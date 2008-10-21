@@ -1,0 +1,580 @@
+/* file: android-developer-docs.css
+   author: smain
+   date: september 2008
+   info: developer doc styles (developer.android.com)
+*/
+
+@import url("android-developer-core.css");
+
+#title {
+  border-bottom: 4px solid #ccc;
+  display:none;
+}
+
+#title h1 {
+  color:#336666;
+  margin:0;
+  padding: 5px 10px;
+  font-size: 100%;
+  line-height: 15px;
+}
+
+#title h1 .small{
+  color:#000;
+  margin:0;
+  font-size: 13px;
+  padding:0 0 0 15px;
+}
+
+#crumb {
+  font-size:95%;
+  padding:5px 20px;
+  float:right;
+  color:#336666;
+}
+
+/* SIDE NAVIGATION */
+
+#side-nav {
+  padding:0 6px 0 0;
+  background-color: #fff;
+}
+
+#resize-packages-nav {
+/* keeps the resize handle below the h-scroll handle */
+  height:200px;
+  overflow:hidden;
+  max-height:100%;
+}
+
+#packages-nav {
+  height:200px;
+  max-height:inherit;
+  position:relative;
+  overflow:auto;
+}
+
+#classes-nav,
+#devdoc-nav {
+  overflow:auto;
+}
+
+#side-nav ul {
+  list-style: none;
+  margin: 0;
+  padding:5px 0;
+}
+
+#side-nav ul ul {
+  margin: 0;
+  padding: 0;
+}
+
+#side-nav li {
+  padding: 1px 0 2px 0;
+  line-height:1.1em;
+  white-space:nowrap;
+}
+
+#side-nav li h2 {
+  font-size: 100%;
+  font-weight: bold;
+  margin: 0;
+  padding: 8px 0 0 10px;
+}
+
+#side-nav li a {
+  padding: 0 0 0 11px;
+}
+
+#side-nav li a+a {
+  padding: 0;
+}
+
+#side-nav li li li a { 
+/*sdk lists*/
+  padding: 0 0 0 25px;
+} 
+
+#side-nav .selected {
+  background-color: #97a2ac;
+  color: #fff;
+  font-weight:bold;
+}
+
+#side-nav .selected a {
+  color: #fff;
+}
+
+#side-nav strong {
+  display:block;
+}
+
+#index-links .selected {
+  background-color: #fff;
+  color: #000;
+  font-weight:normal;
+  text-decoration:none;
+}
+
+#index-links {
+  padding:7px 0 4px 10px;
+}
+
+/* DOCUMENT BODY */
+
+#doc-content {
+  overflow:auto;
+}
+	
+#jd-header {
+  background-color: #9bb0c3;
+  padding: 10px 20px;
+}
+
+#jd-header h1 {
+  margin: 0 0 10px;
+  font-size:160%;
+}
+
+#jd-header table {
+  margin:0;
+  padding:0;
+}
+
+#jd-header td {
+  border:none;
+  padding:0;
+  vertical-align:top;
+}
+
+
+/* inheritance table */
+.jd-inheritance-table {
+  border-spacing:0;
+  margin:0;
+  padding:0;
+  font-size:90%;
+}
+.jd-inheritance-table td {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+.jd-inheritance-table .jd-inheritance-space {
+  font-weight:bold;
+  width:1em;
+}
+.jd-inheritance-table .jd-inheritance-interface-cell {
+  padding-left: 17px;
+}
+
+#jd-content {
+  padding: 12px 20px;
+}
+
+hr {
+  background-color:#ccc;
+}
+
+/* DOC CLASSES */
+
+#jd-content h1 {
+/*sdk page*/
+  font-size:160%;
+  color:#336666;
+  margin:0 0 .5em;
+}
+
+#jd-content h2 {
+  font-size:140%;
+  background-color: #97a2ac;
+  border-right:20px solid #97a2ac;
+  position:relative;
+  left:-20px;
+  width:100%;
+  padding: 8px 0 8px 20px;
+  z-index:-1;
+}
+
+#jd-content h3 {
+  font-size:130%;
+  border-top: 3px solid #97a2ac;
+  padding:3px 0 5px;
+}
+
+#jd-content h4 {
+  font-size:110%;
+  margin-bottom:.5em;
+}
+
+img {
+  padding:0 0 1em 0;
+}
+
+#jd-content li img,
+#jd-content dd img {
+  margin:.5em 0 0;
+  padding:0;
+}
+
+.nolist {
+  list-style:none;
+  padding:0 0 1em;
+  margin:0 0 0 1em;
+}
+
+h4 .normal {
+  font-size:90%;
+  font-weight:normal;
+}
+
+.jd-details {
+/*  border:1px solid #669999;
+  padding:4px; */
+  margin:0 0 1em;
+}
+
+.jd-tagdata {
+  margin:.6em 0;
+}
+
+.jd-tagdata ul {
+  padding:0;
+}
+
+h4.jd-details-title {
+  font-size:115%;
+  background-color: #d6d6d6;
+  margin:0 0 .6em;
+  padding:3px;
+}
+
+h4.jd-tagtitle {
+  margin:0;
+}
+
+.jd-details-descr {
+  padding:3px;
+}
+
+.jd-tagtable {
+  margin:0;
+}
+
+.jd-tagtable td,
+.jd-tagtable th {
+  border:none;
+  background-color:#fff;
+  vertical-align:top;
+  font-weight:normal;
+  padding:2px 10px;
+}
+
+.jd-tagtable th {
+  font-style:italic;
+}
+
+.sidebox-wrapper {
+  float: right;
+  width:300px;
+  background-color:#fff;
+  padding-left:15px;
+}
+
+.sidebox-inner {
+  border-left:2px solid #7BB026;
+  padding:0 5px 0 15px;
+}
+
+.sidebox {
+  float: right;
+  width:300px;
+  background-color:#fff;
+  border-left:2px solid #7BB026;
+  margin-left:15px;
+  padding:0 5px 0 15px;
+}
+
+#jd-content .sidebox h2,
+#jd-content .sidebox h3,
+#jd-content .sidebox-inner h2,
+#jd-content .sidebox-inner h3 {
+  background-color:#fff;
+  border:none;
+  font-size:110%;
+  margin:0;
+  padding:0 0 10px;
+  left:0;
+  z-index:0;
+}
+
+#jd-content table h2 {
+  background-color: #d6d6d6;
+  font-size: 110%;
+  margin:0 0 10px;
+  padding:5px;
+  left:0;
+  width:auto;
+}
+
+div.special {
+  padding: 10px 25px 0;
+  margin: 0 0 1em;
+  background-color: #ddf0f2;
+}
+
+#jd-content div.special h3 {
+  color:#669999;
+  font-size:120%;
+  border:none;
+  margin:0 0 .5em;
+}
+  
+p.note, p.caution, p.warning {
+  margin:0 0 1em;
+  padding: 4px 10px;
+  background-color: #efefef;
+  border-top: 1px solid;  
+  border-bottom: 1px solid;
+}
+
+p.special-note {
+  background-color:#EBF3DB;
+  padding:10px 20px;
+  margin:0 0 1em;
+}
+
+p.note {
+  border-color: #3366CC;
+}
+    
+p.caution {
+  border-color: #ffcc33;
+}
+
+p.warning {
+  border-color: #aa0033;
+}
+  
+p.warning b, p.warning em, p.warning strong {
+  color: #aa0033;
+  font-weight: bold;
+}
+
+li p.note, li p.warning, li p.caution {
+  margin: .5em 0 0 0;  
+  padding: .2em .5em .2em .9em;
+}
+
+dl.xml dt {
+  font-variant:small-caps;
+}
+
+.new {
+  font-size: 78%;
+  font-weight: bold;
+  color: red;
+  text-decoration: none;
+}
+
+/* table of contents */
+
+ol.toc {
+  margin: 1em 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+ol.toc li {
+  font-weight: bold;
+  margin: .5em 0 0 1.5em;
+  padding: 0;
+}
+
+ol.toc li ol {
+  margin: 0;
+  padding: 0;
+}
+  
+ol.toc li ol li {
+  padding: 0;
+  margin: .1em 0 0 1em;
+  font-weight: normal;
+  list-style: none;
+}
+
+table ol.toc {
+  margin-left: 0;
+}
+
+.columns td {
+  padding:0 5px;
+  border:none;
+}
+
+/* link table */
+.jd-linktable {
+  margin: 0 0 1em;
+  border-bottom: 1px solid #888;
+}
+.jd-linktable th,
+.jd-linktable td {
+  padding: 3px 5px;
+  vertical-align: top;
+  text-align: left;
+  border:none;
+}
+.jd-linktable tr {
+  background-color: #fff;
+}
+.jd-linktable td {
+  border-top: 1px solid #888;
+  background-color: inherit;
+}
+.jd-linktable td  p {
+  padding: 0 0 5px;
+}
+.jd-linktable .jd-linkcol {
+}
+.jd-linktable .jd-descrcol {
+}
+.jd-linktable .jd-typecol {
+  text-align:right;
+}
+.jd-linktable .jd-valcol {
+}
+.jd-linktable .jd-commentrow {
+  border-top:none;
+  padding-left:25px;
+}
+.jd-deprecated-warning {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+tr.alt-color {
+  background-color: #e6e6e6;
+}
+
+/* expando trigger */
+.jd-expando-trigger {
+  padding:0;
+}
+
+/* jd-expando */
+.jd-inheritedlinks {
+  padding:0 0 0 13px
+}
+
+/* SDK PAGE */
+table.download tr {
+  background-color:#d9d9d9;
+}
+
+table.download tr.alt-color {
+  background-color:#ededed;
+}
+
+table.download td,
+table.download th {
+  border:2px solid #fff;
+  padding:10px 5px;
+}
+
+table.download th {
+  background-color:#6d8293;
+  color:#fff;
+}
+
+/* INLAY 240PX EXTENSION */
+/* modified to 43px so that all browsers eliminate the package panel h-scroll */
+.g-tpl-240 .g-unit, 
+.g-unit .g-tpl-240 .g-unit, 
+.g-unit .g-unit .g-tpl-240 .g-unit {
+  display: block;
+  margin: 0 0 0 243px;
+  width: auto;
+  float: none;
+}
+.g-unit .g-unit .g-tpl-240 .g-first,
+.g-unit .g-tpl-240 .g-first,
+.g-tpl-240 .g-first {
+  display: block;
+  margin: 0;
+  width: 243px;
+  float: left;
+}
+/* 240px alt */
+.g-tpl-240-alt .g-unit, 
+.g-unit .g-tpl-240-alt .g-unit, 
+.g-unit .g-unit .g-tpl-240-alt .g-unit {
+  display: block;
+  margin: 0 243px 0 0;
+  width: auto;
+  float: none;
+}
+.g-unit .g-unit .g-tpl-240-alt .g-first,
+.g-unit .g-tpl-240-alt .g-first,
+.g-tpl-240-alt .g-first {
+  display: block;
+  margin: 0;
+  width: 243px;
+  float: right;
+}
+
+  
+/* JQUERY RESIZABLE STYLES */
+.ui-resizable { position: relative; }
+.ui-resizable-handle { position: absolute; display: none; font-size: 0.1px; }
+.ui-resizable .ui-resizable-handle { display: block; }
+body .ui-resizable-disabled .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
+body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
+.ui-resizable-s { cursor: s-resize; height: 6px; width: 100%; bottom: 0px; left: 0px; background: transparent url("images/resizable-s2.gif") repeat scroll center top; }
+.ui-resizable-e { cursor: e-resize; width: 6px; right: 0px; top: 0px; height: 100%; background: transparent url("images/resizable-e2.gif") repeat scroll right center; }
+
+@media print {
+
+  body {
+    overflow:visible;
+  }
+  
+  #side-nav {
+    display:none;
+  }
+  
+  #doc-content {
+    margin-left:0;
+    height:auto;
+    width:auto;
+  }
+
+  #jd-header {
+    border-bottom:3px solid #9bb0c3;
+  }
+
+  #jd-content h2 {
+    border-top:2px solid #97a2ac;
+    border-bottom:2px solid #97a2ac;
+  }
+
+  pre {
+    /* these allow lines to break (if there's a white space) */
+    overflow: visible;
+    text-wrap: unrestricted;
+    white-space: -moz-pre-wrap; /* Moz */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    white-space: pre-wrap; /* CSS3  */
+    word-wrap: break-word; /* IE 5.5+ */
+  }
+
+  h1, h2, h3, h4, h5, h6 { 
+    page-break-after: avoid;
+  }
+
+  table, img {
+    page-break-inside: avoid;
+  }
+
+}

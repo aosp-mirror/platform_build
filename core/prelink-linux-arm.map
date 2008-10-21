@@ -1,0 +1,115 @@
+
+# 0xC0000000 - 0xFFFFFFFF Kernel
+# 0xB0100000 - 0xBFFFFFFF Thread 0 Stack
+# 0xB0000000 - 0xB00FFFFF Linker
+# 0xA0000000 - 0xBFFFFFFF Prelinked System Libraries
+# 0x90000000 - 0x9FFFFFFF Prelinked App Libraries
+# 0x80000000 - 0x8FFFFFFF Non-prelinked Libraries
+# 0x40000000 - 0x7FFFFFFF mmap'd stuff
+# 0x10000000 - 0x3FFFFFFF Thread Stacks
+# 0x00000000 - 0x0FFFFFFF .text / .data / heap
+
+# core system libraries
+libdl.so                0xAFF00000
+libc.so                 0xAFE00000
+libstdc++.so            0xAFD00000
+libm.so                 0xAFC00000
+liblog.so               0xAFBC0000
+libcutils.so            0xAFB00000
+libthread_db.so         0xAFA00000
+libz.so                 0xAF900000
+libevent.so             0xAF800000
+libssl.so               0xAF700000
+libcrypto.so            0xAF500000
+
+# extended system libraries
+libbluedroid.so         0xAED00000
+libbluetooth.so         0xAEC00000
+libdbus.so              0xAE800000
+libril.so               0xAE400000
+libreference-ril.so     0xAE000000
+libwpa_client.so        0xADC00000
+libnetutils.so          0xADB00000
+
+# core dalvik runtime support
+libandroid_servers.so   0xAD900000
+libicudata.so           0xAD600000
+libicuuc.so             0xAD500000
+libicui18n.so           0xAD400000
+libandroid_runtime.so   0xAD300000
+libnativehelper.so      0xAD200000
+libdvm-ARM.so           0xAD100000
+libdvm.so               0xAD000000
+
+# graphics
+libpixelflinger.so      0xACF00000
+libcorecg.so            0xACE00000
+libsurfaceflinger.so    0xACD00000
+libagl.so               0xACC00000
+libGLES_CM.so           0xACB00000
+libexif.so              0xAC500000
+libui.so                0xAC400000
+libsgl.so               0xAC000000
+
+# audio
+libaudio.so             0xAB700000
+libsonivox.so           0xAB600000
+libsoundpool.so         0xAB500000
+libvorbisidec.so        0xAB400000
+libmedia_jni.so         0xAB300000
+libmediaplayerservice.so 0xAB280000
+libmedia.so             0xAB200000
+libFFTEm.so             0xAB100000
+libaudioflinger.so      0xAB000000
+
+# assorted system libraries
+libsqlite.so            0xAAC00000
+libexpat.so             0xAA800000
+libwebcore.so           0xAA000000
+libutils.so             0xA9D00000
+libcameraservice.so     0xA9C80000
+libhardware.so          0xA9C00000
+libapp_process.so       0xA9B00000
+libsystem_server.so     0xA9A00000
+libime.so               0xA9800000
+libgps.so               0xA9700000
+libcamera.so            0xA9680000
+libqcamera.so           0xA9400000
+
+# pv libraries
+libpvasf.so                   0xA7BC0000
+libpvasfreg.so                0xA7B70000
+libopencoredownload.so        0xA7B40000
+libopencoredownloadreg.so     0xA7B00000
+libopencorenet_support.so     0xA7A00000
+libopencorertsp.so            0xA7900000
+libopencorertspreg.so         0xA7800000
+libopencoreauthor.so          0xA7600000
+libopencorecommon.so          0xA7500000
+libopencoremp4.so             0xA7400000
+libopencoremp4reg.so          0xA7300000
+libopencoreplayer.so          0xA7000000
+
+# libraries for specific apps or temporary libraries
+libcam_ipl.so           0x9F000000
+libwbxml.so             0x9E800000
+libwbxml_jni.so         0x9E400000
+libxml2wbxml.so         0x9E000000
+libaes.so               0x9DC00000
+libdrm1.so              0x9D800000
+libdrm1_jni.so          0x9D400000
+libwapcore.so           0x9D000000
+libstreetview.so        0x9CC00000
+libwapbrowsertest.so    0x9C800000
+libminiglobe.so         0x9C400000
+libearth.so             0x9C000000
+libembunit.so           0x9BC00000
+libneon.so              0x9B800000
+libjni_example.so       0x9B400000
+libjni_load_test.so     0x9B000000
+libjni_lib_test.so      0x9AC00000
+librunperf.so           0x9A800000
+libctest.so             0x9A700000
+libUAPI_jni.so          0x9A500000
+librpc.so               0x9A400000 
+libtrace_test.so        0x9A300000 

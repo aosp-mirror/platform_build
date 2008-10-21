@@ -1,0 +1,7 @@
+template {
+    which = codesite
+    extension=.ezt
+    escape.0.key=[
+    escape.0.value=[[]
+}
+

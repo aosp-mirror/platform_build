@@ -1,0 +1,167 @@
+
+on init
+
+loglevel 3
+
+# setup the global environment
+    export PATH /sbin:/system/sbin:/system/bin:/system/xbin
+    export LD_LIBRARY_PATH /system/lib
+    export ANDROID_BOOTLOGO 1
+    export ANDROID_ROOT /system
+    export ANDROID_ASSETS /system/app
+    export ANDROID_DATA /data
+    export EXTERNAL_STORAGE /sdcard
+    export BOOTCLASSPATH /system/framework/core.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar
+
+# Backward compatibility
+    symlink /system/etc /etc
+
+# create mountpoints and mount tmpfs on sqlite_stmt_journals and debugfs on d
+    mkdir /d
+    mkdir /sdcard 0000 system system
+    mkdir /system
+    mkdir /data 0771 system system
+    mkdir /cache 0770 system cache
+    mkdir /sqlite_stmt_journals 01777 root root
+    mount tmpfs tmpfs /sqlite_stmt_journals
+    mount debugfs debugfs /d
+
+    mount rootfs rootfs / ro remount
+
+    write /proc/sys/kernel/panic_on_oops 1
+    write /proc/sys/kernel/hung_task_timeout_secs 0
+    write /proc/cpu/alignment 4
+    write /proc/sys/kernel/sched_latency_ns 10000000
+    write /proc/sys/kernel/sched_wakeup_granularity_ns 2000000
+
+# mount mtd partitions
+    # Mount /system rw first to give the filesystem a chance to save a checkpoint
+    mount yaffs2 mtd@system /system 
+    #   dexpreopt needs to write to /system
+    ### mount yaffs2 mtd@system /system ro remount
+
+    # We chown/chmod /data again so because mount is run as root + defaults
+    mount yaffs2 mtd@userdata /data
+    chown system system /data
+    chmod 0771 /data
+
+    # Same reason as /data above
+    mount yaffs2 mtd@cache /cache
+    chown system cache /cache
+    chmod 0770 /cache
+
+    # This may have been created by the recovery system with odd permissions
+    chown system system /cache/recovery
+    chmod 0770 /cache/recovery
+
+# create basic filesystem structure
+    mkdir /data/dalvik-cache 0777 root root
+    mkdir /data/misc 01771 system misc
+    mkdir /data/misc/hcid 0770 bluetooth bluetooth
+    mkdir /data/local 0771 shell shell
+    mkdir /data/local/tmp 0771 shell shell
+    mkdir /data/data 0771 system system
+    mkdir /data/app-private 0771 system system
+    mkdir /data/app 0771 system system
+    mkdir /data/property 0700 root root
+
+    # create dalvik-cache and double-check the perms
+    mkdir /data/dalvik-cache 0771 system system
+    chown system system /data/dalvik-cache
+    chmod 0771 /data/dalvik-cache
+
+    # create the lost+found directories, so as to enforce our permissions
+    mkdir /data/lost+found 0770
+    mkdir /cache/lost+found 0770
+
+    # double check the perms, in case lost+found already exists, and set owner
+    chown root root /data/lost+found
+    chmod 0770 /data/lost+found
+    chown root root /cache/lost+found
+    chmod 0770 /cache/lost+found
+
+on boot
+# basic network init
+    ifup lo
+    hostname localhost
+    domainname localdomain
+
+# set RLIMIT_NICE to allow priorities from 19 to -20
+    setrlimit 13 40 40
+
+# Define the oom_adj values for the classes of processes that can be
+# killed by the kernel.  These are used in ActivityManagerService.
+    setprop ro.FOREGROUND_APP_ADJ 0
+    setprop ro.VISIBLE_APP_ADJ 1
+    setprop ro.SECONDARY_SERVER_ADJ 2
+    setprop ro.HIDDEN_APP_MIN_ADJ 7
+    setprop ro.CONTENT_PROVIDER_ADJ 14
+    setprop ro.EMPTY_APP_ADJ 15
+
+# Define the memory thresholds at which the above process classes will
+# be killed.  These numbers are in pages (4k).
+    setprop ro.FOREGROUND_APP_MEM 1536
+    setprop ro.VISIBLE_APP_MEM 2048
+    setprop ro.SECONDARY_SERVER_MEM 4096
+    setprop ro.HIDDEN_APP_MEM 5120
+    setprop ro.CONTENT_PROVIDER_MEM 5632
+    setprop ro.EMPTY_APP_MEM 6144
+
+# Write value must be consistent with the above properties.
+    write /sys/module/lowmemorykiller/parameters/adj 0,1,2,7,14,15
+
+    write /proc/sys/vm/overcommit_memory 1
+    write /sys/module/lowmemorykiller/parameters/minfree 1536,2048,4096,5120,5632,6144
+
+    class_start default
+
+    # Set init its forked children's oom_adj.
+    write /proc/1/oom_adj -16
+
+    # Permissions for System Server and daemons.
+    chown radio system /sys/android_power/state
+    chown radio system /sys/android_power/request_state
+    chown radio system /sys/android_power/acquire_full_wake_lock
+    chown radio system /sys/android_power/acquire_partial_wake_lock
+    chown radio system /sys/android_power/release_wake_lock
+    chown system system /sys/class/timed_output/vibrator/enable
+    chown system system /sys/class/leds/keyboard-backlight/brightness
+    chown system system /sys/class/leds/lcd-backlight/brightness
+    chown system system /sys/class/leds/button-backlight/brightness
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chown system system /sys/class/leds/red/device/grpfreq
+    chown system system /sys/class/leds/red/device/grppwm
+    chown system system /sys/class/leds/red/device/blink
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chown system system /sys/class/leds/red/device/grpfreq
+    chown system system /sys/class/leds/red/device/grppwm
+    chown system system /sys/class/leds/red/device/blink
+    chown system system /sys/class/timed_output/vibrator/enable
+    chown bluetooth bluetooth /sys/module/board_trout/parameters/bluetooth_power_on
+    chown system system /sys/module/sco/parameters/disable_esco
+    chmod 0660 /sys/module/board_trout/parameters/bluetooth_power_on
+    chown system system /sys/kernel/ipv4/tcp_wmem_min
+    chown system system /sys/kernel/ipv4/tcp_wmem_def
+    chown system system /sys/kernel/ipv4/tcp_wmem_max
+    chown system system /sys/kernel/ipv4/tcp_rmem_min
+    chown system system /sys/kernel/ipv4/tcp_rmem_def
+    chown system system /sys/kernel/ipv4/tcp_rmem_max
+    chown root radio /proc/cmdline
+
+# Define TCP buffer sizes for various networks
+#   ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
+    setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
+
+
+## Daemon processes to be run by init.
+##
+service console /system/bin/sh
+    console

@@ -1,0 +1,40 @@
+README for Android "acp" Command
+
+The "cp" command was judged and found wanting.  The issues are:
+
+Mac OS X:
+ - Uses the BSD cp, not the fancy GNU cp.  It lacks the "-u" flag, which
+   only copies files if they are newer than the destination.  This can
+   slow the build when copying lots of content.
+ - Doesn't take the "-d" flag, which causes symlinks to be copied as
+   links.  This is the default behavior, so it's not all bad, but it
+   complains if you supply "-d".
+
+MinGW/Cygwin:
+ - Gets really weird when copying a file called "foo.exe", failing with
+   "cp: skipping file 'foo.exe', as it was replaced while being copied".
+   This only seems to happen when the source file is on an NFS/Samba
+   volume.  "cp" works okay copying from local disk.
+
+Linux:
+ - On some systems it's possible to have microsecond-accurate timestamps
+   on an NFS volume, and non-microsecond timestamps on a local volume.
+   If you copy from NFS to local disk, your NFS files will always be
+   newer, because the local disk time stamp is truncated rather than
+   rounded up.  This foils the "-u" flag if you also supply the "-p" flag
+   to preserve timestamps.
+ - The Darwin linker insists that ranlib be current.  If you copy the
+   library, the time stamp no longer matches.  Preserving the time
+   stamp is essential, so simply turning the "-p" flag off doesn't work.
+
+Futzing around these in make with GNU make functions is awkward at best.
+It's easier and more reliable to write a cp command that works properly.
+
+
+The "acp" command takes most of the standard flags, following the GNU
+conventions.  It adds a "-e" flag, used when copying executables around.
+On most systems it is ignored, but on MinGW/Cygwin it allows "cp foo bar"
+to work when what is actually meant is "cp foo.exe bar.exe".  Unlike the
+default Cygwin cp, "acp foo bar" will not find foo.exe unless you add
+the "-e" flag, avoiding potential ambiguity.
+
