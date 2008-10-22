@@ -2,6 +2,10 @@ if [[ "x$ANDROID_JAVA_HOME" != x && -e $ANDROID_JAVA_HOME/lib/tools.jar ]] ; the
     echo $ANDROID_JAVA_HOME/lib/tools.jar
 else
     JAVAC=$(which javac)
+    if [ -z "$JAVAC" ] ; then
+	echo "Please-install-JDK-5.0,-update-12-or-higher,-which-you-can-download-from-java.sun.com"
+	exit 1
+    fi
     while [ -L $JAVAC ] ; do
         LSLINE=$(ls -l $JAVAC)
         JAVAC=$(echo -n $LSLINE | sed -e "s/.* -> //")
