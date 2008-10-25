@@ -302,11 +302,18 @@ ifeq ($(BUILD_TINY_ANDROID), true)
 INTERNAL_DEFAULT_DOCS_TARGETS := 
 
 subdirs := \
+	bionic \
 	system/core \
-	external/zlib \
-	build/tools \
-	tools/kcm \
-	external/yaffs2
+	build/libs \
+	build/target \
+	build/tools/acp \
+	build/tools/apriori \
+	build/tools/kcm \
+	build/tools/soslim \
+	external/elfcopy \
+	external/elfutils \
+	external/yaffs2 \
+	external/zlib
 else	# !BUILD_TINY_ANDROID
 
 #
