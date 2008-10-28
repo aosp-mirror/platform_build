@@ -481,7 +481,7 @@ ifdef WITH_DEXPREOPT
 endif
 ifdef with_dexpreopt
   # This file will set BUILT_SYSTEMIMAGE and SYSTEMIMAGE_SOURCE_DIR
-  include tools/dexpreopt/Config.mk
+  include build/tools/dexpreopt/Config.mk
 else
   BUILT_SYSTEMIMAGE := $(BUILT_SYSTEMIMAGE_UNOPT)
   SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
