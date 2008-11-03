@@ -165,13 +165,17 @@ endif
 override_build_tags := development
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
-ifeq "" "$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES))"
-  # Install an apns-conf.xml file if one's not already being installed.
-  PRODUCT_COPY_FILES += development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
-endif
 else # !sdk
 # Enable sync for non-sdk builds only (sdk builds lack SubscribedFeedsProvider).
 ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
+endif
+
+ifeq "" "$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES))"
+  # Install an apns-conf.xml file if one's not already being installed.
+  PRODUCT_COPY_FILES += development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
+  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+    $(warning implicitly installing apns-conf_sdk.xml)
+  endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
