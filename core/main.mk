@@ -578,9 +578,10 @@ droidcore: report_config files \
 .PHONY: droid user userdebug tests
 droid user userdebug tests: droidcore
 
+#TODO: restore support for building OTA packages
+#	$(INTERNAL_OTA_PACKAGE_TARGET) \
 $(call dist-for-goals,user userdebug droid, \
 	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
-	$(INTERNAL_OTA_PACKAGE_TARGET) \
 	$(SYMBOLS_ZIP) \
 	$(APPS_ZIP) \
 	$(HOST_OUT_EXECUTABLES)/adb$(HOST_EXECUTABLE_SUFFIX) \
