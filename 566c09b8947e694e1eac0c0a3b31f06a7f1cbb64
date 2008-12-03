@@ -33,6 +33,23 @@
       "revId": "566c09b8947e694e1eac0c0a3b31f06a7f1cbb64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "z2730b6ce395fa706d77d8a31e9bc4731",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2008-12-03T21:10:40Z",
+      "side": 1,
+      "message": "Yes, 5093 is along the lines of what I had in mind, thanks.",
+      "revId": "566c09b8947e694e1eac0c0a3b31f06a7f1cbb64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
