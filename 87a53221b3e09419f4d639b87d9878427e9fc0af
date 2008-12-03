@@ -70,6 +70,23 @@
     },
     {
       "key": {
+        "uuid": "zfb12ae3a7f7f452d7ce486fcb0d5a686",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1001286
+      },
+      "writtenOn": "2008-12-03T16:11:22Z",
+      "side": 1,
+      "message": "Specifically, my concern is that TARGET_CPU ends up really meaning \"target mtune option value\" and in a number of cases my not actually reflect the target cpu because you might need a different value for mtune, depending.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "z25395f0a4b409b47c9e78770bf002de3",
         "filename": "core/combo/linux-arm.mk",
         "patchSetId": 1
