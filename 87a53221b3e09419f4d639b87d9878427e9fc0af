@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "z0934d748a62b4fbbfaae90dad495dd3a",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000237
+      },
+      "writtenOn": "2008-12-03T16:11:21Z",
+      "side": 1,
+      "message": "On 2008/10/30 23:49:57, Dave Bort wrote:\n\u003e s/somtimes/sometimes/\n\nFixed.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
