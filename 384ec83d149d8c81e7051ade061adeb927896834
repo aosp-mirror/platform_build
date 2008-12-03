@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "ze5a9f10131d5a93a7cd6209615c377af",
+        "filename": "tools/findleaves.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:36Z",
+      "side": 1,
+      "message": "can you make the commenting more explicit, for example with:\n\"\"\"\n##########!/bin/bash  (see XXX comment below for explanation)\n\"\"\"\n",
+      "revId": "384ec83d149d8c81e7051ade061adeb927896834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "z0ae3ad385d36dd927497dd9d9645d11f",
         "filename": "tools/findleaves.sh",
         "patchSetId": 1
@@ -13,6 +30,23 @@
       "writtenOn": "2008-12-03T16:11:36Z",
       "side": 1,
       "message": "On 2008/11/11 10:23:37, David Turner wrote:\n\u003e hmm, this is a bit hard to understand. May I suggest you to replace it with the\n\u003e following:\n\u003e \"\"\"\n\u003e XXX: the !/bin/bash invocation on the first line has been\n\u003e      commented out because it doesn\u0027t work on FreeBSD\n\u003e      (which uses /usr/local/bin/bash, instead of /bin/bash)\n\u003e \n\u003e      note that, with this comment, this script is invoked\n\u003e      with the right bash shell from build/core/main.mk\n\u003e \"\"\"\n\u003e \n\nWell, your version is more easy to understand. I\u0027ll replace comment in ammended commit.",
+      "revId": "384ec83d149d8c81e7051ade061adeb927896834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "z25ed4ae27c9ca93c590099318174d930",
+        "filename": "tools/findleaves.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:36Z",
+      "side": 1,
+      "message": "hmm, this is a bit hard to understand. May I suggest you to replace it with the following:\n\"\"\"\nXXX: the !/bin/bash invocation on the first line has been\n     commented out because it doesn\u0027t work on FreeBSD\n     (which uses /usr/local/bin/bash, instead of /bin/bash)\n\n     note that, with this comment, this script is invoked\n     with the right bash shell from build/core/main.mk\n\"\"\"\n",
       "revId": "384ec83d149d8c81e7051ade061adeb927896834",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
