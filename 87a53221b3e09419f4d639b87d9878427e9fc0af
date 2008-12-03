@@ -53,6 +53,23 @@
     },
     {
       "key": {
+        "uuid": "ze1395e33be5f78ee5a8f9f133fefdd5d",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000237
+      },
+      "writtenOn": "2008-12-03T16:11:22Z",
+      "side": 1,
+      "message": "On 2008/10/30 23:59:50, Brian Swetland wrote:\n\u003e Specifically, my concern is that TARGET_CPU ends up really meaning \"target mtune\n\u003e option value\" and in a number of cases my not actually reflect the target cpu\n\u003e because you might need a different value for mtune, depending.\n\nTo be honest, I don\u0027t have an actual use case for wanting to \u0027tune\u0027 to a different. It might make sense to let a particular board set the -mtune cflag, and leave -mtune completely out of linux-arm.mk. I still think linux-arm.mk should take care of architecture version differences though, as there are going to many boards with the same architecture, but in reality there is very few things in user land that care about the particular TARGET_CPU.\n\nTo this end, I\u0027m going to leave -mtune more-or-less hard coded as it is at the moment, and a further patch can fix this if it is useful.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "z25395f0a4b409b47c9e78770bf002de3",
         "filename": "core/combo/linux-arm.mk",
         "patchSetId": 1
