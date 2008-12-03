@@ -19,6 +19,40 @@
     },
     {
       "key": {
+        "uuid": "z72c845d0a4a46cbf9d628c73c87c647c",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2008-12-03T16:11:21Z",
+      "side": 1,
+      "message": "I\u0027m a little worried about namespace issues here.  I know it\u0027s kind of wordy, but I\u0027d prefer something like:\n\nARCH_ARM_HAVE_THUMB_SUPPORT, ARCH_ARM_HAVE_FAST_INTERWORKING, etc.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "zd05514e1c984e27f926d8ec7f739b8cf",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2008-12-03T16:11:22Z",
+      "side": 1,
+      "message": "swetland and I would prefer if you removed the abstraction here and just dealt with cflags, like:\n\narch_cflags :\u003d -march\u003d$(TARGET_ARCH_VERSION) -mtune\u003darm920 -D__ARM_ARCH_4__\n\nThis will give us more flexibility in case a given architecture wants to define more than just -mtune and -D args.  (arch_cflags, in this case, is essentially local to this file and thus would be in lowercase)\n\nOf course, this makes it a little messier to override TARGET_CPU, but you could still do it like:\n\nifneq ($(strip $(TARGET_CPU)),)\n  arch_cflags :\u003d -mtune\u003d$(TARGET_CPU) $(filter-out -mtune\u003d%,$(arch_cflags)) \nendif",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "z25395f0a4b409b47c9e78770bf002de3",
         "filename": "core/combo/linux-arm.mk",
         "patchSetId": 1
@@ -64,6 +98,23 @@
       "writtenOn": "2008-12-03T16:11:21Z",
       "side": 1,
       "message": "On 2008/10/30 23:49:57, Dave Bort wrote:\n\u003e s/somtimes/sometimes/\n\nFixed.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "za196f36d546a3bafc7d851dd1aea6d96",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2008-12-03T16:11:22Z",
+      "side": 1,
+      "message": "s/somtimes/sometimes/",
       "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
