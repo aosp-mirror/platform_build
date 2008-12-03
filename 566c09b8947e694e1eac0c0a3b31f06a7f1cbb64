@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "zfea7f79fbdc44c5878f20e499e36f5cf",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2008-12-03T16:36:51Z",
+      "side": 1,
+      "message": "* \"if then fi\" would be more readable than \"[ ] \u0026\u0026\u0027\n\n* If there\u0027s a need to distinguish between host systems. I\u0027d rather have a single piece of logic that determines the host, independent from the places that need to have host-specific behaviors. Yes, I know there are probably bad precedents, but that\u0027s the kind of thing that is easier to fix before it spirals out of control.\n\n",
+      "revId": "566c09b8947e694e1eac0c0a3b31f06a7f1cbb64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
