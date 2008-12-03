@@ -16,6 +16,23 @@
       "revId": "566c09b8947e694e1eac0c0a3b31f06a7f1cbb64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "zff1b9bdf691516a45ab0dfa8b28553a5",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1001302
+      },
+      "writtenOn": "2008-12-03T19:53:31Z",
+      "side": 1,
+      "message": "On 2008/12/03 16:36:51, Jean-Baptiste Queru wrote: {...}\n\nsee amended commit http://review.source.android.com/5093\n\nIf I correctly understood your comment, than that commit makes main script logics less system dependent. There are still some Linux related ifs in script body, but most of dependent code is isolated in the header.",
+      "revId": "566c09b8947e694e1eac0c0a3b31f06a7f1cbb64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
