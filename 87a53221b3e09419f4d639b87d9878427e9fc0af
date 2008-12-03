@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "z3961342bcdd56431ffd0d85b34a9aa9f",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000237
+      },
+      "writtenOn": "2008-12-03T16:11:21Z",
+      "side": 1,
+      "message": "On 2008/10/30 23:49:57, Dave Bort wrote:\n\u003e I\u0027m a little worried about namespace issues here.  I know it\u0027s kind of wordy,\n\u003e but I\u0027d prefer something like:\n\u003e \n\u003e ARCH_ARM_HAVE_THUMB_SUPPORT, ARCH_ARM_HAVE_FAST_INTERWORKING, etc.\n\nAgree. Fixed.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "z25395f0a4b409b47c9e78770bf002de3",
         "filename": "core/combo/linux-arm.mk",
         "patchSetId": 1
@@ -13,6 +30,23 @@
       "writtenOn": "2008-12-03T16:11:21Z",
       "side": 1,
       "message": "Rather than creating a new macro so close to the existing one, maybe do something like:\n\n(before the CFLAGS assignment)\nandroid_config_h :\u003d $(call select-android-config-h,linux-arm)\narch_include_dir :\u003d $(dir $(android_config_h))\n\n(in the CFLAGS assignment)\n-include $(android_config_h) -I $(arch_include_dir)\n\n...or, remove the definition of select-android-config-h and construct it in terms of select-system-core-arch-include-dir.",
+      "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "z289d6fb3c217e51d43ead9e12ee3df7a",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1000237
+      },
+      "writtenOn": "2008-12-03T16:11:21Z",
+      "side": 1,
+      "message": "On 2008/10/30 23:49:57, Dave Bort wrote:\n\u003e Rather than creating a new macro so close to the existing one, maybe do\n\u003e something like:\n\u003e \n\u003e (before the CFLAGS assignment)\n\u003e android_config_h :\u003d $(call select-android-config-h,linux-arm)\n\u003e arch_include_dir :\u003d $(dir $(android_config_h))\n\u003e \n\u003e (in the CFLAGS assignment)\n\u003e -include $(android_config_h) -I $(arch_include_dir)\n\u003e \n\u003e ...or, remove the definition of select-android-config-h and construct it in\n\u003e terms of select-system-core-arch-include-dir.\n\nFixed, I took the former approach.",
       "revId": "87a53221b3e09419f4d639b87d9878427e9fc0af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
