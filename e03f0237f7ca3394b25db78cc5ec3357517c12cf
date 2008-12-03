@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "z1e95fed45e6363f73133ba677e1764f7",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:27Z",
+      "side": 0,
+      "message": "please keep existing line spacing whenever possible",
+      "revId": "e03f0237f7ca3394b25db78cc5ec3357517c12cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "z8bf8c1beed7d1d268bb0aefc3062f486",
+        "filename": "core/tasks/apicheck.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:27Z",
+      "side": 0,
+      "message": "keep linespacing",
+      "revId": "e03f0237f7ca3394b25db78cc5ec3357517c12cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

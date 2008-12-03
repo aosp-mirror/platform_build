@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "z92b8154cbe6af658b4053fb0be9d51a6",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:27Z",
+      "side": 1,
+      "message": "please use \u0027ifeq ($(SYSNAME),FreeBSD)\u0027 for consistency.",
+      "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "zcfdc959bf6ee469564e33fe25fe39087",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -13,6 +30,40 @@
       "writtenOn": "2008-12-03T16:11:27Z",
       "side": 1,
       "message": "This file must be ignored.\nWas committed by mistake, the only difference - echo \"****\" lines, used to debug building process.",
+      "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "z87d7e62f1dd33c5f5e96913d860e2c59",
+        "filename": "tools/findleaves.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:27Z",
+      "side": 1,
+      "message": "mmm, this *is* a bash script though, so there is no point in \"interpreting the file by a fork\" unless you already run bash.\n\nwhat problem did you try to avoid, I still don\u0027t understand, sorry",
+      "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "za5ca7d64d26e3672159058dd27ea0502",
+        "filename": "tools/findleaves.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2008-12-03T16:11:27Z",
+      "side": 1,
+      "message": "why ? please change this to /bin/sh if you think that the script doesn\u0027t require bash. otherwise there is no reason to comment out it.",
       "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
