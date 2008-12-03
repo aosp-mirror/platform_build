@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "z5cbca779a6572b17728f62bca58846f5",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1000237
+      },
+      "writtenOn": "2008-12-03T16:11:22Z",
+      "side": 1,
+      "message": "Should this probably be TARGET_DEVICE, that way it is possible to have multiple products targeting the same device. Which seems to make sense (at least to me).",
+      "revId": "e9304038f3ed3769675cf3c8264a7fb1cd8b39b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
