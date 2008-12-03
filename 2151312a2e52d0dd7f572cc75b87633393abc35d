@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "z4683fb43458abf7d54d5d07cfdffb129",
+        "filename": "core/combo/linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2008-12-03T16:11:22Z",
+      "side": 1,
+      "message": "Needs to be ARCH_ARM_HAVE_THUMB_SUPPORT",
+      "revId": "2151312a2e52d0dd7f572cc75b87633393abc35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
