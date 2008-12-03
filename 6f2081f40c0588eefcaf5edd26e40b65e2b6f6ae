@@ -67,6 +67,40 @@
       "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "zd8d395a0cd4b5d82446521e2a732ac4a",
+        "filename": "tools/findleaves.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1001302
+      },
+      "writtenOn": "2008-12-03T16:11:28Z",
+      "side": 1,
+      "message": "this script specifies which interpretator to use  - /bin/bash. For unknown reason executing script from makefile makes bash execute this script with /bin/bash as interpretator, which leads to error on FreeBSD (where bash is located in /usr/local/bin).\n---\n/usr/local/bin/bash: build/tools/findleaves.sh: /bin/bash: bad interpreter: No such file or directory\n---\nWhen bash is used to run script interactively from command line (/usr/local/bin/bash build/tools/findleaves.sh) it works as expected, no problem occurs. \n\nI\u0027ve tried different bash switches, but result of shell invocation from makefile was the same. I\u0027ve not found way to ignore shebang by bash, so decided to comment it, as script seems is not used directly  and thus no harm will be produced.",
+      "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "zf8d2b1c64eea23b0a4048af69e72e3c6",
+        "filename": "tools/findleaves.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1001302
+      },
+      "writtenOn": "2008-12-03T16:11:28Z",
+      "side": 1,
+      "message": "On 2008/11/03 13:54:20, David Turner wrote:\n\u003e why ? please change this to /bin/sh if you think that the script doesn\u0027t require\n\u003e bash. otherwise there is no reason to comment out it.\n\nThis script is not called directly. It\u0027s called only via $(shell build/tools/findleaves.sh) call from defintions.mk and main.mk. If change to /bin/sh - script must be rewritten to conform sh syntax (e.g. bash \u0027[[\u0027 must be changed to more common \u0027[\u0027).\n\nAfter commenting first line, behaviour of any shell will be not \"start interpretator for this file\", but \"interpret this file by my fork\".\n\nCommenting is much simplier solution and requires no any changes on file content.",
+      "revId": "6f2081f40c0588eefcaf5edd26e40b65e2b6f6ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
