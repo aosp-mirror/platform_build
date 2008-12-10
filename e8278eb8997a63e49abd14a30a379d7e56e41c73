@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "z3c57adab3fd7d082232d332ca1706829",
+        "filename": "tools/atree/fs.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2008-12-10T18:10:58Z",
+      "side": 1,
+      "message": "I\u0027d rather do if (path.length() \u003d\u003d 0 and path[0] \u003d\u003d \u0027/\u0027).  I\u0027ll make that change and get this checked in today to get this working for you.  Just a stylistic detail.",
+      "revId": "e8278eb8997a63e49abd14a30a379d7e56e41c73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
