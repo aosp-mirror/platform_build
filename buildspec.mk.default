@@ -53,7 +53,7 @@ endif
 # Choose a product to build for.  Look in the products directory for ones
 # that work.
 ifndef TARGET_PRODUCT
-#TARGET_PRODUCT:=sooner
+#TARGET_PRODUCT:=generic
 endif
 
 # Choose additional targets to always install, even when building
@@ -74,8 +74,14 @@ endif
 # This mechanism does not currently support values containing spaces.
 #ADDITIONAL_BUILD_PROPERTIES +=
 
+# If you want to reduce the system.img size by several meg, and are willing to
+# lose access to CJK (and other) character sets, define NO_FALLBACK_FONT:=true
+ifndef NO_FALLBACK_FONT
+#NO_FALLBACK_FONT:=true
+endif
+
 # when the build system changes such that this file must be updated, this
 # variable will be changed.  After you have modified this file with the new
 # changes (see buildspec.mk.default), update this to the new value from
 # buildspec.mk.default.
-BUILD_ENV_SEQUENCE_NUMBER := 8
+BUILD_ENV_SEQUENCE_NUMBER := 9

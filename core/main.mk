@@ -38,6 +38,10 @@ TOPDIR :=
 
 BUILD_SYSTEM := $(TOPDIR)build/core
 
+# This is the default target.  It must be the first declared target.
+DEFAULT_GOAL := droid
+$(DEFAULT_GOAL):
+
 # Set up various standard variables based on configuration
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
@@ -87,37 +91,37 @@ include $(BUILD_SYSTEM)/version_defaults.mk
 # (must be defined before including definitions.make)
 INTERNAL_MODIFIER_TARGETS := showcommands
 
-# This is the default target.  It must be the first declared target
-DEFAULT_TARGET := droid
-.PHONY: $(DEFAULT_TARGET)
-$(DEFAULT_TARGET):
-
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
+ifneq ($(filter eng user userdebug tests,$(MAKECMDGOALS)),)
+$(info ***************************************************************)
+$(info ***************************************************************)
+$(info Don't pass '$(filter eng user userdebug tests,$(MAKECMDGOALS))' on \
+		the make command line.)
+$(info Set TARGET_BUILD_VARIANT in buildspec.mk, or use lunch or)
+$(info choosecombo.)
+$(info ***************************************************************)
+$(info ***************************************************************)
+$(error stopping)
+endif
+
+
 ###
-### DO NOT USE THIS AS AN EXAMPLE FOR ANYTHING ELSE;
-### ONLY 'user'/'userdebug'/'tests'/'sdk' GOALS
-### SHOULD REFER TO MAKECMDGOALS.
+### In this section we set up the things that are different
+### between the build variants
 ###
 
 ## user/userdebug ##
 
-user_goal := $(filter userdebug user,$(MAKECMDGOALS))
+user_variant := $(filter userdebug user,$(TARGET_BUILD_VARIANT))
 enable_target_debugging := true
-ifneq (,$(user_goal))
-  # Make sure that exactly one of {userdebug,user} has been specified,
-  # and that no non-INTERNAL_MODIFIER_TARGETS goals have been specified.
-  non_user_goals := \
-      $(filter-out $(INTERNAL_MODIFIER_TARGETS) $(user_goal),$(MAKECMDGOALS))
-  ifneq ($(words $(non_user_goals) $(user_goal)),1)
-    $(error The '$(word 1,$(user_goal))' target may not be specified with any other targets)
-  endif
+ifneq (,$(user_variant))
   # Target is secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
 
   override_build_tags := user
-  ifeq ($(user_goal),userdebug)
+  ifeq ($(user_variant),userdebug)
     # Pick up some extra useful tools
     override_build_tags += debug
   else
@@ -130,12 +134,12 @@ ifneq (,$(user_goal))
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
   endif
-else # !user_goal
+else # !user_variant
   # Turn on checkjni for non-user builds.
   ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
   # Set device insecure for non-user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
-endif # !user_goal
+endif # !user_variant
 
 ifeq (true,$(strip $(enable_target_debugging)))
   # Target is more debuggable and adbd is on by default
@@ -149,10 +153,7 @@ endif # !enable_target_debugging
 
 ## tests ##
 
-ifneq ($(filter tests,$(MAKECMDGOALS)),)
-ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
-$(error The 'tests' target may not be specified with any other targets)
-endif
+ifeq ($(TARGET_BUILD_VARIANT),tests)
 override_build_tags := eng debug user development tests
 endif
 
@@ -165,13 +166,17 @@ endif
 override_build_tags := development
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
-ifeq "" "$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES))"
-  # Install an apns-conf.xml file if one's not already being installed.
-  PRODUCT_COPY_FILES += development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
-endif
 else # !sdk
 # Enable sync for non-sdk builds only (sdk builds lack SubscribedFeedsProvider).
 ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
+endif
+
+ifeq "" "$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES))"
+  # Install an apns-conf.xml file if one's not already being installed.
+  PRODUCT_COPY_FILES += development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
+  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+    $(warning implicitly installing apns-conf_sdk.xml)
+  endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
@@ -199,8 +204,8 @@ $(if $(filter samples,$(1)),,$(filter eng debug user development,$(1)))
 endef
 endif
 
-ifneq (,$(filter user,$(MAKECMDGOALS)))
-# For the user goal, everything should be installed in /system.
+ifeq ($(TARGET_BUILD_VARIANT),)
+# For the default goal, everything should be installed in /system.
 define should-install-to-system
 true
 endef
@@ -211,7 +216,7 @@ endif
 # the default target.
 ifeq ($(MAKECMDGOALS),showcommands)
 .PHONY: showcommands
-showcommands: $(DEFAULT_TARGET)
+showcommands: $(DEFAULT_GOAL)
 endif
 
 # These targets are going to delete stuff, don't bother including
@@ -244,6 +249,7 @@ endif
 ifeq ($(SDK_ONLY),true)
 
 subdirs := \
+	prebuilt \
 	build/libs/host \
 	dalvik/dexdump \
 	dalvik/libdex \
@@ -251,6 +257,7 @@ subdirs := \
 	development/emulator/mksdcard \
 	development/tools/activitycreator \
 	development/tools/line_endings \
+	development/host \
 	external/expat \
 	external/libpng \
 	external/qemu \
@@ -281,8 +288,10 @@ subdirs += \
 	development/tools/layoutlib_utils \
 	development/tools/ninepatch \
 	development/tools/sdkstats \
+	development/tools/sdkmanager \
 	frameworks/base \
 	frameworks/base/tools/layoutlib \
+	external/googleclient \
 	packages
 else
 $(warning sdk-only: javac not available.)
@@ -312,8 +321,12 @@ else	# !BUILD_TINY_ANDROID
 #
 # Typical build; include any Android.mk files we can find.
 #
-INTERNAL_DEFAULT_DOCS_TARGETS := framework-docs
+INTERNAL_DEFAULT_DOCS_TARGETS := offline-sdk-docs
 subdirs := $(TOP)
+# Only include Android.mk files directly under vendor/*, not
+# *all* Android.mk files under vendor (which is what would happen
+# if we didn't prune vendor in the findleaves call).
+subdir_makefiles += $(wildcard vendor/*/Android.mk)
 
 FULL_BUILD := true
 
@@ -327,38 +340,40 @@ subdir_makefiles += \
 	$(shell build/tools/findleaves.sh \
 	    --prune="./vendor" --prune="./out" $(subdirs) Android.mk)
 
-# Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_PRODUCT)
-# or under vendor/*/$(TARGET_PRODUCT).  Search in both places, but
+# Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
+# or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
 # make sure only one exists.
 # Real boards should always be associated with an OEM vendor.
 board_config_mk := \
 	$(strip $(wildcard \
-		$(SRC_TARGET_DIR)/board/$(TARGET_PRODUCT)/BoardConfig.mk \
-		vendor/*/$(TARGET_PRODUCT)/BoardConfig.mk \
+		$(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
+		vendor/*/$(TARGET_DEVICE)/BoardConfig.mk \
 	))
 ifeq ($(board_config_mk),)
-  $(error No config file found for TARGET_PRODUCT $(TARGET_PRODUCT))
+  $(error No config file found for TARGET_DEVICE $(TARGET_DEVICE))
 endif
 ifneq ($(words $(board_config_mk)),1)
-  $(error Multiple board config files for TARGET_PRODUCT $(TARGET_PRODUCT): $(board_config_mk))
+  $(error Multiple board config files for TARGET_DEVICE $(TARGET_DEVICE): $(board_config_mk))
 endif
 include $(board_config_mk)
-TARGET_PRODUCT_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
+TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
 ifdef CUSTOM_PKG
 $(info ***************************************************************)
 $(info ***************************************************************)
-$(error CUSTOM_PKG is obsolete; use CUSTOM_MODULES)
+$(info CUSTOM_PKG is obsolete; use CUSTOM_MODULES)
 $(info ***************************************************************)
 $(info ***************************************************************)
+$(error stopping)
 endif
 ifdef CUSTOM_TARGETS
 $(info ***************************************************************)
 $(info ***************************************************************)
-$(error CUSTOM_TARGETS is obsolete; use CUSTOM_MODULES)
+$(info CUSTOM_TARGETS is obsolete; use CUSTOM_MODULES)
 $(info ***************************************************************)
 $(info ***************************************************************)
+$(error stopping)
 endif
 
 #
@@ -387,6 +402,17 @@ endif
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
+
+# -------------------------------------------------------------------
+# Include any makefiles that must happen after the module makefiles
+# have been included.
+# TODO: have these files register themselves via a global var rather
+# than hard-coding the list here.
+ifdef FULL_BUILD
+  # Only include this during a full build, otherwise we can't be
+  # guaranteed that any policies were included.
+  -include frameworks/policies/base/PolicyConfig.mk
+endif
 
 # -------------------------------------------------------------------
 # Fix up CUSTOM_MODULES to refer to installed files rather than
@@ -440,7 +466,7 @@ ifdef FULL_BUILD
   user_PACKAGES := $(call module-installed-files, \
                        $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
   ifeq (0,1)
-    $(info user packages for $(TARGET_PRODUCT) ($(INTERNAL_PRODUCT)):)
+    $(info user packages for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
     $(foreach p,$(user_PACKAGES),$(info :   $(p)))
     $(error done)
   endif
@@ -524,7 +550,7 @@ endif # dont_bother
 # but they're considered undocumented, so don't complain if their
 # behavior changes.
 .PHONY: prebuilt
-prebuilt: $(ALL_PREBUILT) report_config
+prebuilt: $(ALL_PREBUILT)
 
 # An internal target that depends on all copied headers
 # (see copy_headers.make).  Other targets that need the
@@ -536,18 +562,24 @@ $(ALL_C_CPP_ETC_OBJECTS): | all_copied_headers
 
 # All the droid stuff, in directories
 .PHONY: files
-files: report_config prebuilt $(modules_to_build) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
+files: prebuilt $(modules_to_build) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # -------------------------------------------------------------------
 
 .PHONY: ramdisk
-ramdisk: $(INSTALLED_RAMDISK_TARGET) report_config
+ramdisk: $(INSTALLED_RAMDISK_TARGET)
+
+.PHONY: systemtarball
+systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
 
 .PHONY: userdataimage
-userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET) report_config
+userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
+
+.PHONY: userdatatarball
+userdatatarball: $(INSTALLED_USERDATATARBALL_TARGET)
 
 .PHONY: bootimage
-bootimage: $(INSTALLED_BOOTIMAGE_TARGET) report_config
+bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 ifeq ($(BUILD_TINY_ANDROID), true)
 INSTALLED_RECOVERYIMAGE_TARGET :=
@@ -555,7 +587,7 @@ endif
 
 # Build files and then package it into the rom formats
 .PHONY: droidcore
-droidcore: report_config files \
+droidcore: files \
 	systemimage \
 	$(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_RECOVERYIMAGE_TARGET) \
@@ -563,44 +595,43 @@ droidcore: report_config files \
 	$(INTERNAL_DEFAULT_DOCS_TARGETS)
 
 # The actual files built by the droidcore target changes depending
-# on MAKECMDGOALS. THIS IS A TOTAL HACK AND SHOULD NOT BE USED AS AN EXAMPLE
-.PHONY: droid user userdebug tests
-droid user userdebug tests: droidcore
+# on the build variant.
+.PHONY: droid tests
+droid tests: droidcore
 
-$(call dist-for-goals,user userdebug droid, \
+$(call dist-for-goals, droid, \
 	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
 	$(INTERNAL_OTA_PACKAGE_TARGET) \
 	$(SYMBOLS_ZIP) \
 	$(APPS_ZIP) \
-	$(HOST_OUT_EXECUTABLES)/adb$(HOST_EXECUTABLE_SUFFIX) \
 	$(INTERNAL_EMULATOR_PACKAGE_TARGET) \
 	$(PACKAGE_STATS_FILE) \
 	$(INSTALLED_FILES_FILE) \
 	$(INSTALLED_BUILD_PROP_TARGET) \
 	$(BUILT_TARGET_FILES_PACKAGE) \
  )
-# Tests are installed in userdata.img; copy it for "make tests dist".
-# Also copy a zip of the contents of userdata.img, so that people can
-# easily extract a single .apk.
-$(call dist-for-goals,tests, \
+
+# Tests are installed in userdata.img.  If we're building the tests
+# variant, copy it for "make tests dist".  Also copy a zip of the
+# contents of userdata.img, so that people can easily extract a
+# single .apk.
+ifeq ($(TARGET_BUILD_VARIANT),tests)
+$(call dist-for-goals, droid, \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(BUILT_TESTS_ZIP_PACKAGE) \
  )
+endif
 
 .PHONY: docs
 docs: $(ALL_DOCS)
 
 .PHONY: sdk
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
-sdk: report_config $(ALL_SDK_TARGETS)
+sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk,$(ALL_SDK_TARGETS))
 
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
-
-# Also do the targets not built by "make droid".
-.PHONY: all
-all: droid $(nonDroid_MODULES) docs sdk
 
 .PHONY: clean
 dirs_to_clean := \
@@ -665,5 +696,4 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
-
 

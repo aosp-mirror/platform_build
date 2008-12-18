@@ -1,6 +1,7 @@
 #ifndef FILES_H
 #define FILES_H
 
+#include <map>
 #include <string>
 #include <vector>
 #include <sys/types.h>
@@ -25,8 +26,10 @@ struct FileRecord
     unsigned int mode;
 };
 
-int read_list_file(const string& filename, vector<FileRecord>* files,
-                    vector<string>* excludes);
+int read_list_file(const string& filename,
+                   const map<string, string>& variables,
+                   vector<FileRecord>* files,
+                   vector<string>* excludes);
 int locate(FileRecord* rec, const vector<string>& search);
 void stat_out(const string& base, FileRecord* rec);
 string dir_part(const string& filename);

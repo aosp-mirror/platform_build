@@ -100,9 +100,61 @@ add_file(vector<FileRecord>* files, const string& listFile, int listLine,
     files->push_back(rec);
 }
 
+static string
+replace_variables(const string& input,
+                  const map<string, string>& variables,
+                  bool* error) {
+    if (variables.empty()) {
+        return input;
+    }
+
+    // Abort if the variable prefix is not found
+    if (input.find("${") == string::npos) {
+        return input;
+    }
+
+    string result = input;
+
+    // Note: rather than be fancy to detect recursive replacements,
+    // we simply iterate till a given threshold is met.
+
+    int retries = 1000;
+    bool did_replace;
+
+    do {
+        did_replace = false;
+        for (map<string, string>::const_iterator it = variables.begin();
+             it != variables.end(); ++it) {
+            string::size_type pos = 0;
+            while((pos = result.find(it->first, pos)) != string::npos) {
+                result = result.replace(pos, it->first.length(), it->second);
+                pos += it->second.length();
+                did_replace = true;
+            }
+        }
+        if (did_replace && --retries == 0) {
+            *error = true;
+            fprintf(stderr, "Recursive replacement detected during variables "
+                    "substitution. Full list of variables is: ");
+
+            for (map<string, string>::const_iterator it = variables.begin();
+                 it != variables.end(); ++it) {
+                fprintf(stderr, "  %s=%s\n",
+                        it->first.c_str(), it->second.c_str());
+            }
+
+            return result;
+        }
+    } while (did_replace);
+
+    return result;
+}
+
 int
-read_list_file(const string& filename, vector<FileRecord>* files,
-                    vector<string>* excludes)
+read_list_file(const string& filename,
+               const map<string, string>& variables,
+               vector<FileRecord>* files,
+               vector<string>* excludes)
 {
     int err = 0;
     FILE* f = NULL;
@@ -192,11 +244,27 @@ read_list_file(const string& filename, vector<FileRecord>* files,
             
             if (words.size() == 1) {
                 // pattern: DEST
-                add_file(files, filename, i+1, words[0], words[0]);
+                bool error = false;
+                string w0 = replace_variables(words[0], variables, &error);
+                if (error) {
+                    err = 1;
+                    goto cleanup;
+                }
+                add_file(files, filename, i+1, w0, w0);
             }
             else if (words.size() == 2) {
                 // pattern: SRC DEST
-                add_file(files, filename, i+1, words[0], words[1]);
+                bool error = false;
+                string w0, w1;
+                w0 = replace_variables(words[0], variables, &error);
+                if (!error) {
+                    w1 = replace_variables(words[1], variables, &error);
+                }
+                if (error) {
+                    err = 1;
+                    goto cleanup;
+                }
+                add_file(files, filename, i+1, w0, w1);
             }
             else {
                 fprintf(stderr, "%s:%d: bad format: %s\n", filename.c_str(),

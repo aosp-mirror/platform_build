@@ -10,14 +10,15 @@ function toggle_inherited(base) {
     if (list.style.display == "none") {
         list.style.display = "block";
         summary.style.display = "none";
-        trigger.src = "<?cs var:toroot ?>assets/triangle-open.png";
+        trigger.src = "<?cs var:toroot ?>assets/images/triangle-closed.png";
     } else {
         list.style.display = "none";
         summary.style.display = "block";
-        trigger.src = "<?cs var:toroot ?>assets/triangle-close.png";
+        trigger.src = "<?cs var:toroot ?>assets/images/triangle-opened.png";
     }
 }
 </script>
+
 <?cs include:"header.cs" ?>
 
 <div class="g-unit" id="doc-content">
@@ -80,17 +81,17 @@ function toggle_inherited(base) {
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- ======== NESTED CLASS SUMMARY ======== -->
 <?cs if:subcount(class.inners) ?>
-<h4><?cs call:expando_trigger("nested-classes", "close") ?>Nested Classes</h4>
+<h4><?cs call:expando_trigger("nested-classes", "opened") ?>Nested Classes</h4>
 <?cs call:expandable_class_list("nested-classes", class.inners, "summary") ?>
 <?cs /if ?>
 
 <?cs if:subcount(class.subclasses.direct) ?>
-<h4><?cs call:expando_trigger("subclasses-direct", "open") ?>Known Direct Subclasses</h4>
+<h4><?cs call:expando_trigger("subclasses-direct", "closed") ?>Known Direct Subclasses</h4>
 <?cs call:expandable_class_list("subclasses-direct", class.subclasses.direct, "list") ?>
 <?cs /if ?>
 
 <?cs if:subcount(class.subclasses.indirect) ?>
-<h4><?cs call:expando_trigger("subclasses-indirect", "open") ?>Known Indirect Subclasses</h4>
+<h4><?cs call:expando_trigger("subclasses-indirect", "closed") ?>Known Indirect Subclasses</h4>
 <?cs call:expandable_class_list("subclasses-indirect", class.subclasses.indirect, "list") ?>
 <?cs /if ?>
 
@@ -195,7 +196,7 @@ function toggle_inherited(base) {
 
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.attrs) ?>
-<h4><?cs call:expando_trigger("inherited-attrs-"+cl.qualified, "open") ?>XML Attributes inherited
+<h4><?cs call:expando_trigger("inherited-attrs-"+cl.qualified, "closed") ?>XML Attributes inherited
     from <?cs var:cl.kind ?>
     <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
 </h4>
@@ -239,7 +240,7 @@ function toggle_inherited(base) {
 
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.constants) ?>
-<h4><?cs call:expando_trigger("inherited-constants-"+cl.qualified, "open") ?>Constants inherited
+<h4><?cs call:expando_trigger("inherited-constants-"+cl.qualified, "closed") ?>Constants inherited
     from <?cs var:cl.kind ?>
     <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
 </h4>
@@ -266,7 +267,7 @@ function toggle_inherited(base) {
 
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.fields) ?>
-<h4><?cs call:expando_trigger("inherited-fields-"+cl.qualified, "open") ?>Fields inherited
+<h4><?cs call:expando_trigger("inherited-fields-"+cl.qualified, "closed") ?>Fields inherited
     from <?cs var:cl.kind ?>
     <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
 </h4>
@@ -314,7 +315,7 @@ function toggle_inherited(base) {
 
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.methods) ?>
-<h4><?cs call:expando_trigger("inherited-methods-"+cl.qualified, "open") ?>Methods inherited
+<h4><?cs call:expando_trigger("inherited-methods-"+cl.qualified, "closed") ?>Methods inherited
     from <?cs var:cl.kind ?>
     <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
 </h4>

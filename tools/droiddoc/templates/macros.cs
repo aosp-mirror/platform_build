@@ -225,7 +225,7 @@ This <?cs var:kind ?> is deprecated.
 <?cs def:expando_trigger(id, default) ?>
 <a href="javascript:toggle_inherited('<?cs var:id ?>')" class="jd-expando-trigger"
         ><img id="<?cs var:id ?>-trigger"
-        src="<?cs var:toroot ?>assets/triangle-<?cs var:default ?>.png"
+        src="<?cs var:toroot ?>assets/images/triangle-<?cs var:default ?>.png"
         class="jd-expando-trigger" /></a>
 <?cs /def ?>
 
@@ -248,6 +248,109 @@ This <?cs var:kind ?> is deprecated.
         </div>
     </div>
 <?cs /def ?>
+
+
+<?cs def:default_left_nav() ?>
+<div class="g-section g-tpl-240" id="body-content">
+  <div class="g-unit g-first side-nav-resizable" id="side-nav">
+    <div id="swapper">
+      <div id="nav-panels">
+        <div id="resize-packages-nav">
+          <div id="packages-nav">
+            <div id="index-links"><nobr>
+              <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
+              <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
+            </div>
+            <ul>
+            <?cs each:pkg=docs.packages ?>
+              <li <?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>class="selected"<?cs /if ?>><?cs call:package_link(pkg) ?></li>
+            <?cs /each ?>
+            </ul><br/>
+          </div> <!-- end packages -->
+        </div> <!-- end resize-packages -->
+        <div id="classes-nav">
+          <?cs if:subcount(class.package) ?>
+          <ul>
+            <?cs call:list("Interfaces", class.package.interfaces) ?>
+            <?cs call:list("Classes", class.package.classes) ?>
+            <?cs call:list("Enums", class.package.enums) ?>
+            <?cs call:list("Exceptions", class.package.exceptions) ?>
+            <?cs call:list("Errors", class.package.errors) ?>
+          </ul>
+          <?cs elif:subcount(package) ?>
+          <ul>
+            <?cs call:class_link_list("Interfaces", package.interfaces) ?>
+            <?cs call:class_link_list("Classes", package.classes) ?>
+            <?cs call:class_link_list("Enums", package.enums) ?>
+            <?cs call:class_link_list("Exceptions", package.exceptions) ?>
+            <?cs call:class_link_list("Errors", package.errors) ?>
+          </ul>
+          <?cs else ?>
+            <script>
+              /*addLoadEvent(maxPackageHeight);*/
+            </script>
+            <p style="padding:10px">Select a package to view its members</p>
+          <?cs /if ?><br/>
+        </div><!-- end classes -->
+      </div><!-- end nav-panels -->
+      <div id="nav-tree" style="display:none">
+        <div id="index-links"><nobr>
+          <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
+          <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
+        </div>
+      </div><!-- end nav-tree -->
+    </div><!-- end swapper -->
+  </div> <!-- end side-nav -->
+
+  <script>
+    $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
+    chooseDefaultNav();
+    if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
+    else {
+      addLoadEvent(function() {
+        scrollIntoView("packages-nav");
+        scrollIntoView("classes-nav");
+      });
+    }
+    $("#swapper").css({borderBottom:"2px solid #aaa"});
+  </script>
+
+<?cs /def ?>
+
+<?cs def:default_search_box() ?>
+<div id="search" align="right">
+    <div id="searchForm">
+        <form accept-charset="utf-8" class="gsc-search-box"
+                onsubmit="document.location='<?cs var:toroot ?>search.html?' + document.getElementById('search_autocomplete').value; return false;">
+          <table class="gsc-search-box" cellpadding="0" cellspacing="0"><tbody>
+              <tr>
+                <td class="gsc-input">
+                  <input id="search_autocomplete" class="gsc-input" type="text" size="33" autocomplete="off" 
+                    tabindex="1" title="search developer docs"
+                    value="search developer docs" 
+                    onFocus="search_focus_changed(this, true)" 
+                    onBlur="search_focus_changed(this, false)" 
+                    onkeydown="return search_changed(event, true, '<?cs var:toroot?>')" 
+                    onkeyup="search_changed(event, false, '<?cs var:toroot?>')" />
+                <br/>
+                <div id="search_filtered_div">
+                    <table id="search_filtered" class="no-display" cellspacing=0>
+                    </table>
+                </div>
+                </td>
+                <td class="gsc-search-button">
+                  <input type="button" value="Search" title="search" id="search-button" class="gsc-search-button" onclick="document.location='<?cs var:toroot ?>search.html?' + document.getElementById('search_autocomplete').value;" tabindex="2"/>
+                </td>
+                <td class="gsc-clear-button">
+                  <div title="clear results" class="gsc-clear-button">&nbsp;</div>
+                </td>
+              </tr></tbody>
+            </table>
+        </form>
+    </div><!-- searchForm -->
+</div><!-- search -->
+<?cs /def ?>
+
 
 
 <?cs include:"customization.cs" ?>

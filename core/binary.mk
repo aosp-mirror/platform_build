@@ -34,8 +34,10 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CPP_EXTENSION := $(LOCAL_CPP_EXTENSION)
 
 # Certain modules like libdl have to have symbols resolved at runtime and blow
 # up if --no-undefined is passed to the linker.
+ifeq ($(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS)),)
 ifeq ($(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS)),)
   LOCAL_LDFLAGS := $(LOCAL_LDFLAGS) $($(my_prefix)NO_UNDEFINED_LDFLAGS)
+endif
 endif
 
 ###########################################################

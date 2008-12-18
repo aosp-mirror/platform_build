@@ -9,7 +9,7 @@
 
 var oldVid = "multi"; // set the default video
 var nowPlayingString = "Now playing:";
-var assetsRoot = "/gae/assets/";
+var assetsRoot = "/assets/";
 
 
 /* -- app thumbnail switcher -- */
@@ -112,8 +112,10 @@ var arrowLeft = 'arrow-left'; // the left control arrow
 
 function showPreview(slideName) {
 //  centerSlide(slideName);
+  if (slideName.indexOf('selected') != -1) {
+    return false;
+  }
   droid(slideName); // do this function when slide is clicked
-
 }
 
 var thumblist = document.getElementById(slideList);// the div containing the slides

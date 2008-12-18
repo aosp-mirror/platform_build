@@ -24,4 +24,4 @@ LOCAL_JAR_MANIFEST := SignApk.mf
 include $(BUILD_HOST_JAVA_LIBRARY)
 
 # The post-build signing tools need signapk.jar.
-$(call dist-for-goals,user userdebug droid,$(LOCAL_INSTALLED_MODULE))
+$(call dist-for-goals,droid,$(LOCAL_INSTALLED_MODULE))

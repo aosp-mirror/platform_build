@@ -20,23 +20,6 @@
 ## are used by others to construct the final targets.
 ##
 
-# You can be dependent on this target to print to the
-# user the current configuration being used.
-
-.PHONY: report_config
-report_config:
-	@echo -e "============================================"\
-	"\nTARGET_PRODUCT="$(TARGET_PRODUCT)\
-	"\nTARGET_SIMULATOR="$(TARGET_SIMULATOR)\
-	"\nTARGET_BUILD_TYPE="$(TARGET_BUILD_TYPE)\
-	"\nTARGET_ARCH="$(TARGET_ARCH)\
-	"\nTARGET_OS="$(TARGET_OS)\
-	"\nHOST_ARCH="$(HOST_ARCH)\
-	"\nHOST_OS="$(HOST_OS)\
-	"\nHOST_BUILD_TYPE="$(HOST_BUILD_TYPE)\
-	"\nBUILD_ID="$(BUILD_ID)\
-	"\n============================================"
-
 # These are variables we use to collect overall lists
 # of things being processed.
 
@@ -178,6 +161,28 @@ endef
 
 define all-subdir-java-files
 $(call all-java-files-under,.)
+endef
+
+###########################################################
+## Find all of the c files under the named directories.
+## Meant to be used like:
+##    SRC_FILES := $(call all-c-files-under,src tests)
+###########################################################
+
+define all-c-files-under
+$(patsubst ./%,%, \
+  $(shell cd $(LOCAL_PATH) ; \
+          find $(1) -name "*.c" -and -not -name ".*") \
+ )
+endef
+
+###########################################################
+## Find all of the c files from here.  Meant to be used like:
+##    SRC_FILES := $(call all-subdir-c-files)
+###########################################################
+
+define all-subdir-c-files
+$(call all-c-files-under,.)
 endef
 
 ###########################################################
@@ -669,10 +674,10 @@ $(hide) $(PRIVATE_CXX) \
 	    $(TARGET_GLOBAL_CPPFLAGS) \
 	    $(PRIVATE_ARM_CFLAGS) \
 	 ) \
+	-fno-rtti \
 	$(PRIVATE_CFLAGS) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
-	-fno-rtti \
 	-MD -o $@ $<
 $(hide) $(transform-d-to-p)
 endef
@@ -889,6 +894,7 @@ endef
 ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-shared-lib-inner
 $(TARGET_CXX) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	-shared -Wl,-soname,$(notdir $@) \
@@ -949,7 +955,9 @@ endef
 
 ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-executable-inner
-$(TARGET_CXX) -Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
+$(TARGET_CXX) \
+	$(TARGET_GLOBAL_LDFLAGS) \
+	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
@@ -1002,7 +1010,10 @@ $(HOST_CXX) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	$(HOST_GLOBAL_LD_DIRS) \
-	$(PRIVATE_LDFLAGS) $(HOST_GLOBAL_LDFLAGS) \
+	$(PRIVATE_LDFLAGS) \
+	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+		$(HOST_GLOBAL_LDFLAGS) \
+	) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \

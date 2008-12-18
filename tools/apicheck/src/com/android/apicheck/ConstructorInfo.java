@@ -81,6 +81,17 @@ public class ConstructorInfo implements AbstractMethodInfo {
         return baseName + name();
     }
     
+    public String prettySignature() {
+        String params = "";
+        for (ParameterInfo pInfo : mParameters) {
+            if (params.length() > 0) {
+                params += ", ";
+            }
+            params += pInfo.getType();
+        }
+        return qualifiedName() + '(' + params + ')';
+    }
+    
     public boolean isConsistent(ConstructorInfo mInfo) {
       mInfo.mExistsInBoth = true;
       mExistsInBoth = true;
@@ -89,26 +100,32 @@ public class ConstructorInfo implements AbstractMethodInfo {
       if (mIsFinal != mInfo.mIsFinal) {
           consistent = false;
           Errors.error(Errors.CHANGED_FINAL, mInfo.position(),
-                  "Method " + mInfo.qualifiedName() + " has changed 'final' qualifier");
+                  "Constructor " + mInfo.qualifiedName() + " has changed 'final' qualifier");
       }
       
       if (mIsStatic != mInfo.mIsStatic) {
           consistent = false;
           Errors.error(Errors.CHANGED_FINAL, mInfo.position(),
-                  "Method " + mInfo.qualifiedName() + " has changed 'static' qualifier");
+                  "Constructor " + mInfo.qualifiedName() + " has changed 'static' qualifier");
       }
      
       if (!mScope.equals(mInfo.mScope)) {
           consistent = false;
           Errors.error(Errors.CHANGED_SCOPE, mInfo.position(),
-                  "Method " + mInfo.qualifiedName() + " changed scope from "
+                  "Constructor " + mInfo.qualifiedName() + " changed scope from "
                   + mScope + " to " + mInfo.mScope);
+      }
+      
+      if (!mDeprecated.equals(mInfo.mDeprecated)) {
+          consistent = false;
+          Errors.error(Errors.CHANGED_DEPRECATED, mInfo.position(),
+                  "Constructor " + mInfo.qualifiedName() + " has changed deprecation state");
       }
       
       for (String exec : mExceptions) {
           if (!mInfo.mExceptions.contains(exec)) {
               Errors.error(Errors.CHANGED_THROWS, mInfo.position(),
-                      "Method " + mInfo.qualifiedName() + " no longer throws exception "
+                      "Constructor " + mInfo.qualifiedName() + " no longer throws exception "
                       + exec);
               consistent = false;
           }
@@ -117,7 +134,7 @@ public class ConstructorInfo implements AbstractMethodInfo {
       for (String exec : mInfo.mExceptions) {
           if (!mExceptions.contains(exec)) {
               Errors.error(Errors.CHANGED_THROWS, mInfo.position(),
-                      "Method " + mInfo.qualifiedName() + " added thrown exception "
+                      "Constructor " + mInfo.qualifiedName() + " added thrown exception "
                       + exec);
             consistent = false;
           }

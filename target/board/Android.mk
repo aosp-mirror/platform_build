@@ -26,17 +26,17 @@ else
   INSTALLED_RADIOIMAGE_TARGET :=
 endif
 
-include $(TARGET_PRODUCT_DIR)/Android.mk
+include $(TARGET_DEVICE_DIR)/Android.mk
 
 # Generate a file that contains various information about the
 # device we're building for.  This file is typically packaged up
 # with everything else.
 #
-# If the file "board-info.txt" appears in $(TARGET_PRODUCT_DIR),
+# If the file "board-info.txt" appears in $(TARGET_DEVICE_DIR),
 # it will be appended to the output file.
 #
 INSTALLED_ANDROID_INFO_TXT_TARGET := $(PRODUCT_OUT)/android-info.txt
-board_info_txt := $(wildcard $(TARGET_PRODUCT_DIR)/board-info.txt)
+board_info_txt := $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt)
 $(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt)
 	$(call pretty,"Generated: ($@)")
 	$(hide) echo "board=$(TARGET_BOOTLOADER_BOARD_NAME)" > $@

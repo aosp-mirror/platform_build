@@ -39,6 +39,7 @@ LOCAL_SRC_FILES := \
 	LiteralTagInfo.java \
 	MemberInfo.java \
 	MethodInfo.java \
+	NavTree.java \
 	PackageInfo.java \
 	ParamTagInfo.java \
 	ParameterInfo.java \

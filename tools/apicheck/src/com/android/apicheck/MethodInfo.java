@@ -66,6 +66,17 @@ public class MethodInfo implements AbstractMethodInfo {
         return parentQName + name();
     }
     
+    public String prettySignature() {
+        String params = "";
+        for (ParameterInfo pInfo : mParameters) {
+            if (params.length() > 0) {
+                params += ", ";
+            }
+            params += pInfo.getType();
+        }
+        return qualifiedName() + '(' + params + ')';
+    }
+    
     public SourcePositionInfo position() {
         return mSourcePosition;
     }
@@ -128,21 +139,33 @@ public class MethodInfo implements AbstractMethodInfo {
                     + mScope + " to " + mInfo.mScope);
         }
         
+        if (!mDeprecated.equals(mInfo.mDeprecated)) {
+            Errors.error(Errors.CHANGED_DEPRECATED, mInfo.position(),
+                    "Method " + mInfo.qualifiedName() + " has changed deprecation state");
+            consistent = false;
+        }
+        
         for (String exec : mExceptions) {
             if (!mInfo.mExceptions.contains(exec)) {
-                Errors.error(Errors.CHANGED_THROWS, mInfo.position(),
-                        "Method " + mInfo.qualifiedName() + " no longer throws exception "
-                        + exec);
-                consistent = false;
+                // exclude 'throws' changes to finalize() overrides with no arguments
+                if (!name().equals("finalize") || (mParameters.size() > 0)) {
+                    Errors.error(Errors.CHANGED_THROWS, mInfo.position(),
+                            "Method " + mInfo.qualifiedName() + " no longer throws exception "
+                            + exec);
+                    consistent = false;
+                }
             }
         }
         
         for (String exec : mInfo.mExceptions) {
+            // exclude 'throws' changes to finalize() overrides with no arguments
             if (!mExceptions.contains(exec)) {
-                Errors.error(Errors.CHANGED_THROWS, mInfo.position(),
-                        "Method " + mInfo.qualifiedName() + " added thrown exception "
-                        + exec);
-                consistent = false;
+                if (!name().equals("finalize") || (mParameters.size() > 0)) {
+                    Errors.error(Errors.CHANGED_THROWS, mInfo.position(),
+                            "Method " + mInfo.qualifiedName() + " added thrown exception "
+                            + exec);
+                    consistent = false;
+                }
             }
         }
         

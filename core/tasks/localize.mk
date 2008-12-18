@@ -43,5 +43,5 @@ xlb: $(xlb_target)
 
 # We want this on the build-server builds, but no reason to inflict it on
 # everyone
-$(call dist-for-goals, user droid, $(xlb_target))
+$(call dist-for-goals, droid, $(xlb_target))
 

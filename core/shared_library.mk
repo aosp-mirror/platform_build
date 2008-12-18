@@ -26,5 +26,7 @@ OVERRIDE_BUILT_MODULE_PATH := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)
 
 include $(BUILD_SYSTEM)/dynamic_binary.mk
 
-$(linked_module): $(all_objects) $(all_libraries) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(linked_module): $(all_objects) $(all_libraries) \
+                  $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+                  $(TARGET_CRTBEGIN_SO_O) $(TARGET_CRTEND_SO_O)
 	$(transform-o-to-shared-lib)

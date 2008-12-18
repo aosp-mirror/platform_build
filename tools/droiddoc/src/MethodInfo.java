@@ -266,9 +266,12 @@ public class MethodInfo extends MemberInfo
                         ClassInfo[] thrownExceptions, SourcePositionInfo position,
                         AnnotationInstanceInfo[] annotations)
     {
+        // Explicitly coerce 'final' state of Java6-compiled enum values() method, to match
+        // the Java5-emitted base API description.
         super(rawCommentText, name, signature, containingClass, realContainingClass,
                 isPublic, isProtected, isPackagePrivate, isPrivate,
-                isFinal, isStatic, isSynthetic, kind, position, annotations);
+                ((name.equals("values") && containingClass.isEnum()) ? true : isFinal),
+                isStatic, isSynthetic, kind, position, annotations);
 
         // The underlying MethodDoc for an interface's declared methods winds up being marked
         // non-abstract.  Correct that here by looking at the immediate-parent class, and marking

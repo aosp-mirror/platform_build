@@ -38,6 +38,7 @@ import java.io.PrintStream;
 import java.security.AlgorithmParameters;
 import java.security.DigestOutputStream;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
@@ -46,12 +47,16 @@ import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.Key;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -67,6 +72,9 @@ import javax.crypto.spec.PBEKeySpec;
  * a way compatible with the mincrypt verifier, using SHA1 and RSA keys.
  */
 class SignApk {
+    private static final String CERT_SF_NAME = "META-INF/CERT.SF";
+    private static final String CERT_RSA_NAME = "META-INF/CERT.RSA";
+
     private static X509Certificate readPublicKey(File file)
             throws IOException, GeneralSecurityException {
         FileInputStream input = new FileInputStream(file);
@@ -104,7 +112,7 @@ class SignApk {
      * @param encryptedPrivateKey The raw data of the private key
      * @param keyFile The file containing the private key
      */
-    private static KeySpec decryptPrivateKey(byte[] encryptedPrivateKey, File keyFile) 
+    private static KeySpec decryptPrivateKey(byte[] encryptedPrivateKey, File keyFile)
             throws GeneralSecurityException {
         EncryptedPrivateKeyInfo epkInfo;
         try {
@@ -171,10 +179,21 @@ class SignApk {
         byte[] buffer = new byte[4096];
         int num;
 
+        // We sort the input entries by name, and add them to the
+        // output manifest in sorted order.  We expect that the output
+        // map will be deterministic.
+
+        TreeMap<String, JarEntry> byName = new TreeMap<String, JarEntry>();
+
         for (Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ) {
             JarEntry entry = e.nextElement();
+            byName.put(entry.getName(), entry);
+        }
+
+        for (JarEntry entry: byName.values()) {
             String name = entry.getName();
-            if (!entry.isDirectory() && !name.equals(JarFile.MANIFEST_NAME)) {
+            if (!entry.isDirectory() && !name.equals(JarFile.MANIFEST_NAME) &&
+                !name.equals(CERT_SF_NAME) && !name.equals(CERT_RSA_NAME)) {
                 InputStream data = jar.getInputStream(entry);
                 while ((num = data.read(buffer)) > 0) {
                     md.update(buffer, 0, num);
@@ -285,14 +304,18 @@ class SignApk {
         int num;
 
         Map<String, Attributes> entries = manifest.getEntries();
-        for (String name : entries.keySet()) {
+        List<String> names = new ArrayList(entries.keySet());
+        Collections.sort(names);
+        for (String name : names) {
             JarEntry inEntry = in.getJarEntry(name);
             if (inEntry.getMethod() == JarEntry.STORED) {
                 // Preserve the STORED method of the input entry.
                 out.putNextEntry(new JarEntry(inEntry));
             } else {
                 // Create a new entry so that the compressed len is recomputed.
-                out.putNextEntry(new JarEntry(name));
+                JarEntry je = new JarEntry(name);
+                je.setTime(inEntry.getTime());
+                out.putNextEntry(je);
             }
 
             InputStream data = in.getInputStream(inEntry);
@@ -316,27 +339,37 @@ class SignApk {
 
         try {
             X509Certificate publicKey = readPublicKey(new File(args[0]));
+
+            // Assume the certificate is valid for at least an hour.
+            long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
+
             PrivateKey privateKey = readPrivateKey(new File(args[1]));
             inputJar = new JarFile(new File(args[2]), false);  // Don't verify.
             outputJar = new JarOutputStream(new FileOutputStream(args[3]));
             outputJar.setLevel(9);
 
+            JarEntry je;
+
             // MANIFEST.MF
             Manifest manifest = addDigestsToManifest(inputJar);
-            manifest.getEntries().remove("META-INF/CERT.SF");
-            manifest.getEntries().remove("META-INF/CERT.RSA");
-            outputJar.putNextEntry(new JarEntry(JarFile.MANIFEST_NAME));
+            je = new JarEntry(JarFile.MANIFEST_NAME);
+            je.setTime(timestamp);
+            outputJar.putNextEntry(je);
             manifest.write(outputJar);
 
             // CERT.SF
             Signature signature = Signature.getInstance("SHA1withRSA");
             signature.initSign(privateKey);
-            outputJar.putNextEntry(new JarEntry("META-INF/CERT.SF"));
+            je = new JarEntry(CERT_SF_NAME);
+            je.setTime(timestamp);
+            outputJar.putNextEntry(je);
             writeSignatureFile(manifest,
                     new SignatureOutputStream(outputJar, signature));
 
             // CERT.RSA
-            outputJar.putNextEntry(new JarEntry("META-INF/CERT.RSA"));
+            je = new JarEntry(CERT_RSA_NAME);
+            je.setTime(timestamp);
+            outputJar.putNextEntry(je);
             writeSignatureBlock(signature, publicKey, outputJar);
 
             // Everything else

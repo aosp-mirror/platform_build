@@ -50,8 +50,28 @@ $(combo_target)STATIC_LIB_SUFFIX := .a
 
 $(combo_target)PRELINKER_MAP := $(BUILD_SYSTEM)/prelink-$(combo_os_arch).map
 
+# We try to find a target or host specific file for the os/arch specified, and
+# default to just looking for the os/arch one. This will allow us to define
+# things separately for targets and hosts that have the same architecture
+# but need different defines. e.g. target_linux-x86 and host_linux-x86
+
+ifneq ($(TARGET_SIMULATOR),true)
+# Convert the combo_target string to lowercase
+combo_target_lc := $(shell echo $(combo_target) | tr '[A-Z]' '[a-z]')
+
+# form combo makefile name like "<path>/target_linux-x86.make",
+# "<path>/host_darwin-x86.make", etc.
+combo_target_os_arch := $(BUILD_COMBOS)/$(combo_target_lc)$(combo_os_arch).mk
+else
+combo_target_os_arch :=
+endif
+
 # Now include the combo for this specific target.
+ifneq ($(wildcard $(combo_target_os_arch)),)
+include $(combo_target_os_arch)
+else
 include $(BUILD_COMBOS)/$(combo_os_arch).mk
+endif
 
 ifneq ($(USE_CCACHE),)
   ccache := prebuilt/$(HOST_PREBUILT_TAG)/ccache/ccache

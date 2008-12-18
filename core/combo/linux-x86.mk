@@ -7,13 +7,6 @@ $(combo_target)CC := $(CC)
 $(combo_target)CXX := $(CXX)
 $(combo_target)AR := $(AR)
 
-$(combo_target)GLOBAL_CFLAGS += -fPIC -m32
-$(combo_target)GLOBAL_CFLAGS += \
-	-include $(call select-android-config-h,linux-x86)
-$(combo_target)GLOBAL_LDFLAGS += -m32
-
-$(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
-
 ifeq ($(combo_target),HOST_)
 # $(1): The file to check
 define get-file-size
@@ -23,5 +16,23 @@ endef
 # Which gcc to use to build qemu, which doesn't work right when
 # built with 4.2.1 or later.
 GCCQEMU := prebuilt/linux-x86/toolchain/i686-linux-gnu-3.4.6/bin/gcc
+endif # _HOST
 
-endif  # HOST
+
+# On the sim, we build the "host" tools in 64 bit iff the compiler
+# does it for us automatically.  In other words, that means on 64 bit
+# system, they're 64 bit and on 32 bit systems, they're 32 bits.  In
+# all other cases, we build 32 bit, since this is what we release.
+ifneq ($(combo_target)$(TARGET_SIMULATOR),HOST_true)
+$(combo_target)GLOBAL_CFLAGS := $($(combo_target)GLOBAL_CFLAGS) -m32
+$(combo_target)GLOBAL_LDFLAGS := $($(combo_target)GLOBAL_LDFLAGS) -m32
+endif
+
+
+$(combo_target)GLOBAL_CFLAGS += -fPIC
+$(combo_target)GLOBAL_CFLAGS += \
+	-include $(call select-android-config-h,linux-x86)
+
+$(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
+
+

@@ -174,14 +174,14 @@ public class ClassInfo {
               }
           } else {
               Errors.error(Errors.REMOVED_METHOD, mInfo.position(),
-                      "Removed public constructor " + mInfo.qualifiedName());
+                      "Removed public constructor " + mInfo.prettySignature());
               consistent = false;
           }
         }
         for (ConstructorInfo mInfo : cl.mConstructors.values()) {
             if (!mInfo.isInBoth()) {
                 Errors.error(Errors.ADDED_METHOD, mInfo.position(),
-                        "Added public constructor " + mInfo.qualifiedName());
+                        "Added public constructor " + mInfo.prettySignature());
                 consistent = false;
             }
         }
@@ -224,10 +224,16 @@ public class ClassInfo {
         }
      
         if (!mScope.equals(cl.mScope)) {
-              consistent = false;
-              Errors.error(Errors.CHANGED_SCOPE, cl.position(),
-                      "Class " + cl.qualifiedName() + " scope changed from "
-                      + mScope + " to " + cl.mScope);
+            consistent = false;
+            Errors.error(Errors.CHANGED_SCOPE, cl.position(),
+                    "Class " + cl.qualifiedName() + " scope changed from "
+                    + mScope + " to " + cl.mScope);
+        }
+        
+        if (!mDeprecated.equals(cl.mDeprecated)) {
+            consistent = false;
+            Errors.error(Errors.CHANGED_DEPRECATED, cl.position(),
+                    "Class " + cl.qualifiedName() + " has changed deprecation state");
         }
         
         if (mSuperClassName != null) {

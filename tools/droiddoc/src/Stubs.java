@@ -83,8 +83,9 @@ public class Stubs {
                         if (!t.isPrimitive()) {
                             if (t.asClassInfo().isHidden()) {
                                 Errors.error(Errors.UNAVAILABLE_SYMBOL,
-                                        p.position(), "Reference to unavailable class "
-                                        + t.fullName());
+                                        m.position(), "Parameter of hidden type "
+                                        + t.fullName() + " in "
+                                        + cl.qualifiedName() + "." + m.name() + "()");
                             }
                         }
                     }
@@ -255,10 +256,19 @@ public class Stubs {
                           if (pInfo.type().typeArguments() != null){
                               for (TypeInfo tInfoType : pInfo.type().typeArguments()){
                                   if (tInfoType.asClassInfo() != null){
-                                      cantStripThis(tInfoType.asClassInfo(), notStrippable, 
-                                                    "10:" +  
-                                                    mInfo.realContainingClass().qualifiedName() + ":" + 
-                                                    mInfo.name());
+                                      ClassInfo tcl = tInfoType.asClassInfo();
+                                      if (tcl.isHidden()) {
+                                          Errors.error(Errors.UNAVAILABLE_SYMBOL, mInfo.position(),
+                                                  "Parameter of hidden type "
+                                                  + tInfoType.fullName() + " in "
+                                                  + mInfo.containingClass().qualifiedName()
+                                                  + '.' + mInfo.name() + "()");
+                                      } else {
+                                          cantStripThis(tcl, notStrippable, 
+                                                  "10:" +  
+                                                  mInfo.realContainingClass().qualifiedName() + ":" + 
+                                                  mInfo.name());
+                                      }
                                   }
                               }
                           }
@@ -552,14 +562,8 @@ public class Stubs {
         int count = 1;
         int size = method.parameters().length;
         for (ParameterInfo param: method.parameters()) {
-            String fullTypeName = param.type().fullName(method.typeVariables());
-            if (count == size && method.isVarArgs()) {
-                // TODO: note that this does not attempt to handle hypothetical
-                // vararg methods whose last parameter is a list of arrays, e.g.
-                // "Object[]...".
-                fullTypeName = param.type().qualifiedTypeName() + "...";
-            }
-            stream.print(comma + fullTypeName + " " + param.name());
+            stream.print(comma + fullParameterTypeName(method, param.type(), count == size)
+                    + " " + param.name());
             comma = ", ";
             count++;
         }
@@ -852,6 +856,7 @@ public class Stubs {
     
     static void writeMethodXML(PrintStream xmlWriter, MethodInfo mi) {
         String scope = DroidDoc.scope(mi);
+
         String deprecatedString = "";
         if (mi.isDeprecated()) {
             deprecatedString = "deprecated";
@@ -860,7 +865,7 @@ public class Stubs {
         }
         xmlWriter.println("<method name=\"" + mi.name() + "\"\n" 
                 + ((mi.returnType() != null)
-                        ? " return=\"" + mi.returnType().qualifiedTypeName() + "\"\n"
+                        ? " return=\"" + makeXMLcompliant(fullParameterTypeName(mi, mi.returnType(), false)) + "\"\n"
                         : "") 
                 + " abstract=\"" + mi.isAbstract() + "\"\n"
                 + " native=\"" + mi.isNative() + "\"\n"
@@ -873,8 +878,11 @@ public class Stubs {
                 + ">");
 
         // write parameters in declaration order
+        int numParameters = mi.parameters().length;
+        int count = 0;
         for (ParameterInfo pi : mi.parameters()) {
-            writeParameterXML(xmlWriter, pi);
+            count++;
+            writeParameterXML(xmlWriter, mi, pi, count == numParameters);
         }
         
         // but write exceptions in canonicalized order
@@ -905,6 +913,13 @@ public class Stubs {
                 //+ " source=\"" + mi.position() + "\"\n"
                 + ">");
 
+        int numParameters = mi.parameters().length;
+        int count = 0;
+        for (ParameterInfo pi : mi.parameters()) {
+            count++;
+            writeParameterXML(xmlWriter, mi, pi, count == numParameters);
+        }
+        
         ClassInfo[] exceptions = mi.thrownExceptions();
         Arrays.sort(exceptions, ClassInfo.comparator);
         for (ClassInfo pi : exceptions) {
@@ -915,9 +930,10 @@ public class Stubs {
         xmlWriter.println("</constructor>");
   }
     
-    static void writeParameterXML(PrintStream xmlWriter, ParameterInfo pi) {
+    static void writeParameterXML(PrintStream xmlWriter, MethodInfo method,
+            ParameterInfo pi, boolean isLast) {
         xmlWriter.println("<parameter name=\"" + pi.name() + "\" type=\"" +
-                          pi.type().qualifiedTypeName() + "\">");
+                makeXMLcompliant(fullParameterTypeName(method, pi.type(), isLast)) + "\">");
         xmlWriter.println("</parameter>");
     }
     
@@ -931,8 +947,12 @@ public class Stubs {
         }
         //need to make sure value is valid XML
         String value  = makeXMLcompliant(fi.constantLiteralValue());
+
+        String fullTypeName = makeXMLcompliant(fi.type().qualifiedTypeName())
+                + fi.type().dimension();
+
         xmlWriter.println("<field name=\"" + fi.name() +"\"\n"
-                          + " type=\"" + fi.type().qualifiedTypeName() + "\"\n"
+                          + " type=\"" + fullTypeName + "\"\n"
                           + " transient=\"" + fi.isTransient() + "\"\n"
                           + " volatile=\"" + fi.isVolatile() + "\"\n"
                           + (fieldIsInitialized(fi) ? " value=\"" + value + "\"\n" : "") 
@@ -953,6 +973,17 @@ public class Stubs {
         returnString = returnString.replaceAll("\"", "&quot;");
         returnString = returnString.replaceAll("'", "&pos;");
         return returnString;
+    }
+    
+    static String fullParameterTypeName(MethodInfo method, TypeInfo type, boolean isLast) {
+        String fullTypeName = type.fullName(method.typeVariables());
+        if (isLast && method.isVarArgs()) {
+            // TODO: note that this does not attempt to handle hypothetical
+            // vararg methods whose last parameter is a list of arrays, e.g.
+            // "Object[]...".
+            fullTypeName = type.qualifiedTypeName() + "...";
+        }
+        return fullTypeName;
     }
 }
 

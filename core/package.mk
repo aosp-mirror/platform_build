@@ -174,7 +174,11 @@ endif
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 
 ifneq ($(full_classes_jar),)
-$(full_classes_jar): $(R_file_stamp)
+# If full_classes_jar is non-empty, we're building sources.
+# If we're building sources, the initial javac step (which
+# produces full_classes_compiled_jar) needs to ensure the
+# R.java and Manifest.java files have been generated first.
+$(full_classes_compiled_jar): $(R_file_stamp)
 endif
 
 endif	# all_resources
