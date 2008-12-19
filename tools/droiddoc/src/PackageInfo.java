@@ -49,11 +49,10 @@ public class PackageInfo extends DocInfo implements ContainerInfo
         return s;
     }
 
-    public String htmlLinksPage()
-    {
+    public String fullDescriptionHtmlPage() {
         String s = mName;
         s = s.replace('.', '/');
-        s += "/package-links.html";
+        s += "/package-descr.html";
         s = DroidDoc.javadocDir + s;
         return s;
     }

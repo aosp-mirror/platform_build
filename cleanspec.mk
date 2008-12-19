@@ -18,7 +18,7 @@
 # WHEN DOING SO, DELETE ANY "add-clean-step" ENTRIES THAT HAVE PILED UP.
 # **********************************************************************
 #
-INTERNAL_CLEAN_BUILD_VERSION := 1
+INTERNAL_CLEAN_BUILD_VERSION := 2
 #
 # ***********************************************************************
 # Do not touch INTERNAL_CLEAN_BUILD_VERSION if you've added a clean step!

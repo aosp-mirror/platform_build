@@ -51,15 +51,6 @@ endef
 
 
 # ---------------------------------------------------------------
-# if TARGET_PRODUCT isn't set, fall back to the hardware- and
-# vendor-agnostic "generic" product.
-#
-ifeq ($(strip $(TARGET_PRODUCT)),)
-TARGET_PRODUCT := generic
-endif
-
-
-# ---------------------------------------------------------------
 # Provide "PRODUCT-<prodname>-<goal>" targets, which lets you build
 # a particular configuration without needing to set up the environment.
 #
@@ -77,19 +68,32 @@ ifdef product_goals
   ifneq ($(words $(product_goals)),2)
     $(error Bad PRODUCT-* goal "$(goal_name)")
   endif
-  product_name := $(word 1,$(product_goals))
-  product_build := $(word 2,$(product_goals))
-  ifeq ($(product_build),eng)
-    product_build := droid
+
+  # The product they want
+  TARGET_PRODUCT := $(word 1,$(product_goals))
+
+  # The variant they want
+  TARGET_BUILD_VARIANT := $(word 2,$(product_goals))
+
+  # HACK HACK HACK
+  # The build server wants to do make PRODUCT-dream-installclean
+  # which really means TARGET_PRODUCT=dream make installclean.  
+  ifneq ($(filter-out eng user userdebug tests,$(TARGET_BUILD_VARIANT)),)
+	MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
+	TARGET_BUILD_VARIANT := eng
+    default_goal_substitution := 
+  else
+    default_goal_substitution := $(DEFAULT_GOAL)
   endif
+  # HACK HACK HACK
 
   # Hack to make the linux build servers use dexpreopt.
   # OSX is still a little flaky.  Most engineers don't use this
   # type of target ("make PRODUCT-blah-user"), so this should
   # only tend to happen when using buildbot.
-  # TODO: remove this and fix the matching lines in //device/Makefile
+  # TODO: remove this and fix the matching lines in build/core/main.mk
   # once dexpreopt works better on OSX.
-  ifeq ($(product_build),user)
+  ifeq ($(TARGET_BUILD_VARIANT),user)
     WITH_DEXPREOPT_buildbot := true
   endif
 
@@ -99,12 +103,9 @@ ifdef product_goals
   #
   # Note that modifying this will not affect the goals that make will
   # attempt to build, but it's important because we inspect this value
-  # in certain situations (like for "make user").
+  # in certain situations (like for "make sdk").  
   #
-  MAKECMDGOALS := $(patsubst $(goal_name),$(product_build),$(MAKECMDGOALS))
-
-  # Keep track of the requested product.
-  REQUESTED_PRODUCT := $(product_name)
+  MAKECMDGOALS := $(patsubst $(goal_name),$(default_goal_substitution),$(MAKECMDGOALS))
 
   # Define a rule for the PRODUCT-* goal, and make it depend on the
   # patched-up command-line goals as well as any other goals that we
@@ -112,29 +113,8 @@ ifdef product_goals
   #
 .PHONY: $(goal_name)
 $(goal_name): $(MAKECMDGOALS)
-
-else
-  # Use the value set in the environment or buildspec.mk.
-  #
-  REQUESTED_PRODUCT := $(TARGET_PRODUCT)
 endif
-
-# ---------------------------------------------------------------
-# Make the SDK build against generic by default.
-ifneq (,$(filter sdk,$(MAKECMDGOALS)))
-  ifeq (,$(strip $(REQUESTED_PRODUCT)))
-    REQUESTED_PRODUCT := generic
-  endif
-endif
-
-# ---------------------------------------------------------------
-# Make the PDK build against generic by default.
-ifneq (,$(filter pdk,$(MAKECMDGOALS)))
-  ifeq (,$(strip $(REQUESTED_PRODUCT)))
-    REQUESTED_PRODUCT := generic
-  endif
-endif
-
+# else: Use the value set in the environment or buildspec.mk.
 
 # ---------------------------------------------------------------
 # Include the product definitions.
@@ -158,17 +138,11 @@ $(check-all-products)
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
-INTERNAL_PRODUCT := $(call resolve-short-product-name, $(REQUESTED_PRODUCT))
-#$(error REQUESTED_PRODUCT $(REQUESTED_PRODUCT) --> $(INTERNAL_PRODUCT))
+INTERNAL_PRODUCT := $(call resolve-short-product-name, $(TARGET_PRODUCT))
+#$(error TARGET_PRODUCT $(TARGET_PRODUCT) --> $(INTERNAL_PRODUCT))
 
-# Convert from the real product (which represents everything about a
-# build) to the old product (which represents a board/device/sku).
-#
-# Use "override" in case make was invoked like "make TARGET_PRODUCT=xyz"
-# TODO: get rid of the old meaning of "product" in favor of
-# device/board.
-#
-override TARGET_PRODUCT := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
+# Find the device that this product maps to.
+TARGET_DEVICE := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
 
 # Figure out which resoure configuration options to use for this
 # product.
@@ -195,6 +169,9 @@ PRODUCT_MANUFACTURER := \
 ifndef PRODUCT_MANUFACTURER
   PRODUCT_MANUFACTURER := unknown
 endif
+
+# Which policy should this product use
+PRODUCT_POLICY := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_POLICY))
 
 # A list of words like <source path>:<destination path>.  The file at
 # the source path should be copied to the destination path when building
@@ -226,7 +203,9 @@ OTA_PUBLIC_KEYS := \
 # TODO: Let a product opt out of needing OTA keys, and stop defaulting to
 #       the test key as soon as possible.
 ifeq (,$(strip $(OTA_PUBLIC_KEYS)))
-  $(warning WARNING: adding test OTA key)
+  ifeq (,$(CALLED_FROM_SETUP))
+    $(warning WARNING: adding test OTA key)
+  endif
   OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
 endif
 

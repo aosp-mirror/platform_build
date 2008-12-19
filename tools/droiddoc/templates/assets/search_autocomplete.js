@@ -136,7 +136,7 @@ function search_changed(e, kd, toroot)
         gSelectedIndex = -1;
         for (i=0; i<DATA.length; i++) {
             var s = DATA[i];
-            if (text.length != 0 && s.label.toLowerCase().indexOf(text.toLowerCase()) != -1) {
+            if (text.length != 0 && s.label.indexOf(text) != -1) {
                 gMatches[matchedCount] = s;
                 if (gSelectedID == s.id) {
                     gSelectedIndex = matchedCount;
@@ -156,8 +156,10 @@ function search_focus_changed(obj, focused)
             obj.style.color="#000000";
         }
     } else {
-        obj.value = DEFAULT_TEXT;
-        obj.style.color="#aaaaaa";
+        if(obj.value == ""){
+          obj.value = DEFAULT_TEXT;
+          obj.style.color="#aaaaaa";
+        }
         document.getElementById("search_filtered").className = "no-display";
     }
 }

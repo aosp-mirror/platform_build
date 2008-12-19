@@ -4,12 +4,23 @@
    info: core developer styles (developer.android.com)
 */
 
-@import url("http://www.google.com/css/goog.css");
-@import url("http://www.google.com/css/inlay.css");
+
+/* RESET STYLES */
+
+html,body,div,h1,h2,h3,h4,h5,h6,p,img,
+dl,dt,dd,ol,ul,li,table,caption,tbody,
+tfoot,thead,tr,th,td,form,fieldset,
+embed,object,applet {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
 
 /* BASICS */
 
 body {
+  font-family:arial,sans-serif;
+  color:#000;
   font-size:13px;
   color:#333;
   overflow:hidden;
@@ -19,17 +30,47 @@ body {
   background-repeat:repeat-x;
 }
 
+a, a code { 
+  color:#00c;
+} 
+
+a:active,
+a:active code { 
+  color:#f00;
+} 
+
+a:visited,
+a:visited code { 
+  color:#551a8b;
+}
+
+input, select,
+textarea, option {
+  font-family:inherit;
+  font-size:inherit;
+}
+
+p {
+  padding:0;
+  margin:0 0 1em;
+}
+
 code, pre {
   color:#007000;
   font-family:monospace;
   line-height:1em;
 }
 
+var {
+  color:#007000;
+  font-style:italic;
+}
+
 pre {
-  border:1px solid #5B7957;
+  border:1px solid #ccc;
   background-color:#fafafa;
   padding:10px;
-  margin:0 0 1em;
+  margin:0 0 1em 1em;
   overflow:auto;
 }
 
@@ -43,55 +84,66 @@ p,ul,ol,dl,dd,dt,li {
 }
 
 ul,ol {
-  margin:0;
-  padding:0 0 1em 2em;
-}
-
-dl {
-  margin:0;
-  padding:0;
-}
-
-dt {  
-  font-weight:bold;
-  margin:0;
-  padding:0 0 .5em;
-}
-
-dd {
-  font-weight:normal;
-  margin:0;
-  padding:0 0 .5em 1em;
-}
-
-li p, li pre, li table, li img,
-dd p, dd pre, dd table, dd img {
-  margin:.5em 0 0;
+  margin:0 0 .8em;
+  padding:0 0 0 2em;
 }
 
 li {
   padding:0 0 .5em;
 }
 
+dl {
+  margin:0 0 1em 0;
+  padding:0;
+}
+
+dt {  
+  margin:0;
+  padding:0;
+}
+
+dd {
+  margin:0 0 1em;
+  padding:0 0 0 2em;
+}
+
+li p, dd p {
+  margin:1em 0 0;
+}
+
+li pre, li table, li img,
+dd pre, dd table, dd img {
+  margin:1em 0 0 1em;
+}
+
 li ul,
 li ol {
-  padding: .5em 0 0 2em;
+  margin:.5em 0 0 0;
+  padding: 0 0 0 2em;
 }
 
-dl dl {
-  padding:.5em 0 0;
+dl li {
+  padding:.5em 0 0 0;
 }
 
-li p {
+dl dl,
+ol dl,
+ul dl {
+  margin:0 0 1em;
   padding:0;
 }
 
 table {
+  font-size:1em;
   margin:0 0 1em;
+  padding:0;
+  border-collapse:collapse;
+  border-width:0;
+  empty-cells:show;
 }
 
 td,th {
-  border:1px solid #666;
+  border:1px solid #ccc;
   padding:6px 12px;
   text-align:left;
   vertical-align:top;
@@ -99,17 +151,7 @@ td,th {
 }
 
 th {
-  background-color:#ccc;
-}
-
-a code {
-  color:#00c;
-} 
-a:active code {
-  color:#f00;
-} 
-a:visited code {
-  color:#551a8b;
+  background-color:#dee8f1;
 }
 
 hr.blue {
@@ -124,6 +166,7 @@ hr.blue {
   margin:0;
   position:fixed;
   top:103px;
+  width:100%;
 }
 
 #header {
@@ -131,25 +174,21 @@ hr.blue {
   height: 100px;
   position:relative;
   z-index:100;
-  min-width:730px;
-}
-
-#header img {
-  padding:0;
+  min-width:620px;
 }
 
 #headerLeft{
-  float:left;
+  position:absolute;
   border:none;
-  width:1px;
   margin:20px 0 0 10px;
   overflow:visible;
+  font-size: 36px;
 }
 
 #headerRight {
   float:right;
   border:none;
-  width:715px;
+  width:615px;
   height:100px;
 }
 
@@ -162,10 +201,11 @@ hr.blue {
   height: 32px;
   position:absolute;
   bottom:0;
+  right:0;
 }
 
 #header li {
-  float: right;
+  float: left;
   margin: 0px 5px 0px 0px;
   padding:0;
 }
@@ -180,9 +220,8 @@ hr.blue {
   font-weight: normal;
   width: 96px;
   height: 32px;
-  padding-top: 9px;
   text-align: center;
-  margin: 0px 0px 0px 0px;
+  margin: 0px;
 }
 
 #header li a:hover {
@@ -191,18 +230,34 @@ hr.blue {
   color: #fff;
 }
 
+#header li a span {
+  position:relative;
+  top:9px;
+}
+
 /* TAB HIGHLIGHTING */
-.home #home-link,
-.publish #publish-link,
-.guide #guide-link,
-.reference #reference-link,
-.sdk #sdk-link,
-.community #community-link,
-.about #about-link {
+.home #home-link a,
+.publish #publish-link a,
+.guide #guide-link a,
+.reference #reference-link a,
+.sdk #sdk-link a,
+.community #community-link a,
+.about #about-link a {
   background-image: url(images/tab_selected.png);
   background-repeat: no-repeat;
   color: #fff;
   font-weight: bold;
+  cursor:default;
+}
+
+.home #home-link a:hover,
+.publish #publish-link a:hover,
+.guide #guide-link a:hover,
+.reference #reference-link a:hover,
+.sdk #sdk-link a:hover,
+.community #community-link a:hover,
+.about #about-link  a:hover {
+  background-image: url(images/tab_selected.png);
 }
 
 #headerLinks {
@@ -234,10 +289,9 @@ hr.blue {
 /* main */
 
 #mainBodyFixed {
-  float: left;
-  margin: 20px;
+  margin: 20px auto;
   color: #333;
-  min-width:920px;
+  width:920px;
 }
 
 #mainBodyFixed h3 {
@@ -254,7 +308,14 @@ hr.blue {
   padding-bottom:.5em;
 }
 
-#mainBodyFixed .green { 
+#mainBodyFixed h1 { 
+  color:#435A6E;
+  font-size:1.7em;
+  margin: 1em 0;
+}
+
+#mainBodyFixed .green,
+#jd-content .green { 
   color:#7BB026;
   background-color:none;
 }
@@ -322,7 +383,7 @@ div.indent {
     text-align:left;
 }
 
-#mainBodyRight td.blueBorderBox {
+#mainBodyRight .blueBorderBox {
   border:5px solid #ddf0f2;
     padding:18px 18px 18px 18px;
     text-align:left;
@@ -389,28 +450,25 @@ div.indent {
 }
 
 .groupTable {
-  width: 95%;
+  width: 100%;
 }
 
 .groupTable th {
-  padding: 10px 20px 10px 20px;
+  padding: 10px;
   color: #ffffff;
   background-color: #6D8293;
   border: 2px solid #fff;
 }
 
-.groupTable .oddRow td {  
-  padding: 20px 28px 20px 28px;
+.groupTable td {
+  padding: 10px;
   color: #333333;
   background-color: #d9d9d9;
   border: 2px solid #fff;
 }
 
 .groupTable .evenRow td {  
-  padding: 20px 28px 20px 28px;
-  color: #333333;
   background-color: #ededed;
-  border: 2px solid #fff;
 }
 
 span.BigBlue {
@@ -496,7 +554,7 @@ vertical-align: bottom;
   color:#0000cc;
 }
 #search_filtered .jd-selected {
-  background-color: #7BB026;
+  background-color: #A4C639;
   cursor:pointer;
 }
 #search_filtered .jd-selected,
@@ -514,10 +572,10 @@ vertical-align: bottom;
   padding-right: 6px;
   padding-top: 1px;
   padding-bottom: 1px;
-  font-size: 80%;
+  font-size: .8em;
   border: none;
   margin: 0;
-  line-height: 105%;
+  line-height: 1.05em;
 }
 
 .show-row {
@@ -608,7 +666,7 @@ input.gsc-input {
   border:1px solid #BCCDF0;
   width:99%;
   padding-left:2px;
-  font-size:95%;
+  font-size:.95em;
 }
 
 td.gsc-search-button {
@@ -721,17 +779,19 @@ div#app-list {
 #app-list img {  
   width:90px;
   height:70px;
-  padding:0;
+  margin:0;
 }
 
 #app-list a.selected, 
-.app-list a:active.selected, 
-.app-list a:hover.selected {
+#app-list a:active.selected, 
+#app-list a:hover.selected {
   background:#A4C639;
   color:#fff;
+  cursor:default;
+  text-decoration:none;
 }
 #app-list a:hover, 
-.app-list a:active {
+#app-list a:active {
   background:#ff9900;
   text-decoration:underline;
 }
@@ -751,7 +811,7 @@ div#app-list {
 }
 
 #carouselMain img {
-  padding:0;
+  margin:0;
 }
 
 /*carousel bulletin layouts*/
@@ -790,5 +850,6 @@ div#app-list {
   height:100px;
   margin:10px;
 }
+
 
 

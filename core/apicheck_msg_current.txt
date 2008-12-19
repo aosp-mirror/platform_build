@@ -8,10 +8,11 @@ To make these errors go away, you have two choices:
 
    2) You can update current.xml by executing the following commands:
 
-         p4 edit config/api/current.xml
+         p4 edit frameworks/base/api/current.xml
          make update-api
 
       To check in the revised current.xml, you will need OWNERS approval.
 ******************************
+
 
 

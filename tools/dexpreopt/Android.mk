@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 ifneq ($(TARGET_SIMULATOR),true)
+ifneq ($(DISABLE_DEXPREOPT),true)
 
 LOCAL_PATH := $(my-dir)
 include $(CLEAR_VARS)
@@ -33,4 +34,5 @@ subdir_makefiles := \
 		$(LOCAL_PATH)/afar/Android.mk
 include $(subdir_makefiles)
 
+endif # !disable_dexpreopt
 endif # !sim

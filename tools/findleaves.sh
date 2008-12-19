@@ -93,7 +93,10 @@ sed -e 's/\/[^\/]*$/\//' |
 
 # Sort the output, so directories appear immediately before their contents.
 # If there are any duplicates, the awk script will implicitly ignore them.
-sort |
+# The LC_ALL=C forces sort(1) to use bytewise ordering instead of listening
+# to the locale, which may do case-insensitive and/or alphanumeric-only
+# sorting.
+LC_ALL=C sort |
 
 # Always print the first line, which can't possibly be covered by a
 # parent directory match. After that, only print lines where the last

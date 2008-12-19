@@ -5,12 +5,15 @@
 #include "files.h"
 #include "fs.h"
 #include <set>
+#include <iostream>
+#include <sstream>
 
 using namespace std;
 
 bool g_debug = false;
 vector<string> g_listFiles;
 vector<string> g_inputBases;
+map<string, string> g_variables;
 string g_outputBase;
 string g_dependency;
 bool g_useHardLinks = false;
@@ -29,6 +32,7 @@ const char* USAGE =
 "  -l             Use hard links instead of copying the files.\n"
 "  -m DEPENDENCY  Output a make-formatted file containing the list.\n"
 "                 of files included.  It sets the variable ATREE_FILES.\n"
+"  -v VAR=VAL     Replaces ${VAR} by VAL when reading input files.\n"
 "\n"
 "FILELIST file format:\n"
 "  The FILELIST files contain the list of files that will end up\n"
@@ -53,13 +57,28 @@ int usage()
     return 1;
 }
 
+static bool
+add_variable(const char* arg) {
+    const char* p = arg;
+    while (*p && *p != '=') p++;
+
+    if (*p == 0 || p == arg || p[1] == 0) {
+        return false;
+    }
+
+    ostringstream var;
+    var << "${" << string(arg, p-arg) << "}";
+    g_variables[var.str()] = string(p+1);
+    return true;
+}
+
 int
 main(int argc, char* const* argv)
 {
     int err;
     bool done = false;
     while (!done) {
-        int opt = getopt(argc, argv, "f:I:o:hlm:");
+        int opt = getopt(argc, argv, "f:I:o:hlm:v:");
         switch (opt)
         {
             case -1:
@@ -89,6 +108,14 @@ main(int argc, char* const* argv)
                     return usage();
                 }
                 g_dependency = optarg;
+                break;
+            case 'v':
+                if (!add_variable(optarg)) {
+                    fprintf(stderr, "%s Invalid expression in '-v %s': "
+                            "expected format is '-v VAR=VALUE'.\n",
+                            argv[0], optarg);
+                    return usage();
+                }
                 break;
             default:
             case '?':
@@ -143,7 +170,7 @@ main(int argc, char* const* argv)
     // read file lists
     for (vector<string>::iterator it=g_listFiles.begin();
                                 it!=g_listFiles.end(); it++) {
-        err = read_list_file(*it, &files, &excludes);
+        err = read_list_file(*it, g_variables, &files, &excludes);
         if (err != 0) {
             return err;
         }

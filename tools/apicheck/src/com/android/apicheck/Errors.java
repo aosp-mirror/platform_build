@@ -113,6 +113,7 @@ public class Errors
     public static Error CHANGED_THROWS = new Error(21, WARNING);
     public static Error CHANGED_NATIVE = new Error(22, HIDDEN);
     public static Error CHANGED_CLASS = new Error(23, WARNING);
+    public static Error CHANGED_DEPRECATED = new Error(24, WARNING);
     
     public static Error[] ERRORS = {
         PARSE_ERROR,
@@ -137,6 +138,8 @@ public class Errors
         CHANGED_ABSTRACT,
         CHANGED_THROWS,
         CHANGED_NATIVE,
+        CHANGED_CLASS,
+        CHANGED_DEPRECATED,
         };
 
     public static boolean setErrorLevel(int code, int level) {

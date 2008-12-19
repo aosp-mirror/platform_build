@@ -9,7 +9,7 @@
 
 # Whatever compiler is on this system.
 ifeq ($(HOST_OS), windows)
-    COMMON_JAVAC := prebuilt/windows/host/bin/javawrap.exe -J-Xmx256m \
+    COMMON_JAVAC := development/host/windows/prebuilt/javawrap.exe -J-Xmx256m \
         -target 1.5 -Xmaxerrs 9999999
 else
     COMMON_JAVAC := javac -J-Xmx256m -target 1.5 -Xmaxerrs 9999999

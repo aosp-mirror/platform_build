@@ -27,9 +27,10 @@
 # A mapping from shorthand names to include directories.
 #
 pathmap_INCL := \
+    bluedroid:system/bluetooth/bluedroid/include \
     bluez-libs:external/bluez/libs/include \
     bluez-utils:external/bluez/utils \
-    bootloader:bootloader/legacy/include \
+    bootloader:bootable/bootloader/legacy/include \
     corecg:external/skia/include/corecg \
     dbus:external/dbus \
     frameworks-base:frameworks/base/include \
@@ -46,7 +47,7 @@ pathmap_INCL := \
     libstdc++:bionic/libstdc++/include \
     libthread_db:bionic/libthread_db/include \
     mkbootimg:system/core/mkbootimg \
-    recovery:recovery \
+    recovery:bootable/recovery \
     system-core:system/core/include
 
 #
@@ -66,16 +67,28 @@ endef
 #
 JNI_H_INCLUDE := $(call include-path-for,libnativehelper)/nativehelper
 
+#
+# A list of all source roots under frameworks/base, which will be
+# built into the android.jar.
+#
 FRAMEWORKS_BASE_SUBDIRS := \
-	core \
-	graphics \
-	location \
-	media \
-	opengl \
-	sax \
-	services \
-	telephony \
-	wifi
+	$(addsuffix /java, \
+	    core \
+	    graphics \
+	    im \
+	    location \
+	    media \
+	    opengl \
+	    sax \
+	    telephony \
+	    wifi \
+	 )
 
+#
+# A version of FRAMEWORKS_BASE_SUBDIRS that is expanded to full paths from
+# the root of the tree.  This currently needs to be here so that other libraries
+# and apps can find the .aidl files in the framework, though we should really
+# figure out a better way to do this.
+#
 FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
-	$(patsubst %,frameworks/base/%/java,$(FRAMEWORKS_BASE_SUBDIRS))
+	$(addprefix frameworks/base/,$(FRAMEWORKS_BASE_SUBDIRS))

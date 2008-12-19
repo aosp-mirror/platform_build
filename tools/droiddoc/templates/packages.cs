@@ -1,6 +1,7 @@
 <?cs include:"macros.cs" ?>
 <html>
 <?cs include:"head_tag.cs" ?>
+<body class="gc-documentation">
 <?cs include:"header.cs" ?>
 
 <div class="g-unit" id="doc-content">

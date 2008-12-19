@@ -4,6 +4,7 @@ PRODUCT_PACKAGES := \
 	ApiDemos \
 	Development \
 	Fallback \
+	GPSEnable
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 

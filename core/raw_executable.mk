@@ -16,7 +16,8 @@ $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 	@$(mkdir -p $(dir $@)
 	@echo "target Linking: $(PRIVATE_MODULE)"
 	$(hide) $(TARGET_LD) \
-		--script $(PRIVATE_LINK_SCRIPT) \
+		$(addprefix --script ,$(PRIVATE_LINK_SCRIPT)) \
+		$(PRIVATE_RAW_EXECUTABLE_LDFLAGS) \
 		-o $(PRIVATE_ELF_FILE) \
 		$(PRIVATE_ALL_OBJECTS) \
 		--start-group $(PRIVATE_ALL_STATIC_LIBRARIES) --end-group \

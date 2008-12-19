@@ -14,15 +14,6 @@
 # limitations under the License.
 #
 
-# HACK HACK HACK
-# *** Do not use any of the following as an example for anything else ***
-
-# TODO: remove this hack once the build machine no longer needs "user-dist"
-user-dist: user
-ifneq (,$(filter user-dist,$(MAKECMDGOALS)))
-  MAKECMDGOALS := $(patsubst user-dist,user dist,$(MAKECMDGOALS))
-endif
-
 # When specifying "dist", the user has asked that we copy the important
 # files from this build into DIST_DIR.
 
@@ -34,7 +25,7 @@ MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
 ifeq (,$(strip $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))))
 # The commandline was something like "make dist" or "make dist showcommands".
 # Add a dependency on a real target.
-dist: $(DEFAULT_TARGET)
+dist: $(DEFAULT_GOAL)
 endif
 
 ifdef dist_goal
@@ -54,7 +45,7 @@ endef
 # certain files with certain goals.  When those goals are built
 # and "dist" is specified, the marked files will be copied to DIST_DIR.
 #
-# $(1): a list of goals (e.g., "user all")
+# $(1): a list of goals  (e.g. droid, sdk, pdk, ndk)
 # $(2): the dist files to add to those goals
 define dist-for-goals
 $(foreach file,$(2), \

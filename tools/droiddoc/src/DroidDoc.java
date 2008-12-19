@@ -209,6 +209,9 @@ public class DroidDoc
             writeHTMLPages();
         }
 
+        // Navigation tree
+        NavTree.writeNavTree(javadocDir);
+
         // Packages Pages
         writePackages(javadocDir
                         + (ClearPage.htmlDir!=null
@@ -475,7 +478,7 @@ public class DroidDoc
                     classesToCheck = pkg.interfaces();
                     break;
                 default:
-                    System.out.println("Error reading package: " + pkg.name());
+                    System.err.println("Error reading package: " + pkg.name());
                     break;
                 }
                 for (ClassInfo cl : classesToCheck) {
@@ -516,24 +519,17 @@ public class DroidDoc
                 if (len > 3 && ".cs".equals(templ.substring(len-3))) {
                     HDF data = makeHDF();
                     String filename = templ.substring(0,len-3) + htmlExtension;
-                    System.out.println("Writing CS:  " + filename);
                     ClearPage.write(data, templ, filename);
                 }
                 else if (len > 3 && ".jd".equals(templ.substring(len-3))) {
                     String filename = templ.substring(0,len-3) + htmlExtension;
-                    System.out.println("Writing JD:  " + filename);
                     DocFile.writePage(f.getAbsolutePath(), relative, filename);
                 }
                 else {
-//                    System.out.println("relative=" + relative
-//                            + " f.getAbsolutePath()=" + f.getAbsolutePath()
-//                            + " templ=" + templ);
-                    System.out.println("Copying:     " + templ);
                     ClearPage.copyFile(f, templ);
                 }
             }
             else if (f.isDirectory()) {
-                System.out.println("Writing dir: " + relative + f.getName() + "/");
                 writeDirectory(f, relative + f.getName() + "/");
             }
         }
@@ -543,7 +539,7 @@ public class DroidDoc
     {
         File f = new File(ClearPage.htmlDir);
         if (!f.isDirectory()) {
-            System.out.println("htmlDir not a directory: " + ClearPage.htmlDir);
+            System.err.println("htmlDir not a directory: " + ClearPage.htmlDir);
         }
         writeDirectory(f, "");
     }
@@ -644,7 +640,7 @@ public class DroidDoc
             }
         }
         catch (FileNotFoundException e) {
-            System.out.println("error writing file: " + filename);
+            System.err.println("error writing file: " + filename);
         }
         finally {
             if (stream != null) {
@@ -653,13 +649,13 @@ public class DroidDoc
         }
     }
 
-    public static void writePackages(String filename)
-    {
-        System.out.println("Writing packages...");
-        HDF data = makePackageHDF();
+    private static PackageInfo[] sVisiblePackages = null;
+    public static PackageInfo[] choosePackages() {
+        if (sVisiblePackages != null) {
+            return sVisiblePackages;
+        }
 
         ClassInfo[] classes = Converter.rootClasses();
-
         SortedMap<String, PackageInfo> sorted = new TreeMap<String, PackageInfo>();
         for (ClassInfo cl: classes) {
             PackageInfo pkg = cl.containingPackage();
@@ -672,7 +668,8 @@ public class DroidDoc
             sorted.put(name, pkg);
         }
 
-        int i = 0;
+        ArrayList<PackageInfo> result = new ArrayList();
+
         for (String s: sorted.keySet()) {
             PackageInfo pkg = sorted.get(s);
 
@@ -680,10 +677,13 @@ public class DroidDoc
                 continue;
             }
             Boolean allHidden = true;
-            int pass = 1;
-            ClassInfo[] classesToCheck = pkg.ordinaryClasses();
+            int pass = 0;
+            ClassInfo[] classesToCheck = null;
             while (pass < 5 ) {
                 switch(pass) {
+                case 0:
+                    classesToCheck = pkg.ordinaryClasses();
+                    break;
                 case 1:
                     classesToCheck = pkg.enums();
                     break;
@@ -697,7 +697,7 @@ public class DroidDoc
                     classesToCheck = pkg.interfaces();
                     break;
                 default:
-                    System.out.println("Error reading package: " + pkg.name());
+                    System.err.println("Error reading package: " + pkg.name());
                     break;
                 }
                 for (ClassInfo cl : classesToCheck) {
@@ -715,7 +715,25 @@ public class DroidDoc
                 continue;
             }
 
+            result.add(pkg);
+        }
+
+        sVisiblePackages = result.toArray(new PackageInfo[result.size()]);
+        return sVisiblePackages;
+    }
+
+    public static void writePackages(String filename)
+    {
+        HDF data = makePackageHDF();
+
+        int i = 0;
+        for (PackageInfo pkg: choosePackages()) {
             writePackage(pkg);
+
+            data.setValue("docs.packages." + i + ".name", pkg.name());
+            data.setValue("docs.packages." + i + ".link", pkg.htmlPage());
+            TagInfo.makeHDF(data, "docs.packages." + i + ".shortDescr",
+                            pkg.firstSentenceTags());
 
             i++;
         }
@@ -739,7 +757,6 @@ public class DroidDoc
         HDF data = makePackageHDF();
 
         String name = pkg.name();
-        System.out.println("Writing " + name);
 
         data.setValue("package.name", name);
         data.setValue("package.descr", "...description...");
@@ -762,8 +779,7 @@ public class DroidDoc
         setPageTitle(data, name);
         ClearPage.write(data, "package.cs", filename);
 
-        filename = filename.substring(0, filename.lastIndexOf('/')+1)
-            + "package-descr" + htmlExtension;
+        filename = pkg.fullDescriptionHtmlPage();
         setPageTitle(data, name + " Details");
         ClearPage.write(data, "package-descr.cs", filename);
 
@@ -804,8 +820,6 @@ public class DroidDoc
                             sorted[j].label = sorted[j].label + " (" + pkg.name() + ")";
                         }
                     }
-                } else {
-                    //System.out.println("not duplicate: " + sorted[i].label);
                 }
                 firstMatch = i;
                 lastName = s;
@@ -838,7 +852,7 @@ public class DroidDoc
             cl.makeKeywordEntries(keywords);
         }
 
-        HDF data = makePackageHDF();
+        HDF data = makeHDF();
 
         Collections.sort(keywords);
         
@@ -884,7 +898,6 @@ public class DroidDoc
     {
         cl.makeHDF(data);
 
-        System.out.println("Writing " + cl.name());
         setPageTitle(data, cl.name());
         ClearPage.write(data, "class.cs", cl.htmlPage());
 

@@ -116,21 +116,21 @@ public class DocFile
 
         hdf.setValue("commentText", commentText);
         
-        if(outfile.indexOf("sdk/") != -1) {
-          hdf.setValue("sdk", "true");
-          if(outfile.indexOf("index.html") != -1) {
-            ClearPage.write(hdf, "sdkpage.cs", outfile);
-          }else{
+        if (outfile.indexOf("sdk/") != -1) {
+            hdf.setValue("sdk", "true");
+            if (outfile.indexOf("index.html") != -1) {
+                ClearPage.write(hdf, "sdkpage.cs", outfile);
+            } else {
+                ClearPage.write(hdf, "docpage.cs", outfile);
+            }
+        } else if (outfile.indexOf("guide/") != -1){
+            hdf.setValue("guide", "true");
             ClearPage.write(hdf, "docpage.cs", outfile);
-          }
-        }else if(outfile.indexOf("guide/") != -1){
-          hdf.setValue("guide", "true");
-          ClearPage.write(hdf, "docpage.cs", outfile);
-        }else if(outfile.indexOf("publish/") != -1){
-          hdf.setValue("publish", "true");
-          ClearPage.write(hdf, "docpage.cs", outfile);
-        }else{
-          ClearPage.write(hdf, "nosidenavpage.cs", outfile);
+        } else if (outfile.indexOf("publish/") != -1){
+            hdf.setValue("publish", "true");
+            ClearPage.write(hdf, "docpage.cs", outfile);
+        } else {
+            ClearPage.write(hdf, "nosidenavpage.cs", outfile);
         }
     }
 

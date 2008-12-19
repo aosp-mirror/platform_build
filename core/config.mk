@@ -18,8 +18,8 @@ SRC_HEADERS := \
 SRC_HOST_HEADERS:=$(TOPDIR)tools/include
 SRC_LIBRARIES:= $(TOPDIR)libs
 SRC_SERVERS:= $(TOPDIR)servers
-SRC_TOOLS:= $(TOPDIR)tools
 SRC_TARGET_DIR := $(TOPDIR)build/target
+SRC_API_DIR := $(TOPDIR)frameworks/base/api
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/tools/droiddoc
@@ -94,11 +94,8 @@ COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 -include $(TOPDIR)buildspec.mk
 
 # ---------------------------------------------------------------
-# Handle the setup of TARGET_PRODUCT and related variables.
-include $(BUILD_SYSTEM)/product_config.mk
-
-# ---------------------------------------------------------------
-# Define most of the global variables.
+# Define most of the global variables.  These are the ones that
+# are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
 # $(1): os/arch
@@ -121,7 +118,10 @@ include $(BUILD_SYSTEM)/combo/javac.mk
 # ---------------------------------------------------------------
 # Check that the configuration is current.  We check that
 # BUILD_ENV_SEQUENCE_NUMBER is current against this value.
+# Don't fail if we're called from envsetup, so they have a
+# chance to update their environment.
 
+ifeq (,$(strip $(CALLED_FROM_SETUP)))
 ifneq (,$(strip $(BUILD_ENV_SEQUENCE_NUMBER)))
 ifneq ($(BUILD_ENV_SEQUENCE_NUMBER),$(CORRECT_BUILD_ENV_SEQUENCE_NUMBER))
 $(warning BUILD_ENV_SEQUENCE_NUMBER is set incorrectly.)
@@ -132,6 +132,7 @@ $(info *** If you use buildspec.mk:)
 $(info ***   - Look at buildspec.mk.default to see what has changed)
 $(info ***   - Update BUILD_ENV_SEQUENCE_NUMBER to "$(CORRECT_BUILD_ENV_SEQUENCE_NUMBER)")
 $(error bailing..)
+endif
 endif
 endif
 
@@ -151,6 +152,13 @@ MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 MKYAFFS2 := $(HOST_OUT_EXECUTABLES)/mkyaffs2image$(HOST_EXECUTABLE_SUFFIX)
 APICHECK := $(HOST_OUT_EXECUTABLES)/apicheck$(HOST_EXECUTABLE_SUFFIX)
+FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
+MKEXT2IMG := $(HOST_OUT_EXECUTABLES)/genext2fs$(HOST_EXECUTABLE_SUFFIX)
+MKEXT2BOOTIMG := external/genext2fs/mkbootimg_ext2.sh
+MKTARBALL := build/tools/mktarball.sh
+TUNE2FS := tune2fs
+E2FSCK := e2fsck
+JARJAR := java -jar $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
@@ -271,9 +279,9 @@ TARGET_AVAILABLE_SDK_VERSIONS := current \
         $(shell function sgrax() { \
                 while [ -n "$$1" ] ; do echo $$1 ; shift ; done \
             } ; \
-            ( sgrax $(patsubst $(BUILD_SYSTEM)/api/%.xml,%, \
-                $(filter-out $(BUILD_SYSTEM)/api/current.xml, \
-                $(shell find $(BUILD_SYSTEM)/api -name "*.xml"))) | sort -g ) )
+            ( sgrax $(patsubst $(SRC_API_DIR)/%.xml,%, \
+                $(filter-out $(SRC_API_DIR)/current.xml, \
+                $(shell find $(SRC_API_DIR) -name "*.xml"))) | sort -g ) )
 
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml

@@ -376,7 +376,8 @@ public class LinkReference {
         if (result.href == null && !skipHref) {
             if (printOnErrors && (base == null || base.checkLevel())) {
                 Errors.error(Errors.UNRESOLVED_LINK, pos,
-                        "Unresolved link/see tag: " + text.trim());
+                        "Unresolved link/see tag \"" + text.trim()
+                        + "\" in " + ((base != null) ? base.qualifiedName() : "[null]"));
             }
             result.makeError();
         }

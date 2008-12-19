@@ -47,9 +47,9 @@ droidcore: checkapi
 # SDK version.
 $(eval $(call check-api, \
 	checkapi-last, \
-	$(BUILD_SYSTEM)/api/$(lastword $(TARGET_AVAILABLE_SDK_VERSIONS)).xml, \
+	$(SRC_API_DIR)/$(lastword $(TARGET_AVAILABLE_SDK_VERSIONS)).xml, \
 	$(INTERNAL_PLATFORM_API_FILE), \
-	-hide 2 -hide 3 -hide 4 -hide 5 -hide 6 \
+	-hide 2 -hide 3 -hide 4 -hide 5 -hide 6 -hide 24 \
 	-error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
 	-error 16 -error 17 -error 18 , \
 	cat $(BUILD_SYSTEM)/apicheck_msg_last.txt \
@@ -59,17 +59,17 @@ $(eval $(call check-api, \
 # SDK version.
 $(eval $(call check-api, \
 	checkapi-current, \
-	$(BUILD_SYSTEM)/api/current.xml, \
+	$(SRC_API_DIR)/current.xml, \
 	$(INTERNAL_PLATFORM_API_FILE), \
 	-error 2 -error 3 -error 4 -error 5 -error 6 \
 	-error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
-	-error 16 -error 17 -error 18 -error 19 -error 20 -error 21 , \
+	-error 16 -error 17 -error 18 -error 19 -error 20 -error 21 -error 23 -error 24 , \
 	cat $(BUILD_SYSTEM)/apicheck_msg_current.txt \
 	))
 
 .PHONY: update-api
 update-api: $(INTERNAL_PLATFORM_API_FILE) | $(ACP)
 	@echo Copying current.xml
-	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) $(BUILD_SYSTEM)/api/current.xml
+	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) $(SRC_API_DIR)/current.xml
 
 endif

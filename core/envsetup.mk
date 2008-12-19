@@ -13,7 +13,36 @@
 # people who haven't re-run those will have to do so before they
 # can build.  Make sure to also update the corresponding value in
 # buildspec.mk.default and envsetup.sh.
-CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 8
+CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 9
+
+# ---------------------------------------------------------------
+# The product defaults to generic on hardware and sim on sim
+# NOTE: This will be overridden in product_config.mk if make
+# was invoked with a PRODUCT-xxx-yyy goal.
+ifeq ($(TARGET_PRODUCT),)
+ifeq ($(TARGET_SIMULATOR),true)
+TARGET_PRODUCT := sim
+else
+TARGET_PRODUCT := generic
+endif
+endif
+
+
+# the variant -- the set of files that are included for a build
+ifeq ($(strip $(TARGET_BUILD_VARIANT)),)
+TARGET_BUILD_VARIANT := eng
+endif
+
+# Read the product specs so we an get TARGET_DEVICE and other
+# variables that we need in order to locate the output files.
+include $(BUILD_SYSTEM)/product_config.mk
+
+build_variant := $(filter-out eng user userdebug tests,$(TARGET_BUILD_VARIANT))
+ifneq ($(build_variant)-$(words $(TARGET_BUILD_VARIANT)),-1)
+$(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
+$(error must be empty or one of: eng user userdebug tests)
+endif
+
 
 
 # ---------------------------------------------------------------
@@ -83,11 +112,10 @@ endif
 # The following must be set:
 # 		TARGET_OS = { linux }
 # 		TARGET_ARCH = { arm | x86 }
-# TARGET_ARCH==arm means that it's not the simulator, and the others
-# mean it is the simulator.
+
 
 # if we're build the simulator, HOST_* is TARGET_* (except for BUILD_TYPE)
-# otherwise it's arm-linux
+# otherwise  it's <arch>-linux
 ifeq ($(TARGET_SIMULATOR),true)
 ifneq ($(HOST_OS),linux)
 $(error TARGET_SIMULATOR=true is only supported under Linux)
@@ -95,7 +123,9 @@ endif
 TARGET_ARCH := $(HOST_ARCH)
 TARGET_OS := $(HOST_OS)
 else
+ifeq ($(TARGET_ARCH),)
 TARGET_ARCH := arm
+endif
 TARGET_OS := linux
 endif
 
@@ -110,15 +140,6 @@ ifeq ($(TARGET_SIMULATOR),true)
   TARGET_PREBUILT_TAG := $(TARGET_OS)-$(TARGET_ARCH)
 else
   TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
-endif
-
-# the product defaults to sooner on ARM and nothing on sim
-ifeq ($(TARGET_PRODUCT),)
-ifeq ($(TARGET_SIMULATOR),true)
-TARGET_PRODUCT := sim
-else
-TARGET_PRODUCT := sooner
-endif
 endif
 
 # ---------------------------------------------------------------
@@ -157,7 +178,7 @@ endif
 TARGET_COMMON_OUT_ROOT := $(TARGET_OUT_ROOT)/common
 HOST_COMMON_OUT_ROOT := $(HOST_OUT_ROOT)/common
 
-PRODUCT_OUT := $(TARGET_PRODUCT_OUT_ROOT)/$(TARGET_PRODUCT)
+PRODUCT_OUT := $(TARGET_PRODUCT_OUT_ROOT)/$(TARGET_DEVICE)
 
 OUT_DOCS := $(TARGET_COMMON_OUT_ROOT)/docs
 
@@ -215,10 +236,23 @@ TARGET_ROOT_OUT_USR := $(TARGET_ROOT_OUT)/usr
 TARGET_RECOVERY_OUT := $(PRODUCT_OUT)/recovery
 TARGET_RECOVERY_ROOT_OUT := $(TARGET_RECOVERY_OUT)/root
 
+TARGET_SYSLOADER_OUT := $(PRODUCT_OUT)/sysloader
+TARGET_SYSLOADER_ROOT_OUT := $(TARGET_SYSLOADER_OUT)/root
+TARGET_SYSLOADER_SYSTEM_OUT := $(TARGET_SYSLOADER_OUT)/root/system
+
+TARGET_INSTALLER_OUT := $(PRODUCT_OUT)/installer
+TARGET_INSTALLER_DATA_OUT := $(TARGET_INSTALLER_OUT)/data
+TARGET_INSTALLER_ROOT_OUT := $(TARGET_INSTALLER_OUT)/root
+TARGET_INSTALLER_SYSTEM_OUT := $(TARGET_INSTALLER_OUT)/root/system
+
 COMMON_MODULE_CLASSES := JAVA_LIBRARIES NOTICE_FILES
 
 ifeq (,$(strip $(DIST_DIR)))
   DIST_DIR := $(OUT_DIR)/dist
+endif
+
+ifeq ($(PRINT_BUILD_CONFIG),)
+PRINT_BUILD_CONFIG := true
 endif
 
 # ---------------------------------------------------------------
@@ -275,4 +309,25 @@ $(dumpvar_target):
 
 endif # dumpvar_goals
 
+ifneq ($(dumpvar_goals),report_config)
+PRINT_BUILD_CONFIG:=
+endif
+
 endif # CALLED_FROM_SETUP
+
+
+ifneq ($(PRINT_BUILD_CONFIG),)
+$(info ============================================)
+$(info   TARGET_PRODUCT=$(TARGET_PRODUCT))
+$(info   TARGET_BUILD_VARIANT=$(TARGET_BUILD_VARIANT))
+$(info   TARGET_SIMULATOR=$(TARGET_SIMULATOR))
+$(info   TARGET_BUILD_TYPE=$(TARGET_BUILD_TYPE))
+$(info   TARGET_ARCH=$(TARGET_ARCH))
+$(info   HOST_ARCH=$(HOST_ARCH))
+$(info   HOST_OS=$(HOST_OS))
+$(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
+$(info   BUILD_ID=$(BUILD_ID))
+$(info ============================================)
+endif
+
+

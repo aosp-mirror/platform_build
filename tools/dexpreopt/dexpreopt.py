@@ -520,7 +520,11 @@ def DownloadDirectoryHierarchy(ep, src, dest, timeout=0):
       buf.fromfile(ep.stdout, 4)
       (adler32,) = struct.unpack('>i', buf)  # adler32 wants a signed int ('i')
       data_adler32 = zlib.adler32(data)
-      if adler32 != data_adler32:
+      # Because of a difference in behavior of zlib.adler32 on 32-bit and 64-bit
+      # systems (one returns signed values, the other unsigned), we take the
+      # modulo 2**32 of the checksums, and compare those.
+      # See also http://bugs.python.org/issue1202
+      if (adler32 % (2**32)) != (data_adler32 % (2**32)):
         Trace('adler32 does not match: calculated 0x%08x != expected 0x%08x' %
               (data_adler32, adler32))
         return False

@@ -148,6 +148,12 @@ public class FieldInfo {
           consistent = false;
       }
       
+      if (!mDeprecated.equals(fInfo.mDeprecated)) {
+          Errors.error(Errors.CHANGED_DEPRECATED, fInfo.position(),
+                  "Field " + fInfo.qualifiedName() + " has changed deprecation state");
+          consistent = false;
+      }
+      
       return consistent;
     }
 

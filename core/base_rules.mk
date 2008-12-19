@@ -124,10 +124,15 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 ###########################################################
 # Pick a name for the intermediate and final targets
 ###########################################################
-LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE)$(LOCAL_MODULE_SUFFIX)
-LOCAL_BUILT_MODULE_STEM:= $(strip $(LOCAL_BUILT_MODULE_STEM))
+LOCAL_MODULE_STEM := $(strip $(LOCAL_MODULE_STEM))
+ifeq ($(LOCAL_MODULE_STEM),)
+  LOCAL_MODULE_STEM := $(LOCAL_MODULE)
+endif
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
+
+LOCAL_BUILT_MODULE_STEM := $(strip $(LOCAL_BUILT_MODULE_STEM))
 ifeq ($(LOCAL_BUILT_MODULE_STEM),)
-LOCAL_BUILT_MODULE_STEM:= $(LOCAL_INSTALLED_MODULE_STEM)
+  LOCAL_BUILT_MODULE_STEM := $(LOCAL_INSTALLED_MODULE_STEM)
 endif
 
 # OVERRIDE_BUILT_MODULE_PATH is only allowed to be used by the

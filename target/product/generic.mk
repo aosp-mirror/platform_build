@@ -8,6 +8,7 @@ PRODUCT_PACKAGES := \
     Calendar \
     Camera \
     DrmProvider \
+    LatinIME \
     Mms \
     Music \
     Settings \

@@ -33,8 +33,8 @@ LOCAL_BUILT_MODULE_STEM := $(strip $(LOCAL_BUILT_MODULE_STEM))
 ifeq ($(LOCAL_BUILT_MODULE_STEM),)
 $(error $(LOCAL_PATH): Target java template must define LOCAL_BUILT_MODULE_STEM)
 endif
-ifeq ($(LOCAL_BUILT_MODULE_STEM),classes.jar)
-$(error LOCAL_BUILT_MODULE_STEM may not be "classes.jar")
+ifneq ($(filter classes-compiled.jar classes.jar,$(LOCAL_BUILT_MODULE_STEM)),)
+$(error LOCAL_BUILT_MODULE_STEM may not be "$(LOCAL_BUILT_MODULE_STEM)")
 endif
 
 #######################################
@@ -64,13 +64,30 @@ ifneq (,$(strip $(all_java_sources)))
 # Otherwise, the caller will define it as a prerequisite of
 # LOCAL_BUILT_MODULE, so it will inherit the necessary PRIVATE_*
 # variable definitions.
-#
+full_classes_jar := $(intermediates.COMMON)/classes.jar
+
+# Compile the java files to a .jar file.
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
-full_classes_jar := $(intermediates.COMMON)/classes.jar
-$(full_classes_jar): $(java_sources) $(full_java_lib_deps)
+full_classes_compiled_jar := $(intermediates.COMMON)/classes-compiled.jar
+$(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
 	$(transform-java-to-classes.jar)
+
+# Run jarjar if necessary, otherwise just copy the file.  This is the last
+# part of this step, so the output of this command is full_classes_jar.
+full_classes_jarjar_jar := $(full_classes_jar)
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | jarjar
+	@echo JarJar: $@
+	$(hide) $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
+	@echo Copying: $@
+	$(hide) $(ACP) $< $@
+endif
+
 
 built_dex := $(intermediates.COMMON)/classes.dex
 
