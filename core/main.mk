@@ -1,5 +1,7 @@
 
 # Use bash, not whatever shell somebody has installed as /bin/sh
+# This is repeated in config.mk, since envsetup.sh runs that file
+# directly.
 SHELL := /bin/bash
 
 # this turns off the suffix rules built into make

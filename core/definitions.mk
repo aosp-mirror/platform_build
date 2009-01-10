@@ -1147,11 +1147,13 @@ $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
 @rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 endef
 
+#TODO: use a smaller -Xmx value for most libraries;
+#      only core.jar and framework.jar need a heap this big.
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 $(hide) $(DX) -JXms16M \
-    $(if $(GENERATE_DEX_DEBUG), -JXmx1536M, -JXmx1280M) \
+    -JXmx1536M \
     --dex --output=$@ \
     $(if $(NO_OPTIMIZE_DX), \
         --no-optimize) \

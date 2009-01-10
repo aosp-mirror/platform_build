@@ -12,7 +12,7 @@ ifeq ($(HOST_OS), windows)
     COMMON_JAVAC := development/host/windows/prebuilt/javawrap.exe -J-Xmx256m \
         -target 1.5 -Xmaxerrs 9999999
 else
-    COMMON_JAVAC := javac -J-Xmx256m -target 1.5 -Xmaxerrs 9999999
+    COMMON_JAVAC := javac -J-Xmx512M -target 1.5 -Xmaxerrs 9999999
 endif
 
 # Eclipse.

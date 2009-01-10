@@ -31,10 +31,10 @@ pathmap_INCL := \
     bluez-libs:external/bluez/libs/include \
     bluez-utils:external/bluez/utils \
     bootloader:bootable/bootloader/legacy/include \
-    corecg:external/skia/include/corecg \
+    corecg:external/skia/include/core \
     dbus:external/dbus \
     frameworks-base:frameworks/base/include \
-    graphics:external/skia/include/graphics \
+    graphics:external/skia/include/core \
     libc:bionic/libc/include \
     libdrm1:frameworks/base/media/libdrm/mobile1/include \
     libdrm2:frameworks/base/media/libdrm/mobile2/include \
