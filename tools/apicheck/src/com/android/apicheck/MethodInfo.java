@@ -145,6 +145,12 @@ public class MethodInfo implements AbstractMethodInfo {
             consistent = false;
         }
         
+        if (mIsSynchronized != mInfo.mIsSynchronized) {
+            Errors.error(Errors.CHANGED_SYNCHRONIZED, mInfo.position(),
+                    "Method " + mInfo.qualifiedName() + " has changed 'synchronized' qualifier from " + mIsSynchronized + " to " + mInfo.mIsSynchronized);
+            consistent = false;
+        }
+        
         for (String exec : mExceptions) {
             if (!mInfo.mExceptions.contains(exec)) {
                 // exclude 'throws' changes to finalize() overrides with no arguments

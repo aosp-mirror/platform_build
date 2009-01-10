@@ -288,46 +288,50 @@ hr.blue {
 
 /* main */
 
+#mainBodyFluid {
+  margin: 20px 10px;
+  color:#333;
+}
+
 #mainBodyFixed {
-  margin: 20px auto;
+  margin: 20px 10px;
   color: #333;
   width:920px;
 }
 
-#mainBodyFixed h3 {
+#mainBodyFixed h3,
+#mainBodyFluid h3 {
   color:#336666;
   font-size:1.25em;
   margin: 0em 0em 0em 0em;
   padding-bottom:.5em;
 }
 
-#mainBodyFixed h2 { 
+#mainBodyFixed h2,
+#mainBodyFluid h2 { 
   color:#336666;
   font-size:1.25em;
   margin: 0;
   padding-bottom:.5em;
 }
 
-#mainBodyFixed h1 { 
+#mainBodyFixed h1,
+#mainBodyFluid h1 { 
   color:#435A6E;
   font-size:1.7em;
   margin: 1em 0;
 }
 
 #mainBodyFixed .green,
+#mainBodyFluid .green,
 #jd-content .green { 
   color:#7BB026;
   background-color:none;
 }
 
-#mainBodyFixed a {
+#mainBodyFixed a,
+#mainBodyFluid a {
   color: #006699;
-  font-size: 13px;
-  text-decoration: underline;
-}
-
-#mainBodyFixed a.orangeLink {
-  color: #ff6600;
   font-size: 13px;
   text-decoration: underline;
 }

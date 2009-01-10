@@ -3,6 +3,11 @@
 # current configuration and platform, which
 # are not specific to what is being built.
 
+# Use bash, not whatever shell somebody has installed as /bin/sh
+# This is repeated from main.mk, since envsetup.sh runs this file
+# directly.
+SHELL := /bin/bash
+
 # Standard source directories.
 SRC_DOCS:= $(TOPDIR)docs
 # TODO: Enforce some kind of layering; only add include paths

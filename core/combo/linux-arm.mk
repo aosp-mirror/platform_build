@@ -109,6 +109,7 @@ $(combo_target)GLOBAL_CFLAGS += \
 			-ffunction-sections \
 			-funwind-tables \
 			-fstack-protector \
+			-fno-short-enums \
 			$(arch_version_cflags) \
 			-include $(android_config_h) \
 			-I $(arch_include_dir)
