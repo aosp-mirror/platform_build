@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "z57842e05271ce47bec2ec87397f38ea3",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1001302
+      },
+      "writtenOn": "2009-01-10T22:22:22Z",
+      "side": 1,
+      "message": "why did you forget about bash-ism \u0027[[\u0027 if you want to purify this piece of file? :)\n\nActually, Android build system uses bash instead of sh. This file also is called from config.mk,197 like $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)\n\nSHELL variable is set to bash, not sh.",
+      "revId": "6df23618dd8864bc104c88ffc50de441ae090c97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
