@@ -378,16 +378,8 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
 
     public TagInfo[] deprecatedTags()
     {
-        TagInfo[] result = comment().deprecatedTags();
-        if (result.length == 0) {
-            if (comment().undeprecateTags().length == 0) {
-                if (superclass() != null) {
-                    result = superclass().deprecatedTags();
-                }
-            }
-        }
-        // should we also do the interfaces?
-        return result;
+        // Should we also do the interfaces?
+        return comment().deprecatedTags();
     }
 
     public MethodInfo[] methods()
