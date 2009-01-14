@@ -608,10 +608,9 @@ droidcore: files \
 .PHONY: droid tests
 droid tests: droidcore
 
-#TODO: restore support for building OTA packages
-#	$(INTERNAL_OTA_PACKAGE_TARGET) \
 $(call dist-for-goals, droid, \
 	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
+	$(INTERNAL_OTA_PACKAGE_TARGET) \
 	$(SYMBOLS_ZIP) \
 	$(APPS_ZIP) \
 	$(INTERNAL_EMULATOR_PACKAGE_TARGET) \
