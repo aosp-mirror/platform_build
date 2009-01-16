@@ -66,24 +66,70 @@ ifneq (,$(strip $(all_java_sources)))
 # variable definitions.
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 
+# Emma source code coverage
+ifneq ($(EMMA_INSTRUMENT),true) 
+LOCAL_NO_EMMA_INSTRUMENT := true
+LOCAL_NO_EMMA_COMPILE := true
+endif
+
+ifneq ($(LOCAL_NO_EMMA_COMPILE),true) 
+# If you instrument class files that have local variable debug information in
+# them emma does not correctly maintain the local variable table.
+# This will cause an error when you try to convert the class files for Android.
+# The workaround for this to compile the java classes with only
+# line and source debug information, not local information.
+full_classes_compiled_name_jar := classes-no-debug-var.jar
+$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g:{lines,source}
+else
+# when emma is off, compile with the default flags, which contain full debug 
+# info
+full_classes_compiled_name_jar := classes-full-debug.jar
+$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
+endif
+
 # Compile the java files to a .jar file.
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
-full_classes_compiled_jar := $(intermediates.COMMON)/classes-compiled.jar
+full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_name_jar)
 $(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
 	$(transform-java-to-classes.jar)
+
+emma_intermediates_dir := $(intermediates.COMMON)/emma_out
+# the 'lib/$(full_classes_compiled_name_jar)' portion of this path is fixed in 
+# the emma tool
+full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(full_classes_compiled_name_jar)
+
+ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
+# Skip adding emma instrumentation to class files if this is a static library,
+# since it will be instrumented by the package that includes it
+LOCAL_NO_EMMA_INSTRUMENT:= true
+endif
+
+ifneq ($(LOCAL_NO_EMMA_INSTRUMENT),true)
+$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
+$(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
+# this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
+# $(full_classes_emma_jar)
+$(full_classes_emma_jar): $(full_classes_compiled_jar)
+	$(transform-classes.jar-to-emma)
+$(PRIVATE_EMMA_COVERAGE_FILE): $(full_classes_emma_jar)
+else
+$(full_classes_emma_jar): $(full_classes_compiled_jar) | $(ACP)
+	@echo Copying $<
+	$(copy-file-to-target)
+endif
 
 # Run jarjar if necessary, otherwise just copy the file.  This is the last
 # part of this step, so the output of this command is full_classes_jar.
 full_classes_jarjar_jar := $(full_classes_jar)
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | jarjar
+$(full_classes_jarjar_jar): $(full_classes_emma_jar) | jarjar
 	@echo JarJar: $@
 	$(hide) $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
+$(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) $< $@
 endif

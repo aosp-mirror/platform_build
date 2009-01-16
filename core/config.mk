@@ -16,6 +16,7 @@ SRC_DOCS:= $(TOPDIR)docs
 SRC_HEADERS := \
 	$(TOPDIR)system/core/include \
 	$(TOPDIR)hardware/libhardware/include \
+	$(TOPDIR)hardware/libhardware_legacy/include \
 	$(TOPDIR)hardware/ril/include \
 	$(TOPDIR)dalvik/libnativehelper/include \
 	$(TOPDIR)frameworks/base/include \
@@ -171,6 +172,7 @@ KCM := $(HOST_OUT_EXECUTABLES)/kcm$(HOST_EXECUTABLE_SUFFIX)
 ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign$(HOST_EXECUTABLE_SUFFIX)
 FINDBUGS := prebuilt/common/findbugs/bin/findbugs
 LOCALIZE := $(HOST_OUT_EXECUTABLES)/localize$(HOST_EXECUTABLE_SUFFIX)
+EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 # Binary prelinker/compressor tools
 APRIORI := $(HOST_OUT_EXECUTABLES)/apriori$(HOST_EXECUTABLE_SUFFIX)
@@ -290,5 +292,6 @@ TARGET_AVAILABLE_SDK_VERSIONS := current \
 
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml
+
 
 

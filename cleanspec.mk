@@ -55,6 +55,10 @@ INTERNAL_CLEAN_BUILD_VERSION := 2
 #$(call add-clean-step, find $(OUT_DIR) -type f -name "IGTalkSession*" -print0 | xargs -0 rm -f)
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
 
+$(call add-clean-step, rm -f $(PRODUCT_OUT)/system/etc/NOTICE.html)
+# Remove generated java files after CL 126153
+$(call add-clean-step, find $(OUT_DIR) -type f -name "*.java" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

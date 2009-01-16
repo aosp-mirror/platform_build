@@ -26,7 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 public class Stubs {
-    private static HashSet<ClassInfo> notStrippable;  
+    private static HashSet<ClassInfo> notStrippable;
     public static void writeStubs(String stubsDir, Boolean writeXML, String xmlFile,
             HashSet<String> stubPackages) {
         // figure out which classes we need
@@ -90,7 +90,7 @@ public class Stubs {
                         }
                     }
                 }
-                
+
                 // annotations are handled like methods
                 methods = cl.annotationElements();
                 for (MethodInfo m: methods) {
@@ -156,14 +156,14 @@ public class Stubs {
     }
 
     public static void cantStripThis(ClassInfo cl, HashSet<ClassInfo> notStrippable, String why) {
-      
+
       if (!notStrippable.add(cl)) {
         // slight optimization: if it already contains cl, it already contains
         // all of cl's parents
           return;
       }
       cl.setReasonIncluded(why);
-      
+
       // cant strip annotations
       /*if (cl.annotations() != null){
           for (AnnotationInstanceInfo ai : cl.annotations()){
@@ -233,7 +233,7 @@ public class Stubs {
           }
       }
     }
-    
+
     private static void cantStripThis(MethodInfo[] mInfos , HashSet<ClassInfo> notStrippable) {
       //for each method, blow open the parameters, throws and return types.  also blow open their generics
       if (mInfos != null){
@@ -241,8 +241,8 @@ public class Stubs {
               if (mInfo.getTypeParameters() != null){
                   for (TypeInfo tInfo : mInfo.getTypeParameters()){
                       if (tInfo.asClassInfo() != null){
-                          cantStripThis(tInfo.asClassInfo(), notStrippable, "8:" + 
-                                        mInfo.realContainingClass().qualifiedName() + ":" + 
+                          cantStripThis(tInfo.asClassInfo(), notStrippable, "8:" +
+                                        mInfo.realContainingClass().qualifiedName() + ":" +
                                         mInfo.name());
                       }
                   }
@@ -250,8 +250,8 @@ public class Stubs {
               if (mInfo.parameters() != null){
                   for (ParameterInfo pInfo : mInfo.parameters()){
                       if (pInfo.type() != null && pInfo.type().asClassInfo() != null){
-                          cantStripThis(pInfo.type().asClassInfo(), notStrippable, 
-                                        "9:"+  mInfo.realContainingClass().qualifiedName() 
+                          cantStripThis(pInfo.type().asClassInfo(), notStrippable,
+                                        "9:"+  mInfo.realContainingClass().qualifiedName()
                                         + ":" + mInfo.name());
                           if (pInfo.type().typeArguments() != null){
                               for (TypeInfo tInfoType : pInfo.type().typeArguments()){
@@ -264,9 +264,9 @@ public class Stubs {
                                                   + mInfo.containingClass().qualifiedName()
                                                   + '.' + mInfo.name() + "()");
                                       } else {
-                                          cantStripThis(tcl, notStrippable, 
-                                                  "10:" +  
-                                                  mInfo.realContainingClass().qualifiedName() + ":" + 
+                                          cantStripThis(tcl, notStrippable,
+                                                  "10:" +
+                                                  mInfo.realContainingClass().qualifiedName() + ":" +
                                                   mInfo.name());
                                       }
                                   }
@@ -276,19 +276,19 @@ public class Stubs {
                   }
               }
               for (ClassInfo thrown : mInfo.thrownExceptions()){
-                  cantStripThis(thrown, notStrippable, "11:" + 
+                  cantStripThis(thrown, notStrippable, "11:" +
                                 mInfo.realContainingClass().qualifiedName()
                                 +":" + mInfo.name());
               }
               if (mInfo.returnType() != null && mInfo.returnType().asClassInfo() != null){
-                  cantStripThis(mInfo.returnType().asClassInfo(), notStrippable, 
-                                "12:" + mInfo.realContainingClass().qualifiedName() + 
+                  cantStripThis(mInfo.returnType().asClassInfo(), notStrippable,
+                                "12:" + mInfo.realContainingClass().qualifiedName() +
                                 ":" + mInfo.name());
                   if (mInfo.returnType().typeArguments() != null){
                       for (TypeInfo tyInfo: mInfo.returnType().typeArguments() ){
                           if (tyInfo.asClassInfo() != null){
-                              cantStripThis(tyInfo.asClassInfo(), notStrippable, 
-                                            "13:" + 
+                              cantStripThis(tyInfo.asClassInfo(), notStrippable,
+                                            "13:" +
                                             mInfo.realContainingClass().qualifiedName()
                                             + ":" + mInfo.name());
                           }
@@ -417,18 +417,18 @@ public class Stubs {
 
         for (ClassInfo inner: cl.getRealInnerClasses()) {
             if (notStrippable.contains(inner)
-                    && !inner.isDocOnly()){  
+                    && !inner.isDocOnly()){
                 writeClass(stream, inner);
             }
         }
 
-        
+
         for (MethodInfo method: cl.constructors()) {
             if (!method.isDocOnly()) {
                 writeMethod(stream, method, true);
             }
         }
-        
+
         boolean fieldNeedsInitialization = false;
         boolean staticFieldNeedsInitialization = false;
         for (FieldInfo field: cl.allSelfFields()) {
@@ -441,12 +441,12 @@ public class Stubs {
                 }
             }
         }
-        
-        // The compiler includes a default public constructor that calls the super classes 
-        // default constructor in the case where there are no written constructors.  
+
+        // The compiler includes a default public constructor that calls the super classes
+        // default constructor in the case where there are no written constructors.
         // So, if we hide all the constructors, java may put in a constructor
-        // that calls a nonexistent super class constructor.  So, if there are no constructors, 
-        // and the super class doesn't have a default constructor, write in a private constructor 
+        // that calls a nonexistent super class constructor.  So, if there are no constructors,
+        // and the super class doesn't have a default constructor, write in a private constructor
         // that works.  TODO -- we generate this as protected, but we really should generate
         // it as private unless it also exists in the real code.
         if ((cl.constructors().length == 0 && (cl.getNonWrittenConstructors().length != 0
@@ -454,7 +454,7 @@ public class Stubs {
                 && !cl.isAnnotation()
                 && !cl.isInterface()
                 && !cl.isEnum() ) {
-            //Errors.error(Errors.HIDDEN_CONSTRUCTOR, 
+            //Errors.error(Errors.HIDDEN_CONSTRUCTOR,
             //             cl.position(), "No constructors " +
             //            "found and superclass has no parameterless constructor.  A constructor " +
             //            "that calls an appropriate superclass constructor " +
@@ -463,7 +463,7 @@ public class Stubs {
                     + "() { " + superCtorCall(cl,null)
                     + "throw new" + " RuntimeException(\"Stub!\"); }");
         }
-        
+
         for (MethodInfo method: cl.allSelfMethods()) {
             if (cl.isEnum()) {
                 if (("values".equals(method.name())
@@ -484,11 +484,11 @@ public class Stubs {
         //These can't be hidden.
         for (MethodInfo method : cl.getHiddenMethods()){
             MethodInfo overriddenMethod = method.findRealOverriddenMethod(method.name(), method.signature(), notStrippable);
-            ClassInfo classContainingMethod = method.findRealOverriddenClass(method.name(), 
+            ClassInfo classContainingMethod = method.findRealOverriddenClass(method.name(),
                                                                              method.signature());
             if (overriddenMethod != null && !overriddenMethod.isHidden()
                 && !overriddenMethod.isDocOnly() &&
-                (overriddenMethod.isAbstract() || 
+                (overriddenMethod.isAbstract() ||
                 overriddenMethod.containingClass().isInterface())) {
                 method.setReason("1:" + classContainingMethod.qualifiedName());
                 cl.addMethod(method);
@@ -519,11 +519,11 @@ public class Stubs {
             }
             stream.println("}");
         }
-        
+
         stream.println("}");
     }
 
-    
+
     static void writeMethod(PrintStream stream, MethodInfo method, boolean isConstructor) {
         String comma;
 
@@ -627,7 +627,7 @@ public class Stubs {
         if (mi.isAbstract() || mi.isStatic() || mi.isFinal()) {
             return false;
         }
-        
+
         // Find any relevant ancestor declaration and inspect it
         MethodInfo om = mi.findSuperclassImplementation(notStrippable);
         if (om != null) {
@@ -735,8 +735,8 @@ public class Stubs {
                     //put null in each super class method.  Cast null to the correct type
                     //to avoid collisions with other constructors.  If the type is generic
                     //don't cast it
-                    result += (!t.isTypeVariable() ? "(" + t.qualifiedTypeName() + t.dimension() +  
-                              ")" : "") + "null"; 
+                    result += (!t.isTypeVariable() ? "(" + t.qualifiedTypeName() + t.dimension() +
+                              ")" : "") + "null";
                 }
                 if (i != N-1) {
                     result += ",";
@@ -769,8 +769,8 @@ public class Stubs {
         }
         stream.println(";");
     }
-    
-    static void writeXML(PrintStream xmlWriter, HashMap<PackageInfo, List<ClassInfo>> allClasses, 
+
+    static void writeXML(PrintStream xmlWriter, HashMap<PackageInfo, List<ClassInfo>> allClasses,
                          HashSet notStrippable) {
         // extract the set of packages, sort them by name, and write them out in that order
         Set<PackageInfo> allClassKeys = allClasses.keySet();
@@ -783,22 +783,22 @@ public class Stubs {
         }
         xmlWriter.println("</api>");
     }
-    
+
     static void writePackageXML(PrintStream xmlWriter, PackageInfo pack, List<ClassInfo> classList,
                                 HashSet notStrippable) {
         ClassInfo[] classes = classList.toArray(new ClassInfo[classList.size()]);
         Arrays.sort(classes, ClassInfo.comparator);
         xmlWriter.println("<package name=\"" + pack.name() + "\"\n"
-                //+ " source=\"" + pack.position() + "\"\n" 
+                //+ " source=\"" + pack.position() + "\"\n"
                 + ">");
         for (ClassInfo cl : classes) {
             writeClassXML(xmlWriter, cl, notStrippable);
         }
         xmlWriter.println("</package>");
-      
-      
+
+
     }
-    
+
     static void writeClassXML(PrintStream xmlWriter, ClassInfo cl, HashSet notStrippable) {
         String scope = DroidDoc.scope(cl);
         String deprecatedString = "";
@@ -821,7 +821,7 @@ public class Stubs {
                 + " visibility=\"" + scope + "\"\n"
                 //+ " source=\"" + cl.position() + "\"\n"
                 + ">");
-        
+
         ClassInfo[] interfaces = cl.realInterfaces();
         Arrays.sort(interfaces, ClassInfo.comparator);
         for (ClassInfo iface : interfaces) {
@@ -830,13 +830,13 @@ public class Stubs {
                 xmlWriter.println("</implements>");
             }
         }
-        
+
         MethodInfo[] constructors = cl.constructors();
         Arrays.sort(constructors, MethodInfo.comparator);
         for (MethodInfo mi : constructors) {
             writeConstructorXML(xmlWriter, mi);
         }
-       
+
         MethodInfo[] methods = cl.allSelfMethods();
         Arrays.sort(methods, MethodInfo.comparator);
         for (MethodInfo mi : methods) {
@@ -844,16 +844,16 @@ public class Stubs {
                 writeMethodXML(xmlWriter, mi);
             }
         }
-       
+
         FieldInfo[] fields = cl.allSelfFields();
         Arrays.sort(fields, FieldInfo.comparator);
         for (FieldInfo fi : fields) {
             writeFieldXML(xmlWriter, fi);
         }
         xmlWriter.println("</" + declString + ">");
-        
+
     }
-    
+
     static void writeMethodXML(PrintStream xmlWriter, MethodInfo mi) {
         String scope = DroidDoc.scope(mi);
 
@@ -863,10 +863,10 @@ public class Stubs {
         } else {
             deprecatedString = "not deprecated";
         }
-        xmlWriter.println("<method name=\"" + mi.name() + "\"\n" 
+        xmlWriter.println("<method name=\"" + mi.name() + "\"\n"
                 + ((mi.returnType() != null)
                         ? " return=\"" + makeXMLcompliant(fullParameterTypeName(mi, mi.returnType(), false)) + "\"\n"
-                        : "") 
+                        : "")
                 + " abstract=\"" + mi.isAbstract() + "\"\n"
                 + " native=\"" + mi.isNative() + "\"\n"
                 + " synchronized=\"" + mi.isSynchronized() + "\"\n"
@@ -884,7 +884,7 @@ public class Stubs {
             count++;
             writeParameterXML(xmlWriter, mi, pi, count == numParameters);
         }
-        
+
         // but write exceptions in canonicalized order
         ClassInfo[] exceptions = mi.thrownExceptions();
         Arrays.sort(exceptions, ClassInfo.comparator);
@@ -895,7 +895,7 @@ public class Stubs {
         }
         xmlWriter.println("</method>");
     }
-    
+
     static void writeConstructorXML(PrintStream xmlWriter, MethodInfo mi) {
         String scope = DroidDoc.scope(mi);
         String deprecatedString = "";
@@ -919,7 +919,7 @@ public class Stubs {
             count++;
             writeParameterXML(xmlWriter, mi, pi, count == numParameters);
         }
-        
+
         ClassInfo[] exceptions = mi.thrownExceptions();
         Arrays.sort(exceptions, ClassInfo.comparator);
         for (ClassInfo pi : exceptions) {
@@ -929,14 +929,14 @@ public class Stubs {
         }
         xmlWriter.println("</constructor>");
   }
-    
+
     static void writeParameterXML(PrintStream xmlWriter, MethodInfo method,
             ParameterInfo pi, boolean isLast) {
         xmlWriter.println("<parameter name=\"" + pi.name() + "\" type=\"" +
                 makeXMLcompliant(fullParameterTypeName(method, pi.type(), isLast)) + "\">");
         xmlWriter.println("</parameter>");
     }
-    
+
     static void writeFieldXML(PrintStream xmlWriter, FieldInfo fi) {
         String scope = DroidDoc.scope(fi);
         String deprecatedString = "";
@@ -955,7 +955,7 @@ public class Stubs {
                           + " type=\"" + fullTypeName + "\"\n"
                           + " transient=\"" + fi.isTransient() + "\"\n"
                           + " volatile=\"" + fi.isVolatile() + "\"\n"
-                          + (fieldIsInitialized(fi) ? " value=\"" + value + "\"\n" : "") 
+                          + (fieldIsInitialized(fi) ? " value=\"" + value + "\"\n" : "")
                           + " static=\"" + fi.isStatic() + "\"\n"
                           + " final=\"" + fi.isFinal() + "\"\n"
                           + " deprecated=\"" + deprecatedString + "\"\n"
@@ -964,7 +964,7 @@ public class Stubs {
                           + ">");
         xmlWriter.println("</field>");
     }
-    
+
     static String makeXMLcompliant(String s) {
         String returnString = "";
         returnString = s.replaceAll("&", "&amp;");
@@ -974,16 +974,15 @@ public class Stubs {
         returnString = returnString.replaceAll("'", "&pos;");
         return returnString;
     }
-    
+
     static String fullParameterTypeName(MethodInfo method, TypeInfo type, boolean isLast) {
         String fullTypeName = type.fullName(method.typeVariables());
         if (isLast && method.isVarArgs()) {
             // TODO: note that this does not attempt to handle hypothetical
             // vararg methods whose last parameter is a list of arrays, e.g.
             // "Object[]...".
-            fullTypeName = type.qualifiedTypeName() + "...";
+            fullTypeName = type.fullNameNoDimension(method.typeVariables()) + "...";
         }
         return fullTypeName;
     }
 }
-

@@ -81,6 +81,8 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS:=
 LOCAL_DX_FLAGS:=
 LOCAL_CERTIFICATE:=
 LOCAL_SDK_VERSION:=
+LOCAL_NO_EMMA_INSTRUMENT:=
+LOCAL_NO_EMMA_COMPILE:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
