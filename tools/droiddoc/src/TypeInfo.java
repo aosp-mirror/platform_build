@@ -81,37 +81,43 @@ public class TypeInfo
 
     public String fullName(HashSet<String> typeVars)
     {
+        mFullName = fullNameNoDimension(typeVars) + mDimension;
+        return mFullName;
+    }
+
+    public String fullNameNoDimension(HashSet<String> typeVars)
+    {
+        String fullName = null;
         if (mIsTypeVariable) {
             if (typeVars.contains(mQualifiedTypeName)) {
                 // don't recurse forever with the parameters.  This handles
                 // Enum<K extends Enum<K>>
-                return mQualifiedTypeName + mDimension;
+                return mQualifiedTypeName;
             }
             typeVars.add(mQualifiedTypeName);
         }
 /*
-        if (mFullName != null) {
-            return mFullName;
+        if (fullName != null) {
+            return fullName;
         }
 */
-        mFullName = mQualifiedTypeName;
+        fullName = mQualifiedTypeName;
         if (mTypeArguments != null && mTypeArguments.length > 0) {
-            mFullName += typeArgumentsName(mTypeArguments, typeVars);
+            fullName += typeArgumentsName(mTypeArguments, typeVars);
         }
         else if (mSuperBounds != null && mSuperBounds.length > 0) {
-            mFullName += " super " + mSuperBounds[0].fullName(typeVars);
+            fullName += " super " + mSuperBounds[0].fullName(typeVars);
             for (int i=1; i<mSuperBounds.length; i++) {
-                mFullName += " & " + mSuperBounds[i].fullName(typeVars);
+                fullName += " & " + mSuperBounds[i].fullName(typeVars);
             }
         }
         else if (mExtendsBounds != null && mExtendsBounds.length > 0) {
-            mFullName += " extends " + mExtendsBounds[0].fullName(typeVars);
+            fullName += " extends " + mExtendsBounds[0].fullName(typeVars);
             for (int i=1; i<mExtendsBounds.length; i++) {
-                mFullName += " & " + mExtendsBounds[i].fullName(typeVars);
+                fullName += " & " + mExtendsBounds[i].fullName(typeVars);
             }
         }
-        mFullName += mDimension;
-        return mFullName;
+        return fullName;
     }
 
     public TypeInfo[] typeArguments()
@@ -241,13 +247,13 @@ public class TypeInfo
             return "null";
         }
     }
-    
+
     public String toString(){
       String returnString = "";
       returnString += "Primitive?: " + mIsPrimitive + " TypeVariable?: " +
       mIsTypeVariable + " Wildcard?: " + mIsWildcard + " Dimension: " + mDimension
       + " QualifedTypeName: " + mQualifiedTypeName;
-      
+
       if (mTypeArguments != null){
         returnString += "\nTypeArguments: ";
         for (TypeInfo tA : mTypeArguments){

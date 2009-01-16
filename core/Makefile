@@ -112,6 +112,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE)
 			BUILD_VERSION_TAGS="$(BUILD_VERSION_TAGS)" \
 			TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
 			BUILD_FINGERPRINT="$(BUILD_FINGERPRINT)" \
+			TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
 	        bash $(BUILDINFO_SH) > $@
 	$(hide) if [ -f $(TARGET_DEVICE_DIR)/system.prop ]; then \
 	          cat $(TARGET_DEVICE_DIR)/system.prop >> $@; \
@@ -399,6 +400,7 @@ endef
 
 target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
 target_notice_file_html := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
+target_notice_file_html_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
 tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 
@@ -418,15 +420,17 @@ $(eval $(call combine-notice-files, \
 			$(HOST_OUT_NOTICE_FILES), \
 			$(ALL_DEFAULT_INSTALLED_MODULES)))
 
-# Install the html file at /system/NOTICE.html.
+# Install the html file at /system/etc/NOTICE.html.gz.
 # This is not ideal, but this is very late in the game, after a lot of
 # the module processing has already been done -- in fact, we used the
 # fact that all that has been done to get the list of modules that we
 # need notice files for.
-installed_notice_html := $(TARGET_OUT)/etc/NOTICE.html
-$(installed_notice_html): $(target_notice_file_html) | $(ACP)
+$(target_notice_file_html_gz): $(target_notice_file_html)
+	gzip -c $< > $@
+installed_notice_html_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
+$(installed_notice_html_gz): $(target_notice_file_html_gz) | $(ACP)
 	$(copy-file-to-target)
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html)
+ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_gz)
 
 # The kernel isn't really a module, so to get its module file in there, we
 # make the target NOTICE files depend on this particular file too, which will

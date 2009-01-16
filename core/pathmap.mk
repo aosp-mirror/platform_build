@@ -39,6 +39,7 @@ pathmap_INCL := \
     libdrm1:frameworks/base/media/libdrm/mobile1/include \
     libdrm2:frameworks/base/media/libdrm/mobile2/include \
     libhardware:hardware/libhardware/include \
+    libhardware_legacy:hardware/libhardware_legacy/include \
     libhost:build/libs/host/include \
     libm:bionic/libm/include \
     libnativehelper:dalvik/libnativehelper/include \

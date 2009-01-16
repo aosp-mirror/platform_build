@@ -165,7 +165,7 @@ ifneq ($(filter sdk,$(MAKECMDGOALS)),)
 ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
-override_build_tags := development
+override_build_tags := user
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
@@ -495,34 +495,11 @@ eng_MODULES := $(sort $(call get-tagged-modules,eng,restricted))
 debug_MODULES := $(sort $(call get-tagged-modules,debug,restricted))
 tests_MODULES := $(sort $(call get-tagged-modules,tests,restricted))
 
-# Don't include any GNU targets in the SDK.  It's ok (and necessary)
-# to build the host tools, but nothing that's going to be installed
-# on the target (including static libraries).
-all_development_MODULES := \
-	$(sort $(call get-tagged-modules,development,restricted))
-target_gnu_MODULES := \
-	$(filter \
-		$(TARGET_OUT_INTERMEDIATES)/% \
-		$(TARGET_OUT)/% \
-		$(TARGET_OUT_DATA)/%, \
-	    $(sort $(call get-tagged-modules,gnu)))
-#$(info Removing from development:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
-development_MODULES := \
-	$(filter-out $(target_gnu_MODULES),$(all_development_MODULES))
-
 droid_MODULES := $(sort $(Default_MODULES) \
 			$(eng_MODULES) \
 			$(debug_MODULES) \
 			$(user_MODULES) \
 			$(all_development_MODULES))
-
-# The list of everything that's not on droid_MODULES.
-# Also skip modules tagged as "restricted", which are
-# never installed unless explicitly mentioned in
-# CUSTOM_MODULES.
-nonDroid_MODULES := $(sort $(call get-tagged-modules,\
-			  $(ALL_MODULE_TAGS),\
-			  eng debug user development restricted))
 
 # THIS IS A TOTAL HACK AND SHOULD NOT BE USED AS AN EXAMPLE
 modules_to_build := $(droid_MODULES)
@@ -542,6 +519,22 @@ ifdef overridden_packages
           $(modules_to_build))
 endif
 #$(error filtered out $(filter-out $(modules_to_build),$(old_modules_to_build)))
+
+# Don't include any GNU targets in the SDK.  It's ok (and necessary)
+# to build the host tools, but nothing that's going to be installed
+# on the target (including static libraries).
+ifneq ($(filter sdk,$(MAKECMDGOALS)),)
+  target_gnu_MODULES := \
+              $(filter \
+                      $(TARGET_OUT_INTERMEDIATES)/% \
+                      $(TARGET_OUT)/% \
+                      $(TARGET_OUT_DATA)/%, \
+                              $(sort $(call get-tagged-modules,gnu)))
+  $(info Removing from sdk:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
+  modules_to_build := \
+              $(filter-out $(target_gnu_MODULES),$(modules_to_build))
+endif
+
 
 # config/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES

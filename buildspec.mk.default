@@ -16,7 +16,7 @@
 
 ######################################################################
 # This is a do-nothing template file.  To use it, copy it to a file
-# named "buildspec.mk" in the same directory, and uncomment or change
+# named "buildspec.mk" in the root directory, and uncomment or change
 # the variables necessary for your desired configuration.  The file
 # "buildspec.mk" should never be checked in to source control.
 ######################################################################

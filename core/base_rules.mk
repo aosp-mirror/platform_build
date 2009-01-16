@@ -57,8 +57,8 @@ endif
 
 LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS))
 ifeq (,$(LOCAL_MODULE_TAGS))
-# Modules without tags fall back to the default set
-LOCAL_MODULE_TAGS := eng user development
+# Modules without tags fall back to user (which is changed to user eng below)
+LOCAL_MODULE_TAGS := user
 #$(warning default tags: $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))))
 endif
 

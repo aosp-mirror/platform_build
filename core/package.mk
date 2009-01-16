@@ -65,7 +65,8 @@ LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif
 
 ifeq (,$(LOCAL_RESOURCE_DIR))
-LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
+LOCAL_RESOURCE_DIR := $(wildcard $(addsuffix /$(LOCAL_PATH)/res, $(PRODUCT_PACKAGE_OVERLAYS))) \
+  $(LOCAL_PATH)/res
 endif
 
 # this is an app, so add the system libraries to the search path

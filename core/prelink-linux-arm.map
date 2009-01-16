@@ -75,7 +75,8 @@ libexpat.so             0xAAB00000
 libwebcore.so           0xAA000000
 libutils.so             0xA9D00000
 libcameraservice.so     0xA9C80000
-libhardware.so          0xA9C00000
+libhardware.so          0xA9C70000
+libhardware_legacy.so   0xA9C00000
 libapp_process.so       0xA9B00000
 libsystem_server.so     0xA9A00000
 libime.so               0xA9800000

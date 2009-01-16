@@ -66,7 +66,8 @@ _product_var_list := \
     PRODUCT_PROPERTY_OVERRIDES \
     PRODUCT_COPY_FILES \
     PRODUCT_OTA_PUBLIC_KEYS \
-    PRODUCT_POLICY
+    PRODUCT_POLICY \
+    PRODUCT_PACKAGE_OVERLAYS
 
 define dump-product
 $(info ==== $(1) ====)\

@@ -186,6 +186,10 @@ PRODUCT_COPY_FILES := \
 PRODUCT_PROPERTY_OVERRIDES := \
 	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES))
 
+# Should we use the default resources or add any product specific overlays
+PRODUCT_PACKAGE_OVERLAYS := \
+	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
+
 # Add the product-defined properties to the build properties.
 ADDITIONAL_BUILD_PROPERTIES := \
 	$(ADDITIONAL_BUILD_PROPERTIES) \
