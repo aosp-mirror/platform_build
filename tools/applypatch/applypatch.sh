@@ -128,7 +128,7 @@ run_command $WORK_DIR/applypatch -c $WORK_DIR/old.file $BAD2_SHA1 $BAD1_SHA1 && 
 # --------------- apply patch ----------------------
 
 $ADB push $DATA_DIR/old.file $WORK_DIR
-$ADB push $DATA_DIR/patch.xdelta3 $WORK_DIR
+$ADB push $DATA_DIR/patch.bsdiff $WORK_DIR
 
 # Check that the partition has enough space to apply the patch without
 # copying.  If it doesn't, we'll be testing the low-space condition
@@ -145,19 +145,6 @@ if (( free_kb * 1024 < NEW_SIZE * 3 / 2 )); then
   exit 1
 fi
 
-testname "apply xdelta3 patch"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.xdelta3 || fail
-$ADB pull $WORK_DIR/old.file $tmpdir/patched
-diff -q $DATA_DIR/new.file $tmpdir/patched || fail
-
-testname "reapply xdelta3 patch"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.xdelta3 || fail
-$ADB pull $WORK_DIR/old.file $tmpdir/patched
-diff -q $DATA_DIR/new.file $tmpdir/patched || fail
-
-$ADB push $DATA_DIR/old.file $WORK_DIR
-$ADB push $DATA_DIR/patch.bsdiff $WORK_DIR
-
 testname "apply bsdiff patch"
 run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
@@ -172,7 +159,6 @@ diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 # --------------- apply patch with low space on /system ----------------------
 
 $ADB push $DATA_DIR/old.file $WORK_DIR
-$ADB push $DATA_DIR/patch.xdelta3 $WORK_DIR
 $ADB push $DATA_DIR/patch.bsdiff $WORK_DIR
 
 free_kb=$(free_space $WORK_FS)
@@ -181,18 +167,6 @@ echo run_command dd if=/dev/zero of=$WORK_DIR/bloat.dat count=$((free_kb-512)) b
 run_command dd if=/dev/zero of=$WORK_DIR/bloat.dat count=$((free_kb-512)) bs=1024 || fail
 free_kb=$(free_space $WORK_FS)
 echo "${free_kb}kb free on /$WORK_FS now."
-
-testname "apply xdelta3 patch with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.xdelta3 || fail
-$ADB pull $WORK_DIR/old.file $tmpdir/patched
-diff -q $DATA_DIR/new.file $tmpdir/patched || fail
-
-testname "reapply xdelta3 patch with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.xdelta3 || fail
-$ADB pull $WORK_DIR/old.file $tmpdir/patched
-diff -q $DATA_DIR/new.file $tmpdir/patched || fail
-
-$ADB push $DATA_DIR/old.file $WORK_DIR
 
 testname "apply bsdiff patch with low space"
 run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
@@ -207,7 +181,6 @@ diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 # --------------- apply patch with low space on /system and /cache ----------------------
 
 $ADB push $DATA_DIR/old.file $WORK_DIR
-$ADB push $DATA_DIR/patch.xdelta3 $WORK_DIR
 $ADB push $DATA_DIR/patch.bsdiff $WORK_DIR
 
 free_kb=$(free_space $WORK_FS)
@@ -216,7 +189,7 @@ echo "${free_kb}kb free on /$WORK_FS"
 run_command mkdir /cache/subdir
 run_command 'echo > /cache/subdir/a.file'
 run_command 'echo > /cache/a.file'
-run_command mkdir -p /cache/recovery/otatest
+run_command mkdir /cache/recovery /cache/recovery/otatest
 run_command 'echo > /cache/recovery/otatest/b.file'
 run_command "echo > $CACHE_TEMP_SOURCE"
 free_kb=$(free_space cache)
@@ -268,8 +241,8 @@ $ADB push $DATA_DIR/old.file $CACHE_TEMP_SOURCE
 # put some junk in the old file
 run_command dd if=/dev/urandom of=$WORK_DIR/old.file count=100 bs=1024 || fail
 
-testname "apply xdelta3 patch from cache (corrupted source) with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.xdelta3 || fail
+testname "apply bsdiff patch from cache (corrupted source) with low space"
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 

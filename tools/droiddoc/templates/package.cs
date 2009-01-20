@@ -29,7 +29,9 @@
 <?cs def:class_table(label, classes) ?>
   <?cs if:subcount(classes) ?>
     <h3><?cs var:label ?></h3>
+    <div class="jd-sumtable">
     <?cs call:class_link_table(classes) ?>
+    </div>
   <?cs /if ?>
 <?cs /def ?>
 

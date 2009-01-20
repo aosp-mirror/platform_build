@@ -1,20 +1,17 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <errno.h>
@@ -209,24 +206,6 @@ int CheckMode(int argc, char** argv) {
 }
 
 int ShowLicenses() {
-  puts("\nCopyright (C) 2008 The Android Open Source Project\n"
-       "\n"
-       "This program is free software; you can redistribute it and/or\n"
-       "modify it under the terms of the GNU General Public License\n"
-       "as published by the Free Software Foundation; either version 2\n"
-       "of the License, or (at your option) any later version.\n"
-       "\n"
-       "This program is distributed in the hope that it will be useful,\n"
-       "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-       "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-       "GNU General Public License for more details.\n"
-       "\n"
-       "You should have received a copy of the GNU General Public License\n"
-       "along with this program; if not, write to the Free Software\n"
-       "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA\n"
-       "02110-1301, USA.\n"
-       "\n------------------\n"
-       );
   ShowBSDiffLicense();
   return 0;
 }
@@ -251,10 +230,10 @@ size_t FreeSpaceForFile(const char* filename) {
 //   successfully.
 //
 // - otherwise, if the sha1 hash of <file> is <src-sha1>, applies the
-//   xdelta3 or bsdiff <patch> to <file> to produce a new file (the
-//   type of patch is automatically detected from the file header).
-//   If that new file has sha1 hash <tgt-sha1>, moves it to replace
-//   <file>, and exits successfully.
+//   bsdiff <patch> to <file> to produce a new file (the type of patch
+//   is automatically detected from the file header).  If that new
+//   file has sha1 hash <tgt-sha1>, moves it to replace <file>, and
+//   exits successfully.
 //
 // - otherwise, or if any error is encountered, exits with non-zero
 //   status.
@@ -426,12 +405,8 @@ int main(int argc, char** argv) {
       header[2] == 0xc4 && header[3] == 0) {
     // xdelta3 patches begin "VCD" (with the high bits set) followed
     // by a zero byte (the version number).
-    int result = ApplyXDelta3Patch(source_to_use->data, source_to_use->size,
-                                   patch_filename, output, &ctx);
-    if (result != 0) {
-      fprintf(stderr, "ApplyXDelta3Patch failed\n");
-      return result;
-    }
+    fprintf(stderr, "error:  xdelta3 patches no longer supported\n");
+    return 1;
   } else if (header_bytes_read >= 8 &&
              memcmp(header, "BSDIFF40", 8) == 0) {
     int result = ApplyBSDiffPatch(source_to_use->data, source_to_use->size,
