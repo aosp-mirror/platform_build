@@ -103,7 +103,7 @@ This <?cs var:kind ?> is deprecated.
 <?cs def:see_also_tags(also) ?>
 <?cs if:subcount(also) ?>
 <div class="jd-tagdata">
-    <h4 class="jd-tagtitle">See Also</h4>
+    <h5 class="jd-tagtitle">See Also</h5>
     <ul class="nolist">
     <?cs each:tag=also
     ?><li><?cs
@@ -114,8 +114,7 @@ This <?cs var:kind ?> is deprecated.
         else ?>[ERROR: Unknown @see kind]<?cs
         /if ?></li>
     <?cs /each ?>
-    </table>
-    <ul>
+    </ul>
 </div>
 <?cs /if ?>
 <?cs /def ?>
@@ -127,11 +126,12 @@ This <?cs var:kind ?> is deprecated.
 <?cs def:description(obj) ?>
 
 <?cs call:deprecated_warning(obj) ?>
-<?cs call:tag_list(obj.descr) ?>
+<div class="jd-tagdata jd-tagdescr"><p><?cs call:tag_list(obj.descr) ?></p></div>
+
 
 <?cs if:subcount(obj.attrRefs) ?>
 <div class="jd-tagdata">
-    <h4 class="jd-tagtitle">Related XML Attributes</h4>
+    <h5 class="jd-tagtitle">Related XML Attributes</h5>
     <ul class="nolist">
     <?cs each:attr=obj.attrRefs ?>
         <li><a href="<?cs var:toroot ?><?cs var:attr.href ?>"><?cs var:attr.name ?></a></li>
@@ -142,7 +142,7 @@ This <?cs var:kind ?> is deprecated.
 
 <?cs if:subcount(obj.paramTags) ?>
 <div class="jd-tagdata">
-    <h4 class="jd-tagtitle">Parameters</h4>
+    <h5 class="jd-tagtitle">Parameters</h5>
     <table class="jd-tagtable">
     <?cs each:tag=obj.paramTags
     ?><tr>
@@ -158,14 +158,14 @@ This <?cs var:kind ?> is deprecated.
 
 <?cs if:subcount(obj.returns) ?>
 <div class="jd-tagdata">
-    <h4 class="jd-tagtitle">Returns</h4>
+    <h5 class="jd-tagtitle">Returns</h5>
     <ul class="nolist"><li><?cs call:tag_list(obj.returns) ?></li></ul>
 </div>
 <?cs /if ?>
 
 <?cs if:subcount(obj.throws) ?>
 <div class="jd-tagdata">
-    <h4 class="jd-tagtitle">Throws</h4>
+    <h5 class="jd-tagtitle">Throws</h5>
     <table class="jd-tagtable">
     <?cs each:tag=obj.throws
     ?>  <tr>
@@ -185,7 +185,7 @@ This <?cs var:kind ?> is deprecated.
 <?cs # A table of links to classes with descriptions, as in a package file or the nested classes ?>
 <?cs def:class_link_table(classes) ?>
 <?cs set:count = #1 ?>
-<table class="jd-linktable"><?cs
+<table class="jd-sumtable-expando"><?cs
     each:cl=classes ?>
       <tr <?cs if:count % #2 ?>class="alt-color"<?cs /if ?> >
             <td class="jd-linkcol"><?cs call:type_link(cl.type) ?></td>

@@ -207,7 +207,7 @@
 }
 	
 #jd-header {
-  background-color: #E9E9E9;
+  background-color: #E2E2E2;
   padding: 7px 20px;
 }
 
@@ -253,6 +253,86 @@
   position:relative;
 }
 
+/* summary tables for reference pages */
+.jd-sumtable {
+margin: .5em 1em 1em 1em;
+width:99%;
+font-size:.9em;
+}
+
+.jd-sumtable a {
+  text-decoration:none;
+}
+
+.jd-sumtable a:hover {
+  text-decoration:underline;
+}
+
+/* a div inside a sumtable th holding "Expand All" */
+.expandall {
+float:right;
+font-weight:normal;
+}
+
+/* adjustments for in/direct subclasses tables */
+.jd-sumtable-subclasses {
+  margin: 1em 0 0 0;
+  max-width:968px;
+}
+
+/* extra space between end of method name and open-paren */
+.sympad {
+  margin-right: 2px;
+}
+
+/* right alignment for the return type in sumtable */
+.jd-sumtable .jd-typecol {
+  text-align:right;
+}
+
+/* adjustments for the expando table-in-table */
+.jd-sumtable-expando {
+  margin:.5em 0;
+  padding:0;
+}
+
+/* a div that holds a short description */
+.jd-descrdiv {
+  width:100%; 
+  padding:3px 1em 0 1em;
+  margin:0;
+  border:0;
+}
+
+/* page-top-right container for reference pages (holds
+links to summary tables) */
+#api-info-block {
+  font-size:.8em;
+  margin:0;
+  padding:6px;
+  font-weight:normal;
+  float:right;
+  text-align:right;
+  color:#999;
+  max-width:70%;
+}
+
+/* applies to a div containing links to summary tables */
+.sum-details-links {
+  margin:0 .5em;
+  padding:0;
+  font-weight:normal;
+}
+
+.sum-details-links a {
+  text-decoration:none;
+}
+
+.sum-details-links a:hover {
+  text-decoration:underline;
+}
+
+
 /* inheritance table */
 .jd-inheritance-table {
   border-spacing:0;
@@ -295,7 +375,7 @@ hr {
   color:#111;
   border-top:2px solid #ccc;
   padding: .5em 0 0;
-  margin: 1.75em 0 1em 0;
+  margin: 1.5em 0 1em 0;
   max-width:968px;
 }
 
@@ -334,7 +414,12 @@ hr {
 .nolist {
   list-style:none;
   padding:0;
-  margin:0 0 1em 1em;
+  margin:0 0 0 1em;
+}
+
+.nolist li {
+  padding:0;
+  margin:0;
 }
 
 h4 .normal {
@@ -348,18 +433,57 @@ h4 .normal {
   margin:0 0 1em;
 }
 
-.jd-tagdata {
-  margin:.6em 0;
+/* API reference: a container for the
+.tagdata blocks that make up the detailed
+description */
+.jd-details-descr {
+  padding:0;
+  margin:.5em .25em;
 }
 
-.jd-tagdata ul {
+/* API reference: a block containing 
+a detailed description, a params table,
+seealso list, etc */
+.jd-tagdata {
+  margin:.5em 1em;
+}
+
+/* API reference: adjustments to
+the detailed description block */
+.jd-tagdescr {
+  margin:.25em 0 .75em 0;
+  line-height:1em;
+}
+
+.jd-tagdescr p {
+  margin:.5em 0;
+  padding:0;
+
+}
+
+.jd-tagdescr ol,
+.jd-tagdescr ul {
+  margin:0 2.5em;
   padding:0;
 }
 
+.jd-tagdescr table,
+.jd-tagdescr img {
+  margin:.25em 1em;
+}
+
+.jd-tagdescr li {
+margin:0 0 .25em 0;
+padding:0;
+}
+
+/* API reference: heading marking
+the details section for constants,
+attrs, methods, etc. */
 h4.jd-details-title {
   font-size:1.15em;
-  background-color: #d6d6d6;
-  margin:0 0 .6em;
+  background-color: #E2E2E2;
+  margin:1.5em 0 .6em;
   padding:3px;
 }
 
@@ -367,8 +491,11 @@ h4.jd-tagtitle {
   margin:0;
 }
 
-.jd-details-descr {
-  padding:3px;
+/* API reference: heading for "Parameters", "See Also", etc.,
+in details sections */
+h5.jd-tagtitle {
+  margin:0 0 .25em 0;
+  font-size:1em;
 }
 
 .jd-tagtable {
@@ -398,13 +525,13 @@ h4.jd-tagtitle {
 }
 
 div.special {
-  padding: 15px 20px 3px;
+  padding: .5em 1em 1em 1em;
   margin: 0 0 1em;
   background-color: #ddf0f2;
 }
 
 div.special p {
-  margin: .25em 0;
+  margin: .5em 0 0 0;
 }
 
 div.special ol {
@@ -529,6 +656,7 @@ pre.classic {
   margin-top:0px;
   width:295;
   float:right;
+  font-size:.9em;
 }
 
 #qv ol {
@@ -725,7 +853,7 @@ table ol.toc {
 }
 
 tr.alt-color {
-  background-color: #e6e6e6;
+  background-color: #f6f6f6;
 }
 
 /* expando trigger */

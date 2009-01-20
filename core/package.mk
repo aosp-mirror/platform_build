@@ -65,9 +65,11 @@ LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif
 
 ifeq (,$(LOCAL_RESOURCE_DIR))
-LOCAL_RESOURCE_DIR := $(wildcard $(addsuffix /$(LOCAL_PATH)/res, $(PRODUCT_PACKAGE_OVERLAYS))) \
-  $(LOCAL_PATH)/res
+  LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 endif
+LOCAL_RESOURCE_DIR := \
+  $(wildcard $(addsuffix /$(LOCAL_RESOURCE_DIR), $(PRODUCT_PACKAGE_OVERLAYS))) \
+  $(LOCAL_RESOURCE_DIR)
 
 # this is an app, so add the system libraries to the search path
 LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
@@ -77,8 +79,14 @@ LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
 all_assets := $(call find-subdir-assets,$(LOCAL_ASSET_DIR))
 all_assets := $(addprefix $(LOCAL_ASSET_DIR)/,$(patsubst assets/%,%,$(all_assets)))
 
-all_resources := $(call find-subdir-assets,$(LOCAL_RESOURCE_DIR))
-all_resources := $(addprefix $(LOCAL_RESOURCE_DIR)/,$(patsubst res/%,%,$(all_resources)))
+all_resources := $(strip \
+    $(foreach dir, $(LOCAL_RESOURCE_DIR), \
+      $(addprefix $(dir)/, \
+        $(patsubst res/%,%, \
+          $(call find-subdir-assets,$(dir)) \
+         ) \
+       ) \
+     ))
 
 all_res_assets := $(strip $(all_assets) $(all_resources))
 

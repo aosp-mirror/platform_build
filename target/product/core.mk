@@ -18,5 +18,6 @@ PRODUCT_PACKAGES := \
     MediaProvider \
     SettingsProvider \
     TelephonyProvider \
+    UserDictionaryProvider \
     PackageInstaller \
     Bugreport

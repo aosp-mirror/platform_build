@@ -809,6 +809,11 @@ define package_files-copy-root
   fi
 endef
 
+built_ota_tools := \
+ 	$(hide) $(ACP) $(call intermediates-dir-for,EXECUTABLES,applypatch)/applypatch \
+	$(hide) $(ACP) $(call intermediates-dir-for,EXECUTABLES,check_prereq)/check_prereq
+$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
+
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
@@ -820,6 +825,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 		$(INTERNAL_OTA_SCRIPT_TARGET) \
+		$(built_ota_tools) \
 		$(APKCERTS_FILE) \
 		| $(ACP)
 	@echo "Package target files: $@"
@@ -865,10 +871,11 @@ endif
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_OUT_DATA),$(zip_root)/DATA)
 	@# Extra contents of the OTA package
-	$(hide) mkdir -p $(zip_root)/OTA
+	$(hide) mkdir -p $(zip_root)/OTA/bin
 	$(hide) $(call package_files-copy-root, \
 		$(INTERNAL_OTA_INTERMEDIATES_DIR),$(zip_root)/OTA)
 	$(hide) $(ACP) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
+	$(hide) $(ACP) $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
 	@# Files that don't end up in any images, but are necessary to
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META

@@ -17,12 +17,12 @@ include $(CLEAR_VARS)
 
 ifneq ($(TARGET_SIMULATOR),true)
 
-LOCAL_SRC_FILES := applypatch.c xdelta3.c bsdiff.c freecache.c
+LOCAL_SRC_FILES := applypatch.c bsdiff.c freecache.c
 LOCAL_MODULE := applypatch
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := eng
-LOCAL_C_INCLUDES += external/xdelta3 external/bzip2
-LOCAL_STATIC_LIBRARIES += libxdelta3 libmincrypt libbz libc
+LOCAL_C_INCLUDES += external/bzip2
+LOCAL_STATIC_LIBRARIES += libmincrypt libbz libc
 
 include $(BUILD_EXECUTABLE)
 

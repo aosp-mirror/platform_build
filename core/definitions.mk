@@ -243,15 +243,9 @@ endef
 ###########################################################
 
 define find-subdir-assets
-$(if $(1),\
-  $(patsubst ./%,%, $(foreach dir,$(1),\
-    $(shell if [ -d $(dir) ] ; then\
-	 cd $(dir) ; find ./ -type f -and -not -type l ;\
-      fi \
-    ) \
-  )) \
-, \
-  $(warning Empty argument supplied to find-subdir-assets) \
+$(if $(1),$(patsubst ./%,%, \
+	$(shell if [ -d $(1) ] ; then cd $(1) ; find ./ -type f -and -not -type l ; fi)), \
+	$(warning Empty argument supplied to find-subdir-assets) \
 )
 endef
 
