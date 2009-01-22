@@ -75,6 +75,9 @@ $(INSTALLED_BUILD_PROP_TARGET): PRIVATE_BUILD_DESC := $(build_desc)
 ifeq (,$(strip $(BUILD_FINGERPRINT)))
   BUILD_FINGERPRINT := $(PRODUCT_BRAND)/$(TARGET_PRODUCT)/$(TARGET_DEVICE)/$(TARGET_BOOTLOADER_BOARD_NAME):$(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
 endif
+ifneq ($(words $(BUILD_FINGERPRINT)),1)
+  $(error BUILD_FINGERPRINT cannot contain spaces: "$(BUILD_FINGERPRINT)")
+endif
 
 # Selects the first locale in the list given as the argument,
 # and splits it into language and region, which each may be
@@ -810,8 +813,8 @@ define package_files-copy-root
 endef
 
 built_ota_tools := \
- 	$(hide) $(ACP) $(call intermediates-dir-for,EXECUTABLES,applypatch)/applypatch \
-	$(hide) $(ACP) $(call intermediates-dir-for,EXECUTABLES,check_prereq)/check_prereq
+ 	$(call intermediates-dir-for,EXECUTABLES,applypatch)/applypatch \
+	$(call intermediates-dir-for,EXECUTABLES,check_prereq)/check_prereq
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 
 # Depending on the various images guarantees that the underlying
