@@ -361,22 +361,8 @@ include $(board_config_mk)
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
-ifdef CUSTOM_PKG
-$(info ***************************************************************)
-$(info ***************************************************************)
-$(info CUSTOM_PKG is obsolete; use CUSTOM_MODULES)
-$(info ***************************************************************)
-$(info ***************************************************************)
-$(error stopping)
-endif
-ifdef CUSTOM_TARGETS
-$(info ***************************************************************)
-$(info ***************************************************************)
-$(info CUSTOM_TARGETS is obsolete; use CUSTOM_MODULES)
-$(info ***************************************************************)
-$(info ***************************************************************)
-$(error stopping)
-endif
+# Clean up/verify variables defined by the board config file.
+TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
 
 #
 # Include all of the makefiles in the system
