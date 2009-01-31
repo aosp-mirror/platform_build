@@ -16,6 +16,23 @@
       "revId": "4cf7606d7ea96bd7f40c4320bceff462005441e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAACH////g\u003d",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1001538
+      },
+      "writtenOn": "2009-01-31T13:28:29Z",
+      "side": 1,
+      "message": "\u0026\u0026 in an if is common shell syntax.\n\nThe problem is that -a doesn\u0027t short circuit, but \u0026\u0026 does - saving us a (harmless) stat on /lib/tools.jar when ANDROID_JAVA_HOME is unset.  I was simply trying to preserve the original logic - I can switch to -a if you\u0027d like.",
+      "revId": "4cf7606d7ea96bd7f40c4320bceff462005441e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
