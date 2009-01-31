@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAB3///7Y\u003d",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2009-01-31T00:05:17Z",
+      "side": 1,
+      "message": "I\u0027ve never seen anyone use \u0026\u0026 in an if like this before; I think it would be a little more clear to use -a:\n\nif [ \"x$AN..\" !\u003d x -a -e \"$AND..jar\" ] ; then",
+      "revId": "4cf7606d7ea96bd7f40c4320bceff462005441e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
