@@ -80,6 +80,7 @@ function buildCarousel() {
     var a = document.createElement("a");
     var img = document.createElement("img");
     var br = document.createElement("br");
+    var span = document.createElement("span");
     var text = document.createTextNode(droid.name);
 
     a.setAttribute("id", "droidlink-" + x);
@@ -89,9 +90,10 @@ function buildCarousel() {
     img.setAttribute("src", assetsRoot + "images/home/" + droid.icon);
     img.setAttribute("alt", "");
 
+    span.appendChild(text);
     a.appendChild(img);
     a.appendChild(br);
-    a.appendChild(text);
+    a.appendChild(span);
     appList.appendChild(a);
   }
 }
@@ -111,7 +113,7 @@ var arrowLeft = 'arrow-left'; // the left control arrow
 
 
 function showPreview(slideName) {
-//  centerSlide(slideName);
+  centerSlide(slideName);
   if (slideName.indexOf('selected') != -1) {
     return false;
   }

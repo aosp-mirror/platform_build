@@ -46,13 +46,20 @@ endef
 # and "dist" is specified, the marked files will be copied to DIST_DIR.
 #
 # $(1): a list of goals  (e.g. droid, sdk, pdk, ndk)
-# $(2): the dist files to add to those goals
+# $(2): the dist files to add to those goals.  If the file contains ':',
+#       the text following the colon is the name that the file is copied
+#       to under the dist directory.  Subdirs are ok, and will be created
+#       at copy time if necessary.
 define dist-for-goals
 $(foreach file,$(2), \
+  $(eval fw := $(subst :,$(space),$(file))) \
+  $(eval src := $(word 1,$(fw))) \
+  $(eval dst := $(word 2,$(fw))) \
+  $(eval dst := $(if $(dst),$(dst),$(notdir $(src)))) \
   $(eval \
       $(call copy-one-dist-file, \
-          $(file), \
-          $(DIST_DIR)/$(notdir $(file)), \
+          $(src), \
+          $(DIST_DIR)/$(dst), \
 	  $(1) \
        ) \
    ) \

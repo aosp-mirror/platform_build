@@ -70,7 +70,7 @@ function sync_selection_table(toroot)
 
     //if we have results, make the table visible and initialize result info
     if (gMatches.length > 0) {
-        filtered.className = "showing";
+        document.getElementById("search_filtered_div").className = "showing";
         var N = gMatches.length < ROW_COUNT ? gMatches.length : ROW_COUNT;
         for (i=0; i<N; i++) {
             r = filtered.rows[i];
@@ -97,7 +97,7 @@ function sync_selection_table(toroot)
         }*/
     //if we have no results, hide the table
     } else {
-        filtered.className = "no-display";
+        document.getElementById("search_filtered_div").className = "no-display";
     }
 }
 
@@ -160,6 +160,12 @@ function search_focus_changed(obj, focused)
           obj.value = DEFAULT_TEXT;
           obj.style.color="#aaaaaa";
         }
-        document.getElementById("search_filtered").className = "no-display";
+        document.getElementById("search_filtered_div").className = "no-display";
     }
+}
+
+function submit_search() {
+  var query = document.getElementById('search_autocomplete').value;
+  document.location = '/search.html#q=' + query; 
+  return false;
 }

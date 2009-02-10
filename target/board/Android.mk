@@ -26,7 +26,16 @@ else
   INSTALLED_RADIOIMAGE_TARGET :=
 endif
 
-include $(TARGET_DEVICE_DIR)/Android.mk
+ifeq (,$(wildcard $(TARGET_DEVICE_DIR)/AndroidBoard.mk))
+  ifeq (,$(wildcard $(TARGET_DEVICE_DIR)/Android.mk))
+    $(error Missing "$(TARGET_DEVICE_DIR)/AndroidBoard.mk")
+  else
+    # TODO: Remove this check after people have had a chance to switch,
+    # after April 2009.
+    $(error Please rename "$(TARGET_DEVICE_DIR)/Android.mk" to "$(TARGET_DEVICE_DIR)/AndroidBoard.mk")
+  endif
+endif
+include $(TARGET_DEVICE_DIR)/AndroidBoard.mk
 
 # Generate a file that contains various information about the
 # device we're building for.  This file is typically packaged up

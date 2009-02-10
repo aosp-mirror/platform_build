@@ -20,6 +20,7 @@ SRC_HEADERS := \
 	$(TOPDIR)hardware/ril/include \
 	$(TOPDIR)dalvik/libnativehelper/include \
 	$(TOPDIR)frameworks/base/include \
+	$(TOPDIR)frameworks/base/opengl/include \
 	$(TOPDIR)external/skia/include
 SRC_HOST_HEADERS:=$(TOPDIR)tools/include
 SRC_LIBRARIES:= $(TOPDIR)libs
@@ -87,6 +88,8 @@ COMMON_PACKAGE_SUFFIX := .zip
 COMMON_JAVA_PACKAGE_SUFFIX := .jar
 COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 
+# list of flags to turn specific warnings in to errors
+TARGET_ERROR_FLAGS := -Werror=return-type
 
 # ###############################################################
 # Include sub-configuration files
@@ -244,6 +247,16 @@ TARGET_GLOBAL_LD_DIRS += -L$(TARGET_OUT_INTERMEDIATE_LIBRARIES)
 
 HOST_PROJECT_INCLUDES:= $(SRC_HEADERS) $(SRC_HOST_HEADERS) $(HOST_OUT_HEADERS)
 TARGET_PROJECT_INCLUDES:= $(SRC_HEADERS) $(TARGET_OUT_HEADERS)
+
+# Many host compilers don't support these flags, so we have to make
+# sure to only specify them for the target compilers checked in to
+# the source tree. The simulator uses the target flags but the
+# host compiler, so only set them for the target when the target
+# is not the simulator.
+ifneq ($(TARGET_SIMULATOR),true)
+TARGET_GLOBAL_CFLAGS += $(TARGET_ERROR_FLAGS)
+TARGET_GLOBAL_CPPFLAGS += $(TARGET_ERROR_FLAGS)
+endif
 
 ifeq ($(HOST_BUILD_TYPE),release)
 HOST_GLOBAL_CFLAGS+= $(HOST_RELEASE_CFLAGS)

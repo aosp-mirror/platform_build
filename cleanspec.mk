@@ -60,6 +60,11 @@ $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/etc/NOTICE.html)
 $(call add-clean-step, find $(OUT_DIR) -type f -name "*.java" -print0 | xargs -0 rm -f)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sapphire/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates/led)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/mountd)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/mountd.conf)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Browser_intermediates)
+$(call add-clean-step, rm -f vendor/google/apps/Talk/res/drawable/%*)
+$(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/android_os_NetStat.o)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

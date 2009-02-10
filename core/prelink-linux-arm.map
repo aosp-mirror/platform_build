@@ -52,7 +52,13 @@ libpixelflinger.so      0xACF00000
 libcorecg.so            0xACE00000
 libsurfaceflinger.so    0xACD00000
 libagl.so               0xACC00000
-libGLES_CM.so           0xACB00000
+
+libGLESv1_CM.so         0xACB00000
+libGLESv2.so            0xACA00000
+libOpenVG_CM.so         0xAC900000
+libOpenVGU_CM.so        0xAC800000
+libEGL.so               0xAC700000
+
 libexif.so              0xAC500000
 libui.so                0xAC400000
 libsgl.so               0xAC000000
@@ -97,6 +103,14 @@ libopencorecommon.so          0xA7500000
 libopencoremp4.so             0xA7400000
 libopencoremp4reg.so          0xA7300000
 libopencoreplayer.so          0xA7000000
+
+# opencore hardware support
+libmm-adspsvc.so              0xA6FFD000
+libOmxCore.so                 0xA6FF0000
+libOmxMpeg4Dec.so             0xA6FC0000
+libOmxH264Dec.so              0xA6F90000
+libOmxVidEnc.so               0xA6F60000
+libopencorehw.so              0xA6F50000
 
 # libraries for specific apps or temporary libraries
 libcam_ipl.so           0x9F000000

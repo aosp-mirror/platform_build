@@ -325,10 +325,6 @@ else	# !BUILD_TINY_ANDROID
 #
 INTERNAL_DEFAULT_DOCS_TARGETS := offline-sdk-docs
 subdirs := $(TOP)
-# Only include Android.mk files directly under vendor/*, not
-# *all* Android.mk files under vendor (which is what would happen
-# if we didn't prune vendor in the findleaves call).
-subdir_makefiles += $(wildcard vendor/*/Android.mk)
 
 FULL_BUILD := true
 
@@ -339,8 +335,7 @@ endif	# !SDK_ONLY
 # Can't use first-makefiles-under here because
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles += \
-	$(shell build/tools/findleaves.sh \
-	    --prune="./vendor" --prune="./out" $(subdirs) Android.mk)
+	$(shell build/tools/findleaves.sh --prune="./out" $(subdirs) Android.mk)
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
@@ -632,40 +627,7 @@ clobber:
 	@rm -rf $(OUT_DIR)
 	@echo "Entire build directory removed."
 
-.PHONY: dataclean
-dataclean:
-	@rm -rf $(PRODUCT_OUT)/data/*
-	@rm -rf $(PRODUCT_OUT)/data-qemu/*
-	@rm -rf $(PRODUCT_OUT)/userdata-qemu.img
-	@echo "Deleted emulator userdata images."
-
-.PHONY: installclean
-# Deletes all of the files that change between different build types,
-# like "make user" vs. "make sdk".  This lets you work with different
-# build types without having to do a full clean each time.  E.g.:
-#
-#     $ make -j8 all
-#     $ make installclean
-#     $ make -j8 user
-#     $ make installclean
-#     $ make -j8 sdk
-#
-installclean: dataclean
-	$(hide) rm -rf ./$(PRODUCT_OUT)/system
-	$(hide) rm -rf ./$(PRODUCT_OUT)/recovery
-	$(hide) rm -rf ./$(PRODUCT_OUT)/data
-	$(hide) rm -rf ./$(PRODUCT_OUT)/root
-	$(hide) rm -rf ./$(PRODUCT_OUT)/obj/NOTICE_FILES
-	@# Remove APPS because they may contain the wrong resources.
-	$(hide) rm -rf ./$(PRODUCT_OUT)/obj/APPS
-	$(hide) rm -rf ./$(HOST_OUT)/obj/NOTICE_FILES
-	$(hide) rm -rf ./$(HOST_OUT)/sdk
-	$(hide) rm -rf ./$(PRODUCT_OUT)/obj/PACKAGING
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.img
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.zip
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.txt
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.xlb
-	@echo "Deleted images and staging directories."
+# The rules for dataclean and installclean are defined in cleanbuild.mk.
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules

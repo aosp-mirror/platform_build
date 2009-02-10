@@ -1,5 +1,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>favicon.ico" />
 <title><?cs var:page.title ?> | <?cs 
         if:guide ?>Guide | <?cs 
         elif:reference ?>Reference | <?cs 
@@ -7,7 +8,7 @@
         elif:sample ?>Samples | <?cs 
         /if ?>Android Developers</title>
 
-<?cs if:guide ?>
+<?cs if:guide||sdk ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" />
 <?cs else ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />

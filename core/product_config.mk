@@ -181,6 +181,10 @@ PRODUCT_POLICY := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_POLICY))
 PRODUCT_COPY_FILES := \
 	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
 
+# The HTML file containing the contributors to the project.
+PRODUCT_CONTRIBUTORS_FILE := \
+	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CONTRIBUTORS_FILE))
+
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
 PRODUCT_PROPERTY_OVERRIDES := \
@@ -189,6 +193,11 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
 	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
+DEVICE_PACKAGE_OVERLAYS := \
+        $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).DEVICE_PACKAGE_OVERLAYS))
+
+# An list of whitespace-separated words.
+PRODUCT_TAGS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_TAGS))
 
 # Add the product-defined properties to the build properties.
 ADDITIONAL_BUILD_PROPERTIES := \

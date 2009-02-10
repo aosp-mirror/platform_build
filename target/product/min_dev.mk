@@ -8,6 +8,7 @@ PRODUCT_DEVICE := generic
 
 PRODUCT_PACKAGES := \
     DownloadProvider \
+    GoogleSearch \
     MediaProvider \
     SettingsProvider \
     PackageInstaller \

@@ -18,21 +18,24 @@ embed,object,applet {
 
 /* BASICS */
 
+html, body {
+  overflow:hidden; /* keeps scrollbar off IE */
+  background-color:#fff;
+}
+
 body {
   font-family:arial,sans-serif;
   color:#000;
   font-size:13px;
   color:#333;
-  overflow:hidden;
-  padding:0;
-  margin:0;
   background-image:url(images/bg_fade.jpg); 
   background-repeat:repeat-x;
 }
 
 a, a code { 
-  color:#00c;
+  color:#006699;
 } 
+
 
 a:active,
 a:active code { 
@@ -41,7 +44,7 @@ a:active code {
 
 a:visited,
 a:visited code { 
-  color:#551a8b;
+  color:#006699;
 }
 
 input, select,
@@ -164,75 +167,68 @@ hr.blue {
 /* LAYOUT */
 #body-content {
   margin:0;
-  position:fixed;
-  top:103px;
+  position:relative;
   width:100%;
 }
 
 #header {
-  border-bottom: #74AC23 solid 3px;
-  height: 100px;
+  height: 114px;
   position:relative;
   z-index:100;
-  min-width:620px;
+  min-width:576px;
+  padding:0 10px;
+  border-bottom:3px solid #94b922;
 }
 
 #headerLeft{
-  position:absolute;
-  border:none;
-  margin:20px 0 0 10px;
-  overflow:visible;
-  font-size: 36px;
+  padding: 25px 0 0;
 }
 
 #headerRight {
-  float:right;
-  border:none;
-  width:615px;
-  height:100px;
+  position:absolute;
+  right:0;
+  top:0;
+  text-align:right;
 }
 
 /* Tabs in the header */
 #header ul {
   list-style: none;
-  float: right;
-  margin: 0px 3px 0px 0px;  
-  padding: 0px 0px 0px 0px;
-  height: 32px;
-  position:absolute;
-  bottom:0;
-  right:0;
+  margin: 7px 0 0;  
+  padding: 0;
+  height: 29px;
 }
 
 #header li {
   float: left;
-  margin: 0px 5px 0px 0px;
+  margin: 0px 2px 0px 0px;
   padding:0;
 }
 
 #header li a {
   text-decoration: none;
   display: block;
-  background-image: url(images/tab_default.png);
+  background-image: url(images/bg_images_sprite.png);
+  background-position: 0 -58px;
   background-repeat: no-repeat;
   color: #666;
   font-size: 13px;
-  font-weight: normal;
-  width: 96px;
-  height: 32px;
+  font-weight: bold;
+  width: 94px;
+  height: 29px;
   text-align: center;
   margin: 0px;
 }
 
 #header li a:hover {
-  background-image: url(images/tab_hover.png);
+  background-image: url(images/bg_images_sprite.png);
+  background-position: 0 -29px;
   background-repeat: no-repeat;
-  color: #fff;
 }
 
 #header li a span {
   position:relative;
-  top:9px;
+  top:7px;
 }
 
 /* TAB HIGHLIGHTING */
@@ -243,7 +239,8 @@ hr.blue {
 .sdk #sdk-link a,
 .community #community-link a,
 .about #about-link a {
-  background-image: url(images/tab_selected.png);
+  background-image: url(images/bg_images_sprite.png);
+  background-position: 0 0;
   background-repeat: no-repeat;
   color: #fff;
   font-weight: bold;
@@ -257,14 +254,13 @@ hr.blue {
 .sdk #sdk-link a:hover,
 .community #community-link a:hover,
 .about #about-link  a:hover {
-  background-image: url(images/tab_selected.png);
+  background-image: url(images/bg_images_sprite.png);
+  background-position: 0 0;
 }
 
 #headerLinks {
   margin:10px 10px 0 0;
   height:13px;
- /* nudge IE because green border is inside header */
-  _margin-top:7px;
 }
 
 #headerLinks .text {
@@ -283,7 +279,7 @@ hr.blue {
 
 #search {
   height:45px;
-  margin:0 10px 0 0;
+  margin:15px 10px 0 0;
 }
 
 /* main */
@@ -296,7 +292,7 @@ hr.blue {
 #mainBodyFixed {
   margin: 20px 10px;
   color: #333;
-  width:920px;
+  width:930px;
 }
 
 #mainBodyFixed h3,
@@ -327,13 +323,6 @@ hr.blue {
 #jd-content .green { 
   color:#7BB026;
   background-color:none;
-}
-
-#mainBodyFixed a,
-#mainBodyFluid a {
-  color: #006699;
-  font-size: 13px;
-  text-decoration: underline;
 }
 
 #mainBodyLeft {
@@ -383,17 +372,17 @@ div.indent {
 
 #mainBodyRight td {
   border:0px solid #666;
-    padding:0px 5px;
-    text-align:left;
+  padding:0px 5px;
+  text-align:left;
 }
 
 #mainBodyRight .blueBorderBox {
   border:5px solid #ddf0f2;
-    padding:18px 18px 18px 18px;
-    text-align:left;
+  padding:18px 18px 18px 18px;
+  text-align:left;
 }
 
-#mainBodyRight .seperator {
+#mainBodyFixed .seperator {
   background-image:url(images/hr_gray_side.jpg);
   background-repeat:no-repeat;
   width: 100%;
@@ -421,17 +410,27 @@ div.indent {
   float: left;
   width:90%;
   margin: 20px;
-  color: #666;
+  color: #aaa;
   font-size: 11px;
 }
 
 #footer a {
-  color: #666;
+  color: #aaa;
   font-size: 11px;
 }
 
 #footer a:hover {
   text-decoration: underline;
+  color:#aaa;
+}
+
+#footerlinks {
+  margin-top:2px;
+}
+
+#footerlinks a,
+#footerlinks a:visited {
+  color:#006699;
 }
 
 #homeBottom td {
@@ -537,16 +536,13 @@ vertical-align: bottom;
 
 #search_filtered_div {
   position:absolute;
+  margin-top:-1px;
   z-index:101;
-  width:280px;
+  border:1px solid #BCCDF0;
+  background-color:#fff;
 }
 
 #search_filtered {
-  border:1px solid #BCCDF0;
-  background-color:#fff;
-  position:relative;
-  top:-1px;
-  _top:-19px; /*IE*/
   min-width:100%;
 }
 #search_filtered td{
@@ -554,11 +550,9 @@ vertical-align: bottom;
   border-bottom: 1px solid #669999;
   line-height:1.5em;
 }
-#search_filtered a{
-  color:#0000cc;
-}
+
 #search_filtered .jd-selected {
-  background-color: #A4C639;
+  background-color: #94b922;
   cursor:pointer;
 }
 #search_filtered .jd-selected,
@@ -692,44 +686,71 @@ td.gsc-search-button {
   padding: 0px 0px 0px 0px;
   float: left;
   width: 584px;
-  height: 450px;
+  height: 580px;
   background:url(images/home/bg_home_middle.png) no-repeat 0 0;
 }
 
-#homeMiddle #homeTitle {
-  margin:17px 17px 0;
-  height:35px;
+#homeTitle {
+  margin:15px 15px 0;
+  height:30px;
+  background:url(images/hr_gray_side.jpg) no-repeat 0 29px;
+}
+
+#homeTitle h2 {
+  padding:0;
+}
+
+#announcement-block {
+  margin:15px 15px 0;
+  height:125px;
+}
+
+#announcement-block img {
+  float:left;
+  margin:0 30px 0 0;
+}
+
+#announcement {
+  float:left;
+  margin:0;
 }
 
 .clearer { clear:both; }
 
 #arrow-left, #arrow-right {
   display:block;
-  width:25px;
-  height:116px;
+  width:42px;
+  height:42px;
+  background-image:url(images/home/carousel_buttons_sprite.png);
   background-repeat:no-repeat;
 }
 #arrow-left {
   float:left;
-  margin:0 15px 0 10px;
+  margin:35px 3px 0 10px;
 }
 #arrow-right {
   float:left;
-  margin-left:15px;
+  margin:35px 10px 0 0;
 }
 .arrow-left-off,
+#arrow-left.arrow-left-off:hover { 
+  background-position:0 0;
+}
+.arrow-right-off, 
+#arrow-right.arrow-right-off:hover { 
+  background-position:-42px 0;
+}
 #arrow-left:hover { 
-  background-image:url(images/arrow_left_off.jpg);
+  background-position:0 -42px;
+}
+#arrow-right:hover { 
+  background-position:-42px -42px;
 }
 .arrow-left-on {
-  background-image:url(images/arrow_left_on.jpg);
-}
-.arrow-right-off,
-#arrow-right:hover { 
-  background-image:url(images/arrow_right_off.jpg);
+  background-position:0 0;
 }
 .arrow-right-on {
-  background-image:url(images/arrow_right_on.jpg);
+  background-position:-42px 0;
 }
 
 .arrow-right-off,
@@ -740,7 +761,7 @@ td.gsc-search-button {
 .app-list-container {
   clear:both;
   text-align: center;
-  margin:37px 25px 0;
+  margin:37px 20px 0;
   _margin-top:33px;
   border:0px solid #ccc;
   position:relative;
@@ -761,7 +782,7 @@ div#app-list {
   position:absolute;
   margin:11px 0 0;
   _margin-top:13px;
-  width:100%;
+  width:1000%;
 }
 
 #app-list a {
@@ -794,9 +815,14 @@ div#app-list {
   cursor:default;
   text-decoration:none;
 }
+
 #app-list a:hover, 
 #app-list a:active {
   background:#ff9900;
+}
+
+#app-list a:hover span, 
+#app-list a:active span {
   text-decoration:underline;
 }
 

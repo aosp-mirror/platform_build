@@ -223,10 +223,10 @@ This <?cs var:kind ?> is deprecated.
 
 <?cs # An expando trigger ?>
 <?cs def:expando_trigger(id, default) ?>
-<a href="javascript:toggle_inherited('<?cs var:id ?>')" class="jd-expando-trigger"
+<a href="#" onclick="return toggleInherited(this, null)" id="<?cs var:id ?>" class="jd-expando-trigger closed"
         ><img id="<?cs var:id ?>-trigger"
         src="<?cs var:toroot ?>assets/images/triangle-<?cs var:default ?>.png"
-        class="jd-expando-trigger" /></a>
+        class="jd-expando-trigger-img" /></a>
 <?cs /def ?>
 
 <?cs # An expandable list of classes ?>
@@ -318,28 +318,27 @@ This <?cs var:kind ?> is deprecated.
 <?cs /def ?>
 
 <?cs def:default_search_box() ?>
-<div id="search" align="right">
+<div id="search" >
     <div id="searchForm">
-        <form accept-charset="utf-8" class="gsc-search-box"
-                onsubmit="document.location='<?cs var:toroot ?>search.html?' + document.getElementById('search_autocomplete').value; return false;">
+        <form accept-charset="utf-8" class="gsc-search-box" 
+              onsubmit="return submit_search()">
           <table class="gsc-search-box" cellpadding="0" cellspacing="0"><tbody>
               <tr>
                 <td class="gsc-input">
                   <input id="search_autocomplete" class="gsc-input" type="text" size="33" autocomplete="off" 
-                    tabindex="1" title="search developer docs"
+                    title="search developer docs" name="q"
                     value="search developer docs" 
                     onFocus="search_focus_changed(this, true)" 
                     onBlur="search_focus_changed(this, false)" 
                     onkeydown="return search_changed(event, true, '<?cs var:toroot?>')" 
-                    onkeyup="search_changed(event, false, '<?cs var:toroot?>')" />
-                <br/>
-                <div id="search_filtered_div">
-                    <table id="search_filtered" class="no-display" cellspacing=0>
+                    onkeyup="return search_changed(event, false, '<?cs var:toroot?>')" />
+                <div id="search_filtered_div" class="no-display">
+                    <table id="search_filtered" cellspacing=0>
                     </table>
                 </div>
                 </td>
                 <td class="gsc-search-button">
-                  <input type="button" value="Search" title="search" id="search-button" class="gsc-search-button" onclick="document.location='<?cs var:toroot ?>search.html?' + document.getElementById('search_autocomplete').value;" tabindex="2"/>
+                  <input type="submit" value="Search" title="search" id="search-button" class="gsc-search-button" />
                 </td>
                 <td class="gsc-clear-button">
                   <div title="clear results" class="gsc-clear-button">&nbsp;</div>

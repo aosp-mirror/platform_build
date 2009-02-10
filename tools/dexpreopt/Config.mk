@@ -29,11 +29,19 @@ LOCAL_PATH := $(my-dir)
 # would have different versions.
 intermediates := \
 	$(call intermediates-dir-for,PACKAGING,dexpreopt)
-dexpreopt_initrc := $(LOCAL_PATH)/etc/init.rc
 dexpreopt_system_dir := $(intermediates)/system
 built_afar := $(call intermediates-dir-for,EXECUTABLES,afar)/afar
 built_dowrapper := \
 	$(call intermediates-dir-for,EXECUTABLES,dexopt-wrapper)/dexopt-wrapper
+
+# Generate a stripped-down init.rc based on the real one.
+dexpreopt_initrc := $(intermediates)/etc/init.rc
+geninitrc_script := $(LOCAL_PATH)/geninitrc.awk
+$(dexpreopt_initrc): script := $(geninitrc_script)
+$(dexpreopt_initrc): system/core/rootdir/init.rc $(geninitrc_script)
+	@echo "Dexpreopt init.rc: $@"
+	@mkdir -p $(dir $@)
+	$(hide) awk -f $(script) < $< > $@
 
 BUILT_DEXPREOPT_RAMDISK := $(intermediates)/ramdisk.img
 $(BUILT_DEXPREOPT_RAMDISK): intermediates := $(intermediates)

@@ -25,10 +25,12 @@ public class Errors
 
     private static class Message implements Comparable {
         SourcePositionInfo pos;
+        int level;
         String msg;
 
-        Message(SourcePositionInfo p, String m) {
+        Message(SourcePositionInfo p, int l, String m) {
             pos = p;
+            level = l;
             msg = m;
         }
 
@@ -50,14 +52,15 @@ public class Errors
             return;
         }
 
-        String which = (!warningsAreErrors && error.level == WARNING) ? " warning " : " error ";
+        int level = (!warningsAreErrors && error.level == WARNING) ? WARNING : ERROR;
+        String which = level == WARNING ? " warning " : " error ";
         String message = which + error.code + ": " + text;
 
         if (where == null) {
             where = new SourcePositionInfo("unknown", 0, 0);
         }
 
-        allErrors.add(new Message(where, message));
+        allErrors.add(new Message(where, level, message));
 
         if (error.level == ERROR || (warningsAreErrors && error.level == WARNING)) {
             hadError = true;
@@ -66,7 +69,14 @@ public class Errors
 
     public static void printErrors() {
         for (Message m: allErrors) {
-            System.err.println(m.toString());
+            if (m.level == WARNING) {
+                System.err.println(m.toString());
+            }
+        }
+        for (Message m: allErrors) {
+            if (m.level == ERROR) {
+                System.err.println(m.toString());
+            }
         }
     }
 

@@ -60,7 +60,9 @@
 <?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->
 </div><!-- end doc-content -->
-<?cs include:"analytics.cs" ?>
+
+<?cs include:"trailer.cs" ?>
+
 </body>
 </html>
 

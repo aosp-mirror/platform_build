@@ -17,6 +17,8 @@
 
 <?cs # appears on the left side of the blue bar at the bottom of every page ?>
 <?cs def:custom_copyright() ?><?cs /def ?>
+<?cs def:custom_cc_copyright() ?><?cs /def ?>
+<?cs def:custom_footerlinks() ?><?cs /def ?>
 
 <?cs # appears on the right side of the blue bar at the bottom of every page ?>
 <?cs def:custom_buildinfo() ?>Build <?cs var:page.build ?> - <?cs var:page.now ?><?cs /def ?>

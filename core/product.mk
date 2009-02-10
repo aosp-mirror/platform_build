@@ -23,14 +23,8 @@
 # $(call ) isn't necessary.
 #
 define _find-android-products-files
-$(foreach vendor,$(wildcard vendor/*), \
-  $(if $(wildcard $(vendor)/AndroidProducts.mk), \
-    $(vendor)/AndroidProducts.mk \
-   , \
-    $(wildcard $(vendor)/*/AndroidProducts.mk) \
-   ) \
- ) \
- $(wildcard $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
+$(shell test -d vendor && find vendor -maxdepth 6 -name AndroidProducts.mk) \
+  $(SRC_TARGET_DIR)/product/AndroidProducts.mk
 endef
 
 #
@@ -67,7 +61,10 @@ _product_var_list := \
     PRODUCT_COPY_FILES \
     PRODUCT_OTA_PUBLIC_KEYS \
     PRODUCT_POLICY \
-    PRODUCT_PACKAGE_OVERLAYS
+    PRODUCT_PACKAGE_OVERLAYS \
+    DEVICE_PACKAGE_OVERLAYS \
+    PRODUCT_CONTRIBUTORS_FILE \
+    PRODUCT_TAGS
 
 define dump-product
 $(info ==== $(1) ====)\

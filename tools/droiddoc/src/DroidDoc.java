@@ -461,10 +461,13 @@ public class DroidDoc
                 continue;
             }
             Boolean allHidden = true;
-            int pass = 1;
-            ClassInfo[] classesToCheck = pkg.ordinaryClasses();
+            int pass = 0;
+            ClassInfo[] classesToCheck = null;
             while (pass < 5 ) {
                 switch(pass) {
+                case 0:
+                    classesToCheck = pkg.ordinaryClasses();
+                    break;
                 case 1:
                     classesToCheck = pkg.enums();
                     break;

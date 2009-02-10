@@ -43,9 +43,18 @@ CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 CTS_CASE_LIST := \
 	DeviceInfoCollector \
 	CtsTestStubs \
-	CtsTextTestCases \
-	CtsViewTestCases \
+	CtsAppTestCases \
+	CtsContentTestCases \
+	CtsDatabaseTestCases \
 	CtsGraphicsTestCases \
+	CtsLocationTestCases \
+	CtsNetTestCases \
+	CtsOsTestCases \
+	CtsProviderTestCases \
+	CtsTextTestCases \
+	CtsUtilTestCases \
+	CtsViewTestCases \
+	CtsWidgetTestCases \
 	SignatureTest
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
@@ -84,11 +93,12 @@ $(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN)
 	@echo "Package CTS: $@"
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
 
-.PHONY: cts 
+.PHONY: cts
 cts: $(INTERNAL_CTS_TARGET) adb
 $(call dist-for-goals,cts,$(INTERNAL_CTS_TARGET))
 
 define copy-testcase-apk
+
 $(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk \
 	$(PRIVATE_DIR)/repository/testcases/$(1).apk
 

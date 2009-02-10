@@ -1,3 +1,4 @@
+<?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
 <html>
 <?cs include:"head_tag.cs" ?>
@@ -44,6 +45,8 @@
 <?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->
 </div><!-- doc-content -->
-<?cs include:"analytics.cs" ?>
+
+<?cs include:"trailer.cs" ?>
+
 </body>
 </html>

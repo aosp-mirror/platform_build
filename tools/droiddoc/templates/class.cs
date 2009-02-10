@@ -1,21 +1,29 @@
+<?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
 <html>
 <?cs include:"head_tag.cs" ?>
 <body>
 <script type="text/javascript">
-function toggle_inherited(base) {
+function toggleInherited(linkObj, expand) {
+    var base = linkObj.getAttribute("id");
     var list = document.getElementById(base + "-list");
     var summary = document.getElementById(base + "-summary");
     var trigger = document.getElementById(base + "-trigger");
-    if (list.style.display == "none") {
-        list.style.display = "block";
-        summary.style.display = "none";
-        trigger.src = "<?cs var:toroot ?>assets/images/triangle-closed.png";
-    } else {
+    var a = $(linkObj);
+    if ( (expand == null && a.hasClass("closed")) || expand ) {
         list.style.display = "none";
         summary.style.display = "block";
         trigger.src = "<?cs var:toroot ?>assets/images/triangle-opened.png";
+        a.removeClass("closed");
+        a.addClass("opened");
+    } else if ( (expand == null && a.hasClass("opened")) || (expand == false) ) {
+        list.style.display = "block";
+        summary.style.display = "none";
+        trigger.src = "<?cs var:toroot ?>assets/images/triangle-closed.png";
+        a.removeClass("opened");
+        a.addClass("closed");
     }
+    return false;
 }
 </script>
 
@@ -96,7 +104,7 @@ Summary:
 <?cs /if ?>
 </nobr>
 <?cs if:inhattrs || inhconstants || inhfields || inhmethods || subcount(class.subclasses.direct) || subcount(class.subclasses.indirect) ?>
-&#124; [<a href="">Expand All</a>]
+&#124; <a href="#" onclick="return toggleAllSummaryInherited(this)">[Expand All]</a>
 <?cs /if ?>
 </div>
 </div>
@@ -288,7 +296,7 @@ Summary:
 <?cs # if there are inherited attrs, write the table ?>
 <?cs if:inhattrs ?>
 <table id="inhattrs" class="jd-sumtable"><tr><th>
-  <div class="expandall">[<a href="">Expand All</a>]</div>
+  <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited XML Attributes</div></th></tr>
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.attrs) ?>
@@ -336,7 +344,7 @@ Summary:
 <?cs # if there are inherited constants, write the table ?>
 <?cs if:inhconstants ?>
 <table id="inhconstants" class="jd-sumtable"><tr><th>
-  <div class="expandall">[<a href="">Expand All</a>]</div>
+  <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Constants</div></th></tr>
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.constants) ?>
@@ -369,7 +377,7 @@ Summary:
 <?cs # if there are inherited fields, write the table ?>
 <?cs if:inhfields ?>
 <table id="inhfields" class="jd-sumtable"><tr><th>
-  <div class="expandall">[<a href="">Expand All</a>]</div>
+  <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Fields</div></th></tr>
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.fields) ?>
@@ -426,7 +434,7 @@ Summary:
 <?cs # if there are inherited methods, write the table ?>
 <?cs if:inhmethods ?>
 <table id="inhmethods" class="jd-sumtable"><tr><th>
-  <div class="expandall">[<a href="">Expand All</a>]</div>
+  <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Methods</div></th></tr>
 <?cs each:cl=class.inherited ?>
 <?cs if:subcount(cl.methods) ?>
@@ -586,6 +594,8 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 </div> <!-- jd-content -->
 
 </div><!-- end doc-content -->
-<?cs include:"analytics.cs" ?>
+
+<?cs include:"trailer.cs" ?>
+
 </body>
 </html>
