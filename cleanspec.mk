@@ -65,6 +65,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/mountd.conf)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Browser_intermediates)
 $(call add-clean-step, rm -f vendor/google/apps/Talk/res/drawable/%*)
 $(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/android_os_NetStat.o)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

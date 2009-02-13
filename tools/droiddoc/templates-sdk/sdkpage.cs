@@ -19,8 +19,6 @@
   
 <div class="g-unit" id="doc-content" >
 
-<div id="jd-content">
-
 <?cs if:sdk.redirect ?>
   Redirecting to 
   <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html">
@@ -28,7 +26,14 @@
   </a>...
 <?cs else ?>
   
-    <h1><?cs var:page.title ?></h1>
+  <div id="jd-header" class="guide-header" >
+    <span class="crumb">&nbsp;</span>
+    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
+  </div>
+
+
+<div id="jd-content">
+
     <p><em>
     <?cs var:sdk.date ?>
     </em></p>
@@ -41,6 +46,12 @@
 <?cs /if ?>
   
   
+<?cs if:android.whichdoc != "online" ?>
+
+<p>The sections below provide an overview of the SDK package. </p>
+
+<?cs else ?>
+
 <p>Before downloading, please read the <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.version ?>/requirements.html">
 System Requirements</a> document. As you start the download, you will also need to review and agree to 
 the Terms and Conditions that govern the use of the Android SDK. </p>
@@ -77,11 +88,12 @@ the Terms and Conditions that govern the use of the Android SDK. </p>
     <td><?cs var:sdk.linux_checksum ?></td>
   </tr>
   </table>
-  
-      <?cs call:tag_list(root.descr) ?>
 
 <?cs /if ?>
 
+      <?cs call:tag_list(root.descr) ?>
+
+<?cs /if ?>
 </div><!-- end jd-content -->
 
 <?cs include:"footer.cs" ?>

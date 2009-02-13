@@ -50,7 +50,7 @@
 <div class="g-section g-tpl-240" id="body-content">
   <div class="g-unit g-first not-resizable" id="side-nav">
     <div id="devdoc-nav">
-      <?cs include:"../../../java/android/html/sdk/sdk_toc.cs" ?>
+      <?cs include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
     </div>
   </div> <!-- end side-nav -->
 <?cs /def ?>
@@ -59,7 +59,7 @@
 <div class="g-section g-tpl-240" id="body-content">
   <div class="g-unit g-first side-nav-resizable" id="side-nav">
     <div id="devdoc-nav">
-      <?cs include:"../../../java/android/html/guide/guide_toc.cs" ?>
+      <?cs include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
     </div>
   </div> <!-- end side-nav -->
   <script>
@@ -69,20 +69,9 @@
   </script>
 <?cs /def ?>
 
-<?cs def:publish_nav() ?>
-<div class="g-section g-tpl-180" id="body-content">
-  <div class="g-unit g-first" id="side-nav">
-    <div id="devdoc-nav">
-      <?cs include:"../../../java/android/html/publish/publish_toc.cs" ?>
-    </div>
-  </div> <!-- end side-nav -->
-<?cs /def ?>
-
 <?cs def:custom_left_nav() ?>
   <?cs if:guide ?>
     <?cs call:guide_nav() ?>
-  <?cs elif:publish ?>
-    <?cs call:publish_nav() ?> 
   <?cs elif:sdk ?>
     <?cs call:sdk_nav() ?>
   <?cs else ?>

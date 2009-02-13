@@ -169,6 +169,7 @@ hr.blue {
   margin:0;
   position:relative;
   width:100%;
+  background: url('images/preliminary.png');
 }
 
 #header {
@@ -293,6 +294,7 @@ hr.blue {
   margin: 20px 10px;
   color: #333;
   width:930px;
+  position:relative;
 }
 
 #mainBodyFixed h3,
@@ -330,6 +332,7 @@ hr.blue {
   width: 600px;
   margin-right: 20px;  
   color: #333;
+  position:relative;
 }
 
 div.indent {
@@ -688,6 +691,7 @@ td.gsc-search-button {
   width: 584px;
   height: 580px;
   background:url(images/home/bg_home_middle.png) no-repeat 0 0;
+  position:relative;
 }
 
 #homeTitle {
@@ -718,18 +722,16 @@ td.gsc-search-button {
 .clearer { clear:both; }
 
 #arrow-left, #arrow-right {
-  display:block;
+  float:left;
   width:42px;
   height:42px;
   background-image:url(images/home/carousel_buttons_sprite.png);
   background-repeat:no-repeat;
 }
 #arrow-left {
-  float:left;
   margin:35px 3px 0 10px;
 }
 #arrow-right {
-  float:left;
   margin:35px 10px 0 0;
 }
 .arrow-left-off,
@@ -752,18 +754,14 @@ td.gsc-search-button {
 .arrow-right-on {
   background-position:-42px 0;
 }
-
 .arrow-right-off,
 .arrow-left-off {
   cursor:default;
 }
 
 .app-list-container {
-  clear:both;
-  text-align: center;
   margin:37px 20px 0;
   _margin-top:33px;
-  border:0px solid #ccc;
   position:relative;
   width:100%;
 }

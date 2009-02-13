@@ -30,7 +30,6 @@
 
 #side-nav {
   padding:0 6px 0 0;
-  background-color: #fff;
   font-size:12px;
 }
 
@@ -73,6 +72,7 @@
   padding:0;
   line-height:16px;
   white-space:nowrap;
+  zoom:1;
 }
 
 #side-nav li h2 {
@@ -85,6 +85,7 @@
 #side-nav li a {
   text-decoration:none;
   padding: 0 0 0 18px;
+  zoom:1;
 }
 
 #side-nav li a:hover {

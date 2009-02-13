@@ -17,11 +17,11 @@ cts_tools_src_dir := cts/tools
 
 # Build a name that looks like:
 #
-#     linux-x86   --> android-cts_12345_linux-x86
-#     darwin-x86  --> android-cts_12345_mac-x86
-#     windows-x86 --> android-cts_12345_windows
+#     linux-x86   --> android-cts_linux-x86
+#     darwin-x86  --> android-cts_mac-x86
+#     windows-x86 --> android-cts_windows
 #
-cts_name := android-cts_$(FILE_NAME_TAG)
+cts_name := android-cts
 ifeq ($(HOST_OS),darwin)
     cts_host_os := mac
 else
@@ -74,8 +74,9 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
 			$(call copy-testcase-apk,$(apk)))
-# Copy CTS host config to CTS directory
+# Copy CTS host config and start script to CTS directory
 	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/host_config.xml $(PRIVATE_DIR)/repository/
+	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/startcts $(PRIVATE_DIR)/tools/
 	$(hide) touch $@
 
 # Generate the default test plan for User.
