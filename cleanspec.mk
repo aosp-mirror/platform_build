@@ -66,6 +66,8 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Browser_intermed
 $(call add-clean-step, rm -f vendor/google/apps/Talk/res/drawable/%*)
 $(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/android_os_NetStat.o)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libjni_andpyime_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/share)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

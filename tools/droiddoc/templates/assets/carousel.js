@@ -9,7 +9,7 @@
 
 var oldVid = "multi"; // set the default video
 var nowPlayingString = "Now playing:";
-var assetsRoot = "/assets/";
+var assetsRoot = "assets/";
 
 
 /* -- app thumbnail switcher -- */
@@ -60,7 +60,7 @@ function droid(appName){
     descDiv.className = "desc-left";
   }
 
-  imgDiv.innerHTML = "<img src='" + assetsRoot + "images/home/" + droid.img + "'>";
+  imgDiv.innerHTML = "<img src='" + toRoot + assetsRoot + "images/home/" + droid.img + "'>";
   descDiv.innerHTML = (droid.title != "") ? "<h3>" + droid.title + "</h3>" + droid.desc : droid.desc;
 
   if(oldDroid)
@@ -87,7 +87,7 @@ function buildCarousel() {
     a.className = x;
     a.setAttribute("href", "#");
     a.onclick = function() { showPreview(this.className); return false; }
-    img.setAttribute("src", assetsRoot + "images/home/" + droid.icon);
+    img.setAttribute("src", toRoot + assetsRoot + "images/home/" + droid.icon);
     img.setAttribute("alt", "");
 
     span.appendChild(text);

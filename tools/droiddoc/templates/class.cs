@@ -157,7 +157,7 @@ Summary:
 </table>
 
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
-<!-- ======== NESTED CLASS SUMMARY ======== -->
+
 <?cs if:subcount(class.subclasses.direct) ?>
 <table class="jd-sumtable jd-sumtable-subclasses"><tr><td colspan="12" style="border:none;margin:0;padding:0;">
 <?cs call:expando_trigger("subclasses-direct", "closed") ?>Known Direct Subclasses
@@ -295,6 +295,8 @@ Summary:
 
 <?cs # if there are inherited attrs, write the table ?>
 <?cs if:inhattrs ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- =========== FIELD SUMMARY =========== -->
 <table id="inhattrs" class="jd-sumtable"><tr><th>
   <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited XML Attributes</div></th></tr>
@@ -335,7 +337,7 @@ Summary:
 
 <?cs if:subcount(class.constants) ?>
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
-<!-- =========== FIELD SUMMARY =========== -->
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
 <table id="constants" class="jd-sumtable"><tr><th colspan="12">Constants</th></tr>
 <?cs call:write_constant_summary(class.constants) ?>
 </table>
@@ -343,6 +345,8 @@ Summary:
 
 <?cs # if there are inherited constants, write the table ?>
 <?cs if:inhconstants ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
 <table id="inhconstants" class="jd-sumtable"><tr><th>
   <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Constants</div></th></tr>
@@ -376,6 +380,8 @@ Summary:
 
 <?cs # if there are inherited fields, write the table ?>
 <?cs if:inhfields ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- =========== FIELD SUMMARY =========== -->
 <table id="inhfields" class="jd-sumtable"><tr><th>
   <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Fields</div></th></tr>
@@ -433,6 +439,8 @@ Summary:
 
 <?cs # if there are inherited methods, write the table ?>
 <?cs if:inhmethods ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- ========== METHOD SUMMARY =========== -->
 <table id="inhmethods" class="jd-sumtable"><tr><th>
   <a href="#" class="toggle-all" onclick="return toggleAllInherited(this, null)">[Expand]</a>
   <div style="clear:left;">Inherited Methods</div></th></tr>
@@ -462,7 +470,9 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 <?cs def:write_field_details(fields) ?>
 <?cs each:field=fields ?>
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
-<div class="jd-details" id="<?cs var:field.anchor ?>"> 
+<?cs # the A tag in the next line must remain where it is, so that Eclipse can parse the docs ?>
+<A NAME="<?cs var:field.anchor ?>"></A>
+<div class="jd-details"> 
     <h4 class="jd-details-title">
       <span class="normal">
         <?cs var:field.scope ?> 
@@ -493,8 +503,9 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 
 <?cs def:write_method_details(methods) ?>
 <?cs each:method=methods ?>
-<?cs # this next line must be exactly like this to be parsed by eclipse ?>
-<div class="jd-details" id="<?cs var:method.anchor ?>"> 
+<?cs # the A tag in the next line must remain where it is, so that Eclipse can parse the docs ?>
+<A NAME="<?cs var:method.anchor ?>"></A>
+<div class="jd-details"> 
     <h4 class="jd-details-title">
       <span class="normal">
         <?cs var:method.scope ?> 
@@ -514,8 +525,9 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 
 <?cs def:write_attr_details(attrs) ?>
 <?cs each:attr=attrs ?>
-<?cs # this next line must be exactly like this to be parsed by eclipse ?>
-<div class="jd-details" id="<?cs var:attr.anchor ?>"> 
+<?cs # the A tag in the next line must remain where it is, so that Eclipse can parse the docs ?>
+<A NAME="<?cs var:attr.anchor ?>"></A>
+<div class="jd-details">
     <h4 class="jd-details-title"><?cs var:attr.name ?></h4>
     <div class="jd-details-descr">
         <?cs call:description(attr) ?>
@@ -536,30 +548,40 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 
 <!-- XML Attributes -->
 <?cs if:subcount(class.attrs) ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- ========= FIELD DETAIL ======== -->
 <h2>XML Attributes</h2>
 <?cs call:write_attr_details(class.attrs) ?>
 <?cs /if ?>
 
 <!-- Enum Values -->
 <?cs if:subcount(class.enumConstants) ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
 <h2>Enum Values</h2>
 <?cs call:write_field_details(class.enumConstants) ?>
 <?cs /if ?>
 
 <!-- Constants -->
 <?cs if:subcount(class.constants) ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- ========= ENUM CONSTANTS DETAIL ======== -->
 <h2>Constants</h2>
 <?cs call:write_field_details(class.constants) ?>
 <?cs /if ?>
 
 <!-- Fields -->
 <?cs if:subcount(class.fields) ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- ========= FIELD DETAIL ======== -->
 <h2>Fields</h2>
 <?cs call:write_field_details(class.fields) ?>
 <?cs /if ?>
 
 <!-- Public ctors -->
 <?cs if:subcount(class.ctors.public) ?>
+<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
 <h2>Public Constructors</h2>
 <?cs call:write_method_details(class.ctors.public) ?>
 <?cs /if ?>
@@ -573,7 +595,7 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 <?cs /if ?>
 
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<!-- ========= METHOD DETAIL ======== -->
 <!-- Public methdos -->
 <?cs if:subcount(class.methods.public) ?>
 <h2>Public Methods</h2>
@@ -587,8 +609,9 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 <?cs call:write_method_details(class.methods.protected) ?>
 <?cs /if ?>
 
-<?cs # this next line must be exactly like this to be parsed by eclipse ?>
+<?cs # the next two lines must be exactly like this to be parsed by eclipse ?>
 <!-- ========= END OF CLASS DATA ========= -->
+<A NAME="navbar_top"></A>
 
 <?cs include:"footer.cs" ?>
 </div> <!-- jd-content -->

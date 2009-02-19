@@ -17,6 +17,8 @@
 # api compatibility or added apis illegally.
 #
 
+ifneq ($(BUILD_TINY_ANDROID), true)
+
 .PHONY: checkapi
 
 # eval this to define a rule that runs apicheck.
@@ -71,3 +73,4 @@ update-api: $(INTERNAL_PLATFORM_API_FILE) | $(ACP)
 	@echo Copying current.xml
 	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) $(SRC_API_DIR)/current.xml
 
+endif

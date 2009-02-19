@@ -30,6 +30,7 @@
 
 #side-nav {
   padding:0 6px 0 0;
+  background-color: #fff;
   font-size:12px;
 }
 
@@ -660,7 +661,7 @@ pre.classic {
   float: right;
   width:310px;
   background-color:#fff;
-  margin:-48px 0 0 0;
+  margin:-48px 0 2px 0;
   padding:0 0 20px 35px;
 }
 

@@ -7,7 +7,7 @@
   <div id="build_info">
     <?cs call:custom_buildinfo() ?>
   </div>
-<?cs else ?>
+<?cs elif:!hide_license_footer ?>
   <div id="copyright">
     <?cs call:custom_cc_copyright() ?>
   </div>

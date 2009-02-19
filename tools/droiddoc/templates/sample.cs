@@ -5,11 +5,15 @@
 <?cs include:"head_tag.cs" ?>
 <?cs include:"header.cs" ?>
 
-<div class="g-unit" id="doc-content">
+<div class="g-unit" id="doc-content"><a name="top"></a>
 
-<div id="jd-header">
+<div id="jd-header" class="guide-header">
+
+  <span class="crumb">
+    <a href="<?cs var:toroot ?>guide/samples/index.html">Sample Code &gt;</a>
+    
+  </span>
 <h1><?cs var:page.title ?></h1>
-<?cs var:subdir ?>
 </div>
 
 <div id="jd-content">

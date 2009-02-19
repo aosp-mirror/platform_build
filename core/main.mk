@@ -313,11 +313,18 @@ ifeq ($(BUILD_TINY_ANDROID), true)
 INTERNAL_DEFAULT_DOCS_TARGETS := 
 
 subdirs := \
+	bionic \
 	system/core \
-	external/zlib \
-	build/tools \
-	tools/kcm \
-	external/yaffs2
+	build/libs \
+	build/target \
+	build/tools/acp \
+	build/tools/apriori \
+	build/tools/kcm \
+	build/tools/soslim \
+	external/elfcopy \
+	external/elfutils \
+	external/yaffs2 \
+	external/zlib
 else	# !BUILD_TINY_ANDROID
 
 #
@@ -489,7 +496,7 @@ overridden_packages := $(call get-package-overrides,$(modules_to_build))
 ifdef overridden_packages
 #  old_modules_to_build := $(modules_to_build)
   modules_to_build := \
-      $(filter-out $(foreach p,$(overridden_packages),%/$(p) %/$(p).apk), \
+      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk), \
           $(modules_to_build))
 endif
 #$(error filtered out $(filter-out $(modules_to_build),$(old_modules_to_build)))
