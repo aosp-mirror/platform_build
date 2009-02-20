@@ -93,9 +93,5 @@ define get-file-size
 stat -f "%z" $(1)
 endef
 
-# Which gcc to use to build qemu, which doesn't work right when
-# built with 4.2.1 or later.
-GCCQEMU := prebuilt/darwin-x86/toolchain/i686-apple-darwin8-4.0.1/bin/gcc
-
 endif
 

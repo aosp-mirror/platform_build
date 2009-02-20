@@ -575,7 +575,8 @@ droidcore: files \
 	$(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_RECOVERYIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INTERNAL_DEFAULT_DOCS_TARGETS)
+	$(INTERNAL_DEFAULT_DOCS_TARGETS) \
+	$(INSTALLED_FILES_FILE)
 
 # The actual files built by the droidcore target changes depending
 # on the build variant.

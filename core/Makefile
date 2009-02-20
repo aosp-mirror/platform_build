@@ -198,20 +198,6 @@ $(APKCERTS_FILE): $(all_built_packages)
 apkcerts-list: $(APKCERTS_FILE)
 
 # -----------------------------------------------------------------
-# installed file list
-INSTALLED_FILES_FILE := $(PRODUCT_OUT)/installed-files.txt
-$(INSTALLED_FILES_FILE): $(ALL_DEFAULT_INSTALLED_MODULES)
-	@echo Installed file list: $@
-	@mkdir -p $(dir $@)
-	@rm -f $@
-	$(hide) (cd $(PRODUCT_OUT) && \
-	         find system data -type f -printf 'name="%p" size=%s\n') | \
-		sort > $@
-
-.PHONY: installed-file-list
-installed-file-list: $(INSTALLED_FILES_FILE)
-
-# -----------------------------------------------------------------
 # module info file
 ifdef CREATE_MODULE_INFO_FILE
   MODULE_INFO_FILE := $(PRODUCT_OUT)/module-info.txt
@@ -899,6 +885,20 @@ endif
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
+
+# -----------------------------------------------------------------
+# installed file list
+# Depending on $(INSTALLED_SYSTEMIMAGE) ensures that it
+# gets the DexOpt one if we're doing that.
+INSTALLED_FILES_FILE := $(PRODUCT_OUT)/installed-files.txt
+$(INSTALLED_FILES_FILE): $(INSTALLED_SYSTEMIMAGE)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) build/tools/fileslist.py $(TARGET_OUT) $(TARGET_OUT_DATA) > $@
+
+.PHONY: installed-file-list
+installed-file-list: $(INSTALLED_FILES_FILE)
 
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".

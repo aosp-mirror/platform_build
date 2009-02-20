@@ -149,6 +149,15 @@ TARGET_DEVICE := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
 PRODUCT_LOCALES := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_LOCALES))
 # TODO: also keep track of things like "port", "land" in product files.
 
+# If CUSTOM_LOCALES contains any locales not already included
+# in PRODUCT_LOCALES, add them to PRODUCT_LOCALES.
+extra_locales := $(filter-out $(PRODUCT_LOCALES),$(CUSTOM_LOCALES))
+ifneq (,$(extra_locales))
+  $(info Adding CUSTOM_LOCALES [$(extra_locales)] to PRODUCT_LOCALES [$(PRODUCT_LOCALES)])
+  PRODUCT_LOCALES += $(extra_locales)
+  extra_locales :=
+endif
+
 # Assemble the list of options.
 PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES)
 

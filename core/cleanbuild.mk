@@ -104,8 +104,14 @@ else
   # Don't bother with this extra part when explicitly building the sdk product.
   building_sdk :=
 endif
-current_build_config := $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)
+
+# A change in the list of locales warrants an installclean, too.
+locale_list := $(subst $(space),$(comma),$(strip $(PRODUCT_LOCALES)))
+
+current_build_config := \
+    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(locale_list)}
 building_sdk :=
+locale_list :=
 force_installclean := false
 
 # Read the current state from the file, if present.

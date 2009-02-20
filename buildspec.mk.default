@@ -65,6 +65,14 @@ ifndef CUSTOM_MODULES
 #CUSTOM_MODULES:=
 endif
 
+# Choose additional locales, like "en_US" or "it_IT", to add to any
+# built product.  Any locales that appear in CUSTOM_LOCALES but not in
+# the locale list for the selected product will be added to the end
+# of PRODUCT_LOCALES.
+ifndef CUSTOM_LOCALES
+#CUSTOM_LOCALES:=
+endif
+
 # If you have a special place to put your ouput files, set this, otherwise
 # it goes to <build-root>/out
 #OUT_DIR:=/tmp/stuff

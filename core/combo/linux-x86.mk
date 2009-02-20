@@ -12,12 +12,7 @@ ifeq ($(combo_target),HOST_)
 define get-file-size
 stat --format "%s" "$(1)"
 endef
-
-# Which gcc to use to build qemu, which doesn't work right when
-# built with 4.2.1 or later.
-GCCQEMU := prebuilt/linux-x86/toolchain/i686-linux-gnu-3.4.6/bin/gcc
-endif # _HOST
-
+endif
 
 # On the sim, we build the "host" tools in 64 bit iff the compiler
 # does it for us automatically.  In other words, that means on 64 bit
