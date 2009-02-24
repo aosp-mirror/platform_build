@@ -84,29 +84,11 @@ libgps.so               0xA9700000
 libcamera.so            0xA9680000
 libqcamera.so           0xA9400000
 
-# pv libraries
-libpvasf.so                    0xA7C26000
-libpvasfreg.so                 0xA7C00000
-libomx_sharedlibrary.so        0xA7BA0000
-libopencore_download.so        0xA7B40000
-libopencore_downloadreg.so     0xA7B00000
-libopencore_net_support.so     0xA7A00000
-libopencore_rtsp.so            0xA7900000
-libopencore_rtspreg.so         0xA7890000
-libopencore_author.so          0xA7800000
-libomx_aacdec_sharedlibrary.so 0xA7700000
-libomx_amrdec_sharedlibrary.so 0xA76A0000
-libomx_amrenc_sharedlibrary.so 0xA7680000
-libomx_avcdec_sharedlibrary.so 0xA7660000
-libomx_avcenc_sharedlibrary.so 0xA7610000
-libomx_m4vdec_sharedlibrary.so 0xA75C0000
-libomx_m4venc_sharedlibrary.so 0xA7590000
-libomx_mp3dec_sharedlibrary.so 0xA7450000
-libopencore_mp4local.so        0xA7400000
-libopencore_mp4localreg.so     0xA7300000
-libopencore_player.so          0xA7000000
-libopencore_common.so          0xA6000000
-libopencore_2way.so            0xA5A00000
+# pv opencore libraries
+libopencore_author.so   0xA7B00000
+libopencore_player.so   0xA7800000
+libopencore_common.so   0xA7300000
+libopencore_2way.so     0xA7000000
 
 # libraries for specific apps or temporary libraries
 libcam_ipl.so           0x9F000000
