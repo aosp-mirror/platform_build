@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAIX////I\u003d",
+        "filename": "target/board/generic_x86/AT_Translated_Set_2_keyboard.kcm",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2009-02-28T05:11:49Z",
+      "side": 1,
+      "message": "This file looks the same as development/emulator/keymaps/qwerty.kcm.  I\u0027d prefer to let this x86 fall back to that one unless there\u0027s a custom keyboard, but that would go in vendor somewhere.",
+      "revId": "840165afd84aa2c988055651d59b4677ecf7a0fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAIX////E\u003d",
+        "filename": "target/board/generic_x86/AT_Translated_Set_2_keyboard.kl",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2009-02-28T05:11:49Z",
+      "side": 1,
+      "message": "Same comment here as for qwerty.kcm.",
+      "revId": "840165afd84aa2c988055651d59b4677ecf7a0fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
