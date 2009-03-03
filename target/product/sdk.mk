@@ -15,8 +15,10 @@ PRODUCT_PACKAGES := \
 	Mms \
 	Settings \
 	SdkSetup \
+	CustomLocale \
 	gpstest \
-	sqlite3
+	sqlite3 \
+	SoftKeyboard
 
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)

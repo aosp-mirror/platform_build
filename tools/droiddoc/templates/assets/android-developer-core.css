@@ -682,6 +682,32 @@ td.gsc-search-button {
   height:1.8em;
 }
 
+/* search result tabs */
+
+#doc-content .gsc-control {
+  position:relative;
+}
+
+#doc-content .gsc-tabsArea {
+  position:relative;
+}
+
+#doc-content .gsc-tabHeader {
+  padding: 3px 6px;
+  position:relative;
+}
+
+#doc-content .gsc-tabHeader.gsc-tabhActive {
+  border-top: 2px solid #94B922;
+}
+
+#doc-content h2#searchTitle {
+  padding:0;
+}
+
+#doc-content .gsc-resultsbox-visible {
+  padding:1em 0 0 6px;
+}
 
 /* CAROUSEL */
 

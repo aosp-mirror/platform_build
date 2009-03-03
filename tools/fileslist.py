@@ -17,6 +17,10 @@
 
 import os, sys
 
+def get_file_size(path):
+  st = os.lstat(path)
+  return st.st_size;
+
 def main(argv):
   output = []
   roots = argv[1:]
@@ -27,7 +31,7 @@ def main(argv):
       for f in files:
         try:
           row = (
-              os.path.getsize(os.path.sep.join((dir, f))),
+              get_file_size(os.path.sep.join((dir, f))),
               os.path.sep.join((relative, f)),
             )
           output.append(row)
