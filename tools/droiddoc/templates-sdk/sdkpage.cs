@@ -40,8 +40,8 @@
 
 <?cs if:sdk.not_latest_version ?>
   <div class="special">
-    <p><strong>This is NOT the current Android SDK release.</strong></p>
-    <p>Use the links under <strong>Current SDK Release</strong>, on the left, to be directed to the current SDK.</p>
+    <p><strong>This is NOT the latest version of the Android SDK</strong>.</p>
+    <p>Go to the <a href="<?cs var:toroot ?>sdk/index.html">SDK home page</a> to be directed to the latest version.</p>
   </div>
 <?cs /if ?>
   

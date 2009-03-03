@@ -136,17 +136,11 @@ ifneq (,$(user_variant))
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
   endif
-  
-  # Disallow mock locations by default for user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
-  
 else # !user_variant
   # Turn on checkjni for non-user builds.
   ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
   # Set device insecure for non-user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
-  # Allow mock locations by default for non user builds
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
 endif # !user_variant
 
 ifeq (true,$(strip $(enable_target_debugging)))

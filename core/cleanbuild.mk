@@ -123,11 +123,7 @@ PREVIOUS_BUILD_CONFIG := $(strip $(PREVIOUS_BUILD_CONFIG))
 ifdef PREVIOUS_BUILD_CONFIG
   ifneq "$(current_build_config)" "$(PREVIOUS_BUILD_CONFIG)"
     $(info *** Build configuration changed: "$(PREVIOUS_BUILD_CONFIG)" -> "$(current_build_config)")
-    ifneq ($(DISABLE_AUTO_INSTALLCLEAN),true)
-      force_installclean := true
-    else
-      $(info DISABLE_AUTO_INSTALLCLEAN is set; skipping auto-clean. Your tree may be in an inconsistent state.)
-    endif
+    force_installclean := true
   endif
 endif  # else, this is the first build, so no need to clean.
 PREVIOUS_BUILD_CONFIG :=

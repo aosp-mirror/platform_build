@@ -107,8 +107,7 @@ function search_changed(e, kd, toroot)
     var text = search.value;
 
     // 13 = enter
-    if (!kd && (e.keyCode == 13)) {
-        document.getElementById("search_filtered_div").className = "no-display";
+    if (kd && (e.keyCode == 13)) {
         if (gSelectedIndex >= 0) {
             window.location = toroot + gMatches[gSelectedIndex].link;
             return false;
@@ -146,7 +145,6 @@ function search_changed(e, kd, toroot)
             }
         }
         sync_selection_table(toroot);
-        return true; // allow the event to bubble up to the search api
     }
 }
 

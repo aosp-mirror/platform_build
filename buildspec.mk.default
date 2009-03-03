@@ -88,11 +88,6 @@ ifndef NO_FALLBACK_FONT
 #NO_FALLBACK_FONT:=true
 endif
 
-# To enabled instrumentation in webcore based apps like gmail and
-# the browser, define WEBCORE_INSTRUMENTATION:=true
-#WEBCORE_INSTRUMENTATION:=true
-#endif
-
 # when the build system changes such that this file must be updated, this
 # variable will be changed.  After you have modified this file with the new
 # changes (see buildspec.mk.default), update this to the new value from

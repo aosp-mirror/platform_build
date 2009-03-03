@@ -899,7 +899,6 @@ $(INSTALLED_FILES_FILE): $(INSTALLED_SYSTEMIMAGE)
 
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
-$(call dist-for-goals, sdk, $(INSTALLED_FILES_FILE))
 
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".

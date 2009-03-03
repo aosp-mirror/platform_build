@@ -558,7 +558,7 @@ hide := @
 else
 define pretty
 endef
-hide :=
+hide := 
 endif
 
 ###########################################################
@@ -984,7 +984,7 @@ endef
 ###########################################################
 ## Commands for running gcc to link a statically linked
 ## executable.  In practice, we only use this on arm, so
-## the other platforms don't have the
+## the other platforms don't have the 
 ## transform-o-to-static-executable defined
 ###########################################################
 
@@ -1033,7 +1033,7 @@ endef
 
 
 ###########################################################
-## Commands for running javac to make .class files
+## Commands for running javac to make .class files 
 ###########################################################
 
 #@echo "Source intermediates dir: $(PRIVATE_SOURCE_INTERMEDIATES_DIR)"
@@ -1064,9 +1064,9 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
 endef
 
 ifeq ($(HOST_OS),windows)
-xlint_unchecked :=
+xlint_unchecked := 
 else
-#xlint_unchecked := -Xlint:unchecked
+#xlint_unchecked := -Xlint:unchecked 
 endif
 
 # emit-line, <word list>, <output file>
@@ -1102,7 +1102,7 @@ endef
 
 # For a list of jar files, unzip them to a specified directory,
 # but make sure that no META-INF files come along for the ride.
-#
+# 
 # $(1): files to unzip
 # $(2): destination directory
 define unzip-jar-files
@@ -1250,7 +1250,7 @@ $(hide) if [ -f "$(PRIVATE_INTERMEDIATES_DIR)/classes.lst" ]; then \
 endef
 
 # TODO(joeo): If we can ever upgrade to post 3.81 make and get the
-# new prebuilt rules to work, we should change this to copy the
+# new prebuilt rules to work, we should change this to copy the 
 # resources to the out directory and then copy the resources.
 
 # Note: not using aapt tool for this because we aren't making
@@ -1263,15 +1263,11 @@ define transform-host-java-to-package
 @mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES), \
     $(PRIVATE_CLASS_INTERMEDIATES_DIR))
-$(call dump-words-to-file,$(sort\
-	$(PRIVATE_JAVA_SOURCES)),\
-	$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq)
 $(hide) $(HOST_JAVAC) -encoding ascii -g \
 	$(xlint_unchecked) \
 	$(addprefix -classpath ,$(strip \
 		$(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
-	-extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR)\
-        \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq || \
+	-extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_JAVA_SOURCES) || \
 	( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) $(PRIVATE_EXTRA_JAR_ARGS) \
@@ -1486,3 +1482,4 @@ include $(BUILD_SYSTEM)/distdir.mk
 #	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 #	      -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
 #	  rm -f $*.d
+

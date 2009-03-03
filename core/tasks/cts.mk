@@ -15,7 +15,22 @@
 cts_dir := $(HOST_OUT)/cts
 cts_tools_src_dir := cts/tools
 
+# Build a name that looks like:
+#
+#     linux-x86   --> android-cts_linux-x86
+#     darwin-x86  --> android-cts_mac-x86
+#     windows-x86 --> android-cts_windows
+#
 cts_name := android-cts
+ifeq ($(HOST_OS),darwin)
+    cts_host_os := mac
+else
+    cts_host_os := $(HOST_OS)
+endif
+ifneq ($(HOST_OS),windows)
+    cts_host_os := $(cts_host_os)-$(HOST_ARCH)
+endif
+cts_name := $(cts_name)_$(cts_host_os)
 
 CTS_EXECUTABLE := cts
 ifeq ($(HOST_OS),windows)
@@ -33,13 +48,13 @@ CTS_CASE_LIST := \
 	CtsDatabaseTestCases \
 	CtsGraphicsTestCases \
 	CtsLocationTestCases \
+	CtsNetTestCases \
 	CtsOsTestCases \
 	CtsProviderTestCases \
 	CtsTextTestCases \
 	CtsUtilTestCases \
 	CtsViewTestCases \
 	CtsWidgetTestCases \
-	CtsNetTestCases \
 	SignatureTest
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
@@ -70,9 +85,6 @@ $(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/
      $(PRIVATE_DIR) $(TMP_DIR) $(TOP) $(TARGET_COMMON_OUT_ROOT) $(OUT_DIR)
 
 # Package CTS and clean up.
-#
-# TODO:
-#   Pack cts.bat into the same zip file as well. See http://buganizer/issue?id=1656821 for more details
 INTERNAL_CTS_TARGET := $(cts_dir)/$(cts_name).zip
 $(INTERNAL_CTS_TARGET): PRIVATE_NAME := $(cts_name)
 $(INTERNAL_CTS_TARGET): PRIVATE_CTS_DIR := $(cts_dir)

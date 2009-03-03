@@ -91,7 +91,6 @@ libcamera.so            0xA9680000
 libqcamera.so           0xA9400000
 
 # pv libraries
-libopencorenet_support.so     0xA7D20000
 libpvasf.so                   0xA7BC0000
 libpvasfreg.so                0xA7B70000
 libopencoredownload.so        0xA7B40000
