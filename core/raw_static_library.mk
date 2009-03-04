@@ -1,5 +1,0 @@
-
-LOCAL_RAW_STATIC_LIBRARY:=true
-
-include $(BUILD_STATIC_LIBRARY)
-
