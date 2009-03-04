@@ -1,0 +1,152 @@
+#!/bin/bash
+#
+# Copyright (C) 2007 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+PROGNAME=`basename $0`
+
+function fail ()
+{
+    if [ ! -z "$@" ]
+    then
+        echo "$PROGNAME: ERROR: $@" >&2
+    fi
+    echo "$PROGNAME: ERROR: failed." >&2
+    exit 1
+}
+
+function usage ()
+{
+    cat << HERE
+usage: $PROGNAME <.jar/.apk-file-list>
+    Dumps a summary of the compressed and uncompressed sizes of various
+    types of files in each package.  Emits one line per package.
+    Packages must be zipfiles, readable using "unzip".
+
+    Example output line:
+
+        filesize=642684 all=603288/919304 dex=119529/353815 name="out/App.apk"
+
+    filesize: the size of the package on disk
+    name: the name of the package as passed to $PROGNAME
+
+    These fields are presented as <uncompressed bytes>/<compressed bytes>:
+
+        all: the sum of all entries in the package
+        dex: the sum of all "*.dex" entries in the package
+HERE
+    exit 1
+}
+
+if [ $# -lt 1 ]
+then
+    usage
+fi
+
+UNAME=`uname`
+if [ "x$UNAME" = "xDarwin" ]
+then
+    statArgs="-f %z"
+elif [ "x$UNAME" = "xLinux" ]
+then
+    statArgs="-c %s"
+else
+    fail "Unknown uname $UNAME"
+fi
+
+function printFileSize ()
+{
+    stat $statArgs $1
+}
+
+for file
+do
+    if [ ! -f "$file" ]
+    then
+        fail "$file doesn't exist or isn't a file"
+    fi
+    unzip -lv "$file" | awk '
+        BEGIN {
+          total_compressed = 0;
+          total_uncompressed = 0;
+          dex_compressed = 0;
+          dex_uncompressed = 0;
+        }
+
+        # Make sure the output of unzip -lv looks like something we expect.
+        #
+        NR == "1" {
+            if ($1 != "Archive:") {
+                print "'$PROGNAME': ERROR: Unexpected zip listing format" > \
+                        "/dev/stderr";
+                print "'$PROGNAME': ERROR: Line 1 is \"" $0 "\"" > \
+                        "/dev/stderr";
+                failed = 1;
+                exit 1;
+            }
+        }
+        NR == "2" {
+            if (NF != "8" ||
+                $1 != "Length" ||
+                $2 != "Method" ||
+                $3 != "Size" ||
+                $4 != "Ratio" ||
+                $5 != "Date" ||
+                $6 != "Time" ||
+                $7 != "CRC-32" ||
+                $8 != "Name")
+            {
+                print "'$PROGNAME': ERROR: Unexpected zip listing format" > \
+                        "/dev/stderr";
+                print "'$PROGNAME': ERROR: Line 2 is \"" $0 "\"" > \
+                        "/dev/stderr";
+                failed = 1;
+                exit 1;
+            } else {
+                saw_listing = 1;
+            }
+        }
+
+        # Only look for lines where the ratio is the fourth column;
+        # this filters out the header and footer.
+        #
+        $4 ~ /%$/ {
+            uncompressed = $1;
+            compressed = $3;
+            if ($0 ~ /.dex$/) {
+                dex_compressed += compressed;
+                dex_uncompressed += uncompressed;
+            }
+            total_compressed += compressed;
+            total_uncompressed += uncompressed;
+        }
+        { next }
+
+        END {
+            if (!failed && saw_listing) {
+                print "filesize='$(printFileSize "$file")'",
+                      "all=" total_compressed "/" total_uncompressed,
+                      "dex=" dex_compressed "/" dex_uncompressed,
+                      "name=\"'"$file"'\"";
+            } else {
+                exit 1;
+            }
+        }
+    '
+    if [ $? -ne 0 ]
+    then
+        fail "Could not get stats for $file"
+    fi
+done
