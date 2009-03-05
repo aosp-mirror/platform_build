@@ -15,7 +15,8 @@ $(combo_target)LD := $($(combo_target)TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
 
 $(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-TARGET_arm_release_CFLAGS :=    -fomit-frame-pointer \
+TARGET_arm_release_CFLAGS :=    -O2 \
+                                -fomit-frame-pointer \
                                 -fstrict-aliasing    \
                                 -funswitch-loops     \
                                 -finline-limit=300
@@ -62,7 +63,7 @@ $(combo_target)GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 $(combo_target)RELEASE_CFLAGS := \
 			-DSK_RELEASE -DNDEBUG \
-			-O2 -g \
+			-g \
 			-Wstrict-aliasing=2 \
 			-finline-functions \
 			-fno-inline-functions-called-once \

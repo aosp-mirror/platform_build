@@ -80,9 +80,19 @@ endef
 #
 # $(1): product to inherit
 #
+# Does three things:
+#  1. Inherits all of the variables from $1.
+#  2. Records the inheritance in the .INHERITS_FROM variable
+#  3. Records that we've visited this node, in ALL_PRODUCTS
+#
 define inherit-product
   $(foreach v,$(_product_var_list), \
-      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(strip $(1))))
+      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(strip $(1)))) \
+  $(eval inherit_var := \
+      PRODUCTS.$(strip $(word 1,$(_include_stack))).INHERITS_FROM) \
+  $(eval $(inherit_var) := $(sort $($(inherit_var)) $(strip $(1)))) \
+  $(eval inherit_var:=) \
+  $(eval ALL_PRODUCTS := $(sort $(ALL_PRODUCTS) $(word 1,$(_include_stack))))
 endef
 
 #

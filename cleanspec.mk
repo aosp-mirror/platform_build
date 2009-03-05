@@ -68,6 +68,7 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/libandro
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libjni_andpyime_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/share)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libwebcore_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

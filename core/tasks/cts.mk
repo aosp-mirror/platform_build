@@ -40,7 +40,8 @@ CTS_CASE_LIST := \
 	CtsViewTestCases \
 	CtsWidgetTestCases \
 	CtsNetTestCases \
-	SignatureTest
+	SignatureTest \
+	android.core.tests
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
@@ -64,6 +65,55 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/startcts $(PRIVATE_DIR)/tools/
 	$(hide) touch $@
 
+# Generate the test plan for the core-tests
+CORE_TEST_PLAN := $(cts_dir)/$(cts_name)/repository/testcases/android.core.tests
+
+CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+
+$(CORE_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(CORE_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
+$(CORE_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
+$(CORE_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java -classpath $(PRIVATE_CLASSPATH) \
+	$(PRIVATE_PARAMS) CollectAllTests $(CORE_TEST_PLAN) \
+	cts/tests/core/AndroidManifest.xml tests.AllTests
+# Why does this depend on javalib.jar instead of classes.jar?  Because
+# even though the tool will operate on the classes.jar files, the
+# build system requires that dependencies use javalib.jar.  If
+# javalib.jar is up-to-date, then classes.jar is as well.  Depending
+# on classes.jar will build the files incorrectly.
+$(CORE_TEST_PLAN): android.core.tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp
+	@echo "Generate the CTS test plan: $@"
+	@echo $(PRIVATE_CUSTOM_TOOL)
+	$(transform-generated-source)
+
+
+# ----- Generate the test plan for the vm-tests -----
+#
+CORE_VM_TEST_PLAN := $(cts_dir)/$(cts_name)/repository/testcases/android.core.vm-tests
+
+VMTESTS_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests,1,)
+# core tests only needed to get hold of junit-framework-classes
+TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+
+$(CORE_VM_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(CORE_VM_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
+$(CORE_VM_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
+$(CORE_VM_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java -classpath $(PRIVATE_CLASSPATH) \
+	$(PRIVATE_PARAMS) CollectAllTests $(CORE_VM_TEST_PLAN) \
+	cts/tests/vm-tests/AndroidManifest.xml dot.junit.AllJunitHostTests
+# Please see big comment above on why this line depends on javalib.jar instead of classes.jar
+$(CORE_VM_TEST_PLAN): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
+	@echo "Generate the CTS vm-test plan: $@"
+	@echo $(PRIVATE_CUSTOM_TOOL)
+	$(transform-generated-source)
+	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
+
 # Generate the default test plan for User.
 $(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh
 	$(hide) bash $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh cts/tests/tests/ \
@@ -78,7 +128,7 @@ $(INTERNAL_CTS_TARGET): PRIVATE_NAME := $(cts_name)
 $(INTERNAL_CTS_TARGET): PRIVATE_CTS_DIR := $(cts_dir)
 $(INTERNAL_CTS_TARGET): PRIVATE_DIR := $(cts_dir)/$(cts_name)
 $(INTERNAL_CTS_TARGET): TMP_DIR := $(cts_dir)/temp
-$(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN)
+$(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN) $(CORE_TEST_PLAN) $(CORE_VM_TEST_PLAN)
 	@echo "Package CTS: $@"
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
 
@@ -92,4 +142,3 @@ $(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk \
 	$(PRIVATE_DIR)/repository/testcases/$(1).apk
 
 endef
-
