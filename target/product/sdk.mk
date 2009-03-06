@@ -20,6 +20,8 @@ PRODUCT_PACKAGES := \
 	sqlite3 \
 	SoftKeyboard
 
+PRODUCT_COPY_FILES := \
+	development/data/etc/vold.conf:system/etc/vold.conf
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
