@@ -74,9 +74,11 @@ TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,CO
 GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
 
 $(CORE_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(CORE_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
 $(CORE_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
 $(CORE_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
-$(CORE_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java -classpath $(PRIVATE_CLASSPATH) \
+$(CORE_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
+	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(CORE_TEST_PLAN) \
 	cts/tests/core/AndroidManifest.xml tests.AllTests
 # Why does this depend on javalib.jar instead of classes.jar?  Because
@@ -104,7 +106,9 @@ GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classe
 $(CORE_VM_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 $(CORE_VM_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
 $(CORE_VM_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
-$(CORE_VM_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java -classpath $(PRIVATE_CLASSPATH) \
+$(CORE_VM_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
+$(CORE_VM_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
+	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(CORE_VM_TEST_PLAN) \
 	cts/tests/vm-tests/AndroidManifest.xml dot.junit.AllJunitHostTests
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar

@@ -690,6 +690,7 @@ td.gsc-search-button {
 
 #doc-content .gsc-tabsArea {
   position:relative;
+  white-space:nowrap;
 }
 
 #doc-content .gsc-tabHeader {

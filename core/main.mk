@@ -101,6 +101,8 @@ $(info ***************************************************************)
 $(info ***************************************************************)
 $(info Don't pass '$(filter eng user userdebug tests,$(MAKECMDGOALS))' on \
 		the make command line.)
+# XXX The single quote on this line fixes gvim's syntax highlighting.
+# Without which, the rest of this file is impossible to read.
 $(info Set TARGET_BUILD_VARIANT in buildspec.mk, or use lunch or)
 $(info choosecombo.)
 $(info ***************************************************************)
@@ -108,6 +110,15 @@ $(info ***************************************************************)
 $(error stopping)
 endif
 
+ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
+$(info ***************************************************************)
+$(info ***************************************************************)
+$(info Invalid variant: $(TARGET_BUILD_VARIANT)
+$(info Valid values are: $(INTERNAL_VALID_VARIANTS)
+$(info ***************************************************************)
+$(info ***************************************************************)
+$(error stopping)
+endif
 
 ###
 ### In this section we set up the things that are different
@@ -122,10 +133,10 @@ ifneq (,$(user_variant))
   # Target is secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
 
-  override_build_tags := user
+  tags_to_install := user
   ifeq ($(user_variant),userdebug)
     # Pick up some extra useful tools
-    override_build_tags += debug
+    tags_to_install += debug
   else
     # Disable debugging in plain user builds.
     enable_target_debugging :=
@@ -159,10 +170,16 @@ else # !enable_target_debugging
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0 persist.service.adb.enable=0
 endif # !enable_target_debugging
 
+## eng ##
+
+ifeq ($(TARGET_BUILD_VARIANT),eng)
+tags_to_install := user debug eng
+endif
+
 ## tests ##
 
 ifeq ($(TARGET_BUILD_VARIANT),tests)
-override_build_tags := eng debug user development tests
+tags_to_install := user debug eng tests
 endif
 
 ## sdk ##
@@ -171,7 +188,9 @@ ifneq ($(filter sdk,$(MAKECMDGOALS)),)
 ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
-override_build_tags := user
+# TODO: this should be eng I think.  Since the sdk is built from the eng
+# variant.
+tags_to_install := user
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
@@ -198,24 +217,17 @@ ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-file=/data/anr/traces.txt
 # Define a function that, given a list of module tags, returns
 # non-empty if that module should be installed in /system.
 
-# For most goals, anything tagged with "eng"/"debug"/"user" should
+# For most goals, anything not tagged with the "tests" tag should
 # be installed in /system.
 define should-install-to-system
-$(filter eng debug user,$(1))
+$(if $(filter tests,$(1)),,true)
 endef
 
 ifneq (,$(filter sdk,$(MAKECMDGOALS)))
 # For the sdk goal, anything with the "samples" tag should be
 # installed in /data even if that module also has "eng"/"debug"/"user".
 define should-install-to-system
-$(if $(filter samples,$(1)),,$(filter eng debug user development,$(1)))
-endef
-endif
-
-ifeq ($(TARGET_BUILD_VARIANT),)
-# For the default goal, everything should be installed in /system.
-define should-install-to-system
-true
+$(if $(filter samples tests,$(1)),,true)
 endef
 endif
 
@@ -454,6 +466,8 @@ add-required-deps :=
 Default_MODULES := $(sort $(ALL_DEFAULT_INSTALLED_MODULES) \
                           $(ALL_BUILT_MODULES) \
                           $(CUSTOM_MODULES))
+# TODO: Remove the 3 places in the tree that use
+# ALL_DEFAULT_INSTALLED_MODULES and get rid of it from this list.
 
 ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
@@ -482,30 +496,23 @@ eng_MODULES := $(sort $(call get-tagged-modules,eng,restricted))
 debug_MODULES := $(sort $(call get-tagged-modules,debug,restricted))
 tests_MODULES := $(sort $(call get-tagged-modules,tests,restricted))
 
-droid_MODULES := $(sort $(Default_MODULES) \
-			$(eng_MODULES) \
-			$(debug_MODULES) \
-			$(user_MODULES) \
-			$(all_development_MODULES))
-
-# THIS IS A TOTAL HACK AND SHOULD NOT BE USED AS AN EXAMPLE
-modules_to_build := $(droid_MODULES)
-ifneq ($(override_build_tags),)
-  modules_to_build := $(sort $(Default_MODULES) \
-		      $(foreach tag,$(override_build_tags),$($(tag)_MODULES)))
-#$(error skipping modules $(filter-out $(modules_to_build),$(Default_MODULES) $(droid_MODULES)))
+ifeq ($(strip $(tags_to_install)),)
+$(error ASSERTION FAILED: tags_to_install should not be empty)
 endif
+modules_to_install := $(sort $(Default_MODULES) \
+          $(foreach tag,$(tags_to_install),$($(tag)_MODULES)))
 
 # Some packages may override others using LOCAL_OVERRIDES_PACKAGES.
 # Filter out (do not install) any overridden packages.
-overridden_packages := $(call get-package-overrides,$(modules_to_build))
+overridden_packages := $(call get-package-overrides,$(modules_to_install))
 ifdef overridden_packages
-#  old_modules_to_build := $(modules_to_build)
-  modules_to_build := \
+#  old_modules_to_install := $(modules_to_install)
+  modules_to_install := \
       $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk), \
-          $(modules_to_build))
+          $(modules_to_install))
 endif
-#$(error filtered out $(filter-out $(modules_to_build),$(old_modules_to_build)))
+#$(error filtered out
+#           $(filter-out $(modules_to_install),$(old_modules_to_install)))
 
 # Don't include any GNU targets in the SDK.  It's ok (and necessary)
 # to build the host tools, but nothing that's going to be installed
@@ -518,8 +525,8 @@ ifneq ($(filter sdk,$(MAKECMDGOALS)),)
                       $(TARGET_OUT_DATA)/%, \
                               $(sort $(call get-tagged-modules,gnu)))
   $(info Removing from sdk:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
-  modules_to_build := \
-              $(filter-out $(target_gnu_MODULES),$(modules_to_build))
+  modules_to_install := \
+              $(filter-out $(target_gnu_MODULES),$(modules_to_install))
 endif
 
 
@@ -527,9 +534,9 @@ endif
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
 # contains everything that's built during the current make, but it also further
 # extends ALL_DEFAULT_INSTALLED_MODULES.
-ALL_DEFAULT_INSTALLED_MODULES := $(modules_to_build)
+ALL_DEFAULT_INSTALLED_MODULES := $(modules_to_install)
 include $(BUILD_SYSTEM)/Makefile
-modules_to_build := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
+modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 endif # dont_bother
@@ -551,7 +558,7 @@ $(ALL_C_CPP_ETC_OBJECTS): | all_copied_headers
 
 # All the droid stuff, in directories
 .PHONY: files
-files: prebuilt $(modules_to_build) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
+files: prebuilt $(modules_to_install) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # -------------------------------------------------------------------
 

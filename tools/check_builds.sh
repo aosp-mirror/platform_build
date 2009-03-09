@@ -55,13 +55,22 @@ function golden_builds
     do_builds golden "$@"
 }
 
+function compare_builds
+{
+    local inputs=
+    while [ -n "$1" ]
+    do
+        inputs="$inputs $TEST_BUILD_DIR/golden-$1/installed-files.txt"
+        inputs="$inputs $TEST_BUILD_DIR/dist-$1/installed-files.txt"
+        shift
+    done
+    build/tools/compare_fileslist.py $inputs > $TEST_BUILD_DIR/sizes.html
+}
+
 function check_builds
 {
     rm -rf $TEST_BUILD_DIR/dist-*
     do_builds dist "$@"
-    build/tools/compare_fileslist.py \
-            $TEST_BUILD_DIR/golden-*/installed-files.txt \
-            $TEST_BUILD_DIR/dist-*/installed-files.txt \
-        > $TEST_BUILD_DIR/sizes.html
+    compare_builds "$@"
 }
 

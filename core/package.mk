@@ -30,13 +30,6 @@ ifeq ($(LOCAL_PACKAGE_NAME),)
 $(error $(LOCAL_PATH): Package modules must define LOCAL_PACKAGE_NAME)
 endif
 
-LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
-ifeq ($(LOCAL_MODULE_TAGS),)
-$(error $(LOCAL_PATH): Package modules must define LOCAL_MODULE_TAGS)
-endif
-
-#$(warning $(LOCAL_PATH) $(LOCAL_PACKAGE_NAME) $(sort $(LOCAL_MODULE_TAGS)))
-
 ifneq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE_SUFFIX)
 endif
@@ -59,6 +52,14 @@ ifneq ($(strip $(LOCAL_MODULE_CLASS)),)
 $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
 LOCAL_MODULE_CLASS := APPS
+
+# Package LOCAL_MODULE_TAGS default to optional
+LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
+ifeq ($(LOCAL_MODULE_TAGS),)
+LOCAL_MODULE_TAGS := optional
+endif
+
+#$(warning $(LOCAL_PATH) $(LOCAL_PACKAGE_NAME) $(sort $(LOCAL_MODULE_TAGS)))
 
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
