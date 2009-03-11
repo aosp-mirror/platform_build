@@ -9,7 +9,7 @@ var NAV_PREF_TREE = "tree";
 var NAV_PREF_PANELS = "panels";
 var nav_pref;
 var toRoot;
-
+var isMobile = false; // true if mobile, so we can adjust some layout
 
 function addLoadEvent(newfun) {
   var current = window.onload;
@@ -23,7 +23,24 @@ function addLoadEvent(newfun) {
   }
 }
 
+var agent = navigator['userAgent'];
+if ((agent.indexOf("Mobile") != -1) || 
+    (agent.indexOf("BlackBerry") != -1) || 
+    (agent.indexOf("Mini") != -1)) {
+  isMobile = true;
+  addLoadEvent(mobileSetup);
+}
+
 window.onresize = resizeAll;
+
+function mobileSetup() {
+  $("body").css({'overflow':'auto'});
+  $("html").css({'overflow':'auto'});
+  $("#body-content").css({'position':'relative', 'top':'0'});
+  $("#doc-content").css({'overflow':'visible', 'border-left':'3px solid #DDD'});
+  $("#side-nav").css({'padding':'0'});
+  $("#nav-tree").css({'overflow-y': 'auto'});
+}
 
 function setToRoot(root) {
   toRoot = root;
@@ -83,9 +100,6 @@ function writeCookie(cookie, val, path, expiration) {
 } 
 
 function init() {
-  $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizeHeight(); } });
-  $(".side-nav-resizable").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
-
   $("#side-nav").css({position:"absolute",left:0});
   content = $("#doc-content");
   resizePackagesNav = $("#resize-packages-nav");
@@ -98,17 +112,22 @@ function init() {
   } else if (location.href.indexOf("/guide/") != -1) {
     var cookiePath = "guide_";
   }
-  var cookieWidth = getCookie(cookiePath+'width');
-  var cookieHeight = getCookie(cookiePath+'height');
-  if (cookieWidth) {
-    restoreWidth(cookieWidth);
-  } else if ($(".side-nav-resizable").length) {
-    resizeWidth();
-  }
-  if (cookieHeight) {
-    restoreHeight(cookieHeight);
-  } else {
-    resizeHeight();
+
+  if (!isMobile) {
+    $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizeHeight(); } });
+    $(".side-nav-resizable").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
+    var cookieWidth = getCookie(cookiePath+'width');
+    var cookieHeight = getCookie(cookiePath+'height');
+    if (cookieWidth) {
+      restoreWidth(cookieWidth);
+    } else if ($(".side-nav-resizable").length) {
+      resizeWidth();
+    }
+    if (cookieHeight) {
+      restoreHeight(cookieHeight);
+    } else {
+      resizeHeight();
+    }
   }
 
   if (devdocNav.length) { // only dev guide and sdk 
@@ -175,9 +194,11 @@ function resizeWidth() {
 }
 
 function resizeAll() {
-  resizeHeight();
-  if ($(".side-nav-resizable").length) {
-    resizeWidth();
+  if (!isMobile) {
+    resizeHeight();
+    if ($(".side-nav-resizable").length) {
+      resizeWidth();
+    }
   }
 }
 

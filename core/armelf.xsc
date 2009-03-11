@@ -190,9 +190,15 @@ SECTIONS
   .debug_funcnames 0 : { *(.debug_funcnames) }
   .debug_typenames 0 : { *(.debug_typenames) }
   .debug_varnames  0 : { *(.debug_varnames) }
+  /* Adding the word ABSOLUTE below, so that the _stack below won't float
+     into a random section. If _stack is not absolutely with .stack section,
+     we saw that sometimes _stack got inserted into the .debug_frame section
+     because it's processed by the linker at that moment. As a result, _stack
+     symbol will get wrongly moved and gelf_update_symshndx() will return
+     invalid data. */
     .stack         0x80000 :
   {
-    _stack = .;
+    _stack = ABSOLUTE(.);
     *(.stack)
   }
   .note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }

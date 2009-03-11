@@ -283,16 +283,20 @@ def:default_left_nav() ?>
       </div><!-- end swapper -->
     </div> <!-- end side-nav -->
     <script>
-      $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
-      chooseDefaultNav();
-      if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
-      else {
-        addLoadEvent(function() {
-          scrollIntoView("packages-nav");
-          scrollIntoView("classes-nav");
-        });
+      if (!isMobile) {
+        $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
+        chooseDefaultNav();
+        if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
+        else {
+          addLoadEvent(function() {
+            scrollIntoView("packages-nav");
+            scrollIntoView("classes-nav");
+          });
+        }
+        $("#swapper").css({borderBottom:"2px solid #aaa"});
+      } else {
+        swapNav(); // tree view should be used on mobile
       }
-      $("#swapper").css({borderBottom:"2px solid #aaa"});
     </script><?cs 
 /def ?>
 

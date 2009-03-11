@@ -32,8 +32,10 @@ CTS_CASE_LIST := \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
 	CtsGraphicsTestCases \
+	CtsHardwareTestCases \
 	CtsLocationTestCases \
 	CtsOsTestCases \
+	CtsPermissionTestCases \
 	CtsProviderTestCases \
 	CtsTextTestCases \
 	CtsUtilTestCases \
@@ -110,7 +112,7 @@ $(CORE_VM_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
 $(CORE_VM_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
 	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(CORE_VM_TEST_PLAN) \
-	cts/tests/vm-tests/AndroidManifest.xml dot.junit.AllJunitHostTests
+	cts/tests/vm-tests/AndroidManifest.xml dot.junit.AllJunitHostTests cts/tools/vm-tests/Android.mk
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
 $(CORE_VM_TEST_PLAN): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
 	@echo "Generate the CTS vm-test plan: $@"
@@ -119,7 +121,7 @@ $(CORE_VM_TEST_PLAN): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INT
 	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
 
 # Generate the default test plan for User.
-$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh
+$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh $(CORE_VM_TEST_PLAN) $(CORE_TEST_PLAN)
 	$(hide) bash $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh cts/tests/tests/ \
      $(PRIVATE_DIR) $(TMP_DIR) $(TOP) $(TARGET_COMMON_OUT_ROOT) $(OUT_DIR)
 
