@@ -95,9 +95,9 @@ def StartEmulator(exe_name='emulator', kernel=None,
               or unqualified (and left to exec() to find).
     kernel: If set, passed to the emulator as "-kernel".
     ramdisk: If set, passed to the emulator as "-ramdisk".
-    image: If set, passed to the emulator as "-image".
+    image: If set, passed to the emulator as "-system".
     userdata: If set, passed to the emulator as "-initdata" and "-data".
-    system: If set, passed to the emulator as "-system".
+    system: If set, passed to the emulator as "-sysdir".
 
   Returns:
     A subprocess.Popen that refers to the emulator process, or None if
@@ -107,9 +107,10 @@ def StartEmulator(exe_name='emulator', kernel=None,
   args = [exe_name]
   if kernel: args += ['-kernel', kernel]
   if ramdisk: args += ['-ramdisk', ramdisk]
-  if image: args += ['-image', image]
+  if image: args += ['-system', image]
   if userdata: args += ['-initdata', userdata, '-data', userdata]
-  if system: args += ['-system', system]
+  if system: args += ['-sysdir', system]
+  args += ['-partition-size', '128']
   args += ['-no-window', '-netfast', '-noaudio']
 
   _USE_PIPE = True

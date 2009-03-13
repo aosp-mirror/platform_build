@@ -115,7 +115,7 @@ int doStuff(const char* zipName, const char* odexName)
         exit(67);                           /* usually */
     } else {
         /* parent -- wait for child to finish */
-        printf("waiting for verify+opt, pid=%d\n", (int) pid);
+        printf("--- waiting for verify+opt, pid=%d\n", (int) pid);
         int status, oldStatus;
         pid_t gotPid;
 

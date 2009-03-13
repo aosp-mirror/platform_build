@@ -201,11 +201,24 @@ else # !sdk
 ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 endif
 
-ifeq "" "$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES))"
-  # Install an apns-conf.xml file if one's not already being installed.
-  PRODUCT_COPY_FILES += development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
-  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+# Install an apns-conf.xml file if one's not already being installed.
+ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
+  PRODUCT_COPY_FILES += \
+        development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
+  ifeq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
     $(warning implicitly installing apns-conf_sdk.xml)
+  endif
+endif
+# If we're on an eng or tests build, but not on the sdk, and we have
+# a better one, use that instead.
+ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
+  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+    apns_to_use := $(wildcard vendor/google/etc/apns-conf.xml)
+    ifneq ($(strip $(apns_to_use)),)
+      PRODUCT_COPY_FILES := \
+            $(filter-out %:system/etc/apns-conf.xml,$(PRODUCT_COPY_FILES)) \
+            $(strip $(apns_to_use)):system/etc/apns-conf.xml
+    endif
   endif
 endif
 
