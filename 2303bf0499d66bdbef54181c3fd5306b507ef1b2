@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAMH///+4\u003d",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1001708
+      },
+      "writtenOn": "2009-03-15T10:33:13Z",
+      "side": 1,
+      "message": "This is a dead link as the file build/building.html is not in the repository.",
+      "revId": "2303bf0499d66bdbef54181c3fd5306b507ef1b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAMH///+0\u003d",
+        "filename": "core/build-system.html",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1001708
+      },
+      "writtenOn": "2009-03-15T10:33:13Z",
+      "side": 1,
+      "message": "You should specify the domain name of the adresses. @android.com / @google.com ?",
+      "revId": "2303bf0499d66bdbef54181c3fd5306b507ef1b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
