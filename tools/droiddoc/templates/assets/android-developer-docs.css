@@ -34,6 +34,10 @@
   font-size:12px;
 }
 
+#side-nav.not-resizable {
+  background:url('images/sidenav-rule.png') no-repeat 243px 0;
+}
+
 #resize-packages-nav {
 /* keeps the resize handle below the h-scroll handle */
   height:270px;
@@ -69,6 +73,7 @@
   padding:0;
   line-height:16px;
   white-space:nowrap;
+  zoom:1;
 }
 
 #side-nav li h2 {
@@ -81,6 +86,7 @@
 #side-nav li a {
   text-decoration:none;
   padding: 0 0 0 18px;
+  zoom:1;
 }
 
 #side-nav li a:hover {
@@ -199,6 +205,17 @@
   overflow-y: scroll;
 }
 
+#nav-swap {
+  font-size:10px;
+  line-height:10px;
+  margin-left:1em;
+  text-decoration:none;
+  display:block;
+}
+
+#tree-link {
+
+}
 
 /* DOCUMENT BODY */
 
@@ -208,7 +225,7 @@
 	
 #jd-header {
   background-color: #E2E2E2;
-  padding: 7px 20px;
+  padding: 7px 15px;
 }
 
 #jd-header h1 {
@@ -268,10 +285,12 @@ font-size:.9em;
   text-decoration:underline;
 }
 
-/* a div inside a sumtable th holding "Expand All" */
-.expandall {
-float:right;
-font-weight:normal;
+/* the link inside a sumtable for "Show All/Hide All" */
+.toggle-all {
+  display:block;
+  float:right;
+  font-weight:normal;
+  font-size:0.9em;
 }
 
 /* adjustments for in/direct subclasses tables */
@@ -354,7 +373,7 @@ links to summary tables) */
 }
 
 #jd-content {
-  padding: 18px 20px;
+  padding: 18px 15px;
 }
 
 hr {
@@ -640,22 +659,18 @@ pre.classic {
 
 #qv-wrapper {
   float: right;
-  position:relative;
-  width:315px;
+  width:310px;
   background-color:#fff;
-  padding:4px 30px 15px 20px;
-  top:-55px;
-  left:20px;
+  margin:-48px 0 2px 0;
+  padding:0 0 20px 35px;
 }
 
 #qv {
   background-color:#fff;
   border:4px solid #dee8f1;
-  margin:0 0 0 15px;
+  margin:0;
   padding:0 6px 6px;
-  margin-top:0px;
-  width:295;
-  float:right;
+  width:270px;
   font-size:.9em;
 }
 
@@ -730,27 +745,50 @@ pre.classic {
 
 .sidebox-wrapper {
   float: right;
-  width:300px;
+  width:280px;
   background-color:#fff;
-  margin: 0 0 0 15px;
-  padding: 5px 0 5px 15px;
+  margin: 0;
+  padding: 20px 0 20px 20px;
 }
 
 .sidebox-inner {
   border-left:1px solid #dee8f1;
   background-color:#ffffee;
-  padding:0 5px 0 15px;
+  padding:5px 8px 5px 12px;
+  font-size:90%;
+  width:260px;
 }
 
 .sidebox {
   float: right;
-  width:285px;
+  width:260px;
   background-color:#ffffee;
   border-left:1px solid #dee8f1;
-  margin: 0 0 0 15px;
+  margin: 12px 0 0 15px;
   padding:5px 8px 0 12px;
+  font-size:90%;
 }	
 
+.sidebox p,
+.sidebox-inner p {
+  margin-bottom: .25em;
+}
+
+.sidebox ul,
+.sidebox-inner ul {
+  padding: 0 0 0 1.5em;
+}
+
+.sidebox li ul,
+.sidebox-inner li ul {
+  margin-top:0;
+  margin-bottom:.1em;
+}
+
+.sidebox li,
+.sidebox-inner li {
+padding:0 0 0 0em;
+}
 
 #jd-content .sidebox h2,
 #jd-content .sidebox h3,
@@ -857,7 +895,7 @@ tr.alt-color {
 }
 
 /* expando trigger */
-#jd-content .jd-expando-trigger {
+#jd-content .jd-expando-trigger-img {
   margin:0;
 }
 

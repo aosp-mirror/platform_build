@@ -23,14 +23,8 @@
 # $(call ) isn't necessary.
 #
 define _find-android-products-files
-$(foreach vendor,$(wildcard vendor/*), \
-  $(if $(wildcard $(vendor)/AndroidProducts.mk), \
-    $(vendor)/AndroidProducts.mk \
-   , \
-    $(wildcard $(vendor)/*/AndroidProducts.mk) \
-   ) \
- ) \
- $(wildcard $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
+$(shell test -d vendor && find vendor -maxdepth 6 -name AndroidProducts.mk) \
+  $(SRC_TARGET_DIR)/product/AndroidProducts.mk
 endef
 
 #
@@ -67,7 +61,10 @@ _product_var_list := \
     PRODUCT_COPY_FILES \
     PRODUCT_OTA_PUBLIC_KEYS \
     PRODUCT_POLICY \
-    PRODUCT_PACKAGE_OVERLAYS
+    PRODUCT_PACKAGE_OVERLAYS \
+    DEVICE_PACKAGE_OVERLAYS \
+    PRODUCT_CONTRIBUTORS_FILE \
+    PRODUCT_TAGS
 
 define dump-product
 $(info ==== $(1) ====)\
@@ -83,9 +80,19 @@ endef
 #
 # $(1): product to inherit
 #
+# Does three things:
+#  1. Inherits all of the variables from $1.
+#  2. Records the inheritance in the .INHERITS_FROM variable
+#  3. Records that we've visited this node, in ALL_PRODUCTS
+#
 define inherit-product
   $(foreach v,$(_product_var_list), \
-      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(strip $(1))))
+      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(strip $(1)))) \
+  $(eval inherit_var := \
+      PRODUCTS.$(strip $(word 1,$(_include_stack))).INHERITS_FROM) \
+  $(eval $(inherit_var) := $(sort $($(inherit_var)) $(strip $(1)))) \
+  $(eval inherit_var:=) \
+  $(eval ALL_PRODUCTS := $(sort $(ALL_PRODUCTS) $(word 1,$(_include_stack))))
 endef
 
 #

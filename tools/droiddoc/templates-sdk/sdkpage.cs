@@ -1,88 +1,106 @@
+<?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
 <html>
-<?cs include:"head_tag.cs" ?>
+<?cs if:sdk.redirect ?>
+  <head>
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html">
+    <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
+  </head>
+<?cs else ?>
+  <?cs include:"head_tag.cs" ?>
+<?cs /if ?>
 <body class="gc-documentation">
 <a name="top"></a>
 <?cs call:custom_masthead() ?>
 
 <?cs call:sdk_nav() ?>
 
-
+  
 <div class="g-unit" id="doc-content" >
 
-<div id="jd-content" style="min-width:870px">
-
-<h1><?cs var:sdk.version ?></h1>
-<p><em>
-<?cs var:sdk.date ?> - 
-<a href="RELEASENOTES.html">Release Notes</a>
-</em></p>
-
-<div id="qv-wrapper">
-<div id="qv">
-<h2>Get Started</h2>
-<p><a href="requirements.html">System and Sofware Requirements</a></p>
-<p><a href="installing.html">Guide to Installing the SDK</a></p>
-
-<h2>Upgrade</h2>
-<p><a href="upgrading.html">Upgrading the SDK</a></p>
-<p><a href="migrating/changes-overview.html">API changes overview</a></p>
-<p><a href="migrating/changes.html">API differences report</a></p>
-
-<h2>Using Eclipse?</h2>
-<p>Android provides an Eclipse plugin to help make programming and debugging easier.</p>
-<p><a href="<?cs var:toroot ?>guide/developing/tools/adt.html">Install Eclipse plugin</a></p>
-</div>
-</div>
+<?cs if:sdk.redirect ?>
+  Redirecting to 
+  <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html">
+  <?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html
+  </a>...
+<?cs else ?>
+  
+  <div id="jd-header" class="guide-header" >
+    <span class="crumb">&nbsp;</span>
+    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
+  </div>
 
 
-<p>Before downloading, please read the <a href="terms.html">Terms</a> 
-    that govorn the use of the Android SDK.</p>
+<div id="jd-content">
 
-<p class="special-note"><strong>Please note:</strong> The Android SDK is under active development.
-  Please keep this in mind as you explore its capabilities. If you discover any issues, we 
-  welcome you to notify us of them via our Issue Tracker.</p>
+    <p><em>
+    <?cs var:sdk.date ?>
+    </em></p>
 
-<table class="download">
+<?cs if:sdk.not_latest_version ?>
+  <div class="special">
+    <p><strong>This is NOT the current Android SDK release.</strong></p>
+    <p>Use the links under <strong>Current SDK Release</strong>, on the left, to be directed to the current SDK.</p>
+  </div>
+<?cs /if ?>
+  
+  
+<?cs if:android.whichdoc != "online" ?>
+
+<p>The sections below provide an overview of the SDK package. </p>
+
+<?cs else ?>
+
+<p>Before downloading, please read the <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.version ?>/requirements.html">
+System Requirements</a> document. As you start the download, you will also need to review and agree to 
+the Terms and Conditions that govern the use of the Android SDK. </p>
+  
+  <table class="download">
+    <tr>
+      <th>Platform</th>
+      <th>Package</th>
+      <th>Size</th>
+      <th>MD5 Checksum</th>
+  </tr>
   <tr>
-    <th>Platform</th>
-    <th>Package</th>
-    <th>Size</th>
-    <th>MD5 Checksum</th>
-</tr>
-<tr>
-  <td>Windows</td>
-  <td>
-<a href="http://dl.google.com/android/<?cs var:sdk.win_download ?>"><?cs var:sdk.win_download ?></a>
-  </td>
-  <td><?cs var:sdk.win_bytes ?></td>
-  <td><?cs var:sdk.win_checksum ?></td>
-</tr>
-<tr class="alt-color">
-  <td>Mac OS X (intel)</td>
-  <td>
-<a href="http://dl.google.com/android/<?cs var:sdk.mac_download ?>"><?cs var:sdk.mac_download ?></a>
-  </td>
-  <td><?cs var:sdk.mac_bytes ?></td>
-  <td><?cs var:sdk.mac_checksum ?></td>
-</tr>
-<tr>
-  <td>Linux (i386)</td>
-  <td>
-<a href="http://dl.google.com/android/<?cs var:sdk.linux_download ?>"><?cs var:sdk.linux_download ?></a>
-  </td>
-  <td><?cs var:sdk.linux_bytes ?></td>
-  <td><?cs var:sdk.linux_checksum ?></td>
-</tr>
-</table>
+    <td>Windows</td>
+    <td>
+  <a href="<?cs var:toroot ?>sdk/download.html?v=<?cs var:sdk.win_download ?>"><?cs var:sdk.win_download ?></a>
+    </td>
+    <td><?cs var:sdk.win_bytes ?> bytes</td>
+    <td><?cs var:sdk.win_checksum ?></td>
+  </tr>
+  <tr class="alt-color">
+    <td>Mac OS X (intel)</td>
+    <td>
+  <a href="<?cs var:toroot ?>sdk/download.html?v=<?cs var:sdk.mac_download ?>"><?cs var:sdk.mac_download ?></a>
+    </td>
+    <td><?cs var:sdk.mac_bytes ?> bytes</td>
+    <td><?cs var:sdk.mac_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux (i386)</td>
+    <td>
+  <a href="<?cs var:toroot ?>sdk/download.html?v=<?cs var:sdk.linux_download ?>"><?cs var:sdk.linux_download ?></a>
+    </td>
+    <td><?cs var:sdk.linux_bytes ?> bytes</td>
+    <td><?cs var:sdk.linux_checksum ?></td>
+  </tr>
+  </table>
 
+<?cs /if ?>
 
+      <?cs call:tag_list(root.descr) ?>
+
+<?cs /if ?>
 </div><!-- end jd-content -->
 
 <?cs include:"footer.cs" ?>
 </div><!-- end doc-content -->
-</div><!-- end body-content -->
-<?cs include:"analytics.cs" ?>
+
+<?cs include:"trailer.cs" ?>
+
 </body>
 </html>
 

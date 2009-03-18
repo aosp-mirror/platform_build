@@ -101,6 +101,8 @@ $(info ***************************************************************)
 $(info ***************************************************************)
 $(info Don't pass '$(filter eng user userdebug tests,$(MAKECMDGOALS))' on \
 		the make command line.)
+# XXX The single quote on this line fixes gvim's syntax highlighting.
+# Without which, the rest of this file is impossible to read.
 $(info Set TARGET_BUILD_VARIANT in buildspec.mk, or use lunch or)
 $(info choosecombo.)
 $(info ***************************************************************)
@@ -108,6 +110,15 @@ $(info ***************************************************************)
 $(error stopping)
 endif
 
+ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
+$(info ***************************************************************)
+$(info ***************************************************************)
+$(info Invalid variant: $(TARGET_BUILD_VARIANT)
+$(info Valid values are: $(INTERNAL_VALID_VARIANTS)
+$(info ***************************************************************)
+$(info ***************************************************************)
+$(error stopping)
+endif
 
 ###
 ### In this section we set up the things that are different
@@ -122,10 +133,10 @@ ifneq (,$(user_variant))
   # Target is secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
 
-  override_build_tags := user
+  tags_to_install := user
   ifeq ($(user_variant),userdebug)
     # Pick up some extra useful tools
-    override_build_tags += debug
+    tags_to_install += debug
   else
     # Disable debugging in plain user builds.
     enable_target_debugging :=
@@ -136,11 +147,17 @@ ifneq (,$(user_variant))
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
   endif
+  
+  # Disallow mock locations by default for user builds
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
+  
 else # !user_variant
   # Turn on checkjni for non-user builds.
   ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
   # Set device insecure for non-user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+  # Allow mock locations by default for non user builds
+  ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
 endif # !user_variant
 
 ifeq (true,$(strip $(enable_target_debugging)))
@@ -153,10 +170,19 @@ else # !enable_target_debugging
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0 persist.service.adb.enable=0
 endif # !enable_target_debugging
 
+## eng ##
+
+ifeq ($(TARGET_BUILD_VARIANT),eng)
+tags_to_install := user debug eng
+  # Don't require the setup wizard on eng builds
+  ADDITIONAL_BUILD_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\
+          $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES)))
+endif
+
 ## tests ##
 
 ifeq ($(TARGET_BUILD_VARIANT),tests)
-override_build_tags := eng debug user development tests
+tags_to_install := user debug eng tests
 endif
 
 ## sdk ##
@@ -165,7 +191,9 @@ ifneq ($(filter sdk,$(MAKECMDGOALS)),)
 ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
-override_build_tags := user
+# TODO: this should be eng I think.  Since the sdk is built from the eng
+# variant.
+tags_to_install := user
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
@@ -173,11 +201,24 @@ else # !sdk
 ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 endif
 
-ifeq "" "$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES))"
-  # Install an apns-conf.xml file if one's not already being installed.
-  PRODUCT_COPY_FILES += development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
-  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+# Install an apns-conf.xml file if one's not already being installed.
+ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
+  PRODUCT_COPY_FILES += \
+        development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
+  ifeq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
     $(warning implicitly installing apns-conf_sdk.xml)
+  endif
+endif
+# If we're on an eng or tests build, but not on the sdk, and we have
+# a better one, use that instead.
+ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
+  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+    apns_to_use := $(wildcard vendor/google/etc/apns-conf.xml)
+    ifneq ($(strip $(apns_to_use)),)
+      PRODUCT_COPY_FILES := \
+            $(filter-out %:system/etc/apns-conf.xml,$(PRODUCT_COPY_FILES)) \
+            $(strip $(apns_to_use)):system/etc/apns-conf.xml
+    endif
   endif
 endif
 
@@ -192,24 +233,17 @@ ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-file=/data/anr/traces.txt
 # Define a function that, given a list of module tags, returns
 # non-empty if that module should be installed in /system.
 
-# For most goals, anything tagged with "eng"/"debug"/"user" should
+# For most goals, anything not tagged with the "tests" tag should
 # be installed in /system.
 define should-install-to-system
-$(filter eng debug user,$(1))
+$(if $(filter tests,$(1)),,true)
 endef
 
 ifneq (,$(filter sdk,$(MAKECMDGOALS)))
 # For the sdk goal, anything with the "samples" tag should be
 # installed in /data even if that module also has "eng"/"debug"/"user".
 define should-install-to-system
-$(if $(filter samples,$(1)),,$(filter eng debug user development,$(1)))
-endef
-endif
-
-ifeq ($(TARGET_BUILD_VARIANT),)
-# For the default goal, everything should be installed in /system.
-define should-install-to-system
-true
+$(if $(filter samples tests,$(1)),,true)
 endef
 endif
 
@@ -332,10 +366,6 @@ else	# !BUILD_TINY_ANDROID
 #
 INTERNAL_DEFAULT_DOCS_TARGETS := offline-sdk-docs
 subdirs := $(TOP)
-# Only include Android.mk files directly under vendor/*, not
-# *all* Android.mk files under vendor (which is what would happen
-# if we didn't prune vendor in the findleaves call).
-subdir_makefiles += $(wildcard vendor/*/Android.mk)
 
 FULL_BUILD := true
 
@@ -346,8 +376,7 @@ endif	# !SDK_ONLY
 # Can't use first-makefiles-under here because
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles += \
-	$(shell build/tools/findleaves.sh \
-	    --prune="./vendor" --prune="./out" $(subdirs) Android.mk)
+	$(shell build/tools/findleaves.sh --prune="./out" $(subdirs) Android.mk)
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
@@ -453,6 +482,8 @@ add-required-deps :=
 Default_MODULES := $(sort $(ALL_DEFAULT_INSTALLED_MODULES) \
                           $(ALL_BUILT_MODULES) \
                           $(CUSTOM_MODULES))
+# TODO: Remove the 3 places in the tree that use
+# ALL_DEFAULT_INSTALLED_MODULES and get rid of it from this list.
 
 ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
@@ -481,30 +512,23 @@ eng_MODULES := $(sort $(call get-tagged-modules,eng,restricted))
 debug_MODULES := $(sort $(call get-tagged-modules,debug,restricted))
 tests_MODULES := $(sort $(call get-tagged-modules,tests,restricted))
 
-droid_MODULES := $(sort $(Default_MODULES) \
-			$(eng_MODULES) \
-			$(debug_MODULES) \
-			$(user_MODULES) \
-			$(all_development_MODULES))
-
-# THIS IS A TOTAL HACK AND SHOULD NOT BE USED AS AN EXAMPLE
-modules_to_build := $(droid_MODULES)
-ifneq ($(override_build_tags),)
-  modules_to_build := $(sort $(Default_MODULES) \
-		      $(foreach tag,$(override_build_tags),$($(tag)_MODULES)))
-#$(error skipping modules $(filter-out $(modules_to_build),$(Default_MODULES) $(droid_MODULES)))
+ifeq ($(strip $(tags_to_install)),)
+$(error ASSERTION FAILED: tags_to_install should not be empty)
 endif
+modules_to_install := $(sort $(Default_MODULES) \
+          $(foreach tag,$(tags_to_install),$($(tag)_MODULES)))
 
 # Some packages may override others using LOCAL_OVERRIDES_PACKAGES.
 # Filter out (do not install) any overridden packages.
-overridden_packages := $(call get-package-overrides,$(modules_to_build))
+overridden_packages := $(call get-package-overrides,$(modules_to_install))
 ifdef overridden_packages
-#  old_modules_to_build := $(modules_to_build)
-  modules_to_build := \
-      $(filter-out $(foreach p,$(overridden_packages),%/$(p) %/$(p).apk), \
-          $(modules_to_build))
+#  old_modules_to_install := $(modules_to_install)
+  modules_to_install := \
+      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk), \
+          $(modules_to_install))
 endif
-#$(error filtered out $(filter-out $(modules_to_build),$(old_modules_to_build)))
+#$(error filtered out
+#           $(filter-out $(modules_to_install),$(old_modules_to_install)))
 
 # Don't include any GNU targets in the SDK.  It's ok (and necessary)
 # to build the host tools, but nothing that's going to be installed
@@ -517,8 +541,8 @@ ifneq ($(filter sdk,$(MAKECMDGOALS)),)
                       $(TARGET_OUT_DATA)/%, \
                               $(sort $(call get-tagged-modules,gnu)))
   $(info Removing from sdk:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
-  modules_to_build := \
-              $(filter-out $(target_gnu_MODULES),$(modules_to_build))
+  modules_to_install := \
+              $(filter-out $(target_gnu_MODULES),$(modules_to_install))
 endif
 
 
@@ -526,9 +550,9 @@ endif
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
 # contains everything that's built during the current make, but it also further
 # extends ALL_DEFAULT_INSTALLED_MODULES.
-ALL_DEFAULT_INSTALLED_MODULES := $(modules_to_build)
+ALL_DEFAULT_INSTALLED_MODULES := $(modules_to_install)
 include $(BUILD_SYSTEM)/Makefile
-modules_to_build := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
+modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 endif # dont_bother
@@ -550,7 +574,7 @@ $(ALL_C_CPP_ETC_OBJECTS): | all_copied_headers
 
 # All the droid stuff, in directories
 .PHONY: files
-files: prebuilt $(modules_to_build) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
+files: prebuilt $(modules_to_install) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # -------------------------------------------------------------------
 
@@ -580,7 +604,8 @@ droidcore: files \
 	$(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_RECOVERYIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INTERNAL_DEFAULT_DOCS_TARGETS)
+	$(INTERNAL_DEFAULT_DOCS_TARGETS) \
+	$(INSTALLED_FILES_FILE)
 
 # The actual files built by the droidcore target changes depending
 # on the build variant.
@@ -639,40 +664,7 @@ clobber:
 	@rm -rf $(OUT_DIR)
 	@echo "Entire build directory removed."
 
-.PHONY: dataclean
-dataclean:
-	@rm -rf $(PRODUCT_OUT)/data/*
-	@rm -rf $(PRODUCT_OUT)/data-qemu/*
-	@rm -rf $(PRODUCT_OUT)/userdata-qemu.img
-	@echo "Deleted emulator userdata images."
-
-.PHONY: installclean
-# Deletes all of the files that change between different build types,
-# like "make user" vs. "make sdk".  This lets you work with different
-# build types without having to do a full clean each time.  E.g.:
-#
-#     $ make -j8 all
-#     $ make installclean
-#     $ make -j8 user
-#     $ make installclean
-#     $ make -j8 sdk
-#
-installclean: dataclean
-	$(hide) rm -rf ./$(PRODUCT_OUT)/system
-	$(hide) rm -rf ./$(PRODUCT_OUT)/recovery
-	$(hide) rm -rf ./$(PRODUCT_OUT)/data
-	$(hide) rm -rf ./$(PRODUCT_OUT)/root
-	$(hide) rm -rf ./$(PRODUCT_OUT)/obj/NOTICE_FILES
-	@# Remove APPS because they may contain the wrong resources.
-	$(hide) rm -rf ./$(PRODUCT_OUT)/obj/APPS
-	$(hide) rm -rf ./$(HOST_OUT)/obj/NOTICE_FILES
-	$(hide) rm -rf ./$(HOST_OUT)/sdk
-	$(hide) rm -rf ./$(PRODUCT_OUT)/obj/PACKAGING
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.img
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.zip
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.txt
-	$(hide) rm -f ./$(PRODUCT_OUT)/*.xlb
-	@echo "Deleted images and staging directories."
+# The rules for dataclean and installclean are defined in cleanbuild.mk.
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules

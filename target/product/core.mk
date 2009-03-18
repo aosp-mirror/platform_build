@@ -21,3 +21,7 @@ PRODUCT_PACKAGES := \
     UserDictionaryProvider \
     PackageInstaller \
     Bugreport
+
+#include basic ringtones
+include frameworks/base/data/sounds/OriginalAudio.mk
+

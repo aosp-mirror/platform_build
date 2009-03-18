@@ -122,8 +122,8 @@ public class ClassInfo {
         }
         for (String iface : mInterfaces) {
             if (!cl.mInterfaces.contains(iface)) {
-                Errors.error(Errors.REMOVED_INTERFACE,
-                        cl.position(), "Removed interface " + iface);
+                Errors.error(Errors.REMOVED_INTERFACE, cl.position(),
+                        "Class " + qualifiedName() + " no longer implements " + iface);
             }
         }
         for (String iface : cl.mInterfaces) {

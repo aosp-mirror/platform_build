@@ -182,8 +182,9 @@ endef
 # $(2): makefile representing this node
 # $(3): list of node variable names
 #
-#TODO: keep a debug stack to make error messages more helpful
+# _include_stack contains the list of included files, with the most recent files first.
 define _import-node
+  $(eval _include_stack := $(2) $$(_include_stack))
   $(call clear-var-list, $(3))
   $(eval include $(2))
   $(call copy-var-list, $(1).$(2), $(3))
@@ -196,6 +197,7 @@ define _import-node
   $(call _expand-inherited-values,$(1),$(2),$(3))
 
   $(eval $(1).$(2).inherited :=)
+  $(eval _include_stack := $(wordlist 2,9999,$$(_include_stack)))
 endef
 
 #
@@ -229,10 +231,15 @@ define import-nodes
 $(if \
   $(foreach _in,$(2), \
     $(eval _node_import_context := _nic.$(1).[[$(_in)]]) \
+    $(if $(_include_stack),$(eval $(error ASSERTION FAILED: _include_stack \
+                should be empty here: $(_include_stack))),) \
+    $(eval _include_stack := ) \
     $(call _import-nodes-inner,$(_node_import_context),$(_in),$(3)) \
     $(call move-var-list,$(_node_import_context).$(_in),$(1).$(_in),$(3)) \
     $(eval _node_import_context :=) \
     $(eval $(1) := $($(1)) $(_in)) \
+    $(if $(_include_stack),$(eval $(error ASSERTION FAILED: _include_stack \
+                should be empty here: $(_include_stack))),) \
    ) \
 ,)
 endef

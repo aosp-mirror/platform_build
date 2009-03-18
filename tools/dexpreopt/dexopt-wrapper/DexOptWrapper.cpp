@@ -14,6 +14,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "cutils/properties.h"
+
 //using namespace android;
 
 /*
@@ -36,8 +38,12 @@ static void runDexopt(int zipFd, int odexFd, const char* inputFileName)
     static const int kMaxIntLen = 12;   // '-'+10dig+'\0' -OR- 0x+8dig
     char zipNum[kMaxIntLen];
     char odexNum[kMaxIntLen];
+    char dexoptFlags[PROPERTY_VALUE_MAX];
     const char* androidRoot;
     char* execFile;
+
+    /* pull optional configuration tweaks out of properties */
+    property_get("dalvik.vm.dexopt-flags", dexoptFlags, "");
 
     /* find dexopt executable; this exists for simulator compatibility */
     androidRoot = getenv("ANDROID_ROOT");
@@ -50,7 +56,7 @@ static void runDexopt(int zipFd, int odexFd, const char* inputFileName)
     sprintf(odexNum, "%d", odexFd);
 
     execl(execFile, execFile, "--zip", zipNum, odexNum, inputFileName,
-        (char*) NULL);
+        dexoptFlags, (char*) NULL);
     fprintf(stderr, "execl(%s) failed: %s\n", kDexOptBin, strerror(errno));
 }
 
@@ -109,7 +115,7 @@ int doStuff(const char* zipName, const char* odexName)
         exit(67);                           /* usually */
     } else {
         /* parent -- wait for child to finish */
-        printf("waiting for verify+opt, pid=%d\n", (int) pid);
+        printf("--- waiting for verify+opt, pid=%d\n", (int) pid);
         int status, oldStatus;
         pid_t gotPid;
 

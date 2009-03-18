@@ -15,22 +15,7 @@
 cts_dir := $(HOST_OUT)/cts
 cts_tools_src_dir := cts/tools
 
-# Build a name that looks like:
-#
-#     linux-x86   --> android-cts_12345_linux-x86
-#     darwin-x86  --> android-cts_12345_mac-x86
-#     windows-x86 --> android-cts_12345_windows
-#
-cts_name := android-cts_$(FILE_NAME_TAG)
-ifeq ($(HOST_OS),darwin)
-    cts_host_os := mac
-else
-    cts_host_os := $(HOST_OS)
-endif
-ifneq ($(HOST_OS),windows)
-    cts_host_os := $(cts_host_os)-$(HOST_ARCH)
-endif
-cts_name := $(cts_name)_$(cts_host_os)
+cts_name := android-cts
 
 CTS_EXECUTABLE := cts
 ifeq ($(HOST_OS),windows)
@@ -43,10 +28,22 @@ CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 CTS_CASE_LIST := \
 	DeviceInfoCollector \
 	CtsTestStubs \
-	CtsTextTestCases \
-	CtsViewTestCases \
+	CtsAppTestCases \
+	CtsContentTestCases \
+	CtsDatabaseTestCases \
 	CtsGraphicsTestCases \
-	SignatureTest
+	CtsHardwareTestCases \
+	CtsLocationTestCases \
+	CtsOsTestCases \
+	CtsPermissionTestCases \
+	CtsProviderTestCases \
+	CtsTextTestCases \
+	CtsUtilTestCases \
+	CtsViewTestCases \
+	CtsWidgetTestCases \
+	CtsNetTestCases \
+	SignatureTest \
+	android.core.tests
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
@@ -65,32 +62,89 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
 			$(call copy-testcase-apk,$(apk)))
-# Copy CTS host config to CTS directory
+# Copy CTS host config and start script to CTS directory
 	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/host_config.xml $(PRIVATE_DIR)/repository/
+	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/startcts $(PRIVATE_DIR)/tools/
 	$(hide) touch $@
 
+# Generate the test plan for the core-tests
+CORE_TEST_PLAN := $(cts_dir)/$(cts_name)/repository/testcases/android.core.tests
+
+CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+
+$(CORE_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(CORE_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
+$(CORE_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
+$(CORE_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
+$(CORE_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
+	-classpath $(PRIVATE_CLASSPATH) \
+	$(PRIVATE_PARAMS) CollectAllTests $(CORE_TEST_PLAN) \
+	cts/tests/core/AndroidManifest.xml tests.AllTests
+# Why does this depend on javalib.jar instead of classes.jar?  Because
+# even though the tool will operate on the classes.jar files, the
+# build system requires that dependencies use javalib.jar.  If
+# javalib.jar is up-to-date, then classes.jar is as well.  Depending
+# on classes.jar will build the files incorrectly.
+$(CORE_TEST_PLAN): android.core.tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp
+	@echo "Generate the CTS test plan: $@"
+	@echo $(PRIVATE_CUSTOM_TOOL)
+	$(transform-generated-source)
+
+
+# ----- Generate the test plan for the vm-tests -----
+#
+CORE_VM_TEST_PLAN := $(cts_dir)/$(cts_name)/repository/testcases/android.core.vm-tests
+
+VMTESTS_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests,1,)
+# core tests only needed to get hold of junit-framework-classes
+TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+
+$(CORE_VM_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(CORE_VM_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
+$(CORE_VM_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
+$(CORE_VM_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
+$(CORE_VM_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
+	-classpath $(PRIVATE_CLASSPATH) \
+	$(PRIVATE_PARAMS) CollectAllTests $(CORE_VM_TEST_PLAN) \
+	cts/tests/vm-tests/AndroidManifest.xml dot.junit.AllJunitHostTests cts/tools/vm-tests/Android.mk
+# Please see big comment above on why this line depends on javalib.jar instead of classes.jar
+$(CORE_VM_TEST_PLAN): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
+	@echo "Generate the CTS vm-test plan: $@"
+	@echo $(PRIVATE_CUSTOM_TOOL)
+	$(transform-generated-source)
+	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
+
 # Generate the default test plan for User.
-$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh
+$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh $(CORE_VM_TEST_PLAN) $(CORE_TEST_PLAN)
 	$(hide) bash $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh cts/tests/tests/ \
      $(PRIVATE_DIR) $(TMP_DIR) $(TOP) $(TARGET_COMMON_OUT_ROOT) $(OUT_DIR)
 
 # Package CTS and clean up.
+#
+# TODO:
+#   Pack cts.bat into the same zip file as well. See http://buganizer/issue?id=1656821 for more details
 INTERNAL_CTS_TARGET := $(cts_dir)/$(cts_name).zip
 $(INTERNAL_CTS_TARGET): PRIVATE_NAME := $(cts_name)
 $(INTERNAL_CTS_TARGET): PRIVATE_CTS_DIR := $(cts_dir)
 $(INTERNAL_CTS_TARGET): PRIVATE_DIR := $(cts_dir)/$(cts_name)
 $(INTERNAL_CTS_TARGET): TMP_DIR := $(cts_dir)/temp
-$(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN)
+$(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN) $(CORE_TEST_PLAN) $(CORE_VM_TEST_PLAN)
 	@echo "Package CTS: $@"
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
 
-.PHONY: cts 
+.PHONY: cts
 cts: $(INTERNAL_CTS_TARGET) adb
 $(call dist-for-goals,cts,$(INTERNAL_CTS_TARGET))
 
 define copy-testcase-apk
+
 $(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk \
 	$(PRIVATE_DIR)/repository/testcases/$(1).apk
 
 endef
-

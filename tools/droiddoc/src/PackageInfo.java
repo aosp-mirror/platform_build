@@ -117,36 +117,55 @@ public class PackageInfo extends DocInfo implements ContainerInfo
     public void makeClassLinkListHDF(HDF data, String base)
     {
         makeLink(data, base);
-        ClassInfo.makeLinkListHDF(data, base + ".interfaces", ClassInfo.sortByName(interfaces()));
-        ClassInfo.makeLinkListHDF(data, base + ".classes", ClassInfo.sortByName(ordinaryClasses()));
-        ClassInfo.makeLinkListHDF(data, base + ".enums", ClassInfo.sortByName(enums()));
-        ClassInfo.makeLinkListHDF(data, base + ".exceptions", ClassInfo.sortByName(exceptions()));
-        ClassInfo.makeLinkListHDF(data, base + ".errors", ClassInfo.sortByName(errors()));
+        ClassInfo.makeLinkListHDF(data, base + ".interfaces", interfaces());
+        ClassInfo.makeLinkListHDF(data, base + ".classes", ordinaryClasses());
+        ClassInfo.makeLinkListHDF(data, base + ".enums", enums());
+        ClassInfo.makeLinkListHDF(data, base + ".exceptions", exceptions());
+        ClassInfo.makeLinkListHDF(data, base + ".errors", errors());
     }
 
     public ClassInfo[] interfaces()
     {
-        return filterHidden(Converter.convertClasses(mPackage.interfaces()));
+        if (mInterfaces == null) {
+            mInterfaces = ClassInfo.sortByName(filterHidden(Converter.convertClasses(
+                            mPackage.interfaces())));
+        }
+        return mInterfaces;
     }
 
     public ClassInfo[] ordinaryClasses()
     {
-        return filterHidden(Converter.convertClasses(mPackage.ordinaryClasses()));
+        if (mOrdinaryClasses == null) {
+            mOrdinaryClasses = ClassInfo.sortByName(filterHidden(Converter.convertClasses(
+                            mPackage.ordinaryClasses())));
+        }
+        return mOrdinaryClasses;
     }
 
     public ClassInfo[] enums()
     {
-        return filterHidden(Converter.convertClasses(mPackage.enums()));
+        if (mEnums == null) {
+            mEnums = ClassInfo.sortByName(filterHidden(Converter.convertClasses(mPackage.enums())));
+        }
+        return mEnums;
     }
 
     public ClassInfo[] exceptions()
     {
-        return filterHidden(Converter.convertClasses(mPackage.exceptions()));
+        if (mExceptions == null) {
+            mExceptions = ClassInfo.sortByName(filterHidden(Converter.convertClasses(
+                        mPackage.exceptions())));
+        }
+        return mExceptions;
     }
 
     public ClassInfo[] errors()
     {
-        return filterHidden(Converter.convertClasses(mPackage.errors()));
+        if (mErrors == null) {
+            mErrors = ClassInfo.sortByName(filterHidden(Converter.convertClasses(
+                        mPackage.errors())));
+        }
+        return mErrors;
     }
 
     // in hashed containers, treat the name as the key
@@ -157,5 +176,10 @@ public class PackageInfo extends DocInfo implements ContainerInfo
 
     private String mName;
     private PackageDoc mPackage;
+    private ClassInfo[] mInterfaces;
+    private ClassInfo[] mOrdinaryClasses;
+    private ClassInfo[] mEnums;
+    private ClassInfo[] mExceptions;
+    private ClassInfo[] mErrors;
 }
 

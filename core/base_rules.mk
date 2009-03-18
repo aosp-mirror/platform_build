@@ -82,7 +82,7 @@ ifneq (,$(filter $(LOCAL_MODULE),$(CUSTOM_MODULES)))
 endif
 
 # The definition of should-install-to-system will be different depending
-# on which goal (e.g., user/eng/sdk) is being built.
+# on which goal (e.g., sdk or just droid) is being built.
 ifdef LOCAL_IS_HOST_MODULE
   use_data :=
 else

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -24,6 +25,9 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_STATIC_LIBRARIES := \
         libdex
+
+LOCAL_SHARED_LIBRARIES := \
+        libcutils
 
 LOCAL_MODULE := dexopt-wrapper
 

@@ -30,13 +30,6 @@ ifeq ($(LOCAL_PACKAGE_NAME),)
 $(error $(LOCAL_PATH): Package modules must define LOCAL_PACKAGE_NAME)
 endif
 
-LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
-ifeq ($(LOCAL_MODULE_TAGS),)
-$(error $(LOCAL_PATH): Package modules must define LOCAL_MODULE_TAGS)
-endif
-
-#$(warning $(LOCAL_PATH) $(LOCAL_PACKAGE_NAME) $(sort $(LOCAL_MODULE_TAGS)))
-
 ifneq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE_SUFFIX)
 endif
@@ -60,6 +53,14 @@ $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
 LOCAL_MODULE_CLASS := APPS
 
+# Package LOCAL_MODULE_TAGS default to optional
+LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
+ifeq ($(LOCAL_MODULE_TAGS),)
+LOCAL_MODULE_TAGS := optional
+endif
+
+#$(warning $(LOCAL_PATH) $(LOCAL_PACKAGE_NAME) $(sort $(LOCAL_MODULE_TAGS)))
+
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif
@@ -69,6 +70,7 @@ ifeq (,$(LOCAL_RESOURCE_DIR))
 endif
 LOCAL_RESOURCE_DIR := \
   $(wildcard $(addsuffix /$(LOCAL_RESOURCE_DIR), $(PRODUCT_PACKAGE_OVERLAYS))) \
+  $(wildcard $(addsuffix /$(LOCAL_RESOURCE_DIR), $(DEVICE_PACKAGE_OVERLAYS))) \
   $(LOCAL_RESOURCE_DIR)
 
 # this is an app, so add the system libraries to the search path

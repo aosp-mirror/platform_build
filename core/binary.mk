@@ -91,6 +91,8 @@ $(yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
 	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
 $(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 
+$(yacc_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(yacc_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(yacc_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 endif
@@ -109,6 +111,8 @@ $(lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
 		$(TOPDIR)$(LOCAL_PATH)/%.l
 	$(transform-l-to-cpp)
 
+$(lex_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(lex_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(lex_objects): $(intermediates)/%.o: \
 		$(intermediates)/%$(LOCAL_CPP_EXTENSION) \
 		$(PRIVATE_ADDITIONAL_DEPENDENCIES) \
