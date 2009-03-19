@@ -9,7 +9,6 @@ PRODUCT_PACKAGES := \
     Camera \
     DrmProvider \
     LatinIME \
-    Launcher \
     Mms \
     Music \
     Settings \
