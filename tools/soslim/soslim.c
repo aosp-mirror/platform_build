@@ -236,7 +236,7 @@ void clone_elf(Elf *elf, Elf *newelf,
           {
             /* Mark the symbol table's string table for removal. */
             INFO("Section [%s] (static symbol-string table) will be stripped from image.\n",
-                 shdr_info[cnt].name);
+                 shdr_info[shdr_info[cnt].shdr.sh_link].name);
             shdr_info[shdr_info[cnt].shdr.sh_link].idx = 0;
           }
           else {
