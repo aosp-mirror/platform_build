@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAANH///8Y\u003d",
+        "filename": "core/tasks/localize.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000880
+      },
+      "writtenOn": "2009-03-23T03:21:05Z",
+      "side": 0,
+      "message": "This is where the original problem exists, as a produces a large list that\u0027s passed as an argument to echo below.",
+      "revId": "4cd3f74003399b76cb1a7303ff54536e137b0786",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
