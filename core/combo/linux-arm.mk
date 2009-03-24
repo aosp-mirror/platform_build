@@ -24,7 +24,13 @@ endif
 # fine. If/when this becomes large, please change this to include
 # architecture versions specific Makefiles which define these
 # variables.
-# 
+#
+# Supporting armv4 (without thumb) does not make much sense since
+# it's mostly an obsoleted instruction set architecture (only available
+# in StrongArm and arm8). Supporting armv4 will require a lot of conditional
+# code in assembler source since the bx (branch and exchange) instruction is
+# not supported.
+#
 ifeq ($(TARGET_ARCH_VERSION),armv5te)
 ARCH_ARM_HAVE_THUMB_SUPPORT := true
 ARCH_ARM_HAVE_FAST_INTERWORKING := true
@@ -36,8 +42,8 @@ ARCH_ARM_HAVE_FFS := true
 arch_version_cflags := -march=armv5te -mtune=xscale  -D__ARM_ARCH_5__ \
 	-D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__
 else
-ifeq ($(TARGET_ARCH_VERSION),armv4)
-$(warning ARMv4 support is currently a work in progress. It does not work right now!)
+ifeq ($(TARGET_ARCH_VERSION),armv4t)
+$(warning ARMv4t support is currently a work in progress. It does not work right now!)
 ARCH_ARM_HAVE_THUMB_SUPPORT := false
 ARCH_ARM_HAVE_THUMB_INTERWORKING := false
 ARCH_ARM_HAVE_64BIT_DATA := false
@@ -45,9 +51,9 @@ ARCH_ARM_HAVE_HALFWORD_MULTIPLY := false
 ARCH_ARM_HAVE_CLZ := false
 ARCH_ARM_HAVE_FFS := false
 
-DEFAULT_TARGET_CPU := arm920
+DEFAULT_TARGET_CPU := arm920t
 
-arch_version_cflags := -march=armv4 -mtune=arm920 -D__ARM_ARCH_4__
+arch_version_cflags := -march=armv4t -mtune=arm920t -D__ARM_ARCH_4T__
 else
 $(error Unknown ARM architecture version: $(TARGET_ARCH_VERSION))
 endif
