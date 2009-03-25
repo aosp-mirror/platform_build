@@ -22,6 +22,7 @@
 # (like "MAIN") or a branch name and a release candidate
 # (like "TC1-RC5").  It must be a single word, and is
 # capitalized by convention.
+#
 BUILD_ID := CUPCAKE
 
 # DISPLAY_BUILD_NUMBER should only be set for development branches,
