@@ -9,7 +9,7 @@ PRODUCT_PACKAGES := \
     framework-res \
     Browser \
     Contacts \
-    Home \
+    Launcher \
     HTMLViewer \
     Phone \
     ContactsProvider \
