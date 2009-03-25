@@ -72,13 +72,3 @@ ifeq "" "$(BUILD_NUMBER)"
   BUILD_NUMBER := eng.$(USER).$(shell date +%Y%m%d.%H%M%S)
 endif
 
-ifeq "true" "$(DISPLAY_BUILD_NUMBER)"
-  # if the build_id.mk has this defined, then BUILD_ID is updated with
-  # the BUILD_NUMBER as well.  For development branches, this will be 
-  # set, but release branches this will not be set.
-  BUILD_DISPLAY_ID := "$(BUILD_ID).$(BUILD_NUMBER)"
-else
-  BUILD_DISPLAY_ID := "$(BUILD_ID)"
-endif
-
-
