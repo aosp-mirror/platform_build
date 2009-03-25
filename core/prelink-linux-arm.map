@@ -39,7 +39,7 @@ libnetutils.so          0xADB00000
 
 # core dalvik runtime support
 libandroid_servers.so   0xAD900000
-libicudata.so           0xAD600000
+#libicudata.so           0xAD600000
 libicuuc.so             0xAD500000
 libicui18n.so           0xAD400000
 libandroid_runtime.so   0xAD300000
