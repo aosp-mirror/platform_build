@@ -71,6 +71,8 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/s
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libwebcore_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIME_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.android.inputmethod.pinyin.lib_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIMEGoogleService_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
