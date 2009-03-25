@@ -156,7 +156,10 @@ PRODUCT_LOCALES := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_LOCALES))
 # in PRODUCT_LOCALES, add them to PRODUCT_LOCALES.
 extra_locales := $(filter-out $(PRODUCT_LOCALES),$(CUSTOM_LOCALES))
 ifneq (,$(extra_locales))
-  $(info Adding CUSTOM_LOCALES [$(extra_locales)] to PRODUCT_LOCALES [$(PRODUCT_LOCALES)])
+  ifneq ($(CALLED_FROM_SETUP),true)
+    # Don't spam stdout, because envsetup.sh may be scraping values from it.
+    $(info Adding CUSTOM_LOCALES [$(extra_locales)] to PRODUCT_LOCALES [$(PRODUCT_LOCALES)])
+  endif
   PRODUCT_LOCALES += $(extra_locales)
   extra_locales :=
 endif
