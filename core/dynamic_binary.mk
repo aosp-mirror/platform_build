@@ -18,7 +18,15 @@ ifeq ($(LOCAL_UNSTRIPPED_PATH),)
 endif
 
 # The name of the target file, without any path prepended.
-LOCAL_BUILT_MODULE_STEM := $(LOCAL_MODULE)$(LOCAL_MODULE_SUFFIX)
+# TODO: This duplicates logic from base_rules.mk because we need to
+#       know its results before base_rules.mk is included.
+#       Consolidate the duplicates.
+LOCAL_MODULE_STEM := $(strip $(LOCAL_MODULE_STEM))
+ifeq ($(LOCAL_MODULE_STEM),)
+  LOCAL_MODULE_STEM := $(LOCAL_MODULE)
+endif
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
+LOCAL_BUILT_MODULE_STEM := $(LOCAL_INSTALLED_MODULE_STEM)
 
 # base_rules.make defines $(intermediates), but we need its value
 # before we include base_rules.  Make a guess, and verify that
