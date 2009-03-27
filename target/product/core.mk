@@ -9,7 +9,7 @@ PRODUCT_PACKAGES := \
     framework-res \
     Browser \
     Contacts \
-    Home \
+    Launcher \
     HTMLViewer \
     Phone \
     ContactsProvider \
@@ -21,7 +21,4 @@ PRODUCT_PACKAGES := \
     UserDictionaryProvider \
     PackageInstaller \
     Bugreport
-
-#include basic ringtones
-include frameworks/base/data/sounds/OriginalAudio.mk
 

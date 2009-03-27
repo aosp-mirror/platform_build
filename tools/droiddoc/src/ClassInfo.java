@@ -1185,7 +1185,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         ClassInfo cl = this;
         while (cl != null) {
             PackageInfo pkg = cl.containingPackage();
-            if (pkg.isHidden()) {
+            if (pkg != null && pkg.isHidden()) {
                 return true;
             }
             if (cl.comment().isHidden()) {
