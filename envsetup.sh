@@ -974,6 +974,17 @@ function runtest()
     (cd "$T" && development/tools/runtest $@)
 }
 
+# simple shortcut to the runtest.py command
+function runtest.py()
+{
+    T=$(gettop)
+    if [ ! "$T" ]; then
+        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
+        return
+    fi
+    (cd "$T" && development/testrunner/runtest.py $@)
+}
+
 function godir () {
     if [[ -z "$1" ]]; then
         echo "Usage: godir <regex>"
