@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <fnmatch.h>
+#include <string.h>
+#include <stdlib.h>
 
 static bool
 is_comment_line(const char* p)

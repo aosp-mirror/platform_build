@@ -1,0 +1,947 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+  A lot of people read this document template.  Please keep it clean:
+
+   - keep the document xhtml-compliant, as many people use validating editors
+   - check your edits for typos, spelling errors, and questionable grammar
+   - prefer css styles to formatting tags like <font>, <tt>, etc.
+   - keep it human-readable and human-editable in a plain text editor:
+     - strive to keep lines wrapped at 80 columns, unless a link prevents it
+     - use plenty of whitespace
+     - try to pretty-format (wrt nesting and indenting) any hairy html
+   - check your inline javascript for errors using the javascript console
+   
+  Your readers will be very appreciative.
+-->
+
+<head>
+  <title>Android Build System</title>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <link href="../android.css" type="text/css" rel="stylesheet" />
+
+<!-- commenting out so the xhtml validator doesn't whine about < and &&;
+     the browser should still find the script tag. -->
+<script language="JavaScript1.2" type="text/javascript">
+<!--
+function highlight(name) {
+  if (document.getElementsByTagName) {
+    tags              = [ 'span', 'div', 'tr', 'td' ];
+    for (i in tags) {
+      elements        = document.getElementsByTagName(tags[i]);
+      if (elements) {
+        for (j = 0; j < elements.length; j++) {
+          elementName = elements[j].getAttribute("class");
+          if (elementName == name) {
+            elements[j].style.backgroundColor = "#C0F0C0";
+          } else if (elementName && elementName.indexOf("rev") == 0) {
+            elements[j].style.backgroundColor = "#FFFFFF";
+          }
+        }
+      }
+    }
+  }
+}
+//-->
+  </script>
+  <!-- this style sheet is for the style of the toc -->
+  <link href="toc.css" type="text/css" rel="stylesheet" />
+
+  <style type="text/css">
+    .warning {
+        border: 1px solid red;
+        padding: 8px;
+        color: red;
+    }
+    pre.prettyprint {
+        margin-top: 0;
+    }
+    li {
+        margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body onload="prettyPrint()">
+
+<h1><a name="My_Project_" />Android Build System</h1>
+
+<!-- Status is one of: Draft, Current, Needs Update, Obsolete -->
+<p style="text-align:center">
+  <strong>Status:</strong> <em>Draft </em> &nbsp;
+  <small>(as of May 18, 2006)</small>
+</p>
+
+<p><b>Contents</b></p>
+<!-- this div expands out to a list of contents based on the H2 and H3 headings.
+Believe it! -->
+ <div id="nav"  class="nav-2-levels"></div>
+
+<h2>Objective</h2>
+<p>The primary goals of reworking the build system are (1) to make dependencies
+work more reliably, so that when files need to rebuilt, they are, and (2) to
+improve performance of the build system so that unnecessary modules are not
+rebuilt, and so doing a top-level build when little or nothing needs to be done
+for a build takes as little time as possible.</p>
+
+<h2>Principles and Use Cases and Policy</h2>
+<p>Given the above objective, these are the overall principles and use cases
+that we will support.  This is not an exhaustive list.</p>
+<h3>Multiple Targets</h3>
+<p>It needs to be possible to build the Android platform for multiple targets.
+This means:</p>
+<ul>
+    <li>The build system will support building tools for the host platform,
+    both ones that are used in the build process itself, and developer tools
+    like the simulator.</li>
+    <li>The build system will need to be able to build tools on Linux
+    (definitely Goobuntu and maybe Grhat), MacOS, and to some degree on
+    Windows.</li>
+    <li>The build system will need to be able to build the OS on Linux, and in
+    the short-term, MacOS.  Note that this is a conscious decision to stop
+    building the OS on Windows.  We are going to rely on the emulator there
+    and not attempt to use the simulator.  This is a requirement change now
+    that the emulator story is looking brighter.</li>
+</ul>
+<h3>Non-Recursive Make</h3>
+<p>To achieve the objectives, the build system will be rewritten to use make
+non-recursively.  For more background on this, read <a href="http://aegis.sourceforge.net/auug97.pdf">Recursive Make Considered Harmful</a>.  For those that don't
+want PDF, here is the
+<a href="http://72.14.203.104/search?q=cache:HwuX7YF2uBIJ:aegis.sourceforge.net/auug97.pdf&hl=en&gl=us&ct=clnk&cd=2&client=firefox">Google translated version</a>.
+<h3>Rapid Compile-Test Cycles</h3>
+<p>When developing a component, for example a C++ shared library, it must be
+possible to easily rebuild just that component, and not have to wait more than a
+couple seconds for dependency checks, and not have to wait for unneeded
+components to be built.</p>
+<h3>Both Environment and Config File Based Settings</h3>
+<p>To set the target, and other options, some people on the team like to have a
+configuration file in a directory so they do not have an environment setup
+script to run, and others want an environment setup script to run so they can
+run builds in different terminals on the same tree, or switch back and forth
+in one terminal.  We will support both.</p>
+<h3>Object File Directory / make clean</h3>
+<p>Object files and other intermediate files will be generated into a directory
+that is separate from the source tree.  The goal is to have make clean be
+"rm -rf <obj>" in the tree root directory.  The primary goals of
+this are to simplify searching the source tree, and to make "make clean" more
+reliable.</p>
+
+<h3>SDK</h3>
+<p>The SDK will be a tarball that will allow non-OS-developers to write apps.
+The apps will actually be built by first building the SDK, and then building
+the apps against that SDK.  This will hopefully (1) make writing apps easier
+for us, because we won't have to rebuild the OS as much, and we can use the
+standard java-app development tools, and (2) allow us to dog-food the SDK, to
+help ensure its quality.  Cedric has suggested (and I agree) that apps built
+from the SDK should be built with ant.  Stay tuned for more details as we
+figure out exactly how this will work.</p>
+
+<h3>Dependecies</h3>
+<p>Dependencies should all be automatic.  Unless there is a custom tool involved
+(e.g. the webkit has several), the dependencies for shared and static libraries,
+.c, .cpp, .h, .java, java libraries, etc., should all work without intervention
+in the Android.mk file.</p>
+
+<h3>Hiding command lines</h3>
+<p>The default of the build system will be to hide the command lines being
+executed for make steps.  It will be possible to override this by specifying
+the showcommands pseudo-target, and possibly by setting an environment
+variable.</p>
+
+<h3>Wildcard source files</h3>
+<p>Wildcarding source file will be discouraged.  It may be useful in some
+scenarios.  The default <code>$(wildcard *)</code> will not work due to the
+current directory being set to the root of the build tree.<p>
+
+<h3>Multiple targets in one directory</h3>
+<p>It will be possible to generate more than one target from a given
+subdirectory.  For example, libutils generates a shared library for the target
+and a static library for the host.</p>
+
+<h3>Makefile fragments for modules</h3>
+<p><b>Android.mk</b> is the standard name for the makefile fragments that
+control the building of a given module.  Only the top directory should
+have a file named "Makefile".</p>
+
+<h3>Use shared libraries</h3>
+<p>Currently, the simulator is not built to use shared libraries.  This should
+be fixed, and now is a good time to do it.  This implies getting shared
+libraries to work on Mac OS.</p>
+
+
+<h2>Nice to Have</h2>
+
+<p>These things would be nice to have, and this is a good place to record them,
+however these are not promises.</p>
+
+<h3>Simultaneous Builds</h3>
+<p>The hope is to be able to do two builds for different combos in the same
+tree at the same time, but this is a stretch goal, not a requirement.
+Doing two builds in the same tree, not at the same time must work.  (update:
+it's looking like we'll get the two builds at the same time working)</p>
+
+<h3>Deleting headers (or other dependecies)</h3>
+<p>Problems can arise if you delete a header file that is referenced in
+".d" files.  The easy way to deal with this is "make clean".  There
+should be a better way to handle it. (from fadden)</p>
+<p>One way of solving this is introducing a dependency on the directory.  The
+problem is that this can create extra dependecies and slow down the build.
+It's a tradeoff.</p>
+
+<h3>Multiple builds</h3>
+<p>General way to perform builds across the set of known platforms.  This
+would make it easy to perform multiple platform builds when testing a
+change, and allow a wide-scale "make clean".  Right now the buildspec.mk
+or environment variables need to be updated before each build. (from fadden)</p>
+
+<h3>Aftermarket Locales and Carrier</h3>
+<p>We will eventually need to add support for creating locales and carrier
+customizations to the SDK, but that will not be addressed right now.</p>
+
+
+<h2><a id="usage"/>Usage</h2>
+<p>You've read (or scrolled past) all of the motivations for this build system,
+and you want to know how to use it.  This is the place.</p>
+
+<h3>Your first build</h3>
+<p>The <a href="../building.html">Building</a> document describes how do do
+builds.</p>
+
+<h3>build/envsetup.sh functions</h3>
+If you source the file build/envsetup.sh into your bash environment,
+<code>. build/envsetup.sh</code>you'll get a few helpful shell functions:
+
+<ul>
+<li><b>printconfig</b> - Prints the current configuration as set by the
+lunch and choosecombo commands.</li>
+<li><b>m</b> - Runs <code>make</code> from the top of the tree.  This is
+useful because you can run make from within subdirectories.  If you have the
+<code>TOP</code> environment variable set, it uses that.  If you don't, it looks
+up the tree from the current directory, trying to find the top of the tree.</li>
+<li><b>croot</b> - <code>cd</code> to the top of the tree.</li>
+<li><b>sgrep</b> - grep for the regex you provide in all .c, .cpp, .h, .java,
+and .xml files below the current directory.</li>
+</ul>
+
+<h3>Build flavors/types</h3>
+<p>
+When building for a particular product, it's often useful to have minor
+variations on what is ultimately the final release build.  These are the
+currently-defined "flavors" or "types" (we need to settle on a real name
+for these).
+</p>
+
+<table border=1>
+<tr>
+    <td>
+        <code>eng<code>
+    </td>
+    <td>
+        This is the default flavor. A plain "<code>make</code>" is the
+        same as "<code>make eng</code>".  <code>droid</code> is an alias
+        for <code>eng</code>.
+        <ul>
+        <li>Installs modules tagged with: <code>eng</code>, <code>debug</code>,
+            <code>user</code>, and/or <code>development</code>.
+        <li>Installs non-APK modules that have no tags specified.
+        <li>Installs APKs according to the product definition files, in
+            addition to tagged APKs.
+        <li><code>ro.secure=0</code>
+        <li><code>ro.debuggable=1</code>
+        <li><code>ro.kernel.android.checkjni=1</code>
+        <li><code>adb</code> is enabled by default.
+    </td>
+</tr>
+<tr>
+    <td>
+        <code>user<code>
+    </td>
+    <td>
+        "<code>make user</code>"
+        <p>
+        This is the flavor intended to be the final release bits.
+        <ul>
+        <li>Installs modules tagged with <code>user</code>.
+        <li>Installs non-APK modules that have no tags specified.
+        <li>Installs APKs according to the product definition files; tags
+            are ignored for APK modules.
+        <li><code>ro.secure=1</code>
+        <li><code>ro.debuggable=0</code>
+        <li><code>adb</code> is disabled by default.
+    </td>
+</tr>
+<tr>
+    <td>
+        <code>userdebug<code>
+    </td>
+    <td>
+        "<code>make userdebug</code>"
+        <p>
+        The same as <code>user</code>, except:
+        <ul>
+        <li>Also installs modules tagged with <code>debug</code>.
+        <li><code>ro.debuggable=1</code>
+        <li><code>adb</code> is enabled by default.
+    </td>
+</tr>
+</table>
+
+<p>
+If you build one flavor and then want to build another, you should run
+"<code>make installclean</code>" between the two makes to guarantee that
+you don't pick up files installed by the previous flavor.  "<code>make
+clean</code>" will also suffice, but it takes a lot longer.
+</p>
+
+
+<h3>More pseudotargets</h3>
+<p>Sometimes you want to just build one thing.  The following pseudotargets are
+there for your convenience:</p>
+
+<ul>
+<li><b>droid</b> - <code>make droid</code> is the normal build.  This target
+is here because the default target has to have a name.</li>
+<li><b>all</b> - <code>make all</code> builds everything <code>make
+droid</code> does, plus everything whose <code>LOCAL_MODULE_TAGS</code> do not
+include the "droid" tag.  The build server runs this to make sure
+that everything that is in the tree and has an Android.mk builds.</li>
+<li><b>clean-$(LOCAL_MODULE)</b> and <b>clean-$(LOCAL_PACKAGE_NAME)</b> - 
+Let you selectively clean one target.  For example, you can type
+<code>make clean-libutils</code> and it will delete libutils.so and all of the
+intermediate files, or you can type <code>make clean-Home</code> and it will
+clean just the Home app.</li>
+<li><b>clean</b> - <code>make clean</code> deletes all of the output and
+intermediate files for this configuration.  This is the same as <code>rm -rf
+out/&lt;configuration&gt;/</code></li>
+<li><b>clobber</b> - <code>make clobber</code> deletes all of the output
+and intermediate files for all configurations.  This is the same as
+<code>rm -rf out/</code>.</li>
+<li><b>dataclean</b> - <code>make dataclean</code> deletes contents of the data 
+directory inside the current combo directory.  This is especially useful on the
+simulator and emulator, where the persistent data remains present between 
+builds.</li>
+<li><b>showcommands</b> - <code>showcommands</code> is a modifier target
+which causes the build system to show the actual command lines for the build
+steps, instead of the brief descriptions.  Most people don't like seeing the
+actual commands, because they're quite long and hard to read, but if you need
+to for debugging purposes, you can add <code>showcommands</code> to the list
+of targets you build.  For example <code>make showcommands</code> will build
+the default android configuration, and <code>make runtime showcommands</code>
+will build just the runtime, and targets that it depends on, while displaying
+the full command lines.  Please note that there are a couple places where the
+commands aren't shown here.  These are considered bugs, and should be fixed,
+but they're often hard to track down.  Please let
+<a href="mailto:android-build-team">android-build-team</a> know if you find
+any.</li>
+<li><b>LOCAL_MODULE</b> - Anything you specify as a <code>LOCAL_MODULE</code>
+in an Android.mk is made into a pseudotarget.  For example, <code>make
+runtime</code> might be shorthand for <code>make
+out/linux-x86-debug/system/bin/runtime</code> (which would work), and
+<code>make libkjs</code> might be shorthand for <code>make
+out/linux-x86-debug/system/lib/libkjs.so</code> (which would also work).</li>
+<li><b>targets</b> - <code>make targets</code> will print a list of all of
+the LOCAL_MODULE names you can make.</li>
+</ul>
+
+<h3><a name="templates"/>How to add another component to the build - Android.mk templates</h3>
+<p>You have a new library, a new app, or a new executable.  For each of the
+common types of modules, there is a corresponding file in the templates
+directory.  It will usually be enough to copy one of these, and fill in your
+own values.  Some of the more esoteric values are not included in the
+templates, but are instead just documented here, as is the documentation
+on using custom tools to generate files.</p>
+<p>Mostly, you can just look for the TODO comments in the templates and do
+what it says.  Please remember to delete the TODO comments when you're done
+to keep the files clean.  The templates have minimal documentation in them,
+because they're going to be copied, and when that gets stale, the copies just
+won't get updated.  So read on...</p>
+
+<h4>Apps</h4>
+<p>Use the <code>templates/apps</code> file.</p>
+<p>This template is pretty self-explanitory.  See the variables below for more
+details.</p>
+
+<h4>Java Libraries</h4>
+<p>Use the <code>templates/java_library</code> file.</p>
+<p>The interesting thing here is the value of LOCAL_MODULE, which becomes
+the name of the jar file.  (Actually right now, we're not making jar files yet,
+just directories of .class files,  but the directory is named according to
+what you put in LOCAL_MODULE).  This name will be what goes in the 
+LOCAL_JAVA_LIBRARIES variable in modules that depend on your java library.</p>
+
+<h4>C/C++ Executables</h4>
+<p>Use the <code>templates/executable</code> file, or the
+<code>templates/executable_host</code> file.</p>
+<p>This template has a couple extra options that you usually don't need.
+Please delete the ones you don't need, and remove the TODO comments.  It makes
+the rest of them easier to read, and you can always refer back to the templates
+if you need them again later.</p>
+<p>By default, on the target these are built into /system/bin, and on the
+host, they're built into <combo>/host/bin.  These can be overridden by setting
+<code>LOCAL_MODULE_PATH</code>.  See
+<a href="#moving-targets">Putting targets elsewhere</a>
+for more.</p>
+
+<h4>Shared Libraries</h4>
+<p>Use the <code>templates/shared_library</code> file, or the
+<code>templates/shared_library_host</code> file.</p>
+<p>Remember that on the target, we use shared libraries, and on the host,
+we use static libraries, since executable size isn't as big an issue, and it
+simplifies distribution in the SDK.</p>
+
+<h4>Static Libraries</h4>
+<p>Use the <code>templates/static_library</code> file, or the
+<code>templates/static_library_host</code> file.</p>
+<p>Remember that on the target, we use shared libraries, and on the host,
+we use static libraries, since executable size isn't as big an issue, and it
+simplifies distribution in the SDK.</p>
+
+<h4><a name="custom-tools"/>Using Custom Tools</h4>
+<p>If you have a tool that generates source files for you, it's possible
+to have the build system get the dependencies correct for it.  Here are
+a couple of examples.  <code>$@</code> is the make built-in variable for
+"the current target." The <font color=red>red</font> parts are the parts you'll
+need to change.</p>
+
+<p>You need to put this after you have declared <code>LOCAL_PATH</code> and
+<code>LOCAL_MODULE</code>, because the <code>$(local-intermediates-dir)</code>
+and <code>$(local-host-intermediates-dir)</code> macros use these variables
+to determine where to put the files.
+
+<h5>Example 1</h5>
+<p>Here, there is one generated file, called
+chartables.c, which doesn't depend on anything.  And is built by the tool
+built to $(HOST_OUT_EXECUTABLES)/dftables.  Note on the second to last line
+that a dependency is created on the tool.</p>
+<pre>
+intermediates:= $(local-intermediates-dir)
+GEN := $(intermediates)/<font color=red>chartables.c</font>
+$(GEN): PRIVATE_CUSTOM_TOOL = <font color=red>$(HOST_OUT_EXECUTABLES)/dftables $@</font>
+$(GEN): <font color=red>$(HOST_OUT_EXECUTABLES)/dftables</font>
+	$(transform-generated-source)
+LOCAL_GENERATED_SOURCES += $(GEN)
+</pre>
+
+<h5>Example 2</h5>
+<p>Here as a hypothetical example, we use use cat as if it were to transform
+a file.  Pretend that it does something useful.  Note how we use a
+target-specific variable called PRIVATE_INPUT_FILE to store the name of the
+input file.</p>
+<pre>
+intermediates:= $(local-intermediates-dir)
+GEN := $(intermediates)/<font color=red>file.c</font>
+$(GEN): PRIVATE_INPUT_FILE := $(LOCAL_PATH)/<font color=red>input.file</font>
+$(GEN): PRIVATE_CUSTOM_TOOL = <font color=red>cat $(PRIVATE_INPUT_FILE) &gt; $@</font>
+$(GEN): <font color=red>$(LOCAL_PATH)/file.c</font>
+	$(transform-generated-source)
+LOCAL_GENERATED_SOURCES += $(GEN)
+</pre>
+
+<h5>Example 3</h5>
+<p>If you have several files that are all similar in
+name, and use the same tool, you can combine them.  (here the *.lut.h files are
+the generated ones, and the *.cpp files are the input files)</p>
+<pre>
+intermediates:= $(local-intermediates-dir)
+GEN := $(addprefix $(intermediates)<font color=red>/kjs/, \
+            array_object.lut.h \
+            bool_object.lut.h \</font>
+        )
+$(GEN): PRIVATE_CUSTOM_TOOL = <font color=red>perl libs/WebKitLib/WebKit/JavaScriptCore/kjs/create_hash_table $< -i > $@</font>
+$(GEN): $(intermediates)/<font color=red>%.lut.h</font> : $(LOCAL_PATH)/<font color=red>%.cpp</font>
+	$(transform-generated-source)
+LOCAL_GENERATED_SOURCES += $(GEN)
+</pre>
+
+<h3><a name="platform-specific"/>Platform specific conditionals</h3>
+<p>Sometimes you need to set flags specifically for different platforms.  Here
+is a list of which values the different build-system defined variables will be
+set to and some examples.</p>
+<p>For a device build, <code>TARGET_OS</code> is <code>linux</code> (we're using
+linux!), and <code>TARGET_ARCH</code> is <code>arm</code>.</p>
+<p>For a simulator build, <code>TARGET_OS</code> and <code>TARGET_ARCH</code>
+are set to the same as <code>HOST_OS</code> and <code>HOST_ARCH</code> are
+on your platform.  <code>TARGET_PRODUCT</code> is the name of the target
+hardware/product you are building for.  The value <code>sim</code> is used
+for the simulator.  We haven't thought through the full extent of customization
+that will happen here, but likely there will be additional UI configurations
+specified here as well.</p>
+<table cellspacing=25>
+<tr>
+    <td valign=top align=center>
+        <b>HOST_OS</b><br/>
+        linux<br/>
+        darwin<br/>
+        (cygwin)
+    </td>
+    <td valign=top align=center>
+        <b>HOST_ARCH</b><br/>
+        x86
+    </td>
+    <td valign=top align=center>
+        <b>HOST_BUILD_TYPE</b><br/>
+        release<br/>
+        debug
+    </td>
+</tr>
+<tr>
+    <td valign=top align=center>
+        <b>TARGET_OS</b><br/>
+        linux<br/>
+        darwin<br/>
+        (cygwin)
+    </td>
+    <td valign=top align=center>
+        <b>TARGET_ARCH</b><br/>
+        arm<br/>
+        x86
+    </td>
+    <td valign=top align=center>
+        <b>TARGET_BUILD_TYPE</b><br/>
+        release<br/>
+        debug
+    </td>
+    <td valign=top align=center>
+        <b>TARGET_PRODUCT</b><br/>
+        sim<br/>
+        dream<br/>
+        sooner
+    </td>
+</tr>
+</table>
+
+<h4>TARGET_SIMULATOR</h4>
+<p>If we're building the simulator, as opposed to the arm or emulator builds,
+<code>TARGET_SIMULATOR</code> will be set to <code>true</code>.
+
+<h4>Some Examples</h4>
+<pre>ifeq ($(TARGET_SIMULATOR),true)
+LOCAL_CFLAGS += -DSIMULATOR
+endif
+
+ifeq ($(TARGET_BUILD_TYPE),release)
+LOCAL_CFLAGS += -DNDEBUG=1
+endif
+
+# from libutils
+ifeq ($(TARGET_OS),linux)
+# Use the futex based mutex and condition variable
+# implementation from android-arm because it's shared mem safe
+LOCAL_SRC_FILES += futex_synchro.c
+LOCAL_LDLIBS += -lrt -ldl
+endif
+
+</pre>
+
+
+<h3><a name="moving-modules"/>Putting modules elsewhere</h3>
+<p>If you have modules that normally go somewhere, and you need to have them
+build somewhere else, read this.  One use of this is putting files on
+the root filesystem instead of where they normally go in /system. Add these
+lines to your Android.mk:</p>
+<pre>
+LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
+LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
+</pre>
+<p>For executables and libraries, you need to also specify a
+<code>LOCAL_UNSTRIPPED_PATH</code> location, because on target builds, we keep
+the unstripped executables so GDB can find the symbols.</code>
+<p>Look in <code>config/envsetup.make</code> for all of the variables defining
+places to build things.</p>
+<p>FYI: If you're installing an executable to /sbin, you probably also want to
+set <code>LOCAL_FORCE_STATIC_EXCUTABLE := true</code> in your Android.mk, which
+will force the linker to only accept static libraries.</p>
+
+
+<h3>Android.mk variables</h3>
+<p>These are the variables that you'll commonly see in Android.mk files, listed
+alphabetically.</p>
+<p>But first, a note on variable naming:
+<ul>
+    <li><b>LOCAL_</b> - These variables are set per-module.  They are cleared
+    by the <code>include $(CLEAR_VARS)</code> line, so you can rely on them
+    being empty after including that file.  Most of the variables you'll use
+    in most modules are LOCAL_ variables.</li>
+    <li><b>PRIVATE_</b> - These variables are make-target-specific variables.  That
+    means they're only usable within the commands for that module.  It also
+    means that they're unlikely to change behind your back from modules that
+    are included after yours.  This 
+    <a href="http://www.gnu.org/software/make/manual/make.html#Target_002dspecific">link to the make documentation</a>
+    describes more about target-specific variables.  Please note that there
+    are a couple of these laying around the tree that aren't prefixed with
+    PRIVATE_.  It is safe, and they will be fixed as they are discovered.
+    Sorry for the confusion.</li>
+    <li><b>INTERNAL_</b> - These variables are critical to functioning of
+    the build system, so you shouldn't create variables named like this, and
+    you probably shouldn't be messing with these variables in your makefiles.
+    </li>
+    <li><b>HOST_</b> and <b>TARGET_</b> - These contain the directories
+    and definitions that are specific to either the host or the target builds.
+    Do not set variables that start with HOST_ or TARGET_ in your makefiles.
+    </li>
+    <li><b>BUILD_</b> and <b>CLEAR_VARS</b> - These contain the names of
+    well-defined template makefiles to include.  Some examples are CLEAR_VARS
+    and BUILD_HOST_PACKAGE.</li>
+    <li>Any other name is fair-game for you to use in your Android.mk.  However,
+    remember that this is a non-recursive build system, so it is possible that
+    your variable will be changed by another Android.mk included later, and be
+    different when the commands for your rule / module are executed.</li>
+</ul>
+</p>
+
+<h4>LOCAL_ASSET_FILES</h4>
+<p>In Android.mk files that <code>include $(BUILD_PACKAGE)</code> set this
+to the set of files you want built into your app.  Usually:</p>
+<p><code>LOCAL_ASSET_FILES += $(call find-subdir-assets)</code></p>
+<p>This will probably change when we switch to ant for the apps' build
+system.</p>
+
+<h4>LOCAL_CC</h4>
+<p>If you want to use a different C compiler for this module, set LOCAL_CC
+to the path to the compiler.  If LOCAL_CC is blank, the appropriate default
+compiler is used.</p>
+
+<h4>LOCAL_CXX</h4>
+<p>If you want to use a different C++ compiler for this module, set LOCAL_CXX
+to the path to the compiler.  If LOCAL_CXX is blank, the appropriate default
+compiler is used.</p>
+
+<h4>LOCAL_CFLAGS</h4>
+<p>If you have additional flags to pass into the C or C++ compiler, add
+them here.  For example:</p>
+<p><code>LOCAL_CFLAGS += -DLIBUTILS_NATIVE=1</code></p>
+
+<h4>LOCAL_CPPFLAGS</h4>
+<p>If you have additional flags to pass into <i>only</i> the C++ compiler, add
+them here.  For example:</p>
+<p><code>LOCAL_CPPFLAGS += -ffriend-injection</code></p>
+<code>LOCAL_CPPFLAGS</code> is guaranteed to be after <code>LOCAL_CFLAGS</code>
+on the compile line, so you can use it to override flags listed in
+<code>LOCAL_CFLAGS</code>.
+
+<h4>LOCAL_CPP_EXTENSION</h4>
+<p>If your C++ files end in something other than "<code>.cpp</code>",
+you can specify the custom extension here.  For example:</p>
+<p><code>LOCAL_CPP_EXTENSION := .cc</code></p>
+Note that all C++ files for a given module must have the same
+extension; it is not currently possible to mix different extensions.
+
+<h4>LOCAL_NO_DEFAULT_COMPILER_FLAGS</h4>
+<p>Normally, the compile line for C and C++ files includes global include
+paths and global cflags.  If <code>LOCAL_NO_DEFAULT_COMPILER_FLAGS</code>
+is non-empty, none of the default includes or flags will be used when compiling
+C and C++ files in this module.
+<code>LOCAL_C_INCLUDES</code>, <code>LOCAL_CFLAGS</code>, and
+<code>LOCAL_CPPFLAGS</code> will still be used in this case, as will
+any <code>DEBUG_CFLAGS</code> that are defined for the module.
+
+<h4>LOCAL_COPY_HEADERS</h4>
+<p class=warning>This will be going away.</p>
+<p>The set of files to copy to the install include tree.  You must also
+supply <code>LOCAL_COPY_HEADERS_TO</code>.</p>
+<p>This is going away because copying headers messes up the error messages, and
+may lead to people editing those headers instead of the correct ones.  It also
+makes it easier to do bad layering in the system, which we want to avoid.  We
+also aren't doing a C/C++ SDK, so there is no ultimate requirement to copy any
+headers.</p>
+
+<h4>LOCAL_COPY_HEADERS_TO</h4>
+<p class=warning>This will be going away.</p>
+<p>The directory within "include" to copy the headers listed in
+<code>LOCAL_COPY_HEADERS</code> to.</p>
+<p>This is going away because copying headers messes up the error messages, and
+may lead to people editing those headers instead of the correct ones.  It also
+makes it easier to do bad layering in the system, which we want to avoid.  We
+also aren't doing a C/C++ SDK, so there is no ultimate requirement to copy any
+headers.</p>
+
+<h4>LOCAL_C_INCLUDES</h4>
+<p>Additional directories to instruct the C/C++ compilers to look for header
+files in.  These paths are rooted at the top of the tree.  Use
+<code>LOCAL_PATH</code> if you have subdirectories of your own that you
+want in the include paths.  For example:</p>
+<p><code>
+LOCAL_C_INCLUDES += extlibs/zlib-1.2.3<br/>
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/src
+</code></p>
+<p>You should not add subdirectories of include to
+<code>LOCAL_C_INCLUDES</code>, instead you should reference those files
+in the <code>#include</code> statement with their subdirectories.  For
+example:</p>
+<p><code>#include &lt;utils/KeyedVector.h&gt;</code><br/>
+not <code><s>#include &lt;KeyedVector.h&gt;</s></code></p>
+<p>There are some components that are doing this wrong, and should be cleaned
+up.</p>
+
+<h4>LOCAL_MODULE_TAGS</h4>
+<p>Set <code>LOCAL_MODULE_TAGS</code> to any number of whitespace-separated
+tags.  If the tag list is empty or contains <code>droid</code>, the module
+will get installed as part of a <code>make droid</code>.  Otherwise, it will
+only get installed by running <code>make &lt;your-module&gt;</code>
+or with the <code>make all</code> pseudotarget.</p>
+
+<h4>LOCAL_REQUIRED_MODULES</h4>
+<p>Set <code>LOCAL_REQUIRED_MODULES</code> to any number of whitespace-separated
+module names, like "libblah" or "Email".  If this module is installed, all
+of the modules that it requires will be installed as well.  This can be
+used to, e.g., ensure that necessary shared libraries or providers are
+installed when a given app is installed.
+
+<h4>LOCAL_FORCE_STATIC_EXECUTABLE</h4>
+<p>If your executable should be linked statically, set 
+<code>LOCAL_FORCE_STATIC_EXECUTABLE:=true</code>.  There is a very short
+list of libraries that we have in static form (currently only libc).  This is
+really only used for executables in /sbin on the root filesystem.</p>
+
+<h4>LOCAL_GENERATED_SOURCES</h4>
+<p>Files that you add to <code>LOCAL_GENERATED_SOURCES</code> will be
+automatically generated and then linked in when your module is built.
+See the <a href="#custom-tools">Custom Tools</a> template makefile for an
+example.</p>
+
+<h4>LOCAL_JAVA_LIBRARIES</h4>
+<p>When linking Java apps and libraries, <code>LOCAL_JAVA_LIBRARIES</code>
+specifies which sets of java classes to include.  Currently there are
+two of these: <code>core</code> and <code>framework</code>.
+In most cases, it will look like this:</p>
+<p><code>LOCAL_JAVA_LIBRARIES := core framework</code></p>
+<p>Note that setting <code>LOCAL_JAVA_LIBRARIES</code> is not necessary
+(and is not allowed) when building an APK with
+"<code>include $(BUILD_PACKAGE)</code>".  The appropriate libraries
+will be included automatically.</p>
+
+<h4>LOCAL_LDFLAGS</h4>
+<p>You can pass additional flags to the linker by setting
+<code>LOCAL_LDFLAGS</code>.  Keep in mind that the order of parameters is
+very important to ld, so test whatever you do on all platforms.</p>
+
+<h4>LOCAL_LDLIBS</h4>
+<p><code>LOCAL_LDLIBS</code> allows you to specify additional libraries
+that are not part of the build for your executable or library.  Specify
+the libraries you want in -lxxx format; they're passed directly to the 
+link line.  However, keep in mind that there will be no dependency generated
+for these libraries.  It's most useful in simulator builds where you want
+to use a library preinstalled on the host.  The linker (ld) is a particularly
+fussy beast, so it's sometimes necessary to pass other flags here if you're
+doing something sneaky. Some examples:</p>
+<p><code>LOCAL_LDLIBS += -lcurses -lpthread<br/>
+LOCAL_LDLIBS += -Wl,-z,origin
+</code></p>
+
+<h4>LOCAL_NO_MANIFEST</h4>
+<p>If your package doesn't have a manifest (AndroidManifest.xml), then
+set <code>LOCAL_NO_MANIFEST:=true</code>.  The common resources package
+does this.</p>
+
+<h4>LOCAL_PACKAGE_NAME</h4>
+<p><code>LOCAL_PACKAGE_NAME</code> is the name of an app.  For example,
+Dialer, Contacts, etc.  This will probably change or go away when we switch
+to an ant-based build system for the apps.</p>
+
+<h4>LOCAL_PATH</h4>
+<p>The directory your Android.mk file is in. You can set it by putting the
+following as the first line in your Android.mk:</p>
+<p><code>LOCAL_PATH := $(my-dir)</code></p>
+<p>The <code>my-dir</code> macro uses the 
+<code><a href="http://www.gnu.org/software/make/manual/make.html#MAKEFILE_005fLIST-Variable">MAKEFILE_LIST</a></code>
+variable, so you must call it before you include any other makefiles.  Also,
+consider that any subdirectories you inlcude might reset LOCAL_PATH, so do your
+own stuff before you include them.  This also means that if you try to write
+several <code>include</code> lines that reference <code>LOCAL_PATH</code>,
+it won't work, because those included makefiles might reset LOCAL_PATH.
+
+<h4>LOCAL_POST_PROCESS_COMMAND</h4>
+<p>For host executables, you can specify a command to run on the module
+after it's been linked.  You might have to go through some contortions
+to get variables right because of early or late variable evaluation:</p>
+<p><code>module := $(HOST_OUT_EXECUTABLES)/$(LOCAL_MODULE)<br/>
+LOCAL_POST_PROCESS_COMMAND := /Developer/Tools/Rez -d __DARWIN__ -t APPL\<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-d __WXMAC__ -o $(module) Carbon.r
+</code></p>
+
+<h4>LOCAL_PREBUILT_EXECUTABLES</h4>
+<p>When including $(BUILD_PREBUILT) or $(BUILD_HOST_PREBUILT), set these to
+executables that you want copied.  They're located automatically into the
+right bin directory.</p>
+
+<h4>LOCAL_PREBUILT_LIBS</h4>
+<p>When including $(BUILD_PREBUILT) or $(BUILD_HOST_PREBUILT), set these to
+libraries that you want copied.  They're located automatically into the
+right lib directory.</p>
+
+<h4>LOCAL_SHARED_LIBRARIES</h4>
+<p>These are the libraries you directly link against.  You don't need to
+pass transitively included libraries.  Specify the name without the suffix:</p>
+<p><code>LOCAL_SHARED_LIBRARIES := \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libutils \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libui \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libaudio \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libexpat \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libsgl
+</code></p>
+
+<h4>LOCAL_SRC_FILES</h4>
+<p>The build system looks at <code>LOCAL_SRC_FILES</code> to know what source
+files to compile -- .cpp .c .y .l .java.  For lex and yacc files, it knows
+how to correctly do the intermediate .h and .c/.cpp files automatically.  If
+the files are in a subdirectory of the one containing the Android.mk, prefix
+them with the directory name:</p>
+<p><code>LOCAL_SRC_FILES := \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;file1.cpp \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;dir/file2.cpp
+</code></p>
+
+<h4>LOCAL_STATIC_LIBRARIES</h4>
+<p>These are the static libraries that you want to include in your module.
+Mostly, we use shared libraries, but there are a couple of places, like
+executables in sbin and host executables where we use static libraries instead.
+<p><code>LOCAL_STATIC_LIBRARIES := \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libutils \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libtinyxml
+</code></p>
+
+<h4>LOCAL_MODULE</h4>
+<p><code>LOCAL_MODULE</code> is the name of what's supposed to be generated
+from your Android.mk.  For exmample, for libkjs, the <code>LOCAL_MODULE</code>
+is "libkjs" (the build system adds the appropriate suffix -- .so .dylib .dll).
+For app modules, use <code>LOCAL_PACKAGE_NAME</code> instead of 
+<code>LOCAL_MODULE</code>.  We're planning on switching to ant for the apps,
+so this might become moot.</p>
+
+<h4>LOCAL_MODULE_PATH</h4>
+<p>Instructs the build system to put the module somewhere other than what's
+normal for its type.  If you override this, make sure you also set
+<code>LOCAL_UNSTRIPPED_PATH</code> if it's an executable or a shared library
+so the unstripped binary has somewhere to go.  An error will occur if you forget
+to.</p>
+<p>See <a href="#moving-modules">Putting modules elsewhere</a> for more.</p>
+
+<h4>LOCAL_UNSTRIPPED_PATH</h4>
+<p>Instructs the build system to put the unstripped version of the module
+somewhere other than what's normal for its type.  Usually, you override this
+because you overrode <code>LOCAL_MODULE_PATH</code> for an executable or a
+shared library.  If you overrode <code>LOCAL_MODULE_PATH</code>, but not 
+<code>LOCAL_UNSTRIPPED_PATH</code>, an error will occur.</p>
+<p>See <a href="#moving-modules">Putting modules elsewhere</a> for more.</p>
+
+<h4>LOCAL_WHOLE_STATIC_LIBRARIES</h4>
+<p>These are the static libraries that you want to include in your module without allowing
+the linker to remove dead code from them. This is mostly useful if you want to add a static library
+to a shared library and have the static library's content exposed from the shared library.
+<p><code>LOCAL_WHOLE_STATIC_LIBRARIES := \<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;libsqlite3_android<br/>
+</code></p>
+
+<h4>LOCAL_YACCFLAGS</h4>
+<p>Any flags to pass to invocations of yacc for your module.  A known limitation
+here is that the flags will be the same for all invocations of YACC for your
+module.  This can be fixed.  If you ever need it to be, just ask.</p>
+<p><code>LOCAL_YACCFLAGS := -p kjsyy</code></p>
+
+
+
+<h2>Implementation Details</h2>
+
+<p>You should never have to touch anything in the config directory unless
+you're adding a new platform, new tools, or adding new features to the
+build system.  In general, please consult with the build system owner(s)
+(<a href="mailto:android-build-team">android-build-team</a>) before you go
+mucking around in here.  That said, here are some notes on what's going on
+under the hood.</p>
+
+<h3>Environment Setup / buildspec.mk Versioning</h3>
+<p>In order to make easier for people when the build system changes, when
+it is necessary to make changes to buildspec.mk or to rerun the environment
+setup scripts, they contain a version number in the variable
+BUILD_ENV_SEQUENCE_NUMBER.  If this variable does not match what the build
+system expects, it fails printing an error message explaining what happened.
+If you make a change that requires an update, you need to update two places
+so this message will be printed.
+<ul>
+    <li>In config/envsetup.make, increment the
+        CORRECT_BUILD_ENV_SEQUENCE_NUMBER definition.</li>
+    <li>In buildspec.mk.default, update the BUILD_ENV_SEQUENCE_DUMBER
+        definition to match the one in config/envsetup.make</li>
+</ul>
+The scripts automatically get the value from the build system, so they will
+trigger the warning as well.
+</p>
+
+<h3>Additional makefile variables</h3>
+<p>You probably shouldn't use these variables.  Please consult
+<a href="mailto:android-build-team">android-build-team</a> before using them.
+These are mostly there for workarounds for other issues, or things that aren't
+completely done right.</p>
+
+<h4>LOCAL_ADDITIONAL_DEPENDENCIES</h4>
+<p>If your module needs to depend on anything else that
+isn't actually built in to it, you can add those make targets to 
+<code>LOCAL_ADDITIONAL_DEPENDENCIES</code>.  Usually this is a workaround
+for some other dependency that isn't created automatically.</p>
+
+<h4>LOCAL_BUILT_MODULE</h4>
+<p>When a module is built, the module is created in an intermediate
+directory then copied to its final location.  LOCAL_BUILT_MODULE is
+the full path to the intermediate file.  See LOCAL_INSTALLED_MODULE
+for the path to the final installed location of the module.</p>
+
+<h4>LOCAL_HOST</h4>
+<p>Set by the host_xxx.make includes to tell base_rules.make and the other
+includes that we're building for the host.  Kenneth did this as part of
+openbinder, and I would like to clean it up so the rules, includes and
+definitions aren't duplicated for host and target.</p>
+
+<h4>LOCAL_INSTALLED_MODULE</h4>
+<p>The fully qualified path name of the final location of the module.
+See LOCAL_BUILT_MODULE for the location of the intermediate file that
+the make rules should actually be constructing.</p>
+
+<h4>LOCAL_REPLACE_VARS</h4>
+<p>Used in some stuff remaining from the openbinder for building scripts
+with particular values set,</p>
+
+<h4>LOCAL_SCRIPTS</h4>
+<p>Used in some stuff remaining from the openbinder build system that we
+might find handy some day.</p>
+
+<h4>LOCAL_MODULE_CLASS</h4>
+<p>Which kind of module this is.  This variable is used to construct other
+variable names used to locate the modules.  See base_rules.make and
+envsetup.make.</p>
+
+<h4>LOCAL_MODULE_NAME</h4>
+<p>Set to the leaf name of the LOCAL_BUILT_MODULE.  I'm not sure,
+but it looks like it's just used in the WHO_AM_I variable to identify
+in the pretty printing what's being built.</p>
+
+<h4>LOCAL_MODULE_SUFFIX</h4>
+<p>The suffix that will be appended to <code>LOCAL_MODULE</code> to form
+<code>LOCAL_MODULE_NAME</code>.  For example, .so, .a, .dylib.</p>
+
+<h4>LOCAL_STRIP_MODULE</h4>
+<p>Calculated in base_rules.make to determine if this module should actually
+be stripped or not, based on whether <code>LOCAL_STRIPPABLE_MODULE</code>
+is set, and whether the combo is configured to ever strip modules.  With
+Iliyan's stripping tool, this might change.</p>
+
+<h4>LOCAL_STRIPPABLE_MODULE</h4>
+<p>Set by the include makefiles if that type of module is strippable. 
+Executables and shared libraries are.</p>
+
+<h4>LOCAL_SYSTEM_SHARED_LIBRARIES</h4>
+<p>Used while building the base libraries: libc, libm, libdl.  Usually
+it should be set to "none," as it is in $(CLEAR_VARS).  When building
+these libraries, it's set to the ones they link against.  For example,
+libc, libstdc++ and libdl don't link against anything, and libm links against
+libc.  Normally, when the value is none, these libraries are automatically
+linked in to executables and libraries, so you don't need to specify them
+manually.</p>
+
+
+</body>
+</html>

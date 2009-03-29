@@ -750,14 +750,14 @@ case `uname -s` in
     Darwin)
         function sgrep()
         {
-            find -E . -type f -iregex '.*\.(c|h|cpp|S|java|xml)' -print0 | xargs -0 grep --color -n "$@"
+            find -E . -type f -iregex '.*\.(c|h|cpp|S|java|xml|sh|mk)' -print0 | xargs -0 grep --color -n "$@"
         }
 
         ;;
     *)
         function sgrep()
         {
-            find . -type f -iregex '.*\.\(c\|h\|cpp\|S\|java\|xml\)' -print0 | xargs -0 grep --color -n "$@"
+            find . -type f -iregex '.*\.\(c\|h\|cpp\|S\|java\|xml\|sh\|mk\)' -print0 | xargs -0 grep --color -n "$@"
         }
         ;;
 esac

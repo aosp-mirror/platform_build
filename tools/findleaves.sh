@@ -86,7 +86,7 @@ filename="${!nargs}"
 # Print out all files that match, as long as the path isn't explicitly
 # pruned. This will print out extraneous results from directories whose
 # parents have a match. These are filtered out by the awk script below.
-find "${@:0:$nargs}" $findargs -type f -name "$filename" -print |
+find -L "${@:1:$nargs-1}" $findargs -type f -name "$filename" -print |
 
 # Only pass along the directory of each match.
 sed -e 's/\/[^\/]*$/\//' |
