@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAOH///84\u003d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2009-03-30T19:15:49Z",
+      "side": 1,
+      "message": "Please add a TODO explaining why this line is being added, and when it can be removed.",
+      "revId": "d0ade797c46ea719166db30973bb0c9509532d86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
