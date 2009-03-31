@@ -278,12 +278,6 @@ endif
 TARGET_COMPRESS_MODULE_SYMBOLS := false
 TARGET_PRELINK_MODULE := true
 
-# This is a temporary hack to globally disable OpenCORE as
-# it broke during a major cupcake->master merge.
-# See issue 2308 for the reason why it's necessary.
-# TODO: remove this as soon as OpenCORE builds again - issue 2331.
-BUILD_WITHOUT_PV := true
-
 PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 
 
