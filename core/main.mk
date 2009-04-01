@@ -290,6 +290,7 @@ subdirs := \
 	dalvik/dexdump \
 	dalvik/libdex \
 	dalvik/tools/dmtracedump \
+	dalvik/tools/hprof-conv \
 	development/emulator/mksdcard \
 	development/tools/activitycreator \
 	development/tools/line_endings \
