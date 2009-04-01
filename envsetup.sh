@@ -975,7 +975,7 @@ function runtest()
 }
 
 # simple shortcut to the runtest.py command
-function runtest.py()
+function runtest_py()
 {
     T=$(gettop)
     if [ ! "$T" ]; then
