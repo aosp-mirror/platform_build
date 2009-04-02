@@ -1,0 +1,157 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2008 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Given a target-files zipfile, produces an image zipfile suitable for
+use with 'fastboot update'.
+
+Usage:  img_from_target_files [flags] input_target_files output_image_zip
+
+  -b  (--board_config)  <file>
+      Specifies a BoardConfig.mk file containing image max sizes
+      against which the generated image files are checked.
+
+"""
+
+import sys
+
+if sys.hexversion < 0x02040000:
+  print >> sys.stderr, "Python 2.4 or newer is required."
+  sys.exit(1)
+
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+import zipfile
+
+# missing in Python 2.4 and before
+if not hasattr(os, "SEEK_SET"):
+  os.SEEK_SET = 0
+
+import common
+
+OPTIONS = common.OPTIONS
+
+
+def AddUserdata(output_zip):
+  """Create an empty userdata image and store it in output_zip."""
+
+  print "creating userdata.img..."
+
+  # The name of the directory it is making an image out of matters to
+  # mkyaffs2image.  So we create a temp dir, and within it we create an
+  # empty dir named "data", and build the image from that.
+  temp_dir = tempfile.mkdtemp()
+  user_dir = os.path.join(temp_dir, "data")
+  os.mkdir(user_dir)
+  img = tempfile.NamedTemporaryFile()
+
+  p = common.Run(["mkyaffs2image", "-f", user_dir, img.name])
+  p.communicate()
+  assert p.returncode == 0, "mkyaffs2image of userdata.img image failed"
+
+  common.CheckSize(img.name, "userdata.img")
+  output_zip.write(img.name, "userdata.img")
+  img.close()
+  os.rmdir(user_dir)
+  os.rmdir(temp_dir)
+
+
+def AddSystem(output_zip):
+  """Turn the contents of SYSTEM into a system image and store it in
+  output_zip."""
+
+  print "creating system.img..."
+
+  img = tempfile.NamedTemporaryFile()
+
+  # The name of the directory it is making an image out of matters to
+  # mkyaffs2image.  It wants "system" but we have a directory named
+  # "SYSTEM", so create a symlink.
+  os.symlink(os.path.join(OPTIONS.input_tmp, "SYSTEM"),
+             os.path.join(OPTIONS.input_tmp, "system"))
+
+  p = common.Run(["mkyaffs2image", "-f",
+                  os.path.join(OPTIONS.input_tmp, "system"), img.name])
+  p.communicate()
+  assert p.returncode == 0, "mkyaffs2image of system.img image failed"
+
+  img.seek(os.SEEK_SET, 0)
+  data = img.read()
+  img.close()
+
+  common.CheckSize(data, "system.img")
+  output_zip.writestr("system.img", data)
+
+
+def CopyInfo(output_zip):
+  """Copy the android-info.txt file from the input to the output."""
+  output_zip.write(os.path.join(OPTIONS.input_tmp, "OTA", "android-info.txt"),
+                   "android-info.txt")
+
+
+def main(argv):
+
+  def option_handler(o, a):
+    if o in ("-b", "--board_config"):
+      common.LoadBoardConfig(a)
+      return True
+    else:
+      return False
+
+  args = common.ParseOptions(argv, __doc__,
+                             extra_opts="b:",
+                             extra_long_opts=["board_config="],
+                             extra_option_handler=option_handler)
+
+  if len(args) != 2:
+    common.Usage(__doc__)
+    sys.exit(1)
+
+  if not OPTIONS.max_image_size:
+    print
+    print "  WARNING:  No board config specified; will not check image"
+    print "  sizes against limits.  Use -b to make sure the generated"
+    print "  images don't exceed partition sizes."
+    print
+
+  OPTIONS.input_tmp = common.UnzipTemp(args[0])
+
+  output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
+
+  common.AddBoot(output_zip)
+  common.AddRecovery(output_zip)
+  AddSystem(output_zip)
+  AddUserdata(output_zip)
+  CopyInfo(output_zip)
+
+  print "cleaning up..."
+  output_zip.close()
+  shutil.rmtree(OPTIONS.input_tmp)
+
+  print "done."
+
+
+if __name__ == '__main__':
+  try:
+    main(sys.argv[1:])
+  except common.ExternalError, e:
+    print
+    print "   ERROR: %s" % (e,)
+    print
+    sys.exit(1)
