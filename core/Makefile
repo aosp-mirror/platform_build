@@ -62,9 +62,6 @@ endif
 # Apps are always signed with test keys, and may be re-signed in a post-build
 # step.  If that happens, the "test-keys" tag will be removed by that step.
 BUILD_VERSION_TAGS += test-keys
-ifndef INCLUDE_TEST_OTA_KEYS
-  BUILD_VERSION_TAGS += ota-rel-keys
-endif
 BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
 
 # A human-readable string that descibes this build in detail.
@@ -639,13 +636,31 @@ ifdef BOARD_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(BOARD_KERNEL_CMDLINE)"
 endif
 
+# Keys authorized to sign OTA packages this build will accept.  The
+# build always uses test-keys for this; release packaging tools will
+# substitute other keys for this one.
+OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
+
+# Generate a file containing the keys that will be read by the
+# recovery binary.
+RECOVERY_INSTALL_OTA_KEYS := \
+	$(call intermediates-dir-for,PACKAGING,ota_keys)/keys
+DUMPKEY_JAR := $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar
+$(RECOVERY_INSTALL_OTA_KEYS): PRIVATE_OTA_PUBLIC_KEYS := $(OTA_PUBLIC_KEYS)
+$(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR)
+	@echo "DumpPublicKey: $@ <= $(PRIVATE_OTA_PUBLIC_KEYS)"
+	@rm -rf $@
+	@mkdir -p $(dir $@)
+	java -jar $(DUMPKEY_JAR) $(PRIVATE_OTA_PUBLIC_KEYS) > $@
+
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(recovery_binary) \
 		$(recovery_initrc) $(recovery_kernel) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
-		$(recovery_build_prop) $(recovery_resource_deps)
+		$(recovery_build_prop) $(recovery_resource_deps) \
+		$(RECOVERY_INSTALL_OTA_KEYS)
 	@echo ----- Making recovery image ------
 	rm -rf $(TARGET_RECOVERY_OUT)
 	mkdir -p $(TARGET_RECOVERY_OUT)
@@ -660,6 +675,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) \
 	cp -rf $(recovery_resources_common) $(TARGET_RECOVERY_ROOT_OUT)/
 	$(foreach item,$(recovery_resources_private), \
 	  cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/)
+	cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
 	cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
 	        > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
 	$(MKBOOTFS) $(TARGET_RECOVERY_ROOT_OUT) | gzip > $(recovery_ramdisk)
@@ -759,16 +775,6 @@ endif
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 
-# Keys authorized to sign OTA packages this build will accept.
-ifeq ($(INCLUDE_TEST_OTA_KEYS),true)
-  OTA_PUBLIC_KEYS := \
-  	$(sort $(SRC_TARGET_DIR)/product/security/testkey.x509.pem $(OTA_PUBLIC_KEYS))
-endif
-
-ifeq ($(OTA_PUBLIC_KEYS),)
-  $(error No OTA_PUBLIC_KEYS defined)
-endif
-
 # Build a keystore with the authorized keys in it.
 # java/android/android/server/checkin/UpdateVerifier.java uses this.
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/otacerts.zip
@@ -783,21 +789,6 @@ $(TARGET_OUT_ETC)/security/otacerts.zip: $(OTA_PUBLIC_KEYS)
 #   keytool -keystore $@ -storepass $(notdir $@) -noprompt \
 #           -import -file $$f -alias $(notdir $$f) || exit 1; \
 # done
-
-ifdef RECOVERY_INSTALL_OTA_KEYS_INC
-# Generate a C-includable file containing the keys.
-# RECOVERY_INSTALL_OTA_KEYS_INC is defined by recovery/Android.mk.
-# *** THIS IS A TOTAL HACK; EXECUTABLES MUST NOT CHANGE BETWEEN DIFFERENT
-#     PRODUCTS/BUILD TYPES. ***
-# TODO: make recovery read the keys from an external file.
-DUMPKEY_JAR := $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar
-$(RECOVERY_INSTALL_OTA_KEYS_INC): PRIVATE_OTA_PUBLIC_KEYS := $(OTA_PUBLIC_KEYS)
-$(RECOVERY_INSTALL_OTA_KEYS_INC): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR)
-	@echo "DumpPublicKey: $@ <= $(PRIVATE_OTA_PUBLIC_KEYS)"
-	@rm -rf $@
-	@mkdir -p $(dir $@)
-	$(hide) java -jar $(DUMPKEY_JAR) $(PRIVATE_OTA_PUBLIC_KEYS) > $@
-endif
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
@@ -827,7 +818,7 @@ define package_files-copy-root
 endef
 
 built_ota_tools := \
- 	$(call intermediates-dir-for,EXECUTABLES,applypatch)/applypatch \
+	$(call intermediates-dir-for,EXECUTABLES,applypatch)/applypatch \
 	$(call intermediates-dir-for,EXECUTABLES,check_prereq)/check_prereq
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 
@@ -897,6 +888,7 @@ endif
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) $(ACP) $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
+	$(hide)	echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 
