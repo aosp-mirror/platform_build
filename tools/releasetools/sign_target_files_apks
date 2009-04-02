@@ -1,0 +1,193 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2008 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Signs all the APK files in a target-files zipfile, producing a new
+target-files zip.
+
+Usage:  sign_target_files_apks [flags] input_target_files output_target_files
+
+  -s  (--signapk_jar)  <path>
+      Path of the signapks.jar file used to sign an individual APK
+      file.
+
+  -e  (--extra_apks)  <name,name,...=key>
+      Add extra APK name/key pairs as though they appeared in
+      apkcerts.zip.  Option may be repeated to give multiple extra
+      packages.
+
+  -k  (--key_mapping)  <src_key=dest_key>
+      Add a mapping from the key name as specified in apkcerts.txt (the
+      src_key) to the real key you wish to sign the package with
+      (dest_key).  Option may be repeated to give multiple key
+      mappings.
+
+  -d  (--default_key_mappings)  <dir>
+      Set up the following key mappings:
+
+        build/target/product/security/testkey   ==>  $dir/releasekey
+        build/target/product/security/media     ==>  $dir/media
+        build/target/product/security/shared    ==>  $dir/shared
+        build/target/product/security/platform  ==>  $dir/platform
+
+      -d and -k options are added to the set of mappings in the order
+      in which they appear on the command line.
+"""
+
+import sys
+
+if sys.hexversion < 0x02040000:
+  print >> sys.stderr, "Python 2.4 or newer is required."
+  sys.exit(1)
+
+import os
+import re
+import subprocess
+import tempfile
+import zipfile
+
+import common
+
+OPTIONS = common.OPTIONS
+
+OPTIONS.extra_apks = {}
+OPTIONS.key_map = {}
+
+
+def GetApkCerts(tf_zip):
+  certmap = OPTIONS.extra_apks.copy()
+  for line in tf_zip.read("META/apkcerts.txt").split("\n"):
+    line = line.strip()
+    if not line: continue
+    m = re.match(r'^name="(.*)"\s+certificate="(.*)\.x509\.pem"\s+'
+                 r'private_key="\2\.pk8"$', line)
+    if not m:
+      raise SigningError("failed to parse line from apkcerts.txt:\n" + line)
+    certmap[m.group(1)] = OPTIONS.key_map.get(m.group(2), m.group(2))
+  return certmap
+
+
+def SignApk(data, keyname, pw):
+  unsigned = tempfile.NamedTemporaryFile()
+  unsigned.write(data)
+  unsigned.flush()
+
+  signed = tempfile.NamedTemporaryFile()
+
+  common.SignFile(unsigned.name, signed.name, keyname, pw, align=4)
+
+  data = signed.read()
+  unsigned.close()
+  signed.close()
+
+  return data
+
+
+def SignApks(input_tf_zip, output_tf_zip):
+  apk_key_map = GetApkCerts(input_tf_zip)
+
+  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
+
+  maxsize = max([len(os.path.basename(i.filename))
+                 for i in input_tf_zip.infolist()
+                 if i.filename.endswith('.apk')])
+
+  for info in input_tf_zip.infolist():
+    data = input_tf_zip.read(info.filename)
+    if info.filename.endswith(".apk"):
+      name = os.path.basename(info.filename)
+      key = apk_key_map.get(name, None)
+      if key is not None:
+        print "signing: %-*s (%s)" % (maxsize, name, key)
+        signed_data = SignApk(data, key, key_passwords[key])
+        output_tf_zip.writestr(info, signed_data)
+      else:
+        # an APK we're not supposed to sign.
+        print "skipping: %s" % (name,)
+        output_tf_zip.writestr(info, data)
+    elif info.filename == "SYSTEM/build.prop":
+      # Change build fingerprint to reflect the fact that apps are signed.
+      m = re.search(r"ro\.build\.fingerprint=.*\b(test-keys)\b.*", data)
+      if not m:
+        print 'WARNING: ro.build.fingerprint does not contain "test-keys"'
+      else:
+        data = data[:m.start(1)] + "release-keys" + data[m.end(1):]
+      m = re.search(r"ro\.build\.description=.*\b(test-keys)\b.*", data)
+      if not m:
+        print 'WARNING: ro.build.description does not contain "test-keys"'
+      else:
+        data = data[:m.start(1)] + "release-keys" + data[m.end(1):]
+      output_tf_zip.writestr(info, data)
+    else:
+      # a non-APK file; copy it verbatim
+      output_tf_zip.writestr(info, data)
+
+
+def main(argv):
+
+  def option_handler(o, a):
+    if o in ("-s", "--signapk_jar"):
+      OPTIONS.signapk_jar = a
+    elif o in ("-e", "--extra_apks"):
+      names, key = a.split("=")
+      names = names.split(",")
+      for n in names:
+        OPTIONS.extra_apks[n] = key
+    elif o in ("-d", "--default_key_mappings"):
+      OPTIONS.key_map.update({
+          "build/target/product/security/testkey": "%s/releasekey" % (a,),
+          "build/target/product/security/media": "%s/media" % (a,),
+          "build/target/product/security/shared": "%s/shared" % (a,),
+          "build/target/product/security/platform": "%s/platform" % (a,),
+          })
+    elif o in ("-k", "--key_mapping"):
+      s, d = a.split("=")
+      OPTIONS.key_map[s] = d
+    else:
+      return False
+    return True
+
+  args = common.ParseOptions(argv, __doc__,
+                             extra_opts="s:e:d:k:",
+                             extra_long_opts=["signapk_jar=",
+                                              "extra_apks=",
+                                              "default_key_mappings=",
+                                              "key_mapping="],
+                             extra_option_handler=option_handler)
+
+  if len(args) != 2:
+    common.Usage(__doc__)
+    sys.exit(1)
+
+  input_zip = zipfile.ZipFile(args[0], "r")
+  output_zip = zipfile.ZipFile(args[1], "w")
+
+  SignApks(input_zip, output_zip)
+
+  input_zip.close()
+  output_zip.close()
+
+  print "done."
+
+
+if __name__ == '__main__':
+  try:
+    main(sys.argv[1:])
+  except common.ExternalError, e:
+    print
+    print "   ERROR: %s" % (e,)
+    print
+    sys.exit(1)
