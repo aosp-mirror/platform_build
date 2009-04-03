@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAOn///88\u003d",
+        "filename": "core/node_fns.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1000392
+      },
+      "writtenOn": "2009-04-03T02:08:43Z",
+      "side": 1,
+      "message": "Please change this to LOCAL_PATH, to match the rest of the build system.  I know that AndroidProducts.mk files use LOCAL_DIR, but that was a slip-up on my part (that I didn\u0027t even notice until now).  Otherwise, this looks good!",
+      "revId": "14b7f70010d6624c904b590305a3f95144cf5e50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
