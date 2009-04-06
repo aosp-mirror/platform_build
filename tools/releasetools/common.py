@@ -28,6 +28,7 @@ if not hasattr(os, "SEEK_SET"):
 class Options(object): pass
 OPTIONS = Options()
 OPTIONS.signapk_jar = "out/host/linux-x86/framework/signapk.jar"
+OPTIONS.dumpkey_jar = "out/host/linux-x86/framework/dumpkey.jar"
 OPTIONS.max_image_size = {}
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
