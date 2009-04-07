@@ -193,7 +193,7 @@ $(error The 'sdk' target may not be specified with any other targets)
 endif
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
-tags_to_install := user
+tags_to_install := user debug eng
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk

@@ -10,7 +10,6 @@ PRODUCT_PACKAGES := \
 	Fallback \
 	GPSEnable \
 	Launcher \
-	Maps \
 	Music \
 	Mms \
 	Settings \
