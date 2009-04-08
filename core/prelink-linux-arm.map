@@ -90,11 +90,20 @@ libgps.so               0xA9700000
 libcamera.so            0xA9680000
 libqcamera.so           0xA9400000
 
-# pv opencore libraries
-libopencore_author.so   0xA7B00000
-libopencore_player.so   0xA7800000
-libopencore_common.so   0xA7300000
-libopencore_2way.so     0xA7000000
+# pv libraries
+libopencorenet_support.so     0xA7D20000
+libpvasf.so                   0xA7BC0000
+libpvasfreg.so                0xA7B70000
+libopencoredownload.so        0xA7B40000
+libopencoredownloadreg.so     0xA7B00000
+libopencorenet_support.so     0xA7A00000
+libopencorertsp.so            0xA7900000
+libopencorertspreg.so         0xA7800000
+libopencoreauthor.so          0xA7600000
+libopencorecommon.so          0xA7500000
+libopencoremp4.so             0xA7400000
+libopencoremp4reg.so          0xA7300000
+libopencoreplayer.so          0xA7000000
 
 # opencore hardware support
 libmm-adspsvc.so              0xA6FFD000
