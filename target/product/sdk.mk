@@ -2,7 +2,6 @@ PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
 	AlarmClock \
-	ApiDemos \
 	Camera \
 	Development \
 	DrmProvider \
@@ -17,6 +16,9 @@ PRODUCT_PACKAGES := \
 	CustomLocale \
 	gpstest \
 	sqlite3 \
+	LatinIME \
+	PinyinIME \
+	ApiDemos \
 	SoftKeyboard
 
 PRODUCT_COPY_FILES := \
