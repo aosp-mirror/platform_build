@@ -922,6 +922,7 @@ $(INSTALLED_FILES_FILE): $(INSTALLED_SYSTEMIMAGE)
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 $(call dist-for-goals, sdk, $(INSTALLED_FILES_FILE))
+$(call dist-for-goals, sdk_addon, $(INSTALLED_FILES_FILE))
 
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".
@@ -1078,14 +1079,14 @@ sdk_dir := $(HOST_OUT)/sdk
 #
 sdk_name := android-sdk_$(FILE_NAME_TAG)
 ifeq ($(HOST_OS),darwin)
-  sdk_host_os := mac
+  INTERNAL_SDK_HOST_OS_NAME := mac
 else
-  sdk_host_os := $(HOST_OS)
+  INTERNAL_SDK_HOST_OS_NAME := $(HOST_OS)
 endif
 ifneq ($(HOST_OS),windows)
-  sdk_host_os := $(sdk_host_os)-$(HOST_ARCH)
+  INTERNAL_SDK_HOST_OS_NAME := $(INTERNAL_SDK_HOST_OS_NAME)-$(HOST_ARCH)
 endif
-sdk_name := $(sdk_name)_$(sdk_host_os)
+sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
 
