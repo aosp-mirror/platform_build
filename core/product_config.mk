@@ -49,6 +49,21 @@ $(strip \
  )
 endef
 
+###########################################################
+## List all of the files in a subdirectory in a format
+## suitable for PRODUCT_COPY_FILES and
+## PRODUCT_SDK_ADDON_COPY_FILES
+##
+## $(1): Glob to match file name
+## $(2): Source directory
+## $(3): Target base directory
+###########################################################
+
+define find-copy-subdir-files
+$(shell find $(2) -name "$(1)" | sed -E "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g")
+endef
+
+# ---------------------------------------------------------------
 
 # These are the valid values of TARGET_BUILD_VARIANT.  Also, if anything else is passed
 # as the variant in the PRODUCT-$TARGET_BUILD_PRODUCT-$TARGET_BUILD_VARIANT form,

@@ -15,9 +15,9 @@ endif
 # <dest file> is relative to $(PRODUCT_OUT), so it should look like,
 # e.g., "system/etc/file.xml".
 $(foreach cf,$(PRODUCT_COPY_FILES), \
-  $(eval _w := $(subst :,$(space),$(cf))) \
-  $(eval _src := $(word 1,$(_w))) \
-  $(eval _dest := $(subst //,/,$(PRODUCT_OUT)/$(word 2,$(_w)))) \
+  $(eval _src := $(call word-colon,1,$(cf))) \
+  $(eval _dest := $(call \
+          append-path,$(PRODUCT_OUT),$(call word-colon,2,$(cf)))) \
   $(eval $(call copy-one-file,$(_src),$(_dest))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_dest)) \
  )
@@ -246,7 +246,10 @@ INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
-INSTALLED_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
+BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
+
+# We just build this directly to the install location.
+INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
 $(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES)
 	$(call pretty,"Target ram disk: $@")
 	$(hide) $(MKBOOTFS) $(TARGET_ROOT_OUT) | gzip > $@
@@ -578,7 +581,10 @@ define build-userdataimage-target
 endef
 endif # TARGET_USERIMAGES_USE_EXT2
 
-INSTALLED_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
+BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
+
+# We just build this directly to the install location.
+INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
 $(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_MKUSERFS) \
                                    $(INTERNAL_USERDATAIMAGE_FILES)
 	$(build-userdataimage-target)
