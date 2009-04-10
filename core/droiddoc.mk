@@ -100,7 +100,6 @@ $(full_target): PRIVATE_DROIDDOC_OPTIONS := $(LOCAL_DROIDDOC_OPTIONS)
 # $(3): list of directories to search for java files in
 define prepare-doc-source-list
 $(hide) mkdir -p $(dir $(1))
-$(hide) echo $(2)
 $(call dump-words-to-file, $(2), $(1))
 $(hide) for d in $(3) ; do find $$d -name '*.java' >> $(1) 2> /dev/null ; done ; true
 endef
