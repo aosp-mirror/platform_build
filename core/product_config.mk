@@ -49,6 +49,20 @@ $(strip \
  )
 endef
 
+# TODO: push this into the combo files; unfortunately, we don't even
+# know HOST_OS at this point.
+trysed := $(shell echo a | sed -E -e 's/a/b/' 2>/dev/null)
+ifeq ($(trysed),b)
+  SED_EXTENDED := sed -E
+else
+  trysed := $(shell echo c | sed -r -e 's/c/d/' 2>/dev/null)
+  ifeq ($(trysed),d)
+    SED_EXTENDED := sed -r
+  else
+    $(error Unknown sed version)
+  endif
+endif
+
 ###########################################################
 ## List all of the files in a subdirectory in a format
 ## suitable for PRODUCT_COPY_FILES and
@@ -60,7 +74,7 @@ endef
 ###########################################################
 
 define find-copy-subdir-files
-$(shell find $(2) -name "$(1)" | sed -E "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g")
+$(shell find $(2) -name "$(1)" | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g")
 endef
 
 # ---------------------------------------------------------------
