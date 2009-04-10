@@ -66,6 +66,21 @@ ifneq (,$(strip $(all_java_sources)))
 # variable definitions.
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 
+# Droiddoc isn't currently able to generate stubs for modules, so we're just
+# allowing it to use the classes.jar as the "stubs" that would be use to link
+# against, for the cases where someone needs the jar to link against.
+# - Use the classes.jar instead of the handful of other intermediates that
+#   we have, because it's the most processed, but still hasn't had dex run on
+#   it, so it's closest to what's on the device.
+# - This extra copy, with the dependency on LOCAL_BUILT_MODULE allows the
+#   PRIVATE_ vars to be preserved.
+full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
+$(full_classes_stubs_jar): PRIVATE_SOURCE_FILE := $(full_classes_jar)
+$(full_classes_stubs_jar) : $(LOCAL_BUILT_MODULE) | $(ACP)
+	@echo Copying $(PRIVATE_SOURCE_FILE)
+	$(hide) $(ACP) -fp $(PRIVATE_SOURCE_FILE) $@
+ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
+
 # Emma source code coverage
 ifneq ($(EMMA_INSTRUMENT),true) 
 LOCAL_NO_EMMA_INSTRUMENT := true
