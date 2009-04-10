@@ -30,3 +30,31 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 PRODUCT_BRAND := generic
 PRODUCT_NAME := sdk
 PRODUCT_DEVICE := generic
+PRODUCT_LOCALES := \
+	en_US \
+	en_GB \
+	en_CA \
+	en_AU \
+	en_NZ \
+	en_SG \
+	ja_JP \
+	fr_FR \
+	fr_BE \
+	fr_CA \
+	fr_CH \
+	it_IT \
+	it_CH \
+	es_ES \
+	de_DE \
+	de_AT \
+	de_CH \
+	de_LI \
+	nl_NL \
+	nl_BE \
+	cs_CZ \
+	pl_PL \
+	zh_CN \
+	zh_TW \
+	ru_RU \
+	ko_KR
+
