@@ -201,6 +201,16 @@ else # !sdk
 ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 endif
 
+## precise GC ##
+
+ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
+  # Enabling type-precise GC results in larger optimized DEX files.  The
+  # additional storage requirements for ".odex" files can cause /system
+  # to overflow on some devices, so this is configured separately for
+  # each product.
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
+endif
+
 # Install an apns-conf.xml file if one's not already being installed.
 ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
   PRODUCT_COPY_FILES += \
