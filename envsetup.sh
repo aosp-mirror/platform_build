@@ -666,6 +666,7 @@ function mmm()
                     ARGS="$ARGS showcommands"
                 else
                     echo "No Android.mk in $DIR."
+                    return 1
                 fi
             fi
         done
