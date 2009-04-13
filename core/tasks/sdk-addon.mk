@@ -18,9 +18,11 @@
 addon_name := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_NAME))
 ifneq ($(addon_name),)
 
+addon_dir_leaf := $(addon_name)-$(FILE_NAME_TAG)-$(INTERNAL_SDK_HOST_OS_NAME)
+
 intermediates := $(HOST_OUT_INTERMEDIATES)/SDK_ADDON/$(addon_name)_intermediates
-full_target := $(HOST_OUT_SDK_ADDON)/$(addon_name).zip
-staging := $(intermediates)/$(addon_name)
+full_target := $(HOST_OUT_SDK_ADDON)/$(addon_dir_leaf).zip
+staging := $(intermediates)/$(addon_dir_leaf)
 
 sdk_addon_deps :=
 files_to_copy :=
@@ -74,10 +76,12 @@ $(full_target): $(sdk_addon_deps) | $(ACP)
 	    $(ACP) -r $(PRIVATE_DOCS_DIR)/* $(PRIVATE_STAGING_DIR)/docs/reference ;\
 	  fi
 	$(hide) mkdir -p $(dir $@)
-	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR) && zip -rq $$F * )
+	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rq $$F * )
 
 .PHONY: sdk_addon
 sdk_addon: $(full_target)
+
+$(call dist-for-goals, sdk_addon, $(full_target))
 
 else # addon_name
 ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
