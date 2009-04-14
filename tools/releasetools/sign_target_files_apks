@@ -26,8 +26,10 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
   -e  (--extra_apks)  <name,name,...=key>
       Add extra APK name/key pairs as though they appeared in
-      apkcerts.zip.  Option may be repeated to give multiple extra
-      packages.
+      apkcerts.txt (so mappings specified by -k and -d are applied).
+      Keys specified in -e override any value for that app contained
+      in the apkcerts.txt file.  Option may be repeated to give
+      multiple extra packages.
 
   -k  (--key_mapping)  <src_key=dest_key>
       Add a mapping from the key name as specified in apkcerts.txt (the
@@ -76,7 +78,7 @@ OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
 
 def GetApkCerts(tf_zip):
-  certmap = OPTIONS.extra_apks.copy()
+  certmap = {}
   for line in tf_zip.read("META/apkcerts.txt").split("\n"):
     line = line.strip()
     if not line: continue
@@ -85,6 +87,8 @@ def GetApkCerts(tf_zip):
     if not m:
       raise SigningError("failed to parse line from apkcerts.txt:\n" + line)
     certmap[m.group(1)] = OPTIONS.key_map.get(m.group(2), m.group(2))
+  for apk, cert in OPTIONS.extra_apks.iteritems():
+    certmap[apk] = OPTIONS.key_map.get(cert, cert)
   return certmap
 
 
