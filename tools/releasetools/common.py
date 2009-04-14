@@ -135,6 +135,12 @@ def GetKeyPasswords(keylist):
   key_passwords = {}
   devnull = open("/dev/null", "w+b")
   for k in sorted(keylist):
+    # An empty-string key is used to mean don't re-sign this package.
+    # Obviously we don't need a password for this non-key.
+    if not k:
+      key_passwords[k] = None
+      continue
+
     p = subprocess.Popen(["openssl", "pkcs8", "-in", k+".pk8",
                           "-inform", "DER", "-nocrypt"],
                          stdin=devnull.fileno(),

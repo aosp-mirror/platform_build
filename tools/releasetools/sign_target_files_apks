@@ -111,25 +111,41 @@ def SignApk(data, keyname, pw):
 def SignApks(input_tf_zip, output_tf_zip):
   apk_key_map = GetApkCerts(input_tf_zip)
 
-  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
-
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
+
+  # Check that all the APKs we want to sign have keys specified, and
+  # error out if they don't.  Do this before prompting for key
+  # passwords in case we're going to fail anyway.
+  unknown_apks = []
+  for info in input_tf_zip.infolist():
+    if info.filename.endswith(".apk"):
+      name = os.path.basename(info.filename)
+      if name not in apk_key_map:
+        unknown_apks.append(name)
+  if unknown_apks:
+    print "ERROR: no key specified for:\n\n ",
+    print "\n  ".join(unknown_apks)
+    print "\nUse '-e <apkname>=' to specify a key (which may be an"
+    print "empty string to not sign this apk)."
+    sys.exit(1)
+
+  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
 
   for info in input_tf_zip.infolist():
     data = input_tf_zip.read(info.filename)
     out_info = copy.copy(info)
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
-      key = apk_key_map.get(name, None)
-      if key is not None:
-        print "signing: %-*s (%s)" % (maxsize, name, key)
+      key = apk_key_map[name]
+      if key:
+        print "    signing: %-*s (%s)" % (maxsize, name, key)
         signed_data = SignApk(data, key, key_passwords[key])
         output_tf_zip.writestr(out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
-        print "skipping: %s" % (name,)
+        print "NOT signing: %s" % (name,)
         output_tf_zip.writestr(out_info, data)
     elif info.filename in ("SYSTEM/build.prop",
                            "RECOVERY/RAMDISK/default.prop"):
