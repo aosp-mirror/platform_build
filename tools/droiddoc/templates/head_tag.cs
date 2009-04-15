@@ -26,7 +26,7 @@ if:reference ?>
 /if ?>
 <noscript>
   <style type="text/css">
-    body{overflow:auto;}
+    html,body{overflow:auto;}
     #body-content{position:relative; top:0;}
     #doc-content{overflow:visible;border-left:3px solid #666;}
     #side-nav{padding:0;}
