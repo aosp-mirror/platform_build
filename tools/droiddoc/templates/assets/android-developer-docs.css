@@ -1016,7 +1016,11 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   }
 
   #headerLeft {
-    margin:0;
+    padding:0;
+  }
+
+  #headerLeft .guide {
+    display:none;
   }
   
   #headerRight {
