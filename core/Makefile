@@ -15,9 +15,9 @@ endif
 # <dest file> is relative to $(PRODUCT_OUT), so it should look like,
 # e.g., "system/etc/file.xml".
 $(foreach cf,$(PRODUCT_COPY_FILES), \
-  $(eval _w := $(subst :,$(space),$(cf))) \
-  $(eval _src := $(word 1,$(_w))) \
-  $(eval _dest := $(subst //,/,$(PRODUCT_OUT)/$(word 2,$(_w)))) \
+  $(eval _src := $(call word-colon,1,$(cf))) \
+  $(eval _dest := $(call \
+          append-path,$(PRODUCT_OUT),$(call word-colon,2,$(cf)))) \
   $(eval $(call copy-one-file,$(_src),$(_dest))) \
   $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_dest)) \
  )
@@ -246,7 +246,10 @@ INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
-INSTALLED_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
+BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
+
+# We just build this directly to the install location.
+INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
 $(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES)
 	$(call pretty,"Target ram disk: $@")
 	$(hide) $(MKBOOTFS) $(TARGET_ROOT_OUT) | gzip > $@
@@ -578,7 +581,10 @@ define build-userdataimage-target
 endef
 endif # TARGET_USERIMAGES_USE_EXT2
 
-INSTALLED_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
+BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
+
+# We just build this directly to the install location.
+INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
 $(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_MKUSERFS) \
                                    $(INTERNAL_USERDATAIMAGE_FILES)
 	$(build-userdataimage-target)
@@ -916,6 +922,7 @@ $(INSTALLED_FILES_FILE): $(INSTALLED_SYSTEMIMAGE)
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
 $(call dist-for-goals, sdk, $(INSTALLED_FILES_FILE))
+$(call dist-for-goals, sdk_addon, $(INSTALLED_FILES_FILE))
 
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".
@@ -1072,14 +1079,14 @@ sdk_dir := $(HOST_OUT)/sdk
 #
 sdk_name := android-sdk_$(FILE_NAME_TAG)
 ifeq ($(HOST_OS),darwin)
-  sdk_host_os := mac
+  INTERNAL_SDK_HOST_OS_NAME := mac
 else
-  sdk_host_os := $(HOST_OS)
+  INTERNAL_SDK_HOST_OS_NAME := $(HOST_OS)
 endif
 ifneq ($(HOST_OS),windows)
-  sdk_host_os := $(sdk_host_os)-$(HOST_ARCH)
+  INTERNAL_SDK_HOST_OS_NAME := $(INTERNAL_SDK_HOST_OS_NAME)-$(HOST_ARCH)
 endif
-sdk_name := $(sdk_name)_$(sdk_host_os)
+sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 
 sdk_dep_file := $(sdk_dir)/sdk_deps.mk
 

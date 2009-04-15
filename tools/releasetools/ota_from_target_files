@@ -1,0 +1,670 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2008 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Given a target-files zipfile, produces an OTA package that installs
+that build.  An incremental OTA is produced if -i is given, otherwise
+a full OTA is produced.
+
+Usage:  ota_from_target_files [flags] input_target_files output_ota_package
+
+  -b  (--board_config)  <file>
+      Specifies a BoardConfig.mk file containing image max sizes
+      against which the generated image files are checked.
+
+  -k  (--package_key)  <key>
+      Key to use to sign the package (default is
+      "build/target/product/security/testkey").
+
+  -i  (--incremental_from)  <file>
+      Generate an incremental OTA using the given target-files zip as
+      the starting build.
+
+"""
+
+import sys
+
+if sys.hexversion < 0x02040000:
+  print >> sys.stderr, "Python 2.4 or newer is required."
+  sys.exit(1)
+
+import copy
+import os
+import re
+import sha
+import subprocess
+import tempfile
+import time
+import zipfile
+
+import common
+
+OPTIONS = common.OPTIONS
+OPTIONS.package_key = "build/target/product/security/testkey"
+OPTIONS.incremental_source = None
+OPTIONS.require_verbatim = set()
+OPTIONS.prohibit_verbatim = set(("system/build.prop",))
+OPTIONS.patch_threshold = 0.95
+
+def MostPopularKey(d, default):
+  """Given a dict, return the key corresponding to the largest
+  value.  Returns 'default' if the dict is empty."""
+  x = [(v, k) for (k, v) in d.iteritems()]
+  if not x: return default
+  x.sort()
+  return x[-1][1]
+
+
+def IsSymlink(info):
+  """Return true if the zipfile.ZipInfo object passed in represents a
+  symlink."""
+  return (info.external_attr >> 16) == 0120777
+
+
+
+class Item:
+  """Items represent the metadata (user, group, mode) of files and
+  directories in the system image."""
+  ITEMS = {}
+  def __init__(self, name, dir=False):
+    self.name = name
+    self.uid = None
+    self.gid = None
+    self.mode = None
+    self.dir = dir
+
+    if name:
+      self.parent = Item.Get(os.path.dirname(name), dir=True)
+      self.parent.children.append(self)
+    else:
+      self.parent = None
+    if dir:
+      self.children = []
+
+  def Dump(self, indent=0):
+    if self.uid is not None:
+      print "%s%s %d %d %o" % ("  "*indent, self.name, self.uid, self.gid, self.mode)
+    else:
+      print "%s%s %s %s %s" % ("  "*indent, self.name, self.uid, self.gid, self.mode)
+    if self.dir:
+      print "%s%s" % ("  "*indent, self.descendants)
+      print "%s%s" % ("  "*indent, self.best_subtree)
+      for i in self.children:
+        i.Dump(indent=indent+1)
+
+  @classmethod
+  def Get(cls, name, dir=False):
+    if name not in cls.ITEMS:
+      cls.ITEMS[name] = Item(name, dir=dir)
+    return cls.ITEMS[name]
+
+  @classmethod
+  def GetMetadata(cls):
+    """Run the external 'fs_config' program to determine the desired
+    uid, gid, and mode for every Item object."""
+    p = common.Run(["fs_config"], stdin=subprocess.PIPE,
+                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    suffix = { False: "", True: "/" }
+    input = "".join(["%s%s\n" % (i.name, suffix[i.dir])
+                     for i in cls.ITEMS.itervalues() if i.name])
+    output, error = p.communicate(input)
+    assert not error
+
+    for line in output.split("\n"):
+      if not line: continue
+      name, uid, gid, mode = line.split()
+      i = cls.ITEMS[name]
+      i.uid = int(uid)
+      i.gid = int(gid)
+      i.mode = int(mode, 8)
+      if i.dir:
+        i.children.sort(key=lambda i: i.name)
+
+  def CountChildMetadata(self):
+    """Count up the (uid, gid, mode) tuples for all children and
+    determine the best strategy for using set_perm_recursive and
+    set_perm to correctly chown/chmod all the files to their desired
+    values.  Recursively calls itself for all descendants.
+
+    Returns a dict of {(uid, gid, dmode, fmode): count} counting up
+    all descendants of this node.  (dmode or fmode may be None.)  Also
+    sets the best_subtree of each directory Item to the (uid, gid,
+    dmode, fmode) tuple that will match the most descendants of that
+    Item.
+    """
+
+    assert self.dir
+    d = self.descendants = {(self.uid, self.gid, self.mode, None): 1}
+    for i in self.children:
+      if i.dir:
+        for k, v in i.CountChildMetadata().iteritems():
+          d[k] = d.get(k, 0) + v
+      else:
+        k = (i.uid, i.gid, None, i.mode)
+        d[k] = d.get(k, 0) + 1
+
+    # Find the (uid, gid, dmode, fmode) tuple that matches the most
+    # descendants.
+
+    # First, find the (uid, gid) pair that matches the most
+    # descendants.
+    ug = {}
+    for (uid, gid, _, _), count in d.iteritems():
+      ug[(uid, gid)] = ug.get((uid, gid), 0) + count
+    ug = MostPopularKey(ug, (0, 0))
+
+    # Now find the dmode and fmode that match the most descendants
+    # with that (uid, gid), and choose those.
+    best_dmode = (0, 0755)
+    best_fmode = (0, 0644)
+    for k, count in d.iteritems():
+      if k[:2] != ug: continue
+      if k[2] is not None and count >= best_dmode[0]: best_dmode = (count, k[2])
+      if k[3] is not None and count >= best_fmode[0]: best_fmode = (count, k[3])
+    self.best_subtree = ug + (best_dmode[1], best_fmode[1])
+
+    return d
+
+  def SetPermissions(self, script, renamer=lambda x: x):
+    """Append set_perm/set_perm_recursive commands to 'script' to
+    set all permissions, users, and groups for the tree of files
+    rooted at 'self'.  'renamer' turns the filenames stored in the
+    tree of Items into the strings used in the script."""
+
+    self.CountChildMetadata()
+
+    def recurse(item, current):
+      # current is the (uid, gid, dmode, fmode) tuple that the current
+      # item (and all its children) have already been set to.  We only
+      # need to issue set_perm/set_perm_recursive commands if we're
+      # supposed to be something different.
+      if item.dir:
+        if current != item.best_subtree:
+          script.append("set_perm_recursive %d %d 0%o 0%o %s" %
+                        (item.best_subtree + (renamer(item.name),)))
+          current = item.best_subtree
+
+        if item.uid != current[0] or item.gid != current[1] or \
+           item.mode != current[2]:
+          script.append("set_perm %d %d 0%o %s" %
+                        (item.uid, item.gid, item.mode, renamer(item.name)))
+
+        for i in item.children:
+          recurse(i, current)
+      else:
+        if item.uid != current[0] or item.gid != current[1] or \
+               item.mode != current[3]:
+          script.append("set_perm %d %d 0%o %s" %
+                        (item.uid, item.gid, item.mode, renamer(item.name)))
+
+    recurse(self, (-1, -1, -1, -1))
+
+
+def CopySystemFiles(input_zip, output_zip=None,
+                    substitute=None):
+  """Copies files underneath system/ in the input zip to the output
+  zip.  Populates the Item class with their metadata, and returns a
+  list of symlinks.  output_zip may be None, in which case the copy is
+  skipped (but the other side effects still happen).  substitute is an
+  optional dict of {output filename: contents} to be output instead of
+  certain input files.
+  """
+
+  symlinks = []
+
+  for info in input_zip.infolist():
+    if info.filename.startswith("SYSTEM/"):
+      basefilename = info.filename[7:]
+      if IsSymlink(info):
+        symlinks.append((input_zip.read(info.filename),
+                         "SYSTEM:" + basefilename))
+      else:
+        info2 = copy.copy(info)
+        fn = info2.filename = "system/" + basefilename
+        if substitute and fn in substitute and substitute[fn] is None:
+          continue
+        if output_zip is not None:
+          if substitute and fn in substitute:
+            data = substitute[fn]
+          else:
+            data = input_zip.read(info.filename)
+          output_zip.writestr(info2, data)
+        if fn.endswith("/"):
+          Item.Get(fn[:-1], dir=True)
+        else:
+          Item.Get(fn, dir=False)
+
+  symlinks.sort()
+  return symlinks
+
+
+def AddScript(script, output_zip):
+  now = time.localtime()
+  i = zipfile.ZipInfo("META-INF/com/google/android/update-script",
+                      (now.tm_year, now.tm_mon, now.tm_mday,
+                       now.tm_hour, now.tm_min, now.tm_sec))
+  output_zip.writestr(i, "\n".join(script) + "\n")
+
+
+def SignOutput(temp_zip_name, output_zip_name):
+  key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
+  pw = key_passwords[OPTIONS.package_key]
+
+  common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw)
+
+
+def SubstituteRoot(s):
+  if s == "system": return "SYSTEM:"
+  assert s.startswith("system/")
+  return "SYSTEM:" + s[7:]
+
+def FixPermissions(script):
+  Item.GetMetadata()
+  root = Item.Get("system")
+  root.SetPermissions(script, renamer=SubstituteRoot)
+
+def DeleteFiles(script, to_delete):
+  line = []
+  t = 0
+  for i in to_delete:
+    line.append(i)
+    t += len(i) + 1
+    if t > 80:
+      script.append("delete " + " ".join(line))
+      line = []
+      t = 0
+  if line:
+    script.append("delete " + " ".join(line))
+
+def AppendAssertions(script, input_zip):
+  script.append('assert compatible_with("0.2") == "true"')
+
+  device = GetBuildProp("ro.product.device", input_zip)
+  script.append('assert getprop("ro.product.device") == "%s" || '
+                'getprop("ro.build.product") == "%s"' % (device, device))
+
+  info = input_zip.read("OTA/android-info.txt")
+  m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
+  if not m:
+    raise ExternalError("failed to find required bootloaders in "
+                        "android-info.txt")
+  bootloaders = m.group(1).split("|")
+  script.append("assert " +
+                " || ".join(['getprop("ro.bootloader") == "%s"' % (b,)
+                             for b in bootloaders]))
+
+
+def IncludeBinary(name, input_zip, output_zip):
+  try:
+    data = input_zip.read(os.path.join("OTA/bin", name))
+    output_zip.writestr(name, data)
+  except IOError:
+    raise ExternalError('unable to include device binary "%s"' % (name,))
+
+
+def WriteFullOTAPackage(input_zip, output_zip):
+  script = []
+
+  ts = GetBuildProp("ro.build.date.utc", input_zip)
+  script.append("run_program PACKAGE:check_prereq %s" % (ts,))
+  IncludeBinary("check_prereq", input_zip, output_zip)
+
+  AppendAssertions(script, input_zip)
+
+  script.append("format BOOT:")
+  script.append("show_progress 0.1 0")
+
+  output_zip.writestr("radio.img", input_zip.read("RADIO/image"))
+  script.append("write_radio_image PACKAGE:radio.img")
+  script.append("show_progress 0.5 0")
+
+  script.append("format SYSTEM:")
+  script.append("copy_dir PACKAGE:system SYSTEM:")
+
+  symlinks = CopySystemFiles(input_zip, output_zip)
+  script.extend(["symlink %s %s" % s for s in symlinks])
+
+  common.BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "RECOVERY"),
+                                  "system/recovery.img", output_zip)
+  Item.Get("system/recovery.img", dir=False)
+
+  FixPermissions(script)
+
+  common.AddBoot(output_zip)
+  script.append("show_progress 0.2 0")
+  script.append("write_raw_image PACKAGE:boot.img BOOT:")
+  script.append("show_progress 0.2 10")
+
+  AddScript(script, output_zip)
+
+
+class File(object):
+  def __init__(self, name, data):
+    self.name = name
+    self.data = data
+    self.size = len(data)
+    self.sha1 = sha.sha(data).hexdigest()
+
+  def WriteToTemp(self):
+    t = tempfile.NamedTemporaryFile()
+    t.write(self.data)
+    t.flush()
+    return t
+
+  def AddToZip(self, z):
+    z.writestr(self.name, self.data)
+
+
+def LoadSystemFiles(z):
+  """Load all the files from SYSTEM/... in a given target-files
+  ZipFile, and return a dict of {filename: File object}."""
+  out = {}
+  for info in z.infolist():
+    if info.filename.startswith("SYSTEM/") and not IsSymlink(info):
+      fn = "system/" + info.filename[7:]
+      data = z.read(info.filename)
+      out[fn] = File(fn, data)
+  return out
+
+
+def Difference(tf, sf):
+  """Return the patch (as a string of data) needed to turn sf into tf."""
+
+  ttemp = tf.WriteToTemp()
+  stemp = sf.WriteToTemp()
+
+  ext = os.path.splitext(tf.name)[1]
+
+  try:
+    ptemp = tempfile.NamedTemporaryFile()
+    p = common.Run(["bsdiff", stemp.name, ttemp.name, ptemp.name])
+    _, err = p.communicate()
+    if err:
+      raise ExternalError("failure running bsdiff:\n%s\n" % (err,))
+    diff = ptemp.read()
+    ptemp.close()
+  finally:
+    stemp.close()
+    ttemp.close()
+
+  return diff
+
+
+def GetBuildProp(property, z):
+  """Return the fingerprint of the build of a given target-files
+  ZipFile object."""
+  bp = z.read("SYSTEM/build.prop")
+  if not property:
+    return bp
+  m = re.search(re.escape(property) + r"=(.*)\n", bp)
+  if not m:
+    raise ExternalException("couldn't find %s in build.prop" % (property,))
+  return m.group(1).strip()
+
+
+def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
+  script = []
+
+  print "Loading target..."
+  target_data = LoadSystemFiles(target_zip)
+  print "Loading source..."
+  source_data = LoadSystemFiles(source_zip)
+
+  verbatim_targets = []
+  patch_list = []
+  largest_source_size = 0
+  for fn in sorted(target_data.keys()):
+    tf = target_data[fn]
+    sf = source_data.get(fn, None)
+
+    if sf is None or fn in OPTIONS.require_verbatim:
+      # This file should be included verbatim
+      if fn in OPTIONS.prohibit_verbatim:
+        raise ExternalError("\"%s\" must be sent verbatim" % (fn,))
+      print "send", fn, "verbatim"
+      tf.AddToZip(output_zip)
+      verbatim_targets.append((fn, tf.size))
+    elif tf.sha1 != sf.sha1:
+      # File is different; consider sending as a patch
+      d = Difference(tf, sf)
+      print fn, tf.size, len(d), (float(len(d)) / tf.size)
+      if len(d) > tf.size * OPTIONS.patch_threshold:
+        # patch is almost as big as the file; don't bother patching
+        tf.AddToZip(output_zip)
+        verbatim_targets.append((fn, tf.size))
+      else:
+        output_zip.writestr("patch/" + fn + ".p", d)
+        patch_list.append((fn, tf, sf, tf.size))
+        largest_source_size = max(largest_source_size, sf.size)
+    else:
+      # Target file identical to source.
+      pass
+
+  total_verbatim_size = sum([i[1] for i in verbatim_targets])
+  total_patched_size = sum([i[3] for i in patch_list])
+
+  source_fp = GetBuildProp("ro.build.fingerprint", source_zip)
+  target_fp = GetBuildProp("ro.build.fingerprint", target_zip)
+
+  script.append(('assert file_contains("SYSTEM:build.prop", '
+                 '"ro.build.fingerprint=%s") == "true" || '
+                 'file_contains("SYSTEM:build.prop", '
+                 '"ro.build.fingerprint=%s") == "true"') %
+                (source_fp, target_fp))
+
+  source_boot = common.BuildBootableImage(
+      os.path.join(OPTIONS.source_tmp, "BOOT"))
+  target_boot = common.BuildBootableImage(
+      os.path.join(OPTIONS.target_tmp, "BOOT"))
+  updating_boot = (source_boot != target_boot)
+
+  source_recovery = common.BuildBootableImage(
+      os.path.join(OPTIONS.source_tmp, "RECOVERY"))
+  target_recovery = common.BuildBootableImage(
+      os.path.join(OPTIONS.target_tmp, "RECOVERY"))
+  updating_recovery = (source_recovery != target_recovery)
+
+  source_radio = source_zip.read("RADIO/image")
+  target_radio = target_zip.read("RADIO/image")
+  updating_radio = (source_radio != target_radio)
+
+  # The last 0.1 is reserved for creating symlinks, fixing
+  # permissions, and writing the boot image (if necessary).
+  progress_bar_total = 1.0
+  if updating_boot:
+    progress_bar_total -= 0.1
+  if updating_radio:
+    progress_bar_total -= 0.3
+
+  AppendAssertions(script, target_zip)
+
+  pb_verify = progress_bar_total * 0.3 * \
+              (total_patched_size /
+               float(total_patched_size+total_verbatim_size))
+
+  for i, (fn, tf, sf, size) in enumerate(patch_list):
+    if i % 5 == 0:
+      next_sizes = sum([i[3] for i in patch_list[i:i+5]])
+      script.append("show_progress %f 1" %
+                    (next_sizes * pb_verify / total_patched_size,))
+    script.append("run_program PACKAGE:applypatch -c /%s %s %s" %
+                  (fn, tf.sha1, sf.sha1))
+
+  if patch_list:
+    script.append("run_program PACKAGE:applypatch -s %d" %
+                  (largest_source_size,))
+    script.append("copy_dir PACKAGE:patch CACHE:../tmp/patchtmp")
+    IncludeBinary("applypatch", target_zip, output_zip)
+
+  script.append("\n# ---- start making changes here\n")
+
+  DeleteFiles(script, [SubstituteRoot(i[0]) for i in verbatim_targets])
+
+  if updating_boot:
+    script.append("format BOOT:")
+    output_zip.writestr("boot.img", target_boot)
+    print "boot image changed; including."
+  else:
+    print "boot image unchanged; skipping."
+
+  if updating_recovery:
+    output_zip.writestr("system/recovery.img", target_recovery)
+    print "recovery image changed; including."
+  else:
+    print "recovery image unchanged; skipping."
+
+  if updating_radio:
+    script.append("show_progress 0.3 10")
+    script.append("write_radio_image PACKAGE:radio.img")
+    output_zip.writestr("radio.img", target_radio)
+    print "radio image changed; including."
+  else:
+    print "radio image unchanged; skipping."
+
+  pb_apply = progress_bar_total * 0.7 * \
+             (total_patched_size /
+              float(total_patched_size+total_verbatim_size))
+  for i, (fn, tf, sf, size) in enumerate(patch_list):
+    if i % 5 == 0:
+      next_sizes = sum([i[3] for i in patch_list[i:i+5]])
+      script.append("show_progress %f 1" %
+                    (next_sizes * pb_apply / total_patched_size,))
+    script.append(("run_program PACKAGE:applypatch "
+                   "/%s %s %d %s:/tmp/patchtmp/%s.p") %
+                  (fn, tf.sha1, tf.size, sf.sha1, fn))
+
+  target_symlinks = CopySystemFiles(target_zip, None)
+
+  target_symlinks_d = dict([(i[1], i[0]) for i in target_symlinks])
+  temp_script = []
+  FixPermissions(temp_script)
+
+  # Note that this call will mess up the tree of Items, so make sure
+  # we're done with it.
+  source_symlinks = CopySystemFiles(source_zip, None)
+  source_symlinks_d = dict([(i[1], i[0]) for i in source_symlinks])
+
+  # Delete all the symlinks in source that aren't in target.  This
+  # needs to happen before verbatim files are unpacked, in case a
+  # symlink in the source is replaced by a real file in the target.
+  to_delete = []
+  for dest, link in source_symlinks:
+    if link not in target_symlinks_d:
+      to_delete.append(link)
+  DeleteFiles(script, to_delete)
+
+  if verbatim_targets:
+    pb_verbatim = progress_bar_total * \
+                  (total_verbatim_size /
+                   float(total_patched_size+total_verbatim_size))
+    script.append("show_progress %f 5" % (pb_verbatim,))
+    script.append("copy_dir PACKAGE:system SYSTEM:")
+
+  # Create all the symlinks that don't already exist, or point to
+  # somewhere different than what we want.  Delete each symlink before
+  # creating it, since the 'symlink' command won't overwrite.
+  to_create = []
+  for dest, link in target_symlinks:
+    if link in source_symlinks_d:
+      if dest != source_symlinks_d[link]:
+        to_create.append((dest, link))
+    else:
+      to_create.append((dest, link))
+  DeleteFiles(script, [i[1] for i in to_create])
+  script.extend(["symlink %s %s" % s for s in to_create])
+
+  # Now that the symlinks are created, we can set all the
+  # permissions.
+  script.extend(temp_script)
+
+  if updating_boot:
+    script.append("show_progress 0.1 5")
+    script.append("write_raw_image PACKAGE:boot.img BOOT:")
+
+  AddScript(script, output_zip)
+
+
+def main(argv):
+
+  def option_handler(o, a):
+    if o in ("-b", "--board_config"):
+      common.LoadBoardConfig(a)
+      return True
+    elif o in ("-k", "--package_key"):
+      OPTIONS.package_key = a
+      return True
+    elif o in ("-i", "--incremental_from"):
+      OPTIONS.incremental_source = a
+      return True
+    else:
+      return False
+
+  args = common.ParseOptions(argv, __doc__,
+                             extra_opts="b:k:i:d:",
+                             extra_long_opts=["board_config=",
+                                              "package_key=",
+                                              "incremental_from="],
+                             extra_option_handler=option_handler)
+
+  if len(args) != 2:
+    common.Usage(__doc__)
+    sys.exit(1)
+
+  if not OPTIONS.max_image_size:
+    print
+    print "  WARNING:  No board config specified; will not check image"
+    print "  sizes against limits.  Use -b to make sure the generated"
+    print "  images don't exceed partition sizes."
+    print
+
+  print "unzipping target target-files..."
+  OPTIONS.input_tmp = common.UnzipTemp(args[0])
+  OPTIONS.target_tmp = OPTIONS.input_tmp
+  input_zip = zipfile.ZipFile(args[0], "r")
+  if OPTIONS.package_key:
+    temp_zip_file = tempfile.NamedTemporaryFile()
+    output_zip = zipfile.ZipFile(temp_zip_file, "w",
+                                 compression=zipfile.ZIP_DEFLATED)
+  else:
+    output_zip = zipfile.ZipFile(args[1], "w",
+                                 compression=zipfile.ZIP_DEFLATED)
+
+  if OPTIONS.incremental_source is None:
+    WriteFullOTAPackage(input_zip, output_zip)
+  else:
+    print "unzipping source target-files..."
+    OPTIONS.source_tmp = common.UnzipTemp(OPTIONS.incremental_source)
+    source_zip = zipfile.ZipFile(OPTIONS.incremental_source, "r")
+    WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+
+  output_zip.close()
+  if OPTIONS.package_key:
+    SignOutput(temp_zip_file.name, args[1])
+    temp_zip_file.close()
+
+  common.Cleanup()
+
+  print "done."
+
+
+if __name__ == '__main__':
+  try:
+    main(sys.argv[1:])
+  except common.ExternalError, e:
+    print
+    print "   ERROR: %s" % (e,)
+    print
+    sys.exit(1)

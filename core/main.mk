@@ -125,6 +125,15 @@ endif
 ### between the build variants
 ###
 
+is_sdk_build :=
+ifneq ($(filter sdk,$(MAKECMDGOALS)),)
+is_sdk_build := true
+endif
+ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
+is_sdk_build := true
+endif
+
+
 ## user/userdebug ##
 
 user_variant := $(filter userdebug user,$(TARGET_BUILD_VARIANT))
@@ -187,13 +196,13 @@ endif
 
 ## sdk ##
 
-ifneq ($(filter sdk,$(MAKECMDGOALS)),)
+ifdef is_sdk_build
 ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
-tags_to_install := user
+tags_to_install := user debug eng
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
@@ -220,7 +229,7 @@ endif
 # If we're on an eng or tests build, but not on the sdk, and we have
 # a better one, use that instead.
 ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
-  ifeq ($(filter sdk,$(MAKECMDGOALS)),)
+  ifdef is_sdk_build
     apns_to_use := $(wildcard vendor/google/etc/apns-conf.xml)
     ifneq ($(strip $(apns_to_use)),)
       PRODUCT_COPY_FILES := \
@@ -247,7 +256,7 @@ define should-install-to-system
 $(if $(filter tests,$(1)),,true)
 endef
 
-ifneq (,$(filter sdk,$(MAKECMDGOALS)))
+ifdef is_sdk_build
 # For the sdk goal, anything with the "samples" tag should be
 # installed in /data even if that module also has "eng"/"debug"/"user".
 define should-install-to-system
@@ -298,6 +307,7 @@ subdirs := \
 	dalvik/dexdump \
 	dalvik/libdex \
 	dalvik/tools/dmtracedump \
+	dalvik/tools/hprof-conv \
 	development/emulator/mksdcard \
 	development/tools/activitycreator \
 	development/tools/line_endings \
@@ -541,7 +551,7 @@ endif
 # Don't include any GNU targets in the SDK.  It's ok (and necessary)
 # to build the host tools, but nothing that's going to be installed
 # on the target (including static libraries).
-ifneq ($(filter sdk,$(MAKECMDGOALS)),)
+ifdef is_sdk_build
   target_gnu_MODULES := \
               $(filter \
                       $(TARGET_OUT_INTERMEDIATES)/% \

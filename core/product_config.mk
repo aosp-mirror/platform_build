@@ -49,6 +49,35 @@ $(strip \
  )
 endef
 
+# TODO: push this into the combo files; unfortunately, we don't even
+# know HOST_OS at this point.
+trysed := $(shell echo a | sed -E -e 's/a/b/' 2>/dev/null)
+ifeq ($(trysed),b)
+  SED_EXTENDED := sed -E
+else
+  trysed := $(shell echo c | sed -r -e 's/c/d/' 2>/dev/null)
+  ifeq ($(trysed),d)
+    SED_EXTENDED := sed -r
+  else
+    $(error Unknown sed version)
+  endif
+endif
+
+###########################################################
+## List all of the files in a subdirectory in a format
+## suitable for PRODUCT_COPY_FILES and
+## PRODUCT_SDK_ADDON_COPY_FILES
+##
+## $(1): Glob to match file name
+## $(2): Source directory
+## $(3): Target base directory
+###########################################################
+
+define find-copy-subdir-files
+$(shell find $(2) -name "$(1)" | $(SED_EXTENDED) "s:($(2)/?(.*)):\\1\\:$(3)/\\2:" | sed "s://:/:g")
+endef
+
+# ---------------------------------------------------------------
 
 # These are the valid values of TARGET_BUILD_VARIANT.  Also, if anything else is passed
 # as the variant in the PRODUCT-$TARGET_BUILD_PRODUCT-$TARGET_BUILD_VARIANT form,
