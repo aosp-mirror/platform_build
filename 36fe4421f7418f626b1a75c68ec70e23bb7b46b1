@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAPH////s\u003d",
+        "filename": "core/tasks/localize.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1001850
+      },
+      "writtenOn": "2009-04-15T03:57:25Z",
+      "side": 1,
+      "message": "I have been using this in my builds since without it I get the dreaded argument list too long.\n\nI\u0027m running Ubuntu 8.10 in a VirtualBox VM with 2GB Ram allocated.\n\nJust wanted to give my support to this patch.",
+      "revId": "36fe4421f7418f626b1a75c68ec70e23bb7b46b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
