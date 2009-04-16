@@ -345,6 +345,7 @@ subdirs += \
 	development/tools/ninepatch \
 	development/tools/sdkstats \
 	development/tools/sdkmanager \
+	development/tools/mkstubs \
 	frameworks/base \
 	frameworks/base/tools/layoutlib \
 	external/googleclient \
