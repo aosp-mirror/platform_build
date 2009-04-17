@@ -25,6 +25,28 @@ else
 endif
 CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 
+CTS_CORE_CASE_LIST := android.core.tests.annotation \
+	android.core.tests.archive \
+	android.core.tests.concurrent \
+	android.core.tests.crypto \
+	android.core.tests.dom \
+	android.core.tests.logging \
+	android.core.tests.luni \
+	android.core.tests.luni.io \
+	android.core.tests.luni.lang \
+	android.core.tests.luni.net \
+	android.core.tests.luni.util \
+	android.core.tests.math \
+	android.core.tests.nio \
+	android.core.tests.nio_char \
+	android.core.tests.prefs \
+	android.core.tests.regex \
+	android.core.tests.security \
+	android.core.tests.sql \
+	android.core.tests.text \
+	android.core.tests.xml \
+	android.core.tests.xnet
+
 CTS_CASE_LIST := \
 	DeviceInfoCollector \
 	CtsTestStubs \
@@ -43,7 +65,7 @@ CTS_CASE_LIST := \
 	CtsWidgetTestCases \
 	CtsNetTestCases \
 	SignatureTest \
-	android.core.tests
+	$(CTS_CORE_CASE_LIST)
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
@@ -67,36 +89,99 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/startcts $(PRIVATE_DIR)/tools/
 	$(hide) touch $@
 
-# Generate the test plan for the core-tests
-CORE_TEST_PLAN := $(cts_dir)/$(cts_name)/repository/testcases/android.core.tests
+# Generate the test descriptions for the core-tests
+
+define generate-core-test-description
+@echo "Generate core-test description ("$(notdir $(1))")"
+$(hide) java $(PRIVATE_JAVAOPTS) \
+	-classpath $(PRIVATE_CLASSPATH) \
+	$(PRIVATE_PARAMS) CollectAllTests $(1) \
+	$(2) $(3)
+endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
 TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
-
 GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
 
-$(CORE_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
-$(CORE_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
-$(CORE_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
-$(CORE_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
-$(CORE_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
-	-classpath $(PRIVATE_CLASSPATH) \
-	$(PRIVATE_PARAMS) CollectAllTests $(CORE_TEST_PLAN) \
-	cts/tests/core/AndroidManifest.xml tests.AllTests
+$(cts_dir)/all_cts_core_files_stamp: PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(cts_dir)/all_cts_core_files_stamp: PRIVATE_JAVAOPTS:=-Xmx256M
+$(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
+$(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 # Why does this depend on javalib.jar instead of classes.jar?  Because
 # even though the tool will operate on the classes.jar files, the
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(CORE_TEST_PLAN): android.core.tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp
-	@echo "Generate the CTS test plan: $@"
-	@echo $(PRIVATE_CUSTOM_TOOL)
-	$(transform-generated-source)
+$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.annotation,\
+		cts/tests/core/annotation/AndroidManifest.xml,\
+		tests.annotation.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.archive,\
+		cts/tests/core/archive/AndroidManifest.xml,\
+		tests.archive.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.concurrent,\
+		cts/tests/core/concurrent/AndroidManifest.xml,\
+		tests.concurrent.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.crypto,\
+		cts/tests/core/crypto/AndroidManifest.xml,\
+		tests.crypto.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.dom,\
+		cts/tests/core/dom/AndroidManifest.xml,\
+		tests.dom.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.logging,\
+		cts/tests/core/logging/AndroidManifest.xml,\
+		tests.logging.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni,\
+		cts/tests/core/luni/AndroidManifest.xml,\
+		tests.luni.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
+		cts/tests/core/luni-io/AndroidManifest.xml,\
+		tests.luni.AllTestsIo)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.lang,\
+		cts/tests/core/luni-lang/AndroidManifest.xml,\
+		tests.luni.AllTestsLang)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.net,\
+		cts/tests/core/luni-net/AndroidManifest.xml,\
+		tests.luni.AllTestsNet)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.util,\
+		cts/tests/core/luni-util/AndroidManifest.xml,\
+		tests.luni.AllTestsUtil)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.math,\
+		cts/tests/core/math/AndroidManifest.xml,\
+		tests.math.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.nio,\
+		cts/tests/core/nio/AndroidManifest.xml,\
+		tests.nio.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.nio_char,\
+		cts/tests/core/nio_char/AndroidManifest.xml,\
+		tests.nio_char.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.prefs,\
+		cts/tests/core/prefs/AndroidManifest.xml,\
+		tests.prefs.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.regex,\
+		cts/tests/core/regex/AndroidManifest.xml,\
+		tests.regex.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.security,\
+		cts/tests/core/security/AndroidManifest.xml,\
+		tests.security.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.sql,\
+		cts/tests/core/sql/AndroidManifest.xml,\
+		tests.sql.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.text,\
+		cts/tests/core/text/AndroidManifest.xml,\
+		tests.text.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xml,\
+		cts/tests/core/xml/AndroidManifest.xml,\
+		tests.xml.AllTests)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xnet,\
+		cts/tests/core/xnet/AndroidManifest.xml,\
+		tests.xnet.AllTests)
+	$(hide) touch $@
 
 
-# ----- Generate the test plan for the vm-tests -----
+# ----- Generate the test descriptions for the vm-tests -----
 #
-CORE_VM_TEST_PLAN := $(cts_dir)/$(cts_name)/repository/testcases/android.core.vm-tests
+CORE_VM_TEST_DESC := $(cts_dir)/$(cts_name)/repository/testcases/android.core.vm-tests
 
 VMTESTS_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests,1,)
 # core tests only needed to get hold of junit-framework-classes
@@ -105,23 +190,19 @@ CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
 
 GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
 
-$(CORE_VM_TEST_PLAN): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
-$(CORE_VM_TEST_PLAN): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
-$(CORE_VM_TEST_PLAN): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
-$(CORE_VM_TEST_PLAN): PRIVATE_JAVAOPTS:=-Xmx256M
-$(CORE_VM_TEST_PLAN): PRIVATE_CUSTOM_TOOL := java $(PRIVATE_JAVAOPTS) \
-	-classpath $(PRIVATE_CLASSPATH) \
-	$(PRIVATE_PARAMS) CollectAllTests $(CORE_VM_TEST_PLAN) \
-	cts/tests/vm-tests/AndroidManifest.xml dot.junit.AllJunitHostTests cts/tools/vm-tests/Android.mk
+$(CORE_VM_TEST_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+$(CORE_VM_TEST_DESC): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
+$(CORE_VM_TEST_DESC): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
+$(CORE_VM_TEST_DESC): PRIVATE_JAVAOPTS:=-Xmx256M
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
-$(CORE_VM_TEST_PLAN): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
-	@echo "Generate the CTS vm-test plan: $@"
-	@echo $(PRIVATE_CUSTOM_TOOL)
-	$(transform-generated-source)
+$(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
+	$(call generate-core-test-description,$(CORE_VM_TEST_DESC),\
+		cts/tests/vm-tests/AndroidManifest.xml,\
+		dot.junit.AllJunitHostTests, cts/tools/vm-tests/Android.mk)
 	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
 
 # Generate the default test plan for User.
-$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh $(CORE_VM_TEST_PLAN) $(CORE_TEST_PLAN)
+$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_dir)/all_cts_core_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh $(CORE_VM_TEST_DESC)
 	$(hide) bash $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh cts/tests/tests/ \
      $(PRIVATE_DIR) $(TMP_DIR) $(TOP) $(TARGET_COMMON_OUT_ROOT) $(OUT_DIR)
 
@@ -134,7 +215,7 @@ $(INTERNAL_CTS_TARGET): PRIVATE_NAME := $(cts_name)
 $(INTERNAL_CTS_TARGET): PRIVATE_CTS_DIR := $(cts_dir)
 $(INTERNAL_CTS_TARGET): PRIVATE_DIR := $(cts_dir)/$(cts_name)
 $(INTERNAL_CTS_TARGET): TMP_DIR := $(cts_dir)/temp
-$(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN) $(CORE_TEST_PLAN) $(CORE_VM_TEST_PLAN)
+$(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN) $(CORE_VM_TEST_DESC)
 	@echo "Package CTS: $@"
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
 
