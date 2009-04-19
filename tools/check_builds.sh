@@ -40,6 +40,7 @@ function do_builds
     while [ -n "$1" ]
     do
         rm -rf $TEST_BUILD_DIR/$PREFIX-$1
+        make PRODUCT-$(echo $1 | sed "s/-.*//" )-installclean
         make -j6 PRODUCT-$1 dist DIST_DIR=$TEST_BUILD_DIR/$PREFIX-$1
         if [ $? -ne 0 ] ; then
             echo FAILED
@@ -72,5 +73,20 @@ function check_builds
     rm -rf $TEST_BUILD_DIR/dist-*
     do_builds dist "$@"
     compare_builds "$@"
+}
+
+function diff_builds
+{
+    local inputs=
+    while [ -n "$1" ]
+    do
+        diff $TEST_BUILD_DIR/golden-$1/installed-files.txt $TEST_BUILD_DIR/dist-$1/installed-files.txt &> /dev/null
+        if [ $? != 0 ]; then
+            echo =========== $1 ===========
+            diff $TEST_BUILD_DIR/golden-$1/installed-files.txt $TEST_BUILD_DIR/dist-$1/installed-files.txt
+        fi
+        shift
+    done
+    build/tools/compare_fileslist.py $inputs > $TEST_BUILD_DIR/sizes.html
 }
 
