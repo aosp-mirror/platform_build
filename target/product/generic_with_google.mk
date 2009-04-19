@@ -5,7 +5,14 @@
 
 PRODUCT_PACKAGES := \
     GoogleContactsProvider \
-    GoogleSubscribedFeedsProvider
+    GoogleSubscribedFeedsProvider \
+    com.google.android.gtalkservice \
+    com.google.android.maps
+
+PRODUCT_COPY_FILES := \
+    vendor/google/frameworks/maps/com.google.android.maps.xml:system/etc/permissions/com.google.android.maps.xml \
+    vendor/google/apps/GTalkService/com.google.android.gtalkservice.xml:system/etc/permissions/com.google.android.gtalkservice.xml
+
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
 
