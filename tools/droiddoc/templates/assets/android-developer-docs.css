@@ -570,15 +570,7 @@ div.special ol li {
   margin:0 0 .5em;
   padding:0;
 }
-  
-/* old p.note, p.caution, p.warning {
-  margin:0 0 1em;
-  padding: 4px 10px;
-  background-color: #efefef;
-  border-top: 1px solid;  
-  border-bottom: 1px solid;
-}
-*/
+
 p.note, p.caution, p.warning {
   margin: 1em;
   padding: 0 0 0 .5em;
@@ -594,21 +586,16 @@ p.special-note {
 p.note {
  border-color: #99aacc;
 }
-    
-p.caution {
-  border-color: #ffcc33;
-}
 
 p.warning {
   border-color: #aa0033;
 }
   
-p.warning b, p.warning em, p.warning strong {
-  color: #aa0033;
+p.warning b, p.warning strong {
   font-weight: bold;
 }
 
-li p.note, li p.warning, li p.caution {
+li p.note, li p.warning {
   margin: .5em 0 0 0;  
   padding: .2em .5em .2em .9em;
 }

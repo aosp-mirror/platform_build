@@ -110,11 +110,18 @@ dd {
   padding:0 0 0 2em;
 }
 
-li p, dd p {
+li p {
+  margin:.5em 0 0;
+}
+
+dd p {
   margin:1em 0 0;
 }
 
-li pre, li table, li img,
+li pre, li table, li img {
+  margin:.5em 0 0 1em;
+}
+
 dd pre, dd table, dd img {
   margin:1em 0 0 1em;
 }
@@ -169,7 +176,6 @@ hr.blue {
   margin:0;
   position:relative;
   width:100%;
-  background: url('images/preliminary.png');
 }
 
 #header {
