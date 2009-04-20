@@ -53,6 +53,11 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       verification with the one specified in the input target_files
       zip (in the META/otakeys.txt file).  Key remapping (-k and -d)
       is performed on this key.
+
+  -t  (--extra_tag)  <tag>
+      A string which is added to the set of tags in the last component
+      of the build fingerprint.  Option may be repeated to give
+      multiple extra tags.
 """
 
 import sys
@@ -76,6 +81,7 @@ OPTIONS = common.OPTIONS
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
+OPTIONS.extra_tags = []
 
 def GetApkCerts(tf_zip):
   certmap = {}
@@ -149,21 +155,47 @@ def SignApks(input_tf_zip, output_tf_zip):
         output_tf_zip.writestr(out_info, data)
     elif info.filename in ("SYSTEM/build.prop",
                            "RECOVERY/RAMDISK/default.prop"):
-      # Change build fingerprint to reflect the fact that apps are signed.
-      m = re.search(r"ro\.build\.fingerprint=.*\b(test-keys)\b.*", data)
-      if not m:
-        print 'WARNING: ro.build.fingerprint does not contain "test-keys"'
-      else:
-        data = data[:m.start(1)] + "release-keys" + data[m.end(1):]
-      m = re.search(r"ro\.build\.description=.*\b(test-keys)\b.*", data)
-      if not m:
-        print 'WARNING: ro.build.description does not contain "test-keys"'
-      else:
-        data = data[:m.start(1)] + "release-keys" + data[m.end(1):]
-      output_tf_zip.writestr(out_info, data)
+      print "rewriting %s:" % (info.filename,)
+      new_data = RewriteProps(data)
+      output_tf_zip.writestr(out_info, new_data)
     else:
       # a non-APK file; copy it verbatim
       output_tf_zip.writestr(out_info, data)
+
+
+def RewriteProps(data):
+  output = []
+  for line in data.split("\n"):
+    line = line.strip()
+    original_line = line
+    if line and line[0] != '#':
+      key, value = line.split("=", 1)
+      if key == "ro.build.fingerprint":
+        pieces = line.split("/")
+        tags = set(pieces[-1].split(","))
+        if "test-keys" in tags:
+          tags.remove("test-keys")
+          tags.add("release-keys")
+          # TODO: from donut onwards, only add ota-rel-keys if -o is given.
+          tags.add("ota-rel-keys")
+        tags.update(OPTIONS.extra_tags)
+        line = "/".join(pieces[:-1] + [",".join(sorted(tags))])
+      elif key == "ro.build.description":
+        pieces = line.split(" ")
+        assert len(pieces) == 5
+        tags = set(pieces[-1].split(","))
+        if "test-keys" in tags:
+          tags.remove("test-keys")
+          tags.add("release-keys")
+          # TODO: from donut onwards, only add ota-rel-keys if -o is given.
+          tags.add("ota-rel-keys")
+        tags.update(OPTIONS.extra_tags)
+        line = " ".join(pieces[:-1] + [",".join(sorted(tags))])
+    if line != original_line:
+      print "  replace: ", original_line
+      print "     with: ", line
+    output.append(line)
+  return "\n".join(output) + "\n"
 
 
 def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
@@ -227,17 +259,20 @@ def main(argv):
       OPTIONS.key_map[s] = d
     elif o in ("-o", "--replace_ota_keys"):
       OPTIONS.replace_ota_keys = True
+    elif o in ("-t", "--extra_tags"):
+      OPTIONS.extra_tags.append(a)
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="s:e:d:k:o",
+                             extra_opts="s:e:d:k:ot:",
                              extra_long_opts=["signapk_jar=",
                                               "extra_apks=",
                                               "default_key_mappings=",
                                               "key_mapping=",
-                                              "replace_ota_keys"],
+                                              "replace_ota_keys",
+                                              "extra_tag="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
