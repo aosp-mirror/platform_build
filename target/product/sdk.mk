@@ -3,6 +3,7 @@ PRODUCT_PROPERTY_OVERRIDES :=
 PRODUCT_PACKAGES := \
 	AlarmClock \
 	Camera \
+	Calculator \
 	Development \
 	DrmProvider \
 	Email \
