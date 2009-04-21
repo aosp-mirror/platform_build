@@ -4,7 +4,7 @@
 <?cs if:sdk.redirect ?>
   <head>
     <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html">
+    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs var:sdk.current ?>/index.html">
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
 <?cs else ?>
@@ -21,14 +21,14 @@
 
 <?cs if:sdk.redirect ?>
   Redirecting to 
-  <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html">
+  <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.current ?>/index.html">
   <?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html
   </a>...
 <?cs else ?>
   
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
-    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
+    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:sdk.self ?></h1>
   </div>
 
 
@@ -52,7 +52,7 @@
 
 <?cs else ?>
 
-<p>Before downloading, please read the <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.version ?>/requirements.html">
+<p>Before downloading, please read the <a href="requirements.html">
 System Requirements</a> document. As you start the download, you will also need to review and agree to 
 the Terms and Conditions that govern the use of the Android SDK. </p>
   

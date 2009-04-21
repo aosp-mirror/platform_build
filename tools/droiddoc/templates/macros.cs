@@ -61,6 +61,9 @@ def:tag_list(tags) ?><?cs
       elif:tag.name == "@sample" ?><pre class="Code prettyprint"><?cs var:tag.text ?></pre><?cs
       elif:tag.name == "@include" ?><?cs var:tag.text ?><?cs
       elif:tag.kind == "@docRoot" ?><?cs var:toroot ?><?cs
+      elif:tag.kind == "@sdkCurrent" ?><?cs var:sdk.current ?><?cs
+      elif:tag.kind == "@sdkCurrentVersion" ?><?cs var:sdk.version ?><?cs
+      elif:tag.kind == "@sdkCurrentRelId" ?><?cs var:sdk.rel.id ?><?cs
       elif:tag.kind == "@inheritDoc" ?><?cs # This is the case when @inheritDoc is in something
                                               that doesn't inherit from anything?><?cs
       elif:tag.kind == "@attr" ?><?cs
