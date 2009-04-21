@@ -54,10 +54,13 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       zip (in the META/otakeys.txt file).  Key remapping (-k and -d)
       is performed on this key.
 
-  -t  (--extra_tag)  <tag>
-      A string which is added to the set of tags in the last component
-      of the build fingerprint.  Option may be repeated to give
-      multiple extra tags.
+  -t  (--tag_changes)  <+tag>,<-tag>,...
+      Comma-separated list of changes to make to the set of tags (in
+      the last component of the build fingerprint).  Prefix each with
+      '+' or '-' to indicate whether that tag should be added or
+      removed.  Changes are processed in the order they appear.
+      Default value is "-test-keys,+ota-rel-keys,+release-keys".
+
 """
 
 import sys
@@ -81,7 +84,7 @@ OPTIONS = common.OPTIONS
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
-OPTIONS.extra_tags = []
+OPTIONS.tag_changes = ("-test-keys", "+ota-rel-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
   certmap = {}
@@ -173,23 +176,21 @@ def RewriteProps(data):
       if key == "ro.build.fingerprint":
         pieces = line.split("/")
         tags = set(pieces[-1].split(","))
-        if "test-keys" in tags:
-          tags.remove("test-keys")
-          tags.add("release-keys")
-          # TODO: from donut onwards, only add ota-rel-keys if -o is given.
-          tags.add("ota-rel-keys")
-        tags.update(OPTIONS.extra_tags)
+        for ch in OPTIONS.tag_changes:
+          if ch[0] == "-":
+            tags.discard(ch[1:])
+          elif ch[0] == "+":
+            tags.add(ch[1:])
         line = "/".join(pieces[:-1] + [",".join(sorted(tags))])
       elif key == "ro.build.description":
         pieces = line.split(" ")
         assert len(pieces) == 5
         tags = set(pieces[-1].split(","))
-        if "test-keys" in tags:
-          tags.remove("test-keys")
-          tags.add("release-keys")
-          # TODO: from donut onwards, only add ota-rel-keys if -o is given.
-          tags.add("ota-rel-keys")
-        tags.update(OPTIONS.extra_tags)
+        for ch in OPTIONS.tag_changes:
+          if ch[0] == "-":
+            tags.discard(ch[1:])
+          elif ch[0] == "+":
+            tags.add(ch[1:])
         line = " ".join(pieces[:-1] + [",".join(sorted(tags))])
     if line != original_line:
       print "  replace: ", original_line
@@ -259,8 +260,14 @@ def main(argv):
       OPTIONS.key_map[s] = d
     elif o in ("-o", "--replace_ota_keys"):
       OPTIONS.replace_ota_keys = True
-    elif o in ("-t", "--extra_tags"):
-      OPTIONS.extra_tags.append(a)
+    elif o in ("-t", "--tag_changes"):
+      new = []
+      for i in a.split(","):
+        i = i.strip()
+        if not i or i[0] not in "-+":
+          raise ValueError("Bad tag change '%s'" % (i,))
+        new.append(i[0] + i[1:].strip())
+      OPTIONS.tag_changes = tuple(new)
     else:
       return False
     return True
@@ -272,7 +279,7 @@ def main(argv):
                                               "default_key_mappings=",
                                               "key_mapping=",
                                               "replace_ota_keys",
-                                              "extra_tag="],
+                                              "tag_changes="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
