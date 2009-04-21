@@ -47,6 +47,7 @@ public class Comment
             "@deprecated",
             "@undeprecate",
             "@docRoot",
+            "@sdkCurrent",
             "@inheritDoc",
             "@more",
             "@code",
