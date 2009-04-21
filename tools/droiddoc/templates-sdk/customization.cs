@@ -19,7 +19,7 @@ def:custom_masthead() ?>
                   if:android.whichdoc != "online" ?>offline.html<?cs 
                   else ?>index.html<?cs /if ?>">
                   <span>Home</span></a></li>
-              <li id="sdk-link"><a href="<?cs var:toroot ?>sdk/1.1_r1/index.html"><span>SDK</span></a></li>
+              <li id="sdk-link"><a href="<?cs var:toroot ?>sdk/<?cs var:sdk.current ?>/index.html"><span>SDK</span></a></li>
               <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
                                   onClick="return loadLast('guide')"><span>Dev Guide</span></a></li>
               <li id="reference-link"><a href="<?cs var:toroot ?>reference/packages.html" 
@@ -115,7 +115,7 @@ def:custom_footerlinks() ?>
   </p><?cs 
 /def ?>
 
-<?cs # appears on the right side of the blue bar at the bottom of every page ?><?cs 
+<?cs # appears on the right side of the blue bar at the bottom off every page ?><?cs 
 def:custom_buildinfo() ?>
-  Android 1.1 r1 - <?cs var:page.now ?><?cs 
-/def ?>
+  Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> - <?cs var:page.now ?>
+<?cs /def ?>
