@@ -96,7 +96,7 @@ define generate-core-test-description
 $(hide) java $(PRIVATE_JAVAOPTS) \
 	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(1) \
-	$(2) $(3)
+	$(2) $(3) $(4)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
