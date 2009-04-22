@@ -28,7 +28,7 @@
   
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
-    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:sdk.self ?></h1>
+    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
   </div>
 
 
