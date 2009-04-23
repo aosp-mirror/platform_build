@@ -37,6 +37,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate an OTA package that will wipe the user data partition
       when installed.
 
+  -n  (--no_prereq)
+      Omit the timestamp prereq check normally included at the top of
+      the build scripts (used for developer OTA packages which
+      legitimately need to go back and forth).
+
 """
 
 import sys
@@ -63,6 +68,7 @@ OPTIONS.require_verbatim = set()
 OPTIONS.prohibit_verbatim = set(("system/build.prop",))
 OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
+OPTIONS.omit_prereq = False
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -323,9 +329,10 @@ def IncludeBinary(name, input_zip, output_zip):
 def WriteFullOTAPackage(input_zip, output_zip):
   script = []
 
-  ts = GetBuildProp("ro.build.date.utc", input_zip)
-  script.append("run_program PACKAGE:check_prereq %s" % (ts,))
-  IncludeBinary("check_prereq", input_zip, output_zip)
+  if not OPTIONS.omit_prereq:
+    ts = GetBuildProp("ro.build.date.utc", input_zip)
+    script.append("run_program PACKAGE:check_prereq %s" % (ts,))
+    IncludeBinary("check_prereq", input_zip, output_zip)
 
   AppendAssertions(script, input_zip)
 
@@ -619,16 +626,19 @@ def main(argv):
       OPTIONS.incremental_source = a
     elif o in ("-w", "--wipe_user_data"):
       OPTIONS.wipe_user_data = True
+    elif o in ("-n", "--no_prereq"):
+      OPTIONS.omit_prereq = True
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:w",
+                             extra_opts="b:k:i:d:wn",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
-                                              "wipe_user_data"],
+                                              "wipe_user_data",
+                                              "no_prereq"],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
