@@ -28,6 +28,7 @@ if not hasattr(os, "SEEK_SET"):
 class Options(object): pass
 OPTIONS = Options()
 OPTIONS.signapk_jar = "out/host/linux-x86/framework/signapk.jar"
+OPTIONS.dumpkey_jar = "out/host/linux-x86/framework/dumpkey.jar"
 OPTIONS.max_image_size = {}
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
@@ -134,6 +135,12 @@ def GetKeyPasswords(keylist):
   key_passwords = {}
   devnull = open("/dev/null", "w+b")
   for k in sorted(keylist):
+    # An empty-string key is used to mean don't re-sign this package.
+    # Obviously we don't need a password for this non-key.
+    if not k:
+      key_passwords[k] = None
+      continue
+
     p = subprocess.Popen(["openssl", "pkcs8", "-in", k+".pk8",
                           "-inform", "DER", "-nocrypt"],
                          stdin=devnull.fileno(),

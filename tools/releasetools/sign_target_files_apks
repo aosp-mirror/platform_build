@@ -47,6 +47,20 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
       -d and -k options are added to the set of mappings in the order
       in which they appear on the command line.
+
+  -o  (--replace_ota_keys)
+      Replace the certificate (public key) used by OTA package
+      verification with the one specified in the input target_files
+      zip (in the META/otakeys.txt file).  Key remapping (-k and -d)
+      is performed on this key.
+
+  -t  (--tag_changes)  <+tag>,<-tag>,...
+      Comma-separated list of changes to make to the set of tags (in
+      the last component of the build fingerprint).  Prefix each with
+      '+' or '-' to indicate whether that tag should be added or
+      removed.  Changes are processed in the order they appear.
+      Default value is "-test-keys,+ota-rel-keys,+release-keys".
+
 """
 
 import sys
@@ -55,6 +69,8 @@ if sys.hexversion < 0x02040000:
   print >> sys.stderr, "Python 2.4 or newer is required."
   sys.exit(1)
 
+import cStringIO
+import copy
 import os
 import re
 import subprocess
@@ -67,7 +83,8 @@ OPTIONS = common.OPTIONS
 
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
-
+OPTIONS.replace_ota_keys = False
+OPTIONS.tag_changes = ("-test-keys", "+ota-rel-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
   certmap = {}
@@ -103,41 +120,122 @@ def SignApk(data, keyname, pw):
 def SignApks(input_tf_zip, output_tf_zip):
   apk_key_map = GetApkCerts(input_tf_zip)
 
-  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
-
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
 
+  # Check that all the APKs we want to sign have keys specified, and
+  # error out if they don't.  Do this before prompting for key
+  # passwords in case we're going to fail anyway.
+  unknown_apks = []
   for info in input_tf_zip.infolist():
-    data = input_tf_zip.read(info.filename)
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
-      key = apk_key_map.get(name, None)
-      if key is not None:
-        print "signing: %-*s (%s)" % (maxsize, name, key)
+      if name not in apk_key_map:
+        unknown_apks.append(name)
+  if unknown_apks:
+    print "ERROR: no key specified for:\n\n ",
+    print "\n  ".join(unknown_apks)
+    print "\nUse '-e <apkname>=' to specify a key (which may be an"
+    print "empty string to not sign this apk)."
+    sys.exit(1)
+
+  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
+
+  for info in input_tf_zip.infolist():
+    data = input_tf_zip.read(info.filename)
+    out_info = copy.copy(info)
+    if info.filename.endswith(".apk"):
+      name = os.path.basename(info.filename)
+      key = apk_key_map[name]
+      if key:
+        print "    signing: %-*s (%s)" % (maxsize, name, key)
         signed_data = SignApk(data, key, key_passwords[key])
-        output_tf_zip.writestr(info, signed_data)
+        output_tf_zip.writestr(out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
-        print "skipping: %s" % (name,)
-        output_tf_zip.writestr(info, data)
-    elif info.filename == "SYSTEM/build.prop":
-      # Change build fingerprint to reflect the fact that apps are signed.
-      m = re.search(r"ro\.build\.fingerprint=.*\b(test-keys)\b.*", data)
-      if not m:
-        print 'WARNING: ro.build.fingerprint does not contain "test-keys"'
-      else:
-        data = data[:m.start(1)] + "release-keys" + data[m.end(1):]
-      m = re.search(r"ro\.build\.description=.*\b(test-keys)\b.*", data)
-      if not m:
-        print 'WARNING: ro.build.description does not contain "test-keys"'
-      else:
-        data = data[:m.start(1)] + "release-keys" + data[m.end(1):]
-      output_tf_zip.writestr(info, data)
+        print "NOT signing: %s" % (name,)
+        output_tf_zip.writestr(out_info, data)
+    elif info.filename in ("SYSTEM/build.prop",
+                           "RECOVERY/RAMDISK/default.prop"):
+      print "rewriting %s:" % (info.filename,)
+      new_data = RewriteProps(data)
+      output_tf_zip.writestr(out_info, new_data)
     else:
       # a non-APK file; copy it verbatim
-      output_tf_zip.writestr(info, data)
+      output_tf_zip.writestr(out_info, data)
+
+
+def RewriteProps(data):
+  output = []
+  for line in data.split("\n"):
+    line = line.strip()
+    original_line = line
+    if line and line[0] != '#':
+      key, value = line.split("=", 1)
+      if key == "ro.build.fingerprint":
+        pieces = line.split("/")
+        tags = set(pieces[-1].split(","))
+        for ch in OPTIONS.tag_changes:
+          if ch[0] == "-":
+            tags.discard(ch[1:])
+          elif ch[0] == "+":
+            tags.add(ch[1:])
+        line = "/".join(pieces[:-1] + [",".join(sorted(tags))])
+      elif key == "ro.build.description":
+        pieces = line.split(" ")
+        assert len(pieces) == 5
+        tags = set(pieces[-1].split(","))
+        for ch in OPTIONS.tag_changes:
+          if ch[0] == "-":
+            tags.discard(ch[1:])
+          elif ch[0] == "+":
+            tags.add(ch[1:])
+        line = " ".join(pieces[:-1] + [",".join(sorted(tags))])
+    if line != original_line:
+      print "  replace: ", original_line
+      print "     with: ", line
+    output.append(line)
+  return "\n".join(output) + "\n"
+
+
+def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
+  try:
+    keylist = input_tf_zip.read("META/otakeys.txt").split()
+  except KeyError:
+    raise ExternalError("can't read META/otakeys.txt from input")
+
+  mapped_keys = []
+  for k in keylist:
+    m = re.match(r"^(.*)\.x509\.pem$", k)
+    if not m:
+      raise ExternalError("can't parse \"%s\" from META/otakeys.txt" % (k,))
+    k = m.group(1)
+    mapped_keys.append(OPTIONS.key_map.get(k, k) + ".x509.pem")
+
+  print "using:\n   ", "\n   ".join(mapped_keys)
+  print "for OTA package verification"
+
+  # recovery uses a version of the key that has been slightly
+  # predigested (by DumpPublicKey.java) and put in res/keys.
+
+  p = common.Run(["java", "-jar", OPTIONS.dumpkey_jar] + mapped_keys,
+                 stdout=subprocess.PIPE)
+  data, _ = p.communicate()
+  if p.returncode != 0:
+    raise ExternalError("failed to run dumpkeys")
+  output_tf_zip.writestr("RECOVERY/RAMDISK/res/keys", data)
+
+  # SystemUpdateActivity uses the x509.pem version of the keys, but
+  # put into a zipfile system/etc/security/otacerts.zip.
+
+  tempfile = cStringIO.StringIO()
+  certs_zip = zipfile.ZipFile(tempfile, "w")
+  for k in mapped_keys:
+    certs_zip.write(k)
+  certs_zip.close()
+  output_tf_zip.writestr("SYSTEM/etc/security/otacerts.zip",
+                         tempfile.getvalue())
 
 
 def main(argv):
@@ -160,16 +258,28 @@ def main(argv):
     elif o in ("-k", "--key_mapping"):
       s, d = a.split("=")
       OPTIONS.key_map[s] = d
+    elif o in ("-o", "--replace_ota_keys"):
+      OPTIONS.replace_ota_keys = True
+    elif o in ("-t", "--tag_changes"):
+      new = []
+      for i in a.split(","):
+        i = i.strip()
+        if not i or i[0] not in "-+":
+          raise ValueError("Bad tag change '%s'" % (i,))
+        new.append(i[0] + i[1:].strip())
+      OPTIONS.tag_changes = tuple(new)
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="s:e:d:k:",
+                             extra_opts="s:e:d:k:ot:",
                              extra_long_opts=["signapk_jar=",
                                               "extra_apks=",
                                               "default_key_mappings=",
-                                              "key_mapping="],
+                                              "key_mapping=",
+                                              "replace_ota_keys",
+                                              "tag_changes="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -180,6 +290,9 @@ def main(argv):
   output_zip = zipfile.ZipFile(args[1], "w")
 
   SignApks(input_zip, output_zip)
+
+  if OPTIONS.replace_ota_keys:
+    ReplaceOtaKeys(input_zip, output_zip)
 
   input_zip.close()
   output_zip.close()
