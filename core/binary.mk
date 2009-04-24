@@ -47,11 +47,11 @@ LOCAL_ARM_MODE := $(strip $(LOCAL_ARM_MODE))
 arm_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)
 normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 
-# Read the values from something like TARGET_arm_release_CFLAGS or
-# TARGET_thumb_debug_CFLAGS.  HOST_(arm|thumb)_(release|debug)_CFLAGS
-# values aren't actually used (although they are usually empty).
-arm_objects_cflags := $($(my_prefix)$(arm_objects_mode)_$($(my_prefix)BUILD_TYPE)_CFLAGS)
-normal_objects_cflags := $($(my_prefix)$(normal_objects_mode)_$($(my_prefix)BUILD_TYPE)_CFLAGS)
+# Read the values from something like TARGET_arm_CFLAGS or
+# TARGET_thumb_CFLAGS.  HOST_(arm|thumb)_CFLAGS values aren't
+# actually used (although they are usually empty).
+arm_objects_cflags := $($(my_prefix)$(arm_objects_mode)_CFLAGS)
+normal_objects_cflags := $($(my_prefix)$(normal_objects_mode)_CFLAGS)
 
 ###########################################################
 ## Define per-module debugging flags.  Users can turn on

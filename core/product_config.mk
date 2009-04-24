@@ -256,13 +256,11 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_PUBLIC_KEYS))
 
 # ---------------------------------------------------------------
-# Force the simulator to be the simulator, and make BUILD_TYPE
-# default to debug.
+# Simulator overrides
 ifeq ($(TARGET_PRODUCT),sim)
+  # Tell the build system to turn on some special cases
+  # to deal with the simulator product.
   TARGET_SIMULATOR := true
-  ifeq (,$(strip $(TARGET_BUILD_TYPE)))
-    TARGET_BUILD_TYPE := debug
-  endif
   # dexpreopt doesn't work when building the simulator
   DISABLE_DEXPREOPT := true
 endif
