@@ -817,11 +817,16 @@ function tracedmdump()
         return
     fi
     local prebuiltdir=$(getprebuilt)
-    local KERNEL=$T/prebuilt/android-arm/vmlinux-qemu
+    local KERNEL=$T/prebuilt/android-arm/kernel/vmlinux-qemu
 
     local TRACE=$1
     if [ ! "$TRACE" ] ; then
         echo "usage:  tracedmdump  tracename"
+        return
+    fi
+
+    if [ ! -r "$KERNEL" ] ; then
+        echo "Error: cannot find kernel: '$KERNEL'"
         return
     fi
 
