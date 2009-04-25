@@ -69,6 +69,7 @@ CTS_CASE_LIST := \
 	CtsPerformance3TestCases \
 	CtsPerformance4TestCases \
 	CtsPerformance5TestCases \
+	ApiDemos \
 	ApiDemosReferenceTest \
 	$(CTS_CORE_CASE_LIST)
 
