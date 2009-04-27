@@ -38,7 +38,7 @@
 <?cs if:sdk.not_latest_version ?>
   <div class="special">
     <p><strong>This is NOT the current Android SDK release.</strong></p>
-    <p>Use the links under <strong>Current SDK Release</strong>, on the left, to be directed to the current SDK.</p>
+    <p><a href="/sdk/<?cs var:sdk.current ?>/index.html">Download the current Android SDK</a></p>
   </div>
 <?cs /if ?>
   
