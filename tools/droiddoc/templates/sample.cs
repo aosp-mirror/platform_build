@@ -18,7 +18,7 @@
 
 <div id="jd-content">
 
-<p><a href="<?cs var:realFile ?>">Original <?cs var:realFile ?></a></p>
+<p>The file containing the source code shown below is located in the corresponding directory in <code>&lt;sdk&gt;/platforms/android-&lt;version&gt;/samples/...</code></p>
 
 <!-- begin file contents -->
 <pre class="Code prettyprint"><?cs var:fileContents ?></pre>
