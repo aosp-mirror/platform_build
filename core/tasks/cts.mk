@@ -65,6 +65,12 @@ CTS_CASE_LIST := \
 	CtsWidgetTestCases \
 	CtsNetTestCases \
 	SignatureTest \
+	CtsPerformanceTestCases \
+	CtsPerformance2TestCases \
+	CtsPerformance3TestCases \
+	CtsPerformance4TestCases \
+	CtsPerformance5TestCases \
+	ApiDemosReferenceTest \
 	$(CTS_CORE_CASE_LIST)
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
