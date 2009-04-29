@@ -13,6 +13,7 @@ PRODUCT_PACKAGES := \
     Launcher \
     HTMLViewer \
     Phone \
+    ApplicationsProvider \
     ContactsProvider \
     DownloadProvider \
     GoogleSearch \
