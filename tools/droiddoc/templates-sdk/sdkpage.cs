@@ -16,24 +16,21 @@
 
 <?cs call:sdk_nav() ?>
 
-  
-<div class="g-unit" id="doc-content" >
-
 <?cs if:sdk.redirect ?>
-  Redirecting to 
-  <a href="<?cs var:toroot ?>sdk/<?cs var:sdk.current ?>/index.html">
-  <?cs var:toroot ?>sdk/<?cs var:sdk.redirect ?>/index.html
-  </a>...
+<div class="g-unit">
+  <div id="jd-content">
+    <p>Redirecting to 
+    <a href="/sdk/<?cs var:sdk.current ?>/index.html">
+    /sdk/<?cs var:sdk.current ?>/index.html
+    </a></p>
 <?cs else ?>
-  
+<div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
     <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
   </div>
 
-
-<div id="jd-content">
-
+  <div id="jd-content">
     <p><em>
     <?cs var:sdk.date ?>
     </em></p>
@@ -96,7 +93,10 @@ the Terms and Conditions that govern the use of the Android SDK. </p>
 <?cs /if ?>
 </div><!-- end jd-content -->
 
-<?cs include:"footer.cs" ?>
+<?cs if:!sdk.redirect ?>
+     <?cs include:"footer.cs" ?>
+<?cs /if ?>
+
 </div><!-- end doc-content -->
 
 <?cs include:"trailer.cs" ?>
