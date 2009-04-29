@@ -31,7 +31,6 @@ CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.crypto \
 	android.core.tests.dom \
 	android.core.tests.logging \
-	android.core.tests.luni \
 	android.core.tests.luni.io \
 	android.core.tests.luni.lang \
 	android.core.tests.luni.net \
@@ -137,9 +136,6 @@ $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRA
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.logging,\
 		cts/tests/core/logging/AndroidManifest.xml,\
 		tests.logging.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni,\
-		cts/tests/core/luni/AndroidManifest.xml,\
-		tests.luni.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
 		cts/tests/core/luni-io/AndroidManifest.xml,\
 		tests.luni.AllTestsIo)
