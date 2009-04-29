@@ -311,7 +311,6 @@ subdirs := \
 	dalvik/tools/dmtracedump \
 	dalvik/tools/hprof-conv \
 	development/emulator/mksdcard \
-	development/tools/activitycreator \
 	development/tools/line_endings \
 	development/host \
 	external/expat \
