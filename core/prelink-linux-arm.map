@@ -122,10 +122,7 @@ libopencorehw.so              0xA6F50000
 
 # pv libraries
 libopencore_common.so         0xA6000000
-libopencore_2way.so           0xA5A00000
-
-libqcomm_omx.so         0xA5000000
-libmm-adspsvc.so        0xA4FFD000
+libqcomm_omx.so               0xA5A00000
 
 # libraries for specific apps or temporary libraries
 libcam_ipl.so           0x9F000000
