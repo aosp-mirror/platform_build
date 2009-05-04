@@ -212,6 +212,23 @@ $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(PR
 endif
 
 ###########################################################
+## C: Compile generated .c files to .o.
+###########################################################
+
+gen_c_sources := $(filter %.c,$(LOCAL_GENERATED_SOURCES))
+gen_c_objects := $(gen_c_sources:%.c=%.o)
+
+ifneq ($(strip $(gen_c_objects)),)
+# Compile all generated files as thumb.
+# TODO: support compiling certain generated files as arm.
+$(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
+$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+	$(transform-$(PRIVATE_HOST)c-to-o)
+-include $(gen_c_objects:%.o=%.P)
+endif
+
+###########################################################
 ## AS: Compile .S files to .o.
 ###########################################################
 
@@ -248,6 +265,7 @@ all_objects := \
 	$(gen_cpp_objects) \
 	$(gen_asm_objects) \
 	$(c_objects) \
+	$(gen_c_objects) \
 	$(yacc_objects) \
 	$(lex_objects) \
 	$(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
