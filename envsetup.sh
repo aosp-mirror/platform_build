@@ -945,18 +945,14 @@ function runtest()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (cd "$T" && development/tools/runtest $@)
+    (cd "$T" && development/testrunner/runtest.py $@)
 }
 
-# simple shortcut to the runtest.py command
+# TODO: Remove this some time after 1 June 2009
 function runtest_py()
 {
-    T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-    (cd "$T" && development/testrunner/runtest.py $@)
+    echo "runtest_py is obsolete; use runtest instead" >&2
+    return 1
 }
 
 function godir () {
