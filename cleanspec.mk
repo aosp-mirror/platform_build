@@ -84,6 +84,25 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framew
 $(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/lib?camera_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/STATIC_LIBRARIES/lib?camera_intermediates)
 
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/core/java/android/bluetooth/*)
+$(call add-clean-step, rm -rf $(OUT_DIR)/host/common/obj/JAVA_LIBRARIES/layoutlib_intermediates/classes/android/bluetooth/*)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/SHARED_LIBRARIES/libbluetooth_intermediates/*)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/lib/libhcid.so)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/system/lib/libhcid.so)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/symbols/system/lib/libhcid.so)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/EXECUTABLES/hcid_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/system/bin/hcid)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/symbols/system/bin/hcid)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/EXECUTABLES/passkey-agent_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/system/xbin/passkey-agent)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/symbols/system/bin/passkey-agent)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/EXECUTABLES/auth-agent_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/system/xbin/auth-agent)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/symbols/system/bin/auth-agent)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/STATIC_LIBRARIES/libeglib_static_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/STATIC_LIBRARIES/libgdbus_static_intermediates/*)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/STATIC_LIBRARIES/libbluez-utils-common-static_intermediates)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

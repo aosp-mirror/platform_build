@@ -28,8 +28,8 @@
 #
 pathmap_INCL := \
     bluedroid:system/bluetooth/bluedroid/include \
-    bluez-libs:external/bluez/libs/include \
-    bluez-utils:external/bluez/utils \
+    bluez:external/bluetooth/bluez \
+    glib:external/bluetooth/glib \
     bootloader:bootable/bootloader/legacy/include \
     corecg:external/skia/include/core \
     dbus:external/dbus \

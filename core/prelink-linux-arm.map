@@ -27,7 +27,7 @@ libsysutils.so          0xAF400000
 liba2dp.so              0xAEE00000
 audio.so                0xAED00000
 input.so                0xAEC00000
-libhcid.so              0xAEB00000
+libbluetoothd.so        0xAEB00000
 libbluedroid.so         0xAEA00000
 libbluetooth.so         0xAE900000
 libdbus.so              0xAE800000
