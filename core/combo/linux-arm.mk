@@ -73,40 +73,39 @@ $(combo_target)LD := $($(combo_target)TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
 
 $(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-TARGET_arm_release_CFLAGS :=    -O2 \
-                                -fomit-frame-pointer \
-                                -fstrict-aliasing    \
-                                -funswitch-loops     \
-                                -finline-limit=300
+TARGET_arm_CFLAGS :=    -O2 \
+                        -fomit-frame-pointer \
+                        -fstrict-aliasing    \
+                        -funswitch-loops     \
+                        -finline-limit=300
 
 # Modules can choose to compile some source as thumb. As 
 # non-thumb enabled targets are supported, this is treated
 # as a 'hint'. If thumb is not enabled, these files are just
 # compiled as ARM.
 ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
-TARGET_thumb_release_CFLAGS :=  -mthumb \
-                                -Os \
-                                -fomit-frame-pointer \
-                                -fno-strict-aliasing \
-                                -finline-limit=64
+TARGET_thumb_CFLAGS :=  -mthumb \
+                        -Os \
+                        -fomit-frame-pointer \
+                        -fno-strict-aliasing \
+                        -finline-limit=64
 else
-TARGET_thumb_release_CFLAGS := $(TARGET_arm_release_CFLAGS)
+TARGET_thumb_CFLAGS := $(TARGET_arm_CFLAGS)
 endif
 
-# When building for debug, compile everything as arm.
-TARGET_arm_debug_CFLAGS := $(TARGET_arm_release_CFLAGS) -fno-omit-frame-pointer -fno-strict-aliasing
-TARGET_thumb_debug_CFLAGS := $(TARGET_thumb_release_CFLAGS) -marm -fno-omit-frame-pointer
-
-# NOTE: if you try to build a debug build with thumb, several
+# Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
+# or in your environment to force a full arm build, even for
+# files that are normally built as thumb; this can make
+# gdb debugging easier.  Don't forget to do a clean build.
+#
+# NOTE: if you try to build a -O0 build with thumb, several
 # of the libraries (libpv, libwebcore, libkjs) need to be built
 # with -mlong-calls.  When built at -O0, those libraries are
 # too big for a thumb "BL <label>" to go from one end to the other.
-
-## As hopefully a temporary hack,
-## use this to force a full ARM build (for easier debugging in gdb)
-## (don't forget to do a clean build)
-##TARGET_arm_release_CFLAGS := $(TARGET_arm_release_CFLAGS) -fno-omit-frame-pointer
-##TARGET_thumb_release_CFLAGS := $(TARGET_thumb_release_CFLAGS) -marm -fno-omit-frame-pointer
+ifeq ($(FORCE_ARM_DEBUGGING),true)
+  TARGET_arm_CFLAGS += -fno-omit-frame-pointer -fno-strict-aliasing
+  TARGET_thumb_CFLAGS += -marm -fno-omit-frame-pointer
+endif
 
 android_config_h := $(call select-android-config-h,linux-arm)
 arch_include_dir := $(dir $(android_config_h))
