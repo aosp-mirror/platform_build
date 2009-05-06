@@ -21,6 +21,7 @@ libz.so                 0xAF900000
 libevent.so             0xAF800000
 libssl.so               0xAF700000
 libcrypto.so            0xAF500000
+libsysutils.so          0xAF400000
 
 # bluetooth
 liba2dp.so              0xAEE00000
