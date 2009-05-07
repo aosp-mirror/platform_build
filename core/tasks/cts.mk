@@ -44,7 +44,8 @@ CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.sql \
 	android.core.tests.text \
 	android.core.tests.xml \
-	android.core.tests.xnet
+	android.core.tests.xnet \
+	android.core.tests.runner
 
 CTS_CASE_LIST := \
 	DeviceInfoCollector \
