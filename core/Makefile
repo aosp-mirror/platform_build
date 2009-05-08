@@ -650,6 +650,9 @@ INTERNAL_RECOVERYIMAGE_ARGS := \
 ifdef BOARD_KERNEL_CMDLINE
   INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(BOARD_KERNEL_CMDLINE)"
 endif
+ifdef BOARD_KERNEL_BASE
+  INTERNAL_RECOVERYIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
+endif
 
 # Keys authorized to sign OTA packages this build will accept.  The
 # build always uses test-keys for this; release packaging tools will
