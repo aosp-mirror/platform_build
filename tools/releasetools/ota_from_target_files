@@ -561,7 +561,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       script.append("show_progress %f 1" %
                     (next_sizes * pb_apply / total_patched_size,))
     script.append(("run_program PACKAGE:applypatch "
-                   "/%s %s %d %s:/tmp/patchtmp/%s.p") %
+                   "/%s - %s %d %s:/tmp/patchtmp/%s.p") %
                   (fn, tf.sha1, tf.size, sf.sha1, fn))
 
   target_symlinks = CopySystemFiles(target_zip, None)
