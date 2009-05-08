@@ -24,16 +24,22 @@ WORK_DIR=/system
 # partition that WORK_DIR is located on, without the leading slash
 WORK_FS=system
 
+# set to 0 to use a device instead
+USE_EMULATOR=1
+
 # ------------------------
 
 tmpdir=$(mktemp -d)
 
-emulator -wipe-data -noaudio -no-window -port $EMULATOR_PORT &
-pid_emulator=$!
+if [ "$USE_EMULATOR" == 1 ]; then
+  emulator -wipe-data -noaudio -no-window -port $EMULATOR_PORT &
+  pid_emulator=$!
+  ADB="adb -s emulator-$EMULATOR_PORT "
+else
+  ADB="adb -d "
+fi
 
-ADB="adb -s emulator-$EMULATOR_PORT "
-
-echo "emulator is $pid_emulator; waiting for startup"
+echo "waiting to connect to device"
 $ADB wait-for-device
 echo "device is available"
 $ADB remount
@@ -56,7 +62,8 @@ fail() {
   echo
   echo FAIL: $testname
   echo
-  kill $pid_emulator
+  [ "$open_pid" == "" ] || kill $open_pid
+  [ "$pid_emulator" == "" ] || kill $pid_emulator
   exit 1
 }
 
@@ -68,6 +75,23 @@ free_space() {
   run_command df | awk "/$1/ {print gensub(/K/, \"\", \"g\", \$6)}"
 }
 
+cleanup() {
+  # not necessary if we're about to kill the emulator, but nice for
+  # running on real devices or already-running emulators.
+  testname "removing test files"
+  run_command rm $WORK_DIR/bloat.dat
+  run_command rm $WORK_DIR/old.file
+  run_command rm $WORK_DIR/patch.bsdiff
+  run_command rm $WORK_DIR/applypatch
+  run_command rm $CACHE_TEMP_SOURCE
+  run_command rm /cache/bloat*.dat
+
+  [ "$pid_emulator" == "" ] || kill $pid_emulator
+
+  rm -rf $tmpdir
+}
+
+cleanup
 
 $ADB push $ANDROID_PRODUCT_OUT/system/bin/applypatch $WORK_DIR/applypatch
 
@@ -146,15 +170,70 @@ if (( free_kb * 1024 < NEW_SIZE * 3 / 2 )); then
 fi
 
 testname "apply bsdiff patch"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 
 testname "reapply bsdiff patch"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 
+
+# --------------- apply patch in new location ----------------------
+
+$ADB push $DATA_DIR/old.file $WORK_DIR
+$ADB push $DATA_DIR/patch.bsdiff $WORK_DIR
+
+# Check that the partition has enough space to apply the patch without
+# copying.  If it doesn't, we'll be testing the low-space condition
+# when we intend to test the not-low-space condition.
+testname "apply patch to new location (with enough space)"
+free_kb=$(free_space $WORK_FS)
+echo "${free_kb}kb free on /$WORK_FS."
+if (( free_kb * 1024 < NEW_SIZE * 3 / 2 )); then
+  echo "Not enough space on /$WORK_FS to patch test file."
+  echo
+  echo "This doesn't mean that applypatch is necessarily broken;"
+  echo "just that /$WORK_FS doesn't have enough free space to"
+  echo "properly run this test."
+  exit 1
+fi
+
+run_command rm $WORK_DIR/new.file
+run_command rm $CACHE_TEMP_SOURCE
+
+testname "apply bsdiff patch to new location"
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file $WORK_DIR/new.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+$ADB pull $WORK_DIR/new.file $tmpdir/patched
+diff -q $DATA_DIR/new.file $tmpdir/patched || fail
+
+testname "reapply bsdiff patch to new location"
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file $WORK_DIR/new.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+$ADB pull $WORK_DIR/new.file $tmpdir/patched
+diff -q $DATA_DIR/new.file $tmpdir/patched || fail
+
+$ADB push $DATA_DIR/old.file $CACHE_TEMP_SOURCE
+# put some junk in the old file
+run_command dd if=/dev/urandom of=$WORK_DIR/old.file count=100 bs=1024 || fail
+
+testname "apply bsdiff patch to new location with corrupted source"
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file $WORK_DIR/new.file $NEW_SHA1 $NEW_SIZE $OLD_SHA1:$WORK_DIR/patch.bsdiff $BAD1_SHA1:$WORK_DIR/foo || fail
+$ADB pull $WORK_DIR/new.file $tmpdir/patched
+diff -q $DATA_DIR/new.file $tmpdir/patched || fail
+
+# put some junk in the cache copy, too
+run_command dd if=/dev/urandom of=$CACHE_TEMP_SOURCE count=100 bs=1024 || fail
+
+run_command rm $WORK_DIR/new.file
+testname "apply bsdiff patch to new location with corrupted source and copy (no new file)"
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file $WORK_DIR/new.file $NEW_SHA1 $NEW_SIZE $OLD_SHA1:$WORK_DIR/patch.bsdiff $BAD1_SHA1:$WORK_DIR/foo && fail
+
+# put some junk in the new file
+run_command dd if=/dev/urandom of=$WORK_DIR/new.file count=100 bs=1024 || fail
+
+testname "apply bsdiff patch to new location with corrupted source and copy (bad new file)"
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file $WORK_DIR/new.file $NEW_SHA1 $NEW_SIZE $OLD_SHA1:$WORK_DIR/patch.bsdiff $BAD1_SHA1:$WORK_DIR/foo && fail
 
 # --------------- apply patch with low space on /system ----------------------
 
@@ -169,12 +248,12 @@ free_kb=$(free_space $WORK_FS)
 echo "${free_kb}kb free on /$WORK_FS now."
 
 testname "apply bsdiff patch with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 
 testname "reapply bsdiff patch with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 
@@ -213,7 +292,7 @@ run_command ls /cache/subdir/a.file || fail            # wasn't deleted because 
 run_command ls $CACHE_TEMP_SOURCE || fail              # wasn't deleted because it's the source file copy
 
 # should fail; not enough files can be deleted
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff && fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff && fail
 run_command ls /cache/bloat_large.dat || fail   # wasn't deleted because it was open
 run_command ls /cache/subdir/a.file || fail     # wasn't deleted because it's in a subdir
 run_command ls $CACHE_TEMP_SOURCE || fail       # wasn't deleted because it's the source file copy
@@ -229,7 +308,7 @@ run_command ls /cache/subdir/a.file || fail     # still wasn't deleted because i
 run_command ls $CACHE_TEMP_SOURCE || fail       # wasn't deleted because it's the source file copy
 
 # should succeed
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 run_command ls /cache/subdir/a.file || fail     # still wasn't deleted because it's in a subdir
@@ -242,7 +321,7 @@ $ADB push $DATA_DIR/old.file $CACHE_TEMP_SOURCE
 run_command dd if=/dev/urandom of=$WORK_DIR/old.file count=100 bs=1024 || fail
 
 testname "apply bsdiff patch from cache (corrupted source) with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 
@@ -251,20 +330,14 @@ $ADB push $DATA_DIR/old.file $CACHE_TEMP_SOURCE
 run_command rm $WORK_DIR/old.file
 
 testname "apply bsdiff patch from cache (missing source) with low space"
-run_command $WORK_DIR/applypatch $WORK_DIR/old.file $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
+run_command $WORK_DIR/applypatch $WORK_DIR/old.file - $NEW_SHA1 $NEW_SIZE $BAD1_SHA1:$WORK_DIR/foo $OLD_SHA1:$WORK_DIR/patch.bsdiff || fail
 $ADB pull $WORK_DIR/old.file $tmpdir/patched
 diff -q $DATA_DIR/new.file $tmpdir/patched || fail
 
 
 # --------------- cleanup ----------------------
 
-# not necessary if we're about to kill the emulator, but nice for
-# running on real devices or already-running emulators.
-run_command rm /cache/bloat*.dat $WORK_DIR/bloat.dat $CACHE_TEMP_SOURCE $WORK_DIR/old.file $WORK_DIR/patch.xdelta3 $WORK_DIR/patch.bsdiff $WORK_DIR/applypatch
-
-kill $pid_emulator
-
-rm -rf $tmpdir
+cleanup
 
 echo
 echo PASS
