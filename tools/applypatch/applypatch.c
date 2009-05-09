@@ -43,6 +43,7 @@ int LoadFileContents(const char* filename, FileContents* file) {
   if (f == NULL) {
     fprintf(stderr, "failed to open \"%s\": %s\n", filename, strerror(errno));
     free(file->data);
+    file->data = NULL;
     return -1;
   }
 
@@ -51,6 +52,7 @@ int LoadFileContents(const char* filename, FileContents* file) {
     fprintf(stderr, "short read of \"%s\" (%d bytes of %d)\n",
             filename, bytes_read, file->size);
     free(file->data);
+    file->data = NULL;
     return -1;
   }
   fclose(f);
@@ -226,14 +228,16 @@ size_t FreeSpaceForFile(const char* filename) {
 // replacement for it) and idempotent (it's okay to run this program
 // multiple times).
 //
-// - if the sha1 hash of <file> is <tgt-sha1>, does nothing and exits
+// - if the sha1 hash of <tgt-file> is <tgt-sha1>, does nothing and exits
 //   successfully.
 //
-// - otherwise, if the sha1 hash of <file> is <src-sha1>, applies the
-//   bsdiff <patch> to <file> to produce a new file (the type of patch
+// - otherwise, if the sha1 hash of <src-file> is <src-sha1>, applies the
+//   bsdiff <patch> to <src-file> to produce a new file (the type of patch
 //   is automatically detected from the file header).  If that new
-//   file has sha1 hash <tgt-sha1>, moves it to replace <file>, and
-//   exits successfully.
+//   file has sha1 hash <tgt-sha1>, moves it to replace <tgt-file>, and
+//   exits successfully.  Note that if <src-file> and <tgt-file> are
+//   not the same, <src-file> is NOT deleted on success.  <tgt-file>
+//   may be the string "-" to mean "the same as src-file".
 //
 // - otherwise, or if any error is encountered, exits with non-zero
 //   status.
@@ -241,7 +245,7 @@ size_t FreeSpaceForFile(const char* filename) {
 int main(int argc, char** argv) {
   if (argc < 2) {
  usage:
-    fprintf(stderr, "usage: %s <file> <tgt-sha1> <tgt-size> [<src-sha1>:<patch> ...]\n"
+    fprintf(stderr, "usage: %s <src-file> <tgt-file> <tgt-sha1> <tgt-size> [<src-sha1>:<patch> ...]\n"
                     "   or  %s -c <file> [<sha1> ...]\n"
                     "   or  %s -s <bytes>\n"
                     "   or  %s -l\n",
@@ -273,26 +277,31 @@ int main(int argc, char** argv) {
   uint8_t target_sha1[SHA_DIGEST_SIZE];
 
   const char* source_filename = argv[1];
+  const char* target_filename = argv[2];
+  if (target_filename[0] == '-' &&
+      target_filename[1] == '\0') {
+    target_filename = source_filename;
+  }
 
-  // assume that source_filename (eg "/system/app/Foo.apk") is located
+  // assume that target_filename (eg "/system/app/Foo.apk") is located
   // on the same filesystem as its top-level directory ("/system").
   // We need something that exists for calling statfs().
-  char* source_fs = strdup(argv[1]);
-  char* slash = strchr(source_fs+1, '/');
+  char* target_fs = strdup(target_filename);
+  char* slash = strchr(target_fs+1, '/');
   if (slash != NULL) {
     *slash = '\0';
   }
 
-  if (ParseSha1(argv[2], target_sha1) != 0) {
-    fprintf(stderr, "failed to parse tgt-sha1 \"%s\"\n", argv[2]);
+  if (ParseSha1(argv[3], target_sha1) != 0) {
+    fprintf(stderr, "failed to parse tgt-sha1 \"%s\"\n", argv[3]);
     return 1;
   }
 
-  unsigned long target_size = strtoul(argv[3], NULL, 0);
+  unsigned long target_size = strtoul(argv[4], NULL, 0);
 
   int num_patches;
   Patch* patches;
-  if (ParseShaArgs(argc-4, argv+4, &patches, &num_patches) < 0) { return 1; }
+  if (ParseShaArgs(argc-5, argv+5, &patches, &num_patches) < 0) { return 1; }
 
   FileContents copy_file;
   FileContents source_file;
@@ -300,15 +309,27 @@ int main(int argc, char** argv) {
   const char* copy_patch_filename = NULL;
   int made_copy = 0;
 
-  if (LoadFileContents(source_filename, &source_file) == 0) {
+  // We try to load the target file into the source_file object.
+  if (LoadFileContents(target_filename, &source_file) == 0) {
     if (memcmp(source_file.sha1, target_sha1, SHA_DIGEST_SIZE) == 0) {
       // The early-exit case:  the patch was already applied, this file
       // has the desired hash, nothing for us to do.
       fprintf(stderr, "\"%s\" is already target; no patch needed\n",
-              source_filename);
+              target_filename);
       return 0;
     }
+  }
 
+  if (source_file.data == NULL ||
+      (target_filename != source_filename &&
+       strcmp(target_filename, source_filename) != 0)) {
+    // Need to load the source file:  either we failed to load the
+    // target file, or we did but it's different from the source file.
+    free(source_file.data);
+    LoadFileContents(source_filename, &source_file);
+  }
+
+  if (source_file.data != NULL) {
     const Patch* to_use =
         FindMatchingPatch(source_file.sha1, patches, num_patches);
     if (to_use != NULL) {
@@ -340,7 +361,7 @@ int main(int argc, char** argv) {
   }
 
   // Is there enough room in the target filesystem to hold the patched file?
-  size_t free_space = FreeSpaceForFile(source_fs);
+  size_t free_space = FreeSpaceForFile(target_fs);
   int enough_space = free_space > (target_size * 3 / 2);  // 50% margin of error
   printf("target %ld bytes; free space %ld bytes; enough %d\n",
          (long)target_size, (long)free_space, enough_space);
@@ -361,8 +382,8 @@ int main(int argc, char** argv) {
     made_copy = 1;
     unlink(source_filename);
 
-    size_t free_space = FreeSpaceForFile(source_fs);
-    printf("(now %ld bytes free for source)\n", (long)free_space);
+    size_t free_space = FreeSpaceForFile(target_fs);
+    printf("(now %ld bytes free for target)\n", (long)free_space);
   }
 
   FileContents* source_to_use;
@@ -375,14 +396,14 @@ int main(int argc, char** argv) {
     patch_filename = copy_patch_filename;
   }
 
-  // We write the decoded output to "<file>.patch".
-  char* outname = (char*)malloc(strlen(source_filename) + 10);
-  strcpy(outname, source_filename);
+  // We write the decoded output to "<tgt-file>.patch".
+  char* outname = (char*)malloc(strlen(target_filename) + 10);
+  strcpy(outname, target_filename);
   strcat(outname, ".patch");
   FILE* output = fopen(outname, "wb");
   if (output == NULL) {
     fprintf(stderr, "failed to patch file %s: %s\n",
-            source_filename, strerror(errno));
+            target_filename, strerror(errno));
     return 1;
   }
 
@@ -441,10 +462,10 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  // Finally, rename the .patch file to replace the original source file.
-  if (rename(outname, source_filename) != 0) {
+  // Finally, rename the .patch file to replace the target file.
+  if (rename(outname, target_filename) != 0) {
     fprintf(stderr, "rename of .patch to \"%s\" failed: %s\n",
-            source_filename, strerror(errno));
+            target_filename, strerror(errno));
     return 1;
   }
 
