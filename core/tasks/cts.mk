@@ -17,11 +17,11 @@ cts_tools_src_dir := cts/tools
 
 cts_name := android-cts
 
-CTS_EXECUTABLE := cts
+CTS_EXECUTABLE := startcts
 ifeq ($(HOST_OS),windows)
     CTS_EXECUTABLE_PATH := $(cts_tools_src_dir)/host/etc/cts.bat
 else
-    CTS_EXECUTABLE_PATH := $(HOST_OUT_EXECUTABLES)/$(CTS_EXECUTABLE)
+    CTS_EXECUTABLE_PATH := $(cts_tools_src_dir)/utils/$(CTS_EXECUTABLE)
 endif
 CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 
@@ -91,9 +91,8 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
 			$(call copy-testcase-apk,$(apk)))
-# Copy CTS host config and start script to CTS directory
+# Copy CTS host config to CTS directory
 	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/host_config.xml $(PRIVATE_DIR)/repository/
-	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/startcts $(PRIVATE_DIR)/tools/
 	$(hide) touch $@
 
 # Generate the test descriptions for the core-tests
