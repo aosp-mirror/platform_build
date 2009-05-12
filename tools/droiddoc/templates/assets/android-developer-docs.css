@@ -590,6 +590,10 @@ p.note {
 p.warning {
   border-color: #aa0033;
 }
+
+p.caution {
+  border-color: #ffcf00;
+}
   
 p.warning b, p.warning strong {
   font-weight: bold;
