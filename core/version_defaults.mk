@@ -39,7 +39,7 @@ ifeq "" "$(PLATFORM_VERSION)"
   # which is the version that we reveal to the end user.
   # Update this value when the platform version changes (rather
   # than overriding it somewhere else).  Can be an arbitrary string.
-  PLATFORM_VERSION := Donut
+  PLATFORM_VERSION := Eclair
 endif
 
 ifeq "" "$(PLATFORM_SDK_VERSION)"
@@ -57,7 +57,7 @@ endif
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
-  PLATFORM_VERSION_CODENAME := Donut
+  PLATFORM_VERSION_CODENAME := Eclair
 endif
 
 ifeq "" "$(BUILD_ID)"
