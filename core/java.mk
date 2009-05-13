@@ -188,9 +188,8 @@ $(findbugs_html) : PRIVATE_XML_FILE := $(findbugs_xml)
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 $(findbugs_html) : $(findbugs_xml)
 	@mkdir -p $(dir $@)
-	@echo UnionBugs: $@
-	$(hide) prebuilt/common/findbugs/bin/unionBugs $(PRIVATE_XML_FILE) \
-	| prebuilt/common/findbugs/bin/convertXmlToText -html:fancy.xsl \
+	@echo ConvertXmlToText: $@
+	$(hide) prebuilt/common/findbugs/bin/convertXmlToText -html:fancy.xsl $(PRIVATE_XML_FILE) \
 	> $@
 
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)
