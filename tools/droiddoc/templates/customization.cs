@@ -9,7 +9,9 @@ def:custom_masthead() ?>
           <a href="<?cs var:toroot ?>index.html" tabindex="-1"><?cs var:page.title ?></a>
       </div>
       <div id="headerRight">
-          <?cs call:default_search_box() ?>
+          <?cs if:!online-pdk ?>
+            <?cs call:default_search_box() ?>
+          <?cs /if ?>
       </div><!-- headerRight -->
   </div><!-- header --><?cs 
 /def ?>

@@ -6,7 +6,7 @@ def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
           <a href="<?cs var:toroot ?>index.html" tabindex="-1"><img
-              src="<?cs var:toroot ?>assets/images/bg_logo.png" alt="Android Porting Development Kit" /></a>
+              src="<?cs var:toroot ?>assets/images/open_source.png" alt="Open Source Project: Platform Development Kit" /></a>
           <ul class="<?cs 
                   if:reference ?> <?cs
                   elif:guide ?> <?cs
@@ -15,17 +15,10 @@ def:custom_masthead() ?>
                   elif:community ?> <?cs
                   elif:publish ?> <?cs
                   elif:about ?> <?cs /if ?>">
-              <li id="home-link"><a href="<?cs var:toroot ?><?cs 
-                  if:android.whichdoc != "online-pdk" ?>offline.html<?cs 
-                  else ?>index.html<?cs /if ?>">
-                  <span>Home</span></a></li>
-              <!--<li id="sdk-link"><a href="<?cs var:toroot ?>index.html"><span>SDK</span></a></li>-->
-              <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
-                                  onClick="return loadLast('guide')"><span>Porting Guide</span></a></li>
-              <!--<li id="reference-link"><a href="<?cs var:toroot ?>reference/packages.html" 
-                                  onClick="return loadLast('reference')"><span>Reference</span></a></li> 
-              <li><a href="http://android-developers.blogspot.com"><span>Blog</span></a></li>
-              <li id="community-link"><a href="<?cs var:toroot ?>community/index.html"><span>Community</span></a></li>-->
+              <li id="guide-link"><a href="<?cs var:toroot ?>index.html"
+                                  onClick="return loadLast('guide)'"><span>Porting Guide</span></a></li>
+              <li id="opensource-link"><a href="http://source.android.com/"
+				 onClick="return loadLast('open')"><span>Open Source</span></a></li>
           </ul> 
       </div>
       <div id="headerRight">
@@ -35,8 +28,7 @@ def:custom_masthead() ?>
               <!-- &nbsp;<a href="#">English</a> | -->
               <a href="http://www.android.com">Android.com</a>
             </span>
-          </div><?cs 
-          call:default_search_box() ?>
+          </div>
       </div><!-- headerRight -->
   </div><!-- header --><?cs 
 /def ?><?cs # custom_masthead ?>
@@ -47,7 +39,7 @@ def:guide_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
       <div id="devdoc-nav"><?cs 
-        include:"../../../../development/pdk/docs/html/guide/guide_toc.cs" ?>
+        include:"../../../../development/pdk/docs/guide/pdk_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -59,11 +51,7 @@ def:guide_nav() ?>
 
 <?cs 
 def:custom_left_nav() ?><?cs 
-  if:guide ?><?cs 
     call:guide_nav() ?><?cs 
-  else ?><?cs 
-    call:default_left_nav() ?><?cs 
-  /if ?><?cs 
 /def ?>
 
 <?cs # appears at the bottom of every page ?><?cs 
