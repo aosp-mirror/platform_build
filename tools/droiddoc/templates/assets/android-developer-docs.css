@@ -433,11 +433,11 @@ hr {
 .nolist {
   list-style:none;
   padding:0;
-  margin:0 0 0 1em;
+  margin:0 0 1em 1em;
 }
 
 .nolist li {
-  padding:0;
+  padding:0 0 2px;
   margin:0;
 }
 
@@ -594,7 +594,7 @@ p.warning {
 p.caution {
   border-color: #ffcf00;
 }
-  
+
 p.warning b, p.warning strong {
   font-weight: bold;
 }
@@ -672,7 +672,7 @@ pre.classic {
 
 #qv ol ol{
   list-style:none;
-  padding: 0 0 3px 12px;
+  padding: 0 0 0 12px;
   margin:0;
 }
 
@@ -681,9 +681,12 @@ pre.classic {
 }
 
 #qv li {
-  padding: 0 10px;
-  margin: 2 0 0;
+  padding: 0 10px 3px;
   line-height: 1.2em;
+}
+
+#qv li li {
+  padding: 3px 10px 0;
 }
 
 #qv ul li {
