@@ -794,6 +794,22 @@ $(hide) $(transform-d-to-p)
 endef
 
 ###########################################################
+## Commands for running gcc to compile an Objective-C file
+## This should never happen for target builds but this
+## will error at build time.
+###########################################################
+
+define transform-m-to-o-no-deps
+@echo "target ObjC: $(PRIVATE_MODULE) <= $<"
+$(call transform-c-or-s-to-o-no-deps)
+endef
+
+define transform-m-to-o
+$(transform-m-to-o-no-deps)
+$(hide) $(transform-d-to-p)
+endef
+
+###########################################################
 ## Commands for running gcc to compile a host C++ file
 ###########################################################
 
@@ -867,6 +883,20 @@ endef
 
 define transform-host-s-to-o
 $(transform-host-s-to-o-no-deps)
+$(transform-d-to-p)
+endef
+
+###########################################################
+## Commands for running gcc to compile a host Objective-C file
+###########################################################
+
+define transform-host-m-to-o-no-deps
+@echo "host ObjC: $(PRIVATE_MODULE) <= $<"
+$(call transform-host-c-or-s-to-o-no-deps)
+endef
+
+define tranform-host-m-to-o
+$(transform-host-m-to-o-no-deps)
 $(transform-d-to-p)
 endef
 
