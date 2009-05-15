@@ -77,6 +77,7 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.an
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIMEGoogleService_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/telephony)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libwebcore_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
