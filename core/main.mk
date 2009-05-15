@@ -85,9 +85,6 @@ $(warning ************************************************************)
 $(error Directory names containing spaces not supported)
 endif
 
-# Set up version information.
-include $(BUILD_SYSTEM)/version_defaults.mk
-
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
