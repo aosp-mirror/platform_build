@@ -1122,7 +1122,11 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
     $(addprefix -P , $(PRIVATE_RESOURCE_PUBLICS_OUTPUT)) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
-    $(addprefix -I , $(PRIVATE_AAPT_INCLUDES))
+    $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
+    $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
+    $(addprefix --version-name , $(PLATFORM_VERSION))
 endef
 
 ifeq ($(HOST_OS),windows)
@@ -1250,6 +1254,9 @@ endef
 #      A list of dynamic and static parameters;  build layers for
 #      dynamic params that lay over the static ones.
 #TODO: update the manifest to point to the package file
+#Note that the version numbers are given to aapt as simple default
+#values; applications can override these by explicitly stating
+#them in their manifest.
 define add-assets-to-package
 $(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRODUCT_AAPT_CONFIG)) \
@@ -1257,6 +1264,10 @@ $(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
     $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
+    $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
+    $(addprefix --version-name , $(PLATFORM_VERSION)) \
     -F $@
 endef
 
