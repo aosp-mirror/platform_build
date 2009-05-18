@@ -20,6 +20,8 @@
 # Guarantees that the following are defined:
 #     PLATFORM_VERSION
 #     PLATFORM_SDK_VERSION
+#     PLATFORM_VERSION_CODENAME
+#     DEFAULT_APP_TARGET_SDK
 #     BUILD_ID
 #     BUILD_NUMBER
 #
@@ -58,6 +60,19 @@ ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
   PLATFORM_VERSION_CODENAME := Eclair
+endif
+
+ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
+  # This is the default minSdkVersion and targetSdkVersion to use for
+  # all .apks created by the build system.  It can be overridden by explicitly
+  # setting these in the .apk's AndroidManifest.xml.  It is either the code
+  # name of the development build or, if this is a release build, the official
+  # SDK version of this release.
+  ifeq "REL" "$(PLATFORM_VERSION_CODENAME)"
+    DEFAULT_APP_TARGET_SDK := $(PLATFORM_SDK_VERSION)
+  else
+    DEFAULT_APP_TARGET_SDK := $(PLATFORM_VERSION_CODENAME)
+  endif
 endif
 
 ifeq "" "$(BUILD_ID)"
