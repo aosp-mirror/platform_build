@@ -87,7 +87,7 @@ yacc_objects := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.o)
 ifneq ($(strip $(yacc_cpps)),)
 $(yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
 		$(TOPDIR)$(LOCAL_PATH)/%.y \
-		$(lex_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+		$(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
 $(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 
@@ -115,7 +115,7 @@ $(lex_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(lex_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(lex_objects): $(intermediates)/%.o: \
 		$(intermediates)/%$(LOCAL_CPP_EXTENSION) \
-		$(PRIVATE_ADDITIONAL_DEPENDENCIES) \
+		$(LOCAL_ADDITIONAL_DEPENDENCIES) \
 		$(yacc_headers)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 endif
@@ -142,7 +142,7 @@ cpp_objects        := $(cpp_arm_objects) $(cpp_normal_objects)
 ifneq ($(strip $(cpp_objects)),)
 $(cpp_objects): $(intermediates)/%.o: \
 		$(TOPDIR)$(LOCAL_PATH)/%$(LOCAL_CPP_EXTENSION) \
-		$(yacc_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+		$(yacc_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(cpp_objects:%.o=%.P)
 endif
@@ -159,7 +159,7 @@ ifneq ($(strip $(gen_cpp_objects)),)
 # TODO: support compiling certain generated files as arm.
 $(gen_cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(gen_cpp_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION) $(yacc_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(gen_cpp_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION) $(yacc_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(gen_cpp_objects:%.o=%.P)
 endif
@@ -172,7 +172,7 @@ gen_S_sources := $(filter %.S,$(LOCAL_GENERATED_SOURCES))
 gen_S_objects := $(gen_S_sources:%.S=%.o)
 
 ifneq ($(strip $(gen_S_sources)),)
-$(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(gen_S_objects:%.o=%.P)
 endif
@@ -181,7 +181,7 @@ gen_s_sources := $(filter %.s,$(LOCAL_GENERATED_SOURCES))
 gen_s_objects := $(gen_s_sources:%.s=%.o)
 
 ifneq ($(strip $(gen_s_objects)),)
-$(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(gen_s_objects:%.o=%.P)
 endif
@@ -206,7 +206,7 @@ $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 c_objects        := $(c_arm_objects) $(c_normal_objects)
 
 ifneq ($(strip $(c_objects)),)
-$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(c_objects:%.o=%.P)
 endif
@@ -223,7 +223,7 @@ ifneq ($(strip $(gen_c_objects)),)
 # TODO: support compiling certain generated files as arm.
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(gen_c_objects:%.o=%.P)
 endif
@@ -236,7 +236,7 @@ asm_sources_S := $(filter %.S,$(LOCAL_SRC_FILES))
 asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
 
 ifneq ($(strip $(asm_objects_S)),)
-$(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(asm_objects_S:%.o=%.P)
 endif
@@ -245,7 +245,7 @@ asm_sources_s := $(filter %.s,$(LOCAL_SRC_FILES))
 asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
 
 ifneq ($(strip $(asm_objects_s)),)
-$(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+$(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(asm_objects_s:%.o=%.P)
 endif
