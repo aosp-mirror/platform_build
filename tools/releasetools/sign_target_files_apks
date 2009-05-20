@@ -101,6 +101,85 @@ def GetApkCerts(tf_zip):
   return certmap
 
 
+def CheckAllApksSigned(input_tf_zip, apk_key_map):
+  """Check that all the APKs we want to sign have keys specified, and
+  error out if they don't."""
+  unknown_apks = []
+  for info in input_tf_zip.infolist():
+    if info.filename.endswith(".apk"):
+      name = os.path.basename(info.filename)
+      if name not in apk_key_map:
+        unknown_apks.append(name)
+  if unknown_apks:
+    print "ERROR: no key specified for:\n\n ",
+    print "\n  ".join(unknown_apks)
+    print "\nUse '-e <apkname>=' to specify a key (which may be an"
+    print "empty string to not sign this apk)."
+    sys.exit(1)
+
+
+def SharedUserForApk(data):
+  tmp = tempfile.NamedTemporaryFile()
+  tmp.write(data)
+  tmp.flush()
+
+  p = common.Run(["aapt", "dump", "xmltree", tmp.name, "AndroidManifest.xml"],
+                 stdout=subprocess.PIPE)
+  data, _ = p.communicate()
+  if p.returncode != 0:
+    raise ExternalError("failed to run aapt dump")
+  lines = data.split("\n")
+  for i in lines:
+    m = re.match(r'^\s*A: android:sharedUserId\([0-9a-fx]*\)="([^"]*)" .*$', i)
+    if m:
+      return m.group(1)
+  return None
+
+
+def CheckSharedUserIdsConsistent(input_tf_zip, apk_key_map):
+  """Check that all packages that request the same shared user id are
+  going to be signed with the same key."""
+
+  shared_user_apks = {}
+  maxlen = 0
+
+  for info in input_tf_zip.infolist():
+    if info.filename.endswith(".apk"):
+      data = input_tf_zip.read(info.filename)
+
+      name = os.path.basename(info.filename)
+      shared_user = SharedUserForApk(data)
+      key = apk_key_map[name]
+      maxlen = max(maxlen, len(key))
+
+      if shared_user is not None:
+        shared_user_apks.setdefault(
+            shared_user, {}).setdefault(key, []).append(name)
+
+  errors = []
+  for k, v in shared_user_apks.iteritems():
+    # each shared user should have exactly one key used for all the
+    # apks that want that user.
+    if len(v) > 1:
+      errors.append((k, v))
+
+  if not errors: return
+
+  print "ERROR:  shared user inconsistency.  All apks wanting to use"
+  print "        a given shared user must be signed with the same key."
+  print
+  errors.sort()
+  for user, keys in errors:
+    print 'shared user id "%s":' % (user,)
+    for key, apps in keys.iteritems():
+      print '  %-*s   %s' % (maxlen, key, apps[0])
+      for a in apps[1:]:
+        print (' ' * (maxlen+5)) + a
+    print
+
+  sys.exit(1)
+
+
 def SignApk(data, keyname, pw):
   unsigned = tempfile.NamedTemporaryFile()
   unsigned.write(data)
@@ -117,30 +196,10 @@ def SignApk(data, keyname, pw):
   return data
 
 
-def SignApks(input_tf_zip, output_tf_zip):
-  apk_key_map = GetApkCerts(input_tf_zip)
-
+def SignApks(input_tf_zip, output_tf_zip, apk_key_map, key_passwords):
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
-
-  # Check that all the APKs we want to sign have keys specified, and
-  # error out if they don't.  Do this before prompting for key
-  # passwords in case we're going to fail anyway.
-  unknown_apks = []
-  for info in input_tf_zip.infolist():
-    if info.filename.endswith(".apk"):
-      name = os.path.basename(info.filename)
-      if name not in apk_key_map:
-        unknown_apks.append(name)
-  if unknown_apks:
-    print "ERROR: no key specified for:\n\n ",
-    print "\n  ".join(unknown_apks)
-    print "\nUse '-e <apkname>=' to specify a key (which may be an"
-    print "empty string to not sign this apk)."
-    sys.exit(1)
-
-  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
 
   for info in input_tf_zip.infolist():
     data = input_tf_zip.read(info.filename)
@@ -289,7 +348,12 @@ def main(argv):
   input_zip = zipfile.ZipFile(args[0], "r")
   output_zip = zipfile.ZipFile(args[1], "w")
 
-  SignApks(input_zip, output_zip)
+  apk_key_map = GetApkCerts(input_zip)
+  CheckAllApksSigned(input_zip, apk_key_map)
+  CheckSharedUserIdsConsistent(input_zip, apk_key_map)
+
+  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
+  SignApks(input_zip, output_zip, apk_key_map, key_passwords)
 
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_zip, output_zip)
