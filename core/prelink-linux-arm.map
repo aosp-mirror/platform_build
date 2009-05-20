@@ -80,6 +80,7 @@ libaudioflinger.so      0xAB000000
 libsqlite.so            0xAAC00000
 libexpat.so             0xAAB00000
 libwebcore.so           0xAA000000
+libbinder.so            0xA9D80000
 libutils.so             0xA9D00000
 libcameraservice.so     0xA9C80000
 libhardware.so          0xA9C70000
