@@ -42,6 +42,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       the build scripts (used for developer OTA packages which
       legitimately need to go back and forth).
 
+  -e  (--extra_script)  <file>
+      Insert the contents of file at the end of the update script.
+
 """
 
 import sys
@@ -69,6 +72,7 @@ OPTIONS.prohibit_verbatim = set(("system/build.prop",))
 OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
+OPTIONS.extra_script = None
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -363,6 +367,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.append("write_raw_image PACKAGE:boot.img BOOT:")
   script.append("show_progress 0.2 10")
 
+  if OPTIONS.extra_script is not None:
+    script.append(OPTIONS.extra_script)
+
   AddScript(script, output_zip)
 
 
@@ -612,6 +619,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.append("show_progress 0.1 5")
     script.append("write_raw_image PACKAGE:boot.img BOOT:")
 
+  if OPTIONS.extra_script is not None:
+    script.append(OPTIONS.extra_script)
+
   AddScript(script, output_zip)
 
 
@@ -628,17 +638,20 @@ def main(argv):
       OPTIONS.wipe_user_data = True
     elif o in ("-n", "--no_prereq"):
       OPTIONS.omit_prereq = True
+    elif o in ("-e", "--extra_script"):
+      OPTIONS.extra_script = a
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wn",
+                             extra_opts="b:k:i:d:wne:",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
                                               "wipe_user_data",
-                                              "no_prereq"],
+                                              "no_prereq",
+                                              "extra_script="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -651,6 +664,9 @@ def main(argv):
     print "  sizes against limits.  Use -b to make sure the generated"
     print "  images don't exceed partition sizes."
     print
+
+  if OPTIONS.extra_script is not None:
+    OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
   print "unzipping target target-files..."
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
