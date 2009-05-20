@@ -23,6 +23,7 @@ echo "ro.product.board=$TARGET_BOOTLOADER_BOARD_NAME"
 echo "ro.product.manufacturer=$PRODUCT_MANUFACTURER"
 echo "ro.product.locale.language=$PRODUCT_DEFAULT_LANGUAGE"
 echo "ro.product.locale.region=$PRODUCT_DEFAULT_REGION"
+echo "ro.wifi.channels=$PRODUCT_DEFAULT_WIFI_CHANNELS"
 echo "ro.board.platform=$TARGET_BOARD_PLATFORM"
 
 echo "# ro.build.product is obsolete; use ro.product.device"
