@@ -4,7 +4,7 @@ var devdocNav;
 var sidenav;
 var content;
 var HEADER_HEIGHT = 117;
-var cookie_style = 'android_developer';
+var cookie_namespace = 'android_developer';
 var NAV_PREF_TREE = "tree";
 var NAV_PREF_PANELS = "panels";
 var nav_pref;
@@ -70,8 +70,8 @@ function restoreHeight(packageHeight) {
   $("#nav-tree").css({height:swapperHeight + "px"});
 }
 
-function getCookie(cookie) {
-  var myCookie = cookie_style+"_"+cookie+"=";
+function readCookie(cookie) {
+  var myCookie = cookie_namespace+"_"+cookie+"=";
   if (document.cookie) {
     var index = document.cookie.indexOf(myCookie);
     if (index != -1) {
@@ -87,16 +87,15 @@ function getCookie(cookie) {
   return 0;
 }
 
-function writeCookie(cookie, val, path, expiration) {
+function writeCookie(cookie, val, section, expiration) {
   if (!val) return;  
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
-  expiration = expiration ? expiration : date.toGMTString();
-  if (location.href.indexOf("/reference/") != -1) {
-    document.cookie = cookie_style+'_reference_'+cookie+'='+val+'; expires='+expiration+'; path='+'/'+path;
-  } else if (location.href.indexOf("/guide/") != -1) {
-    document.cookie = cookie_style+'_guide_'+cookie+'='+val+'; expires='+expiration+'; path='+'/'+path;
+  section = section == null ? "_" : "_"+section+"_";
+  if (expiration == null) {
+    var date = new Date();
+    date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
+    expiration = date.toGMTString();
   }
+  document.cookie = cookie_namespace+section+cookie+"="+val+"; expires="+expiration+"; path=/";
 } 
 
 function init() {
@@ -116,8 +115,8 @@ function init() {
   if (!isMobile) {
     $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizeHeight(); } });
     $(".side-nav-resizable").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
-    var cookieWidth = getCookie(cookiePath+'width');
-    var cookieHeight = getCookie(cookiePath+'height');
+    var cookieWidth = readCookie(cookiePath+'width');
+    var cookieHeight = readCookie(cookiePath+'height');
     if (cookieWidth) {
       restoreWidth(cookieWidth);
     } else if ($(".side-nav-resizable").length) {
@@ -175,7 +174,9 @@ function resizeHeight() {
   $("#packages-nav").css({height:parseInt(resizePackagesNav.css("height")) - 6 + "px"}); //move 6px for handle
   devdocNav.css({height:sidenav.css("height")});
   $("#nav-tree").css({height:swapperHeight + "px"});
-  writeCookie("height", resizePackagesNav.css("height"), "", null);
+  
+  var section = location.pathname.substring(1,location.pathname.indexOf("/",1));
+  writeCookie("height", resizePackagesNav.css("height"), section, null);
 }
 
 function resizeWidth() {
@@ -190,7 +191,9 @@ function resizeWidth() {
   resizePackagesNav.css({width:sidenavWidth});
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
-  writeCookie("width", sidenavWidth, "", null);
+  
+  var section = location.pathname.substring(1,location.pathname.indexOf("/",1));
+  writeCookie("width", sidenavWidth, section, null);
 }
 
 function resizeAll() {
@@ -207,7 +210,7 @@ function loadLast(cookiePath) {
   if (location.indexOf("/"+cookiePath+"/") != -1) {
     return true;
   }
-  var lastPage = getCookie(cookiePath + "_lastpage");
+  var lastPage = readCookie(cookiePath + "_lastpage");
   if (lastPage) {
     window.location = lastPage;
     return false;
@@ -216,11 +219,11 @@ function loadLast(cookiePath) {
 }
 
 $(window).unload(function(){
-  var href = location.href;
-  if (href.indexOf("/reference/") != -1) {
-    writeCookie("lastpage", href, "", null);
-  } else if (href.indexOf("/guide/") != -1) {
-    writeCookie("lastpage", href, "", null);
+  var path = location.pathname;
+  if (path.indexOf("/reference/") != -1) {
+    writeCookie("lastpage", path, "reference", null);
+  } else if (path.indexOf("/guide/") != -1) {
+    writeCookie("lastpage", path, "guide", null);
   }
 });
 
@@ -257,7 +260,7 @@ function buildToggleLists() {
 }
 
 function getNavPref() {
-  var v = getCookie('reference_nav');
+  var v = readCookie('reference_nav');
   if (v != NAV_PREF_TREE) {
     v = NAV_PREF_PANELS;
   }
@@ -283,7 +286,7 @@ function swapNav() {
   }
   var date = new Date();
   date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  writeCookie("nav", nav_pref, "", date.toGMTString());
+  writeCookie("nav", nav_pref, null, date.toGMTString());
 
   $("#nav-panels").toggle();
   $("#panel-link").toggle();
@@ -349,3 +352,57 @@ function toggleAllSummaryInherited(linkObj) {
   }
   return false;
 }
+
+
+function changeTabLang(lang) {
+  var nodes = $("#header-tabs").find("."+lang);
+  for (i=0; i < nodes.length; i++) { // for each node in this language 
+    var node = $(nodes[i]);
+    node.siblings().css("display","none"); // hide all siblings 
+    if (node.not(":empty").length != 0) { //if this languages node has a translation, show it 
+      node.css("display","inline");
+    } else { //otherwise, show English instead 
+      node.css("display","none");
+      node.siblings().filter(".en").css("display","inline");
+    }
+  }
+}
+
+function changeNavLang(lang) {
+  var nodes = $("#side-nav").find("."+lang);
+  for (i=0; i < nodes.length; i++) { // for each node in this language 
+    var node = $(nodes[i]);
+    node.siblings().css("display","none"); // hide all siblings 
+    if (node.not(":empty").length != 0) { // if this languages node has a translation, show it 
+      node.css("display","inline");
+    } else { // otherwise, show English instead 
+      node.css("display","none");
+      node.siblings().filter(".en").css("display","inline");
+    }
+  }
+}
+
+function changeDocLang(lang) {
+  changeTabLang(lang);
+  changeNavLang(lang);
+}
+
+function changeLangPref(lang) {
+  var date = new Date();
+  date.setTime(date.getTime()+(50*365*24*60*60*1000)); // keep this for 50 years
+  writeCookie("pref_lang", lang, null, date);
+  
+  changeDocLang(lang);
+}
+
+function loadLangPref() {
+  var lang = readCookie("pref_lang");
+  if (lang != 0) {
+    $("#language").find("option[value='"+lang+"']").attr("selected",true);
+  }
+}
+
+function getLangPref() {
+  return $("#language").find(":selected").attr("value");
+}
+
