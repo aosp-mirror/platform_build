@@ -6,12 +6,11 @@ To make these errors go away, you have two choices:
    1) You can add "@hide" javadoc comments to the methods, etc. listed in the
       errors above.
 
-   2) You can update current.xml by executing the following commands:
+   2) You can update current.xml by executing the following command:
 
-         p4 edit frameworks/base/api/current.xml
          make update-api
 
-      To check in the revised current.xml, you will need OWNERS approval.
+      To check in the revised current.xml, you will need approval from the android API council.
 ******************************
 
 
