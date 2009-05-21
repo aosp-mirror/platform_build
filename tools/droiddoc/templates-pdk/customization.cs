@@ -5,7 +5,7 @@ left nav (toc) that gets placed on all pages. ?>
 def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
-          <a href="<?cs var:toroot ?>index.html" tabindex="-1"><img
+          <a href="<?cs var:toroot ?>guide/index.html" tabindex="-1"><img
               src="<?cs var:toroot ?>assets/images/open_source.png" alt="Open Source Project: Platform Development Kit" /></a>
           <ul class="<?cs 
                   if:reference ?> <?cs
@@ -15,7 +15,7 @@ def:custom_masthead() ?>
                   elif:community ?> <?cs
                   elif:publish ?> <?cs
                   elif:about ?> <?cs /if ?>">
-              <li id="guide-link"><a href="<?cs var:toroot ?>index.html"
+              <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
                                   onClick="return loadLast('guide)'"><span>Porting Guide</span></a></li>
               <li id="opensource-link"><a href="http://source.android.com/"
 				 onClick="return loadLast('open')"><span>Open Source</span></a></li>
