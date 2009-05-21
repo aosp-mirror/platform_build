@@ -78,6 +78,7 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIMEGoogleS
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/telephony)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/bin/tcpdump)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/location)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
