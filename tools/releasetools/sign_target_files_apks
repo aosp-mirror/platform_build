@@ -141,7 +141,7 @@ def CheckSharedUserIdsConsistent(input_tf_zip, apk_key_map):
   going to be signed with the same key."""
 
   shared_user_apks = {}
-  maxlen = 0
+  maxlen = len("(unknown key)")
 
   for info in input_tf_zip.infolist():
     if info.filename.endswith(".apk"):
@@ -172,7 +172,7 @@ def CheckSharedUserIdsConsistent(input_tf_zip, apk_key_map):
   for user, keys in errors:
     print 'shared user id "%s":' % (user,)
     for key, apps in keys.iteritems():
-      print '  %-*s   %s' % (maxlen, key, apps[0])
+      print '  %-*s   %s' % (maxlen, key or "(unknown key)", apps[0])
       for a in apps[1:]:
         print (' ' * (maxlen+5)) + a
     print
