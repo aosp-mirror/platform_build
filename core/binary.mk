@@ -229,6 +229,19 @@ $(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(LOCA
 endif
 
 ###########################################################
+## ObjC: Compile .m files to .o
+###########################################################
+
+objc_sources := $(filter %.m,$(LOCAL_SRC_FILES))
+objc_objects := $(addprefix $(intermediates)/,$(objc_sources:.m=.o))
+
+ifneq ($(strip $(objc_objects)),)
+$(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $(PRIVATE_ADDITIONAL_DEPENDENCIES)
+	$(transform-$(PRIVATE_HOST)m-to-o)
+-include $(objc_objects:%.o=%.P)
+endif
+
+###########################################################
 ## AS: Compile .S files to .o.
 ###########################################################
 
