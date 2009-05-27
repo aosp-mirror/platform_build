@@ -156,6 +156,7 @@ AIDL := $(HOST_OUT_EXECUTABLES)/aidl$(HOST_EXECUTABLE_SUFFIX)
 ICUDATA := $(HOST_OUT_EXECUTABLES)/icudata$(HOST_EXECUTABLE_SUFFIX)
 SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
+MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 MKYAFFS2 := $(HOST_OUT_EXECUTABLES)/mkyaffs2image$(HOST_EXECUTABLE_SUFFIX)
 APICHECK := $(HOST_OUT_EXECUTABLES)/apicheck$(HOST_EXECUTABLE_SUFFIX)
@@ -274,7 +275,7 @@ PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 # The 'current' version is whatever this source tree is.  Once the apicheck
 # tool can generate the stubs from the xml files, we'll use that to be
 # able to build back-versions.  In the meantime, 'current' is the only
-# one supported.  
+# one supported.
 #
 # sgrax     is the opposite of xargs.  It takes the list of args and puts them
 #           on each line for sort to process.
