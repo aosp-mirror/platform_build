@@ -80,6 +80,9 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/bin/tcpdump)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/location)
 
+$(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/lib?camera_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/STATIC_LIBRARIES/lib?camera_intermediates)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
