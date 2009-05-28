@@ -904,12 +904,28 @@ endef
 ## Commands for running ar
 ###########################################################
 
+define extract-and-include-whole-static-libs
+$(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
+	@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
+	ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(lib)))_objs;\
+	rm -rf $$ldir; \
+	mkdir -p $$ldir; \
+	filelist=; \
+	for f in `$(TARGET_AR) t $(lib)`; do \
+	    $(TARGET_AR) p $(lib) $$f > $$ldir/$$f; \
+	    filelist="$$filelist $$ldir/$$f"; \
+	done ; \
+	$(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist;\
+)
+endef
+
 # Explicitly delete the archive first so that ar doesn't
 # try to add to an existing archive.
 define transform-o-to-static-lib
 @mkdir -p $(dir $@)
-@echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 @rm -f $@
+$(extract-and-include-whole-static-libs)
+@echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 $(hide) $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $^
 endef
 

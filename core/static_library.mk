@@ -25,5 +25,6 @@ $(all_objects) : TARGET_GLOBAL_CFLAGS :=
 $(all_objects) : TARGET_GLOBAL_CPPFLAGS := 
 endif
 
+$(LOCAL_BUILT_MODULE): $(built_whole_libraries)
 $(LOCAL_BUILT_MODULE): $(all_objects)
 	$(transform-o-to-static-lib)
