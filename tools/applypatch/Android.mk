@@ -12,18 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ifneq ($(TARGET_SIMULATOR),true)
+
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-ifneq ($(TARGET_SIMULATOR),true)
-
-LOCAL_SRC_FILES := applypatch.c bsdiff.c freecache.c
+LOCAL_SRC_FILES := applypatch.c bsdiff.c freecache.c imgpatch.c
 LOCAL_MODULE := applypatch
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := eng
-LOCAL_C_INCLUDES += external/bzip2
-LOCAL_STATIC_LIBRARIES += libmincrypt libbz libc
+LOCAL_C_INCLUDES += external/bzip2 external/zlib
+LOCAL_STATIC_LIBRARIES += libmincrypt libbz libz libc
 
 include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := imgdiff.c
+LOCAL_MODULE := imgdiff
+LOCAL_FORCE_STATIC_EXECUTABLE := true
+LOCAL_MODULE_TAGS := eng
+LOCAL_C_INCLUDES += external/zlib
+LOCAL_STATIC_LIBRARIES += libz
+
+include $(BUILD_HOST_EXECUTABLE)
 
 endif  # !TARGET_SIMULATOR

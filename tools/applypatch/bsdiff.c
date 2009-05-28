@@ -29,6 +29,7 @@
 #include <bzlib.h>
 
 #include "mincrypt/sha.h"
+#include "applypatch.h"
 
 void ShowBSDiffLicense() {
   puts("The bsdiff library used herein is:\n"
@@ -80,9 +81,33 @@ static off_t offtin(u_char *buf)
   return y;
 }
 
+
 int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
-                     const char* patch_filename,
+                     const char* patch_filename, ssize_t patch_offset,
                      FILE* output, SHA_CTX* ctx) {
+
+  unsigned char* new_data;
+  ssize_t new_size;
+  if (ApplyBSDiffPatchMem(old_data, old_size, patch_filename, patch_offset,
+                          &new_data, &new_size) != 0) {
+    return -1;
+  }
+
+  if (fwrite(new_data, 1, new_size, output) < new_size) {
+    fprintf(stderr, "short write of output: %d (%s)\n", errno, strerror(errno));
+    return 1;
+  }
+  if (ctx) {
+    SHA_update(ctx, new_data, new_size);
+  }
+  free(new_data);
+
+  return 0;
+}
+
+int ApplyBSDiffPatchMem(const unsigned char* old_data, ssize_t old_size,
+                        const char* patch_filename, ssize_t patch_offset,
+                        unsigned char** new_data, ssize_t* new_size) {
 
   FILE* f;
   if ((f = fopen(patch_filename, "rb")) == NULL) {
@@ -102,6 +127,8 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
   // from oldfile to x bytes from the diff block; copy y bytes from the
   // extra block; seek forwards in oldfile by z bytes".
 
+  fseek(f, patch_offset, SEEK_SET);
+
   unsigned char header[32];
   if (fread(header, 1, 32, f) < 32) {
     fprintf(stderr, "failed to read patch file header\n");
@@ -109,17 +136,16 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
   }
 
   if (memcmp(header, "BSDIFF40", 8) != 0) {
-    fprintf(stderr, "corrupt patch file header (magic number)\n");
+    fprintf(stderr, "corrupt bsdiff patch file header (magic number)\n");
     return 1;
   }
 
   ssize_t ctrl_len, data_len;
-  ssize_t new_size;
   ctrl_len = offtin(header+8);
   data_len = offtin(header+16);
-  new_size = offtin(header+24);
+  *new_size = offtin(header+24);
 
-  if (ctrl_len < 0 || data_len < 0 || new_size < 0) {
+  if (ctrl_len < 0 || data_len < 0 || *new_size < 0) {
     fprintf(stderr, "corrupt patch file header (data lengths)\n");
     return 1;
   }
@@ -135,7 +161,7 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
     fprintf(stderr, "failed to open patch file\n");                      \
     return 1;                                                            \
   }                                                                      \
-  if (fseeko(f, offset, SEEK_SET)) {                                     \
+  if (fseeko(f, offset+patch_offset, SEEK_SET)) {                        \
     fprintf(stderr, "failed to seek in patch file\n");                   \
     return 1;                                                            \
   }                                                                      \
@@ -150,9 +176,10 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
 
 #undef OPEN_AT
 
-  unsigned char* new_data = malloc(new_size);
-  if (new_data == NULL) {
-    fprintf(stderr, "failed to allocate memory for output file\n");
+  *new_data = malloc(*new_size);
+  if (*new_data == NULL) {
+    fprintf(stderr, "failed to allocate %d bytes of memory for output file\n",
+            (int)*new_size);
     return 1;
   }
 
@@ -161,7 +188,7 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
   off_t len_read;
   int i;
   unsigned char buf[8];
-  while (newpos < new_size) {
+  while (newpos < *new_size) {
     // Read control data
     for (i = 0; i < 3; ++i) {
       len_read = BZ2_bzRead(&bzerr, cpfbz2, buf, 8);
@@ -173,13 +200,13 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
     }
 
     // Sanity check
-    if (newpos + ctrl[0] > new_size) {
+    if (newpos + ctrl[0] > *new_size) {
       fprintf(stderr, "corrupt patch (new file overrun)\n");
       return 1;
     }
 
     // Read diff string
-    len_read = BZ2_bzRead(&bzerr, dpfbz2, new_data + newpos, ctrl[0]);
+    len_read = BZ2_bzRead(&bzerr, dpfbz2, *new_data + newpos, ctrl[0]);
     if (len_read < ctrl[0] || !(bzerr == BZ_OK || bzerr == BZ_STREAM_END)) {
       fprintf(stderr, "corrupt patch (read diff)\n");
       return 1;
@@ -188,7 +215,7 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
     // Add old data to diff string
     for (i = 0; i < ctrl[0]; ++i) {
       if ((oldpos+i >= 0) && (oldpos+i < old_size)) {
-        new_data[newpos+i] += old_data[oldpos+i];
+        (*new_data)[newpos+i] += old_data[oldpos+i];
       }
     }
 
@@ -197,13 +224,13 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
     oldpos += ctrl[0];
 
     // Sanity check
-    if (newpos + ctrl[1] > new_size) {
+    if (newpos + ctrl[1] > *new_size) {
       fprintf(stderr, "corrupt patch (new file overrun)\n");
       return 1;
     }
 
     // Read extra string
-    len_read = BZ2_bzRead(&bzerr, epfbz2, new_data + newpos, ctrl[1]);
+    len_read = BZ2_bzRead(&bzerr, epfbz2, *new_data + newpos, ctrl[1]);
     if (len_read < ctrl[1] || !(bzerr == BZ_OK || bzerr == BZ_STREAM_END)) {
       fprintf(stderr, "corrupt patch (read extra)\n");
       return 1;
@@ -220,13 +247,6 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
   fclose(cpf);
   fclose(dpf);
   fclose(epf);
-
-  if (fwrite(new_data, 1, new_size, output) < new_size) {
-    fprintf(stderr, "short write of output: %d (%s)\n", errno, strerror(errno));
-    return 1;
-  }
-  SHA_update(ctx, new_data, new_size);
-  free(new_data);
 
   return 0;
 }
