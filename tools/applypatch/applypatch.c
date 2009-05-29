@@ -431,9 +431,17 @@ int main(int argc, char** argv) {
   } else if (header_bytes_read >= 8 &&
              memcmp(header, "BSDIFF40", 8) == 0) {
     int result = ApplyBSDiffPatch(source_to_use->data, source_to_use->size,
-                                  patch_filename, output, &ctx);
+                                  patch_filename, 0, output, &ctx);
     if (result != 0) {
       fprintf(stderr, "ApplyBSDiffPatch failed\n");
+      return result;
+    }
+  } else if (header_bytes_read >= 8 &&
+             memcmp(header, "IMGDIFF1", 8) == 0) {
+    int result = ApplyImagePatch(source_to_use->data, source_to_use->size,
+                                 patch_filename, output, &ctx);
+    if (result != 0) {
+      fprintf(stderr, "ApplyImagePatch failed\n");
       return result;
     }
   } else {
