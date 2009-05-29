@@ -3,5 +3,5 @@
 # will only be used to select an optimized VFP-capable assembly
 # interpreter loop for Dalvik.
 #
-include $(BUILD_SYSTEM)/combo/arch/armv5te.mk
+include $(BUILD_COMBOS)/arch/arm/armv5te.mk
 
