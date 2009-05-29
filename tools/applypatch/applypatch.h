@@ -44,6 +44,14 @@ size_t FreeSpaceForFile(const char* filename);
 // bsdiff.c
 void ShowBSDiffLicense();
 int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
+                     const char* patch_filename, ssize_t offset,
+                     FILE* output, SHA_CTX* ctx);
+int ApplyBSDiffPatchMem(const unsigned char* old_data, ssize_t old_size,
+                        const char* patch_filename, ssize_t patch_offset,
+                        unsigned char** new_data, ssize_t* new_size);
+
+// imgpatch.c
+int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
                      const char* patch_filename,
                      FILE* output, SHA_CTX* ctx);
 
