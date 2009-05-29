@@ -322,9 +322,12 @@ def AppendAssertions(script, input_zip):
                              for b in bootloaders]))
 
 
-def IncludeBinary(name, input_zip, output_zip):
+def IncludeBinary(name, input_zip, output_zip, input_path=None):
   try:
-    data = input_zip.read(os.path.join("OTA/bin", name))
+    if input_path is not None:
+      data = open(input_path).read()
+    else:
+      data = input_zip.read(os.path.join("OTA/bin", name))
     output_zip.writestr(name, data)
   except IOError:
     raise ExternalError('unable to include device binary "%s"' % (name,))
@@ -402,8 +405,11 @@ def LoadSystemFiles(z):
   return out
 
 
-def Difference(tf, sf):
-  """Return the patch (as a string of data) needed to turn sf into tf."""
+def Difference(tf, sf, diff_program):
+  """Return the patch (as a string of data) needed to turn sf into tf.
+  diff_program is the name of an external program (or list, if
+  additional arguments are desired) to run to generate the diff.
+  """
 
   ttemp = tf.WriteToTemp()
   stemp = sf.WriteToTemp()
@@ -412,10 +418,17 @@ def Difference(tf, sf):
 
   try:
     ptemp = tempfile.NamedTemporaryFile()
-    p = common.Run(["bsdiff", stemp.name, ttemp.name, ptemp.name])
+    if isinstance(diff_program, list):
+      cmd = copy.copy(diff_program)
+    else:
+      cmd = [diff_program]
+    cmd.append(stemp.name)
+    cmd.append(ttemp.name)
+    cmd.append(ptemp.name)
+    p = common.Run(cmd)
     _, err = p.communicate()
     if err:
-      raise ExternalError("failure running bsdiff:\n%s\n" % (err,))
+      raise ExternalError("failure running %s:\n%s\n" % (diff_program, err))
     diff = ptemp.read()
     ptemp.close()
   finally:
@@ -461,7 +474,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       verbatim_targets.append((fn, tf.size))
     elif tf.sha1 != sf.sha1:
       # File is different; consider sending as a patch
-      d = Difference(tf, sf)
+      diff_method = "bsdiff"
+      if tf.name.endswith(".gz"):
+        diff_method = "imgdiff"
+      d = Difference(tf, sf, diff_method)
       print fn, tf.size, len(d), (float(len(d)) / tf.size)
       if len(d) > tf.size * OPTIONS.patch_threshold:
         # patch is almost as big as the file; don't bother patching
@@ -493,11 +509,13 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       os.path.join(OPTIONS.target_tmp, "BOOT"))
   updating_boot = (source_boot != target_boot)
 
-  source_recovery = common.BuildBootableImage(
-      os.path.join(OPTIONS.source_tmp, "RECOVERY"))
-  target_recovery = common.BuildBootableImage(
-      os.path.join(OPTIONS.target_tmp, "RECOVERY"))
-  updating_recovery = (source_recovery != target_recovery)
+  source_recovery = File("system/recovery.img",
+                         common.BuildBootableImage(
+      os.path.join(OPTIONS.source_tmp, "RECOVERY")))
+  target_recovery = File("system/recovery.img",
+                         common.BuildBootableImage(
+      os.path.join(OPTIONS.target_tmp, "RECOVERY")))
+  updating_recovery = (source_recovery.data != target_recovery.data)
 
   source_radio = source_zip.read("RADIO/image")
   target_radio = target_zip.read("RADIO/image")
@@ -515,13 +533,13 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   pb_verify = progress_bar_total * 0.3 * \
               (total_patched_size /
-               float(total_patched_size+total_verbatim_size))
+               float(total_patched_size+total_verbatim_size+1))
 
   for i, (fn, tf, sf, size) in enumerate(patch_list):
     if i % 5 == 0:
       next_sizes = sum([i[3] for i in patch_list[i:i+5]])
       script.append("show_progress %f 1" %
-                    (next_sizes * pb_verify / total_patched_size,))
+                    (next_sizes * pb_verify / (total_patched_size+1),))
     script.append("run_program PACKAGE:applypatch -c /%s %s %s" %
                   (fn, tf.sha1, sf.sha1))
 
@@ -530,6 +548,19 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                   (largest_source_size,))
     script.append("copy_dir PACKAGE:patch CACHE:../tmp/patchtmp")
     IncludeBinary("applypatch", target_zip, output_zip)
+
+  if updating_recovery:
+    d = Difference(target_recovery, source_recovery, "imgdiff")
+    print "recovery  target: %d  source: %d  diff: %d" % (
+        target_recovery.size, source_recovery.size, len(d))
+
+    output_zip.writestr("patch/recovery.img.p", d)
+
+    script.append(("run_program PACKAGE:applypatch -c "
+                   "MTD:recovery:%d:%s:%d:%s") %
+                  (source_recovery.size, source_recovery.sha1,
+                   target_recovery.size, target_recovery.sha1))
+
 
   script.append("\n# ---- start making changes here\n")
 
@@ -546,7 +577,15 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     print "boot image unchanged; skipping."
 
   if updating_recovery:
-    output_zip.writestr("system/recovery.img", target_recovery)
+    # Produce /system/recovery.img by applying a patch to the current
+    # contents of the recovery partition.
+    script.append(("run_program PACKAGE:applypatch MTD:recovery:%d:%s:%d:%s "
+                   "/system/recovery.img %s %d %s:/tmp/patchtmp/recovery.img.p")
+                  % (source_recovery.size, source_recovery.sha1,
+                     target_recovery.size, target_recovery.sha1,
+                     target_recovery.sha1,
+                     target_recovery.size,
+                     source_recovery.sha1))
     print "recovery image changed; including."
   else:
     print "recovery image unchanged; skipping."
@@ -561,12 +600,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   pb_apply = progress_bar_total * 0.7 * \
              (total_patched_size /
-              float(total_patched_size+total_verbatim_size))
+              float(total_patched_size+total_verbatim_size+1))
   for i, (fn, tf, sf, size) in enumerate(patch_list):
     if i % 5 == 0:
       next_sizes = sum([i[3] for i in patch_list[i:i+5]])
       script.append("show_progress %f 1" %
-                    (next_sizes * pb_apply / total_patched_size,))
+                    (next_sizes * pb_apply / (total_patched_size+1),))
     script.append(("run_program PACKAGE:applypatch "
                    "/%s - %s %d %s:/tmp/patchtmp/%s.p") %
                   (fn, tf.sha1, tf.size, sf.sha1, fn))
@@ -594,7 +633,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if verbatim_targets:
     pb_verbatim = progress_bar_total * \
                   (total_verbatim_size /
-                   float(total_patched_size+total_verbatim_size))
+                   float(total_patched_size+total_verbatim_size+1))
     script.append("show_progress %f 5" % (pb_verbatim,))
     script.append("copy_dir PACKAGE:system SYSTEM:")
 

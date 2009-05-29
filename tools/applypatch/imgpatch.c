@@ -124,7 +124,8 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
 
       unsigned char* expanded_source = malloc(expanded_len);
       if (expanded_source == NULL) {
-        fprintf(stderr, "failed to allocate %d bytes for expanded_source\n", expanded_len);
+        fprintf(stderr, "failed to allocate %d bytes for expanded_source\n",
+                expanded_len);
         return -1;
       }
 

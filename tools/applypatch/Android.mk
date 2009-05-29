@@ -21,8 +21,8 @@ LOCAL_SRC_FILES := applypatch.c bsdiff.c freecache.c imgpatch.c
 LOCAL_MODULE := applypatch
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := eng
-LOCAL_C_INCLUDES += external/bzip2 external/zlib
-LOCAL_STATIC_LIBRARIES += libmincrypt libbz libz libc
+LOCAL_C_INCLUDES += external/bzip2 external/zlib bootable/recovery
+LOCAL_STATIC_LIBRARIES += libmtdutils libmincrypt libbz libz libc
 
 include $(BUILD_EXECUTABLE)
 
