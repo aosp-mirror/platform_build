@@ -52,6 +52,7 @@ libdvm.so               0xAD000000
 libpixelflinger.so      0xACF00000
 libcorecg.so            0xACE00000
 libsurfaceflinger.so    0xACD00000
+libGLES_android.so      0xACC80000
 libagl.so               0xACC00000
 
 libGLESv1_CM.so         0xACB00000
