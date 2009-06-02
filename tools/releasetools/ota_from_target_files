@@ -427,11 +427,12 @@ def Difference(tf, sf, diff_program):
     cmd.append(ptemp.name)
     p = common.Run(cmd)
     _, err = p.communicate()
-    if err:
-      raise ExternalError("failure running %s:\n%s\n" % (diff_program, err))
+    if err or p.returncode != 0:
+      print "WARNING: failure running %s:\n%s\n" % (diff_program, err)
+      return None
     diff = ptemp.read()
-    ptemp.close()
   finally:
+    ptemp.close()
     stemp.close()
     ttemp.close()
 
@@ -478,8 +479,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       if tf.name.endswith(".gz"):
         diff_method = "imgdiff"
       d = Difference(tf, sf, diff_method)
-      print fn, tf.size, len(d), (float(len(d)) / tf.size)
-      if len(d) > tf.size * OPTIONS.patch_threshold:
+      if d is not None:
+        print fn, tf.size, len(d), (float(len(d)) / tf.size)
+      if d is None or len(d) > tf.size * OPTIONS.patch_threshold:
         # patch is almost as big as the file; don't bother patching
         tf.AddToZip(output_zip)
         verbatim_targets.append((fn, tf.size))
@@ -503,11 +505,13 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                  '"ro.build.fingerprint=%s") == "true"') %
                 (source_fp, target_fp))
 
-  source_boot = common.BuildBootableImage(
-      os.path.join(OPTIONS.source_tmp, "BOOT"))
-  target_boot = common.BuildBootableImage(
-      os.path.join(OPTIONS.target_tmp, "BOOT"))
-  updating_boot = (source_boot != target_boot)
+  source_boot = File("/tmp/boot.img",
+                     common.BuildBootableImage(
+      os.path.join(OPTIONS.source_tmp, "BOOT")))
+  target_boot = File("/tmp/boot.img",
+                     common.BuildBootableImage(
+      os.path.join(OPTIONS.target_tmp, "BOOT")))
+  updating_boot = (source_boot.data != target_boot.data)
 
   source_recovery = File("system/recovery.img",
                          common.BuildBootableImage(
@@ -543,12 +547,6 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.append("run_program PACKAGE:applypatch -c /%s %s %s" %
                   (fn, tf.sha1, sf.sha1))
 
-  if patch_list:
-    script.append("run_program PACKAGE:applypatch -s %d" %
-                  (largest_source_size,))
-    script.append("copy_dir PACKAGE:patch CACHE:../tmp/patchtmp")
-    IncludeBinary("applypatch", target_zip, output_zip)
-
   if updating_recovery:
     d = Difference(target_recovery, source_recovery, "imgdiff")
     print "recovery  target: %d  source: %d  diff: %d" % (
@@ -561,6 +559,23 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                   (source_recovery.size, source_recovery.sha1,
                    target_recovery.size, target_recovery.sha1))
 
+  if updating_boot:
+    d = Difference(target_boot, source_boot, "imgdiff")
+    print "boot      target: %d  source: %d  diff: %d" % (
+        target_boot.size, source_boot.size, len(d))
+
+    output_zip.writestr("patch/boot.img.p", d)
+
+    script.append(("run_program PACKAGE:applypatch -c "
+                   "MTD:boot:%d:%s:%d:%s") %
+                  (source_boot.size, source_boot.sha1,
+                   target_boot.size, target_boot.sha1))
+
+  if patch_list or updating_recovery or updating_boot:
+    script.append("run_program PACKAGE:applypatch -s %d" %
+                  (largest_source_size,))
+    script.append("copy_dir PACKAGE:patch CACHE:../tmp/patchtmp")
+    IncludeBinary("applypatch", target_zip, output_zip)
 
   script.append("\n# ---- start making changes here\n")
 
@@ -570,8 +585,17 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   DeleteFiles(script, [SubstituteRoot(i[0]) for i in verbatim_targets])
 
   if updating_boot:
-    script.append("format BOOT:")
-    output_zip.writestr("boot.img", target_boot)
+    # Produce the boot image by applying a patch to the current
+    # contents of the boot partition, and write it back to the
+    # partition.
+    script.append(("run_program PACKAGE:applypatch "
+                   "MTD:boot:%d:%s:%d:%s - "
+                   "%s %d %s:/tmp/patchtmp/boot.img.p")
+                  % (source_boot.size, source_boot.sha1,
+                     target_boot.size, target_boot.sha1,
+                     target_boot.sha1,
+                     target_boot.size,
+                     source_boot.sha1))
     print "boot image changed; including."
   else:
     print "boot image unchanged; skipping."
@@ -653,10 +677,6 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   # Now that the symlinks are created, we can set all the
   # permissions.
   script.extend(temp_script)
-
-  if updating_boot:
-    script.append("show_progress 0.1 5")
-    script.append("write_raw_image PACKAGE:boot.img BOOT:")
 
   if OPTIONS.extra_script is not None:
     script.append(OPTIONS.extra_script)
