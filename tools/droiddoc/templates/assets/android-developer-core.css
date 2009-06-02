@@ -268,20 +268,16 @@ hr.blue {
 #headerLinks {
   margin:10px 10px 0 0;
   height:13px;
-}
-
-#headerLinks .text {
-  text-decoration: none;
-  color: #7FA9B5;
   font-size: 11px;
   vertical-align: top;
 }
 
 #headerLinks a {
-  text-decoration: underline;
   color: #7FA9B5;
-  font-size: 11px;
-  vertical-align: top;
+}
+
+#language {
+  margin:0 10px;
 }
 
 #search {
