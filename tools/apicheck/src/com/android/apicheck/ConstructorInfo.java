@@ -55,11 +55,12 @@ public class ConstructorInfo implements AbstractMethodInfo {
     }
     
     public String getHashableName() {
-      String returnString = qualifiedName();
+      StringBuilder result = new StringBuilder();
+      result.append(name());
       for (ParameterInfo pInfo : mParameters) {
-          returnString += ":" + pInfo.getType();
+          result.append(":").append(pInfo.getType());
       }
-      return returnString;
+      return result.toString();
     }
     
     public boolean isInBoth() {

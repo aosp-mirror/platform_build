@@ -195,7 +195,7 @@ public class MethodInfo implements AbstractMethodInfo {
     }
     
     public String getHashableName() {
-        return qualifiedName() + getParameterHash();
+        return name() + getParameterHash();
     }
     
     public String getSignature() {
