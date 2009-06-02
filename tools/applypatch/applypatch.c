@@ -25,11 +25,21 @@
 
 #include "mincrypt/sha.h"
 #include "applypatch.h"
+#include "mtdutils/mtdutils.h"
+
+int LoadMTDContents(const char* filename, FileContents* file);
+int ParseSha1(const char* str, uint8_t* digest);
 
 // Read a file into memory; store it and its associated metadata in
 // *file.  Return 0 on success.
 int LoadFileContents(const char* filename, FileContents* file) {
   file->data = NULL;
+
+  // A special 'filename' beginning with "MTD:" means to load the
+  // contents of an MTD partition.
+  if (strncmp(filename, "MTD:", 4) == 0) {
+    return LoadMTDContents(filename, file);
+  }
 
   if (stat(filename, &file->st) != 0) {
     fprintf(stderr, "failed to stat \"%s\": %s\n", filename, strerror(errno));
@@ -60,6 +70,178 @@ int LoadFileContents(const char* filename, FileContents* file) {
   SHA(file->data, file->size, file->sha1);
   return 0;
 }
+
+static size_t* size_array;
+// comparison function for qsort()ing an int array of indexes into
+// size_array[].
+static int compare_size_indices(const void* a, const void* b) {
+  int aa = *(int*)a;
+  int bb = *(int*)b;
+  if (size_array[aa] < size_array[bb]) {
+    return -1;
+  } else if (size_array[aa] > size_array[bb]) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+// Load the contents of an MTD partition into the provided
+// FileContents.  filename should be a string of the form
+// "MTD:<partition_name>:<size_1>:<sha1_1>:<size_2>:<sha1_2>:...".
+// The smallest size_n bytes for which that prefix of the mtd contents
+// has the corresponding sha1 hash will be loaded.  It is acceptable
+// for a size value to be repeated with different sha1s.  Will return
+// 0 on success.
+//
+// This complexity is needed because if an OTA installation is
+// interrupted, the partition might contain either the source or the
+// target data, which might be of different lengths.  We need to know
+// the length in order to read from MTD (there is no "end-of-file"
+// marker), so the caller must specify the possible lengths and the
+// hash of the data, and we'll do the load expecting to find one of
+// those hashes.
+int LoadMTDContents(const char* filename, FileContents* file) {
+  char* copy = strdup(filename);
+  const char* magic = strtok(copy, ":");
+  if (strcmp(magic, "MTD") != 0) {
+    fprintf(stderr, "LoadMTDContents called with bad filename (%s)\n",
+            filename);
+    return -1;
+  }
+  const char* partition = strtok(NULL, ":");
+
+  int i;
+  int colons = 0;
+  for (i = 0; filename[i] != '\0'; ++i) {
+    if (filename[i] == ':') {
+      ++colons;
+    }
+  }
+  if (colons < 3 || colons%2 == 0) {
+    fprintf(stderr, "LoadMTDContents called with bad filename (%s)\n",
+            filename);
+  }
+
+  int pairs = (colons-1)/2;     // # of (size,sha1) pairs in filename
+  int* index = malloc(pairs * sizeof(int));
+  size_t* size = malloc(pairs * sizeof(size_t));
+  char** sha1sum = malloc(pairs * sizeof(char*));
+
+  for (i = 0; i < pairs; ++i) {
+    const char* size_str = strtok(NULL, ":");
+    size[i] = strtol(size_str, NULL, 10);
+    if (size[i] == 0) {
+      fprintf(stderr, "LoadMTDContents called with bad size (%s)\n", filename);
+      return -1;
+    }
+    sha1sum[i] = strtok(NULL, ":");
+    index[i] = i;
+  }
+
+  // sort the index[] array so it indexs the pairs in order of
+  // increasing size.
+  size_array = size;
+  qsort(index, pairs, sizeof(int), compare_size_indices);
+
+  static int partitions_scanned = 0;
+  if (!partitions_scanned) {
+    mtd_scan_partitions();
+    partitions_scanned = 1;
+  }
+
+  const MtdPartition* mtd = mtd_find_partition_by_name(partition);
+  if (mtd == NULL) {
+    fprintf(stderr, "mtd partition \"%s\" not found (loading %s)\n",
+            partition, filename);
+    return -1;
+  }
+
+  MtdReadContext* ctx = mtd_read_partition(mtd);
+  if (ctx == NULL) {
+    fprintf(stderr, "failed to initialize read of mtd partition \"%s\"\n",
+            partition);
+    return -1;
+  }
+
+  SHA_CTX sha_ctx;
+  SHA_init(&sha_ctx);
+  uint8_t parsed_sha[SHA_DIGEST_SIZE];
+
+  // allocate enough memory to hold the largest size.
+  file->data = malloc(size[index[pairs-1]]);
+  char* p = (char*)file->data;
+  file->size = 0;                // # bytes read so far
+
+  for (i = 0; i < pairs; ++i) {
+    // Read enough additional bytes to get us up to the next size
+    // (again, we're trying the possibilities in order of increasing
+    // size).
+    size_t next = size[index[i]] - file->size;
+    size_t read = 0;
+    if (next > 0) {
+      read = mtd_read_data(ctx, p, next);
+      if (next != read) {
+        fprintf(stderr, "short read (%d bytes of %d) for partition \"%s\"\n",
+                read, next, partition);
+        free(file->data);
+        file->data = NULL;
+        return -1;
+      }
+      SHA_update(&sha_ctx, p, read);
+      file->size += read;
+    }
+
+    // Duplicate the SHA context and finalize the duplicate so we can
+    // check it against this pair's expected hash.
+    SHA_CTX temp_ctx;
+    memcpy(&temp_ctx, &sha_ctx, sizeof(SHA_CTX));
+    const uint8_t* sha_so_far = SHA_final(&temp_ctx);
+
+    if (ParseSha1(sha1sum[index[i]], parsed_sha) != 0) {
+      fprintf(stderr, "failed to parse sha1 %s in %s\n",
+              sha1sum[index[i]], filename);
+      free(file->data);
+      file->data = NULL;
+      return -1;
+    }
+
+    if (memcmp(sha_so_far, parsed_sha, SHA_DIGEST_SIZE) == 0) {
+      // we have a match.  stop reading the partition; we'll return
+      // the data we've read so far.
+      printf("mtd read matched size %d sha %s\n",
+             size[index[i]], sha1sum[index[i]]);
+      break;
+    }
+
+    p += read;
+  }
+
+  mtd_read_close(ctx);
+
+  if (i == pairs) {
+    // Ran off the end of the list of (size,sha1) pairs without
+    // finding a match.
+    fprintf(stderr, "contents of MTD partition \"%s\" didn't match %s\n",
+            partition, filename);
+    free(file->data);
+    file->data = NULL;
+    return -1;
+  }
+
+  const uint8_t* sha_final = SHA_final(&sha_ctx);
+  for (i = 0; i < SHA_DIGEST_SIZE; ++i) {
+    file->sha1[i] = sha_final[i];
+  }
+
+  free(copy);
+  free(index);
+  free(size);
+  free(sha1sum);
+
+  return 0;
+}
+
 
 // Save the contents of the given FileContents object under the given
 // filename.  Return 0 on success.
@@ -178,8 +360,13 @@ int CheckMode(int argc, char** argv) {
   FileContents file;
   file.data = NULL;
 
+  // It's okay to specify no sha1s; the check will pass if the
+  // LoadFileContents is successful.  (Useful for reading MTD
+  // partitions, where the filename encodes the sha1s; no need to
+  // check them twice.)
   if (LoadFileContents(argv[2], &file) != 0 ||
-      FindMatchingPatch(file.sha1, patches, num_patches) == NULL) {
+      (num_patches > 0 &&
+       FindMatchingPatch(file.sha1, patches, num_patches) == NULL)) {
     fprintf(stderr, "file \"%s\" doesn't have any of expected "
             "sha1 sums; checking cache\n", argv[2]);
 
@@ -241,14 +428,24 @@ size_t FreeSpaceForFile(const char* filename) {
 //
 // - otherwise, or if any error is encountered, exits with non-zero
 //   status.
+//
+// <src-file> (or <file> in check mode) may refer to an MTD partition
+// to read the source data.  See the comments for the
+// LoadMTDContents() function above for the format of such a filename.
 
 int main(int argc, char** argv) {
   if (argc < 2) {
  usage:
-    fprintf(stderr, "usage: %s <src-file> <tgt-file> <tgt-sha1> <tgt-size> [<src-sha1>:<patch> ...]\n"
-                    "   or  %s -c <file> [<sha1> ...]\n"
-                    "   or  %s -s <bytes>\n"
-                    "   or  %s -l\n",
+    fprintf(stderr,
+            "usage: %s <src-file> <tgt-file> <tgt-sha1> <tgt-size> "
+            "[<src-sha1>:<patch> ...]\n"
+            "   or  %s -c <file> [<sha1> ...]\n"
+            "   or  %s -s <bytes>\n"
+            "   or  %s -l\n"
+            "\n"
+            "<src-file> or <file> may be of the form\n"
+            "  MTD:<partition>:<len_1>:<sha1_1>:<len_2>:<sha1_2>:...\n"
+            "to specify reading from an MTD partition.\n\n",
             argv[0], argv[0], argv[0], argv[0]);
     return 1;
   }
@@ -370,6 +567,15 @@ int main(int argc, char** argv) {
     // Using the original source, but not enough free space.  First
     // copy the source file to cache, then delete it from the original
     // location.
+
+    if (strncmp(source_filename, "MTD:", 4) == 0) {
+      // It's impossible to free space on the target filesystem by
+      // deleting the source if the source is an MTD partition.  If
+      // we're ever in a state where we need to do this, fail.
+      fprintf(stderr, "not enough free space for target but source is MTD\n");
+      return 1;
+    }
+
     if (MakeFreeSpaceOnCache(source_file.size) < 0) {
       fprintf(stderr, "not enough free space on /cache\n");
       return 1;
