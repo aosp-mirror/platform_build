@@ -24,3 +24,6 @@ def:custom_masthead() ?>
 
 <?cs # appears on the side of the page ?>
 <?cs def:custom_left_nav() ?><?cs call:default_left_nav() ?><?cs /def ?>
+
+<?cs def:default_search_box() ?><?cs /def ?>
+<?cs def:default_left_nav() ?><?cs /def ?>
