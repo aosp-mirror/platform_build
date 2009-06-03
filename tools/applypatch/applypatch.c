@@ -27,8 +27,11 @@
 #include "applypatch.h"
 #include "mtdutils/mtdutils.h"
 
+int SaveFileContents(const char* filename, FileContents file);
 int LoadMTDContents(const char* filename, FileContents* file);
 int ParseSha1(const char* str, uint8_t* digest);
+
+static int mtd_partitions_scanned = 0;
 
 // Read a file into memory; store it and its associated metadata in
 // *file.  Return 0 on success.
@@ -139,15 +142,14 @@ int LoadMTDContents(const char* filename, FileContents* file) {
     index[i] = i;
   }
 
-  // sort the index[] array so it indexs the pairs in order of
+  // sort the index[] array so it indexes the pairs in order of
   // increasing size.
   size_array = size;
   qsort(index, pairs, sizeof(int), compare_size_indices);
 
-  static int partitions_scanned = 0;
-  if (!partitions_scanned) {
+  if (!mtd_partitions_scanned) {
     mtd_scan_partitions();
-    partitions_scanned = 1;
+    mtd_partitions_scanned = 1;
   }
 
   const MtdPartition* mtd = mtd_find_partition_by_name(partition);
@@ -234,6 +236,11 @@ int LoadMTDContents(const char* filename, FileContents* file) {
     file->sha1[i] = sha_final[i];
   }
 
+  // Fake some stat() info.
+  file->st.st_mode = 0644;
+  file->st.st_uid = 0;
+  file->st.st_gid = 0;
+
   free(copy);
   free(index);
   free(size);
@@ -272,6 +279,76 @@ int SaveFileContents(const char* filename, FileContents file) {
     return -1;
   }
 
+  return 0;
+}
+
+// Copy the contents of source_file to target_mtd partition, a string
+// of the form "MTD:<partition>[:...]".  Return 0 on success.
+int CopyToMTDPartition(const char* source_file, const char* target_mtd) {
+  char* partition = strchr(target_mtd, ':');
+  if (partition == NULL) {
+    fprintf(stderr, "bad MTD target name \"%s\"\n", target_mtd);
+    return -1;
+  }
+  ++partition;
+  // Trim off anything after a colon, eg "MTD:boot:blah:blah:blah...".
+  // We want just the partition name "boot".
+  partition = strdup(partition);
+  char* end = strchr(partition, ':');
+  if (end != NULL)
+    *end = '\0';
+
+  FILE* f = fopen(source_file, "rb");
+  if (f == NULL) {
+    fprintf(stderr, "failed to open %s for reading: %s\n",
+            source_file, strerror(errno));
+    return -1;
+  }
+
+  if (!mtd_partitions_scanned) {
+    mtd_scan_partitions();
+    mtd_partitions_scanned = 1;
+  }
+
+  const MtdPartition* mtd = mtd_find_partition_by_name(partition);
+  if (mtd == NULL) {
+    fprintf(stderr, "mtd partition \"%s\" not found for writing\n", partition);
+    return -1;
+  }
+
+  MtdWriteContext* ctx = mtd_write_partition(mtd);
+  if (ctx == NULL) {
+    fprintf(stderr, "failed to init mtd partition \"%s\" for writing\n",
+            partition);
+    return -1;
+  }
+
+  const int buffer_size = 4096;
+  char buffer[buffer_size];
+  size_t read;
+  while ((read = fread(buffer, 1, buffer_size, f)) > 0) {
+    size_t written = mtd_write_data(ctx, buffer, read);
+    if (written != read) {
+      fprintf(stderr, "only wrote %d of %d bytes to MTD %s\n",
+              written, read, partition);
+      mtd_write_close(ctx);
+      return -1;
+    }
+  }
+
+  fclose(f);
+  if (mtd_erase_blocks(ctx, -1) < 0) {
+    fprintf(stderr, "error finishing mtd write of %s\n", partition);
+    mtd_write_close(ctx);
+    return -1;
+  }
+
+  if (mtd_write_close(ctx)) {
+    fprintf(stderr, "error closing mtd write of %s\n", partition);
+    return -1;
+  }
+
+  free(partition);
   return 0;
 }
 
@@ -443,9 +520,10 @@ int main(int argc, char** argv) {
             "   or  %s -s <bytes>\n"
             "   or  %s -l\n"
             "\n"
-            "<src-file> or <file> may be of the form\n"
-            "  MTD:<partition>:<len_1>:<sha1_1>:<len_2>:<sha1_2>:...\n"
-            "to specify reading from an MTD partition.\n\n",
+            "Filenames may be of the form\n"
+            "  MTD:<partition>:<len_1>:<sha1_1>:<len_2>:<sha1_2>"
+              ":...:<backup-file>\n"
+            "to specify reading from or writing to an MTD partition.\n\n",
             argv[0], argv[0], argv[0], argv[0]);
     return 1;
   }
@@ -480,16 +558,7 @@ int main(int argc, char** argv) {
     target_filename = source_filename;
   }
 
-  // assume that target_filename (eg "/system/app/Foo.apk") is located
-  // on the same filesystem as its top-level directory ("/system").
-  // We need something that exists for calling statfs().
-  char* target_fs = strdup(target_filename);
-  char* slash = strchr(target_fs+1, '/');
-  if (slash != NULL) {
-    *slash = '\0';
-  }
-
-  if (ParseSha1(argv[3], target_sha1) != 0) {
+ if (ParseSha1(argv[3], target_sha1) != 0) {
     fprintf(stderr, "failed to parse tgt-sha1 \"%s\"\n", argv[3]);
     return 1;
   }
@@ -557,39 +626,70 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Is there enough room in the target filesystem to hold the patched file?
-  size_t free_space = FreeSpaceForFile(target_fs);
-  int enough_space = free_space > (target_size * 3 / 2);  // 50% margin of error
-  printf("target %ld bytes; free space %ld bytes; enough %d\n",
-         (long)target_size, (long)free_space, enough_space);
+  // Is there enough room in the target filesystem to hold the patched
+  // file?
 
-  if (!enough_space && source_patch_filename != NULL) {
-    // Using the original source, but not enough free space.  First
-    // copy the source file to cache, then delete it from the original
-    // location.
+  if (strncmp(target_filename, "MTD:", 4) == 0) {
+    // If the target is an MTD partition, we're actually going to
+    // write the output to /tmp and then copy it to the partition.
+    // statfs() always returns 0 blocks free for /tmp, so instead
+    // we'll just assume that /tmp has enough space to hold the file.
 
-    if (strncmp(source_filename, "MTD:", 4) == 0) {
-      // It's impossible to free space on the target filesystem by
-      // deleting the source if the source is an MTD partition.  If
-      // we're ever in a state where we need to do this, fail.
-      fprintf(stderr, "not enough free space for target but source is MTD\n");
-      return 1;
-    }
-
+    // We still write the original source to cache, in case the MTD
+    // write is interrupted.
     if (MakeFreeSpaceOnCache(source_file.size) < 0) {
       fprintf(stderr, "not enough free space on /cache\n");
       return 1;
     }
-
     if (SaveFileContents(CACHE_TEMP_SOURCE, source_file) < 0) {
       fprintf(stderr, "failed to back up source file\n");
       return 1;
     }
     made_copy = 1;
-    unlink(source_filename);
+  } else {
+    // assume that target_filename (eg "/system/app/Foo.apk") is located
+    // on the same filesystem as its top-level directory ("/system").
+    // We need something that exists for calling statfs().
+    char* target_fs = strdup(target_filename);
+    char* slash = strchr(target_fs+1, '/');
+    if (slash != NULL) {
+      *slash = '\0';
+    }
 
     size_t free_space = FreeSpaceForFile(target_fs);
-    printf("(now %ld bytes free for target)\n", (long)free_space);
+    int enough_space =
+        free_space > (target_size * 3 / 2);  // 50% margin of error
+    printf("target %ld bytes; free space %ld bytes; enough %d\n",
+           (long)target_size, (long)free_space, enough_space);
+
+    if (!enough_space && source_patch_filename != NULL) {
+      // Using the original source, but not enough free space.  First
+      // copy the source file to cache, then delete it from the original
+      // location.
+
+      if (strncmp(source_filename, "MTD:", 4) == 0) {
+        // It's impossible to free space on the target filesystem by
+        // deleting the source if the source is an MTD partition.  If
+        // we're ever in a state where we need to do this, fail.
+        fprintf(stderr, "not enough free space for target but source is MTD\n");
+        return 1;
+      }
+
+      if (MakeFreeSpaceOnCache(source_file.size) < 0) {
+        fprintf(stderr, "not enough free space on /cache\n");
+        return 1;
+      }
+
+      if (SaveFileContents(CACHE_TEMP_SOURCE, source_file) < 0) {
+        fprintf(stderr, "failed to back up source file\n");
+        return 1;
+      }
+      made_copy = 1;
+      unlink(source_filename);
+
+      size_t free_space = FreeSpaceForFile(target_fs);
+      printf("(now %ld bytes free for target)\n", (long)free_space);
+    }
   }
 
   FileContents* source_to_use;
@@ -602,14 +702,19 @@ int main(int argc, char** argv) {
     patch_filename = copy_patch_filename;
   }
 
-  // We write the decoded output to "<tgt-file>.patch".
-  char* outname = (char*)malloc(strlen(target_filename) + 10);
-  strcpy(outname, target_filename);
-  strcat(outname, ".patch");
+  char* outname = NULL;
+  if (strncmp(target_filename, "MTD:", 4) == 0) {
+    outname = MTD_TARGET_TEMP_FILE;
+  } else {
+    // We write the decoded output to "<tgt-file>.patch".
+    outname = (char*)malloc(strlen(target_filename) + 10);
+    strcpy(outname, target_filename);
+    strcat(outname, ".patch");
+  }
   FILE* output = fopen(outname, "wb");
   if (output == NULL) {
-    fprintf(stderr, "failed to patch file %s: %s\n",
-            target_filename, strerror(errno));
+    fprintf(stderr, "failed to open output file %s: %s\n",
+            outname, strerror(errno));
     return 1;
   }
 
@@ -665,22 +770,32 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  // Give the .patch file the same owner, group, and mode of the
-  // original source file.
-  if (chmod(outname, source_to_use->st.st_mode) != 0) {
-    fprintf(stderr, "chmod of \"%s\" failed: %s\n", outname, strerror(errno));
-    return 1;
-  }
-  if (chown(outname, source_to_use->st.st_uid, source_to_use->st.st_gid) != 0) {
-    fprintf(stderr, "chown of \"%s\" failed: %s\n", outname, strerror(errno));
-    return 1;
-  }
+  if (strcmp(outname, MTD_TARGET_TEMP_FILE) == 0) {
+    // Copy the temp file to the MTD partition.
+    if (CopyToMTDPartition(outname, target_filename) != 0) {
+      fprintf(stderr, "copy of %s to %s failed\n", outname, target_filename);
+      return 1;
+    }
+    unlink(outname);
+  } else {
+    // Give the .patch file the same owner, group, and mode of the
+    // original source file.
+    if (chmod(outname, source_to_use->st.st_mode) != 0) {
+      fprintf(stderr, "chmod of \"%s\" failed: %s\n", outname, strerror(errno));
+      return 1;
+    }
+    if (chown(outname, source_to_use->st.st_uid,
+              source_to_use->st.st_gid) != 0) {
+      fprintf(stderr, "chown of \"%s\" failed: %s\n", outname, strerror(errno));
+      return 1;
+    }
 
-  // Finally, rename the .patch file to replace the target file.
-  if (rename(outname, target_filename) != 0) {
-    fprintf(stderr, "rename of .patch to \"%s\" failed: %s\n",
-            target_filename, strerror(errno));
-    return 1;
+    // Finally, rename the .patch file to replace the target file.
+    if (rename(outname, target_filename) != 0) {
+      fprintf(stderr, "rename of .patch to \"%s\" failed: %s\n",
+              target_filename, strerror(errno));
+      return 1;
+    }
   }
 
   // If this run of applypatch created the copy, and we're here, we
