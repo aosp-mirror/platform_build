@@ -31,6 +31,15 @@ if ((agent.indexOf("Mobile") != -1) ||
   addLoadEvent(mobileSetup);
 }
 
+/* loads the lists.js file to the page. 
+Loading this in the head was slowing page load time */
+addLoadEvent( function() {
+  var lists = document.createElement("script");
+  lists.setAttribute("type","text/javascript");
+  lists.setAttribute("src", toRoot+"reference/lists.js");
+  $("head").append($(lists));
+} );
+
 window.onresize = resizeAll;
 
 function mobileSetup() {
@@ -282,7 +291,7 @@ function swapNav() {
     nav_pref = NAV_PREF_PANELS;
   } else {
     nav_pref = NAV_PREF_TREE;
-    init_navtree("nav-tree", toRoot, NAVTREE_DATA);
+    init_default_navtree(toRoot);
   }
   var date = new Date();
   date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
