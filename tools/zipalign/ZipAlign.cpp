@@ -16,7 +16,7 @@
 /*
  * Zip alignment tool
  */
-#include "utils/ZipFile.h"
+#include "ZipFile.h"
 
 #include <stdlib.h>
 #include <stdio.h>

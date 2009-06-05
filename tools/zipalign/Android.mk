@@ -8,7 +8,9 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
-	ZipAlign.cpp
+	ZipAlign.cpp \
+	ZipEntry.cpp \
+	ZipFile.cpp
 
 LOCAL_C_INCLUDES += external/zlib
 
