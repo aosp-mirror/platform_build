@@ -324,6 +324,7 @@ subdirs += \
 	dalvik/dx \
 	dalvik/libcore \
 	development/apps \
+	development/tools/archquery \
 	development/tools/androidprefs \
 	development/tools/apkbuilder \
 	development/tools/jarutils \
