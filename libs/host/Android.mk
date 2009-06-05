@@ -3,7 +3,6 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
 	CopyFile.c \
-	Directories.cpp \
 	pseudolocalize.cpp
 
 ifeq ($(HOST_OS),cygwin)
