@@ -1224,7 +1224,7 @@ define unzip-jar-files
       echo Missing file $$f; \
       exit 1; \
     fi; \
-    unzip -q $$f -d $(2); \
+    unzip -qo $$f -d $(2); \
     (cd $(2) && rm -rf META-INF); \
   done
 endef
