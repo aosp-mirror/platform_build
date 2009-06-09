@@ -84,6 +84,7 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    telephony \
 	    tts \
 	    wifi \
+            vpn \
 	 )
 
 #
