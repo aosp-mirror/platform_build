@@ -22,5 +22,6 @@ PRODUCT_PACKAGES := \
     TelephonyProvider \
     UserDictionaryProvider \
     PackageInstaller \
+    WebSearchProvider \
     Bugreport
 
