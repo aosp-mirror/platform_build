@@ -102,6 +102,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_DIR)/symbols/system/bin/auth-agent)
 $(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/STATIC_LIBRARIES/libeglib_static_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/STATIC_LIBRARIES/libgdbus_static_intermediates/*)
 $(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/STATIC_LIBRARIES/libbluez-utils-common-static_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/obj/EXECUTABLES/hcidump_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/system/bin/hcidump)
+$(call add-clean-step, rm -rf $(PRODUCT_DIR)/symbols/system/bin/hcidump)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
