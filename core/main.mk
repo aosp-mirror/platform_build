@@ -228,7 +228,7 @@ endif
 # If we're on an eng or tests build, but not on the sdk, and we have
 # a better one, use that instead.
 ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
-  ifdef is_sdk_build
+  ifndef is_sdk_build
     apns_to_use := $(wildcard vendor/google/etc/apns-conf.xml)
     ifneq ($(strip $(apns_to_use)),)
       PRODUCT_COPY_FILES := \
