@@ -168,6 +168,6 @@ function search_focus_changed(obj, focused)
 
 function submit_search() {
   var query = document.getElementById('search_autocomplete').value;
-  document.location = '/search.html#q=' + query; 
+  document.location = toRoot + 'search.html#q=' + query; // toRoot is initialized in android-developer-docs.js 
   return false;
 }
