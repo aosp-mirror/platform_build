@@ -17,8 +17,10 @@ PRODUCT_PACKAGES := \
     DownloadProvider \
     GoogleSearch \
     MediaProvider \
+    PicoTts \
     SettingsProvider \
     TelephonyProvider \
+    TtsService \
     UserDictionaryProvider \
     PackageInstaller \
     WebSearchProvider \
