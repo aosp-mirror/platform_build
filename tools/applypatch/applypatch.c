@@ -509,23 +509,48 @@ size_t FreeSpaceForFile(const char* filename) {
 // <src-file> (or <file> in check mode) may refer to an MTD partition
 // to read the source data.  See the comments for the
 // LoadMTDContents() function above for the format of such a filename.
+//
+//
+// As you might guess from the arguments, this function used to be
+// main(); it was split out this way so applypatch could be built as a
+// static library and linked into other executables as well.  In the
+// future only the library form will exist; we will not need to build
+// this as a standalone executable.
+//
+// The arguments to this function are just the command-line of the
+// standalone executable:
+//
+// <src-file> <tgt-file> <tgt-sha1> <tgt-size> [<src-sha1>:<patch> ...]
+//    to apply a patch.  Returns 0 on success, 1 on failure.
+//
+// "-c" <file> [<sha1> ...]
+//    to check a file's contents against zero or more sha1s.  Returns
+//    0 if it matches any of them, 1 if it doesn't.
+//
+// "-s" <bytes>
+//    returns 0 if enough free space is available on /cache; 1 if it
+//    does not.
+//
+// "-l"
+//    shows open-source license information and returns 0.
+//
+// This function returns 2 if the arguments are not understood (in the
+// standalone executable, this causes the usage message to be
+// printed).
+//
+// TODO: make the interface more sensible for use as a library.
 
-int main(int argc, char** argv) {
+int applypatch(int argc, char** argv) {
+
+  printf("applypatch  argc %d\n", argc);
+  int xx;
+  for (xx = 0; xx < argc; ++xx) {
+    printf("%d %p %s\n", xx, argv[xx], argv[xx]);
+    fflush(stdout);
+  }
+
   if (argc < 2) {
- usage:
-    fprintf(stderr,
-            "usage: %s <src-file> <tgt-file> <tgt-sha1> <tgt-size> "
-            "[<src-sha1>:<patch> ...]\n"
-            "   or  %s -c <file> [<sha1> ...]\n"
-            "   or  %s -s <bytes>\n"
-            "   or  %s -l\n"
-            "\n"
-            "Filenames may be of the form\n"
-            "  MTD:<partition>:<len_1>:<sha1_1>:<len_2>:<sha1_2>"
-              ":...:<backup-file>\n"
-            "to specify reading from or writing to an MTD partition.\n\n",
-            argv[0], argv[0], argv[0], argv[0]);
-    return 1;
+    return 2;
   }
 
   if (strncmp(argv[1], "-l", 3) == 0) {
@@ -538,7 +563,7 @@ int main(int argc, char** argv) {
 
   if (strncmp(argv[1], "-s", 3) == 0) {
     if (argc != 3) {
-      goto usage;
+      return 2;
     }
     size_t bytes = strtol(argv[2], NULL, 10);
     if (MakeFreeSpaceOnCache(bytes) < 0) {

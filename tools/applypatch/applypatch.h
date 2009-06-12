@@ -17,6 +17,7 @@
 #ifndef _APPLYPATCH_H
 #define _APPLYPATCH_H
 
+#include <sys/stat.h>
 #include "mincrypt/sha.h"
 
 typedef struct _Patch {
@@ -45,6 +46,7 @@ typedef struct _FileContents {
 
 // applypatch.c
 size_t FreeSpaceForFile(const char* filename);
+int applypatch(int argc, char** argv);
 
 // bsdiff.c
 void ShowBSDiffLicense();
