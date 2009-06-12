@@ -21,6 +21,7 @@ PRODUCT_PACKAGES := \
     SettingsProvider \
     TelephonyProvider \
     TtsService \
+    VpnServices \
     UserDictionaryProvider \
     PackageInstaller \
     WebSearchProvider \
