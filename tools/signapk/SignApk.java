@@ -62,6 +62,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 import javax.crypto.Cipher;
 import javax.crypto.EncryptedPrivateKeyInfo;
 import javax.crypto.SecretKeyFactory;
@@ -74,6 +75,10 @@ import javax.crypto.spec.PBEKeySpec;
 class SignApk {
     private static final String CERT_SF_NAME = "META-INF/CERT.SF";
     private static final String CERT_RSA_NAME = "META-INF/CERT.RSA";
+
+    // Files matching this pattern are not copied to the output.
+    private static Pattern stripPattern =
+            Pattern.compile("^META-INF/(.*)[.](SF|RSA|DSA)$");
 
     private static X509Certificate readPublicKey(File file)
             throws IOException, GeneralSecurityException {
@@ -193,7 +198,9 @@ class SignApk {
         for (JarEntry entry: byName.values()) {
             String name = entry.getName();
             if (!entry.isDirectory() && !name.equals(JarFile.MANIFEST_NAME) &&
-                !name.equals(CERT_SF_NAME) && !name.equals(CERT_RSA_NAME)) {
+                !name.equals(CERT_SF_NAME) && !name.equals(CERT_RSA_NAME) &&
+                (stripPattern == null ||
+                 !stripPattern.matcher(name).matches())) {
                 InputStream data = jar.getInputStream(entry);
                 while ((num = data.read(buffer)) > 0) {
                     md.update(buffer, 0, num);
