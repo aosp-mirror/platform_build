@@ -83,7 +83,8 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    sax \
 	    telephony \
 	    wifi \
-            vpn \
+	    vpn \
+	    keystore \
 	 )
 
 #
