@@ -21,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 # missing in Python 2.4 and before
 if not hasattr(os, "SEEK_SET"):
@@ -70,7 +71,7 @@ def BuildAndAddBootableImage(sourcedir, targetname, output_zip):
   img = BuildBootableImage(sourcedir)
 
   CheckSize(img, targetname)
-  output_zip.writestr(targetname, img)
+  ZipWriteStr(output_zip, targetname, img)
 
 def BuildBootableImage(sourcedir):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
@@ -381,3 +382,12 @@ class PasswordManager(object):
       if e.errno != errno.ENOENT:
         print "error reading password file: ", str(e)
     return result
+
+
+def ZipWriteStr(zip, filename, data, perms=0644):
+  # use a fixed timestamp so the output is repeatable.
+  zinfo = zipfile.ZipInfo(filename=filename,
+                          date_time=(2009, 1, 1, 0, 0, 0))
+  zinfo.compress_type = zip.compression
+  zinfo.external_attr = perms << 16
+  zip.writestr(zinfo, data)

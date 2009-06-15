@@ -96,7 +96,7 @@ def AddSystem(output_zip):
   img.close()
 
   common.CheckSize(data, "system.img")
-  output_zip.writestr("system.img", data)
+  common.ZipWriteStr(output_zip, "system.img", data)
 
 
 def CopyInfo(output_zip):
