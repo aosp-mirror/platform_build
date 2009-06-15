@@ -267,11 +267,8 @@ def CopySystemFiles(input_zip, output_zip=None,
 
 
 def AddScript(script, output_zip):
-  now = time.localtime()
-  i = zipfile.ZipInfo("META-INF/com/google/android/update-script",
-                      (now.tm_year, now.tm_mon, now.tm_mday,
-                       now.tm_hour, now.tm_min, now.tm_sec))
-  output_zip.writestr(i, "\n".join(script) + "\n")
+  common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-script",
+                     "\n".join(script) + "\n")
 
 
 def SignOutput(temp_zip_name, output_zip_name):
@@ -328,7 +325,7 @@ def IncludeBinary(name, input_zip, output_zip, input_path=None):
       data = open(input_path).read()
     else:
       data = input_zip.read(os.path.join("OTA/bin", name))
-    output_zip.writestr(name, data)
+    common.ZipWriteStr(output_zip, name, data, perms=0755)
   except IOError:
     raise ExternalError('unable to include device binary "%s"' % (name,))
 
@@ -346,7 +343,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.append("format BOOT:")
   script.append("show_progress 0.1 0")
 
-  output_zip.writestr("radio.img", input_zip.read("RADIO/image"))
+  common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
   script.append("write_radio_image PACKAGE:radio.img")
   script.append("show_progress 0.5 0")
 
@@ -390,7 +387,7 @@ class File(object):
     return t
 
   def AddToZip(self, z):
-    z.writestr(self.name, self.data)
+    common.ZipWriteStr(z, self.name, self.data)
 
 
 def LoadSystemFiles(z):
@@ -486,7 +483,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
         tf.AddToZip(output_zip)
         verbatim_targets.append((fn, tf.size))
       else:
-        output_zip.writestr("patch/" + fn + ".p", d)
+        common.ZipWriteStr(output_zip, "patch/" + fn + ".p", d)
         patch_list.append((fn, tf, sf, tf.size))
         largest_source_size = max(largest_source_size, sf.size)
     else:
@@ -552,7 +549,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     print "recovery  target: %d  source: %d  diff: %d" % (
         target_recovery.size, source_recovery.size, len(d))
 
-    output_zip.writestr("patch/recovery.img.p", d)
+    common.ZipWriteStr(output_zip, "patch/recovery.img.p", d)
 
     script.append(("run_program PACKAGE:applypatch -c "
                    "MTD:recovery:%d:%s:%d:%s") %
@@ -564,7 +561,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     print "boot      target: %d  source: %d  diff: %d" % (
         target_boot.size, source_boot.size, len(d))
 
-    output_zip.writestr("patch/boot.img.p", d)
+    common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
     script.append(("run_program PACKAGE:applypatch -c "
                    "MTD:boot:%d:%s:%d:%s") %
@@ -617,7 +614,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if updating_radio:
     script.append("show_progress 0.3 10")
     script.append("write_radio_image PACKAGE:radio.img")
-    output_zip.writestr("radio.img", target_radio)
+    common.ZipWriteStr(output_zip, "radio.img", target_radio)
     print "radio image changed; including."
   else:
     print "radio image unchanged; skipping."

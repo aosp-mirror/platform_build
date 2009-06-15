@@ -283,7 +283,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
   data, _ = p.communicate()
   if p.returncode != 0:
     raise ExternalError("failed to run dumpkeys")
-  output_tf_zip.writestr("RECOVERY/RAMDISK/res/keys", data)
+  common.ZipWriteStr(output_tf_zip, "RECOVERY/RAMDISK/res/keys", data)
 
   # SystemUpdateActivity uses the x509.pem version of the keys, but
   # put into a zipfile system/etc/security/otacerts.zip.
@@ -293,8 +293,8 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
   for k in mapped_keys:
     certs_zip.write(k)
   certs_zip.close()
-  output_tf_zip.writestr("SYSTEM/etc/security/otacerts.zip",
-                         tempfile.getvalue())
+  common.ZipWriteStr(output_tf_zip, "SYSTEM/etc/security/otacerts.zip",
+                     tempfile.getvalue())
 
 
 def main(argv):
