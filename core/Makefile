@@ -226,6 +226,15 @@ ifdef CREATE_MODULE_INFO_FILE
 	"INSTALLED=\"$(strip $(ALL_MODULES.$(m).INSTALLED))\"" >> $(MODULE_INFO_FILE)))
 endif
 
+# -----------------------------------------------------------------
+
+# The test key is used to sign this package, and as the key required
+# for future OTA packages installed by this system.  Actual product
+# deliverables will be re-signed by hand.  We expect this file to
+# exist with the suffixes ".x509.pem" and ".pk8".
+DEFAULT_KEY_CERT_PAIR := $(SRC_TARGET_DIR)/product/security/testkey
+
+
 # Rules that need to be present for the simulator, even
 # if they don't do anything.
 .PHONY: systemimage
@@ -439,7 +448,7 @@ $(eval $(call combine-notice-files, \
 # fact that all that has been done to get the list of modules that we
 # need notice files for.
 $(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
-	$(MINIGZIP) -9 < $< > $@
+	$(hide) $(MINIGZIP) -9 < $< > $@
 installed_notice_html_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
 $(installed_notice_html_gz): $(target_notice_file_html_gz) | $(ACP)
 	$(copy-file-to-target)
@@ -458,6 +467,24 @@ $(kernel_notice_file): \
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(ACP) $< $@
+
+
+# -----------------------------------------------------------------
+# Build a keystore with the authorized keys in it, used to verify the
+# authenticity of downloaded OTA packages.
+#
+# This rule adds to ALL_DEFAULT_INSTALLED_MODULES, so it needs to come
+# before the rules that use that variable to build the image.
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/otacerts.zip
+$(TARGET_OUT_ETC)/security/otacerts.zip: KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
+$(TARGET_OUT_ETC)/security/otacerts.zip: $(addsuffix .x509.pem,$(KEY_CERT_PAIR))
+	@echo "building otacerts.zip"
+	$(hide) rm -f $@
+	$(hide) mkdir -p $(dir $@)
+	zip -qj $@ $<
+
+.PHONY: otacerts
+otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
 
 
 # #################################################################
@@ -717,103 +744,19 @@ include bootable/diskinstaller/config.mk
 endif
 
 # -----------------------------------------------------------------
-# OTA update package
-name := $(TARGET_PRODUCT)
-ifeq ($(TARGET_BUILD_TYPE),debug)
-  name := $(name)_debug
-endif
-name := $(name)-ota-$(FILE_NAME_TAG)
+# host tools needed to build OTA packages
 
-INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
-INTERNAL_OTA_INTERMEDIATES_DIR := $(call intermediates-dir-for,PACKAGING,ota)
-
-# If neither TARGET_NO_KERNEL nor TARGET_NO_RECOVERY are true
-ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
-INTERNAL_OTA_RECOVERYIMAGE_TARGET := $(INTERNAL_OTA_INTERMEDIATES_DIR)/system/recovery.img
-else
-INTERNAL_OTA_RECOVERYIMAGE_TARGET :=
-endif
-INTERNAL_OTA_SCRIPT_TARGET := $(INTERNAL_OTA_INTERMEDIATES_DIR)/META-INF/com/google/android/update-script
-
-# Sign OTA packages with the test key by default.
-# Actual product deliverables will be re-signed by hand.
-private_key := $(SRC_TARGET_DIR)/product/security/testkey.pk8
-certificate := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
-$(INTERNAL_OTA_PACKAGE_TARGET): $(private_key) $(certificate) $(SIGNAPK_JAR)
-$(INTERNAL_OTA_PACKAGE_TARGET): PRIVATE_PRIVATE_KEY := $(private_key)
-$(INTERNAL_OTA_PACKAGE_TARGET): PRIVATE_CERTIFICATE := $(certificate)
-
-# Depending on INSTALLED_SYSTEMIMAGE guarantees that SYSTEMIMAGE_SOURCE_DIR
-# is up-to-date.  We use jar instead of zip so that we can use the -C
-# switch to avoid cd-ing all over the place.
-# TODO: Make our own jar-creation tool to avoid all these shenanigans.
-$(INTERNAL_OTA_PACKAGE_TARGET): \
-		$(INTERNAL_OTA_SCRIPT_TARGET) \
-		$(INTERNAL_OTA_RECOVERYIMAGE_TARGET) \
-		$(INSTALLED_BOOTIMAGE_TARGET) \
-		$(INSTALLED_RADIOIMAGE_TARGET) \
-		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-		$(INSTALLED_SYSTEMIMAGE)
-	@echo "Package OTA: $@"
-	$(hide) rm -rf $@
-	$(hide) jar cf $@ \
-	        $(foreach item, \
-	                $(INSTALLED_BOOTIMAGE_TARGET) \
-	                $(INSTALLED_RADIOIMAGE_TARGET) \
-	                $(INSTALLED_ANDROID_INFO_TXT_TARGET), \
-	            -C $(dir $(item)) $(notdir $(item))) \
-	            -C $(INTERNAL_OTA_INTERMEDIATES_DIR) .
-	$(hide) find $(SYSTEMIMAGE_SOURCE_DIR) -type f -print | \
-	        sed 's|^$(dir $(SYSTEMIMAGE_SOURCE_DIR))|-C & |' | \
-	        xargs jar uf $@
-	$(hide) if jar tf $@ | egrep '.{65}' >&2; then \
-	            echo "Path too long (>64 chars) for OTA update" >&2; \
-	            exit 1; \
-	        fi
-	$(sign-package)
-
-$(INTERNAL_OTA_SCRIPT_TARGET): \
-		$(HOST_OUT_EXECUTABLES)/make-update-script \
-		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-		$(INSTALLED_SYSTEMIMAGE)
-	@mkdir -p $(dir $@)
-	@rm -rf $@
-	@echo "Update script: $@"
-	$(hide) TARGET_DEVICE=$(TARGET_DEVICE) \
-	        $< $(SYSTEMIMAGE_SOURCE_DIR) \
-	           $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-	        > $@
-
-ifneq (,$(INTERNAL_OTA_RECOVERYIMAGE_TARGET))
-# This copy is so recovery.img can be in /system within the OTA package.
-# That way it gets installed into the system image, which in turn installs it.
-$(INTERNAL_OTA_RECOVERYIMAGE_TARGET): $(INSTALLED_RECOVERYIMAGE_TARGET) | $(ACP)
-	@mkdir -p $(dir $@)
-	$(hide) $(ACP) $< $@
-endif
-
-.PHONY: otapackage
-otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-
-# Keys authorized to sign OTA packages this build will accept.  The
-# build always uses test-keys for this; release packaging tools will
-# substitute other keys for this one.
-OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
-
-# Build a keystore with the authorized keys in it.
-# java/android/android/server/checkin/UpdateVerifier.java uses this.
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/otacerts.zip
-$(TARGET_OUT_ETC)/security/otacerts.zip: $(OTA_PUBLIC_KEYS)
-	$(hide) rm -f $@
-	$(hide) mkdir -p $(dir $@)
-	zip -qj $@ $(OTA_PUBLIC_KEYS)
-
-# The device does not support JKS.
-# $(hide) for f in $(OTA_PUBLIC_KEYS); do \
-#   echo "keytool: $@ <= $$f" && \
-#   keytool -keystore $@ -storepass $(notdir $@) -noprompt \
-#           -import -file $$f -alias $(notdir $$f) || exit 1; \
-# done
+.PHONY: otatools
+otatools: $(HOST_OUT_EXECUTABLES)/minigzip \
+	  $(HOST_OUT_EXECUTABLES)/mkbootfs \
+	  $(HOST_OUT_EXECUTABLES)/mkbootimg \
+	  $(HOST_OUT_EXECUTABLES)/fs_config \
+	  $(HOST_OUT_EXECUTABLES)/mkyaffs2image \
+	  $(HOST_OUT_EXECUTABLES)/zipalign \
+	  $(HOST_OUT_EXECUTABLES)/aapt \
+	  $(HOST_OUT_EXECUTABLES)/bsdiff \
+	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
+	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
@@ -851,14 +794,12 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_OTA_TOOLS := $(built_ota_tools)
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
-		$(INTERNAL_OTA_SCRIPT_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_RADIOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
 		$(BUILT_SYSTEMIMAGE) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
-		$(INTERNAL_OTA_SCRIPT_TARGET) \
 		$(built_ota_tools) \
 		$(APKCERTS_FILE) \
 		| $(ACP)
@@ -906,11 +847,9 @@ endif
 		$(TARGET_OUT_DATA),$(zip_root)/DATA)
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA/bin
-	$(hide) $(call package_files-copy-root, \
-		$(INTERNAL_OTA_INTERMEDIATES_DIR),$(zip_root)/OTA)
 	$(hide) $(ACP) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
 	$(hide) $(ACP) $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
-	@# Files that don't end up in any images, but are necessary to
+	@# Files that do not end up in any images, but are necessary to
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) $(ACP) $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
@@ -919,6 +858,29 @@ endif
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
+
+# -----------------------------------------------------------------
+# OTA update package
+name := $(TARGET_PRODUCT)
+ifeq ($(TARGET_BUILD_TYPE),debug)
+  name := $(name)_debug
+endif
+name := $(name)-ota-$(FILE_NAME_TAG)
+
+INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
+
+$(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
+
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
+	@echo "Package OTA: $@"
+	$(hide) ./build/tools/releasetools/ota_from_target_files \
+           -b $(TARGET_DEVICE_DIR)/BoardConfig.mk \
+           -k $(KEY_CERT_PAIR) \
+           $(BUILT_TARGET_FILES_PACKAGE) $@
+
+.PHONY: otapackage
+otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+
 
 # -----------------------------------------------------------------
 # installed file list
@@ -1021,15 +983,6 @@ dalvikfiles: $(INTERNAL_DALVIK_MODULES)
 # -----------------------------------------------------------------
 # The update package
 
-INTERNAL_UPDATE_PACKAGE_FILES += \
-		$(INSTALLED_BOOTIMAGE_TARGET) \
-		$(INSTALLED_RECOVERYIMAGE_TARGET) \
-		$(INSTALLED_SYSTEMIMAGE) \
-		$(INSTALLED_USERDATAIMAGE_TARGET) \
-		$(INSTALLED_ANDROID_INFO_TXT_TARGET)
-
-ifneq ($(strip $(INTERNAL_UPDATE_PACKAGE_FILES)),)
-
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -1038,13 +991,14 @@ name := $(name)-img-$(FILE_NAME_TAG)
 
 INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(INTERNAL_UPDATE_PACKAGE_FILES)
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 	@echo "Package: $@"
-	$(hide) zip -qj $@ $(INTERNAL_UPDATE_PACKAGE_FILES)
+	$(hide) ./build/tools/releasetools/img_from_target_files \
+	   -b $(TARGET_DEVICE_DIR)/BoardConfig.mk \
+	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-else
-INTERNAL_UPDATE_PACKAGE_TARGET :=
-endif
+.PHONY: updatepackage
+updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 
 # -----------------------------------------------------------------
 # The emulator package
