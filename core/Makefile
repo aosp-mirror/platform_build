@@ -1094,7 +1094,9 @@ deps := \
 	$(target_notice_file_txt) \
 	$(tools_notice_file_txt) \
 	$(OUT_DOCS)/offline-sdk-timestamp \
-	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
+	$(INSTALLED_SYSTEMIMAGE) \
+	$(INSTALLED_USERDATAIMAGE_TARGET) \
+	$(INSTALLED_RAMDISK_TARGET) \
 	$(INSTALLED_SDK_BUILD_PROP_TARGET) \
 	$(ATREE_FILES) \
 	$(atree_dir)/sdk.atree \
