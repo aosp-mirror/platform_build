@@ -861,6 +861,10 @@ target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
 # -----------------------------------------------------------------
 # OTA update package
+
+ifneq ($(TARGET_SIMULATOR),true)
+ifneq ($(TARGET_PRODUCT),sdk)
+
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -881,6 +885,8 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 
+endif    # TARGET_PRODUCT != sdk
+endif    # TARGET_SIMULATOR != true
 
 # -----------------------------------------------------------------
 # installed file list
@@ -983,6 +989,9 @@ dalvikfiles: $(INTERNAL_DALVIK_MODULES)
 # -----------------------------------------------------------------
 # The update package
 
+ifneq ($(TARGET_SIMULATOR),true)
+ifneq ($(TARGET_PRODUCT),sdk)
+
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -999,6 +1008,9 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 
 .PHONY: updatepackage
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
+
+endif    # TARGET_PRODUCT != sdk
+endif    # TARGET_SIMULATOR != true
 
 # -----------------------------------------------------------------
 # The emulator package
