@@ -310,13 +310,11 @@ def AppendAssertions(script, input_zip):
 
   info = input_zip.read("OTA/android-info.txt")
   m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
-  if not m:
-    raise ExternalError("failed to find required bootloaders in "
-                        "android-info.txt")
-  bootloaders = m.group(1).split("|")
-  script.append("assert " +
-                " || ".join(['getprop("ro.bootloader") == "%s"' % (b,)
-                             for b in bootloaders]))
+  if m:
+    bootloaders = m.group(1).split("|")
+    script.append("assert " +
+                  " || ".join(['getprop("ro.bootloader") == "%s"' % (b,)
+                               for b in bootloaders]))
 
 
 def IncludeBinary(name, input_zip, output_zip, input_path=None):
@@ -343,8 +341,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.append("format BOOT:")
   script.append("show_progress 0.1 0")
 
-  common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
-  script.append("write_radio_image PACKAGE:radio.img")
+  try:
+    common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
+    script.append("write_radio_image PACKAGE:radio.img")
+  except KeyError:
+    pass
+
   script.append("show_progress 0.5 0")
 
   if OPTIONS.wipe_user_data:
