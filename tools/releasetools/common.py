@@ -90,11 +90,15 @@ def BuildBootableImage(sourcedir):
   assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (targetname,)
   assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (targetname,)
 
-  cmdline = open(os.path.join(sourcedir, "cmdline")).read().rstrip("\n")
+  fn = os.path.join(sourcedir, "cmdline")
+  if os.access(fn, os.F_OK):
+    cmdline = ["--cmdline", open(fn).read().rstrip("\n")]
+  else:
+    cmdline = []
   p = Run(["mkbootimg",
-           "--kernel", os.path.join(sourcedir, "kernel"),
-           "--cmdline", cmdline,
-           "--ramdisk", ramdisk_img.name,
+           "--kernel", os.path.join(sourcedir, "kernel")] +
+          cmdline +
+          ["--ramdisk", ramdisk_img.name,
            "--output", img.name],
           stdout=subprocess.PIPE)
   p.communicate()
