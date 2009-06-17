@@ -16,7 +16,7 @@ def:custom_masthead() ?>
                   elif:publish ?> <?cs
                   elif:about ?> <?cs /if ?>">
               <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
-                                  onClick="return loadLast('guide)'"><span>Porting Guide</span></a></li>
+                                  onClick="return loadLast('guide)'"><span>Dev Guide</span></a></li>
               <li id="opensource-link"><a href="http://source.android.com/"
 				 onClick="return loadLast('open')"><span>Open Source</span></a></li>
           </ul> 
