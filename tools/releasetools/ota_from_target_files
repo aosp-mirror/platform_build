@@ -45,6 +45,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
 
+  -m  (--script_mode)  <mode>
+      Specify 'amend' or 'edify' scripts, or 'auto' to pick
+      automatically (this is the default).
+
 """
 
 import sys
@@ -63,6 +67,8 @@ import time
 import zipfile
 
 import common
+import amend_generator
+import edify_generator
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = "build/target/product/security/testkey"
@@ -73,6 +79,7 @@ OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
+OPTIONS.script_mode = 'auto'
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -193,11 +200,10 @@ class Item:
 
     return d
 
-  def SetPermissions(self, script, renamer=lambda x: x):
+  def SetPermissions(self, script):
     """Append set_perm/set_perm_recursive commands to 'script' to
     set all permissions, users, and groups for the tree of files
-    rooted at 'self'.  'renamer' turns the filenames stored in the
-    tree of Items into the strings used in the script."""
+    rooted at 'self'."""
 
     self.CountChildMetadata()
 
@@ -208,22 +214,19 @@ class Item:
       # supposed to be something different.
       if item.dir:
         if current != item.best_subtree:
-          script.append("set_perm_recursive %d %d 0%o 0%o %s" %
-                        (item.best_subtree + (renamer(item.name),)))
+          script.SetPermissionsRecursive("/"+item.name, *item.best_subtree)
           current = item.best_subtree
 
         if item.uid != current[0] or item.gid != current[1] or \
            item.mode != current[2]:
-          script.append("set_perm %d %d 0%o %s" %
-                        (item.uid, item.gid, item.mode, renamer(item.name)))
+          script.SetPermissions("/"+item.name, item.uid, item.gid, item.mode)
 
         for i in item.children:
           recurse(i, current)
       else:
         if item.uid != current[0] or item.gid != current[1] or \
                item.mode != current[3]:
-          script.append("set_perm %d %d 0%o %s" %
-                        (item.uid, item.gid, item.mode, renamer(item.name)))
+          script.SetPermissions("/"+item.name, item.uid, item.gid, item.mode)
 
     recurse(self, (-1, -1, -1, -1))
 
@@ -245,7 +248,7 @@ def CopySystemFiles(input_zip, output_zip=None,
       basefilename = info.filename[7:]
       if IsSymlink(info):
         symlinks.append((input_zip.read(info.filename),
-                         "SYSTEM:" + basefilename))
+                         "/system/" + basefilename))
       else:
         info2 = copy.copy(info)
         fn = info2.filename = "system/" + basefilename
@@ -266,11 +269,6 @@ def CopySystemFiles(input_zip, output_zip=None,
   return symlinks
 
 
-def AddScript(script, output_zip):
-  common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-script",
-                     "\n".join(script) + "\n")
-
-
 def SignOutput(temp_zip_name, output_zip_name):
   key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
   pw = key_passwords[OPTIONS.package_key]
@@ -278,35 +276,15 @@ def SignOutput(temp_zip_name, output_zip_name):
   common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw)
 
 
-def SubstituteRoot(s):
-  if s == "system": return "SYSTEM:"
-  assert s.startswith("system/")
-  return "SYSTEM:" + s[7:]
-
 def FixPermissions(script):
   Item.GetMetadata()
   root = Item.Get("system")
-  root.SetPermissions(script, renamer=SubstituteRoot)
+  root.SetPermissions(script)
 
-def DeleteFiles(script, to_delete):
-  line = []
-  t = 0
-  for i in to_delete:
-    line.append(i)
-    t += len(i) + 1
-    if t > 80:
-      script.append("delete " + " ".join(line))
-      line = []
-      t = 0
-  if line:
-    script.append("delete " + " ".join(line))
 
 def AppendAssertions(script, input_zip):
-  script.append('assert compatible_with("0.2") == "true"')
-
   device = GetBuildProp("ro.product.device", input_zip)
-  script.append('assert getprop("ro.product.device") == "%s" || '
-                'getprop("ro.build.product") == "%s"' % (device, device))
+  script.AssertDevice(device)
 
   info = input_zip.read("OTA/android-info.txt")
   m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
@@ -314,47 +292,39 @@ def AppendAssertions(script, input_zip):
     raise ExternalError("failed to find required bootloaders in "
                         "android-info.txt")
   bootloaders = m.group(1).split("|")
-  script.append("assert " +
-                " || ".join(['getprop("ro.bootloader") == "%s"' % (b,)
-                             for b in bootloaders]))
-
-
-def IncludeBinary(name, input_zip, output_zip, input_path=None):
-  try:
-    if input_path is not None:
-      data = open(input_path).read()
-    else:
-      data = input_zip.read(os.path.join("OTA/bin", name))
-    common.ZipWriteStr(output_zip, name, data, perms=0755)
-  except IOError:
-    raise ExternalError('unable to include device binary "%s"' % (name,))
+  script.AssertSomeBootloader(*bootloaders)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
-  script = []
+  if OPTIONS.script_mode in ("amend", "auto"):
+    script = amend_generator.AmendGenerator()
+  else:
+    # TODO: how to determine this?  We don't know what version it will
+    # be installed on top of.  For now, we expect the API just won't
+    # change very often.
+    script = edify_generator.EdifyGenerator(1)
 
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", input_zip)
-    script.append("run_program PACKAGE:check_prereq %s" % (ts,))
-    IncludeBinary("check_prereq", input_zip, output_zip)
+    script.AssertOlderBuild(ts)
 
   AppendAssertions(script, input_zip)
 
-  script.append("format BOOT:")
-  script.append("show_progress 0.1 0")
+  script.ShowProgress(0.1, 0)
 
   common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
-  script.append("write_radio_image PACKAGE:radio.img")
-  script.append("show_progress 0.5 0")
+  script.WriteFirmwareImage("radio", "radio.img")
+  script.ShowProgress(0.5, 0)
 
   if OPTIONS.wipe_user_data:
-    script.append("format DATA:")
+    script.FormatPartition("userdata")
 
-  script.append("format SYSTEM:")
-  script.append("copy_dir PACKAGE:system SYSTEM:")
+  script.FormatPartition("system")
+  script.Mount("MTD", "system", "/system")
+  script.UnpackPackageDir("system", "/system")
 
   symlinks = CopySystemFiles(input_zip, output_zip)
-  script.extend(["symlink %s %s" % s for s in symlinks])
+  script.MakeSymlinks(symlinks)
 
   common.BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "RECOVERY"),
                                   "system/recovery.img", output_zip)
@@ -363,14 +333,15 @@ def WriteFullOTAPackage(input_zip, output_zip):
   FixPermissions(script)
 
   common.AddBoot(output_zip)
-  script.append("show_progress 0.2 0")
-  script.append("write_raw_image PACKAGE:boot.img BOOT:")
-  script.append("show_progress 0.2 10")
+  script.ShowProgress(0.2, 0)
+
+  script.WriteRawImage("boot", "boot.img")
+  script.ShowProgress(0.2, 10)
 
   if OPTIONS.extra_script is not None:
-    script.append(OPTIONS.extra_script)
+    script.AppendExtra(OPTIONS.extra_script)
 
-  AddScript(script, output_zip)
+  script.AddToZip(input_zip, output_zip)
 
 
 class File(object):
@@ -448,8 +419,38 @@ def GetBuildProp(property, z):
   return m.group(1).strip()
 
 
+def GetRecoveryAPIVersion(zip):
+  """Returns the version of the recovery API.  Version 0 is the older
+  amend code (no separate binary)."""
+  try:
+    version = zip.read("META/recovery-api-version.txt")
+    return int(version)
+  except KeyError:
+    try:
+      # version one didn't have the recovery-api-version.txt file, but
+      # it did include an updater binary.
+      zip.getinfo("OTA/bin/updater")
+      return 1
+    except KeyError:
+      return 0
+
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
-  script = []
+  source_version = GetRecoveryAPIVersion(source_zip)
+
+  if OPTIONS.script_mode == 'amend':
+    script = amend_generator.AmendGenerator()
+  elif OPTIONS.script_mode == 'edify':
+    if source_version == 0:
+      print ("WARNING: generating edify script for a source that "
+             "can't install it.")
+    script = edify_generator.EdifyGenerator(source_version)
+  elif OPTIONS.script_mode == 'auto':
+    if source_version > 0:
+      script = edify_generator.EdifyGenerator(source_version)
+    else:
+      script = amend_generator.AmendGenerator()
+  else:
+    raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
   print "Loading target..."
   target_data = LoadSystemFiles(target_zip)
@@ -496,11 +497,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_fp = GetBuildProp("ro.build.fingerprint", source_zip)
   target_fp = GetBuildProp("ro.build.fingerprint", target_zip)
 
-  script.append(('assert file_contains("SYSTEM:build.prop", '
-                 '"ro.build.fingerprint=%s") == "true" || '
-                 'file_contains("SYSTEM:build.prop", '
-                 '"ro.build.fingerprint=%s") == "true"') %
-                (source_fp, target_fp))
+  script.Mount("MTD", "system", "/system")
+  script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = File("/tmp/boot.img",
                      common.BuildBootableImage(
@@ -532,6 +530,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   AppendAssertions(script, target_zip)
 
+  script.Print("Verifying current system...")
+
   pb_verify = progress_bar_total * 0.3 * \
               (total_patched_size /
                float(total_patched_size+total_verbatim_size+1))
@@ -539,10 +539,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   for i, (fn, tf, sf, size) in enumerate(patch_list):
     if i % 5 == 0:
       next_sizes = sum([i[3] for i in patch_list[i:i+5]])
-      script.append("show_progress %f 1" %
-                    (next_sizes * pb_verify / (total_patched_size+1),))
-    script.append("run_program PACKAGE:applypatch -c /%s %s %s" %
-                  (fn, tf.sha1, sf.sha1))
+      script.ShowProgress(next_sizes * pb_verify / (total_patched_size+1), 1)
+
+    script.PatchCheck("/"+fn, tf.sha1, sf.sha1)
 
   if updating_recovery:
     d = Difference(target_recovery, source_recovery, "imgdiff")
@@ -551,10 +550,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     common.ZipWriteStr(output_zip, "patch/recovery.img.p", d)
 
-    script.append(("run_program PACKAGE:applypatch -c "
-                   "MTD:recovery:%d:%s:%d:%s") %
-                  (source_recovery.size, source_recovery.sha1,
-                   target_recovery.size, target_recovery.sha1))
+    script.PatchCheck("MTD:recovery:%d:%s:%d:%s" %
+                      (source_recovery.size, source_recovery.sha1,
+                       target_recovery.size, target_recovery.sha1))
 
   if updating_boot:
     d = Difference(target_boot, source_boot, "imgdiff")
@@ -563,36 +561,35 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
-    script.append(("run_program PACKAGE:applypatch -c "
-                   "MTD:boot:%d:%s:%d:%s") %
-                  (source_boot.size, source_boot.sha1,
-                   target_boot.size, target_boot.sha1))
+    script.PatchCheck("MTD:boot:%d:%s:%d:%s" %
+                      (source_boot.size, source_boot.sha1,
+                       target_boot.size, target_boot.sha1))
 
   if patch_list or updating_recovery or updating_boot:
-    script.append("run_program PACKAGE:applypatch -s %d" %
-                  (largest_source_size,))
-    script.append("copy_dir PACKAGE:patch CACHE:../tmp/patchtmp")
-    IncludeBinary("applypatch", target_zip, output_zip)
+    script.CacheFreeSpaceCheck(largest_source_size)
+    script.Print("Unpacking patches...")
+    script.UnpackPackageDir("patch", "/tmp/patchtmp")
 
-  script.append("\n# ---- start making changes here\n")
+  script.Comment("---- start making changes here ----")
 
   if OPTIONS.wipe_user_data:
-    script.append("format DATA:")
+    script.Print("Erasing user data...")
+    script.FormatPartition("userdata")
 
-  DeleteFiles(script, [SubstituteRoot(i[0]) for i in verbatim_targets])
+  script.Print("Removing unneeded files...")
+  script.DeleteFiles(["/"+i[0] for i in verbatim_targets])
 
   if updating_boot:
     # Produce the boot image by applying a patch to the current
     # contents of the boot partition, and write it back to the
     # partition.
-    script.append(("run_program PACKAGE:applypatch "
-                   "MTD:boot:%d:%s:%d:%s - "
-                   "%s %d %s:/tmp/patchtmp/boot.img.p")
-                  % (source_boot.size, source_boot.sha1,
-                     target_boot.size, target_boot.sha1,
-                     target_boot.sha1,
-                     target_boot.size,
-                     source_boot.sha1))
+    script.Print("Patching boot image...")
+    script.ApplyPatch("MTD:boot:%d:%s:%d:%s"
+                      % (source_boot.size, source_boot.sha1,
+                         target_boot.size, target_boot.sha1),
+                      "-",
+                      target_boot.size, target_boot.sha1,
+                      source_boot.sha1, "/tmp/patchtmp/boot.img.p")
     print "boot image changed; including."
   else:
     print "boot image unchanged; skipping."
@@ -600,41 +597,41 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if updating_recovery:
     # Produce /system/recovery.img by applying a patch to the current
     # contents of the recovery partition.
-    script.append(("run_program PACKAGE:applypatch MTD:recovery:%d:%s:%d:%s "
-                   "/system/recovery.img %s %d %s:/tmp/patchtmp/recovery.img.p")
-                  % (source_recovery.size, source_recovery.sha1,
-                     target_recovery.size, target_recovery.sha1,
-                     target_recovery.sha1,
-                     target_recovery.size,
-                     source_recovery.sha1))
+    script.Print("Patching recovery image...")
+    script.ApplyPatch("MTD:recovery:%d:%s:%d:%s"
+                      % (source_recovery.size, source_recovery.sha1,
+                         target_recovery.size, target_recovery.sha1),
+                      "/system/recovery.img",
+                      target_recovery.size, target_recovery.sha1,
+                      source_recovery.sha1, "/tmp/patchtmp/recovery.img.p")
     print "recovery image changed; including."
   else:
     print "recovery image unchanged; skipping."
 
   if updating_radio:
-    script.append("show_progress 0.3 10")
-    script.append("write_radio_image PACKAGE:radio.img")
+    script.ShowProgress(0.3, 10)
+    script.Print("Writing radio image...")
+    script.WriteFirmwareImage("radio", "radio.img")
     common.ZipWriteStr(output_zip, "radio.img", target_radio)
     print "radio image changed; including."
   else:
     print "radio image unchanged; skipping."
 
+  script.Print("Patching system files...")
   pb_apply = progress_bar_total * 0.7 * \
              (total_patched_size /
               float(total_patched_size+total_verbatim_size+1))
   for i, (fn, tf, sf, size) in enumerate(patch_list):
     if i % 5 == 0:
       next_sizes = sum([i[3] for i in patch_list[i:i+5]])
-      script.append("show_progress %f 1" %
-                    (next_sizes * pb_apply / (total_patched_size+1),))
-    script.append(("run_program PACKAGE:applypatch "
-                   "/%s - %s %d %s:/tmp/patchtmp/%s.p") %
-                  (fn, tf.sha1, tf.size, sf.sha1, fn))
+      script.ShowProgress(next_sizes * pb_apply / (total_patched_size+1), 1)
+    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
+                      sf.sha1, "/tmp/patchtmp/"+fn+".p")
 
   target_symlinks = CopySystemFiles(target_zip, None)
 
   target_symlinks_d = dict([(i[1], i[0]) for i in target_symlinks])
-  temp_script = []
+  temp_script = script.MakeTemporary()
   FixPermissions(temp_script)
 
   # Note that this call will mess up the tree of Items, so make sure
@@ -649,14 +646,17 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   for dest, link in source_symlinks:
     if link not in target_symlinks_d:
       to_delete.append(link)
-  DeleteFiles(script, to_delete)
+  script.DeleteFiles(to_delete)
 
   if verbatim_targets:
     pb_verbatim = progress_bar_total * \
                   (total_verbatim_size /
                    float(total_patched_size+total_verbatim_size+1))
-    script.append("show_progress %f 5" % (pb_verbatim,))
-    script.append("copy_dir PACKAGE:system SYSTEM:")
+    script.ShowProgress(pb_verbatim, 5)
+    script.Print("Unpacking new files...")
+    script.UnpackPackageDir("system", "/system")
+
+  script.Print("Finishing up...")
 
   # Create all the symlinks that don't already exist, or point to
   # somewhere different than what we want.  Delete each symlink before
@@ -668,17 +668,17 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
         to_create.append((dest, link))
     else:
       to_create.append((dest, link))
-  DeleteFiles(script, [i[1] for i in to_create])
-  script.extend(["symlink %s %s" % s for s in to_create])
+  script.DeleteFiles([i[1] for i in to_create])
+  script.MakeSymlinks(to_create)
 
   # Now that the symlinks are created, we can set all the
   # permissions.
-  script.extend(temp_script)
+  script.AppendScript(temp_script)
 
   if OPTIONS.extra_script is not None:
-    script.append(OPTIONS.extra_script)
+    scirpt.AppendExtra(OPTIONS.extra_script)
 
-  AddScript(script, output_zip)
+  script.AddToZip(target_zip, output_zip)
 
 
 def main(argv):
@@ -696,18 +696,21 @@ def main(argv):
       OPTIONS.omit_prereq = True
     elif o in ("-e", "--extra_script"):
       OPTIONS.extra_script = a
+    elif o in ("-m", "--script_mode"):
+      OPTIONS.script_mode = a
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:",
+                             extra_opts="b:k:i:d:wne:m:",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
                                               "wipe_user_data",
                                               "no_prereq",
-                                              "extra_script="],
+                                              "extra_script=",
+                                              "script_mode="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -720,6 +723,9 @@ def main(argv):
     print "  sizes against limits.  Use -b to make sure the generated"
     print "  images don't exceed partition sizes."
     print
+
+  if OPTIONS.script_mode not in ("amend", "edify", "auto"):
+    raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
