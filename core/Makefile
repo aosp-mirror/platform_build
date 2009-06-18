@@ -887,6 +887,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 	@echo "Package OTA: $@"
 	$(hide) ./build/tools/releasetools/ota_from_target_files \
+	   -p $(HOST_OUT) \
            -b $(TARGET_DEVICE_DIR)/BoardConfig.mk \
            -k $(KEY_CERT_PAIR) \
            $(BUILT_TARGET_FILES_PACKAGE) $@
@@ -1012,6 +1013,7 @@ INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 	@echo "Package: $@"
 	$(hide) ./build/tools/releasetools/img_from_target_files \
+	   -p $(HOST_OUT) \
 	   -b $(TARGET_DEVICE_DIR)/BoardConfig.mk \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 

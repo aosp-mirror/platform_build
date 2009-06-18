@@ -29,8 +29,7 @@ if not hasattr(os, "SEEK_SET"):
 
 class Options(object): pass
 OPTIONS = Options()
-OPTIONS.signapk_jar = "out/host/linux-x86/framework/signapk.jar"
-OPTIONS.dumpkey_jar = "out/host/linux-x86/framework/dumpkey.jar"
+OPTIONS.search_path = "out/host/linux-x86"
 OPTIONS.max_image_size = {}
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
@@ -154,11 +153,11 @@ def GetKeyPasswords(keylist):
       no_passwords.append(k)
       continue
 
-    p = subprocess.Popen(["openssl", "pkcs8", "-in", k+".pk8",
-                          "-inform", "DER", "-nocrypt"],
-                         stdin=devnull.fileno(),
-                         stdout=devnull.fileno(),
-                         stderr=subprocess.STDOUT)
+    p = Run(["openssl", "pkcs8", "-in", k+".pk8",
+             "-inform", "DER", "-nocrypt"],
+            stdin=devnull.fileno(),
+            stdout=devnull.fileno(),
+            stderr=subprocess.STDOUT)
     p.communicate()
     if p.returncode == 0:
       no_passwords.append(k)
@@ -188,12 +187,13 @@ def SignFile(input_name, output_name, key, password, align=None):
   else:
     sign_name = output_name
 
-  p = subprocess.Popen(["java", "-jar", OPTIONS.signapk_jar,
-                        key + ".x509.pem",
-                        key + ".pk8",
-                        input_name, sign_name],
-                       stdin=subprocess.PIPE,
-                       stdout=subprocess.PIPE)
+  p = Run(["java", "-jar",
+           os.path.join(OPTIONS.search_path, "framework", "signapk.jar"),
+           key + ".x509.pem",
+           key + ".pk8",
+           input_name, sign_name],
+          stdin=subprocess.PIPE,
+          stdout=subprocess.PIPE)
   if password is not None:
     password += "\n"
   p.communicate(password)
@@ -201,7 +201,7 @@ def SignFile(input_name, output_name, key, password, align=None):
     raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
 
   if align:
-    p = subprocess.Popen(["zipalign", "-f", str(align), sign_name, output_name])
+    p = Run(["zipalign", "-f", str(align), sign_name, output_name])
     p.communicate()
     if p.returncode != 0:
       raise ExternalError("zipalign failed: return code %s" % (p.returncode,))
@@ -230,8 +230,8 @@ def CheckSize(data, target):
 
 COMMON_DOCSTRING = """
   -p  (--path)  <dir>
-      Prepend <dir> to the list of places to search for binaries run
-      by this script.
+      Prepend <dir>/bin to the list of places to search for binaries
+      run by this script, and expect to find jars in <dir>/framework.
 
   -v  (--verbose)
       Show command lines being executed.
@@ -273,15 +273,13 @@ def ParseOptions(argv,
     elif o in ("-v", "--verbose"):
       OPTIONS.verbose = True
     elif o in ("-p", "--path"):
-      os.environ["PATH"] = a + os.pathsep + os.environ["PATH"]
-      path_specified = True
+      OPTIONS.search_path = a
     else:
       if extra_option_handler is None or not extra_option_handler(o, a):
         assert False, "unknown option \"%s\"" % (o,)
 
-  if not path_specified:
-    os.environ["PATH"] = ("out/host/linux-x86/bin" + os.pathsep +
-                          os.environ["PATH"])
+  os.environ["PATH"] = (os.path.join(OPTIONS.search_path, "bin") +
+                        os.pathsep + os.environ["PATH"])
 
   return args
 
