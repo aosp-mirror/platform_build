@@ -278,7 +278,9 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
   # recovery uses a version of the key that has been slightly
   # predigested (by DumpPublicKey.java) and put in res/keys.
 
-  p = common.Run(["java", "-jar", OPTIONS.dumpkey_jar] + mapped_keys,
+  p = common.Run(["java", "-jar",
+                  os.path.join(OPTIONS.search_path, "framework", "dumpkey.jar")]
+                 + mapped_keys,
                  stdout=subprocess.PIPE)
   data, _ = p.communicate()
   if p.returncode != 0:
