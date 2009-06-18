@@ -19,6 +19,11 @@ PRODUCT_PACKAGES := \
 	sqlite3 \
 	LatinIME \
 	PinyinIME \
+	OpenWnn \
+	libWnnEngDic \
+	libWnnJpnDic \
+	libWnnZHCNDic \
+	libwnndict \
 	ApiDemos \
 	SoftKeyboard
 
