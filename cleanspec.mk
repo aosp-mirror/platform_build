@@ -31,7 +31,7 @@ INTERNAL_CLEAN_BUILD_VERSION := 3
 #
 # E.g.:
 #     $(call add-clean-step, touch -c external/sqlite/sqlite3.h)
-#     $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/external/zlib/)
+#     $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libz_intermediates)
 #
 # Always use "touch -c" and "rm -f" or "rm -rf" to gracefully deal with
 # files that are missing or have been moved.
@@ -58,3 +58,6 @@ INTERNAL_CLEAN_BUILD_VERSION := 3
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
+
