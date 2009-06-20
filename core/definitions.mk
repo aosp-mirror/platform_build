@@ -1569,6 +1569,25 @@ $(if $(2), \
  )
 endef
 
+
+###########################################################
+## Define device-specific radio files
+###########################################################
+
+# Copy a radio image file to the output location, and add it to
+# INSTALLED_RADIOIMAGE_TARGET.
+# $(1): filename
+define add-radio-file
+  $(eval $(call add-radio-file-internal,$(1)))
+endef
+define add-radio-file-internal
+INSTALLED_RADIOIMAGE_TARGET += $$(PRODUCT_OUT)/$(1)
+ALL_PREBUILT += $$(PRODUCT_OUT)/$(1)
+$$(PRODUCT_OUT)/$(1) : $$(LOCAL_PATH)/$(1) | $$(ACP)
+	$$(transform-prebuilt-to-target)
+endef
+
+
 ###########################################################
 ## Other includes
 ###########################################################

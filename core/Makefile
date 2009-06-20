@@ -843,11 +843,9 @@ endif
 ifdef BOARD_KERNEL_BASE
 	$(hide) echo "$(BOARD_KERNEL_BASE)" > $(zip_root)/BOOT/base
 endif
-ifdef INSTALLED_RADIOIMAGE_TARGET
-	@# The radio image
-	$(hide) mkdir -p $(zip_root)/RADIO
-	$(hide) $(ACP) $(INSTALLED_RADIOIMAGE_TARGET) $(zip_root)/RADIO/image
-endif
+	$(hide) $(foreach t,$(INSTALLED_RADIOIMAGE_TARGET),\
+	            mkdir -p $(zip_root)/RADIO; \
+	            $(ACP) $(t) $(zip_root)/RADIO/$(notdir $(t));)
 	@# Contents of the system image
 	$(hide) $(call package_files-copy-root, \
 		$(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
