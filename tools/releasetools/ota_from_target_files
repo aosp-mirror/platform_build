@@ -302,19 +302,18 @@ def WriteFullOTAPackage(input_zip, output_zip):
     # change very often.
     script = edify_generator.EdifyGenerator(1)
 
+  device_specific = common.DeviceSpecificParams(
+      input_zip=input_zip,
+      output_zip=output_zip,
+      script=script,
+      input_tmp=OPTIONS.input_tmp)
+
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", input_zip)
     script.AssertOlderBuild(ts)
 
   AppendAssertions(script, input_zip)
-
-  script.ShowProgress(0.1, 0)
-
-  try:
-    common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
-    script.WriteFirmwareImage("radio", "radio.img")
-  except KeyError:
-    pass
+  device_specific.FullOTA_Assertions()
 
   script.ShowProgress(0.5, 0)
 
@@ -335,10 +334,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
   FixPermissions(script)
 
   common.AddBoot(output_zip)
-  script.ShowProgress(0.2, 0)
 
-  script.WriteRawImage("boot", "boot.img")
   script.ShowProgress(0.2, 10)
+  script.WriteRawImage("boot", "boot.img")
+
+  script.ShowProgress(0.1, 0)
+  device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
     script.AppendExtra(OPTIONS.extra_script)
@@ -454,6 +455,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
+  device_specific = common.DeviceSpecificParams(
+      source_zip=source_zip,
+      target_zip=target_zip,
+      output_zip=output_zip,
+      script=script)
+
   print "Loading target..."
   target_data = LoadSystemFiles(target_zip)
   print "Loading source..."
@@ -518,19 +525,15 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       os.path.join(OPTIONS.target_tmp, "RECOVERY")))
   updating_recovery = (source_recovery.data != target_recovery.data)
 
-  source_radio = source_zip.read("RADIO/image")
-  target_radio = target_zip.read("RADIO/image")
-  updating_radio = (source_radio != target_radio)
-
-  # The last 0.1 is reserved for creating symlinks, fixing
-  # permissions, and writing the boot image (if necessary).
-  progress_bar_total = 1.0
+  # We reserve the last 0.3 of the progress bar for the
+  # device-specific IncrementalOTA_InstallEnd() call at the end, which
+  # will typically install a radio image.
+  progress_bar_total = 0.7
   if updating_boot:
     progress_bar_total -= 0.1
-  if updating_radio:
-    progress_bar_total -= 0.3
 
   AppendAssertions(script, target_zip)
+  device_specific.IncrementalOTA_Assertions()
 
   script.Print("Verifying current system...")
 
@@ -572,6 +575,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.Print("Unpacking patches...")
     script.UnpackPackageDir("patch", "/tmp/patchtmp")
 
+  device_specific.IncrementalOTA_VerifyEnd()
+
   script.Comment("---- start making changes here ----")
 
   if OPTIONS.wipe_user_data:
@@ -609,15 +614,6 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     print "recovery image changed; including."
   else:
     print "recovery image unchanged; skipping."
-
-  if updating_radio:
-    script.ShowProgress(0.3, 10)
-    script.Print("Writing radio image...")
-    script.WriteFirmwareImage("radio", "radio.img")
-    common.ZipWriteStr(output_zip, "radio.img", target_radio)
-    print "radio image changed; including."
-  else:
-    print "radio image unchanged; skipping."
 
   script.Print("Patching system files...")
   pb_apply = progress_bar_total * 0.7 * \
@@ -658,7 +654,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.Print("Unpacking new files...")
     script.UnpackPackageDir("system", "/system")
 
-  script.Print("Finishing up...")
+  script.Print("Symlinks and permissions...")
 
   # Create all the symlinks that don't already exist, or point to
   # somewhere different than what we want.  Delete each symlink before
@@ -676,6 +672,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   # Now that the symlinks are created, we can set all the
   # permissions.
   script.AppendScript(temp_script)
+
+  # Write the radio image, if necessary.
+  script.ShowProgress(0.3, 10)
+  device_specific.IncrementalOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
     scirpt.AppendExtra(OPTIONS.extra_script)

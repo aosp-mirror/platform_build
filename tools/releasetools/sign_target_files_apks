@@ -20,10 +20,6 @@ target-files zip.
 
 Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
-  -s  (--signapk_jar)  <path>
-      Path of the signapks.jar file used to sign an individual APK
-      file.
-
   -e  (--extra_apks)  <name,name,...=key>
       Add extra APK name/key pairs as though they appeared in
       apkcerts.txt (so mappings specified by -k and -d are applied).
@@ -302,9 +298,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
 def main(argv):
 
   def option_handler(o, a):
-    if o in ("-s", "--signapk_jar"):
-      OPTIONS.signapk_jar = a
-    elif o in ("-e", "--extra_apks"):
+    if o in ("-e", "--extra_apks"):
       names, key = a.split("=")
       names = names.split(",")
       for n in names:
@@ -334,9 +328,8 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="s:e:d:k:ot:",
-                             extra_long_opts=["signapk_jar=",
-                                              "extra_apks=",
+                             extra_opts="e:d:k:ot:",
+                             extra_long_opts=["extra_apks=",
                                               "default_key_mappings=",
                                               "key_mapping=",
                                               "replace_ota_keys",

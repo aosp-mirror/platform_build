@@ -15,6 +15,7 @@
 import errno
 import getopt
 import getpass
+import imp
 import os
 import re
 import shutil
@@ -33,7 +34,7 @@ OPTIONS.search_path = "out/host/linux-x86"
 OPTIONS.max_image_size = {}
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
-
+OPTIONS.device_specific = None
 
 class ExternalError(RuntimeError): pass
 
@@ -233,6 +234,10 @@ COMMON_DOCSTRING = """
       Prepend <dir>/bin to the list of places to search for binaries
       run by this script, and expect to find jars in <dir>/framework.
 
+  -s  (--device_specific) <file>
+      Path to the python module containing device-specific
+      releasetools code.
+
   -v  (--verbose)
       Show command lines being executed.
 
@@ -257,8 +262,9 @@ def ParseOptions(argv,
 
   try:
     opts, args = getopt.getopt(
-        argv, "hvp:" + extra_opts,
-        ["help", "verbose", "path="] + list(extra_long_opts))
+        argv, "hvp:s:" + extra_opts,
+        ["help", "verbose", "path=", "device_specific="] +
+          list(extra_long_opts))
   except getopt.GetoptError, err:
     Usage(docstring)
     print "**", str(err), "**"
@@ -274,6 +280,8 @@ def ParseOptions(argv,
       OPTIONS.verbose = True
     elif o in ("-p", "--path"):
       OPTIONS.search_path = a
+    elif o in ("-s", "--device_specific"):
+      OPTIONS.device_specific = a
     else:
       if extra_option_handler is None or not extra_option_handler(o, a):
         assert False, "unknown option \"%s\"" % (o,)
@@ -398,3 +406,67 @@ def ZipWriteStr(zip, filename, data, perms=0644):
   zinfo.compress_type = zip.compression
   zinfo.external_attr = perms << 16
   zip.writestr(zinfo, data)
+
+
+class DeviceSpecificParams(object):
+  module = None
+  def __init__(self, **kwargs):
+    """Keyword arguments to the constructor become attributes of this
+    object, which is passed to all functions in the device-specific
+    module."""
+    for k, v in kwargs.iteritems():
+      setattr(self, k, v)
+
+    if self.module is None:
+      path = OPTIONS.device_specific
+      if path is None: return
+      if os.path.isdir(path):
+        info = imp.find_module("releasetools", [path])
+      else:
+        d, f = os.path.split(path)
+        b, x = os.path.splitext(f)
+        if x == ".py":
+          f = b
+        info = imp.find_module(f, [d])
+      if not info or info[0] is None:
+        raise ValueError("unable to find device-specific module")
+      self.module = imp.load_module("device_specific", *info)
+
+  def _DoCall(self, function_name, *args, **kwargs):
+    """Call the named function in the device-specific module, passing
+    the given args and kwargs.  The first argument to the call will be
+    the DeviceSpecific object itself.  If there is no module, or the
+    module does not define the function, return the value of the
+    'default' kwarg (which itself defaults to None)."""
+    if self.module is None or not hasattr(self.module, function_name):
+      return kwargs.get("default", None)
+    return getattr(self.module, function_name)(*((self,) + args), **kwargs)
+
+  def FullOTA_Assertions(self):
+    """Called after emitting the block of assertions at the top of a
+    full OTA package.  Implementations can add whatever additional
+    assertions they like."""
+    return self._DoCall("FullOTA_Assertions")
+
+  def FullOTA_InstallEnd(self):
+    """Called at the end of full OTA installation; typically this is
+    used to install the image for the device's baseband processor."""
+    return self._DoCall("FullOTA_InstallEnd")
+
+  def IncrementalOTA_Assertions(self):
+    """Called after emitting the block of assertions at the top of an
+    incremental OTA package.  Implementations can add whatever
+    additional assertions they like."""
+    return self._DoCall("IncrementalOTA_Assertions")
+
+  def IncrementalOTA_VerifyEnd(self):
+    """Called at the end of the verification phase of incremental OTA
+    installation; additional checks can be placed here to abort the
+    script before any changes are made."""
+    return self._DoCall("IncrementalOTA_VerifyEnd")
+
+  def IncrementalOTA_InstallEnd(self):
+    """Called at the end of incremental OTA installation; typically
+    this is used to install the image for the device's baseband
+    processor."""
+    return self._DoCall("IncrementalOTA_InstallEnd")
