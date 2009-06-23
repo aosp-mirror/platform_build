@@ -85,6 +85,44 @@ $(warning ************************************************************)
 $(error Directory names containing spaces not supported)
 endif
 
+
+# The windows build server currently uses 1.6.  This will be fixed.
+ifneq ($(HOST_OS),windows)
+
+# Check for the correct version of java
+java_version := $(shell java -version 2>&1 | head -n 1 | grep '[ "]1\.5[\. "$$]')
+ifeq ($(strip $(java_version)),)
+$(info ************************************************************)
+$(info You are attempting to build with the incorrect version)
+$(info of java.)
+$(info $(space))
+$(info Your version is: $(shell java -version 2>&1 | head -n 1).)
+$(info The correct version is: 1.5.)
+$(info $(space))
+$(info Please follow the machine setup instructions at)
+$(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+$(info ************************************************************)
+$(error stop)
+endif
+
+# Check for the correct version of javac
+javac_version := $(shell javac -version 2>&1 | head -n 1 | grep '[ "]1\.5[\. "$$]')
+ifeq ($(strip $(javac_version)),)
+$(info ************************************************************)
+$(info You are attempting to build with the incorrect version)
+$(info of javac.)
+$(info $(space))
+$(info Your version is: $(shell javac -version 2>&1 | head -n 1).)
+$(info The correct version is: 1.5.)
+$(info $(space))
+$(info Please follow the machine setup instructions at)
+$(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+$(info ************************************************************)
+$(error stop)
+endif
+
+endif # windows
+
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
