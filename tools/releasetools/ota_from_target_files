@@ -288,11 +288,9 @@ def AppendAssertions(script, input_zip):
 
   info = input_zip.read("OTA/android-info.txt")
   m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
-  if not m:
-    raise ExternalError("failed to find required bootloaders in "
-                        "android-info.txt")
-  bootloaders = m.group(1).split("|")
-  script.AssertSomeBootloader(*bootloaders)
+  if m:
+    bootloaders = m.group(1).split("|")
+    script.AssertSomeBootloader(*bootloaders)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
@@ -415,7 +413,7 @@ def GetBuildProp(property, z):
     return bp
   m = re.search(re.escape(property) + r"=(.*)\n", bp)
   if not m:
-    raise ExternalException("couldn't find %s in build.prop" % (property,))
+    raise common.ExternalError("couldn't find %s in build.prop" % (property,))
   return m.group(1).strip()
 
 
@@ -467,7 +465,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     if sf is None or fn in OPTIONS.require_verbatim:
       # This file should be included verbatim
       if fn in OPTIONS.prohibit_verbatim:
-        raise ExternalError("\"%s\" must be sent verbatim" % (fn,))
+        raise common.ExternalError("\"%s\" must be sent verbatim" % (fn,))
       print "send", fn, "verbatim"
       tf.AddToZip(output_zip)
       verbatim_targets.append((fn, tf.size))
