@@ -24,6 +24,6 @@ LOCAL_C_INCLUDES := external/zlib
 LOCAL_SHARED_LIBRARIES := libz
 
 LOCAL_MODULE := afar
-LOCAL_MODULE_TAGS := tests
+LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_EXECUTABLE)

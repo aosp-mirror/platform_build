@@ -31,6 +31,6 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_MODULE := dexopt-wrapper
 
-LOCAL_MODULE_TAGS := tests
+LOCAL_MODULE_TAGS := optional
 
 include $(BUILD_EXECUTABLE)
