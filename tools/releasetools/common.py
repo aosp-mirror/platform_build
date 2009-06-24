@@ -64,18 +64,29 @@ def LoadBoardConfig(fn):
 def BuildAndAddBootableImage(sourcedir, targetname, output_zip):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
   'sourcedir'), and turn them into a boot image.  Put the boot image
-  into the output zip file under the name 'targetname'."""
+  into the output zip file under the name 'targetname'.  Returns
+  targetname on success or None on failure (if sourcedir does not
+  appear to contain files for the requested image)."""
 
   print "creating %s..." % (targetname,)
 
   img = BuildBootableImage(sourcedir)
+  if img is None:
+    return None
 
   CheckSize(img, targetname)
   ZipWriteStr(output_zip, targetname, img)
+  return targetname
 
 def BuildBootableImage(sourcedir):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
-  'sourcedir'), and turn them into a boot image.  Return the image data."""
+  'sourcedir'), and turn them into a boot image.  Return the image
+  data, or None if sourcedir does not appear to contains files for
+  building the requested image."""
+
+  if (not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK) or
+      not os.access(os.path.join(sourcedir, "kernel"), os.F_OK)):
+    return None
 
   ramdisk_img = tempfile.NamedTemporaryFile()
   img = tempfile.NamedTemporaryFile()
@@ -107,7 +118,8 @@ def BuildBootableImage(sourcedir):
 
   p = Run(cmd, stdout=subprocess.PIPE)
   p.communicate()
-  assert p.returncode == 0, "mkbootimg of %s image failed" % (targetname,)
+  assert p.returncode == 0, "mkbootimg of %s image failed" % (
+      os.path.basename(sourcedir),)
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()

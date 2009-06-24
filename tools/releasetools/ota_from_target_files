@@ -327,9 +327,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   symlinks = CopySystemFiles(input_zip, output_zip)
   script.MakeSymlinks(symlinks)
 
-  common.BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "RECOVERY"),
-                                  "system/recovery.img", output_zip)
-  Item.Get("system/recovery.img", dir=False)
+  if common.BuildAndAddBootableImage(
+      os.path.join(OPTIONS.input_tmp, "RECOVERY"),
+      "system/recovery.img", output_zip):
+    Item.Get("system/recovery.img", dir=False)
 
   FixPermissions(script)
 
