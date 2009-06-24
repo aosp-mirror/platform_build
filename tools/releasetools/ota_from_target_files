@@ -310,8 +310,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   script.ShowProgress(0.1, 0)
 
-  common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
-  script.WriteFirmwareImage("radio", "radio.img")
+  try:
+    common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
+    script.WriteFirmwareImage("radio", "radio.img")
+  except KeyError:
+    print "warning: no radio image in input target_files; not flashing radio"
+
   script.ShowProgress(0.5, 0)
 
   if OPTIONS.wipe_user_data:
@@ -324,9 +328,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   symlinks = CopySystemFiles(input_zip, output_zip)
   script.MakeSymlinks(symlinks)
 
-  common.BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "RECOVERY"),
-                                  "system/recovery.img", output_zip)
-  Item.Get("system/recovery.img", dir=False)
+  if common.BuildAndAddBootableImage(
+      os.path.join(OPTIONS.input_tmp, "RECOVERY"),
+      "system/recovery.img", output_zip):
+    Item.Get("system/recovery.img", dir=False)
 
   FixPermissions(script)
 
