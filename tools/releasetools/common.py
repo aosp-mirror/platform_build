@@ -432,17 +432,18 @@ class DeviceSpecificParams(object):
     if self.module is None:
       path = OPTIONS.device_specific
       if path is None: return
-      if os.path.isdir(path):
-        info = imp.find_module("releasetools", [path])
-      else:
-        d, f = os.path.split(path)
-        b, x = os.path.splitext(f)
-        if x == ".py":
-          f = b
-        info = imp.find_module(f, [d])
-      if not info or info[0] is None:
-        raise ValueError("unable to find device-specific module")
-      self.module = imp.load_module("device_specific", *info)
+      try:
+        if os.path.isdir(path):
+          info = imp.find_module("releasetools", [path])
+        else:
+          d, f = os.path.split(path)
+          b, x = os.path.splitext(f)
+          if x == ".py":
+            f = b
+          info = imp.find_module(f, [d])
+        self.module = imp.load_module("device_specific", *info)
+      except ImportError:
+        print "unable to load device-specific module; assuming none"
 
   def _DoCall(self, function_name, *args, **kwargs):
     """Call the named function in the device-specific module, passing
