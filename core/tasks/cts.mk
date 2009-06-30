@@ -25,6 +25,8 @@ else
 endif
 CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 
+junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
+
 CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.archive \
 	android.core.tests.concurrent \
@@ -76,7 +78,9 @@ CTS_CASE_LIST := \
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
-$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
+$(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
+
+$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(ACP)
 # Make necessary directory for CTS
 	@rm -rf $(PRIVATE_CTS_DIR)
 	@mkdir -p $(TMP_DIR)
@@ -87,6 +91,8 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 # Copy executable to CTS directory
 	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(PRIVATE_DIR)/tools
 	$(hide) $(ACP) -fp $(CTS_EXECUTABLE_PATH) $(PRIVATE_DIR)/tools
+# Copy junit jar
+	$(hide) $(ACP) -fp $(PRIVATE_JUNIT_HOST_JAR) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
