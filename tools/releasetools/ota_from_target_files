@@ -580,7 +580,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.FormatPartition("userdata")
 
   script.Print("Removing unneeded files...")
-  script.DeleteFiles(["/"+i[0] for i in verbatim_targets])
+  script.DeleteFiles(["/"+i[0] for i in verbatim_targets] +
+                     ["/"+i for i in sorted(source_data)
+                            if i not in target_data])
 
   if updating_boot:
     # Produce the boot image by applying a patch to the current
