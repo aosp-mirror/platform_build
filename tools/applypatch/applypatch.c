@@ -541,14 +541,6 @@ size_t FreeSpaceForFile(const char* filename) {
 // TODO: make the interface more sensible for use as a library.
 
 int applypatch(int argc, char** argv) {
-
-  printf("applypatch  argc %d\n", argc);
-  int xx;
-  for (xx = 0; xx < argc; ++xx) {
-    printf("%d %p %s\n", xx, argv[xx], argv[xx]);
-    fflush(stdout);
-  }
-
   if (argc < 2) {
     return 2;
   }
