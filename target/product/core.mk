@@ -9,6 +9,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_PACKAGES := \
     framework-res \
     Browser \
+    Calculator \
     Contacts \
     Launcher \
     HTMLViewer \
@@ -27,4 +28,3 @@ PRODUCT_PACKAGES := \
     PackageInstaller \
     WebSearchProvider \
     Bugreport
-
