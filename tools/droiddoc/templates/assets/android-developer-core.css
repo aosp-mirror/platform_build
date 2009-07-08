@@ -238,6 +238,10 @@ hr.blue {
   top:7px;
 }
 
+#header li a span+span {
+  display:none;
+}
+
 /* TAB HIGHLIGHTING */
 .home #home-link a,
 .publish #publish-link a,
@@ -268,20 +272,20 @@ hr.blue {
 #headerLinks {
   margin:10px 10px 0 0;
   height:13px;
-}
-
-#headerLinks .text {
-  text-decoration: none;
-  color: #7FA9B5;
   font-size: 11px;
   vertical-align: top;
 }
 
 #headerLinks a {
-  text-decoration: underline;
   color: #7FA9B5;
-  font-size: 11px;
-  vertical-align: top;
+}
+
+#headerLinks img {
+  vertical-align:middle;
+}
+
+#language {
+  margin:0 10px 0 4px;
 }
 
 #search {

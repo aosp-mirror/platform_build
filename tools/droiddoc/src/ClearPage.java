@@ -126,7 +126,7 @@ public class ClearPage
         OutputStreamWriter stream = null;
         try {
             stream = new OutputStreamWriter(
-                            new FileOutputStream(file));
+                            new FileOutputStream(file), "UTF-8");
             String rendered = cs.render();
             stream.write(rendered, 0, rendered.length());
         }

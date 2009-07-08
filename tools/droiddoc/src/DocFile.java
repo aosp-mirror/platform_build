@@ -33,7 +33,8 @@ public class DocFile
         try {
             File f = new File(filename);
             int length = (int)f.length();
-            FileReader reader = new FileReader(f);
+            FileInputStream is = new FileInputStream(f);
+            InputStreamReader reader = new InputStreamReader(is, "UTF-8");
             char[] buf = new char[length];
             int index = 0;
             int amt;
