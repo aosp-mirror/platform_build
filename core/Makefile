@@ -499,6 +499,95 @@ INTERNAL_MKUSERFS := $(MKYAFFS2)
 endif
 
 # -----------------------------------------------------------------
+# Recovery image
+
+# If neither TARGET_NO_KERNEL nor TARGET_NO_RECOVERY are true
+ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
+
+INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
+
+recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
+recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
+recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
+recovery_build_prop := $(INSTALLED_BUILD_PROP_TARGET)
+recovery_binary := $(call intermediates-dir-for,EXECUTABLES,recovery)/recovery
+recovery_resources_common := $(call include-path-for, recovery)/res
+recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
+recovery_resource_deps := $(shell find $(recovery_resources_common) \
+  $(recovery_resources_private) -type f)
+
+ifeq ($(recovery_resources_private),)
+  $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
+endif
+
+INTERNAL_RECOVERYIMAGE_ARGS := \
+	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
+	--kernel $(recovery_kernel) \
+	--ramdisk $(recovery_ramdisk)
+
+# Assumes this has already been stripped
+ifdef BOARD_KERNEL_CMDLINE
+  INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(BOARD_KERNEL_CMDLINE)"
+endif
+ifdef BOARD_KERNEL_BASE
+  INTERNAL_RECOVERYIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
+endif
+
+# Keys authorized to sign OTA packages this build will accept.  The
+# build always uses test-keys for this; release packaging tools will
+# substitute other keys for this one.
+OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
+
+# Generate a file containing the keys that will be read by the
+# recovery binary.
+RECOVERY_INSTALL_OTA_KEYS := \
+	$(call intermediates-dir-for,PACKAGING,ota_keys)/keys
+DUMPKEY_JAR := $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar
+$(RECOVERY_INSTALL_OTA_KEYS): PRIVATE_OTA_PUBLIC_KEYS := $(OTA_PUBLIC_KEYS)
+$(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR)
+	@echo "DumpPublicKey: $@ <= $(PRIVATE_OTA_PUBLIC_KEYS)"
+	@rm -rf $@
+	@mkdir -p $(dir $@)
+	java -jar $(DUMPKEY_JAR) $(PRIVATE_OTA_PUBLIC_KEYS) > $@
+
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
+		$(INSTALLED_RAMDISK_TARGET) \
+		$(INSTALLED_BOOTIMAGE_TARGET) \
+		$(recovery_binary) \
+		$(recovery_initrc) $(recovery_kernel) \
+		$(INSTALLED_2NDBOOTLOADER_TARGET) \
+		$(recovery_build_prop) $(recovery_resource_deps) \
+		$(RECOVERY_INSTALL_OTA_KEYS)
+	@echo ----- Making recovery image ------
+	rm -rf $(TARGET_RECOVERY_OUT)
+	mkdir -p $(TARGET_RECOVERY_OUT)
+	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)
+	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc
+	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/tmp
+	echo Copying baseline ramdisk...
+	cp -R $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
+	echo Modifying ramdisk contents...
+	cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
+	cp -f $(recovery_binary) $(TARGET_RECOVERY_ROOT_OUT)/sbin/
+	cp -rf $(recovery_resources_common) $(TARGET_RECOVERY_ROOT_OUT)/
+	$(foreach item,$(recovery_resources_private), \
+	  cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/)
+	cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
+	cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
+	        > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+	$(MKBOOTFS) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
+	$(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) --output $@
+	@echo ----- Made recovery image -------- $@
+	$(hide) $(call assert-max-file-size,$@,$(BOARD_RECOVERYIMAGE_MAX_SIZE))
+
+else
+INSTALLED_RECOVERYIMAGE_TARGET :=
+endif
+
+.PHONY: recoveryimage
+recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET)
+
+# -----------------------------------------------------------------
 # system yaffs image
 #
 # First, the "unoptimized" image, which contains .apk/.jar files
@@ -553,10 +642,10 @@ else
   SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 endif
 
-$(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) | $(ACP)
+$(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(INSTALLED_RECOVERYIMAGE_TARGET) | $(ACP)
 	@echo "Install system fs image: $@"
 	$(copy-file-to-target)
-	$(hide) $(call assert-max-file-size,$@,$(BOARD_SYSTEMIMAGE_MAX_SIZE))
+	$(hide) $(call assert-max-file-size,$@ $(INSTALLED_RECOVERYIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_MAX_SIZE))
 
 systemimage: $(INSTALLED_SYSTEMIMAGE)
 
@@ -649,94 +738,6 @@ userdatatarball-nodeps: $(FS_GET_STATS)
 	$(build-userdatatarball-target)
 
 
-# If neither TARGET_NO_KERNEL nor TARGET_NO_RECOVERY are true
-ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
-
-# -----------------------------------------------------------------
-# Recovery image
-INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
-
-recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
-recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
-recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
-recovery_build_prop := $(INSTALLED_BUILD_PROP_TARGET)
-recovery_binary := $(call intermediates-dir-for,EXECUTABLES,recovery)/recovery
-recovery_resources_common := $(call include-path-for, recovery)/res
-recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
-recovery_resource_deps := $(shell find $(recovery_resources_common) \
-  $(recovery_resources_private) -type f)
-
-ifeq ($(recovery_resources_private),)
-  $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
-endif
-
-INTERNAL_RECOVERYIMAGE_ARGS := \
-	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
-	--kernel $(recovery_kernel) \
-	--ramdisk $(recovery_ramdisk)
-
-# Assumes this has already been stripped
-ifdef BOARD_KERNEL_CMDLINE
-  INTERNAL_RECOVERYIMAGE_ARGS += --cmdline "$(BOARD_KERNEL_CMDLINE)"
-endif
-ifdef BOARD_KERNEL_BASE
-  INTERNAL_RECOVERYIMAGE_ARGS += --base $(BOARD_KERNEL_BASE)
-endif
-
-# Keys authorized to sign OTA packages this build will accept.  The
-# build always uses test-keys for this; release packaging tools will
-# substitute other keys for this one.
-OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
-
-# Generate a file containing the keys that will be read by the
-# recovery binary.
-RECOVERY_INSTALL_OTA_KEYS := \
-	$(call intermediates-dir-for,PACKAGING,ota_keys)/keys
-DUMPKEY_JAR := $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar
-$(RECOVERY_INSTALL_OTA_KEYS): PRIVATE_OTA_PUBLIC_KEYS := $(OTA_PUBLIC_KEYS)
-$(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR)
-	@echo "DumpPublicKey: $@ <= $(PRIVATE_OTA_PUBLIC_KEYS)"
-	@rm -rf $@
-	@mkdir -p $(dir $@)
-	java -jar $(DUMPKEY_JAR) $(PRIVATE_OTA_PUBLIC_KEYS) > $@
-
-$(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
-		$(INSTALLED_RAMDISK_TARGET) \
-		$(INSTALLED_BOOTIMAGE_TARGET) \
-		$(recovery_binary) \
-		$(recovery_initrc) $(recovery_kernel) \
-		$(INSTALLED_2NDBOOTLOADER_TARGET) \
-		$(recovery_build_prop) $(recovery_resource_deps) \
-		$(RECOVERY_INSTALL_OTA_KEYS)
-	@echo ----- Making recovery image ------
-	rm -rf $(TARGET_RECOVERY_OUT)
-	mkdir -p $(TARGET_RECOVERY_OUT)
-	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)
-	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc
-	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/tmp
-	echo Copying baseline ramdisk...
-	cp -R $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
-	echo Modifying ramdisk contents...
-	cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
-	cp -f $(recovery_binary) $(TARGET_RECOVERY_ROOT_OUT)/sbin/
-	cp -rf $(recovery_resources_common) $(TARGET_RECOVERY_ROOT_OUT)/
-	$(foreach item,$(recovery_resources_private), \
-	  cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/)
-	cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
-	cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
-	        > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
-	$(MKBOOTFS) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
-	$(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) --output $@
-	@echo ----- Made recovery image -------- $@
-	$(hide) $(call assert-max-file-size,$@,$(BOARD_RECOVERYIMAGE_MAX_SIZE))
-
-else
-INSTALLED_RECOVERYIMAGE_TARGET :=
-endif
-
-.PHONY: recoveryimage
-recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET)
-
 # -----------------------------------------------------------------
 # bring in the installer image generation defines if necessary
 ifeq ($(TARGET_USE_DISKINSTALLER),true)
@@ -800,7 +801,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_RADIOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
-		$(BUILT_SYSTEMIMAGE) \
+		$(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 		$(built_ota_tools) \
@@ -862,6 +863,11 @@ endif
 	$(hide) $(ACP) $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
 	$(hide)	echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
 	$(hide) echo "$(PRIVATE_RECOVERY_API_VERSION)" > $(zip_root)/META/recovery-api-version.txt
+	$(hide) echo "blocksize $(BOARD_FLASH_BLOCK_SIZE)" > $(zip_root)/META/imagesizes.txt
+	$(hide) echo "boot $(BOARD_BOOTIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "recovery $(BOARD_RECOVERYIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "system $(BOARD_SYSTEMIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "userdata $(BOARD_USERDATAIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 
@@ -902,7 +908,6 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 	$(hide) ./build/tools/releasetools/ota_from_target_files \
 	   -s $(extensions) -m $(scriptmode) \
 	   -p $(HOST_OUT) \
-           -b $(TARGET_DEVICE_DIR)/BoardConfig.mk \
            -k $(KEY_CERT_PAIR) \
            $(BUILT_TARGET_FILES_PACKAGE) $@
 
@@ -1036,7 +1041,6 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 	$(hide) ./build/tools/releasetools/img_from_target_files \
 	   -s $(extensions) \
 	   -p $(HOST_OUT) \
-	   -b $(TARGET_DEVICE_DIR)/BoardConfig.mk \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: updatepackage
