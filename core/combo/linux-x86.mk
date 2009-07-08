@@ -10,7 +10,7 @@ $(combo_target)AR := $(AR)
 ifeq ($(combo_target),HOST_)
 # $(1): The file to check
 define get-file-size
-stat --format "%s" "$(1)"
+stat --format "%s" "$(1)" | tr -d '\n'
 endef
 endif
 

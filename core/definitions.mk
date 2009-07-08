@@ -1558,8 +1558,8 @@ endef
 # next whole flash block size.
 define assert-max-file-size
 $(if $(2), \
-  size=$$(for i in $(1); do $(call get-file-size,$$i); done); \
-  total=$$(( $$( echo "$$size" | tr '\n' + ; echo 0 ) )); \
+  size=$$(for i in $(1); do $(call get-file-size,$$i); echo +; done; echo 0); \
+  total=$$(( $$( echo "$$size" ) )); \
   printname=$$(echo -n "$(1)" | tr " " +); \
   echo "$$printname total size is $$total"; \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
@@ -1570,8 +1570,7 @@ $(if $(2), \
   if [ "$$total" -gt "$$maxsize" ]; then \
     echo "error: $$printname too large ($$total > [$(2) - $$reserve])"; \
     false; \
-  fi; \
-  if [ "$$total" -gt $$((maxsize - 32768)) ]; then \
+  elif [ "$$total" -gt $$((maxsize - 32768)) ]; then \
     echo "WARNING: $$printname approaching size limit ($$total now; limit $$maxsize)"; \
   fi \
  , \
