@@ -104,7 +104,8 @@ function this_page_relative(toroot)
   var file = "";
   if (toroot.substr(0, 1) == "/") {
     if (full.substr(0, toroot.length) == toroot) {
-      return full.substr(toroot.length);
+      var basePath = getBaseUri(full);
+      return basePath.substring(toroot.length);
     } else {
       // the file isn't under toroot.  Fail.
       return null;
