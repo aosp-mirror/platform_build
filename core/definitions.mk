@@ -1540,8 +1540,16 @@ ifndef get-file-size
 $(error HOST_OS must define get-file-size)
 endif
 
-# $(1): The file to check (often $@)
-# $(2): The maximum size, in decimal bytes
+# Convert a partition data size (eg, as reported in /proc/mtd) to the
+# size of the image used to flash that partition (which includes a
+# 64-byte spare area for each 2048-byte page).
+# $(1): the partition data size
+define image-size-from-data-size
+$(shell echo $$(($(1) / 2048 * (2048+64))))
+endef
+
+# $(1): The file(s) to check (often $@)
+# $(2): The maximum total image size, in decimal bytes
 #
 # If $(2) is empty, evaluates to "true"
 #
@@ -1550,19 +1558,21 @@ endif
 # next whole flash block size.
 define assert-max-file-size
 $(if $(2), \
-  fileSize=`$(call get-file-size,$(1))`; \
-  maxSize=$(2); \
-  onePct=`expr "(" $$maxSize + 99 ")" / 100`; \
-  onePct=`expr "(" "(" $$onePct + $(BOARD_FLASH_BLOCK_SIZE) - 1 ")" / \
-          $(BOARD_FLASH_BLOCK_SIZE) ")" "*" $(BOARD_FLASH_BLOCK_SIZE)`; \
-  reserve=`expr 2 "*" $(BOARD_FLASH_BLOCK_SIZE)`; \
-  if [ "$$onePct" -gt "$$reserve" ]; then \
-      reserve="$$onePct"; \
+  size=$$(for i in $(1); do $(call get-file-size,$$i); done); \
+  total=$$(( $$( echo "$$size" | tr '\n' + ; echo 0 ) )); \
+  printname=$$(echo -n "$(1)" | tr " " +); \
+  echo "$$printname total size is $$total"; \
+  img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
+  twoblocks=$$((img_blocksize * 2)); \
+  onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
+  reserve=$$((twoblocks > onepct ? twoblocks : onepct)); \
+  maxsize=$$(($(2) - reserve)); \
+  if [ "$$total" -gt "$$maxsize" ]; then \
+    echo "error: $$printname too large ($$total > [$(2) - $$reserve])"; \
+    false; \
   fi; \
-  maxSize=`expr $$maxSize - $$reserve`; \
-  if [ "$$fileSize" -gt "$$maxSize" ]; then \
-      echo "error: $(1) too large ($$fileSize > [$(2) - $$reserve])"; \
-      false; \
+  if [ "$$total" -gt $$((maxsize - 32768)) ]; then \
+    echo "WARNING: $$printname approaching size limit ($$total now; limit $$maxsize)"; \
   fi \
  , \
   true \
