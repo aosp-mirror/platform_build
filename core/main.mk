@@ -263,14 +263,6 @@ ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
     $(warning implicitly installing apns-conf_sdk.xml)
   endif
 endif
-# Install a vold.conf file is one's not already being installed.
-ifeq (,$(filter %:system/etc/vold.conf, $(PRODUCT_COPY_FILES)))
-  PRODUCT_COPY_FILES += \
-	development/data/etc/vold.conf:system/etc/vold.conf
-  ifeq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
-    $(warning implicitly installing vold.conf)
-  endif
-endif
 # If we're on an eng or tests build, but not on the sdk, and we have
 # a better one, use that instead.
 ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)

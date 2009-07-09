@@ -5,9 +5,11 @@
 PRODUCT_PACKAGES := \
     AlarmClock \
     AlarmProvider \
+    Calculator \
     Calendar \
     Camera \
     DrmProvider \
+    Email \
     LatinIME \
     Mms \
     Music \
