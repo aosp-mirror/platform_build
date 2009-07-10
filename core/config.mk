@@ -78,8 +78,8 @@ SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
 COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused
 COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
-COMMON_GLOBAL_CPPFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -Wnon-virtual-dtor
-COMMON_RELEASE_CPPFLAGS:= -DNDEBUG -UDEBUG
+COMMON_GLOBAL_CPPFLAGS:= $(COMMON_GLOBAL_CFLAGS)
+COMMON_RELEASE_CPPFLAGS:= $(COMMON_RELEASE_CFLAGS)
 
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
@@ -87,7 +87,7 @@ COMMON_JAVA_PACKAGE_SUFFIX := .jar
 COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 
 # list of flags to turn specific warnings in to errors
-TARGET_ERROR_FLAGS := -Werror=return-type
+TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor
 
 # TODO: do symbol compression
 TARGET_COMPRESS_MODULE_SYMBOLS := false
