@@ -53,6 +53,7 @@ CTS_CASE_LIST := \
 	CtsAppTestCases \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
+	CtsExtraPermissionTestCases \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
 	CtsLocationTestCases \
