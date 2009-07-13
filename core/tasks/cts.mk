@@ -58,6 +58,7 @@ CTS_CASE_LIST := \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
 	CtsLocationTestCases \
+	CtsMediaTestCases \
 	CtsOsTestCases \
 	CtsPermissionTestCases \
 	CtsProviderTestCases \
