@@ -14,4 +14,4 @@ ARCH_ARM_HAVE_FFS               := true
 arch_variant_cflags := \
     -march=armv7-a \
     -mfloat-abi=softfp \
-    -mfpu=vfp
+    -mfpu=neon
