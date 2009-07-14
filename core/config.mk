@@ -75,10 +75,10 @@ SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
 # ###############################################################
 
 # These can be changed to modify both host and device modules.
-COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused
+COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -fdiagnostics-show-option -Winit-self -Wpointer-arith
 COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
-COMMON_GLOBAL_CPPFLAGS:= $(COMMON_GLOBAL_CFLAGS)
+COMMON_GLOBAL_CPPFLAGS:= $(COMMON_GLOBAL_CFLAGS) -Wsign-promo -Wctor-dtor-privacy 
 COMMON_RELEASE_CPPFLAGS:= $(COMMON_RELEASE_CFLAGS)
 
 # Set the extensions used for various packages
@@ -87,7 +87,7 @@ COMMON_JAVA_PACKAGE_SUFFIX := .jar
 COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 
 # list of flags to turn specific warnings in to errors
-TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor
+TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point
 
 # TODO: do symbol compression
 TARGET_COMPRESS_MODULE_SYMBOLS := false
