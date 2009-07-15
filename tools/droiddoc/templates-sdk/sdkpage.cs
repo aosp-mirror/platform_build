@@ -4,7 +4,9 @@
 <?cs if:sdk.redirect ?>
   <head>
     <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs var:sdk.current ?>/index.html">
+    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>"<?cs 
+      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>"
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
 <?cs else ?>
@@ -17,12 +19,14 @@
 <?cs call:sdk_nav() ?>
 
 <?cs if:sdk.redirect ?>
+
 <div class="g-unit">
   <div id="jd-content">
     <p>Redirecting to 
-    <a href="/sdk/<?cs var:sdk.current ?>/index.html">
-    /sdk/<?cs var:sdk.current ?>/index.html
-    </a></p>
+    <a href="<?cs var:toroot ?>sdk/<?cs 
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>">/sdk/<?cs var:sdk.redirect.path ?><?cs 
+      else ?><?cs var:sdk.current ?>/index.html">/sdk/<?cs var:sdk.current ?>/index.html<?cs /if ?>
+    </a> ...</p>
 <?cs else ?>
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
