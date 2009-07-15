@@ -4,8 +4,7 @@
 	elif:sdk ?>sdk<?cs
 	elif:home ?>home<?cs
 	elif:community ?>community<?cs
-	elif:publish ?>publish<?cs
-	elif:about ?>about<?cs /if ?>">
+	elif:videos ?>videos<?cs /if ?>">
          
 	<li id="home-link"><a href="<?cs var:toroot ?><?cs if:android.whichdoc != "online" ?>offline.html<?cs else ?>index.html<?cs /if ?>">
 		<span class="en">Home</span>
@@ -42,6 +41,10 @@
                 <span class="ja">ブログ</span>
 		<span class="zh-CN">博客</span>
 		<span class="zh-TW">網誌</span>
+	</a></li>
+	<li id="videos-link"><a href="<?cs var:toroot ?>videos/index.html" onClick="return loadLast('videos')">
+		<span class="en">Videos</span>
+    <span class="ja">ビデオ</span>
 	</a></li>
 	<li id="community-link"><a href="<?cs var:toroot ?>community/index.html">
 		<span class="en">Community</span>
