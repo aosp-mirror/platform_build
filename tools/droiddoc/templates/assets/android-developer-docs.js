@@ -208,7 +208,7 @@ function resizeAll() {
 }
 
 function getBaseUri(uri) {
-  intlUrl = uri.substring(0,6) == "/intl/";
+  var intlUrl = (uri.substring(0,6) == "/intl/");
   if (intlUrl) {
     base = uri.substring(uri.indexOf('intl/')+5,uri.length);
     base = base.substring(base.indexOf('/')+1, base.length);
@@ -217,6 +217,19 @@ function getBaseUri(uri) {
   } else {
       //alert("not intl, returning uri as found.");
     return uri;
+  }
+}
+
+function requestAppendHL(uri) {
+//append "?hl=<lang> to an outgoing request (such as to blog)
+  var lang = getLangPref();
+  if (lang) {
+    var q = 'hl=' + lang;
+    uri += '?' + q;
+    window.location = uri;
+    return false;
+  } else {
+    return true;
   }
 }
 
@@ -418,5 +431,9 @@ function loadLangPref() {
 }
 
 function getLangPref() {
-  return $("#language").find(":selected").attr("value");
+  var lang = $("#language").find(":selected").attr("value");
+  if (!lang) {
+    lang = readCookie("pref_lang");
+  }
+  return (lang != 0) ? lang : 'en';
 }
