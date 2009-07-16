@@ -596,6 +596,8 @@ function mm()
         # Find the closest Android.mk file.
         T=$(gettop)
         local M=$(findmakefile)
+        # Remove the path to top as the makefilepath needs to be relative
+        local M=`echo $M|sed 's:'$T'/::'`
         if [ ! "$T" ]; then
             echo "Couldn't locate the top of the tree.  Try setting TOP."
         elif [ ! "$M" ]; then
