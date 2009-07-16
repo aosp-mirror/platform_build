@@ -304,9 +304,14 @@ class SignApk {
         pkcs7.encodeSignedData(out);
     }
 
-    /** Copy all the files in a manifest from input to output. */
+    /**
+     * Copy all the files in a manifest from input to output.  We set
+     * the modification times in the output to a fixed time, so as to
+     * reduce variation in the output file and make incremental OTAs
+     * more efficient.
+     */
     private static void copyFiles(Manifest manifest,
-            JarFile in, JarOutputStream out) throws IOException {
+        JarFile in, JarOutputStream out, long timestamp) throws IOException {
         byte[] buffer = new byte[4096];
         int num;
 
@@ -315,15 +320,16 @@ class SignApk {
         Collections.sort(names);
         for (String name : names) {
             JarEntry inEntry = in.getJarEntry(name);
+            JarEntry outEntry = null;
             if (inEntry.getMethod() == JarEntry.STORED) {
                 // Preserve the STORED method of the input entry.
-                out.putNextEntry(new JarEntry(inEntry));
+                outEntry = new JarEntry(inEntry);
             } else {
                 // Create a new entry so that the compressed len is recomputed.
-                JarEntry je = new JarEntry(name);
-                je.setTime(inEntry.getTime());
-                out.putNextEntry(je);
+                outEntry = new JarEntry(name);
             }
+            outEntry.setTime(timestamp);
+            out.putNextEntry(outEntry);
 
             InputStream data = in.getInputStream(inEntry);
             while ((num = data.read(buffer)) > 0) {
@@ -380,7 +386,7 @@ class SignApk {
             writeSignatureBlock(signature, publicKey, outputJar);
 
             // Everything else
-            copyFiles(manifest, inputJar, outputJar);
+            copyFiles(manifest, inputJar, outputJar, timestamp);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
