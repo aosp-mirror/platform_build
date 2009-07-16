@@ -92,7 +92,7 @@ libsystem_server.so     0xA9A00000
 libime.so               0xA9800000
 libgps.so               0xA9700000
 libcamera.so            0xA9680000
-libqcamera.so           0xA9400000
+liboemcamera.so         0xA9400000
 
 # pv libraries
 libpvasf.so                    0xA7C26000
