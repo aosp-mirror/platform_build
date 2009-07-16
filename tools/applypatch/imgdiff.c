@@ -439,6 +439,77 @@ void ChangeGzipChunkToNormal(ImageChunk* ch) {
   ch->len = ch->gzip_len;
 }
 
+/*
+ * Return true if the data in the chunk is identical (including the
+ * compressed representation, for gzip chunks).
+ */
+int AreChunksEqual(ImageChunk* a, ImageChunk* b) {
+    if (a->type != b->type) return 0;
+
+    switch (a->type) {
+        case CHUNK_NORMAL:
+            return a->len == b->len && memcmp(a->data, b->data, a->len) == 0;
+
+        case CHUNK_GZIP:
+            return a->gzip_len == b->gzip_len &&
+                memcmp(a->gzip_data, b->gzip_data, a->gzip_len) == 0;
+
+        default:
+            fprintf(stderr, "unknown chunk type %d\n", a->type);
+            return 0;
+    }
+}
+
+/*
+ * Look for runs of adjacent normal chunks and compress them down into
+ * a single chunk.  (Such runs can be produced when gzip chunks are
+ * changed to normal chunks.)
+ */
+void MergeAdjacentNormalChunks(ImageChunk* chunks, int* num_chunks) {
+  int out = 0;
+  int in_start = 0, in_end;
+  while (in_start < *num_chunks) {
+    if (chunks[in_start].type != CHUNK_NORMAL) {
+      in_end = in_start+1;
+    } else {
+      // in_start is a normal chunk.  Look for a run of normal chunks
+      // that constitute a solid block of data (ie, each chunk begins
+      // where the previous one ended).
+      for (in_end = in_start+1;
+           in_end < num_chunks && chunks[in_end].type == CHUNK_NORMAL &&
+             (chunks[in_end].start ==
+              chunks[in_end-1].start + chunks[in_end-1].len &&
+              chunks[in_end].data ==
+              chunks[in_end-1].data + chunks[in_end-1].len);
+           ++in_end);
+    }
+
+    if (in_end == in_start+1) {
+      if (out != in_start) {
+        memcpy(chunks+out, chunks+in_start, sizeof(ImageChunk));
+      }
+    } else {
+      printf("collapse normal chunks %d - %d\n", in_start, in_end-1);
+
+      // Merge chunks [in_start, in_end-1] into one chunk.  Since the
+      // data member of each chunk is just a pointer into an in-memory
+      // copy of the file, this can be done without recopying (the
+      // output chunk has the first chunk's start location and data
+      // pointer, and length equal to the sum of the input chunk
+      // lengths).
+      chunks[out].type = CHUNK_NORMAL;
+      chunks[out].start = chunks[in_start].start;
+      chunks[out].data = chunks[in_start].data;
+      chunks[out].len = chunks[in_end-1].len +
+        (chunks[in_end-1].start - chunks[in_start].start);
+    }
+
+    ++out;
+    in_start = in_end;
+  }
+  *num_chunks = out;
+}
+
 int main(int argc, char** argv) {
   if (argc != 4) {
     fprintf(stderr, "usage: %s <src-img> <tgt-img> <patch-file>\n", argv[0]);
@@ -475,22 +546,45 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Confirm that given the uncompressed chunk data in the target, we
-  // can recompress it and get exactly the same bits as are in the
-  // input target image.  If this fails, treat the chunk as a normal
-  // non-gzipped chunk.
-
   for (i = 0; i < num_tgt_chunks; ++i) {
     if (tgt_chunks[i].type == CHUNK_GZIP) {
+      // Confirm that given the uncompressed chunk data in the target, we
+      // can recompress it and get exactly the same bits as are in the
+      // input target image.  If this fails, treat the chunk as a normal
+      // non-gzipped chunk.
       if (ReconstructGzipChunk(tgt_chunks+i) < 0) {
         printf("failed to reconstruct target gzip chunk %d; "
                "treating as normal chunk\n", i);
         ChangeGzipChunkToNormal(tgt_chunks+i);
         ChangeGzipChunkToNormal(src_chunks+i);
+        continue;
       } else {
         printf("reconstructed target gzip chunk %d\n", i);
       }
+
+      // If two gzip chunks are identical (eg, the kernel has not
+      // changed between two builds), treat them as normal chunks.
+      // This makes applypatch much faster -- it can apply a trivial
+      // patch to the compressed data, rather than uncompressing and
+      // recompressing to apply the trivial patch to the uncompressed
+      // data.
+      if (AreChunksEqual(tgt_chunks+i, src_chunks+i)) {
+        printf("source and target chunk %d are identical; "
+               "treating as normal chunk\n", i);
+        ChangeGzipChunkToNormal(tgt_chunks+i);
+        ChangeGzipChunkToNormal(src_chunks+i);
+      }
     }
+  }
+
+  // If we changed any gzip chunks to normal chunks, we can simplify
+  // the patch by merging neighboring normal chunks.
+  MergeAdjacentNormalChunks(src_chunks, &num_src_chunks);
+  MergeAdjacentNormalChunks(tgt_chunks, &num_tgt_chunks);
+  if (num_src_chunks != num_tgt_chunks) {
+    // This shouldn't happen.
+    fprintf(stderr, "merging normal chunks went awry\n");
+    return 1;
   }
 
   // Compute bsdiff patches for each chunk's data (the uncompressed
