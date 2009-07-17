@@ -126,7 +126,7 @@ endif # windows
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
-INTERNAL_MODIFIER_TARGETS := showcommands
+INTERNAL_MODIFIER_TARGETS := showcommands checkbuild
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
@@ -292,11 +292,11 @@ endef
 endif
 
 
-# If all they typed was make showcommands, we'll actually build
-# the default target.
-ifeq ($(MAKECMDGOALS),showcommands)
-.PHONY: showcommands
-showcommands: $(DEFAULT_GOAL)
+# If they only used the modifier goals (showcommands, checkbuild), we'll actually
+# build the default target.
+ifeq ($(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS)),)
+.PHONY: $(INTERNAL_MODIFIER_TARGETS)
+$(INTERNAL_MODIFIER_TARGETS): $(DEFAULT_GOAL)
 endif
 
 # These targets are going to delete stuff, don't bother including
@@ -530,7 +530,6 @@ add-required-deps :=
 # poisons the rest of the tags and shouldn't appear
 # on any list.
 Default_MODULES := $(sort $(ALL_DEFAULT_INSTALLED_MODULES) \
-                          $(ALL_BUILT_MODULES) \
                           $(CUSTOM_MODULES))
 # TODO: Remove the 3 places in the tree that use
 # ALL_DEFAULT_INSTALLED_MODULES and get rid of it from this list.
@@ -596,7 +595,7 @@ ifdef is_sdk_build
 endif
 
 
-# config/Makefile contains extra stuff that we don't want to pollute this
+# build/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
 # contains everything that's built during the current make, but it also further
 # extends ALL_DEFAULT_INSTALLED_MODULES.
@@ -606,6 +605,20 @@ modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 endif # dont_bother
+
+# These are additional goals that we build, in order to make sure that there
+# is as little code as possible in the tree that doesn't build.
+modules_to_check := $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).CHECKED))
+
+# If you would like to build all goals, and not skip any intermediate
+# steps, you can pass the "all" modifier goal on the commandline.
+ifneq ($(filter all,$(MAKECMDGOALS)),)
+modules_to_check += $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).BUILT))
+endif
+
+# for easier debugging
+modules_to_check := $(sort $(modules_to_check))
+#$(error modules_to_check $(modules_to_check))
 
 # -------------------------------------------------------------------
 # This is used to to get the ordering right, you can also use these,
@@ -624,9 +637,15 @@ $(ALL_C_CPP_ETC_OBJECTS): | all_copied_headers
 
 # All the droid stuff, in directories
 .PHONY: files
-files: prebuilt $(modules_to_install) $(INSTALLED_ANDROID_INFO_TXT_TARGET)
+files: prebuilt \
+        $(modules_to_install) \
+        $(modules_to_check) \
+        $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # -------------------------------------------------------------------
+
+.PHONY: checkbuild
+checkbuild: $(modules_to_check)
 
 .PHONY: ramdisk
 ramdisk: $(INSTALLED_RAMDISK_TARGET)

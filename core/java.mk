@@ -37,6 +37,54 @@ ifneq ($(filter classes-compiled.jar classes.jar,$(LOCAL_BUILT_MODULE_STEM)),)
 $(error LOCAL_BUILT_MODULE_STEM may not be "$(LOCAL_BUILT_MODULE_STEM)")
 endif
 
+
+##############################################################################
+# Define the intermediate targets before including base_rules so they get
+# the correct environment.
+##############################################################################
+
+intermediates := $(call local-intermediates-dir)
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+
+# This is cleared below, and re-set if we really need it.
+full_classes_jar := $(intermediates.COMMON)/classes.jar
+
+# Emma source code coverage
+ifneq ($(EMMA_INSTRUMENT),true)
+LOCAL_NO_EMMA_INSTRUMENT := true
+LOCAL_NO_EMMA_COMPILE := true
+endif
+
+# Choose leaf name for the compiled jar file.
+ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
+full_classes_compiled_jar_leaf := classes-no-debug-var.jar
+else
+full_classes_compiled_jar_leaf := classes-full-debug.jar
+endif
+full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
+
+emma_intermediates_dir := $(intermediates.COMMON)/emma_out
+# the 'lib/$(full_classes_compiled_jar_leaf)' portion of this path is fixed in
+# the emma tool
+full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(full_classes_compiled_jar_leaf)
+full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
+full_classes_jarjar_jar := $(full_classes_jar)
+built_dex := $(intermediates.COMMON)/classes.dex
+
+LOCAL_INTERMEDIATE_TARGETS += \
+    $(full_classes_jar) \
+    $(full_classes_compiled_jar) \
+    $(full_classes_emma_jar) \
+    $(full_classes_stubs_jar) \
+    $(full_classes_jarjar_jar) \
+    $(built_dex)
+
+
+# TODO: It looks like the only thing we need from base_rules is
+# all_java_sources.  See if we can get that by adding a
+# common_java.mk, and moving the include of base_rules.mk to
+# after all the declarations.
+
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -65,6 +113,7 @@ ifneq (,$(strip $(all_java_sources)))
 # LOCAL_BUILT_MODULE, so it will inherit the necessary PRIVATE_*
 # variable definitions.
 full_classes_jar := $(intermediates.COMMON)/classes.jar
+built_dex := $(intermediates.COMMON)/classes.dex
 
 # Droiddoc isn't currently able to generate stubs for modules, so we're just
 # allowing it to use the classes.jar as the "stubs" that would be use to link
@@ -74,33 +123,27 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 #   it, so it's closest to what's on the device.
 # - This extra copy, with the dependency on LOCAL_BUILT_MODULE allows the
 #   PRIVATE_ vars to be preserved.
-full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 $(full_classes_stubs_jar): PRIVATE_SOURCE_FILE := $(full_classes_jar)
 $(full_classes_stubs_jar) : $(LOCAL_BUILT_MODULE) | $(ACP)
 	@echo Copying $(PRIVATE_SOURCE_FILE)
 	$(hide) $(ACP) -fp $(PRIVATE_SOURCE_FILE) $@
 ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 
-# Emma source code coverage
-ifneq ($(EMMA_INSTRUMENT),true) 
-LOCAL_NO_EMMA_INSTRUMENT := true
-LOCAL_NO_EMMA_COMPILE := true
-endif
-
-# Choose leaf name for the compiled jar file.
-ifneq ($(LOCAL_NO_EMMA_COMPILE),true) 
-full_classes_compiled_jar_leaf := classes-no-debug-var.jar
-else
-full_classes_compiled_jar_leaf := classes-full-debug.jar
-endif
-
 # Compile the java files to a .jar file.
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
-full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
 $(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
 	$(transform-java-to-classes.jar)
+
+# All of the rules after full_classes_compiled_jar are very unlikely
+# to fail except for bugs in their respective tools.  If you would
+# like to run these rules, add the "all" modifier goal to the make
+# command line.
+# This overwrites the value defined in base_rules.mk.  That's a little
+# dirty.  It's preferable to set LOCAL_CHECKED_MODULE, but this has to
+# be done after the inclusion of base_rules.mk.
+ALL_MODULES.$(LOCAL_MODULE).CHECKED := $(full_classes_compiled_jar)
 
 ifneq ($(LOCAL_NO_EMMA_COMPILE),true) 
 # If you instrument class files that have local variable debug information in
@@ -114,11 +157,6 @@ else
 # info
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 endif
-
-emma_intermediates_dir := $(intermediates.COMMON)/emma_out
-# the 'lib/$(full_classes_compiled_jar_leaf)' portion of this path is fixed in 
-# the emma tool
-full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(full_classes_compiled_jar_leaf)
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # Skip adding emma instrumentation to class files if this is a static library,
@@ -142,7 +180,6 @@ endif
 
 # Run jarjar if necessary, otherwise just copy the file.  This is the last
 # part of this step, so the output of this command is full_classes_jar.
-full_classes_jarjar_jar := $(full_classes_jar)
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jarjar_jar): $(full_classes_emma_jar) | jarjar
@@ -153,9 +190,6 @@ $(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) $< $@
 endif
-
-
-built_dex := $(intermediates.COMMON)/classes.dex
 
 # Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
 # will work even when intermediates != intermediates.COMMON.

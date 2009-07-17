@@ -41,9 +41,6 @@ ALL_MODULES:=
 # set of installed targets.
 ALL_DEFAULT_INSTALLED_MODULES:=
 
-# Full paths to all targets that will be built.
-ALL_BUILT_MODULES:=
-
 # The list of tags that have been defined by
 # LOCAL_MODULE_TAGS.  Each word in this variable maps
 # to a corresponding ALL_MODULE_TAGS.<tagname> variable
@@ -1239,21 +1236,21 @@ $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES), \
     $(PRIVATE_CLASS_INTERMEDIATES_DIR))
-$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_INTERMEDIATES_DIR)/java-source-list)
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_INTERMEDIATES_DIR)/java-source-list; \
+	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list; \
 fi
-$(hide) tr ' ' '\n' < $(PRIVATE_INTERMEDIATES_DIR)/java-source-list \
-    | sort -u > $(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list \
+    | sort -u > $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq
 $(hide) $(TARGET_JAVAC) -encoding ascii $(PRIVATE_BOOTCLASSPATH) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
     $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
-    \@$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq \
+    \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
-$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list
-$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) rm -f $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list
+$(hide) rm -f $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq
 $(hide) mkdir -p $(dir $@)
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
