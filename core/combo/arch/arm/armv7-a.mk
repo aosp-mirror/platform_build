@@ -17,3 +17,6 @@ arch_variant_cflags := \
     -march=armv7-a \
     -mfloat-abi=softfp \
     -mfpu=neon
+
+arch_variant_ldflags := \
+	-Wl,--fix-cortex-a8
