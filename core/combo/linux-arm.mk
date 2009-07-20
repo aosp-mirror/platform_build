@@ -96,6 +96,9 @@ $(combo_target)GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(arch_include_dir)
 
+$(combo_target)GLOBAL_LDFLAGS += \
+			$(arch_variant_ldflags)
+
 # We only need thumb interworking in cases where thumb support
 # is available in the architecture, and just to be sure, (and
 # since sometimes thumb-interwork appears to be default), we
@@ -177,6 +180,7 @@ $(TARGET_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	$(TARGET_LIBGCC)
 endef
 
@@ -193,6 +197,7 @@ $(TARGET_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	$(PRIVATE_ALL_OBJECTS) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(PRIVATE_LDFLAGS) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	$(TARGET_LIBGCC) \
 	$(TARGET_CRTEND_O)
 endef
@@ -204,6 +209,7 @@ $(TARGET_CXX) -nostdlib -Bstatic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	$(TARGET_CRTBEGIN_STATIC_O) \
 	$(PRIVATE_LDFLAGS) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_ALL_OBJECTS) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(TARGET_LIBGCC) \

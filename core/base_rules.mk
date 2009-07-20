@@ -391,6 +391,25 @@ endif
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
+
+###########################################################
+## CHECK_BUILD goals
+###########################################################
+
+# If nobody has defined a more specific module for the
+# checked modules, use LOCAL_BUILT_MODULE.  This was old
+# behavior, so it should be a safe default.
+ifndef LOCAL_CHECKED_MODULE
+  LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
+endif
+
+# If they request that this module not be checked, then don't.
+# PLEASE DON'T SET THIS.  ANY PLACES THAT SET THIS WITHOUT
+# GOOD REASON WILL HAVE IT REMOVED.
+ifdef LOCAL_DONT_CHECK_MODULE
+  LOCAL_CHECKED_MODULE :=
+endif
+
 ###########################################################
 ## Register with ALL_MODULES
 ###########################################################
@@ -403,6 +422,8 @@ ALL_MODULES.$(LOCAL_MODULE).PATH := \
     $(ALL_MODULES.$(LOCAL_MODULE).PATH) $(LOCAL_PATH)
 ALL_MODULES.$(LOCAL_MODULE).TAGS := \
     $(ALL_MODULES.$(LOCAL_MODULE).TAGS) $(LOCAL_MODULE_TAGS)
+ALL_MODULES.$(LOCAL_MODULE).CHECKED := \
+    $(ALL_MODULES.$(LOCAL_MODULE).CHECKED) $(LOCAL_CHECKED_MODULE)
 ALL_MODULES.$(LOCAL_MODULE).BUILT := \
     $(ALL_MODULES.$(LOCAL_MODULE).BUILT) $(LOCAL_BUILT_MODULE)
 ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
@@ -428,9 +449,6 @@ $(foreach tag,$(LOCAL_MODULE_TAGS),\
 # Add this module name to the tag list of each specified tag.
 $(foreach tag,$(LOCAL_MODULE_TAGS),\
     $(eval ALL_MODULE_NAME_TAGS.$(tag) += $(LOCAL_MODULE)))
-
-# Always build everything, but only install a subset.
-ALL_BUILT_MODULES += $(LOCAL_BUILT_MODULE)
 
 ###########################################################
 ## NOTICE files
