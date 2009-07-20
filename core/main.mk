@@ -400,8 +400,6 @@ ifeq ($(BUILD_TINY_ANDROID), true)
 # TINY_ANDROID is a super-minimal build configuration, handy for board 
 # bringup and very low level debugging
 
-INTERNAL_DEFAULT_DOCS_TARGETS := 
-
 subdirs := \
 	bionic \
 	system/core \
@@ -420,7 +418,6 @@ else	# !BUILD_TINY_ANDROID
 #
 # Typical build; include any Android.mk files we can find.
 #
-INTERNAL_DEFAULT_DOCS_TARGETS := offline-sdk-docs
 subdirs := $(TOP)
 
 FULL_BUILD := true
@@ -449,7 +446,6 @@ include $(ONE_SHOT_MAKEFILE)
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS),))
 FULL_BUILD :=
-INTERNAL_DEFAULT_DOCS_TARGETS :=
 # Stub out the notice targets, which probably aren't defined
 # when using ONE_SHOT_MAKEFILE.
 NOTICE-HOST-%: ;
@@ -657,7 +653,6 @@ droidcore: files \
 	$(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_RECOVERYIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INTERNAL_DEFAULT_DOCS_TARGETS) \
 	$(INSTALLED_FILES_FILE)
 
 # The actual files built by the droidcore target changes depending
