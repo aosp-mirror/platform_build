@@ -774,65 +774,76 @@ td.gsc-search-button {
 }
 
 #carouselMain {
+	background: url('/assets/images/home/bg_home_carousel_board.png') 0 0 no-repeat;
+	height:auto;
   padding: 25px 21px 0;
-  height:185px;
-  background-position:top;
   overflow:hidden;
   position:relative;
+  zoom:1; /*IE6*/
 }
 
 #carouselMain img {
   margin:0;
 }
 
-#homeMiddle p {
-  margin:0;
-  padding-bottom: 1em;
+#carouselMain .bulletinDesc h3 {
+	margin:0;
+	padding:0;
+}
+
+#carouselMain .bulletinDesc p {
+	margin:0;
+	padding:0.7em 0 0;
+}
+
+#carouselWheel {
+	background: url('/assets/images/home/bg_home_carousel_wheel.png') 0 0 no-repeat;
+	padding-top:40px;
+	height:150px;
 }
 
 .clearer { clear:both; }
 
-#arrow-left, #arrow-right {
+a#arrow-left, a#arrow-right {
   float:left;
   width:42px;
   height:42px;
   background-image:url(images/home/carousel_buttons_sprite.png);
   background-repeat:no-repeat;
 }
-#arrow-left {
+a#arrow-left {
   margin:35px 3px 0 10px;
 }
-#arrow-right {
+a#arrow-right {
   margin:35px 10px 0 0;
 }
-.arrow-left-off,
-#arrow-left.arrow-left-off:hover { 
+a.arrow-left-off,
+a#arrow-left.arrow-left-off:hover { 
   background-position:0 0;
 }
-.arrow-right-off, 
-#arrow-right.arrow-right-off:hover { 
+a.arrow-right-off, 
+a#arrow-right.arrow-right-off:hover { 
   background-position:-42px 0;
 }
-#arrow-left:hover { 
+a#arrow-left:hover { 
   background-position:0 -42px;
 }
-#arrow-right:hover { 
+a#arrow-right:hover { 
   background-position:-42px -42px;
 }
-.arrow-left-on {
+a.arrow-left-on {
   background-position:0 0;
 }
-.arrow-right-on {
+a.arrow-right-on {
   background-position:-42px 0;
 }
-.arrow-right-off,
-.arrow-left-off {
+a.arrow-right-off,
+a.arrow-left-off {
   cursor:default;
 }
 
 .app-list-container {
-  margin:37px 20px 0;
-  _margin-top:33px;
+  margin:0 20px;
   position:relative;
   width:100%;
 }
@@ -907,13 +918,19 @@ div#app-list {
   padding-bottom:.25em;
 }
 
+/*IE6*/
+* html #app-list a { zoom: 1; margin:0 24px 0 15px;}
+
+* html #list-clip { 
+  width:430px !important;
+}
+
 /*carousel bulletin layouts*/
 /*460px width*/
 /*185px height*/
 .img-left {
   float:left;
   width:230px;
-  height:165px;
   overflow:hidden;
   padding:8px 0 8px 8px;
 }
@@ -925,7 +942,6 @@ div#app-list {
 .img-right {
   float:right;
   width:220px;
-  height:165px;
   overflow:hidden;
   padding:8px 8px 8px 0;
 }
@@ -936,12 +952,10 @@ div#app-list {
   text-align:right;
 }
 .img-top {
-  height:80px;
-  text-align:center;
+  padding:20px 20px 0;
 }
 .desc-bottom {
-  height:100px;
-  margin:10px;
+  padding:10px;
 }
 
 
