@@ -115,9 +115,15 @@ def:see_also_tags(also) ?><?cs
   /if ?>
 <?cs /def ?>
 
+<?cs # print the Since: section ?><?cs
+def:since_tags(obj) ?>
+  <div class="jd-tagdata">
+      <h5 class="jd-tagtitle">Since <?cs var:obj.since ?></h5>
+  </div>
+<?cs /def ?>
 
 <?cs # Print the long-form description for something.
-       Uses the following fields: deprecated descr seeAlso ?><?cs 
+       Uses the following fields: deprecated descr seeAlso since ?><?cs
 def:description(obj) ?><?cs 
   call:deprecated_warning(obj) ?>
   <div class="jd-tagdata jd-tagdescr"><p><?cs call:tag_list(obj.descr) ?></p></div><?cs 
@@ -165,6 +171,7 @@ def:description(obj) ?><?cs
   </div><?cs 
   /if ?><?cs 
   call:see_also_tags(obj.seeAlso) ?><?cs 
+  call:since_tags(obj) ?><?cs
 /def ?>
 
 <?cs # A table of links to classes with descriptions, as in a package file or the nested classes ?><?cs

@@ -21,6 +21,7 @@
 <div class="jd-descr">
 <p><?cs call:tag_list(package.descr) ?></p>
 </div>
+<?cs call:since_tags(package) ?>
 
 <?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->

@@ -907,6 +907,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         if (kind != null) {
             data.setValue("class.kind", kind);
         }
+        data.setValue("class.since", getSince());
 
         // the containing package -- note that this can be passed to type_link,
         // but it also contains the list of all of the packages
