@@ -25,6 +25,7 @@ PRODUCT_PACKAGES := \
 	libWnnZHCNDic \
 	libwnndict \
 	ApiDemos \
+	GestureBuilder \
 	SoftKeyboard
 
 PRODUCT_COPY_FILES := \

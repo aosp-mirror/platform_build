@@ -94,6 +94,7 @@ public class DroidDoc
         String stubsDir = null;
         //Create the dependency graph for the stubs directory
         boolean apiXML = false;
+        boolean noDocs = false;
         String apiFile = null;
         String debugStubsFile = "";
         HashSet<String> stubPackages = null;
@@ -186,6 +187,9 @@ public class DroidDoc
                 apiXML = true;
                 apiFile = a[1];
             }
+            else if (a[0].equals("-nodocs")) {
+                noDocs = true;
+            }
         }
 
         // read some prefs from the template
@@ -196,59 +200,67 @@ public class DroidDoc
         // Set up the data structures
         Converter.makeInfo(r);
 
-        // Files for proofreading
-        if (proofreadFile != null) {
-            Proofread.initProofread(proofreadFile);
+        if (!noDocs) {
+            long startTime = System.nanoTime();
+
+            // Files for proofreading
+            if (proofreadFile != null) {
+                Proofread.initProofread(proofreadFile);
+            }
+            if (todoFile != null) {
+                TodoFile.writeTodoFile(todoFile);
+            }
+
+            // HTML Pages
+            if (ClearPage.htmlDir != null) {
+                writeHTMLPages();
+            }
+
+            // Navigation tree
+            NavTree.writeNavTree(javadocDir);
+
+            // Packages Pages
+            writePackages(javadocDir
+                            + (ClearPage.htmlDir!=null
+                                ? "packages" + htmlExtension
+                                : "index" + htmlExtension));
+
+            // Classes
+            writeClassLists();
+            writeClasses();
+            writeHierarchy();
+     //      writeKeywords();
+
+            // Lists for JavaScript
+            writeLists();
+            if (keepListFile != null) {
+                writeKeepList(keepListFile);
+            }
+
+            // Sample Code
+            for (SampleCode sc: sampleCodes) {
+                sc.write();
+            }
+
+            // Index page
+            writeIndex();
+
+            Proofread.finishProofread(proofreadFile);
+
+            if (sdkValuePath != null) {
+                writeSdkValues(sdkValuePath);
+            }
+
+            long time = System.nanoTime() - startTime;
+            System.out.println("DroidDoc took " + (time / 1000000000) + " sec. to write docs to "
+                    + ClearPage.outputDir);
         }
-        if (todoFile != null) {
-            TodoFile.writeTodoFile(todoFile);
-        }
-
-        // HTML Pages
-        if (ClearPage.htmlDir != null) {
-            writeHTMLPages();
-        }
-
-        // Navigation tree
-        NavTree.writeNavTree(javadocDir);
-
-        // Packages Pages
-        writePackages(javadocDir
-                        + (ClearPage.htmlDir!=null
-                            ? "packages" + htmlExtension
-                            : "index" + htmlExtension));
-
-        // Classes
-        writeClassLists();
-        writeClasses();
-        writeHierarchy();
- //      writeKeywords();
-
-        // Lists for JavaScript
-        writeLists();
-        if (keepListFile != null) {
-            writeKeepList(keepListFile);
-        }
-
-        // Sample Code
-        for (SampleCode sc: sampleCodes) {
-            sc.write();
-        }
-
-        // Index page
-        writeIndex();
-
-        Proofread.finishProofread(proofreadFile);
 
         // Stubs
         if (stubsDir != null) {
             Stubs.writeStubs(stubsDir, apiXML, apiFile, stubPackages);
         }
         
-        if (sdkValuePath != null) {
-            writeSdkValues(sdkValuePath);
-        }
-
         Errors.printErrors();
         return !Errors.hadError;
     }
@@ -393,6 +405,9 @@ public class DroidDoc
         }
         if (option.equals("-apixml")) {
             return 2;
+        }
+        if (option.equals("-nodocs")) {
+            return 1;
         }
         return 0;
     }
