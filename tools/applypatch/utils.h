@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-// Image patch chunk types
-#define CHUNK_NORMAL   0
-#define CHUNK_GZIP     1   // version 1 only
-#define CHUNK_DEFLATE  2   // version 2 only
-#define CHUNK_RAW      3   // version 2 only
+#ifndef _BUILD_TOOLS_APPLYPATCH_UTILS_H
+#define _BUILD_TOOLS_APPLYPATCH_UTILS_H
 
-// The gzip header size is actually variable, but we currently don't
-// support gzipped data with any of the optional fields, so for now it
-// will always be ten bytes.  See RFC 1952 for the definition of the
-// gzip format.
-#define GZIP_HEADER_LEN   10
+#include <stdio.h>
 
-// The gzip footer size really is fixed.
-#define GZIP_FOOTER_LEN   8
+// Read and write little-endian values of various sizes.
+
+void Write4(int value, FILE* f);
+void Write8(long long value, FILE* f);
+int Read2(unsigned char* p);
+int Read4(unsigned char* p);
+long long Read8(unsigned char* p);
+
+#endif //  _BUILD_TOOLS_APPLYPATCH_UTILS_H
