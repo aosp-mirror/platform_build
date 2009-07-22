@@ -291,7 +291,8 @@ def AppendAssertions(script, input_zip):
   m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
   if m:
     bootloaders = m.group(1).split("|")
-    script.AssertSomeBootloader(*bootloaders)
+    if "*" not in bootloaders:
+      script.AssertSomeBootloader(*bootloaders)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
