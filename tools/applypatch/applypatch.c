@@ -765,7 +765,8 @@ int applypatch(int argc, char** argv) {
       return result;
     }
   } else if (header_bytes_read >= 8 &&
-             memcmp(header, "IMGDIFF1", 8) == 0) {
+             memcmp(header, "IMGDIFF", 7) == 0 &&
+             (header[7] == '1' || header[7] == '2')) {
     int result = ApplyImagePatch(source_to_use->data, source_to_use->size,
                                  patch_filename, output, &ctx);
     if (result != 0) {
@@ -773,7 +774,7 @@ int applypatch(int argc, char** argv) {
       return result;
     }
   } else {
-    fprintf(stderr, "Unknown patch file format");
+    fprintf(stderr, "Unknown patch file format\n");
     return 1;
   }
 
