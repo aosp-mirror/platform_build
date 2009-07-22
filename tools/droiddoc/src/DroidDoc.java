@@ -98,6 +98,7 @@ public class DroidDoc
         String apiFile = null;
         String debugStubsFile = "";
         HashSet<String> stubPackages = null;
+        SinceTagger sinceTagger = new SinceTagger();
 
         root = r;
 
@@ -190,6 +191,9 @@ public class DroidDoc
             else if (a[0].equals("-nodocs")) {
                 noDocs = true;
             }
+            else if (a[0].equals("-since")) {
+                sinceTagger.addVersion(a[1], a[2]);
+            }
         }
 
         // read some prefs from the template
@@ -202,6 +206,9 @@ public class DroidDoc
 
         if (!noDocs) {
             long startTime = System.nanoTime();
+
+            // Apply @since tags from the XML file
+            sinceTagger.tagAll(Converter.rootClasses());
 
             // Files for proofreading
             if (proofreadFile != null) {
@@ -260,7 +267,7 @@ public class DroidDoc
         if (stubsDir != null) {
             Stubs.writeStubs(stubsDir, apiXML, apiFile, stubPackages);
         }
-        
+
         Errors.printErrors();
         return !Errors.hadError;
     }
@@ -409,9 +416,12 @@ public class DroidDoc
         if (option.equals("-nodocs")) {
             return 1;
         }
+        if (option.equals("-since")) {
+            return 3;
+        }
         return 0;
     }
-    
+
     public static boolean validOptions(String[][] options, DocErrorReporter r)
     {
         for (String[] a: options) {
@@ -777,6 +787,7 @@ public class DroidDoc
         String name = pkg.name();
 
         data.setValue("package.name", name);
+        data.setValue("package.since", pkg.getSince());
         data.setValue("package.descr", "...description...");
 
         makeClassListHDF(data, "package.interfaces", 

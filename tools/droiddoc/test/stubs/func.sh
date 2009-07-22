@@ -26,21 +26,22 @@ function build_stubs()
     STUBS_DIR=$3
 
     OBJ_DIR=out/stubs/$ID
+    PLATFORM=${HOST_OS}-${HOST_ARCH}
 
     rm -rf $OBJ_DIR &> /dev/null
     mkdir -p $OBJ_DIR
 
     find $SRC_DIR -name '*.java' > $OBJ_DIR/javadoc-src-list
     ( \
-        LD_LIBRARY_PATH=out/host/darwin-x86/lib \
+        LD_LIBRARY_PATH=out/host/$PLATFORM/lib \
         javadoc \
             \@$OBJ_DIR/javadoc-src-list \
             -J-Xmx512m \
-            -J-Djava.library.path=out/host/darwin-x86/lib \
+            -J-Djava.library.path=out/host/$PLATFORM/lib \
              \
             -quiet \
             -doclet DroidDoc \
-            -docletpath out/host/darwin-x86/framework/clearsilver.jar:out/host/darwin-x86/framework/droiddoc.jar \
+            -docletpath out/host/$PLATFORM/framework/clearsilver.jar:out/host/$PLATFORM/framework/droiddoc.jar \
             -templatedir tools/droiddoc/templates \
             -classpath out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar \
             -sourcepath $SRC_DIR:out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar \

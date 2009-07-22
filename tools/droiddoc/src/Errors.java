@@ -114,6 +114,7 @@ public class Errors
     public static Error DEPRECATION_MISMATCH = new Error(13, WARNING);
     public static Error MISSING_COMMENT = new Error(14, WARNING);
     public static Error IO_ERROR = new Error(15, HIDDEN);
+    public static Error NO_SINCE_DATA = new Error(16, WARNING);
 
     public static Error[] ERRORS = {
             UNRESOLVED_LINK,
@@ -129,6 +130,7 @@ public class Errors
             HIDDEN_SUPERCLASS,
             DEPRECATED,
             IO_ERROR,
+            NO_SINCE_DATA,
         };
 
     public static boolean setErrorLevel(int code, int level) {

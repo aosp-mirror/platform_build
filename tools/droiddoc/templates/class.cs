@@ -180,6 +180,7 @@ Summary:
 <?cs /if ?>
 
 <?cs call:see_also_tags(class.seeAlso) ?>
+<?cs call:since_tags(class) ?>
 
 </div><!-- jd-descr -->
 
