@@ -59,7 +59,7 @@ def:custom_cc_copyright() ?>
   Except as noted, this content is 
   licensed under <a href="http://creativecommons.org/licenses/by/2.5/">
   Creative Commons Attribution 2.5</a>. For details and 
-  restrictions, see the <a href="<?cs var:toroot ?>license.html">Content 
+  restrictions, see the <a href="http://developer.android.com/license.html">Content 
   License</a>.<?cs 
 /def ?>
 
@@ -67,7 +67,7 @@ def:custom_cc_copyright() ?>
 def:custom_copyright() ?>
   Except as noted, this content is licensed under <a
   href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>. 
-  For details and restrictions, see the <a href="<?cs var:toroot ?>license.html">
+  For details and restrictions, see the <a href="http://developer.android.com/license.html">
   Content License</a>.<?cs 
 /def ?>
 
