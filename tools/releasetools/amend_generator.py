@@ -94,13 +94,13 @@ class AmendGenerator(object):
     for i in sha1:
       out.append(" " + i)
     self.script.append("".join(out))
-    self.included_files.add("applypatch")
+    self.included_files.add(("applypatch_static", "applypatch"))
 
   def CacheFreeSpaceCheck(self, amount):
     """Check that there's at least 'amount' space that can be made
     available on /cache."""
     self.script.append("run_program PACKAGE:applypatch -s %d" % (amount,))
-    self.included_files.add("applypatch")
+    self.included_files.add(("applypatch_static", "applypatch"))
 
   def Mount(self, kind, what, path):
     # no-op; amend uses it's 'roots' system to automatically mount
@@ -155,7 +155,7 @@ class AmendGenerator(object):
          (srcfile, tgtfile, tgtsha1, tgtsize)) +
         " ".join(["%s:%s" % patchpairs[i:i+2]
                   for i in range(0, len(patchpairs), 2)]))
-    self.included_files.add("applypatch")
+    self.included_files.add(("applypatch_static", "applypatch"))
 
   def WriteFirmwareImage(self, kind, fn):
     """Arrange to update the given firmware image (kind must be
@@ -195,11 +195,16 @@ class AmendGenerator(object):
     common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-script",
                        "\n".join(self.script) + "\n")
     for i in self.included_files:
+      if isinstance(i, tuple):
+        sourcefn, targetfn = i
+      else:
+        sourcefn = i
+        targetfn = i
       try:
         if input_path is None:
-          data = input_zip.read(os.path.join("OTA/bin", i))
+          data = input_zip.read(os.path.join("OTA/bin", sourcefn))
         else:
-          data = open(os.path.join(input_path, i)).read()
-        common.ZipWriteStr(output_zip, i, data, perms=0755)
+          data = open(os.path.join(input_path, sourcefn)).read()
+        common.ZipWriteStr(output_zip, targetfn, data, perms=0755)
       except (IOError, KeyError), e:
         raise ExternalError("unable to include binary %s: %s" % (i, e))
