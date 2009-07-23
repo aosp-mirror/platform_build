@@ -84,7 +84,7 @@ static off_t offtin(u_char *buf)
 
 int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
                      const char* patch_filename, ssize_t patch_offset,
-                     FILE* output, SHA_CTX* ctx) {
+                     SinkFn sink, void* token, SHA_CTX* ctx) {
 
   unsigned char* new_data;
   ssize_t new_size;
@@ -93,7 +93,7 @@ int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
     return -1;
   }
 
-  if (fwrite(new_data, 1, new_size, output) < new_size) {
+  if (sink(new_data, new_size, token) < new_size) {
     fprintf(stderr, "short write of output: %d (%s)\n", errno, strerror(errno));
     return 1;
   }

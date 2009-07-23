@@ -282,9 +282,10 @@ int SaveFileContents(const char* filename, FileContents file) {
   return 0;
 }
 
-// Copy the contents of source_file to target_mtd partition, a string
-// of the form "MTD:<partition>[:...]".  Return 0 on success.
-int CopyToMTDPartition(const char* source_file, const char* target_mtd) {
+// Write a memory buffer to target_mtd partition, a string of the form
+// "MTD:<partition>[:...]".  Return 0 on success.
+int WriteToMTDPartition(unsigned char* data, size_t len,
+                        const char* target_mtd) {
   char* partition = strchr(target_mtd, ':');
   if (partition == NULL) {
     fprintf(stderr, "bad MTD target name \"%s\"\n", target_mtd);
@@ -297,13 +298,6 @@ int CopyToMTDPartition(const char* source_file, const char* target_mtd) {
   char* end = strchr(partition, ':');
   if (end != NULL)
     *end = '\0';
-
-  FILE* f = fopen(source_file, "rb");
-  if (f == NULL) {
-    fprintf(stderr, "failed to open %s for reading: %s\n",
-            source_file, strerror(errno));
-    return -1;
-  }
 
   if (!mtd_partitions_scanned) {
     mtd_scan_partitions();
@@ -323,20 +317,14 @@ int CopyToMTDPartition(const char* source_file, const char* target_mtd) {
     return -1;
   }
 
-  const int buffer_size = 4096;
-  char buffer[buffer_size];
-  size_t read;
-  while ((read = fread(buffer, 1, buffer_size, f)) > 0) {
-    size_t written = mtd_write_data(ctx, buffer, read);
-    if (written != read) {
-      fprintf(stderr, "only wrote %d of %d bytes to MTD %s\n",
-              written, read, partition);
-      mtd_write_close(ctx);
-      return -1;
-    }
+  size_t written = mtd_write_data(ctx, (char*)data, len);
+  if (written != len) {
+    fprintf(stderr, "only wrote %d of %d bytes to MTD %s\n",
+            written, len, partition);
+    mtd_write_close(ctx);
+    return -1;
   }
 
-  fclose(f);
   if (mtd_erase_blocks(ctx, -1) < 0) {
     fprintf(stderr, "error finishing mtd write of %s\n", partition);
     mtd_write_close(ctx);
@@ -474,6 +462,26 @@ int CheckMode(int argc, char** argv) {
 int ShowLicenses() {
   ShowBSDiffLicense();
   return 0;
+}
+
+size_t FileSink(unsigned char* data, size_t len, void* token) {
+  return fwrite(data, 1, len, (FILE*)token);
+}
+
+typedef struct {
+  unsigned char* buffer;
+  size_t size;
+  size_t pos;
+} MemorySinkInfo;
+
+size_t MemorySink(unsigned char* data, size_t len, void* token) {
+  MemorySinkInfo* msi = (MemorySinkInfo*)token;
+  if (msi->size - msi->pos < len) {
+    return -1;
+  }
+  memcpy(msi->buffer + msi->pos, data, len);
+  msi->pos += len;
+  return len;
 }
 
 // Return the amount of free space (in bytes) on the filesystem
@@ -720,19 +728,36 @@ int applypatch(int argc, char** argv) {
   }
 
   char* outname = NULL;
+  FILE* output = NULL;
+  MemorySinkInfo msi;
+  SinkFn sink = NULL;
+  void* token = NULL;
   if (strncmp(target_filename, "MTD:", 4) == 0) {
-    outname = MTD_TARGET_TEMP_FILE;
+    // We store the decoded output in memory.
+    msi.buffer = malloc(target_size);
+    if (msi.buffer == NULL) {
+      fprintf(stderr, "failed to alloc %ld bytes for output\n",
+              (long)target_size);
+      return 1;
+    }
+    msi.pos = 0;
+    msi.size = target_size;
+    sink = MemorySink;
+    token = &msi;
   } else {
     // We write the decoded output to "<tgt-file>.patch".
     outname = (char*)malloc(strlen(target_filename) + 10);
     strcpy(outname, target_filename);
     strcat(outname, ".patch");
-  }
-  FILE* output = fopen(outname, "wb");
-  if (output == NULL) {
-    fprintf(stderr, "failed to open output file %s: %s\n",
-            outname, strerror(errno));
-    return 1;
+
+    output = fopen(outname, "wb");
+    if (output == NULL) {
+      fprintf(stderr, "failed to open output file %s: %s\n",
+              outname, strerror(errno));
+      return 1;
+    }
+    sink = FileSink;
+    token = output;
   }
 
 #define MAX_HEADER_LENGTH 8
@@ -759,7 +784,7 @@ int applypatch(int argc, char** argv) {
   } else if (header_bytes_read >= 8 &&
              memcmp(header, "BSDIFF40", 8) == 0) {
     int result = ApplyBSDiffPatch(source_to_use->data, source_to_use->size,
-                                  patch_filename, 0, output, &ctx);
+                                  patch_filename, 0, sink, token, &ctx);
     if (result != 0) {
       fprintf(stderr, "ApplyBSDiffPatch failed\n");
       return result;
@@ -768,7 +793,7 @@ int applypatch(int argc, char** argv) {
              memcmp(header, "IMGDIFF", 7) == 0 &&
              (header[7] == '1' || header[7] == '2')) {
     int result = ApplyImagePatch(source_to_use->data, source_to_use->size,
-                                 patch_filename, output, &ctx);
+                                 patch_filename, sink, token, &ctx);
     if (result != 0) {
       fprintf(stderr, "ApplyImagePatch failed\n");
       return result;
@@ -778,9 +803,11 @@ int applypatch(int argc, char** argv) {
     return 1;
   }
 
-  fflush(output);
-  fsync(fileno(output));
-  fclose(output);
+  if (output != NULL) {
+    fflush(output);
+    fsync(fileno(output));
+    fclose(output);
+  }
 
   const uint8_t* current_target_sha1 = SHA_final(&ctx);
   if (memcmp(current_target_sha1, target_sha1, SHA_DIGEST_SIZE) != 0) {
@@ -788,13 +815,13 @@ int applypatch(int argc, char** argv) {
     return 1;
   }
 
-  if (strcmp(outname, MTD_TARGET_TEMP_FILE) == 0) {
+  if (output == NULL) {
     // Copy the temp file to the MTD partition.
-    if (CopyToMTDPartition(outname, target_filename) != 0) {
-      fprintf(stderr, "copy of %s to %s failed\n", outname, target_filename);
+    if (WriteToMTDPartition(msi.buffer, msi.pos, target_filename) != 0) {
+      fprintf(stderr, "write of patched data to %s failed\n", target_filename);
       return 1;
     }
-    unlink(outname);
+    free(msi.buffer);
   } else {
     // Give the .patch file the same owner, group, and mode of the
     // original source file.
