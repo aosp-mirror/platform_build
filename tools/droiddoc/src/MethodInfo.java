@@ -15,9 +15,8 @@
  */
 
 import org.clearsilver.HDF;
-import org.clearsilver.CS;
+
 import java.util.*;
-import java.io.*;
 
 public class MethodInfo extends MemberInfo
 {
@@ -357,6 +356,19 @@ public class MethodInfo extends MemberInfo
         return s;
     }
 
+    /**
+     * Returns a name consistent with the {@link
+     * com.android.apicheck.MethodInfo#getHashableName()}.
+     */
+    public String getHashableName() {
+        StringBuilder result = new StringBuilder();
+        result.append(name());
+        for (ParameterInfo pInfo : mParameters) {
+            result.append(":").append(pInfo.type().fullName());
+        }
+        return result.toString();
+    }
+
     private boolean inList(ClassInfo item, ThrowsTagInfo[] list)
     {
         int len = list.length;
@@ -545,6 +557,7 @@ public class MethodInfo extends MemberInfo
         TagInfo.makeHDF(data, base + ".descr", inlineTags());
         TagInfo.makeHDF(data, base + ".deprecated", deprecatedTags());
         TagInfo.makeHDF(data, base + ".seeAlso", seeTags());
+        data.setValue(base + ".since", getSince());
         ParamTagInfo.makeHDF(data, base + ".paramTags", paramTags());
         AttrTagInfo.makeReferenceHDF(data, base + ".attrRefs", comment().attrTags());
         ThrowsTagInfo.makeHDF(data, base + ".throws", throwsTags());

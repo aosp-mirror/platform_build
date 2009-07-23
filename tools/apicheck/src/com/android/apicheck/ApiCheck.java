@@ -20,7 +20,6 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Stack;
 
 public class ApiCheck {
@@ -83,62 +82,62 @@ public class ApiCheck {
                 }
             }
 
-            String xmlFileName = args.get(0);
-            String xmlFileNameNew = args.get(1);
-            XMLReader xmlreader = null;
-            try {
-                // parse the XML files into our data structures
-                xmlreader = XMLReaderFactory.createXMLReader();
-                ApiCheck acheck = new ApiCheck();
-                MakeHandler handler = acheck.new MakeHandler();
-                xmlreader.setContentHandler(handler);
-                xmlreader.setErrorHandler(handler);
-                FileReader filereader = new FileReader(xmlFileName);
-                xmlreader.parse(new InputSource(filereader));
-                FileReader filereaderNew = new FileReader(xmlFileNameNew);
-                xmlreader.parse(new InputSource(filereaderNew));
+            ApiCheck acheck = new ApiCheck();
 
-                // establish the superclass relationships
-                handler.getOldApi().resolveSuperclasses();
-                handler.getNewApi().resolveSuperclasses();
-                
-                // finally, run the consistency check
-                handler.getOldApi().isConsistent(handler.getNewApi());
+            ApiInfo oldApi = acheck.parseApi(args.get(0));
+            ApiInfo newApi = acheck.parseApi(args.get(1));
 
-            } catch (SAXParseException e) {
-                Errors.error(Errors.PARSE_ERROR,
-                        new SourcePositionInfo(xmlFileName, e.getLineNumber(), 0),
-                        e.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-                Errors.error(Errors.PARSE_ERROR,
-                        new SourcePositionInfo(xmlFileName, 0, 0),
-                        e.getMessage());
-            } 
+            // only run the consistency check if we haven't had XML parse errors
+            if (!Errors.hadError) {
+                oldApi.isConsistent(newApi);
+            }
 
             Errors.printErrors();
             System.exit(Errors.hadError ? 1 : 0);
         }
 
-        private class MakeHandler extends DefaultHandler {
+    public ApiInfo parseApi(String xmlFile) {
+        FileReader fileReader = null;
+        try {
+            XMLReader xmlreader = XMLReaderFactory.createXMLReader();
+            MakeHandler handler = new MakeHandler();
+            xmlreader.setContentHandler(handler);
+            xmlreader.setErrorHandler(handler);
+            fileReader = new FileReader(xmlFile);
+            xmlreader.parse(new InputSource(fileReader));
+            ApiInfo apiInfo = handler.getApi();
+            apiInfo.resolveSuperclasses();
+            return apiInfo;
+        } catch (SAXParseException e) {
+            Errors.error(Errors.PARSE_ERROR,
+                    new SourcePositionInfo(xmlFile, e.getLineNumber(), 0),
+                    e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Errors.error(Errors.PARSE_ERROR,
+                    new SourcePositionInfo(xmlFile, 0, 0), e.getMessage());
+        } finally {
+            if (fileReader != null) {
+                try {
+                    fileReader.close();
+                } catch (IOException ignored) {}
+            }
+        }
+        return null;
+    }
+
+    private static class MakeHandler extends DefaultHandler {
             
-            private Integer mWarningCount;
-            private ApiInfo mOriginalApi;
-            private ApiInfo mNewApi;
-            private boolean mOldApi;
+            private ApiInfo mApi;
             private PackageInfo mCurrentPackage;
             private ClassInfo mCurrentClass;
             private AbstractMethodInfo mCurrentMethod;
-            private ConstructorInfo mCurrentConstructor;
             private Stack<ClassInfo> mClassScope = new Stack<ClassInfo>();
-            
-            
+
+
             public MakeHandler() {
                 super();
-                mOriginalApi = new ApiInfo();
-                mNewApi = new ApiInfo();
-                mOldApi = true;
-                
+                mApi = new ApiInfo();
             }
             
             public void startElement(String uri, String localName, String qName, 
@@ -229,25 +228,11 @@ public class ApiCheck {
                     mCurrentPackage.addClass(mCurrentClass);
                     mCurrentClass = mClassScope.pop();
                 } else if (qName.equals("package")){
-                    if (mOldApi) {
-                        mOriginalApi.addPackage(mCurrentPackage);
-                    } else {
-                        mNewApi.addPackage(mCurrentPackage);
-                    }
+                    mApi.addPackage(mCurrentPackage);
                 }
             }
-            public void endDocument() {
-                mOldApi = !mOldApi;
+            public ApiInfo getApi() {
+                return mApi;
             }
-            
-            public ApiInfo getOldApi() {
-                return mOriginalApi;
-            }
-            
-            public ApiInfo getNewApi() {
-                return mNewApi;
-            }
-
-
-            }
+        }
 }

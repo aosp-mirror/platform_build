@@ -51,8 +51,17 @@ public abstract class DocInfo
 
     public abstract ContainerInfo parent();
 
+    public void setSince(String since) {
+        mSince = since;
+    }
+
+    public String getSince() {
+        return mSince;
+    }
+
     private String mRawCommentText;
     Comment mComment;
     SourcePositionInfo mPosition;
+    private String mSince;
 }
 
