@@ -41,7 +41,7 @@ function build_stubs()
              \
             -quiet \
             -doclet DroidDoc \
-            -docletpath out/host/$PLATFORM/framework/clearsilver.jar:out/host/$PLATFORM/framework/droiddoc.jar \
+            -docletpath out/host/$PLATFORM/framework/clearsilver.jar:out/host/$PLATFORM/framework/droiddoc.jar:out/host/$PLATFORM/framework/apicheck.jar \
             -templatedir tools/droiddoc/templates \
             -classpath out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar \
             -sourcepath $SRC_DIR:out/target/common/obj/JAVA_LIBRARIES/core_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/ext_intermediates/classes.jar:out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/classes.jar \
