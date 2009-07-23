@@ -641,10 +641,24 @@ else
   SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 endif
 
-$(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(INSTALLED_RECOVERYIMAGE_TARGET) | $(ACP)
+# The system partition needs room for the recovery image as well.  We
+# now store the recovery image as a binary patch using the boot image
+# as the source (since they are very similar).  Generate the patch so
+# we can see how big it's going to be, and include that in the system
+# image size check calculation.
+intermediates := $(call intermediates-dir-for,PACKAGING,recovery_patch)
+RECOVERY_FROM_BOOT_PATCH := $(intermediates)/recovery_from_boot.p
+$(RECOVERY_FROM_BOOT_PATCH): $(INSTALLED_RECOVERYIMAGE_TARGET) \
+                             $(INSTALLED_BOOTIMAGE_TARGET) \
+			     | $(HOST_OUT_EXECUTABLES)/imgdiff
+	@echo "Construct recovery from boot"
+	mkdir -p $(dir $@)
+	$(HOST_OUT_EXECUTABLES)/imgdiff $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_RECOVERYIMAGE_TARGET) $@
+
+$(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH) | $(ACP)
 	@echo "Install system fs image: $@"
 	$(copy-file-to-target)
-	$(hide) $(call assert-max-file-size,$@ $(INSTALLED_RECOVERYIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_MAX_SIZE))
+	$(hide) $(call assert-max-file-size,$@ $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_SYSTEMIMAGE_MAX_SIZE))
 
 systemimage: $(INSTALLED_SYSTEMIMAGE)
 
