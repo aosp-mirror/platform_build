@@ -29,11 +29,19 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := main.c
 LOCAL_MODULE := applypatch
+LOCAL_STATIC_LIBRARIES += libapplypatch libmtdutils libmincrypt libbz
+LOCAL_SHARED_LIBRARIES += libz libcutils libstdc++ libc
+
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := main.c
+LOCAL_MODULE := applypatch_static
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := eng
-LOCAL_STATIC_LIBRARIES += libapplypatch
-LOCAL_STATIC_LIBRARIES += libmtdutils libmincrypt libbz libz
-LOCAL_STATIC_LIBRARIES += libcutils libstdc++ libc
+LOCAL_STATIC_LIBRARIES += libapplypatch libmtdutils libmincrypt libbz
+LOCAL_STATIC_LIBRARIES += libz libcutils libstdc++ libc
 
 include $(BUILD_EXECUTABLE)
 

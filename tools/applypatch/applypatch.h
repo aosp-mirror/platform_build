@@ -39,10 +39,7 @@ typedef struct _FileContents {
 // and use it as the source instead.
 #define CACHE_TEMP_SOURCE "/cache/saved.file"
 
-// When writing to an MTD partition, we first put the output in this
-// temp file, then copy it to the partition once the patching is
-// finished (and the target sha1 verified).
-#define MTD_TARGET_TEMP_FILE "/tmp/mtd-temp"
+typedef size_t (*SinkFn)(unsigned char*, size_t, void*);
 
 // applypatch.c
 size_t FreeSpaceForFile(const char* filename);
@@ -52,15 +49,15 @@ int applypatch(int argc, char** argv);
 void ShowBSDiffLicense();
 int ApplyBSDiffPatch(const unsigned char* old_data, ssize_t old_size,
                      const char* patch_filename, ssize_t offset,
-                     FILE* output, SHA_CTX* ctx);
+                     SinkFn sink, void* token, SHA_CTX* ctx);
 int ApplyBSDiffPatchMem(const unsigned char* old_data, ssize_t old_size,
                         const char* patch_filename, ssize_t patch_offset,
                         unsigned char** new_data, ssize_t* new_size);
 
 // imgpatch.c
 int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
-                     const char* patch_filename,
-                     FILE* output, SHA_CTX* ctx);
+                    const char* patch_filename,
+                    SinkFn sink, void* token, SHA_CTX* ctx);
 
 // freecache.c
 int MakeFreeSpaceOnCache(size_t bytes_needed);
