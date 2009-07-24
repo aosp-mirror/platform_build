@@ -70,10 +70,12 @@ libRS.so                0xAB900000
 
 
 # audio
-libspeech.so            0xAB800000
+libaudiopolicy.so       0xAB880000
+libaudiopolicygeneric.so 0xAB800000
+libsoundpool.so         0xAB780000
 libaudio.so             0xAB700000
-libsonivox.so           0xAB600000
-libsoundpool.so         0xAB500000
+libspeech.so            0xAB600000
+libsonivox.so           0xAB500000
 libvorbisidec.so        0xAB400000
 libmedia_jni.so         0xAB300000
 libmediaplayerservice.so 0xAB280000
