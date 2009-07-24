@@ -647,6 +647,7 @@ endif
 # we can see how big it's going to be, and include that in the system
 # image size check calculation.
 ifneq ($(TARGET_PRODUCT),sdk)
+ifneq ($(TARGET_PRODUCT),generic)
 intermediates := $(call intermediates-dir-for,PACKAGING,recovery_patch)
 RECOVERY_FROM_BOOT_PATCH := $(intermediates)/recovery_from_boot.p
 $(RECOVERY_FROM_BOOT_PATCH): $(INSTALLED_RECOVERYIMAGE_TARGET) \
@@ -656,9 +657,8 @@ $(RECOVERY_FROM_BOOT_PATCH): $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	@echo "Construct recovery from boot"
 	mkdir -p $(dir $@)
 	PATH=$(HOST_OUT_EXECUTABLES):$$PATH $(HOST_OUT_EXECUTABLES)/imgdiff $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_RECOVERYIMAGE_TARGET) $@
-else  # TARGET_PRODUCT == sdk
-RECOVERY_FROM_BOOT_PATCH :=
-endif
+endif  # TARGET_PRODUCT != generic
+endif  # TARGET_PRODUCT != sdk
 
 $(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH) | $(ACP)
 	@echo "Install system fs image: $@"
