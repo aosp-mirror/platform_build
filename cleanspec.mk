@@ -67,6 +67,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_int
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/Silence.ogg)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/notifications/Silence.ogg)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/passion/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
