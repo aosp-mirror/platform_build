@@ -7,7 +7,6 @@
 #   $(combo_target)OS -- standard name for this host (LINUX, DARWIN, etc.)
 #   $(combo_target)ARCH -- standard name for process architecture (powerpc, x86, etc.)
 #   $(combo_target)GLOBAL_CFLAGS -- C compiler flags to use for everything
-#   $(combo_target)DEBUG_CFLAGS -- additional C compiler flags for debug builds
 #   $(combo_target)RELEASE_CFLAGS -- additional C compiler flags for release builds
 #   $(combo_target)GLOBAL_ARFLAGS -- flags to use for static linking everything
 #   $(combo_target)SHLIB_SUFFIX -- suffix of shared libraries
@@ -39,7 +38,6 @@ $(combo_target)HAVE_KERNEL_MODULES := 0
 
 # These flags might (will) be overridden by the target makefiles
 $(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
-$(combo_target)DEBUG_CFLAGS := -O0 -g
 $(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
 $(combo_target)GLOBAL_ARFLAGS := crs
 

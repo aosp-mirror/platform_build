@@ -3,6 +3,7 @@ PRODUCT_PROPERTY_OVERRIDES :=
 PRODUCT_PACKAGES := \
 	AlarmClock \
 	Camera \
+	Calculator \
 	Development \
 	DrmProvider \
 	Email \
@@ -18,6 +19,11 @@ PRODUCT_PACKAGES := \
 	sqlite3 \
 	LatinIME \
 	PinyinIME \
+	OpenWnn \
+	libWnnEngDic \
+	libWnnJpnDic \
+	libWnnZHCNDic \
+	libwnndict \
 	ApiDemos \
 	SoftKeyboard
 

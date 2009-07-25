@@ -110,11 +110,11 @@ ifdef product_goals
   TARGET_BUILD_VARIANT := $(word 2,$(product_goals))
 
   # The build server wants to do make PRODUCT-dream-installclean
-  # which really means TARGET_PRODUCT=dream make installclean.  
+  # which really means TARGET_PRODUCT=dream make installclean.
   ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
 	MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
 	TARGET_BUILD_VARIANT := eng
-    default_goal_substitution := 
+    default_goal_substitution :=
   else
     default_goal_substitution := $(DEFAULT_GOAL)
   endif
@@ -135,7 +135,7 @@ ifdef product_goals
   #
   # Note that modifying this will not affect the goals that make will
   # attempt to build, but it's important because we inspect this value
-  # in certain situations (like for "make sdk").  
+  # in certain situations (like for "make sdk").
   #
   MAKECMDGOALS := $(patsubst $(goal_name),$(default_goal_substitution),$(MAKECMDGOALS))
 
@@ -185,7 +185,10 @@ PRODUCT_LOCALES := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_LOCALES))
 # in PRODUCT_LOCALES, add them to PRODUCT_LOCALES.
 extra_locales := $(filter-out $(PRODUCT_LOCALES),$(CUSTOM_LOCALES))
 ifneq (,$(extra_locales))
-  $(info Adding CUSTOM_LOCALES [$(extra_locales)] to PRODUCT_LOCALES [$(PRODUCT_LOCALES)])
+  ifneq ($(CALLED_FROM_SETUP),true)
+    # Don't spam stdout, because envsetup.sh may be scraping values from it.
+    $(info Adding CUSTOM_LOCALES [$(extra_locales)] to PRODUCT_LOCALES [$(PRODUCT_LOCALES)])
+  endif
   PRODUCT_LOCALES += $(extra_locales)
   extra_locales :=
 endif
@@ -202,7 +205,7 @@ PRODUCT_BRAND := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BRAND))
 
 PRODUCT_MODEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MODEL))
 ifndef PRODUCT_MODEL
-  PRODUCT_MODEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_NAME)) 
+  PRODUCT_MODEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_NAME))
 endif
 
 PRODUCT_MANUFACTURER := \
@@ -245,32 +248,19 @@ ADDITIONAL_BUILD_PROPERTIES := \
 	$(ADDITIONAL_BUILD_PROPERTIES) \
 	$(PRODUCT_PROPERTY_OVERRIDES)
 
-# Get the list of OTA public keys for the product.
-OTA_PUBLIC_KEYS := \
-	$(sort \
-	    $(OTA_PUBLIC_KEYS) \
-	    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_PUBLIC_KEYS) \
-	 )
-
-# HACK: Not all products define OTA keys yet, and the -user build
-# will fail if no keys are defined.
-# TODO: Let a product opt out of needing OTA keys, and stop defaulting to
-#       the test key as soon as possible.
-ifeq (,$(strip $(OTA_PUBLIC_KEYS)))
-  ifeq (,$(CALLED_FROM_SETUP))
-    $(warning WARNING: adding test OTA key)
-  endif
-  OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
-endif
+# The OTA key(s) specified by the product config, if any.  The names
+# of these keys are stored in the target-files zip so that post-build
+# signing tools can substitute them for the test key embedded by
+# default.
+PRODUCT_OTA_PUBLIC_KEYS := $(sort \
+    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_PUBLIC_KEYS))
 
 # ---------------------------------------------------------------
-# Force the simulator to be the simulator, and make BUILD_TYPE
-# default to debug.
+# Simulator overrides
 ifeq ($(TARGET_PRODUCT),sim)
+  # Tell the build system to turn on some special cases
+  # to deal with the simulator product.
   TARGET_SIMULATOR := true
-  ifeq (,$(strip $(TARGET_BUILD_TYPE)))
-    TARGET_BUILD_TYPE := debug
-  endif
   # dexpreopt doesn't work when building the simulator
   DISABLE_DEXPREOPT := true
 endif

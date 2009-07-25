@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import errno
 import getopt
 import getpass
 import os
@@ -20,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 # missing in Python 2.4 and before
 if not hasattr(os, "SEEK_SET"):
@@ -27,7 +29,7 @@ if not hasattr(os, "SEEK_SET"):
 
 class Options(object): pass
 OPTIONS = Options()
-OPTIONS.signapk_jar = "out/host/linux-x86/framework/signapk.jar"
+OPTIONS.search_path = "out/host/linux-x86"
 OPTIONS.max_image_size = {}
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
@@ -61,40 +63,62 @@ def LoadBoardConfig(fn):
 def BuildAndAddBootableImage(sourcedir, targetname, output_zip):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
   'sourcedir'), and turn them into a boot image.  Put the boot image
-  into the output zip file under the name 'targetname'."""
+  into the output zip file under the name 'targetname'.  Returns
+  targetname on success or None on failure (if sourcedir does not
+  appear to contain files for the requested image)."""
 
   print "creating %s..." % (targetname,)
 
   img = BuildBootableImage(sourcedir)
+  if img is None:
+    return None
 
   CheckSize(img, targetname)
-  output_zip.writestr(targetname, img)
+  ZipWriteStr(output_zip, targetname, img)
+  return targetname
 
 def BuildBootableImage(sourcedir):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
-  'sourcedir'), and turn them into a boot image.  Return the image data."""
+  'sourcedir'), and turn them into a boot image.  Return the image
+  data, or None if sourcedir does not appear to contains files for
+  building the requested image."""
+
+  if (not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK) or
+      not os.access(os.path.join(sourcedir, "kernel"), os.F_OK)):
+    return None
 
   ramdisk_img = tempfile.NamedTemporaryFile()
   img = tempfile.NamedTemporaryFile()
 
   p1 = Run(["mkbootfs", os.path.join(sourcedir, "RAMDISK")],
            stdout=subprocess.PIPE)
-  p2 = Run(["gzip", "-n"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+  p2 = Run(["minigzip"],
+           stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
 
   p2.wait()
   p1.wait()
   assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (targetname,)
-  assert p2.returncode == 0, "gzip of %s ramdisk failed" % (targetname,)
+  assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (targetname,)
 
-  cmdline = open(os.path.join(sourcedir, "cmdline")).read().rstrip("\n")
-  p = Run(["mkbootimg",
-           "--kernel", os.path.join(sourcedir, "kernel"),
-           "--cmdline", cmdline,
-           "--ramdisk", ramdisk_img.name,
-           "--output", img.name],
-          stdout=subprocess.PIPE)
+  cmd = ["mkbootimg", "--kernel", os.path.join(sourcedir, "kernel")]
+
+  fn = os.path.join(sourcedir, "cmdline")
+  if os.access(fn, os.F_OK):
+    cmd.append("--cmdline")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  fn = os.path.join(sourcedir, "base")
+  if os.access(fn, os.F_OK):
+    cmd.append("--base")
+    cmd.append(open(fn).read().rstrip("\n"))
+
+  cmd.extend(["--ramdisk", ramdisk_img.name,
+              "--output", img.name])
+
+  p = Run(cmd, stdout=subprocess.PIPE)
   p.communicate()
-  assert p.returncode == 0, "mkbootimg of %s image failed" % (targetname,)
+  assert p.returncode == 0, "mkbootimg of %s image failed" % (
+      os.path.basename(sourcedir),)
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
@@ -131,22 +155,30 @@ def GetKeyPasswords(keylist):
   those which require them.  Return a {key: password} dict.  password
   will be None if the key has no password."""
 
-  key_passwords = {}
+  no_passwords = []
+  need_passwords = []
   devnull = open("/dev/null", "w+b")
   for k in sorted(keylist):
-    p = subprocess.Popen(["openssl", "pkcs8", "-in", k+".pk8",
-                          "-inform", "DER", "-nocrypt"],
-                         stdin=devnull.fileno(),
-                         stdout=devnull.fileno(),
-                         stderr=subprocess.STDOUT)
+    # An empty-string key is used to mean don't re-sign this package.
+    # Obviously we don't need a password for this non-key.
+    if not k:
+      no_passwords.append(k)
+      continue
+
+    p = Run(["openssl", "pkcs8", "-in", k+".pk8",
+             "-inform", "DER", "-nocrypt"],
+            stdin=devnull.fileno(),
+            stdout=devnull.fileno(),
+            stderr=subprocess.STDOUT)
     p.communicate()
     if p.returncode == 0:
-      print "%s.pk8 does not require a password" % (k,)
-      key_passwords[k] = None
+      no_passwords.append(k)
     else:
-      key_passwords[k] = getpass.getpass("Enter password for %s.pk8> " % (k,))
+      need_passwords.append(k)
   devnull.close()
-  print
+
+  key_passwords = PasswordManager().GetPasswords(need_passwords)
+  key_passwords.update(dict.fromkeys(no_passwords, None))
   return key_passwords
 
 
@@ -167,12 +199,13 @@ def SignFile(input_name, output_name, key, password, align=None):
   else:
     sign_name = output_name
 
-  p = subprocess.Popen(["java", "-jar", OPTIONS.signapk_jar,
-                        key + ".x509.pem",
-                        key + ".pk8",
-                        input_name, sign_name],
-                       stdin=subprocess.PIPE,
-                       stdout=subprocess.PIPE)
+  p = Run(["java", "-jar",
+           os.path.join(OPTIONS.search_path, "framework", "signapk.jar"),
+           key + ".x509.pem",
+           key + ".pk8",
+           input_name, sign_name],
+          stdin=subprocess.PIPE,
+          stdout=subprocess.PIPE)
   if password is not None:
     password += "\n"
   p.communicate(password)
@@ -180,7 +213,7 @@ def SignFile(input_name, output_name, key, password, align=None):
     raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
 
   if align:
-    p = subprocess.Popen(["zipalign", "-f", str(align), sign_name, output_name])
+    p = Run(["zipalign", "-f", str(align), sign_name, output_name])
     p.communicate()
     if p.returncode != 0:
       raise ExternalError("zipalign failed: return code %s" % (p.returncode,))
@@ -209,8 +242,8 @@ def CheckSize(data, target):
 
 COMMON_DOCSTRING = """
   -p  (--path)  <dir>
-      Prepend <dir> to the list of places to search for binaries run
-      by this script.
+      Prepend <dir>/bin to the list of places to search for binaries
+      run by this script, and expect to find jars in <dir>/framework.
 
   -v  (--verbose)
       Show command lines being executed.
@@ -252,15 +285,13 @@ def ParseOptions(argv,
     elif o in ("-v", "--verbose"):
       OPTIONS.verbose = True
     elif o in ("-p", "--path"):
-      os.environ["PATH"] = a + os.pathsep + os.environ["PATH"]
-      path_specified = True
+      OPTIONS.search_path = a
     else:
       if extra_option_handler is None or not extra_option_handler(o, a):
         assert False, "unknown option \"%s\"" % (o,)
 
-  if not path_specified:
-    os.environ["PATH"] = ("out/host/linux-x86/bin" + os.pathsep +
-                          os.environ["PATH"])
+  os.environ["PATH"] = (os.path.join(OPTIONS.search_path, "bin") +
+                        os.pathsep + os.environ["PATH"])
 
   return args
 
@@ -271,3 +302,111 @@ def Cleanup():
       shutil.rmtree(i)
     else:
       os.remove(i)
+
+
+class PasswordManager(object):
+  def __init__(self):
+    self.editor = os.getenv("EDITOR", None)
+    self.pwfile = os.getenv("ANDROID_PW_FILE", None)
+
+  def GetPasswords(self, items):
+    """Get passwords corresponding to each string in 'items',
+    returning a dict.  (The dict may have keys in addition to the
+    values in 'items'.)
+
+    Uses the passwords in $ANDROID_PW_FILE if available, letting the
+    user edit that file to add more needed passwords.  If no editor is
+    available, or $ANDROID_PW_FILE isn't define, prompts the user
+    interactively in the ordinary way.
+    """
+
+    current = self.ReadFile()
+
+    first = True
+    while True:
+      missing = []
+      for i in items:
+        if i not in current or not current[i]:
+          missing.append(i)
+      # Are all the passwords already in the file?
+      if not missing: return current
+
+      for i in missing:
+        current[i] = ""
+
+      if not first:
+        print "key file %s still missing some passwords." % (self.pwfile,)
+        answer = raw_input("try to edit again? [y]> ").strip()
+        if answer and answer[0] not in 'yY':
+          raise RuntimeError("key passwords unavailable")
+      first = False
+
+      current = self.UpdateAndReadFile(current)
+
+  def PromptResult(self, current):
+    """Prompt the user to enter a value (password) for each key in
+    'current' whose value is fales.  Returns a new dict with all the
+    values.
+    """
+    result = {}
+    for k, v in sorted(current.iteritems()):
+      if v:
+        result[k] = v
+      else:
+        while True:
+          result[k] = getpass.getpass("Enter password for %s key> "
+                                      % (k,)).strip()
+          if result[k]: break
+    return result
+
+  def UpdateAndReadFile(self, current):
+    if not self.editor or not self.pwfile:
+      return self.PromptResult(current)
+
+    f = open(self.pwfile, "w")
+    os.chmod(self.pwfile, 0600)
+    f.write("# Enter key passwords between the [[[ ]]] brackets.\n")
+    f.write("# (Additional spaces are harmless.)\n\n")
+
+    first_line = None
+    sorted = [(not v, k, v) for (k, v) in current.iteritems()]
+    sorted.sort()
+    for i, (_, k, v) in enumerate(sorted):
+      f.write("[[[  %s  ]]] %s\n" % (v, k))
+      if not v and first_line is None:
+        # position cursor on first line with no password.
+        first_line = i + 4
+    f.close()
+
+    p = Run([self.editor, "+%d" % (first_line,), self.pwfile])
+    _, _ = p.communicate()
+
+    return self.ReadFile()
+
+  def ReadFile(self):
+    result = {}
+    if self.pwfile is None: return result
+    try:
+      f = open(self.pwfile, "r")
+      for line in f:
+        line = line.strip()
+        if not line or line[0] == '#': continue
+        m = re.match(r"^\[\[\[\s*(.*?)\s*\]\]\]\s*(\S+)$", line)
+        if not m:
+          print "failed to parse password file: ", line
+        else:
+          result[m.group(2)] = m.group(1)
+      f.close()
+    except IOError, e:
+      if e.errno != errno.ENOENT:
+        print "error reading password file: ", str(e)
+    return result
+
+
+def ZipWriteStr(zip, filename, data, perms=0644):
+  # use a fixed timestamp so the output is repeatable.
+  zinfo = zipfile.ZipInfo(filename=filename,
+                          date_time=(2009, 1, 1, 0, 0, 0))
+  zinfo.compress_type = zip.compression
+  zinfo.external_attr = perms << 16
+  zip.writestr(zinfo, data)

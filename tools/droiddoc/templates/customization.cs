@@ -2,6 +2,10 @@
 <?cs # Use the -templatedir arg to javadoc to set your own directory with a     ?>
 <?cs # replacement for this file in it. ?>
 
+
+<?cs def:default_search_box() ?><?cs /def ?>
+<?cs def:default_left_nav() ?><?cs /def ?>
+
 <?cs # appears at the top of every page ?><?cs 
 def:custom_masthead() ?>
   <div id="header">
@@ -9,7 +13,9 @@ def:custom_masthead() ?>
           <a href="<?cs var:toroot ?>index.html" tabindex="-1"><?cs var:page.title ?></a>
       </div>
       <div id="headerRight">
-          <?cs call:default_search_box() ?>
+          <?cs if:!online-pdk ?>
+            <?cs call:default_search_box() ?>
+          <?cs /if ?>
       </div><!-- headerRight -->
   </div><!-- header --><?cs 
 /def ?>

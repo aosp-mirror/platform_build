@@ -115,23 +115,30 @@ public class DocFile
         TagInfo.makeHDF(hdf, "root.descr", tags);
 
         hdf.setValue("commentText", commentText);
-        
-        if (outfile.indexOf("sdk/") != -1) {
-            hdf.setValue("sdk", "true");
-            if (outfile.indexOf("index.html") != -1) {
-                ClearPage.write(hdf, "sdkpage.cs", outfile);
-            } else {
-                ClearPage.write(hdf, "docpage.cs", outfile);
-            }
-        } else if (outfile.indexOf("guide/") != -1){
-            hdf.setValue("guide", "true");
-            ClearPage.write(hdf, "docpage.cs", outfile);
-        } else if (outfile.indexOf("publish/") != -1){
-            hdf.setValue("publish", "true");
+
+        // write the page using the appropriate root template, based on the 
+        // whichdoc value supplied by build
+        String fromWhichmodule = hdf.getValue("android.whichmodule", "");
+        if (fromWhichmodule.equals("online-pdk")) {
+            //leaving this in just for temporary compatibility with pdk doc
+            hdf.setValue("online-pdk", "true");
+            // add any conditional login for root template here (such as 
+            // for custom left nav based on tab etc. 
             ClearPage.write(hdf, "docpage.cs", outfile);
         } else {
-            ClearPage.write(hdf, "nosidenavpage.cs", outfile);
+            if (outfile.indexOf("sdk/") != -1) {
+                hdf.setValue("sdk", "true");
+                if (outfile.indexOf("index.html") != -1) {
+                    ClearPage.write(hdf, "sdkpage.cs", outfile);
+                } else {
+                    ClearPage.write(hdf, "docpage.cs", outfile);
+                }
+            } else if (outfile.indexOf("guide/") != -1) {
+                hdf.setValue("guide", "true");
+                ClearPage.write(hdf, "docpage.cs", outfile);
+            } else {
+                ClearPage.write(hdf, "nosidenavpage.cs", outfile);
+            }
         }
-    }
-
+    } //writePage
 }

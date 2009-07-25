@@ -61,6 +61,9 @@ def:tag_list(tags) ?><?cs
       elif:tag.name == "@sample" ?><pre class="Code prettyprint"><?cs var:tag.text ?></pre><?cs
       elif:tag.name == "@include" ?><?cs var:tag.text ?><?cs
       elif:tag.kind == "@docRoot" ?><?cs var:toroot ?><?cs
+      elif:tag.kind == "@sdkCurrent" ?><?cs var:sdk.current ?><?cs
+      elif:tag.kind == "@sdkCurrentVersion" ?><?cs var:sdk.version ?><?cs
+      elif:tag.kind == "@sdkCurrentRelId" ?><?cs var:sdk.rel.id ?><?cs
       elif:tag.kind == "@inheritDoc" ?><?cs # This is the case when @inheritDoc is in something
                                               that doesn't inherit from anything?><?cs
       elif:tag.kind == "@attr" ?><?cs
@@ -230,108 +233,5 @@ def:expandable_class_list(id, classes, default) ?>
   </div><?cs 
 /def ?>
 
-<?cs # The default side navigation for the reference docs ?><?cs 
-def:default_left_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first side-nav-resizable" id="side-nav">
-      <div id="swapper">
-        <div id="nav-panels">
-          <div id="resize-packages-nav">
-            <div id="packages-nav">
-              <div id="index-links"><nobr>
-                <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
-                <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
-              </div>
-              <ul><?cs 
-              each:pkg=docs.packages ?>
-                <li <?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>class="selected"<?cs /if ?>><?cs call:package_link(pkg) ?></li><?cs 
-              /each ?>
-              </ul><br/>
-            </div> <!-- end packages -->
-          </div> <!-- end resize-packages -->
-          <div id="classes-nav"><?cs 
-            if:subcount(class.package) ?>
-            <ul>
-              <?cs call:list("Interfaces", class.package.interfaces) ?>
-              <?cs call:list("Classes", class.package.classes) ?>
-              <?cs call:list("Enums", class.package.enums) ?>
-              <?cs call:list("Exceptions", class.package.exceptions) ?>
-              <?cs call:list("Errors", class.package.errors) ?>
-            </ul><?cs 
-            elif:subcount(package) ?>
-            <ul>
-              <?cs call:class_link_list("Interfaces", package.interfaces) ?>
-              <?cs call:class_link_list("Classes", package.classes) ?>
-              <?cs call:class_link_list("Enums", package.enums) ?>
-              <?cs call:class_link_list("Exceptions", package.exceptions) ?>
-              <?cs call:class_link_list("Errors", package.errors) ?>
-            </ul><?cs 
-            else ?>
-              <script>
-                /*addLoadEvent(maxPackageHeight);*/
-              </script>
-              <p style="padding:10px">Select a package to view its members</p><?cs 
-            /if ?><br/>
-          </div><!-- end classes -->
-        </div><!-- end nav-panels -->
-        <div id="nav-tree" style="display:none">
-          <div id="index-links"><nobr>
-            <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
-            <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
-          </div>
-        </div><!-- end nav-tree -->
-      </div><!-- end swapper -->
-    </div> <!-- end side-nav -->
-    <script>
-      if (!isMobile) {
-        $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
-        chooseDefaultNav();
-        if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
-        else {
-          addLoadEvent(function() {
-            scrollIntoView("packages-nav");
-            scrollIntoView("classes-nav");
-          });
-        }
-        $("#swapper").css({borderBottom:"2px solid #aaa"});
-      } else {
-        swapNav(); // tree view should be used on mobile
-      }
-    </script><?cs 
-/def ?>
-
-<?cs # The default search box that goes in the header ?><?cs 
-def:default_search_box() ?>
-  <div id="search" >
-      <div id="searchForm">
-          <form accept-charset="utf-8" class="gsc-search-box" 
-                onsubmit="return submit_search()">
-            <table class="gsc-search-box" cellpadding="0" cellspacing="0"><tbody>
-                <tr>
-                  <td class="gsc-input">
-                    <input id="search_autocomplete" class="gsc-input" type="text" size="33" autocomplete="off" 
-                      title="search developer docs" name="q"
-                      value="search developer docs" 
-                      onFocus="search_focus_changed(this, true)" 
-                      onBlur="search_focus_changed(this, false)" 
-                      onkeydown="return search_changed(event, true, '<?cs var:toroot?>')" 
-                      onkeyup="return search_changed(event, false, '<?cs var:toroot?>')" />
-                  <div id="search_filtered_div" class="no-display">
-                      <table id="search_filtered" cellspacing=0>
-                      </table>
-                  </div>
-                  </td>
-                  <td class="gsc-search-button">
-                    <input type="submit" value="Search" title="search" id="search-button" class="gsc-search-button" />
-                  </td>
-                  <td class="gsc-clear-button">
-                    <div title="clear results" class="gsc-clear-button">&nbsp;</div>
-                  </td>
-                </tr></tbody>
-              </table>
-          </form>
-      </div><!-- searchForm -->
-  </div><!-- search --><?cs 
-/def ?>
 
 <?cs include:"customization.cs" ?>

@@ -21,6 +21,7 @@ libz.so                 0xAF900000
 libevent.so             0xAF800000
 libssl.so               0xAF700000
 libcrypto.so            0xAF500000
+libsysutils.so          0xAF400000
 
 # bluetooth
 liba2dp.so              0xAEE00000
@@ -104,6 +105,10 @@ libOmxH264Dec.so              0xA6F90000
 libOmxVidEnc.so               0xA6F60000
 libopencorehw.so              0xA6F50000
 
+# pv libraries
+libopencore_common.so         0xA6000000
+libqcomm_omx.so               0xA5A00000
+
 # libraries for specific apps or temporary libraries
 libcam_ipl.so           0x9F000000
 libwbxml.so             0x9E800000
@@ -128,3 +133,4 @@ libUAPI_jni.so          0x9A500000
 librpc.so               0x9A400000
 libtrace_test.so        0x9A300000
 libsrec_jni.so          0x9A200000
+libcerttool_jni.so      0x9A100000

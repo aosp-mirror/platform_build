@@ -1,45 +1,74 @@
 <?cs # This default template file is meant to be replaced. ?>
 <?cs # Use the -tempatedir arg to javadoc to set your own directory with a replacement for this file in it. ?>
 
+
+<?cs # The default search box that goes in the header ?><?cs 
+def:default_search_box() ?>
+  <div id="search" >
+      <div id="searchForm">
+          <form accept-charset="utf-8" class="gsc-search-box" 
+                onsubmit="return submit_search()">
+            <table class="gsc-search-box" cellpadding="0" cellspacing="0"><tbody>
+                <tr>
+                  <td class="gsc-input">
+                    <input id="search_autocomplete" class="gsc-input" type="text" size="33" autocomplete="off" 
+                      title="search developer docs" name="q"
+                      value="search developer docs" 
+                      onFocus="search_focus_changed(this, true)" 
+                      onBlur="search_focus_changed(this, false)" 
+                      onkeydown="return search_changed(event, true, '<?cs var:toroot?>')" 
+                      onkeyup="return search_changed(event, false, '<?cs var:toroot?>')" />
+                  <div id="search_filtered_div" class="no-display">
+                      <table id="search_filtered" cellspacing=0>
+                      </table>
+                  </div>
+                  </td>
+                  <td class="gsc-search-button">
+                    <input type="submit" value="Search" title="search" id="search-button" class="gsc-search-button" />
+                  </td>
+                  <td class="gsc-clear-button">
+                    <div title="clear results" class="gsc-clear-button">&nbsp;</div>
+                  </td>
+                </tr></tbody>
+              </table>
+          </form>
+      </div><!-- searchForm -->
+  </div><!-- search --><?cs 
+/def ?>
+
 <?cs 
 def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
           <a href="<?cs var:toroot ?>index.html" tabindex="-1"><img
               src="<?cs var:toroot ?>assets/images/bg_logo.png" alt="Android Developers" /></a>
-          <ul class="<?cs 
-                  if:reference ?>reference<?cs
-                  elif:guide ?>guide<?cs
-                  elif:sdk ?>sdk<?cs
-                  elif:home ?>home<?cs
-                  elif:community ?>community<?cs
-                  elif:publish ?>publish<?cs
-                  elif:about ?>about<?cs /if ?>">
-              <li id="home-link"><a href="<?cs var:toroot ?><?cs 
-                  if:android.whichdoc != "online" ?>offline.html<?cs 
-                  else ?>index.html<?cs /if ?>">
-                  <span>Home</span></a></li>
-              <li id="sdk-link"><a href="<?cs var:toroot ?>sdk/1.1_r1/index.html"><span>SDK</span></a></li>
-              <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
-                                  onClick="return loadLast('guide')"><span>Dev Guide</span></a></li>
-              <li id="reference-link"><a href="<?cs var:toroot ?>reference/packages.html" 
-                                  onClick="return loadLast('reference')"><span>Reference</span></a></li>
-              <li><a href="http://android-developers.blogspot.com"><span>Blog</span></a></li>
-              <li id="community-link"><a href="<?cs var:toroot ?>community/index.html"><span>Community</span></a></li>
-          </ul>
+          <?cs include:"header_tabs.cs" ?>     <?cs # The links are extracted so we can better manage localization ?>
       </div>
       <div id="headerRight">
           <div id="headerLinks">
-            <!-- <img src="<?cs var:toroot ?>assets/images/icon_world.jpg" alt="" /> -->
-            <span class="text">
-              <!-- &nbsp;<a href="#">English</a> | -->
-              <a href="http://www.android.com">Android.com</a>
-            </span>
+            <!-- 	<img src="<?cs var:toroot ?>assets/images/icon_world.jpg" alt="" />  -->
+              <span id="language">
+             		<select name="language" onChange="changeLangPref(this.value)">
+    							<option value="en">English</option>
+    				  	<!--  <option value="ja"></option>  -->
+             		</select>	
+             		<script type="text/javascript">
+             		  <!--  
+             		  loadLangPref();  
+             		  //-->
+             		</script>
+             	</span>
+            <a href="http://www.android.com">Android.com</a>
           </div><?cs 
           call:default_search_box() ?>
       </div><!-- headerRight -->
+      <script type="text/javascript">
+        <!--  
+        changeTabLang(getLangPref());  
+        //-->
+      </script>
   </div><!-- header --><?cs 
-/def ?><?cs # custom_masthead ?>
+/def ?>
 
 <?cs 
 def:sdk_nav() ?>
@@ -66,22 +95,80 @@ def:guide_nav() ?>
     </script>
 <?cs /def ?>
 
-<?cs 
-def:publish_nav() ?>
-  <div class="g-section g-tpl-180" id="body-content">
-    <div class="g-unit g-first" id="side-nav">
-      <div id="devdoc-nav"><?cs 
-        include:"../../../../frameworks/base/docs/html/publish/publish_toc.cs" ?>
-      </div>
+<?cs # The default side navigation for the reference docs ?><?cs 
+def:default_left_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="swapper">
+        <div id="nav-panels">
+          <div id="resize-packages-nav">
+            <div id="packages-nav">
+              <div id="index-links"><nobr>
+                <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
+                <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
+              </div>
+              <ul><?cs 
+              each:pkg=docs.packages ?>
+                <li <?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>class="selected"<?cs /if ?>><?cs call:package_link(pkg) ?></li><?cs 
+              /each ?>
+              </ul><br/>
+            </div> <!-- end packages -->
+          </div> <!-- end resize-packages -->
+          <div id="classes-nav"><?cs 
+            if:subcount(class.package) ?>
+            <ul>
+              <?cs call:list("Interfaces", class.package.interfaces) ?>
+              <?cs call:list("Classes", class.package.classes) ?>
+              <?cs call:list("Enums", class.package.enums) ?>
+              <?cs call:list("Exceptions", class.package.exceptions) ?>
+              <?cs call:list("Errors", class.package.errors) ?>
+            </ul><?cs 
+            elif:subcount(package) ?>
+            <ul>
+              <?cs call:class_link_list("Interfaces", package.interfaces) ?>
+              <?cs call:class_link_list("Classes", package.classes) ?>
+              <?cs call:class_link_list("Enums", package.enums) ?>
+              <?cs call:class_link_list("Exceptions", package.exceptions) ?>
+              <?cs call:class_link_list("Errors", package.errors) ?>
+            </ul><?cs 
+            else ?>
+              <script>
+                /*addLoadEvent(maxPackageHeight);*/
+              </script>
+              <p style="padding:10px">Select a package to view its members</p><?cs 
+            /if ?><br/>
+          </div><!-- end classes -->
+        </div><!-- end nav-panels -->
+        <div id="nav-tree" style="display:none">
+          <div id="index-links"><nobr>
+            <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
+            <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
+          </div>
+        </div><!-- end nav-tree -->
+      </div><!-- end swapper -->
     </div> <!-- end side-nav -->
-<?cs /def ?>
+    <script>
+      if (!isMobile) {
+        $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
+        chooseDefaultNav();
+        if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
+        else {
+          addLoadEvent(function() {
+            scrollIntoView("packages-nav");
+            scrollIntoView("classes-nav");
+          });
+        }
+        $("#swapper").css({borderBottom:"2px solid #aaa"});
+      } else {
+        swapNav(); // tree view should be used on mobile
+      }
+    </script><?cs 
+/def ?>
 
 <?cs 
 def:custom_left_nav() ?><?cs 
   if:guide ?><?cs 
     call:guide_nav() ?><?cs 
-  elif:publish ?><?cs 
-    call:publish_nav() ?><?cs 
   elif:sdk ?><?cs 
     call:sdk_nav() ?><?cs 
   else ?><?cs 
@@ -115,7 +202,7 @@ def:custom_footerlinks() ?>
   </p><?cs 
 /def ?>
 
-<?cs # appears on the right side of the blue bar at the bottom of every page ?><?cs 
+<?cs # appears on the right side of the blue bar at the bottom off every page ?><?cs 
 def:custom_buildinfo() ?>
-  Android 1.1 r1 - <?cs var:page.now ?><?cs 
-/def ?>
+  Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> - <?cs var:page.now ?>
+<?cs /def ?>

@@ -7,6 +7,9 @@
 #     OUT_DIR is also set to "out" if it's not already set.
 #         this allows you to set it to somewhere else if you like
 
+# Set up version information.
+include $(BUILD_SYSTEM)/version_defaults.mk
+
 # ---------------------------------------------------------------
 # If you update the build system such that the environment setup
 # or buildspec.mk need to be updated, increment this number, and
@@ -319,6 +322,8 @@ endif # CALLED_FROM_SETUP
 
 ifneq ($(PRINT_BUILD_CONFIG),)
 $(info ============================================)
+$(info   PLATFORM_VERSION_CODENAME=$(PLATFORM_VERSION_CODENAME))
+$(info   PLATFORM_VERSION=$(PLATFORM_VERSION))
 $(info   TARGET_PRODUCT=$(TARGET_PRODUCT))
 $(info   TARGET_BUILD_VARIANT=$(TARGET_BUILD_VARIANT))
 $(info   TARGET_SIMULATOR=$(TARGET_SIMULATOR))

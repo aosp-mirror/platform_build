@@ -12,13 +12,18 @@ PRODUCT_PACKAGES := \
     Launcher \
     HTMLViewer \
     Phone \
+    ApplicationsProvider \
     ContactsProvider \
     DownloadProvider \
     GoogleSearch \
     MediaProvider \
+    PicoTts \
     SettingsProvider \
     TelephonyProvider \
+    TtsService \
+    VpnServices \
     UserDictionaryProvider \
     PackageInstaller \
+    WebSearchProvider \
     Bugreport
 

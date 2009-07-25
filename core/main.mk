@@ -85,8 +85,43 @@ $(warning ************************************************************)
 $(error Directory names containing spaces not supported)
 endif
 
-# Set up version information.
-include $(BUILD_SYSTEM)/version_defaults.mk
+
+# The windows build server currently uses 1.6.  This will be fixed.
+ifneq ($(HOST_OS),windows)
+
+# Check for the correct version of java
+java_version := $(shell java -version 2>&1 | head -n 1 | grep '[ "]1\.5[\. "$$]')
+ifeq ($(strip $(java_version)),)
+$(info ************************************************************)
+$(info You are attempting to build with the incorrect version)
+$(info of java.)
+$(info $(space))
+$(info Your version is: $(shell java -version 2>&1 | head -n 1).)
+$(info The correct version is: 1.5.)
+$(info $(space))
+$(info Please follow the machine setup instructions at)
+$(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+$(info ************************************************************)
+$(error stop)
+endif
+
+# Check for the correct version of javac
+javac_version := $(shell javac -version 2>&1 | head -n 1 | grep '[ "]1\.5[\. "$$]')
+ifeq ($(strip $(javac_version)),)
+$(info ************************************************************)
+$(info You are attempting to build with the incorrect version)
+$(info of javac.)
+$(info $(space))
+$(info Your version is: $(shell javac -version 2>&1 | head -n 1).)
+$(info The correct version is: 1.5.)
+$(info $(space))
+$(info Please follow the machine setup instructions at)
+$(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+$(info ************************************************************)
+$(error stop)
+endif
+
+endif # windows
 
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
@@ -309,7 +344,6 @@ subdirs := \
 	dalvik/tools/dmtracedump \
 	dalvik/tools/hprof-conv \
 	development/emulator/mksdcard \
-	development/tools/activitycreator \
 	development/tools/line_endings \
 	development/host \
 	external/expat \
@@ -336,6 +370,7 @@ subdirs += \
 	dalvik/dx \
 	dalvik/libcore \
 	development/apps \
+	development/tools/archquery \
 	development/tools/androidprefs \
 	development/tools/apkbuilder \
 	development/tools/jarutils \
@@ -418,6 +453,10 @@ board_config_mk :=
 
 # Clean up/verify variables defined by the board config file.
 TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
+TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
+ifeq ($(TARGET_CPU_ABI),)
+  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
+endif
 
 #
 # Include all of the makefiles in the system

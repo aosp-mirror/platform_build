@@ -7,7 +7,7 @@
     if:sdk.version ?> (<?cs
       var:sdk.version ?>)<?cs
     /if ?> | <?cs
-  /if ?>Android Developers</title>
+  /if ?>Android Open Source</title>
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" />
 <link href="<?cs var:toroot ?>assets-pdk/pdk-local.css" rel="stylesheet" type="text/css" />
 <script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>

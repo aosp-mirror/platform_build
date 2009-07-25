@@ -110,11 +110,18 @@ dd {
   padding:0 0 0 2em;
 }
 
-li p, dd p {
+li p {
+  margin:.5em 0 0;
+}
+
+dd p {
   margin:1em 0 0;
 }
 
-li pre, li table, li img,
+li pre, li table, li img {
+  margin:.5em 0 0 1em;
+}
+
 dd pre, dd table, dd img {
   margin:1em 0 0 1em;
 }
@@ -169,7 +176,6 @@ hr.blue {
   margin:0;
   position:relative;
   width:100%;
-  background: url('images/preliminary.png');
 }
 
 #header {
@@ -262,20 +268,16 @@ hr.blue {
 #headerLinks {
   margin:10px 10px 0 0;
   height:13px;
-}
-
-#headerLinks .text {
-  text-decoration: none;
-  color: #7FA9B5;
   font-size: 11px;
   vertical-align: top;
 }
 
 #headerLinks a {
-  text-decoration: underline;
   color: #7FA9B5;
-  font-size: 11px;
-  vertical-align: top;
+}
+
+#language {
+  margin:0 10px;
 }
 
 #search {
@@ -717,14 +719,16 @@ td.gsc-search-button {
   float: left;
   width: 584px;
   height: 580px;
-  background:url(images/home/bg_home_middle.png) no-repeat 0 0;
   position:relative;
 }
 
+#topAnnouncement {
+  background:url(images/home/bg_home_announcement.png) no-repeat 0 0;
+}
+  
 #homeTitle {
-  margin:15px 15px 0;
-  height:30px;
-  background:url(images/hr_gray_side.jpg) no-repeat 0 29px;
+  padding:15px 15px 0;
+  height:30px;  
 }
 
 #homeTitle h2 {
@@ -732,8 +736,14 @@ td.gsc-search-button {
 }
 
 #announcement-block {
-  margin:15px 15px 0;
-  height:125px;
+  padding:0 15px 0;
+  overflow:hidden;
+  background: url(images/hr_gray_side.jpg) no-repeat 15px 0;
+  zoom:1;
+}
+
+#announcement-block>* {
+  padding:15px 0 0;
 }
 
 #announcement-block img {
@@ -744,6 +754,29 @@ td.gsc-search-button {
 #announcement {
   float:left;
   margin:0;
+}
+
+#carousel {
+  background:url(images/home/bg_home_carousel.png) no-repeat 0 0;
+  position:relative;
+  height:400px;
+}
+
+#carouselMain {
+  padding: 25px 21px 0;
+  height:185px;
+  background-position:top;
+  overflow:hidden;
+  position:relative;
+}
+
+#carouselMain img {
+  margin:0;
+}
+
+#homeMiddle p {
+  margin:0;
+  padding-bottom: 1em;
 }
 
 .clearer { clear:both; }
@@ -824,6 +857,12 @@ div#app-list {
   text-decoration:none;
   text-align:center;
   font-size:11px;
+  line-height:11px;
+}
+
+#app-list a span {
+  position:relative;
+  top:-4px;
 }
 
 #app-list img {  
@@ -857,18 +896,6 @@ div#app-list {
   padding-bottom:.25em;
 }
 
-#carouselMain {
-  margin: 25px 21px 0;
-  height:185px;
-  background-position:top;
-  background-repeat:no-repeat;
-  overflow:hidden;
-}
-
-#carouselMain img {
-  margin:0;
-}
-
 /*carousel bulletin layouts*/
 /*460px width*/
 /*185px height*/
@@ -877,24 +904,24 @@ div#app-list {
   width:230px;
   height:165px;
   overflow:hidden;
-  margin:8px 0 8px 8px;
+  padding:8px 0 8px 8px;
 }
 .desc-right {
   float:left;
   width:270px;
-  margin:10px;
+  padding:10px;
 }
 .img-right {
   float:right;
   width:220px;
   height:165px;
   overflow:hidden;
-  margin:8px 8px 8px 0;
+  padding:8px 8px 8px 0;
 }
 .desc-left {
   float:right;
   width:280px;
-  margin:10px;
+  padding:10px;
   text-align:right;
 }
 .img-top {

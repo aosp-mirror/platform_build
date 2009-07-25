@@ -289,30 +289,6 @@ function choosetype()
 #
 function chooseproduct()
 {
-    # Find the makefiles that must exist for a product.
-    # Send stderr to /dev/null in case partner isn't present.
-    local -a choices
-    choices=(`/bin/ls build/target/board/*/BoardConfig.mk vendor/*/*/BoardConfig.mk 2> /dev/null`)
-
-    local choice
-    local -a prodlist
-    for choice in ${choices[@]}
-    do
-        # The product name is the name of the directory containing
-        # the makefile we found, above.
-        prodlist=(${prodlist[@]} `dirname ${choice} | xargs basename`)
-    done
-
-    local index=1
-    local p
-    echo "Product choices are:"
-    for p in ${prodlist[@]}
-    do
-        echo "     $index. $p"
-        let "index = $index + 1"
-    done
-
-
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
     else
@@ -327,8 +303,7 @@ function chooseproduct()
     local ANSWER
     while [ -z "$TARGET_PRODUCT" ]
     do
-        echo "You can also type the name of a product if you know it."
-        echo -n "Which would you like? [$default_value] "
+        echo -n "Which product would you like? [$default_value] "
         if [ -z "$1" ] ; then
             read ANSWER
         else
@@ -338,13 +313,6 @@ function chooseproduct()
 
         if [ -z "$ANSWER" ] ; then
             export TARGET_PRODUCT=$default_value
-        elif (echo -n $ANSWER | grep -q -e "^[0-9][0-9]*$") ; then
-            local poo=`echo -n $ANSWER`
-            if [ $poo -le ${#prodlist[@]} ] ; then
-                export TARGET_PRODUCT=${prodlist[$(($ANSWER-$_arrayoffset))]}
-            else
-                echo "** Bad product selection: $ANSWER"
-            fi
         else
             if check_product $ANSWER
             then
@@ -976,18 +944,14 @@ function runtest()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (cd "$T" && development/tools/runtest $@)
+    (cd "$T" && development/testrunner/runtest.py $@)
 }
 
-# simple shortcut to the runtest.py command
+# TODO: Remove this some time after 1 June 2009
 function runtest_py()
 {
-    T=$(gettop)
-    if [ ! "$T" ]; then
-        echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
-        return
-    fi
-    (cd "$T" && development/testrunner/runtest.py $@)
+    echo "runtest_py is obsolete; use runtest instead" >&2
+    return 1
 }
 
 function godir () {
@@ -1045,7 +1009,7 @@ fi
 unset _xarray
 
 # Execute the contents of any vendorsetup.sh files we can find.
-for f in `/bin/ls vendor/*/vendorsetup.sh 2> /dev/null`
+for f in `/bin/ls vendor/*/vendorsetup.sh vendor/*/build/vendorsetup.sh 2> /dev/null`
 do
     echo "including $f"
     . $f

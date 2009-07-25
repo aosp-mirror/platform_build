@@ -17,13 +17,15 @@ cts_tools_src_dir := cts/tools
 
 cts_name := android-cts
 
-CTS_EXECUTABLE := cts
+CTS_EXECUTABLE := startcts
 ifeq ($(HOST_OS),windows)
     CTS_EXECUTABLE_PATH := $(cts_tools_src_dir)/host/etc/cts.bat
 else
-    CTS_EXECUTABLE_PATH := $(HOST_OUT_EXECUTABLES)/$(CTS_EXECUTABLE)
+    CTS_EXECUTABLE_PATH := $(cts_tools_src_dir)/utils/$(CTS_EXECUTABLE)
 endif
 CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
+
+junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
 
 CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.archive \
@@ -31,7 +33,6 @@ CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.crypto \
 	android.core.tests.dom \
 	android.core.tests.logging \
-	android.core.tests.luni \
 	android.core.tests.luni.io \
 	android.core.tests.luni.lang \
 	android.core.tests.luni.net \
@@ -45,7 +46,8 @@ CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.sql \
 	android.core.tests.text \
 	android.core.tests.xml \
-	android.core.tests.xnet
+	android.core.tests.xnet \
+	android.core.tests.runner
 
 CTS_CASE_LIST := \
 	DeviceInfoCollector \
@@ -65,11 +67,20 @@ CTS_CASE_LIST := \
 	CtsWidgetTestCases \
 	CtsNetTestCases \
 	SignatureTest \
+	CtsPerformanceTestCases \
+	CtsPerformance2TestCases \
+	CtsPerformance3TestCases \
+	CtsPerformance4TestCases \
+	CtsPerformance5TestCases \
+	ApiDemos \
+	ApiDemosReferenceTest \
 	$(CTS_CORE_CASE_LIST)
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
-$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
+$(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
+
+$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(ACP)
 # Make necessary directory for CTS
 	@rm -rf $(PRIVATE_CTS_DIR)
 	@mkdir -p $(TMP_DIR)
@@ -80,13 +91,14 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) | $(ACP)
 # Copy executable to CTS directory
 	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(PRIVATE_DIR)/tools
 	$(hide) $(ACP) -fp $(CTS_EXECUTABLE_PATH) $(PRIVATE_DIR)/tools
+# Copy junit jar
+	$(hide) $(ACP) -fp $(PRIVATE_JUNIT_HOST_JAR) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
 			$(call copy-testcase-apk,$(apk)))
-# Copy CTS host config and start script to CTS directory
+# Copy CTS host config to CTS directory
 	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/host_config.xml $(PRIVATE_DIR)/repository/
-	$(hide) $(ACP) -fp $(cts_tools_src_dir)/utils/startcts $(PRIVATE_DIR)/tools/
 	$(hide) touch $@
 
 # Generate the test descriptions for the core-tests
@@ -112,7 +124,7 @@ $(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.annotation,\
 		cts/tests/core/annotation/AndroidManifest.xml,\
 		tests.annotation.AllTests)
@@ -131,9 +143,6 @@ $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRA
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.logging,\
 		cts/tests/core/logging/AndroidManifest.xml,\
 		tests.logging.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni,\
-		cts/tests/core/luni/AndroidManifest.xml,\
-		tests.luni.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
 		cts/tests/core/luni-io/AndroidManifest.xml,\
 		tests.luni.AllTestsIo)

@@ -3,10 +3,7 @@
 <link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>favicon.ico" />
 <title><?cs 
   if:page.title ?><?cs 
-    var:page.title ?><?cs
-    if:sdk.version ?> (<?cs
-      var:sdk.version ?>)<?cs
-    /if ?> | <?cs
+    var:page.title ?> | <?cs
   /if ?>Android Developers</title><?cs 
 if:guide||sdk ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" /><?cs 

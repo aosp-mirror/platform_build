@@ -30,7 +30,8 @@ void usage(void)
 {
     fprintf(stderr, "Zip alignment utility\n");
     fprintf(stderr,
-        "Usage: zipalign [-f] [-v] <align> infile.zip outfile.zip\n");
+        "Usage: zipalign [-f] [-v] <align> infile.zip outfile.zip\n"
+        "       zipalign -c [-v] <align> infile.zip\n" );
 }
 
 /*
@@ -152,14 +153,14 @@ static int verify(const char* fileName, int alignment, bool verbose)
         pEntry = zipFile.getEntryByIndex(i);
         if (pEntry->isCompressed()) {
             if (verbose) {
-                printf("%8ld %s (OK - compressed)\n", 
+                printf("%8ld %s (OK - compressed)\n",
                     (long) pEntry->getFileOffset(), pEntry->getFileName());
             }
         } else {
             long offset = pEntry->getFileOffset();
             if ((offset % alignment) != 0) {
                 if (verbose) {
-                    printf("%8ld %s (BAD - %ld)\n", 
+                    printf("%8ld %s (BAD - %ld)\n",
                         (long) offset, pEntry->getFileName(),
                         offset % alignment);
                 }
@@ -185,6 +186,7 @@ static int verify(const char* fileName, int alignment, bool verbose)
 int main(int argc, char* const argv[])
 {
     bool wantUsage = false;
+    bool check = false;
     bool force = false;
     bool verbose = false;
     int result = 1;
@@ -204,6 +206,9 @@ int main(int argc, char* const argv[])
 
         while (*cp != '\0') {
             switch (*cp) {
+            case 'c':
+                check = true;
+                break;
             case 'f':
                 force = true;
                 break;
@@ -223,7 +228,7 @@ int main(int argc, char* const argv[])
         argv++;
     }
 
-    if (argc != 3) {
+    if (!((check && argc == 2) || (!check && argc == 3))) {
         wantUsage = true;
         goto bail;
     }
@@ -235,12 +240,17 @@ int main(int argc, char* const argv[])
         goto bail;
     }
 
-    /* create the new archive */
-    result = process(argv[1], argv[2], alignment, force);
+    if (check) {
+        /* check existing archive for correct alignment */
+        result = verify(argv[1], alignment, verbose);
+    } else {
+        /* create the new archive */
+        result = process(argv[1], argv[2], alignment, force);
 
-    /* trust, but verify */
-    if (result == 0)
-        result = verify(argv[2], alignment, verbose);
+        /* trust, but verify */
+        if (result == 0)
+            result = verify(argv[2], alignment, verbose);
+    }
 
 bail:
     if (wantUsage) {
@@ -250,4 +260,3 @@ bail:
 
     return result;
 }
-

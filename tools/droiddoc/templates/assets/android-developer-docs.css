@@ -433,11 +433,11 @@ hr {
 .nolist {
   list-style:none;
   padding:0;
-  margin:0 0 0 1em;
+  margin:0 0 1em 1em;
 }
 
 .nolist li {
-  padding:0;
+  padding:0 0 2px;
   margin:0;
 }
 
@@ -570,15 +570,7 @@ div.special ol li {
   margin:0 0 .5em;
   padding:0;
 }
-  
-/* old p.note, p.caution, p.warning {
-  margin:0 0 1em;
-  padding: 4px 10px;
-  background-color: #efefef;
-  border-top: 1px solid;  
-  border-bottom: 1px solid;
-}
-*/
+
 p.note, p.caution, p.warning {
   margin: 1em;
   padding: 0 0 0 .5em;
@@ -594,21 +586,20 @@ p.special-note {
 p.note {
  border-color: #99aacc;
 }
-    
-p.caution {
-  border-color: #ffcc33;
-}
 
 p.warning {
   border-color: #aa0033;
 }
-  
-p.warning b, p.warning em, p.warning strong {
-  color: #aa0033;
+
+p.caution {
+  border-color: #ffcf00;
+}
+
+p.warning b, p.warning strong {
   font-weight: bold;
 }
 
-li p.note, li p.warning, li p.caution {
+li p.note, li p.warning {
   margin: .5em 0 0 0;  
   padding: .2em .5em .2em .9em;
 }
@@ -681,7 +672,7 @@ pre.classic {
 
 #qv ol ol{
   list-style:none;
-  padding: 0 0 3px 12px;
+  padding: 0 0 0 12px;
   margin:0;
 }
 
@@ -690,9 +681,12 @@ pre.classic {
 }
 
 #qv li {
-  padding: 0 10px;
-  margin: 2 0 0;
+  padding: 0 10px 3px;
   line-height: 1.2em;
+}
+
+#qv li li {
+  padding: 3px 10px 0;
 }
 
 #qv ul li {
@@ -809,6 +803,63 @@ padding:0 0 0 0em;
 }
 
 /* End sidebox sidebar element styles */
+
+/* BEGIN image and caption styles (originally for UI Guidelines docs) */
+
+table.image-caption {
+  padding:0;
+  margin:.5em 0;
+  border:0;
+}
+
+td.image-caption-i {
+  font-size:92%;
+  padding:0;
+  margin:0;
+  border:0;
+}
+
+td.image-caption-i img {
+  padding:0 1em;
+  margin:0;
+}
+
+.image-list {
+  width:24px;
+  text-align:center;
+}
+
+.image-list .caption {
+  margin:0 2px;
+}
+
+td.image-caption-c {
+  font-size:92%;
+  padding:1em 2px 2px 2px;
+  margin:0;
+  border:0;
+  width:350px;
+}
+
+.grad-rule-top {
+background-image:url(images/grad-rule-qv.png);
+background-repeat:no-repeat;
+padding-top:1em;
+margin-top:0;
+}
+
+.image-caption-nested {
+  margin-top:0;
+  padding:0 0 0 1em;
+}
+
+.image-caption-nested td {
+  padding:0 4px 2px 0;
+  margin:0;
+  border:0;
+}
+
+/* END image and caption styles */
 
 /* table of contents */
 

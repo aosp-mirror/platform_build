@@ -794,6 +794,22 @@ $(hide) $(transform-d-to-p)
 endef
 
 ###########################################################
+## Commands for running gcc to compile an Objective-C file
+## This should never happen for target builds but this
+## will error at build time.
+###########################################################
+
+define transform-m-to-o-no-deps
+@echo "target ObjC: $(PRIVATE_MODULE) <= $<"
+$(call transform-c-or-s-to-o-no-deps)
+endef
+
+define transform-m-to-o
+$(transform-m-to-o-no-deps)
+$(hide) $(transform-d-to-p)
+endef
+
+###########################################################
 ## Commands for running gcc to compile a host C++ file
 ###########################################################
 
@@ -871,15 +887,45 @@ $(transform-d-to-p)
 endef
 
 ###########################################################
+## Commands for running gcc to compile a host Objective-C file
+###########################################################
+
+define transform-host-m-to-o-no-deps
+@echo "host ObjC: $(PRIVATE_MODULE) <= $<"
+$(call transform-host-c-or-s-to-o-no-deps)
+endef
+
+define tranform-host-m-to-o
+$(transform-host-m-to-o-no-deps)
+$(transform-d-to-p)
+endef
+
+###########################################################
 ## Commands for running ar
 ###########################################################
+
+define extract-and-include-whole-static-libs
+$(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
+	@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
+	ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(lib)))_objs;\
+	rm -rf $$ldir; \
+	mkdir -p $$ldir; \
+	filelist=; \
+	for f in `$(TARGET_AR) t $(lib)`; do \
+	    $(TARGET_AR) p $(lib) $$f > $$ldir/$$f; \
+	    filelist="$$filelist $$ldir/$$f"; \
+	done ; \
+	$(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist;\
+)
+endef
 
 # Explicitly delete the archive first so that ar doesn't
 # try to add to an existing archive.
 define transform-o-to-static-lib
 @mkdir -p $(dir $@)
-@echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 @rm -f $@
+$(extract-and-include-whole-static-libs)
+@echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 $(hide) $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $^
 endef
 
@@ -1122,7 +1168,11 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
     $(addprefix -P , $(PRIVATE_RESOURCE_PUBLICS_OUTPUT)) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
-    $(addprefix -I , $(PRIVATE_AAPT_INCLUDES))
+    $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
+    $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
+    $(addprefix --version-name , $(PLATFORM_VERSION))
 endef
 
 ifeq ($(HOST_OS),windows)
@@ -1174,7 +1224,7 @@ define unzip-jar-files
       echo Missing file $$f; \
       exit 1; \
     fi; \
-    unzip -q $$f -d $(2); \
+    unzip -qo $$f -d $(2); \
     (cd $(2) && rm -rf META-INF); \
   done
 endef
@@ -1189,21 +1239,21 @@ $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES), \
     $(PRIVATE_CLASS_INTERMEDIATES_DIR))
-$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list)
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
+	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_INTERMEDIATES_DIR)/java-source-list; \
 fi
-$(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
-    | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) tr ' ' '\n' < $(PRIVATE_INTERMEDIATES_DIR)/java-source-list \
+    | sort -u > $(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) $(TARGET_JAVAC) -encoding ascii $(PRIVATE_BOOTCLASSPATH) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
     $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
-    \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
+    \@$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
-$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
-$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) mkdir -p $(dir $@)
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
@@ -1250,6 +1300,9 @@ endef
 #      A list of dynamic and static parameters;  build layers for
 #      dynamic params that lay over the static ones.
 #TODO: update the manifest to point to the package file
+#Note that the version numbers are given to aapt as simple default
+#values; applications can override these by explicitly stating
+#them in their manifest.
 define add-assets-to-package
 $(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRODUCT_AAPT_CONFIG)) \
@@ -1257,6 +1310,10 @@ $(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
     $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
+    $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
+    $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
+    $(addprefix --version-name , $(PLATFORM_VERSION)) \
     -F $@
 endef
 
@@ -1328,14 +1385,16 @@ $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES), \
     $(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(call dump-words-to-file,$(sort\
 	$(PRIVATE_JAVA_SOURCES)),\
-	$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq)
+	$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq)
 $(hide) $(HOST_JAVAC) -encoding ascii -g \
 	$(xlint_unchecked) \
 	$(addprefix -classpath ,$(strip \
 		$(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
 	-extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR)\
-        \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq || \
+        \@$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq || \
 	( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
+$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) $(PRIVATE_EXTRA_JAR_ARGS) \
     -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
@@ -1481,8 +1540,16 @@ ifndef get-file-size
 $(error HOST_OS must define get-file-size)
 endif
 
-# $(1): The file to check (often $@)
-# $(2): The maximum size, in decimal bytes
+# Convert a partition data size (eg, as reported in /proc/mtd) to the
+# size of the image used to flash that partition (which includes a
+# 64-byte spare area for each 2048-byte page).
+# $(1): the partition data size
+define image-size-from-data-size
+$(shell echo $$(($(1) / 2048 * (2048+64))))
+endef
+
+# $(1): The file(s) to check (often $@)
+# $(2): The maximum total image size, in decimal bytes
 #
 # If $(2) is empty, evaluates to "true"
 #
@@ -1491,19 +1558,21 @@ endif
 # next whole flash block size.
 define assert-max-file-size
 $(if $(2), \
-  fileSize=`$(call get-file-size,$(1))`; \
-  maxSize=$(2); \
-  onePct=`expr "(" $$maxSize + 99 ")" / 100`; \
-  onePct=`expr "(" "(" $$onePct + $(BOARD_FLASH_BLOCK_SIZE) - 1 ")" / \
-          $(BOARD_FLASH_BLOCK_SIZE) ")" "*" $(BOARD_FLASH_BLOCK_SIZE)`; \
-  reserve=`expr 2 "*" $(BOARD_FLASH_BLOCK_SIZE)`; \
-  if [ "$$onePct" -gt "$$reserve" ]; then \
-      reserve="$$onePct"; \
+  size=$$(for i in $(1); do $(call get-file-size,$$i); done); \
+  total=$$(( $$( echo "$$size" | tr '\n' + ; echo 0 ) )); \
+  printname=$$(echo -n "$(1)" | tr " " +); \
+  echo "$$printname total size is $$total"; \
+  img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
+  twoblocks=$$((img_blocksize * 2)); \
+  onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
+  reserve=$$((twoblocks > onepct ? twoblocks : onepct)); \
+  maxsize=$$(($(2) - reserve)); \
+  if [ "$$total" -gt "$$maxsize" ]; then \
+    echo "error: $$printname too large ($$total > [$(2) - $$reserve])"; \
+    false; \
   fi; \
-  maxSize=`expr $$maxSize - $$reserve`; \
-  if [ "$$fileSize" -gt "$$maxSize" ]; then \
-      echo "error: $(1) too large ($$fileSize > [$(2) - $$reserve])"; \
-      false; \
+  if [ "$$total" -gt $$((maxsize - 32768)) ]; then \
+    echo "WARNING: $$printname approaching size limit ($$total now; limit $$maxsize)"; \
   fi \
  , \
   true \
