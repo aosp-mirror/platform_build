@@ -238,6 +238,10 @@ hr.blue {
   top:7px;
 }
 
+#header li a span+span {
+  display:none;
+}
+
 /* TAB HIGHLIGHTING */
 .home #home-link a,
 .publish #publish-link a,
@@ -276,8 +280,12 @@ hr.blue {
   color: #7FA9B5;
 }
 
+#headerLinks img {
+  vertical-align:middle;
+}
+
 #language {
-  margin:0 10px;
+  margin:0 10px 0 4px;
 }
 
 #search {
