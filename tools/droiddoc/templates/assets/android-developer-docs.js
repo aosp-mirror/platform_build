@@ -175,7 +175,8 @@ function resizeHeight() {
   devdocNav.css({height:sidenav.css("height")});
   $("#nav-tree").css({height:swapperHeight + "px"});
   
-  var section = location.pathname.substring(1,location.pathname.indexOf("/",1));
+  var basePath = getBaseUri(location.pathname);
+  var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("height", resizePackagesNav.css("height"), section, null);
 }
 
@@ -192,7 +193,8 @@ function resizeWidth() {
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
   
-  var section = location.pathname.substring(1,location.pathname.indexOf("/",1));
+  var basePath = getBaseUri(location.pathname);
+  var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("width", sidenavWidth, section, null);
 }
 
