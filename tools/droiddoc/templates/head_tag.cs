@@ -11,14 +11,12 @@ else ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" /><?cs 
 /if ?>
 <script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>reference/lists.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/jquery-resizable.min.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/android-developer-docs.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("<?cs var:toroot ?>");
 </script><?cs 
 if:reference ?>
-<script src="<?cs var:toroot ?>navtree_data.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/navtree.js" type="text/javascript"></script><?cs 
 /if ?>
 <noscript>
