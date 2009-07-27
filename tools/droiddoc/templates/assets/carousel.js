@@ -45,23 +45,8 @@ function droid(appName){
   currentDroid = appName;
 
   var droid = droidList[appName];
-  var layout = droid.layout;
-  var imgDiv = document.getElementById("bulletinImg");
-  var descDiv = document.getElementById("bulletinDesc");
-
-  if (layout == "imgLeft") {
-    imgDiv.className = "img-left";
-    descDiv.className = "desc-right";
-  } else if (layout == "imgTop") {
-    imgDiv.className = "img-top";
-    descDiv.className = "desc-bottom";
-  } else if (layout == "imgRight") {
-    imgDiv.className = "img-right";
-    descDiv.className = "desc-left";
-  }
-
-  imgDiv.innerHTML = "<img src='" + toRoot + assetsRoot + "images/home/" + droid.img + "'>";
-  descDiv.innerHTML = (droid.title != "") ? "<h3>" + droid.title + "</h3>" + droid.desc : droid.desc;
+  
+  $("#"+appName).show().siblings().hide();
 
   if(oldDroid)
     oldDroid.removeClass("selected");
@@ -95,7 +80,41 @@ function buildCarousel() {
     a.appendChild(br);
     a.appendChild(span);
     appList.appendChild(a);
+    
+    
+    /* add the bulletins */
+	  var layout = droid.layout;
+    var div = document.createElement("div");
+    var imgDiv = document.createElement("div");
+    var descDiv = document.createElement("div");
+    
+    div.setAttribute("id", x);
+    div.setAttribute("style", "display:none");
+    imgDiv.setAttribute("class", "bulletinImg");
+    descDiv.setAttribute("class", "bulletinDesc");
+	
+	  if (layout == "imgLeft") {
+	    $(imgDiv).addClass("img-left");
+	    $(descDiv).addClass("desc-right");
+	  } else if (layout == "imgTop") {
+	    $(imgDiv).addClass("img-top");
+	    $(descDiv).addClass("desc-bottom");
+	  } else if (layout == "imgRight") {
+	    $(imgDiv).addClass("img-right");
+	    $(descDiv).addClass("desc-left");
+	  }
+	
+	  imgDiv.innerHTML = "<img src='" + toRoot + assetsRoot + "images/home/" + droid.img + "'>";
+	  descDiv.innerHTML = (droid.title != "") ? "<h3>" + droid.title + "</h3>" + droid.desc : droid.desc;
+		$(div).append(imgDiv);
+		$(div).append(descDiv);
+    
+    $("#carouselMain").append(div);
+    
   }
+
+		
+  
 }
 
 // -- * slider * -- //

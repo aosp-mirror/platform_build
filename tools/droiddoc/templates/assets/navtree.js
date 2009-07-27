@@ -104,7 +104,8 @@ function this_page_relative(toroot)
   var file = "";
   if (toroot.substr(0, 1) == "/") {
     if (full.substr(0, toroot.length) == toroot) {
-      return full.substr(toroot.length);
+      var basePath = getBaseUri(full);
+      return basePath.substring(toroot.length);
     } else {
       // the file isn't under toroot.  Fail.
       return null;
@@ -144,8 +145,20 @@ function find_page(url, data)
   return null;
 }
 
+function load_navtree_data(toroot) {
+  var navtreeData = document.createElement("script");
+  navtreeData.setAttribute("type","text/javascript");
+  navtreeData.setAttribute("src", toroot+"navtree_data.js");
+  $("head").append($(navtreeData));
+} 
+
+function init_default_navtree(toroot) {
+  load_navtree_data(toroot);
+  init_navtree("nav-tree", toroot, NAVTREE_DATA);
+}
+
 function init_navtree(navtree_id, toroot, root_nodes)
-{
+{  
   var me = new Object();
   me.toroot = toroot;
   me.node = new Object();

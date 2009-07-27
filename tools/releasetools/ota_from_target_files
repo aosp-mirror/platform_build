@@ -277,12 +277,6 @@ def SignOutput(temp_zip_name, output_zip_name):
   common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw)
 
 
-def FixPermissions(script):
-  Item.GetMetadata()
-  root = Item.Get("system")
-  root.SetPermissions(script)
-
-
 def AppendAssertions(script, input_zip):
   device = GetBuildProp("ro.product.device", input_zip)
   script.AssertDevice(device)
@@ -293,6 +287,47 @@ def AppendAssertions(script, input_zip):
     bootloaders = m.group(1).split("|")
     if "*" not in bootloaders:
       script.AssertSomeBootloader(*bootloaders)
+
+
+def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
+  """Generate a binary patch that creates the recovery image starting
+  with the boot image.  (Most of the space in these images is just the
+  kernel, which is identical for the two, so the resulting patch
+  should be efficient.)  Add it to the output zip, along with a shell
+  script that is run from init.rc on first boot to actually do the
+  patching and install the new recovery image.
+
+  recovery_img and boot_img should be File objects for the
+  corresponding images.
+
+  Returns an Item for the shell script, which must be made
+  executable.
+  """
+
+  patch = Difference(recovery_img, boot_img, "imgdiff")
+  common.ZipWriteStr(output_zip, "system/recovery-from-boot.p", patch)
+  Item.Get("system/recovery-from-boot.p", dir=False)
+
+  # Images with different content will have a different first page, so
+  # we check to see if this recovery has already been installed by
+  # testing just the first 2k.
+  HEADER_SIZE = 2048
+  header_sha1 = sha.sha(recovery_img.data[:HEADER_SIZE]).hexdigest()
+  sh = """#!/system/bin/sh
+if ! applypatch -c MTD:recovery:%(header_size)d:%(header_sha1)s; then
+  log -t recovery "Installing new recovery image"
+  applypatch MTD:boot:%(boot_size)d:%(boot_sha1)s MTD:recovery %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
+else
+  log -t recovery "Recovery image already installed"
+fi
+""" % { 'boot_size': boot_img.size,
+        'boot_sha1': boot_img.sha1,
+        'header_size': HEADER_SIZE,
+        'header_sha1': header_sha1,
+        'recovery_size': recovery_img.size,
+        'recovery_sha1': recovery_img.sha1 }
+  common.ZipWriteStr(output_zip, "system/etc/install-recovery.sh", sh)
+  return Item.Get("system/etc/install-recovery.sh", dir=False)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
@@ -331,14 +366,25 @@ def WriteFullOTAPackage(input_zip, output_zip):
   symlinks = CopySystemFiles(input_zip, output_zip)
   script.MakeSymlinks(symlinks)
 
-  if common.BuildAndAddBootableImage(
-      os.path.join(OPTIONS.input_tmp, "RECOVERY"),
-      "system/recovery.img", output_zip):
-    Item.Get("system/recovery.img", dir=False)
+  boot_img = File("boot.img", common.BuildBootableImage(
+      os.path.join(OPTIONS.input_tmp, "BOOT")))
+  recovery_img = File("recovery.img", common.BuildBootableImage(
+      os.path.join(OPTIONS.input_tmp, "RECOVERY")))
+  i = MakeRecoveryPatch(output_zip, recovery_img, boot_img)
 
-  FixPermissions(script)
+  Item.GetMetadata()
 
-  common.AddBoot(output_zip)
+  # GetMetadata uses the data in android_filesystem_config.h to assign
+  # the uid/gid/mode of all files.  We want to override that for the
+  # recovery patching shell script to make it executable.
+  i.uid = 0
+  i.gid = 0
+  i.mode = 0544
+  Item.Get("system").SetPermissions(script)
+
+  common.CheckSize(boot_img.data, "boot.img")
+  common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
+  script.ShowProgress(0.2, 0)
 
   script.ShowProgress(0.2, 10)
   script.WriteRawImage("boot", "boot.img")
@@ -553,17 +599,6 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     script.PatchCheck("/"+fn, tf.sha1, sf.sha1)
 
-  if updating_recovery:
-    d = Difference(target_recovery, source_recovery, "imgdiff")
-    print "recovery  target: %d  source: %d  diff: %d" % (
-        target_recovery.size, source_recovery.size, len(d))
-
-    common.ZipWriteStr(output_zip, "patch/recovery.img.p", d)
-
-    script.PatchCheck("MTD:recovery:%d:%s:%d:%s" %
-                      (source_recovery.size, source_recovery.sha1,
-                       target_recovery.size, target_recovery.sha1))
-
   if updating_boot:
     d = Difference(target_boot, source_boot, "imgdiff")
     print "boot      target: %d  source: %d  diff: %d" % (
@@ -609,16 +644,20 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     print "boot image unchanged; skipping."
 
   if updating_recovery:
-    # Produce /system/recovery.img by applying a patch to the current
-    # contents of the recovery partition.
-    script.Print("Patching recovery image...")
-    script.ApplyPatch("MTD:recovery:%d:%s:%d:%s"
-                      % (source_recovery.size, source_recovery.sha1,
-                         target_recovery.size, target_recovery.sha1),
-                      "/system/recovery.img",
-                      target_recovery.size, target_recovery.sha1,
-                      source_recovery.sha1, "/tmp/patchtmp/recovery.img.p")
-    print "recovery image changed; including."
+    # Is it better to generate recovery as a patch from the current
+    # boot image, or from the previous recovery image?  For large
+    # updates with significant kernel changes, probably the former.
+    # For small updates where the kernel hasn't changed, almost
+    # certainly the latter.  We pick the first option.  Future
+    # complicated schemes may let us effectively use both.
+    #
+    # A wacky possibility: as long as there is room in the boot
+    # partition, include the binaries and image files from recovery in
+    # the boot image (though not in the ramdisk) so they can be used
+    # as fodder for constructing the recovery image.
+    recovery_sh_item = MakeRecoveryPatch(output_zip,
+                                         target_recovery, target_boot)
+    print "recovery image changed; including as patch from boot."
   else:
     print "recovery image unchanged; skipping."
 
@@ -637,7 +676,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   target_symlinks_d = dict([(i[1], i[0]) for i in target_symlinks])
   temp_script = script.MakeTemporary()
-  FixPermissions(temp_script)
+  Item.GetMetadata()
+  if updating_recovery:
+    recovery_sh_item.uid = 0
+    recovery_sh_item.gid = 0
+    recovery_sh_item.mode = 0544
+  Item.Get("system").SetPermissions(temp_script)
 
   # Note that this call will mess up the tree of Items, so make sure
   # we're done with it.

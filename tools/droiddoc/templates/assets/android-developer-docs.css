@@ -89,6 +89,10 @@
   zoom:1;
 }
 
+#side-nav li a span+span {
+  display:none;
+}
+
 #side-nav li a:hover {
   text-decoration:underline;
 }
@@ -1130,9 +1134,9 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
     page-break-inside: avoid;
   }
 
-  #qv,
+/*  #qv,
   #qv-wrapper {
     display:none;
   }
-
+*/
 }
