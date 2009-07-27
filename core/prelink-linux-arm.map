@@ -105,7 +105,6 @@ libomx_aacdec_sharedlibrary.so 0xA7700000
 libomx_amrdec_sharedlibrary.so 0xA76A0000
 libomx_amrenc_sharedlibrary.so 0xA7680000
 libomx_avcdec_sharedlibrary.so 0xA7660000
-libomx_avcenc_sharedlibrary.so 0xA7610000
 libomx_m4vdec_sharedlibrary.so 0xA75C0000
 libomx_m4venc_sharedlibrary.so 0xA7590000
 libomx_mp3dec_sharedlibrary.so 0xA7450000

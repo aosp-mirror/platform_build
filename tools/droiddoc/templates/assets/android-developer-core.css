@@ -191,6 +191,11 @@ hr.blue {
   padding: 25px 0 0;
 }
 
+#headerLeft img{
+  height:50px;
+  width:180px;
+}
+
 #headerRight {
   position:absolute;
   right:0;
@@ -238,14 +243,17 @@ hr.blue {
   top:7px;
 }
 
+#header li a span+span {
+  display:none;
+}
+
 /* TAB HIGHLIGHTING */
 .home #home-link a,
-.publish #publish-link a,
 .guide #guide-link a,
 .reference #reference-link a,
 .sdk #sdk-link a,
 .community #community-link a,
-.about #about-link a {
+.videos #videos-link a {
   background-image: url(images/bg_images_sprite.png);
   background-position: 0 0;
   background-repeat: no-repeat;
@@ -255,12 +263,11 @@ hr.blue {
 }
 
 .home #home-link a:hover,
-.publish #publish-link a:hover,
 .guide #guide-link a:hover,
 .reference #reference-link a:hover,
 .sdk #sdk-link a:hover,
 .community #community-link a:hover,
-.about #about-link  a:hover {
+.videos #videos-link  a:hover {
   background-image: url(images/bg_images_sprite.png);
   background-position: 0 0;
 }
@@ -276,8 +283,12 @@ hr.blue {
   color: #7FA9B5;
 }
 
+#headerLinks img {
+  vertical-align:middle;
+}
+
 #language {
-  margin:0 10px;
+  margin:0 10px 0 4px;
 }
 
 #search {
@@ -763,65 +774,76 @@ td.gsc-search-button {
 }
 
 #carouselMain {
+	background: url('/assets/images/home/bg_home_carousel_board.png') 0 0 no-repeat;
+	height:auto;
   padding: 25px 21px 0;
-  height:185px;
-  background-position:top;
   overflow:hidden;
   position:relative;
+  zoom:1; /*IE6*/
 }
 
 #carouselMain img {
   margin:0;
 }
 
-#homeMiddle p {
-  margin:0;
-  padding-bottom: 1em;
+#carouselMain .bulletinDesc h3 {
+	margin:0;
+	padding:0;
+}
+
+#carouselMain .bulletinDesc p {
+	margin:0;
+	padding:0.7em 0 0;
+}
+
+#carouselWheel {
+	background: url('/assets/images/home/bg_home_carousel_wheel.png') 0 0 no-repeat;
+	padding-top:40px;
+	height:150px;
 }
 
 .clearer { clear:both; }
 
-#arrow-left, #arrow-right {
+a#arrow-left, a#arrow-right {
   float:left;
   width:42px;
   height:42px;
   background-image:url(images/home/carousel_buttons_sprite.png);
   background-repeat:no-repeat;
 }
-#arrow-left {
+a#arrow-left {
   margin:35px 3px 0 10px;
 }
-#arrow-right {
+a#arrow-right {
   margin:35px 10px 0 0;
 }
-.arrow-left-off,
-#arrow-left.arrow-left-off:hover { 
+a.arrow-left-off,
+a#arrow-left.arrow-left-off:hover { 
   background-position:0 0;
 }
-.arrow-right-off, 
-#arrow-right.arrow-right-off:hover { 
+a.arrow-right-off, 
+a#arrow-right.arrow-right-off:hover { 
   background-position:-42px 0;
 }
-#arrow-left:hover { 
+a#arrow-left:hover { 
   background-position:0 -42px;
 }
-#arrow-right:hover { 
+a#arrow-right:hover { 
   background-position:-42px -42px;
 }
-.arrow-left-on {
+a.arrow-left-on {
   background-position:0 0;
 }
-.arrow-right-on {
+a.arrow-right-on {
   background-position:-42px 0;
 }
-.arrow-right-off,
-.arrow-left-off {
+a.arrow-right-off,
+a.arrow-left-off {
   cursor:default;
 }
 
 .app-list-container {
-  margin:37px 20px 0;
-  _margin-top:33px;
+  margin:0 20px;
   position:relative;
   width:100%;
 }
@@ -896,13 +918,19 @@ div#app-list {
   padding-bottom:.25em;
 }
 
+/*IE6*/
+* html #app-list a { zoom: 1; margin:0 24px 0 15px;}
+
+* html #list-clip { 
+  width:430px !important;
+}
+
 /*carousel bulletin layouts*/
 /*460px width*/
 /*185px height*/
 .img-left {
   float:left;
   width:230px;
-  height:165px;
   overflow:hidden;
   padding:8px 0 8px 8px;
 }
@@ -914,7 +942,6 @@ div#app-list {
 .img-right {
   float:right;
   width:220px;
-  height:165px;
   overflow:hidden;
   padding:8px 8px 8px 0;
 }
@@ -925,13 +952,275 @@ div#app-list {
   text-align:right;
 }
 .img-top {
-  height:80px;
-  text-align:center;
+  padding:20px 20px 0;
 }
 .desc-bottom {
-  height:100px;
-  margin:10px;
+  padding:10px;
 }
 
 
+/* VIDEO PAGE */
 
+#mainBodyLeft.videoPlayer {
+  width:570px;
+}
+
+#mainBodyRight.videoPlayer {
+  width:330px;
+}
+
+/* player */
+
+#videoPlayerBox {
+  background-color: #DAF3FC;
+  border-radius:7px;
+  -moz-border-radius:7px;
+  -webkit-border-radius:7px;
+  width:530px;
+  padding:20px;
+  border:1px solid #d3ecf5;
+  box-shadow:2px 3px 1px #eee;
+  -moz-box-shadow:2px 3px 1px #eee;
+  -webkit-box-shadow:2px 3px 1px #eee;
+}
+
+#videoBorder {
+  background-color: #FFF;
+  min-height:399px;
+  height:auto !important;
+  border:1px solid #ccdada;
+  border-radius:7px 7px 0 0;
+  -moz-border-radius:7px 7px 0 0;
+  -webkit-border-top-left-radius:7px;
+  -webkit-border-top-right-radius:7px;
+}
+
+#videoPlayerTitle {
+  width:500px;
+  padding:15px 15px 0;
+}
+
+#videoPlayerTitle h2 {
+  font-weight:bold;
+  font-size:1.2em;
+  color:#336666;
+  margin:0;
+  padding:0;
+}
+
+#objectWrapper {
+  padding:15px 15px;
+  height:334px;
+  width:500px;
+}
+
+/* playlist tabs */
+
+ul#videoTabs {
+  list-style-type:none;
+  padding:0;
+  clear:both;
+  margin:0;
+  padding: 20px 0 0 15px;
+  zoom:1; /* IE7/8, otherwise top-padding is double */
+}
+
+ul#videoTabs li {
+  display:inline;
+  padding:0;
+  margin:0 3px 0 0;
+  line-height:2em;
+}
+
+ul#videoTabs li a {
+  border-radius:7px 7px 0 0;
+  -moz-border-radius:7px 7px 0 0;
+  -webkit-border-top-left-radius:7px;
+  -webkit-border-top-right-radius:7px;
+  background:#95c0d0;
+  color:#fff;
+  text-decoration:none;
+  padding:.45em 1.5em;
+  font-weight:bold;
+}
+
+ul#videoTabs li.selected a {
+  font-weight:bold;
+  text-decoration:none;
+  color:#555;
+  background:#daf3fc;
+  border-bottom:1px solid #daf3fc;
+}
+
+ul#videoTabs li:hover a {
+  background:#85acba;
+}
+
+ul#videoTabs li.selected:hover a {
+  background:#daf3fc;
+}
+
+/* playlists */
+
+#videos {
+  background:#daf3fc;
+  margin-bottom:1.5em;
+  padding:15px;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  box-shadow:2px 3px 1px #eee;
+  -moz-box-shadow:2px 3px 1px #eee;
+  -webkit-box-shadow:2px 3px 1px #eee;
+}
+
+#videos div {
+  display:none;
+}
+
+#videos div.selected {
+  display:block;
+}
+
+ul.videoPreviews {
+  list-style:none;
+  padding:0;
+  margin:0;
+  zoom:1; /* IE, otherwise, layout doesn't update when showing 'more' */
+}
+
+ul.videoPreviews li {
+  margin:0 0 5px;
+  padding:0;
+  overflow:hidden;
+  position:relative;
+}
+
+#mainBodyFixed ul.videoPreviews h3 {
+  font-size: 12px;
+  margin:0 0 1em 130px;
+  padding:0;
+  font-weight:bold;
+  color:inherit;
+}
+
+ul.videoPreviews a {
+  margin:1px;
+  padding:10px;
+  text-decoration:none;
+  height:90px;
+  display:block;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  background-color:transparent;
+}
+
+ul.videoPreviews a:hover {
+  background-color:#FFF;
+  border:none; /* IE8, otherwise, bg doesn't work */
+}
+
+ul.videoPreviews a.selected {
+  background-color: #FF9900;
+}
+
+ul.videoPreviews img {
+  float:left;
+  clear:left;
+  margin:0;
+}
+
+ul.videoPreviews h3 {
+  font-size:12px;
+  font-weight:bold;
+  text-decoration:none;
+  margin:0 0 1em 130px;
+  padding:0;
+}
+
+ul.videoPreviews p {
+  font-size: 12px;
+  text-decoration:none;
+  margin:0 0 1.2em 130px;
+}
+
+ul.videoPreviews p.full {
+  display:none;
+}
+
+ul.videoPreviews span.more {
+  padding:0 0 0 12px;
+  background:url('/assets/images/arrow_bluelink_down.png') 0 2px no-repeat;
+}
+
+ul.videoPreviews span.less {
+  padding:0 0 0 12px;
+  background:url('/assets/images/arrow_bluelink_up.png') 0 2px no-repeat;
+  display:none;
+}
+
+ul.videoPreviews p.toggle {
+  position:absolute;
+  margin:0;
+  margin-top:-23px; /* instead of bottom:23px, because IE won't do it correctly */
+  left:140px;
+}
+
+ul.videoPreviews p.toggle a {
+  height:auto;
+  margin:0;
+  padding:0;
+  zoom:1; /* IE6, otherwise the margin considers the img on redraws */
+}
+
+ul.videoPreviews p.toggle a:hover {
+  text-decoration:underline;
+  background:transparent; /* IE6, otherwise it inherits white */
+}
+
+/* featured videos */
+
+#mainBodyRight h2 {
+  padding:0 0 5px;
+}
+
+#mainBodyRight ul.videoPreviews {
+  margin:10px 0 0;
+}
+
+#mainBodyRight ul.videoPreviews li {
+  font-size:11px;
+  line-height:13px;
+  margin:0 0 5px;
+  padding:0;
+}
+
+#mainBodyRight ul.videoPreviews h3 {
+  padding:0;
+  margin:0;
+}
+
+#mainBodyRight ul.videoPreviews a {
+  text-decoration:none;
+  height:108px;
+  border:1px solid #FFF;
+}
+
+#mainBodyRight ul.videoPreviews a:hover {
+  border:1px solid #CCDADA;
+}
+
+#mainBodyRight ul.videoPreviews a.selected {
+  border:1px solid #FFF;
+}
+
+#mainBodyRight ul.videoPreviews p {
+	line-height:1.2em;
+  padding:0;
+  margin:4px 0 0 130px;
+}
+
+#mainBodyRight ul.videoPreviews img {
+	margin-top:5px;
+}

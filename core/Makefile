@@ -646,8 +646,7 @@ endif
 # as the source (since they are very similar).  Generate the patch so
 # we can see how big it's going to be, and include that in the system
 # image size check calculation.
-ifneq ($(TARGET_PRODUCT),sdk)
-ifneq ($(TARGET_PRODUCT),generic)
+ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 intermediates := $(call intermediates-dir-for,PACKAGING,recovery_patch)
 RECOVERY_FROM_BOOT_PATCH := $(intermediates)/recovery_from_boot.p
 $(RECOVERY_FROM_BOOT_PATCH): $(INSTALLED_RECOVERYIMAGE_TARGET) \
@@ -657,8 +656,8 @@ $(RECOVERY_FROM_BOOT_PATCH): $(INSTALLED_RECOVERYIMAGE_TARGET) \
 	@echo "Construct recovery from boot"
 	mkdir -p $(dir $@)
 	PATH=$(HOST_OUT_EXECUTABLES):$$PATH $(HOST_OUT_EXECUTABLES)/imgdiff $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_RECOVERYIMAGE_TARGET) $@
-endif  # TARGET_PRODUCT != generic
-endif  # TARGET_PRODUCT != sdk
+endif
+
 
 $(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH) | $(ACP)
 	@echo "Install system fs image: $@"
@@ -893,6 +892,7 @@ target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
 ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
+ifneq ($(TARGET_PRODUCT),generic)
 
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
@@ -914,6 +914,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 
+endif    # TARGET_PRODUCT != generic
 endif    # TARGET_PRODUCT != sdk
 endif    # TARGET_SIMULATOR != true
 
