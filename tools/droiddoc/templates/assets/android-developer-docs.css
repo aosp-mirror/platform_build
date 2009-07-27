@@ -321,7 +321,6 @@ font-size:.9em;
 
 /* a div that holds a short description */
 .jd-descrdiv {
-  width:100%; 
   padding:3px 1em 0 1em;
   margin:0;
   border:0;
@@ -338,6 +337,50 @@ links to summary tables) */
   text-align:right;
   color:#999;
   max-width:70%;
+}
+
+#api-level-toggle {
+  float:right;
+  padding:0 10px;
+  font-size:11px;
+  color:#999;
+}
+
+h4.jd-details-title .api-level,
+div#jd-header .api-level { 
+  font-size:12px;
+  font-weight:normal;
+  color:#999;
+  position:absolute;
+  top:5px;
+  right:5px;
+}
+
+div#jd-header .api-level { 
+  position:relative;
+  float:right;
+  margin-top:-1.7em;
+}
+
+.absent,
+.absent a:link,
+.absent a:visited,
+.absent a:hover,
+.absent * {
+  color:#aaa !important;
+  background-color:#f6f6f6 !important;
+  cursor:default !important;
+  text-decoration:none !important;
+}
+
+#side-nav li.absent,
+#side-nav li.absent * {
+  background-color:#fff !important;
+}
+
+#side-nav li.absent.selected,
+#side-nav li.absent.selected * {
+  background-color:#eee !important;
 }
 
 /* applies to a div containing links to summary tables */
@@ -471,6 +514,10 @@ seealso list, etc */
   margin:.5em 1em;
 }
 
+.jd-tagdata p {
+  margin:0 0 1em 1em;
+}
+
 /* API reference: adjustments to
 the detailed description block */
 .jd-tagdescr {
@@ -508,6 +555,7 @@ h4.jd-details-title {
   background-color: #E2E2E2;
   margin:1.5em 0 .6em;
   padding:3px;
+  position:relative; /* so the api level can be absolute */
 }
 
 h4.jd-tagtitle {

@@ -49,8 +49,12 @@ a:visited code {
 
 input, select,
 textarea, option {
-  font-family:inherit;
-  font-size:inherit;
+  padding:0;
+  margin:0;
+}
+
+option {
+  padding:0 4px;
 }
 
 p {
@@ -692,7 +696,6 @@ td.gsc-search-button {
 #search-button {
   margin:0 0 0 2px;
   font-size:11px;
-  height:1.8em;
 }
 
 /* search result tabs */

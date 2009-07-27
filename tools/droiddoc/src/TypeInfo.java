@@ -159,6 +159,7 @@ public class TypeInfo
         }
         else if (!isPrimitive() && cl != null && cl.isIncluded()) {
             data.setValue(base + ".link", cl.htmlPage());
+            data.setValue(base + ".since", cl.getSince());
         }
 
         if (mIsTypeVariable) {
