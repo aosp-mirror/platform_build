@@ -78,8 +78,8 @@ SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
 COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused
 COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
-COMMON_GLOBAL_CPPFLAGS:=
-COMMON_RELEASE_CPPFLAGS:=
+COMMON_GLOBAL_CPPFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -Wnon-virtual-dtor
+COMMON_RELEASE_CPPFLAGS:= -DNDEBUG -UDEBUG
 
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip

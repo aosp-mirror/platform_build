@@ -64,11 +64,15 @@
  *    "IMGDIFF1"                  (8)   [magic number and version]
  *    chunk count                 (4)
  *    for each chunk:
- *        chunk type              (4)   [CHUNK_NORMAL or CHUNK_GZIP]
- *        source start            (8)
- *        source len              (8)
- *        bsdiff patch offset     (8)   [from start of patch file]
- *        if chunk type == CHUNK_GZIP:
+ *        chunk type              (4)   [CHUNK_{NORMAL, GZIP, DEFLATE, RAW}]
+ *        if chunk type == CHUNK_NORMAL:
+ *           source start         (8)
+ *           source len           (8)
+ *           bsdiff patch offset  (8)   [from start of patch file]
+ *        if chunk type == CHUNK_GZIP:      (version 1 only)
+ *           source start         (8)
+ *           source len           (8)
+ *           bsdiff patch offset  (8)   [from start of patch file]
  *           source expanded len  (8)   [size of uncompressed source]
  *           target expected len  (8)   [size of uncompressed target]
  *           gzip level           (4)
@@ -79,6 +83,20 @@
  *           gzip header len      (4)
  *           gzip header          (gzip header len)
  *           gzip footer          (8)
+ *        if chunk type == CHUNK_DEFLATE:   (version 2 only)
+ *           source start         (8)
+ *           source len           (8)
+ *           bsdiff patch offset  (8)   [from start of patch file]
+ *           source expanded len  (8)   [size of uncompressed source]
+ *           target expected len  (8)   [size of uncompressed target]
+ *           gzip level           (4)
+ *                method          (4)
+ *                windowBits      (4)
+ *                memLevel        (4)
+ *                strategy        (4)
+ *        if chunk type == RAW:             (version 2 only)
+ *           target len           (4)
+ *           data                 (target len)
  *
  * All integers are little-endian.  "source start" and "source len"
  * specify the section of the input image that comprises this chunk,
@@ -104,28 +122,229 @@
 
 #include "zlib.h"
 #include "imgdiff.h"
+#include "utils.h"
 
 typedef struct {
-  int type;             // CHUNK_NORMAL or CHUNK_GZIP
+  int type;             // CHUNK_NORMAL, CHUNK_DEFLATE
   size_t start;         // offset of chunk in original image file
 
   size_t len;
-  unsigned char* data;  // data to be patched (ie, uncompressed, for
-                        // gzip chunks)
+  unsigned char* data;  // data to be patched (uncompressed, for deflate chunks)
 
-  // everything else is for CHUNK_GZIP chunks only:
+  size_t source_start;
+  size_t source_len;
 
-  size_t gzip_header_len;
-  unsigned char* gzip_header;
-  unsigned char* gzip_footer;
+  // --- for CHUNK_DEFLATE chunks only: ---
 
-  // original (compressed) gzip data, including header and footer
-  size_t gzip_len;
-  unsigned char* gzip_data;
+  // original (compressed) deflate data
+  size_t deflate_len;
+  unsigned char* deflate_data;
+
+  char* filename;       // used for zip entries
 
   // deflate encoder parameters
   int level, method, windowBits, memLevel, strategy;
+
+  size_t source_uncompressed_len;
 } ImageChunk;
+
+typedef struct {
+  int data_offset;
+  int deflate_len;
+  int uncomp_len;
+  char* filename;
+} ZipFileEntry;
+
+static int fileentry_compare(const void* a, const void* b) {
+  int ao = ((ZipFileEntry*)a)->data_offset;
+  int bo = ((ZipFileEntry*)b)->data_offset;
+  if (ao < bo) {
+    return -1;
+  } else if (ao > bo) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+unsigned char* ReadZip(const char* filename,
+                       int* num_chunks, ImageChunk** chunks,
+                       int include_pseudo_chunk) {
+  struct stat st;
+  if (stat(filename, &st) != 0) {
+    fprintf(stderr, "failed to stat \"%s\": %s\n", filename, strerror(errno));
+    return NULL;
+  }
+
+  unsigned char* img = malloc(st.st_size);
+  FILE* f = fopen(filename, "rb");
+  if (fread(img, 1, st.st_size, f) != st.st_size) {
+    fprintf(stderr, "failed to read \"%s\" %s\n", filename, strerror(errno));
+    fclose(f);
+    return NULL;
+  }
+  fclose(f);
+
+  // look for the end-of-central-directory record.
+
+  int i;
+  for (i = st.st_size-20; i >= 0 && i > st.st_size - 65600; --i) {
+    if (img[i] == 0x50 && img[i+1] == 0x4b &&
+        img[i+2] == 0x05 && img[i+3] == 0x06) {
+      break;
+    }
+  }
+  // double-check: this archive consists of a single "disk"
+  if (!(img[i+4] == 0 && img[i+5] == 0 && img[i+6] == 0 && img[i+7] == 0)) {
+    fprintf(stderr, "can't process multi-disk archive\n");
+    return NULL;
+  }
+
+  int cdcount = Read2(img+i+8);
+  int cdoffset = Read4(img+i+16);
+
+  ZipFileEntry* temp_entries = malloc(cdcount * sizeof(ZipFileEntry));
+  int entrycount = 0;
+
+  unsigned char* cd = img+cdoffset;
+  for (i = 0; i < cdcount; ++i) {
+    if (!(cd[0] == 0x50 && cd[1] == 0x4b && cd[2] == 0x01 && cd[3] == 0x02)) {
+      fprintf(stderr, "bad central directory entry %d\n", i);
+      return NULL;
+    }
+
+    int clen = Read4(cd+20);   // compressed len
+    int ulen = Read4(cd+24);   // uncompressed len
+    int nlen = Read2(cd+28);   // filename len
+    int xlen = Read2(cd+30);   // extra field len
+    int mlen = Read2(cd+32);   // file comment len
+    int hoffset = Read4(cd+42);   // local header offset
+
+    char* filename = malloc(nlen+1);
+    memcpy(filename, cd+46, nlen);
+    filename[nlen] = '\0';
+
+    int method = Read2(cd+10);
+
+    cd += 46 + nlen + xlen + mlen;
+
+    if (method != 8) {  // 8 == deflate
+      free(filename);
+      continue;
+    }
+
+    unsigned char* lh = img + hoffset;
+
+    if (!(lh[0] == 0x50 && lh[1] == 0x4b && lh[2] == 0x03 && lh[3] == 0x04)) {
+      fprintf(stderr, "bad local file header entry %d\n", i);
+      return NULL;
+    }
+
+    if (Read2(lh+26) != nlen || memcmp(lh+30, filename, nlen) != 0) {
+      fprintf(stderr, "central dir filename doesn't match local header\n");
+      return NULL;
+    }
+
+    xlen = Read2(lh+28);   // extra field len; might be different from CD entry?
+
+    temp_entries[entrycount].data_offset = hoffset+30+nlen+xlen;
+    temp_entries[entrycount].deflate_len = clen;
+    temp_entries[entrycount].uncomp_len = ulen;
+    temp_entries[entrycount].filename = filename;
+    ++entrycount;
+  }
+
+  qsort(temp_entries, entrycount, sizeof(ZipFileEntry), fileentry_compare);
+
+#if 0
+  printf("found %d deflated entries\n", entrycount);
+  for (i = 0; i < entrycount; ++i) {
+    printf("off %10d  len %10d unlen %10d   %p %s\n",
+           temp_entries[i].data_offset,
+           temp_entries[i].deflate_len,
+           temp_entries[i].uncomp_len,
+           temp_entries[i].filename,
+           temp_entries[i].filename);
+  }
+#endif
+
+  *num_chunks = 0;
+  *chunks = malloc((entrycount*2+2) * sizeof(ImageChunk));
+  ImageChunk* curr = *chunks;
+
+  if (include_pseudo_chunk) {
+    curr->type = CHUNK_NORMAL;
+    curr->start = 0;
+    curr->len = st.st_size;
+    curr->data = img;
+    curr->filename = NULL;
+    ++curr;
+    ++*num_chunks;
+  }
+
+  int pos = 0;
+  int nextentry = 0;
+
+  while (pos < st.st_size) {
+    if (nextentry < entrycount && pos == temp_entries[nextentry].data_offset) {
+      curr->type = CHUNK_DEFLATE;
+      curr->start = pos;
+      curr->deflate_len = temp_entries[nextentry].deflate_len;
+      curr->deflate_data = img + pos;
+      curr->filename = temp_entries[nextentry].filename;
+
+      curr->len = temp_entries[nextentry].uncomp_len;
+      curr->data = malloc(curr->len);
+
+      z_stream strm;
+      strm.zalloc = Z_NULL;
+      strm.zfree = Z_NULL;
+      strm.opaque = Z_NULL;
+      strm.avail_in = curr->deflate_len;
+      strm.next_in = curr->deflate_data;
+
+      // -15 means we are decoding a 'raw' deflate stream; zlib will
+      // not expect zlib headers.
+      int ret = inflateInit2(&strm, -15);
+
+      strm.avail_out = curr->len;
+      strm.next_out = curr->data;
+      ret = inflate(&strm, Z_NO_FLUSH);
+      if (ret != Z_STREAM_END) {
+        fprintf(stderr, "failed to inflate \"%s\"; %d\n", curr->filename, ret);
+        return NULL;
+      }
+
+      inflateEnd(&strm);
+
+      pos += curr->deflate_len;
+      ++nextentry;
+      ++*num_chunks;
+      ++curr;
+      continue;
+    }
+
+    // use a normal chunk to take all the data up to the start of the
+    // next deflate section.
+
+    curr->type = CHUNK_NORMAL;
+    curr->start = pos;
+    if (nextentry < entrycount) {
+      curr->len = temp_entries[nextentry].data_offset - pos;
+    } else {
+      curr->len = st.st_size - pos;
+    }
+    curr->data = img + pos;
+    curr->filename = NULL;
+    pos += curr->len;
+
+    ++*num_chunks;
+    ++curr;
+  }
+
+  free(temp_entries);
+  return img;
+}
 
 /*
  * Read the given file and break it up into chunks, putting the number
@@ -166,38 +385,45 @@ unsigned char* ReadImage(const char* filename,
   while (pos < st.st_size) {
     unsigned char* p = img+pos;
 
-    // Reallocate the list for every chunk; we expect the number of
-    // chunks to be small (5 for typical boot and recovery images).
-    ++*num_chunks;
-    *chunks = realloc(*chunks, *num_chunks * sizeof(ImageChunk));
-    ImageChunk* curr = *chunks + (*num_chunks-1);
-    curr->start = pos;
-
     if (st.st_size - pos >= 4 &&
         p[0] == 0x1f && p[1] == 0x8b &&
         p[2] == 0x08 &&    // deflate compression
         p[3] == 0x00) {    // no header flags
       // 'pos' is the offset of the start of a gzip chunk.
 
-      curr->type = CHUNK_GZIP;
-      curr->gzip_header_len = GZIP_HEADER_LEN;
-      curr->gzip_header = p;
+      *num_chunks += 3;
+      *chunks = realloc(*chunks, *num_chunks * sizeof(ImageChunk));
+      ImageChunk* curr = *chunks + (*num_chunks-3);
+
+      // create a normal chunk for the header.
+      curr->start = pos;
+      curr->type = CHUNK_NORMAL;
+      curr->len = GZIP_HEADER_LEN;
+      curr->data = p;
+
+      pos += curr->len;
+      p += curr->len;
+      ++curr;
+
+      curr->type = CHUNK_DEFLATE;
+      curr->filename = NULL;
 
       // We must decompress this chunk in order to discover where it
       // ends, and so we can put the uncompressed data and its length
-      // into curr->data and curr->len;
+      // into curr->data and curr->len.
 
       size_t allocated = 32768;
       curr->len = 0;
       curr->data = malloc(allocated);
-      curr->gzip_data = p;
+      curr->start = pos;
+      curr->deflate_data = p;
 
       z_stream strm;
       strm.zalloc = Z_NULL;
       strm.zfree = Z_NULL;
       strm.opaque = Z_NULL;
-      strm.avail_in = st.st_size - (pos + curr->gzip_header_len);
-      strm.next_in = p + GZIP_HEADER_LEN;
+      strm.avail_in = st.st_size - pos;
+      strm.next_in = p;
 
       // -15 means we are decoding a 'raw' deflate stream; zlib will
       // not expect zlib headers.
@@ -214,27 +440,42 @@ unsigned char* ReadImage(const char* filename,
         }
       } while (ret != Z_STREAM_END);
 
-      curr->gzip_len = st.st_size - strm.avail_in - pos + GZIP_FOOTER_LEN;
-      pos = st.st_size - strm.avail_in;
+      curr->deflate_len = st.st_size - strm.avail_in - pos;
       inflateEnd(&strm);
+      pos += curr->deflate_len;
+      p += curr->deflate_len;
+      ++curr;
 
-      // consume the gzip footer.
-      curr->gzip_footer = img+pos;
-      pos += GZIP_FOOTER_LEN;
-      p = img+pos;
+      // create a normal chunk for the footer
+
+      curr->type = CHUNK_NORMAL;
+      curr->start = pos;
+      curr->len = GZIP_FOOTER_LEN;
+      curr->data = img+pos;
+
+      pos += curr->len;
+      p += curr->len;
+      ++curr;
 
       // The footer (that we just skipped over) contains the size of
       // the uncompressed data.  Double-check to make sure that it
       // matches the size of the data we got when we actually did
       // the decompression.
-      size_t footer_size = p[-4] + (p[-3] << 8) + (p[-2] << 16) + (p[-1] << 24);
-      if (footer_size != curr->len) {
+      size_t footer_size = Read4(p-4);
+      if (footer_size != curr[-2].len) {
         fprintf(stderr, "Error: footer size %d != decompressed size %d\n",
-                footer_size, curr->len);
+                footer_size, curr[-2].len);
         free(img);
         return NULL;
       }
     } else {
+      // Reallocate the list for every chunk; we expect the number of
+      // chunks to be small (5 for typical boot and recovery images).
+      ++*num_chunks;
+      *chunks = realloc(*chunks, *num_chunks * sizeof(ImageChunk));
+      ImageChunk* curr = *chunks + (*num_chunks-1);
+      curr->start = pos;
+
       // 'pos' is not the offset of the start of a gzip chunk, so scan
       // forward until we find a gzip header.
       curr->type = CHUNK_NORMAL;
@@ -264,7 +505,13 @@ unsigned char* ReadImage(const char* filename,
  * the chunk).  Return 0 on success.
  */
 int TryReconstruction(ImageChunk* chunk, unsigned char* out) {
-  size_t p = chunk->gzip_header_len;
+  size_t p = 0;
+
+#if 0
+  fprintf(stderr, "trying %d %d %d %d %d\n",
+          chunk->level, chunk->method, chunk->windowBits,
+          chunk->memLevel, chunk->strategy);
+#endif
 
   z_stream strm;
   strm.zalloc = Z_NULL;
@@ -281,7 +528,7 @@ int TryReconstruction(ImageChunk* chunk, unsigned char* out) {
     ret = deflate(&strm, Z_FINISH);
     size_t have = BUFFER_SIZE - strm.avail_out;
 
-    if (memcmp(out, chunk->gzip_data+p, have) != 0) {
+    if (memcmp(out, chunk->deflate_data+p, have) != 0) {
       // mismatch; data isn't the same.
       deflateEnd(&strm);
       return -1;
@@ -289,7 +536,7 @@ int TryReconstruction(ImageChunk* chunk, unsigned char* out) {
     p += have;
   } while (ret != Z_STREAM_END);
   deflateEnd(&strm);
-  if (p + GZIP_FOOTER_LEN != chunk->gzip_len) {
+  if (p != chunk->deflate_len) {
     // mismatch; ran out of data before we should have.
     return -1;
   }
@@ -302,9 +549,9 @@ int TryReconstruction(ImageChunk* chunk, unsigned char* out) {
  * strategy fields in the chunk to the encoding parameters needed to
  * produce the right output.  Returns 0 on success.
  */
-int ReconstructGzipChunk(ImageChunk* chunk) {
-  if (chunk->type != CHUNK_GZIP) {
-    fprintf(stderr, "attempt to reconstruct non-gzip chunk\n");
+int ReconstructDeflateChunk(ImageChunk* chunk) {
+  if (chunk->type != CHUNK_DEFLATE) {
+    fprintf(stderr, "attempt to reconstruct non-deflate chunk\n");
     return -1;
   }
 
@@ -329,27 +576,6 @@ int ReconstructGzipChunk(ImageChunk* chunk) {
   return -1;
 }
 
-/** Write a 4-byte value to f in little-endian order. */
-void Write4(int value, FILE* f) {
-  fputc(value & 0xff, f);
-  fputc((value >> 8) & 0xff, f);
-  fputc((value >> 16) & 0xff, f);
-  fputc((value >> 24) & 0xff, f);
-}
-
-/** Write an 8-byte value to f in little-endian order. */
-void Write8(long long value, FILE* f) {
-  fputc(value & 0xff, f);
-  fputc((value >> 8) & 0xff, f);
-  fputc((value >> 16) & 0xff, f);
-  fputc((value >> 24) & 0xff, f);
-  fputc((value >> 32) & 0xff, f);
-  fputc((value >> 40) & 0xff, f);
-  fputc((value >> 48) & 0xff, f);
-  fputc((value >> 56) & 0xff, f);
-}
-
-
 /*
  * Given source and target chunks, compute a bsdiff patch between them
  * by running bsdiff in a subprocess.  Return the patch data, placing
@@ -357,6 +583,14 @@ void Write8(long long value, FILE* f) {
  * program to be in the path.
  */
 unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
+  if (tgt->type == CHUNK_NORMAL) {
+    if (tgt->len <= 160) {
+      tgt->type = CHUNK_RAW;
+      *size = tgt->len;
+      return tgt->data;
+    }
+  }
+
   char stemp[] = "/tmp/imgdiff-src-XXXXXX";
   char ttemp[] = "/tmp/imgdiff-tgt-XXXXXX";
   char ptemp[] = "/tmp/imgdiff-patch-XXXXXX";
@@ -405,6 +639,17 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
   }
 
   unsigned char* data = malloc(st.st_size);
+
+  if (tgt->type == CHUNK_NORMAL && tgt->len <= st.st_size) {
+    unlink(stemp);
+    unlink(ttemp);
+    unlink(ptemp);
+
+    tgt->type = CHUNK_RAW;
+    *size = tgt->len;
+    return tgt->data;
+  }
+
   *size = st.st_size;
 
   f = fopen(ptemp, "rb");
@@ -422,6 +667,17 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
   unlink(ttemp);
   unlink(ptemp);
 
+  tgt->source_start = src->start;
+  switch (tgt->type) {
+    case CHUNK_NORMAL:
+      tgt->source_len = src->len;
+      break;
+    case CHUNK_DEFLATE:
+      tgt->source_len = src->deflate_len;
+      tgt->source_uncompressed_len = src->len;
+      break;
+  }
+
   return data;
 }
 
@@ -432,77 +688,243 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
  * where some gzip chunks are reconstructible but others aren't (by
  * treating the ones that aren't as normal chunks).
  */
-void ChangeGzipChunkToNormal(ImageChunk* ch) {
+void ChangeDeflateChunkToNormal(ImageChunk* ch) {
+  if (ch->type != CHUNK_DEFLATE) return;
   ch->type = CHUNK_NORMAL;
   free(ch->data);
-  ch->data = ch->gzip_data;
-  ch->len = ch->gzip_len;
+  ch->data = ch->deflate_data;
+  ch->len = ch->deflate_len;
+}
+
+/*
+ * Return true if the data in the chunk is identical (including the
+ * compressed representation, for gzip chunks).
+ */
+int AreChunksEqual(ImageChunk* a, ImageChunk* b) {
+    if (a->type != b->type) return 0;
+
+    switch (a->type) {
+        case CHUNK_NORMAL:
+            return a->len == b->len && memcmp(a->data, b->data, a->len) == 0;
+
+        case CHUNK_DEFLATE:
+            return a->deflate_len == b->deflate_len &&
+                memcmp(a->deflate_data, b->deflate_data, a->deflate_len) == 0;
+
+        default:
+            fprintf(stderr, "unknown chunk type %d\n", a->type);
+            return 0;
+    }
+}
+
+/*
+ * Look for runs of adjacent normal chunks and compress them down into
+ * a single chunk.  (Such runs can be produced when deflate chunks are
+ * changed to normal chunks.)
+ */
+void MergeAdjacentNormalChunks(ImageChunk* chunks, int* num_chunks) {
+  int out = 0;
+  int in_start = 0, in_end;
+  while (in_start < *num_chunks) {
+    if (chunks[in_start].type != CHUNK_NORMAL) {
+      in_end = in_start+1;
+    } else {
+      // in_start is a normal chunk.  Look for a run of normal chunks
+      // that constitute a solid block of data (ie, each chunk begins
+      // where the previous one ended).
+      for (in_end = in_start+1;
+           in_end < *num_chunks && chunks[in_end].type == CHUNK_NORMAL &&
+             (chunks[in_end].start ==
+              chunks[in_end-1].start + chunks[in_end-1].len &&
+              chunks[in_end].data ==
+              chunks[in_end-1].data + chunks[in_end-1].len);
+           ++in_end);
+    }
+
+    if (in_end == in_start+1) {
+#if 0
+      printf("chunk %d is now %d\n", in_start, out);
+#endif
+      if (out != in_start) {
+        memcpy(chunks+out, chunks+in_start, sizeof(ImageChunk));
+      }
+    } else {
+#if 0
+      printf("collapse normal chunks %d-%d into %d\n", in_start, in_end-1, out);
+#endif
+
+      // Merge chunks [in_start, in_end-1] into one chunk.  Since the
+      // data member of each chunk is just a pointer into an in-memory
+      // copy of the file, this can be done without recopying (the
+      // output chunk has the first chunk's start location and data
+      // pointer, and length equal to the sum of the input chunk
+      // lengths).
+      chunks[out].type = CHUNK_NORMAL;
+      chunks[out].start = chunks[in_start].start;
+      chunks[out].data = chunks[in_start].data;
+      chunks[out].len = chunks[in_end-1].len +
+        (chunks[in_end-1].start - chunks[in_start].start);
+    }
+
+    ++out;
+    in_start = in_end;
+  }
+  *num_chunks = out;
+}
+
+ImageChunk* FindChunkByName(const char* name,
+                            ImageChunk* chunks, int num_chunks) {
+  int i;
+  for (i = 0; i < num_chunks; ++i) {
+    if (chunks[i].type == CHUNK_DEFLATE && chunks[i].filename &&
+        strcmp(name, chunks[i].filename) == 0) {
+      return chunks+i;
+    }
+  }
+  return NULL;
 }
 
 int main(int argc, char** argv) {
-  if (argc != 4) {
-    fprintf(stderr, "usage: %s <src-img> <tgt-img> <patch-file>\n", argv[0]);
+  if (argc != 4 && argc != 5) {
+    usage:
+    fprintf(stderr, "usage: %s [-z] <src-img> <tgt-img> <patch-file>\n",
+            argv[0]);
     return 2;
   }
 
+  int zip_mode = 0;
+
+  if (strcmp(argv[1], "-z") == 0) {
+    zip_mode = 1;
+    --argc;
+    ++argv;
+  }
+
+
   int num_src_chunks;
   ImageChunk* src_chunks;
-  if (ReadImage(argv[1], &num_src_chunks, &src_chunks) == NULL) {
-    fprintf(stderr, "failed to break apart source image\n");
-    return 1;
-  }
-
   int num_tgt_chunks;
   ImageChunk* tgt_chunks;
-  if (ReadImage(argv[2], &num_tgt_chunks, &tgt_chunks) == NULL) {
-    fprintf(stderr, "failed to break apart target image\n");
-    return 1;
-  }
-
-  // Verify that the source and target images have the same chunk
-  // structure (ie, the same sequence of gzip and normal chunks).
-
-  if (num_src_chunks != num_tgt_chunks) {
-    fprintf(stderr, "source and target don't have same number of chunks!\n");
-    return 1;
-  }
   int i;
-  for (i = 0; i < num_src_chunks; ++i) {
-    if (src_chunks[i].type != tgt_chunks[i].type) {
-      fprintf(stderr, "source and target don't have same chunk "
-              "structure! (chunk %d)\n", i);
+
+  if (zip_mode) {
+    if (ReadZip(argv[1], &num_src_chunks, &src_chunks, 1) == NULL) {
+      fprintf(stderr, "failed to break apart source zip file\n");
       return 1;
     }
-  }
+    if (ReadZip(argv[2], &num_tgt_chunks, &tgt_chunks, 0) == NULL) {
+      fprintf(stderr, "failed to break apart target zip file\n");
+      return 1;
+    }
+  } else {
+    if (ReadImage(argv[1], &num_src_chunks, &src_chunks) == NULL) {
+      fprintf(stderr, "failed to break apart source image\n");
+      return 1;
+    }
+    if (ReadImage(argv[2], &num_tgt_chunks, &tgt_chunks) == NULL) {
+      fprintf(stderr, "failed to break apart target image\n");
+      return 1;
+    }
 
-  // Confirm that given the uncompressed chunk data in the target, we
-  // can recompress it and get exactly the same bits as are in the
-  // input target image.  If this fails, treat the chunk as a normal
-  // non-gzipped chunk.
+    // Verify that the source and target images have the same chunk
+    // structure (ie, the same sequence of deflate and normal chunks).
 
-  for (i = 0; i < num_tgt_chunks; ++i) {
-    if (tgt_chunks[i].type == CHUNK_GZIP) {
-      if (ReconstructGzipChunk(tgt_chunks+i) < 0) {
-        printf("failed to reconstruct target gzip chunk %d; "
-               "treating as normal chunk\n", i);
-        ChangeGzipChunkToNormal(tgt_chunks+i);
-        ChangeGzipChunkToNormal(src_chunks+i);
-      } else {
-        printf("reconstructed target gzip chunk %d\n", i);
+    if (num_src_chunks != num_tgt_chunks) {
+      fprintf(stderr, "source and target don't have same number of chunks!\n");
+      return 1;
+    }
+    for (i = 0; i < num_src_chunks; ++i) {
+      if (src_chunks[i].type != tgt_chunks[i].type) {
+        fprintf(stderr, "source and target don't have same chunk "
+                "structure! (chunk %d)\n", i);
+        return 1;
       }
     }
   }
 
+  for (i = 0; i < num_tgt_chunks; ++i) {
+    if (tgt_chunks[i].type == CHUNK_DEFLATE) {
+      // Confirm that given the uncompressed chunk data in the target, we
+      // can recompress it and get exactly the same bits as are in the
+      // input target image.  If this fails, treat the chunk as a normal
+      // non-deflated chunk.
+      if (ReconstructDeflateChunk(tgt_chunks+i) < 0) {
+        printf("failed to reconstruct target deflate chunk %d [%s]; "
+               "treating as normal\n", i, tgt_chunks[i].filename);
+        ChangeDeflateChunkToNormal(tgt_chunks+i);
+        if (zip_mode) {
+          ImageChunk* src = FindChunkByName(tgt_chunks[i].filename, src_chunks, num_src_chunks);
+          if (src) {
+            ChangeDeflateChunkToNormal(src);
+          }
+        } else {
+          ChangeDeflateChunkToNormal(src_chunks+i);
+        }
+        continue;
+      }
+
+      // If two deflate chunks are identical (eg, the kernel has not
+      // changed between two builds), treat them as normal chunks.
+      // This makes applypatch much faster -- it can apply a trivial
+      // patch to the compressed data, rather than uncompressing and
+      // recompressing to apply the trivial patch to the uncompressed
+      // data.
+      ImageChunk* src;
+      if (zip_mode) {
+        src = FindChunkByName(tgt_chunks[i].filename, src_chunks, num_src_chunks);
+      } else {
+        src = src_chunks+i;
+      }
+
+      if (src == NULL || AreChunksEqual(tgt_chunks+i, src)) {
+        ChangeDeflateChunkToNormal(tgt_chunks+i);
+        if (src) {
+          ChangeDeflateChunkToNormal(src);
+        }
+      }
+    }
+  }
+
+  // Merging neighboring normal chunks.
+  if (zip_mode) {
+    // For zips, we only need to do this to the target:  deflated
+    // chunks are matched via filename, and normal chunks are patched
+    // using the entire source file as the source.
+    MergeAdjacentNormalChunks(tgt_chunks, &num_tgt_chunks);
+  } else {
+    // For images, we need to maintain the parallel structure of the
+    // chunk lists, so do the merging in both the source and target
+    // lists.
+    MergeAdjacentNormalChunks(tgt_chunks, &num_tgt_chunks);
+    MergeAdjacentNormalChunks(src_chunks, &num_src_chunks);
+    if (num_src_chunks != num_tgt_chunks) {
+      // This shouldn't happen.
+      fprintf(stderr, "merging normal chunks went awry\n");
+      return 1;
+    }
+  }
+
   // Compute bsdiff patches for each chunk's data (the uncompressed
-  // data, in the case of gzip chunks).
+  // data, in the case of deflate chunks).
 
-  unsigned char** patch_data = malloc(num_src_chunks * sizeof(unsigned char*));
-  size_t* patch_size = malloc(num_src_chunks * sizeof(size_t));
-  for (i = 0; i < num_src_chunks; ++i) {
-    patch_data[i] = MakePatch(src_chunks+i, tgt_chunks+i, patch_size+i);
-    printf("patch %d is %d bytes (of %d)\n", i, patch_size[i],
-           tgt_chunks[i].type == CHUNK_NORMAL ? tgt_chunks[i].len : tgt_chunks[i].gzip_len);
-
+  printf("Construct patches for %d chunks...\n", num_tgt_chunks);
+  unsigned char** patch_data = malloc(num_tgt_chunks * sizeof(unsigned char*));
+  size_t* patch_size = malloc(num_tgt_chunks * sizeof(size_t));
+  for (i = 0; i < num_tgt_chunks; ++i) {
+    if (zip_mode) {
+      ImageChunk* src;
+      if (tgt_chunks[i].type == CHUNK_DEFLATE &&
+          (src = FindChunkByName(tgt_chunks[i].filename, src_chunks,
+                                 num_src_chunks))) {
+        patch_data[i] = MakePatch(src, tgt_chunks+i, patch_size+i);
+      } else {
+        patch_data[i] = MakePatch(src_chunks, tgt_chunks+i, patch_size+i);
+      }
+    } else {
+      patch_data[i] = MakePatch(src_chunks+i, tgt_chunks+i, patch_size+i);
+    }
+    printf("patch %3d is %d bytes (of %d)\n",
+           i, patch_size[i], tgt_chunks[i].source_len);
   }
 
   // Figure out how big the imgdiff file header is going to be, so
@@ -510,10 +932,18 @@ int main(int argc, char** argv) {
   // within the file.
 
   size_t total_header_size = 12;
-  for (i = 0; i < num_src_chunks; ++i) {
-    total_header_size += 4 + 8*3;
-    if (src_chunks[i].type == CHUNK_GZIP) {
-      total_header_size += 8*2 + 4*6 + tgt_chunks[i].gzip_header_len + 8;
+  for (i = 0; i < num_tgt_chunks; ++i) {
+    total_header_size += 4;
+    switch (tgt_chunks[i].type) {
+      case CHUNK_NORMAL:
+        total_header_size += 8*3;
+        break;
+      case CHUNK_DEFLATE:
+        total_header_size += 8*5 + 4*5;
+        break;
+      case CHUNK_RAW:
+        total_header_size += 4 + patch_size[i];
+        break;
     }
   }
 
@@ -523,35 +953,53 @@ int main(int argc, char** argv) {
 
   // Write out the headers.
 
-  fwrite("IMGDIFF1", 1, 8, f);
-  Write4(num_src_chunks, f);
+  fwrite("IMGDIFF2", 1, 8, f);
+  Write4(num_tgt_chunks, f);
   for (i = 0; i < num_tgt_chunks; ++i) {
     Write4(tgt_chunks[i].type, f);
-    Write8(src_chunks[i].start, f);
-    Write8(src_chunks[i].type == CHUNK_NORMAL ? src_chunks[i].len :
-           (src_chunks[i].gzip_len + src_chunks[i].gzip_header_len + 8), f);
-    Write8(offset, f);
 
-    if (tgt_chunks[i].type == CHUNK_GZIP) {
-      Write8(src_chunks[i].len, f);
-      Write8(tgt_chunks[i].len, f);
-      Write4(tgt_chunks[i].level, f);
-      Write4(tgt_chunks[i].method, f);
-      Write4(tgt_chunks[i].windowBits, f);
-      Write4(tgt_chunks[i].memLevel, f);
-      Write4(tgt_chunks[i].strategy, f);
-      Write4(tgt_chunks[i].gzip_header_len, f);
-      fwrite(tgt_chunks[i].gzip_header, 1, tgt_chunks[i].gzip_header_len, f);
-      fwrite(tgt_chunks[i].gzip_footer, 1, GZIP_FOOTER_LEN, f);
+    switch (tgt_chunks[i].type) {
+      case CHUNK_NORMAL:
+        printf("chunk %3d: normal   (%10d, %10d)  %10d\n", i,
+               tgt_chunks[i].start, tgt_chunks[i].len, patch_size[i]);
+        Write8(tgt_chunks[i].source_start, f);
+        Write8(tgt_chunks[i].source_len, f);
+        Write8(offset, f);
+        offset += patch_size[i];
+        break;
+
+      case CHUNK_DEFLATE:
+        printf("chunk %3d: deflate  (%10d, %10d)  %10d  %s\n", i,
+               tgt_chunks[i].start, tgt_chunks[i].deflate_len, patch_size[i],
+               tgt_chunks[i].filename);
+        Write8(tgt_chunks[i].source_start, f);
+        Write8(tgt_chunks[i].source_len, f);
+        Write8(offset, f);
+        Write8(tgt_chunks[i].source_uncompressed_len, f);
+        Write8(tgt_chunks[i].len, f);
+        Write4(tgt_chunks[i].level, f);
+        Write4(tgt_chunks[i].method, f);
+        Write4(tgt_chunks[i].windowBits, f);
+        Write4(tgt_chunks[i].memLevel, f);
+        Write4(tgt_chunks[i].strategy, f);
+        offset += patch_size[i];
+        break;
+
+      case CHUNK_RAW:
+        printf("chunk %3d: raw      (%10d, %10d)\n", i,
+               tgt_chunks[i].start, tgt_chunks[i].len);
+        Write4(patch_size[i], f);
+        fwrite(patch_data[i], 1, patch_size[i], f);
+        break;
     }
-
-    offset += patch_size[i];
   }
 
   // Append each chunk's bsdiff patch, in order.
 
   for (i = 0; i < num_tgt_chunks; ++i) {
-    fwrite(patch_data[i], 1, patch_size[i], f);
+    if (tgt_chunks[i].type != CHUNK_RAW) {
+      fwrite(patch_data[i], 1, patch_size[i], f);
+    }
   }
 
   fclose(f);

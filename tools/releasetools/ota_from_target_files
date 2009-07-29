@@ -69,6 +69,7 @@ import zipfile
 import common
 import amend_generator
 import edify_generator
+import both_generator
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = "build/target/product/security/testkey"
@@ -294,13 +295,15 @@ def AppendAssertions(script, input_zip):
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
-  if OPTIONS.script_mode in ("amend", "auto"):
+  if OPTIONS.script_mode == "auto":
+    script = both_generator.BothGenerator(2)
+  elif OPTIONS.script_mode == "amend":
     script = amend_generator.AmendGenerator()
   else:
     # TODO: how to determine this?  We don't know what version it will
     # be installed on top of.  For now, we expect the API just won't
     # change very often.
-    script = edify_generator.EdifyGenerator(1)
+    script = edify_generator.EdifyGenerator(2)
 
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", input_zip)
