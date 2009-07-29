@@ -159,8 +159,9 @@ def:default_left_nav() ?>
       if (!isMobile) {
         $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
         chooseDefaultNav();
-        if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
-        else {
+        if ($("#nav-tree").is(':visible')) {
+          init_default_navtree("<?cs var:toroot ?>");
+        } else {
           addLoadEvent(function() {
             scrollIntoView("packages-nav");
             scrollIntoView("classes-nav");
