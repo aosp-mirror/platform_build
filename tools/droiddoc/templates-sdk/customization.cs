@@ -117,10 +117,8 @@ def:default_left_nav() ?>
                 <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
                 <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
               </div>
-              <ul><?cs 
-              each:pkg=docs.packages ?>
-                <li <?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>class="selected"<?cs /if ?>><?cs call:package_link(pkg) ?></li><?cs 
-              /each ?>
+              <ul>
+              	<?cs call:package_link_list(docs.packages) ?>
               </ul><br/>
             </div> <!-- end packages -->
           </div> <!-- end resize-packages -->
