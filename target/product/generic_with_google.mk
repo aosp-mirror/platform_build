@@ -5,6 +5,7 @@
 
 PRODUCT_PACKAGES := \
     GoogleContactsProvider \
+    GoogleContactsSyncAdapter \
     GoogleSubscribedFeedsProvider \
     com.google.android.gtalkservice \
     com.google.android.datamessaging \
