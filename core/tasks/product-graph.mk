@@ -25,6 +25,7 @@ products_pdf := $(OUT_DIR)/products.pdf
 $(products_pdf):
 	$(hide) ( \
 		echo 'digraph {'; \
+		echo 'graph [ ratio = .6, pack=false];'; \
 		$(foreach p,$(ALL_PRODUCTS), \
 			$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), \
 			echo \"$(d)\" -\> \"$(p)\";)) \
