@@ -9,21 +9,23 @@
 <div id="jd-header">
   package
   <h1><?cs var:package.name ?></h1>
-
   <div class="jd-nav">
       <?cs if:subcount(package.shortDescr) ?>
       Classes |
       <a class="jd-navlink" href="package-descr.html">Description</a>
       <?cs /if ?>
   </div>
+  <span class="api-level">
+    <?cs call:since_tags(package) ?>
+  </span>
 </div>
 
 <div id="jd-content">
 
 <?cs if:subcount(package.shortDescr) ?>
   <div class="jd-descr">
-  <p><?cs call:tag_list(package.shortDescr) ?>
-  <span class="jd-more"><a href="package-descr.html">more...</a></span></p>
+  <p><?cs call:tag_list(package.shortDescr) ?></p>
+  <p><span class="jd-more"><a href="package-descr.html">more...</a></span></p>
   </div>
 <?cs /if ?>
 

@@ -512,6 +512,7 @@ public class DroidDoc
             data.setValue("reference", "true");
             data.setValue("docs.packages." + i + ".name", s);
             data.setValue("docs.packages." + i + ".link", pkg.htmlPage());
+            data.setValue("docs.packages." + i + ".since", pkg.getSince());
             TagInfo.makeHDF(data, "docs.packages." + i + ".shortDescr",
                                                pkg.firstSentenceTags());
             i++;

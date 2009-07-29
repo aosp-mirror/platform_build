@@ -115,11 +115,9 @@ def:see_also_tags(also) ?><?cs
   /if ?>
 <?cs /def ?>
 
-<?cs # print the Since: section ?><?cs
+<?cs # print the API Level ?><?cs
 def:since_tags(obj) ?>
-  <div class="jd-tagdata">
-      <h5 class="jd-tagtitle">Since <?cs var:obj.since ?></h5>
-  </div>
+  Since: API Level <?cs var:obj.since ?>
 <?cs /def ?>
 
 <?cs # Print the long-form description for something.
@@ -170,8 +168,7 @@ def:description(obj) ?><?cs
       </table>
   </div><?cs 
   /if ?><?cs 
-  call:see_also_tags(obj.seeAlso) ?><?cs 
-  call:since_tags(obj) ?><?cs
+  call:see_also_tags(obj.seeAlso) ?><?cs
 /def ?>
 
 <?cs # A table of links to classes with descriptions, as in a package file or the nested classes ?><?cs
@@ -179,7 +176,7 @@ def:class_link_table(classes) ?><?cs
   set:count = #1 ?>
   <table class="jd-sumtable-expando"><?cs
       each:cl=classes ?>
-        <tr <?cs if:count % #2 ?>class="alt-color"<?cs /if ?> >
+        <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:cl.type.since ?>" >
               <td class="jd-linkcol"><?cs call:type_link(cl.type) ?></td>
               <td class="jd-descrcol" width="100%"><?cs call:short_descr(cl) ?>&nbsp;</td>
           </tr><?cs set:count = count + #1 ?><?cs
@@ -187,30 +184,37 @@ def:class_link_table(classes) ?><?cs
   </table><?cs 
 /def ?>
 
-<?cs # A list of links to classes, for use in the side navigation of packages ?><?cs 
+<?cs # A list of links to classes, for use in the side navigation of classes when viewing a package (panel nav) ?><?cs 
 def:class_link_list(label, classes) ?><?cs 
   if:subcount(classes) ?>
     <li><h2><?cs var:label ?></h2>
       <ul><?cs 
       each:cl=classes ?>
-        <li><?cs call:type_link(cl.type) ?></li><?cs 
+        <li class="api apilevel-<?cs var:cl.type.since ?>"><?cs call:type_link(cl.type) ?></li><?cs 
       /each ?>
       </ul>
     </li><?cs 
   /if ?><?cs 
 /def ?>
 
-<?cs # A list of links to classes, for use in the side navigation of classes ?><?cs 
+<?cs # A list of links to classes, for use in the side navigation of classes when viewing a class (panel nav) ?><?cs 
 def:list(label, classes) ?><?cs 
   if:subcount(classes) ?>
     <li><h2><?cs var:label ?></h2>
       <ul><?cs 
       each:cl=classes ?>
-          <li <?cs if:class.name == cl.label?>class="selected"<?cs /if ?>><?cs call:type_link(cl) ?></li><?cs 
+          <li class="<?cs if:class.name == cl.label?>selected<?cs /if ?> api apilevel-<?cs var:cl.since ?>"><?cs call:type_link(cl) ?></li><?cs 
       /each ?>
       </ul>
     </li><?cs 
   /if ?><?cs 
+/def ?>
+
+<?cs # A list of links to packages, for use in the side navigation of packages (panel nav) ?><?cs 
+def:package_link_list(packages) ?><?cs 
+  each:pkg=packages ?>
+    <li class="<?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>selected<?cs /if ?> api apilevel-<?cs var:pkg.since ?>"><?cs call:package_link(pkg) ?></li><?cs 
+  /each ?><?cs
 /def ?>
 
 <?cs # An expando trigger ?><?cs 
