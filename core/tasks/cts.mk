@@ -61,6 +61,7 @@ CTS_CASE_LIST := \
 	CtsMediaTestCases \
 	CtsOsTestCases \
 	CtsPermissionTestCases \
+	CtsPermission2TestCases \
 	CtsProviderTestCases \
 	CtsTextTestCases \
 	CtsUtilTestCases \
