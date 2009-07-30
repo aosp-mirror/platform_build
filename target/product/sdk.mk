@@ -22,7 +22,6 @@ PRODUCT_PACKAGES := \
 	OpenWnn \
 	libWnnEngDic \
 	libWnnJpnDic \
-	libWnnZHCNDic \
 	libwnndict \
 	ApiDemos \
 	GestureBuilder \

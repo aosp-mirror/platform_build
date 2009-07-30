@@ -112,6 +112,7 @@ public class PackageInfo extends DocInfo implements ContainerInfo
             data.setValue(base + ".link", htmlPage());
         }
         data.setValue(base + ".name", name());
+        data.setValue(base + ".since", getSince());
     }
 
     public void makeClassLinkListHDF(HDF data, String base)

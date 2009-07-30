@@ -117,10 +117,8 @@ def:default_left_nav() ?>
                 <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
                 <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
               </div>
-              <ul><?cs 
-              each:pkg=docs.packages ?>
-                <li <?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>class="selected"<?cs /if ?>><?cs call:package_link(pkg) ?></li><?cs 
-              /each ?>
+              <ul>
+              	<?cs call:package_link_list(docs.packages) ?>
               </ul><br/>
             </div> <!-- end packages -->
           </div> <!-- end resize-packages -->
@@ -161,8 +159,9 @@ def:default_left_nav() ?>
       if (!isMobile) {
         $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
         chooseDefaultNav();
-        if ($("#nav-tree").is(':visible')) init_navtree("nav-tree", "<?cs var:toroot ?>", NAVTREE_DATA);
-        else {
+        if ($("#nav-tree").is(':visible')) {
+          init_default_navtree("<?cs var:toroot ?>");
+        } else {
           addLoadEvent(function() {
             scrollIntoView("packages-nav");
             scrollIntoView("classes-nav");
