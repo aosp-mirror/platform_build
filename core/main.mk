@@ -54,6 +54,12 @@ include $(BUILD_SYSTEM)/config.mk
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
 
+VERSION_CHECK_SEQUENCE_NUMBER := 1
+-include $(OUT_DIR)/versions_checked.mk
+ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
+
+$(info Checking build tools versions...)
+
 ifneq ($(HOST_OS),windows)
 ifneq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
 # check for a case sensitive file system
@@ -122,6 +128,10 @@ $(error stop)
 endif
 
 endif # windows
+
+$(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
+        > $(OUT_DIR)/versions_checked.mk)
+endif
 
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
