@@ -63,9 +63,11 @@ CTS_CASE_LIST := \
 	CtsPermissionTestCases \
 	CtsPermission2TestCases \
 	CtsProviderTestCases \
+	CtsTelephonyTestCases \
 	CtsTextTestCases \
 	CtsUtilTestCases \
 	CtsViewTestCases \
+	CtsWebkitTestCases \
 	CtsWidgetTestCases \
 	CtsNetTestCases \
 	SignatureTest \
