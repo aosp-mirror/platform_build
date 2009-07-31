@@ -312,7 +312,7 @@ warnpatterns = [
         'patterns':[r".*: warning: converting negative value '.+' to '.+'"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'',
         'description':'Passing NULL as non-pointer argument',
-        'patterns':[r".*: warning: passing NULL to non-pointer argument 3 of '.+'"] },
+        'patterns':[r".*: warning: passing NULL to non-pointer argument [0-9]+ of '.+'"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wctor-dtor-privacy',
         'description':'Class seems unusable because of private ctor/dtor' ,
         'patterns':[r".*: warning: all member functions in class '.+' are private"] },
@@ -333,6 +333,12 @@ warnpatterns = [
     { 'category':'cont.',   'severity':severity.SKIP,     'members':[], 'option':'',
         'description':'',
         'patterns':[r".*: warning:   in call to '.+'"] },
+    { 'category':'C/C++',   'severity':severity.HIGH,     'members':[], 'option':'-Wextra',
+        'description':'Base should be explicitly initialized in copy constructor',
+        'patterns':[r".*: warning: base class '.+' should be explicitly initialized in the copy constructor"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
+        'description':'Converting from <type> to <other type>',
+        'patterns':[r".*: warning: converting to '.+' from '.+'"] },
 
     # these next ones are to deal with formatting problems resulting from the log being mixed up by 'make -j'
     { 'category':'C/C++',   'severity':severity.SKIP,     'members':[], 'option':'',
