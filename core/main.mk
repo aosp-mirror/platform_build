@@ -54,6 +54,12 @@ include $(BUILD_SYSTEM)/config.mk
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
 
+VERSION_CHECK_SEQUENCE_NUMBER := 1
+-include $(OUT_DIR)/versions_checked.mk
+ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
+
+$(info Checking build tools versions...)
+
 ifneq ($(HOST_OS),windows)
 ifneq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
 # check for a case sensitive file system
@@ -122,6 +128,10 @@ $(error stop)
 endif
 
 endif # windows
+
+$(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
+        > $(OUT_DIR)/versions_checked.mk)
+endif
 
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
@@ -327,8 +337,6 @@ endif
 # Bring in all modules that need to be built.
 ifneq ($(dont_bother),true)
 
-subdir_makefiles :=
-
 ifeq ($(HOST_OS),windows)
 SDK_ONLY := true
 endif
@@ -426,15 +434,6 @@ endif	# !BUILD_TINY_ANDROID
 
 endif	# !SDK_ONLY
 
-# Can't use first-makefiles-under here because
-# --mindepth=2 makes the prunes not work.
-subdir_makefiles += \
-	$(shell build/tools/findleaves.sh --prune="./out" $(subdirs) Android.mk)
-
-#
-# Include all of the makefiles in the system
-#
-
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
@@ -450,9 +449,21 @@ FULL_BUILD :=
 # when using ONE_SHOT_MAKEFILE.
 NOTICE-HOST-%: ;
 NOTICE-TARGET-%: ;
-else
+
+else # ONE_SHOT_MAKEFILE
+
+#
+# Include all of the makefiles in the system
+#
+
+# Can't use first-makefiles-under here because
+# --mindepth=2 makes the prunes not work.
+subdir_makefiles := \
+	$(shell build/tools/findleaves.sh --prune="./out" $(subdirs) Android.mk)
+
 include $(subdir_makefiles)
-endif
+endif # ONE_SHOT_MAKEFILE
+
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------

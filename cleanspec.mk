@@ -69,6 +69,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/Silenc
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/notifications/Silence.ogg)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/passion/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.google.android.datamessaging_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libcrypto_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libssl_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/openssl_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

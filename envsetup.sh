@@ -656,6 +656,26 @@ function croot()
     fi
 }
 
+function cproj()
+{
+    TOPFILE=build/core/envsetup.mk
+    # We redirect cd to /dev/null in case it's aliased to
+    # a command that prints something as a side-effect
+    # (like pushd)
+    local HERE=$PWD
+    T=
+    while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+        T=$PWD
+        if [ -f "$T/Android.mk" ]; then
+            cd $T
+            return
+        fi
+        cd .. > /dev/null
+    done
+    cd $HERE > /dev/null
+    echo "can't find Android.mk"
+}
+
 function pid()
 {
    local EXE="$1"
