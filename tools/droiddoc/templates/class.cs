@@ -102,12 +102,12 @@ Summary:
 <?cs if:inhmethods ?>
   <?cs if:linkcount ?>&#124; <?cs /if ?><a href="#inhmethods">Inherited Methods</a>
 <?cs /if ?>
-</nobr>
 <?cs if:inhattrs || inhconstants || inhfields || inhmethods || subcount(class.subclasses.direct) || subcount(class.subclasses.indirect) ?>
 &#124; <a href="#" onclick="return toggleAllSummaryInherited(this)">[Expand All]</a>
 <?cs /if ?>
-</div>
-</div>
+</div><!-- end sum-details-links -->
+
+</div><!-- end api-info-block -->
 
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -134,10 +134,12 @@ Summary:
   <?cs set:colspan = colspan-1 ?>
 <?cs /each ?>
 
+<div class="api-level"><?cs call:since_tags(class) ?></div>
+
 </div><!-- end header -->
 
 
-<div id="jd-content">
+<div id="jd-content" class="apilevel-<?cs var:class.since ?>">
 <table class="jd-inheritance-table">
 <?cs set:colspan = subcount(class.inheritance) ?>
 <?cs each:supr = class.inheritance ?>
@@ -189,7 +191,8 @@ Summary:
 <?cs def:write_method_summary(methods) ?>
 <?cs set:count = #1 ?>
 <?cs each:method = methods ?>
-    <tr <?cs if:count % #2 ?>class="alt-color"<?cs /if ?> >
+	 <?cs # The apilevel-N class MUST BE LAST in the sequence of class names ?>
+    <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:method.since ?>" >
         <td class="jd-typecol"><nobr>
             <?cs var:method.abstract ?>
             <?cs var:method.synchronized ?>
@@ -472,7 +475,8 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <?cs # the A tag in the next line must remain where it is, so that Eclipse can parse the docs ?>
 <A NAME="<?cs var:field.anchor ?>"></A>
-<div class="jd-details"> 
+<?cs # The apilevel-N class MUST BE LAST in the sequence of class names ?>
+<div class="jd-details api apilevel-<?cs var:field.since ?>"> 
     <h4 class="jd-details-title">
       <span class="normal">
         <?cs var:field.scope ?> 
@@ -481,6 +485,9 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
         <?cs call:type_link(field.type) ?>
       </span>
         <?cs var:field.name ?>
+      <span class="api-level">
+        <?cs call:since_tags(field) ?>
+      </span>
     </h4>
     <div class="jd-details-descr"><?cs call:description(field) ?>
     <?cs if:subcount(field.constantValue) ?>
@@ -505,7 +512,8 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 <?cs each:method=methods ?>
 <?cs # the A tag in the next line must remain where it is, so that Eclipse can parse the docs ?>
 <A NAME="<?cs var:method.anchor ?>"></A>
-<div class="jd-details"> 
+<?cs # The apilevel-N class MUST BE LAST in the sequence of class names ?>
+<div class="jd-details api apilevel-<?cs var:method.since ?>"> 
     <h4 class="jd-details-title">
       <span class="normal">
         <?cs var:method.scope ?> 
@@ -517,6 +525,9 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
       </span>
       <span class="sympad"><?cs var:method.name ?></span>
       <span class="normal">(<?cs call:parameter_list(method.params) ?>)</span>
+      <span class="api-level">
+        <?cs call:since_tags(method) ?>
+      </span>
     </h4>
     <div class="jd-details-descr"><?cs call:description(method) ?></div>
 </div>
@@ -527,8 +538,13 @@ From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs va
 <?cs each:attr=attrs ?>
 <?cs # the A tag in the next line must remain where it is, so that Eclipse can parse the docs ?>
 <A NAME="<?cs var:attr.anchor ?>"></A>
-<div class="jd-details">
-    <h4 class="jd-details-title"><?cs var:attr.name ?></h4>
+<?cs # The apilevel-N class MUST BE LAST in the sequence of class names ?>
+<div class="jd-details api apilevel-<?cs var:attr.since ?>"> 
+    <h4 class="jd-details-title"><?cs var:attr.name ?>
+      <span class="api-level">
+        <?cs call:since_tags(attr) ?>
+      </span>
+    </h4>
     <div class="jd-details-descr">
         <?cs call:description(attr) ?>
 

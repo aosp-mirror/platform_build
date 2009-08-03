@@ -4,7 +4,9 @@
 <?cs if:sdk.redirect ?>
   <head>
     <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs var:sdk.current ?>/index.html">
+    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>"<?cs 
+      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>"
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
 <?cs else ?>
@@ -17,12 +19,14 @@
 <?cs call:sdk_nav() ?>
 
 <?cs if:sdk.redirect ?>
+
 <div class="g-unit">
   <div id="jd-content">
     <p>Redirecting to 
-    <a href="/sdk/<?cs var:sdk.current ?>/index.html">
-    /sdk/<?cs var:sdk.current ?>/index.html
-    </a></p>
+    <a href="<?cs var:toroot ?>sdk/<?cs 
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>">/sdk/<?cs var:sdk.redirect.path ?><?cs 
+      else ?><?cs var:sdk.current ?>/index.html">/sdk/<?cs var:sdk.current ?>/index.html<?cs /if ?>
+    </a> ...</p>
 <?cs else ?>
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
@@ -45,8 +49,7 @@
     <p><a href="/sdk/<?cs var:sdk.current ?>/index.html">Download the current Android SDK</a></p>
   </div>
 <?cs /if ?>
-  
-  
+
 <?cs if:android.whichdoc != "online" ?>
 
 <p>The sections below provide an overview of the SDK package. </p>
@@ -58,14 +61,13 @@
 application developers build performance-critical portions of their apps in
 native code. It is designed for use <em>only</em> in conjunction with the
 Android SDK, so if you have not already installed the Android 1.5 SDK, please do
-so before downloading the NDK. Also, please read <a href="">What is the Android
-NDK?</a> to get an understanding of what the NDK offers and whether it will be
-useful to you.</p>
+so before downloading the NDK. Also, please read <a href="#overview">What is the 
+Android NDK?</a> to get an understanding of what the NDK offers and whether it 
+will be useful to you.</p>
 
 <p>Select the download package that is appropriate for your development
-computer. Note that separate download packages are provided for 32- and 64-bit
-Linux platforms.</p>
-  
+computer. </p>
+
   <table class="download">
     <tr>
       <th>Platform</th>
@@ -76,7 +78,7 @@ Linux platforms.</p>
   <tr>
     <td>Windows</td>
     <td>
-  <a href="http://dl.google.com/android/<?cs var:ndk.win_download ?>"><?cs var:ndk.win_download ?></a>
+  <a href="http://dl.google.com/android/ndk/<?cs var:ndk.win_download ?>"><?cs var:ndk.win_download ?></a>
     </td>
     <td><?cs var:ndk.win_bytes ?> bytes</td>
     <td><?cs var:ndk.win_checksum ?></td>
@@ -84,26 +86,18 @@ Linux platforms.</p>
   <tr class="alt-color">
     <td>Mac OS X (intel)</td>
     <td>
-  <a href="http://dl.google.com/android/<?cs var:ndk.mac_download ?>"><?cs var:ndk.mac_download ?></a>
+  <a href="http://dl.google.com/android/ndk/<?cs var:ndk.mac_download ?>"><?cs var:ndk.mac_download ?></a>
     </td>
     <td><?cs var:ndk.mac_bytes ?> bytes</td>
     <td><?cs var:ndk.mac_checksum ?></td>
   </tr>
   <tr>
-    <td>Linux 32-bit (i386)</td>
+    <td>Linux 32/64-bit (x86)</td>
     <td>
-  <a href="http://dl.google.com/android/<?cs var:ndk.linux_download ?>"><?cs var:ndk.linux_download ?></a>
+  <a href="http://dl.google.com/android/ndk/<?cs var:ndk.linux_download ?>"><?cs var:ndk.linux_download ?></a>
     </td>
     <td><?cs var:ndk.linux_bytes ?> bytes</td>
     <td><?cs var:ndk.linux_checksum ?></td>
-  </tr>
-  <tr class="alt-color">
-    <td>Linux 64-bit (x86_64)</td>
-    <td>
-  <a href="http://dl.google.com/android/<?cs var:ndk.linux_64_download ?>"><?cs var:ndk.linux_64_download ?></a>
-    </td>
-    <td><?cs var:ndk.linux_64_bytes ?> bytes</td>
-    <td><?cs var:ndk.linux_64_checksum ?></td>
   </tr>
   </table>
 

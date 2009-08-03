@@ -187,8 +187,8 @@ public class ClassInfo {
         }
         
         for (FieldInfo mInfo : mFields.values()) {
-          if (cl.mFields.containsKey(mInfo.qualifiedName())) {
-              if (!mInfo.isConsistent(cl.mFields.get(mInfo.qualifiedName()))) {
+          if (cl.mFields.containsKey(mInfo.name())) {
+              if (!mInfo.isConsistent(cl.mFields.get(mInfo.name()))) {
                   consistent = false;
               }
           } else {
@@ -267,7 +267,7 @@ public class ClassInfo {
     }
     
     public void addField(FieldInfo fInfo) {
-        mFields.put(fInfo.qualifiedName(), fInfo);
+        mFields.put(fInfo.name(), fInfo);
       
     }
     
@@ -279,4 +279,26 @@ public class ClassInfo {
         return mExistsInBoth;
     }
 
+    public Map<String, ConstructorInfo> allConstructors() {
+        return mConstructors;
+    }
+
+    public Map<String, FieldInfo> allFields() {
+        return mFields;
+    }
+
+    public Map<String, MethodInfo> allMethods() {
+        return mMethods;
+    }
+
+    /**
+     * Returns the class hierarchy for this class, starting with this class.
+     */
+    public Iterable<ClassInfo> hierarchy() {
+        List<ClassInfo> result = new ArrayList<ClassInfo>(4);
+        for (ClassInfo c  = this; c != null; c = c.mSuperClass) {
+            result.add(c);
+        }
+        return result;
+    }
 }

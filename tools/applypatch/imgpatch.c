@@ -37,7 +37,7 @@
  */
 int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
                     const char* patch_filename,
-                    FILE* output, SHA_CTX* ctx) {
+                    SinkFn sink, void* token, SHA_CTX* ctx) {
   FILE* f;
   if ((f = fopen(patch_filename, "rb")) == NULL) {
     fprintf(stderr, "failed to open patch file\n");
@@ -86,7 +86,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
 
       ApplyBSDiffPatch(old_data + src_start, src_len,
                        patch_filename, patch_offset,
-                       output, ctx);
+                       sink, token, ctx);
     } else if (type == CHUNK_GZIP) {
       // This branch is basically a duplicate of the CHUNK_DEFLATE
       // branch, with a bit of extra processing for the gzip header
@@ -178,7 +178,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       // Now compress the target data and append it to the output.
 
       // start with the gzip header.
-      fwrite(gzip+64, 1, gzip_header_len, output);
+      sink(gzip+64, gzip_header_len, token);
       SHA_update(ctx, gzip+64, gzip_header_len);
 
       // we're done with the expanded_source data buffer, so we'll
@@ -207,7 +207,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
         ret = deflate(&strm, Z_FINISH);
         size_t have = temp_size - strm.avail_out;
 
-        if (fwrite(temp_data, 1, have, output) != have) {
+        if (sink(temp_data, have, token) != have) {
           fprintf(stderr, "failed to write %d compressed bytes to output\n",
                   have);
           return -1;
@@ -217,7 +217,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       deflateEnd(&strm);
 
       // lastly, the gzip footer.
-      fwrite(gzip+64+gzip_header_len, 1, 8, output);
+      sink(gzip+64+gzip_header_len, 8, token);
       SHA_update(ctx, gzip+64+gzip_header_len, 8);
 
       free(temp_data);
@@ -240,7 +240,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
           return -1;
       }
       SHA_update(ctx, temp, data_len);
-      if (fwrite(temp, 1, data_len, output) != data_len) {
+      if (sink(temp, data_len, token) != data_len) {
           fprintf(stderr, "failed to write chunk %d raw data\n", i);
           return -1;
       }
@@ -343,7 +343,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
         ret = deflate(&strm, Z_FINISH);
         size_t have = temp_size - strm.avail_out;
 
-        if (fwrite(temp_data, 1, have, output) != have) {
+        if (sink(temp_data, have, token) != have) {
           fprintf(stderr, "failed to write %d compressed bytes to output\n",
                   have);
           return -1;

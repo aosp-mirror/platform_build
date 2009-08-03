@@ -97,6 +97,7 @@ public class DroidDoc
         String apiFile = null;
         String debugStubsFile = "";
         HashSet<String> stubPackages = null;
+        SinceTagger sinceTagger = new SinceTagger();
 
         root = r;
 
@@ -186,6 +187,9 @@ public class DroidDoc
                 apiXML = true;
                 apiFile = a[1];
             }
+            else if (a[0].equals("-since")) {
+                sinceTagger.addVersion(a[1], a[2]);
+            }
         }
 
         // read some prefs from the template
@@ -203,6 +207,9 @@ public class DroidDoc
         if (todoFile != null) {
             TodoFile.writeTodoFile(todoFile);
         }
+
+        // Apply @since tags from the XML file
+        sinceTagger.tagAll(Converter.rootClasses());
 
         // HTML Pages
         if (ClearPage.htmlDir != null) {
@@ -244,7 +251,7 @@ public class DroidDoc
         if (stubsDir != null) {
             Stubs.writeStubs(stubsDir, apiXML, apiFile, stubPackages);
         }
-        
+
         if (sdkValuePath != null) {
             writeSdkValues(sdkValuePath);
         }
@@ -394,9 +401,12 @@ public class DroidDoc
         if (option.equals("-apixml")) {
             return 2;
         }
+        if (option.equals("-since")) {
+            return 3;
+        }
         return 0;
     }
-    
+
     public static boolean validOptions(String[][] options, DocErrorReporter r)
     {
         for (String[] a: options) {
@@ -502,6 +512,7 @@ public class DroidDoc
             data.setValue("reference", "true");
             data.setValue("docs.packages." + i + ".name", s);
             data.setValue("docs.packages." + i + ".link", pkg.htmlPage());
+            data.setValue("docs.packages." + i + ".since", pkg.getSince());
             TagInfo.makeHDF(data, "docs.packages." + i + ".shortDescr",
                                                pkg.firstSentenceTags());
             i++;
@@ -762,6 +773,7 @@ public class DroidDoc
         String name = pkg.name();
 
         data.setValue("package.name", name);
+        data.setValue("package.since", pkg.getSince());
         data.setValue("package.descr", "...description...");
 
         makeClassListHDF(data, "package.interfaces", 

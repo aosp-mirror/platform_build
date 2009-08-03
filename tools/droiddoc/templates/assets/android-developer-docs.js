@@ -31,6 +31,15 @@ if ((agent.indexOf("Mobile") != -1) ||
   addLoadEvent(mobileSetup);
 }
 
+/* loads the lists.js file to the page.
+Loading this in the head was slowing page load time */
+addLoadEvent( function() {
+  var lists = document.createElement("script");
+  lists.setAttribute("type","text/javascript");
+  lists.setAttribute("src", toRoot+"reference/lists.js");
+  $("head").append($(lists));
+} );
+
 window.onresize = resizeAll;
 
 function mobileSetup() {
@@ -175,7 +184,8 @@ function resizeHeight() {
   devdocNav.css({height:sidenav.css("height")});
   $("#nav-tree").css({height:swapperHeight + "px"});
   
-  var section = location.pathname.substring(1,location.pathname.indexOf("/",1));
+  var basePath = getBaseUri(location.pathname);
+  var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("height", resizePackagesNav.css("height"), section, null);
 }
 
@@ -192,7 +202,8 @@ function resizeWidth() {
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
   
-  var section = location.pathname.substring(1,location.pathname.indexOf("/",1));
+  var basePath = getBaseUri(location.pathname);
+  var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("width", sidenavWidth, section, null);
 }
 
@@ -202,6 +213,32 @@ function resizeAll() {
     if ($(".side-nav-resizable").length) {
       resizeWidth();
     }
+  }
+}
+
+function getBaseUri(uri) {
+  var intlUrl = (uri.substring(0,6) == "/intl/");
+  if (intlUrl) {
+    base = uri.substring(uri.indexOf('intl/')+5,uri.length);
+    base = base.substring(base.indexOf('/')+1, base.length);
+      //alert("intl, returning base url: /" + base);
+    return ("/" + base);
+  } else {
+      //alert("not intl, returning uri as found.");
+    return uri;
+  }
+}
+
+function requestAppendHL(uri) {
+//append "?hl=<lang> to an outgoing request (such as to blog)
+  var lang = getLangPref();
+  if (lang) {
+    var q = 'hl=' + lang;
+    uri += '?' + q;
+    window.location = uri;
+    return false;
+  } else {
+    return true;
   }
 }
 
@@ -219,15 +256,13 @@ function loadLast(cookiePath) {
 }
 
 $(window).unload(function(){
-  var path = location.pathname;
+  var path = getBaseUri(location.pathname);
   if (path.indexOf("/reference/") != -1) {
     writeCookie("lastpage", path, "reference", null);
   } else if (path.indexOf("/guide/") != -1) {
     writeCookie("lastpage", path, "guide", null);
   }
 });
-
-
 
 function toggle(obj, slide) {
   var ul = $("ul", obj);
@@ -248,8 +283,6 @@ function toggle(obj, slide) {
     $(".toggle-img", li).attr("title", "show pages");
   }
 }
-
-
 
 function buildToggleLists() {
   $(".toggle-list").each(
@@ -282,11 +315,11 @@ function swapNav() {
     nav_pref = NAV_PREF_PANELS;
   } else {
     nav_pref = NAV_PREF_TREE;
-    init_navtree("nav-tree", toRoot, NAVTREE_DATA);
+    init_default_navtree(toRoot);
   }
   var date = new Date();
   date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  writeCookie("nav", nav_pref, null, date.toGMTString());
+  writeCookie("nav", nav_pref, "reference", date.toGMTString());
 
   $("#nav-panels").toggle();
   $("#panel-link").toggle();
@@ -387,12 +420,16 @@ function changeDocLang(lang) {
   changeNavLang(lang);
 }
 
-function changeLangPref(lang) {
+function changeLangPref(lang, refresh) {
   var date = new Date();
-  date.setTime(date.getTime()+(50*365*24*60*60*1000)); // keep this for 50 years
-  writeCookie("pref_lang", lang, null, date);
-  
-  changeDocLang(lang);
+  expires = date.toGMTString(date.setTime(date.getTime()+(10*365*24*60*60*1000))); // keep this for 50 years
+  //alert("expires: " + expires)
+  writeCookie("pref_lang", lang, null, expires);
+  //changeDocLang(lang);
+  if (refresh) {
+    l = getBaseUri(location.pathname);
+    window.location = l;
+  }
 }
 
 function loadLangPref() {
@@ -403,6 +440,9 @@ function loadLangPref() {
 }
 
 function getLangPref() {
-  return $("#language").find(":selected").attr("value");
+  var lang = $("#language").find(":selected").attr("value");
+  if (!lang) {
+    lang = readCookie("pref_lang");
+  }
+  return (lang != 0) ? lang : 'en';
 }
-

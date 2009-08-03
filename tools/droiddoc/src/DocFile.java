@@ -33,7 +33,8 @@ public class DocFile
         try {
             File f = new File(filename);
             int length = (int)f.length();
-            FileReader reader = new FileReader(f);
+            FileInputStream is = new FileInputStream(f);
+            InputStreamReader reader = new InputStreamReader(is, "UTF-8");
             char[] buf = new char[length];
             int index = 0;
             int amt;
@@ -128,7 +129,7 @@ public class DocFile
         } else {
             if (outfile.indexOf("sdk/") != -1) {
                 hdf.setValue("sdk", "true");
-                if (outfile.indexOf("index.html") != -1) {
+                if ((outfile.indexOf("index.html") != -1) || (outfile.indexOf("features.html") != -1)) {
                     ClearPage.write(hdf, "sdkpage.cs", outfile);
                 } else {
                     ClearPage.write(hdf, "docpage.cs", outfile);

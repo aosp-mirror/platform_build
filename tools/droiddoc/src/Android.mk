@@ -47,6 +47,7 @@ LOCAL_SRC_FILES := \
 	SampleTagInfo.java \
     Scoped.java \
 	SeeTagInfo.java \
+	SinceTagger.java \
 	Sorter.java \
 	SourcePositionInfo.java \
     Stubs.java \
@@ -57,6 +58,7 @@ LOCAL_SRC_FILES := \
 	TypeInfo.java
 
 LOCAL_JAVA_LIBRARIES := \
+	apicheck \
 	clearsilver
 
 LOCAL_CLASSPATH := \
