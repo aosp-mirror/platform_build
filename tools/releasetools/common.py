@@ -52,8 +52,10 @@ def LoadMaxSizes():
   OPTIONS.max_image_size = {}
   try:
     for line in open(os.path.join(OPTIONS.input_tmp, "META", "imagesizes.txt")):
-      image, size = line.split()
-      size = int(size)
+      pieces = line.split()
+      if len(pieces) != 2: continue
+      image = pieces[0]
+      size = int(pieces[1])
       OPTIONS.max_image_size[image + ".img"] = size
   except IOError, e:
     if e.errno == errno.ENOENT:
