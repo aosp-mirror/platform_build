@@ -276,9 +276,9 @@
 
 /* summary tables for reference pages */
 .jd-sumtable {
-margin: .5em 1em 1em 1em;
-width:99%;
-font-size:.9em;
+  margin: .5em 1em 1em 1em;
+  width:95%; /* consistent table widths; within IE's quirks */
+  font-size:.9em;
 }
 
 .jd-sumtable a {
@@ -330,8 +330,7 @@ font-size:.9em;
 links to summary tables) */
 #api-info-block {
   font-size:.8em;
-  margin:0;
-  padding:6px;
+  padding:6px 10px;
   font-weight:normal;
   float:right;
   text-align:right;
@@ -346,20 +345,56 @@ links to summary tables) */
   color:#999;
 }
 
-h4.jd-details-title .api-level,
-div#jd-header .api-level { 
-  font-size:12px;
+div.api-level { 
+  font-size:.8em;
   font-weight:normal;
   color:#999;
-  position:absolute;
-  top:5px;
-  right:5px;
+  float:right;
+  padding:0 7px 0;
+  margin-top:-25px;
 }
 
-div#jd-header .api-level { 
-  position:relative;
-  float:right;
-  margin-top:-1.7em;
+#api-info-block div.api-level { 
+  font-size:1.3em;
+  font-weight:bold;
+  float:none;
+  color:#444;
+  padding:0;
+  margin:0;
+}
+
+/* Force link colors for IE6 */
+div.api-level a {
+  color:#999;
+}
+#api-info-block div.api-level a:link {
+  color:#444;
+}
+#api-level-toggle a {
+  color:#999;
+}
+
+div#naMessage {
+  display:none;
+  width:555px;
+  height:0;
+  margin:0 auto;
+}
+
+div#naMessage div {
+  width:450px;
+  position:fixed;
+  margin:50px 0;
+  padding:4em 4em 3em;
+  background:#FFF;
+  background:rgba(255,255,255,0.7);
+  border:1px solid #dddd00;
+}
+/* IE6 can't position fixed */
+* html div#naMessage div { position:absolute; }
+
+div#naMessage strong {
+  font-size:1.1em;
 }
 
 .absent,
@@ -367,25 +402,53 @@ div#jd-header .api-level {
 .absent a:visited,
 .absent a:hover,
 .absent * {
-  color:#aaa !important;
-  background-color:#f6f6f6 !important;
+  color:#bbb !important;
   cursor:default !important;
   text-decoration:none !important;
 }
 
-#side-nav li.absent,
-#side-nav li.absent * {
-  background-color:#fff !important;
+#api-level-toggle a,
+.api-level a {
+  color:inherit;
+  text-decoration:none;
+}
+
+#api-level-toggle a:hover,
+.api-level a:hover {
+  color:inherit;
+  text-decoration:underline !important;
+  cursor:pointer !important;
 }
 
 #side-nav li.absent.selected,
-#side-nav li.absent.selected * {
-  background-color:#eee !important;
+#side-nav li.absent.selected *,
+#side-nav div.label.absent.selected,
+#side-nav div.label.absent.selected * {
+  background-color:#eaeaea !important;
 }
+/* IE6 quirk (won't chain classes, so just keep background blue) */
+* html #side-nav li.selected,
+* html #side-nav li.selected *,
+* html #side-nav div.label.selected,
+* html #side-nav div.label.selected * {
+  background-color: #435a6e !important;
+}
+
+
+.absent h4.jd-details-title,
+.absent h4.jd-details-title * {
+  background-color:#f6f6f6 !important;
+}
+
+.absent img {
+  opacity: .3;
+  filter: alpha(opacity=30);
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+}
+
 
 /* applies to a div containing links to summary tables */
 .sum-details-links {
-  margin:0 .5em;
   padding:0;
   font-weight:normal;
 }
@@ -554,8 +617,7 @@ h4.jd-details-title {
   font-size:1.15em;
   background-color: #E2E2E2;
   margin:1.5em 0 .6em;
-  padding:3px;
-  position:relative; /* so the api level can be absolute */
+  padding:3px 95px 3px 3px; /* room for api-level */
 }
 
 h4.jd-tagtitle {

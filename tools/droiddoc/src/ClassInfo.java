@@ -863,6 +863,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         data.setValue(base + ".kind", this.kind());
         TagInfo.makeHDF(data, base + ".shortDescr", this.firstSentenceTags());
         TagInfo.makeHDF(data, base + ".deprecated", deprecatedTags());
+        data.setValue(base + ".since", getSince());
     }
 
     /**

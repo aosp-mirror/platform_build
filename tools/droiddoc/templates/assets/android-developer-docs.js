@@ -31,16 +31,9 @@ if ((agent.indexOf("Mobile") != -1) ||
   addLoadEvent(mobileSetup);
 }
 
-/* loads the lists.js file to the page.
-Loading this in the head was slowing page load time */
-addLoadEvent( function() {
-  var lists = document.createElement("script");
-  lists.setAttribute("type","text/javascript");
-  lists.setAttribute("src", toRoot+"reference/lists.js");
-  $("head").append($(lists));
-} );
-
+addLoadEvent(function() {
 window.onresize = resizeAll;
+});
 
 function mobileSetup() {
   $("body").css({'overflow':'auto'});
@@ -50,6 +43,15 @@ function mobileSetup() {
   $("#side-nav").css({'padding':'0'});
   $("#nav-tree").css({'overflow-y': 'auto'});
 }
+
+/* loads the lists.js file to the page.
+Loading this in the head was slowing page load time */
+addLoadEvent( function() {
+  var lists = document.createElement("script");
+  lists.setAttribute("type","text/javascript");
+  lists.setAttribute("src", toRoot+"reference/lists.js");
+  $("head").append($(lists));
+} );
 
 function setToRoot(root) {
   toRoot = root;

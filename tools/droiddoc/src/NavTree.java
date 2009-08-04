@@ -25,7 +25,7 @@ public class NavTree {
         for (PackageInfo pkg: DroidDoc.choosePackages()) {
             children.add(makePackageNode(pkg));
         }
-        Node node = new Node("Reference", dir + "packages.html", children);
+        Node node = new Node("Reference", dir + "packages.html", children, null);
 
         StringBuilder buf = new StringBuilder();
         if (false) {
@@ -46,7 +46,7 @@ public class NavTree {
     private static Node makePackageNode(PackageInfo pkg) {
         ArrayList<Node> children = new ArrayList();
 
-        children.add(new Node("Description", pkg.fullDescriptionHtmlPage(), null));
+        children.add(new Node("Description", pkg.fullDescriptionHtmlPage(), null, null));
 
         addClassNodes(children, "Interfaces", pkg.interfaces());
         addClassNodes(children, "Classes", pkg.ordinaryClasses());
@@ -54,7 +54,7 @@ public class NavTree {
         addClassNodes(children, "Exceptions", pkg.exceptions());
         addClassNodes(children, "Errors", pkg.errors());
 
-        return new Node(pkg.name(), pkg.htmlPage(), children);
+        return new Node(pkg.name(), pkg.htmlPage(), children, pkg.getSince());
     }
 
     private static void addClassNodes(ArrayList<Node> parent, String label, ClassInfo[] classes) {
@@ -62,12 +62,12 @@ public class NavTree {
 
         for (ClassInfo cl: classes) {
             if (cl.checkLevel()) {
-                children.add(new Node(cl.name(), cl.htmlPage(), null));
+                children.add(new Node(cl.name(), cl.htmlPage(), null, cl.getSince()));
             }
         }
 
         if (children.size() > 0) {
-            parent.add(new Node(label, null, children));
+            parent.add(new Node(label, null, children, null));
         }
     }
 
@@ -75,11 +75,13 @@ public class NavTree {
         private String mLabel;
         private String mLink;
         ArrayList<Node> mChildren;
+        private String mSince;
 
-        Node(String label, String link, ArrayList<Node> children) {
+        Node(String label, String link, ArrayList<Node> children, String since) {
             mLabel = label;
             mLink = link;
             mChildren = children;
+            mSince = since;
         }
 
         static void renderString(StringBuilder buf, String s) {
@@ -136,6 +138,8 @@ public class NavTree {
             renderString(buf, mLink);
             buf.append(", ");
             renderChildren(buf);
+            buf.append(", ");
+            renderString(buf, mSince);
             buf.append(" ]");
         }
     }
