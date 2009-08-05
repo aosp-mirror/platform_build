@@ -5,6 +5,7 @@
 PRODUCT_PACKAGES := \
     AlarmClock \
     AlarmProvider \
+    Bluetooth \
     Calculator \
     Calendar \
     Camera \
