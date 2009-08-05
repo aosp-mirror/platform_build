@@ -4,6 +4,8 @@ import com.android.apicheck.*;
 
 import java.util.*;
 
+import org.clearsilver.HDF;
+
 /**
  * Applies version information to the DroidDoc class model from apicheck XML
  * files. Sample usage:
@@ -42,6 +44,17 @@ public class SinceTagger {
 
         if (!xmlToName.isEmpty()) {
             warnForMissingVersions(classDocs);
+        }
+    }
+
+    /**
+     * Writes an index of the version names to {@code data}. 
+     */
+    public void writeVersionNames(HDF data) {
+        int index = 1;
+        for (String version : xmlToName.values()) {
+            data.setValue("since." + index + ".name", version);
+            index++;
         }
     }
 

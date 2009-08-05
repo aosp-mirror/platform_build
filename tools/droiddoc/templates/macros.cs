@@ -117,7 +117,7 @@ def:see_also_tags(also) ?><?cs
 
 <?cs # print the API Level ?><?cs
 def:since_tags(obj) ?>
-  Since: API Level <?cs var:obj.since ?>
+  Since: <a href="<?cs var:toroot ?>guide/appendix/api-levels.html#level<?cs var:obj.since ?>">API Level <?cs var:obj.since ?></a>
 <?cs /def ?>
 
 <?cs # Print the long-form description for something.
@@ -203,7 +203,7 @@ def:list(label, classes) ?><?cs
     <li><h2><?cs var:label ?></h2>
       <ul><?cs 
       each:cl=classes ?>
-          <li class="<?cs if:class.name == cl.label?>selected<?cs /if ?> api apilevel-<?cs var:cl.since ?>"><?cs call:type_link(cl) ?></li><?cs 
+          <li class="<?cs if:class.name == cl.label?>selected <?cs /if ?>api apilevel-<?cs var:cl.since ?>"><?cs call:type_link(cl) ?></li><?cs 
       /each ?>
       </ul>
     </li><?cs 
@@ -213,7 +213,7 @@ def:list(label, classes) ?><?cs
 <?cs # A list of links to packages, for use in the side navigation of packages (panel nav) ?><?cs 
 def:package_link_list(packages) ?><?cs 
   each:pkg=packages ?>
-    <li class="<?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>selected<?cs /if ?> api apilevel-<?cs var:pkg.since ?>"><?cs call:package_link(pkg) ?></li><?cs 
+    <li class="<?cs if:(class.package.name == pkg.name) || (package.name == pkg.name)?>selected <?cs /if ?>api apilevel-<?cs var:pkg.since ?>"><?cs call:package_link(pkg) ?></li><?cs 
   /each ?><?cs
 /def ?>
 
