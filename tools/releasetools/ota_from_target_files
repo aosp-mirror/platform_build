@@ -22,8 +22,7 @@ a full OTA is produced.
 Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
   -b  (--board_config)  <file>
-      Specifies a BoardConfig.mk file containing image max sizes
-      against which the generated image files are checked.
+      Deprecated.
 
   -k  (--package_key)  <key>
       Key to use to sign the package (default is
@@ -736,7 +735,7 @@ def main(argv):
 
   def option_handler(o, a):
     if o in ("-b", "--board_config"):
-      common.LoadBoardConfig(a)
+      pass   # deprecated
     elif o in ("-k", "--package_key"):
       OPTIONS.package_key = a
     elif o in ("-i", "--incremental_from"):
@@ -768,13 +767,6 @@ def main(argv):
     common.Usage(__doc__)
     sys.exit(1)
 
-  if not OPTIONS.max_image_size:
-    print
-    print "  WARNING:  No board config specified; will not check image"
-    print "  sizes against limits.  Use -b to make sure the generated"
-    print "  images don't exceed partition sizes."
-    print
-
   if OPTIONS.script_mode not in ("amend", "edify", "auto"):
     raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
@@ -783,6 +775,14 @@ def main(argv):
 
   print "unzipping target target-files..."
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
+
+  common.LoadMaxSizes()
+  if not OPTIONS.max_image_size:
+    print
+    print "  WARNING:  Failed to load max image sizes; will not enforce"
+    print "  image size limits."
+    print
+
   OPTIONS.target_tmp = OPTIONS.input_tmp
   input_zip = zipfile.ZipFile(args[0], "r")
   if OPTIONS.package_key:

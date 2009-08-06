@@ -21,8 +21,7 @@ use with 'fastboot update'.
 Usage:  img_from_target_files [flags] input_target_files output_image_zip
 
   -b  (--board_config)  <file>
-      Specifies a BoardConfig.mk file containing image max sizes
-      against which the generated image files are checked.
+      Deprecated.
 
 """
 
@@ -109,10 +108,10 @@ def main(argv):
 
   def option_handler(o, a):
     if o in ("-b", "--board_config"):
-      common.LoadBoardConfig(a)
-      return True
+      pass       # deprecated
     else:
       return False
+    return True
 
   args = common.ParseOptions(argv, __doc__,
                              extra_opts="b:",
@@ -123,14 +122,14 @@ def main(argv):
     common.Usage(__doc__)
     sys.exit(1)
 
+  OPTIONS.input_tmp = common.UnzipTemp(args[0])
+
+  common.LoadMaxSizes()
   if not OPTIONS.max_image_size:
     print
-    print "  WARNING:  No board config specified; will not check image"
-    print "  sizes against limits.  Use -b to make sure the generated"
-    print "  images don't exceed partition sizes."
+    print "  WARNING:  Failed to load max image sizes; will not enforce"
+    print "  image size limits."
     print
-
-  OPTIONS.input_tmp = common.UnzipTemp(args[0])
 
   output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
 

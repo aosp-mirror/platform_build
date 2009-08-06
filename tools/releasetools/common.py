@@ -46,18 +46,20 @@ def Run(args, **kwargs):
   return subprocess.Popen(args, **kwargs)
 
 
-def LoadBoardConfig(fn):
-  """Parse a board_config.mk file looking for lines that specify the
-  maximum size of various images, and parse them into the
-  OPTIONS.max_image_size dict."""
+def LoadMaxSizes():
+  """Load the maximum allowable images sizes from the input
+  target_files size."""
   OPTIONS.max_image_size = {}
-  for line in open(fn):
-    line = line.strip()
-    m = re.match(r"BOARD_(BOOT|RECOVERY|SYSTEM|USERDATA)IMAGE_MAX_SIZE"
-                 r"\s*:=\s*(\d+)", line)
-    if not m: continue
-
-    OPTIONS.max_image_size[m.group(1).lower() + ".img"] = int(m.group(2))
+  try:
+    for line in open(os.path.join(OPTIONS.input_tmp, "META", "imagesizes.txt")):
+      pieces = line.split()
+      if len(pieces) != 2: continue
+      image = pieces[0]
+      size = int(pieces[1])
+      OPTIONS.max_image_size[image + ".img"] = size
+  except IOError, e:
+    if e.errno == errno.ENOENT:
+      pass
 
 
 def BuildAndAddBootableImage(sourcedir, targetname, output_zip):
