@@ -90,6 +90,7 @@ def main(argv):
   dirlist = argv[i:-1]
   filename = argv[-1]
   results = perform_find(mindepth, prune, dirlist, filename)
+  results.sort()
   for r in results:
     print r
 
