@@ -49,6 +49,8 @@ a:visited code {
 
 input, select,
 textarea, option {
+  font-family:inherit;
+  font-size:inherit;
   padding:0;
   margin:0;
 }
@@ -177,6 +179,8 @@ hr.blue {
 
 /* LAYOUT */
 #body-content {
+  /* "Preliminary" watermark for preview releases and interim builds. */
+  background:transparent url(images/preliminary.png) repeat scroll 0 0;
   margin:0;
   position:relative;
   width:100%;

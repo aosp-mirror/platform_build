@@ -58,8 +58,16 @@
 	<?cs /if ?>
 	</a></li>
 	<li id="videos-link"><a href="<?cs var:toroot ?>videos/index.html" onClick="return loadLast('videos')">
+	<?cs if:!sdk.redirect ?>
 		<span class="en">Videos</span>
-    <span class="ja">ビデオ</span>
+		<span class="de"></span>
+		<span class="es"></span>
+		<span class="fr"></span>
+		<span class="it"></span>
+                <span class="ja">ビデオ</span>
+		<span class="zh-CN"></span>
+		<span class="zh-TW"></span>
+	<?cs /if ?>
 	</a></li>
 	<li id="community-link"><a href="<?cs var:toroot ?>community/index.html">
 	<?cs if:!sdk.redirect ?>
