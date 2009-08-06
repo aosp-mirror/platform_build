@@ -781,7 +781,7 @@ td.gsc-search-button {
 }
 
 #carouselMain {
-	background: url('/assets/images/home/bg_home_carousel_board.png') 0 0 no-repeat;
+	background: url(images/home/bg_home_carousel_board.png) 0 0 no-repeat;
 	height:auto;
   padding: 25px 21px 0;
   overflow:hidden;
@@ -804,7 +804,7 @@ td.gsc-search-button {
 }
 
 #carouselWheel {
-	background: url('/assets/images/home/bg_home_carousel_wheel.png') 0 0 no-repeat;
+	background: url(images/home/bg_home_carousel_wheel.png) 0 0 no-repeat;
 	padding-top:40px;
 	height:150px;
 }
@@ -1158,12 +1158,12 @@ ul.videoPreviews p.full {
 
 ul.videoPreviews span.more {
   padding:0 0 0 12px;
-  background:url('/assets/images/arrow_bluelink_down.png') 0 2px no-repeat;
+  background:url(images/arrow_bluelink_down.png) 0 2px no-repeat;
 }
 
 ul.videoPreviews span.less {
   padding:0 0 0 12px;
-  background:url('/assets/images/arrow_bluelink_up.png') 0 2px no-repeat;
+  background:url(images/arrow_bluelink_up.png) 0 2px no-repeat;
   display:none;
 }
 
