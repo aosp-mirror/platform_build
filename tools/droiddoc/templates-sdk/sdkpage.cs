@@ -176,8 +176,8 @@ the Terms and Conditions that govern the use of the Android SDK. </p>
   <p>The Android 1.6 platform includes a variety of improvements and new features
   for users and developers. Additionally, the SDK itself introduces several new
   capabilities that enable you to develop applications more efficiently.
-  See the <a href="features.html">Android 1.6 Highlights</a> document for a list
-  of highlights.</p>
+  See the <a href="http://developer.android.com/sdk/preview/features.html">
+  Android 1.6 Highlights</a> document for a list of highlights.</p>
 <?cs /if ?>
 
       <?cs call:tag_list(root.descr) ?>
