@@ -6,7 +6,7 @@
     <title>Redirecting...</title>
     <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>"<?cs 
-      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>"
+      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>">
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
 <?cs else ?>
@@ -24,8 +24,10 @@
   <div id="jd-content">
     <p>Redirecting to 
     <a href="<?cs var:toroot ?>sdk/<?cs 
-      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>">/sdk/<?cs var:sdk.redirect.path ?><?cs 
-      else ?><?cs var:sdk.current ?>/index.html">/sdk/<?cs var:sdk.current ?>/index.html<?cs /if ?>
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
+      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>">sdk/<?cs 
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
+      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>
     </a> ...</p>
 <?cs else ?>
 <div class="g-unit" id="doc-content" >
@@ -50,7 +52,7 @@
   </div>
 <?cs /if ?>
 
-<?cs if:android.whichdoc != "online" ?>
+<?cs if:android.whichdoc != "online" && !android.preview ?>
 
 <p>The sections below provide an overview of the SDK package. </p>
 
@@ -101,7 +103,20 @@ computer. </p>
   </tr>
   </table>
 
-  <?cs else ?>
+  <?cs else ?><?cs if:android.whichdoc == "online" ?>
+
+  <?cs if:sdk.preview ?>
+  <p>Welcome developers! The next release of the Android platform will be
+  Android 1.6 and we are pleased to announce the availability of an early look
+  SDK to give you a head-start on developing applications for it. </p>
+
+  <p>The Android 1.6 platform includes a variety of improvements and new
+  features for users and developers. Additionally, the SDK itself introduces
+  several new capabilities that enable you to develop applications more
+  efficiently. See the <a href="features.html">Android 1.6 Highlights</a> 
+  document for a list of highlights.</p>
+  <?cs /if ?>
+
 <p>Before downloading, please read the <a href="requirements.html">
 System Requirements</a> document. As you start the download, you will also need to review and agree to 
 the Terms and Conditions that govern the use of the Android SDK. </p>
@@ -137,9 +152,32 @@ the Terms and Conditions that govern the use of the Android SDK. </p>
     <td><?cs var:sdk.linux_bytes ?> bytes</td>
     <td><?cs var:sdk.linux_checksum ?></td>
   </tr>
+  <?cs if:adt.zip_download ?>
+  <tr class="alt-color">
+    <td>ADT Plugin for Eclipse <?cs var:adt.zip_version ?></td>
+    <td>
+  <a href="<?cs var:toroot ?>sdk/download.html?v=<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
+    </td>
+    <td><?cs var:adt.zip_bytes ?> bytes</td>
+    <td><?cs var:adt.zip_checksum ?></td>
+  </tr>
+  <?cs /if ?>
   </table>
 
-<?cs /if ?>
+  <?cs /if ?>
+ <?cs /if ?>
+<?cs /if ?> 
+
+<?cs if:android.whichdoc != "online" && sdk.preview ?>
+  <p>Welcome developers! The next release of the Android platform will be
+  Android 1.6 and we are pleased to announce the availability of an early look SDK
+  to give you a head-start on developing applications for it. </p>
+
+  <p>The Android 1.6 platform includes a variety of improvements and new features
+  for users and developers. Additionally, the SDK itself introduces several new
+  capabilities that enable you to develop applications more efficiently.
+  See the <a href="http://developer.android.com/sdk/preview/features.html">
+  Android 1.6 Highlights</a> document for a list of highlights.</p>
 <?cs /if ?>
 
       <?cs call:tag_list(root.descr) ?>
