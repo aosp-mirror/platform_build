@@ -33,7 +33,6 @@ else
 $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
 	$(transform-prebuilt-to-target)
 endif
-
 ifneq ($(prebuilt_module_is_a_library),)
   ifneq ($(LOCAL_IS_HOST_MODULE),)
 	$(transform-host-ranlib-copy-hack)
