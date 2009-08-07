@@ -459,7 +459,7 @@ else # ONE_SHOT_MAKEFILE
 # Can't use first-makefiles-under here because
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles := \
-	$(shell build/tools/findleaves.sh --prune="./out" $(subdirs) Android.mk)
+	$(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git $(subdirs) Android.mk)
 
 include $(subdir_makefiles)
 endif # ONE_SHOT_MAKEFILE
