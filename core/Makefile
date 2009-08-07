@@ -300,7 +300,7 @@ else # TARGET_BOOTIMAGE_USE_EXT2 != true
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES)
 	$(call pretty,"Target boot image: $@")
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) --output $@
-	$(hide) $(call assert-max-file-size,$@,$(BOARD_BOOTIMAGE_MAX_SIZE))
+	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 endif # TARGET_BOOTIMAGE_USE_EXT2
 
 else	# TARGET_NO_KERNEL
@@ -578,7 +578,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	$(MKBOOTFS) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
 	$(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) --output $@
 	@echo ----- Made recovery image -------- $@
-	$(hide) $(call assert-max-file-size,$@,$(BOARD_RECOVERYIMAGE_MAX_SIZE))
+	$(hide) $(call assert-max-image-size,$@,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))
 
 else
 INSTALLED_RECOVERYIMAGE_TARGET :=
@@ -663,7 +663,7 @@ endif
 $(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH) | $(ACP)
 	@echo "Install system fs image: $@"
 	$(copy-file-to-target)
-	$(hide) $(call assert-max-file-size,$@ $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_SYSTEMIMAGE_MAX_SIZE))
+	$(hide) $(call assert-max-image-size,$@ $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 
 systemimage: $(INSTALLED_SYSTEMIMAGE)
 
@@ -672,7 +672,7 @@ systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
 	            | $(INTERNAL_MKUSERFS)
 	@echo "make $@: ignoring dependencies"
 	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE))
-	$(hide) $(call assert-max-file-size,$(INSTALLED_SYSTEMIMAGE),$(BOARD_SYSTEMIMAGE_MAX_SIZE))
+	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 
 #######
 ## system tarball
@@ -709,7 +709,7 @@ define build-userdataimage-target
     $(call pretty,"Target userdata fs image: $(INSTALLED_USERDATAIMAGE_TARGET)")
     @mkdir -p $(TARGET_OUT_DATA)
     $(call build-userimage-ext2-target,$(TARGET_OUT_DATA),$(INSTALLED_USERDATAIMAGE_TARGET),userdata,)
-    $(hide) $(call assert-max-file-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_MAX_SIZE))
+    $(hide) $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
 endef
 
 else # TARGET_USERIMAGES_USE_EXT2 != true
@@ -719,7 +719,7 @@ define build-userdataimage-target
     $(call pretty,"Target userdata fs image: $(INSTALLED_USERDATAIMAGE_TARGET)")
     @mkdir -p $(TARGET_OUT_DATA)
     $(hide) $(MKYAFFS2) -f $(TARGET_OUT_DATA) $(INSTALLED_USERDATAIMAGE_TARGET)
-    $(hide) $(call assert-max-file-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_MAX_SIZE))
+    $(hide) $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
 endef
 endif # TARGET_USERIMAGES_USE_EXT2
 
@@ -883,10 +883,10 @@ endif
 	$(hide)	echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
 	$(hide) echo "$(PRIVATE_RECOVERY_API_VERSION)" > $(zip_root)/META/recovery-api-version.txt
 	$(hide) echo "blocksize $(BOARD_FLASH_BLOCK_SIZE)" > $(zip_root)/META/imagesizes.txt
-	$(hide) echo "boot $(BOARD_BOOTIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
-	$(hide) echo "recovery $(BOARD_RECOVERYIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
-	$(hide) echo "system $(BOARD_SYSTEMIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
-	$(hide) echo "userdata $(BOARD_USERDATAIMAGE_MAX_SIZE)" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "boot $(call image-size-from-data-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "recovery $(call image-size-from-data-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "system $(call image-size-from-data-size,$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "userdata $(call image-size-from-data-size,$(BOARD_USERDATAIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 

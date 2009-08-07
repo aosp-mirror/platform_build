@@ -1589,6 +1589,18 @@ $(if $(2), \
  )
 endef
 
+# Like assert-max-file-size, but the second argument is a partition
+# size, which we'll convert to a max image size before checking it
+# against the files.
+#
+# $(1): The file(s) to check (often $@)
+# $(2): The partition size.
+define assert-max-image-size
+$(if $(2), \
+  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))), \
+  true)
+endef
+
 
 ###########################################################
 ## Define device-specific radio files
