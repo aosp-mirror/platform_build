@@ -91,7 +91,7 @@ def main(argv):
   filename = argv[-1]
   results = perform_find(mindepth, prune, dirlist, filename)
   results.sort()
-  for r in results:
+  for r in set(results):
     print r
 
 if __name__ == "__main__":
