@@ -3,7 +3,7 @@
 ##
 ## Additional inputs from base_rules.make:
 ## None.
-## 
+##
 ###########################################################
 
 ifneq ($(LOCAL_PREBUILT_LIBS),)
@@ -26,8 +26,13 @@ else
   prebuilt_module_is_a_library :=
 endif
 
+ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
+$(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+	$(transform-prebuilt-to-target-strip-comments)
+else
 $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
 	$(transform-prebuilt-to-target)
+endif
 ifneq ($(prebuilt_module_is_a_library),)
   ifneq ($(LOCAL_IS_HOST_MODULE),)
 	$(transform-host-ranlib-copy-hack)
