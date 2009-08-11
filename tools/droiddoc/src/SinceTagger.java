@@ -1,8 +1,13 @@
 // Copyright 2009 Google Inc. All Rights Reserved.
 
-import com.android.apicheck.*;
+import com.android.apicheck.ApiCheck;
+import com.android.apicheck.ApiInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Collections;
 
 import org.clearsilver.HDF;
 
@@ -165,31 +170,68 @@ public class SinceTagger {
      */
     private void warnForMissingVersions(ClassInfo[] classDocs) {
         for (ClassInfo claz : classDocs) {
+            if (!checkLevelRecursive(claz)) {
+                continue;
+            }
+
             if (claz.getSince() == null) {
                 Errors.error(Errors.NO_SINCE_DATA, claz.position(),
                         "XML missing class " + claz.qualifiedName());
             }
-            for (FieldInfo field : claz.fields()) {
-                if (field.getSince() == null) {
-                    Errors.error(Errors.NO_SINCE_DATA, field.position(),
-                            "XML missing field "
-                                    + claz.qualifiedName() + "#" + field .name());
-                }
+            
+            for (FieldInfo field : missingVersions(claz.fields())) {
+                Errors.error(Errors.NO_SINCE_DATA, field.position(),
+                        "XML missing field " + claz.qualifiedName()
+                                + "#" + field.name());
             }
-            for (MethodInfo constructor : claz.constructors()) {
-                if (constructor.getSince() == null) {
-                    Errors.error(Errors.NO_SINCE_DATA, constructor.position(),
-                            "XML missing constructor "
-                                    + claz.qualifiedName() + "#" + constructor.getHashableName());
-                }
+
+            for (MethodInfo constructor : missingVersions(claz.constructors())) {
+                Errors.error(Errors.NO_SINCE_DATA, constructor.position(),
+                        "XML missing constructor " + claz.qualifiedName()
+                                + "#" + constructor.getHashableName());
             }
-            for (MethodInfo method : claz.methods()) {
-                if (method.getSince() == null) {
-                    Errors.error(Errors.NO_SINCE_DATA, method.position(),
-                            "XML missing method "
-                                    + claz.qualifiedName() + "#" + method .getHashableName());
-                }
+
+            for (MethodInfo method : missingVersions(claz.methods())) {
+                Errors.error(Errors.NO_SINCE_DATA, method.position(),
+                        "XML missing method " + claz.qualifiedName()
+                                + "#" + method.getHashableName());
             }
         }
+    }
+
+    /**
+     * Returns the DocInfos in {@code all} that are documented but do not have
+     * since tags.
+     */
+    private <T extends MemberInfo> Iterable<T> missingVersions(T[] all) {
+        List<T> result = Collections.emptyList();
+        for (T t : all) {
+            // if this member has version info or isn't documented, skip it
+            if (t.getSince() != null
+                    || t.isHidden()
+                    || !checkLevelRecursive(t.realContainingClass())) {
+                continue;
+            }
+
+            if (result.isEmpty()) {
+                result = new ArrayList<T>(); // lazily construct a mutable list
+            }
+            result.add(t);
+        }
+        return result;
+    }
+
+    /**
+     * Returns true if {@code claz} and all containing classes are documented.
+     * The result may be used to filter out members that exist in the API
+     * data structure but aren't a part of the API.
+     */
+    private boolean checkLevelRecursive(ClassInfo claz) {
+        for (ClassInfo c = claz; c != null; c = c.containingClass()) {
+            if (!c.checkLevel()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

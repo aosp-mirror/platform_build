@@ -363,8 +363,17 @@ public class MethodInfo extends MemberInfo
     public String getHashableName() {
         StringBuilder result = new StringBuilder();
         result.append(name());
-        for (ParameterInfo pInfo : mParameters) {
-            result.append(":").append(pInfo.type().fullName());
+        for (int p = 0; p < mParameters.length; p++) {
+            result.append(":");
+            if (p == mParameters.length - 1 && isVarArgs()) {
+                // TODO: note that this does not attempt to handle hypothetical
+                // vararg methods whose last parameter is a list of arrays, e.g.
+                // "Object[]...".
+                result.append(mParameters[p].type().fullNameNoDimension(typeVariables()))
+                        .append("...");
+            } else {
+                result.append(mParameters[p].type().fullName(typeVariables()));
+            }
         }
         return result.toString();
     }
