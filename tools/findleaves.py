@@ -38,7 +38,7 @@ def perform_find(mindepth, prune, dirlist, filename):
       if check_prune:
         i = 0
         while i < len(dirs):
-          if os.path.join(root, dirs[i]) in prune:
+          if dirs[i] in prune:
             del dirs[i]
           else:
             i += 1
