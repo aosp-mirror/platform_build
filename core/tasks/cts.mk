@@ -106,13 +106,17 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(ACP)
 	$(hide) touch $@
 
 # Generate the test descriptions for the core-tests
-
+# Parameters:
+# $1 : The output file where the description should be written (without the '.xml' extension)
+# $2 : The AndroidManifest.xml corresponding to the test package
+# $3 : The name of the TestSuite generator class to use
+# $4 : The Android.mk corresponding to the test package (required for host-side tests only)
 define generate-core-test-description
 @echo "Generate core-test description ("$(notdir $(1))")"
 $(hide) java $(PRIVATE_JAVAOPTS) \
 	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(1) \
-	$(2) $(3)
+	$(2) $(3) $(4)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
