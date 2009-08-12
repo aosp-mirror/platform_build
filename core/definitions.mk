@@ -1470,6 +1470,12 @@ define copy-file-to-target-with-cp
 $(hide) cp -fp $< $@
 endef
 
+# The same as copy-file-to-target, but use the zipalign tool to do so.
+define copy-file-to-target-with-zipalign
+@mkdir -p $(dir $@)
+$(hide) $(ZIPALIGN) -f 4 $< $@
+endef
+
 # The same as copy-file-to-target, but strip out "# comment"-style
 # comments (for config files and such).
 define copy-file-to-target-strip-comments
@@ -1495,6 +1501,12 @@ endef
 define transform-prebuilt-to-target
 @echo "$(if $(PRIVATE_IS_HOST_MODULE),host,target) Prebuilt: $(PRIVATE_MODULE) ($@)"
 $(copy-file-to-target)
+endef
+
+# Copy a prebuilt file to a target location, using zipalign on it.
+define transform-prebuilt-to-target-with-zipalign
+@echo "$(if $(PRIVATE_IS_HOST_MODULE),host,target) Prebuilt APK: $(PRIVATE_MODULE) ($@)"
+$(copy-file-to-target-with-zipalign)
 endef
 
 # Copy a prebuilt file to a target location, stripping "# comment" comments.
