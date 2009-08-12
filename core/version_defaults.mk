@@ -59,7 +59,7 @@ endif
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # If the build is not a final release build, then this is the current
   # development code-name.  If this is a final release build, it is simply "REL".
-  PLATFORM_VERSION_CODENAME := Donut
+  PLATFORM_VERSION_CODENAME := REL
 endif
 
 ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
