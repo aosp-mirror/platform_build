@@ -1,24 +1,27 @@
 <?cs # This file defines custom definitions for the masthead (logo, searchbox, tabs, etc) and 
-left nav (toc) that gets placed on all pages. ?>
+left nav (toc) that gets placed on all pages, for the open source site?>
 
 <?cs 
 def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
-          <a href="<?cs var:toroot ?>guide/index.html" tabindex="-1"><img
+          <a href="http://source.android.com" tabindex="-1"><img
               src="<?cs var:toroot ?>assets/images/open_source.png" alt="Open Source Project: Platform Development Kit" /></a>
           <ul class="<?cs 
-                  if:reference ?> <?cs
-                  elif:guide ?> <?cs
-                  elif:sdk ?> <?cs
-                  elif:home ?> <?cs
-                  elif:community ?> <?cs
-                  elif:publish ?> <?cs
-                  elif:about ?> <?cs /if ?>">
-              <!--<li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
-                                  onClick="return loadLast('guide)'"><span>Dev Guide</span></a></li>
-              <li id="opensource-link"><a href="http://source.android.com/"
-				 onClick="return loadLast('open')"><span>Open Source</span></a></li>-->
+                  if:releases ?> releases<?cs
+                  elif:guide ?> guide<?cs
+                  elif:licenses ?>licenses <?cs
+                  elif:home ?>home <?cs
+                  elif:community ?>community <?cs /if ?>">
+              <li id="home-link"><a href="<?cs var:toroot ?>index.html"><span>Home</span></a></li>
+              <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
+                                  onClick="return loadLast('guide)'"><span>Guide</span></a></li>
+              <li id="releases-ink"><a href="<?cs var:toroot ?>releases/index.html"
+                                  onClick="return loadLast('releases)'"><span>Releases</span></a></li>
+              <li id="licenses-link"><a href="<?cs var:toroot ?>licenses/index.html"
+                                  onClick="return loadLast('licenses)'"><span>Licenses</span></a></li>
+              <li id="community-link"><a href="<?cs var:toroot ?>community/index.html"
+                                  onClick="return loadLast('community)'"><span>Community</span></a></li>
           </ul> 
       </div>
       <div id="headerRight">
@@ -49,9 +52,45 @@ def:guide_nav() ?>
     </script>
 <?cs /def ?>
 
+<?cs
+def:licenses_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="devdoc-nav"><?cs
+        include:"../../../../development/pdk/docs/licenses/licenses_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      addLoadEvent(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
+<?cs
+def:releases_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="devdoc-nav"><?cs
+        include:"../../../../development/pdk/docs/releases/releases_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      addLoadEvent(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
 <?cs 
-def:custom_left_nav() ?><?cs 
-    call:guide_nav() ?><?cs 
+def:custom_left_nav() ?><?cs
+  if:doc.type == "guide" ?><?cs
+    call:guide_nav() ?><?cs
+  elif:doc.type == "licenses" ?><?cs
+    call:licenses_nav() ?><?cs
+  elif:doc.type == "releases" ?><?cs
+    call:releases_nav() ?><?cs
+  /if ?><?cs
 /def ?>
 
 <?cs # appears at the bottom of every page ?><?cs 
