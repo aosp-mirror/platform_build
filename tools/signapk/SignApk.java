@@ -247,7 +247,7 @@ class SignApk {
         }
     }
 
-    /** Write a .SF file with a digest the specified manifest. */
+    /** Write a .SF file with a digest of the specified manifest. */
     private static void writeSignatureFile(Manifest manifest, OutputStream out)
             throws IOException, GeneralSecurityException {
         Manifest sf = new Manifest();
@@ -304,6 +304,56 @@ class SignApk {
         pkcs7.encodeSignedData(out);
     }
 
+    private static void signWholeOutputFile(byte[] zipData,
+                                            OutputStream outputStream,
+                                            X509Certificate publicKey,
+                                            PrivateKey privateKey)
+        throws IOException, GeneralSecurityException {
+
+        // For a zip with no archive comment, the
+        // end-of-central-directory record will be 22 bytes long, so
+        // we expect to find the EOCD marker 22 bytes from the end.
+        if (zipData[zipData.length-22] != 0x50 ||
+            zipData[zipData.length-21] != 0x4b ||
+            zipData[zipData.length-20] != 0x05 ||
+            zipData[zipData.length-19] != 0x06) {
+            throw new IllegalArgumentException("zip data already has an archive comment");
+        }
+
+        Signature signature = Signature.getInstance("SHA1withRSA");
+        signature.initSign(privateKey);
+        signature.update(zipData, 0, zipData.length-2);
+
+        ByteArrayOutputStream temp = new ByteArrayOutputStream();
+
+        // put a readable message and a null char at the start of the
+        // archive comment, so that tools that display the comment
+        // (hopefully) show something sensible.
+        // TODO: anything more useful we can put in this message?
+        byte[] message = "signed by SignApk".getBytes("UTF-8");
+        temp.write(message);
+        temp.write(0);
+        writeSignatureBlock(signature, publicKey, temp);
+        int total_size = temp.size() + 6;
+        if (total_size > 0xffff) {
+            throw new IllegalArgumentException("signature is too big for ZIP file comment");
+        }
+        // signature starts this many bytes from the end of the file
+        int signature_start = total_size - message.length - 1;
+        temp.write(0xff);
+        temp.write(0xff);
+        temp.write(signature_start & 0xff);
+        temp.write((signature_start >> 8) & 0xff);
+        temp.write(total_size & 0xff);
+        temp.write((total_size >> 8) & 0xff);
+        temp.flush();
+
+        outputStream.write(zipData, 0, zipData.length-2);
+        outputStream.write(total_size & 0xff);
+        outputStream.write((total_size >> 8) & 0xff);
+        temp.writeTo(outputStream);
+    }
+
     /**
      * Copy all the files in a manifest from input to output.  We set
      * the modification times in the output to a fixed time, so as to
@@ -340,25 +390,40 @@ class SignApk {
     }
 
     public static void main(String[] args) {
-        if (args.length != 4) {
-            System.err.println("Usage: signapk " +
+        if (args.length != 4 && args.length != 5) {
+            System.err.println("Usage: signapk [-w] " +
                     "publickey.x509[.pem] privatekey.pk8 " +
                     "input.jar output.jar");
             System.exit(2);
         }
 
+        boolean signWholeFile = false;
+        int argstart = 0;
+        if (args[0].equals("-w")) {
+            signWholeFile = true;
+            argstart = 1;
+        }
+
         JarFile inputJar = null;
         JarOutputStream outputJar = null;
+        FileOutputStream outputFile = null;
 
         try {
-            X509Certificate publicKey = readPublicKey(new File(args[0]));
+            X509Certificate publicKey = readPublicKey(new File(args[argstart+0]));
 
             // Assume the certificate is valid for at least an hour.
             long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
 
-            PrivateKey privateKey = readPrivateKey(new File(args[1]));
-            inputJar = new JarFile(new File(args[2]), false);  // Don't verify.
-            outputJar = new JarOutputStream(new FileOutputStream(args[3]));
+            PrivateKey privateKey = readPrivateKey(new File(args[argstart+1]));
+            inputJar = new JarFile(new File(args[argstart+2]), false);  // Don't verify.
+
+            OutputStream outputStream = null;
+            if (signWholeFile) {
+                outputStream = new ByteArrayOutputStream();
+            } else {
+                outputStream = outputFile = new FileOutputStream(args[argstart+3]);
+            }
+            outputJar = new JarOutputStream(outputStream);
             outputJar.setLevel(9);
 
             JarEntry je;
@@ -387,13 +452,23 @@ class SignApk {
 
             // Everything else
             copyFiles(manifest, inputJar, outputJar, timestamp);
+
+            outputJar.close();
+            outputJar = null;
+            outputStream.flush();
+
+            if (signWholeFile) {
+                outputFile = new FileOutputStream(args[argstart+3]);
+                signWholeOutputFile(((ByteArrayOutputStream)outputStream).toByteArray(),
+                                    outputFile, publicKey, privateKey);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         } finally {
             try {
                 if (inputJar != null) inputJar.close();
-                if (outputJar != null) outputJar.close();
+                if (outputFile != null) outputFile.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
