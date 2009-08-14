@@ -273,7 +273,8 @@ def SignOutput(temp_zip_name, output_zip_name):
   key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
   pw = key_passwords[OPTIONS.package_key]
 
-  common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw)
+  common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
+                  whole_file=True)
 
 
 def AppendAssertions(script, input_zip):
