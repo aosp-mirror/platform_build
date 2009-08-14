@@ -340,13 +340,32 @@ class SignApk {
         }
         // signature starts this many bytes from the end of the file
         int signature_start = total_size - message.length - 1;
-        temp.write(0xff);
-        temp.write(0xff);
         temp.write(signature_start & 0xff);
         temp.write((signature_start >> 8) & 0xff);
+        // Why the 0xff bytes?  In a zip file with no archive comment,
+        // bytes [-6:-2] of the file are the little-endian offset from
+        // the start of the file to the central directory.  So for the
+        // two high bytes to be 0xff 0xff, the archive would have to
+        // be nearly 4GB in side.  So it's unlikely that a real
+        // commentless archive would have 0xffs here, and lets us tell
+        // an old signed archive from a new one.
+        temp.write(0xff);
+        temp.write(0xff);
         temp.write(total_size & 0xff);
         temp.write((total_size >> 8) & 0xff);
         temp.flush();
+
+        // Signature verification checks that the EOCD header is the
+        // last such sequence in the file (to avoid minzip finding a
+        // fake EOCD appended after the signature in its scan).  The
+        // odds of producing this sequence by chance are very low, but
+        // let's catch it here if it does.
+        byte[] b = temp.toByteArray();
+        for (int i = 0; i < b.length-3; ++i) {
+            if (b[i] == 0x50 && b[i+1] == 0x4b && b[i+2] == 0x05 && b[i+3] == 0x06) {
+                throw new IllegalArgumentException("found spurious EOCD header at " + i);
+            }
+        }
 
         outputStream.write(zipData, 0, zipData.length-2);
         outputStream.write(total_size & 0xff);
