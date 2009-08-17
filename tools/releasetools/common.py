@@ -185,14 +185,20 @@ def GetKeyPasswords(keylist):
   return key_passwords
 
 
-def SignFile(input_name, output_name, key, password, align=None):
+def SignFile(input_name, output_name, key, password, align=None,
+             whole_file=False):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
 
   If align is an integer > 1, zipalign is run to align stored files in
   the output zip on 'align'-byte boundaries.
+
+  If whole_file is true, use the "-w" option to SignApk to embed a
+  signature that covers the whole file in the archive comment of the
+  zip file.
   """
+
   if align == 0 or align == 1:
     align = None
 
@@ -202,13 +208,14 @@ def SignFile(input_name, output_name, key, password, align=None):
   else:
     sign_name = output_name
 
-  p = Run(["java", "-jar",
-           os.path.join(OPTIONS.search_path, "framework", "signapk.jar"),
-           key + ".x509.pem",
-           key + ".pk8",
-           input_name, sign_name],
-          stdin=subprocess.PIPE,
-          stdout=subprocess.PIPE)
+  cmd = ["java", "-Xmx512m", "-jar",
+           os.path.join(OPTIONS.search_path, "framework", "signapk.jar")]
+  if whole_file:
+    cmd.append("-w")
+  cmd.extend([key + ".x509.pem", key + ".pk8",
+              input_name, sign_name])
+
+  p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
   if password is not None:
     password += "\n"
   p.communicate(password)
