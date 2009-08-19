@@ -1184,20 +1184,15 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
     padding:0;
   }
 
-  #headerLeft .guide {
-    display:none;
-  }
-  
-  #headerRight {
+  #header-tabs,
+  #headerRight,
+  #side-nav,
+  #api-info-block {
     display:none;
   }
 
   #body-content {
     position:inherit;
-  }
-
-  #side-nav {
-    display:none;
   }
   
   #doc-content {
