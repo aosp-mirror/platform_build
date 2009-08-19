@@ -362,6 +362,9 @@ subdirs := \
 	external/qemu \
 	external/sqlite/dist \
 	external/zlib \
+	frameworks/base/libs/utils \
+	frameworks/base/tools/aapt \
+	frameworks/base/tools/aidl \
 	system/core/adb \
 	system/core/fastboot \
 	system/core/libcutils \
@@ -387,6 +390,7 @@ subdirs += \
 	development/tools/sdkmanager \
 	development/tools/mkstubs \
 	frameworks/base \
+	frameworks/base/tools/layoutlib \
 	external/googleclient \
 	packages
 else
