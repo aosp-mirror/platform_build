@@ -1265,11 +1265,12 @@ endef
 
 #TODO: use a smaller -Xmx value for most libraries;
 #      only core.jar and framework.jar need a heap this big.
+# Avoid the memory arguments on Windows, dx fails to load for some reason with them.
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
-$(hide) $(DX) -JXms16M \
-    -JXmx1536M \
+$(hide) $(DX) \
+    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx1536M) \
     --dex --output=$@ \
     $(if $(NO_OPTIMIZE_DX), \
         --no-optimize) \
