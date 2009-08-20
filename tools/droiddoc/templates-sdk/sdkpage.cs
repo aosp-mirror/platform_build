@@ -5,7 +5,7 @@
   <head>
     <title>Redirecting...</title>
     <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
-      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?>"<?cs 
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
       else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>">
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
