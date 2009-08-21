@@ -272,8 +272,13 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
     k = m.group(1)
     mapped_keys.append(OPTIONS.key_map.get(k, k) + ".x509.pem")
 
-  print "using:\n   ", "\n   ".join(mapped_keys)
-  print "for OTA package verification"
+  if mapped_keys:
+    print "using:\n   ", "\n   ".join(mapped_keys)
+    print "for OTA package verification"
+  else:
+    mapped_keys.append(
+        OPTIONS.key_map["build/target/product/security/testkey"] + ".x509.pem")
+    print "META/otakeys.txt has no keys; using", mapped_keys[0]
 
   # recovery uses a version of the key that has been slightly
   # predigested (by DumpPublicKey.java) and put in res/keys.
