@@ -4,7 +4,7 @@
 # from generic.mk
 
 PRODUCT_PACKAGES := \
-    GoogleContactsProvider \
+    ContactsProvider \
     GoogleContactsSyncAdapter \
     GoogleSubscribedFeedsProvider \
     com.google.android.gtalkservice \
