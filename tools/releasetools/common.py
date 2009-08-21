@@ -144,7 +144,7 @@ def UnzipTemp(filename):
 
   tmp = tempfile.mkdtemp(prefix="targetfiles-")
   OPTIONS.tempfiles.append(tmp)
-  p = Run(["unzip", "-q", filename, "-d", tmp], stdout=subprocess.PIPE)
+  p = Run(["unzip", "-o", "-q", filename, "-d", tmp], stdout=subprocess.PIPE)
   p.communicate()
   if p.returncode != 0:
     raise ExternalError("failed to unzip input target-files \"%s\"" %
