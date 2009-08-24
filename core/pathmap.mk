@@ -76,7 +76,6 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	$(addsuffix /java, \
 	    core \
 	    graphics \
-	    im \
 	    location \
 	    media \
 	    opengl \
