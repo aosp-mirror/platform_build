@@ -1591,7 +1591,7 @@ $(if $(2), \
   if [ "$(3)" == "yaffs" ]; then \
     reservedblocks=5; \
   else \
-    reselvedblocks=0; \
+    reservedblocks=0; \
   fi; \
   twoblocks=$$((img_blocksize * 2)); \
   onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
