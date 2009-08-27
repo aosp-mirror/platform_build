@@ -1572,6 +1572,7 @@ endef
 
 # $(1): The file(s) to check (often $@)
 # $(2): The maximum total image size, in decimal bytes
+# $(3): the type of filesystem "yaffs" or "raw"
 #
 # If $(2) is empty, evaluates to "true"
 #
@@ -1585,9 +1586,15 @@ $(if $(2), \
   printname=$$(echo -n "$(1)" | tr " " +); \
   echo "$$printname total size is $$total"; \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
+  if [ "$(3)" == "yaffs" ]; then \
+    reservedblocks=5; \
+  else \
+    reservedblocks=0; \
+  fi; \
   twoblocks=$$((img_blocksize * 2)); \
   onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
-  reserve=$$((twoblocks > onepct ? twoblocks : onepct)); \
+  reserve=$$(((twoblocks > onepct ? twoblocks : onepct) + \
+               reservedblocks * img_blocksize)); \
   maxsize=$$(($(2) - reserve)); \
   if [ "$$total" -gt "$$maxsize" ]; then \
     echo "error: $$printname too large ($$total > [$(2) - $$reserve])"; \

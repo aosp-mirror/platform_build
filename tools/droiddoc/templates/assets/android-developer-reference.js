@@ -29,18 +29,8 @@ function buildApiLevelToggle() {
 
 function changeApiLevel() {
 	var selectedLevel = $("#apiLevelControl option:selected").val();
-	var apis = $(".api");
-	apis.each(function(i) {
-		var obj = $(this);
-		var className = obj.attr("class");
-		var apiLevelIndex = className.lastIndexOf("-")+1;
-		var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
-		apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
-		var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
-		if (apiLevel > selectedLevel) obj.addClass("absent").attr("title","Requires API Level "+apiLevel+" or higher");
-		else obj.removeClass("absent").removeAttr("title");
-	});
-
+  toggleVisisbleApis(selectedLevel, "body");
+  
   var date = new Date();
   date.setTime(date.getTime()+(50*365*24*60*60*1000)); // keep this for 50 years
   writeCookie(API_LEVEL_COOKIE, selectedLevel, null, date);
@@ -55,6 +45,20 @@ function changeApiLevel() {
 	} else {
     $("#naMessage").hide();
   }
+}
+
+function toggleVisisbleApis(selectedLevel, context) {
+	var apis = $(".api",context);
+	apis.each(function(i) {
+		var obj = $(this);
+		var className = obj.attr("class");
+		var apiLevelIndex = className.lastIndexOf("-")+1;
+		var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
+		apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
+		var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
+		if (apiLevel > selectedLevel) obj.addClass("absent").attr("title","Requires API Level "+apiLevel+" or higher");
+		else obj.removeClass("absent").removeAttr("title");
+	});
 }
 
 /* NAVTREE */
@@ -150,6 +154,10 @@ function expand_node(me, node)
     }
     node.plus_img.src = me.toroot + "assets/images/triangle-opened-small.png";
     node.expanded = true;
+    
+    // perform api level toggling because new nodes are new to the DOM 
+	  var selectedLevel = $("#apiLevelControl option:selected").val();
+    toggleVisisbleApis(selectedLevel, "#side-nav");
   }
 }
 
@@ -218,6 +226,10 @@ function load_navtree_data(toroot) {
 
 function init_default_navtree(toroot) {
   init_navtree("nav-tree", toroot, NAVTREE_DATA);
+  
+  // perform api level toggling because because the whole tree is new to the DOM 
+	var selectedLevel = $("#apiLevelControl option:selected").val();
+  toggleVisisbleApis(selectedLevel, "#side-nav");
 }
 
 function init_navtree(navtree_id, toroot, root_nodes)
