@@ -281,13 +281,6 @@ def AppendAssertions(script, input_zip):
   device = GetBuildProp("ro.product.device", input_zip)
   script.AssertDevice(device)
 
-  info = input_zip.read("OTA/android-info.txt")
-  m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
-  if m:
-    bootloaders = m.group(1).split("|")
-    if "*" not in bootloaders:
-      script.AssertSomeBootloader(*bootloaders)
-
 
 def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   """Generate a binary patch that creates the recovery image starting
