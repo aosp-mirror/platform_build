@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAin///nU\u003d",
+        "filename": "tools/soslim/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2009-08-28T16:57:08Z",
+      "side": 1,
+      "message": "can you add a small comment that explains that libdl.so is not needed on FreeBSD because the needed functions are in libc instead? This will make this fragment clearer.",
+      "revId": "7faa99165c9f2871231de9843591b322c586b7a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
