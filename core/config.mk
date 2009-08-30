@@ -199,6 +199,7 @@ MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := tune2fs
 E2FSCK := e2fsck
 JARJAR := java -jar $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
+PROGUARD := external/proguard/bin/proguard.sh
 
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
