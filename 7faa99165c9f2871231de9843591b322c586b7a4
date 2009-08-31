@@ -16,6 +16,24 @@
       "revId": "7faa99165c9f2871231de9843591b322c586b7a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAi3////k\u003d",
+        "filename": "tools/soslim/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1001302
+      },
+      "writtenOn": "2009-08-31T16:25:02Z",
+      "side": 1,
+      "message": "There is no libdl in FreeBSD at all.\n\nlibdl is for dynamic linking support. On FreeBSD all related functions are in libc. AFAIK, the same is correct for Linux (libdl is provided only for backward compatibility), however I\u0027m not 100% sure in case of Linux, thus -ldl was removed feom LDLIBS only for FreeBSD.",
+      "parentUuid": "AAAAin///nU\u003d",
+      "revId": "7faa99165c9f2871231de9843591b322c586b7a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
