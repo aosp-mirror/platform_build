@@ -68,7 +68,8 @@ emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # the emma tool
 full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(full_classes_compiled_jar_leaf)
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
-full_classes_jarjar_jar := $(full_classes_jar)
+full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
+full_classes_proguard_jar := $(full_classes_jar)
 built_dex := $(intermediates.COMMON)/classes.dex
 
 LOCAL_INTERMEDIATE_TARGETS += \
@@ -174,19 +175,52 @@ $(full_classes_emma_jar): $(full_classes_compiled_jar)
 $(PRIVATE_EMMA_COVERAGE_FILE): $(full_classes_emma_jar)
 else
 $(full_classes_emma_jar): $(full_classes_compiled_jar) | $(ACP)
-	@echo Copying $<
+	@echo Copying: $<
 	$(copy-file-to-target)
 endif
 
-# Run jarjar if necessary, otherwise just copy the file.  This is the last
-# part of this step, so the output of this command is full_classes_jar.
+# Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_emma_jar) | jarjar
+$(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
 $(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(ACP)
+	@echo Copying: $@
+	$(hide) $(ACP) $< $@
+endif
+
+# Run proguard if necessary, otherwise just copy the file.  This is the last
+# part of this step, so the output of this command is full_classes_jar.
+ifneq ($(strip $(LOCAL_PROGUARD_ENABLED)),)
+proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
+proguard_flags := $(addprefix -libraryjars ,$(full_java_libs)) \
+                  -include $(BUILD_SYSTEM)/proguard.flags \
+                  -forceprocessing \
+                  -printmapping $(proguard_dictionary)
+ifeq ($(strip $(LOCAL_PROGUARD_ENABLED)),full)
+    # full
+else
+ifeq ($(strip $(LOCAL_PROGUARD_ENABLED)),optonly)
+    # optonly
+    proguard_flags += -dontobfuscate
+else
+ifeq ($(strip $(LOCAL_PROGUARD_ENABLED)),custom)
+    # custom
+else
+    $(warning while processing: $(LOCAL_MODULE))
+    $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
+endif
+endif
+endif
+
+$(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(proguard_flags) $(LOCAL_PROGUARD_FLAGS)
+$(full_classes_proguard_jar): $(full_classes_emma_jar) | $(PROGUARD)
+	@echo Proguard: $@
+	$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS)
+else
+$(full_classes_proguard_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) $< $@
 endif
