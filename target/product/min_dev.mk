@@ -12,7 +12,6 @@ PRODUCT_PACKAGES := \
     MediaProvider \
     SettingsProvider \
     PackageInstaller \
-    WebSearchProvider \
     Bugreport \
     Launcher \
     Settings \
