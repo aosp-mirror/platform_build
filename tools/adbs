@@ -217,6 +217,7 @@ if __name__ == '__main__':
       SymbolTranslation(groups)
     else:
       print line
+      sys.stdout.flush()
 
   # adb itself aborts
   stream.close()
