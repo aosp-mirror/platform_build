@@ -25,5 +25,4 @@ PRODUCT_PACKAGES := \
     VpnServices \
     UserDictionaryProvider \
     PackageInstaller \
-    WebSearchProvider \
     Bugreport
