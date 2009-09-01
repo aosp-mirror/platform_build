@@ -198,7 +198,7 @@ main(int argc, char** argv)
         return 1;
     }
 
-    int out = open(outfilename, O_RDWR|O_CREAT|O_TRUNC, 0660);
+    int out = open(outfilename, O_RDWR|O_CREAT|O_TRUNC, 0664);
     if (out == -1) {
         fprintf(stderr, "kcm: error opening file for write: %s\n", outfilename);
         return 1;
