@@ -28,7 +28,8 @@ PRODUCT_PACKAGES := \
 	SoftKeyboard
 
 PRODUCT_COPY_FILES := \
-	development/data/etc/vold.conf:system/etc/vold.conf
+	development/data/etc/vold.conf:system/etc/vold.conf \
+	frameworks/base/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
