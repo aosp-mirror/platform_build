@@ -133,13 +133,17 @@ dd pre, dd table, dd img {
 }
 
 li ul,
-li ol {
+li ol,
+dd ul,
+dd ol {
   margin:0;
   padding: 0 0 0 2em;
 }
 
-dl li {
-  padding:.5em 0 0 0;
+li li,
+dd li {
+  margin:0;
+  padding:.5em 0 0;
 }
 
 dl dl,
