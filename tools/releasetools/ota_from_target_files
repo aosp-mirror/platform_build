@@ -481,6 +481,15 @@ def GetRecoveryAPIVersion(zip):
     except KeyError:
       return 0
 
+
+DIFF_METHOD_BY_EXT = {
+    ".gz" : "imgdiff",
+    ".zip" : ["imgdiff", "-z"],
+    ".jar" : ["imgdiff", "-z"],
+    ".apk" : ["imgdiff", "-z"],
+    }
+
+
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = GetRecoveryAPIVersion(source_zip)
 
@@ -526,9 +535,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       verbatim_targets.append((fn, tf.size))
     elif tf.sha1 != sf.sha1:
       # File is different; consider sending as a patch
-      diff_method = "bsdiff"
-      if tf.name.endswith(".gz"):
-        diff_method = "imgdiff"
+      ext = os.path.splitext(tf.name)[1]
+      diff_method = DIFF_METHOD_BY_EXT.get(ext, "bsdiff")
       d = Difference(tf, sf, diff_method)
       if d is not None:
         print fn, tf.size, len(d), (float(len(d)) / tf.size)
