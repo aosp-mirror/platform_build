@@ -34,6 +34,24 @@
       "revId": "7faa99165c9f2871231de9843591b322c586b7a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAj3///u8\u003d",
+        "filename": "tools/soslim/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2009-09-02T16:49:30Z",
+      "side": 1,
+      "message": "thanks, but can you add the comment to the Android.mk itself? that would be better.",
+      "parentUuid": "AAAAi3////k\u003d",
+      "revId": "7faa99165c9f2871231de9843591b322c586b7a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
