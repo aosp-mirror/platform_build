@@ -784,6 +784,14 @@ ImageChunk* FindChunkByName(const char* name,
   return NULL;
 }
 
+void DumpChunks(ImageChunk* chunks, int num_chunks) {
+    int i;
+    for (i = 0; i < num_chunks; ++i) {
+        printf("chunk %d: type %d start %d len %d\n",
+               i, chunks[i].type, chunks[i].start, chunks[i].len);
+    }
+}
+
 int main(int argc, char** argv) {
   if (argc != 4 && argc != 5) {
     usage:
@@ -829,14 +837,29 @@ int main(int argc, char** argv) {
     // Verify that the source and target images have the same chunk
     // structure (ie, the same sequence of deflate and normal chunks).
 
+    if (!zip_mode) {
+        // Merge the gzip header and footer in with any adjacent
+        // normal chunks.
+        MergeAdjacentNormalChunks(tgt_chunks, &num_tgt_chunks);
+        MergeAdjacentNormalChunks(src_chunks, &num_src_chunks);
+    }
+
     if (num_src_chunks != num_tgt_chunks) {
       fprintf(stderr, "source and target don't have same number of chunks!\n");
+      printf("source chunks:\n");
+      DumpChunks(src_chunks, num_src_chunks);
+      printf("target chunks:\n");
+      DumpChunks(tgt_chunks, num_tgt_chunks);
       return 1;
     }
     for (i = 0; i < num_src_chunks; ++i) {
       if (src_chunks[i].type != tgt_chunks[i].type) {
         fprintf(stderr, "source and target don't have same chunk "
                 "structure! (chunk %d)\n", i);
+        printf("source chunks:\n");
+        DumpChunks(src_chunks, num_src_chunks);
+        printf("target chunks:\n");
+        DumpChunks(tgt_chunks, num_tgt_chunks);
         return 1;
       }
     }
