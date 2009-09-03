@@ -339,6 +339,7 @@ ifeq ($(SDK_ONLY),true)
 subdirs := \
 	prebuilt \
 	build/libs/host \
+	build/tools/zipalign \
 	dalvik/dexdump \
 	dalvik/libdex \
 	dalvik/tools/dmtracedump \
@@ -366,7 +367,6 @@ ifneq (,$(shell which javac 2>/dev/null))
 $(warning sdk-only: javac available.)
 subdirs += \
 	build/tools/signapk \
-	build/tools/zipalign \
 	dalvik/dx \
 	dalvik/libcore \
 	development/apps \

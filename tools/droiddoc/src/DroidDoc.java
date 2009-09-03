@@ -56,6 +56,7 @@ public class DroidDoc
     public static ArrayList<String[]> mHDFData = new ArrayList<String[]>();
     public static Map<Character,String> escapeChars = new HashMap<Character,String>();
     public static String title = "";
+    public static SinceTagger sinceTagger = new SinceTagger();
 
     public static boolean checkLevel(int level)
     {
@@ -97,7 +98,6 @@ public class DroidDoc
         String apiFile = null;
         String debugStubsFile = "";
         HashSet<String> stubPackages = null;
-        SinceTagger sinceTagger = new SinceTagger();
 
         root = r;
 
@@ -518,6 +518,7 @@ public class DroidDoc
             i++;
         }
 
+        sinceTagger.writeVersionNames(data);
         return data;
     }
 

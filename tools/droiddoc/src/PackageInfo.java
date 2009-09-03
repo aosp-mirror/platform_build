@@ -123,6 +123,7 @@ public class PackageInfo extends DocInfo implements ContainerInfo
         ClassInfo.makeLinkListHDF(data, base + ".enums", enums());
         ClassInfo.makeLinkListHDF(data, base + ".exceptions", exceptions());
         ClassInfo.makeLinkListHDF(data, base + ".errors", errors());
+        data.setValue(base + ".since", getSince());
     }
 
     public ClassInfo[] interfaces()

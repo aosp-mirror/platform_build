@@ -26,6 +26,7 @@ endif
 CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 
 junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
+HOSTTESTLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
 
 CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.archive \
@@ -49,12 +50,25 @@ CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.xnet \
 	android.core.tests.runner
 
+CTS_SECURITY_APPS_LIST := \
+	CtsAppAccessData \
+	CtsAppWithData \
+	CtsInstrumentationAppDiffCert \
+	CtsPermissionDeclareApp \
+	CtsSharedUidInstall \
+	CtsSharedUidInstallDiffCert \
+	CtsSimpleAppInstall \
+	CtsSimpleAppInstallDiffCert \
+	CtsTargetInstrumentationApp \
+	CtsUsePermissionDiffCert
+
 CTS_CASE_LIST := \
 	DeviceInfoCollector \
 	CtsTestStubs \
 	CtsAppTestCases \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
+        CtsGestureTestCases \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
 	CtsLocationTestCases \
@@ -78,13 +92,14 @@ CTS_CASE_LIST := \
 	CtsPerformance5TestCases \
 	ApiDemos \
 	ApiDemosReferenceTest \
-	$(CTS_CORE_CASE_LIST)
+	$(CTS_CORE_CASE_LIST) \
+	$(CTS_SECURITY_APPS_LIST)
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
 $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
 
-$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(ACP)
 # Make necessary directory for CTS
 	@rm -rf $(PRIVATE_CTS_DIR)
 	@mkdir -p $(TMP_DIR)
@@ -97,6 +112,8 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(ACP)
 	$(hide) $(ACP) -fp $(CTS_EXECUTABLE_PATH) $(PRIVATE_DIR)/tools
 # Copy junit jar
 	$(hide) $(ACP) -fp $(PRIVATE_JUNIT_HOST_JAR) $(PRIVATE_DIR)/tools
+# Copy hosttestlib jar
+	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
@@ -106,13 +123,17 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(ACP)
 	$(hide) touch $@
 
 # Generate the test descriptions for the core-tests
-
+# Parameters:
+# $1 : The output file where the description should be written (without the '.xml' extension)
+# $2 : The AndroidManifest.xml corresponding to the test package
+# $3 : The name of the TestSuite generator class to use
+# $4 : The Android.mk corresponding to the test package (required for host-side tests only)
 define generate-core-test-description
 @echo "Generate core-test description ("$(notdir $(1))")"
 $(hide) java $(PRIVATE_JAVAOPTS) \
 	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(1) \
-	$(2) $(3)
+	$(2) $(3) $(4)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
@@ -214,10 +235,17 @@ $(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INT
 		dot.junit.AllJunitHostTests, cts/tools/vm-tests/Android.mk)
 	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
 
+# Move app security host-side tests to the repository
+APP_SECURITY_LIB := $(cts_dir)/$(cts_name)/repository/testcases/CtsAppSecurityTests.jar
+
+$(APP_SECURITY_LIB): $(HOST_OUT_JAVA_LIBRARIES)/CtsAppSecurityTests.jar $(cts_dir)/all_cts_files_stamp $(ACP)
+	$(ACP) -fv $(HOST_OUT_JAVA_LIBRARIES)/CtsAppSecurityTests.jar $(APP_SECURITY_LIB)
+
 # Generate the default test plan for User.
-$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_dir)/all_cts_core_files_stamp $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh $(CORE_VM_TEST_DESC)
-	$(hide) bash $(cts_tools_src_dir)/utils/genDefaultTestPlan.sh cts/tests/tests/ \
-     $(PRIVATE_DIR) $(TMP_DIR) $(TOP) $(TARGET_COMMON_OUT_ROOT) $(OUT_DIR)
+# Usage: buildCts.py <testRoot> <ctsOutputDir> <tempDir> <androidRootDir> <docletPath>
+$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_dir)/all_cts_core_files_stamp $(cts_tools_src_dir)/utils/buildCts.py $(CORE_VM_TEST_DESC) $(APP_SECURITY_LIB) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar
+	$(hide) $(cts_tools_src_dir)/utils/buildCts.py cts/tests/tests/ $(PRIVATE_DIR) $(TMP_DIR) \
+		$(TOP) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar
 
 # Package CTS and clean up.
 #

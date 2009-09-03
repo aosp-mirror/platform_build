@@ -180,6 +180,7 @@ class AmendGenerator(object):
 
   def MakeSymlinks(self, symlink_list):
     """Create symlinks, given a list of (dest, link) pairs."""
+    self.DeleteFiles([i[1] for i in symlink_list])
     self.script.extend(["symlink %s %s" % (i[0], self._FileRoot(i[1]))
                         for i in sorted(symlink_list)])
 

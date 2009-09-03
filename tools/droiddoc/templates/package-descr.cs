@@ -2,26 +2,31 @@
 <?cs include:"macros.cs" ?>
 <html>
 <?cs include:"head_tag.cs" ?>
+<body class="<?cs var:package.since ?>">
 <?cs include:"header.cs" ?>
 
 <div class="g-unit" id="doc-content">
 
+<div id="api-info-block">
+<div class="api-level">
+  <?cs call:since_tags(package) ?>
+</div>
+</div>
+
 <div id="jd-header">
-  <strong>
-    <div class="jd-page_title-prefix">package</div>
-  </strong>
+  package
   <h1><?cs var:package.name ?></b></h1>
   <div class="jd-nav">
-      <a class="jd-navlink" href="package-summary.html">Classes</a> |
-      Description
+      <a class="jd-navlink" href="package-summary.html">Classes</a> | Description
   </div>
 </div><!-- end header -->
 
-<div id="jd-content">
+<div id="naMessage"></div>
+
+<div id="jd-content" class="api apilevel-<?cs var:package.since ?>">
 <div class="jd-descr">
 <p><?cs call:tag_list(package.descr) ?></p>
 </div>
-<?cs call:since_tags(package) ?>
 
 <?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->

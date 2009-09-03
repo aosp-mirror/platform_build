@@ -20,7 +20,7 @@
 <?cs set:count = #1 ?>
 <table class="jd-sumtable">
 <?cs each:pkg = docs.packages ?>
-    <tr <?cs if:count % #2 ?>class="alt-color"<?cs /if ?> >
+    <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:pkg.since ?>" >
         <td class="jd-linkcol"><?cs call:package_link(pkg) ?></td>
         <td class="jd-descrcol" width="100%"><?cs call:tag_list(pkg.shortDescr) ?>&nbsp;</td>
     </tr>

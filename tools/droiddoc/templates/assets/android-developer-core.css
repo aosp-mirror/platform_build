@@ -49,6 +49,8 @@ a:visited code {
 
 input, select,
 textarea, option {
+  font-family:inherit;
+  font-size:inherit;
   padding:0;
   margin:0;
 }
@@ -131,13 +133,17 @@ dd pre, dd table, dd img {
 }
 
 li ul,
-li ol {
-  margin:.5em 0 0 0;
+li ol,
+dd ul,
+dd ol {
+  margin:0;
   padding: 0 0 0 2em;
 }
 
-dl li {
-  padding:.5em 0 0 0;
+li li,
+dd li {
+  margin:0;
+  padding:.5em 0 0;
 }
 
 dl dl,
@@ -177,6 +183,8 @@ hr.blue {
 
 /* LAYOUT */
 #body-content {
+  /* "Preliminary" watermark for preview releases and interim builds.
+  background:transparent url(images/preliminary.png) repeat scroll 0 0;  */
   margin:0;
   position:relative;
   width:100%;
@@ -777,7 +785,7 @@ td.gsc-search-button {
 }
 
 #carouselMain {
-	background: url('/assets/images/home/bg_home_carousel_board.png') 0 0 no-repeat;
+	background: url(images/home/bg_home_carousel_board.png) 0 0 no-repeat;
 	height:auto;
   padding: 25px 21px 0;
   overflow:hidden;
@@ -800,7 +808,7 @@ td.gsc-search-button {
 }
 
 #carouselWheel {
-	background: url('/assets/images/home/bg_home_carousel_wheel.png') 0 0 no-repeat;
+	background: url(images/home/bg_home_carousel_wheel.png) 0 0 no-repeat;
 	padding-top:40px;
 	height:150px;
 }
@@ -1154,12 +1162,12 @@ ul.videoPreviews p.full {
 
 ul.videoPreviews span.more {
   padding:0 0 0 12px;
-  background:url('/assets/images/arrow_bluelink_down.png') 0 2px no-repeat;
+  background:url(images/arrow_bluelink_down.png) 0 2px no-repeat;
 }
 
 ul.videoPreviews span.less {
   padding:0 0 0 12px;
-  background:url('/assets/images/arrow_bluelink_up.png') 0 2px no-repeat;
+  background:url(images/arrow_bluelink_up.png) 0 2px no-repeat;
   display:none;
 }
 

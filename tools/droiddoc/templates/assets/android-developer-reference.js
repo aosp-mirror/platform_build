@@ -1,5 +1,69 @@
 
-function new_node(me, mom, text, link, children_data)
+/* API LEVEL TOGGLE */
+addLoadEvent(changeApiLevel);
+var API_LEVEL_COOKIE = "api_level";
+var minLevel = 1;
+
+function buildApiLevelToggle() {
+	var maxLevel = SINCE_DATA.length;
+	var userApiLevel = readCookie(API_LEVEL_COOKIE);
+	
+	if (userApiLevel != 0) {
+		selectedLevel = userApiLevel;
+	} else {
+	  selectedLevel = maxLevel;
+	}
+	
+  minLevel = $("body").attr("class");
+	var select = $("#apiLevelControl").html("").change(changeApiLevel);
+	for (var i = maxLevel-1; i >= 0; i--) {
+		var option = $("<option />").attr("value",""+SINCE_DATA[i]).append(""+SINCE_DATA[i]);
+//		if (SINCE_DATA[i] < minLevel) option.addClass("absent"); // always false for strings (codenames)
+		select.append(option);
+	}
+	
+  // get the DOM element and use setAttribute cuz IE6 fails when using jquery .attr('selected',true)
+	var selectedLevelItem = $("#apiLevelControl option[value='"+selectedLevel+"']").get(0); 
+  selectedLevelItem.setAttribute('selected',true); 
+}
+
+function changeApiLevel() {
+	var selectedLevel = $("#apiLevelControl option:selected").val();
+  toggleVisisbleApis(selectedLevel, "body");
+  
+  var date = new Date();
+  date.setTime(date.getTime()+(50*365*24*60*60*1000)); // keep this for 50 years
+  writeCookie(API_LEVEL_COOKIE, selectedLevel, null, date);
+  
+	if (selectedLevel < minLevel) {
+	  var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
+	  $("#naMessage").show().html("<div><p><strong>This " + thing + " is not available with API Level " + selectedLevel + ".</strong></p>"
+                              + "<p>To use this " + thing + ", your application must specify API Level " + minLevel + " or higher in its manifest "
+                              + "and be compiled against a version of the Android library that supports an equal or higher API Level. To reveal this "
+                              + "document, change the value of the API Level filter above.</p>"
+                              + "<p><a href='" +toRoot+ "guide/appendix/api-levels.html'>What is the API Level?</a></p></div>");
+	} else {
+    $("#naMessage").hide();
+  }
+}
+
+function toggleVisisbleApis(selectedLevel, context) {
+	var apis = $(".api",context);
+	apis.each(function(i) {
+		var obj = $(this);
+		var className = obj.attr("class");
+		var apiLevelIndex = className.lastIndexOf("-")+1;
+		var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
+		apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
+		var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
+		if (apiLevel > selectedLevel) obj.addClass("absent").attr("title","Requires API Level "+apiLevel+" or higher");
+		else obj.removeClass("absent").removeAttr("title");
+	});
+}
+
+/* NAVTREE */
+
+function new_node(me, mom, text, link, children_data, api_level)
 {
   var node = new Object();
   node.children = Array();
@@ -10,9 +74,13 @@ function new_node(me, mom, text, link, children_data)
   mom.get_children_ul().appendChild(node.li);
 
   node.label_div = document.createElement("div");
+  node.label_div.className = "label";
+  if (api_level != null) {
+    $(node.label_div).addClass("api");
+    $(node.label_div).addClass("api-level-"+api_level);
+  }
   node.li.appendChild(node.label_div);
   node.label_div.style.paddingLeft = 10*node.depth + "px";
-  node.label_div.className = "label";
 
   if (children_data == null) {
     // 12 is the width of the triangle and padding extra space
@@ -81,10 +149,15 @@ function expand_node(me, node)
       $(node.get_children_ul()).slideDown("fast");
     } else {
       get_node(me, node);
+      if ($(node.label_div).hasClass("absent")) $(node.get_children_ul()).addClass("absent");
       $(node.get_children_ul()).slideDown("fast");
     }
     node.plus_img.src = me.toroot + "assets/images/triangle-opened-small.png";
     node.expanded = true;
+    
+    // perform api level toggling because new nodes are new to the DOM 
+	  var selectedLevel = $("#apiLevelControl option:selected").val();
+    toggleVisisbleApis(selectedLevel, "#side-nav");
   }
 }
 
@@ -94,7 +167,7 @@ function get_node(me, mom)
   for (var i in mom.children_data) {
     var node_data = mom.children_data[i];
     mom.children[i] = new_node(me, mom, node_data[0], node_data[1],
-        node_data[2]);
+        node_data[2], node_data[3]);
   }
 }
 
@@ -104,8 +177,7 @@ function this_page_relative(toroot)
   var file = "";
   if (toroot.substr(0, 1) == "/") {
     if (full.substr(0, toroot.length) == toroot) {
-      var basePath = getBaseUri(full);
-      return basePath.substring(toroot.length);
+      return full.substr(toroot.length);
     } else {
       // the file isn't under toroot.  Fail.
       return null;
@@ -150,15 +222,18 @@ function load_navtree_data(toroot) {
   navtreeData.setAttribute("type","text/javascript");
   navtreeData.setAttribute("src", toroot+"navtree_data.js");
   $("head").append($(navtreeData));
-} 
+}
 
 function init_default_navtree(toroot) {
-  load_navtree_data(toroot);
   init_navtree("nav-tree", toroot, NAVTREE_DATA);
+  
+  // perform api level toggling because because the whole tree is new to the DOM 
+	var selectedLevel = $("#apiLevelControl option:selected").val();
+  toggleVisisbleApis(selectedLevel, "#side-nav");
 }
 
 function init_navtree(navtree_id, toroot, root_nodes)
-{  
+{
   var me = new Object();
   me.toroot = toroot;
   me.node = new Object();
@@ -189,4 +264,3 @@ function init_navtree(navtree_id, toroot, root_nodes)
       });
   }
 }
-
