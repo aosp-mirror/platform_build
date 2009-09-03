@@ -76,6 +76,7 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sholes/system/build.prop
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/bugreport)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
