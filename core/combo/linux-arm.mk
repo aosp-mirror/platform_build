@@ -166,6 +166,10 @@ TARGET_STRIP_MODULE:=true
 $(combo_target)DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 
 $(combo_target)CUSTOM_LD_COMMAND := true
+
+# Enable the Dalvik JIT compiler
+WITH_JIT := true
+
 define transform-o-to-shared-lib-inner
 $(TARGET_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/armelf.xsc \
