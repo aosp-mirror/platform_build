@@ -36,7 +36,7 @@ import java.util.regex.Matcher;
  * Both tags accept either a filename and an id or just a filename.  If no id
  * is provided, the entire file is copied.  If an id is provided, the lines
  * in the given file between the first two lines containing BEGIN_INCLUDE(id)
- * and END_INCLUDE(id), for the given id, are copied.  The id may be only 
+ * and END_INCLUDE(id), for the given id, are copied.  The id may be only
  * letters, numbers and underscore (_).
  *
  * Four examples:
@@ -274,6 +274,7 @@ public class SampleTagInfo extends TagInfo
         return result.substring(0);
     }
 
+    @Override
     public void makeHDF(HDF data, String base)
     {
         data.setValue(base + ".name", name());

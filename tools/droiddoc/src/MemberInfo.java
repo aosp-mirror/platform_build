@@ -115,6 +115,7 @@ public abstract class MemberInfo extends DocInfo implements Comparable, Scoped
         return mIsSynthetic;
     }
 
+    @Override
     public ContainerInfo parent()
     {
         return mContainingClass;
@@ -130,7 +131,7 @@ public abstract class MemberInfo extends DocInfo implements Comparable, Scoped
     {
         return mKind;
     }
-    
+
     public AnnotationInstanceInfo[] annotations()
     {
         return mAnnotations;

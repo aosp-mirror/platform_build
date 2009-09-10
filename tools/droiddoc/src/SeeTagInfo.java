@@ -45,6 +45,7 @@ public class SeeTagInfo extends TagInfo
         return linkReference().label;
     }
 
+    @Override
     public void makeHDF(HDF data, String base)
     {
         LinkReference linkRef = linkReference();
