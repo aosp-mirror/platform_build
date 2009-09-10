@@ -979,10 +979,11 @@ public class DroidDoc
     }
 
     /**
-     * Returns true if the given element has an @hide annotation.
+     * Returns true if the given element has an @hide or @pending annotation.
      */
     private static boolean hasHideAnnotation(Doc doc) {
-        return doc.getRawCommentText().indexOf("@hide") != -1;
+        String comment = doc.getRawCommentText();
+        return comment.indexOf("@hide") != -1 || comment.indexOf("@pending") != -1;
     }
 
     /**
