@@ -26,7 +26,7 @@ public class FieldInfo extends MemberInfo
             return a.name().compareTo(b.name());
         }
     };
-    
+
     public FieldInfo(String name, ClassInfo containingClass, ClassInfo realContainingClass,
                         boolean isPublic, boolean isProtected,
                         boolean isPackagePrivate, boolean isPrivate,
@@ -92,7 +92,7 @@ public class FieldInfo extends MemberInfo
     {
         return constantLiteralValue(mConstantValue);
     }
-    
+
     public boolean isDeprecated() {
         boolean deprecated = false;
         if (!mDeprecatedKnown) {
@@ -124,7 +124,7 @@ public class FieldInfo extends MemberInfo
             if (val instanceof Boolean
                     || val instanceof Byte
                     || val instanceof Short
-                    || val instanceof Integer) 
+                    || val instanceof Integer)
             {
                 str = val.toString();
             }
@@ -291,6 +291,7 @@ public class FieldInfo extends MemberInfo
         }
     }
 
+    @Override
     public boolean isExecutable()
     {
         return false;

@@ -41,6 +41,7 @@ public class Errors
             return this.msg.compareTo(that.msg);
         }
 
+        @Override
         public String toString() {
             String whereText = this.pos == null ? "unknown: " : this.pos.toString() + ':';
             return whereText + this.msg;

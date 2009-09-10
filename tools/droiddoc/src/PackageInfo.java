@@ -57,11 +57,13 @@ public class PackageInfo extends DocInfo implements ContainerInfo
         return s;
     }
 
+    @Override
     public ContainerInfo parent()
     {
         return null;
     }
 
+    @Override
     public boolean isHidden()
     {
         return comment().isHidden();

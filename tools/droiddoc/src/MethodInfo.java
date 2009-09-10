@@ -25,9 +25,9 @@ public class MethodInfo extends MemberInfo
             return a.name().compareTo(b.name());
         }
     };
-    
+
     private class InlineTags implements InheritedTags
-    { 
+    {
         public TagInfo[] tags()
         {
             return comment().tags();
@@ -42,7 +42,7 @@ public class MethodInfo extends MemberInfo
             }
         }
     }
-    
+
     private static void addInterfaces(ClassInfo[] ifaces, ArrayList<ClassInfo> queue)
     {
         for (ClassInfo i: ifaces) {
@@ -79,7 +79,7 @@ public class MethodInfo extends MemberInfo
         }
         return null;
     }
-    
+
     private static void addRealInterfaces(ClassInfo[] ifaces, ArrayList<ClassInfo> queue)
     {
         for (ClassInfo i: ifaces) {
@@ -92,7 +92,7 @@ public class MethodInfo extends MemberInfo
             addInterfaces(i.realInterfaces(), queue);
         }
     }
-    
+
     public MethodInfo findRealOverriddenMethod(String name, String signature, HashSet notStrippable) {
         if (mReturnType == null) {
         // ctor
@@ -103,7 +103,7 @@ public class MethodInfo extends MemberInfo
         }
 
         ArrayList<ClassInfo> queue = new ArrayList<ClassInfo>();
-        if (containingClass().realSuperclass() != null && 
+        if (containingClass().realSuperclass() != null &&
             containingClass().realSuperclass().isAbstract()) {
             queue.add(containingClass());
         }
@@ -121,7 +121,7 @@ public class MethodInfo extends MemberInfo
         }
         return null;
     }
-    
+
     public MethodInfo findSuperclassImplementation(HashSet notStrippable) {
         if (mReturnType == null) {
             // ctor
@@ -138,7 +138,7 @@ public class MethodInfo extends MemberInfo
         }
 
         ArrayList<ClassInfo> queue = new ArrayList<ClassInfo>();
-        if (containingClass().realSuperclass() != null && 
+        if (containingClass().realSuperclass() != null &&
                 containingClass().realSuperclass().isAbstract()) {
             queue.add(containingClass());
         }
@@ -154,7 +154,7 @@ public class MethodInfo extends MemberInfo
         }
         return null;
     }
-    
+
     public ClassInfo findRealOverriddenClass(String name, String signature) {
         if (mReturnType == null) {
         // ctor
@@ -165,7 +165,7 @@ public class MethodInfo extends MemberInfo
         }
 
         ArrayList<ClassInfo> queue = new ArrayList<ClassInfo>();
-        if (containingClass().realSuperclass() != null && 
+        if (containingClass().realSuperclass() != null &&
             containingClass().realSuperclass().isAbstract()) {
             queue.add(containingClass());
         }
@@ -199,7 +199,7 @@ public class MethodInfo extends MemberInfo
             }
         }
     }
-    
+
     private class ReturnTags implements InheritedTags {
         public TagInfo[] tags() {
             return comment().returnTags();
@@ -213,7 +213,7 @@ public class MethodInfo extends MemberInfo
             }
         }
     }
-    
+
     public boolean isDeprecated() {
         boolean deprecated = false;
         if (!mDeprecatedKnown) {
@@ -237,7 +237,7 @@ public class MethodInfo extends MemberInfo
         }
         return mIsDeprecated;
     }
-    
+
     public TypeInfo[] getTypeParameters(){
         return mTypeParameters;
     }
@@ -274,7 +274,7 @@ public class MethodInfo extends MemberInfo
 
         // The underlying MethodDoc for an interface's declared methods winds up being marked
         // non-abstract.  Correct that here by looking at the immediate-parent class, and marking
-        // this method abstract if it is an unimplemented interface method. 
+        // this method abstract if it is an unimplemented interface method.
         if (containingClass.isInterface()) {
             isAbstract = true;
         }
@@ -448,7 +448,7 @@ public class MethodInfo extends MemberInfo
                             + tag.parameterName() + "'");
                 }
             }
-             
+
             // get our parent's tags to fill in the blanks
             MethodInfo overridden = this.findOverriddenMethod(name(), signature());
             if (overridden != null) {
@@ -508,7 +508,7 @@ public class MethodInfo extends MemberInfo
     {
         return mParameters;
     }
-    
+
 
     public boolean matchesParams(String[] params, String[] dimensions)
     {
@@ -589,6 +589,7 @@ public class MethodInfo extends MemberInfo
         return result;
     }
 
+    @Override
     public boolean isExecutable()
     {
         return true;
@@ -617,21 +618,23 @@ public class MethodInfo extends MemberInfo
     {
         return mDefaultAnnotationElementValue;
     }
-    
+
     public void setVarargs(boolean set){
         mIsVarargs = set;
     }
     public boolean isVarArgs(){
       return mIsVarargs;
     }
+
+    @Override
     public String toString(){
       return this.name();
     }
-    
+
     public void setReason(String reason) {
         mReasonOpened = reason;
     }
-    
+
     public String getReason() {
         return mReasonOpened;
     }
