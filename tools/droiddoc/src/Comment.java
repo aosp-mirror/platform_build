@@ -157,7 +157,7 @@ public class Comment
         else if (name.equals("@literal")) {
             mInlineTagsList.add(new LiteralTagInfo(name, name, text, pos));
         }
-        else if (name.equals("@hide") || name.equals("@doconly")) {
+        else if (name.equals("@hide") || name.equals("@pending") || name.equals("@doconly")) {
             // nothing
         }
         else if (name.equals("@attr")) {
@@ -307,7 +307,7 @@ public class Comment
                 mHidden = 0;
                 return false;
             }
-            boolean b = mText.indexOf("@hide") >= 0;
+            boolean b = mText.indexOf("@hide") >= 0 || mText.indexOf("@pending") >= 0;
             mHidden = b ? 1 : 0;
             return b;
         }
