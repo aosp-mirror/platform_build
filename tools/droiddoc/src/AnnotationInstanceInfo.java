@@ -35,6 +35,7 @@ class AnnotationInstanceInfo
         return mElementValues;
     }
 
+    @Override
     public String toString()
     {
         StringBuilder str = new StringBuilder();
