@@ -173,7 +173,7 @@ ifeq ($(TARGET_SIMULATOR),true)
   # under product/) are actually host-dependent.
   # But, the debug type is controlled by TARGET_BUILD_TYPE and not
   # HOST_BUILD_TYPE.
-  TARGET_PRODUCT_OUT_ROOT := $(HOST_OUT_$(TARGET_BUILD_TYPE))/product
+  TARGET_PRODUCT_OUT_ROOT := $(HOST_OUT_$(TARGET_BUILD_TYPE))/pr
 else
   TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
 endif
