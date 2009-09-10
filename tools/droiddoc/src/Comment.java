@@ -206,7 +206,7 @@ public class Comment
         for (int i=0; i<N; i++) {
             if (mInlineTagsList.get(i).name().equals("@more")) {
                 more = i;
-            } 
+            }
         }
           if (more >= 0) {
             for (int i=0; i<more; i++) {
@@ -225,7 +225,7 @@ public class Comment
                     }
                 }
                 mBriefTagsList.add(t);
-                
+
             }
         }
     }
@@ -312,7 +312,7 @@ public class Comment
             return b;
         }
     }
-    
+
     public boolean isDocOnly() {
         if (mDocOnly >= 0) {
             return mDocOnly != 0;
@@ -391,5 +391,5 @@ public class Comment
     ArrayList<TagInfo> mUndeprecateTagsList = new ArrayList<TagInfo>();
     ArrayList<AttrTagInfo> mAttrTagsList = new ArrayList<AttrTagInfo>();
 
-    
+
 }
