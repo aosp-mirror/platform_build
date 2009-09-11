@@ -188,7 +188,7 @@ Summary:
 
 <?cs # summary macros ?>
 
-<?cs def:write_method_summary(methods) ?>
+<?cs def:write_method_summary(methods, included) ?>
 <?cs set:count = #1 ?>
 <?cs each:method = methods ?>
 	 <?cs # The apilevel-N class MUST BE LAST in the sequence of class names ?>
@@ -202,8 +202,7 @@ Summary:
             <?cs call:type_link(method.returnType) ?></nobr>
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
-        <span class="sympad"><a href="<?cs var:toroot ?><?cs var:method.href ?>">
-        <?cs var:method.name ?></a></span>(<?cs call:parameter_list(method.params) ?>)</nobr>
+        <span class="sympad"><?cs call:cond_link(method.name, toroot, method.href, included) ?></span>(<?cs call:parameter_list(method.params) ?>)</nobr>
         <?cs if:subcount(method.shortDescr) || subcount(method.deprecated) ?>
         <div class="jd-descrdiv"><?cs call:short_descr(method) ?></div>
   <?cs /if ?>
@@ -212,7 +211,7 @@ Summary:
 <?cs /each ?>
 <?cs /def ?>
 
-<?cs def:write_field_summary(fields) ?>
+<?cs def:write_field_summary(fields, included) ?>
 <?cs set:count = #1 ?>
     <?cs each:field=fields ?>
       <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:field.since ?>" >
@@ -221,26 +220,26 @@ Summary:
           <?cs var:field.static ?>
           <?cs var:field.final ?>
           <?cs call:type_link(field.type) ?></nobr></td>
-          <td class="jd-linkcol"><a href="<?cs var:toroot ?><?cs var:field.href ?>"><?cs var:field.name ?></a></td>
+          <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, included) ?></td>
           <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?></td>
       </tr>
       <?cs set:count = count + #1 ?>
     <?cs /each ?>
 <?cs /def ?>
 
-<?cs def:write_constant_summary(fields) ?>
+<?cs def:write_constant_summary(fields, included) ?>
 <?cs set:count = #1 ?>
     <?cs each:field=fields ?>
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:field.since ?>" >
         <td class="jd-typecol"><?cs call:type_link(field.type) ?></td>
-        <td class="jd-linkcol"><a href="<?cs var:toroot ?><?cs var:field.href ?>"><?cs var:field.name ?></a></td>
+        <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, included) ?></td>
         <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?></td>
     </tr>
     <?cs set:count = count + #1 ?>
     <?cs /each ?>
 <?cs /def ?>
 
-<?cs def:write_attr_summary(attrs) ?>
+<?cs def:write_attr_summary(attrs, included) ?>
 <?cs set:count = #1 ?>
     <tr>
         <td><nobr><em>Attribute Name</em></nobr></td>
@@ -249,9 +248,9 @@ Summary:
     </tr>
     <?cs each:attr=attrs ?>
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:attr.since ?>" >
-        <td class="jd-linkcol"><a href="<?cs var:toroot ?><?cs var:attr.href ?>"><?cs var:attr.name ?></a></td>
+        <td class="jd-linkcol"><?cs if:included ?><a href="<?cs var:toroot ?><?cs var:attr.href ?>"><?cs /if ?><?cs var:attr.name ?><?cs if:included ?></a><?cs /if ?></td>
         <td class="jd-linkcol"><?cs each:m=attr.methods ?>
-            <a href="<?cs var:toroot ?><?cs var:m.href ?>"><?cs var:m.name ?></a>
+            <?cs call:cond_link(m.name, toroot, m.href, included) ?>
             <?cs /each ?>
         </td>
         <td class="jd-descrcol" width="100%"><?cs call:short_descr(attr) ?>&nbsp;</td>
@@ -293,7 +292,7 @@ Summary:
 <?cs if:subcount(class.attrs) ?>
 <!-- =========== FIELD SUMMARY =========== -->
 <table id="lattrs" class="jd-sumtable"><tr><th colspan="12">XML Attributes</th></tr>
-<?cs call:write_attr_summary(class.attrs) ?>
+<?cs call:write_attr_summary(class.attrs, 1) ?>
 <?cs /if ?>
 
 <?cs # if there are inherited attrs, write the table ?>
@@ -308,14 +307,14 @@ Summary:
 <tr class="api apilevel-<?cs var:cl.since ?>" >
 <td colspan="12">
 <?cs call:expando_trigger("inherited-attrs-"+cl.qualified, "closed") ?>From <?cs var:cl.kind ?>
-<a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
+<?cs call:cond_link(cl.qualified, toroot, cl.link, cl.included) ?>
 <div id="inherited-attrs-<?cs var:cl.qualified ?>">
   <div id="inherited-attrs-<?cs var:cl.qualified ?>-list"
         class="jd-inheritedlinks">
   </div>
   <div id="inherited-attrs-<?cs var:cl.qualified ?>-summary" style="display: none;">
     <table class="jd-sumtable-expando">
-    <?cs call:write_attr_summary(cl.attrs) ?></table>
+    <?cs call:write_attr_summary(cl.attrs, cl.included) ?></table>
   </div>
 </div>
 </td></tr>
@@ -332,7 +331,7 @@ Summary:
     <?cs each:field=class.enumConstants ?>
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:field.since ?>" >
         <td class="jd-descrcol"><?cs call:type_link(field.type) ?>&nbsp;</td>
-        <td class="jd-linkcol"><a href="<?cs var:toroot ?><?cs var:field.href ?>"><?cs var:field.name ?></a>&nbsp;</td>
+        <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, cl.included) ?>&nbsp;</td>
         <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?>&nbsp;</td>
     </tr>
     <?cs set:count = count + #1 ?>
@@ -343,7 +342,7 @@ Summary:
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- =========== ENUM CONSTANT SUMMARY =========== -->
 <table id="constants" class="jd-sumtable"><tr><th colspan="12">Constants</th></tr>
-<?cs call:write_constant_summary(class.constants) ?>
+<?cs call:write_constant_summary(class.constants, 1) ?>
 </table>
 <?cs /if ?>
 
@@ -359,14 +358,14 @@ Summary:
 <tr class="api apilevel-<?cs var:cl.since ?>" >
 <td colspan="12">
 <?cs call:expando_trigger("inherited-constants-"+cl.qualified, "closed") ?>From <?cs var:cl.kind ?>
-<a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
+<?cs call:cond_link(cl.qualified, toroot, cl.link, cl.included) ?>
 <div id="inherited-constants-<?cs var:cl.qualified ?>">
   <div id="inherited-constants-<?cs var:cl.qualified ?>-list"
         class="jd-inheritedlinks">
   </div>
   <div id="inherited-constants-<?cs var:cl.qualified ?>-summary" style="display: none;">
     <table class="jd-sumtable-expando">
-    <?cs call:write_constant_summary(cl.constants) ?></table>
+    <?cs call:write_constant_summary(cl.constants, cl.included) ?></table>
   </div>
 </div>
 </td></tr>
@@ -379,7 +378,7 @@ Summary:
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- =========== FIELD SUMMARY =========== -->
 <table id="lfields" class="jd-sumtable"><tr><th colspan="12">Fields</th></tr>
-<?cs call:write_field_summary(class.fields) ?>
+<?cs call:write_field_summary(class.fields, 1) ?>
 </table>
 <?cs /if ?>
 
@@ -395,14 +394,14 @@ Summary:
 <tr class="api apilevel-<?cs var:cl.since ?>" >
 <td colspan="12">
 <?cs call:expando_trigger("inherited-fields-"+cl.qualified, "closed") ?>From <?cs var:cl.kind ?>
-<a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
+<?cs call:cond_link(cl.qualified, toroot, cl.link, cl.included) ?>
 <div id="inherited-fields-<?cs var:cl.qualified ?>">
   <div id="inherited-fields-<?cs var:cl.qualified ?>-list"
         class="jd-inheritedlinks">
   </div>
   <div id="inherited-fields-<?cs var:cl.qualified ?>-summary" style="display: none;">
     <table class="jd-sumtable-expando">
-    <?cs call:write_field_summary(cl.fields) ?></table>
+    <?cs call:write_field_summary(cl.fields, cl.included) ?></table>
   </div>
 </div>
 </td></tr>
@@ -415,7 +414,7 @@ Summary:
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <table id="pubctors" class="jd-sumtable"><tr><th colspan="12">Public Constructors</th></tr>
-<?cs call:write_method_summary(class.ctors.public) ?>
+<?cs call:write_method_summary(class.ctors.public, 1) ?>
 </table>
 <?cs /if ?>
 
@@ -423,7 +422,7 @@ Summary:
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <table id="proctors" class="jd-sumtable"><tr><th colspan="12">Protected Constructors</th></tr>
-<?cs call:write_method_summary(class.ctors.protected) ?>
+<?cs call:write_method_summary(class.ctors.protected, 1) ?>
 </table>
 <?cs /if ?>
 
@@ -431,7 +430,7 @@ Summary:
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- ========== METHOD SUMMARY =========== -->
 <table id="pubmethods" class="jd-sumtable"><tr><th colspan="12">Public Methods</th></tr>
-<?cs call:write_method_summary(class.methods.public) ?>
+<?cs call:write_method_summary(class.methods.public, 1) ?>
 </table>
 <?cs /if ?>
 
@@ -439,7 +438,7 @@ Summary:
 <?cs # this next line must be exactly like this to be parsed by eclipse ?>
 <!-- ========== METHOD SUMMARY =========== -->
 <table id="promethods" class="jd-sumtable"><tr><th colspan="12">Protected Methods</th></tr>
-<?cs call:write_method_summary(class.methods.protected) ?>
+<?cs call:write_method_summary(class.methods.protected, 1) ?>
 </table>
 <?cs /if ?>
 
@@ -454,14 +453,14 @@ Summary:
 <?cs if:subcount(cl.methods) ?>
 <tr class="api apilevel-<?cs var:cl.since ?>" >
 <td colspan="12"><?cs call:expando_trigger("inherited-methods-"+cl.qualified, "closed") ?>
-From <?cs var:cl.kind ?> <a href="<?cs var:toroot ?><?cs var:cl.link ?>"><?cs var:cl.qualified ?></a>
+From <?cs var:cl.kind ?> <?cs call:cond_link(cl.qualified, toroot, cl.link, cl.included) ?>
 <div id="inherited-methods-<?cs var:cl.qualified ?>">
   <div id="inherited-methods-<?cs var:cl.qualified ?>-list"
         class="jd-inheritedlinks">
   </div>
   <div id="inherited-methods-<?cs var:cl.qualified ?>-summary" style="display: none;">
     <table class="jd-sumtable-expando">
-    <?cs call:write_method_summary(cl.methods) ?></table>
+    <?cs call:write_method_summary(cl.methods, cl.included) ?></table>
   </div>
 </div>
 </td></tr>

@@ -1138,6 +1138,10 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
             data.setValue(base + ".kind", kind);
         }
 
+        if (cl.mIsIncluded) {
+            data.setValue(base + ".included", "true");
+        }
+
         // xml attributes
         i=0;
         for (AttributeInfo attr: cl.selfAttributes()) {

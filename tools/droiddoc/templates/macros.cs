@@ -39,6 +39,15 @@ def:type_link_impl(type, link) ?><?cs
 <?cs def:class_name(type) ?><?cs call:type_link_impl(type, "false") ?><?cs /def ?>
 <?cs def:type_link(type) ?><?cs call:type_link_impl(type, "true") ?><?cs /def ?>
 
+<?cs # a conditional link.
+      if the "condition" parameter evals to true then the link is displayed
+      otherwise only the text is displayed
+?><?cs
+def:cond_link(text, root, path, condition) ?><?cs
+  if:condition ?><a href="<?cs var:root ?><?cs var:path ?>"><?cs /if ?><?cs var:text ?><?cs if:condition ?></a><?cs /if ?><?cs
+/def ?>
+
+
 <?cs # A comma separated parameter list ?><?cs 
 def:parameter_list(params) ?><?cs
   each:param = params ?><?cs
