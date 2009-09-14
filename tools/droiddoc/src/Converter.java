@@ -238,6 +238,7 @@ public class Converter
     }
     private static Cache mClasses = new Cache()
     {
+        @Override
         protected Object make(Object o)
         {
             ClassDoc c = (ClassDoc)o;
@@ -268,19 +269,21 @@ public class Converter
             }
             return cl;
         }
+        @Override
         protected void made(Object o, Object r)
         {
             if (mClassesNeedingInit == null) {
                 initClass((ClassDoc)o, (ClassInfo)r);
                 ((ClassInfo)r).init2();
             }
-        } 
+        }
+        @Override
         ClassInfo[] all()
         {
             return (ClassInfo[])mCache.values().toArray(new ClassInfo[mCache.size()]);
         }
     };
-    
+
     private static MethodInfo[] getHiddenMethods(MethodDoc[] methods){
       if (methods == null) return null;
       ArrayList<MethodInfo> out = new ArrayList<MethodInfo>();
@@ -342,7 +345,7 @@ public class Converter
         }
         return out.toArray(new MethodInfo[out.size()]);
     }
-    
+
     private static MethodInfo[] convertNonWrittenConstructors(ConstructorDoc[] methods)
     {
         if (methods == null) return null;
@@ -367,6 +370,7 @@ public class Converter
     }
     private static Cache mMethods = new Cache()
     {
+        @Override
         protected Object make(Object o)
         {
             if (o instanceof AnnotationTypeElementDoc) {
@@ -374,7 +378,7 @@ public class Converter
                 MethodInfo result = new MethodInfo(
                                 m.getRawCommentText(),
                                 Converter.convertTypes(m.typeParameters()),
-                                m.name(), m.signature(), 
+                                m.name(), m.signature(),
                                 Converter.obtainClass(m.containingClass()),
                                 Converter.obtainClass(m.containingClass()),
                                 m.isPublic(), m.isProtected(),
@@ -399,7 +403,7 @@ public class Converter
                 MethodInfo result = new MethodInfo(
                                 m.getRawCommentText(),
                                 Converter.convertTypes(m.typeParameters()),
-                                m.name(), m.signature(), 
+                                m.name(), m.signature(),
                                 Converter.obtainClass(m.containingClass()),
                                 Converter.obtainClass(m.containingClass()),
                                 m.isPublic(), m.isProtected(),
@@ -424,7 +428,7 @@ public class Converter
                 MethodInfo result = new MethodInfo(
                                 m.getRawCommentText(),
                                 Converter.convertTypes(m.typeParameters()),
-                                m.name(), m.signature(), 
+                                m.name(), m.signature(),
                                 Converter.obtainClass(m.containingClass()),
                                 Converter.obtainClass(m.containingClass()),
                                 m.isPublic(), m.isProtected(),
@@ -472,6 +476,7 @@ public class Converter
     }
     private static Cache mFields = new Cache()
     {
+        @Override
         protected Object make(Object o)
         {
             FieldDoc f = (FieldDoc)o;
@@ -496,6 +501,7 @@ public class Converter
     }
     private static Cache mPackagees = new Cache()
     {
+        @Override
         protected Object make(Object o)
         {
             PackageDoc p = (PackageDoc)o;
@@ -510,7 +516,8 @@ public class Converter
     }
     private static Cache mTypes = new Cache()
     {
-       protected Object make(Object o)
+       @Override
+    protected Object make(Object o)
        {
            Type t = (Type)o;
            String simpleTypeName;
@@ -524,6 +531,7 @@ public class Converter
                    Converter.obtainClass(t.asClassDoc()));
            return ti;
        }
+        @Override
         protected void made(Object o, Object r)
         {
             Type t = (Type)o;
@@ -545,8 +553,9 @@ public class Converter
                              Converter.convertTypes(t.asWildcardType().extendsBounds()));
             }
         }
+        @Override
         protected Object keyFor(Object o)
-        {  
+        {
             Type t = (Type)o;
             String keyString = o.getClass().getName() + "/" + o.toString() + "/";
             if (t.asParameterizedType() != null){
@@ -584,13 +593,13 @@ public class Converter
             }else{
               keyString += "NoWildCardType//";
             }
-            
-            
-            
+
+
+
             return keyString;
         }
     };
-    
+
 
 
     private static MemberInfo obtainMember(MemberDoc o)
@@ -599,6 +608,7 @@ public class Converter
     }
     private static Cache mMembers = new Cache()
     {
+        @Override
         protected Object make(Object o)
         {
             if (o instanceof MethodDoc) {
@@ -633,6 +643,7 @@ public class Converter
     }
     private static Cache mAnnotationInstances = new Cache()
     {
+        @Override
         protected Object make(Object o)
         {
             AnnotationDesc a = (AnnotationDesc)o;

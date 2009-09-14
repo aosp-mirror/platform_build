@@ -40,7 +40,7 @@ public class DroidDoc
     private static final int TYPE_WIDGET = 1;
     private static final int TYPE_LAYOUT = 2;
     private static final int TYPE_LAYOUT_PARAM = 3;
-    
+
     public static final int SHOW_PUBLIC = 0x00000001;
     public static final int SHOW_PROTECTED = 0x00000003;
     public static final int SHOW_PACKAGE = 0x00000007;
@@ -84,7 +84,7 @@ public class DroidDoc
         }
         return false;
     }
-    
+
     public static boolean start(RootDoc r)
     {
         String keepListFile = null;
@@ -792,7 +792,7 @@ public class DroidDoc
         data.setValue("package.since", pkg.getSince());
         data.setValue("package.descr", "...description...");
 
-        makeClassListHDF(data, "package.interfaces", 
+        makeClassListHDF(data, "package.interfaces",
                          ClassInfo.sortByName(pkg.interfaces()));
         makeClassListHDF(data, "package.classes",
                          ClassInfo.sortByName(pkg.ordinaryClasses()));
@@ -886,7 +886,7 @@ public class DroidDoc
         HDF data = makeHDF();
 
         Collections.sort(keywords);
-        
+
         int i=0;
         for (KeywordEntry entry: keywords) {
             String base = "keywords." + entry.firstChar() + "." + i;
@@ -979,10 +979,11 @@ public class DroidDoc
     }
 
     /**
-     * Returns true if the given element has an @hide annotation.
+     * Returns true if the given element has an @hide or @pending annotation.
      */
     private static boolean hasHideAnnotation(Doc doc) {
-        return doc.getRawCommentText().indexOf("@hide") != -1;
+        String comment = doc.getRawCommentText();
+        return comment.indexOf("@hide") != -1 || comment.indexOf("@pending") != -1;
     }
 
     /**
@@ -1074,7 +1075,7 @@ public class DroidDoc
             if (methodName.equals("getRawCommentText")) {
                 return filterComment((String) method.invoke(target, args));
             }
-            
+
             // escape "&" in disjunctive types.
             if (proxy instanceof Type && methodName.equals("toString")) {
                 return ((String) method.invoke(target, args))
@@ -1129,7 +1130,7 @@ public class DroidDoc
             throw new RuntimeException("invalid scope for object " + scoped);
         }
     }
-    
+
     /**
      * Collect the values used by the Dev tools and write them in files packaged with the SDK
      * @param output the ouput directory for the files.
@@ -1139,16 +1140,16 @@ public class DroidDoc
         ArrayList<String> broadcastActions = new ArrayList<String>();
         ArrayList<String> serviceActions = new ArrayList<String>();
         ArrayList<String> categories = new ArrayList<String>();
-        
+
         ArrayList<ClassInfo> layouts = new ArrayList<ClassInfo>();
         ArrayList<ClassInfo> widgets = new ArrayList<ClassInfo>();
         ArrayList<ClassInfo> layoutParams = new ArrayList<ClassInfo>();
-        
+
         ClassInfo[] classes = Converter.allClasses();
 
         // Go through all the fields of all the classes, looking SDK stuff.
         for (ClassInfo clazz : classes) {
-            
+
             // first check constant fields for the SdkConstant annotation.
             FieldInfo[] fields = clazz.allSelfFields();
             for (FieldInfo field : fields) {
@@ -1177,7 +1178,7 @@ public class DroidDoc
                     }
                 }
             }
-            
+
             // Now check the class for @Widget or if its in the android.widget package
             // (unless the class is hidden or abstract, or non public)
             if (clazz.isHidden() == false && clazz.isPublic() && clazz.isAbstract() == false) {
@@ -1196,7 +1197,7 @@ public class DroidDoc
                         }
                     }
                 }
-                
+
                 if (annotated == false) {
                     // lets check if this is inside android.widget
                     PackageInfo pckg = clazz.containingPackage();
@@ -1236,7 +1237,7 @@ public class DroidDoc
 
         Collections.sort(categories);
         writeValues(output + "/categories.txt", categories);
-        
+
         // before writing the list of classes, we do some checks, to make sure the layout params
         // are enclosed by a layout class (and not one that has been declared as a widget)
         for (int i = 0 ; i < layoutParams.size();) {
@@ -1248,10 +1249,10 @@ public class DroidDoc
                 i++;
             }
         }
-        
+
         writeClasses(output + "/widgets.txt", widgets, layouts, layoutParams);
     }
-    
+
     /**
      * Writes a list of values into a text files.
      * @param pathname the absolute os path of the output file.
@@ -1263,7 +1264,7 @@ public class DroidDoc
         try {
             fw = new FileWriter(pathname, false);
             bw = new BufferedWriter(fw);
-            
+
             for (String value : values) {
                 bw.append(value).append('\n');
             }
@@ -1297,7 +1298,7 @@ public class DroidDoc
         try {
             fw = new FileWriter(pathname, false);
             bw = new BufferedWriter(fw);
-            
+
             // write the 3 types of classes.
             for (ClassInfo clazz : widgets) {
                 writeClass(bw, clazz, 'W');
@@ -1340,7 +1341,7 @@ public class DroidDoc
         }
         writer.append('\n');
     }
-    
+
     /**
      * Checks the inheritance of {@link ClassInfo} objects. This method return
      * <ul>
@@ -1348,7 +1349,7 @@ public class DroidDoc
      * <li>{@link #TYPE_WIDGET}: if the class extends <code>android.view.View</code></li>
      * <li>{@link #TYPE_LAYOUT_PARAM}: if the class extends <code>android.view.ViewGroup$LayoutParams</code></li>
      * <li>{@link #TYPE_NONE}: in all other cases</li>
-     * </ul> 
+     * </ul>
      * @param clazz the {@link ClassInfo} to check.
      */
     private static int checkInheritance(ClassInfo clazz) {
@@ -1359,12 +1360,12 @@ public class DroidDoc
         } else if ("android.view.ViewGroup.LayoutParams".equals(clazz.qualifiedName())) {
             return TYPE_LAYOUT_PARAM;
         }
-        
+
         ClassInfo parent = clazz.superclass();
         if (parent != null) {
             return checkInheritance(parent);
         }
-        
+
         return TYPE_NONE;
     }
 }

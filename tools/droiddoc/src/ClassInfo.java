@@ -101,7 +101,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         mSelfFields = null;
         mSelfAttributes = null;
         mDeprecatedKnown = false;
-        
+
         Arrays.sort(mEnumConstants, FieldInfo.comparator);
         Arrays.sort(mInnerClasses, ClassInfo.comparator);
     }
@@ -111,16 +111,16 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         // objects
         selfAttributes();
     }
-    
+
     public void init3(TypeInfo[] types, ClassInfo[] realInnerClasses){
       mTypeParameters = types;
       mRealInnerClasses = realInnerClasses;
     }
-    
+
     public ClassInfo[] getRealInnerClasses(){
       return mRealInnerClasses;
     }
-    
+
     public TypeInfo[] getTypeParameters(){
       return mTypeParameters;
     }
@@ -146,6 +146,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         }
     }
 
+    @Override
     public ContainerInfo parent()
     {
         return this;
@@ -351,7 +352,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
     {
         return comment().briefTags();
     }
-    
+
     public boolean isDeprecated() {
         boolean deprecated = false;
         if (!mDeprecatedKnown) {
@@ -551,7 +552,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
     public MethodInfo[] allSelfMethods() {
         return mAllSelfMethods;
     }
-    
+
     public void addMethod(MethodInfo method) {
         MethodInfo[] methods = new MethodInfo[mAllSelfMethods.length + 1];
         int i = 0;
@@ -596,7 +597,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
                     }
                 }
             }
-            
+
             //constructors too
            for (MethodInfo m: constructors()) {
               for (AttrTagInfo tag: m.comment().attrTags()) {
@@ -1136,7 +1137,11 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         if (kind != null) {
             data.setValue(base + ".kind", kind);
         }
-        
+
+        if (cl.mIsIncluded) {
+            data.setValue(base + ".included", "true");
+        }
+
         // xml attributes
         i=0;
         for (AttributeInfo attr: cl.selfAttributes()) {
@@ -1170,6 +1175,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         }
     }
 
+    @Override
     public boolean isHidden()
     {
         int val = mHidden;
@@ -1301,7 +1307,7 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
                 return f;
             }
         }
-        
+
         // then look at our enum constants (these are really fields, maybe
         // they should be mixed into fields().  not sure)
         for (FieldInfo f: enumConstants()) {
@@ -1346,11 +1352,11 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
             return false;
         }
     }
-    
+
     public void setNonWrittenConstructors(MethodInfo[] nonWritten) {
         mNonWrittenConstructors = nonWritten;
     }
-    
+
     public MethodInfo[] getNonWrittenConstructors() {
         return mNonWrittenConstructors;
     }
@@ -1377,23 +1383,24 @@ public class ClassInfo extends DocInfo implements ContainerInfo, Comparable, Sco
         }
         return null;
     }
-    
+
     public void setHiddenMethods(MethodInfo[] mInfo){
         mHiddenMethods = mInfo;
     }
     public MethodInfo[] getHiddenMethods(){
         return mHiddenMethods;
     }
+    @Override
     public String toString(){
         return this.qualifiedName();
     }
-    
+
     public void setReasonIncluded(String reason) {
         mReasonIncluded = reason;
     }
-    
+
     public String getReasonIncluded() {
-        return mReasonIncluded; 
+        return mReasonIncluded;
     }
 
     private ClassDoc mClass;
