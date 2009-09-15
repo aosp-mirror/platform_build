@@ -1590,7 +1590,7 @@ $(if $(2), \
   echo "$$printname total size is $$total"; \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
   if [ "$(3)" == "yaffs" ]; then \
-    reservedblocks=5; \
+    reservedblocks=8; \
   else \
     reservedblocks=0; \
   fi; \
