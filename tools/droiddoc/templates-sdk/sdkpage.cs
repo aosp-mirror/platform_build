@@ -158,7 +158,7 @@ Android SDK. </p>
   <tr class="alt-color">
     <td>ADT Plugin for Eclipse <?cs var:adt.zip_version ?></td>
     <td>
-  <a href="<?cs var:toroot ?>sdk/download.html?v=<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
+  <a href="http://dl.google.com/android/<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
     </td>
     <td><?cs var:adt.zip_bytes ?> bytes</td>
     <td><?cs var:adt.zip_checksum ?></td>
