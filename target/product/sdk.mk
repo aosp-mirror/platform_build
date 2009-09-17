@@ -25,7 +25,10 @@ PRODUCT_PACKAGES := \
 	libwnndict \
 	ApiDemos \
 	GestureBuilder \
-	SoftKeyboard
+	SoftKeyboard \
+	talkback \
+	soundback \
+	kickback
 
 PRODUCT_COPY_FILES := \
 	development/data/etc/vold.conf:system/etc/vold.conf \
@@ -65,3 +68,10 @@ PRODUCT_LOCALES := \
 	ru_RU \
 	ko_KR
 
+# include available languages for TTS in the system image
+include external/svox/pico/lang/PicoLangDeDeInSystem.mk
+include external/svox/pico/lang/PicoLangEnGBInSystem.mk
+include external/svox/pico/lang/PicoLangEnUsInSystem.mk
+include external/svox/pico/lang/PicoLangEsEsInSystem.mk
+include external/svox/pico/lang/PicoLangFrFrInSystem.mk
+include external/svox/pico/lang/PicoLangItItInSystem.mk
