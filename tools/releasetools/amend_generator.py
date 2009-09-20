@@ -87,6 +87,10 @@ class AmendGenerator(object):
     'dur' seconds."""
     self.script.append("show_progress %f %d" % (frac, int(dur)))
 
+  def SetProgress(self, frac):
+    """Not implemented in amend."""
+    pass
+
   def PatchCheck(self, filename, *sha1):
     """Check that the given file (or MTD reference) has one of the
     given *sha1 hashes."""
