@@ -6,9 +6,10 @@
 	elif:community ?>community<?cs
 	elif:videos ?>videos<?cs /if ?>">
     
- <?cs if:android.whichdoc == "online" ?>     
-	<li id="home-link"><a href="<?cs var:toroot ?>index.html">
-	 <?cs if:!sdk.redirect ?>
+	<li id="home-link"><a href="<?cs var:toroot ?><?cs 
+	                            if:android.whichdoc != "online" ?>offline.html<?cs 
+	                            else ?>index.html<?cs /if ?>">
+	<?cs if:!sdk.redirect ?>
 		<span class="en">Home</span>
 		<span style="display:none" class="de">Startseite</span>
 		<span style="display:none" class="es"></span>
@@ -17,12 +18,11 @@
     <span style="display:none" class="ja">ホーム</span>
 		<span style="display:none" class="zh-CN">主页</span>
 		<span style="display:none" class="zh-TW">首頁</span>
-	 <?cs /if ?>
+	<?cs /if ?>
 	</a></li>
- <?cs /if ?> <?cs # end of "if online" ?>
-	<li id="sdk-link"><a href="<?cs var:toroot ?>sdk/<?cs 
-	                            if:android.whichdoc != "online" ?>offline-welcome.html<?cs 
-	                            else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>">
+	<li id="sdk-link"><a href="<?cs var:toroot ?><?cs 
+	                            if:android.whichdoc != "online" ?>sdk/RELEASENOTES.html<?cs 
+	                            else ?>sdk/<?cs var:sdk.current ?>/index.html<?cs /if ?>">
 		<span class="en">SDK</span>
 	</a></li>
 	<li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html" onClick="return loadLast('guide')">
