@@ -9,6 +9,7 @@ PRODUCT_PACKAGES := \
     Calculator \
     Calendar \
     Camera \
+    CertInstaller \
     DrmProvider \
     Email \
     LatinIME \
