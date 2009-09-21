@@ -91,6 +91,13 @@ prelink_input := $(compress_output)
 # around, so we have to use this version.
 prelink_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_MODULE_SUBDIR)$(LOCAL_BUILT_MODULE_STEM)
 
+# Skip prelinker if it is FDO instrumentation build.
+ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
+ifneq ($(LOCAL_NO_FDO_SUPPORT),true)
+LOCAL_PRELINK_MODULE := false
+endif
+endif
+
 ifeq ($(LOCAL_PRELINK_MODULE),true)
 $(prelink_output): $(prelink_input) $(TARGET_PRELINKER_MAP) $(APRIORI)
 	$(transform-to-prelinked)

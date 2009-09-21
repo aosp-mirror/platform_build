@@ -135,6 +135,37 @@ ifneq ($(wildcard $($(combo_target)CC)),)
 $(combo_target)LIBGCC := $(shell $($(combo_target)CC) $($(combo_target)GLOBAL_CFLAGS) -print-libgcc-file-name)
 endif
 
+# Define FDO (Feedback Directed Optimization) options.
+
+TARGET_FDO_CFLAGS:=
+TARGET_FDO_LIB:=
+
+target_libgcov := $(shell $($(combo_target)CC) $($(combo_target)GLOBAL_CFLAGS) \
+        --print-file-name=libgcov.a)
+ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
+  # Set BUILD_FDO_INSTRUMENT=true to turn on FDO instrumentation.
+  # The profile will be generated on /data/local/tmp/profile on the device.
+  TARGET_FDO_CFLAGS := -fprofile-generate=/data/local/tmp/profile -DANDROID_FDO
+  TARGET_FDO_LIB := $(target_libgcov)
+else
+  # If BUILD_FDO_INSTRUMENT is turned off, then consider doing the FDO optimizations.
+  # Set TARGET_FDO_PROFILE_PATH to set a custom profile directory for your build.
+  ifeq ($(strip $(TARGET_FDO_PROFILE_PATH)),)
+    TARGET_FDO_PROFILE_PATH := fdo/profiles/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT)
+  else
+    ifeq ($(strip $(wildcard $(TARGET_FDO_PROFILE_PATH))),)
+      $(warning Custom TARGET_FDO_PROFILE_PATH supplied, but directory does not exist. Turn off FDO.)
+    endif
+  endif
+
+  # If the FDO profile directory can't be found, then FDO is off.
+  ifneq ($(strip $(wildcard $(TARGET_FDO_PROFILE_PATH))),)
+    TARGET_FDO_CFLAGS := -fprofile-use=$(TARGET_FDO_PROFILE_PATH) -DANDROID_FDO
+    TARGET_FDO_LIB := $(target_libgcov)
+  endif
+endif
+
+
 # unless CUSTOM_KERNEL_HEADERS is defined, we're going to use
 # symlinks located in out/ to point to the appropriate kernel
 # headers. see 'config/kernel_headers.make' for more details
@@ -185,6 +216,7 @@ $(TARGET_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(TARGET_GLOBAL_LDFLAGS) \
+	$(TARGET_FDO_LIB) \
 	$(TARGET_LIBGCC)
 endef
 
@@ -202,6 +234,7 @@ $(TARGET_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(PRIVATE_LDFLAGS) \
 	$(TARGET_GLOBAL_LDFLAGS) \
+	$(TARGET_FDO_LIB) \
 	$(TARGET_LIBGCC) \
 	$(TARGET_CRTEND_O)
 endef
@@ -216,6 +249,7 @@ $(TARGET_CXX) -nostdlib -Bstatic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_ALL_OBJECTS) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+	$(TARGET_FDO_LIB) \
 	$(TARGET_LIBGCC) \
 	$(TARGET_CRTEND_O)
 endef

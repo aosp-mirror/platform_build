@@ -29,6 +29,7 @@ define transform-o-to-shared-lib-inner
         -o $@ \
         $(PRIVATE_LDFLAGS) \
         $(if $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES),-all_load) \
+        $(TARGET_FDO_LIB) \
         $(TARGET_LIBGCC)
 endef
 
@@ -42,6 +43,7 @@ define transform-o-to-executable-inner
         $(PRIVATE_LDLIBS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(TARGET_FDO_LIB) \
         $(TARGET_LIBGCC)
 endef
 
@@ -55,6 +57,7 @@ define transform-o-to-static-executable-inner
         $(PRIVATE_LDLIBS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(TARGET_FDO_LIB) \
         $(TARGET_LIBGCC)
 endef
 
@@ -94,4 +97,3 @@ stat -f "%z" $(1)
 endef
 
 endif
-
