@@ -577,28 +577,27 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       os.path.join(OPTIONS.target_tmp, "RECOVERY")))
   updating_recovery = (source_recovery.data != target_recovery.data)
 
-  # We reserve the last 0.3 of the progress bar for the
-  # device-specific IncrementalOTA_InstallEnd() call at the end, which
-  # will typically install a radio image.
-  progress_bar_total = 0.7
-  if updating_boot:
-    progress_bar_total -= 0.1
+  # Here's how we divide up the progress bar:
+  #  0.1 for verifying the start state (PatchCheck calls)
+  #  0.8 for applying patches (ApplyPatch calls)
+  #  0.1 for unpacking verbatim files, symlinking, and doing the
+  #      device-specific commands.
 
   AppendAssertions(script, target_zip)
   device_specific.IncrementalOTA_Assertions()
 
   script.Print("Verifying current system...")
 
-  pb_verify = progress_bar_total * 0.3 * \
-              (total_patched_size /
-               float(total_patched_size+total_verbatim_size+1))
+  script.ShowProgress(0.1, 0)
+  total_verify_size = float(sum([i[2].size for i in patch_list]) + 1)
+  if updating_boot:
+    total_verify_size += source_boot.size
+  so_far = 0
 
-  for i, (fn, tf, sf, size) in enumerate(patch_list):
-    if i % 5 == 0:
-      next_sizes = sum([i[3] for i in patch_list[i:i+5]])
-      script.ShowProgress(next_sizes * pb_verify / (total_patched_size+1), 1)
-
+  for fn, tf, sf, size in patch_list:
     script.PatchCheck("/"+fn, tf.sha1, sf.sha1)
+    so_far += sf.size
+    script.SetProgress(so_far / total_verify_size)
 
   if updating_boot:
     d = Difference(target_boot, source_boot, "imgdiff")
@@ -610,6 +609,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.PatchCheck("MTD:boot:%d:%s:%d:%s" %
                       (source_boot.size, source_boot.sha1,
                        target_boot.size, target_boot.sha1))
+    so_far += source_boot.size
+    script.SetProgress(so_far / total_verify_size)
 
   if patch_list or updating_recovery or updating_boot:
     script.CacheFreeSpaceCheck(largest_source_size)
@@ -630,6 +631,19 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                             if i not in target_data] +
                      ["/system/recovery.img"])
 
+  script.ShowProgress(0.8, 0)
+  total_patch_size = float(sum([i[1].size for i in patch_list]) + 1)
+  if updating_boot:
+    total_patch_size += target_boot.size
+  so_far = 0
+
+  script.Print("Patching system files...")
+  for fn, tf, sf, size in patch_list:
+    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
+                      sf.sha1, "/tmp/patchtmp/"+fn+".p")
+    so_far += tf.size
+    script.SetProgress(so_far / total_patch_size)
+
   if updating_boot:
     # Produce the boot image by applying a patch to the current
     # contents of the boot partition, and write it back to the
@@ -641,6 +655,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                       "-",
                       target_boot.size, target_boot.sha1,
                       source_boot.sha1, "/tmp/patchtmp/boot.img.p")
+    so_far += target_boot.size
+    script.SetProgress(so_far / total_patch_size)
     print "boot image changed; including."
   else:
     print "boot image unchanged; skipping."
@@ -663,16 +679,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     print "recovery image unchanged; skipping."
 
-  script.Print("Patching system files...")
-  pb_apply = progress_bar_total * 0.7 * \
-             (total_patched_size /
-              float(total_patched_size+total_verbatim_size+1))
-  for i, (fn, tf, sf, size) in enumerate(patch_list):
-    if i % 5 == 0:
-      next_sizes = sum([i[3] for i in patch_list[i:i+5]])
-      script.ShowProgress(next_sizes * pb_apply / (total_patched_size+1), 1)
-    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
-                      sf.sha1, "/tmp/patchtmp/"+fn+".p")
+  script.ShowProgress(0.1, 10)
 
   target_symlinks = CopySystemFiles(target_zip, None)
 
@@ -700,10 +707,6 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script.DeleteFiles(to_delete)
 
   if verbatim_targets:
-    pb_verbatim = progress_bar_total * \
-                  (total_verbatim_size /
-                   float(total_patched_size+total_verbatim_size+1))
-    script.ShowProgress(pb_verbatim, 5)
     script.Print("Unpacking new files...")
     script.UnpackPackageDir("system", "/system")
 
@@ -726,8 +729,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   # permissions.
   script.AppendScript(temp_script)
 
-  # Write the radio image, if necessary.
-  script.ShowProgress(0.3, 10)
+  # Do device-specific installation (eg, write radio image).
   device_specific.IncrementalOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
