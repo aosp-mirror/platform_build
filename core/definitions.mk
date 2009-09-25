@@ -109,7 +109,14 @@ endef
 
 # Figure out where we are.
 define my-dir
-$(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST),$(MAKEFILE_LIST))))
+$(strip \
+  $(eval md_file_ := $$(lastword $$(MAKEFILE_LIST))) \
+  $(if $(filter $(CLEAR_VARS),$(md_file_)), \
+    $(error LOCAL_PATH must be set before including $$(CLEAR_VARS)) \
+   , \
+    $(patsubst %/,%,$(dir $(md_file_))) \
+   ) \
+ )
 endef
 
 ###########################################################
