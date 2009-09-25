@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAnH////g\u003d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2009-09-25T01:53:31Z",
+      "side": 1,
+      "message": "If we put these lines here, then combo/sh.mk can override it.  (I can\u0027t get gerrit to format this right, but you get the idea)\n\n# ###############################################################\n# Set defaults to be overridden in the combo files.\n# ###############################################################\n\n# TODO: do symbol compression\nTARGET_COMPRESS_MODULE_SYMBOLS :\u003d false\nTARGET_PRELINK_MODULE :\u003d true",
+      "revId": "36a7b5db7b4eb3a6aeea895f7e2d06b091134e7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAnH////c\u003d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2009-09-25T01:53:31Z",
+      "side": 1,
+      "message": "Then this whole section can be deleted, and TARGET_PRELINK_MODULE :\u003d false can go into combo/sh.mk",
+      "revId": "36a7b5db7b4eb3a6aeea895f7e2d06b091134e7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
