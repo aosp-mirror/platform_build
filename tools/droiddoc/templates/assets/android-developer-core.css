@@ -81,6 +81,7 @@ pre {
   padding:10px;
   margin:0 0 1em 1em;
   overflow:auto;
+  line-height:inherit; /* fixes vertical scrolling in webkit */
 }
 
 h1,h2,h3,h4,h5 {
