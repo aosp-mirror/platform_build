@@ -51,7 +51,7 @@ LOCAL_SRC_FILES := imgdiff.c utils.c bsdiff.c
 LOCAL_MODULE := imgdiff
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := eng
-LOCAL_C_INCLUDES += external/zlib
+LOCAL_C_INCLUDES += external/zlib external/bzip2
 LOCAL_STATIC_LIBRARIES += libz libbz
 
 include $(BUILD_HOST_EXECUTABLE)
