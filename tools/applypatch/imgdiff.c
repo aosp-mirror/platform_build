@@ -119,6 +119,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 #include "zlib.h"
 #include "imgdiff.h"
@@ -133,6 +134,8 @@ typedef struct {
 
   size_t source_start;
   size_t source_len;
+
+  off_t* I;             // used by bsdiff
 
   // --- for CHUNK_DEFLATE chunks only: ---
 
@@ -166,6 +169,10 @@ static int fileentry_compare(const void* a, const void* b) {
     return 0;
   }
 }
+
+// from bsdiff.c
+int bsdiff(u_char* old, off_t oldsize, off_t** IP, u_char* new, off_t newsize,
+           const char* patch_filename);
 
 unsigned char* ReadZip(const char* filename,
                        int* num_chunks, ImageChunk** chunks,
@@ -278,6 +285,7 @@ unsigned char* ReadZip(const char* filename,
     curr->len = st.st_size;
     curr->data = img;
     curr->filename = NULL;
+    curr->I = NULL;
     ++curr;
     ++*num_chunks;
   }
@@ -292,6 +300,7 @@ unsigned char* ReadZip(const char* filename,
       curr->deflate_len = temp_entries[nextentry].deflate_len;
       curr->deflate_data = img + pos;
       curr->filename = temp_entries[nextentry].filename;
+      curr->I = NULL;
 
       curr->len = temp_entries[nextentry].uncomp_len;
       curr->data = malloc(curr->len);
@@ -336,6 +345,7 @@ unsigned char* ReadZip(const char* filename,
     }
     curr->data = img + pos;
     curr->filename = NULL;
+    curr->I = NULL;
     pos += curr->len;
 
     ++*num_chunks;
@@ -400,6 +410,7 @@ unsigned char* ReadImage(const char* filename,
       curr->type = CHUNK_NORMAL;
       curr->len = GZIP_HEADER_LEN;
       curr->data = p;
+      curr->I = NULL;
 
       pos += curr->len;
       p += curr->len;
@@ -407,6 +418,7 @@ unsigned char* ReadImage(const char* filename,
 
       curr->type = CHUNK_DEFLATE;
       curr->filename = NULL;
+      curr->I = NULL;
 
       // We must decompress this chunk in order to discover where it
       // ends, and so we can put the uncompressed data and its length
@@ -452,6 +464,7 @@ unsigned char* ReadImage(const char* filename,
       curr->start = pos;
       curr->len = GZIP_FOOTER_LEN;
       curr->data = img+pos;
+      curr->I = NULL;
 
       pos += curr->len;
       p += curr->len;
@@ -475,6 +488,7 @@ unsigned char* ReadImage(const char* filename,
       *chunks = realloc(*chunks, *num_chunks * sizeof(ImageChunk));
       ImageChunk* curr = *chunks + (*num_chunks-1);
       curr->start = pos;
+      curr->I = NULL;
 
       // 'pos' is not the offset of the start of a gzip chunk, so scan
       // forward until we find a gzip header.
@@ -591,43 +605,12 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
     }
   }
 
-  char stemp[] = "/tmp/imgdiff-src-XXXXXX";
-  char ttemp[] = "/tmp/imgdiff-tgt-XXXXXX";
   char ptemp[] = "/tmp/imgdiff-patch-XXXXXX";
-  mkstemp(stemp);
-  mkstemp(ttemp);
   mkstemp(ptemp);
 
-  FILE* f = fopen(stemp, "wb");
-  if (f == NULL) {
-    fprintf(stderr, "failed to open src chunk %s: %s\n",
-            stemp, strerror(errno));
-    return NULL;
-  }
-  if (fwrite(src->data, 1, src->len, f) != src->len) {
-    fprintf(stderr, "failed to write src chunk to %s: %s\n",
-            stemp, strerror(errno));
-    return NULL;
-  }
-  fclose(f);
-
-  f = fopen(ttemp, "wb");
-  if (f == NULL) {
-    fprintf(stderr, "failed to open tgt chunk %s: %s\n",
-            ttemp, strerror(errno));
-    return NULL;
-  }
-  if (fwrite(tgt->data, 1, tgt->len, f) != tgt->len) {
-    fprintf(stderr, "failed to write tgt chunk to %s: %s\n",
-            ttemp, strerror(errno));
-    return NULL;
-  }
-  fclose(f);
-
-  char cmd[200];
-  sprintf(cmd, "bsdiff %s %s %s", stemp, ttemp, ptemp);
-  if (system(cmd) != 0) {
-    fprintf(stderr, "failed to run bsdiff: %s\n", strerror(errno));
+  int r = bsdiff(src->data, src->len, &(src->I), tgt->data, tgt->len, ptemp);
+  if (r != 0) {
+    fprintf(stderr, "bsdiff() failed: %d\n", r);
     return NULL;
   }
 
@@ -641,8 +624,6 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
   unsigned char* data = malloc(st.st_size);
 
   if (tgt->type == CHUNK_NORMAL && tgt->len <= st.st_size) {
-    unlink(stemp);
-    unlink(ttemp);
     unlink(ptemp);
 
     tgt->type = CHUNK_RAW;
@@ -652,7 +633,7 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
 
   *size = st.st_size;
 
-  f = fopen(ptemp, "rb");
+  FILE* f = fopen(ptemp, "rb");
   if (f == NULL) {
     fprintf(stderr, "failed to open patch %s: %s\n", ptemp, strerror(errno));
     return NULL;
@@ -663,8 +644,6 @@ unsigned char* MakePatch(ImageChunk* src, ImageChunk* tgt, size_t* size) {
   }
   fclose(f);
 
-  unlink(stemp);
-  unlink(ttemp);
   unlink(ptemp);
 
   tgt->source_start = src->start;
