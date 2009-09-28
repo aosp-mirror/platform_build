@@ -119,6 +119,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 #include "zlib.h"
 #include "imgdiff.h"
