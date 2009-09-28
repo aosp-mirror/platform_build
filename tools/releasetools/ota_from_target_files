@@ -517,7 +517,7 @@ def ComputeDifferences(diffs):
           print "%8.2f sec %8d / %8d bytes (%6.2f%%) %s" % (
               dur, len(patch), tf.size, 100.0 * len(patch) / tf.size, name)
       lock.release()
-    except e:
+    except Exception, e:
       print e
       raise
 
