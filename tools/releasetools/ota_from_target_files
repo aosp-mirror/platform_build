@@ -57,6 +57,7 @@ if sys.hexversion < 0x02040000:
   sys.exit(1)
 
 import copy
+import errno
 import os
 import re
 import sha
@@ -854,6 +855,23 @@ def main(argv):
 
   print "unzipping target target-files..."
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
+
+  if OPTIONS.device_specific is None:
+    # look for the device-specific tools extension location in the input
+    try:
+      f = open(os.path.join(OPTIONS.input_tmp, "META", "tool-extensions.txt"))
+      ds = f.read().strip()
+      f.close()
+      if ds:
+        ds = os.path.normpath(ds)
+        print "using device-specific extensions in", ds
+        OPTIONS.device_specific = ds
+    except IOError, e:
+      if e.errno == errno.ENOENT:
+        # nothing specified in the file
+        pass
+      else:
+        raise
 
   common.LoadMaxSizes()
   if not OPTIONS.max_image_size:

@@ -440,7 +440,7 @@ class DeviceSpecificParams(object):
 
     if self.module is None:
       path = OPTIONS.device_specific
-      if path is None: return
+      if not path: return
       try:
         if os.path.isdir(path):
           info = imp.find_module("releasetools", [path])
