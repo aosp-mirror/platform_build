@@ -98,8 +98,8 @@ def:short_descr(obj) ?><?cs
 <?cs # Show the red box with the deprecated warning ?><?cs 
 def:deprecated_warning(obj) ?><?cs 
   if:subcount(obj.deprecated) ?><p>
-  <p class="warning jd-deprecated-warning">
-      <strong><?cs call:deprecated_text(obj.kind) ?></strong><?cs 
+  <p class="caution">
+      <strong><?cs call:deprecated_text(obj.kind) ?></strong><br/> <?cs 
       call:tag_list(obj.deprecated) ?>
   </p><?cs 
   /if ?><?cs 
