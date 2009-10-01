@@ -25,10 +25,7 @@ PRODUCT_PACKAGES := \
 	libwnndict \
 	ApiDemos \
 	GestureBuilder \
-	SoftKeyboard \
-	talkback \
-	soundback \
-	kickback
+	SoftKeyboard
 
 PRODUCT_COPY_FILES := \
 	development/data/etc/vold.conf:system/etc/vold.conf \
