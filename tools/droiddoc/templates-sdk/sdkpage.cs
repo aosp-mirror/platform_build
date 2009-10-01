@@ -62,10 +62,10 @@
 <p>The Android NDK is a companion tool to the Android SDK that lets Android
 application developers build performance-critical portions of their apps in
 native code. It is designed for use <em>only</em> in conjunction with the
-Android SDK, so if you have not already installed the Android 1.5 SDK, please do
-so before downloading the NDK. Also, please read <a href="#overview">What is the 
-Android NDK?</a> to get an understanding of what the NDK offers and whether it 
-will be useful to you.</p>
+Android SDK, so if you have not already installed the latest Android SDK, please
+do so before downloading the NDK. Also, please read <a href="#overview">What is 
+the Android NDK?</a> to get an understanding of what the NDK offers and whether
+it will be useful to you.</p>
 
 <p>Select the download package that is appropriate for your development
 computer. </p>
