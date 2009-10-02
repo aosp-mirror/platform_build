@@ -23,7 +23,7 @@
 # (like "TC1-RC5").  It must be a single word, and is
 # capitalized by convention.
 #
-BUILD_ID := ECLAIR
+BUILD_ID := ECLAIR-MR2
 
 # DISPLAY_BUILD_NUMBER should only be set for development branches,
 # If set, the BUILD_NUMBER (cl) is appended to the BUILD_ID for
