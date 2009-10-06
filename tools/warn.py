@@ -460,8 +460,8 @@ def dumpseverity(sev):
 
 def classifywarning(line):
     for i in warnpatterns:
-        for pat in i['patterns']:
-            if re.match(pat, line):
+        for cpat in i['compiledpatterns']:
+            if cpat.match(line):
                 i['members'].append(line)
                 return
     else:
@@ -470,7 +470,12 @@ def classifywarning(line):
         # 2 or more concurrent compiles
         pass
 
-
+# precompiling every pattern speeds up parsing by about 30x
+def compilepatterns():
+    for i in warnpatterns:
+        i['compiledpatterns'] = []
+        for pat in i['patterns']:
+            i['compiledpatterns'].append(re.compile(pat))
 
 infile = open(sys.argv[1], 'r')
 warnings = []
@@ -481,6 +486,7 @@ targetvariant = 'unknown'
 linecounter = 0
 
 warningpattern = re.compile('.* warning:.*')
+compilepatterns()
 
 # read the log file and classify all the warnings
 lastmatchedline = ''
@@ -514,8 +520,4 @@ dumpseverity(severity.LOW)
 dumpseverity(severity.HARMLESS)
 dumpseverity(severity.UNKNOWN)
 dumpfixed()
-
-
-
-
 
