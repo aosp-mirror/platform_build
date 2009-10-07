@@ -92,6 +92,7 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framew
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sholes/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/com.amazon.mp3_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/com.amazon.mp3.apk)
+$(call add-clean-stop, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
