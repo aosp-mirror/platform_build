@@ -931,7 +931,7 @@ define transform-o-to-static-lib
 @rm -f $@
 $(extract-and-include-whole-static-libs)
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
-$(hide) $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $^
+$(hide) echo $^ | xargs $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
 endef
 
 ###########################################################
@@ -944,7 +944,7 @@ define transform-host-o-to-static-lib
 @mkdir -p $(dir $@)
 @echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 @rm -f $@
-$(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $^
+echo $^ | xargs $(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
 endef
 
 

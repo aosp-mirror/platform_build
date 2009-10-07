@@ -14,6 +14,7 @@ $(combo_target)JNILIB_SUFFIX := .jnilib
 $(combo_target)GLOBAL_CFLAGS += \
 	-include $(call select-android-config-h,darwin-x86)
 $(combo_target)RUN_RANLIB_AFTER_COPYING := true
+$(combo_target)GLOBAL_ARFLAGS := cqs
 
 ifeq ($(combo_target),TARGET_)
 $(combo_target)CUSTOM_LD_COMMAND := true
