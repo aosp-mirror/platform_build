@@ -53,7 +53,7 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
-  PLATFORM_SDK_VERSION := 4
+  PLATFORM_SDK_VERSION := 5
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
