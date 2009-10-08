@@ -302,7 +302,7 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
 
   d = Difference(recovery_img, boot_img)
   _, _, patch = d.ComputePatch()
-  common.ZipWriteStr(output_zip, "system/recovery-from-boot.p", patch)
+  common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
 
   # Images with different content will have a different first page, so
@@ -323,7 +323,7 @@ fi
         'header_sha1': header_sha1,
         'recovery_size': recovery_img.size,
         'recovery_sha1': recovery_img.sha1 }
-  common.ZipWriteStr(output_zip, "system/etc/install-recovery.sh", sh)
+  common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
 
 
@@ -358,6 +358,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   script.FormatPartition("system")
   script.Mount("MTD", "system", "/system")
+  script.UnpackPackageDir("recovery", "/system")
   script.UnpackPackageDir("system", "/system")
 
   symlinks = CopySystemFiles(input_zip, output_zip)
@@ -745,6 +746,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # as fodder for constructing the recovery image.
     recovery_sh_item = MakeRecoveryPatch(output_zip,
                                          target_recovery, target_boot)
+    script.UnpackPackageDir("recovery", "/system")
     print "recovery image changed; including as patch from boot."
   else:
     print "recovery image unchanged; skipping."
