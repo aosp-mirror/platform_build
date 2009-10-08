@@ -68,7 +68,9 @@ CTS_CASE_LIST := \
 	CtsAppTestCases \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
-        CtsGestureTestCases \
+	CtsDpiTestCases \
+	CtsDpiTestCases2 \
+    CtsGestureTestCases \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
 	CtsLocationTestCases \
@@ -77,6 +79,7 @@ CTS_CASE_LIST := \
 	CtsPermissionTestCases \
 	CtsPermission2TestCases \
 	CtsProviderTestCases \
+	CtsSpeechTestCases \
 	CtsTelephonyTestCases \
 	CtsTextTestCases \
 	CtsUtilTestCases \
