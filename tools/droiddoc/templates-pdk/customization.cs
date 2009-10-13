@@ -12,6 +12,8 @@ def:custom_masthead() ?>
                   elif:guide ?> guide<?cs
                   elif:licenses ?>licenses <?cs
                   elif:home ?>home <?cs
+                  elif:getsource ?>getsource <?cs
+                  elif:compatibility ?>compatibility <?cs
                   elif:community ?>community <?cs /if ?>">
               <li id="home-link"><a href="<?cs var:toroot ?>index.html"><span>Home</span></a></li>
               <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
@@ -20,6 +22,10 @@ def:custom_masthead() ?>
                                   onClick="return loadLast('releases)'"><span>Releases</span></a></li>
               <li id="licenses-link"><a href="<?cs var:toroot ?>licenses/index.html"
                                   onClick="return loadLast('licenses)'"><span>Licenses</span></a></li>
+              <li id="getsource-link"><a href="<?cs var:toroot ?>getsource/index.html"
+                                  onClick="return loadLast('getsource)'"><span>Get Source</span></a></li>
+              <li id="compatibility-link"><a href="<?cs var:toroot ?>compatibility/index.html"
+                                  onClick="return loadLast('compatibility)'"><span>Compatibility</span></a></li>
               <li id="community-link"><a href="<?cs var:toroot ?>community/index.html"
                                   onClick="return loadLast('community)'"><span>Community</span></a></li>
           </ul> 
@@ -82,6 +88,37 @@ def:releases_nav() ?>
     </script>
 <?cs /def ?>
 
+<?cs
+def:getsource_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="devdoc-nav"><?cs
+        include:"../../../../development/pdk/docs/getsource/getsource_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      addLoadEvent(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
+<?cs
+def:compatibility_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="devdoc-nav"><?cs
+        include:"../../../../development/pdk/docs/compatibility/compatibility_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      addLoadEvent(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
+
 <?cs 
 def:custom_left_nav() ?><?cs
   if:doc.type == "guide" ?><?cs
@@ -90,6 +127,10 @@ def:custom_left_nav() ?><?cs
     call:licenses_nav() ?><?cs
   elif:doc.type == "releases" ?><?cs
     call:releases_nav() ?><?cs
+  elif:doc.type == "compatibility" ?><?cs
+    call:compatibility_nav() ?><?cs
+  elif:doc.type == "getsource" ?><?cs
+    call:getsource_nav() ?><?cs
   /if ?><?cs
 /def ?>
 
