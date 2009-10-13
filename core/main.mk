@@ -357,6 +357,7 @@ subdirs := \
 	dalvik/tools/hprof-conv \
 	development/emulator/mksdcard \
 	development/tools/line_endings \
+	development/tools/sdklauncher \
 	development/host \
 	external/expat \
 	external/libpng \
@@ -390,6 +391,7 @@ subdirs += \
 	development/tools/sdkstats \
 	development/tools/sdkmanager \
 	development/tools/mkstubs \
+	development/tools/layoutopt \
 	frameworks/base \
 	frameworks/base/tools/layoutlib \
 	external/googleclient \
