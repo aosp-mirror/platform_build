@@ -942,8 +942,9 @@ endef
 # try to add to an existing archive.
 define transform-host-o-to-static-lib
 @mkdir -p $(dir $@)
-@echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 @rm -f $@
+$(extract-and-include-whole-static-libs)
+@echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 echo $^ | xargs $(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
 endef
 
