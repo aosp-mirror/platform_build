@@ -12,6 +12,7 @@ PRODUCT_PACKAGES := \
     CertInstaller \
     DrmProvider \
     Email \
+    Gallery \
     LatinIME \
     Mms \
     Music \
