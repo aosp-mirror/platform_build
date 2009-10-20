@@ -1334,11 +1334,9 @@ $(hide) (cd $(dir $@) && zip -r $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
-#TODO: use aapt instead of zip, once it supports junking the path
-#      (so adding "xxx/yyy/classes.dex" appears as "classes.dex")
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) zip -qj $@ $(PRIVATE_DEX_FILE)
+$(hide) $(AAPT) add -k $@ $(PRIVATE_DEX_FILE)
 endef
 
 define add-java-resources-to-package
