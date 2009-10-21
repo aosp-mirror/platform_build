@@ -1,4 +1,3 @@
-
 #
 # Copyright (C) 2008 The Android Open Source Project
 #
@@ -14,9 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+#
+# Defines branch-specific values.
+#
+
 # BUILD_ID is usually used to specify the branch name
 # (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
+# (like "TC1-RC5").  It must be a single word, and is
 # capitalized by convention.
-
+#
 export BUILD_ID=DRD20
+

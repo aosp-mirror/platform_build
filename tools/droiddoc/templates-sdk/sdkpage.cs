@@ -62,10 +62,10 @@
 <p>The Android NDK is a companion tool to the Android SDK that lets Android
 application developers build performance-critical portions of their apps in
 native code. It is designed for use <em>only</em> in conjunction with the
-Android SDK, so if you have not already installed the Android 1.5 SDK, please do
-so before downloading the NDK. Also, please read <a href="#overview">What is the 
-Android NDK?</a> to get an understanding of what the NDK offers and whether it 
-will be useful to you.</p>
+Android SDK, so if you have not already installed the latest Android SDK, please
+do so before downloading the NDK. Also, please read <a href="#overview">What is 
+the Android NDK?</a> to get an understanding of what the NDK offers and whether
+it will be useful to you.</p>
 
 <p>Select the download package that is appropriate for your development
 computer. </p>
@@ -110,16 +110,18 @@ computer. </p>
   Android 1.6 and we are pleased to announce the availability of an early look
   SDK to give you a head-start on developing applications for it. </p>
 
-  <p>The Android 1.6 platform includes a variety of improvements and new
-  features for users and developers. Additionally, the SDK itself introduces
-  several new capabilities that enable you to develop applications more
-  efficiently. See the <a href="features.html">Android 1.6 Highlights</a> 
-  document for a list of highlights.</p>
-  <?cs /if ?>
+  <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
+improvements and new features for users and developers. Additionally, the SDK
+itself introduces several new capabilities that enable you to develop
+applications more efficiently. See the <a href="features.html">Android <?cs
+var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
+highlights.</p>
+<?cs /if ?>
 
 <p>Before downloading, please read the <a href="requirements.html">
-System Requirements</a> document. As you start the download, you will also need to review and agree to 
-the Terms and Conditions that govern the use of the Android SDK. </p>
+System Requirements</a> document. As you start the download, you will also need 
+to review and agree to the Terms and Conditions that govern the use of the 
+Android SDK. </p>
   
   <table class="download">
     <tr>
@@ -156,7 +158,7 @@ the Terms and Conditions that govern the use of the Android SDK. </p>
   <tr class="alt-color">
     <td>ADT Plugin for Eclipse <?cs var:adt.zip_version ?></td>
     <td>
-  <a href="<?cs var:toroot ?>sdk/download.html?v=<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
+  <a href="http://dl.google.com/android/<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
     </td>
     <td><?cs var:adt.zip_bytes ?> bytes</td>
     <td><?cs var:adt.zip_checksum ?></td>
@@ -170,14 +172,17 @@ the Terms and Conditions that govern the use of the Android SDK. </p>
 
 <?cs if:android.whichdoc != "online" && sdk.preview ?>
   <p>Welcome developers! The next release of the Android platform will be
-  Android 1.6 and we are pleased to announce the availability of an early look SDK
-  to give you a head-start on developing applications for it. </p>
+Android <?cs var:sdk.preview.version ?> and we are pleased to announce the
+availability of an early look SDK to give you a head-start on developing
+applications for it. </p>
 
-  <p>The Android 1.6 platform includes a variety of improvements and new features
-  for users and developers. Additionally, the SDK itself introduces several new
-  capabilities that enable you to develop applications more efficiently.
-  See the <a href="http://developer.android.com/sdk/preview/features.html">
-  Android 1.6 Highlights</a> document for a list of highlights.</p>
+  <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
+improvements and new features for users and developers. Additionally, the SDK
+itself introduces several new capabilities that enable you to develop
+applications more efficiently. See the <a
+href="http://developer.android.com/sdk/preview/features.html">Android 
+<?cs var:sdk.preview.version ?> Highlights</a> document for a list of
+highlights.</p>
 <?cs /if ?>
 
       <?cs call:tag_list(root.descr) ?>
