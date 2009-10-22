@@ -20,9 +20,7 @@
 		<span style="display:none" class="zh-TW">首頁</span>
 	<?cs /if ?>
 	</a></li>
-	<li id="sdk-link"><a href="<?cs var:toroot ?><?cs 
-	                            if:android.whichdoc != "online" ?>sdk/RELEASENOTES.html<?cs 
-	                            else ?>sdk/<?cs var:sdk.current ?>/index.html<?cs /if ?>">
+	<li id="sdk-link"><a href="<?cs var:toroot ?>sdk/index.html">
 		<span class="en">SDK</span>
 	</a></li>
 	<li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html" onClick="return loadLast('guide')">
