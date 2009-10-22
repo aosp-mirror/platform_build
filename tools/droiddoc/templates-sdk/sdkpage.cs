@@ -33,28 +33,29 @@
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
-    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
+    <h1><?cs if:android.whichdoc == "online" ?>Download the <?cs /if ?><?cs var:page.title ?></h1>
   </div>
 
   <div id="jd-content">
-    <p><em><?cs 
-    if:ndk ?><?cs 
-      var:ndk.date ?><?cs 
+    <?cs 
+    if:ndk ?><p><em><?cs 
+      var:ndk.date ?></em></p><?cs 
     else ?><?cs 
-      var:sdk.date ?><?cs 
-    /if ?></em>
-    </p>
+      if:android.whichdoc == "online" ?><p><em><?cs 
+      var:sdk.date ?></em></p><?cs 
+      /if ?><?cs
+    /if ?>
 
 <?cs if:sdk.not_latest_version ?>
   <div class="special">
     <p><strong>This is NOT the current Android SDK release.</strong></p>
-    <p><a href="/sdk/<?cs var:sdk.current ?>/index.html">Download the current Android SDK</a></p>
+    <p><a href="/sdk/index.html">Download the current Android SDK</a></p>
   </div>
 <?cs /if ?>
 
 <?cs if:android.whichdoc != "online" && !android.preview ?>
 
-<p>The sections below provide an overview of the SDK package. </p>
+<!-- <p>The sections below provide an overview of how to install the SDK package. </p> -->
 
 <?cs else ?>
   <?cs if:ndk ?>
@@ -117,6 +118,11 @@ applications more efficiently. See the <a href="features.html">Android <?cs
 var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
 highlights.</p>
 <?cs /if ?>
+
+<p>To get started with the Android SDK, select a package from the table
+below and download it to your development computer. Next, install the package
+and then use the tools included to download one or more Android platforms, SDK
+add-ons, or other components into your SDK. </p>
 
 <p>Before downloading, please read the <a href="requirements.html">
 System Requirements</a> document. As you start the download, you will also need 
