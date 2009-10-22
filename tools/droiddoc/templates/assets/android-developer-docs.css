@@ -750,6 +750,8 @@ ul.no-style {
   font-weight: bold;
   color: red;
   text-decoration: none;
+  vertical-align:top;
+  line-height:.9em;
 }
 
 pre.classic {
