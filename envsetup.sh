@@ -967,14 +967,7 @@ function runtest()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (cd "$T" && development/testrunner/runtest.py $@)
-}
-
-# TODO: Remove this some time after 1 June 2009
-function runtest_py()
-{
-    echo "runtest_py is obsolete; use runtest instead" >&2
-    return 1
+    ("$T"/development/testrunner/runtest.py $@)
 }
 
 function godir () {
