@@ -945,7 +945,7 @@ $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
 	rm -rf $$ldir; \
 	mkdir -p $$ldir; \
 	filelist=; \
-	for f in `$(HOST_AR) t $(lib)`; do \
+	for f in `$(HOST_AR) t $(lib) | grep '\.o$$'`; do \
 	    $(HOST_AR) p $(lib) $$f > $$ldir/$$f; \
 	    filelist="$$filelist $$ldir/$$f"; \
 	done ; \
