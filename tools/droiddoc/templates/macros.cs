@@ -73,6 +73,15 @@ def:tag_list(tags) ?><?cs
       elif:tag.kind == "@sdkCurrent" ?><?cs var:sdk.current ?><?cs
       elif:tag.kind == "@sdkCurrentVersion" ?><?cs var:sdk.version ?><?cs
       elif:tag.kind == "@sdkCurrentRelId" ?><?cs var:sdk.rel.id ?><?cs
+      elif:tag.kind == "@sdkPlatformVersion" ?><?cs var:sdk.platform.version ?><?cs
+      elif:tag.kind == "@sdkPlatformApiLevel" ?><?cs var:sdk.platform.apiLevel ?><?cs
+      elif:tag.kind == "@sdkPlatformMajorMinor" ?><?cs var:sdk.platform.majorMinor ?><?cs
+      elif:tag.kind == "@sdkPlatformReleaseDate" ?><?cs var:sdk.platform.releaseDate ?><?cs
+      elif:tag.kind == "@sdkPlatformDeployableDate" ?><?cs var:sdk.platform.deployableDate ?><?cs
+      elif:tag.kind == "@adtZipVersion" ?><?cs var:adt.zip.version ?><?cs
+      elif:tag.kind == "@adtZipDownload" ?><?cs var:adt.zip.download ?><?cs
+      elif:tag.kind == "@adtZipBytes" ?><?cs var:adt.zip.bytes ?><?cs
+      elif:tag.kind == "@adtZipChecksum" ?><?cs var:adt.zip.checksum ?><?cs
       elif:tag.kind == "@inheritDoc" ?><?cs # This is the case when @inheritDoc is in something
                                               that doesn't inherit from anything?><?cs
       elif:tag.kind == "@attr" ?><?cs
