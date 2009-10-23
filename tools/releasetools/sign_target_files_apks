@@ -55,7 +55,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       the last component of the build fingerprint).  Prefix each with
       '+' or '-' to indicate whether that tag should be added or
       removed.  Changes are processed in the order they appear.
-      Default value is "-test-keys,+ota-rel-keys,+release-keys".
+      Default value is "-test-keys,+release-keys".
 
 """
 
@@ -80,7 +80,7 @@ OPTIONS = common.OPTIONS
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
-OPTIONS.tag_changes = ("-test-keys", "+ota-rel-keys", "+release-keys")
+OPTIONS.tag_changes = ("-test-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
   certmap = {}
