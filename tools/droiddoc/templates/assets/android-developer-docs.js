@@ -448,3 +448,18 @@ function getLangPref() {
   }
   return (lang != 0) ? lang : 'en';
 }
+
+
+function toggleContent(obj) {
+  var button = $(obj);
+  var div = $(obj.parentNode);
+  var toggleMe = $(".toggle-content-toggleme",div);
+  if (button.hasClass("show")) {
+    toggleMe.slideDown();
+    button.removeClass("show").addClass("hide");
+  } else {
+    toggleMe.slideUp();
+    button.removeClass("hide").addClass("show");
+  }
+  $("span", button).toggle();
+}
