@@ -112,22 +112,47 @@ computer. </p>
   SDK to give you a head-start on developing applications for it. </p>
 
   <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
-improvements and new features for users and developers. Additionally, the SDK
-itself introduces several new capabilities that enable you to develop
-applications more efficiently. See the <a href="features.html">Android <?cs
-var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
-highlights.</p>
-<?cs /if ?>
+  improvements and new features for users and developers. Additionally, the SDK
+  itself introduces several new capabilities that enable you to develop
+  applications more efficiently. See the <a href="features.html">Android <?cs
+  var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
+  highlights.</p>
+<?cs /if ?> 
+<?cs # end if NDK ... the following is for the SDK ?>
 
-<p>To get started with the Android SDK, select a package from the table
-below and download it to your development computer. Next, install the package
-and then use the tools included to download one or more Android platforms, SDK
-add-ons, or other components into your SDK. </p>
+  <div class="toggle-content special">
+    <p>The Android SDK has changed! If you've worked with the Android SDK before, 
+    you will notice several important differences:</p>
+    
+    <div class="toggle-content-toggleme" style="display:none">
+    <ul>
+    <li style="margin-top:.5em">The SDK downloadable package includes <em>only</em>
+    the latest version of the Android SDK Tools.</li>
+    <li>Once you've installed the SDK, you now use the Android SDK and AVD Manager
+    to download all of the SDK components that you need, such as Android platforms,
+    SDK add-ons, tools, and documentation. </li>
+    <li>The new approach is modular &mdash; you can install only the components you
+    need and update any or all components without affecting other parts of your
+    development environment.</li>
+    <li>In short, once you've installed the new SDK, you will not need to download
+    an SDK package again. Instead, you will use the Android SDK and AVD Manager to
+    keep your development environment up-to-date. </li>
+    </ul>
+    <p>If you are currently using the Android 1.6 SDK, you do not need
+    to install the new SDK, because your existing SDK includes the Android SDK and
+    AVD Manager tool. To develop against Android 2.0, for example, you can
+    just download the Android 2.0 platform into your existing SDK. Refer to
+    <a href="adding-components.html">Adding SDK Components</a>.</p>
+    </div>
+    
+    <a href='#' class='toggle-content-button show' onclick="toggleContent(this);return false;">
+      <span>show more</span><span style='display:none'>show less</span>
+    </a>
+  </div>
 
-<p>Before downloading, please read the <a href="requirements.html">
-System Requirements</a> document. As you start the download, you will also need 
-to review and agree to the Terms and Conditions that govern the use of the 
-Android SDK. </p>
+  <p>If you are new to the Android SDK, please read the <a href="#quickstart">Quick Start</a>,
+  below, for an overview of the installation process and how to set up your environment.</p>
+  
   
   <table class="download">
     <tr>
