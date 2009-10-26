@@ -659,7 +659,27 @@ h5.jd-tagtitle {
 div.special {
   padding: .5em 1em 1em 1em;
   margin: 0 0 1em;
-  background-color: #ddf0f2;
+  background-color: #DAF3FC;
+  border:1px solid #d3ecf5;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+}
+
+.toggle-content-toggleme {
+  display:none;
+}
+
+.toggle-content-button {
+  font-size:.9em;
+  line-height:.9em;
+  text-decoration:none;
+  position:relative;
+  top:5px;
+}
+
+.toggle-content-button:hover {
+  text-decoration:underline;
 }
 
 div.special p {
