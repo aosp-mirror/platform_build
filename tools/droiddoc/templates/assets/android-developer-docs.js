@@ -156,8 +156,8 @@ function highlightNav(fullPageName) {
   var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
   var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5);
   var link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-  if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) || (fullPageName.indexOf("/sdk/") != -1))) { 
-// if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide and sdk)
+  if ((link.length == 0) && (fullPageName.indexOf("/guide/") != -1)) { 
+// if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide)
     lastBackstep = pathPageName.lastIndexOf("/");
     while (link.length == 0) {
       backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
