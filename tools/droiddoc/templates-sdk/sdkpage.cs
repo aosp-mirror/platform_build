@@ -125,7 +125,7 @@ computer. </p>
     you will notice several important differences:</p>
     
     <div class="toggle-content-toggleme" style="display:none">
-    <ul>
+    <ul style="padding-bottom:.0;">
     <li style="margin-top:.5em">The SDK downloadable package includes <em>only</em>
     the latest version of the Android SDK Tools.</li>
     <li>Once you've installed the SDK, you now use the Android SDK and AVD Manager
@@ -138,11 +138,12 @@ computer. </p>
     an SDK package again. Instead, you will use the Android SDK and AVD Manager to
     keep your development environment up-to-date. </li>
     </ul>
-    <p>If you are currently using the Android 1.6 SDK, you do not need
-    to install the new SDK, because your existing SDK includes the Android SDK and
-    AVD Manager tool. To develop against Android 2.0, for example, you can
-    just download the Android 2.0 platform into your existing SDK. Refer to
-    <a href="adding-components.html">Adding SDK Components</a>.</p>
+    <p style="margin-top:0">If you are currently using the Android 1.6 SDK, you
+    do not need to install the new SDK, because your existing SDK already 
+    includes the Android SDK and AVD Manager tool. To develop against Android 
+    2.0, for example, you can just download the Android 2.0 platform (and 
+    updated SDK Tools) into your existing SDK. Refer to <a 
+    href="adding-components.html">Adding SDK Components</a>.</p>
     </div>
     
     <a href='#' class='toggle-content-button show' onclick="toggleContent(this);return false;">
@@ -151,7 +152,7 @@ computer. </p>
   </div>
 
   <p>If you are new to the Android SDK, please read the <a href="#quickstart">Quick Start</a>,
-  below, for an overview of the installation process and how to set up your environment.</p>
+  below, for an overview of how to install and set up the SDK.</p>
   
   
   <table class="download">
