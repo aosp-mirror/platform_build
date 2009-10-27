@@ -73,9 +73,10 @@ def:custom_masthead() ?>
           call:default_search_box() ?><?cs 
     	 	  if:reference ?>
     			  <div id="api-level-toggle">
-    			    <label for="apiLevelControl"><a href="<?cs var:toroot ?>guide/appendix/api-levels.html">Filter by API Level</a>: </label>
-    			    <select id="apiLevelControl">
-    			      <!-- option elements added by buildApiLevelToggle() -->
+    			    <input type="checkbox" id="apiLevelCheckbox" onclick="toggleApiLevelSelector(this)" />
+    			    <label for="apiLevelCheckbox" class="disabled">Filter by API Level: </label>
+    			    <select id="apiLevelSelector">
+    			      <!-- option elements added by buildApiLevelSelector() -->
     			    </select>
     			  </div>
     	 	    <script>
@@ -85,7 +86,7 @@ def:custom_masthead() ?>
                   if:!last(since) ?>, <?cs /if ?><?cs
                 /each 
               ?> ];
-              buildApiLevelToggle();
+              buildApiLevelSelector();
             </script><?cs 
     			/if ?>
       </div><!-- headerRight -->
