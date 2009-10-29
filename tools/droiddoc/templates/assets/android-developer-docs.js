@@ -99,7 +99,7 @@ function readCookie(cookie) {
 }
 
 function writeCookie(cookie, val, section, expiration) {
-  if (!val) return;  
+  if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
   if (expiration == null) {
     var date = new Date();
