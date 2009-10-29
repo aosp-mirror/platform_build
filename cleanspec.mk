@@ -104,6 +104,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/openssl_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
