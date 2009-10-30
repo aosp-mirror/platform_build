@@ -196,7 +196,7 @@ hr.blue {
   height: 114px;
   position:relative;
   z-index:100;
-  min-width:576px;
+  min-width:675px; /* min width for the tabs, before they wrap */
   padding:0 10px;
   border-bottom:3px solid #94b922;
 }
