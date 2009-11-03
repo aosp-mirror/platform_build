@@ -26,6 +26,7 @@ function buildApiLevelSelector() {
   var maxLevel = SINCE_DATA.length;
   var userApiLevelEnabled = readCookie(API_LEVEL_ENABLED_COOKIE);
   var userApiLevel = readCookie(API_LEVEL_COOKIE);
+  userApiLevel = userApiLevel == 0 ? maxLevel : userApiLevel; // If there's no cookie (zero), use the max by default
 
   if (userApiLevelEnabled == 0) {
     $("#apiLevelSelector").attr("disabled","disabled");
