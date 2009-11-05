@@ -422,7 +422,7 @@ endif	# !SDK_ONLY
 # Can't use first-makefiles-under here because
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles += \
-	$(shell build/tools/findleaves.sh --prune="./out" $(subdirs) Android.mk)
+	$(shell build/tools/findleaves.sh --prune="*\.git*" --prune="*\.repo*" --prune="./out" $(subdirs) Android.mk)
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
