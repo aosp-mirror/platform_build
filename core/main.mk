@@ -252,8 +252,6 @@ tags_to_install := user debug eng
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
-# Enable sync for non-sdk builds only (sdk builds lack SubscribedFeedsProvider).
-ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 endif
 
 ## precise GC ##
@@ -288,6 +286,7 @@ ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
+ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 
 # enable vm tracing in files for now to help track
 # the cause of ANRs in the content process

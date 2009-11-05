@@ -1,6 +1,7 @@
 PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
+	AccountAndSyncSettings \
 	AlarmClock \
 	Camera \
 	Calculator \
