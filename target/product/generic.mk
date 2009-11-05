@@ -3,6 +3,7 @@
 # you should derive from generic_with_google.mk
 
 PRODUCT_PACKAGES := \
+    AccountAndSyncSettings \
     AlarmClock \
     AlarmProvider \
     Bluetooth \
@@ -20,7 +21,6 @@ PRODUCT_PACKAGES := \
     Sync \
     Updater \
     CalendarProvider \
-    SubscribedFeedsProvider \
     SyncProvider
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
