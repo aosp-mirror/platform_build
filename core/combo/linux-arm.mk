@@ -112,7 +112,7 @@ endif
 $(combo_target)GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 $(combo_target)RELEASE_CFLAGS := \
-			-DSK_RELEASE -DNDEBUG \
+			-DNDEBUG \
 			-g \
 			-Wstrict-aliasing=2 \
 			-finline-functions \
