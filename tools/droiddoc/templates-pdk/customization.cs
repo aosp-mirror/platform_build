@@ -5,29 +5,28 @@ left nav (toc) that gets placed on all pages, for the open source site?>
 def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
-          <a href="http://source.android.com" tabindex="-1"><img
-              src="<?cs var:toroot ?>assets/images/open_source.png" alt="Open Source Project: Platform Development Kit" /></a>
-          <ul class="<?cs 
-                  if:releases ?> releases<?cs
-                  elif:guide ?> guide<?cs
-                  elif:licenses ?>licenses <?cs
-                  elif:home ?>home <?cs
-                  elif:getsource ?>getsource <?cs
-                  elif:compatibility ?>compatibility <?cs
-                  elif:community ?>community <?cs /if ?>">
+          <a href="<?cs var:toroot?>" tabindex="-1"><img
+              src="<?cs var:toroot ?>assets/images/open_source.png" alt="Android Open Source Project" /></a>
+          <ul class="<?cs if:home ?>home<?cs
+                      elif:doc.type == "source" ?>source<?cs
+                      elif:doc.type == "porting" ?>porting<?cs
+                      elif:doc.type == "compatibility" ?>compatibility<?cs
+                      elif:doc.type == "downloads" ?>downloads<?cs
+                      elif:doc.type == "community" ?>community<?cs
+                      elif:doc.type == "about" ?>about<?cs /if ?>">
               <li id="home-link"><a href="<?cs var:toroot ?>index.html"><span>Home</span></a></li>
-              <li id="guide-link"><a href="<?cs var:toroot ?>guide/index.html"
-                                  onClick="return loadLast('guide)'"><span>Guide</span></a></li>
-              <li id="releases-ink"><a href="<?cs var:toroot ?>releases/index.html"
-                                  onClick="return loadLast('releases)'"><span>Releases</span></a></li>
-              <li id="licenses-link"><a href="<?cs var:toroot ?>licenses/index.html"
-                                  onClick="return loadLast('licenses)'"><span>Licenses</span></a></li>
-              <li id="getsource-link"><a href="<?cs var:toroot ?>getsource/index.html"
-                                  onClick="return loadLast('getsource)'"><span>Get Source</span></a></li>
+              <li id="source-link"><a href="<?cs var:toroot ?>source/index.html"
+                                  onClick="return loadLast('source')"><span>Source</span></a></li>
+              <li id="porting-link"><a href="<?cs var:toroot ?>porting/index.html"
+                                  onClick="return loadLast('porting')"><span>Porting</span></a></li>
               <li id="compatibility-link"><a href="<?cs var:toroot ?>compatibility/index.html"
-                                  onClick="return loadLast('compatibility)'"><span>Compatibility</span></a></li>
+                                  onClick="return loadLast('compatibility')"><span>Compatibility</span></a></li>
               <li id="community-link"><a href="<?cs var:toroot ?>community/index.html"
-                                  onClick="return loadLast('community)'"><span>Community</span></a></li>
+                                  onClick="return loadLast('community')"><span>Community</span></a></li>
+              <li id="downloads-link"><a href="<?cs var:toroot ?>downloads/index.html"
+                                  onClick="return loadLast('downloads')"><span>Downloads</span></a></li>
+              <li id="about-link"><a href="<?cs var:toroot ?>about/index.html"
+                                  onClick="return loadLast('about')"><span>About</span></a></li>
           </ul> 
       </div>
       <div id="headerRight">
@@ -43,12 +42,11 @@ def:custom_masthead() ?>
 /def ?><?cs # custom_masthead ?>
 
 
-<?cs 
-def:guide_nav() ?>
+<?cs def:community_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
       <div id="devdoc-nav"><?cs 
-        include:"../../../../development/pdk/docs/guide/pdk_toc.cs" ?>
+        include:"../../../../development/pdk/docs/community/community_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -56,14 +54,14 @@ def:guide_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
+  </div>
 <?cs /def ?>
 
-<?cs
-def:licenses_nav() ?>
+<?cs def:about_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
       <div id="devdoc-nav"><?cs
-        include:"../../../../development/pdk/docs/licenses/licenses_toc.cs" ?>
+        include:"../../../../development/pdk/docs/about/about_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -71,14 +69,14 @@ def:licenses_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
+  </div>
 <?cs /def ?>
 
-<?cs
-def:releases_nav() ?>
+<?cs def:porting_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
       <div id="devdoc-nav"><?cs
-        include:"../../../../development/pdk/docs/releases/releases_toc.cs" ?>
+        include:"../../../../development/pdk/docs/porting/porting_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -86,14 +84,14 @@ def:releases_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
+  </div>
 <?cs /def ?>
 
-<?cs
-def:getsource_nav() ?>
+<?cs def:source_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
       <div id="devdoc-nav"><?cs
-        include:"../../../../development/pdk/docs/getsource/getsource_toc.cs" ?>
+        include:"../../../../development/pdk/docs/source/source_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -101,10 +99,25 @@ def:getsource_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
+  </div>
 <?cs /def ?>
 
-<?cs
-def:compatibility_nav() ?>
+<?cs def:downloads_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="devdoc-nav"><?cs
+        include:"../../../../development/pdk/docs/downloads/downloads_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      addLoadEvent(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+  </div>
+<?cs /def ?>
+
+<?cs def:compatibility_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
       <div id="devdoc-nav"><?cs
@@ -116,23 +129,26 @@ def:compatibility_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
+  </div>
 <?cs /def ?>
 
-
-<?cs 
-def:custom_left_nav() ?><?cs
-  if:doc.type == "guide" ?><?cs
-    call:guide_nav() ?><?cs
-  elif:doc.type == "licenses" ?><?cs
-    call:licenses_nav() ?><?cs
-  elif:doc.type == "releases" ?><?cs
-    call:releases_nav() ?><?cs
-  elif:doc.type == "compatibility" ?><?cs
-    call:compatibility_nav() ?><?cs
-  elif:doc.type == "getsource" ?><?cs
-    call:getsource_nav() ?><?cs
-  /if ?><?cs
-/def ?>
+<?cs def:custom_left_nav() ?>
+  <?cs if:doc.hidenav != "true" ?>
+    <?cs if:doc.type == "source" ?>
+      <?cs call:source_nav() ?>
+    <?cs elif:doc.type == "porting" ?>
+      <?cs call:porting_nav() ?>
+    <?cs elif:doc.type == "compatibility" ?>
+      <?cs call:compatibility_nav() ?>
+    <?cs elif:doc.type == "downloads" ?>
+      <?cs call:downloads_nav() ?>
+    <?cs elif:doc.type == "community" ?>
+      <?cs call:community_nav() ?>
+    <?cs elif:doc.type == "about" ?>
+      <?cs call:about_nav() ?>
+    <?cs /if ?>
+  <?cs /if ?>
+<?cs /def ?>
 
 <?cs # appears at the bottom of every page ?><?cs 
 def:custom_cc_copyright() ?>

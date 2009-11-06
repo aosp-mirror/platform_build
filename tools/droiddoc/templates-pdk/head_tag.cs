@@ -11,7 +11,6 @@
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" />
 <link href="<?cs var:toroot ?>assets-pdk/pdk-local.css" rel="stylesheet" type="text/css" />
 <script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>reference/lists.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/jquery-resizable.min.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/android-developer-docs.js" type="text/javascript"></script>
 <script type="text/javascript">
