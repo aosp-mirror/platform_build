@@ -86,9 +86,10 @@ $(HOST_CXX) \
         $(HOST_GLOBAL_LD_DIRS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(PRIVATE_ALL_OBJECTS) \
-        $(PRIVATE_LDLIBS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(PRIVATE_LDFLAGS) \
+        $(PRIVATE_LDLIBS) \
         $(HOST_LIBGCC)
 endef
 
