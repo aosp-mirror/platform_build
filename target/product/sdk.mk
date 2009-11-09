@@ -25,6 +25,7 @@ PRODUCT_PACKAGES := \
 	libWnnJpnDic \
 	libwnndict \
 	CertInstaller \
+	LiveWallpapersPicker \
 	ApiDemos \
 	GestureBuilder \
 	SoftKeyboard
