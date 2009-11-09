@@ -24,6 +24,7 @@ PRODUCT_PACKAGES := \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
+	CertInstaller \
 	ApiDemos \
 	GestureBuilder \
 	SoftKeyboard
