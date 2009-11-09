@@ -74,6 +74,7 @@ libRS.so                0xAB900000
 
 
 # audio
+libFLAC.so              0xAB8A0000
 libaudiopolicy.so       0xAB880000
 libaudiopolicygeneric.so 0xAB800000
 libsoundpool.so         0xAB780000
