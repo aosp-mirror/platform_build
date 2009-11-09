@@ -68,6 +68,9 @@ endif
 # will be added to LOCAL_CFLAGS when building the module.
 #DEBUG_MODULE_ModuleName:=true
 
+# Specify an alternative tool chain prefix if needed.
+#TARGET_TOOLS_PREFIX:=
+
 # Specify the extra CFLAGS to use when building a module whose
 # DEBUG_MODULE_ variable is set.  Host and device flags are handled
 # separately.
