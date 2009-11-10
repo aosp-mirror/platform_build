@@ -26,7 +26,8 @@ public class ClassInfo {
     private boolean mIsFinal;
     private String mDeprecated;
     private String mScope;
-    private List<String> mInterfaces;
+    private List<String> mInterfaceNames;
+    private List<ClassInfo> mInterfaces;
     private HashMap<String, MethodInfo> mMethods;
     private HashMap<String, FieldInfo> mFields;
     private HashMap<String, ConstructorInfo> mConstructors;
@@ -48,7 +49,8 @@ public class ClassInfo {
         mIsFinal = isFinal;
         mDeprecated = deprecated;
         mScope = visibility;
-        mInterfaces = new ArrayList<String>();
+        mInterfaceNames = new ArrayList<String>();
+        mInterfaces = new ArrayList<ClassInfo>();
         mMethods = new HashMap<String, MethodInfo>();
         mFields = new HashMap<String, FieldInfo>();
         mConstructors = new HashMap<String, ConstructorInfo>();
@@ -109,6 +111,18 @@ public class ClassInfo {
         return null;
     }
     
+    // Find a superinterface declaration of the given method.
+    public MethodInfo interfaceMethod(MethodInfo candidate) {
+        for (ClassInfo interfaceInfo : mInterfaces) {
+            for (MethodInfo mi : interfaceInfo.mMethods.values()) {
+                if (mi.matches(candidate)) {
+                    return mi;
+                }
+            }
+        }
+        return (mSuperClass != null) ? mSuperClass.interfaceMethod(candidate) : null;
+    }
+
     public boolean isConsistent(ClassInfo cl) {
         cl.mExistsInBoth = true;
         mExistsInBoth = true;
@@ -120,18 +134,18 @@ public class ClassInfo {
                     + " changed class/interface declaration");
             consistent = false;
         }
-        for (String iface : mInterfaces) {
+        for (String iface : mInterfaceNames) {
             boolean found = false;
             for (ClassInfo c = cl; c != null && !found; c = c.mSuperClass) {
-                found = c.mInterfaces.contains(iface);
+                found = c.mInterfaceNames.contains(iface);
             }
             if (!found) {
                 Errors.error(Errors.REMOVED_INTERFACE, cl.position(),
                         "Class " + qualifiedName() + " no longer implements " + iface);
             }
         }
-        for (String iface : cl.mInterfaces) {
-          if (!mInterfaces.contains(iface)) {
+        for (String iface : cl.mInterfaceNames) {
+          if (!mInterfaceNames.contains(iface)) {
               Errors.error(Errors.ADDED_INTERFACE, cl.position(),
                       "Added interface " + iface + " to class "
                       + qualifiedName());
@@ -150,6 +164,9 @@ public class ClassInfo {
                  * fulfills the API requirement.
                  */
                 MethodInfo mi = mInfo.containingClass().overriddenMethod(mInfo);
+                if (mi == null) {
+                    mi = mInfo.containingClass().interfaceMethod(mInfo);
+                }
                 if (mi == null) {
                     Errors.error(Errors.REMOVED_METHOD, mInfo.position(),
                             "Removed public method " + mInfo.qualifiedName());
@@ -256,9 +273,15 @@ public class ClassInfo {
         
         return consistent;
     }
+
+    public void resolveInterfaces(ApiInfo apiInfo) {
+        for (String interfaceName : mInterfaceNames) {
+            mInterfaces.add(apiInfo.findClass(interfaceName));
+        }
+    }
     
     public void addInterface(String name) {
-        mInterfaces.add(name);
+        mInterfaceNames.add(name);
     }
     
     public void addMethod(MethodInfo mInfo) {
