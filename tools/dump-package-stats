@@ -102,7 +102,7 @@ do
                 $1 != "Length" ||
                 $2 != "Method" ||
                 $3 != "Size" ||
-                $4 != "Ratio" ||
+                ($4 != "Ratio" && $4 != "Cmpr") ||
                 $5 != "Date" ||
                 $6 != "Time" ||
                 $7 != "CRC-32" ||
