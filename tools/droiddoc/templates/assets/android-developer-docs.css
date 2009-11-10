@@ -1238,10 +1238,4 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body
   table, img {
     page-break-inside: avoid;
   }
-
-/*  #qv,
-  #qv-wrapper {
-    display:none;
-  }
-*/
 }
