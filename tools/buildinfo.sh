@@ -21,6 +21,9 @@ echo "ro.product.name=$PRODUCT_NAME"
 echo "ro.product.device=$TARGET_DEVICE"
 echo "ro.product.board=$TARGET_BOOTLOADER_BOARD_NAME"
 echo "ro.product.cpu.abi=$TARGET_CPU_ABI"
+if [ -n "$TARGET_CPU_ABI2" ] ; then
+  echo "ro.product.cpu.abi2=$TARGET_CPU_ABI2"
+fi
 echo "ro.product.manufacturer=$PRODUCT_MANUFACTURER"
 echo "ro.product.locale.language=$PRODUCT_DEFAULT_LANGUAGE"
 echo "ro.product.locale.region=$PRODUCT_DEFAULT_REGION"
