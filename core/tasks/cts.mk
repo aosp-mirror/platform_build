@@ -63,7 +63,7 @@ CTS_SECURITY_APPS_LIST := \
 	CtsUsePermissionDiffCert
 
 CTS_CASE_LIST := \
-	DeviceInfoCollector \
+	TestDeviceSetup \
 	CtsTestStubs \
 	CtsAppTestCases \
 	CtsContentTestCases \
