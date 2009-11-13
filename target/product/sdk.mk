@@ -30,6 +30,8 @@ PRODUCT_PACKAGES := \
 	GestureBuilder \
 	SoftKeyboard
 
+PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
+
 PRODUCT_COPY_FILES := \
 	development/data/etc/vold.conf:system/etc/vold.conf \
 	frameworks/base/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml
