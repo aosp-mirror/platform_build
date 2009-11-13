@@ -186,7 +186,9 @@ endef
 define _import-node
   $(eval _include_stack := $(2) $$(_include_stack))
   $(call clear-var-list, $(3))
+  $(eval LOCAL_PATH := $(patsubst %/,%,$(dir $(2))))
   $(eval include $(2))
+  $(eval LOCAL_PATH :=)
   $(call copy-var-list, $(1).$(2), $(3))
   $(call clear-var-list, $(3))
 

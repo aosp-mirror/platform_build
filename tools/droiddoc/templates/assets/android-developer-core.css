@@ -48,11 +48,12 @@ a:visited code {
 }
 
 input, select,
-textarea, option {
+textarea, option, label {
   font-family:inherit;
   font-size:inherit;
   padding:0;
   margin:0;
+  vertical-align:middle;
 }
 
 option {
@@ -81,6 +82,7 @@ pre {
   padding:10px;
   margin:0 0 1em 1em;
   overflow:auto;
+  line-height:inherit; /* fixes vertical scrolling in webkit */
 }
 
 h1,h2,h3,h4,h5 {
@@ -194,7 +196,7 @@ hr.blue {
   height: 114px;
   position:relative;
   z-index:100;
-  min-width:576px;
+  min-width:675px; /* min width for the tabs, before they wrap */
   padding:0 10px;
   border-bottom:3px solid #94b922;
 }

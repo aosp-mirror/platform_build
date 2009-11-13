@@ -80,6 +80,7 @@ public class SourcePositionInfo implements Comparable
         return new SourcePositionInfo(that.file, line, 0);
     }
 
+    @Override
     public String toString()
     {
         if (this.file == null) {

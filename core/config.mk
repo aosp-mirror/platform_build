@@ -75,11 +75,11 @@ SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
 # ###############################################################
 
 # These can be changed to modify both host and device modules.
-COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused
+COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -Winit-self -Wpointer-arith
 COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
-COMMON_GLOBAL_CPPFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -Wnon-virtual-dtor
-COMMON_RELEASE_CPPFLAGS:= -DNDEBUG -UDEBUG
+COMMON_GLOBAL_CPPFLAGS:= $(COMMON_GLOBAL_CFLAGS) -Wsign-promo
+COMMON_RELEASE_CPPFLAGS:= $(COMMON_RELEASE_CFLAGS)
 
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
@@ -87,7 +87,13 @@ COMMON_JAVA_PACKAGE_SUFFIX := .jar
 COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 
 # list of flags to turn specific warnings in to errors
-TARGET_ERROR_FLAGS := -Werror=return-type
+TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point
+
+# TODO: do symbol compression
+TARGET_COMPRESS_MODULE_SYMBOLS := false
+
+# Default is to prelink modules.
+TARGET_PRELINK_MODULE := true
 
 # ###############################################################
 # Include sub-configuration files
@@ -104,6 +110,32 @@ TARGET_ERROR_FLAGS := -Werror=return-type
 # Define most of the global variables.  These are the ones that
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
+
+# Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
+# or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
+# make sure only one exists.
+# Real boards should always be associated with an OEM vendor.
+board_config_mk := \
+	$(strip $(wildcard \
+		$(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
+		vendor/*/$(TARGET_DEVICE)/BoardConfig.mk \
+	))
+ifeq ($(board_config_mk),)
+  $(error No config file found for TARGET_DEVICE $(TARGET_DEVICE))
+endif
+ifneq ($(words $(board_config_mk)),1)
+  $(error Multiple board config files for TARGET_DEVICE $(TARGET_DEVICE): $(board_config_mk))
+endif
+include $(board_config_mk)
+TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
+board_config_mk :=
+
+# Clean up/verify variables defined by the board config file.
+TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
+TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
+ifeq ($(TARGET_CPU_ABI),)
+  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
+endif
 
 # $(1): os/arch
 define select-android-config-h
@@ -167,6 +199,7 @@ MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := tune2fs
 E2FSCK := e2fsck
 JARJAR := java -jar $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
+PROGUARD := external/proguard/bin/proguard.sh
 
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
@@ -258,10 +291,6 @@ HOST_GLOBAL_CPPFLAGS += $(HOST_RELEASE_CPPFLAGS)
 
 TARGET_GLOBAL_CFLAGS += $(TARGET_RELEASE_CFLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
-
-# TODO: do symbol compression
-TARGET_COMPRESS_MODULE_SYMBOLS := false
-TARGET_PRELINK_MODULE := true
 
 PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 

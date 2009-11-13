@@ -18,7 +18,7 @@
 # WHEN DOING SO, DELETE ANY "add-clean-step" ENTRIES THAT HAVE PILED UP.
 # **********************************************************************
 #
-INTERNAL_CLEAN_BUILD_VERSION := 2
+INTERNAL_CLEAN_BUILD_VERSION := 3
 #
 # ***********************************************************************
 # Do not touch INTERNAL_CLEAN_BUILD_VERSION if you've added a clean step!
@@ -31,7 +31,7 @@ INTERNAL_CLEAN_BUILD_VERSION := 2
 #
 # E.g.:
 #     $(call add-clean-step, touch -c external/sqlite/sqlite3.h)
-#     $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/external/zlib/)
+#     $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libz_intermediates)
 #
 # Always use "touch -c" and "rm -f" or "rm -rf" to gracefully deal with
 # files that are missing or have been moved.
@@ -54,38 +54,10 @@ INTERNAL_CLEAN_BUILD_VERSION := 2
 #$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/core_intermediates)
 #$(call add-clean-step, find $(OUT_DIR) -type f -name "IGTalkSession*" -print0 | xargs -0 rm -f)
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
-$(call add-clean-step, rm -f $(PRODUCT_OUT)/system/etc/NOTICE.html)
-# Remove generated java files after CL 126153
-$(call add-clean-step, find $(OUT_DIR) -type f -name "*.java" -print0 | xargs -0 rm -f)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sapphire/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates/led)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/mountd)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/mountd.conf)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Browser_intermediates)
-$(call add-clean-step, rm -f vendor/google/apps/Talk/res/drawable/%*)
-$(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/android_os_NetStat.o)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libjni_andpyime_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/share)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIME_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.android.inputmethod.pinyin.lib_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIMEGoogleService_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.android.inputmethod.pinyin.lib_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/PinyinIMEGoogleService_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/telephony)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj)
-$(call add-clean-step, rm -f $(PRODUCT_OUT)/system/bin/tcpdump)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/location)
-
-$(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/SHARED_LIBRARIES/lib?camera_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/product/*/obj/STATIC_LIBRARIES/lib?camera_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/Silence.ogg)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/notifications/Silence.ogg)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

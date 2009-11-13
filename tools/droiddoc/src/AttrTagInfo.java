@@ -98,7 +98,8 @@ public class AttrTagInfo extends TagInfo
     public FieldInfo reference() {
         return REF_COMMAND.equals(mCommand) ? mRefField : null;
     }
-    
+
+    @Override
     public String name() {
         return NAME_COMMAND.equals(mCommand) ? mAttrName : null;
     }
@@ -107,6 +108,7 @@ public class AttrTagInfo extends TagInfo
         return DESCRIPTION_COMMAND.equals(mCommand) ? mDescrComment : null;
     }
 
+    @Override
     public void makeHDF(HDF data, String base)
     {
         super.makeHDF(data, base);

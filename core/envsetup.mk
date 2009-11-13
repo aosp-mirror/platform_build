@@ -173,7 +173,7 @@ ifeq ($(TARGET_SIMULATOR),true)
   # under product/) are actually host-dependent.
   # But, the debug type is controlled by TARGET_BUILD_TYPE and not
   # HOST_BUILD_TYPE.
-  TARGET_PRODUCT_OUT_ROOT := $(HOST_OUT_$(TARGET_BUILD_TYPE))/product
+  TARGET_PRODUCT_OUT_ROOT := $(HOST_OUT_$(TARGET_BUILD_TYPE))/pr
 else
   TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
 endif
@@ -270,7 +270,7 @@ ifeq ($(TARGET_SIMULATOR),true)
 	ABP:=$(ABP):$(TARGET_OUT_EXECUTABLES)
 else
 	# this should be copied to HOST_OUT_EXECUTABLES instead
-	ABP:=$(ABP):$(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.2.1/bin
+	ABP:=$(ABP):$(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.4.0/bin
 endif
 ANDROID_BUILD_PATHS := $(ABP)
 ANDROID_PREBUILTS := prebuilt/$(HOST_PREBUILT_TAG)
@@ -335,5 +335,3 @@ $(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
 $(info   BUILD_ID=$(BUILD_ID))
 $(info ============================================)
 endif
-
-

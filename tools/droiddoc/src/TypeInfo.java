@@ -249,6 +249,7 @@ public class TypeInfo
         }
     }
 
+    @Override
     public String toString(){
       String returnString = "";
       returnString += "Primitive?: " + mIsPrimitive + " TypeVariable?: " +

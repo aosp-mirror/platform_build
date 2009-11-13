@@ -15,21 +15,34 @@
 #
 
 products_pdf := $(OUT_DIR)/products.pdf
+products_graph := $(products_pdf:%.pdf=%.dot)
 
-# This rule doens't include any nodes that don't inherit from
+$(products_graph):
+	@echo Product graph DOT: $@
+	$(hide) ( \
+		echo 'digraph {'; \
+		echo 'graph [ ratio=.5 ];'; \
+		$(foreach p,$(ALL_PRODUCTS), \
+			$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), \
+			echo \"$(d)\" -\> \"$(p)\";)) \
+		$(foreach prod, \
+			$(sort $(foreach p,$(ALL_PRODUCTS), \
+				$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), \
+					$(d))) \
+				$(foreach p,$(ALL_PRODUCTS),$(p))), \
+			echo \"$(prod)\" [ label=\"$(dir $(prod))\\n$(notdir $(prod))\"];) \
+		echo '}' \
+	) > $@
+
+# This rule doesn't include any nodes that don't inherit from
 # anything or don't have anything inherit from them, to make the
 # graph more readable.  To add that, add this line to the rule
 # below:
 #		$(foreach p,$(ALL_PRODUCTS), echo \"$(p)\";) \
 
-$(products_pdf):
-	$(hide) ( \
-		echo 'digraph {'; \
-		$(foreach p,$(ALL_PRODUCTS), \
-			$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), \
-			echo \"$(d)\" -\> \"$(p)\";)) \
-		echo '}' \
-	) | dot -Tpdf -Nshape=box -o $@
+$(products_pdf): $(products_graph)
+	@echo Product graph PDF: $@
+	dot -Tpdf -Nshape=box -o $@ $<
 
 product-graph: $(products_pdf)
 

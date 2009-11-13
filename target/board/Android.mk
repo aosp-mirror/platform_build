@@ -20,11 +20,8 @@ else
   INSTALLED_KERNEL_TARGET :=
 endif
 
-ifneq ($(strip $(TARGET_NO_RADIOIMAGE)),true)
-  INSTALLED_RADIOIMAGE_TARGET := $(PRODUCT_OUT)/radio.img
-else
-  INSTALLED_RADIOIMAGE_TARGET :=
-endif
+# Use the add-radio-file function to add values to this variable.
+INSTALLED_RADIOIMAGE_TARGET :=
 
 ifeq (,$(wildcard $(TARGET_DEVICE_DIR)/AndroidBoard.mk))
   ifeq (,$(wildcard $(TARGET_DEVICE_DIR)/Android.mk))

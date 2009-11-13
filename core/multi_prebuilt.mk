@@ -53,13 +53,13 @@ $(foreach t,$(1), \
     $(eval LOCAL_MODULE := $(word 1,$(tw))) \
     $(eval LOCAL_SRC_FILES := $(word 2,$(tw))) \
    , \
-    $(eval LOCAL_MODULE := $(basename $(t))) \
+    $(eval LOCAL_MODULE := $(basename $(notdir $(t)))) \
     $(eval LOCAL_SRC_FILES := $(t)) \
    ) \
   $(if $(6), \
     $(eval LOCAL_BUILT_MODULE_STEM := $(6)) \
    , \
-    $(eval LOCAL_BUILT_MODULE_STEM := $(LOCAL_SRC_FILES)) \
+    $(eval LOCAL_BUILT_MODULE_STEM := $(notdir $(LOCAL_SRC_FILES))) \
    ) \
   $(eval LOCAL_MODULE_SUFFIX := $(suffix $(LOCAL_SRC_FILES))) \
   $(eval include $(BUILD_PREBUILT)) \

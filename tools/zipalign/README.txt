@@ -1,7 +1,9 @@
 zipalign -- zip archive alignment tool
 
 usage: zipalign [-f] [-v] <align> infile.zip outfile.zip
+       zipalign -c [-v] <align> infile.zip
 
+  -c : check alignment only (does not modify file)
   -f : overwrite existing outfile.zip
   -v : verbose output
   <align> is in bytes, e.g. "4" provides 32-bit alignment
@@ -28,4 +30,6 @@ entries.  Files added to an "aligned" archive will not be aligned.
 
 By default, zipalign will not overwrite an existing output file.  With the
 "-f" flag, an existing file will be overwritten.
+
+You can use the "-c" flag to test whether a zip archive is properly aligned.
 

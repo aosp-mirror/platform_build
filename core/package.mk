@@ -111,6 +111,11 @@ endif
 
 LOCAL_BUILT_MODULE_STEM := package.apk
 
+proguard_options_file := $(package_expected_intermediates_COMMON)/proguard_options
+ifneq ($(strip $(LOCAL_PROGUARD_ENABLED)),custom)
+    LOCAL_PROGUARD_FLAGS := -include $(proguard_options_file) $(LOCAL_PROGUARD_FLAGS)
+endif
+
 # The dex files go in the package, so we don't
 # want to install them separately for this module.
 old_DONT_INSTALL_DEX_FILES := $(DONT_INSTALL_DEX_FILES)
@@ -143,6 +148,7 @@ endif
 
 $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 			$(intermediates.COMMON)/public_resources.xml
+$(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(AAPT) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -f $@
@@ -163,6 +169,8 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(AAPT) | $(ACP)
 			|| exit 31; \
 		$(ACP) -fpt $$GENERATED_R_FILE $@ || exit 32; \
 	done; \
+
+$(proguard_options_file): $(R_file_stamp)
 
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 # Put this module's resources into a PRODUCT-agnositc package that

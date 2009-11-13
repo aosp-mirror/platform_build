@@ -27,7 +27,7 @@ libsysutils.so          0xAF400000
 liba2dp.so              0xAEE00000
 audio.so                0xAED00000
 input.so                0xAEC00000
-libhcid.so              0xAEB00000
+libbluetoothd.so        0xAEB00000
 libbluedroid.so         0xAEA00000
 libbluetooth.so         0xAE900000
 libdbus.so              0xAE800000
@@ -50,8 +50,10 @@ libdvm.so               0xAD000000
 
 # graphics
 libpixelflinger.so      0xACF00000
+# libcorecg is for backward-compatibility with donut
 libcorecg.so            0xACE00000
 libsurfaceflinger.so    0xACD00000
+libGLES_android.so      0xACC80000
 libagl.so               0xACC00000
 
 libGLESv1_CM.so         0xACB00000
@@ -60,15 +62,24 @@ libOpenVG_CM.so         0xAC900000
 libOpenVGU_CM.so        0xAC800000
 libEGL.so               0xAC700000
 
+libacc.so               0xAC600000
+
 libexif.so              0xAC500000
 libui.so                0xAC400000
-libsgl.so               0xAC000000
+# libsgl is for backward-compatibility with donut
+libsgl.so               0xAC200000
+libskia.so              0xAC000000
+librs_jni.so            0xABF00000
+libRS.so                0xAB900000
+
 
 # audio
-libspeech.so            0xAB800000
+libaudiopolicy.so       0xAB880000
+libaudiopolicygeneric.so 0xAB800000
+libsoundpool.so         0xAB780000
 libaudio.so             0xAB700000
-libsonivox.so           0xAB600000
-libsoundpool.so         0xAB500000
+libspeech.so            0xAB600000
+libsonivox.so           0xAB500000
 libvorbisidec.so        0xAB400000
 libmedia_jni.so         0xAB300000
 libmediaplayerservice.so 0xAB280000
@@ -80,6 +91,7 @@ libaudioflinger.so      0xAB000000
 libsqlite.so            0xAAC00000
 libexpat.so             0xAAB00000
 libwebcore.so           0xAA000000
+libbinder.so            0xA9D80000
 libutils.so             0xA9D00000
 libcameraservice.so     0xA9C80000
 libhardware.so          0xA9C70000
@@ -89,7 +101,7 @@ libsystem_server.so     0xA9A00000
 libime.so               0xA9800000
 libgps.so               0xA9700000
 libcamera.so            0xA9680000
-libqcamera.so           0xA9400000
+liboemcamera.so         0xA9400000
 
 # pv libraries
 libpvasf.so                    0xA7C26000
@@ -105,6 +117,7 @@ libomx_aacdec_sharedlibrary.so 0xA7700000
 libomx_amrdec_sharedlibrary.so 0xA76A0000
 libomx_amrenc_sharedlibrary.so 0xA7680000
 libomx_avcdec_sharedlibrary.so 0xA7660000
+libomx_avcenc_sharedlibrary.so 0xA7610000
 libomx_m4vdec_sharedlibrary.so 0xA75C0000
 libomx_m4venc_sharedlibrary.so 0xA7590000
 libomx_mp3dec_sharedlibrary.so 0xA7450000
@@ -149,3 +162,4 @@ librpc.so               0x9A400000
 libtrace_test.so        0x9A300000
 libsrec_jni.so          0x9A200000
 libcerttool_jni.so      0x9A100000
+

@@ -31,6 +31,7 @@ if sys.hexversion < 0x02040000:
   print >> sys.stderr, "Python 2.4 or newer is required."
   sys.exit(1)
 
+import errno
 import os
 import re
 import shutil
@@ -82,8 +83,16 @@ def AddSystem(output_zip):
   # The name of the directory it is making an image out of matters to
   # mkyaffs2image.  It wants "system" but we have a directory named
   # "SYSTEM", so create a symlink.
-  os.symlink(os.path.join(OPTIONS.input_tmp, "SYSTEM"),
-             os.path.join(OPTIONS.input_tmp, "system"))
+  try:
+    os.symlink(os.path.join(OPTIONS.input_tmp, "SYSTEM"),
+               os.path.join(OPTIONS.input_tmp, "system"))
+  except OSError, e:
+      # bogus error on my mac version?
+      #   File "./build/tools/releasetools/img_from_target_files", line 86, in AddSystem
+      #     os.path.join(OPTIONS.input_tmp, "system"))
+      # OSError: [Errno 17] File exists
+    if (e.errno == errno.EEXIST):
+      pass
 
   p = common.Run(["mkyaffs2image", "-f",
                   os.path.join(OPTIONS.input_tmp, "system"), img.name])

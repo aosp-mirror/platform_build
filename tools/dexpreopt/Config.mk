@@ -77,6 +77,13 @@ ifdef sign_dexpreopt
     $(shell echo "$(p) $(PACKAGES.$(p).CERTIFICATE) $(PACKAGES.$(p).PRIVATE_KEY)" >> $(dexpreopt_package_certs_file)))
 endif
 
+# The kernel used for ARMv7 system images is different
+ifeq ($(TARGET_ARCH_VARIANT),armv7-a)
+BUILD_DEXPREOPT_KERNEL := prebuilt/android-arm/kernel/kernel-qemu-armv7
+else
+BUILD_DEXPREOPT_KERNEL := prebuilt/android-arm/kernel/kernel-qemu
+endif
+
 # Build an optimized image from the unoptimized image
 BUILT_DEXPREOPT_SYSTEMIMAGE := $(intermediates)/system.img
 $(BUILT_DEXPREOPT_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE_UNOPT)
@@ -99,7 +106,7 @@ $(BUILT_DEXPREOPT_SYSTEMIMAGE):
 	$(hide) \
 	    PATH=$(HOST_OUT_EXECUTABLES):$$PATH \
 	    $(DEXPREOPT) \
-		    --kernel prebuilt/android-arm/kernel/kernel-qemu \
+		    --kernel $(BUILD_DEXPREOPT_KERNEL) \
 		    --ramdisk $(BUILT_DEXPREOPT_RAMDISK) \
 		    --image $(BUILT_SYSTEMIMAGE_UNOPT) \
 		    --system $(PRODUCT_OUT) \
