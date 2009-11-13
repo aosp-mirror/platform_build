@@ -33,28 +33,29 @@
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
-    <h1><?cs if:android.whichdoc == "online" ?>Download <?cs /if ?><?cs var:page.title ?></h1>
+    <h1><?cs if:android.whichdoc == "online" ?>Download the <?cs /if ?><?cs var:page.title ?></h1>
   </div>
 
   <div id="jd-content">
-    <p><em><?cs 
-    if:ndk ?><?cs 
-      var:ndk.date ?><?cs 
+    <?cs 
+    if:ndk ?><p><em><?cs 
+      var:ndk.date ?></em></p><?cs 
     else ?><?cs 
-      var:sdk.date ?><?cs 
-    /if ?></em>
-    </p>
+      if:android.whichdoc == "online" ?><p><em><?cs 
+      var:sdk.date ?></em></p><?cs 
+      /if ?><?cs
+    /if ?>
 
 <?cs if:sdk.not_latest_version ?>
   <div class="special">
     <p><strong>This is NOT the current Android SDK release.</strong></p>
-    <p><a href="/sdk/<?cs var:sdk.current ?>/index.html">Download the current Android SDK</a></p>
+    <p><a href="/sdk/index.html">Download the current Android SDK</a></p>
   </div>
 <?cs /if ?>
 
 <?cs if:android.whichdoc != "online" && !android.preview ?>
 
-<p>The sections below provide an overview of the SDK package. </p>
+<!-- <p>The sections below provide an overview of how to install the SDK package. </p> -->
 
 <?cs else ?>
   <?cs if:ndk ?>
@@ -111,17 +112,48 @@ computer. </p>
   SDK to give you a head-start on developing applications for it. </p>
 
   <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
-improvements and new features for users and developers. Additionally, the SDK
-itself introduces several new capabilities that enable you to develop
-applications more efficiently. See the <a href="features.html">Android <?cs
-var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
-highlights.</p>
-<?cs /if ?>
+  improvements and new features for users and developers. Additionally, the SDK
+  itself introduces several new capabilities that enable you to develop
+  applications more efficiently. See the <a href="features.html">Android <?cs
+  var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
+  highlights.</p>
+<?cs /if ?> 
+<?cs # end if NDK ... the following is for the SDK ?>
 
-<p>Before downloading, please read the <a href="requirements.html">
-System Requirements</a> document. As you start the download, you will also need 
-to review and agree to the Terms and Conditions that govern the use of the 
-Android SDK. </p>
+  <div class="toggle-content special">
+    <p>The Android SDK has changed! If you've worked with the Android SDK before, 
+    you will notice several important differences:</p>
+    
+    <div class="toggle-content-toggleme" style="display:none">
+    <ul style="padding-bottom:.0;">
+    <li style="margin-top:.5em">The SDK downloadable package includes <em>only</em>
+    the latest version of the Android SDK Tools.</li>
+    <li>Once you've installed the SDK, you now use the Android SDK and AVD Manager
+    to download all of the SDK components that you need, such as Android platforms,
+    SDK add-ons, tools, and documentation. </li>
+    <li>The new approach is modular &mdash; you can install only the components you
+    need and update any or all components without affecting other parts of your
+    development environment.</li>
+    <li>In short, once you've installed the new SDK, you will not need to download
+    an SDK package again. Instead, you will use the Android SDK and AVD Manager to
+    keep your development environment up-to-date. </li>
+    </ul>
+    <p style="margin-top:0">If you are currently using the Android 1.6 SDK, you
+    do not need to install the new SDK, because your existing SDK already 
+    includes the Android SDK and AVD Manager tool. To develop against Android 
+    2.0, for example, you can just download the Android 2.0 platform (and 
+    updated SDK Tools) into your existing SDK. Refer to <a 
+    href="adding-components.html">Adding SDK Components</a>.</p>
+    </div>
+    
+    <a href='#' class='toggle-content-button show' onclick="toggleContent(this);return false;">
+      <span>show more</span><span style='display:none'>show less</span>
+    </a>
+  </div>
+
+  <p>If you are new to the Android SDK, please read the <a href="#quickstart">Quick Start</a>,
+  below, for an overview of how to install and set up the SDK.</p>
+  
   
   <table class="download">
     <tr>
