@@ -687,6 +687,13 @@ function pid()
    fi
 }
 
+# systemstack - dump the current stack trace of all threads in the system process
+# to the usual ANR traces file
+function systemstack()
+{
+    adb shell echo '""' '>>' /data/anr/traces.txt && adb shell chmod 776 /data/anr/traces.txt && adb shell kill -3 $(pid system_server)
+}
+
 function gdbclient()
 {
    local OUT_ROOT=$(get_abs_build_var PRODUCT_OUT)
