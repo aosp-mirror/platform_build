@@ -39,6 +39,15 @@ def:type_link_impl(type, link) ?><?cs
 <?cs def:class_name(type) ?><?cs call:type_link_impl(type, "false") ?><?cs /def ?>
 <?cs def:type_link(type) ?><?cs call:type_link_impl(type, "true") ?><?cs /def ?>
 
+<?cs # a conditional link.
+      if the "condition" parameter evals to true then the link is displayed
+      otherwise only the text is displayed
+?><?cs
+def:cond_link(text, root, path, condition) ?><?cs
+  if:condition ?><a href="<?cs var:root ?><?cs var:path ?>"><?cs /if ?><?cs var:text ?><?cs if:condition ?></a><?cs /if ?><?cs
+/def ?>
+
+
 <?cs # A comma separated parameter list ?><?cs 
 def:parameter_list(params) ?><?cs
   each:param = params ?><?cs
@@ -64,6 +73,15 @@ def:tag_list(tags) ?><?cs
       elif:tag.kind == "@sdkCurrent" ?><?cs var:sdk.current ?><?cs
       elif:tag.kind == "@sdkCurrentVersion" ?><?cs var:sdk.version ?><?cs
       elif:tag.kind == "@sdkCurrentRelId" ?><?cs var:sdk.rel.id ?><?cs
+      elif:tag.kind == "@sdkPlatformVersion" ?><?cs var:sdk.platform.version ?><?cs
+      elif:tag.kind == "@sdkPlatformApiLevel" ?><?cs var:sdk.platform.apiLevel ?><?cs
+      elif:tag.kind == "@sdkPlatformMajorMinor" ?><?cs var:sdk.platform.majorMinor ?><?cs
+      elif:tag.kind == "@sdkPlatformReleaseDate" ?><?cs var:sdk.platform.releaseDate ?><?cs
+      elif:tag.kind == "@sdkPlatformDeployableDate" ?><?cs var:sdk.platform.deployableDate ?><?cs
+      elif:tag.kind == "@adtZipVersion" ?><?cs var:adt.zip.version ?><?cs
+      elif:tag.kind == "@adtZipDownload" ?><?cs var:adt.zip.download ?><?cs
+      elif:tag.kind == "@adtZipBytes" ?><?cs var:adt.zip.bytes ?><?cs
+      elif:tag.kind == "@adtZipChecksum" ?><?cs var:adt.zip.checksum ?><?cs
       elif:tag.kind == "@inheritDoc" ?><?cs # This is the case when @inheritDoc is in something
                                               that doesn't inherit from anything?><?cs
       elif:tag.kind == "@attr" ?><?cs
@@ -89,8 +107,8 @@ def:short_descr(obj) ?><?cs
 <?cs # Show the red box with the deprecated warning ?><?cs 
 def:deprecated_warning(obj) ?><?cs 
   if:subcount(obj.deprecated) ?><p>
-  <p class="warning jd-deprecated-warning">
-      <strong><?cs call:deprecated_text(obj.kind) ?></strong><?cs 
+  <p class="caution">
+      <strong><?cs call:deprecated_text(obj.kind) ?></strong><br/> <?cs 
       call:tag_list(obj.deprecated) ?>
   </p><?cs 
   /if ?><?cs 

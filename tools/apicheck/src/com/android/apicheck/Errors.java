@@ -41,6 +41,7 @@ public class Errors
             return this.msg.compareTo(that.msg);
         }
 
+        @Override
         public String toString() {
             return this.pos.toString() + this.msg;
         }
@@ -115,7 +116,7 @@ public class Errors
     public static Error CHANGED_CLASS = new Error(23, WARNING);
     public static Error CHANGED_DEPRECATED = new Error(24, WARNING);
     public static Error CHANGED_SYNCHRONIZED = new Error(25, ERROR);
-    
+
     public static Error[] ERRORS = {
         PARSE_ERROR,
         ADDED_PACKAGE,

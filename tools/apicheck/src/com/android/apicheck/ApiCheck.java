@@ -127,7 +127,7 @@ public class ApiCheck {
     }
 
     private static class MakeHandler extends DefaultHandler {
-            
+
             private ApiInfo mApi;
             private PackageInfo mCurrentPackage;
             private ClassInfo mCurrentClass;
@@ -139,8 +139,9 @@ public class ApiCheck {
                 super();
                 mApi = new ApiInfo();
             }
-            
-            public void startElement(String uri, String localName, String qName, 
+
+            @Override
+            public void startElement(String uri, String localName, String qName,
                                      Attributes attributes) {
                 if (qName.equals("package")) {
                     mCurrentPackage = new PackageInfo(attributes.getValue("name"),
@@ -150,25 +151,25 @@ public class ApiCheck {
                     // push the old outer scope for later recovery, then set
                     // up the new current class object
                     mClassScope.push(mCurrentClass);
-                    mCurrentClass = new ClassInfo(attributes.getValue("name"), 
+                    mCurrentClass = new ClassInfo(attributes.getValue("name"),
                                                   mCurrentPackage,
                                                   attributes.getValue("extends") ,
-                                                  qName.equals("interface"), 
+                                                  qName.equals("interface"),
                                                   Boolean.valueOf(
                                                       attributes.getValue("abstract")),
                                                   Boolean.valueOf(
                                                       attributes.getValue("static")),
                                                   Boolean.valueOf(
                                                       attributes.getValue("final")),
-                                                  attributes.getValue("deprecated"), 
+                                                  attributes.getValue("deprecated"),
                                                   attributes.getValue("visibility"),
                                                   SourcePositionInfo.fromXml(attributes.getValue("source")),
                                                   mCurrentClass);
                 } else if (qName.equals("method")) {
-                    mCurrentMethod = new MethodInfo(attributes.getValue("name"), 
+                    mCurrentMethod = new MethodInfo(attributes.getValue("name"),
                                                     attributes.getValue("return") ,
                                                     Boolean.valueOf(
-                                                        attributes.getValue("abstract")), 
+                                                        attributes.getValue("abstract")),
                                                     Boolean.valueOf(
                                                         attributes.getValue("native")),
                                                     Boolean.valueOf(
@@ -178,11 +179,11 @@ public class ApiCheck {
                                                     Boolean.valueOf(
                                                         attributes.getValue("final")),
                                                     attributes.getValue("deprecated"),
-                                                    attributes.getValue("visibility"), 
+                                                    attributes.getValue("visibility"),
                                                     SourcePositionInfo.fromXml(attributes.getValue("source")),
                                                     mCurrentClass);
                 } else if (qName.equals("constructor")) {
-                    mCurrentMethod = new ConstructorInfo(attributes.getValue("name"), 
+                    mCurrentMethod = new ConstructorInfo(attributes.getValue("name"),
                                                          attributes.getValue("type") ,
                                                          Boolean.valueOf(
                                                              attributes.getValue("static")),
@@ -193,7 +194,7 @@ public class ApiCheck {
                                                          SourcePositionInfo.fromXml(attributes.getValue("source")),
                                                          mCurrentClass);
                 } else if (qName.equals("field")) {
-                    FieldInfo fInfo = new FieldInfo(attributes.getValue("name"), 
+                    FieldInfo fInfo = new FieldInfo(attributes.getValue("name"),
                                                     attributes.getValue("type") ,
                                                     Boolean.valueOf(
                                                         attributes.getValue("transient")),
@@ -218,6 +219,8 @@ public class ApiCheck {
                     mCurrentClass.addInterface(attributes.getValue("name"));
                 }
             }
+
+            @Override
             public void endElement(String uri, String localName, String qName) {
                 if (qName.equals("method")) {
                     mCurrentClass.addMethod((MethodInfo) mCurrentMethod);

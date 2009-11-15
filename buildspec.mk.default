@@ -21,6 +21,30 @@
 # "buildspec.mk" should never be checked in to source control.
 ######################################################################
 
+# Choose a product to build for.  Look in the products directory for ones
+# that work.
+ifndef TARGET_PRODUCT
+#TARGET_PRODUCT:=generic
+endif
+
+# Choose a variant to build.  If you don't pick one, the default is eng.
+# User is what we ship.  Userdebug is that, with a few flags turned on
+# for debugging.  Eng has lots of extra tools for development.
+ifndef TARGET_BUILD_VARIANT
+#TARGET_BUILD_VARIANT:=user
+#TARGET_BUILD_VARIANT:=userdebug
+#TARGET_BUILD_VARIANT:=eng
+endif
+
+# Choose additional targets to always install, even when building
+# minimal targets like "make droid".  This takes simple target names
+# like "Browser" or "MyApp", the names used by LOCAL_MODULE or
+# LOCAL_PACKAGE_NAME.  Modules listed here will always be installed in
+# /system, even if they'd usually go in /data.
+ifndef CUSTOM_MODULES
+#CUSTOM_MODULES:=
+endif
+
 # Uncomment this if you want the simulator, otherwise, build for arm
 ifndef TARGET_SIMULATOR
 #TARGET_SIMULATOR:=true
@@ -53,21 +77,6 @@ endif
 #HOST_CUSTOM_DEBUG_CFLAGS:=
 #TARGET_CUSTOM_DEBUG_CFLAGS:=
 
-# Choose a product to build for.  Look in the products directory for ones
-# that work.
-ifndef TARGET_PRODUCT
-#TARGET_PRODUCT:=generic
-endif
-
-# Choose additional targets to always install, even when building
-# minimal targets like "make droid".  This takes simple target names
-# like "Browser" or "MyApp", the names used by LOCAL_MODULE or
-# LOCAL_PACKAGE_NAME.  Modules listed here will always be installed in
-# /system, even if they'd usually go in /data.
-ifndef CUSTOM_MODULES
-#CUSTOM_MODULES:=
-endif
-
 # Choose additional locales, like "en_US" or "it_IT", to add to any
 # built product.  Any locales that appear in CUSTOM_LOCALES but not in
 # the locale list for the selected product will be added to the end
@@ -91,10 +100,16 @@ ifndef NO_FALLBACK_FONT
 #NO_FALLBACK_FONT:=true
 endif
 
-# To enabled instrumentation in webcore based apps like gmail and
+# To enable instrumentation in webcore based apps like gmail and
 # the browser, define WEBCORE_INSTRUMENTATION:=true
+ifndef WEBCORE_INSTRUMENTATION
 #WEBCORE_INSTRUMENTATION:=true
-#endif
+endif
+
+# To enable SVG in webcore define ENABLE_SVG:=true
+ifndef ENABLE_SVG
+#ENABLE_SVG:=true
+endif
 
 # when the build system changes such that this file must be updated, this
 # variable will be changed.  After you have modified this file with the new

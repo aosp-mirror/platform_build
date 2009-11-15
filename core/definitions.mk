@@ -109,7 +109,14 @@ endef
 
 # Figure out where we are.
 define my-dir
-$(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST),$(MAKEFILE_LIST))))
+$(strip \
+  $(eval md_file_ := $$(lastword $$(MAKEFILE_LIST))) \
+  $(if $(filter $(CLEAR_VARS),$(md_file_)), \
+    $(error LOCAL_PATH must be set before including $$(CLEAR_VARS)) \
+   , \
+    $(patsubst %/,%,$(dir $(md_file_))) \
+   ) \
+ )
 endef
 
 ###########################################################
@@ -128,7 +135,8 @@ endef
 # $(1): directory to search under
 # Ignores $(1)/Android.mk
 define first-makefiles-under
-$(shell build/tools/findleaves.sh --mindepth=2 $(1) Android.mk)
+$(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git \
+        --mindepth=2 $(1) Android.mk)
 endef
 
 ###########################################################
@@ -1166,6 +1174,7 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
     $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
+    $(addprefix -G , $(PRIVATE_PROGUARD_OPTIONS_FILE)) \
     $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
@@ -1264,11 +1273,12 @@ endef
 
 #TODO: use a smaller -Xmx value for most libraries;
 #      only core.jar and framework.jar need a heap this big.
+# Avoid the memory arguments on Windows, dx fails to load for some reason with them.
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
-$(hide) $(DX) -JXms16M \
-    -JXmx1536M \
+$(hide) $(DX) \
+    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx1536M) \
     --dex --output=$@ \
     $(if $(NO_OPTIMIZE_DX), \
         --no-optimize) \
@@ -1324,11 +1334,9 @@ $(hide) (cd $(dir $@) && zip -r $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
-#TODO: use aapt instead of zip, once it supports junking the path
-#      (so adding "xxx/yyy/classes.dex" appears as "classes.dex")
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) zip -qj $@ $(PRIVATE_DEX_FILE)
+$(hide) $(AAPT) add -k $@ $(PRIVATE_DEX_FILE)
 endef
 
 define add-java-resources-to-package
@@ -1587,7 +1595,7 @@ $(if $(2), \
   echo "$$printname total size is $$total"; \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
   if [ "$(3)" == "yaffs" ]; then \
-    reservedblocks=5; \
+    reservedblocks=8; \
   else \
     reservedblocks=0; \
   fi; \
@@ -1606,6 +1614,37 @@ $(if $(2), \
   true \
  )
 endef
+
+# Like assert-max-file-size, but the second argument is a partition
+# size, which we'll convert to a max image size before checking it
+# against the files.
+#
+# $(1): The file(s) to check (often $@)
+# $(2): The partition size.
+define assert-max-image-size
+$(if $(2), \
+  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))), \
+  true)
+endef
+
+
+###########################################################
+## Define device-specific radio files
+###########################################################
+
+# Copy a radio image file to the output location, and add it to
+# INSTALLED_RADIOIMAGE_TARGET.
+# $(1): filename
+define add-radio-file
+  $(eval $(call add-radio-file-internal,$(1)))
+endef
+define add-radio-file-internal
+INSTALLED_RADIOIMAGE_TARGET += $$(PRODUCT_OUT)/$(1)
+ALL_PREBUILT += $$(PRODUCT_OUT)/$(1)
+$$(PRODUCT_OUT)/$(1) : $$(LOCAL_PATH)/$(1) | $$(ACP)
+	$$(transform-prebuilt-to-target)
+endef
+
 
 ###########################################################
 ## Other includes

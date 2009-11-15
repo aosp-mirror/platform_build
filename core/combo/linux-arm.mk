@@ -1,68 +1,44 @@
 # Configuration for Linux on ARM.
 # Included by combo/select.make
 
-# You can set TARGET_ARCH_VERSION to use an arch version other
-# than ARMv5TE
-ifeq ($(strip $(TARGET_ARCH_VERSION)),)
-TARGET_ARCH_VERSION := armv5te
-endif
-
-# This set of if blocks sets makefile variables similar to preprocesser
+# You can set TARGET_ARCH_VARIANT to use an arch version other
+# than ARMv5TE. Each value should correspond to a file named
+# $(BUILD_COMBOS)/arch/<name>.mk which must contain
+# makefile variable definitions similar to the preprocessor
 # defines in system/core/include/arch/<combo>/AndroidConfig.h. Their
-# purpose is to allow module Android.mk files to selctively compile
-# different versions of code based upon the funtionality and 
+# purpose is to allow module Android.mk files to selectively compile
+# different versions of code based upon the funtionality and
 # instructions available in a given architecture version.
 #
-# The blocks also define specific arch_version_cflags, which 
+# The blocks also define specific arch_variant_cflags, which
 # include defines, and compiler settings for the given architecture
 # version.
 #
-# Note: Hard coding the 'tune' value here is probably not ideal,
-# and a better solution should be found in the future.
-#
-# With two or three different versions this if block approach is
-# fine. If/when this becomes large, please change this to include
-# architecture versions specific Makefiles which define these
-# variables.
-#
-# Supporting armv4 (without thumb) does not make much sense since
-# it's mostly an obsoleted instruction set architecture (only available
-# in StrongArm and arm8). Supporting armv4 will require a lot of conditional
-# code in assembler source since the bx (branch and exchange) instruction is
-# not supported.
-#
-ifeq ($(TARGET_ARCH_VERSION),armv5te)
-ARCH_ARM_HAVE_THUMB_SUPPORT := true
-ARCH_ARM_HAVE_FAST_INTERWORKING := true
-ARCH_ARM_HAVE_64BIT_DATA := true
-ARCH_ARM_HAVE_HALFWORD_MULTIPLY := true
-ARCH_ARM_HAVE_CLZ := true
-ARCH_ARM_HAVE_FFS := true
-
-arch_version_cflags := -march=armv5te -mtune=xscale  -D__ARM_ARCH_5__ \
-	-D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__
-else
-ifeq ($(TARGET_ARCH_VERSION),armv4t)
-$(warning ARMv4t support is currently a work in progress. It does not work right now!)
-ARCH_ARM_HAVE_THUMB_SUPPORT := false
-ARCH_ARM_HAVE_THUMB_INTERWORKING := false
-ARCH_ARM_HAVE_64BIT_DATA := false
-ARCH_ARM_HAVE_HALFWORD_MULTIPLY := false
-ARCH_ARM_HAVE_CLZ := false
-ARCH_ARM_HAVE_FFS := false
-
-DEFAULT_TARGET_CPU := arm920t
-
-arch_version_cflags := -march=armv4t -mtune=arm920t -D__ARM_ARCH_4T__
-else
-$(error Unknown ARM architecture version: $(TARGET_ARCH_VERSION))
+ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
+TARGET_ARCH_VARIANT := armv5te
 endif
+
+# TARGET_ARCH_VARIANT used to be called TARGET_ARCH_VERSION
+# to avoid any weirdness, issue an error message if the latter
+# is defined.
+#
+ifneq ($(strip $(TARGET_ARCH_VERSION)),)
+$(info Definition for TARGET_ARCH_VERSION encountered !)
+$(info This variable has been renamed TARGET_ARCH_VARIANT, please update your build files !!)
+$(error Aborting the build.)
 endif
+
+TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
+ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
+$(error Unknown ARM architecture version: $(TARGET_ARCH_VARIANT))
+endif
+
+include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $($(combo_target)TOOLS_PREFIX)),)
 $(combo_target)TOOLS_PREFIX := \
-	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.2.1/bin/arm-eabi-
+	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-eabi-4.4.0/bin/arm-eabi-
 endif
 
 $(combo_target)CC := $($(combo_target)TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
@@ -79,7 +55,7 @@ TARGET_arm_CFLAGS :=    -O2 \
                         -funswitch-loops     \
                         -finline-limit=300
 
-# Modules can choose to compile some source as thumb. As 
+# Modules can choose to compile some source as thumb. As
 # non-thumb enabled targets are supported, this is treated
 # as a 'hint'. If thumb is not enabled, these files are just
 # compiled as ARM.
@@ -103,7 +79,7 @@ endif
 # with -mlong-calls.  When built at -O0, those libraries are
 # too big for a thumb "BL <label>" to go from one end to the other.
 ifeq ($(FORCE_ARM_DEBUGGING),true)
-  TARGET_arm_CFLAGS += -fno-omit-frame-pointer
+  TARGET_arm_CFLAGS += -fno-omit-frame-pointer -fno-strict-aliasing
   TARGET_thumb_CFLAGS += -marm -fno-omit-frame-pointer
 endif
 
@@ -116,9 +92,12 @@ $(combo_target)GLOBAL_CFLAGS += \
 			-funwind-tables \
 			-fstack-protector \
 			-fno-short-enums \
-			$(arch_version_cflags) \
+			$(arch_variant_cflags) \
 			-include $(android_config_h) \
 			-I $(arch_include_dir)
+
+$(combo_target)GLOBAL_LDFLAGS += \
+			$(arch_variant_ldflags)
 
 # We only need thumb interworking in cases where thumb support
 # is available in the architecture, and just to be sure, (and
@@ -150,7 +129,7 @@ libthread_db_root := bionic/libthread_db
 
 ## on some hosts, the target cross-compiler is not available so do not run this command
 ifneq ($(wildcard $($(combo_target)CC)),)
-# We compile with the global cflags to ensure that 
+# We compile with the global cflags to ensure that
 # any flags which affect libgcc are correctly taken
 # into account.
 $(combo_target)LIBGCC := $(shell $($(combo_target)CC) $($(combo_target)GLOBAL_CFLAGS) -print-libgcc-file-name)
@@ -201,6 +180,7 @@ $(TARGET_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	$(TARGET_LIBGCC)
 endef
 
@@ -217,6 +197,7 @@ $(TARGET_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	$(PRIVATE_ALL_OBJECTS) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(PRIVATE_LDFLAGS) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	$(TARGET_LIBGCC) \
 	$(TARGET_CRTEND_O)
 endef
@@ -228,6 +209,7 @@ $(TARGET_CXX) -nostdlib -Bstatic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	$(TARGET_CRTBEGIN_STATIC_O) \
 	$(PRIVATE_LDFLAGS) \
+	$(TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_ALL_OBJECTS) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(TARGET_LIBGCC) \

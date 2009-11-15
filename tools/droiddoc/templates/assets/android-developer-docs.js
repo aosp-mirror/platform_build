@@ -10,6 +10,7 @@ var NAV_PREF_PANELS = "panels";
 var nav_pref;
 var toRoot;
 var isMobile = false; // true if mobile, so we can adjust some layout
+var isIE6 = false; // true if IE6
 
 function addLoadEvent(newfun) {
   var current = window.onload;
@@ -24,16 +25,23 @@ function addLoadEvent(newfun) {
 }
 
 var agent = navigator['userAgent'];
+// If a mobile phone, set flag and do mobile setup
 if ((agent.indexOf("Mobile") != -1) || 
     (agent.indexOf("BlackBerry") != -1) || 
     (agent.indexOf("Mini") != -1)) {
   isMobile = true;
   addLoadEvent(mobileSetup);
+// If not a mobile browser, set the onresize event for IE6, and others
+} else if (agent.indexOf("MSIE 6.0") != -1) {
+  isIE6 = true;
+  addLoadEvent(function() {
+    window.onresize = resizeAll;
+  });
+} else {
+  addLoadEvent(function() {
+    window.onresize = resizeHeight;
+  });
 }
-
-addLoadEvent(function() {
-window.onresize = resizeAll;
-});
 
 function mobileSetup() {
   $("body").css({'overflow':'auto'});
@@ -50,7 +58,7 @@ addLoadEvent( function() {
   var lists = document.createElement("script");
   lists.setAttribute("type","text/javascript");
   lists.setAttribute("src", toRoot+"reference/lists.js");
-  $("head").append($(lists));
+  document.getElementsByTagName("head")[0].appendChild(lists);
 } );
 
 function setToRoot(root) {
@@ -60,8 +68,12 @@ function setToRoot(root) {
 
 function restoreWidth(navWidth) {
   var windowWidth = $(window).width() + "px";
-  content.css({marginLeft:parseInt(navWidth) + 6 + "px", //account for 6px-wide handle-bar
-               width:parseInt(windowWidth) - parseInt(navWidth) - 6 + "px"});
+  content.css({marginLeft:parseInt(navWidth) + 6 + "px"}); //account for 6px-wide handle-bar
+
+  if (isIE6) {
+    content.css({width:parseInt(windowWidth) - parseInt(navWidth) - 6 + "px"}); // necessary in order for scrollbars to be visible
+  }
+
   sidenav.css({width:navWidth});
   resizePackagesNav.css({width:navWidth});
   classesNav.css({width:navWidth});
@@ -99,14 +111,14 @@ function readCookie(cookie) {
 }
 
 function writeCookie(cookie, val, section, expiration) {
-  if (!val) return;  
+  if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
   if (expiration == null) {
     var date = new Date();
     date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
     expiration = date.toGMTString();
   }
-  document.cookie = cookie_namespace+section+cookie+"="+val+"; expires="+expiration+"; path=/";
+  document.cookie = cookie_namespace + section + cookie + "=" + val + "; expires=" + expiration+"; path=/";
 } 
 
 function init() {
@@ -124,7 +136,7 @@ function init() {
   }
 
   if (!isMobile) {
-    $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizeHeight(); } });
+    $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizePackagesHeight(); } });
     $(".side-nav-resizable").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
     var cookieWidth = readCookie(cookiePath+'width');
     var cookieHeight = readCookie(cookiePath+'height');
@@ -156,8 +168,8 @@ function highlightNav(fullPageName) {
   var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
   var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5);
   var link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-  if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) || (fullPageName.indexOf("/sdk/") != -1))) { 
-// if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide and sdk)
+  if ((link.length == 0) && (fullPageName.indexOf("/guide/") != -1)) { 
+// if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide)
     lastBackstep = pathPageName.lastIndexOf("/");
     while (link.length == 0) {
       backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
@@ -174,23 +186,46 @@ function highlightNav(fullPageName) {
   }
 }
 
-function resizeHeight() {
+/* Resize the height of the nav panels in the reference,
+ * and save the new size to a cookie */
+function resizePackagesHeight() {
   var windowHeight = ($(window).height() - HEADER_HEIGHT);
-  var swapperHeight = windowHeight - 13;
-  $("#swapper").css({height:swapperHeight + "px"});
-  sidenav.css({height:windowHeight + "px"});
-  content.css({height:windowHeight + "px"});
+  var swapperHeight = windowHeight - 13; // move 13px for swapper link at the bottom
   resizePackagesNav.css({maxHeight:swapperHeight + "px"});
   classesNav.css({height:swapperHeight - parseInt(resizePackagesNav.css("height")) + "px"});
+
+  $("#swapper").css({height:swapperHeight + "px"});
   $("#packages-nav").css({height:parseInt(resizePackagesNav.css("height")) - 6 + "px"}); //move 6px for handle
-  devdocNav.css({height:sidenav.css("height")});
-  $("#nav-tree").css({height:swapperHeight + "px"});
-  
+
   var basePath = getBaseUri(location.pathname);
   var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("height", resizePackagesNav.css("height"), section, null);
 }
 
+/* Resize the height of the side-nav and doc-content divs,
+ * which creates the frame effect */
+function resizeHeight() {
+  // Get the window height and always resize the doc-content and side-nav divs
+  var windowHeight = ($(window).height() - HEADER_HEIGHT);
+  content.css({height:windowHeight + "px"});
+  sidenav.css({height:windowHeight + "px"});
+
+  var href = location.href;
+  // If in the reference docs, also resize the "swapper", "classes-nav", and "nav-tree"  divs
+  if (href.indexOf("/reference/") != -1) {
+    var swapperHeight = windowHeight - 13;
+    $("#swapper").css({height:swapperHeight + "px"});
+    $("#classes-nav").css({height:swapperHeight - parseInt(resizePackagesNav.css("height")) + "px"});
+    $("#nav-tree").css({height:swapperHeight + "px"});
+
+  // If in the dev guide docs, also resize the "devdoc-nav" div
+  } else if (href.indexOf("/guide/") != -1) {
+    $("#devdoc-nav").css({height:sidenav.css("height")});
+  }
+}
+
+/* Resize the width of the "side-nav" and the left margin of the "doc-content" div,
+ * which creates the resizable side bar */
 function resizeWidth() {
   var windowWidth = $(window).width() + "px";
   if (sidenav.length) {
@@ -198,24 +233,27 @@ function resizeWidth() {
   } else {
     var sidenavWidth = 0;
   }
-  content.css({marginLeft:parseInt(sidenavWidth) + 6 + "px", //account for 6px-wide handle-bar
-               width:parseInt(windowWidth) - parseInt(sidenavWidth) - 6 + "px"});
+  content.css({marginLeft:parseInt(sidenavWidth) + 6 + "px"}); //account for 6px-wide handle-bar
+
+  if (isIE6) {
+    content.css({width:parseInt(windowWidth) - parseInt(sidenavWidth) - 6 + "px"}); // necessary in order to for scrollbars to be visible
+  }
+
   resizePackagesNav.css({width:sidenavWidth});
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
-  
+
   var basePath = getBaseUri(location.pathname);
   var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("width", sidenavWidth, section, null);
 }
 
+/* For IE6 only,
+ * because it can't properly perform auto width for "doc-content" div,
+ * avoiding this for all browsers provides better performance */
 function resizeAll() {
-  if (!isMobile) {
-    resizeHeight();
-    if ($(".side-nav-resizable").length) {
-      resizeWidth();
-    }
-  }
+  resizeHeight();
+  resizeWidth();
 }
 
 function getBaseUri(uri) {
@@ -447,4 +485,19 @@ function getLangPref() {
     lang = readCookie("pref_lang");
   }
   return (lang != 0) ? lang : 'en';
+}
+
+
+function toggleContent(obj) {
+  var button = $(obj);
+  var div = $(obj.parentNode);
+  var toggleMe = $(".toggle-content-toggleme",div);
+  if (button.hasClass("show")) {
+    toggleMe.slideDown();
+    button.removeClass("show").addClass("hide");
+  } else {
+    toggleMe.slideUp();
+    button.removeClass("hide").addClass("show");
+  }
+  $("span", button).toggle();
 }

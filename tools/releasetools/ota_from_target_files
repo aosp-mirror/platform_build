@@ -57,11 +57,13 @@ if sys.hexversion < 0x02040000:
   sys.exit(1)
 
 import copy
+import errno
 import os
 import re
 import sha
 import subprocess
 import tempfile
+import threading
 import time
 import zipfile
 
@@ -80,6 +82,7 @@ OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
 OPTIONS.script_mode = 'auto'
+OPTIONS.worker_threads = 3
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -273,18 +276,13 @@ def SignOutput(temp_zip_name, output_zip_name):
   key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
   pw = key_passwords[OPTIONS.package_key]
 
-  common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw)
+  common.SignFile(temp_zip_name, output_zip_name, OPTIONS.package_key, pw,
+                  whole_file=True)
 
 
 def AppendAssertions(script, input_zip):
   device = GetBuildProp("ro.product.device", input_zip)
   script.AssertDevice(device)
-
-  info = input_zip.read("OTA/android-info.txt")
-  m = re.search(r"require\s+version-bootloader\s*=\s*(\S+)", info)
-  if m:
-    bootloaders = m.group(1).split("|")
-    script.AssertSomeBootloader(*bootloaders)
 
 
 def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
@@ -302,8 +300,9 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   executable.
   """
 
-  patch = Difference(recovery_img, boot_img, "imgdiff")
-  common.ZipWriteStr(output_zip, "system/recovery-from-boot.p", patch)
+  d = Difference(recovery_img, boot_img)
+  _, _, patch = d.ComputePatch()
+  common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
 
   # Images with different content will have a different first page, so
@@ -324,7 +323,7 @@ fi
         'header_sha1': header_sha1,
         'recovery_size': recovery_img.size,
         'recovery_sha1': recovery_img.sha1 }
-  common.ZipWriteStr(output_zip, "system/etc/install-recovery.sh", sh)
+  common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
 
 
@@ -339,19 +338,18 @@ def WriteFullOTAPackage(input_zip, output_zip):
     # change very often.
     script = edify_generator.EdifyGenerator(2)
 
+  device_specific = common.DeviceSpecificParams(
+      input_zip=input_zip,
+      output_zip=output_zip,
+      script=script,
+      input_tmp=OPTIONS.input_tmp)
+
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", input_zip)
     script.AssertOlderBuild(ts)
 
   AppendAssertions(script, input_zip)
-
-  script.ShowProgress(0.1, 0)
-
-  try:
-    common.ZipWriteStr(output_zip, "radio.img", input_zip.read("RADIO/image"))
-    script.WriteFirmwareImage("radio", "radio.img")
-  except KeyError:
-    print "warning: no radio image in input target_files; not flashing radio"
+  device_specific.FullOTA_Assertions()
 
   script.ShowProgress(0.5, 0)
 
@@ -360,6 +358,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   script.FormatPartition("system")
   script.Mount("MTD", "system", "/system")
+  script.UnpackPackageDir("recovery", "/system")
   script.UnpackPackageDir("system", "/system")
 
   symlinks = CopySystemFiles(input_zip, output_zip)
@@ -385,8 +384,11 @@ def WriteFullOTAPackage(input_zip, output_zip):
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
   script.ShowProgress(0.2, 0)
 
-  script.WriteRawImage("boot", "boot.img")
   script.ShowProgress(0.2, 10)
+  script.WriteRawImage("boot", "boot.img")
+
+  script.ShowProgress(0.1, 0)
+  device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
     script.AppendExtra(OPTIONS.extra_script)
@@ -423,38 +425,111 @@ def LoadSystemFiles(z):
   return out
 
 
-def Difference(tf, sf, diff_program):
-  """Return the patch (as a string of data) needed to turn sf into tf.
-  diff_program is the name of an external program (or list, if
-  additional arguments are desired) to run to generate the diff.
-  """
+DIFF_PROGRAM_BY_EXT = {
+    ".gz" : "imgdiff",
+    ".zip" : ["imgdiff", "-z"],
+    ".jar" : ["imgdiff", "-z"],
+    ".apk" : ["imgdiff", "-z"],
+    ".img" : "imgdiff",
+    }
 
-  ttemp = tf.WriteToTemp()
-  stemp = sf.WriteToTemp()
 
-  ext = os.path.splitext(tf.name)[1]
+class Difference(object):
+  def __init__(self, tf, sf):
+    self.tf = tf
+    self.sf = sf
+    self.patch = None
 
-  try:
-    ptemp = tempfile.NamedTemporaryFile()
-    if isinstance(diff_program, list):
-      cmd = copy.copy(diff_program)
-    else:
-      cmd = [diff_program]
-    cmd.append(stemp.name)
-    cmd.append(ttemp.name)
-    cmd.append(ptemp.name)
-    p = common.Run(cmd)
-    _, err = p.communicate()
-    if err or p.returncode != 0:
-      print "WARNING: failure running %s:\n%s\n" % (diff_program, err)
-      return None
-    diff = ptemp.read()
-  finally:
-    ptemp.close()
-    stemp.close()
-    ttemp.close()
+  def ComputePatch(self):
+    """Compute the patch (as a string of data) needed to turn sf into
+    tf.  Returns the same tuple as GetPatch()."""
 
-  return diff
+    tf = self.tf
+    sf = self.sf
+
+    ext = os.path.splitext(tf.name)[1]
+    diff_program = DIFF_PROGRAM_BY_EXT.get(ext, "bsdiff")
+
+    ttemp = tf.WriteToTemp()
+    stemp = sf.WriteToTemp()
+
+    ext = os.path.splitext(tf.name)[1]
+
+    try:
+      ptemp = tempfile.NamedTemporaryFile()
+      if isinstance(diff_program, list):
+        cmd = copy.copy(diff_program)
+      else:
+        cmd = [diff_program]
+      cmd.append(stemp.name)
+      cmd.append(ttemp.name)
+      cmd.append(ptemp.name)
+      p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      _, err = p.communicate()
+      if err or p.returncode != 0:
+        print "WARNING: failure running %s:\n%s\n" % (diff_program, err)
+        return None
+      diff = ptemp.read()
+    finally:
+      ptemp.close()
+      stemp.close()
+      ttemp.close()
+
+    self.patch = diff
+    return self.tf, self.sf, self.patch
+
+
+  def GetPatch(self):
+    """Return a tuple (target_file, source_file, patch_data).
+    patch_data may be None if ComputePatch hasn't been called, or if
+    computing the patch failed."""
+    return self.tf, self.sf, self.patch
+
+
+def ComputeDifferences(diffs):
+  """Call ComputePatch on all the Difference objects in 'diffs'."""
+  print len(diffs), "diffs to compute"
+
+  # Do the largest files first, to try and reduce the long-pole effect.
+  by_size = [(i.tf.size, i) for i in diffs]
+  by_size.sort(reverse=True)
+  by_size = [i[1] for i in by_size]
+
+  lock = threading.Lock()
+  diff_iter = iter(by_size)   # accessed under lock
+
+  def worker():
+    try:
+      lock.acquire()
+      for d in diff_iter:
+        lock.release()
+        start = time.time()
+        d.ComputePatch()
+        dur = time.time() - start
+        lock.acquire()
+
+        tf, sf, patch = d.GetPatch()
+        if sf.name == tf.name:
+          name = tf.name
+        else:
+          name = "%s (%s)" % (tf.name, sf.name)
+        if patch is None:
+          print "patching failed!                                  %s" % (name,)
+        else:
+          print "%8.2f sec %8d / %8d bytes (%6.2f%%) %s" % (
+              dur, len(patch), tf.size, 100.0 * len(patch) / tf.size, name)
+      lock.release()
+    except Exception, e:
+      print e
+      raise
+
+  # start worker threads; wait for them all to finish.
+  threads = [threading.Thread(target=worker)
+             for i in range(OPTIONS.worker_threads)]
+  for th in threads:
+    th.start()
+  while threads:
+    threads.pop().join()
 
 
 def GetBuildProp(property, z):
@@ -484,6 +559,7 @@ def GetRecoveryAPIVersion(zip):
     except KeyError:
       return 0
 
+
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = GetRecoveryAPIVersion(source_zip)
 
@@ -502,6 +578,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
+  device_specific = common.DeviceSpecificParams(
+      source_zip=source_zip,
+      target_zip=target_zip,
+      output_zip=output_zip,
+      script=script)
+
   print "Loading target..."
   target_data = LoadSystemFiles(target_zip)
   print "Loading source..."
@@ -509,9 +591,11 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   verbatim_targets = []
   patch_list = []
+  diffs = []
   largest_source_size = 0
   for fn in sorted(target_data.keys()):
     tf = target_data[fn]
+    assert fn == tf.name
     sf = source_data.get(fn, None)
 
     if sf is None or fn in OPTIONS.require_verbatim:
@@ -523,26 +607,23 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       verbatim_targets.append((fn, tf.size))
     elif tf.sha1 != sf.sha1:
       # File is different; consider sending as a patch
-      diff_method = "bsdiff"
-      if tf.name.endswith(".gz"):
-        diff_method = "imgdiff"
-      d = Difference(tf, sf, diff_method)
-      if d is not None:
-        print fn, tf.size, len(d), (float(len(d)) / tf.size)
-      if d is None or len(d) > tf.size * OPTIONS.patch_threshold:
-        # patch is almost as big as the file; don't bother patching
-        tf.AddToZip(output_zip)
-        verbatim_targets.append((fn, tf.size))
-      else:
-        common.ZipWriteStr(output_zip, "patch/" + fn + ".p", d)
-        patch_list.append((fn, tf, sf, tf.size))
-        largest_source_size = max(largest_source_size, sf.size)
+      diffs.append(Difference(tf, sf))
     else:
       # Target file identical to source.
       pass
 
-  total_verbatim_size = sum([i[1] for i in verbatim_targets])
-  total_patched_size = sum([i[3] for i in patch_list])
+  ComputeDifferences(diffs)
+
+  for diff in diffs:
+    tf, sf, d = diff.GetPatch()
+    if d is None or len(d) > tf.size * OPTIONS.patch_threshold:
+      # patch is almost as big as the file; don't bother patching
+      tf.AddToZip(output_zip)
+      verbatim_targets.append((tf.name, tf.size))
+    else:
+      common.ZipWriteStr(output_zip, "patch/" + tf.name + ".p", d)
+      patch_list.append((tf.name, tf, sf, tf.size))
+      largest_source_size = max(largest_source_size, sf.size)
 
   source_fp = GetBuildProp("ro.build.fingerprint", source_zip)
   target_fp = GetBuildProp("ro.build.fingerprint", target_zip)
@@ -566,35 +647,31 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       os.path.join(OPTIONS.target_tmp, "RECOVERY")))
   updating_recovery = (source_recovery.data != target_recovery.data)
 
-  source_radio = source_zip.read("RADIO/image")
-  target_radio = target_zip.read("RADIO/image")
-  updating_radio = (source_radio != target_radio)
-
-  # The last 0.1 is reserved for creating symlinks, fixing
-  # permissions, and writing the boot image (if necessary).
-  progress_bar_total = 1.0
-  if updating_boot:
-    progress_bar_total -= 0.1
-  if updating_radio:
-    progress_bar_total -= 0.3
+  # Here's how we divide up the progress bar:
+  #  0.1 for verifying the start state (PatchCheck calls)
+  #  0.8 for applying patches (ApplyPatch calls)
+  #  0.1 for unpacking verbatim files, symlinking, and doing the
+  #      device-specific commands.
 
   AppendAssertions(script, target_zip)
+  device_specific.IncrementalOTA_Assertions()
 
   script.Print("Verifying current system...")
 
-  pb_verify = progress_bar_total * 0.3 * \
-              (total_patched_size /
-               float(total_patched_size+total_verbatim_size+1))
+  script.ShowProgress(0.1, 0)
+  total_verify_size = float(sum([i[2].size for i in patch_list]) + 1)
+  if updating_boot:
+    total_verify_size += source_boot.size
+  so_far = 0
 
-  for i, (fn, tf, sf, size) in enumerate(patch_list):
-    if i % 5 == 0:
-      next_sizes = sum([i[3] for i in patch_list[i:i+5]])
-      script.ShowProgress(next_sizes * pb_verify / (total_patched_size+1), 1)
-
+  for fn, tf, sf, size in patch_list:
     script.PatchCheck("/"+fn, tf.sha1, sf.sha1)
+    so_far += sf.size
+    script.SetProgress(so_far / total_verify_size)
 
   if updating_boot:
-    d = Difference(target_boot, source_boot, "imgdiff")
+    d = Difference(target_boot, source_boot)
+    _, _, d = d.ComputePatch()
     print "boot      target: %d  source: %d  diff: %d" % (
         target_boot.size, source_boot.size, len(d))
 
@@ -603,11 +680,15 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.PatchCheck("MTD:boot:%d:%s:%d:%s" %
                       (source_boot.size, source_boot.sha1,
                        target_boot.size, target_boot.sha1))
+    so_far += source_boot.size
+    script.SetProgress(so_far / total_verify_size)
 
   if patch_list or updating_recovery or updating_boot:
     script.CacheFreeSpaceCheck(largest_source_size)
     script.Print("Unpacking patches...")
     script.UnpackPackageDir("patch", "/tmp/patchtmp")
+
+  device_specific.IncrementalOTA_VerifyEnd()
 
   script.Comment("---- start making changes here ----")
 
@@ -621,6 +702,19 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                             if i not in target_data] +
                      ["/system/recovery.img"])
 
+  script.ShowProgress(0.8, 0)
+  total_patch_size = float(sum([i[1].size for i in patch_list]) + 1)
+  if updating_boot:
+    total_patch_size += target_boot.size
+  so_far = 0
+
+  script.Print("Patching system files...")
+  for fn, tf, sf, size in patch_list:
+    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
+                      sf.sha1, "/tmp/patchtmp/"+fn+".p")
+    so_far += tf.size
+    script.SetProgress(so_far / total_patch_size)
+
   if updating_boot:
     # Produce the boot image by applying a patch to the current
     # contents of the boot partition, and write it back to the
@@ -632,6 +726,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                       "-",
                       target_boot.size, target_boot.sha1,
                       source_boot.sha1, "/tmp/patchtmp/boot.img.p")
+    so_far += target_boot.size
+    script.SetProgress(so_far / total_patch_size)
     print "boot image changed; including."
   else:
     print "boot image unchanged; skipping."
@@ -650,29 +746,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # as fodder for constructing the recovery image.
     recovery_sh_item = MakeRecoveryPatch(output_zip,
                                          target_recovery, target_boot)
+    script.UnpackPackageDir("recovery", "/system")
     print "recovery image changed; including as patch from boot."
   else:
     print "recovery image unchanged; skipping."
 
-  if updating_radio:
-    script.ShowProgress(0.3, 10)
-    script.Print("Writing radio image...")
-    script.WriteFirmwareImage("radio", "radio.img")
-    common.ZipWriteStr(output_zip, "radio.img", target_radio)
-    print "radio image changed; including."
-  else:
-    print "radio image unchanged; skipping."
-
-  script.Print("Patching system files...")
-  pb_apply = progress_bar_total * 0.7 * \
-             (total_patched_size /
-              float(total_patched_size+total_verbatim_size+1))
-  for i, (fn, tf, sf, size) in enumerate(patch_list):
-    if i % 5 == 0:
-      next_sizes = sum([i[3] for i in patch_list[i:i+5]])
-      script.ShowProgress(next_sizes * pb_apply / (total_patched_size+1), 1)
-    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
-                      sf.sha1, "/tmp/patchtmp/"+fn+".p")
+  script.ShowProgress(0.1, 10)
 
   target_symlinks = CopySystemFiles(target_zip, None)
 
@@ -700,14 +779,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script.DeleteFiles(to_delete)
 
   if verbatim_targets:
-    pb_verbatim = progress_bar_total * \
-                  (total_verbatim_size /
-                   float(total_patched_size+total_verbatim_size+1))
-    script.ShowProgress(pb_verbatim, 5)
     script.Print("Unpacking new files...")
     script.UnpackPackageDir("system", "/system")
 
-  script.Print("Finishing up...")
+  script.Print("Symlinks and permissions...")
 
   # Create all the symlinks that don't already exist, or point to
   # somewhere different than what we want.  Delete each symlink before
@@ -725,6 +800,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   # Now that the symlinks are created, we can set all the
   # permissions.
   script.AppendScript(temp_script)
+
+  # Do device-specific installation (eg, write radio image).
+  device_specific.IncrementalOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
     scirpt.AppendExtra(OPTIONS.extra_script)
@@ -749,6 +827,8 @@ def main(argv):
       OPTIONS.extra_script = a
     elif o in ("-m", "--script_mode"):
       OPTIONS.script_mode = a
+    elif o in ("--worker_threads"):
+      OPTIONS.worker_threads = int(a)
     else:
       return False
     return True
@@ -761,7 +841,8 @@ def main(argv):
                                               "wipe_user_data",
                                               "no_prereq",
                                               "extra_script=",
-                                              "script_mode="],
+                                              "script_mode=",
+                                              "worker_threads="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -776,6 +857,23 @@ def main(argv):
 
   print "unzipping target target-files..."
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
+
+  if OPTIONS.device_specific is None:
+    # look for the device-specific tools extension location in the input
+    try:
+      f = open(os.path.join(OPTIONS.input_tmp, "META", "tool-extensions.txt"))
+      ds = f.read().strip()
+      f.close()
+      if ds:
+        ds = os.path.normpath(ds)
+        print "using device-specific extensions in", ds
+        OPTIONS.device_specific = ds
+    except IOError, e:
+      if e.errno == errno.ENOENT:
+        # nothing specified in the file
+        pass
+      else:
+        raise
 
   common.LoadMaxSizes()
   if not OPTIONS.max_image_size:

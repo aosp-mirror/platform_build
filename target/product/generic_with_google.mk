@@ -4,13 +4,16 @@
 # from generic.mk
 
 PRODUCT_PACKAGES := \
-    GoogleContactsProvider \
+    ContactsProvider \
+    GoogleContactsSyncAdapter \
     GoogleSubscribedFeedsProvider \
     com.google.android.gtalkservice \
+    com.google.android.datamessaging \
     com.google.android.maps
 
 PRODUCT_COPY_FILES := \
     vendor/google/frameworks/maps/com.google.android.maps.xml:system/etc/permissions/com.google.android.maps.xml \
+    vendor/google/frameworks/datamessaging/com.google.android.datamessaging.xml:system/etc/permissions/com.google.android.datamessaging.xml \
     vendor/google/apps/GTalkService/com.google.android.gtalkservice.xml:system/etc/permissions/com.google.android.gtalkservice.xml
 
 

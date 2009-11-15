@@ -26,6 +26,8 @@ else
   prebuilt_module_is_a_library :=
 endif
 
+PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
+
 # Ensure that prebuilt .apks have been aligned.
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
 $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ZIPALIGN)

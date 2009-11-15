@@ -102,7 +102,7 @@ function setpaths()
     # and in with the new
     CODE_REVIEWS=
     prebuiltdir=$(getprebuilt)
-    export ANDROID_EABI_TOOLCHAIN=$prebuiltdir/toolchain/arm-eabi-4.2.1/bin
+    export ANDROID_EABI_TOOLCHAIN=$prebuiltdir/toolchain/arm-eabi-4.4.0/bin
     export ANDROID_TOOLCHAIN=$ANDROID_EABI_TOOLCHAIN
     export ANDROID_QTOOLS=$T/development/emulator/qtools
     export ANDROID_BUILD_PATHS=:$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN:$ANDROID_EABI_TOOLCHAIN$CODE_REVIEWS
@@ -596,6 +596,8 @@ function mm()
         # Find the closest Android.mk file.
         T=$(gettop)
         local M=$(findmakefile)
+        # Remove the path to top as the makefilepath needs to be relative
+        local M=`echo $M|sed 's:'$T'/::'`
         if [ ! "$T" ]; then
             echo "Couldn't locate the top of the tree.  Try setting TOP."
         elif [ ! "$M" ]; then
@@ -634,6 +636,7 @@ function mmm()
                     ARGS="$ARGS showcommands"
                 else
                     echo "No Android.mk in $DIR."
+                    return 1
                 fi
             fi
         done
@@ -651,6 +654,26 @@ function croot()
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi
+}
+
+function cproj()
+{
+    TOPFILE=build/core/envsetup.mk
+    # We redirect cd to /dev/null in case it's aliased to
+    # a command that prints something as a side-effect
+    # (like pushd)
+    local HERE=$PWD
+    T=
+    while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
+        T=$PWD
+        if [ -f "$T/Android.mk" ]; then
+            cd $T
+            return
+        fi
+        cd .. > /dev/null
+    done
+    cd $HERE > /dev/null
+    echo "can't find Android.mk"
 }
 
 function pid()
@@ -944,14 +967,7 @@ function runtest()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (cd "$T" && development/testrunner/runtest.py $@)
-}
-
-# TODO: Remove this some time after 1 June 2009
-function runtest_py()
-{
-    echo "runtest_py is obsolete; use runtest instead" >&2
-    return 1
+    ("$T"/development/testrunner/runtest.py $@)
 }
 
 function godir () {

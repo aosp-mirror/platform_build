@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /*
  * Zip alignment tool
  */
-#include "utils/ZipFile.h"
+#include "ZipFile.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,9 +30,15 @@ using namespace android;
 void usage(void)
 {
     fprintf(stderr, "Zip alignment utility\n");
+    fprintf(stderr, "Copyright (C) 2009 The Android Open Source Project\n\n");
     fprintf(stderr,
         "Usage: zipalign [-f] [-v] <align> infile.zip outfile.zip\n"
-        "       zipalign -c [-v] <align> infile.zip\n" );
+        "       zipalign -c [-v] <align> infile.zip\n\n" );
+    fprintf(stderr,
+        "  <align>: alignment in bytes, e.g. '4' provides 32-bit alignment\n");
+    fprintf(stderr, "  -c: check alignment only (does not modify file)\n");
+    fprintf(stderr, "  -f: overwrite existing outfile.zip\n");
+    fprintf(stderr, "  -v: verbose output\n");
 }
 
 /*

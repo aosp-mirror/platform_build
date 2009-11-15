@@ -54,6 +54,12 @@ include $(BUILD_SYSTEM)/config.mk
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
 
+VERSION_CHECK_SEQUENCE_NUMBER := 1
+-include $(OUT_DIR)/versions_checked.mk
+ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
+
+$(info Checking build tools versions...)
+
 ifneq ($(HOST_OS),windows)
 ifneq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
 # check for a case sensitive file system
@@ -122,6 +128,10 @@ $(error stop)
 endif
 
 endif # windows
+
+$(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
+        > $(OUT_DIR)/versions_checked.mk)
+endif
 
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
@@ -220,7 +230,8 @@ ifeq ($(TARGET_BUILD_VARIANT),eng)
 tags_to_install := user debug eng
   # Don't require the setup wizard on eng builds
   ADDITIONAL_BUILD_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\
-          $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES)))
+          $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))) \
+          ro.setupwizard.mode=OPTIONAL
 endif
 
 ## tests ##
@@ -241,8 +252,16 @@ tags_to_install := user debug eng
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
-# Enable sync for non-sdk builds only (sdk builds lack SubscribedFeedsProvider).
-ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
+endif
+
+## precise GC ##
+
+ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
+  # Enabling type-precise GC results in larger optimized DEX files.  The
+  # additional storage requirements for ".odex" files can cause /system
+  # to overflow on some devices, so this is configured separately for
+  # each product.
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
 endif
 
 # Install an apns-conf.xml file if one's not already being installed.
@@ -256,7 +275,7 @@ endif
 # If we're on an eng or tests build, but not on the sdk, and we have
 # a better one, use that instead.
 ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
-  ifdef is_sdk_build
+  ifndef is_sdk_build
     apns_to_use := $(wildcard vendor/google/etc/apns-conf.xml)
     ifneq ($(strip $(apns_to_use)),)
       PRODUCT_COPY_FILES := \
@@ -267,6 +286,7 @@ ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
+ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 
 # enable vm tracing in files for now to help track
 # the cause of ANRs in the content process
@@ -317,8 +337,6 @@ endif
 # Bring in all modules that need to be built.
 ifneq ($(dont_bother),true)
 
-subdir_makefiles :=
-
 ifeq ($(HOST_OS),windows)
 SDK_ONLY := true
 endif
@@ -338,6 +356,7 @@ subdirs := \
 	dalvik/tools/hprof-conv \
 	development/emulator/mksdcard \
 	development/tools/line_endings \
+	development/tools/sdklauncher \
 	development/host \
 	external/expat \
 	external/libpng \
@@ -371,6 +390,7 @@ subdirs += \
 	development/tools/sdkstats \
 	development/tools/sdkmanager \
 	development/tools/mkstubs \
+	development/tools/layoutopt \
 	frameworks/base \
 	frameworks/base/tools/layoutlib \
 	external/googleclient \
@@ -390,8 +410,6 @@ ifeq ($(BUILD_TINY_ANDROID), true)
 # TINY_ANDROID is a super-minimal build configuration, handy for board 
 # bringup and very low level debugging
 
-INTERNAL_DEFAULT_DOCS_TARGETS := 
-
 subdirs := \
 	bionic \
 	system/core \
@@ -410,7 +428,6 @@ else	# !BUILD_TINY_ANDROID
 #
 # Typical build; include any Android.mk files we can find.
 #
-INTERNAL_DEFAULT_DOCS_TARGETS := offline-sdk-docs
 subdirs := $(TOP)
 
 FULL_BUILD := true
@@ -418,41 +435,6 @@ FULL_BUILD := true
 endif	# !BUILD_TINY_ANDROID
 
 endif	# !SDK_ONLY
-
-# Can't use first-makefiles-under here because
-# --mindepth=2 makes the prunes not work.
-subdir_makefiles += \
-	$(shell build/tools/findleaves.sh --prune="*\.git*" --prune="*\.repo*" --prune="./out" $(subdirs) Android.mk)
-
-# Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
-# or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
-# make sure only one exists.
-# Real boards should always be associated with an OEM vendor.
-board_config_mk := \
-	$(strip $(wildcard \
-		$(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
-		vendor/*/$(TARGET_DEVICE)/BoardConfig.mk \
-	))
-ifeq ($(board_config_mk),)
-  $(error No config file found for TARGET_DEVICE $(TARGET_DEVICE))
-endif
-ifneq ($(words $(board_config_mk)),1)
-  $(error Multiple board config files for TARGET_DEVICE $(TARGET_DEVICE): $(board_config_mk))
-endif
-include $(board_config_mk)
-TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
-board_config_mk :=
-
-# Clean up/verify variables defined by the board config file.
-TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
-TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
-ifeq ($(TARGET_CPU_ABI),)
-  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
-endif
-
-#
-# Include all of the makefiles in the system
-#
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
@@ -465,14 +447,25 @@ include $(ONE_SHOT_MAKEFILE)
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS),))
 FULL_BUILD :=
-INTERNAL_DEFAULT_DOCS_TARGETS :=
 # Stub out the notice targets, which probably aren't defined
 # when using ONE_SHOT_MAKEFILE.
 NOTICE-HOST-%: ;
 NOTICE-TARGET-%: ;
-else
+
+else # ONE_SHOT_MAKEFILE
+
+#
+# Include all of the makefiles in the system
+#
+
+# Can't use first-makefiles-under here because
+# --mindepth=2 makes the prunes not work.
+subdir_makefiles := \
+	$(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git $(subdirs) Android.mk)
+
 include $(subdir_makefiles)
-endif
+endif # ONE_SHOT_MAKEFILE
+
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
@@ -673,7 +666,6 @@ droidcore: files \
 	$(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_RECOVERYIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INTERNAL_DEFAULT_DOCS_TARGETS) \
 	$(INSTALLED_FILES_FILE)
 
 # The actual files built by the droidcore target changes depending
