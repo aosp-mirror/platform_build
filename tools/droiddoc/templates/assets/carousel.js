@@ -83,7 +83,7 @@ function buildCarousel() {
     
     
     /* add the bulletins */
-	  var layout = droid.layout;
+    var layout = droid.layout;
     var div = document.createElement("div");
     var imgDiv = document.createElement("div");
     var descDiv = document.createElement("div");
@@ -112,9 +112,6 @@ function buildCarousel() {
     $("#carouselMain").append(div);
     
   }
-
-		
-  
 }
 
 // -- * slider * -- //
