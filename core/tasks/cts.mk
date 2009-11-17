@@ -70,7 +70,8 @@ CTS_CASE_LIST := \
 	CtsDatabaseTestCases \
 	CtsDpiTestCases \
 	CtsDpiTestCases2 \
-    CtsGestureTestCases \
+	CtsExampleTestCases \
+	CtsGestureTestCases \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
 	CtsLocationTestCases \
