@@ -199,6 +199,9 @@ PRODUCT_LOCALES := $(strip \
 	$(PRODUCT_LOCALES) \
 	$(if $(filter %dpi,$(PRODUCT_LOCALES)),,mdpi))
 
+# Everyone gets nodpi assets which are density-independent.
+PRODUCT_LOCALES += nodpi
+
 # Assemble the list of options.
 PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES)
 
