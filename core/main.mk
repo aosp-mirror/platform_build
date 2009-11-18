@@ -355,9 +355,9 @@ subdirs := \
 	dalvik/libdex \
 	dalvik/tools/dmtracedump \
 	dalvik/tools/hprof-conv \
-	development/emulator/mksdcard \
 	development/tools/line_endings \
-	development/tools/sdklauncher \
+	sdk/emulator/mksdcard \
+	sdk/sdklauncher \
 	development/host \
 	external/expat \
 	external/libpng \
@@ -381,17 +381,17 @@ subdirs += \
 	build/tools/signapk \
 	dalvik/dx \
 	dalvik/libcore \
+	sdk/archquery \
+	sdk/androidprefs \
+	sdk/apkbuilder \
+	sdk/jarutils \
+	sdk/layoutlib_utils \
+	sdk/ninepatch \
+	sdk/sdkstats \
+	sdk/sdkmanager \
+	sdk/layoutopt \
 	development/apps \
-	development/tools/archquery \
-	development/tools/androidprefs \
-	development/tools/apkbuilder \
-	development/tools/jarutils \
-	development/tools/layoutlib_utils \
-	development/tools/ninepatch \
-	development/tools/sdkstats \
-	development/tools/sdkmanager \
 	development/tools/mkstubs \
-	development/tools/layoutopt \
 	frameworks/base \
 	frameworks/base/tools/layoutlib \
 	external/googleclient \
