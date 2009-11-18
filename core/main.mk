@@ -393,7 +393,6 @@ subdirs += \
 	development/tools/layoutopt \
 	frameworks/base \
 	frameworks/base/tools/layoutlib \
-	external/googleclient \
 	packages
 else
 $(warning sdk-only: javac not available.)
@@ -737,4 +736,3 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
-
