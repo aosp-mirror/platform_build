@@ -391,7 +391,6 @@ subdirs += \
 	sdk/layoutopt \
 	development/apps \
 	development/tools/mkstubs \
-	frameworks/base \
 	frameworks/base/tools/layoutlib \
 	external/googleclient \
 	packages
