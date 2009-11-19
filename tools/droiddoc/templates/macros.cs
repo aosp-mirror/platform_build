@@ -62,12 +62,12 @@ def:tag_list(tags) ?><?cs
   each:tag = tags ?><?cs
       if:tag.name == "Text" ?><?cs var:tag.text?><?cs
       elif:tag.kind == "@more" ?><p><?cs
-      elif:tag.kind == "@see" ?><a href="<?cs var:toroot ?><?cs var:tag.href ?>"><?cs var:tag.label ?></a><?cs
+      elif:tag.kind == "@see" ?><code><a href="<?cs var:toroot ?><?cs var:tag.href ?>"><?cs var:tag.label ?></a></code><?cs
       elif:tag.kind == "@seeHref" ?><a href="<?cs var:tag.href ?>"><?cs var:tag.label ?></a><?cs
       elif:tag.kind == "@seeJustLabel" ?><?cs var:tag.label ?><?cs
-      elif:tag.kind == "@code" ?><code class="Code prettyprint"><?cs var:tag.text ?></code><?cs
-      elif:tag.kind == "@samplecode" ?><pre class="Code prettyprint"><?cs var:tag.text ?></pre><?cs
-      elif:tag.name == "@sample" ?><pre class="Code prettyprint"><?cs var:tag.text ?></pre><?cs
+      elif:tag.kind == "@code" ?><code><?cs var:tag.text ?></code><?cs
+      elif:tag.kind == "@samplecode" ?><pre><?cs var:tag.text ?></pre><?cs
+      elif:tag.name == "@sample" ?><pre><?cs var:tag.text ?></pre><?cs
       elif:tag.name == "@include" ?><?cs var:tag.text ?><?cs
       elif:tag.kind == "@docRoot" ?><?cs var:toroot ?><?cs
       elif:tag.kind == "@sdkCurrent" ?><?cs var:sdk.current ?><?cs
@@ -121,8 +121,8 @@ def:see_also_tags(also) ?><?cs
       <h5 class="jd-tagtitle">See Also</h5>
       <ul class="nolist"><?cs 
         each:tag=also ?><li><?cs
-            if:tag.kind == "@see" ?><a href="<?cs var:toroot ?><?cs var:tag.href ?>"><?cs
-                    var:tag.label ?></a><?cs
+            if:tag.kind == "@see" ?><code><a href="<?cs var:toroot ?><?cs var:tag.href ?>"><?cs
+                    var:tag.label ?></a></code><?cs
             elif:tag.kind == "@seeHref" ?><a href="<?cs var:tag.href ?>"><?cs var:tag.label ?></a><?cs
             elif:tag.kind == "@seeJustLabel" ?><?cs var:tag.label ?><?cs
             else ?>[ERROR: Unknown @see kind]<?cs
