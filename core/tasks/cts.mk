@@ -74,6 +74,7 @@ CTS_CASE_LIST := \
 	CtsGestureTestCases \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
+	CtsJniTestCases \
 	CtsLocationTestCases \
 	CtsMediaTestCases \
 	CtsOsTestCases \
