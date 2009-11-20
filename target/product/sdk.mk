@@ -9,6 +9,7 @@ PRODUCT_PACKAGES := \
 	DrmProvider \
 	Email \
 	Fallback \
+	Gallery \
 	GPSEnable \
 	Launcher \
 	Music \
@@ -25,7 +26,6 @@ PRODUCT_PACKAGES := \
 	libWnnJpnDic \
 	libwnndict \
 	CertInstaller \
-	LiveWallpapersPicker \
 	ApiDemos \
 	GestureBuilder \
 	SoftKeyboard
