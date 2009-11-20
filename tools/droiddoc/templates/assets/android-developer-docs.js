@@ -24,15 +24,16 @@ function addLoadEvent(newfun) {
   }
 }
 
-var agent = navigator['userAgent'];
+var agent = navigator['userAgent'].toLowerCase();
 // If a mobile phone, set flag and do mobile setup
-if ((agent.indexOf("Mobile") != -1) || 
-    (agent.indexOf("BlackBerry") != -1) || 
-    (agent.indexOf("Mini") != -1)) {
+if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod 
+    (agent.indexOf("blackberry") != -1) ||
+    (agent.indexOf("webos") != -1) ||
+    (agent.indexOf("mini") != -1)) {        // opera mini browsers 
   isMobile = true;
   addLoadEvent(mobileSetup);
 // If not a mobile browser, set the onresize event for IE6, and others
-} else if (agent.indexOf("MSIE 6.0") != -1) {
+} else if (agent.indexOf("msie 6") != -1) {
   isIE6 = true;
   addLoadEvent(function() {
     window.onresize = resizeAll;
