@@ -38,13 +38,14 @@ public class SampleCode {
         }
     }
 
-    public void write() {
+    public void write(boolean offlineMode) {
         File f = new File(mSource);
         if (!f.isDirectory()) {
             System.out.println("-samplecode not a directory: " + mSource);
             return;
         }
-        writeDirectory(f, mDest);
+        if (offlineMode) writeIndexOnly(f, mDest);
+        else writeDirectory(f, mDest);
     }
 
     public static String convertExtension(String s, String ext) {
@@ -99,10 +100,8 @@ public class SampleCode {
 
         // write the index page
         int i;
-        HDF hdf = DroidDoc.makeHDF();
 
-        hdf.setValue("page.title", dir.getName() + " - " + mTitle);
-        hdf.setValue("projectTitle", mTitle);
+        HDF hdf = writeIndex(dir);
         hdf.setValue("subdir", subdir);
         i=0;
         for (String d: dirs) {
@@ -115,15 +114,32 @@ public class SampleCode {
             hdf.setValue("files." + i + ".href", convertExtension(f, ".html"));
             i++;
         }
+        
+        ClearPage.write(hdf, "sampleindex.cs", relative + "/index" + DroidDoc.htmlExtension);
+    }
+
+    public void writeIndexOnly(File dir, String relative) {
+        HDF hdf = writeIndex(dir);
+        ClearPage.write(hdf, "sampleindex.cs", relative + "/index" +
+                        DroidDoc.htmlExtension);
+    }
+
+    public HDF writeIndex(File dir) {
+        HDF hdf = DroidDoc.makeHDF();
+
+        hdf.setValue("page.title", dir.getName() + " - " + mTitle);
+        hdf.setValue("projectTitle", mTitle);
+
         String filename = dir.getPath() + "/_index.html";
-        String summary = SampleTagInfo.readFile(new SourcePositionInfo(filename, -1,-1), filename,
-                                                "sample code", true, false, true);
+        String summary = SampleTagInfo.readFile(new SourcePositionInfo(filename,
+                          -1,-1), filename, "sample code", true, false, true);
+
         if (summary == null) {
             summary = "";
         }
         hdf.setValue("summary", summary);
-        
-        ClearPage.write(hdf, "sampleindex.cs", relative + "/index" + DroidDoc.htmlExtension);
+
+        return hdf;
     }
 
     public void writePage(File f, String out, String subdir) {

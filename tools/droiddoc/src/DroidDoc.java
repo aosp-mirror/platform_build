@@ -96,6 +96,7 @@ public class DroidDoc
         //Create the dependency graph for the stubs directory
         boolean apiXML = false;
         boolean noDocs = false;
+        boolean offlineMode = false;
         String apiFile = null;
         String debugStubsFile = "";
         HashSet<String> stubPackages = null;
@@ -194,6 +195,9 @@ public class DroidDoc
             else if (a[0].equals("-since")) {
                 sinceTagger.addVersion(a[1], a[2]);
             }
+            else if (a[0].equals("-offlinemode")) {
+                offlineMode = true;
+            }
         }
 
         // read some prefs from the template
@@ -246,7 +250,7 @@ public class DroidDoc
 
             // Sample Code
             for (SampleCode sc: sampleCodes) {
-                sc.write();
+                sc.write(offlineMode);
             }
 
             // Index page
@@ -418,6 +422,9 @@ public class DroidDoc
         }
         if (option.equals("-since")) {
             return 3;
+        }
+        if (option.equals("-offlinemode")) {
+            return 1;
         }
         return 0;
     }
