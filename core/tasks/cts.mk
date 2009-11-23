@@ -66,6 +66,7 @@ CTS_CASE_LIST := \
 	TestDeviceSetup \
 	CtsTestStubs \
 	CtsAppTestCases \
+	CtsBluetoothTestCases \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
 	CtsDpiTestCases \
