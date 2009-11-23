@@ -20,23 +20,39 @@
 
 <?cs var:summary ?>
 
-<?cs if:subcount(subdirs) ?>
-    <h2>Subdirectories</h2>
-    <ul class="nolist">
-    <?cs each:dir=subdirs ?>
-      <li><a href="<?cs var:dir.name ?>/index.html"><?cs var:dir.name ?>/</a></li>
-    <?cs /each ?>
-    </ul>
-<?cs /if ?>
+<?cs if:android.whichdoc == "online" ?><?cs
+  # If this is the online docs, build the src code navigation links ?>
 
-<?cs if:subcount(files) ?>
-    <h2>Files</h2>
-    <ul class="nolist">
-    <?cs each:file=files ?>
-      <li><a href="<?cs var:file.href ?>"><?cs var:file.name ?></a></li>
-    <?cs /each ?>
-    </ul>
-<?cs /if ?>
+  <?cs if:subcount(subdirs) ?>
+      <h2>Subdirectories</h2>
+      <ul class="nolist">
+      <?cs each:dir=subdirs ?>
+        <li><a href="<?cs var:dir.name ?>/index.html"><?cs
+          var:dir.name ?>/</a></li>
+      <?cs /each ?>
+      </ul>
+  <?cs /if ?>
+
+  <?cs if:subcount(files) ?>
+      <h2>Files</h2>
+      <ul class="nolist">
+      <?cs each:file=files ?>
+        <li><a href="<?cs var:file.href ?>"><?cs
+          var:file.name ?></a></li>
+      <?cs /each ?>
+      </ul>
+  <?cs /if ?>
+
+<?cs else ?><?cs
+  # else, this means it's offline docs,
+          so don't show src links (we don't have the pages!) ?>
+
+<p>You can find the source code for this sample in your SDK at:</p>
+<p style="margin-left:2em">
+<code><em>&lt;sdk&gt;</em>/platforms/android-<em>&lt;version&gt;</em>/samples/</code>
+</p>
+
+<?cs /if ?><?cs # end if/else online docs ?>
 
 <?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->
