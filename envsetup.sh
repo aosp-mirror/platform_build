@@ -537,7 +537,10 @@ function gettop
         echo $TOP
     else
         if [ -f $TOPFILE ] ; then
-            echo $PWD
+            # The following circumlocution (repeated below as well) ensures
+            # that we record the true directory name and not one that is
+            # faked up with symlink names.
+            PWD= /bin/pwd
         else
             # We redirect cd to /dev/null in case it's aliased to
             # a command that prints something as a side-effect
@@ -546,7 +549,7 @@ function gettop
             T=
             while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
                 cd .. > /dev/null
-                T=$PWD
+                T=`PWD= /bin/pwd`
             done
             cd $HERE > /dev/null
             if [ -f "$T/$TOPFILE" ]; then
