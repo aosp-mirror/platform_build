@@ -120,6 +120,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/GoogleSubscribedFeedsProvider.apk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
