@@ -1,13 +1,9 @@
-The following commands were used to generate the test key pair:
+The following commands were used to generate the test key pairs:
 
-  openssl genrsa -3 -out testkey.pem 2048
-
-  openssl req -new -x509 -key testkey.pem -out testkey.x509.pem -days 10000 \
-    -subj '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
-
-  openssl pkcs8 -in testkey.pem -topk8 -outform DER -out testkey.pk8 -nocrypt
-
-Alternatively you can use the "mkkey.sh" command included in this directory.
+  development/tools/make_key testkey  '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
+  development/tools/make_key platform '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
+  development/tools/make_key shared   '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
+  development/tools/make_key media    '/C=US/ST=California/L=Mountain View/O=Android/OU=Android/CN=Android/emailAddress=android@android.com'
 
 The following standard test keys are currently included:
 
@@ -28,7 +24,7 @@ signing using the openssl commandline (for boot/system images)
    % openssl pkcs8 -inform DER -nocrypt -in testkey.pk8 -out testkey.pem
 
 2. create a signature using the pem format key
-   % openssl dgst -binary -sha1 -sign testkey.pem FILE > FILE.sig 
+   % openssl dgst -binary -sha1 -sign testkey.pem FILE > FILE.sig
 
 extracting public keys for embedding
 ------------------------------------
