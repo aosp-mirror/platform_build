@@ -21,7 +21,7 @@
 <p>The file containing the source code shown below is located in the corresponding directory in <code>&lt;sdk&gt;/platforms/android-&lt;version&gt;/samples/...</code></p>
 
 <!-- begin file contents -->
-<pre class="Code prettyprint"><?cs var:fileContents ?></pre>
+<pre><?cs var:fileContents ?></pre>
 <!-- end file contents -->
 
 <?cs include:"footer.cs" ?>
