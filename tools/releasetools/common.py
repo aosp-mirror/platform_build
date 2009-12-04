@@ -308,7 +308,7 @@ def ParseOptions(argv,
       OPTIONS.search_path = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
-    elif o in ("-x" "--extra"):
+    elif o in ("-x", "--extra"):
       key, value = a.split("=", 1)
       OPTIONS.extras[key] = value
     else:
