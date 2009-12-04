@@ -492,6 +492,8 @@ $(event_log_tags_file): $(event_log_tags_src)
 
 event-log-tags: $(event_log_tags_file)
 
+ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
+
 # -----------------------------------------------------------------
 # Build a keystore with the authorized keys in it, used to verify the
 # authenticity of downloaded OTA packages.
