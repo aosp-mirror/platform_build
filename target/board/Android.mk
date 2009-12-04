@@ -46,7 +46,7 @@ board_info_txt := $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt)
 $(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt)
 	$(call pretty,"Generated: ($@)")
 ifdef board_info_txt
-	$(hide) cat $< >> $@
+	$(hide) cat $< > $@
 else
 	$(hide) echo "board=$(TARGET_BOOTLOADER_BOARD_NAME)" > $@
 endif
