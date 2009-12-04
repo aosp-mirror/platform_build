@@ -186,11 +186,38 @@ aidl_java_sources :=
 endif
 
 ###########################################################
+## logtags: Add .logtags files to global list, emit java source
+###########################################################
+
+logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES))
+
+ifneq ($(strip $(logtags_sources)),)
+
+event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
+
+# Emit a java source file with constants for the tags, if
+# LOCAL_MODULE_CLASS is "APPS" or "JAVA_LIBRARIES".
+ifneq ($(strip $(filter $(LOCAL_MODULE_CLASS),APPS JAVA_LIBRARIES)),)
+
+logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
+logtags_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(logtags_sources))
+
+$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(TOPDIR)$(LOCAL_PATH)/%.logtags
+	$(transform-logtags-to-java)
+
+endif
+
+else
+logtags_java_sources :=
+event_log_tags :=
+endif
+
+###########################################################
 ## Java: Compile .java files to .class
 ###########################################################
 #TODO: pull this into java.make once host and target are combined
 
-java_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) $(aidl_java_sources)
+java_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) $(aidl_java_sources) $(logtags_java_sources)
 all_java_sources := $(java_sources) $(addprefix $($(my_prefix)OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
 
 ## Java resources #########################################
@@ -432,6 +459,8 @@ ALL_MODULES.$(LOCAL_MODULE).INSTALLED := \
     $(ALL_MODULES.$(LOCAL_MODULE).INSTALLED) $(LOCAL_INSTALLED_MODULE)
 ALL_MODULES.$(LOCAL_MODULE).REQUIRED := \
     $(ALL_MODULES.$(LOCAL_MODULE).REQUIRED) $(LOCAL_REQUIRED_MODULES)
+ALL_MODULES.$(LOCAL_MODULE).EVENT_LOG_TAGS := \
+    $(ALL_MODULES.$(LOCAL_MODULE).EVENT_LOG_TAGS) $(event_log_tags)
 
 ###########################################################
 ## Take care of LOCAL_MODULE_TAGS

@@ -201,6 +201,7 @@ TUNE2FS := tune2fs
 E2FSCK := e2fsck
 JARJAR := java -jar $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 PROGUARD := external/proguard/bin/proguard.sh
+JAVATAGS := build/tools/java-event-log-tags.py
 
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
@@ -294,7 +295,6 @@ TARGET_GLOBAL_CFLAGS += $(TARGET_RELEASE_CFLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
 
 PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
-
 
 # ###############################################################
 # Collect a list of the SDK versions that we could compile against
