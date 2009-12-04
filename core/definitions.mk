@@ -717,6 +717,16 @@ endef
 #$(AIDL) $(PRIVATE_AIDL_FLAGS) $< - | indent -nut -br -npcs -l1000 > $@
 
 
+###########################################################
+## Commands for running java-event-log-tags.py
+###########################################################
+
+define transform-logtags-to-java
+@mkdir -p $(dir $@)
+@echo "logtags: $@ <= $<"
+$(hide) $(JAVATAGS) -o $@ $<
+endef
+
 
 ###########################################################
 ## Commands for running gcc to compile a C++ file
