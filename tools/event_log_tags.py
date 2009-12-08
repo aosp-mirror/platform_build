@@ -93,6 +93,18 @@ class TagFile(object):
       self.AddError(str(e))
 
 
+def BooleanFromString(s):
+  """Interpret 's' as a boolean and return its value.  Raise
+  ValueError if it's not something we can interpret as true or
+  false."""
+  s = s.lower()
+  if s in ("true", "t", "1", "on", "yes", "y"):
+    return True
+  if s in ("false", "f", "0", "off", "no", "n"):
+    return False
+  raise ValueError("'%s' not a valid boolean" % (s,))
+
+
 def WriteOutput(output_file, data):
   """Write 'data' to the given output filename (which may be None to
   indicate stdout).  Emit an error message and die on any failure.
