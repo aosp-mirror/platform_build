@@ -13,6 +13,7 @@ else ?>
 <script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/jquery-resizable.min.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("<?cs var:toroot ?>");
 </script><?cs 
