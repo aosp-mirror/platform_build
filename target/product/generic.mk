@@ -1,6 +1,5 @@
 # This is a generic product that isn't specialized for a specific device.
-# It includes the base Android platform. If you need Google-specific features,
-# you should derive from generic_with_google.mk
+# It includes the base Android platform.
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
