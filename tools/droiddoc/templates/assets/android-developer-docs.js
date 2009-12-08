@@ -12,6 +12,7 @@ var toRoot;
 var isMobile = false; // true if mobile, so we can adjust some layout
 var isIE6 = false; // true if IE6
 
+// TODO: use $(document).ready instead
 function addLoadEvent(newfun) {
   var current = window.onload;
   if (typeof window.onload != 'function') {
@@ -60,6 +61,11 @@ addLoadEvent( function() {
   lists.setAttribute("type","text/javascript");
   lists.setAttribute("src", toRoot+"reference/lists.js");
   document.getElementsByTagName("head")[0].appendChild(lists);
+} );
+
+addLoadEvent( function() {
+  $("pre").addClass("prettyprint");
+  prettyPrint();
 } );
 
 function setToRoot(root) {
