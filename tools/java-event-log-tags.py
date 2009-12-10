@@ -60,6 +60,10 @@ tagfile = event_log_tags.TagFile(fn)
 if "java_package" not in tagfile.options:
   tagfile.AddError("java_package option not specified", linenum=0)
 
+hide = True
+if "javadoc_hide" in tagfile.options:
+  hide = event_log_tags.BooleanFromString(tagfile.options["javadoc_hide"][0])
+
 if tagfile.errors:
   for fn, ln, msg in tagfile.errors:
     print >> sys.stderr, "%s:%d: error: %s" % (fn, ln, msg)
@@ -73,6 +77,11 @@ buffer.write("/* This file is auto-generated.  DO NOT MODIFY.\n"
 buffer.write("package %s;\n\n" % (tagfile.options["java_package"][0],))
 
 basename, _ = os.path.splitext(os.path.basename(fn))
+
+if hide:
+  buffer.write("/**\n"
+               " * @hide\n"
+               " */\n")
 buffer.write("public class %s {\n" % (basename,))
 buffer.write("  private %s() { }  // don't instantiate\n" % (basename,))
 
