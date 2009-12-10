@@ -758,7 +758,7 @@ dl.xml dl dt {
 .listhead li {
   font-weight: bold;
 }
-  
+
 .listhead li *, /*ie*/.listhead li li {
   font-weight: normal;
 }
@@ -784,6 +784,16 @@ pre.classic {
   padding:0;
 }
 
+div.figure {
+  float:right;
+  padding:0 0 20px 20px;
+  /* width must be defined w/ an inline style matching the image width */
+}
+
+#jd-content div.figure img {
+  display:block;
+  margin:0 0 10px 0;
+}
 
 /* BEGIN quickview sidebar element styles */
 
