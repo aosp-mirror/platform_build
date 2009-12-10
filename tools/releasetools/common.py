@@ -141,12 +141,15 @@ def AddBoot(output_zip):
   BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "BOOT"),
                            "boot.img", output_zip)
 
-def UnzipTemp(filename):
+def UnzipTemp(filename, pattern=None):
   """Unzip the given archive into a temporary directory and return the name."""
 
   tmp = tempfile.mkdtemp(prefix="targetfiles-")
   OPTIONS.tempfiles.append(tmp)
-  p = Run(["unzip", "-o", "-q", filename, "-d", tmp], stdout=subprocess.PIPE)
+  cmd = ["unzip", "-o", "-q", filename, "-d", tmp]
+  if pattern is not None:
+    cmd.append(pattern)
+  p = Run(cmd, stdout=subprocess.PIPE)
   p.communicate()
   if p.returncode != 0:
     raise ExternalError("failed to unzip input target-files \"%s\"" %
