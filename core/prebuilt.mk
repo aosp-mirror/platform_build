@@ -43,18 +43,24 @@ endif
 endif
 
 ifeq ($(LOCAL_CERTIFICATE),)
-  # can't re-sign this package, so predexopt is not available.
+  ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
+    # It is now a build error to add a prebuilt .apk without
+    # specifying a key for it.
+    $(error No LOCAL_CERTIFICATE specified for prebuilt "$(LOCAL_SRC_FILES)")
+  endif
+else ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
+  # The magic string "PRESIGNED" means this package is already checked
+  # signed with its release key.
+  # Can't re-sign this package, so predexopt is not available.
 else
+  # If this is not an absolute certificate, assign it to a generic one.
+  ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
+      LOCAL_CERTIFICATE := $(SRC_TARGET_DIR)/product/security/$(LOCAL_CERTIFICATE)
+  endif
 
-# If this is not an absolute certificate, assign it to a generic one.
-ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
-    LOCAL_CERTIFICATE := $(SRC_TARGET_DIR)/product/security/$(LOCAL_CERTIFICATE)
-endif
-
-PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
-PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
-PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
-
+  PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
+  PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
+  PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
 endif
 
 ifneq ($(prebuilt_module_is_a_library),)
