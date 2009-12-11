@@ -92,6 +92,7 @@ all_resources := $(strip \
 
 all_res_assets := $(strip $(all_assets) $(all_resources))
 
+package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
 # If no assets or resources were found, clear the directory variables so
 # we don't try to build them.
 ifeq (,$(all_assets))
@@ -104,7 +105,6 @@ else
 # Make sure that R_file_stamp inherits the proper PRIVATE vars.
 # If R.stamp moves, be sure to update the framework makefile,
 # which has intimate knowledge of its location.
-package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
 R_file_stamp := $(package_expected_intermediates_COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 endif
