@@ -89,9 +89,15 @@ def GetApkCerts(tf_zip):
     if not line: continue
     m = re.match(r'^name="(.*)"\s+certificate="(.*)\.x509\.pem"\s+'
                  r'private_key="\2\.pk8"$', line)
-    if not m:
-      raise SigningError("failed to parse line from apkcerts.txt:\n" + line)
-    certmap[m.group(1)] = OPTIONS.key_map.get(m.group(2), m.group(2))
+    if m:
+      certmap[m.group(1)] = OPTIONS.key_map.get(m.group(2), m.group(2))
+    else:
+      m = re.match(r'^name="(.*)"\s+certificate="PRESIGNED"\s+'
+                 r'private_key=""$', line)
+      if m:
+        certmap[m.group(1)] = None
+      else:
+        raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
   for apk, cert in OPTIONS.extra_apks.iteritems():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
   return certmap

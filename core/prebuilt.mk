@@ -51,7 +51,12 @@ ifeq ($(LOCAL_CERTIFICATE),)
 else ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
   # The magic string "PRESIGNED" means this package is already checked
   # signed with its release key.
-  # Can't re-sign this package, so predexopt is not available.
+  #
+  # By setting .CERTIFICATE but not .PRIVATE_KEY, this package will be
+  # mentioned in apkcerts.txt (with certificate set to "PRESIGNED")
+  # but the dexpreopt process will not try to re-sign the app.
+  PACKAGES.$(LOCAL_MODULE).CERTIFICATE := PRESIGNED
+  PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
 else
   # If this is not an absolute certificate, assign it to a generic one.
   ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
