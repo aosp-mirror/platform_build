@@ -9,6 +9,7 @@ PRODUCT_PACKAGES := \
 	DrmProvider \
 	Email \
 	Fallback \
+	Gallery \
 	GPSEnable \
 	Launcher \
 	Music \
