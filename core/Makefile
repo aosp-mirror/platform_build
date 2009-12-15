@@ -208,8 +208,11 @@ $(APKCERTS_FILE): $(all_built_packages)
 	@mkdir -p $(dir $@)
 	@rm -f $@
 	$(hide) $(foreach p,$(PACKAGES),\
-	  echo 'name="$(p).apk" certificate="$(PACKAGES.$(p).CERTIFICATE)" \
-	       private_key="$(PACKAGES.$(p).PRIVATE_KEY)"' >> $@;)
+          $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
+	    echo 'name="$(p).apk" certificate="EXTERNAL" \
+	         private_key=""' >> $@;,\
+	    echo 'name="$(p).apk" certificate="$(PACKAGES.$(p).CERTIFICATE)" \
+	         private_key="$(PACKAGES.$(p).PRIVATE_KEY)"' >> $@;))
 
 .PHONY: apkcerts-list
 apkcerts-list: $(APKCERTS_FILE)

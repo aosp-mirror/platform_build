@@ -42,6 +42,16 @@ $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
 endif
 endif
 
+ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
+  # The magic string "EXTERNAL" means this package will be signed with
+  # the test key throughout the build process, but we expect the final
+  # package to be signed with a different key.
+  #
+  # This can be used for packages where we don't have access to the
+  # keys, but want the package to be predexopt'ed.
+  LOCAL_CERTIFICATE := testkey
+  PACKAGES.$(LOCAL_MODULE).EXTERNAL_KEY := 1
+endif
 ifeq ($(LOCAL_CERTIFICATE),)
   ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
     # It is now a build error to add a prebuilt .apk without

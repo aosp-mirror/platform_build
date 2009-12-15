@@ -248,6 +248,7 @@ class TargetFiles(object):
     d = common.UnzipTemp(filename, '*.apk')
     try:
       self.apks = {}
+      self.apks_by_basename = {}
       for dirpath, dirnames, filenames in os.walk(d):
         for fn in filenames:
           if fn.endswith(".apk"):
@@ -255,11 +256,16 @@ class TargetFiles(object):
             displayname = fullname[len(d)+1:]
             apk = APK(fullname, displayname)
             self.apks[apk.package] = apk
+            self.apks_by_basename[os.path.basename(apk.filename)] = apk
 
             self.max_pkg_len = max(self.max_pkg_len, len(apk.package))
             self.max_fn_len = max(self.max_fn_len, len(apk.filename))
     finally:
       shutil.rmtree(d)
+
+    z = zipfile.ZipFile(open(filename, "rb"))
+    self.certmap = common.ReadApkCerts(z)
+    z.close()
 
   def CheckSharedUids(self):
     """Look for any instances where packages signed with different
@@ -291,6 +297,20 @@ class TargetFiles(object):
         print "        %-*s  [%s]" % (self.max_pkg_len,
                                       apk.package, apk.filename)
       print
+
+  def CheckExternalSignatures(self):
+    for apk_filename, certname in self.certmap.iteritems():
+      if certname == "EXTERNAL":
+        # Apps marked EXTERNAL should be signed with the test key
+        # during development, then manually re-signed after
+        # predexopting.  Consider it an error if this app is now
+        # signed with any key that is present in our tree.
+        apk = self.apks_by_basename[apk_filename]
+        name = ALL_CERTS.Get(apk.cert)
+        if not name.startswith("unknown "):
+          Push(apk.filename)
+          AddProblem("hasn't been signed with EXTERNAL cert")
+          Pop()
 
   def PrintCerts(self):
     """Display a table of packages grouped by cert."""
@@ -402,6 +422,7 @@ def main(argv):
     Banner("target files")
     target_files.PrintCerts()
   target_files.CheckSharedUids()
+  target_files.CheckExternalSignatures()
   if compare_files:
     if OPTIONS.text:
       Banner("comparison files")

@@ -244,6 +244,15 @@ jni_shared_libraries := \
 ifeq ($(LOCAL_CERTIFICATE),)
     LOCAL_CERTIFICATE := testkey
 endif
+
+ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
+  # The special value "EXTERNAL" means that we will sign it with the
+  # default testkey, apply predexopt, but then expect the final .apk
+  # (after dexopting) to be signed by an outside tool.
+  LOCAL_CERTIFICATE := testkey
+  PACKAGES.$(LOCAL_PACKAGE_NAME).EXTERNAL_KEY := 1
+endif
+
 # If this is not an absolute certificate, assign it to a generic one.
 ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
     LOCAL_CERTIFICATE := $(SRC_TARGET_DIR)/product/security/$(LOCAL_CERTIFICATE)
