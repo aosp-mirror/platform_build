@@ -29,7 +29,8 @@ PRODUCT_PACKAGES := \
 	LiveWallpapersPicker \
 	ApiDemos \
 	GestureBuilder \
-	SoftKeyboard
+	SoftKeyboard \
+	CubeLiveWallpapers
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
