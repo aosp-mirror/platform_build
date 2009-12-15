@@ -37,6 +37,11 @@ OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
 OPTIONS.extras = {}
 
+
+# Values for "certificate" in apkcerts that mean special things.
+SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
+
+
 class ExternalError(RuntimeError): pass
 
 
@@ -166,9 +171,8 @@ def GetKeyPasswords(keylist):
   need_passwords = []
   devnull = open("/dev/null", "w+b")
   for k in sorted(keylist):
-    # An empty-string key is used to mean don't re-sign this package.
-    # Obviously we don't need a password for this non-key.
-    if not k:
+    # We don't need a password for things that aren't really keys.
+    if k in SPECIAL_CERT_STRINGS:
       no_passwords.append(k)
       continue
 
@@ -252,6 +256,28 @@ def CheckSize(data, target):
     print
   elif OPTIONS.verbose:
     print "  ", msg
+
+
+def ReadApkCerts(tf_zip):
+  """Given a target_files ZipFile, parse the META/apkcerts.txt file
+  and return a {package: cert} dict."""
+  certmap = {}
+  for line in tf_zip.read("META/apkcerts.txt").split("\n"):
+    line = line.strip()
+    if not line: continue
+    m = re.match(r'^name="(.*)"\s+certificate="(.*)"\s+'
+                 r'private_key="(.*)"$', line)
+    if m:
+      name, cert, privkey = m.groups()
+      if cert in SPECIAL_CERT_STRINGS and not privkey:
+        certmap[name] = cert
+      elif (cert.endswith(".x509.pem") and
+            privkey.endswith(".pk8") and
+            cert[:-9] == privkey[:-4]):
+        certmap[name] = cert[:-9]
+      else:
+        raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
+  return certmap
 
 
 COMMON_DOCSTRING = """

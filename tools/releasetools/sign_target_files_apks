@@ -83,23 +83,16 @@ OPTIONS.replace_ota_keys = False
 OPTIONS.tag_changes = ("-test-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
-  certmap = {}
-  for line in tf_zip.read("META/apkcerts.txt").split("\n"):
-    line = line.strip()
-    if not line: continue
-    m = re.match(r'^name="(.*)"\s+certificate="(.*)\.x509\.pem"\s+'
-                 r'private_key="\2\.pk8"$', line)
-    if m:
-      certmap[m.group(1)] = OPTIONS.key_map.get(m.group(2), m.group(2))
-    else:
-      m = re.match(r'^name="(.*)"\s+certificate="PRESIGNED"\s+'
-                 r'private_key=""$', line)
-      if m:
-        certmap[m.group(1)] = None
-      else:
-        raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
+  certmap = common.ReadApkCerts(tf_zip)
+
+  # apply the key remapping to the contents of the file
+  for apk, cert in certmap.iteritems():
+    certmap[apk] = OPTIONS.key_map.get(cert, cert)
+
+  # apply all the -e options, overriding anything in the file
   for apk, cert in OPTIONS.extra_apks.iteritems():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
+
   return certmap
 
 
@@ -147,7 +140,7 @@ def SignApks(input_tf_zip, output_tf_zip, apk_key_map, key_passwords):
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
       key = apk_key_map[name]
-      if key:
+      if key not in common.SPECIAL_CERT_STRINGS:
         print "    signing: %-*s (%s)" % (maxsize, name, key)
         signed_data = SignApk(data, key, key_passwords[key])
         output_tf_zip.writestr(out_info, signed_data)
