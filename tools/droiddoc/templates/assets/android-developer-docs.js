@@ -140,6 +140,8 @@ function init() {
     var cookiePath = "reference_";
   } else if (location.href.indexOf("/guide/") != -1) {
     var cookiePath = "guide_";
+  } else if (location.href.indexOf("/resources/") != -1) {
+    var cookiePath = "resources_";
   }
 
   if (!isMobile) {
@@ -166,9 +168,14 @@ function init() {
 
 function highlightNav(fullPageName) {
   var lastSlashPos = fullPageName.lastIndexOf("/");
-  var firstSlashPos = (fullPageName.indexOf("/guide/") != -1) ?
-                       fullPageName.indexOf("/guide/") : 
-                       fullPageName.indexOf("/sdk/"); // first slash after /guide or /sdk
+  var firstSlashPos;
+  if (fullPageName.indexOf("/guide/") != -1) {
+      firstSlashPos = fullPageName.indexOf("/guide/");
+    } else if (fullPageName.indexOf("/sdk/") != -1) {
+      firstSlashPos = fullPageName.indexOf("/sdk/");
+    } else {
+      firstSlashPos = fullPageName.indexOf("/resources/");
+    }
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
   }
@@ -227,6 +234,8 @@ function resizeHeight() {
 
   // If in the dev guide docs, also resize the "devdoc-nav" div
   } else if (href.indexOf("/guide/") != -1) {
+    $("#devdoc-nav").css({height:sidenav.css("height")});
+  } else if (href.indexOf("/resources/") != -1) {
     $("#devdoc-nav").css({height:sidenav.css("height")});
   }
 }
@@ -308,6 +317,8 @@ $(window).unload(function(){
     writeCookie("lastpage", path, "reference", null);
   } else if (path.indexOf("/guide/") != -1) {
     writeCookie("lastpage", path, "guide", null);
+  } else if (path.indexOf("/resources/") != -1) {
+    writeCookie("lastpage", path, "resources", null);
   }
 });
 

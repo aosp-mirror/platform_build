@@ -44,7 +44,7 @@ public class SampleCode {
             System.out.println("-samplecode not a directory: " + mSource);
             return;
         }
-        if (offlineMode) writeIndexOnly(f, mDest);
+        if (offlineMode) writeIndexOnly(f, mDest, offlineMode);
         else writeDirectory(f, mDest);
     }
 
@@ -118,9 +118,10 @@ public class SampleCode {
         ClearPage.write(hdf, "sampleindex.cs", relative + "/index" + DroidDoc.htmlExtension);
     }
 
-    public void writeIndexOnly(File dir, String relative) {
+    public void writeIndexOnly(File dir, String relative, Boolean offline) {
         HDF hdf = writeIndex(dir);
-        ClearPage.write(hdf, "sampleindex.cs", relative + "/index" +
+        if (!offline) relative = "/" + relative;
+        ClearPage.write(hdf, "sampleindex.cs", relative + "index" +
                         DroidDoc.htmlExtension);
     }
 

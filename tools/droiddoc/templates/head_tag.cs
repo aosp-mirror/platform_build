@@ -5,7 +5,7 @@
   if:page.title ?><?cs 
     var:page.title ?> | <?cs
   /if ?>Android Developers</title><?cs 
-if:guide||sdk ?>
+if:guide||sdk||resources ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" /><?cs 
 else ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" /><?cs 
