@@ -33,6 +33,7 @@ public class DroidDoc
     private static final String SDK_CONSTANT_TYPE_BROADCAST_ACTION = "android.annotation.SdkConstant.SdkConstantType.BROADCAST_INTENT_ACTION";
     private static final String SDK_CONSTANT_TYPE_SERVICE_ACTION = "android.annotation.SdkConstant.SdkConstantType.SERVICE_INTENT_ACTION";
     private static final String SDK_CONSTANT_TYPE_CATEGORY = "android.annotation.SdkConstant.SdkConstantType.INTENT_CATEGORY";
+    private static final String SDK_CONSTANT_TYPE_FEATURE = "android.annotation.SdkConstant.SdkConstantType.FEATURE";
     private static final String SDK_WIDGET_ANNOTATION = "android.annotation.Widget";
     private static final String SDK_LAYOUT_ANNOTATION = "android.annotation.Layout";
 
@@ -1147,6 +1148,7 @@ public class DroidDoc
         ArrayList<String> broadcastActions = new ArrayList<String>();
         ArrayList<String> serviceActions = new ArrayList<String>();
         ArrayList<String> categories = new ArrayList<String>();
+        ArrayList<String> features = new ArrayList<String>();
 
         ArrayList<ClassInfo> layouts = new ArrayList<ClassInfo>();
         ArrayList<ClassInfo> widgets = new ArrayList<ClassInfo>();
@@ -1177,6 +1179,8 @@ public class DroidDoc
                                         serviceActions.add(cValue.toString());
                                     } else if (SDK_CONSTANT_TYPE_CATEGORY.equals(type)) {
                                         categories.add(cValue.toString());
+                                    } else if (SDK_CONSTANT_TYPE_FEATURE.equals(type)) {
+                                        features.add(cValue.toString());
                                     }
                                 }
                                 break;
@@ -1244,6 +1248,9 @@ public class DroidDoc
 
         Collections.sort(categories);
         writeValues(output + "/categories.txt", categories);
+
+        Collections.sort(features);
+        writeValues(output + "/features.txt", features);
 
         // before writing the list of classes, we do some checks, to make sure the layout params
         // are enclosed by a layout class (and not one that has been declared as a widget)
