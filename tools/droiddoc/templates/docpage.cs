@@ -19,7 +19,6 @@
 
   <div id="jd-content">
 
-
     <div class="jd-descr">
     <?cs call:tag_list(root.descr) ?>
     </div>

@@ -268,7 +268,7 @@ hr.blue {
 .guide #guide-link a,
 .reference #reference-link a,
 .sdk #sdk-link a,
-.community #community-link a,
+.resources #resources-link a,
 .videos #videos-link a {
   background-image: url(images/bg_images_sprite.png);
   background-position: 0 0;
@@ -282,7 +282,7 @@ hr.blue {
 .guide #guide-link a:hover,
 .reference #reference-link a:hover,
 .sdk #sdk-link a:hover,
-.community #community-link a:hover,
+.resources #resources-link a:hover,
 .videos #videos-link  a:hover {
   background-image: url(images/bg_images_sprite.png);
   background-position: 0 0;

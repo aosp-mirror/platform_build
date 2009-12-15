@@ -109,6 +109,21 @@ def:sdk_nav() ?>
 <?cs /def ?>
 
 <?cs 
+def:resources_tab_nav() ?>
+  <div class="g-section g-tpl-240" id="body-content">
+    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+      <div id="devdoc-nav"><?cs 
+        include:"../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      addLoadEvent(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
+<?cs 
 def:guide_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
@@ -196,6 +211,8 @@ def:default_left_nav() ?>
 def:custom_left_nav() ?><?cs 
   if:guide ?><?cs 
     call:guide_nav() ?><?cs 
+  elif:resources ?><?cs 
+    call:resources_tab_nav() ?><?cs 
   elif:sdk ?><?cs 
     call:sdk_nav() ?><?cs 
   else ?><?cs 
