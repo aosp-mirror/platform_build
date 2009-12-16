@@ -10,7 +10,12 @@
 <a name="top"></a>
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header">
-    <span class="crumb">&nbsp;</span>
+    <span class="crumb">
+      <?cs if:parent.link ?>
+        <a href="<?cs var:parent.link ?>"><?cs var:parent.title ?></a> >
+      <?cs else ?>&nbsp;
+      <?cs /if ?>
+    </span>
     <h1><?cs var:page.title ?></h1>
   </div>
 
