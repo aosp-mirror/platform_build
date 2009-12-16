@@ -91,6 +91,8 @@ def GetApkCerts(tf_zip):
 
   # apply all the -e options, overriding anything in the file
   for apk, cert in OPTIONS.extra_apks.iteritems():
+    if not cert:
+      cert = "PRESIGNED"
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
 
   return certmap
