@@ -139,7 +139,7 @@ public class DocFile
                 ClearPage.write(hdf, "docpage.cs", outfile);
             } else if (outfile.indexOf("resources/") != -1) {
                 hdf.setValue("resources", "true");
-                ClearPage.write(hdf, "resourcespage.cs", outfile);
+                ClearPage.write(hdf, "docpage.cs", outfile);
             } else {
                 ClearPage.write(hdf, "nosidenavpage.cs", outfile);
             }
