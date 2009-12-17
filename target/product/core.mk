@@ -26,3 +26,6 @@ PRODUCT_PACKAGES := \
     UserDictionaryProvider \
     PackageInstaller \
     Bugreport
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.stagefright.enable-player=true
