@@ -16,6 +16,7 @@ PRODUCT_PACKAGES := \
     LatinIME \
     Mms \
     Music \
+    Provision \
     Settings \
     Sync \
     Updater \
