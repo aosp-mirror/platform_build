@@ -65,6 +65,7 @@ CTS_SECURITY_APPS_LIST := \
 CTS_CASE_LIST := \
 	TestDeviceSetup \
 	CtsTestStubs \
+	CtsAccountManagerTestCases \
 	CtsAppTestCases \
 	CtsBluetoothTestCases \
 	CtsContentTestCases \
