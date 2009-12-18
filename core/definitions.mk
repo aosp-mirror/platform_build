@@ -223,12 +223,25 @@ $(call all-Iaidl-files-under,.)
 endef
 
 ###########################################################
+## Find all of the html files under the named directories.
+## Meant to be used like:
+##    SRC_FILES := $(call all-html-files-under,src tests)
+###########################################################
+
+define all-html-files-under
+$(patsubst ./%,%, \
+  $(shell cd $(LOCAL_PATH) ; \
+          find $(1) -name "*.html" -and -not -name ".*") \
+ )
+endef
+
+###########################################################
 ## Find all of the html files from here.  Meant to be used like:
 ##    SRC_FILES := $(call all-subdir-html-files)
 ###########################################################
 
 define all-subdir-html-files
-$(patsubst ./%,%,$(shell cd $(LOCAL_PATH) ; find . -name "*.html"))
+$(call all-html-files-under,.)
 endef
 
 ###########################################################
