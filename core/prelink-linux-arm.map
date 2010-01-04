@@ -61,6 +61,7 @@ libGLESv2.so            0xACA00000
 libOpenVG_CM.so         0xAC900000
 libOpenVGU_CM.so        0xAC800000
 libEGL.so               0xAC700000
+libETC1.so              0xAC680000
 
 libacc.so               0xAC600000
 
