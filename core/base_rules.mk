@@ -429,7 +429,9 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 # checked modules, use LOCAL_BUILT_MODULE.  This was old
 # behavior, so it should be a safe default.
 ifndef LOCAL_CHECKED_MODULE
-  LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
+  ifndef LOCAL_SDK_VERSION
+    LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
+  endif
 endif
 
 # If they request that this module not be checked, then don't.
