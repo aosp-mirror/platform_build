@@ -260,9 +260,11 @@ function resizeWidth() {
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
 
-  var basePath = getBaseUri(location.pathname);
-  var section = basePath.substring(1,basePath.indexOf("/",1));
-  writeCookie("width", sidenavWidth, section, null);
+  if ($(".side-nav-resizable").length) { // Must check if the nav is resizable because IE6 calls resizeWidth() from resizeAll() for all pages
+    var basePath = getBaseUri(location.pathname);
+    var section = basePath.substring(1,basePath.indexOf("/",1));
+    writeCookie("width", sidenavWidth, section, null);
+  }
 }
 
 /* For IE6 only,
@@ -270,9 +272,7 @@ function resizeWidth() {
  * avoiding this for all browsers provides better performance */
 function resizeAll() {
   resizeHeight();
-  if ($(".side-nav-resizable").length) {
-    resizeWidth();
-  }
+  resizeWidth();
 }
 
 function getBaseUri(uri) {
