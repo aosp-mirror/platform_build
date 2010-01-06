@@ -164,4 +164,4 @@ librpc.so               0x9A400000
 libtrace_test.so        0x9A300000
 libsrec_jni.so          0x9A200000
 libcerttool_jni.so      0x9A100000
-
+libjpeg.so              0x9A000000
