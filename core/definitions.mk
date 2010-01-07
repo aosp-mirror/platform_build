@@ -572,6 +572,7 @@ endef
 # $(1): list of tags to accept
 # $(2): list of tags to reject
 #TODO(dbort): do $(if $(strip $(1)),$(1),$(ALL_MODULE_TAGS))
+#TODO(jbq): as of 20100106 nobody uses the second parameter
 define get-tagged-modules
 $(filter-out \
 	$(call modules-for-tag-list,$(2)), \
