@@ -187,7 +187,10 @@ define _import-node
   $(eval _include_stack := $(2) $$(_include_stack))
   $(call clear-var-list, $(3))
   $(eval LOCAL_PATH := $(patsubst %/,%,$(dir $(2))))
+  $(eval MAKEFILE_LIST :=)
   $(eval include $(2))
+  $(eval _included := $(filter-out $(2),$(MAKEFILE_LIST)))
+  $(eval MAKEFILE_LIST :=)
   $(eval LOCAL_PATH :=)
   $(call copy-var-list, $(1).$(2), $(3))
   $(call clear-var-list, $(3))
@@ -201,6 +204,13 @@ define _import-node
   $(eval $(1).$(2).inherited :=)
   $(eval _include_stack := $(wordlist 2,9999,$$(_include_stack)))
 endef
+
+#
+# This will generate a warning for _included above
+#  $(if $(_included), \
+#      $(eval $(warning product spec file: $(2)))\
+#      $(foreach _inc,$(_included),$(eval $(warning $(space)$(space)$(space)includes: $(_inc)))),)
+#
 
 #
 # $(1): context prefix
