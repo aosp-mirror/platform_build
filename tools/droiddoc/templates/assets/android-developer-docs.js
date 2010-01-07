@@ -136,12 +136,13 @@ function init() {
   sidenav = $("#side-nav");
   devdocNav = $("#devdoc-nav");
 
+  var cookiePath = "";
   if (location.href.indexOf("/reference/") != -1) {
-    var cookiePath = "reference_";
+    cookiePath = "reference_";
   } else if (location.href.indexOf("/guide/") != -1) {
-    var cookiePath = "guide_";
+    cookiePath = "guide_";
   } else if (location.href.indexOf("/resources/") != -1) {
-    var cookiePath = "resources_";
+    cookiePath = "resources_";
   }
 
   if (!isMobile) {
@@ -269,7 +270,9 @@ function resizeWidth() {
  * avoiding this for all browsers provides better performance */
 function resizeAll() {
   resizeHeight();
-  resizeWidth();
+  if ($(".side-nav-resizable").length) {
+    resizeWidth();
+  }
 }
 
 function getBaseUri(uri) {
