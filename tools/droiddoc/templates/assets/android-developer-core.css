@@ -182,6 +182,11 @@ hr.blue {
   margin:20px 0 10px;
 }
 
+blockquote {
+  margin: 0 0 1em 1em;
+  padding: 0 4em 0 1em;
+  border-left:2px solid #eee;
+}
 /* LAYOUT */
 
 #body-content {
