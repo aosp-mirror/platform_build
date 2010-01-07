@@ -447,7 +447,7 @@ include $(ONE_SHOT_MAKEFILE)
 # modules as a side-effect.  Do this after including ONE_SHOT_MAKEFILE
 # so that the modules will be installed in the same place they
 # would have been with a normal make.
-CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS),))
+CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
 FULL_BUILD :=
 # Stub out the notice targets, which probably aren't defined
 # when using ONE_SHOT_MAKEFILE.
@@ -549,7 +549,7 @@ else
 endif
 # Use tags to get the non-APPS user modules.  Use the product
 # definition files to get the APPS user modules.
-user_MODULES := $(sort $(call get-tagged-modules,user,_class@APPS restricted))
+user_MODULES := $(sort $(call get-tagged-modules,user,restricted))
 user_MODULES := $(user_MODULES) $(user_PACKAGES)
 
 eng_MODULES := $(sort $(call get-tagged-modules,eng,restricted))

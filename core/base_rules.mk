@@ -101,9 +101,13 @@ ifneq ($(words $(LOCAL_MODULE_CLASS)),1)
   $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS must contain exactly one word, not "$(LOCAL_MODULE_CLASS)")
 endif
 
-# Add a tag like "_class@APPS" to this module so that we can filter
-# based on the class.
-LOCAL_MODULE_TAGS += _class@$(LOCAL_MODULE_CLASS)
+# Those used to be implicitly ignored, but aren't any more.
+# As of 20100110 there are no apps with the user tag.
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
+  ifneq ($(filter $(LOCAL_MODULE_TAGS),user),)
+    $(warning user tag on app $(LOCAL_MODULE) at $(LOCAL_PATH) - add your app to core.mk instead)
+  endif
+endif
 
 LOCAL_MODULE_PATH := $(strip $(LOCAL_MODULE_PATH))
 ifeq ($(LOCAL_MODULE_PATH),)
