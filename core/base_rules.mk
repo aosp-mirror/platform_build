@@ -62,6 +62,13 @@ LOCAL_MODULE_TAGS := user
 #$(warning default tags: $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))))
 endif
 
+# Only the tags mentioned in this test are expected to be set by module
+# makefiles. Anything else is either a typo or a source of unexpected
+# behaviors.
+ifneq ($(filter-out user debug eng tests optional samples,$(LOCAL_MODULE_TAGS)),)
+$(warning unusual tags $(LOCAL_MODULE_TAGS) on $(LOCAL_MODULE) at $(LOCAL_PATH))
+endif
+
 # Add implicit tags.
 #
 # If the local directory or one of its parents contains a MODULE_LICENSE_GPL
