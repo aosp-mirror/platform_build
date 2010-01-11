@@ -447,7 +447,7 @@ include $(ONE_SHOT_MAKEFILE)
 # modules as a side-effect.  Do this after including ONE_SHOT_MAKEFILE
 # so that the modules will be installed in the same place they
 # would have been with a normal make.
-CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS),))
+CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
 FULL_BUILD :=
 # Stub out the notice targets, which probably aren't defined
 # when using ONE_SHOT_MAKEFILE.
@@ -521,9 +521,6 @@ add-required-deps :=
 
 # Of the modules defined by the component makefiles,
 # determine what we actually want to build.
-# If a module has the "restricted" tag on it, it
-# poisons the rest of the tags and shouldn't appear
-# on any list.
 Default_MODULES := $(sort $(ALL_DEFAULT_INSTALLED_MODULES) \
                           $(CUSTOM_MODULES))
 # TODO: Remove the 3 places in the tree that use
@@ -549,12 +546,12 @@ else
 endif
 # Use tags to get the non-APPS user modules.  Use the product
 # definition files to get the APPS user modules.
-user_MODULES := $(sort $(call get-tagged-modules,user,_class@APPS restricted))
+user_MODULES := $(sort $(call get-tagged-modules,user))
 user_MODULES := $(user_MODULES) $(user_PACKAGES)
 
-eng_MODULES := $(sort $(call get-tagged-modules,eng,restricted))
-debug_MODULES := $(sort $(call get-tagged-modules,debug,restricted))
-tests_MODULES := $(sort $(call get-tagged-modules,tests,restricted))
+eng_MODULES := $(sort $(call get-tagged-modules,eng))
+debug_MODULES := $(sort $(call get-tagged-modules,debug))
+tests_MODULES := $(sort $(call get-tagged-modules,tests))
 
 ifeq ($(strip $(tags_to_install)),)
 $(error ASSERTION FAILED: tags_to_install should not be empty)
