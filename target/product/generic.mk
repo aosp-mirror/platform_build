@@ -17,6 +17,7 @@ PRODUCT_PACKAGES := \
     Mms \
     Music \
     Provision \
+    QuickSearchBox \
     Settings \
     Sync \
     Updater \
