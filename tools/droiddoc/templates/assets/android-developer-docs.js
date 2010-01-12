@@ -12,6 +12,7 @@ var toRoot;
 var isMobile = false; // true if mobile, so we can adjust some layout
 var isIE6 = false; // true if IE6
 
+// TODO: use $(document).ready instead
 function addLoadEvent(newfun) {
   var current = window.onload;
   if (typeof window.onload != 'function') {
@@ -24,15 +25,16 @@ function addLoadEvent(newfun) {
   }
 }
 
-var agent = navigator['userAgent'];
+var agent = navigator['userAgent'].toLowerCase();
 // If a mobile phone, set flag and do mobile setup
-if ((agent.indexOf("Mobile") != -1) || 
-    (agent.indexOf("BlackBerry") != -1) || 
-    (agent.indexOf("Mini") != -1)) {
+if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod 
+    (agent.indexOf("blackberry") != -1) ||
+    (agent.indexOf("webos") != -1) ||
+    (agent.indexOf("mini") != -1)) {        // opera mini browsers 
   isMobile = true;
   addLoadEvent(mobileSetup);
 // If not a mobile browser, set the onresize event for IE6, and others
-} else if (agent.indexOf("MSIE 6.0") != -1) {
+} else if (agent.indexOf("msie 6") != -1) {
   isIE6 = true;
   addLoadEvent(function() {
     window.onresize = resizeAll;
@@ -59,6 +61,11 @@ addLoadEvent( function() {
   lists.setAttribute("type","text/javascript");
   lists.setAttribute("src", toRoot+"reference/lists.js");
   document.getElementsByTagName("head")[0].appendChild(lists);
+} );
+
+addLoadEvent( function() {
+  $("pre").addClass("prettyprint");
+  prettyPrint();
 } );
 
 function setToRoot(root) {
@@ -133,6 +140,8 @@ function init() {
     var cookiePath = "reference_";
   } else if (location.href.indexOf("/guide/") != -1) {
     var cookiePath = "guide_";
+  } else if (location.href.indexOf("/resources/") != -1) {
+    var cookiePath = "resources_";
   }
 
   if (!isMobile) {
@@ -159,16 +168,21 @@ function init() {
 
 function highlightNav(fullPageName) {
   var lastSlashPos = fullPageName.lastIndexOf("/");
-  var firstSlashPos = (fullPageName.indexOf("/guide/") != -1) ?
-                       fullPageName.indexOf("/guide/") : 
-                       fullPageName.indexOf("/sdk/"); // first slash after /guide or /sdk
+  var firstSlashPos;
+  if (fullPageName.indexOf("/guide/") != -1) {
+      firstSlashPos = fullPageName.indexOf("/guide/");
+    } else if (fullPageName.indexOf("/sdk/") != -1) {
+      firstSlashPos = fullPageName.indexOf("/sdk/");
+    } else {
+      firstSlashPos = fullPageName.indexOf("/resources/");
+    }
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
   }
   var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
   var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5);
   var link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-  if ((link.length == 0) && (fullPageName.indexOf("/guide/") != -1)) { 
+  if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) || (fullPageName.indexOf("/resources/") != -1))) { 
 // if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide)
     lastBackstep = pathPageName.lastIndexOf("/");
     while (link.length == 0) {
@@ -220,6 +234,8 @@ function resizeHeight() {
 
   // If in the dev guide docs, also resize the "devdoc-nav" div
   } else if (href.indexOf("/guide/") != -1) {
+    $("#devdoc-nav").css({height:sidenav.css("height")});
+  } else if (href.indexOf("/resources/") != -1) {
     $("#devdoc-nav").css({height:sidenav.css("height")});
   }
 }
@@ -301,6 +317,8 @@ $(window).unload(function(){
     writeCookie("lastpage", path, "reference", null);
   } else if (path.indexOf("/guide/") != -1) {
     writeCookie("lastpage", path, "guide", null);
+  } else if (path.indexOf("/resources/") != -1) {
+    writeCookie("lastpage", path, "resources", null);
   }
 });
 

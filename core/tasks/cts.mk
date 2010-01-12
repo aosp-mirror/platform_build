@@ -63,16 +63,20 @@ CTS_SECURITY_APPS_LIST := \
 	CtsUsePermissionDiffCert
 
 CTS_CASE_LIST := \
-	DeviceInfoCollector \
+	TestDeviceSetup \
 	CtsTestStubs \
+	CtsAccountManagerTestCases \
 	CtsAppTestCases \
+	CtsBluetoothTestCases \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
 	CtsDpiTestCases \
 	CtsDpiTestCases2 \
-    CtsGestureTestCases \
+	CtsExampleTestCases \
+	CtsGestureTestCases \
 	CtsGraphicsTestCases \
 	CtsHardwareTestCases \
+	CtsJniTestCases \
 	CtsLocationTestCases \
 	CtsMediaTestCases \
 	CtsOsTestCases \

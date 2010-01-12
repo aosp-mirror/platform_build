@@ -5,7 +5,7 @@
   if:page.title ?><?cs 
     var:page.title ?> | <?cs
   /if ?>Android Developers</title><?cs 
-if:guide||sdk ?>
+if:guide||sdk||resources ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" /><?cs 
 else ?>
 <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" /><?cs 
@@ -13,6 +13,7 @@ else ?>
 <script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/jquery-resizable.min.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/android-developer-docs.js" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/prettify.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("<?cs var:toroot ?>");
 </script><?cs 

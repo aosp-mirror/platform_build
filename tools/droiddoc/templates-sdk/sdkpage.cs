@@ -141,7 +141,7 @@ computer. </p>
     <p style="margin-top:0">If you are currently using the Android 1.6 SDK, you
     do not need to install the new SDK, because your existing SDK already 
     includes the Android SDK and AVD Manager tool. To develop against Android 
-    2.0, for example, you can just download the Android 2.0 platform (and 
+    2.0.1, for example, you can just download the Android 2.0.1 platform (and 
     updated SDK Tools) into your existing SDK. Refer to <a 
     href="adding-components.html">Adding SDK Components</a>.</p>
     </div>

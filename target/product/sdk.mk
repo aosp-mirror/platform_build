@@ -9,6 +9,7 @@ PRODUCT_PACKAGES := \
 	DrmProvider \
 	Email \
 	Fallback \
+	Gallery \
 	GPSEnable \
 	Launcher \
 	Music \
@@ -28,7 +29,10 @@ PRODUCT_PACKAGES := \
 	LiveWallpapersPicker \
 	ApiDemos \
 	GestureBuilder \
-	SoftKeyboard
+	SoftKeyboard \
+	CubeLiveWallpapers
+
+PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
 	development/data/etc/vold.conf:system/etc/vold.conf \
