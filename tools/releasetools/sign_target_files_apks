@@ -160,6 +160,18 @@ def SignApks(input_tf_zip, output_tf_zip, apk_key_map, key_passwords):
       output_tf_zip.writestr(out_info, data)
 
 
+def EditTags(tags):
+  """Given a string containing comma-separated tags, apply the edits
+  specified in OPTIONS.tag_changes and return the updated string."""
+  tags = set(tags.split(","))
+  for ch in OPTIONS.tag_changes:
+    if ch[0] == "-":
+      tags.discard(ch[1:])
+    elif ch[0] == "+":
+      tags.add(ch[1:])
+  return ",".join(sorted(tags))
+
+
 def RewriteProps(data):
   output = []
   for line in data.split("\n"):
@@ -168,24 +180,17 @@ def RewriteProps(data):
     if line and line[0] != '#':
       key, value = line.split("=", 1)
       if key == "ro.build.fingerprint":
-        pieces = line.split("/")
-        tags = set(pieces[-1].split(","))
-        for ch in OPTIONS.tag_changes:
-          if ch[0] == "-":
-            tags.discard(ch[1:])
-          elif ch[0] == "+":
-            tags.add(ch[1:])
-        line = "/".join(pieces[:-1] + [",".join(sorted(tags))])
+        pieces = value.split("/")
+        pieces[-1] = EditTags(pieces[-1])
+        value = "/".join(pieces)
       elif key == "ro.build.description":
-        pieces = line.split(" ")
+        pieces = value.split(" ")
         assert len(pieces) == 5
-        tags = set(pieces[-1].split(","))
-        for ch in OPTIONS.tag_changes:
-          if ch[0] == "-":
-            tags.discard(ch[1:])
-          elif ch[0] == "+":
-            tags.add(ch[1:])
-        line = " ".join(pieces[:-1] + [",".join(sorted(tags))])
+        pieces[-1] = EditTags(pieces[-1])
+        value = " ".join(pieces)
+      elif key == "ro.build.tags":
+        value = EditTags(value)
+      line = key + "=" + value
     if line != original_line:
       print "  replace: ", original_line
       print "     with: ", line
