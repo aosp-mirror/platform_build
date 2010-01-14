@@ -346,6 +346,11 @@ endif
 
 ifeq ($(SDK_ONLY),true)
 
+# ----- SDK for Windows ------
+# These configure the build targets that are available for the SDK under Cygwin.
+# The first section defines all the C/C++ tools that can be compiled under Cygwin,
+# the second section defines all the Java ones (assuming javac is available.)
+
 subdirs := \
 	prebuilt \
 	build/libs/host \
@@ -355,6 +360,7 @@ subdirs := \
 	dalvik/tools/dmtracedump \
 	dalvik/tools/hprof-conv \
 	development/tools/line_endings \
+	development/tools/etc1tool \
 	sdk/emulator/mksdcard \
 	sdk/sdklauncher \
 	development/host \
@@ -366,6 +372,7 @@ subdirs := \
 	frameworks/base/libs/utils \
 	frameworks/base/tools/aapt \
 	frameworks/base/tools/aidl \
+	frameworks/base/opengl/libs \
 	system/core/adb \
 	system/core/fastboot \
 	system/core/libcutils \
