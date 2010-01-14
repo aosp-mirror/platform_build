@@ -69,8 +69,10 @@ ifeq (,$(LOCAL_RESOURCE_DIR))
   LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 endif
 LOCAL_RESOURCE_DIR := \
-  $(wildcard $(addsuffix /$(LOCAL_RESOURCE_DIR), $(PRODUCT_PACKAGE_OVERLAYS))) \
-  $(wildcard $(addsuffix /$(LOCAL_RESOURCE_DIR), $(DEVICE_PACKAGE_OVERLAYS))) \
+  $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
+    $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
+  $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
+    $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
   $(LOCAL_RESOURCE_DIR)
 
 # this is an app, so add the system libraries to the search path
