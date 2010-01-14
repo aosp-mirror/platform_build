@@ -136,6 +136,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libmediaplayer
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libstagefright_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/GoogleServicesFramework_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/VoiceSearchWithKeyboard.apk)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Email_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Email_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
