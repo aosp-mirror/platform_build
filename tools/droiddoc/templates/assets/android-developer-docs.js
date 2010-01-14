@@ -220,10 +220,12 @@ function resizePackagesHeight() {
 /* Resize the height of the side-nav and doc-content divs,
  * which creates the frame effect */
 function resizeHeight() {
+  var docContent = $("#doc-content");
+
   // Get the window height and always resize the doc-content and side-nav divs
   var windowHeight = ($(window).height() - HEADER_HEIGHT);
-  content.css({height:windowHeight + "px"});
-  sidenav.css({height:windowHeight + "px"});
+  docContent.css({height:windowHeight + "px"});
+  $("#side-nav").css({height:windowHeight + "px"});
 
   var href = location.href;
   // If in the reference docs, also resize the "swapper", "classes-nav", and "nav-tree"  divs
@@ -238,6 +240,13 @@ function resizeHeight() {
     $("#devdoc-nav").css({height:sidenav.css("height")});
   } else if (href.indexOf("/resources/") != -1) {
     $("#devdoc-nav").css({height:sidenav.css("height")});
+  }
+
+  // Hide the "Go to top" link if there's no vertical scroll
+  if ( parseInt($("#jd-content").css("height")) <= parseInt(docContent.css("height")) ) {
+    $("a[href='#top']").css({'display':'none'});
+  } else {
+    $("a[href='#top']").css({'display':'inline'});
   }
 }
 
