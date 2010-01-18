@@ -16,7 +16,6 @@ PRODUCT_PACKAGES := \
     ApplicationsProvider \
     ContactsProvider \
     DownloadProvider \
-    GoogleSearch \
     MediaProvider \
     PicoTts \
     SettingsProvider \
