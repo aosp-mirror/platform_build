@@ -139,7 +139,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/VoiceSearchWithKeyboard.
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Email_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Email_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/vendor/google_voiceime)
-
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/QuickSearchBox.apk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
