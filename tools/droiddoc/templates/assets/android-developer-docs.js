@@ -64,7 +64,7 @@ addLoadEvent( function() {
 } );
 
 addLoadEvent( function() {
-  $("pre").addClass("prettyprint");
+  $("pre:not(.no-pretty-print)").addClass("prettyprint");
   prettyPrint();
 } );
 
