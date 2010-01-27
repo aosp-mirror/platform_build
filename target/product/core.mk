@@ -24,6 +24,7 @@ PRODUCT_PACKAGES := \
     VpnServices \
     UserDictionaryProvider \
     PackageInstaller \
+    DefaultContainerService \
     Bugreport
 
 PRODUCT_PROPERTY_OVERRIDES += \
