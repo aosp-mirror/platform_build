@@ -395,6 +395,7 @@ subdirs += \
 	sdk/androidprefs \
 	sdk/apkbuilder \
 	sdk/jarutils \
+	sdk/layoutlib_api \
 	sdk/layoutlib_utils \
 	sdk/ninepatch \
 	sdk/sdkstats \
