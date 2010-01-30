@@ -985,6 +985,7 @@ function godir () {
         echo "Usage: godir <regex>"
         return
     fi
+    T=$(gettop)
     if [[ ! -f $T/filelist ]]; then
         echo -n "Creating index..."
         (cd $T; find . -wholename ./out -prune -o -type f > filelist)
