@@ -351,7 +351,8 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   link_instr_intermediates_dir.COMMON := $(call intermediates-dir-for, \
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
 
-  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes.jar
+  # link against the jar with full original names (before proguard processing).
+  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
 
   # We can't depend on the .jar file, so we depend on something that
   # depends on the jar file; the final built package file.

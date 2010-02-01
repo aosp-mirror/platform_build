@@ -1,0 +1,21 @@
+# Keep everything for tests
+-dontshrink -dontobfuscate
+
+#-keep class * extends junit.framework.TestCase {
+#  public void test*();
+#}
+
+#-keepclasseswithmembers class * {
+#  public static void run();
+#  public static junit.framework.Test suite();
+#}
+
+# some AllTests don't include run().
+#-keepclasseswithmembers class * {
+#  public static junit.framework.Test suite();
+#}
+
+#-keep class * extends junit.framework.TestSuite
+#-keep class * extends android.app.Instrumentation
+#-keep class * extends android.test.TestSuiteProvider
+

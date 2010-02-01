@@ -1,7 +1,54 @@
 # see http://sourceforge.net/tracker/?func=detail&aid=2787465&group_id=54750&atid=474707
 -optimizations !code/simplification/arithmetic
+-optimizations !code/simplification/cast
 -allowaccessmodification
+
+# To prevent name conflict in incremental obfuscation.
+-useuniqueclassmembernames
+
+# dex does not like code run through proguard optimize and preverify steps.
+-dontoptimize
+-dontpreverify
+
+# Don't obfuscate. We only need dead code striping.
+-dontobfuscate
+
+# Add this flag in your package's own configuration if it's needed.
+#-flattenpackagehierarchy
 
 # Some classes in the libraries extend package private classes to chare common functionality
 # that isn't explicitly part of the API
--dontskipnonpubliclibraryclasses
+-dontskipnonpubliclibraryclasses -dontskipnonpubliclibraryclassmembers
+
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# class$ methods are inserted by some compilers to implement .class construct,
+# see http://proguard.sourceforge.net/manual/examples.html#library
+-keepclassmembernames class * {
+    java.lang.Class class$(java.lang.String);
+    java.lang.Class class$(java.lang.String, boolean);
+}
+
+# Please specify classes to be kept explicitly in your package's configuration.
+# -keep class * extends android.app.Activity
+# -keep class * extends android.view.View
+# -keep class * extends android.app.Service
+# -keep class * extends android.content.BroadcastReceiver
+# -keep class * extends android.content.ContentProvider
+# -keep class * extends android.preference.Preference
+# -keep class * extends android.app.BackupAgent
+
+#-keep class * implements android.os.Parcelable {
+#  public static final android.os.Parcelable$Creator *;
+#}
+
+
