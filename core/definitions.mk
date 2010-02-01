@@ -671,6 +671,7 @@ define dump-module-variables
 @echo PRIVATE_ARFLAGS=$(PRIVATE_ARFLAGS);
 @echo PRIVATE_AAPT_FLAGS=$(PRIVATE_AAPT_FLAGS);
 @echo PRIVATE_DX_FLAGS=$(PRIVATE_DX_FLAGS);
+@echo PRIVATE_JAVACFLAGS=$(PRIVATE_JAVACFLAGS);
 @echo PRIVATE_JAVA_LIBRARIES=$(PRIVATE_JAVA_LIBRARIES);
 @echo PRIVATE_ALL_SHARED_LIBRARIES=$(PRIVATE_ALL_SHARED_LIBRARIES);
 @echo PRIVATE_ALL_STATIC_LIBRARIES=$(PRIVATE_ALL_STATIC_LIBRARIES);
@@ -1308,7 +1309,7 @@ $(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list
 $(hide) $(TARGET_JAVAC) -encoding ascii $(PRIVATE_BOOTCLASSPATH) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
-    $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
+    $(PRIVATE_JAVACFLAGS) $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
@@ -1446,7 +1447,7 @@ $(call dump-words-to-file,$(sort\
 	$(PRIVATE_JAVA_SOURCES)),\
 	$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq)
 $(hide) $(HOST_JAVAC) -encoding ascii -g \
-	$(xlint_unchecked) \
+	$(PRIVATE_JAVACFLAGS) $(xlint_unchecked) \
 	$(addprefix -classpath ,$(strip \
 		$(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
 	-extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR)\

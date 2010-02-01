@@ -704,6 +704,11 @@ automatically generated and then linked in when your module is built.
 See the <a href="#custom-tools">Custom Tools</a> template makefile for an
 example.</p>
 
+<h4>LOCAL_JAVACFLAGS</h4>
+<p>If you have additional flags to pass into the javac compiler, add
+them here.  For example:</p>
+<p><code>LOCAL_JAVACFLAGS += -Xlint:deprecation</code></p>
+
 <h4>LOCAL_JAVA_LIBRARIES</h4>
 <p>When linking Java apps and libraries, <code>LOCAL_JAVA_LIBRARIES</code>
 specifies which sets of java classes to include.  Currently there are
