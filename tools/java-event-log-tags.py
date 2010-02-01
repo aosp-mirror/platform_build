@@ -26,6 +26,7 @@ tags in the given input file.
 import cStringIO
 import getopt
 import os
+import re
 import sys
 
 import event_log_tags
@@ -93,6 +94,37 @@ for t in tagfile.tags:
 
   buffer.write("  public static final int %s = %d;\n" %
                (t.tagname.upper(), t.tagnum))
+
+keywords = frozenset(["abstract", "continue", "for", "new", "switch", "assert",
+                      "default", "goto", "package", "synchronized", "boolean",
+                      "do", "if", "private", "this", "break", "double",
+                      "implements", "protected", "throw", "byte", "else",
+                      "import", "public", "throws", "case", "enum",
+                      "instanceof", "return", "transient", "catch", "extends",
+                      "int", "short", "try", "char", "final", "interface",
+                      "static", "void", "class", "finally", "long", "strictfp",
+                      "volatile", "const", "float", "native", "super", "while"])
+
+def javaName(name):
+  out = name[0].lower() + re.sub(r"[^A-Za-z0-9]", "", name.title())[1:]
+  if out in keywords:
+    out += "_"
+  return out
+
+javaTypes = ["ERROR", "int", "long", "String", "Object[]"]
+for t in tagfile.tags:
+  methodName = javaName("write_" + t.tagname)
+  if t.description:
+    args = [arg.strip("() ").split("|") for arg in t.description.split(",")]
+  else:
+    args = []
+  argTypesNames = ", ".join([javaTypes[int(arg[1])] + " " + javaName(arg[0]) for arg in args])
+  argNames = "".join([", " + javaName(arg[0]) for arg in args])
+  buffer.write("\n  public static void %s(%s) {" % (methodName, argTypesNames))
+  buffer.write("\n    android.util.EventLog.writeEvent(%s%s);" % (t.tagname.upper(), argNames))
+  buffer.write("\n  }\n")
+
+
 buffer.write("}\n");
 
 event_log_tags.WriteOutput(output_file, buffer)
