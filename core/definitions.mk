@@ -223,6 +223,19 @@ $(call all-Iaidl-files-under,.)
 endef
 
 ###########################################################
+## Find all of the logtags files under the named directories.
+## Meant to be used like:
+##    SRC_FILES := $(call all-logtags-files-under,src)
+###########################################################
+
+define all-logtags-files-under
+$(patsubst ./%,%, \
+  $(shell cd $(LOCAL_PATH) ; \
+          find $(1) -name "*.logtags" -and -not -name ".*") \
+  )
+endef
+
+###########################################################
 ## Find all of the html files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-html-files-under,src tests)
