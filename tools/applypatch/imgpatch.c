@@ -40,13 +40,13 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
                     SinkFn sink, void* token, SHA_CTX* ctx) {
   FILE* f;
   if ((f = fopen(patch_filename, "rb")) == NULL) {
-    fprintf(stderr, "failed to open patch file\n");
+    printf("failed to open patch file\n");
     return -1;
   }
 
   unsigned char header[12];
   if (fread(header, 1, 12, f) != 12) {
-    fprintf(stderr, "failed to read patch file header\n");
+    printf("failed to read patch file header\n");
     return -1;
   }
 
@@ -54,7 +54,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
   // IMGDIFF2 uses CHUNK_NORMAL, CHUNK_DEFLATE, and CHUNK_RAW.
   if (memcmp(header, "IMGDIFF", 7) != 0 ||
       (header[7] != '1' && header[7] != '2')) {
-    fprintf(stderr, "corrupt patch file header (magic number)\n");
+    printf("corrupt patch file header (magic number)\n");
     return -1;
   }
 
@@ -65,7 +65,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
     // each chunk's header record starts with 4 bytes.
     unsigned char chunk[4];
     if (fread(chunk, 1, 4, f) != 4) {
-      fprintf(stderr, "failed to read chunk %d record\n", i);
+      printf("failed to read chunk %d record\n", i);
       return -1;
     }
 
@@ -74,7 +74,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
     if (type == CHUNK_NORMAL) {
       unsigned char normal_header[24];
       if (fread(normal_header, 1, 24, f) != 24) {
-        fprintf(stderr, "failed to read chunk %d normal header data\n", i);
+        printf("failed to read chunk %d normal header data\n", i);
         return -1;
       }
 
@@ -82,7 +82,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       size_t src_len = Read8(normal_header+8);
       size_t patch_offset = Read8(normal_header+16);
 
-      fprintf(stderr, "CHUNK %d:  normal   patch offset %d\n", i, patch_offset);
+      printf("CHUNK %d:  normal   patch offset %d\n", i, patch_offset);
 
       ApplyBSDiffPatch(old_data + src_start, src_len,
                        patch_filename, patch_offset,
@@ -98,14 +98,14 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       // in their chunk header.
       unsigned char* gzip = malloc(64);
       if (fread(gzip, 1, 64, f) != 64) {
-        fprintf(stderr, "failed to read chunk %d initial gzip header data\n",
+        printf("failed to read chunk %d initial gzip header data\n",
                 i);
         return -1;
       }
       size_t gzip_header_len = Read4(gzip+60);
       gzip = realloc(gzip, 64 + gzip_header_len + 8);
       if (fread(gzip+64, 1, gzip_header_len+8, f) != gzip_header_len+8) {
-        fprintf(stderr, "failed to read chunk %d remaining gzip header data\n",
+        printf("failed to read chunk %d remaining gzip header data\n",
                 i);
         return -1;
       }
@@ -122,14 +122,14 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       int gz_memLevel = Read4(gzip+52);
       int gz_strategy = Read4(gzip+56);
 
-      fprintf(stderr, "CHUNK %d:  gzip     patch offset %d\n", i, patch_offset);
+      printf("CHUNK %d:  gzip     patch offset %d\n", i, patch_offset);
 
       // Decompress the source data; the chunk header tells us exactly
       // how big we expect it to be when decompressed.
 
       unsigned char* expanded_source = malloc(expanded_len);
       if (expanded_source == NULL) {
-        fprintf(stderr, "failed to allocate %d bytes for expanded_source\n",
+        printf("failed to allocate %d bytes for expanded_source\n",
                 expanded_len);
         return -1;
       }
@@ -146,7 +146,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       int ret;
       ret = inflateInit2(&strm, -15);
       if (ret != Z_OK) {
-        fprintf(stderr, "failed to init source inflation: %d\n", ret);
+        printf("failed to init source inflation: %d\n", ret);
         return -1;
       }
 
@@ -154,12 +154,12 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       // data, we expect one call to inflate() to suffice.
       ret = inflate(&strm, Z_SYNC_FLUSH);
       if (ret != Z_STREAM_END) {
-        fprintf(stderr, "source inflation returned %d\n", ret);
+        printf("source inflation returned %d\n", ret);
         return -1;
       }
       // We should have filled the output buffer exactly.
       if (strm.avail_out != 0) {
-        fprintf(stderr, "source inflation short by %d bytes\n", strm.avail_out);
+        printf("source inflation short by %d bytes\n", strm.avail_out);
         return -1;
       }
       inflateEnd(&strm);
@@ -208,7 +208,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
         size_t have = temp_size - strm.avail_out;
 
         if (sink(temp_data, have, token) != have) {
-          fprintf(stderr, "failed to write %d compressed bytes to output\n",
+          printf("failed to write %d compressed bytes to output\n",
                   have);
           return -1;
         }
@@ -226,29 +226,29 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
     } else if (type == CHUNK_RAW) {
       unsigned char raw_header[4];
       if (fread(raw_header, 1, 4, f) != 4) {
-        fprintf(stderr, "failed to read chunk %d raw header data\n", i);
+        printf("failed to read chunk %d raw header data\n", i);
         return -1;
       }
 
       size_t data_len = Read4(raw_header);
 
-      fprintf(stderr, "CHUNK %d:  raw      data %d\n", i, data_len);
+      printf("CHUNK %d:  raw      data %d\n", i, data_len);
 
       unsigned char* temp = malloc(data_len);
       if (fread(temp, 1, data_len, f) != data_len) {
-          fprintf(stderr, "failed to read chunk %d raw data\n", i);
+          printf("failed to read chunk %d raw data\n", i);
           return -1;
       }
       SHA_update(ctx, temp, data_len);
       if (sink(temp, data_len, token) != data_len) {
-          fprintf(stderr, "failed to write chunk %d raw data\n", i);
+          printf("failed to write chunk %d raw data\n", i);
           return -1;
       }
     } else if (type == CHUNK_DEFLATE) {
       // deflate chunks have an additional 60 bytes in their chunk header.
       unsigned char deflate_header[60];
       if (fread(deflate_header, 1, 60, f) != 60) {
-        fprintf(stderr, "failed to read chunk %d deflate header data\n", i);
+        printf("failed to read chunk %d deflate header data\n", i);
         return -1;
       }
 
@@ -263,14 +263,14 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       int memLevel = Read4(deflate_header+52);
       int strategy = Read4(deflate_header+56);
 
-      fprintf(stderr, "CHUNK %d:  deflate  patch offset %d\n", i, patch_offset);
+      printf("CHUNK %d:  deflate  patch offset %d\n", i, patch_offset);
 
       // Decompress the source data; the chunk header tells us exactly
       // how big we expect it to be when decompressed.
 
       unsigned char* expanded_source = malloc(expanded_len);
       if (expanded_source == NULL) {
-        fprintf(stderr, "failed to allocate %d bytes for expanded_source\n",
+        printf("failed to allocate %d bytes for expanded_source\n",
                 expanded_len);
         return -1;
       }
@@ -287,7 +287,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       int ret;
       ret = inflateInit2(&strm, -15);
       if (ret != Z_OK) {
-        fprintf(stderr, "failed to init source inflation: %d\n", ret);
+        printf("failed to init source inflation: %d\n", ret);
         return -1;
       }
 
@@ -295,12 +295,12 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       // data, we expect one call to inflate() to suffice.
       ret = inflate(&strm, Z_SYNC_FLUSH);
       if (ret != Z_STREAM_END) {
-        fprintf(stderr, "source inflation returned %d\n", ret);
+        printf("source inflation returned %d\n", ret);
         return -1;
       }
       // We should have filled the output buffer exactly.
       if (strm.avail_out != 0) {
-        fprintf(stderr, "source inflation short by %d bytes\n", strm.avail_out);
+        printf("source inflation short by %d bytes\n", strm.avail_out);
         return -1;
       }
       inflateEnd(&strm);
@@ -344,7 +344,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
         size_t have = temp_size - strm.avail_out;
 
         if (sink(temp_data, have, token) != have) {
-          fprintf(stderr, "failed to write %d compressed bytes to output\n",
+          printf("failed to write %d compressed bytes to output\n",
                   have);
           return -1;
         }
@@ -355,7 +355,7 @@ int ApplyImagePatch(const unsigned char* old_data, ssize_t old_size,
       free(temp_data);
       free(uncompressed_target_data);
     } else {
-      fprintf(stderr, "patch chunk %d is unknown type %d\n", i, type);
+      printf("patch chunk %d is unknown type %d\n", i, type);
       return -1;
     }
   }
