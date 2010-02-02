@@ -44,7 +44,7 @@ extern int applypatch(int argc, char** argv);
 int main(int argc, char** argv) {
   int result = applypatch(argc, argv);
   if (result == 2) {
-    fprintf(stderr,
+    printf(
             "usage: %s <src-file> <tgt-file> <tgt-sha1> <tgt-size> "
             "[<src-sha1>:<patch> ...]\n"
             "   or  %s -c <file> [<sha1> ...]\n"
