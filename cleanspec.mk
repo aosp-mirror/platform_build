@@ -143,6 +143,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/QuickSearchBox.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libdvm_intermediates)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/core/java/android/speech)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Email_intermediates)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/AndroidTests_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
