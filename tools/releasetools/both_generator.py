@@ -55,6 +55,7 @@ class BothGenerator(object):
   def SetPermissionsRecursive(self, *a): self._DoBoth("SetPermissionsRecursive", *a)
   def MakeSymlinks(self, *a): self._DoBoth("MakeSymlinks", *a)
   def AppendExtra(self, *a): self._DoBoth("AppendExtra", *a)
+  def UnmountAll(self, *a): self._DoBoth("UnmountAll", *a)
 
   def AddToZip(self, input_zip, output_zip, input_path=None):
     self._DoBoth("AddToZip", input_zip, output_zip, input_path)

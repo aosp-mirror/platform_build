@@ -192,6 +192,9 @@ class AmendGenerator(object):
     """Append text verbatim to the output script."""
     self.script.append(extra)
 
+  def UnmountAll(self):
+    pass
+
   def AddToZip(self, input_zip, output_zip, input_path=None):
     """Write the accumulated script to the output_zip file.  input_zip
     is used as the source for any ancillary binaries needed by the
