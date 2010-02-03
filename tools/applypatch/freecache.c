@@ -16,7 +16,7 @@ static int EliminateOpenFiles(char** files, int file_count) {
   struct dirent* de;
   d = opendir("/proc");
   if (d == NULL) {
-    fprintf(stderr, "error opening /proc: %s\n", strerror(errno));
+    printf("error opening /proc: %s\n", strerror(errno));
     return -1;
   }
   while ((de = readdir(d)) != 0) {
@@ -35,7 +35,7 @@ static int EliminateOpenFiles(char** files, int file_count) {
     struct dirent* fdde;
     fdd = opendir(path);
     if (fdd == NULL) {
-      fprintf(stderr, "error opening %s: %s\n", path, strerror(errno));
+      printf("error opening %s: %s\n", path, strerror(errno));
       continue;
     }
     while ((fdde = readdir(fdd)) != 0) {
@@ -88,7 +88,7 @@ int FindExpendableFiles(char*** names, int* entries) {
   for (i = 0; i < sizeof(dirs)/sizeof(dirs[0]); ++i) {
     d = opendir(dirs[i]);
     if (d == NULL) {
-      fprintf(stderr, "error opening %s: %s\n", dirs[i], strerror(errno));
+      printf("error opening %s: %s\n", dirs[i], strerror(errno));
       continue;
     }
 
@@ -143,7 +143,7 @@ int MakeFreeSpaceOnCache(size_t bytes_needed) {
 
   if (entries == 0) {
     // nothing we can delete to free up space!
-    fprintf(stderr, "no files can be deleted to free space on /cache\n");
+    printf("no files can be deleted to free space on /cache\n");
     return -1;
   }
 
