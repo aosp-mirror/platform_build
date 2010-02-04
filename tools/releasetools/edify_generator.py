@@ -213,14 +213,18 @@ class EdifyGenerator(object):
     """Append text verbatim to the output script."""
     self.script.append(extra)
 
+  def UnmountAll(self):
+    for p in sorted(self.mounts):
+      self.script.append('unmount("%s");' % (p,))
+    self.mounts = set()
+
   def AddToZip(self, input_zip, output_zip, input_path=None):
     """Write the accumulated script to the output_zip file.  input_zip
     is used as the source for the 'updater' binary needed to run
     script.  If input_path is not None, it will be used as a local
     path for the binary instead of input_zip."""
 
-    for p in sorted(self.mounts):
-      self.script.append('unmount("%s");' % (p,))
+    self.UnmountAll()
 
     common.ZipWriteStr(output_zip, "META-INF/com/google/android/updater-script",
                        "\n".join(self.script) + "\n")
