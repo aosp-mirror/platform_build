@@ -1701,6 +1701,55 @@ endef
 
 
 ###########################################################
+# Override the package defined in $(1), setting the
+# variables listed below differently.
+#
+#  $(1): The makefile to override (relative to the source
+#        tree root)
+#  $(2): Old LOCAL_PACKAGE_NAME value.
+#  $(3): New LOCAL_PACKAGE_NAME value.
+#  $(4): New LOCALE_MANIFEST_PACKAGE_NAME value.
+#  $(5): New LOCAL_CERTIFICATE value.
+#
+# Note that LOCAL_PACKAGE_OVERRIDES is NOT cleared in
+# clear_vars.mk.
+###########################################################
+define inherit-package
+  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4)))
+endef
+
+define inherit-package-internal
+  LOCAL_PACKAGE_OVERRIDES \
+      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(strip $(5)) $(LOCAL_PACKAGE_OVERRIDES)
+  include $(1)
+  LOCAL_PACKAGE_OVERRIDES \
+      := $(wordlist 1,$(words $(LOCAL_PACKAGE_OVERRIDES)), $(LOCAL_PACKAGE_OVERRIDES))
+endef
+
+# To be used with inherit-package above
+# Evalutes to true if the package was overridden
+define set-inherited-package-variables
+$(strip $(call set-inherited-package-variables-internal))
+endef
+
+define keep-or-override
+$(eval $(1) := $(if $(2),$(2),$($(1))))
+endef
+
+define set-inherited-package-variables-internal
+  $(eval _o := $(subst ||, ,$(lastword $(LOCAL_PACKAGE_OVERRIDES))))
+  $(eval _n := $(subst ||, ,$(firstword $(LOCAL_PACKAGE_OVERRIDES))))
+  $(if $(filter $(word 2,$(_n)),$(LOCAL_PACKAGE_NAME)), \
+    $(eval LOCAL_PACKAGE_NAME := $(word 3,$(_o))) \
+    $(eval LOCAL_MANIFEST_PACKAGE_NAME := $(word 4,$(_o))) \
+    $(call keep-or-override,LOCAL_CERTIFICATE,$(word 5,$(_o))) \
+    $(eval LOCAL_OVERRIDES_PACKAGES := $(sort $(LOCAL_OVERRIDES_PACKAGES) $(word 2,$(_o)))) \
+    true \
+  ,)
+endef
+
+
+###########################################################
 ## Other includes
 ###########################################################
 
