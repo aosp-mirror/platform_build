@@ -193,11 +193,25 @@ function highlightNav(fullPageName) {
       if (lastBackstep == 0) break;
     }
   }
+
+  // add 'selected' to the <li> or <div> that wraps this <a>
   link.parent().addClass('selected');
-  if (link.parent().parent().is(':hidden')) {
-    toggle(link.parent().parent().parent(), false);
-  } else if (link.parent().parent().hasClass('toggle-list')) {
-    toggle(link.parent().parent(), false);
+
+  // if we're in a toggleable root link (<li class=toggle-list><div><a>)
+  if (link.parent().parent().hasClass('toggle-list')) {
+    toggle(link.parent().parent(), false); // open our own list
+    // then also check if we're in a third-level nested list that's toggleable
+    if (link.parent().parent().parent().is(':hidden')) {
+      toggle(link.parent().parent().parent().parent(), false); // open the super parent list
+    }
+  }
+  // if we're in a normal nav link (<li><a>) and the parent <ul> is hidden
+  else if (link.parent().parent().is(':hidden')) {
+    toggle(link.parent().parent().parent(), false); // open the parent list
+    // then also check if the parent list is also nested in a hidden list
+    if (link.parent().parent().parent().parent().is(':hidden')) {
+      toggle(link.parent().parent().parent().parent().parent(), false); // open the super parent list
+    }
   }
 }
 
@@ -335,7 +349,7 @@ $(window).unload(function(){
 });
 
 function toggle(obj, slide) {
-  var ul = $("ul", obj);
+  var ul = $("ul:first", obj);
   var li = ul.parent();
   if (li.hasClass("closed")) {
     if (slide) {
@@ -357,7 +371,7 @@ function toggle(obj, slide) {
 function buildToggleLists() {
   $(".toggle-list").each(
     function(i) {
-      $("div", this).append("<a class='toggle-img' href='#' title='show pages' onClick='toggle(this.parentNode.parentNode, true); return false;'></a>");
+      $("div:first", this).append("<a class='toggle-img' href='#' title='show pages' onClick='toggle(this.parentNode.parentNode, true); return false;'></a>");
       $(this).addClass("closed");
     });
 }
