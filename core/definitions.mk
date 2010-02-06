@@ -1233,7 +1233,8 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
     $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
-    $(addprefix --version-name , $(PLATFORM_VERSION))
+    $(addprefix --version-name , $(PLATFORM_VERSION)) \
+    $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME))
 endef
 
 ifeq ($(HOST_OS),windows)
@@ -1376,6 +1377,7 @@ $(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
     $(addprefix --version-name , $(PLATFORM_VERSION)) \
+    $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     -F $@
 endef
 
