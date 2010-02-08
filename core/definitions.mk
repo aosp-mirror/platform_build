@@ -765,11 +765,11 @@ define transform-cpp-to-o
 @echo "target $(PRIVATE_ARM_MODE) C++: $(PRIVATE_MODULE) <= $<"
 $(hide) $(PRIVATE_CXX) \
 	$(foreach incdir, \
+	    $(PRIVATE_C_INCLUDES) \
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(TARGET_PROJECT_INCLUDES) \
 		$(TARGET_C_INCLUDES) \
 	     ) \
-	    $(PRIVATE_C_INCLUDES) \
 	  , \
 	    -I $(incdir) \
 	 ) \
@@ -797,11 +797,11 @@ define transform-c-or-s-to-o-no-deps
 @mkdir -p $(dir $@)
 $(hide) $(PRIVATE_CC) \
 	$(foreach incdir, \
+	    $(PRIVATE_C_INCLUDES) \
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(TARGET_PROJECT_INCLUDES) \
 		$(TARGET_C_INCLUDES) \
 	     ) \
-	    $(PRIVATE_C_INCLUDES) \
 	  , \
 	    -I $(incdir) \
 	 ) \
@@ -861,11 +861,11 @@ define transform-host-cpp-to-o
 @echo "host C++: $(PRIVATE_MODULE) <= $<"
 $(hide) $(PRIVATE_CXX) \
 	$(foreach incdir, \
+	    $(PRIVATE_C_INCLUDES) \
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(HOST_PROJECT_INCLUDES) \
 		$(HOST_C_INCLUDES) \
 	     ) \
-	    $(PRIVATE_C_INCLUDES) \
 	  , \
 	    -I $(incdir) \
 	 ) \
@@ -891,11 +891,11 @@ define transform-host-c-or-s-to-o-no-deps
 @mkdir -p $(dir $@)
 $(hide) $(PRIVATE_CC) \
 	$(foreach incdir, \
+	    $(PRIVATE_C_INCLUDES) \
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(HOST_PROJECT_INCLUDES) \
 		$(HOST_C_INCLUDES) \
 	     ) \
-	    $(PRIVATE_C_INCLUDES) \
 	  , \
 	    -I $(incdir) \
 	 ) \
