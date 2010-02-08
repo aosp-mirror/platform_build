@@ -101,10 +101,14 @@
   padding: 0;
 }
 
+/*second level (nested) list*/
 #side-nav li li li a { 
-/*sdk lists*/
   padding: 0 0 0 28px;
-} 
+}
+/*third level (nested) list*/
+#side-nav li li li li a {
+  padding: 0 0 0 38px;
+}
 
 #side-nav .selected {
   background-color: #435a6e;
@@ -121,7 +125,7 @@
   display:block;
 }
 
-#side-nav .toggle-img {
+#side-nav .toggle-list .toggle-img {
   margin:0;
   padding:0;
   position:absolute;
@@ -131,8 +135,13 @@
   width:15px;
   outline-style:none;
 }
+/* second-level toggle */
+#side-nav .toggle-list .toggle-list .toggle-img {
+  left:10px;
+}
 
-#side-nav .closed .toggle-img {
+#side-nav .closed .toggle-img,
+#side-nav .open .closed .toggle-img {
   background:url('images/triangle-closed-small.png') 7px 4px no-repeat;
 }
 #side-nav .open .toggle-img {
@@ -226,7 +235,7 @@
 #doc-content {
   overflow:auto;
 }
-	
+
 #jd-header {
   background-color: #E2E2E2;
   padding: 7px 15px;
@@ -557,6 +566,15 @@ hr {
 h4 .normal {
   font-size:.9em;
   font-weight:normal;
+}
+
+.caps {
+  font-variant:small-caps;
+  font-size:1.2em;
+}
+
+dl.tag-list dl.atn-list {
+  padding:0 0 0 2em;
 }
 
 .jd-details {
@@ -910,7 +928,7 @@ div.figure {
   margin: 12px 0 0 15px;
   padding:5px 8px 0 12px;
   font-size:90%;
-}	
+}
 
 .sidebox p,
 .sidebox-inner p {

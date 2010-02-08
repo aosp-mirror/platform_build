@@ -671,6 +671,7 @@ define dump-module-variables
 @echo PRIVATE_ARFLAGS=$(PRIVATE_ARFLAGS);
 @echo PRIVATE_AAPT_FLAGS=$(PRIVATE_AAPT_FLAGS);
 @echo PRIVATE_DX_FLAGS=$(PRIVATE_DX_FLAGS);
+@echo PRIVATE_JAVACFLAGS=$(PRIVATE_JAVACFLAGS);
 @echo PRIVATE_JAVA_LIBRARIES=$(PRIVATE_JAVA_LIBRARIES);
 @echo PRIVATE_ALL_SHARED_LIBRARIES=$(PRIVATE_ALL_SHARED_LIBRARIES);
 @echo PRIVATE_ALL_STATIC_LIBRARIES=$(PRIVATE_ALL_STATIC_LIBRARIES);
@@ -1232,7 +1233,8 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
     $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
-    $(addprefix --version-name , $(PLATFORM_VERSION))
+    $(addprefix --version-name , $(PLATFORM_VERSION)) \
+    $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME))
 endef
 
 ifeq ($(HOST_OS),windows)
@@ -1308,7 +1310,7 @@ $(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list
 $(hide) $(TARGET_JAVAC) -encoding ascii $(PRIVATE_BOOTCLASSPATH) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
-    $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
+    $(PRIVATE_JAVACFLAGS) $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
@@ -1375,6 +1377,7 @@ $(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
     $(addprefix --version-name , $(PLATFORM_VERSION)) \
+    $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     -F $@
 endef
 
@@ -1446,7 +1449,7 @@ $(call dump-words-to-file,$(sort\
 	$(PRIVATE_JAVA_SOURCES)),\
 	$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq)
 $(hide) $(HOST_JAVAC) -encoding ascii -g \
-	$(xlint_unchecked) \
+	$(PRIVATE_JAVACFLAGS) $(xlint_unchecked) \
 	$(addprefix -classpath ,$(strip \
 		$(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
 	-extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR)\
@@ -1697,6 +1700,55 @@ INSTALLED_RADIOIMAGE_TARGET += $$(PRODUCT_OUT)/$(2)
 ALL_PREBUILT += $$(PRODUCT_OUT)/$(2)
 $$(PRODUCT_OUT)/$(2) : $$(LOCAL_PATH)/$(1) | $$(ACP)
 	$$(transform-prebuilt-to-target)
+endef
+
+
+###########################################################
+# Override the package defined in $(1), setting the
+# variables listed below differently.
+#
+#  $(1): The makefile to override (relative to the source
+#        tree root)
+#  $(2): Old LOCAL_PACKAGE_NAME value.
+#  $(3): New LOCAL_PACKAGE_NAME value.
+#  $(4): New LOCALE_MANIFEST_PACKAGE_NAME value.
+#  $(5): New LOCAL_CERTIFICATE value.
+#
+# Note that LOCAL_PACKAGE_OVERRIDES is NOT cleared in
+# clear_vars.mk.
+###########################################################
+define inherit-package
+  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4)))
+endef
+
+define inherit-package-internal
+  LOCAL_PACKAGE_OVERRIDES \
+      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(strip $(5)) $(LOCAL_PACKAGE_OVERRIDES)
+  include $(1)
+  LOCAL_PACKAGE_OVERRIDES \
+      := $(wordlist 1,$(words $(LOCAL_PACKAGE_OVERRIDES)), $(LOCAL_PACKAGE_OVERRIDES))
+endef
+
+# To be used with inherit-package above
+# Evalutes to true if the package was overridden
+define set-inherited-package-variables
+$(strip $(call set-inherited-package-variables-internal))
+endef
+
+define keep-or-override
+$(eval $(1) := $(if $(2),$(2),$($(1))))
+endef
+
+define set-inherited-package-variables-internal
+  $(eval _o := $(subst ||, ,$(lastword $(LOCAL_PACKAGE_OVERRIDES))))
+  $(eval _n := $(subst ||, ,$(firstword $(LOCAL_PACKAGE_OVERRIDES))))
+  $(if $(filter $(word 2,$(_n)),$(LOCAL_PACKAGE_NAME)), \
+    $(eval LOCAL_PACKAGE_NAME := $(word 3,$(_o))) \
+    $(eval LOCAL_MANIFEST_PACKAGE_NAME := $(word 4,$(_o))) \
+    $(call keep-or-override,LOCAL_CERTIFICATE,$(word 5,$(_o))) \
+    $(eval LOCAL_OVERRIDES_PACKAGES := $(sort $(LOCAL_OVERRIDES_PACKAGES) $(word 2,$(_o)))) \
+    true \
+  ,)
 endef
 
 
