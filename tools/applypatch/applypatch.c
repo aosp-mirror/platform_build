@@ -839,7 +839,7 @@ int applypatch(int argc, char** argv) {
     if (result != 0) {
       if (retry == 0) {
         printf("applying patch failed\n");
-        return result;
+        return result != 0;
       } else {
         printf("applying patch failed; retrying\n");
       }

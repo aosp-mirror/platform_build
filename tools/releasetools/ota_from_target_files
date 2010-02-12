@@ -751,7 +751,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # as fodder for constructing the recovery image.
     recovery_sh_item = MakeRecoveryPatch(output_zip,
                                          target_recovery, target_boot)
-    script.UnpackPackageDir("recovery", "/system")
+    script.DeleteFiles(["/system/recovery-from-boot.p",
+                        "/system/etc/install-recovery.sh"])
     print "recovery image changed; including as patch from boot."
   else:
     print "recovery image unchanged; skipping."
@@ -786,6 +787,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if verbatim_targets:
     script.Print("Unpacking new files...")
     script.UnpackPackageDir("system", "/system")
+
+  if updating_recovery:
+    script.Print("Unpacking new recovery...")
+    script.UnpackPackageDir("recovery", "/system")
 
   script.Print("Symlinks and permissions...")
 
