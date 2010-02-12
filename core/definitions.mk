@@ -1579,7 +1579,6 @@ define transform-prebuilt-to-target-strip-comments
 $(copy-file-to-target-strip-comments)
 endef
 
-
 ###########################################################
 ## On some platforms (MacOS), after copying a static
 ## library, ranlib must be run to update an internal
@@ -1605,6 +1604,37 @@ define transform-ranlib-copy-hack
 true
 endef
 endif
+
+
+###########################################################
+## Commands to call Proguard
+###########################################################
+
+# Command to copy the file with acp, if proguard is disabled.
+define proguard-disabled-commands
+@echo Copying: $@
+$(hide) $(ACP) $< $@
+endef
+
+# Command to call Proguard
+# $(1): extra flags for instrumentation.
+define proguard-enabled-commands
+@echo Proguard: $@
+$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS) $(1)
+endef
+
+# Figure out the proguard dictionary file of the module that is instrumentationed for.
+define get-instrumentation-proguard-flags
+$(if $(PRIVATE_INSTRUMENTATION_FOR),$(if $(ALL_MODULES.$(PRIVATE_INSTRUMENTATION_FOR).PROGUARD_ENABLED),-applymapping $(call intermediates-dir-for,APPS,$(PRIVATE_INSTRUMENTATION_FOR),,COMMON)/proguard_dictionary))
+endef
+
+define transform-jar-to-proguard
+$(eval _instrumentation_proguard_flags:=$(call get-instrumentation-proguard-flags))
+$(eval _enable_proguard:=$(PRIVATE_PROGUARD_ENABLED)$(_instrumentation_proguard_flags))
+$(if $(_enable_proguard),$(call proguard-enabled-commands,$(_instrumentation_proguard_flags)),$(call proguard-disabled-commands))
+$(eval _instrumentation_proguard_flags:=)
+$(eval _enable_proguard:=)
+endef
 
 
 ###########################################################

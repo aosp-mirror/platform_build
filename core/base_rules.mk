@@ -186,7 +186,14 @@ ifneq ($(strip $(aidl_sources)),)
 aidl_java_sources := $(patsubst %.aidl,%.java,$(addprefix $(intermediates.COMMON)/src/, $(aidl_sources)))
 aidl_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(aidl_sources))
 
-$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
+aidl_preprocess_import :=
+LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
+ifdef LOCAL_SDK_VERSION
+ifneq ($(LOCAL_SDK_VERSION),current)
+aidl_preprocess_import := -p$(TOPDIR)prebuilt/sdk/$(LOCAL_SDK_VERSION)/framework.aidl
+endif # !current
+endif # LOCAL_SDK_VERSION
+$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(aidl_preprocess_import) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
 
 $(aidl_java_sources): $(intermediates.COMMON)/src/%.java: $(TOPDIR)$(LOCAL_PATH)/%.aidl $(PRIVATE_ADDITIONAL_DEPENDENCIES) $(AIDL)
 	$(transform-aidl-to-java)
@@ -330,9 +337,21 @@ ifdef LOCAL_IS_HOST_MODULE
 full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,$(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
 full_java_lib_deps := $(full_java_libs)
 else
+ifdef LOCAL_SDK_VERSION
+ifneq ($(LOCAL_SDK_VERSION),current)
+full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+# For prebuilt sdk versions, we can't depend on the javalib.jar but classes.jar.
+full_java_lib_deps := $(call java-lib-deps,$(filter-out sdk_v$(LOCAL_SDK_VERSION),$(LOCAL_JAVA_LIBRARIES)),$(LOCAL_IS_HOST_MODULE))
+full_java_lib_deps += $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION),$(LOCAL_IS_HOST_MODULE))
+else
 full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-endif
+endif # !current
+else
+full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+endif # LOCAL_SDK_VERSION
+endif # !LOCAL_IS_HOST_MODULE
 full_java_libs += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_lib_deps += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
@@ -351,7 +370,8 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   link_instr_intermediates_dir.COMMON := $(call intermediates-dir-for, \
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
 
-  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes.jar
+  # link against the jar with full original names (before proguard processing).
+  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
 
   # We can't depend on the .jar file, so we depend on something that
   # depends on the jar file; the final built package file.

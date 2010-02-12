@@ -52,6 +52,7 @@ libdvm.so               0xAD000000
 libpixelflinger.so      0xACF00000
 # libcorecg is for backward-compatibility with donut
 libcorecg.so            0xACE00000
+libsurfaceflinger_client.so 0xACD80000
 libsurfaceflinger.so    0xACD00000
 libGLES_android.so      0xACC80000
 libagl.so               0xACC00000
@@ -66,6 +67,7 @@ libETC1.so              0xAC680000
 libacc.so               0xAC600000
 
 libexif.so              0xAC500000
+libcamera_client.so     0xAC480000
 libui.so                0xAC400000
 # libsgl is for backward-compatibility with donut
 libsgl.so               0xAC200000
