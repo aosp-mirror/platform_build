@@ -146,6 +146,8 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Email_intermedia
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/AndroidTests_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/EnhancedGoogleSearchProvider.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/GoogleCheckin.apk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
