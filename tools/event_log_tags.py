@@ -75,11 +75,14 @@ class TagFile(object):
           self.options[parts[1]] = parts[2:]
           continue
 
-        try:
-          tag = int(parts[0])
-        except ValueError:
-          self.AddError("\"%s\" isn't an integer tag" % (parts[0],))
-          continue
+        if parts[0] == "?":
+          tag = None
+        else:
+          try:
+            tag = int(parts[0])
+          except ValueError:
+            self.AddError("\"%s\" isn't an integer tag or '?'" % (parts[0],))
+            continue
 
         tagname = parts[1]
         if len(parts) == 3:
