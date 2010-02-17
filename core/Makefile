@@ -245,6 +245,29 @@ DEFAULT_KEY_CERT_PAIR := $(SRC_TARGET_DIR)/product/security/testkey
 .PHONY: systemimage
 systemimage:
 
+# -----------------------------------------------------------------
+
+.PHONY: event-log-tags
+
+event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
+ALL_PREBUILT += $(event_log_tag_file)
+
+# Include tags from all packages included in this product.
+event_log_tags_src := \
+    $(sort $(foreach m,\
+      $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES) \
+      $(call module-names-for-tag-list,user), \
+      $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
+
+$(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
+$(event_log_tags_file): $(event_log_tags_src)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) build/tools/merge-event-log-tags.py -o $@ $(PRIVATE_SRC_FILES)
+
+event-log-tags: $(event_log_tags_file)
+
+ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
+
 ifneq ($(TARGET_SIMULATOR),true)
 
 # #################################################################
@@ -473,29 +496,6 @@ $(kernel_notice_file): \
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(ACP) $< $@
 
-
-# -----------------------------------------------------------------
-
-.PHONY: event-log-tags
-
-event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
-ALL_PREBUILT += $(event_log_tag_file)
-
-# Include tags from all packages included in this product.
-event_log_tags_src := \
-    $(sort $(foreach m,\
-      $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES) \
-      $(call module-names-for-tag-list,user), \
-      $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
-
-$(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
-$(event_log_tags_file): $(event_log_tags_src)
-	$(hide) mkdir -p $(dir $@)
-	$(hide) build/tools/merge-event-log-tags.py -o $@ $(PRIVATE_SRC_FILES)
-
-event-log-tags: $(event_log_tags_file)
-
-ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 
 # -----------------------------------------------------------------
 # Build a keystore with the authorized keys in it, used to verify the
