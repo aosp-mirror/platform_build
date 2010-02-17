@@ -66,7 +66,14 @@ merged_tagfile = event_log_tags.TagFile(merged_fn)
 merged_by_name = dict([(t.tagname, t) for t in merged_tagfile.tags])
 for t in tagfile.tags:
   if t.tagnum is None:
-    t.tagnum = merged_by_name[t.tagname].tagnum
+    if t.tagname in merged_by_name:
+      t.tagnum = merged_by_name[t.tagname].tagnum
+    else:
+      # We're building something that's not being included in the
+      # product, so its tags don't appear in the merged file.  Assign
+      # them all an arbitrary number so we can emit the java and
+      # compile the (unused) package.
+      t.tagnum = 999999
 
 if "java_package" not in tagfile.options:
   tagfile.AddError("java_package option not specified", linenum=0)
