@@ -137,7 +137,7 @@ def hashname(str):
 for name, t in sorted(by_tagname.iteritems()):
   if t.tagnum is None:
     while True:
-      x = (hashname(name) % (ASSIGN_LIMIT - ASSIGN_START)) + ASSIGN_START
+      x = (hashname(name) % (ASSIGN_LIMIT - ASSIGN_START - 1)) + ASSIGN_START
       if x not in by_tagnum:
         t.tagnum = x
         by_tagnum[x] = t
