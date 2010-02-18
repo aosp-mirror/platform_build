@@ -627,7 +627,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       verbatim_targets.append((tf.name, tf.size))
     else:
       common.ZipWriteStr(output_zip, "patch/" + tf.name + ".p", d)
-      patch_list.append((tf.name, tf, sf, tf.size))
+      patch_list.append((tf.name, tf, sf, tf.size, sha.sha(d).hexdigest()))
       largest_source_size = max(largest_source_size, sf.size)
 
   source_fp = GetBuildProp("ro.build.fingerprint", source_zip)
@@ -669,7 +669,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     total_verify_size += source_boot.size
   so_far = 0
 
-  for fn, tf, sf, size in patch_list:
+  for fn, tf, sf, size, patch_sha in patch_list:
     script.PatchCheck("/"+fn, tf.sha1, sf.sha1)
     so_far += sf.size
     script.SetProgress(so_far / total_verify_size)
@@ -693,6 +693,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.Print("Unpacking patches...")
     script.UnpackPackageDir("patch", "/tmp/patchtmp")
 
+    for fn, tf, sf, size, patch_sha in patch_list:
+      script.PatchCheck("/tmp/patchtmp/" + tf.name + ".p", patch_sha)
+
   device_specific.IncrementalOTA_VerifyEnd()
 
   script.Comment("---- start making changes here ----")
@@ -714,7 +717,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   so_far = 0
 
   script.Print("Patching system files...")
-  for fn, tf, sf, size in patch_list:
+  for fn, tf, sf, size, _ in patch_list:
     script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
                       sf.sha1, "/tmp/patchtmp/"+fn+".p")
     so_far += tf.size

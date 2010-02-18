@@ -113,7 +113,7 @@ class EdifyGenerator(object):
   def PatchCheck(self, filename, *sha1):
     """Check that the given file (or MTD reference) has one of the
     given *sha1 hashes."""
-    self.script.append('assert(apply_patch_check("%s"' % (filename,) +
+    self.script.append('assert(sha1_check(read_file("%s")' % (filename,) +
                        "".join([', "%s"' % (i,) for i in sha1]) +
                        '));')
 
