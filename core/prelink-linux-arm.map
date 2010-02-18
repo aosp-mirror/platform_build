@@ -146,7 +146,6 @@ libcam_ipl.so           0x9F000000
 libwbxml.so             0x9E800000
 libwbxml_jni.so         0x9E400000
 libxml2wbxml.so         0x9E000000
-libaes.so               0x9DC00000
 libdrm1.so              0x9D800000
 libdrm1_jni.so          0x9D400000
 libwapcore.so           0x9D000000
@@ -165,5 +164,4 @@ libUAPI_jni.so          0x9A500000
 librpc.so               0x9A400000
 libtrace_test.so        0x9A300000
 libsrec_jni.so          0x9A200000
-libcerttool_jni.so      0x9A100000
 libjpeg.so              0x9A000000
