@@ -291,7 +291,6 @@ ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
-ADDITIONAL_BUILD_PROPERTIES += ro.config.sync=yes
 
 # enable vm tracing in files for now to help track
 # the cause of ANRs in the content process
