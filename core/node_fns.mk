@@ -162,8 +162,9 @@ define _expand-inherited-values
           $(call uniq-word,$($(_eiv_tv)),$(INHERIT_TAG)$(i))) \
       $(eval ### "Expand the inherit tag") \
       $(eval $(_eiv_tv) := \
-          $(patsubst $(INHERIT_TAG)$(i),$($(1).$(i).$(v)), \
-              $($(_eiv_tv)))) \
+          $(strip \
+              $(patsubst $(INHERIT_TAG)$(i),$($(1).$(i).$(v)), \
+                  $($(_eiv_tv))))) \
       $(eval ### "Clear the child so DAGs don't create duplicate entries" ) \
       $(eval $(1).$(i).$(v) :=) \
       $(eval ### "If we just inherited ourselves, it's a cycle.") \
