@@ -690,11 +690,6 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   if patch_list or updating_recovery or updating_boot:
     script.CacheFreeSpaceCheck(largest_source_size)
-    script.Print("Unpacking patches...")
-    script.UnpackPackageDir("patch", "/tmp/patchtmp")
-
-    for fn, tf, sf, size, patch_sha in patch_list:
-      script.PatchCheck("/tmp/patchtmp/" + tf.name + ".p", patch_sha)
 
   device_specific.IncrementalOTA_VerifyEnd()
 
@@ -718,8 +713,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   script.Print("Patching system files...")
   for fn, tf, sf, size, _ in patch_list:
-    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1,
-                      sf.sha1, "/tmp/patchtmp/"+fn+".p")
+    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
     so_far += tf.size
     script.SetProgress(so_far / total_patch_size)
 
@@ -733,7 +727,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                          target_boot.size, target_boot.sha1),
                       "-",
                       target_boot.size, target_boot.sha1,
-                      source_boot.sha1, "/tmp/patchtmp/boot.img.p")
+                      source_boot.sha1, "patch/boot.img.p")
     so_far += target_boot.size
     script.SetProgress(so_far / total_patch_size)
     print "boot image changed; including."

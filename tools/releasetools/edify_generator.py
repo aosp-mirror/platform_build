@@ -112,6 +112,14 @@ class EdifyGenerator(object):
 
   def PatchCheck(self, filename, *sha1):
     """Check that the given file (or MTD reference) has one of the
+    given *sha1 hashes, checking the version saved in cache if the
+    file does not match."""
+    self.script.append('assert(apply_patch_check("%s"' % (filename,) +
+                       "".join([', "%s"' % (i,) for i in sha1]) +
+                       '));')
+
+  def FileCheck(self, filename, *sha1):
+    """Check that the given file (or MTD reference) has one of the
     given *sha1 hashes."""
     self.script.append('assert(sha1_check(read_file("%s")' % (filename,) +
                        "".join([', "%s"' % (i,) for i in sha1]) +
@@ -164,7 +172,7 @@ class EdifyGenerator(object):
     cmd = ['apply_patch("%s",\0"%s",\0%s,\0%d'
            % (srcfile, tgtfile, tgtsha1, tgtsize)]
     for i in range(0, len(patchpairs), 2):
-      cmd.append(',\0"%s:%s"' % patchpairs[i:i+2])
+      cmd.append(',\0%s, package_extract_file("%s")' % patchpairs[i:i+2])
     cmd.append(');')
     cmd = "".join(cmd)
     self.script.append(self._WordWrap(cmd))
