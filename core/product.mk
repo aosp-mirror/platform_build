@@ -101,6 +101,14 @@ define inherit-product
   $(eval ALL_PRODUCTS := $(sort $(ALL_PRODUCTS) $(word 1,$(_include_stack))))
 endef
 
+
+#
+# Do inherit-product only if $(1) exists
+#
+define inherit-product-if-exists
+  $(if $(wildcard $(1)),$(call inherit-product,$(1)),)
+endef
+
 #
 # $(1): product makefile list
 #
