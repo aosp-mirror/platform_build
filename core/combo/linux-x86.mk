@@ -1,6 +1,11 @@
 # Configuration for Linux on x86.
 # Included by combo/select.make
 
+# Provide a default variant.
+ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
+TARGET_ARCH_VARIANT := x86
+endif
+
 # right now we get these from the environment, but we should
 # pick them from the tree somewhere
 $(combo_target)CC := $(CC)
