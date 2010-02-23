@@ -2,8 +2,10 @@
 # Included by combo/select.make
 
 # Provide a default variant.
+ifeq ($(TARGET_ARCH),x86)
 ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := x86
+endif
 endif
 
 # right now we get these from the environment, but we should

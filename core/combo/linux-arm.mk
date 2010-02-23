@@ -14,8 +14,10 @@
 # include defines, and compiler settings for the given architecture
 # version.
 #
+ifeq ($(TARGET_ARCH),arm)
 ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := armv5te
+endif
 endif
 
 # TARGET_ARCH_VARIANT used to be called TARGET_ARCH_VERSION
