@@ -100,6 +100,10 @@ class AmendGenerator(object):
     self.script.append("".join(out))
     self.included_files.add(("applypatch_static", "applypatch"))
 
+  # Not quite right since we don't need to check /cache/saved.file on
+  # failure, but shouldn't hurt.
+  FileCheck = PatchCheck
+
   def CacheFreeSpaceCheck(self, amount):
     """Check that there's at least 'amount' space that can be made
     available on /cache."""

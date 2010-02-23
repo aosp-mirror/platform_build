@@ -41,6 +41,7 @@ class BothGenerator(object):
   def AssertSomeBootloader(self, *a): self._DoBoth("AssertSomeBootloader", *a)
   def ShowProgress(self, *a): self._DoBoth("ShowProgress", *a)
   def PatchCheck(self, *a): self._DoBoth("PatchCheck", *a)
+  def FileCheck(self, filename, *sha1): self._DoBoth("FileCheck", *a)
   def CacheFreeSpaceCheck(self, *a): self._DoBoth("CacheFreeSpaceCheck", *a)
   def Mount(self, *a): self._DoBoth("Mount", *a)
   def UnpackPackageDir(self, *a): self._DoBoth("UnpackPackageDir", *a)
