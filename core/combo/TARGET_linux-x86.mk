@@ -1,25 +1,56 @@
+#
+# Copyright (C) 2006 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 # Configuration for Linux on x86 as a target.
-# Included by combo/select.make
+# Included by combo/select.mk
+
+ifeq ($(TARGET_SIMULATOR),true)
+# When building for the simulator, use the HOST settings as TARGET settings
+TARGET_CC := $(HOST_CC)
+TARGET_CXX := $(HOST_CXX)
+TARGET_AR := $(HOST_AR)
+TARGET_GLOBAL_CFLAGS := $(HOST_GLOBAL_CFLAGS)
+TARGET_GLOBAL_LDFLAGS := $(HOST_GLOBAL_LDFLAGS)
+TARGET_NO_UNDEFINED_LDFLAGS := $(HOST_NO_UNDEFINED_LDFLAGS)
+else #simulator
+
+# Provide a default variant.
+ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
+TARGET_ARCH_VARIANT := x86
+endif
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
-ifeq ($(strip $($(combo_target)TOOLS_PREFIX)),)
-$(combo_target)TOOLS_PREFIX := \
+ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
+TARGET_TOOLS_PREFIX := \
 	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/i686-unknown-linux-gnu-4.2.1/bin/i686-unknown-linux-gnu-
 endif
 
-$(combo_target)CC := $($(combo_target)TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)CXX := $($(combo_target)TOOLS_PREFIX)g++$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)AR := $($(combo_target)TOOLS_PREFIX)ar$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)OBJCOPY := $($(combo_target)TOOLS_PREFIX)objcopy$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)LD := $($(combo_target)TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
+TARGET_CC := $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
+TARGET_CXX := $(TARGET_TOOLS_PREFIX)g++$(HOST_EXECUTABLE_SUFFIX)
+TARGET_AR := $(TARGET_TOOLS_PREFIX)ar$(HOST_EXECUTABLE_SUFFIX)
+TARGET_OBJCOPY := $(TARGET_TOOLS_PREFIX)objcopy$(HOST_EXECUTABLE_SUFFIX)
+TARGET_LD := $(TARGET_TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
 
-ifneq ($(wildcard $($(combo_target)CC)),)
-$(combo_target)LIBGCC := \
-	$(shell $($(combo_target)CC) -m32 -print-file-name=libgcc.a) \
-        $(shell $($(combo_target)CC) -m32 -print-file-name=libgcc_eh.a)
+ifneq ($(wildcard $(TARGET_CC)),)
+TARGET_LIBGCC := \
+	$(shell $(TARGET_CC) -m32 -print-file-name=libgcc.a) \
+        $(shell $(TARGET_CC) -m32 -print-file-name=libgcc_eh.a)
 endif
 
-$(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
+TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 libc_root := bionic/libc
 libm_root := bionic/libm
@@ -39,16 +70,16 @@ else
 endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
-$(combo_target)GLOBAL_CFLAGS += \
+TARGET_GLOBAL_CFLAGS += \
 			-march=i686 \
 			-m32 \
 			-fPIC \
 			-include $(call select-android-config-h,target_linux-x86)
 
-$(combo_target)GLOBAL_CPPFLAGS += \
+TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
-$(combo_target)C_INCLUDES := \
+TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86/include \
 	$(libc_root)/include \
 	$(libstdc++_root)/include \
@@ -67,9 +98,9 @@ TARGET_CRTEND_SO_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtend_so.o
 
 # TARGET_STRIP_MODULE:=true
 
-$(combo_target)DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
+TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 
-$(combo_target)CUSTOM_LD_COMMAND := true
+TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
 $(TARGET_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
@@ -125,5 +156,7 @@ $(TARGET_CXX) \
 	$(TARGET_CRTEND_O)
 endef
 
-$(combo_target)GLOBAL_CFLAGS += -m32
-$(combo_target)GLOBAL_LDFLAGS += -m32
+TARGET_GLOBAL_CFLAGS += -m32
+TARGET_GLOBAL_LDFLAGS += -m32
+
+endif #simulator

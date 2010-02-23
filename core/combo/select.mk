@@ -1,24 +1,33 @@
+#
+# Copyright (C) 2006 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 # Select a combo based on the compiler being used.
 #
 # Inputs:
 #	combo_target -- prefix for final variables (HOST_ or TARGET_)
 #
-# Outputs:
-#   $(combo_target)OS -- standard name for this host (LINUX, DARWIN, etc.)
-#   $(combo_target)ARCH -- standard name for process architecture (powerpc, x86, etc.)
-#   $(combo_target)GLOBAL_CFLAGS -- C compiler flags to use for everything
-#   $(combo_target)RELEASE_CFLAGS -- additional C compiler flags for release builds
-#   $(combo_target)GLOBAL_ARFLAGS -- flags to use for static linking everything
-#   $(combo_target)SHLIB_SUFFIX -- suffix of shared libraries
 
 # Build a target string like "linux-arm" or "darwin-x86".
 combo_os_arch := $($(combo_target)OS)-$($(combo_target)ARCH)
 
-# Set the defaults.
+# Set reasonable defaults for the various variables
 
-HOST_CC ?= $(CC)
-HOST_CXX ?= $(CXX)
-HOST_AR ?= $(AR)
+$(combo_target)CC := $(CC)
+$(combo_target)CXX := $(CXX)
+$(combo_target)AR := $(AR)
 
 $(combo_target)BINDER_MINI := 0
 
@@ -36,7 +45,6 @@ $(combo_target)HAVE_STRLCPY := 0
 $(combo_target)HAVE_STRLCAT := 0
 $(combo_target)HAVE_KERNEL_MODULES := 0
 
-# These flags might (will) be overridden by the target makefiles
 $(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
 $(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
 $(combo_target)GLOBAL_LDFLAGS :=
@@ -49,28 +57,8 @@ $(combo_target)STATIC_LIB_SUFFIX := .a
 
 $(combo_target)PRELINKER_MAP := $(BUILD_SYSTEM)/prelink-$(combo_os_arch).map
 
-# We try to find a target or host specific file for the os/arch specified, and
-# default to just looking for the os/arch one. This will allow us to define
-# things separately for targets and hosts that have the same architecture
-# but need different defines. e.g. target_linux-x86 and host_linux-x86
-
-ifneq ($(TARGET_SIMULATOR),true)
-# Convert the combo_target string to lowercase
-combo_target_lc := $(shell echo $(combo_target) | tr '[A-Z]' '[a-z]')
-
-# form combo makefile name like "<path>/target_linux-x86.make",
-# "<path>/host_darwin-x86.make", etc.
-combo_target_os_arch := $(BUILD_COMBOS)/$(combo_target_lc)$(combo_os_arch).mk
-else
-combo_target_os_arch :=
-endif
-
 # Now include the combo for this specific target.
-ifneq ($(wildcard $(combo_target_os_arch)),)
-include $(combo_target_os_arch)
-else
-include $(BUILD_COMBOS)/$(combo_os_arch).mk
-endif
+include $(BUILD_COMBOS)/$(combo_target)$(combo_os_arch).mk
 
 ifneq ($(USE_CCACHE),)
   ccache := prebuilt/$(HOST_PREBUILT_TAG)/ccache/ccache
