@@ -1,19 +1,35 @@
+#
+# Copyright (C) 2006 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 # Configuration for Linux on SuperH.
 # Included by combo/select.make
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
-ifeq ($(strip $($(combo_target)TOOLS_PREFIX)),)
-$(combo_target)TOOLS_PREFIX := \
+ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
+TARGET_TOOLS_PREFIX := \
 	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/sh-4.3.3/bin/sh-linux-gnu-
 endif
 
-$(combo_target)CC := $($(combo_target)TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)CXX := $($(combo_target)TOOLS_PREFIX)c++$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)AR := $($(combo_target)TOOLS_PREFIX)ar$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)OBJCOPY := $($(combo_target)TOOLS_PREFIX)objcopy$(HOST_EXECUTABLE_SUFFIX)
-$(combo_target)LD := $($(combo_target)TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
+TARGET_CC := $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
+TARGET_CXX := $(TARGET_TOOLS_PREFIX)c++$(HOST_EXECUTABLE_SUFFIX)
+TARGET_AR := $(TARGET_TOOLS_PREFIX)ar$(HOST_EXECUTABLE_SUFFIX)
+TARGET_OBJCOPY := $(TARGET_TOOLS_PREFIX)objcopy$(HOST_EXECUTABLE_SUFFIX)
+TARGET_LD := $(TARGET_TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
 
-$(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
+TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 TARGET_sh_release_CFLAGS :=     -O2 \
                                 -fomit-frame-pointer \
@@ -24,18 +40,18 @@ TARGET_sh_release_CFLAGS :=     -O2 \
 # When building for debug, compile everything as superh.
 TARGET_sh_debug_CFLAGS := $(TARGET_sh_release_CFLAGS) -fno-omit-frame-pointer -fno-strict-aliasing
 
-$(combo_target)GLOBAL_CFLAGS += \
+TARGET_GLOBAL_CFLAGS += \
 			-fpic \
 			-ffunction-sections \
 			-funwind-tables \
 			-fstack-protector \
 			-include $(call select-android-config-h,linux-sh)
 
-$(combo_target)GLOBAL_CPPFLAGS += \
+TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit \
 			-fvisibility-inlines-hidden
 
-$(combo_target)RELEASE_CFLAGS := \
+TARGET_RELEASE_CFLAGS := \
 			-DSK_RELEASE -DNDEBUG \
 			-O2 -g \
 			-Wstrict-aliasing=2 \
@@ -53,13 +69,13 @@ libthread_db_root := bionic/libthread_db
 
 
 ## on some hosts, the target cross-compiler is not available so do not run this command
-ifneq ($(wildcard $($(combo_target)CC)),)
+ifneq ($(wildcard $(TARGET_CC)),)
 # We compile with the global cflags to ensure that
 # any flags which affect libgcc are correctly taken
 # into account.
-LIBGCC_FILENAME := $(shell $($(combo_target)CC) $($(combo_target)GLOBAL_CFLAGS) -print-libgcc-file-name)
+LIBGCC_FILENAME := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) -print-libgcc-file-name)
 LIBGCC_EH_FILENAME := $(subst libgcc,libgcc_eh,$(LIBGCC_FILENAME))
-$(combo_target)LIBGCC := $(LIBGCC_EH_FILENAME) $(LIBGCC_FILENAME)
+TARGET_LIBGCC := $(LIBGCC_EH_FILENAME) $(LIBGCC_FILENAME)
 endif
 
 # unless CUSTOM_KERNEL_HEADERS is defined, we're going to use
@@ -75,7 +91,7 @@ else
 endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
-$(combo_target)C_INCLUDES := \
+TARGET_C_INCLUDES := \
 	$(libc_root)/arch-sh/include \
 	$(libc_root)/include \
 	$(libstdc++_root)/include \
@@ -92,9 +108,9 @@ TARGET_SOEND := $(TARGET_OUT_STATIC_LIBRARIES)/soend.o
 
 TARGET_STRIP_MODULE:=false
 
-$(combo_target)DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
+TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 
-$(combo_target)CUSTOM_LD_COMMAND := true
+TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
 $(TARGET_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/shlelf.xsc \
