@@ -89,7 +89,6 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    wifi \
 	    vpn \
 	    keystore \
-	    common \
 	 )
 
 #
