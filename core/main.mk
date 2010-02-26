@@ -727,6 +727,20 @@ $(call dist-for-goals,sdk, \
 	$(SYMBOLS_ZIP) \
  )
 
+.PHONY: samplecode
+sample_MODULES := $(sort $(call get-tagged-modules,samples))
+sample_APKS_DEST_PATH := $(TARGET_COMMON_OUT_ROOT)/samples
+sample_APKS_COLLECTION := \
+        $(foreach module,$(sample_MODULES),$(sample_APKS_DEST_PATH)/$(notdir $(module)))
+$(foreach module,$(sample_MODULES),$(eval $(call \
+        copy-one-file,$(module),$(sample_APKS_DEST_PATH)/$(notdir $(module)))))
+sample_ADDITIONAL_INSTALLED := \
+        $(filter-out $(modules_to_install) $(modules_to_check) $(ALL_PREBUILT),$(sample_MODULES))
+samplecode: $(sample_APKS_COLLECTION)
+	@echo "Collect sample code apks: $^"
+	# remove apks that are not intended to be installed.
+	rm -f $(sample_ADDITIONAL_INSTALLED)
+
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
