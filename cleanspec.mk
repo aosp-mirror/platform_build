@@ -151,6 +151,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/GoogleCheckin.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libdvm*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libgtest_main_intermediates)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libgtest_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Music*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Music*)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
