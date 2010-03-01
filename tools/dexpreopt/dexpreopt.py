@@ -125,6 +125,10 @@ def StartEmulator(exe_name='emulator', kernel=None,
   else:
     args += ['-shell']
 
+  # This is a work-around for the ARMv7 emulation bug.
+  # XXX: It only works by chance, if any ! A real emulation fix is on the way
+  args += ['-qemu', '-singlestep']
+
   # Ensure that this environment variable isn't set;
   # if it is, the emulator will print the log to stdout.
   if os.environ.get('ANDROID_LOG_TAGS'):
