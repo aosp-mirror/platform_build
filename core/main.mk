@@ -398,7 +398,6 @@ subdirs += \
 	sdk/layoutlib_utils \
 	sdk/ninepatch \
 	sdk/sdkstats \
-	sdk/builders \
 	sdk/sdkmanager \
 	sdk/layoutopt \
 	development/apps \
