@@ -218,6 +218,9 @@ proguard_flags := $(proguard_flags) -include $(BUILD_SYSTEM)/proguard_tests.flag
 endif # test package
 
 LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
+ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
+    LOCAL_PROGUARD_ENABLED :=
+endif
 ifneq ($(LOCAL_PROGUARD_ENABLED),)
 ifeq ($(LOCAL_PROGUARD_ENABLED),full)
     # full
