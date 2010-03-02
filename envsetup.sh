@@ -771,7 +771,7 @@ function jgrep()
 
 function cgrep()
 {
-    find . -type f -name "*\.c*" -print0 | xargs -0 grep --color -n "$@"
+    find . -type f \( -name '*.c' -o -name '*.cc' -o -name '*.cpp' -o -name '*.h' \) -print0 | xargs -0 grep --color -n "$@"
 }
 
 function resgrep()
