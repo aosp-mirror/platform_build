@@ -14,12 +14,15 @@ endif
 # PRODUCT_COPY_FILES contains words like <source file>:<dest file>.
 # <dest file> is relative to $(PRODUCT_OUT), so it should look like,
 # e.g., "system/etc/file.xml".
+# The filter part means "only eval the copy-one-file rule if this
+# src:dest pair is the first one to match %:dest"
 $(foreach cf,$(PRODUCT_COPY_FILES), \
   $(eval _src := $(call word-colon,1,$(cf))) \
-  $(eval _dest := $(call \
-          append-path,$(PRODUCT_OUT),$(call word-colon,2,$(cf)))) \
-  $(eval $(call copy-one-file,$(_src),$(_dest))) \
-  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_dest)) \
+  $(eval _dest := $(call word-colon,2,$(cf))) \
+  $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
+  $(if $(filter $(_src):$(_dest),$(firstword $(filter %:$(_dest),$(PRODUCT_COPY_FILES)))), \
+    $(eval $(call copy-one-file,$(_src),$(_fulldest))),) \
+  $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_fulldest)) \
  )
 
 # -----------------------------------------------------------------
