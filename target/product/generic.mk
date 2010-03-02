@@ -29,6 +29,7 @@ PRODUCT_PACKAGES := \
     DrmProvider \
     Email \
     LatinIME \
+    Launcher2 \
     Mms \
     Music \
     Provision \
