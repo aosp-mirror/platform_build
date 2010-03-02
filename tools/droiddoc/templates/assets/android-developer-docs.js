@@ -27,10 +27,10 @@ function addLoadEvent(newfun) {
 
 var agent = navigator['userAgent'].toLowerCase();
 // If a mobile phone, set flag and do mobile setup
-if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod 
+if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod
     (agent.indexOf("blackberry") != -1) ||
     (agent.indexOf("webos") != -1) ||
-    (agent.indexOf("mini") != -1)) {        // opera mini browsers 
+    (agent.indexOf("mini") != -1)) {        // opera mini browsers
   isMobile = true;
   addLoadEvent(mobileSetup);
 // If not a mobile browser, set the onresize event for IE6, and others
@@ -126,7 +126,7 @@ function writeCookie(cookie, val, section, expiration) {
     expiration = date.toGMTString();
   }
   document.cookie = cookie_namespace + section + cookie + "=" + val + "; expires=" + expiration+"; path=/";
-} 
+}
 
 function init() {
   $("#side-nav").css({position:"absolute",left:0});
@@ -162,9 +162,82 @@ function init() {
     }
   }
 
-  if (devdocNav.length) { // only dev guide and sdk 
-    highlightNav(location.href); 
+  if (devdocNav.length) { // only dev guide, resources, and sdk
+    tryPopulateResourcesNav();
+    highlightNav(location.href);
   }
+}
+
+function tryPopulateResourcesNav() {
+  var sampleList = $('#devdoc-nav-sample-list');
+  var articleList = $('#devdoc-nav-article-list');
+  var tutorialList = $('#devdoc-nav-tutorial-list');
+  var topicList = $('#devdoc-nav-topic-list');
+
+  if (!topicList.length || !ANDROID_TAGS || !ANDROID_RESOURCES)
+    return;
+
+  var topics = [];
+  for (var topic in ANDROID_TAGS['topic']) {
+    topics.push({name:topic,title:ANDROID_TAGS['topic'][topic]});
+  }
+  topics.sort(function(x,y){ return (x.title < y.title) ? -1 : 1; });
+  for (var i = 0; i < topics.length; i++) {
+    topicList.append(
+        $('<li>').append(
+          $('<a>')
+            .attr('href', toRoot + "resources/browser.html?tag=" + topics[i].name)
+            .append($('<span>')
+              .addClass('en')
+              .html(topics[i].title)
+            )
+          )
+        );
+  }
+
+  var _renderResourceList = function(tag, listNode) {
+    var resources = [];
+    var tags;
+    var resource;
+    var i, j;
+    for (i = 0; i < ANDROID_RESOURCES.length; i++) {
+      resource = ANDROID_RESOURCES[i];
+      tags = resource.tags || [];
+      var hasTag = false;
+      for (j = 0; j < tags.length; j++)
+        if (tags[j] == tag) {
+          hasTag = true;
+          break;
+        }
+      if (!hasTag)
+        continue;
+      resources.push(resource);
+    }
+    //resources.sort(function(x,y){ return (x.title.en < y.title.en) ? -1 : 1; });
+    for (i = 0; i < resources.length; i++) {
+      resource = resources[i];
+      var listItemNode = $('<li>').append(
+          $('<a>')
+            .attr('href', toRoot + "resources/" + resource.path)
+            .append($('<span>')
+              .addClass('en')
+              .html(resource.title.en)
+            )
+          );
+      tags = resource.tags || [];
+      for (j = 0; j < tags.length; j++) {
+        if (tags[j] == 'new') {
+          listItemNode.get(0).innerHTML += '&nbsp;<span class="new">new!</span>';
+          break;
+        }
+      }
+      listNode.append(listItemNode);
+    }
+  };
+
+  _renderResourceList('sample', sampleList);
+  _renderResourceList('article', articleList);
+  _renderResourceList('tutorial', tutorialList);
 }
 
 function highlightNav(fullPageName) {
@@ -180,17 +253,23 @@ function highlightNav(fullPageName) {
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
   }
-  var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
-  var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5);
+  // First check if the exact URL, with query string and all, is in the navigation menu
+  var pathPageName = fullPageName.substr(firstSlashPos);
   var link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-  if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) || (fullPageName.indexOf("/resources/") != -1))) { 
-// if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide)
-    lastBackstep = pathPageName.lastIndexOf("/");
-    while (link.length == 0) {
-      backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
-      link = $("#devdoc-nav a[href$='"+ pathPageName.slice(0, backstepDirectory + 1)+"index.html']");
-      lastBackstep = pathPageName.lastIndexOf("/", lastBackstep - 1);
-      if (lastBackstep == 0) break;
+  if (link.length == 0) {
+    var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
+    pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5); // +5 advances past ".html"
+    link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
+    if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) || (fullPageName.indexOf("/resources/") != -1))) {
+      // if there's no match, then let's backstep through the directory until we find an index.html page
+      // that matches our ancestor directories (only for dev guide and resources)
+      lastBackstep = pathPageName.lastIndexOf("/");
+      while (link.length == 0) {
+        backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
+        link = $("#devdoc-nav a[href$='"+ pathPageName.slice(0, backstepDirectory + 1)+"index.html']");
+        lastBackstep = pathPageName.lastIndexOf("/", lastBackstep - 1);
+        if (lastBackstep == 0) break;
+      }
     }
   }
 
@@ -436,12 +515,12 @@ function scrollIntoView(nav) {
 
 function changeTabLang(lang) {
   var nodes = $("#header-tabs").find("."+lang);
-  for (i=0; i < nodes.length; i++) { // for each node in this language 
+  for (i=0; i < nodes.length; i++) { // for each node in this language
     var node = $(nodes[i]);
-    node.siblings().css("display","none"); // hide all siblings 
-    if (node.not(":empty").length != 0) { //if this languages node has a translation, show it 
+    node.siblings().css("display","none"); // hide all siblings
+    if (node.not(":empty").length != 0) { //if this languages node has a translation, show it
       node.css("display","inline");
-    } else { //otherwise, show English instead 
+    } else { //otherwise, show English instead
       node.css("display","none");
       node.siblings().filter(".en").css("display","inline");
     }
@@ -450,12 +529,12 @@ function changeTabLang(lang) {
 
 function changeNavLang(lang) {
   var nodes = $("#side-nav").find("."+lang);
-  for (i=0; i < nodes.length; i++) { // for each node in this language 
+  for (i=0; i < nodes.length; i++) { // for each node in this language
     var node = $(nodes[i]);
-    node.siblings().css("display","none"); // hide all siblings 
-    if (node.not(":empty").length != 0) { // if this languages node has a translation, show it 
+    node.siblings().css("display","none"); // hide all siblings
+    if (node.not(":empty").length != 0) { // if this languages node has a translation, show it
       node.css("display","inline");
-    } else { // otherwise, show English instead 
+    } else { // otherwise, show English instead
       node.css("display","none");
       node.siblings().filter(".en").css("display","inline");
     }

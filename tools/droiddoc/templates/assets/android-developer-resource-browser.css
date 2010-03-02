@@ -1,0 +1,31 @@
+/* Resource Browser */
+
+#resource-browser-results .no-results {
+  font-style: italic;
+  display: none;
+}
+
+#resource-browser-results .result {
+  position: relative;
+  padding-left: 84px;
+  background: transparent none no-repeat scroll 4px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+#resource-browser-results .tagged-article {
+  background-image: url(images/resource-article.png);
+}
+
+#resource-browser-results .tagged-sample {
+  background-image: url(images/resource-sample.png);
+}
+
+#resource-browser-results .tagged-tutorial {
+  background-image: url(images/resource-tutorial.png);
+}
+
+#resource-browser-results .resource-meta {
+  margin-top: -1em;
+  font-size: 0.85em;
+  font-weight: normal;
+}
