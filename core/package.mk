@@ -127,7 +127,16 @@ endif
 LOCAL_BUILT_MODULE_STEM := package.apk
 
 LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
-
+ifndef LOCAL_PROGUARD_ENABLED
+ifneq ($(filter user userdebug, $(TARGET_BUILD_VARIANT)),)
+    # turn on Proguard by default for user & userdebug build
+    LOCAL_PROGUARD_ENABLED :=full
+endif
+endif
+ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
+    # the package explicitly request to disable proguard.
+    LOCAL_PROGUARD_ENABLED :=
+endif
 proguard_options_file :=
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
 ifneq ($(all_resources),)
