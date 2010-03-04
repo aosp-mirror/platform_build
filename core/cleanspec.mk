@@ -160,6 +160,18 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Music*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Music*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Music*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Launcher.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/AlarmClock.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Calendar.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/DeskClock.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Email.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Facebook.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Gallery3D.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Maps.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/MyFaves.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/googlevoice.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/kickback.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/soundback.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/talkback.apk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
