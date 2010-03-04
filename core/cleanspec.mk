@@ -15,7 +15,11 @@
 
 # Just bump this if you want to force a clean build.
 # **********************************************************************
-# WHEN DOING SO, DELETE ANY "add-clean-step" ENTRIES THAT HAVE PILED UP.
+# WHEN DOING SO
+# 1. DELETE ANY "add-clean-step" ENTRIES THAT HAVE PILED UP IN THIS FILE.
+# 2. REMOVE ALL FILES NAMED CleanSpec.mk.
+# 3. BUMP THE VERSION.
+# IDEALLY, THOSE STEPS SHOULD BE DONE ATOMICALLY.
 # **********************************************************************
 #
 INTERNAL_CLEAN_BUILD_VERSION := 3
@@ -155,7 +159,13 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Music*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Music*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Music*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Music*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Launcher.apk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
+
+subdir_cleanspecs := \
+    $(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git . CleanSpec.mk)
+include $(subdir_cleanspecs)
+subdir_cleanspecs :=

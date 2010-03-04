@@ -140,10 +140,10 @@ endif
 proguard_options_file :=
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
 ifneq ($(all_resources),)
-    proguard_options_file := -include $(package_expected_intermediates_COMMON)/proguard_options
+    proguard_options_file := $(package_expected_intermediates_COMMON)/proguard_options
 endif # all_resources
 endif # !custom
-LOCAL_PROGUARD_FLAGS := $(proguard_options_file) $(LOCAL_PROGUARD_FLAGS)
+LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
 # The dex files go in the package, so we don't
 # want to install them separately for this module.

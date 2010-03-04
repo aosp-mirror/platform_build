@@ -28,7 +28,7 @@ PRODUCT_PACKAGES := \
     framework-res \
     Browser \
     Contacts \
-    Launcher \
+    Home \
     HTMLViewer \
     Phone \
     ApplicationsProvider \
