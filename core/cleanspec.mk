@@ -172,6 +172,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/googlevoice.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/kickback.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/soundback.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/talkback.apk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Launcher*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Launcher*.apk)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
