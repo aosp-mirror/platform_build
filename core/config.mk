@@ -144,8 +144,6 @@ include $(board_config_mk)
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
-include $(BUILD_SYSTEM)/dumpvar.mk
-
 # Clean up/verify variables defined by the board config file.
 TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
 TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
@@ -341,3 +339,5 @@ TARGET_AVAILABLE_SDK_VERSIONS := current $(call numerically_sort,\
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml
+
+include $(BUILD_SYSTEM)/dumpvar.mk
