@@ -118,6 +118,7 @@ include $(BUILD_SYSTEM)/envsetup.mk
 board_config_mk := \
 	$(strip $(wildcard \
 		$(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
+		device/*/$(TARGET_DEVICE)/BoardConfig.mk \
 		vendor/*/$(TARGET_DEVICE)/BoardConfig.mk \
 	))
 ifeq ($(board_config_mk),)
