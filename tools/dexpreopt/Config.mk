@@ -78,7 +78,7 @@ ifdef sign_dexpreopt
 endif
 
 # The kernel used for ARMv7 system images is different
-ifeq ($(TARGET_ARCH_VARIANT),armv7-a)
+ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
 BUILD_DEXPREOPT_KERNEL := prebuilt/android-arm/kernel/kernel-qemu-armv7
 else
 BUILD_DEXPREOPT_KERNEL := prebuilt/android-arm/kernel/kernel-qemu
