@@ -38,6 +38,12 @@
     java.lang.Class class$(java.lang.String, boolean);
 }
 
+# Keep classes and methods that have the guava @VisibleForTesting annotation
+-keep @com.google.common.annotations.VisibleForTesting class *
+-keepclassmembers class * {
+@com.google.common.annotations.VisibleForTesting *;
+}
+
 # Please specify classes to be kept explicitly in your package's configuration.
 # -keep class * extends android.app.Activity
 # -keep class * extends android.view.View
