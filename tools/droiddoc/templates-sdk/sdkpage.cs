@@ -151,10 +151,14 @@ computer. </p>
     </a>
   </div>
 ?>
-  <p>Welcome! If you are new to the Android SDK, please read the <a href="#quickstart">Quick Start</a>,
-  below, for an overview of how to install and set up the SDK.</p>
-  
-  
+  <p>Welcome Developers! If you are new to the Android SDK, please read the <a
+href="#quickstart">Quick Start</a>, below, for an overview of how to install and
+set up the SDK. </p>
+
+  <p>If you are already using the Android SDK and would like to update to the
+latest tools or platforms, please use the <em>Android SDK and AVD Manager</em>
+to get the components, rather than downloading a new SDK package.</p>
+
   <table class="download">
     <tr>
       <th>Platform</th>
