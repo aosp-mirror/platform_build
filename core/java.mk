@@ -82,6 +82,7 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_jar) \
     $(full_classes_compiled_jar) \
     $(full_classes_emma_jar) \
+    $(full_classes_full_names_jar) \
     $(full_classes_stubs_jar) \
     $(full_classes_jarjar_jar) \
     $(built_dex)
@@ -153,7 +154,7 @@ $(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
 # be done after the inclusion of base_rules.mk.
 ALL_MODULES.$(LOCAL_MODULE).CHECKED := $(full_classes_compiled_jar)
 
-ifneq ($(LOCAL_NO_EMMA_COMPILE),true) 
+ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
 # If you instrument class files that have local variable debug information in
 # them emma does not correctly maintain the local variable table.
 # This will cause an error when you try to convert the class files for Android.
@@ -161,7 +162,7 @@ ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
 # line and source debug information, not local information.
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g:{lines,source}
 else
-# when emma is off, compile with the default flags, which contain full debug 
+# when emma is off, compile with the default flags, which contain full debug
 # info
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 endif
@@ -177,9 +178,12 @@ $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
 # this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
 # $(full_classes_emma_jar)
-$(full_classes_emma_jar): $(full_classes_compiled_jar)
+$(full_classes_emma_jar): $(full_classes_compiled_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
 $(PRIVATE_EMMA_COVERAGE_FILE): $(full_classes_emma_jar)
+
+# tell proguard to load emma jar
+LOCAL_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS) $(addprefix -libraryjars ,$(EMMA_JAR))
 else
 $(full_classes_emma_jar): $(full_classes_compiled_jar) | $(ACP)
 	@echo Copying: $<
