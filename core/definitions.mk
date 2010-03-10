@@ -1325,7 +1325,8 @@ endef
 
 define transform-classes.jar-to-emma
 $(hide) java -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
-    $(PRIVATE_EMMA_COVERAGE_FILE) -ip $< -d $(PRIVATE_EMMA_INTERMEDIATES_DIR)
+    $(PRIVATE_EMMA_COVERAGE_FILE) -ip $< -d $(PRIVATE_EMMA_INTERMEDIATES_DIR) \
+    -ix $(PRIVATE_EMMA_COVERAGE_FILTER)
 endef
 
 #TODO: use a smaller -Xmx value for most libraries;

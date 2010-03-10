@@ -63,10 +63,13 @@ endif
 # Choose leaf name for the compiled jar file.
 ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
 full_classes_compiled_jar_leaf := classes-no-debug-var.jar
+built_dex_leaf := classes-no-local.dex
 else
 full_classes_compiled_jar_leaf := classes-full-debug.jar
+built_dex_leaf := classes-with-local.dex
 endif
 full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
+built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_leaf)
 
 emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # the 'lib/$(full_classes_compiled_jar_leaf)' portion of this path is fixed in
@@ -85,7 +88,8 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_full_names_jar) \
     $(full_classes_stubs_jar) \
     $(full_classes_jarjar_jar) \
-    $(built_dex)
+    $(built_dex) \
+    $(built_dex_intermediate)
 
 
 # TODO: It looks like the only thing we need from base_rules is
@@ -154,18 +158,7 @@ $(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
 # be done after the inclusion of base_rules.mk.
 ALL_MODULES.$(LOCAL_MODULE).CHECKED := $(full_classes_compiled_jar)
 
-ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
-# If you instrument class files that have local variable debug information in
-# them emma does not correctly maintain the local variable table.
-# This will cause an error when you try to convert the class files for Android.
-# The workaround for this to compile the java classes with only
-# line and source debug information, not local information.
-$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g:{lines,source}
-else
-# when emma is off, compile with the default flags, which contain full debug
-# info
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
-endif
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # Skip adding emma instrumentation to class files if this is a static library,
@@ -176,6 +169,15 @@ endif
 ifneq ($(LOCAL_NO_EMMA_INSTRUMENT),true)
 $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
+# module level coverage filter can be defined using LOCAL_EMMA_COVERAGE_FILTER
+# in Android.mk
+ifdef LOCAL_EMMA_COVERAGE_FILTER
+$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := $(LOCAL_EMMA_COVERAGE_FILTER)
+else
+# by default, avoid applying emma instrumentation onto emma classes itself,
+# otherwise there will be exceptions thrown
+$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := *,-emma,-emmarun,-com.vladium.*
+endif
 # this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
 # $(full_classes_emma_jar)
 $(full_classes_emma_jar): $(full_classes_compiled_jar) | $(EMMA_JAR)
@@ -252,12 +254,25 @@ $(full_classes_proguard_jar): $(full_classes_full_names_jar) | $(ACP) $(PROGUARD
 
 ALL_MODULES.$(LOCAL_MODULE).PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
 
+# If you instrument class files that have local variable debug information in
+# them emma does not correctly maintain the local variable table.
+# This will cause an error when you try to convert the class files for Android.
+# The workaround here is to build different dex file here based on emma switch
+# then later copy into classes.dex. When emma is on, dx is run with --no-locals
+# option to remove local variable information
+
 # Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
 # will work even when intermediates != intermediates.COMMON.
-$(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
-$(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(built_dex): $(full_classes_jar) $(DX)
+$(built_dex_intermediate): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
+$(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
+$(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
+endif
+$(built_dex_intermediate): $(full_classes_jar) $(DX)
 	$(transform-classes.jar-to-dex)
+$(built_dex): $(built_dex_intermediate) | $(ACP)
+	@echo Copying: $@
+	$(hide) $(ACP) $< $@
 ifneq ($(GENERATE_DEX_DEBUG),)
 	$(install-dex-debug)
 endif
