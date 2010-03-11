@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# This file uses the following encoding: utf-8
 
 import sys
 import re
@@ -51,6 +52,7 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'',
         'description':'Incompatible pointer types',
         'patterns':[r".*: warning: assignment from incompatible pointer type",
+                    r".*: warning: return from incompatible pointer type",
                     r".*: warning: passing argument [0-9]+ of '.*' from incompatible pointer type",
                     r".*: warning: initialization from incompatible pointer type"] },
     { 'category':'C/C++',   'severity':severity.HIGH,     'members':[], 'option':'-fno-builtin',
@@ -61,7 +63,8 @@ warnpatterns = [
         'patterns':[r".*: warning: unused parameter '.*'"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wunused',
         'description':'Unused function, variable or label',
-        'patterns':[r".*: warning: '.+' defined but not used"] },
+        'patterns':[r".*: warning: '.+' defined but not used",
+                    r".*: warning: unused variable '.+'"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wunused-value',
         'description':'Statement with no effect',
         'patterns':[r".*: warning: statement with no effect"] },
@@ -82,6 +85,9 @@ warnpatterns = [
         'patterns':[r".*: warning: comparison between signed and unsigned",
                     r".*: warning: comparison of promoted \~unsigned with unsigned",
                     r".*: warning: signed and unsigned type in conditional expression"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'',
+        'description':'Comparison between enum and non-enum',
+        'patterns':[r".*: warning: enumeral and non-enumeral type in conditional expression"] },
     { 'category':'libpng',  'severity':severity.MEDIUM,   'members':[], 'option':'',
         'description':'libpng: zero area',
         'patterns':[r".*libpng warning: Ignoring attempt to set cHRM RGB triangle with zero area"] },
@@ -215,6 +221,12 @@ warnpatterns = [
         'description':'Java: Non-varargs call of varargs method with inexact argument type for last parameter',
         'patterns':[r".*: warning: non-varargs call of varargs method with inexact argument type for last parameter"] },
     { 'category':'aapt',    'severity':severity.MEDIUM,   'members':[], 'option':'',
+        'description':'aapt: No default translation',
+        'patterns':[r".*: warning: string '.+' has no default translation in .*"] },
+    { 'category':'aapt',    'severity':severity.MEDIUM,   'members':[], 'option':'',
+        'description':'aapt: Missing default or required localization',
+        'patterns':[r".*: warning: \*\*\*\* string '.+' has no default or required localization for '.+' in .+"] },
+    { 'category':'aapt',    'severity':severity.MEDIUM,   'members':[], 'option':'',
         'description':'aapt: String marked untranslatable, but translation exists',
         'patterns':[r".*: warning: string '.+' in .* marked untranslatable but exists in locale '??_??'"] },
     { 'category':'aapt',    'severity':severity.MEDIUM,   'members':[], 'option':'',
@@ -228,7 +240,8 @@ warnpatterns = [
         'patterns':[r".*: warning: backslash and newline separated by space"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Warray-bounds',
         'description':'Array subscript out of bounds',
-        'patterns':[r".*: warning: array subscript is above array bounds"] },
+        'patterns':[r".*: warning: array subscript is above array bounds",
+                    r".*: warning: array subscript is below array bounds"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'',
         'description':'Decimal constant is unsigned only in ISO C90',
         'patterns':[r".*: warning: this decimal constant is unsigned only in ISO C90"] },
@@ -267,6 +280,9 @@ warnpatterns = [
         'patterns':[r".*: warning:   '.+'"] },
     { 'category':'cont.',   'severity':severity.SKIP,     'members':[], 'option':'',
         'description':'',
+        'patterns':[r".*: warning:   base '.+'"] },
+    { 'category':'cont.',   'severity':severity.SKIP,     'members':[], 'option':'',
+        'description':'',
         'patterns':[r".*: warning:   when initialized here"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wmissing-parameter-type',
         'description':'Parameter type not specified',
@@ -301,6 +317,9 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.LOW,      'members':[], 'option':'-Wcomment',
         'description':'Line continuation inside comment',
         'patterns':[r".*: warning: multi-line comment"] },
+    { 'category':'C/C++',   'severity':severity.LOW,      'members':[], 'option':'-Wcomment',
+        'description':'Comment inside comment',
+        'patterns':[r".*: warning: "".+"" within comment"] },
     { 'category':'C/C++',   'severity':severity.HARMLESS, 'members':[], 'option':'',
         'description':'Extra tokens after #endif',
         'patterns':[r".*: warning: extra tokens at end of #endif directive"] },
@@ -339,6 +358,24 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
         'description':'Converting from <type> to <other type>',
         'patterns':[r".*: warning: converting to '.+' from '.+'"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
+        'description':'Return value from void function',
+        'patterns':[r".*: warning: 'return' with a value, in function returning void"] },
+    { 'category':'C/C++',   'severity':severity.LOW,     'members':[], 'option':'',
+        'description':'Useless specifier',
+        'patterns':[r".*: warning: useless storage class specifier in empty declaration"] },
+    { 'category':'logtags',   'severity':severity.LOW,     'members':[], 'option':'',
+        'description':'Duplicate logtag',
+        'patterns':[r".*: warning: tag "".+"" \(None\) duplicated in .+"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
+        'description':'Operator new returns NULL',
+        'patterns':[r".*: warning: 'operator new' must not return NULL unless it is declared 'throw\(\)' .+"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
+        'description':'NULL used in arithmetic',
+        'patterns':[r".*: warning: NULL used in arithmetic"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
+        'description':'Use of deprecated method',
+        'patterns':[r".*: warning: '.+' is deprecated .+"] },
 
     # these next ones are to deal with formatting problems resulting from the log being mixed up by 'make -j'
     { 'category':'C/C++',   'severity':severity.SKIP,     'members':[], 'option':'',
@@ -491,6 +528,9 @@ compilepatterns()
 # read the log file and classify all the warnings
 lastmatchedline = ''
 for line in infile:
+    # replace fancy quotes with plain ol' quotes
+    line = line.replace("‘", "'");
+    line = line.replace("’", "'");
     if warningpattern.match(line):
         if line != lastmatchedline:
             classifywarning(line)
