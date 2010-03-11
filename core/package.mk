@@ -74,6 +74,11 @@ endif
 
 #$(warning $(LOCAL_PATH) $(LOCAL_PACKAGE_NAME) $(sort $(LOCAL_MODULE_TAGS)))
 
+ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
+# Force localization check if it's not tagged as tests.
+LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
+endif
+
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif

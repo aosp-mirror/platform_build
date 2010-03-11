@@ -1221,7 +1221,7 @@ endef
 define create-resource-java-files
 @mkdir -p $(PRIVATE_SOURCE_INTERMEDIATES_DIR)
 @mkdir -p $(dir $(PRIVATE_RESOURCE_PUBLICS_OUTPUT))
-$(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m -z \
+$(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(eval # PRODUCT_AAPT_CONFIG is intentionally missing-- see comment.) \
     $(addprefix -J , $(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
@@ -1367,7 +1367,7 @@ endef
 #values; applications can override these by explicitly stating
 #them in their manifest.
 define add-assets-to-package
-$(hide) $(AAPT) package -z -u $(PRIVATE_AAPT_FLAGS) \
+$(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRODUCT_AAPT_CONFIG)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
