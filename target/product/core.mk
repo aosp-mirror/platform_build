@@ -27,6 +27,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_PACKAGES := \
     framework-res \
     Browser \
+    CarHomeLauncher \
     Contacts \
     Home \
     HTMLViewer \
