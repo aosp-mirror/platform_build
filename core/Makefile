@@ -869,6 +869,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 		$(built_ota_tools) \
 		$(APKCERTS_FILE) \
+		$(HOST_OUT_EXECUTABLES)/fs_config \
 		| $(ACP)
 	@echo "Package target files: $@"
 	$(hide) rm -rf $@ $(zip_root)
@@ -934,6 +935,10 @@ endif
 	$(hide) echo "$(tool_extensions)" > $(zip_root)/META/tool-extensions.txt
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
+	@# Run fs_config on all the system files in the zip, and save the output
+	$(hide) zipinfo -1 $@ | awk -F/ 'BEGIN { OFS="/" } /^SYSTEM\// {$$1 = "system"; print}' | $(HOST_OUT_EXECUTABLES)/fs_config > $(zip_root)/META/filesystem_config.txt
+	$(hide) (cd $(zip_root) && zip -q ../$(notdir $@) META/filesystem_config.txt)
+
 
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
