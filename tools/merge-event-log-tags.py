@@ -82,6 +82,12 @@ for fn in args:
     if t.tagname in by_tagname:
       orig = by_tagname[t.tagname]
 
+      # Allow an explicit tag number to define an implicit tag number
+      if orig.tagnum is None:
+        orig.tagnum = t.tagnum
+      elif t.tagnum is None:
+        t.tagnum = orig.tagnum
+
       if (t.tagnum == orig.tagnum and
           t.description == orig.description):
         # if the name and description are identical, issue a warning
