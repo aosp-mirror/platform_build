@@ -153,7 +153,7 @@ class Item:
       suffix = { False: "", True: "/" }
       input = "".join(["%s%s\n" % (i.name, suffix[i.dir])
                        for i in cls.ITEMS.itervalues() if i.name])
-      output2, error = p.communicate(input)
+      output, error = p.communicate(input)
       assert not error
 
     for line in output.split("\n"):
