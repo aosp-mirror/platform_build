@@ -817,7 +817,7 @@ div.figure {
 
 #qv-wrapper {
   float: right;
-  width:310px;
+  width:310px; /* +35px padding */
   background-color:#fff;
   margin:-48px 0 2px 0;
   padding:0 0 20px 35px;
@@ -827,8 +827,8 @@ div.figure {
   background-color:#fff;
   border:4px solid #dee8f1;
   margin:0;
-  padding:0 6px 6px;
-  width:270px;
+  padding:0 5px 5px;
+  width:292px; /* +10px padding; +8px border */
   font-size:.9em;
 }
 
@@ -906,28 +906,19 @@ div.figure {
 
 .sidebox-wrapper {
   float: right;
-  width:280px;
+  width:300px;
   background-color:#fff;
   margin: 0;
-  padding: 20px 0 20px 20px;
+  padding: 0 0 20px 20px;
 }
 
+.sidebox,
 .sidebox-inner {
   border-left:1px solid #dee8f1;
   background-color:#ffffee;
-  padding:5px 8px 5px 12px;
+  padding:8px 12px;
   font-size:90%;
   width:260px;
-}
-
-.sidebox {
-  float: right;
-  width:260px;
-  background-color:#ffffee;
-  border-left:1px solid #dee8f1;
-  margin: 12px 0 0 15px;
-  padding:5px 8px 0 12px;
-  font-size:90%;
 }
 
 .sidebox p,
@@ -958,7 +949,7 @@ padding:0 0 0 0em;
   border:none;
   font-size:1em;
   margin:0;
-  padding:4px 0 4px;
+  padding:0 0 8px;
   left:0;
   z-index:0;
 }
@@ -1218,10 +1209,12 @@ table.download th {
 .ui-resizable { position: relative; }
 .ui-resizable-handle { position: absolute; display: none; font-size: 0.1px; z-index:1; }
 .ui-resizable .ui-resizable-handle { display: block; }
-body .ui-resizable-disabled .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
-body .ui-resizable-autohide .ui-resizable-handle { display: none; } /* use 'body' to make it more specific (css order) */
-.ui-resizable-s { cursor: s-resize; height: 6px; width: 100%; bottom: 0px; left: 0px; background: transparent url("images/resizable-s2.gif") repeat scroll center top; }
-.ui-resizable-e { cursor: e-resize; width: 6px; right: 0px; top: 0px; height: 100%; background: transparent url("images/resizable-e2.gif") repeat scroll right center; }
+body .ui-resizable-disabled .ui-resizable-handle { display: none; }
+body .ui-resizable-autohide .ui-resizable-handle { display: none; }
+.ui-resizable-s { cursor: s-resize; height: 6px; width: 100%; bottom: 0px; left: 0px;
+  background: transparent url("images/resizable-s2.gif") repeat scroll center top; }
+.ui-resizable-e { cursor: e-resize; width: 6px; right: 0px; top: 0px; height: 100%;
+  background: transparent url("images/resizable-e2.gif") repeat scroll right center; }
 
 @media print {
 
