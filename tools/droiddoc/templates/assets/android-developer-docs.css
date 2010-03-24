@@ -500,6 +500,8 @@ div#naMessage strong {
 
 hr {
   background-color:#ccc;
+  border-color:#fff;
+  margin:2em 0 1em;
 }
 
 /* DOC CLASSES */
@@ -804,6 +806,7 @@ pre.classic {
 
 div.figure {
   float:right;
+  clear:right;
   padding:0 0 20px 20px;
   /* width must be defined w/ an inline style matching the image width */
 }
