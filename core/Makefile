@@ -947,8 +947,7 @@ target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
 ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
-ifneq ($(TARGET_PRODUCT),generic)
-ifneq ($(TARGET_PRODUCT),aosp_emulator_us)
+ifneq ($(TARGET_DEVICE),generic)
 
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
@@ -978,8 +977,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 
-endif    # TARGET_PRODUCT != aosp_emulator_us
-endif    # TARGET_PRODUCT != generic
+endif    # TARGET_DEVICE != generic
 endif    # TARGET_PRODUCT != sdk
 endif    # TARGET_SIMULATOR != true
 
