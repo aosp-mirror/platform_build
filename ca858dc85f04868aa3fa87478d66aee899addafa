@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAwH///w0\u003d",
+        "filename": "target/board/generic_x86/AT_Translated_Set_2_keyboard.kl",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-03-25T20:35:42Z",
+      "side": 1,
+      "message": "Are this file and the .kcm file in this directory different enough from the base qwerty.kl that there needs to be another copy?  I would like qwerty.kl to work on the standard PC keyboard arrangement for netbooks and such, and if phones ever support stuff like bluetooth keyboards.",
+      "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
