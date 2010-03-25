@@ -915,8 +915,7 @@ div.figure {
   padding: 0 0 20px 20px;
 }
 
-.sidebox,
-.sidebox-inner {
+.sidebox {
   border-left:1px solid #dee8f1;
   background-color:#ffffee;
   padding:8px 12px;
@@ -924,31 +923,25 @@ div.figure {
   width:260px;
 }
 
-.sidebox p,
-.sidebox-inner p {
+.sidebox p {
   margin-bottom: .25em;
 }
 
-.sidebox ul,
-.sidebox-inner ul {
+.sidebox ul {
   padding: 0 0 0 1.5em;
 }
 
-.sidebox li ul,
-.sidebox-inner li ul {
+.sidebox li ul {
   margin-top:0;
   margin-bottom:.1em;
 }
 
-.sidebox li,
-.sidebox-inner li {
+.sidebox li {
 padding:0 0 0 0em;
 }
 
 #jd-content .sidebox h2,
-#jd-content .sidebox h3,
-#jd-content .sidebox-inner h2,
-#jd-content .sidebox-inner h3 {
+#jd-content .sidebox h3 {
   border:none;
   font-size:1em;
   margin:0;
@@ -957,8 +950,7 @@ padding:0 0 0 0em;
   z-index:0;
 }
 
-.sidebox hr,
-.sidebox-inner hr {
+.sidebox hr {
   background-color:#ccc;
   border:none;
 }
