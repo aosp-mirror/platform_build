@@ -22,9 +22,6 @@
 PRODUCT_PACKAGES := \
     VoiceDialer
 
-# This is the list of locales included in AOSP builds
-PRODUCT_LOCALES := en_US en_GB fr_FR it_IT de_DE es_ES
-
 # Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \
     keyguard.no_require_sim=true \
@@ -40,6 +37,10 @@ PRODUCT_COPY_FILES := \
 # Pick up some sounds - stick with the short list to save space
 # on smaller devices.
 $(call inherit-product, frameworks/base/data/sounds/OriginalAudio.mk)
+
+# Get a list of languages. We use the small list to save space
+# on smaller devices.
+$(call inherit-product, build/target/product/languages_small.mk)
 
 $(call inherit-product, build/target/product/generic.mk)
 
