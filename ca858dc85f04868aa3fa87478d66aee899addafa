@@ -16,6 +16,91 @@
       "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwH///vk\u003d",
+        "filename": "target/board/generic_x86/AndroidBoard.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-03-26T05:01:25Z",
+      "side": 1,
+      "message": "Don\u0027t use this mechanism. you should use the \"include $(BUILD_PREBUILT)\" instead.. i.e.\n\ninclude $(CLEAR_VARS)\nLOCAL_MODULE :\u003d \u003cfile\u003e\nLOCAL_MODULE_TAGS :\u003d user\nLOCAL_MODULE_CLASS :\u003d \u003cthe right class\u003e\nLOCAL_MODULE_PATH :\u003d $(TARGET_ROOT_OUT)/\u003cfile\u003e\nLOCAL_SRC_FILES :\u003d \u003cfile\u003e\ninclude $(BUILD_PREBUILT)",
+      "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwH///vg\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-03-26T05:01:25Z",
+      "side": 1,
+      "message": "probably too big. We currently use 24M on pretty capable devices. you may want to go to 32M, but I think 128M may be too large. Not a biggy though.",
+      "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwH///vY\u003d",
+        "filename": "target/board/generic_x86/init.generic_x86.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-03-26T05:01:25Z",
+      "side": 1,
+      "message": "we shouldn\u0027t be doing this. this was a hack for eeepc.",
+      "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwH///vc\u003d",
+        "filename": "target/board/generic_x86/init.generic_x86.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-03-26T05:01:25Z",
+      "side": 1,
+      "message": "i thought all this code looked familiar ;) this is all old eeepc code",
+      "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwH///vo\u003d",
+        "filename": "target/product/generic_x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-03-26T05:01:25Z",
+      "side": 1,
+      "message": "i don\u0027t think this is really supported anymore. Noone has really been using it, and its most likely stale.",
+      "revId": "ca858dc85f04868aa3fa87478d66aee899addafa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
