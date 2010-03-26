@@ -165,3 +165,4 @@ librpc.so               0x9A400000
 libtrace_test.so        0x9A300000
 libsrec_jni.so          0x9A200000
 libjpeg.so              0x9A000000
+libbcc.so               0x99C00000
