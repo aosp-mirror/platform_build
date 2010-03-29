@@ -6,7 +6,7 @@
     <title>Redirecting...</title>
     <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
-      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>">
+      else ?>index.html<?cs /if ?>">
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
 <?cs else ?>
@@ -38,8 +38,7 @@
 
   <div id="jd-content">
     <?cs 
-    if:ndk ?><p><em><?cs 
-      var:ndk.date ?></em></p><?cs 
+    if:ndk ?><?cs 
     else ?><?cs 
       if:android.whichdoc == "online" ?><p><em><?cs 
       var:sdk.date ?></em></p><?cs 
@@ -120,7 +119,8 @@ computer. </p>
 <?cs /if ?> 
 <?cs # end if NDK ... the following is for the SDK ?>
 
-  <div class="toggle-content special">
+<?cs #  
+    <div class="toggle-content special">
     <p>The Android SDK has changed! If you've worked with the Android SDK before, 
     you will notice several important differences:</p>
     
@@ -146,15 +146,19 @@ computer. </p>
     href="adding-components.html">Adding SDK Components</a>.</p>
     </div>
     
-    <a href='#' class='toggle-content-button show' onclick="toggleContent(this);return false;">
+    <a href='#' class='toggle-content-button show' onclick="toggleContent(this,true);return false;">
       <span>show more</span><span style='display:none'>show less</span>
     </a>
   </div>
+?>
+  <p>Welcome Developers! If you are new to the Android SDK, please read the <a
+href="#quickstart">Quick Start</a>, below, for an overview of how to install and
+set up the SDK. </p>
 
-  <p>If you are new to the Android SDK, please read the <a href="#quickstart">Quick Start</a>,
-  below, for an overview of how to install and set up the SDK.</p>
-  
-  
+  <p>If you are already using the Android SDK and would like to update to the
+latest tools or platforms, please use the <em>Android SDK and AVD Manager</em>
+to get the components, rather than downloading a new SDK package.</p>
+
   <table class="download">
     <tr>
       <th>Platform</th>
