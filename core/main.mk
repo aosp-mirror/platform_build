@@ -1,3 +1,5 @@
+# Only use ANDROID_BUILD_SHELL to wrap around bash.
+# DO NOT use other shells such as zsh.
 ifdef ANDROID_BUILD_SHELL
 SHELL := $(ANDROID_BUILD_SHELL)
 else
