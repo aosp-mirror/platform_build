@@ -3,10 +3,14 @@
 # current configuration and platform, which
 # are not specific to what is being built.
 
+ifdef ANDROID_BUILD_SHELL
+SHELL := $(ANDROID_BUILD_SHELL)
+else
 # Use bash, not whatever shell somebody has installed as /bin/sh
 # This is repeated from main.mk, since envsetup.sh runs this file
 # directly.
 SHELL := /bin/bash
+endif
 
 # Tell python not to spam the source tree with .pyc files.  This
 # only has an effect on python 2.6 and above.
@@ -325,6 +329,3 @@ TARGET_AVAILABLE_SDK_VERSIONS := current \
 
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml
-
-
-
