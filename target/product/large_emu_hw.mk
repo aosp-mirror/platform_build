@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-# This is a generic phone product that isn't specialized for a specific device.
-# It includes the base Android platform.
+# This is a generic product for devices with large display but not specialized
+# for a specific device. It includes the base Android platform.
 
-PRODUCT_POLICY := android.policy_phone
+PRODUCT_POLICY := android.policy_mid
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
@@ -37,7 +37,6 @@ PRODUCT_PACKAGES := \
     Mms \
     Music \
     Provision \
-    Phone \
     QuickSearchBox \
     Settings \
     Sync \
@@ -50,4 +49,4 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 # Overrides
 PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
-PRODUCT_NAME := generic
+PRODUCT_NAME := large_emu_hw
