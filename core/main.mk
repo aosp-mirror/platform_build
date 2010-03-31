@@ -1,8 +1,13 @@
-
+# Only use ANDROID_BUILD_SHELL to wrap around bash.
+# DO NOT use other shells such as zsh.
+ifdef ANDROID_BUILD_SHELL
+SHELL := $(ANDROID_BUILD_SHELL)
+else
 # Use bash, not whatever shell somebody has installed as /bin/sh
 # This is repeated in config.mk, since envsetup.sh runs that file
 # directly.
 SHELL := /bin/bash
+endif
 
 # this turns off the suffix rules built into make
 .SUFFIXES:
