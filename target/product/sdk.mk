@@ -52,7 +52,7 @@ PRODUCT_PACKAGES := \
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
-	development/data/etc/vold.conf:system/etc/vold.conf \
+	system/core/rootdir/etc/vold.fstab:system/etc/vold.fstab \
 	frameworks/base/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
