@@ -21,6 +21,7 @@ PRODUCT_PACKAGES := \
 	AlarmClock \
 	Camera \
 	Calculator \
+	CarHome \
 	Development \
 	DrmProvider \
 	Email \
