@@ -226,9 +226,6 @@ endif
 PRODUCT_DEFAULT_WIFI_CHANNELS := \
 	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_WIFI_CHANNELS))
 
-# Which policy should this product use
-PRODUCT_POLICY := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_POLICY))
-
 # A list of words like <source path>:<destination path>.  The file at
 # the source path should be copied to the destination path when building
 # this product.  <destination path> is relative to $(PRODUCT_OUT), so
