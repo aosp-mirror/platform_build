@@ -31,14 +31,13 @@ public class ApiInfo {
         return mAllClasses.get(name);
     }
 
-    private void resolveInterfaces() {
+    public void resolveInterfaces() {
         for (ClassInfo c : mAllClasses.values()) {
             c.resolveInterfaces(this);
         }
     }
     
     public boolean isConsistent(ApiInfo otherApi) {
-        resolveInterfaces();
         boolean consistent = true;
         for (PackageInfo pInfo : mPackages.values()) {
             if (otherApi.getPackages().containsKey(pInfo.name())) {
