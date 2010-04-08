@@ -107,6 +107,7 @@ public class ApiCheck {
             xmlreader.parse(new InputSource(fileReader));
             ApiInfo apiInfo = handler.getApi();
             apiInfo.resolveSuperclasses();
+            apiInfo.resolveInterfaces();
             return apiInfo;
         } catch (SAXParseException e) {
             Errors.error(Errors.PARSE_ERROR,

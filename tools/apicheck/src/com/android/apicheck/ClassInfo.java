@@ -135,11 +135,7 @@ public class ClassInfo {
             consistent = false;
         }
         for (String iface : mInterfaceNames) {
-            boolean found = false;
-            for (ClassInfo c = cl; c != null && !found; c = c.mSuperClass) {
-                found = c.mInterfaceNames.contains(iface);
-            }
-            if (!found) {
+            if (!implementsInterface(cl, iface)) {
                 Errors.error(Errors.REMOVED_INTERFACE, cl.position(),
                         "Class " + qualifiedName() + " no longer implements " + iface);
             }
@@ -272,6 +268,26 @@ public class ClassInfo {
         }
         
         return consistent;
+    }
+
+    /**
+     * Returns true if {@code cl} implements the interface {@code iface} either
+     * by either being that interface, implementing that interface or extending
+     * a type that implements the interface.
+     */
+    private boolean implementsInterface(ClassInfo cl, String iface) {
+        if (cl.qualifiedName().equals(iface)) {
+            return true;
+        }
+        for (ClassInfo clImplements : cl.mInterfaces) {
+            if (implementsInterface(clImplements, iface)) {
+                return true;
+            }
+        }
+        if (cl.mSuperClass != null && implementsInterface(cl.mSuperClass, iface)) {
+            return true;
+        }
+        return false;
     }
 
     public void resolveInterfaces(ApiInfo apiInfo) {
