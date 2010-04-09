@@ -30,6 +30,7 @@ PRODUCT_PACKAGES := \
 	Gallery \
 	GPSEnable \
 	Launcher2 \
+	Protips \
 	Music \
 	Mms \
 	Settings \
