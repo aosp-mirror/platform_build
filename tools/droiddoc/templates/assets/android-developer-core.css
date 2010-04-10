@@ -129,7 +129,9 @@ li pre, li table, li img {
   margin:.5em 0 0 1em;
 }
 
-dd pre, dd table, dd img {
+dd pre,
+#jd-content dd table,
+#jd-content dd img {
   margin:1em 0 0 1em;
 }
 
