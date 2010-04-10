@@ -100,7 +100,6 @@
 #side-nav li a+a {
   padding: 0;
 }
-
 /*second level (nested) list*/
 #side-nav li li li a { 
   padding: 0 0 0 28px;
@@ -518,8 +517,7 @@ hr {
   color:#111;
   border-top:2px solid #ccc;
   padding: .5em 0 0;
-  margin: 1.5em 0 1em 0;
-  max-width:968px;
+  margin: 2em 0 1em 0;
 }
 
 #jd-content h3 {
@@ -543,6 +541,10 @@ hr {
   padding:0;
   margin:1em 0 .5em;
   position:inherit;
+}
+
+#jd-content table {
+  margin: 0 0 1em 1em;
 }
 
 #jd-content img {
@@ -807,13 +809,17 @@ pre.classic {
 div.figure {
   float:right;
   clear:right;
-  padding:0 0 20px 20px;
+  padding:1em 0 1em 2em;
+  background-color:#fff;
   /* width must be defined w/ an inline style matching the image width */
 }
 
-#jd-content div.figure img {
-  display:block;
-  margin:0 0 10px 0;
+p.img-caption {
+  margin: -0.5em 0 1em 1em; /* matches default img left-margin */
+}
+
+p.table-caption {
+  margin: 0 0 0.5em 1em; /* matches default table left-margin */
 }
 
 /* BEGIN quickview sidebar element styles */
@@ -967,7 +973,7 @@ table.image-caption {
 
 td.image-caption-i {
   font-size:92%;
-  padding:0;
+  padding:0 5px;
   margin:0;
   border:0;
 }
@@ -980,10 +986,6 @@ td.image-caption-i img {
 .image-list {
   width:24px;
   text-align:center;
-}
-
-.image-list .caption {
-  margin:0 2px;
 }
 
 td.image-caption-c {
