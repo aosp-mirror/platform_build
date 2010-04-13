@@ -337,18 +337,21 @@ endif
 # Bring in all modules that need to be built.
 ifneq ($(dont_bother),true)
 
-ifeq ($(HOST_OS),windows)
-SDK_ONLY := true
-endif
 ifeq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
+SDK_ONLY := true
+$(info Building the SDK under darwin-ppc is actually obsolete and unsupported.)
+$(error stop)
+endif
+
+ifeq ($(HOST_OS),windows)
 SDK_ONLY := true
 endif
 
 ifeq ($(SDK_ONLY),true)
 
 # ----- SDK for Windows ------
-# These configure the build targets that are available for the SDK under Cygwin.
-# The first section defines all the C/C++ tools that can be compiled under Cygwin,
+# These configure the build targets that are available for the SDK under Windows.
+# The first section defines all the C/C++ tools that can be compiled in C/C++,
 # the second section defines all the Java ones (assuming javac is available.)
 
 subdirs := \
@@ -369,10 +372,7 @@ subdirs := \
 	external/qemu \
 	external/sqlite/dist \
 	external/zlib \
-	frameworks/base/libs/utils \
-	frameworks/base/tools/aapt \
-	frameworks/base/tools/aidl \
-	frameworks/base/opengl/libs \
+	frameworks/base \
 	system/core/adb \
 	system/core/fastboot \
 	system/core/libcutils \
@@ -382,7 +382,6 @@ subdirs := \
 # The following can only be built if "javac" is available.
 # This check is used when building parts of the SDK under Cygwin.
 ifneq (,$(shell which javac 2>/dev/null))
-$(warning sdk-only: javac available.)
 subdirs += \
 	build/tools/signapk \
 	dalvik/dx \
@@ -399,11 +398,10 @@ subdirs += \
 	sdk/layoutopt \
 	development/apps \
 	development/tools/mkstubs \
-	frameworks/base/tools/layoutlib \
 	external/googleclient \
 	packages
 else
-$(warning sdk-only: javac not available.)
+$(warning SDK_ONLY: javac not available.)
 endif
 
 # Exclude tools/acp when cross-compiling windows under linux
