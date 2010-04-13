@@ -11,7 +11,6 @@ def:custom_masthead() ?>
                       elif:doc.type == "source" ?>source<?cs
                       elif:doc.type == "porting" ?>porting<?cs
                       elif:doc.type == "compatibility" ?>compatibility<?cs
-                      elif:doc.type == "downloads" ?>downloads<?cs
                       elif:doc.type == "community" ?>community<?cs
                       elif:doc.type == "about" ?>about<?cs /if ?>">
               <li id="home-link"><a href="<?cs var:toroot ?>index.html"><span>Home</span></a></li>
@@ -23,8 +22,6 @@ def:custom_masthead() ?>
                                   onClick="return loadLast('compatibility')"><span>Compatibility</span></a></li>
               <li id="community-link"><a href="<?cs var:toroot ?>community/index.html"
                                   onClick="return loadLast('community')"><span>Community</span></a></li>
-              <li id="downloads-link"><a href="<?cs var:toroot ?>downloads/index.html"
-                                  onClick="return loadLast('downloads')"><span>Downloads</span></a></li>
               <li id="about-link"><a href="<?cs var:toroot ?>about/index.html"
                                   onClick="return loadLast('about')"><span>About</span></a></li>
           </ul> 
@@ -102,21 +99,6 @@ def:custom_masthead() ?>
   </div>
 <?cs /def ?>
 
-<?cs def:downloads_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first side-nav-resizable" id="side-nav">
-      <div id="devdoc-nav"><?cs
-        include:"../../../../development/pdk/docs/downloads/downloads_toc.cs" ?>
-      </div>
-    </div> <!-- end side-nav -->
-    <script>
-      addLoadEvent(function() {
-        scrollIntoView("devdoc-nav");
-        });
-    </script>
-  </div>
-<?cs /def ?>
-
 <?cs def:compatibility_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
@@ -140,8 +122,6 @@ def:custom_masthead() ?>
       <?cs call:porting_nav() ?>
     <?cs elif:doc.type == "compatibility" ?>
       <?cs call:compatibility_nav() ?>
-    <?cs elif:doc.type == "downloads" ?>
-      <?cs call:downloads_nav() ?>
     <?cs elif:doc.type == "community" ?>
       <?cs call:community_nav() ?>
     <?cs elif:doc.type == "about" ?>

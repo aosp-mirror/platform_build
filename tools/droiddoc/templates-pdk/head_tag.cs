@@ -1,6 +1,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>assets-pdk/favicon.ico" />
+<link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>assets/favicon.ico" />
 <title><?cs 
   if:page.title ?><?cs 
     var:page.title ?><?cs
@@ -9,7 +9,7 @@
     /if ?> | <?cs
   /if ?>Android Open Source</title>
 <link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" />
-<link href="<?cs var:toroot ?>assets-pdk/pdk-local.css" rel="stylesheet" type="text/css" />
+<!-- <link href="<?cs var:toroot ?>assets-pdk/pdk-local.css" rel="stylesheet" type="text/css" /> -->
 <script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/jquery-resizable.min.js" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/android-developer-docs.js" type="text/javascript"></script>
@@ -28,7 +28,7 @@
 	}
 }
 </script>
-<script type="text/javascript>
+<script type="text/javascript">
   jQuery(document).ready(function() {
         jQuery("pre").addClass("prettyprint");
   });
