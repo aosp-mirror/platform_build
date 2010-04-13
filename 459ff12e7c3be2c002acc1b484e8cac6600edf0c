@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AAAAwn///+Q\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1001100
+      },
+      "writtenOn": "2010-04-13T17:52:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AAAAwn///+g\u003d",
+      "revId": "459ff12e7c3be2c002acc1b484e8cac6600edf0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAAwn///+c\u003d",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2010-04-13T17:44:04Z",
       "side": 1,
       "message": "Why is this a warning and not an error?  Unless there\u0027s a really good reason, I\u0027d rather just require that all the build tools be installed.",
+      "revId": "459ff12e7c3be2c002acc1b484e8cac6600edf0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwn///+M\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1001100
+      },
+      "writtenOn": "2010-04-13T17:52:50Z",
+      "side": 1,
+      "message": "We don\u0027t actually need Java when creating an actual SDK (since we only patch a linux SDK zip with the various tools *.exe) and that way we don\u0027t need to bother with it on the windows build servers.\n\nI only need java when building layoutlib as part of my Eclipse workspace for local testing.",
+      "parentUuid": "AAAAwn///+c\u003d",
       "revId": "459ff12e7c3be2c002acc1b484e8cac6600edf0c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
