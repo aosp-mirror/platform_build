@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAwn///+g\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-04-13T17:44:04Z",
+      "side": 1,
+      "message": "can you fix the tab please?",
+      "revId": "459ff12e7c3be2c002acc1b484e8cac6600edf0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAwn///+c\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-04-13T17:44:04Z",
+      "side": 1,
+      "message": "Why is this a warning and not an error?  Unless there\u0027s a really good reason, I\u0027d rather just require that all the build tools be installed.",
+      "revId": "459ff12e7c3be2c002acc1b484e8cac6600edf0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
