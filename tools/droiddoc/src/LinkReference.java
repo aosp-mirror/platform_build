@@ -59,6 +59,12 @@ public class LinkReference {
                               Pattern.CASE_INSENSITIVE);
 
     /**
+     * regex pattern to use when matching double-quoted reference text
+     */
+    private static final Pattern QUOTE_PATTERN
+            = Pattern.compile("^\"([^\"]*)\"[ \n\r\t]*$");
+
+    /**
      * Parse and resolve a link string.
      *
      * @param text the original text
@@ -321,15 +327,15 @@ public class LinkReference {
 
         if (text.startsWith("\"")) {
             // literal quoted reference (e.g., a book title)
-            result.label = text.substring(1);
-            skipHref = true;
-            if (!result.label.endsWith("\"")) {
+            Matcher matcher = QUOTE_PATTERN.matcher(text);
+            if (! matcher.matches()) {
                 Errors.error(Errors.UNRESOLVED_LINK, pos,
                         "unbalanced quoted link/see tag: " + text.trim());
                 result.makeError();
                 return result;
             }
-            result.label = result.label.substring(0, result.label.length() - 1);
+            skipHref = true;
+            result.label = matcher.group(1);
             result.kind = "@seeJustLabel";
         }
         else if (text.startsWith("<")) {
