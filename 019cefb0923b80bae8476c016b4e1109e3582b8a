@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAwn///6s\u003d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002670
+      },
+      "writtenOn": "2010-04-14T15:48:10Z",
+      "side": 1,
+      "message": "What about something like this?\n\nifneq (,$(shell which bash 2\u003e/dev/null))\nSHELL :\u003d $(shell which bash)\nelse ifneq (,$(filter $(shell uname),FreeBSD MidnightBSD OpenBSD))\nSHELL :\u003d /usr/local/bin/bash\nelse ifneq (,$(filter $(shell uname),DragonFly NetBSD))\nSHELL :\u003d /usr/pkg/bin/bash\nelse ifneq (,$(filter $(shell uname),MirBSD))\nSHELL :\u003d /usr/mpkg/bin/bash\nelse\nSHELL :\u003d /bin/bash\nendif",
+      "revId": "019cefb0923b80bae8476c016b4e1109e3582b8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
