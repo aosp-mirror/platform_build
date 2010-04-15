@@ -177,6 +177,10 @@ th {
   background-color:#dee8f1;
 }
 
+td p:last-child {
+  margin:0;
+}
+
 hr.blue {
   background-color:#DDF0F2;
   border:none;
