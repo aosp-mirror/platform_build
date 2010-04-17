@@ -195,7 +195,6 @@ LEX:= flex
 YACC:= bison -d
 DOXYGEN:= doxygen
 AAPT := $(HOST_OUT_EXECUTABLES)/aapt$(HOST_EXECUTABLE_SUFFIX)
-ACP := $(HOST_OUT_EXECUTABLES)/acp$(HOST_EXECUTABLE_SUFFIX)
 AIDL := $(HOST_OUT_EXECUTABLES)/aidl$(HOST_EXECUTABLE_SUFFIX)
 ICUDATA := $(HOST_OUT_EXECUTABLES)/icudata$(HOST_EXECUTABLE_SUFFIX)
 SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
@@ -213,6 +212,9 @@ E2FSCK := e2fsck
 JARJAR := java -jar $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
+
+# ACP is always for the build OS, not for the host OS
+ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)
 
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx

@@ -1238,6 +1238,15 @@ $(INTERNAL_SDK_TARGET): $(deps)
 		cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME) \
 	) || ( rm -rf $(PRIVATE_DIR) $@ && exit 44 )
 
+
+# Is a Windows SDK requested? If so, we need some definitions from here
+# in order to find the Linux SDK used to create the Windows one.
+ifneq ($(filter win_sdk,$(MAKECMDGOALS)),)
+LINUX_SDK_NAME := $(sdk_name)
+LINUX_SDK_DIR  := $(sdk_dir)
+include $(TOPDIR)development/build/tools/windows_sdk.mk
+endif
+
 endif # !simulator
 
 # -----------------------------------------------------------------
