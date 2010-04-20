@@ -3,29 +3,6 @@
 <html>
 <?cs include:"head_tag.cs" ?>
 <body class="<?cs var:class.since ?>">
-<script type="text/javascript">
-function toggleInherited(linkObj, expand) {
-    var base = linkObj.getAttribute("id");
-    var list = document.getElementById(base + "-list");
-    var summary = document.getElementById(base + "-summary");
-    var trigger = document.getElementById(base + "-trigger");
-    var a = $(linkObj);
-    if ( (expand == null && a.hasClass("closed")) || expand ) {
-        list.style.display = "none";
-        summary.style.display = "block";
-        trigger.src = "<?cs var:toroot ?>assets/images/triangle-opened.png";
-        a.removeClass("closed");
-        a.addClass("opened");
-    } else if ( (expand == null && a.hasClass("opened")) || (expand == false) ) {
-        list.style.display = "block";
-        summary.style.display = "none";
-        trigger.src = "<?cs var:toroot ?>assets/images/triangle-closed.png";
-        a.removeClass("opened");
-        a.addClass("closed");
-    }
-    return false;
-}
-</script>
 <?cs include:"header.cs" ?>
 
 <div class="g-unit" id="doc-content">
@@ -102,7 +79,7 @@ Summary:
   <?cs if:linkcount ?>&#124; <?cs /if ?><a href="#inhmethods">Inherited Methods</a>
 <?cs /if ?>
 <?cs if:inhattrs || inhconstants || inhfields || inhmethods || subcount(class.subclasses.direct) || subcount(class.subclasses.indirect) ?>
-&#124; <a href="#" onclick="return toggleAllSummaryInherited(this)">[Expand All]</a>
+&#124; <a href="#" onclick="return toggleAllClassInherited()" id="toggleAllClassInherited">[Expand All]</a>
 <?cs /if ?>
 </div><!-- end sum-details-links -->
 <div class="api-level">
