@@ -434,43 +434,6 @@ function scrollIntoView(nav) {
   }
 }
 
-function toggleAllInherited(linkObj, expand) {
-  var a = $(linkObj);
-  var table = $(a.parent().parent().parent());
-  var expandos = $(".jd-expando-trigger", table);
-  if ( (expand == null && a.text() == "[Expand]") || expand ) {
-    expandos.each(function(i) {
-      toggleInherited(this, true);
-    });
-    a.text("[Collapse]");
-  } else if ( (expand == null && a.text() == "[Collapse]") || (expand == false) ) {
-    expandos.each(function(i) {
-      toggleInherited(this, false);
-    });
-    a.text("[Expand]");
-  }
-  return false;
-}
-
-function toggleAllSummaryInherited(linkObj) {
-  var a = $(linkObj);
-  var content = $(a.parent().parent().parent());
-  var toggles = $(".toggle-all", content);
-  if (a.text() == "[Expand All]") {
-    toggles.each(function(i) {
-      toggleAllInherited(this, true);
-    });
-    a.text("[Collapse All]");
-  } else {
-    toggles.each(function(i) {
-      toggleAllInherited(this, false);
-    });
-    a.text("[Expand All]");
-  }
-  return false;
-}
-
-
 function changeTabLang(lang) {
   var nodes = $("#header-tabs").find("."+lang);
   for (i=0; i < nodes.length; i++) { // for each node in this language 

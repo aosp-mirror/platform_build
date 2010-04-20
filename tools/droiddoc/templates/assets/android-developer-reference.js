@@ -34,25 +34,25 @@ function buildApiLevelSelector() {
     $("#apiLevelCheckbox").attr("checked","checked");
     $("#api-level-toggle label").removeClass("disabled");
   }
-	
+  
   minLevel = $("body").attr("class");
   var select = $("#apiLevelSelector").html("").change(changeApiLevel);
   for (var i = maxLevel-1; i >= 0; i--) {
     var option = $("<option />").attr("value",""+SINCE_DATA[i]).append(""+SINCE_DATA[i]);
   //  if (SINCE_DATA[i] < minLevel) option.addClass("absent"); // always false for strings (codenames)
-	  select.append(option);
+    select.append(option);
   }
-	
+  
   // get the DOM element and use setAttribute cuz IE6 fails when using jquery .attr('selected',true)
-  var selectedLevelItem = $("#apiLevelSelector option[value='"+userApiLevel+"']").get(0); 
-  selectedLevelItem.setAttribute('selected',true); 
+  var selectedLevelItem = $("#apiLevelSelector option[value='"+userApiLevel+"']").get(0);
+  selectedLevelItem.setAttribute('selected',true);
 }
 
 function changeApiLevel() {
   var maxLevel = SINCE_DATA.length;
   var userApiLevelEnabled = readCookie(API_LEVEL_ENABLED_COOKIE);
-  var selectedLevel = maxLevel;	
-	
+  var selectedLevel = maxLevel;
+  
   if (userApiLevelEnabled == 0) {
     toggleVisisbleApis(selectedLevel, "body");
   } else {
@@ -78,17 +78,17 @@ function changeApiLevel() {
 }
 
 function toggleVisisbleApis(selectedLevel, context) {
-	var apis = $(".api",context);
-	apis.each(function(i) {
-		var obj = $(this);
-		var className = obj.attr("class");
-		var apiLevelIndex = className.lastIndexOf("-")+1;
-		var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
-		apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
-		var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
-		if (apiLevel > selectedLevel) obj.addClass("absent").attr("title","Requires API Level "+apiLevel+" or higher");
-		else obj.removeClass("absent").removeAttr("title");
-	});
+  var apis = $(".api",context);
+  apis.each(function(i) {
+    var obj = $(this);
+    var className = obj.attr("class");
+    var apiLevelIndex = className.lastIndexOf("-")+1;
+    var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
+    apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
+    var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
+    if (apiLevel > selectedLevel) obj.addClass("absent").attr("title","Requires API Level "+apiLevel+" or higher");
+    else obj.removeClass("absent").removeAttr("title");
+  });
 }
 
 /* NAVTREE */
@@ -185,8 +185,8 @@ function expand_node(me, node)
     node.plus_img.src = me.toroot + "assets/images/triangle-opened-small.png";
     node.expanded = true;
     
-    // perform api level toggling because new nodes are new to the DOM 
-	  var selectedLevel = $("#apiLevelSelector option:selected").val();
+    // perform api level toggling because new nodes are new to the DOM
+    var selectedLevel = $("#apiLevelSelector option:selected").val();
     toggleVisisbleApis(selectedLevel, "#side-nav");
   }
 }
@@ -257,8 +257,8 @@ function load_navtree_data(toroot) {
 function init_default_navtree(toroot) {
   init_navtree("nav-tree", toroot, NAVTREE_DATA);
   
-  // perform api level toggling because because the whole tree is new to the DOM 
-	var selectedLevel = $("#apiLevelSelector option:selected").val();
+  // perform api level toggling because because the whole tree is new to the DOM
+  var selectedLevel = $("#apiLevelSelector option:selected").val();
   toggleVisisbleApis(selectedLevel, "#side-nav");
 }
 
@@ -294,3 +294,97 @@ function init_navtree(navtree_id, toroot, root_nodes)
       });
   }
 }
+
+/* TOGGLE INHERITED MEMBERS */
+
+/* Toggle an inherited class (arrow toggle)
+ * @param linkObj  The link that was clicked.
+ * @param expand  'true' to ensure it's expanded. 'false' to ensure it's closed.
+ *                'null' to simply toggle.
+ */
+function toggleInherited(linkObj, expand) {
+    var base = linkObj.getAttribute("id");
+    var list = document.getElementById(base + "-list");
+    var summary = document.getElementById(base + "-summary");
+    var trigger = document.getElementById(base + "-trigger");
+    var a = $(linkObj);
+    if ( (expand == null && a.hasClass("closed")) || expand ) {
+        list.style.display = "none";
+        summary.style.display = "block";
+        trigger.src = toRoot + "assets/images/triangle-opened.png";
+        a.removeClass("closed");
+        a.addClass("opened");
+    } else if ( (expand == null && a.hasClass("opened")) || (expand == false) ) {
+        list.style.display = "block";
+        summary.style.display = "none";
+        trigger.src = toRoot + "assets/images/triangle-closed.png";
+        a.removeClass("opened");
+        a.addClass("closed");
+    }
+    return false;
+}
+
+/* Toggle all inherited classes in a single table (e.g. all inherited methods)
+ * @param linkObj  The link that was clicked.
+ * @param expand  'true' to ensure it's expanded. 'false' to ensure it's closed.
+ *                'null' to simply toggle.
+ */
+function toggleAllInherited(linkObj, expand) {
+  var a = $(linkObj);
+  var table = $(a.parent().parent().parent()); // ugly way to get table/tbody
+  var expandos = $(".jd-expando-trigger", table);
+  if ( (expand == null && a.text() == "[Expand]") || expand ) {
+    expandos.each(function(i) {
+      toggleInherited(this, true);
+    });
+    a.text("[Collapse]");
+  } else if ( (expand == null && a.text() == "[Collapse]") || (expand == false) ) {
+    expandos.each(function(i) {
+      toggleInherited(this, false);
+    });
+    a.text("[Expand]");
+  }
+  return false;
+}
+
+/* Toggle all inherited members in the class (link in the class title)
+ */
+function toggleAllClassInherited() {
+  var a = $("#toggleAllClassInherited"); // get toggle link from class title
+  var toggles = $(".toggle-all", $("#doc-content"));
+  if (a.text() == "[Expand All]") {
+    toggles.each(function(i) {
+      toggleAllInherited(this, true);
+    });
+    a.text("[Collapse All]");
+  } else {
+    toggles.each(function(i) {
+      toggleAllInherited(this, false);
+    });
+    a.text("[Expand All]");
+  }
+  return false;
+}
+
+/* Expand all inherited members in the class. Used when initiating page search */
+function ensureAllInheritedExpanded() {
+  var toggles = $(".toggle-all", $("#doc-content"));
+  toggles.each(function(i) {
+    toggleAllInherited(this, true);
+  });
+  $("#toggleAllClassInherited").text("[Collapse All]");
+}
+
+
+/* HANDLE KEY EVENTS
+ * - Listen for Ctrl+F (Cmd on Mac) and expand all inherited members (to aid page search)
+ */
+var agent = navigator['userAgent'].toLowerCase();
+var mac = agent.indexOf("macintosh") != -1;
+
+$(document).keydown( function(e) {
+var control = mac ? e.metaKey && !e.ctrlKey : e.ctrlKey; // get ctrl key
+  if (control && e.which == 70) {  // 70 is "F"
+    ensureAllInheritedExpanded();
+  }
+});
