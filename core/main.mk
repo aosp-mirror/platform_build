@@ -702,6 +702,7 @@ $(call dist-for-goals, droid, \
 	$(INSTALLED_BUILD_PROP_TARGET) \
 	$(BUILT_TARGET_FILES_PACKAGE) \
 	$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
+	$(INSTALLED_RAMDISK_TARGET) \
  )
 
 # Tests are installed in userdata.img.  If we're building the tests
