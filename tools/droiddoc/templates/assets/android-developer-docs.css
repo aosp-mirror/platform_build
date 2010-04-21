@@ -806,16 +806,26 @@ pre.classic {
   padding:0;
 }
 
+p.img-caption {
+  margin: -0.5em 0 1em 1em; /* matches default img left-margin */
+}
+
 div.figure {
   float:right;
   clear:right;
-  padding:1em 0 1em 2em;
+  margin:1em 0 0 3em;
+  padding:0;
   background-color:#fff;
   /* width must be defined w/ an inline style matching the image width */
 }
 
-p.img-caption {
-  margin: -0.5em 0 1em 1em; /* matches default img left-margin */
+#jd-content
+div.figure img {
+  margin: 0 0 1em;
+}
+
+div.figure p.img-caption {
+  margin: -0.5em 0 1em 0;
 }
 
 p.table-caption {
@@ -914,19 +924,21 @@ p.table-caption {
 /* Begin sidebox sidebar element styles */
 
 .sidebox-wrapper {
-  float: right;
-  width:300px;
+  float:right;
+  clear:right;
+  width:310px; /* +35px padding */
   background-color:#fff;
-  margin: 0;
-  padding: 0 0 20px 20px;
+  margin:0;
+  padding:0 0 20px 35px;
 }
 
 .sidebox {
   border-left:1px solid #dee8f1;
   background-color:#ffffee;
+  margin:0;
   padding:8px 12px;
-  font-size:90%;
-  width:260px;
+  font-size:0.9em;
+  width:285px; /* +24px padding; +1px border */
 }
 
 .sidebox p {
