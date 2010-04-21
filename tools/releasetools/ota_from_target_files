@@ -44,10 +44,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
 
-  -m  (--script_mode)  <mode>
-      Specify 'amend' or 'edify' scripts, or 'auto' to pick
-      automatically (this is the default).
-
 """
 
 import sys
@@ -68,9 +64,7 @@ import time
 import zipfile
 
 import common
-import amend_generator
 import edify_generator
-import both_generator
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = "build/target/product/security/testkey"
@@ -81,7 +75,6 @@ OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
-OPTIONS.script_mode = 'auto'
 OPTIONS.worker_threads = 3
 
 def MostPopularKey(d, default):
@@ -343,15 +336,10 @@ fi
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
-  if OPTIONS.script_mode == "auto":
-    script = both_generator.BothGenerator(2)
-  elif OPTIONS.script_mode == "amend":
-    script = amend_generator.AmendGenerator()
-  else:
-    # TODO: how to determine this?  We don't know what version it will
-    # be installed on top of.  For now, we expect the API just won't
-    # change very often.
-    script = edify_generator.EdifyGenerator(2)
+  # TODO: how to determine this?  We don't know what version it will
+  # be installed on top of.  For now, we expect the API just won't
+  # change very often.
+  script = edify_generator.EdifyGenerator(3)
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
@@ -574,20 +562,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = GetRecoveryAPIVersion(source_zip)
   target_version = GetRecoveryAPIVersion(target_zip)
 
-  if OPTIONS.script_mode == 'amend':
-    script = amend_generator.AmendGenerator()
-  elif OPTIONS.script_mode == 'edify':
-    if source_version == 0:
-      print ("WARNING: generating edify script for a source that "
-             "can't install it.")
-    script = edify_generator.EdifyGenerator(source_version)
-  elif OPTIONS.script_mode == 'auto':
-    if source_version > 0:
-      script = edify_generator.EdifyGenerator(source_version)
-    else:
-      script = amend_generator.AmendGenerator()
-  else:
-    raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
+  if source_version == 0:
+    print ("WARNING: generating edify script for a source that "
+           "can't install it.")
+  script = edify_generator.EdifyGenerator(source_version)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -835,8 +813,6 @@ def main(argv):
       OPTIONS.omit_prereq = True
     elif o in ("-e", "--extra_script"):
       OPTIONS.extra_script = a
-    elif o in ("-m", "--script_mode"):
-      OPTIONS.script_mode = a
     elif o in ("--worker_threads"):
       OPTIONS.worker_threads = int(a)
     else:
@@ -844,23 +820,19 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:m:",
+                             extra_opts="b:k:i:d:wne:",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
                                               "wipe_user_data",
                                               "no_prereq",
                                               "extra_script=",
-                                              "script_mode=",
                                               "worker_threads="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
-
-  if OPTIONS.script_mode not in ("amend", "edify", "auto"):
-    raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
