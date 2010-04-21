@@ -177,6 +177,10 @@ th {
   background-color:#dee8f1;
 }
 
+td p:last-child {
+  margin:0;
+}
+
 hr.blue {
   background-color:#DDF0F2;
   border:none;
@@ -519,7 +523,7 @@ div.indent {
   padding-right: 6px;
   padding-top: 1px;
   padding-bottom: 1px;
-  font-size: .8em;
+  font-size: 0.81em;
   border: none;
   margin: 0;
   line-height: 1.05em;
