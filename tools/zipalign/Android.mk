@@ -18,17 +18,14 @@ LOCAL_STATIC_LIBRARIES := \
 	libutils \
 	libcutils
 
-LOCAL_LDLIBS := -lz
-
 ifeq ($(HOST_OS),linux)
 LOCAL_LDLIBS += -lrt
 endif
 
-# dunno if we need this, but some of the other tools include it
-ifeq ($(HOST_OS),windows)
-ifeq ($(strip $(USE_CYGWIN),),)
-LOCAL_LDLIBS += -lws2_32
-endif
+ifneq ($(strip $(USE_MINGW)),)
+LOCAL_STATIC_LIBRARIES += libz
+else
+LOCAL_LDLIBS += -lz
 endif
 
 LOCAL_MODULE := zipalign
