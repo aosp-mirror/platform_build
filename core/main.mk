@@ -179,6 +179,9 @@ is_sdk_build :=
 ifneq ($(filter sdk,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
+ifneq ($(filter win_sdk,$(MAKECMDGOALS)),)
+is_sdk_build := true
+endif
 ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
@@ -254,6 +257,7 @@ ifdef is_sdk_build
 ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
+
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
 tags_to_install := user debug eng

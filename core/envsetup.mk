@@ -68,8 +68,16 @@ endif
 ifneq (,$(findstring CYGWIN,$(UNAME)))
 	HOST_OS := windows
 endif
+
+# BUILD_OS is the real host doing the build.
+BUILD_OS := $(HOST_OS)
+
+# Under Linux, if USE_MINGW is set, we change HOST_OS to Windows to build the
+# Windows SDK. Only a subset of tools and SDK will manage to build properly.
+ifeq ($(HOST_OS),linux)
 ifneq ($(USE_MINGW),)
 	HOST_OS := windows
+endif
 endif
 
 ifeq ($(HOST_OS),)
@@ -85,6 +93,8 @@ endif
 ifneq (,$(findstring Power,$(UNAME)))
 	HOST_ARCH := ppc
 endif
+
+BUILD_ARCH := $(HOST_ARCH)
 
 ifeq ($(HOST_ARCH),)
 $(error Unable to determine HOST_ARCH from uname -sm: $(UNAME)!)
@@ -168,6 +178,8 @@ HOST_OUT_release := $(HOST_OUT_ROOT_release)/$(HOST_OS)-$(HOST_ARCH)
 HOST_OUT_debug := $(HOST_OUT_ROOT_debug)/$(HOST_OS)-$(HOST_ARCH)
 HOST_OUT := $(HOST_OUT_$(HOST_BUILD_TYPE))
 
+BUILD_OUT := $(OUT_DIR)/host/$(BUILD_OS)-$(BUILD_ARCH)
+
 ifeq ($(TARGET_SIMULATOR),true)
   # Any arch- or os-specific parts of the simulator (everything
   # under product/) are actually host-dependent.
@@ -184,6 +196,8 @@ HOST_COMMON_OUT_ROOT := $(HOST_OUT_ROOT)/common
 PRODUCT_OUT := $(TARGET_PRODUCT_OUT_ROOT)/$(TARGET_DEVICE)
 
 OUT_DOCS := $(TARGET_COMMON_OUT_ROOT)/docs
+
+BUILD_OUT_EXECUTABLES:= $(BUILD_OUT)/bin
 
 HOST_OUT_EXECUTABLES:= $(HOST_OUT)/bin
 HOST_OUT_SHARED_LIBRARIES:= $(HOST_OUT)/lib
