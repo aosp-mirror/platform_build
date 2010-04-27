@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAx3///2E\u003d",
+        "filename": "target/board/generic_x86/buildspec-generic_x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-04-27T19:14:30Z",
+      "side": 1,
+      "message": "what\u0027s the purpose of this file?",
+      "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAx3///2A\u003d",
+        "filename": "target/board/generic_x86/init.generic_x86.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-04-27T19:14:30Z",
+      "side": 1,
+      "message": "it\u0027s sad that these hacks from eeepc are still being kept.\n\nWe should have a warning that says \"NOT SAFE FOR SHIP\"",
+      "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAx3///2I\u003d",
+        "filename": "tools/applypatch/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-04-27T19:14:30Z",
+      "side": 1,
+      "message": "does this not work for sh and other archs? or does it only break on x86?",
+      "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
