@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AAAAx3///2U\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-04-27T19:17:22Z",
+      "side": 1,
+      "message": "It would be nice if you could define this to \"x86\" instead of \"none\". This would allow testing of NDK-generated x86 binaries !",
+      "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAAx3///2E\u003d",
         "filename": "target/board/generic_x86/buildspec-generic_x86.mk",
         "patchSetId": 2
