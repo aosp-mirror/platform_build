@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "AAAAx3///ws\u003d",
+        "filename": "target/board/generic_x86/buildspec-generic_x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-04-28T01:03:23Z",
+      "side": 1,
+      "message": "I was not asking about the variable. I was asking why you have this buildspec file? You don\u0027t need it for anything.",
+      "parentUuid": "AAAAx3///1o\u003d",
+      "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAAx3///2A\u003d",
         "filename": "target/board/generic_x86/init.generic_x86.sh",
         "patchSetId": 2
@@ -101,6 +119,24 @@
       "side": 1,
       "message": "Why do you feel that the dhcp tweak is an eepc hack?\r\nIt can easily be dropped... but can be useful for an emulator.",
       "parentUuid": "AAAAx3///2A\u003d",
+      "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAx3///wo\u003d",
+        "filename": "target/board/generic_x86/init.generic_x86.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2010-04-28T01:03:23Z",
+      "side": 1,
+      "message": "because you are:\n- Assuming that eth0 exists ALWAYS by the time you run this service\n- Assuming that it\u0027s connected.\n- \"Managing\" network interfaces behind the framework\u0027s back.",
+      "parentUuid": "AAAAx3///1k\u003d",
       "revId": "8fdbfe4784589139ae6c8c8e42ab31349773ba9c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
