@@ -986,8 +986,12 @@ $(INSTALLED_FILES_FILE): $(INSTALLED_SYSTEMIMAGE)
 
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
+ifneq ($(filter sdk,$(MAKECMDGOALS)),)
 $(call dist-for-goals, sdk, $(INSTALLED_FILES_FILE))
+endif
+ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
 $(call dist-for-goals, sdk_addon, $(INSTALLED_FILES_FILE))
+endif
 
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".

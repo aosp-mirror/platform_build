@@ -691,6 +691,8 @@ droidcore: files \
 .PHONY: droid tests
 droid tests: droidcore
 
+# Dist for droid if droid is among the cmd goals, or no cmd goal is given.
+ifneq ($(filter droid,$(MAKECMDGOALS))$(filter ||,|$(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))|),)
 $(call dist-for-goals, droid, \
 	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
 	$(INTERNAL_OTA_PACKAGE_TARGET) \
@@ -709,7 +711,7 @@ ifeq ($(EMMA_INSTRUMENT),true)
 $(call dist-for-goals, droid, \
 	$(EMMA_META_ZIP) \
  )
-endif
+endif  # EMMA_INSTRUMENT
 
 # Tests are installed in userdata.img.  If we're building the tests
 # variant, copy it for "make tests dist".  Also copy a zip of the
@@ -720,7 +722,8 @@ $(call dist-for-goals, droid, \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(BUILT_TESTS_ZIP_PACKAGE) \
  )
-endif
+endif  # tests
+endif  # droid in $(MAKECMDGOALS)
 
 .PHONY: docs
 docs: $(ALL_DOCS)
@@ -728,10 +731,12 @@ docs: $(ALL_DOCS)
 .PHONY: sdk
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
+ifneq ($(filter sdk,$(MAKECMDGOALS)),)
 $(call dist-for-goals,sdk, \
 	$(ALL_SDK_TARGETS) \
 	$(SYMBOLS_ZIP) \
  )
+endif
 
 .PHONY: samplecode
 sample_MODULES := $(sort $(call get-tagged-modules,samples))
