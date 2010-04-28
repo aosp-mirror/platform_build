@@ -101,7 +101,7 @@
   padding: 0;
 }
 /*second level (nested) list*/
-#side-nav li li li a { 
+#side-nav li li li a {
   padding: 0 0 0 28px;
 }
 /*third level (nested) list*/
@@ -356,7 +356,7 @@ links to summary tables) */
   color:#999;
 }
 
-div.api-level { 
+div.api-level {
   font-size:.8em;
   font-weight:normal;
   color:#999;
@@ -365,7 +365,7 @@ div.api-level {
   margin-top:-25px;
 }
 
-#api-info-block div.api-level { 
+#api-info-block div.api-level {
   font-size:1.3em;
   font-weight:bold;
   float:none;
@@ -595,7 +595,7 @@ description */
   margin:.5em .25em;
 }
 
-/* API reference: a block containing 
+/* API reference: a block containing
 a detailed description, a params table,
 seealso list, etc */
 .jd-tagdata {
@@ -759,7 +759,7 @@ p.warning b, p.warning strong {
 }
 
 li p.note, li p.warning {
-  margin: .5em 0 0 0;  
+  margin: .5em 0 0 0;
   padding: .2em .5em .2em .9em;
 }
 
@@ -959,7 +959,9 @@ padding:0 0 0 0em;
 }
 
 #jd-content .sidebox h2,
-#jd-content .sidebox h3 {
+#jd-content .sidebox h3,
+#jd-content .sidebox h4,
+#jd-content .sidebox h5 {
   border:none;
   font-size:1em;
   margin:0;
@@ -1144,8 +1146,8 @@ table.download th {
 
 /* INLAY 180 COPY and 240PX EXTENSION */
 /* modified to 43px so that all browsers eliminate the package panel h-scroll */
-.g-tpl-240 .g-unit, 
-.g-unit .g-tpl-240 .g-unit, 
+.g-tpl-240 .g-unit,
+.g-unit .g-tpl-240 .g-unit,
 .g-unit .g-unit .g-tpl-240 .g-unit {
   display: block;
   margin: 0 0 0 243px;
@@ -1161,8 +1163,8 @@ table.download th {
   float: left;
 }
 /* 240px alt */
-.g-tpl-240-alt .g-unit, 
-.g-unit .g-tpl-240-alt .g-unit, 
+.g-tpl-240-alt .g-unit,
+.g-unit .g-tpl-240-alt .g-unit,
 .g-unit .g-unit .g-tpl-240-alt .g-unit {
   display: block;
   margin: 0 243px 0 0;
@@ -1179,8 +1181,8 @@ table.download th {
 }
 
 /* 180px */
-.g-tpl-180 .g-unit, 
-.g-unit .g-tpl-180 .g-unit, 
+.g-tpl-180 .g-unit,
+.g-unit .g-tpl-180 .g-unit,
 .g-unit .g-unit .g-tpl-180 .g-unit {
   display: block;
   margin: 0 0 0 180px;
@@ -1196,8 +1198,8 @@ table.download th {
   float: left;
 }
 /* 180px alt */
-.g-tpl-180-alt .g-unit, 
-.g-unit .g-tpl-180-alt .g-unit, 
+.g-tpl-180-alt .g-unit,
+.g-unit .g-tpl-180-alt .g-unit,
 .g-unit .g-unit .g-tpl-180-alt .g-unit {
   display: block;
   margin: 0 180px 0 0;
@@ -1286,7 +1288,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; }
     word-wrap: break-word; /* IE 5.5+ */
   }
 
-  h1, h2, h3, h4, h5, h6 { 
+  h1, h2, h3, h4, h5, h6 {
     page-break-after: avoid;
   }
 
