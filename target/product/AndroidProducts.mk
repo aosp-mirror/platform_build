@@ -30,4 +30,5 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/min_dev.mk \
     $(LOCAL_DIR)/sdk.mk \
     $(LOCAL_DIR)/sim.mk \
+    $(LOCAL_DIR)/generic_x86.mk \
     $(LOCAL_DIR)/generic_with_google.mk
