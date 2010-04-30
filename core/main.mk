@@ -400,7 +400,7 @@ ifneq (,$(shell which javac 2>/dev/null))
 subdirs += \
 	build/tools/signapk \
 	dalvik/dx \
-	dalvik/libcore \
+	libcore \
 	sdk/archquery \
 	sdk/androidprefs \
 	sdk/apkbuilder \
