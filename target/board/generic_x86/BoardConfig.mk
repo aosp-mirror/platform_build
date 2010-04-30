@@ -9,12 +9,10 @@ USE_CUSTOM_RUNTIME_HEAP_MAX := "32M"
 TARGET_CPU_ABI := x86
 TARGET_USERIMAGES_USE_EXT2 := true
 TARGET_BOOTIMAGE_USE_EXT2 := true
-TARGET_USE_DISKINSTALLER := false
 
-# For KVM
-# BOARD_KERNEL_CMDLINE := console=tty0 console=ttyS1,115200n8 console=tty0 androidboot.hardware=generic_x86 vga=788
-
-# For mrst_ref
-BOARD_KERNEL_CMDLINE := init=/init pci=noearly console=ttyS0 console=ttyS1,115200n8 console=tty0 earlyprintk=mrst loglevel=8 notsc no_percpu_apbt androidboot.hardware=generic_x86 s0ix_latency=160
-
+BOARD_KERNEL_CMDLINE := init=/init console=tty0 androidboot.hardware=generic_x86 vga=788
+TARGET_USE_DISKINSTALLER := true
+TARGET_DISK_LAYOUT_CONFIG := build/target/board/generic_x86/disk_layout.conf
 BOARD_BOOTIMAGE_MAX_SIZE := 8388608
+BOARD_SYSLOADER_MAX_SIZE := 7340032
+BOARD_FLASH_BLOCK_SIZE := 512
