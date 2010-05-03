@@ -18,7 +18,7 @@
 # WHEN DOING SO, DELETE ANY "add-clean-step" ENTRIES THAT HAVE PILED UP.
 # **********************************************************************
 #
-INTERNAL_CLEAN_BUILD_VERSION := 3
+INTERNAL_CLEAN_BUILD_VERSION := 4
 #
 # ***********************************************************************
 # Do not touch INTERNAL_CLEAN_BUILD_VERSION if you've added a clean step!
@@ -54,59 +54,6 @@ INTERNAL_CLEAN_BUILD_VERSION := 3
 #$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/core_intermediates)
 #$(call add-clean-step, find $(OUT_DIR) -type f -name "IGTalkSession*" -print0 | xargs -0 rm -f)
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.google.android.datamessaging_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sholes/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/pvasflocal.cfg)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sholes)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/Silence.ogg)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/media/audio/ringtones/notifications/Silence.ogg)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/passion/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/com.google.android.datamessaging_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libcrypto_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libssl_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES/openssl_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sholes/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/bugreport)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libwebcore_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/obj/target/common/obj/APPS/VoiceSearch_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/VoiceSearch_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libgps-rpc_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES/pdsm_atl_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libgps_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/*/system/app/Launcher.apk)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src/core/java/android/bluetooth/)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/product/sholes/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/com.amazon.mp3_intermediates)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/com.amazon.mp3.apk)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app)
-$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libhardware_legacy_intermediates)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
