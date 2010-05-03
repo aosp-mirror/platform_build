@@ -210,7 +210,7 @@ MKEXT2BOOTIMG := external/genext2fs/mkbootimg_ext2.sh
 MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := tune2fs
 E2FSCK := e2fsck
-JARJAR := java -jar $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
+JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 

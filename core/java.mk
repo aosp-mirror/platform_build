@@ -197,7 +197,7 @@ ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(JARJAR)
 	@echo JarJar: $@
-	$(hide) $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
 $(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
@@ -205,7 +205,7 @@ $(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(ACP)
 endif
 
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_full_names_jar): $(full_classes_emma_jar) | $(ACP)
+$(full_classes_full_names_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) $< $@
 
