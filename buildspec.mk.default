@@ -106,9 +106,9 @@ ifndef WEBCORE_INSTRUMENTATION
 #WEBCORE_INSTRUMENTATION:=true
 endif
 
-# To enable SVG in webcore define ENABLE_SVG:=true
+# To disable SVG in webcore define ENABLE_SVG:=false
 ifndef ENABLE_SVG
-#ENABLE_SVG:=true
+#ENABLE_SVG:=false
 endif
 
 # when the build system changes such that this file must be updated, this
