@@ -191,6 +191,7 @@ on boot
 
     class_start default
 
+
 ## Daemon processes to be run by init.
 ##
 service console /system/bin/sh
@@ -241,3 +242,13 @@ service brick /system/bin/wipe nuke
 
 service installd /system/bin/installd
     socket installd stream 600 system system
+
+#
+# Set by PRODUCT_PROPERTY_OVERRIDES in <product>.mk
+on property:net.eth0.startonboot=1
+    setprop ro.com.android.dataroaming true
+    start start_eth0
+
+service start_eth0 /system/bin/netcfg eth0 dhcp
+    oneshot
+    disabled
