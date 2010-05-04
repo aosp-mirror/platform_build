@@ -1272,7 +1272,12 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 3401,3600,$(1)),$(2))
         @$(call emit-line,$(wordlist 3601,3800,$(1)),$(2))
         @$(call emit-line,$(wordlist 3801,4000,$(1)),$(2))
-        @$(if $(wordlist 4001,4002,$(1)),$(error Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 4001,4200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4201,4400,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4401,4600,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4601,4800,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4801,5000,$(1)),$(2))
+        @$(if $(wordlist 5001,5002,$(1)),$(error Too many words ($(words $(1)))))
 endef
 
 # For a list of jar files, unzip them to a specified directory,
