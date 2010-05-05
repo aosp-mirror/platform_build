@@ -1,6 +1,6 @@
-The generic_x86 board target provides basic services on
-very basic hardware. To build with generic_x86, you will
-need an appropriate kernel for your device (or emulation).
+The generic_x86 board target provides basic services on very basic
+hardware (really for an emulation). To build with generic_x86, you will
+need an appropriate kernel for your emulation (or device).
 
 A1. Create a new top level directory and pull the AOSP repository
         mkdir $HOME/AOSP
@@ -23,4 +23,11 @@ A4. Build
         make -j8
 
 The build will generate some image files whose format may or may not be correct for your
-device.
+device. You can build an installer image disk for the VirtualBox emulator using the command:
+
+A5. Build a VirtualBox installer image
+	cd $HOME/AOSP
+        source build/envsetup.sh
+        lunch generic_x86-eng
+        make -j8 installer_vdi
+
