@@ -97,12 +97,14 @@ TARGET_GLOBAL_CFLAGS += \
 			-ffunction-sections \
 			-funwind-tables \
 			-fstack-protector \
+			-Wa,--noexecstack \
 			-fno-short-enums \
 			$(arch_variant_cflags) \
 			-include $(android_config_h) \
 			-I $(arch_include_dir)
 
 TARGET_GLOBAL_LDFLAGS += \
+			-Wl,-z,noexecstack \
 			$(arch_variant_ldflags)
 
 # We only need thumb interworking in cases where thumb support
