@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAyX///8k\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1327,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-05-05T18:15:52Z",
+      "side": 1,
+      "message": "can you remove the TODO comment too, since you just did it :) ?",
+      "revId": "f8d8511d670271d173e61440f156b0759d5300ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
