@@ -949,7 +949,7 @@ endef
 
 define extract-and-include-target-whole-static-libs
 $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
-	@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
+	$(hide) echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
 	ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(lib)))_objs;\
 	rm -rf $$ldir; \
 	mkdir -p $$ldir; \
@@ -969,7 +969,8 @@ define transform-o-to-static-lib
 @rm -f $@
 $(extract-and-include-target-whole-static-libs)
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
-$(hide) echo $^ | xargs $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
+$(hide) echo $(filter %.o, $^) | \
+    xargs $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
 endef
 
 ###########################################################
