@@ -1,4 +1,3 @@
-
 # 0xC0000000 - 0xFFFFFFFF Kernel
 # 0xB0100000 - 0xBFFFFFFF Thread 0 Stack
 # 0xB0000000 - 0xB00FFFFF Linker
@@ -9,160 +8,200 @@
 # 0x10000000 - 0x3FFFFFFF Thread Stacks
 # 0x00000000 - 0x0FFFFFFF .text / .data / heap
 
+# Note: The general rule is that libraries should be aligned on 1MB
+# boundaries. For ease of updating this file, you will find a comment
+# on each line, indicating the observed size of the library, which is
+# one of:
+#
+#     [<64K] observed to be less than 64K
+#     [~1M] rounded up, one megabyte (similarly for other sizes)
+#     [???] no size observed, assumed to be one megabyte
+
 # core system libraries
-libdl.so                0xAFF00000
-libc.so                 0xAFE00000
-libstdc++.so            0xAFD00000
-libm.so                 0xAFC00000
-liblog.so               0xAFBC0000
-libcutils.so            0xAFB00000
-libthread_db.so         0xAFA00000
-libz.so                 0xAF900000
-libevent.so             0xAF800000
-libssl.so               0xAF700000
-libcrypto.so            0xAF500000
-libsysutils.so          0xAF400000
+libdl.so                0xAFF00000 # [<64K]
+libc.so                 0xAFD00000 # [~2M]
+libstdc++.so            0xAFC00000 # [<64K]
+libm.so                 0xAFB00000 # [~1M]
+liblog.so               0xAFA00000 # [<64K]
+libcutils.so            0xAF900000 # [~1M]
+libthread_db.so         0xAF800000 # [<64K]
+libz.so                 0xAF700000 # [~1M]
+libevent.so             0xAF600000 # [???]
+libssl.so               0xAF400000 # [~2M]
+libcrypto.so            0xAF000000 # [~5M]
+libsysutils.so          0xAEF00000 # [~1M]
 
 # bluetooth
-liba2dp.so              0xAEE00000
-audio.so                0xAED00000
-input.so                0xAEC00000
-libbluetoothd.so        0xAEB00000
-libbluedroid.so         0xAEA00000
-libbluetooth.so         0xAE900000
-libdbus.so              0xAE800000
+liba2dp.so              0xAEE00000 # [~1M]
+audio.so                0xAED00000 # [~1M]
+input.so                0xAEC00000 # [~1M]
+libbluetoothd.so        0xAEA00000 # [~2M]
+libbluedroid.so         0xAE900000 # [<64K]
+libbluetooth.so         0xAE800000 # [~1M]
+libdbus.so              0xAE700000 # [~1M]
 
 # extended system libraries
-libril.so               0xAE400000
-libreference-ril.so     0xAE000000
-libwpa_client.so        0xADC00000
-libnetutils.so          0xADB00000
+libril.so               0xAE600000 # [~1M]
+libreference-ril.so     0xAE500000 # [~1M]
+libwpa_client.so        0xAE400000 # [<64K]
+libnetutils.so          0xAE300000 # [~1M]
 
 # core dalvik runtime support
-libandroid_servers.so   0xAD900000
-#libicudata.so           0xAD600000
-libicuuc.so             0xAD500000
-libicui18n.so           0xAD400000
-libandroid_runtime.so   0xAD300000
-libnativehelper.so      0xAD200000
-libdvm-ARM.so           0xAD100000
-libdvm.so               0xAD000000
+libandroid_servers.so   0xAE200000 # [~1M]
+libicuuc.so             0xADE00000 # [~4M]
+libicui18n.so           0xAD900000 # [~5M]
+libandroid_runtime.so   0xAD300000 # [~6M]
+libnativehelper.so      0xAD100000 # [~2M]
+libdvm-ARM.so           0xAD000000 # [???]
+libdvm.so               0xACA00000 # [~6M]
+# Note: libicudata.so intentionally omitted
 
 # graphics
-libpixelflinger.so      0xACF00000
+libpixelflinger.so      0xAC900000 # [~1M]
 # libcorecg is for backward-compatibility with donut
-libcorecg.so            0xACE00000
-libsurfaceflinger_client.so 0xACD80000
-libsurfaceflinger.so    0xACD00000
-libGLES_android.so      0xACC80000
-libagl.so               0xACC00000
+libcorecg.so            0xAC800000 # [???]
+libsurfaceflinger_client.so 0xAC700000 # [~1M]
+libsurfaceflinger.so    0xAC500000 # [~2M]
+libGLES_android.so      0xAC400000 # [~1M]
+libagl.so               0xAC300000 # [???]
 
-libGLESv1_CM.so         0xACB00000
-libGLESv2.so            0xACA00000
-libOpenVG_CM.so         0xAC900000
-libOpenVGU_CM.so        0xAC800000
-libEGL.so               0xAC700000
-libETC1.so              0xAC680000
+libGLESv1_CM.so         0xAC200000 # [~1M]
+libGLESv2.so            0xAC100000 # [~1M]
+libOpenVG_CM.so         0xAC000000 # [???]
+libOpenVGU_CM.so        0xABF00000 # [???]
+libEGL.so               0xABE00000 # [~1M]
+libETC1.so              0xABD00000 # [<64K]
 
-libacc.so               0xAC600000
+libacc.so               0xABC00000 # [~1M]
 
-libexif.so              0xAC500000
-libcamera_client.so     0xAC480000
-libui.so                0xAC400000
+libexif.so              0xABB00000 # [~1M]
+libcamera_client.so     0xABA80000 # [~1M]
+libui.so                0xAB900000 # [~1M]
 # libsgl is for backward-compatibility with donut
-libsgl.so               0xAC200000
-libskia.so              0xAC000000
-librs_jni.so            0xABF00000
-libRS.so                0xAB900000
-
+libsgl.so               0xAB800000 # [???]
+libskia.so              0xAB100000 # [~7M]
+librs_jni.so            0xAB000000 # [~1M]
+libRS.so                0xA9E00000 # [~2M]
+libjnigraphics.so       0xA9D00000 # [<64K]
+libskiagl.so            0xA9C00000 # [~1M]
 
 # audio
-libFLAC.so              0xAB8A0000
-libaudiopolicy.so       0xAB880000
-libaudiopolicygeneric.so 0xAB800000
-libsoundpool.so         0xAB780000
-libaudio.so             0xAB700000
-libspeech.so            0xAB600000
-libsonivox.so           0xAB500000
-libvorbisidec.so        0xAB400000
-libmedia_jni.so         0xAB300000
-libmediaplayerservice.so 0xAB280000
-libmedia.so             0xAB200000
-libFFTEm.so             0xAB100000
-libaudioflinger.so      0xAB000000
+libFLAC.so              0xA9B00000 # [???]
+libaudiopolicy.so       0xA9A00000 # [~1M]
+libaudiopolicygeneric.so 0xA9900000 # [???]
+libsoundpool.so         0xA9800000 # [~1M]
+libaudio.so             0xA9700000 # [~1M]
+libspeech.so            0xA9600000 # [~1M]
+libsonivox.so           0xA9500000 # [~1M]
+libvorbisidec.so        0xA9400000 # [~1M]
+libmedia_jni.so         0xA9300000 # [~1M]
+libmediaplayerservice.so 0xA9200000 # [~1M]
+libmedia.so             0xA9000000 # [~2M]
+libFFTEm.so             0xA8F00000 # [~1M]
+libSR_AudioIn.so        0xA8E00000 # [<64K]
+libaudioflinger.so      0xA8D00000 # [~1M]
 
 # assorted system libraries
-libsqlite.so            0xAAC00000
-libexpat.so             0xAAB00000
-libwebcore.so           0xAA000000
-libbinder.so            0xA9D80000
-libutils.so             0xA9D00000
-libcameraservice.so     0xA9C80000
-libhardware.so          0xA9C70000
-libhardware_legacy.so   0xA9C00000
-libapp_process.so       0xA9B00000
-libsystem_server.so     0xA9A00000
-libime.so               0xA9800000
-libgps.so               0xA9700000
-libcamera.so            0xA9680000
-liboemcamera.so         0xA9400000
+libsqlite.so            0xA8B00000 # [~2M]
+libexpat.so             0xA8A00000 # [~1M]
+libwebcore.so           0xA8300000 # [~7M]
+libbinder.so            0xA8200000 # [~1M]
+libutils.so             0xA8100000 # [~1M]
+libcameraservice.so     0xA8000000 # [~1M]
+libhardware.so          0xA7F00000 # [<64K]
+libhardware_legacy.so   0xA7E00000 # [~1M]
+libapp_process.so       0xA7D00000 # [???]
+libsystem_server.so     0xA7C00000 # [~1M]
+libime.so               0xA7B00000 # [???]
+libgps.so               0xA7A00000 # [~1M]
+libcamera.so            0xA7900000 # [~1M]
+liboemcamera.so         0xA7700000 # [~2M]
+libdiskconfig.so        0xA7600000 # [<64K]
+libemoji.so             0xA7500000 # [<64K]
+libjni_latinime.so      0xA7400000 # [~1M]
+libjni_pinyinime.so     0xA7300000 # [~1M]
+libttssynthproxy.so     0xA7200000 # [~1M]
+libttspico.so           0xA7000000 # [~2M]
 
 # pv libraries
-libpvasf.so                    0xA7C26000
-libpvasfreg.so                 0xA7C00000
-libomx_sharedlibrary.so        0xA7BA0000
-libopencore_download.so        0xA7B40000
-libopencore_downloadreg.so     0xA7B00000
-libopencore_net_support.so     0xA7A00000
-libopencore_rtsp.so            0xA7900000
-libopencore_rtspreg.so         0xA7890000
-libopencore_author.so          0xA7800000
-libomx_aacdec_sharedlibrary.so 0xA7700000
-libomx_amrdec_sharedlibrary.so 0xA76A0000
-libomx_amrenc_sharedlibrary.so 0xA7680000
-libomx_avcdec_sharedlibrary.so 0xA7660000
-libomx_avcenc_sharedlibrary.so 0xA7610000
-libomx_m4vdec_sharedlibrary.so 0xA75C0000
-libomx_m4venc_sharedlibrary.so 0xA7590000
-libomx_mp3dec_sharedlibrary.so 0xA7450000
-libopencore_mp4local.so        0xA7400000
-libopencore_mp4localreg.so     0xA7300000
-libopencore_player.so          0xA7000000
+libpvasf.so                    0xA6F00000 # [???]
+libpvasfreg.so                 0xA6E00000 # [???]
+libomx_sharedlibrary.so        0xA6D00000 # [~1M]
+libopencore_download.so        0xA6C00000 # [~1M]
+libopencore_downloadreg.so     0xA6B00000 # [~1M]
+libopencore_net_support.so     0xA6800000 # [~3M]
+libopencore_rtsp.so            0xA6200000 # [~6M]
+libopencore_rtspreg.so         0xA6100000 # [~1M]
+libopencore_author.so          0xA5D00000 # [~4M]
+libomx_aacdec_sharedlibrary.so 0xA5B00000 # [~2M]
+libomx_amrdec_sharedlibrary.so 0xA5A00000 # [~1M]
+libomx_amrenc_sharedlibrary.so 0xA5900000 # [~1M]
+libomx_avcdec_sharedlibrary.so 0xA5800000 # [~1M]
+libomx_avcenc_sharedlibrary.so 0xA5700000 # [???]
+libomx_m4vdec_sharedlibrary.so 0xA5600000 # [~1M]
+libomx_m4venc_sharedlibrary.so 0xA5500000 # [???]
+libomx_mp3dec_sharedlibrary.so 0xA5400000 # [~1M]
+libopencore_mp4local.so        0xA5200000 # [~2M]
+libopencore_mp4localreg.so     0xA5100000 # [~1M]
+libopencore_player.so          0xA4800000 # [~9M]
 
 # opencore hardware support
-libmm-adspsvc.so              0xA6FFD000
-libOmxCore.so                 0xA6FF0000
-libOmxMpeg4Dec.so             0xA6FC0000
-libOmxH264Dec.so              0xA6F90000
-libOmxVidEnc.so               0xA6F60000
-libopencorehw.so              0xA6F50000
+libmm-adspsvc.so              0xA4700000 # [???]
+libOmxCore.so                 0xA4600000 # [<64K]
+libOmxMpeg4Dec.so             0xA4500000 # [???]
+libOmxH264Dec.so              0xA4400000 # [???]
+libOmxVidEnc.so               0xA4300000 # [~1M]
+libopencorehw.so              0xA4200000 # [~1M]
+libOmxVdec.so                 0xA4100000 # [~1M]
+libmm-omxcore.so              0xA4000000 # [<64K]
 
 # pv libraries
-libopencore_common.so         0xA6000000
-libqcomm_omx.so               0xA5A00000
+libopencore_common.so         0xA3900000 # [~7M]
+libqcomm_omx.so               0xA3800000 # [<64K]
+
+# stagefright libraries
+libstagefright_amrnb_common.so     0xA3700000 # [~1M]
+libstagefright_avc_common.so       0xA3600000 # [~1M]
+libstagefright_color_conversion.so 0xA3500000 # [<64K]
+libstagefright_omx.so              0xA3400000 # [~1M]
+libstagefrighthw.so                0xA3300000 # [~1M]
+libstagefright.so                  0xA2F00000 # [~4M]
+
+# libraries for specific hardware
+libgsl.so               0xA2E00000 # [~1M]
+libhtc_acoustic.so      0xA2D00000 # [<64K]
+libhtc_ril.so           0xA2C00000 # [~1M]
+liblvmxipc.so           0xA2B00000 # [~1M]
 
 # libraries for specific apps or temporary libraries
-libcam_ipl.so           0x9F000000
-libwbxml.so             0x9E800000
-libwbxml_jni.so         0x9E400000
-libxml2wbxml.so         0x9E000000
-libdrm1.so              0x9D800000
-libdrm1_jni.so          0x9D400000
-libwapcore.so           0x9D000000
-libstreetview.so        0x9CC00000
-libwapbrowsertest.so    0x9C800000
-libminiglobe.so         0x9C400000
-libearth.so             0x9C000000
-libembunit.so           0x9BC00000
-libneon.so              0x9B800000
-libjni_example.so       0x9B400000
-libjni_load_test.so     0x9B000000
-libjni_lib_test.so      0x9AC00000
-librunperf.so           0x9A800000
-libctest.so             0x9A700000
-libUAPI_jni.so          0x9A500000
-librpc.so               0x9A400000
-libtrace_test.so        0x9A300000
-libsrec_jni.so          0x9A200000
-libjpeg.so              0x9A000000
-libbcc.so               0x99C00000
+libcam_ipl.so           0x9F000000 # [???]
+libwbxml.so             0x9EF00000 # [???]
+libwbxml_jni.so         0x9EE00000 # [~1M]
+libxml2wbxml.so         0x9EB00000 # [~1M]
+libdrm1.so              0x9EA00000 # [~1M]
+libdrm1_jni.so          0x9E900000 # [<64K]
+libwapcore.so           0x9E800000 # [???]
+libstreetview.so        0x9E700000 # [???]
+libwapbrowsertest.so    0x9E600000 # [???]
+libminiglobe.so         0x9E500000 # [???]
+libearth.so             0x9E400000 # [???]
+libembunit.so           0x9E300000 # [<64K]
+libneon.so              0x9E200000 # [???]
+libjni_example.so       0x9E100000 # [???]
+libjni_load_test.so     0x9E000000 # [???]
+libjni_lib_test.so      0x9DF00000 # [???]
+librunperf.so           0x9DE00000 # [???]
+libctest.so             0x9DD00000 # [<64K]
+libUAPI_jni.so          0x9DC00000 # [???]
+librpc.so               0x9DB00000 # [~1M]
+libtrace_test.so        0x9DA00000 # [???]
+libsrec_jni.so          0x9D800000 # [~2M]
+libjpeg.so              0x9D700000 # [~1M]
+libiprouteutil.so       0x9D600000 # [~1M] for external/iproute2
+libnetlink.so           0x9D500000 # [<64K] for external/iproute2
+libpagemap.so           0x9D400000 # [<64K] for system/extras/libpagemap
+libstlport.so           0x9D100000 # [~3M] for external/stlport
+libzxing.so             0x9D000000 # [<64K] for goggles
+libinterstitial.so      0x9CF00000 # [<64K] for goggles
+liblept.so              0x9CA00000 # [~5M] for external/leptonica
+libbcc.so               0x9C600000 # [~4M]
