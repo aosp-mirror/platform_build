@@ -206,3 +206,4 @@ libzxing.so             0x9D000000 # [<64K] for goggles
 libinterstitial.so      0x9CF00000 # [<64K] for goggles
 liblept.so              0x9CA00000 # [~5M] for external/leptonica
 libbcc.so               0x9C600000 # [~4M] for external/llvm
+libchromium_net.so      0x9C400000 # [~2M] for exteral/webkit
