@@ -189,13 +189,15 @@ aidl_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(aidl_sources))
 aidl_preprocess_import :=
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 ifdef LOCAL_SDK_VERSION
-ifneq ($(LOCAL_SDK_VERSION),current)
-aidl_preprocess_import := -p$(TOPDIR)prebuilt/sdk/$(LOCAL_SDK_VERSION)/framework.aidl
+ifeq ($(LOCAL_SDK_VERSION),current)
+  aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
+else
+  aidl_preprocess_import := $(TOPDIR)prebuilt/sdk/$(LOCAL_SDK_VERSION)/framework.aidl
 endif # !current
 endif # LOCAL_SDK_VERSION
-$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(aidl_preprocess_import) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
+$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
 
-$(aidl_java_sources): $(intermediates.COMMON)/src/%.java: $(TOPDIR)$(LOCAL_PATH)/%.aidl $(PRIVATE_ADDITIONAL_DEPENDENCIES) $(AIDL)
+$(aidl_java_sources): $(intermediates.COMMON)/src/%.java: $(TOPDIR)$(LOCAL_PATH)/%.aidl $(PRIVATE_ADDITIONAL_DEPENDENCIES) $(AIDL) $(aidl_preprocess_import)
 	$(transform-aidl-to-java)
 -include $(aidl_java_sources:%.java=%.P)
 
