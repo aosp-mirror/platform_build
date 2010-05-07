@@ -999,7 +999,7 @@ define transform-host-o-to-static-lib
 @rm -f $@
 $(extract-and-include-host-whole-static-libs)
 @echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
-echo $(filter %.o, $^) | \
+$(hide) echo $(filter %.o, $^) | \
 	xargs $(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
 endef
 
@@ -1600,7 +1600,7 @@ define transform-host-ranlib-copy-hack
 endef
 else
 define transform-host-ranlib-copy-hack
-true
+@true
 endef
 endif
 
@@ -1610,7 +1610,7 @@ define transform-ranlib-copy-hack
 endef
 else
 define transform-ranlib-copy-hack
-true
+@true
 endef
 endif
 
