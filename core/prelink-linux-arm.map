@@ -28,7 +28,7 @@ libthread_db.so         0xAF800000 # [<64K]
 libz.so                 0xAF700000 # [~1M]
 libevent.so             0xAF600000 # [???]
 libssl.so               0xAF400000 # [~2M]
-libcrypto.so            0xAF000000 # [~5M]
+libcrypto.so            0xAF000000 # [~4M]
 libsysutils.so          0xAEF00000 # [~1M]
 
 # bluetooth
@@ -98,7 +98,7 @@ libmedia_jni.so         0xA9300000 # [~1M]
 libmediaplayerservice.so 0xA9200000 # [~1M]
 libmedia.so             0xA9000000 # [~2M]
 libFFTEm.so             0xA8F00000 # [~1M]
-libSR_AudioIn.so        0xA8E00000 # [<64K]
+libSR_AudioIn.so        0xA8E00000 # [~1M] for external/srec
 libaudioflinger.so      0xA8D00000 # [~1M]
 
 # assorted system libraries
@@ -120,8 +120,8 @@ libdiskconfig.so        0xA7600000 # [<64K]
 libemoji.so             0xA7500000 # [<64K]
 libjni_latinime.so      0xA7400000 # [~1M]
 libjni_pinyinime.so     0xA7300000 # [~1M]
-libttssynthproxy.so     0xA7200000 # [~1M]
-libttspico.so           0xA7000000 # [~2M]
+libttssynthproxy.so     0xA7200000 # [~1M] for frameworks/base
+libttspico.so           0xA7000000 # [~2M] for external/svox
 
 # pv libraries
 libpvasf.so                    0xA6F00000 # [???]
@@ -146,10 +146,10 @@ libopencore_mp4localreg.so     0xA5100000 # [~1M]
 libopencore_player.so          0xA4800000 # [~9M]
 
 # opencore hardware support
-libmm-adspsvc.so              0xA4700000 # [???]
+libmm-adspsvc.so              0xA4700000 # [<64K]
 libOmxCore.so                 0xA4600000 # [<64K]
-libOmxMpeg4Dec.so             0xA4500000 # [???]
-libOmxH264Dec.so              0xA4400000 # [???]
+libOmxMpeg4Dec.so             0xA4500000 # [~1M]
+libOmxH264Dec.so              0xA4400000 # [~1M]
 libOmxVidEnc.so               0xA4300000 # [~1M]
 libopencorehw.so              0xA4200000 # [~1M]
 libOmxVdec.so                 0xA4100000 # [~1M]
@@ -171,7 +171,8 @@ libstagefright.so                  0xA2F00000 # [~4M]
 libgsl.so               0xA2E00000 # [~1M]
 libhtc_acoustic.so      0xA2D00000 # [<64K]
 libhtc_ril.so           0xA2C00000 # [~1M]
-liblvmxipc.so           0xA2B00000 # [~1M]
+liblvmxipc.so           0xA2B00000 # [~1M] for vendor/nxp
+libreference-cdma-sms.so 0xA2A00000 # [<64K] for hardware/ril
 
 # libraries for specific apps or temporary libraries
 libcam_ipl.so           0x9F000000 # [???]
@@ -204,4 +205,4 @@ libstlport.so           0x9D100000 # [~3M] for external/stlport
 libzxing.so             0x9D000000 # [<64K] for goggles
 libinterstitial.so      0x9CF00000 # [<64K] for goggles
 liblept.so              0x9CA00000 # [~5M] for external/leptonica
-libbcc.so               0x9C600000 # [~4M]
+libbcc.so               0x9C600000 # [~4M] for external/llvm
