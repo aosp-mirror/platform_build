@@ -419,6 +419,10 @@ div.indent {
   text-align:left;
 }
 
+#mainBodyRight td p {
+  margin:0 0 1em 0;
+}
+
 #mainBodyRight .blueBorderBox {
   border:5px solid #ddf0f2;
   padding:18px 18px 18px 18px;
