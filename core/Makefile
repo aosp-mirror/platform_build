@@ -522,8 +522,25 @@ otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
 # #################################################################
 
 ifeq ($(TARGET_USERIMAGES_USE_EXT2),true)
+INTERNAL_USERIMAGES_USE_EXT := true
+INTERNAL_USERIMAGES_EXT_VARIANT := ext2
+else
+ifeq ($(TARGET_USERIMAGES_USE_EXT3),true)
+INTERNAL_USERIMAGES_USE_EXT := true
+INTERNAL_USERIMAGES_EXT_VARIANT := ext3
+else
+ifeq ($(TARGET_USERIMAGES_USE_EXT4),true)
+INTERNAL_USERIMAGES_USE_EXT := true
+INTERNAL_USERIMAGES_EXT_VARIANT := ext4
+endif
+endif
+endif
+
+ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 include external/genext2fs/Config.mk
 INTERNAL_MKUSERFS := $(MKEXT2IMG)
+INTERNAL_TUNEUSERFS := $(TUNE2FS)
+INTERNAL_CHECKUSERFS := $(E2FSCK)
 else
 INTERNAL_MKUSERFS := $(MKYAFFS2)
 endif
@@ -640,15 +657,15 @@ INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
-ifeq ($(TARGET_USERIMAGES_USE_EXT2),true)
-## generate an ext2 image
+ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
+## generate an ext image
 # $(1): output file
 define build-systemimage-target
     @echo "Target system fs image: $(1)"
-    $(call build-userimage-ext2-target,$(TARGET_OUT),$(1),system,)
+    $(call build-userimage-ext-target,$(TARGET_OUT),$(1),system,$(INTERNAL_USERIMAGES_EXT_VARIANT))
 endef
 
-else # TARGET_USERIMAGES_USE_EXT2 != true
+else # INTERNAL_USERIMAGES_USE_EXT != true
 
 ## generate a yaffs2 image
 # $(1): output file
@@ -657,9 +674,10 @@ define build-systemimage-target
     @mkdir -p $(dir $(1))
     $(hide) $(MKYAFFS2) -f $(mkyaffs2_extra_flags) $(TARGET_OUT) $(1)
 endef
-endif # TARGET_USERIMAGES_USE_EXT2
+endif # INTERNAL_USERIMAGES_USE_EXT
 
-$(BUILT_SYSTEMIMAGE_UNOPT): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_MKUSERFS)
+$(BUILT_SYSTEMIMAGE_UNOPT): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_MKUSERFS) \
+			    $(INTERNAL_TUNEUSERFS) $(INTERNAL_CHECKUSERFSK)
 	$(call build-systemimage-target,$@)
 
 # The installed image, which may be optimized or unoptimized.
@@ -740,16 +758,16 @@ stnod: systemtarball-nodeps
 INTERNAL_USERDATAIMAGE_FILES := \
 	$(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
 
-ifeq ($(TARGET_USERIMAGES_USE_EXT2),true)
+ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 ## Generate an ext2 image
 define build-userdataimage-target
     $(call pretty,"Target userdata fs image: $(INSTALLED_USERDATAIMAGE_TARGET)")
     @mkdir -p $(TARGET_OUT_DATA)
-    $(call build-userimage-ext2-target,$(TARGET_OUT_DATA),$(INSTALLED_USERDATAIMAGE_TARGET),userdata,)
+    $(call build-userimage-ext-target,$(TARGET_OUT_DATA),$(INSTALLED_USERDATAIMAGE_TARGET),userdata,$(INTERNAL_USERIMAGES_EXT_VARIANT))
     $(hide) $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE),yaffs)
 endef
 
-else # TARGET_USERIMAGES_USE_EXT2 != true
+else # INTERNAL_USERIMAGES_USE_EXT != true
 
 ## Generate a yaffs2 image
 define build-userdataimage-target
@@ -758,7 +776,7 @@ define build-userdataimage-target
     $(hide) $(MKYAFFS2) -f $(mkyaffs2_extra_flags) $(TARGET_OUT_DATA) $(INSTALLED_USERDATAIMAGE_TARGET)
     $(hide) $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE),yaffs)
 endef
-endif # TARGET_USERIMAGES_USE_EXT2
+endif # INTERNAL_USERIMAGES_USE_EXT
 
 BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
 
