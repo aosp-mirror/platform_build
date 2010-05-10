@@ -149,6 +149,27 @@ endif
 # else: Use the value set in the environment or buildspec.mk.
 
 # ---------------------------------------------------------------
+# Provide "APP-<appname>" targets, which lets you build
+# an unbundled app.
+#
+unbundled_goals := $(strip $(filter APP-%,$(MAKECMDGOALS)))
+ifdef unbundled_goals
+  ifneq ($(words $(unbundled_goals)),1)
+    $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)"))
+  endif
+  UNBUNDLED_APP := $(patsubst APP-%,%,$(unbundled_goals))
+  ifneq ($(filter $(DEFAULT_GOAL),$(MAKECMDGOALS)),)
+    MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
+  else
+    MAKECMDGOALS := $(patsubst $(unbundled_goals),$(DEFAULT_GOAL),$(MAKECMDGOALS))
+  endif
+  is_unbundled_app_build := true
+
+.PHONY: $(unbundled_goals)
+$(unbundled_goals): $(MAKECMDGOALS)
+endif # unbundled_goals
+
+# ---------------------------------------------------------------
 # Include the product definitions.
 # We need to do this to translate TARGET_PRODUCT into its
 # underlying TARGET_DEVICE before we start defining any rules.
@@ -157,12 +178,18 @@ include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
-# Read in all of the product definitions specified by the AndroidProducts.mk
-# files in the tree.
-#
-#TODO: when we start allowing direct pointers to product files,
-#    guarantee that they're in this list.
-$(call import-products, $(get-all-product-makefiles))
+ifeq ($(strip $(is_unbundled_app_build)),true)
+  # An unbundled app build needs only the core product makefiles.
+  $(call import-products,$(call get-product-makefiles,\
+      $(SRC_TARGET_DIR)/product/AndroidProducts.mk))
+else
+  # Read in all of the product definitions specified by the AndroidProducts.mk
+  # files in the tree.
+  #
+  #TODO: when we start allowing direct pointers to product files,
+  #    guarantee that they're in this list.
+  $(call import-products, $(get-all-product-makefiles))
+endif # is_unbundled_app_build
 $(check-all-products)
 #$(dump-products)
 #$(error done)

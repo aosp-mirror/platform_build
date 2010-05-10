@@ -691,7 +691,14 @@ droidcore: files \
 # The actual files built by the droidcore target changes depending
 # on the build variant.
 .PHONY: droid tests
-droid tests: droidcore
+ifeq ($(strip $(is_unbundled_app_build)),true)
+# We build all modules in the source tree for an unbundled app build.
+unbundled_build_modules := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+droid: $(unbundled_build_modules)
+else
+droid: droidcore
+endif
+tests: droidcore
 
 # Dist for droid if droid is among the cmd goals, or no cmd goal is given.
 ifneq ($(filter droid,$(MAKECMDGOALS))$(filter ||,|$(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))|),)
