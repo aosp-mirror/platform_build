@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAyX///eM\u003d",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2010-05-10T20:59:04Z",
+      "side": 1,
+      "message": "Should probably be a tab for consistency with the line above",
+      "revId": "48ad2a5fe12cffce201c47598c592bb8e05ab7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAyX///eI\u003d",
+        "filename": "tools/apriori/apriori.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2010-05-10T20:59:04Z",
+      "side": 1,
+      "message": "Should be using spaces instead of tabs.\n\nNot sure how we regard opening blocks for no apparent reason.",
+      "revId": "48ad2a5fe12cffce201c47598c592bb8e05ab7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
