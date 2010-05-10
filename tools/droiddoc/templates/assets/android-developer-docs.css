@@ -794,7 +794,7 @@ ul.no-style {
 .new {
   font-size: .78em;
   font-weight: bold;
-  color: red;
+  color: #ff3d3d;
   text-decoration: none;
   vertical-align:top;
   line-height:.9em;
