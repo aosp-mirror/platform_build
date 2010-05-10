@@ -538,11 +538,9 @@ endif
 
 ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 include external/genext2fs/Config.mk
-INTERNAL_MKUSERFS := $(MKEXT2IMG)
-INTERNAL_TUNEUSERFS := $(TUNE2FS)
-INTERNAL_CHECKUSERFS := $(E2FSCK)
+INTERNAL_USERIMAGES_DEPS := $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK)
 else
-INTERNAL_MKUSERFS := $(MKYAFFS2)
+INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
 endif
 
 # -----------------------------------------------------------------
@@ -676,8 +674,8 @@ define build-systemimage-target
 endef
 endif # INTERNAL_USERIMAGES_USE_EXT
 
-$(BUILT_SYSTEMIMAGE_UNOPT): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_MKUSERFS) \
-			    $(INTERNAL_TUNEUSERFS) $(INTERNAL_CHECKUSERFSK)
+$(BUILT_SYSTEMIMAGE_UNOPT): $(INTERNAL_SYSTEMIMAGE_FILES) \
+                            $(INTERNAL_USERIMAGES_DEPS)
 	$(call build-systemimage-target,$@)
 
 # The installed image, which may be optimized or unoptimized.
@@ -724,7 +722,7 @@ systemimage: $(INSTALLED_SYSTEMIMAGE)
 
 .PHONY: systemimage-nodeps snod
 systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
-	            | $(INTERNAL_MKUSERFS)
+	            | $(INTERNAL_USERIMAGES_DEPS)
 	@echo "make $@: ignoring dependencies"
 	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE))
 	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE),yaffs)
@@ -782,12 +780,12 @@ BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
 
 # We just build this directly to the install location.
 INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
-$(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_MKUSERFS) \
+$(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) \
                                    $(INTERNAL_USERDATAIMAGE_FILES)
 	$(build-userdataimage-target)
 
 .PHONY: userdataimage-nodeps
-userdataimage-nodeps: $(INTERNAL_MKUSERFS)
+userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-userdataimage-target)
 
 #######
