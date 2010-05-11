@@ -702,6 +702,7 @@ tests: droidcore
 
 # Dist for droid if droid is among the cmd goals, or no cmd goal is given.
 ifneq ($(filter droid,$(MAKECMDGOALS))$(filter ||,|$(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))|),)
+ifneq ($(strip $(is_unbundled_app_build)),true)
 $(call dist-for-goals, droid, \
 	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
 	$(INTERNAL_OTA_PACKAGE_TARGET) \
@@ -732,6 +733,15 @@ $(call dist-for-goals, droid, \
 	$(BUILT_TESTS_ZIP_PACKAGE) \
  )
 endif  # tests
+
+else # is_unbundled_app_build
+# dist the unbundled app.
+ifdef UNBUNDLED_APP
+  $(call dist-for-goals,droid, \
+    $(ALL_MODULES.$(UNBUNDLED_APP).INSTALLED) \
+  )
+endif # UNBUNDLED_APP
+endif # is_unbundled_app_build
 endif  # droid in $(MAKECMDGOALS)
 
 .PHONY: docs
