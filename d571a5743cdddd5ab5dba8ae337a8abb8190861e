@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAyn///1s\u003d",
+        "filename": "tools/retouch/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T20:26:43Z",
+      "side": 1,
+      "message": "No need to compile these with -g and -O2 anymore.  We should let the default flags take effect.",
+      "revId": "d571a5743cdddd5ab5dba8ae337a8abb8190861e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAyn///1o\u003d",
+        "filename": "tools/retouch/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T20:26:43Z",
+      "side": 1,
+      "message": "Also definitely remove -fno-inline.",
+      "revId": "d571a5743cdddd5ab5dba8ae337a8abb8190861e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAyn///1g\u003d",
+        "filename": "tools/retouch/retouch-bindiff.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T20:26:43Z",
+      "side": 1,
+      "message": "cont_prev and offs_prev should be static.",
+      "revId": "d571a5743cdddd5ab5dba8ae337a8abb8190861e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAyn///zU\u003d",
+        "filename": "tools/retouch/retouch-deltas.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T20:26:43Z",
+      "side": 1,
+      "message": "Make them static",
+      "revId": "d571a5743cdddd5ab5dba8ae337a8abb8190861e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAyn///zE\u003d",
+        "filename": "tools/retouch/retouch-deltas.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T20:26:43Z",
+      "side": 1,
+      "message": "Please indent the conditions some more, they are on the same level of indentation as the body of the if statement.",
+      "revId": "d571a5743cdddd5ab5dba8ae337a8abb8190861e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAyn///zc\u003d",
+        "filename": "tools/retouch/retouch-deltas.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T20:26:43Z",
+      "side": 1,
+      "message": "Who not:\n\ndecoding \u003d argc !\u003d 3;",
+      "revId": "d571a5743cdddd5ab5dba8ae337a8abb8190861e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
