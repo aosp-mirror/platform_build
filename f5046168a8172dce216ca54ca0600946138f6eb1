@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAyn///to\u003d",
+        "filename": "tools/retouch/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-11T22:44:58Z",
+      "side": 1,
+      "message": "you can set variables for CFLAGS and LDFLAGS like so:\n\ncommon_ldlibs:\u003d...\ncommon_cflags:\u003d...\n\nand then assign them to the actual variables:\n\nLOCAL_LDLIBS:\u003d$common_ldlibs\nLOCAL_CFLAGS:\u003d$ocmmon_cflags\n\nThis way you\u0027ll avoid the duplication and make it easier to understand the individual makefile targets.",
+      "revId": "f5046168a8172dce216ca54ca0600946138f6eb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
