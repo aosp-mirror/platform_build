@@ -1072,6 +1072,17 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) zip -qj $@ $(TARGET_OUT_APPS)/*
 
+
+#------------------------------------------------------------------
+# A zip of emma code coverage meta files. Generated for fully emma
+# instrumented build.
+#
+EMMA_META_ZIP := $(PRODUCT_OUT)/emma_meta.zip
+$(EMMA_META_ZIP): $(INSTALLED_SYSTEMIMAGE)
+	@echo "Collecting Emma coverage meta files."
+	$(hide) find $(TARGET_COMMON_OUT_ROOT) -name "coverage.em" | \
+		zip -@ -q $@
+
 endif	# TARGET_SIMULATOR != true
 
 # -----------------------------------------------------------------
