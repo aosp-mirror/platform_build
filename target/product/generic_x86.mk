@@ -25,3 +25,10 @@ PRODUCT_BRAND := generic_x86
 PRODUCT_DEVICE := generic_x86
 PRODUCT_NAME := generic_x86
 PRODUCT_POLICY := android.policy_phone
+
+# If running on an emulator or some other device that has a LAN connection
+# that isn't a wifi connection. This will instruct init.rc to enable the
+# network connection so that you can use it with ADB
+ifdef NET_ETH0_STARTONBOOT
+  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
+endif
