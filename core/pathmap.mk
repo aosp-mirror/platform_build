@@ -37,7 +37,6 @@ pathmap_INCL := \
     graphics:external/skia/include/core \
     libc:bionic/libc/include \
     libdrm1:frameworks/base/media/libdrm/mobile1/include \
-    libdrm2:frameworks/base/media/libdrm/mobile2/include \
     libhardware:hardware/libhardware/include \
     libhardware_legacy:hardware/libhardware_legacy/include \
     libhost:build/libs/host/include \
