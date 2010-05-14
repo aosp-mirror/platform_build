@@ -10,7 +10,9 @@ TARGET_CPU_ABI := x86
 TARGET_USERIMAGES_USE_EXT2 := true
 TARGET_BOOTIMAGE_USE_EXT2 := true
 
-BOARD_KERNEL_CMDLINE := init=/init console=tty0 androidboot.hardware=generic_x86 vga=788
+# For VirtualBox and likely other emulators
+BOARD_INSTALLER_CMDLINE := init=/init console=ttyS0 console=tty0 androidboot.hardware=generic_x86 vga=788 verbose
+BOARD_KERNEL_CMDLINE := init=/init console=tty0 console=ttyS0 androidboot.hardware=generic_x86 vga=788
 TARGET_USE_DISKINSTALLER := true
 TARGET_DISK_LAYOUT_CONFIG := build/target/board/generic_x86/disk_layout.conf
 BOARD_BOOTIMAGE_MAX_SIZE := 8388608
