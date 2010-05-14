@@ -98,6 +98,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-funwind-tables \
 			-fstack-protector \
 			-Wa,--noexecstack \
+			-Werror=format-security \
 			-fno-short-enums \
 			$(arch_variant_cflags) \
 			-include $(android_config_h) \
