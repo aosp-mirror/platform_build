@@ -108,6 +108,10 @@ mkdir_recursively(const string& path)
 {
     int err;
     size_t pos = 0;
+    // For absolute pathnames, that starts with leading '/'
+    // use appropriate initial value.
+    if (path.length() != 0 and path[0] == '/') pos++;
+
     while (true) {
         pos = path.find('/', pos);
         string p = path.substr(0, pos);
