@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzH///WU\u003d",
+        "filename": "tools/apriori/apriori.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-18T21:43:05Z",
+      "side": 1,
+      "message": "Why did you remove const from full_path and output?",
+      "revId": "38b06e1206f755c71bd6e5c33f1e925245e6b06f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzH///WQ\u003d",
+        "filename": "tools/apriori/hash.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000866
+      },
+      "writtenOn": "2010-05-18T21:43:05Z",
+      "side": 1,
+      "message": "Use __attribute__((unused)) here instead of the do {} while loop below.",
+      "revId": "38b06e1206f755c71bd6e5c33f1e925245e6b06f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
