@@ -49,6 +49,10 @@ BUILD_SYSTEM := $(TOPDIR)build/core
 DEFAULT_GOAL := droid
 $(DEFAULT_GOAL):
 
+# Used to force goals to build.  Only use for conditionally defined goals.
+.PHONY: FORCE
+FORCE:
+
 # Set up various standard variables based on configuration
 # and host information.
 include $(BUILD_SYSTEM)/config.mk

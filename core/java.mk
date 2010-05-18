@@ -91,6 +91,7 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(built_dex) \
     $(built_dex_intermediate)
 
+LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
 # TODO: It looks like the only thing we need from base_rules is
 # all_java_sources.  See if we can get that by adding a
@@ -108,7 +109,7 @@ include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
 $(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/src
+	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
 
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.
