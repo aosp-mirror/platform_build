@@ -130,33 +130,20 @@ def:custom_masthead() ?>
   <?cs /if ?>
 <?cs /def ?>
 
-<?cs # appears at the bottom of every page ?><?cs 
-def:custom_cc_copyright() ?>
-  Except as noted, this content is 
-  licensed under <a href="http://creativecommons.org/licenses/by/2.5/">
-  Creative Commons Attribution 2.5</a>. For details and 
-  restrictions, see the <a href="http://developer.android.com/license.html">Content 
-  License</a>.<?cs 
-/def ?>
+<?cs def:custom_cc_copyright() ?>
+<?cs /def ?>
 
-<?cs 
-def:custom_copyright() ?>
-  Except as noted, this content is licensed under <a
-  href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>. 
-  For details and restrictions, see the <a href="http://developer.android.com/license.html">
-  Content License</a>.<?cs 
-/def ?>
+<?cs def:custom_copyright() ?>
+<?cs /def ?>
 
 <?cs 
 def:custom_footerlinks() ?>
   <p>
     <a href="http://www.android.com/terms.html">Site Terms of Service</a> -
-    <a href="http://www.android.com/privacy.html">Privacy Policy</a> -
-    <a href="http://www.android.com/branding.html">Brand Guidelines</a>
+    <a href="http://www.android.com/privacy.html">Privacy Policy</a>
   </p><?cs 
 /def ?>
 
-<?cs # appears on the right side of the blue bar at the bottom off every page ?><?cs 
-def:custom_buildinfo() ?>
-  Android <?cs var:sdk.platform.version ?>&nbsp;r<?cs var:sdk.rel.id ?> - <?cs var:page.now ?>
+<?cs # appears on the right side of the blue bar at the bottom off every page ?>
+<?cs def:custom_buildinfo() ?>
 <?cs /def ?>
