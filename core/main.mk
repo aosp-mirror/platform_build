@@ -707,6 +707,12 @@ $(call dist-for-goals, droid, \
 	$(INSTALLED_RAMDISK_TARGET) \
  )
 
+ifeq ($(EMMA_INSTRUMENT),true)
+$(call dist-for-goals, droid, \
+	$(EMMA_META_ZIP) \
+ )
+endif
+
 # Tests are installed in userdata.img.  If we're building the tests
 # variant, copy it for "make tests dist".  Also copy a zip of the
 # contents of userdata.img, so that people can easily extract a
