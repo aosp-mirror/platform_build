@@ -692,12 +692,17 @@ droidcore: files \
 # on the build variant.
 .PHONY: droid tests
 ifeq ($(strip $(is_unbundled_app_build)),true)
-# We build all modules in the source tree for an unbundled app build.
+unbundled_build_modules :=
+ifdef UNBUNDLED_APPS
+unbundled_build_modules := $(UNBUNDLED_APPS)
+else # UNBUNDLED_APPS
+# Otherwise we build all modules in the source tree.
 unbundled_build_modules := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+endif # UNBUNDLED_APPS
 droid: $(unbundled_build_modules)
-else
+else # is_unbundled_app_build
 droid: droidcore
-endif
+endif # is_unbundled_app_build
 tests: droidcore
 
 # Dist for droid if droid is among the cmd goals, or no cmd goal is given.
@@ -736,11 +741,11 @@ endif  # tests
 
 else # is_unbundled_app_build
 # dist the unbundled app.
-ifdef UNBUNDLED_APP
+ifdef UNBUNDLED_APPS
   $(call dist-for-goals,droid, \
-    $(ALL_MODULES.$(UNBUNDLED_APP).INSTALLED) \
+    $(foreach m,$(UNBUNDLED_APPS),$(ALL_MODULES.$(m).INSTALLED)) \
   )
-endif # UNBUNDLED_APP
+endif # UNBUNDLED_APPS
 endif # is_unbundled_app_build
 endif  # droid in $(MAKECMDGOALS)
 
