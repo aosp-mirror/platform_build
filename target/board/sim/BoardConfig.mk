@@ -20,6 +20,9 @@ TARGET_NO_KERNEL := true
 # The simulator does not support native code at all
 TARGET_CPU_ABI := none
 
+# But it is very likely SMP.
+TARGET_CPU_SMP := true
+
 #the simulator partially emulates the original HTC /dev/eac audio interface
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
