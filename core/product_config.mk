@@ -157,7 +157,7 @@ ifdef unbundled_goals
   ifneq ($(words $(unbundled_goals)),1)
     $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)"))
   endif
-  UNBUNDLED_APP := $(patsubst APP-%,%,$(unbundled_goals))
+  UNBUNDLED_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
   ifneq ($(filter $(DEFAULT_GOAL),$(MAKECMDGOALS)),)
     MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
   else
