@@ -88,7 +88,7 @@ libskiagl.so            0xA9C00000 # [~1M]
 # audio
 libFLAC.so              0xA9B00000 # [???]
 libaudiopolicy.so       0xA9A00000 # [~1M]
-libaudiopolicygeneric.so 0xA9900000 # [???]
+libeffects.so           0xA9900000 # [<64K]
 libsoundpool.so         0xA9800000 # [~1M]
 libaudio.so             0xA9700000 # [~1M]
 libspeech.so            0xA9600000 # [~1M]
