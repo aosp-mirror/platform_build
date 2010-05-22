@@ -4,7 +4,7 @@
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
-    AlarmClock \
+    DeskClock \
     AlarmProvider \
     Bluetooth \
     Calculator \
