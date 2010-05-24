@@ -23,3 +23,6 @@ TARGET_CPU_ABI := none
 #the simulator partially emulates the original HTC /dev/eac audio interface
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
+
+# no hardware camera
+USE_CAMERA_STUB := true
