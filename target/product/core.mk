@@ -48,4 +48,5 @@ PRODUCT_PROPERTY_OVERRIDES += \
     media.stagefright.enable-player=true \
     media.stagefright.enable-meta=true   \
     media.stagefright.enable-scan=true   \
-    media.stagefright.enable-http=true
+    media.stagefright.enable-http=true   \
+    media.stagefright.enable-vorbis=true
