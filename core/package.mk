@@ -304,6 +304,10 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries)
+ifeq ($(strip $(is_unbundled_app_build)),true)
+    # Include all resources for unbundled apps.
+    $(LOCAL_BUILT_MODULE): PRODUCT_AAPT_CONFIG :=
+endif
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
