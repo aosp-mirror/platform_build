@@ -315,6 +315,12 @@ public class Stubs {
             return;
         }
 
+        // Work around the bogus "Array" class we invent for
+        // Arrays.copyOf's Class<? extends T[]> newType parameter. (http://b/2715505)
+        if (cl.containingPackage() != null && cl.containingPackage().name().equals("")) {
+            return;
+        }
+
         String filename = stubsDir + '/' + javaFileName(cl);
         File file = new File(filename);
         ClearPage.ensureDirectory(file);
@@ -788,6 +794,11 @@ public class Stubs {
                                 HashSet notStrippable) {
         ClassInfo[] classes = classList.toArray(new ClassInfo[classList.size()]);
         Arrays.sort(classes, ClassInfo.comparator);
+        // Work around the bogus "Array" class we invent for
+        // Arrays.copyOf's Class<? extends T[]> newType parameter. (http://b/2715505)
+        if (pack.name().equals("")) {
+            return;
+        }
         xmlWriter.println("<package name=\"" + pack.name() + "\"\n"
                 //+ " source=\"" + pack.position() + "\"\n"
                 + ">");
