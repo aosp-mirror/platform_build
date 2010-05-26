@@ -1,6 +1,12 @@
 # Configuration for Darwin (Mac OS X) on PPC.
 # Included by combo/select.make
 
+# We build everything in 32-bit, because some host tools are
+# 32-bit-only anyway (emulator, acc), and because it gives us
+# more consistency between the host tools and the target.
+$(combo_target)GLOBAL_CFLAGS += -m32
+$(combo_target)GLOBAL_LDFLAGS += -m32
+
 $(combo_target)GLOBAL_CFLAGS += -fPIC
 $(combo_target)NO_UNDEFINED_LDFLAGS := -Wl,-undefined,error
 
@@ -37,6 +43,7 @@ define transform-o-to-executable-inner
         -o $@ \
         -Wl,-dynamic -headerpad_max_install_names \
         $(TARGET_GLOBAL_LD_DIRS) \
+        $(TARGET_GLOBAL_LDFLAGS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(PRIVATE_ALL_OBJECTS) \
         $(PRIVATE_LDLIBS) \
@@ -50,6 +57,7 @@ define transform-o-to-static-executable-inner
         -static \
         -o $@ \
         $(TARGET_GLOBAL_LD_DIRS) \
+        $(TARGET_GLOBAL_LDFLAGS) \
         $(PRIVATE_LDFLAGS) \
         $(PRIVATE_ALL_OBJECTS) \
         $(PRIVATE_LDLIBS) \
@@ -65,6 +73,7 @@ define transform-host-o-to-shared-lib-inner
     $(HOST_CXX) \
         -dynamiclib -single_module -read_only_relocs suppress \
         $(HOST_GLOBAL_LD_DIRS) \
+        $(HOST_GLOBAL_LDFLAGS) \
         $(PRIVATE_ALL_OBJECTS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -80,6 +89,7 @@ $(HOST_CXX) \
         -o $@ \
         -Wl,-dynamic -headerpad_max_install_names \
         $(HOST_GLOBAL_LD_DIRS) \
+        $(HOST_GLOBAL_LDFLAGS) \
         $(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(PRIVATE_ALL_OBJECTS) \
         $(PRIVATE_LDLIBS) \
