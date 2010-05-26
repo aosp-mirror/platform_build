@@ -48,7 +48,8 @@ PRODUCT_PACKAGES := \
 	ApiDemos \
 	GestureBuilder \
 	SoftKeyboard \
-	CubeLiveWallpapers
+	CubeLiveWallpapers \
+	QuickSearchBox
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
