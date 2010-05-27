@@ -947,6 +947,24 @@ endef
 ## Commands for running ar
 ###########################################################
 
+define _concat-if-arg2-not-empty
+$(if $(2),$(hide) $(1) $(2))
+endef
+
+# Split long argument list into smaller groups and call the command repeatedly
+#
+# $(1): the command without arguments
+# $(2): the arguments
+define split-long-arguments
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 1,500,$(2)))
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 501,1000,$(2)))
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 1001,1500,$(2)))
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 1501,2000,$(2)))
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 2001,2500,$(2)))
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 2501,3000,$(2)))
+$(call _concat-if-arg2-not-empty,$(1),$(wordlist 3001,99999,$(2)))
+endef
+
 define extract-and-include-target-whole-static-libs
 $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
 	$(hide) echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
@@ -969,8 +987,7 @@ define transform-o-to-static-lib
 @rm -f $@
 $(extract-and-include-target-whole-static-libs)
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
-$(hide) echo $(filter %.o, $^) | \
-    xargs $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
+$(call split-long-arguments,$(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
 endef
 
 ###########################################################
@@ -979,7 +996,7 @@ endef
 
 define extract-and-include-host-whole-static-libs
 $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
-	@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
+	$(hide) echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
 	ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(lib)))_objs;\
 	rm -rf $$ldir; \
 	mkdir -p $$ldir; \
@@ -999,8 +1016,7 @@ define transform-host-o-to-static-lib
 @rm -f $@
 $(extract-and-include-host-whole-static-libs)
 @echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
-$(hide) echo $(filter %.o, $^) | \
-	xargs $(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@
+$(call split-long-arguments,$(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
 endef
 
 
