@@ -28,26 +28,13 @@ CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
 HOSTTESTLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
 
-CTS_CORE_CASE_LIST := android.core.tests.annotation \
-	android.core.tests.archive \
-	android.core.tests.concurrent \
-	android.core.tests.crypto \
+CTS_CORE_CASE_LIST := \
 	android.core.tests.dom \
-	android.core.tests.logging \
 	android.core.tests.luni.io \
 	android.core.tests.luni.lang \
 	android.core.tests.luni.net \
 	android.core.tests.luni.util \
-	android.core.tests.math \
-	android.core.tests.nio \
-	android.core.tests.nio_char \
-	android.core.tests.prefs \
-	android.core.tests.regex \
-	android.core.tests.security \
-	android.core.tests.sql \
-	android.core.tests.text \
 	android.core.tests.xml \
-	android.core.tests.xnet \
 	android.core.tests.runner
 
 CTS_SECURITY_APPS_LIST := \
@@ -159,24 +146,9 @@ $(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
 $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.annotation,\
-		cts/tests/core/annotation/AndroidManifest.xml,\
-		tests.annotation.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.archive,\
-		cts/tests/core/archive/AndroidManifest.xml,\
-		tests.archive.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.concurrent,\
-		cts/tests/core/concurrent/AndroidManifest.xml,\
-		tests.concurrent.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.crypto,\
-		cts/tests/core/crypto/AndroidManifest.xml,\
-		tests.crypto.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.dom,\
 		cts/tests/core/dom/AndroidManifest.xml,\
 		tests.dom.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.logging,\
-		cts/tests/core/logging/AndroidManifest.xml,\
-		tests.logging.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
 		cts/tests/core/luni-io/AndroidManifest.xml,\
 		tests.luni.AllTestsIo)
@@ -189,36 +161,9 @@ $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRA
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.util,\
 		cts/tests/core/luni-util/AndroidManifest.xml,\
 		tests.luni.AllTestsUtil)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.math,\
-		cts/tests/core/math/AndroidManifest.xml,\
-		tests.math.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.nio,\
-		cts/tests/core/nio/AndroidManifest.xml,\
-		tests.nio.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.nio_char,\
-		cts/tests/core/nio_char/AndroidManifest.xml,\
-		tests.nio_char.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.prefs,\
-		cts/tests/core/prefs/AndroidManifest.xml,\
-		tests.prefs.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.regex,\
-		cts/tests/core/regex/AndroidManifest.xml,\
-		tests.regex.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.security,\
-		cts/tests/core/security/AndroidManifest.xml,\
-		tests.security.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.sql,\
-		cts/tests/core/sql/AndroidManifest.xml,\
-		tests.sql.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.text,\
-		cts/tests/core/text/AndroidManifest.xml,\
-		tests.text.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xml,\
 		cts/tests/core/xml/AndroidManifest.xml,\
 		tests.xml.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xnet,\
-		cts/tests/core/xnet/AndroidManifest.xml,\
-		tests.xnet.AllTests)
 	$(hide) touch $@
 
 
