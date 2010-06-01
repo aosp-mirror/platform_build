@@ -30,16 +30,27 @@ ifdef eclipse_project_goals
   endif
   eclipse_project_modules := $(call filter-ide-modules,ECLIPSE,$(eclipse_project_goals))
 
+  ifneq ($(filter lunch,$(eclipse_project_modules)),)
+    eclipse_project_modules := $(filter-out lunch,$(eclipse_project_modules))
+    installed_modules := $(foreach m,$(ALL_DEFAULT_INSTALLED_MODULES),\
+        $(INSTALLABLE_FILES.$(m).MODULE))
+    java_modules := $(foreach m,$(installed_modules),\
+        $(if $(filter JAVA_LIBRARIES APPS,$(ALL_MODULES.$(m).CLASS)),$(m),))
+    eclipse_project_modules := $(sort $(eclipse_project_modules) $(java_modules))
+  endif
+
   source_paths := $(foreach m,$(eclipse_project_modules),$(ALL_MODULES.$(m).PATH)) \
-              $(foreach m,$(eclipse_project_modules),$(ALL_MODULES.$(m).INTERMEDIATE_SOURCE_DIR))
+              $(foreach m,$(eclipse_project_modules),$(ALL_MODULES.$(m).INTERMEDIATE_SOURCE_DIR)) \
+              $(INTERNAL_SDK_SOURCE_DIRS)
+  source_paths := $(sort $(source_paths))
 
 .classpath: PRIVATE_MODULES := $(eclipse_project_modules)
-.classpath: PRIVATE_DIRS := $(source_paths) $(INTERNAL_SDK_SOURCE_DIRS)
+.classpath: PRIVATE_DIRS := $(source_paths)
 
 # the mess below with ./src tries to guess whether the src
 $(eclipse_project_goals): .classpath
 .classpath: FORCE
-	$(hide) echo Generating .classpath for modules: $(PRIVATE_MODULES)
+	$(hide) echo Generating .classpath for eclipse
 	$(hide) echo '<classpath>' > $@
 	$(hide) for p in $(PRIVATE_DIRS) ; do \
 		echo -n '  <classpathentry kind="src" path="' >> $@ ; \
