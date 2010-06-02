@@ -687,8 +687,21 @@ droidcore: files \
 # The actual files built by the droidcore target changes depending
 # on the build variant.
 .PHONY: droid tests
-droid tests: droidcore
+ifeq ($(strip $(is_unbundled_app_build)),true)
+unbundled_build_modules :=
+ifdef UNBUNDLED_APPS
+unbundled_build_modules := $(UNBUNDLED_APPS)
+else # UNBUNDLED_APPS
+# Otherwise we build all modules in the source tree.
+unbundled_build_modules := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+endif # UNBUNDLED_APPS
+droid: $(unbundled_build_modules)
+else # is_unbundled_app_build
+droid: droidcore
+endif # is_unbundled_app_build
+tests: droidcore
 
+ifneq ($(strip $(is_unbundled_app_build)),true)
 $(call dist-for-goals, droid, \
 	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
 	$(INTERNAL_OTA_PACKAGE_TARGET) \
@@ -712,6 +725,15 @@ $(call dist-for-goals, droid, \
 	$(BUILT_TESTS_ZIP_PACKAGE) \
  )
 endif
+
+else # is_unbundled_app_build
+# dist the unbundled app.
+ifdef UNBUNDLED_APPS
+  $(call dist-for-goals,droid, \
+    $(foreach m,$(UNBUNDLED_APPS),$(ALL_MODULES.$(m).INSTALLED)) \
+  )
+endif # UNBUNDLED_APPS
+endif # is_unbundled_app_build
 
 .PHONY: docs
 docs: $(ALL_DOCS)
