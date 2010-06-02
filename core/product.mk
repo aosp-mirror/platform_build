@@ -29,13 +29,13 @@ $(shell test -d device && find device -maxdepth 6 -name AndroidProducts.mk) \
 endef
 
 #
-# Returns the sorted concatenation of all PRODUCT_MAKEFILES
-# variables set in all AndroidProducts.mk files.
-# $(call ) isn't necessary.
+# Returns the sorted concatenation of PRODUCT_MAKEFILES
+# variables set in the given AndroidProducts.mk files.
+# $(1): the list of AndroidProducts.mk files.
 #
-define get-all-product-makefiles
+define get-product-makefiles
 $(sort \
-  $(foreach f,$(_find-android-products-files), \
+  $(foreach f,$(1), \
     $(eval PRODUCT_MAKEFILES :=) \
     $(eval LOCAL_DIR := $(patsubst %/,%,$(dir $(f)))) \
     $(eval include $(f)) \
@@ -44,6 +44,15 @@ $(sort \
   $(eval PRODUCT_MAKEFILES :=) \
   $(eval LOCAL_DIR :=) \
  )
+endef
+
+#
+# Returns the sorted concatenation of all PRODUCT_MAKEFILES
+# variables set in all AndroidProducts.mk files.
+# $(call ) isn't necessary.
+#
+define get-all-product-makefiles
+$(call get-product-makefiles,$(_find-android-products-files))
 endef
 
 #
