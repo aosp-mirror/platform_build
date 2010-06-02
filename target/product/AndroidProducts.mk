@@ -25,6 +25,12 @@
 # it includes.
 #
 
+ifeq ($(strip $(is_unbundled_app_build)),true)
+# An unbundled app build needs only generic.mk.
+PRODUCT_MAKEFILES := \
+    $(LOCAL_DIR)/core.mk \
+    $(LOCAL_DIR)/generic.mk
+else
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/core.mk \
     $(LOCAL_DIR)/generic.mk \
@@ -32,3 +38,4 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/full.mk \
     $(LOCAL_DIR)/sdk.mk \
     $(LOCAL_DIR)/sim.mk
+endif
