@@ -1751,7 +1751,7 @@ endef
 # clear_vars.mk.
 ###########################################################
 define inherit-package
-  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5)))
+  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6)))
 endef
 
 define inherit-package-internal
