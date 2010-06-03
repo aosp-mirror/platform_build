@@ -247,6 +247,7 @@ for these).
         for <code>eng</code>.
         <ul>
         <li>Installs modules tagged with: <code>eng</code>, <code>debug</code>,
+            <code>shell_</code>$(TARGET_SHELL),
             <code>user</code>, and/or <code>development</code>.
         <li>Installs non-APK modules that have no tags specified.
         <li>Installs APKs according to the product definition files, in
@@ -266,7 +267,7 @@ for these).
         <p>
         This is the flavor intended to be the final release bits.
         <ul>
-        <li>Installs modules tagged with <code>user</code>.
+        <li>Installs modules tagged with <code>shell_</code>$(TARGET_SHELL) and <code>user</code>.
         <li>Installs non-APK modules that have no tags specified.
         <li>Installs APKs according to the product definition files; tags
             are ignored for APK modules.
@@ -681,7 +682,8 @@ up.</p>
 <h4>LOCAL_MODULE_TAGS</h4>
 <p>Set <code>LOCAL_MODULE_TAGS</code> to any number of whitespace-separated
 tags.  If the tag list is empty or contains <code>droid</code>, the module
-will get installed as part of a <code>make droid</code>.  Otherwise, it will
+will get installed as part of a <code>make droid</code>.  Modules with the tag
+<code>shell_</code>$(TARGET_SHELL) will also be installed. Otherwise, it will
 only get installed by running <code>make &lt;your-module&gt;</code>
 or with the <code>make all</code> pseudotarget.</p>
 
