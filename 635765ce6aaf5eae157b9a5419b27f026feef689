@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AAAAzX///M0\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-06-08T18:34:53Z",
+      "side": 1,
+      "message": "Because Makefile function call is actually text expansion during the parsing phase, such recursion would also cause makefile bloating, I think. I don\u0027t see the advantage this function over the findleaves.py.",
+      "revId": "635765ce6aaf5eae157b9a5419b27f026feef689",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAAzX///NA\u003d",
         "filename": "core/main.mk",
         "patchSetId": 3
