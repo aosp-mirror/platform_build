@@ -1026,6 +1026,20 @@ function godir () {
     cd $T/$pathname
 }
 
+# Force JAVA_HOME to point to java 1.5 if it isn't already set
+if [ "$STAY_OFF_MY_LAWN" = "" ]; then
+    if [ ! "$JAVA_HOME" ]; then
+        case `uname -s` in
+            Darwin)
+                export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5/Home
+                ;;
+            *)
+                export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun
+                ;;
+        esac
+    fi
+fi
+
 # determine whether arrays are zero-based (bash) or one-based (zsh)
 _xarray=(a b c)
 if [ -z "${_xarray[${#_xarray[@]}]}" ]
