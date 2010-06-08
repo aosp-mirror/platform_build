@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX///NA\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-06-08T18:25:15Z",
+      "side": 1,
+      "message": "You don\u0027t prune directories like out/, .repo etc, which would cause serious performance pitfall.",
+      "revId": "635765ce6aaf5eae157b9a5419b27f026feef689",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
