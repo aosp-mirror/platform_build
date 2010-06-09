@@ -688,54 +688,55 @@ droidcore: files \
 
 # The actual files built by the droidcore target changes depending
 # on the build variant.
+ifneq ($(TARGET_BUILD_APPS),)
+  unbundled_build_modules :=
+  ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
+    # If they used the magic goal "all" then build everything
+    unbundled_build_modules := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+  else
+    unbundled_build_modules := $(TARGET_BUILD_APPS)
+  endif
+  default_goal_deps := $(unbundled_build_modules)
+else # TARGET_BUILD_APPS
+  default_goal_deps := droidcore
+endif # TARGET_BUILD_APPS
+
 .PHONY: droid tests
-ifeq ($(strip $(is_unbundled_app_build)),true)
-unbundled_build_modules :=
-ifdef UNBUNDLED_APPS
-unbundled_build_modules := $(UNBUNDLED_APPS)
-else # UNBUNDLED_APPS
-# Otherwise we build all modules in the source tree.
-unbundled_build_modules := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-endif # UNBUNDLED_APPS
-droid: $(unbundled_build_modules)
-else # is_unbundled_app_build
-droid: droidcore
-endif # is_unbundled_app_build
+droid: $(default_goal_deps)
 tests: droidcore
 
-ifneq ($(strip $(is_unbundled_app_build)),true)
-$(call dist-for-goals, droid, \
-	$(INTERNAL_UPDATE_PACKAGE_TARGET) \
-	$(INTERNAL_OTA_PACKAGE_TARGET) \
-	$(SYMBOLS_ZIP) \
-	$(APPS_ZIP) \
-	$(INTERNAL_EMULATOR_PACKAGE_TARGET) \
-	$(PACKAGE_STATS_FILE) \
-	$(INSTALLED_FILES_FILE) \
-	$(INSTALLED_BUILD_PROP_TARGET) \
-	$(BUILT_TARGET_FILES_PACKAGE) \
-	$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
- )
-
-# Tests are installed in userdata.img.  If we're building the tests
-# variant, copy it for "make tests dist".  Also copy a zip of the
-# contents of userdata.img, so that people can easily extract a
-# single .apk.
-ifeq ($(TARGET_BUILD_VARIANT),tests)
-$(call dist-for-goals, droid, \
-	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(BUILT_TESTS_ZIP_PACKAGE) \
- )
-endif
-
-else # is_unbundled_app_build
-# dist the unbundled app.
-ifdef UNBUNDLED_APPS
+ifneq ($(TARGET_BUILD_APPS),)
+  # dist the unbundled app.
   $(call dist-for-goals,droid, \
-    $(foreach m,$(UNBUNDLED_APPS),$(ALL_MODULES.$(m).INSTALLED)) \
+    $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED)) \
   )
-endif # UNBUNDLED_APPS
-endif # is_unbundled_app_build
+
+else # TARGET_BUILD_APPS
+
+  $(call dist-for-goals, droid, \
+    $(INTERNAL_UPDATE_PACKAGE_TARGET) \
+    $(INTERNAL_OTA_PACKAGE_TARGET) \
+    $(SYMBOLS_ZIP) \
+    $(APPS_ZIP) \
+    $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
+    $(PACKAGE_STATS_FILE) \
+    $(INSTALLED_FILES_FILE) \
+    $(INSTALLED_BUILD_PROP_TARGET) \
+    $(BUILT_TARGET_FILES_PACKAGE) \
+    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
+   )
+
+  # Tests are installed in userdata.img.  If we're building the tests
+  # variant, copy it for "make tests dist".  Also copy a zip of the
+  # contents of userdata.img, so that people can easily extract a
+  # single .apk.
+  ifeq ($(TARGET_BUILD_VARIANT),tests)
+  $(call dist-for-goals, droid, \
+    $(INSTALLED_USERDATAIMAGE_TARGET) \
+    $(BUILT_TESTS_ZIP_PACKAGE) \
+   )
+  endif
+endif # TARGET_BUILD_APPS
 
 .PHONY: docs
 docs: $(ALL_DOCS)
