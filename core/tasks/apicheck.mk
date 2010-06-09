@@ -41,13 +41,18 @@ endef
 # Run the checkapi rules by default.
 droidcore: checkapi
 
+last_released_sdk_version := $(lastword $(call numerically_sort,\
+    $(patsubst $(SRC_API_DIR)/%.xml,%, \
+    $(filter-out $(SRC_API_DIR)/current.xml, \
+    $(wildcard $(SRC_API_DIR)/*.xml)))))
+
 # INTERNAL_PLATFORM_API_FILE is the one build by droiddoc.
 
 # Check that the API we're building hasn't broken the last-released
 # SDK version.
 $(eval $(call check-api, \
 	checkapi-last, \
-	$(SRC_API_DIR)/$(lastword $(TARGET_AVAILABLE_SDK_VERSIONS)).xml, \
+	$(SRC_API_DIR)/$(last_released_sdk_version).xml, \
 	$(INTERNAL_PLATFORM_API_FILE), \
 	-hide 2 -hide 3 -hide 4 -hide 5 -hide 6 -hide 24 -hide 25 \
 	-error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
