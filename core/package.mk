@@ -244,17 +244,24 @@ else
 # Most packages should link against the resources defined by framework-res.
 # Even if they don't have their own resources, they may use framework
 # resources.
+ifneq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
+# for released sdk versions, the platform resources were built into android.jar.
+framework_res_package_export := \
+	$(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/android.jar
+framework_res_package_export_deps := $(framework_res_package_export)
+else # LOCAL_SDK_VERSION
 framework_res_package_export := \
 	$(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
 # We can't depend directly on the export.apk file; it won't get its
 # PRIVATE_ vars set up correctly if we do.  Instead, depend on the
 # corresponding R.stamp file, which lists the export.apk as a dependency.
 framework_res_package_export_deps := \
 	$(dir $(framework_res_package_export))src/R.stamp
+endif # LOCAL_SDK_VERSION
 $(R_file_stamp): $(framework_res_package_export_deps)
-endif
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
+endif # LOCAL_NO_STANDARD_LIBRARIES
 
 ifneq ($(full_classes_jar),)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
