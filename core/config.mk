@@ -315,22 +315,26 @@ PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 # For use with the LOCAL_SDK_VERSION variable for include $(BUILD_PACKAGE)
 # ###############################################################
 
-# The files that we can convert into android.jars are are in config/api/*.xml
-# The 'current' version is whatever this source tree is.  Once the apicheck
-# tool can generate the stubs from the xml files, we'll use that to be
-# able to build back-versions.  In the meantime, 'current' is the only
-# one supported.
+HISTORICAL_SDK_VERSIONS_ROOT := $(TOPDIR)prebuilt/sdk
+
+# Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
+# The 'current' version is whatever this source tree is.
 #
 # sgrax     is the opposite of xargs.  It takes the list of args and puts them
 #           on each line for sort to process.
 # sort -g   is a numeric sort, so 1 2 3 10 instead of 1 10 2 3.
-TARGET_AVAILABLE_SDK_VERSIONS := current \
-        $(shell function sgrax() { \
-                while [ -n "$$1" ] ; do echo $$1 ; shift ; done \
-            } ; \
-            ( sgrax $(patsubst $(SRC_API_DIR)/%.xml,%, \
-                $(filter-out $(SRC_API_DIR)/current.xml, \
-                $(shell find $(SRC_API_DIR) -name "*.xml"))) | sort -g ) )
 
+# Numerically sort a list of numbers
+# $(1): the list of numbers to be sorted
+define numerically_sort
+$(shell function sgrax() { \
+    while [ -n "$$1" ] ; do echo $$1 ; shift ; done \
+    } ; \
+    ( sgrax $(1) | sort -g ) )
+endef
+
+TARGET_AVAILABLE_SDK_VERSIONS := current $(call numerically_sort,\
+    $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
+    $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml

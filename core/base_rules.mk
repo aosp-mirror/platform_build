@@ -192,7 +192,7 @@ ifdef LOCAL_SDK_VERSION
 ifeq ($(LOCAL_SDK_VERSION),current)
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
-  aidl_preprocess_import := $(TOPDIR)prebuilt/sdk/$(LOCAL_SDK_VERSION)/framework.aidl
+  aidl_preprocess_import := $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/framework.aidl
 endif # !current
 endif # LOCAL_SDK_VERSION
 $(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
