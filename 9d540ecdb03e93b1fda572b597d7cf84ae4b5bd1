@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX//+zo\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 710,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-06-10T21:09:53Z",
+      "side": 1,
+      "message": "I believe you would want to use @ or $(hide) before each command to prevent them from being displayed by default.\n\n@ is used to completely hide the line (e.g. for mkdir -p)\n$(hide) to hide it, unless showcommands is used",
+      "revId": "9d540ecdb03e93b1fda572b597d7cf84ae4b5bd1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+zk\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-06-10T21:09:53Z",
+      "side": 1,
+      "message": "I guess that cp -f might be a bit better here.",
+      "revId": "9d540ecdb03e93b1fda572b597d7cf84ae4b5bd1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
