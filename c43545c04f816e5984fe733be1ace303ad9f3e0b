@@ -16,6 +16,24 @@
       "revId": "c43545c04f816e5984fe733be1ace303ad9f3e0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+y8\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2010-06-10T21:40:02Z",
+      "side": 1,
+      "message": "Is the original code considered correct then?\nI\u0027ve not seen that sort of construct before.\n\nI made the change because in my builds (for the other comments), PRIVATE_SYSTEM_TAR was never getting set.",
+      "parentUuid": "AAAAzX//+zY\u003d",
+      "revId": "c43545c04f816e5984fe733be1ace303ad9f3e0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
