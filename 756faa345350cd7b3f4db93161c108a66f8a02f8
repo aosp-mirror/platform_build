@@ -16,6 +16,24 @@
       "revId": "756faa345350cd7b3f4db93161c108a66f8a02f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+w0\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-06-10T23:30:00Z",
+      "side": 1,
+      "message": "it\u0027s ok. I think the real issue is that you should also define PRIVATE_SYSTEM_TAR for the systemtarball-nodeps target below. I can only assyme that this is the one that is missing the value of system_tar.",
+      "parentUuid": "AAAAzX//+x0\u003d",
+      "revId": "756faa345350cd7b3f4db93161c108a66f8a02f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
