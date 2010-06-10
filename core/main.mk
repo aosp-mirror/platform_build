@@ -46,6 +46,7 @@ TOPDIR :=
 BUILD_SYSTEM := $(TOPDIR)build/core
 
 # This is the default target.  It must be the first declared target.
+.PHONY: droid
 DEFAULT_GOAL := droid
 $(DEFAULT_GOAL):
 
@@ -686,9 +687,9 @@ droidcore: files \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_FILES_FILE)
 
-# The actual files built by the droidcore target changes depending
-# on the build variant.
 ifneq ($(TARGET_BUILD_APPS),)
+  # If this build is just for apps, only build apps and not the full system by default.
+
   unbundled_build_modules :=
   ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
     # If they used the magic goal "all" then build everything
@@ -696,24 +697,19 @@ ifneq ($(TARGET_BUILD_APPS),)
   else
     unbundled_build_modules := $(TARGET_BUILD_APPS)
   endif
-  default_goal_deps := $(unbundled_build_modules)
-else # TARGET_BUILD_APPS
-  default_goal_deps := droidcore
-endif # TARGET_BUILD_APPS
 
-.PHONY: droid tests
-droid: $(default_goal_deps)
-tests: droidcore
-
-ifneq ($(TARGET_BUILD_APPS),)
   # dist the unbundled app.
-  $(call dist-for-goals,droid, \
+  $(call dist-for-goals,apps_only, \
     $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED)) \
   )
 
-else # TARGET_BUILD_APPS
+.PHONY: apps_only
+apps_only: $(unbundled_build_modules)
 
-  $(call dist-for-goals, droid, \
+droid: apps_only
+
+else # TARGET_BUILD_APPS
+  $(call dist-for-goals, droidcore, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
     $(SYMBOLS_ZIP) \
@@ -736,7 +732,15 @@ else # TARGET_BUILD_APPS
     $(BUILT_TESTS_ZIP_PACKAGE) \
    )
   endif
+
+# Building a full system-- the default is to build droidcore
+droid: droidcore
+
 endif # TARGET_BUILD_APPS
+
+
+.PHONY: droid tests
+tests: droidcore
 
 .PHONY: docs
 docs: $(ALL_DOCS)
@@ -782,3 +786,4 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
+
