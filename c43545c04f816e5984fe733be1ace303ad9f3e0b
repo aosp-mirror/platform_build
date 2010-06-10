@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX//+zY\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-06-10T21:11:59Z",
+      "side": 1,
+      "message": "by convention, PRIVATE_XXX variable must be declared per-target, and not globally. What bug is this patch supposed to fix ?",
+      "revId": "c43545c04f816e5984fe733be1ace303ad9f3e0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
