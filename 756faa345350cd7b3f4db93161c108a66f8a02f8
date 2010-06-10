@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX//+x0\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2010-06-10T22:24:27Z",
+      "side": 1,
+      "message": "oops. upload shouldn\u0027t have occurred on this one. David\u0027s comments in upload 1 are still unanswered. TBD",
+      "revId": "756faa345350cd7b3f4db93161c108a66f8a02f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
