@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX//+vs\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1044,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-06-11T06:44:54Z",
+      "side": 1,
+      "message": "I don\u0027t like adding these ifs all over the place.  Can this go into build/core/combo somewhere?\n\nCan those define STRIPPER and STRIPPER_COMMAND, where STRIPPER is the binary (the same as SOSLIM) for dependency purposes, and STRIPPER_COMMAND is the commandline that\u0027s run?  Alternatively, could we write a script that converts the arguments for the alternate strippers?\n\nWhat is this for anyway?",
+      "revId": "f9c373f3e3912109f1957795ac08d68486c86615",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
