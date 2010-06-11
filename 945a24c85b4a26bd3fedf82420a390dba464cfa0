@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX//+o8\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1044,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2010-06-11T22:52:19Z",
+      "side": 1,
+      "message": "I\u0027m not all that happy with having the ifeq here. I would prefer (as suggested) to do something like:\n\n$(STRIP_COMMAND)\n\nAnd have STRIP_COMMAND have everything that it needs. The problem is that I don\u0027t see how to defer the interpretation of $\u003c and $@. If you have a suggestion... I\u0027ll be glad to go with it.",
+      "revId": "945a24c85b4a26bd3fedf82420a390dba464cfa0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
