@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAzX//+wo\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 709,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-06-11T00:22:00Z",
+      "side": 1,
+      "message": "Should be:\n$(hide) echo \"Target boot fs tarball: $(INSTALLED_BOOTTARBALL_TARGET)",
+      "revId": "a80a12a355b411e5415e026c353526c88eb9a83b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+wk\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 710,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-06-11T00:22:00Z",
+      "side": 1,
+      "message": "All of these lines should be prefixed with $(hide)",
+      "revId": "a80a12a355b411e5415e026c353526c88eb9a83b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+wg\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 714,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-06-11T00:22:00Z",
+      "side": 1,
+      "message": "Please fix tabs.",
+      "revId": "a80a12a355b411e5415e026c353526c88eb9a83b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+wc\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-06-11T00:22:00Z",
+      "side": 1,
+      "message": "Should be\n$(INSTALLED_BOOTTARBALL_TARGET): PRIVATE_BOOT_TAR :\u003d $(boot_tar)\n\nThe PRIVATE_* variables are \"target specific variables\"  See http://www.gnu.org/software/make/manual/make.html#Target_002dspecific",
+      "revId": "a80a12a355b411e5415e026c353526c88eb9a83b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
