@@ -98,9 +98,6 @@ function setpaths()
     if [ -n $ANDROID_BUILD_PATHS ] ; then
         export PATH=${PATH/$ANDROID_BUILD_PATHS/}
     fi
-    if [ -n $ANDROID_PRE_BUILD_PATHS ] ; then
-        export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
-    fi
 
     # and in with the new
     CODE_REVIEWS=
@@ -110,15 +107,6 @@ function setpaths()
     export ANDROID_QTOOLS=$T/development/emulator/qtools
     export ANDROID_BUILD_PATHS=:$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN:$ANDROID_EABI_TOOLCHAIN$CODE_REVIEWS
     export PATH=$PATH$ANDROID_BUILD_PATHS
-
-    unset ANDROID_JAVA_TOOLCHAIN
-    if [ -n "$JAVA_HOME" ]; then
-        export ANDROID_JAVA_TOOLCHAIN=$JAVA_HOME/bin
-    fi
-    export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN
-    if [ -n "$ANDROID_PRE_BUILD_PATHS" ]; then
-        export PATH=$ANDROID_PRE_BUILD_PATHS:$PATH
-    fi
 
     unset ANDROID_PRODUCT_OUT
     export ANDROID_PRODUCT_OUT=$(get_abs_build_var PRODUCT_OUT)
@@ -145,7 +133,6 @@ function printconfig()
 function set_stuff_for_environment()
 {
     settitle
-    set_java_home
     setpaths
     set_sequence_number
 
@@ -1039,21 +1026,19 @@ function godir () {
     cd $T/$pathname
 }
 
-# Force JAVA_HOME to point to java 1.6 if it isn't already set
-function set_java_home() {
-    if [ "$STAY_OFF_MY_LAWN" = "" ]; then
-        if [ ! "$JAVA_HOME" ]; then
-            case `uname -s` in
-                Darwin)
-                    export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home
-                    ;;
-                *)
-                    export JAVA_HOME=/usr/lib/jvm/java-6-sun
-                    ;;
-            esac
-        fi
+# Force JAVA_HOME to point to java 1.5 if it isn't already set
+if [ "$STAY_OFF_MY_LAWN" = "" ]; then
+    if [ ! "$JAVA_HOME" ]; then
+        case `uname -s` in
+            Darwin)
+                export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5/Home
+                ;;
+            *)
+                export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun
+                ;;
+        esac
     fi
-}
+fi
 
 # determine whether arrays are zero-based (bash) or one-based (zsh)
 _xarray=(a b c)
