@@ -16,6 +16,24 @@
       "revId": "f9c373f3e3912109f1957795ac08d68486c86615",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+u4\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1044,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2010-06-11T14:29:44Z",
+      "side": 1,
+      "message": "I\u0027ll take a look at this. Thanks.\n\nWe use \u0027strip --strip-debug\u0027 instead of soslim... since soslim isn\u0027t ported to x86.\nBTW... what was the bug that required you to use soslim instead of existing objcopy and strip tools?",
+      "parentUuid": "AAAAzX//+vs\u003d",
+      "revId": "f9c373f3e3912109f1957795ac08d68486c86615",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
