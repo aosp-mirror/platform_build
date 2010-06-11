@@ -67,6 +67,24 @@
       "revId": "a80a12a355b411e5415e026c353526c88eb9a83b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+sk\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2010-06-11T19:11:26Z",
+      "side": 1,
+      "message": "Done (all of the above)",
+      "parentUuid": "AAAAzX//+wc\u003d",
+      "revId": "a80a12a355b411e5415e026c353526c88eb9a83b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
