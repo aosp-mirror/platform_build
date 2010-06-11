@@ -34,6 +34,24 @@
       "revId": "756faa345350cd7b3f4db93161c108a66f8a02f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+wY\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-06-11T00:22:15Z",
+      "side": 1,
+      "message": "No, it\u0027s not ok.  The PRIVATE_* variables are scoped to a particular goal.  This is overwritten by https://review.source.android.com/#patch,sidebyside,15111,2,core/Makefile  See my comments on that file.",
+      "parentUuid": "AAAAzX//+w0\u003d",
+      "revId": "756faa345350cd7b3f4db93161c108a66f8a02f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
