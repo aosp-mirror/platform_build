@@ -3,7 +3,7 @@
 # you should derive from generic_with_google.mk
 
 PRODUCT_PACKAGES := \
-    AlarmClock \
+    DeskClock \
     AlarmProvider \
     Calendar \
     Camera \
