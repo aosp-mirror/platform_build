@@ -16,6 +16,24 @@
       "revId": "945a24c85b4a26bd3fedf82420a390dba464cfa0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAzX//+Z8\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1044,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2010-06-14T23:52:50Z",
+      "side": 1,
+      "message": "I\u0027m not sure I understand your question, but using \u003d instead of :\u003d should normally defer the expansion of the variable to its actual usage.\n\nDoes STRIP_COMMAND \u003d .... not work ?\n\nApart from that, the patch is good to me.",
+      "parentUuid": "AAAAzX//+o8\u003d",
+      "revId": "945a24c85b4a26bd3fedf82420a390dba464cfa0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
