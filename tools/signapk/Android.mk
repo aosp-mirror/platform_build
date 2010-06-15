@@ -23,5 +23,8 @@ LOCAL_SRC_FILES := SignApk.java
 LOCAL_JAR_MANIFEST := SignApk.mf
 include $(BUILD_HOST_JAVA_LIBRARY)
 
-# The post-build signing tools need signapk.jar.
-$(call dist-for-goals,droid,$(LOCAL_INSTALLED_MODULE))
+ifeq ($(TARGET_BUILD_APPS),)
+# The post-build signing tools need signapk.jar, but we don't
+# need this if we're just doing unbundled apps.
+$(call dist-for-goals,droidcore,$(LOCAL_INSTALLED_MODULE))
+endif
