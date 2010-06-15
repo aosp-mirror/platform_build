@@ -16,7 +16,8 @@
 
 LOCAL_PATH := $(my-dir)
 
-ifeq ($(strip $(is_unbundled_app_build)),true)
+# If we're building only unbundled apps, this is the only tool we need.
+ifneq ($(TARGET_BUILD_APPS),)
 include $(LOCAL_PATH)/signapk/Android.mk
 else
 include $(call first-makefiles-under,$(LOCAL_PATH))
