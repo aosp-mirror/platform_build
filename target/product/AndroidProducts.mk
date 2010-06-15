@@ -25,8 +25,8 @@
 # it includes.
 #
 
-ifeq ($(strip $(is_unbundled_app_build)),true)
 # An unbundled app build needs only generic.mk.
+ifneq ($(TARGET_BUILD_APPS),)
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/core.mk \
     $(LOCAL_DIR)/generic.mk
