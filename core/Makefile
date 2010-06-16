@@ -537,8 +537,15 @@ endif
 endif
 
 ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
-include external/genext2fs/Config.mk
-INTERNAL_USERIMAGES_DEPS := $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK)
+# $(1): src directory
+# $(2): output file
+# $(3): label (if any)
+# $(4): ext variant (ext2, ext3, ext4)
+define build-userimage-ext-target
+  @mkdir -p $(dir $(2))
+  $(hide) $(MKEXT2USERIMG) $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK) $(1) $(2) $(4) $(3)
+endef
+INTERNAL_USERIMAGES_DEPS := $(MKEXT2USERIMG) $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK)
 else
 INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
 endif
