@@ -521,6 +521,7 @@ otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
 # Targets for user images
 # #################################################################
 
+INTERNAL_USERIMAGES_EXT_VARIANT :=
 ifeq ($(TARGET_USERIMAGES_USE_EXT2),true)
 INTERNAL_USERIMAGES_USE_EXT := true
 INTERNAL_USERIMAGES_EXT_VARIANT := ext2
@@ -537,15 +538,18 @@ endif
 endif
 
 ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
+INTERNAL_USERIMAGES_DEPS := $(MKEXT2USERIMG) $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK)
+INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
+
 # $(1): src directory
 # $(2): output file
 # $(3): label (if any)
 # $(4): ext variant (ext2, ext3, ext4)
 define build-userimage-ext-target
   @mkdir -p $(dir $(2))
-  $(hide) $(MKEXT2USERIMG) $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK) $(1) $(2) $(4) $(3)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$(PATH) \
+	  $(MKEXT2USERIMG) $(1) $(2) $(4) $(3)
 endef
-INTERNAL_USERIMAGES_DEPS := $(MKEXT2USERIMG) $(MKEXT2IMG) $(TUNE2FS) $(E2FSCK)
 else
 INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
 endif
@@ -836,7 +840,12 @@ otatools: $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/bsdiff \
 	  $(HOST_OUT_EXECUTABLES)/imgdiff \
 	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
-	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar
+	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
+	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
+	  $(HOST_OUT_EXECUTABLES)/genext2fs \
+	  $(HOST_OUT_EXECUTABLES)/tune2fs \
+	  $(HOST_OUT_EXECUTABLES)/e2fsck
+
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
@@ -1135,6 +1144,7 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) otatools
 	$(hide) ./build/tools/releasetools/img_from_target_files \
 	   -s $(extensions) \
 	   -p $(HOST_OUT) \
+	   $(addprefix --fs_type ,$(INTERNAL_USERIMAGES_EXT_VARIANT)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: updatepackage
