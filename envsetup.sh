@@ -56,6 +56,7 @@ function check_product()
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 TARGET_BUILD_VARIANT= \
         TARGET_SIMULATOR= TARGET_BUILD_TYPE= \
+        TARGET_BUILD_APPS= \
         get_build_var TARGET_DEVICE > /dev/null
     # hide successful answers, but allow the errors to show
 }
@@ -102,7 +103,7 @@ function setpaths()
     # and in with the new
     CODE_REVIEWS=
     prebuiltdir=$(getprebuilt)
-    export ANDROID_EABI_TOOLCHAIN=$prebuiltdir/toolchain/arm-eabi-4.4.0/bin
+    export ANDROID_EABI_TOOLCHAIN=$prebuiltdir/toolchain/arm-eabi-4.4.3/bin
     export ANDROID_TOOLCHAIN=$ANDROID_EABI_TOOLCHAIN
     export ANDROID_QTOOLS=$T/development/emulator/qtools
     export ANDROID_BUILD_PATHS=:$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN:$ANDROID_EABI_TOOLCHAIN$CODE_REVIEWS
@@ -150,9 +151,14 @@ function set_sequence_number()
 function settitle()
 {
     if [ "$STAY_OFF_MY_LAWN" = "" ]; then
-        local product=$(get_build_var TARGET_PRODUCT)
-        local variant=$(get_build_var TARGET_BUILD_VARIANT)
-        export PROMPT_COMMAND="echo -ne \"\033]0;[${product}-${variant}] ${USER}@${HOSTNAME}: ${PWD}\007\""
+        local product=$TARGET_PRODUCT
+        local variant=$TARGET_BUILD_VARIANT
+        local apps=$TARGET_BUILD_APPS
+        if [ -z "$apps" ]; then
+            export PROMPT_COMMAND="echo -ne \"\033]0;[${product}-${variant}] ${USER}@${HOSTNAME}: ${PWD}\007\""
+        else
+            export PROMPT_COMMAND="echo -ne \"\033]0;[$apps $variant] ${USER}@${HOSTNAME}: ${PWD}\007\""
+        fi
     fi
 }
 
@@ -376,11 +382,6 @@ function choosevariant()
     done
 }
 
-function tapas()
-{
-    choosecombo
-}
-
 function choosecombo()
 {
     choosesim $1
@@ -432,7 +433,6 @@ function print_lunch_menu()
     echo
     echo "You're building on" $uname
     echo
-    echo ${LUNCH_MENU_CHOICES[@]}
     echo "Lunch menu... pick a combo:"
 
     local i=1
@@ -484,6 +484,8 @@ function lunch()
         return 1
     fi
 
+    export TARGET_BUILD_APPS=
+
     # special case the simulator
     if [ "$selection" = "simulator" ]
     then
@@ -525,6 +527,31 @@ function lunch()
     fi # !simulator
 
     echo
+
+    set_stuff_for_environment
+    printconfig
+}
+
+# Configures the build to build unbundled apps.
+# Run tapas with one ore more app names (from LOCAL_PACKAGE_NAME)
+function tapas()
+{
+    local variant=$(echo -n $(echo $* | xargs -n 1 echo | grep -E '^(user|userdebug|eng)$'))
+    local apps=$(echo -n $(echo $* | xargs -n 1 echo | grep -E -v '^(user|userdebug|eng)$'))
+
+    if [ $(echo $variant | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple build variants supplied: $variant"
+        return
+    fi
+    if [ -z "$variant" ]; then
+        variant=eng
+    fi
+
+    export TARGET_PRODUCT=generic
+    export TARGET_BUILD_VARIANT=$variant
+    export TARGET_SIMULATOR=false
+    export TARGET_BUILD_TYPE=release
+    export TARGET_BUILD_APPS=$apps
 
     set_stuff_for_environment
     printconfig

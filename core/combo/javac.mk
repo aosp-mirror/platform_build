@@ -8,7 +8,7 @@
 #   COMMON_JAVAC -- Java compiler command with common arguments
 
 # Whatever compiler is on this system.
-ifeq ($(HOST_OS), windows)
+ifeq ($(BUILD_OS), windows)
     COMMON_JAVAC := development/host/windows/prebuilt/javawrap.exe -J-Xmx256m \
         -target 1.5 -Xmaxerrs 9999999
 else
