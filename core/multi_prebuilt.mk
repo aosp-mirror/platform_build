@@ -56,7 +56,6 @@ $(foreach t,$(1), \
     $(eval LOCAL_MODULE := $(basename $(notdir $(t)))) \
     $(eval LOCAL_SRC_FILES := $(t)) \
    ) \
-  $(eval ALL_PREBUILT += $(LOCAL_MODULE)) \
   $(if $(6), \
     $(eval LOCAL_BUILT_MODULE_STEM := $(6)) \
    , \
