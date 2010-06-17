@@ -157,13 +157,12 @@ ifdef unbundled_goals
   ifneq ($(words $(unbundled_goals)),1)
     $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)"))
   endif
-  UNBUNDLED_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
+  TARGET_BUILD_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
   ifneq ($(filter $(DEFAULT_GOAL),$(MAKECMDGOALS)),)
     MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
   else
     MAKECMDGOALS := $(patsubst $(unbundled_goals),$(DEFAULT_GOAL),$(MAKECMDGOALS))
   endif
-  is_unbundled_app_build := true
 
 .PHONY: $(unbundled_goals)
 $(unbundled_goals): $(MAKECMDGOALS)
@@ -178,7 +177,7 @@ include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
-ifeq ($(strip $(is_unbundled_app_build)),true)
+ifneq ($(strip $(TARGET_BUILD_APPS)),)
   # An unbundled app build needs only the core product makefiles.
   $(call import-products,$(call get-product-makefiles,\
       $(SRC_TARGET_DIR)/product/AndroidProducts.mk))
@@ -189,7 +188,7 @@ else
   #TODO: when we start allowing direct pointers to product files,
   #    guarantee that they're in this list.
   $(call import-products, $(get-all-product-makefiles))
-endif # is_unbundled_app_build
+endif # TARGET_BUILD_APPS
 $(check-all-products)
 #$(dump-products)
 #$(error done)

@@ -144,13 +144,13 @@ def SetupToolsPath():
       uname = "darwin-ppc"
   elif uname == "Linux":
     uname = "linux-x86"
-  prefix = "./prebuilt/" + uname + "/toolchain/arm-eabi-4.4.0/bin/"
+  prefix = "./prebuilt/" + uname + "/toolchain/arm-eabi-4.4.3/bin/"
   addr2line_cmd = prefix + "arm-eabi-addr2line"
 
   if (not os.path.exists(addr2line_cmd)):
     try:
       prefix = os.environ['ANDROID_BUILD_TOP'] + "/prebuilt/" + uname + \
-               "/toolchain/arm-eabi-4.4.0/bin/"
+               "/toolchain/arm-eabi-4.4.3/bin/"
     except:
       prefix = "";
 
