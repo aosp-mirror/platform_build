@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA0X///+A\u003d",
+        "filename": "tools/releasetools/amend_generator.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2010-06-17T22:59:04Z",
+      "side": 1,
+      "message": "This whole file shouldn\u0027t exist in master.",
+      "revId": "30e2acad1e29b82174fdc8de98a8333474a7fb35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA0X///98\u003d",
+        "filename": "tools/releasetools/both_generator.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2010-06-17T22:59:04Z",
+      "side": 1,
+      "message": "this file\u0027s gone too.",
+      "revId": "30e2acad1e29b82174fdc8de98a8333474a7fb35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA0X///+Q\u003d",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2010-06-17T22:59:04Z",
+      "side": 1,
+      "message": "maybe \"--use_aslr\"?  --aslr_mode sounds like it should take an argument.",
+      "revId": "30e2acad1e29b82174fdc8de98a8333474a7fb35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA0X///+M\u003d",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 5
+      },
+      "lineNbr": 865,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2010-06-17T22:59:04Z",
+      "side": 1,
+      "message": "long option name doesn\u0027t match the help text.",
+      "revId": "30e2acad1e29b82174fdc8de98a8333474a7fb35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
