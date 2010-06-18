@@ -278,6 +278,16 @@ jni_shared_libraries := \
       $(addsuffix $(so_suffix), \
         $(LOCAL_JNI_SHARED_LIBRARIES)))
 
+# Set the abi directory used by the local JNI shared libraries.
+# (Doesn't change how the local shared libraries are compiled, just
+# sets where they are stored in the apk.)
+
+ifeq ($(LOCAL_JNI_SHARED_LIBRARIES_ABI),)
+    jni_shared_libraries_abi := $(TARGET_CPU_ABI)
+else
+    jni_shared_libraries_abi := $(LOCAL_JNI_SHARED_LIBRARIES_ABI)
+endif
+
 # Pick a key to sign the package with.  If this package hasn't specified
 # an explicit certificate, use the default.
 # Secure release builds will have their packages signed after the fact,
@@ -311,6 +321,7 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries)
+$(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abi)
 ifneq ($(TARGET_BUILD_APPS),)
     # Include all resources for unbundled apps.
     $(LOCAL_BUILT_MODULE): PRODUCT_AAPT_CONFIG :=
