@@ -57,6 +57,13 @@ endif
 $(full_target): PRIVATE_CLASSPATH:=$(LOCAL_CLASSPATH)
 full_java_lib_deps :=
 
+$(full_target): PRIVATE_BOOTCLASSPATH :=
+ifeq ($(BUILD_OS),linux)
+# You have to set bootclasspath for javadoc manually on linux since Java 6.
+host_jdk_rt_jar := $(dir $(HOST_JDK_TOOLS_JAR))../jre/lib/rt.jar
+$(full_target): PRIVATE_BOOTCLASSPATH := $(host_jdk_rt_jar)
+endif
+
 ifneq ($(LOCAL_IS_HOST_MODULE),true)
 
 ifeq ($(LOCAL_JAVA_LIBRARIES),)
@@ -165,6 +172,7 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
                 -templatedir $(PRIVATE_CUSTOM_TEMPLATE_DIR) \
                 -templatedir $(PRIVATE_TEMPLATE_DIR) \
                 $(PRIVATE_DROIDDOC_HTML_DIR) \
+                $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
                 -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
                 -d $(PRIVATE_OUT_DIR) \
