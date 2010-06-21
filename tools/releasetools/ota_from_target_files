@@ -355,6 +355,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   metadata = {"post-build": GetBuildProp("ro.build.fingerprint", input_zip),
               "pre-device": GetBuildProp("ro.product.device", input_zip),
+              "post-timestamp": GetBuildProp("ro.build.date.utc", input_zip),
               }
 
   device_specific = common.DeviceSpecificParams(
@@ -602,6 +603,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     raise ValueError('unknown script mode "%s"' % (OPTIONS.script_mode,))
 
   metadata = {"pre-device": GetBuildProp("ro.product.device", source_zip),
+              "post-timestamp": GetBuildProp("ro.build.date.utc", target_zip),
               }
 
   device_specific = common.DeviceSpecificParams(
