@@ -689,6 +689,10 @@ droidcore: files \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_FILES_FILE)
 
+ifeq ($(EMMA_INSTRUMENT),true)
+  $(call dist-for-goals, droid, $(EMMA_META_ZIP))
+endif
+
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
 
