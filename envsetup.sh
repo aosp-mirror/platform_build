@@ -158,7 +158,7 @@ function set_stuff_for_environment()
 
 function set_sequence_number()
 {
-    export BUILD_ENV_SEQUENCE_NUMBER=9
+    export BUILD_ENV_SEQUENCE_NUMBER=10
 }
 
 function settitle()
