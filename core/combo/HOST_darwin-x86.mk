@@ -29,6 +29,8 @@ HOST_NO_UNDEFINED_LDFLAGS := -Wl,-undefined,error
 HOST_CC := $(CC)
 HOST_CXX := $(CXX)
 HOST_AR := $(AR)
+HOST_STRIP := $(STRIP)
+HOST_STRIP_COMMAND = $(HOST_STRIP) --strip-debug $< -o $@
 
 HOST_SHLIB_SUFFIX := .dylib
 HOST_JNILIB_SUFFIX := .jnilib
