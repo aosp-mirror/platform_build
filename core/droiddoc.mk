@@ -57,6 +57,7 @@ endif
 $(full_target): PRIVATE_CLASSPATH:=$(LOCAL_CLASSPATH)
 full_java_lib_deps :=
 
+$(full_target): PRIVATE_BOOTCLASSPATH :=
 ifeq ($(BUILD_OS),linux)
 # You have to set bootclasspath for javadoc manually on linux since Java 6.
 host_jdk_rt_jar := $(dir $(HOST_JDK_TOOLS_JAR))../jre/lib/rt.jar
