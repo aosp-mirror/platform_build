@@ -1068,17 +1068,15 @@ function godir () {
 
 # Force JAVA_HOME to point to java 1.6 if it isn't already set
 function set_java_home() {
-    if [ "$STAY_OFF_MY_LAWN" = "" ]; then
-        if [ ! "$JAVA_HOME" ]; then
-            case `uname -s` in
-                Darwin)
-                    export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home
-                    ;;
-                *)
-                    export JAVA_HOME=/usr/lib/jvm/java-6-sun
-                    ;;
-            esac
-        fi
+    if [ ! "$JAVA_HOME" ]; then
+        case `uname -s` in
+            Darwin)
+                export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home
+                ;;
+            *)
+                export JAVA_HOME=/usr/lib/jvm/java-6-sun
+                ;;
+        esac
     fi
 }
 
