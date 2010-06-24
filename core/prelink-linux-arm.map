@@ -82,6 +82,7 @@ libsgl.so               0xAB800000 # [???]
 libskia.so              0xAB100000 # [~7M]
 librs_jni.so            0xAB000000 # [~1M]
 libRS.so                0xA9E00000 # [~2M]
+libandroid.so           0xA9D80000 # [<64K]
 libjnigraphics.so       0xA9D00000 # [<64K]
 libskiagl.so            0xA9C00000 # [~1M]
 
