@@ -546,6 +546,9 @@ function tapas()
     if [ -z "$variant" ]; then
         variant=eng
     fi
+    if [ -z "$apps" ]; then
+        apps=all
+    fi
 
     export TARGET_PRODUCT=generic
     export TARGET_BUILD_VARIANT=$variant
