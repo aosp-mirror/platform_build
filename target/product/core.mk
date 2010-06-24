@@ -43,3 +43,6 @@ PRODUCT_PACKAGES := \
     PackageInstaller \
     DefaultContainerService \
     Bugreport
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.stagefright.enable-record=true
