@@ -266,11 +266,6 @@ ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
 endif
 
-# build the full stagefright library
-ifneq ($(strip BUILD_WITH_FULL_STAGEFRIGHT),)
-BUILD_WITH_FULL_STAGEFRIGHT := true
-endif
-
 ## precise GC ##
 
 ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
