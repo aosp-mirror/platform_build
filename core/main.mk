@@ -688,8 +688,8 @@ ifneq ($(TARGET_BUILD_APPS),)
 
   unbundled_build_modules :=
   ifneq ($(filter all,$(TARGET_BUILD_APPS)),)
-    # If they used the magic goal "all" then build everything
-    unbundled_build_modules := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
+    # If they used the magic goal "all" then build all apps in the source tree.
+    unbundled_build_modules := $(foreach m,$(sort $(ALL_MODULES)),$(if $(filter APPS,$(ALL_MODULES.$(m).CLASS)),$(m)))
   else
     unbundled_build_modules := $(TARGET_BUILD_APPS)
   endif
