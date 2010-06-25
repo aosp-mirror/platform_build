@@ -491,6 +491,8 @@ ALL_MODULES += $(LOCAL_MODULE)
 
 # Don't use += on subvars, or else they'll end up being
 # recursively expanded.
+ALL_MODULES.$(LOCAL_MODULE).CLASS := \
+    $(ALL_MODULES.$(LOCAL_MODULE).CLASS) $(LOCAL_MODULE_CLASS)
 ALL_MODULES.$(LOCAL_MODULE).PATH := \
     $(ALL_MODULES.$(LOCAL_MODULE).PATH) $(LOCAL_PATH)
 ALL_MODULES.$(LOCAL_MODULE).TAGS := \
