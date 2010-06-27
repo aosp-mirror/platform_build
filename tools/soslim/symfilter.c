@@ -38,9 +38,9 @@ void build_symfilter(const char *name, Elf *elf, symfilter_t *filter,
            strerror(errno),
            errno);
 
-    INFO("Symbol-filter file %s is %ld bytes long...\n", 
+    INFO("Symbol-filter file %s is %zd bytes long...\n",
          name,
-         fsize);
+         (size_t)fsize);
     filter->fsize = fsize;
 
     /* mmap the symbols file */
@@ -48,8 +48,8 @@ void build_symfilter(const char *name, Elf *elf, symfilter_t *filter,
                         PROT_READ | PROT_WRITE, MAP_PRIVATE, 
                         filter->fd, 0);
     FAILIF(MAP_FAILED == filter->mmap, 
-           "mmap(NULL, %ld, PROT_READ, MAP_PRIVATE, %d, 0): %s (%d)\n",
-           fsize,
+           "mmap(NULL, %zd, PROT_READ, MAP_PRIVATE, %d, 0): %s (%d)\n",
+           (size_t)fsize,
            filter->fd,
            strerror(errno),
            errno);
@@ -202,6 +202,8 @@ void destroy_symfilter(symfilter_t *filter)
 
 static int match_hash_table_section(Elf *elf, Elf_Scn *sect, void *data)
 {
+    (void)elf; // unused argument
+
     symfilter_t *filter = (symfilter_t *)data;
     Elf32_Shdr *shdr;
 
@@ -224,6 +226,8 @@ static int match_hash_table_section(Elf *elf, Elf_Scn *sect, void *data)
 
 static int match_dynsym_section(Elf *elf, Elf_Scn *sect, void *data)
 {
+    (void)elf; // unused argument
+
     symfilter_t *filter = (symfilter_t *)data;
     Elf32_Shdr *shdr;
 

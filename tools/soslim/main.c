@@ -337,7 +337,7 @@ static void print_dynamic_symbols(Elf *elf, const char *file)
                             section_name = "(undefined)";
                         }
                         /* value size binding type section symname */
-                        PRINT("%-15s %8d: %08llx %08llx %c%c %5d %n%s%n",
+                        PRINT("%-15s %8zd: %08llx %08llx %c%c %5d %n%s%n",
                               file,
                               index,
                               sym->st_value, sym->st_size, bind, type,

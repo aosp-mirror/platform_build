@@ -14,13 +14,13 @@
 typedef struct {
 	uint32_t mmap_addr;
 	char tag[4]; /* 'P', 'R', 'E', ' ' */
-} prelink_info_t __attribute__((packed));
+} __attribute__((packed)) prelink_info_t;
 
 static inline void set_prelink(long *prelink_addr, 
 							   int elf_little,
 							   prelink_info_t *info)
 {
-    FAILIF(sizeof(prelink_info_t) != 8, "Unexpected sizeof(prelink_info_t) == %d!\n", sizeof(prelink_info_t));
+    FAILIF(sizeof(prelink_info_t) != 8, "Unexpected sizeof(prelink_info_t) == %zd!\n", sizeof(prelink_info_t));
 	if (prelink_addr) {
 		if (!(elf_little ^ is_host_little())) {
 			/* Same endianness */
@@ -35,11 +35,14 @@ static inline void set_prelink(long *prelink_addr,
 
 int check_prelinked(const char *fname, int elf_little, long *prelink_addr)
 {
-    FAILIF(sizeof(prelink_info_t) != 8, "Unexpected sizeof(prelink_info_t) == %d!\n", sizeof(prelink_info_t));
+    FAILIF(sizeof(prelink_info_t) != 8, "Unexpected sizeof(prelink_info_t) == %zd!\n", sizeof(prelink_info_t));
 	int fd = open(fname, O_RDONLY);
 	FAILIF(fd < 0, "open(%s, O_RDONLY): %s (%d)!\n",
 		   fname, strerror(errno), errno);
 	off_t end = lseek(fd, 0, SEEK_END);
+#ifndef DEBUG
+	(void)end;
+#endif
 
     int nr = sizeof(prelink_info_t);
 
@@ -50,14 +53,14 @@ int check_prelinked(const char *fname, int elf_little, long *prelink_addr)
 		   fd, strerror(errno), errno);
 
 	prelink_info_t info;
-	int num_read = read(fd, &info, nr);
+	ssize_t num_read = read(fd, &info, nr);
 	FAILIF(num_read < 0, 
 		   "read(%d, &info, sizeof(prelink_info_t)): %s (%d)!\n",
 		   fd, strerror(errno), errno);
-	FAILIF(num_read != sizeof(info),
-		   "read(%d, &info, sizeof(prelink_info_t)): did not read %d bytes as "
-		   "expected (read %d)!\n",
-		   fd, sizeof(info), num_read);
+	FAILIF((size_t)num_read != sizeof(info),
+		   "read(%d, &info, sizeof(prelink_info_t)): did not read %zd bytes as "
+		   "expected (read %zd)!\n",
+		   fd, sizeof(info), (size_t)num_read);
 
 	int prelinked = 0;
 	if (!strncmp(info.tag, "PRE ", 4)) {
@@ -70,7 +73,7 @@ int check_prelinked(const char *fname, int elf_little, long *prelink_addr)
 
 void setup_prelink_info(const char *fname, int elf_little, long base)
 {
-    FAILIF(sizeof(prelink_info_t) != 8, "Unexpected sizeof(prelink_info_t) == %d!\n", sizeof(prelink_info_t));
+    FAILIF(sizeof(prelink_info_t) != 8, "Unexpected sizeof(prelink_info_t) == %zd!\n", sizeof(prelink_info_t));
     int fd = open(fname, O_WRONLY);
     FAILIF(fd < 0, 
            "open(%s, O_WRONLY): %s (%d)\n" ,
@@ -93,13 +96,13 @@ void setup_prelink_info(const char *fname, int elf_little, long base)
     }
     strncpy(info.tag, "PRE ", 4);
 
-    int num_written = write(fd, &info, sizeof(info));
+    ssize_t num_written = write(fd, &info, sizeof(info));
     FAILIF(num_written < 0, 
            "write(%d, &info, sizeof(info)): %s (%d)\n",
            fd, strerror(errno), errno);
-    FAILIF(sizeof(info) != num_written, 
-           "Could not write %d bytes (wrote only %d bytes) as expected!\n",
-           sizeof(info), num_written);
+    FAILIF(sizeof(info) != (size_t)num_written,
+           "Could not write %zd bytes (wrote only %zd bytes) as expected!\n",
+           sizeof(info), (size_t)num_written);
     FAILIF(close(fd) < 0, "close(%d): %s (%d)!\n", fd, strerror(errno), errno);
 }
 
