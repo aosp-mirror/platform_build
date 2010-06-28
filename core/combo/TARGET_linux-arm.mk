@@ -211,6 +211,9 @@ TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtbegin_static.o
 TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtbegin_dynamic.o
 TARGET_CRTEND_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtend_android.o
 
+TARGET_CRTBEGIN_SO_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtbegin_so.o
+TARGET_CRTEND_SO_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtend_so.o
+
 TARGET_STRIP_MODULE:=true
 
 TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
@@ -229,6 +232,7 @@ $(TARGET_CXX) \
 	-Wl,-shared,-Bsymbolic \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	$(PRIVATE_ALL_OBJECTS) \
+	$(TARGET_CRTBEGIN_SO_O) \
 	-Wl,--whole-archive \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
 	-Wl,--no-whole-archive \
@@ -238,7 +242,8 @@ $(TARGET_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
 	$(TARGET_FDO_LIB) \
-	$(TARGET_LIBGCC)
+	$(TARGET_LIBGCC) \
+	$(TARGET_CRTEND_SO_O)
 endef
 
 define transform-o-to-executable-inner
