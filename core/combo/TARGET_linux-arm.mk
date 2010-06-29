@@ -95,6 +95,7 @@ arch_include_dir := $(dir $(android_config_h))
 TARGET_GLOBAL_CFLAGS += \
 			-msoft-float -fpic \
 			-ffunction-sections \
+			-fdata-sections \
 			-funwind-tables \
 			-fstack-protector \
 			-Wa,--noexecstack \
@@ -116,6 +117,7 @@ TARGET_GLOBAL_CFLAGS += -Wno-psabi
 
 TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
+			-Wl,--icf=safe \
 			$(arch_variant_ldflags)
 
 # We only need thumb interworking in cases where thumb support
