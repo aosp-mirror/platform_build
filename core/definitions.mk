@@ -1233,8 +1233,8 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(addprefix -G , $(PRIVATE_PROGUARD_OPTIONS_FILE)) \
     $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
-    $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
-    $(addprefix --version-name , $(PLATFORM_VERSION)) \
+    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-code , $(PLATFORM_SDK_VERSION))) \
+    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-name , $(PLATFORM_VERSION))) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_INSTRUMENTATION_FOR_PACKAGE_NAME))
 endef
@@ -1378,8 +1378,8 @@ $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
     $(addprefix --min-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(DEFAULT_APP_TARGET_SDK)) \
-    $(addprefix --version-code , $(PLATFORM_SDK_VERSION)) \
-    $(addprefix --version-name , $(PLATFORM_VERSION)) \
+    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-code , $(PLATFORM_SDK_VERSION))) \
+    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-name , $(PLATFORM_VERSION))) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_INSTRUMENTATION_FOR_PACKAGE_NAME)) \
     -F $@
