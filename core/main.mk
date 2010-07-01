@@ -408,6 +408,7 @@ subdirs += \
 	sdk/sdkstats \
 	sdk/sdkmanager \
 	sdk/layoutopt \
+	sdk/ddms \
 	development/apps \
 	development/tools/mkstubs \
 	packages
