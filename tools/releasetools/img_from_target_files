@@ -171,7 +171,8 @@ def main(argv):
 
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
 
-  common.LoadMaxSizes()
+  info = common.LoadInfoDict()
+  common.LoadMaxSizes(info)
   if not OPTIONS.max_image_size:
     print
     print "  WARNING:  Failed to load max image sizes; will not enforce"

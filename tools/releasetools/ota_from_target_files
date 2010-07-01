@@ -334,11 +334,11 @@ fi
   return Item.Get("system/etc/install-recovery.sh", dir=False)
 
 
-def WriteFullOTAPackage(input_zip, output_zip):
+def WriteFullOTAPackage(input_zip, output_zip, info):
   # TODO: how to determine this?  We don't know what version it will
   # be installed on top of.  For now, we expect the API just won't
   # change very often.
-  script = edify_generator.EdifyGenerator(3)
+  script = edify_generator.EdifyGenerator(3, info)
 
   metadata = {"post-build": GetBuildProp("ro.build.fingerprint", input_zip),
               "pre-device": GetBuildProp("ro.product.device", input_zip),
@@ -366,7 +366,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
     script.FormatPartition("userdata")
 
   script.FormatPartition("system")
-  script.Mount("MTD", "system", "/system")
+  script.Mount("system", "/system")
   script.UnpackPackageDir("recovery", "/system")
   script.UnpackPackageDir("system", "/system")
 
@@ -448,14 +448,14 @@ def GetRecoveryAPIVersion(zip):
       return 0
 
 
-def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
+def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip, info):
   source_version = GetRecoveryAPIVersion(source_zip)
   target_version = GetRecoveryAPIVersion(target_zip)
 
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
            "can't install it.")
-  script = edify_generator.EdifyGenerator(source_version)
+  script = edify_generator.EdifyGenerator(source_version, info)
 
   metadata = {"pre-device": GetBuildProp("ro.product.device", source_zip),
               "post-timestamp": GetBuildProp("ro.build.date.utc", target_zip),
@@ -516,7 +516,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
 
-  script.Mount("MTD", "system", "/system")
+  script.Mount("system", "/system")
   script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = common.File("/tmp/boot.img",
@@ -755,7 +755,8 @@ def main(argv):
       else:
         raise
 
-  common.LoadMaxSizes()
+  info = common.LoadInfoDict()
+  common.LoadMaxSizes(info)
   if not OPTIONS.max_image_size:
     print
     print "  WARNING:  Failed to load max image sizes; will not enforce"
@@ -773,12 +774,12 @@ def main(argv):
                                  compression=zipfile.ZIP_DEFLATED)
 
   if OPTIONS.incremental_source is None:
-    WriteFullOTAPackage(input_zip, output_zip)
+    WriteFullOTAPackage(input_zip, output_zip, info)
   else:
     print "unzipping source target-files..."
     OPTIONS.source_tmp = common.UnzipTemp(OPTIONS.incremental_source)
     source_zip = zipfile.ZipFile(OPTIONS.incremental_source, "r")
-    WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+    WriteIncrementalOTAPackage(input_zip, source_zip, output_zip, info)
 
   output_zip.close()
   if OPTIONS.package_key:
