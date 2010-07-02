@@ -276,6 +276,7 @@ ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
 endif
 
+ifeq (,$(TARGET_BUILD_APPS))
 # Install an apns-conf.xml file if one's not already being installed.
 ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
   PRODUCT_COPY_FILES += \
@@ -296,6 +297,7 @@ ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
     endif
   endif
 endif
+endif # !TARGET_BUILD_APPS
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
@@ -716,6 +718,7 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_BUILD_PROP_TARGET) \
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
+    $(INSTALLED_RAMDISK_TARGET) \
    )
 
   # Tests are installed in userdata.img.  If we're building the tests
