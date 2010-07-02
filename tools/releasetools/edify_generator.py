@@ -21,10 +21,11 @@ class EdifyGenerator(object):
   """Class to generate scripts in the 'edify' recovery script language
   used from donut onwards."""
 
-  def __init__(self, version):
+  def __init__(self, version, info):
     self.script = []
     self.mounts = set()
     self.version = version
+    self.info = info
 
   def MakeTemporary(self):
     """Make a temporary script object whose commands can latter be
@@ -130,12 +131,15 @@ class EdifyGenerator(object):
     available on /cache."""
     self.script.append("assert(apply_patch_space(%d));" % (amount,))
 
-  def Mount(self, kind, what, path):
+  def Mount(self, what, mount_point):
     """Mount the given 'what' at the given path.  'what' should be a
-    partition name if kind is "MTD", or a block device if kind is
-    "vfat".  No other values of 'kind' are supported."""
-    self.script.append('mount("%s", "%s", "%s");' % (kind, what, path))
-    self.mounts.add(path)
+    partition name for an MTD partition, or a block device for
+    anything else."""
+    what = self.info.get("partition_path", "") + what
+    self.script.append('mount("%s", "%s", "%s", "%s");' %
+                       (self.info["fs_type"], self.info["partition_type"],
+                        what, mount_point))
+    self.mounts.add(mount_point)
 
   def UnpackPackageDir(self, src, dst):
     """Unpack a given directory from the OTA package into the given
@@ -154,8 +158,11 @@ class EdifyGenerator(object):
     self.script.append('ui_print("%s");' % (message,))
 
   def FormatPartition(self, partition):
-    """Format the given MTD partition."""
-    self.script.append('format("MTD", "%s");' % (partition,))
+    """Format the given partition."""
+    partition = self.info.get("partition_path", "") + partition
+    self.script.append('format("%s", "%s", "%s");' %
+                       (self.info["fs_type"], self.info["partition_type"],
+                        partition))
 
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""
@@ -190,12 +197,23 @@ class EdifyGenerator(object):
           'write_firmware_image("PACKAGE:%s", "%s");' % (fn, kind))
 
   def WriteRawImage(self, partition, fn):
-    """Write the given package file into the given MTD partition."""
-    self.script.append(
-        ('assert(package_extract_file("%(fn)s", "/tmp/%(partition)s.img"),\n'
-         '       write_raw_image("/tmp/%(partition)s.img", "%(partition)s"),\n'
-         '       delete("/tmp/%(partition)s.img"));')
-        % {'partition': partition, 'fn': fn})
+    """Write the given package file into the given partition."""
+
+    if self.info["partition_type"] == "MTD":
+      self.script.append(
+          ('assert(package_extract_file("%(fn)s", "/tmp/%(partition)s.img"),\n'
+           '       write_raw_image("/tmp/%(partition)s.img", "%(partition)s"),\n'
+           '       delete("/tmp/%(partition)s.img"));')
+          % {'partition': partition, 'fn': fn})
+    elif self.info["partition_type"] == "EMMC":
+      self.script.append(
+          ('package_extract_file("%(fn)s", "%(dir)s%(partition)s");')
+          % {'partition': partition, 'fn': fn,
+             'dir': self.info.get("partition_path", ""),
+             })
+    else:
+      raise ValueError("don't know how to write \"%s\" partitions" %
+                       (self.info["partition_type"],))
 
   def SetPermissions(self, fn, uid, gid, mode):
     """Set file ownership and permissions."""
