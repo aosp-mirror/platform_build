@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA0n//+uk\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-07-07T17:09:32Z",
+      "side": 1,
+      "message": "You have to change the value of PRIVATE_ARM_MODE, instead of defining a new var. Because PRIVATE_ARM_MODE is a target specific var, it may vary with different targets.",
+      "revId": "fd029f4e9ef5ead26b718fbf4b27ce298270ce10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
