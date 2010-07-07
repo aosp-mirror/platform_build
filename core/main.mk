@@ -689,6 +689,9 @@ droidcore: files \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_FILES_FILE)
 
+# dist_libraries only for putting your library into the dist directory with a full build.
+.PHONY: dist_libraries
+
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
 
@@ -736,7 +739,7 @@ else # TARGET_BUILD_APPS
   endif
 
 # Building a full system-- the default is to build droidcore
-droid: droidcore
+droid: droidcore dist_libraries
 
 endif # TARGET_BUILD_APPS
 
