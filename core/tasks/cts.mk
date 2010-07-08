@@ -65,11 +65,13 @@ CTS_SECURITY_APPS_LIST := \
 CTS_CASE_LIST := \
 	TestDeviceSetup \
 	CtsTestStubs \
+	CtsAccessibilityServiceTestCases \
 	CtsAccountManagerTestCases \
 	CtsAppTestCases \
 	CtsBluetoothTestCases \
 	CtsContentTestCases \
 	CtsDatabaseTestCases \
+	CtsDelegatingAccessibilityService \
 	CtsDpiTestCases \
 	CtsDpiTestCases2 \
 	CtsExampleTestCases \
