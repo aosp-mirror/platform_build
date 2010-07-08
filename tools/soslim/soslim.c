@@ -42,7 +42,7 @@ void clone_elf(Elf *elf, Elf *newelf,
     int dynsym_idx = -1; /* index in shdr_info[] of dynamic symbol table
                             section */
 
-    int cnt;	  /* general-purpose counter */
+    unsigned int cnt;	  /* general-purpose counter */
     /* This flag is true when at least one section is dropped or when the
        relative order of sections has changed, so that section indices in
        the resulting file will be different from those in the original. */
@@ -51,7 +51,7 @@ void clone_elf(Elf *elf, Elf *newelf,
 	size_t idx;	  /* general-purporse section index */
 
 	shdr_info_t *shdr_info = NULL;
-    int shdr_info_len = 0;
+    unsigned int shdr_info_len = 0;
     GElf_Phdr *phdr_info = NULL;
 
 	/* Get the information from the old file. */
@@ -95,7 +95,7 @@ void clone_elf(Elf *elf, Elf *newelf,
 
 	/* Get the number of sections. */
 	FAILIF_LIBELF(elf_getshnum (elf, &shnum) < 0, elf_getshnum);
-	INFO("Original ELF file has %d sections.\n", shnum);
+	INFO("Original ELF file has %zd sections.\n", shnum);
 
 	/* Allocate the section-header-info buffer.  We allocate one more entry
        for the section-strings section because we regenerate that one and
@@ -104,7 +104,7 @@ void clone_elf(Elf *elf, Elf *newelf,
        one more section the header.  We just mark the old section for removal
        and create one as the last section.
     */
-	INFO("Allocating section-header info structure (%d) bytes...\n",
+	INFO("Allocating section-header info structure (%zd) bytes...\n",
 		 shnum*sizeof (shdr_info_t));
     shdr_info_len = rebuild_shstrtab ? shnum + 1 : shnum;
 	shdr_info = (shdr_info_t *)CALLOC(shdr_info_len, sizeof (shdr_info_t));
@@ -305,9 +305,9 @@ void clone_elf(Elf *elf, Elf *newelf,
 
               /* Check the length of the dynamic-symbol filter. */
               FAILIF(sym_filter != NULL &&
-                     num_symbols != symdata->d_size / elsize,
+                     (size_t)num_symbols != symdata->d_size / elsize,
                      "Length of dynsym filter (%d) must equal the number"
-                     " of dynamic symbols (%d)!\n",
+                     " of dynamic symbols (%zd)!\n",
                      num_symbols,
                      symdata->d_size / elsize);
 
@@ -443,14 +443,14 @@ void clone_elf(Elf *elf, Elf *newelf,
 			shdr_info[cnt].se = ebl_strtabadd (shst, shdr_info[cnt].name, 0);
 
 			INFO("\tsection [%s]  (old offset %lld, old size %lld) will have index %d "
-				 "(was %d).\n",
+				 "(was %zd).\n",
 				 shdr_info[cnt].name,
 				 shdr_info[cnt].old_shdr.sh_offset,
 				 shdr_info[cnt].old_shdr.sh_size,
 				 shdr_info[cnt].idx,
 				 elf_ndxscn(shdr_info[cnt].scn));
 		} else {
-			INFO("\tIgnoring section [%s] (offset %lld, size %lld, index %d), "
+			INFO("\tIgnoring section [%s] (offset %lld, size %lld, index %zd), "
 				 "it will be discarded.\n",
 				 shdr_info[cnt].name,
 				 shdr_info[cnt].shdr.sh_offset,
