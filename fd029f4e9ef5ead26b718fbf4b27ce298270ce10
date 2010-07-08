@@ -16,6 +16,23 @@
       "revId": "fd029f4e9ef5ead26b718fbf4b27ce298270ce10",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA0n//+gg\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 764,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-07-08T22:12:29Z",
+      "side": 1,
+      "message": "Hi Chih-Wei,\n\nIt seems PRIVATE_ARM_MODE is only used for logging purpose. (A bit weird to me).\nHow about to change binary.mk:\nLOCAL_ARM_MODE :\u003d $(strip $(LOCAL_ARM_MODE))\nifeq ($(TARGET_ARCH),arm)\narm_objects_mode :\u003d $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)\nnormal_objects_mode :\u003d $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)\nelse\narm_objects_mode :\u003d\nnormal_objects_mode :\u003d\nendif\n\nI think the effect is the same as your change.\n\nthanks!",
+      "revId": "fd029f4e9ef5ead26b718fbf4b27ce298270ce10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
