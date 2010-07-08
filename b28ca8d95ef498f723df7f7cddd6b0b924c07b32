@@ -16,6 +16,24 @@
       "revId": "b28ca8d95ef498f723df7f7cddd6b0b924c07b32",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA0n//+ho\u003d",
+        "filename": "core/combo/select.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2010-07-08T21:27:43Z",
+      "side": 1,
+      "message": "I was trying to be consistent here.\nIn this case... I believe it could potentially be passed in in the environment.",
+      "parentUuid": "AAAA0n//+h0\u003d",
+      "revId": "b28ca8d95ef498f723df7f7cddd6b0b924c07b32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
