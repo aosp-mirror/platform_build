@@ -151,6 +151,12 @@ static int setPermissions(const char* dst, const struct stat* pSrcStat, unsigned
          */
         ut.actime = pSrcStat->st_atime;
         ut.modtime = pSrcStat->st_mtime;
+#ifdef MACOSX_RSRC
+        if (pSrcStat->st_mtimespec.tv_nsec > 0)
+#else
+        if (pSrcStat->st_mtim.tv_nsec > 0)
+#endif
+            ut.modtime += 1;
         if (utime(dst, &ut) != 0) {
             DBUG(("---   unable to set timestamps on '%s': %s\n",
                 dst, strerror(errno)));
