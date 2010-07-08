@@ -293,7 +293,7 @@ def AppendAssertions(script, input_zip):
   script.AssertDevice(device)
 
 
-def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
+def MakeRecoveryPatch(output_zip, recovery_img, boot_img, info):
   """Generate a binary patch that creates the recovery image starting
   with the boot image.  (Most of the space in these images is just the
   kernel, which is identical for the two, so the resulting patch
@@ -302,7 +302,8 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   patching and install the new recovery image.
 
   recovery_img and boot_img should be File objects for the
-  corresponding images.
+  corresponding images.  info should be the dictionary returned by
+  common.LoadInfoDict() on the input target_files.
 
   Returns an Item for the shell script, which must be made
   executable.
@@ -319,9 +320,9 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   HEADER_SIZE = 2048
   header_sha1 = sha.sha(recovery_img.data[:HEADER_SIZE]).hexdigest()
   sh = """#!/system/bin/sh
-if ! applypatch -c MTD:recovery:%(header_size)d:%(header_sha1)s; then
+if ! applypatch -c %(partition_type)s:%(partition_path)srecovery:%(header_size)d:%(header_sha1)s; then
   log -t recovery "Installing new recovery image"
-  applypatch MTD:boot:%(boot_size)d:%(boot_sha1)s MTD:recovery %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
+  applypatch %(partition_type)s:%(partition_path)sboot:%(boot_size)d:%(boot_sha1)s %(partition_type)s:%(partition_path)srecovery %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
 else
   log -t recovery "Recovery image already installed"
 fi
@@ -330,7 +331,10 @@ fi
         'header_size': HEADER_SIZE,
         'header_sha1': header_sha1,
         'recovery_size': recovery_img.size,
-        'recovery_sha1': recovery_img.sha1 }
+        'recovery_sha1': recovery_img.sha1,
+        'partition_type': info["partition_type"],
+        'partition_path': info.get("partition_path", ""),
+        }
   common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
 
@@ -378,7 +382,7 @@ def WriteFullOTAPackage(input_zip, output_zip, info):
       os.path.join(OPTIONS.input_tmp, "BOOT")))
   recovery_img = File("recovery.img", common.BuildBootableImage(
       os.path.join(OPTIONS.input_tmp, "RECOVERY")))
-  MakeRecoveryPatch(output_zip, recovery_img, boot_img)
+  MakeRecoveryPatch(output_zip, recovery_img, boot_img, info)
 
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
@@ -574,6 +578,8 @@ def GetRecoveryAPIVersion(zip):
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip, info):
   source_version = GetRecoveryAPIVersion(source_zip)
   target_version = GetRecoveryAPIVersion(target_zip)
+  partition_type = info["partition_type"]
+  partition_path = info.get("partition_path", "")
 
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
@@ -688,8 +694,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip, info):
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
-    script.PatchCheck("MTD:boot:%d:%s:%d:%s" %
-                      (source_boot.size, source_boot.sha1,
+    script.PatchCheck("%s:%sboot:%d:%s:%d:%s" %
+                      (partition_type, partition_path,
+                       source_boot.size, source_boot.sha1,
                        target_boot.size, target_boot.sha1))
     so_far += source_boot.size
     script.SetProgress(so_far / total_verify_size)
@@ -728,8 +735,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip, info):
     # contents of the boot partition, and write it back to the
     # partition.
     script.Print("Patching boot image...")
-    script.ApplyPatch("MTD:boot:%d:%s:%d:%s"
-                      % (source_boot.size, source_boot.sha1,
+    script.ApplyPatch("%s:%sboot:%d:%s:%d:%s"
+                      % (partition_type, partition_path,
+                         source_boot.size, source_boot.sha1,
                          target_boot.size, target_boot.sha1),
                       "-",
                       target_boot.size, target_boot.sha1,
@@ -752,7 +760,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip, info):
     # partition, include the binaries and image files from recovery in
     # the boot image (though not in the ramdisk) so they can be used
     # as fodder for constructing the recovery image.
-    MakeRecoveryPatch(output_zip, target_recovery, target_boot)
+    MakeRecoveryPatch(output_zip, target_recovery, target_boot, info)
     script.DeleteFiles(["/system/recovery-from-boot.p",
                         "/system/etc/install-recovery.sh"])
     print "recovery image changed; including as patch from boot."
@@ -813,7 +821,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip, info):
   device_specific.IncrementalOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
-    scirpt.AppendExtra(OPTIONS.extra_script)
+    script.AppendExtra(OPTIONS.extra_script)
 
   script.AddToZip(target_zip, output_zip)
   WriteMetadata(metadata, output_zip)

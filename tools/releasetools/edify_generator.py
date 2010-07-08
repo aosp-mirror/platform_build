@@ -31,7 +31,7 @@ class EdifyGenerator(object):
     """Make a temporary script object whose commands can latter be
     appended to the parent script with AppendScript().  Used when the
     caller wants to generate script commands out-of-order."""
-    x = EdifyGenerator(self.version)
+    x = EdifyGenerator(self.version, self.info)
     x.mounts = self.mounts
     return x
 
