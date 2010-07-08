@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA0n//+h0\u003d",
+        "filename": "core/combo/select.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-07-08T21:21:46Z",
+      "side": 1,
+      "message": "Sorry, I am wondering where STRIP is defined.",
+      "revId": "b28ca8d95ef498f723df7f7cddd6b0b924c07b32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
