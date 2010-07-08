@@ -24,10 +24,10 @@
   <div id="jd-content">
     <p>Redirecting to 
     <a href="<?cs var:toroot ?>sdk/<?cs 
-      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
-      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>">sdk/<?cs 
-      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
-      else ?><?cs var:sdk.current ?>/index.html<?cs /if ?>
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
+      else ?>index.html<?cs /if ?>"><?cs
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
+      else ?>Download the SDK<?cs /if ?>
     </a> ...</p>
 <?cs else ?>
 <div class="g-unit" id="doc-content" >
