@@ -71,12 +71,13 @@ endif
 full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_leaf)
 
+jarjar_leaf := classes-jarjar.jar
+full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
 emma_intermediates_dir := $(intermediates.COMMON)/emma_out
-# the 'lib/$(full_classes_compiled_jar_leaf)' portion of this path is fixed in
-# the emma tool
-full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(full_classes_compiled_jar_leaf)
+# emma is hardcoded to use the leaf name of its input for the output file --
+# only the output directory can be changed
+full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
-full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_full_names_jar := $(intermediates.COMMON)/classes-full-names.jar
 full_classes_proguard_jar := $(full_classes_jar)
 built_dex := $(intermediates.COMMON)/classes.dex
@@ -161,6 +162,18 @@ ALL_MODULES.$(LOCAL_MODULE).CHECKED := $(full_classes_compiled_jar)
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 
+# Run jarjar if necessary, otherwise just copy the file.
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(JARJAR)
+	@echo JarJar: $@
+	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
+	@echo Copying: $@
+	$(hide) $(ACP) $< $@
+endif
+
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # Skip adding emma instrumentation to class files if this is a static library,
 # since it will be instrumented by the package that includes it
@@ -181,32 +194,20 @@ $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := *,-emma,-emmarun,-com.
 endif
 # this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
 # $(full_classes_emma_jar)
-$(full_classes_emma_jar): $(full_classes_compiled_jar) | $(EMMA_JAR)
+$(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
 $(PRIVATE_EMMA_COVERAGE_FILE): $(full_classes_emma_jar)
 
 # tell proguard to load emma jar
 LOCAL_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS) $(addprefix -libraryjars ,$(EMMA_JAR))
 else
-$(full_classes_emma_jar): $(full_classes_compiled_jar) | $(ACP)
-	@echo Copying: $<
+$(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(ACP)
+	@echo Copying: $@
 	$(copy-file-to-target)
 endif
 
-# Run jarjar if necessary, otherwise just copy the file.
-ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
-$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(JARJAR)
-	@echo JarJar: $@
-	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
-else
-$(full_classes_jarjar_jar): $(full_classes_emma_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) $< $@
-endif
-
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_full_names_jar): $(full_classes_jarjar_jar) | $(ACP)
+$(full_classes_full_names_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) $< $@
 
