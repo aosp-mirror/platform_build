@@ -379,7 +379,7 @@ function choosevariant()
             export TARGET_BUILD_VARIANT=$default_value
         elif (echo -n $ANSWER | grep -q -e "^[0-9][0-9]*$") ; then
             if [ "$ANSWER" -le "${#VARIANT_CHOICES[@]}" ] ; then
-                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[$(($ANSWER-$_arrayoffset))]}
+                export TARGET_BUILD_VARIANT=${VARIANT_CHOICES[$(($ANSWER-1))]}
             fi
         else
             if check_variant $ANSWER
@@ -483,7 +483,7 @@ function lunch()
     then
         if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
         then
-            selection=${LUNCH_MENU_CHOICES[$(($answer-$_arrayoffset))]}
+            selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
         fi
     elif (echo -n $answer | grep -q -e "^[^\-][^\-]*-[^\-][^\-]*$")
     then
@@ -1060,10 +1060,9 @@ function godir () {
                 echo "Invalid choice"
                 continue
             fi
-            pathname=${lines[$(($choice-$_arrayoffset))]}
+            pathname=${lines[$(($choice-1))]}
         done
     else
-        # even though zsh arrays are 1-based, $foo[0] is an alias for $foo[1]
         pathname=${lines[0]}
     fi
     cd $T/$pathname
@@ -1083,15 +1082,13 @@ function set_java_home() {
     fi
 }
 
-# determine whether arrays are zero-based (bash) or one-based (zsh)
-_xarray=(a b c)
-if [ -z "${_xarray[${#_xarray[@]}]}" ]
-then
-    _arrayoffset=1
-else
-    _arrayoffset=0
-fi
-unset _xarray
+case `ps -o command -p $$` in
+    *bash*)
+        ;;
+    *)
+        echo "WARNING: Only bash is supported, use of other shell would lead to erroneous results"
+        ;;
+esac
 
 # Execute the contents of any vendorsetup.sh files we can find.
 for f in `/bin/ls vendor/*/vendorsetup.sh vendor/*/build/vendorsetup.sh device/*/*/vendorsetup.sh 2> /dev/null`
