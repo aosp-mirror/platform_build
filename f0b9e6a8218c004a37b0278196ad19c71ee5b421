@@ -16,6 +16,24 @@
       "revId": "f0b9e6a8218c004a37b0278196ad19c71ee5b421",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA0n//+bA\u003d",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2010-07-09T03:05:10Z",
+      "side": 1,
+      "message": "Hmm, I don\u0027t know. As you said, TARGET_ARCH will not change across modules, and the vars are just empty by default. So originally I think the else part is redundant.\n\nBut if you insist, I\u0027ll upload another patch.",
+      "parentUuid": "AAAA0n//+bI\u003d",
+      "revId": "f0b9e6a8218c004a37b0278196ad19c71ee5b421",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
