@@ -70,7 +70,7 @@ ifeq ($(LOCAL_COMPRESS_MODULE_SYMBOLS),true)
 $(error Symbol compression not yet supported.)
 compress_output := $(intermediates)/COMPRESSED-$(LOCAL_BUILT_MODULE_STEM)
 
-#TODO: write the real $(SOSLIM) rule.
+#TODO: write the real $(STRIPPER) rule.
 #TODO: define a rule to build TARGET_SYMBOL_FILTER_FILE, and
 #      make it depend on ALL_ORIGINAL_DYNAMIC_BINARIES.
 $(compress_output): $(compress_input) $(TARGET_SYMBOL_FILTER_FILE) | $(ACP)
@@ -132,7 +132,7 @@ endif
 
 ifeq ($(LOCAL_STRIP_MODULE),true)
 # Strip the binary
-$(strip_output): $(strip_input) | $(SOSLIM)
+$(strip_output): $(strip_input) | $(TARGET_STRIP)
 	$(transform-to-stripped)
 else
 # Don't strip the binary, just copy it.  We can't skip this step
