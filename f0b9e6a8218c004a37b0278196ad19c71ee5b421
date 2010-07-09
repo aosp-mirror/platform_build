@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA0n//+bI\u003d",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-07-09T02:54:31Z",
+      "side": 1,
+      "message": "You\u0027d better explicitly set those vars to empty in the else case, because the makefile will be included for multiple module. (Though it seems unlikely TARGET_ARCH will change across modules)",
+      "revId": "f0b9e6a8218c004a37b0278196ad19c71ee5b421",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
