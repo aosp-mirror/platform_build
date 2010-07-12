@@ -1,4 +1,5 @@
 TARGET_ARCH=x86
+DISABLE_DEXPREOPT := true
 TARGET_COMPRESS_MODULE_SYMBOLS := false
 TARGET_PRELINK_MODULE := false
 TARGET_NO_RECOVERY := true
@@ -19,3 +20,8 @@ TARGET_DISK_LAYOUT_CONFIG := build/target/board/generic_x86/disk_layout.conf
 BOARD_BOOTIMAGE_MAX_SIZE := 8388608
 BOARD_SYSLOADER_MAX_SIZE := 7340032
 BOARD_FLASH_BLOCK_SIZE := 512
+
+
+# The eth0 device should be started with dhcp on boot.
+# Useful for emulators that don't provide a wifi connection.
+NET_ETH0_STARTONBOOT := true
