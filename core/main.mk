@@ -35,7 +35,7 @@ ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") \>= 3.81))
 $(warning ********************************************************************************)
 $(warning *  You are using version $(MAKE_VERSION) of make.)
 $(warning *  You must upgrade to version 3.81 or greater.)
-$(warning *  see http://source.android.com/download)
+$(warning *  see http://source.android.com/source/download.html)
 $(warning ********************************************************************************)
 $(error stopping)
 endif
@@ -64,11 +64,22 @@ include $(BUILD_SYSTEM)/config.mk
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
 
-VERSION_CHECK_SEQUENCE_NUMBER := 1
+VERSION_CHECK_SEQUENCE_NUMBER := 2
 -include $(OUT_DIR)/versions_checked.mk
 ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
 
 $(info Checking build tools versions...)
+
+ifeq ($(BUILD_OS),linux)
+build_arch := $(shell uname -m)
+ifneq (64,$(findstring 64,$(build_arch)))
+$(warning ************************************************************)
+$(warning You are attempting to build on a 32-bit system.)
+$(warning Only 64-bit build environments are supported now.)
+$(warning ************************************************************)
+$(error stop)
+endif
+endif
 
 ifneq ($(HOST_OS),windows)
 ifneq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
@@ -113,7 +124,7 @@ $(info Your version is: $(shell java -version 2>&1 | head -n 1).)
 $(info The correct version is: 1.6.)
 $(info $(space))
 $(info Please follow the machine setup instructions at)
-$(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+$(info $(space)$(space)$(space)$(space)http://source.android.com/source/download.html)
 $(info ************************************************************)
 $(error stop)
 endif
@@ -129,7 +140,7 @@ $(info Your version is: $(shell javac -version 2>&1 | head -n 1).)
 $(info The correct version is: 1.6.)
 $(info $(space))
 $(info Please follow the machine setup instructions at)
-$(info $(space)$(space)$(space)$(space)http://source.android.com/download)
+$(info $(space)$(space)$(space)$(space)http://source.android.com/source/download.html)
 $(info ************************************************************)
 $(error stop)
 endif
@@ -659,6 +670,9 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 
 .PHONY: systemtarball
 systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
+
+.PHONY: boottarball
+boottarball: $(INSTALLED_BOOTTARBALL_TARGET)
 
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
