@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA0n//+NM\u003d",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1094,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-07-12T17:24:41Z",
+      "side": 1,
+      "message": "I don\u0027t mind vendor/*/*/vendorsetup.sh, but I don\u0027t want to add build/target/board/*/vendorsetup.sh.  It\u0027s just distributing this needlessly throughout the tree when every single checkout has the build/ project.\n\n-joe",
+      "revId": "af1c7a5168ce2b6dba1393c413c627366d464cd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
