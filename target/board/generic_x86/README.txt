@@ -8,15 +8,11 @@ A1. Create a new top level directory and pull the AOSP repository
         repo init -u git://android.git.kernel.org/platform/manifest.git
         repo sync
 
-A2. Copy in the buildspeck.mk
-        cd $HOME/AOSP
-        cp build/target/board/generic_x86/buildspec-generic_x86.mk buildspec.mk
-
-A3. Copy in the kernel
+A2. Copy in the kernel
         cd $HOME/AOSP
         cp ~/bzImage.your_device $HOME/AOSP/prebuilt/android-x86/kernel/kernel
 
-A4. Build
+A3. Build
         cd $HOME/AOSP
         source build/envsetup.sh
         lunch generic_x86-eng
@@ -25,7 +21,7 @@ A4. Build
 The build will generate some image files whose format may or may not be correct for your
 device. You can build an installer image disk for the VirtualBox emulator using the command:
 
-A5. Build a VirtualBox installer image
+A4. Build a VirtualBox installer image
 	cd $HOME/AOSP
         source build/envsetup.sh
         lunch generic_x86-eng
