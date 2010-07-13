@@ -116,8 +116,8 @@ $(TARGET_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/shlelf.xsc \
 	-Wl,--gc-sections -Wl,-z,norelro \
 	-Wl,-shared,-Bsymbolic \
-	$(TARGET_GLOBAL_LD_DIRS) \
-	$(TARGET_SOBEGIN) \
+	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
+	$(PRIVATE_TARGET_SOBEGIN) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -127,8 +127,8 @@ $(TARGET_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(subst -lrt,, $(subst -lpthread,,$(PRIVATE_LDLIBS))) \
-	$(TARGET_LIBGCC) \
-	$(TARGET_SOEND)
+	$(PRIVATE_TARGET_LIBGCC) \
+	$(PRIVATE_TARGET_SOEND)
 endef
 
 define transform-o-to-executable-inner
