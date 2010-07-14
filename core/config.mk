@@ -318,6 +318,7 @@ PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 # ###############################################################
 
 HISTORICAL_SDK_VERSIONS_ROOT := $(TOPDIR)prebuilt/sdk
+HISTORICAL_NDK_VERSIONS_ROOT := $(TOPDIR)prebuilt/ndk
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.
@@ -338,5 +339,9 @@ endef
 TARGET_AVAILABLE_SDK_VERSIONS := current $(call numerically_sort,\
     $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
+
+TARGET_AVAILABLE_NDK_VERSIONS := $(call numerically_sort,\
+    $(patsubst $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r%,%, \
+    $(wildcard $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r*)))
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml
