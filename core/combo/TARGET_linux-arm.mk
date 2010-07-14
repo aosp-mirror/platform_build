@@ -232,20 +232,20 @@ $(TARGET_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/armelf.xsc \
 	-Wl,--gc-sections \
 	-Wl,-shared,-Bsymbolic \
-	$(TARGET_GLOBAL_LD_DIRS) \
+	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(PRIVATE_ALL_OBJECTS) \
-	$(TARGET_CRTBEGIN_SO_O) \
+	$(PRIVATE_TARGET_CRTBEGIN_SO_O) \
 	-Wl,--whole-archive \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
 	-Wl,--no-whole-archive \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
-	$(TARGET_GLOBAL_LDFLAGS) \
+	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
-	$(TARGET_FDO_LIB) \
-	$(TARGET_LIBGCC) \
-	$(TARGET_CRTEND_SO_O)
+	$(PRIVATE_TARGET_FDO_LIB) \
+	$(PRIVATE_TARGET_LIBGCC) \
+	$(PRIVATE_TARGET_CRTEND_SO_O)
 endef
 
 define transform-o-to-executable-inner

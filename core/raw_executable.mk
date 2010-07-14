@@ -7,10 +7,10 @@ include $(BUILD_SYSTEM)/binary.mk
 $(LOCAL_BUILT_MODULE) : PRIVATE_ELF_FILE := $(intermediates)/$(PRIVATE_MODULE).elf
 $(LOCAL_BUILT_MODULE) : PRIVATE_LIBS := `$(TARGET_CC) -mthumb-interwork -print-libgcc-file-name`
 
-$(all_objects) : TARGET_PROJECT_INCLUDES := 
-$(all_objects) : TARGET_C_INCLUDES := 
-$(all_objects) : TARGET_GLOBAL_CFLAGS := 
-$(all_objects) : TARGET_GLOBAL_CPPFLAGS := 
+$(all_objects) : PRIVATE_TARGET_PROJECT_INCLUDES :=
+$(all_objects) : PRIVATE_TARGET_C_INCLUDES :=
+$(all_objects) : PRIVATE_TARGET_GLOBAL_CFLAGS :=
+$(all_objects) : PRIVATE_TARGET_GLOBAL_CPPFLAGS :=
 
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 	@$(mkdir -p $(dir $@)
@@ -23,4 +23,3 @@ $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 		--start-group $(PRIVATE_ALL_STATIC_LIBRARIES) --end-group \
 		$(PRIVATE_LIBS)
 	$(hide) $(TARGET_OBJCOPY) -O binary $(PRIVATE_ELF_FILE) $@
-
