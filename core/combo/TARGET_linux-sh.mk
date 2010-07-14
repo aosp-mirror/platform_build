@@ -105,8 +105,8 @@ TARGET_C_INCLUDES := \
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtbegin_static.o
 TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtbegin_dynamic.o
 TARGET_CRTEND_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtend_android.o
-TARGET_SOBEGIN := $(TARGET_OUT_STATIC_LIBRARIES)/sobegin.o
-TARGET_SOEND := $(TARGET_OUT_STATIC_LIBRARIES)/soend.o
+TARGET_CRTBEGIN_SO_O := $(TARGET_OUT_STATIC_LIBRARIES)/sobegin.o
+TARGET_CRTEND_SO_O := $(TARGET_OUT_STATIC_LIBRARIES)/soend.o
 
 TARGET_STRIP_MODULE:=true
 
@@ -119,7 +119,7 @@ $(TARGET_CXX) \
 	-Wl,--gc-sections -Wl,-z,norelro \
 	-Wl,-shared,-Bsymbolic \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
-	$(PRIVATE_TARGET_SOBEGIN) \
+	$(PRIVATE_TARGET_CRTBEGIN_SO_O) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -130,7 +130,7 @@ $(TARGET_CXX) \
 	$(PRIVATE_LDFLAGS) \
 	$(subst -lrt,, $(subst -lpthread,,$(PRIVATE_LDLIBS))) \
 	$(PRIVATE_TARGET_LIBGCC) \
-	$(PRIVATE_TARGET_SOEND)
+	$(PRIVATE_TARGET_CRTEND_SO_O)
 endef
 
 define transform-o-to-executable-inner
