@@ -16,6 +16,11 @@
 #     [<64K] observed to be less than 64K
 #     [~1M] rounded up, one megabyte (similarly for other sizes)
 #     [???] no size observed, assumed to be one megabyte
+#
+# note: look at the LOAD sections in the library header:
+#
+#   arm-eabi-objdump -x <lib>
+#
 
 # core system libraries
 libdl.so                0xAFF00000 # [<64K]
@@ -77,9 +82,8 @@ libacc.so               0xABC00000 # [~1M]
 libexif.so              0xABB00000 # [~1M]
 libcamera_client.so     0xABA80000 # [~1M]
 libui.so                0xAB900000 # [~1M]
-# libsgl is for backward-compatibility with donut
-libsgl.so               0xAB800000 # [???]
-libskia.so              0xAB100000 # [~7M]
+libgui.so               0xAB800000 # [~1M]
+libskia.so              0xAB100000 # [~2M]
 librs_jni.so            0xAB000000 # [~1M]
 libRS.so                0xA9E00000 # [~2M]
 libandroid.so           0xA9D80000 # [<64K]
