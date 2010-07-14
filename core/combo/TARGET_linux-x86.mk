@@ -104,12 +104,12 @@ TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
 $(TARGET_CXX) \
-	$(TARGET_GLOBAL_LDFLAGS) \
+	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	 -nostdlib -Wl,-soname,$(notdir $@) \
 	 -shared -Bsymbolic \
 	-fPIC -march=i686 \
-	$(TARGET_GLOBAL_LD_DIRS) \
-	$(TARGET_CRTBEGIN_SO_O) \
+	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
+	$(PRIVATE_TARGET_CRTBEGIN_SO_O) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -118,8 +118,8 @@ $(TARGET_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
-	$(TARGET_LIBGCC) \
-	$(TARGET_CRTEND_SO_O)
+	$(PRIVATE_TARGET_LIBGCC) \
+	$(PRIVATE_TARGET_CRTEND_SO_O)
 endef
 
 

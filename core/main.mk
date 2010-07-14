@@ -696,6 +696,9 @@ ifeq ($(EMMA_INSTRUMENT),true)
   $(call dist-for-goals, droid, $(EMMA_META_ZIP))
 endif
 
+# dist_libraries only for putting your library into the dist directory with a full build.
+.PHONY: dist_libraries
+
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
 
@@ -744,7 +747,7 @@ else # TARGET_BUILD_APPS
   endif
 
 # Building a full system-- the default is to build droidcore
-droid: droidcore
+droid: droidcore dist_libraries
 
 endif
 

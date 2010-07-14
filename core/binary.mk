@@ -5,6 +5,31 @@
 ## The list of object files is exported in $(all_objects).
 ###########################################################
 
+######################################
+## Sanity check for LOCAL_NDK_VERSION
+######################################
+my_ndk_version_root :=
+ifdef LOCAL_NDK_VERSION
+  ifdef LOCAL_IS_HOST_MODULE
+    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can not be used in host module)
+  endif
+  ifneq ($(filter-out SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can only be used to build target shared/static libraries, \
+          while your module is of class $(LOCAL_MODULE_CLASS))
+  endif
+  ifeq ($(filter $(LOCAL_NDK_VERSION),$(TARGET_AVAILABLE_NDK_VERSIONS)),)
+    $(error $(LOCAL_PATH): Invalid LOCAL_NDK_VERSION '$(LOCAL_NDK_VERSION)' \
+           Choices are $(TARGET_AVAILABLE_NDK_VERSIONS))
+  endif
+  ifndef LOCAL_SDK_VERSION
+    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION must be defined with LOCAL_SDK_VERSION)
+  endif
+  my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/$(BUILD_OS)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
+  ifeq ($(wildcard $(my_ndk_version_root)),)
+    $(error $(LOCAL_PATH): ndk version root does not exist: $(my_ndk_version_root))
+  endif
+endif
+
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -17,6 +42,26 @@ ifeq ($(strip $(LOCAL_NO_FDO_SUPPORT)),)
   LOCAL_CPPFLAGS += $(TARGET_FDO_CFLAGS)
   LOCAL_LDFLAGS += $(TARGET_FDO_CFLAGS)
 endif
+
+###########################################################
+## Define PRIVATE_ variables from global vars
+###########################################################
+ifdef LOCAL_NDK_VERSION
+my_target_project_includes :=
+my_target_c_inclues := $(my_ndk_version_root)/usr/include
+# TODO: more reliable way to remove platform stuff.
+my_target_global_cflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CFLAGS))
+my_target_global_cppflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CPPFLAGS))
+else
+my_target_project_includes := $(TARGET_PROJECT_INCLUDES)
+my_target_c_inclues := $(TARGET_C_INCLUDES)
+my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
+my_target_global_cppflags := $(TARGET_GLOBAL_CPPFLAGS)
+endif
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_inclues)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
 
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types
@@ -310,11 +355,13 @@ include $(BUILD_COPY_HEADERS)
 # to by supplying a LOCAL_SYSTEM_SHARED_LIBRARIES value.  One would
 # supply that, for example, when building libc itself.
 ###########################################################
-ifndef LOCAL_IS_HOST_MODULE
+ifdef LOCAL_IS_HOST_MODULE
   ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-    LOCAL_SHARED_LIBRARIES += $($(my_prefix)DEFAULT_SYSTEM_SHARED_LIBRARIES)
-  else
-    LOCAL_SHARED_LIBRARIES += $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+    LOCAL_SYSTEM_SHARED_LIBRARIES :=
+  endif
+else
+  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+    LOCAL_SYSTEM_SHARED_LIBRARIES := $($(my_prefix)DEFAULT_SYSTEM_SHARED_LIBRARIES)
   endif
 endif
 
@@ -373,10 +420,34 @@ endif
 so_suffix := $($(my_prefix)SHLIB_SUFFIX)
 a_suffix := $($(my_prefix)STATIC_LIB_SUFFIX)
 
+ifdef LOCAL_NDK_VERSION
 built_shared_libraries := \
     $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(LOCAL_SHARED_LIBRARIES)))
+
+# Get the list of INSTALLED libraries.  Strip off the various
+# intermediates directories and point to the common lib dirs.
+installed_shared_libraries := \
+    $(addprefix $($(my_prefix)OUT_SHARED_LIBRARIES)/, \
+      $(notdir $(built_shared_libraries)))
+
+my_system_shared_libraries_fullpath := $(addprefix $(my_ndk_version_root)/usr/lib/, \
+    $(addsuffix $(so_suffix), $(LOCAL_SYSTEM_SHARED_LIBRARIES)))
+
+built_shared_libraries += $(my_system_shared_libraries_fullpath)
+LOCAL_SHARED_LIBRARIES += $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+else
+LOCAL_SHARED_LIBRARIES += $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+built_shared_libraries := \
+    $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
+      $(addsuffix $(so_suffix), \
+        $(LOCAL_SHARED_LIBRARIES)))
+
+installed_shared_libraries := \
+    $(addprefix $($(my_prefix)OUT_SHARED_LIBRARIES)/, \
+      $(notdir $(built_shared_libraries)))
+endif
 
 built_static_libraries := \
     $(foreach lib,$(LOCAL_STATIC_LIBRARIES), \
@@ -387,12 +458,6 @@ built_whole_libraries := \
     $(foreach lib,$(LOCAL_WHOLE_STATIC_LIBRARIES), \
       $(call intermediates-dir-for, \
         STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE))/$(lib)$(a_suffix))
-
-# Get the list of INSTALLED libraries.  Strip off the various
-# intermediates directories and point to the common lib dirs.
-installed_shared_libraries := \
-    $(addprefix $($(my_prefix)OUT_SHARED_LIBRARIES)/, \
-      $(notdir $(built_shared_libraries)))
 
 # We don't care about installed static libraries, since the
 # libraries have already been linked into the module at that point.
