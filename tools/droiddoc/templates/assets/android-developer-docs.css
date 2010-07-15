@@ -884,7 +884,8 @@ p.table-caption {
   text-decoration:none;
 }
 
-#qv a {
+#qv a,
+#qv a code {
   color:#cc6600;
 }
 
