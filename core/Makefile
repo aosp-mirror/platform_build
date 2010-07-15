@@ -252,8 +252,23 @@ systemimage:
 
 .PHONY: event-log-tags
 
+# Produce an event logs tag file for everything we know about, in order
+# to properly allocate numbers.  Then produce a file that's filtered
+# for what's going to be installed.
+
+all_event_log_tags_file := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
+
+# Include tags from all packages that we know about
+all_event_log_tags_src := \
+    $(sort $(foreach m, $(ALL_MODULES), $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
+
+$(all_event_log_tags_file): PRIVATE_SRC_FILES := $(all_event_log_tags_src)
+$(all_event_log_tags_file): $(all_event_log_tags_src)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) build/tools/merge-event-log-tags.py -o $@ $(PRIVATE_SRC_FILES)
+
+
 event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
-ALL_PREBUILT += $(event_log_tag_file)
 
 # Include tags from all packages included in this product.
 event_log_tags_src := \
@@ -263,13 +278,15 @@ event_log_tags_src := \
       $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
 
 $(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
-$(event_log_tags_file): $(event_log_tags_src)
+$(event_log_tags_file): PRIVATE_MERGED_FILE := $(all_event_log_tags_file)
+$(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) build/tools/merge-event-log-tags.py -o $@ $(PRIVATE_SRC_FILES)
+	$(hide) build/tools/merge-event-log-tags.py -o $@ -m $(PRIVATE_MERGED_FILE) $(PRIVATE_SRC_FILES)
 
 event-log-tags: $(event_log_tags_file)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
+
 
 ifneq ($(TARGET_SIMULATOR),true)
 
