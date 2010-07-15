@@ -381,10 +381,7 @@ ifdef LOCAL_INSTRUMENTATION_FOR
 
   # link against the jar with full original names (before proguard processing).
   full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
-
-  # We can't depend on the .jar file, so we depend on something that
-  # depends on the jar file; the final built package file.
-  full_java_lib_deps += $(link_instr_intermediates_dir)/package.apk
+  full_java_lib_deps += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
 endif
 
 ifneq ($(strip $(LOCAL_JAR_MANIFEST)),)
