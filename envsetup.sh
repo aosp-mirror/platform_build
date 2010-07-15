@@ -432,8 +432,8 @@ function add_lunch_combo()
 }
 
 # add the default one here
-add_lunch_combo generic-eng
-add_lunch_combo generic_x86-eng
+add_lunch_combo full-eng
+add_lunch_combo full_x86-eng
 
 # if we're on linux, add the simulator.  There is a special case
 # in lunch to deal with the simulator
