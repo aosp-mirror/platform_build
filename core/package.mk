@@ -183,7 +183,7 @@ endif
 $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 			$(intermediates.COMMON)/public_resources.xml
 $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
-$(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(AAPT) | $(ACP)
+$(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -f $@
 	$(create-resource-java-files)

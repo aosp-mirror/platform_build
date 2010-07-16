@@ -94,6 +94,30 @@ LOCAL_INTERMEDIATE_TARGETS += \
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
+###############################################################
+## .rs files: RenderScript sources to .java files and .bc files
+###############################################################
+renderscript_sources := $(filter %.rs,$(LOCAL_SRC_FILES))
+# Because names of the java files from RenderScript are unknown until the
+# .rs file(s) are compiled, we have to depend on a timestamp file.
+RenderScript_file_stamp :=
+ifneq ($(renderscript_sources),)
+renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sources))
+RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
+
+$(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
+# By putting the generated java files into $(LOCAL_INTERMEDIATE_SOURCE_DIR), they will be
+# automatically found by the java compiling function transform-java-to-classes.jar.
+$(RenderScript_file_stamp): PRIVATE_RS_OUTPUT_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript
+# TODO: slang support to generate implicit dependency derived from "include" directives.
+$(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(SLANG)
+	$(transform-renderscripts-to-java-and-bc)
+
+LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
+# Make sure the generated resource will be added to the apk.
+LOCAL_RESOURCE_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript/res $(LOCAL_RESOURCE_DIR)
+endif
+
 # TODO: It looks like the only thing we need from base_rules is
 # all_java_sources.  See if we can get that by adding a
 # common_java.mk, and moving the include of base_rules.mk to
@@ -150,6 +174,11 @@ ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
 	$(transform-java-to-classes.jar)
+
+# source files generated from RenderScript must be generated before java compiling
+ifneq ($(RenderScript_file_stamp),)
+$(full_classes_compiled_jar): $(RenderScript_file_stamp)
+endif
 
 # All of the rules after full_classes_compiled_jar are very unlikely
 # to fail except for bugs in their respective tools.  If you would
