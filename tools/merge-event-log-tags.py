@@ -36,6 +36,7 @@ errors = []
 warnings = []
 
 output_file = None
+pre_merged_file = None
 
 # Tags with a tag number of ? are assigned a tag in the range
 # [ASSIGN_START, ASSIGN_LIMIT).
@@ -43,7 +44,7 @@ ASSIGN_START = 900000
 ASSIGN_LIMIT = 1000000
 
 try:
-  opts, args = getopt.getopt(sys.argv[1:], "ho:")
+  opts, args = getopt.getopt(sys.argv[1:], "ho:m:")
 except getopt.GetoptError, err:
   print str(err)
   print __doc__
@@ -55,6 +56,8 @@ for o, a in opts:
     sys.exit(2)
   elif o == "-o":
     output_file = a
+  elif o == "-m":
+    pre_merged_file = a
   else:
     print >> sys.stderr, "unhandled option %s" % (o,)
     sys.exit(1)
@@ -70,6 +73,11 @@ for o, a in opts:
 
 by_tagname = {}
 by_tagnum = {}
+
+pre_merged_tags = {}
+if pre_merged_file:
+  for t in event_log_tags.TagFile(pre_merged_file).tags:
+    pre_merged_tags[t.tagname] = t
 
 for fn in args:
   tagfile = event_log_tags.TagFile(fn)
@@ -140,15 +148,26 @@ def hashname(str):
 # assigned.  We do this based on a hash of the tag name so that the
 # numbers should stay relatively stable as tags are added.
 
+# If we were provided pre-merged tags (w/ the -m option), then don't
+# ever try to allocate one, just fail if we don't have a number
+
 for name, t in sorted(by_tagname.iteritems()):
   if t.tagnum is None:
-    while True:
-      x = (hashname(name) % (ASSIGN_LIMIT - ASSIGN_START - 1)) + ASSIGN_START
-      if x not in by_tagnum:
-        t.tagnum = x
-        by_tagnum[x] = t
-        break
-      name = "_" + name
+    if pre_merged_tags:
+      try:
+        t.tagnum = pre_merged_tags[t.tagname]
+      except KeyError:
+        print >> sys.stderr, ("Error: Tag number not defined for tag `%s'."
+            +" Have you done a full build?") % t.tagname
+        sys.exit(1)
+    else:
+      while True:
+        x = (hashname(name) % (ASSIGN_LIMIT - ASSIGN_START - 1)) + ASSIGN_START
+        if x not in by_tagnum:
+          t.tagnum = x
+          by_tagnum[x] = t
+          break
+        name = "_" + name
 
 # by_tagnum should be complete now; we've assigned numbers to all tags.
 

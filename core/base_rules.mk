@@ -222,7 +222,7 @@ ifneq ($(strip $(filter $(LOCAL_MODULE_CLASS),APPS JAVA_LIBRARIES)),)
 logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
 logtags_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(logtags_sources))
 
-$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(TOPDIR)$(LOCAL_PATH)/%.logtags $(TARGET_OUT)/etc/event-log-tags
+$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(TOPDIR)$(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
 	$(transform-logtags-to-java)
 
 endif
@@ -381,10 +381,7 @@ ifdef LOCAL_INSTRUMENTATION_FOR
 
   # link against the jar with full original names (before proguard processing).
   full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
-
-  # We can't depend on the .jar file, so we depend on something that
-  # depends on the jar file; the final built package file.
-  full_java_lib_deps += $(link_instr_intermediates_dir)/package.apk
+  full_java_lib_deps += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
 endif
 
 ifneq ($(strip $(LOCAL_JAR_MANIFEST)),)
