@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA1X///wo\u003d",
+        "filename": "target/product/full_x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2010-07-16T01:55:33Z",
+      "side": 1,
+      "message": "I\u0027m curious how net.eth0.startonboot works. I check the code of init and init.rc, but can\u0027t find anywhere that respects this variable. Could you explain it?",
+      "revId": "6c2df3e98b418be3828f6732f4b75818304ad960",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
