@@ -181,13 +181,11 @@ installclean_files := \
 	./$(PRODUCT_OUT)/*.xlb \
 	./$(PRODUCT_OUT)/*.zip \
 	./$(PRODUCT_OUT)/data \
-	./$(PRODUCT_OUT)/obj/lib \
 	./$(PRODUCT_OUT)/obj/APPS \
 	./$(PRODUCT_OUT)/obj/NOTICE_FILES \
 	./$(PRODUCT_OUT)/obj/PACKAGING \
 	./$(PRODUCT_OUT)/recovery \
 	./$(PRODUCT_OUT)/root \
-	./$(PRODUCT_OUT)/symbols/system/lib \
 	./$(PRODUCT_OUT)/system
 
 # The files/dirs to delete during a dataclean, which removes any files
