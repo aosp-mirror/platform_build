@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA2H///5Y\u003d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-07-19T20:53:09Z",
+      "side": 1,
+      "message": "Would you mind putting it at the end of the file?  That way we can get everything that\u0027s in this file (which seems reasonable, given that this is the file that get_build_var invokes)",
+      "revId": "82de94e716a0184f48c009b7e476e3daba9f5c84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
