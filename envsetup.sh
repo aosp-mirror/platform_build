@@ -433,7 +433,7 @@ function add_lunch_combo()
 
 # add the default one here
 add_lunch_combo full-eng
-add_lunch_combo generic_x86-eng
+add_lunch_combo full_x86-eng
 
 # if we're on linux, add the simulator.  There is a special case
 # in lunch to deal with the simulator
@@ -907,10 +907,10 @@ function runhat()
 {
     # process standard adb options
     local adbTarget=""
-    if [ $1 = "-d" -o $1 = "-e" ]; then
+    if [ "$1" = "-d" -o "$1" = "-e" ]; then
         adbTarget=$1
         shift 1
-    elif [ $1 = "-s" ]; then
+    elif [ "$1" = "-s" ]; then
         adbTarget="$1 $2"
         shift 2
     fi
@@ -919,10 +919,9 @@ function runhat()
 
     # runhat options
     local targetPid=$1
-    local outputFile=$2
 
     if [ "$targetPid" = "" ]; then
-        echo "Usage: runhat [ -d | -e | -s serial ] target-pid [output-file]"
+        echo "Usage: runhat [ -d | -e | -s serial ] target-pid"
         return
     fi
 
@@ -932,18 +931,14 @@ function runhat()
         return
     fi
 
-    adb ${adbOptions} shell >/dev/null mkdir /data/misc
-    adb ${adbOptions} shell chmod 777 /data/misc
-
-    # send a SIGUSR1 to cause the hprof dump
+    # issue "am" command to cause the hprof dump
+    local devFile=/sdcard/hprof-$targetPid
     echo "Poking $targetPid and waiting for data..."
-    adb ${adbOptions} shell kill -10 $targetPid
+    adb ${adbOptions} shell am dumpheap $targetPid $devFile
     echo "Press enter when logcat shows \"hprof: heap dump completed\""
     echo -n "> "
     read
 
-    local availFiles=( $(adb ${adbOptions} shell ls /data/misc | grep '^heap-dump' | sed -e 's/.*heap-dump-/heap-dump-/' | sort -r | tr '[:space:][:cntrl:]' ' ') )
-    local devFile=/data/misc/${availFiles[0]}
     local localFile=/tmp/$$-hprof
 
     echo "Retrieving file $devFile..."
