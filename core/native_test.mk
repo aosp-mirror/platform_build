@@ -8,7 +8,7 @@ LOCAL_C_INCLUDES += bionic \
                     bionic/libstdc++/include \
                     external/gtest/include \
                     external/stlport/stlport
-LOCAL_STATIC_LIBRARIES +=
+LOCAL_STATIC_LIBRARIES += libgtest libgtest_main
 LOCAL_SHARED_LIBRARIES += libstlport
 
 ifndef LOCAL_MODULE_PATH
