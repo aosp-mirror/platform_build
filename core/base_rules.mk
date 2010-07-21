@@ -384,8 +384,10 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   full_java_lib_deps += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
 endif
 
+jar_manifest_file :=
 ifneq ($(strip $(LOCAL_JAR_MANIFEST)),)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST := $(LOCAL_PATH)/$(LOCAL_JAR_MANIFEST)
+jar_manifest_file := $(LOCAL_PATH)/$(LOCAL_JAR_MANIFEST)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST := $(jar_manifest_file)
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif

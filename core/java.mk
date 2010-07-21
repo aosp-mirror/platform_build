@@ -172,7 +172,7 @@ ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
-$(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps)
+$(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps) $(jar_manifest_file)
 	$(transform-java-to-classes.jar)
 
 # source files generated from RenderScript must be generated before java compiling
