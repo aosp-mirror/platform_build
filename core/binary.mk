@@ -9,6 +9,10 @@
 ## Sanity check for LOCAL_NDK_VERSION
 ######################################
 my_ndk_version_root :=
+ifeq ($(TARGET_SIMULATOR),true)
+  # NDK does not support sim build.
+  LOCAL_NDK_VERSION :=
+endif
 ifdef LOCAL_NDK_VERSION
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can not be used in host module)
