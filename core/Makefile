@@ -95,6 +95,14 @@ else
   BUILD_DISPLAY_ID := $(build_desc)
 endif
 
+# Whether there is default locale set in PRODUCT_PROPERTY_OVERRIDES
+product_property_override_locale_language := $(strip \
+    $(patsubst ro.product.locale.language=%,%,\
+    $(filter ro.product.locale.language=%,$(PRODUCT_PROPERTY_OVERRIDES))))
+product_property_overrides_locale_region := $(strip \
+    $(patsubst ro.product.locale.region=%,%,\
+    $(filter ro.product.locale.region=%,$(PRODUCT_PROPERTY_OVERRIDES))))
+
 # Selects the first locale in the list given as the argument,
 # and splits it into language and region, which each may be
 # empty.
@@ -103,12 +111,13 @@ $(subst _, , $(firstword $(1)))
 endef
 
 # Selects the first locale in the list given as the argument
-# and returns the language (or the region)
+# and returns the language (or the region), if it's not set in PRODUCT_PROPERTY_OVERRIDES;
+# Return empty string if it's already set in PRODUCT_PROPERTY_OVERRIDES.
 define default-locale-language
-$(word 2, 2, $(call default-locale, $(1)))
+$(if $(product_property_override_locale_language),,$(word 1, $(call default-locale, $(1))))
 endef
 define default-locale-region
-$(word 3, 3, $(call default-locale, $(1)))
+$(if $(product_property_overrides_locale_region),,$(word 2, $(call default-locale, $(1))))
 endef
 
 BUILDINFO_SH := build/tools/buildinfo.sh
