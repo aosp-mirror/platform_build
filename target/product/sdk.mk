@@ -18,10 +18,10 @@ PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
 	AccountAndSyncSettings \
-	AlarmClock \
 	Camera \
 	Calculator \
 	CarHome \
+	DeskClock \
 	Development \
 	DrmProvider \
 	Email \
