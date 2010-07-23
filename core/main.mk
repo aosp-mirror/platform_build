@@ -287,7 +287,6 @@ ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
 endif
 
-ifeq (,$(TARGET_BUILD_APPS))
 # Install an apns-conf.xml file if one's not already being installed.
 ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
   PRODUCT_COPY_FILES += \
@@ -308,7 +307,6 @@ ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
     endif
   endif
 endif
-endif # !TARGET_BUILD_APPS
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
@@ -754,6 +752,10 @@ endif
 
 .PHONY: droid tests
 tests: droidcore
+
+# phony target that include any targets in $(ALL_MODULES)
+.PHONY: all_modules
+all_modules: $(ALL_MODULES)
 
 .PHONY: docs
 docs: $(ALL_DOCS)
