@@ -343,6 +343,10 @@ all_objects := \
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(base_intermediates)
 
+ifndef LOCAL_NDK_VERSION
+  LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
+endif
+
 $(all_objects) : | $(LOCAL_GENERATED_SOURCES)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
