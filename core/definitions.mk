@@ -1291,7 +1291,7 @@ endef
 ifeq ($(HOST_OS),windows)
 xlint_unchecked :=
 else
-#xlint_unchecked := -Xlint:unchecked
+xlint_unchecked := -Xlint:unchecked
 endif
 
 # emit-line, <word list>, <output file>
@@ -1366,7 +1366,8 @@ $(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list
 $(hide) $(TARGET_JAVAC) -encoding ascii $(PRIVATE_BOOTCLASSPATH) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
-    $(PRIVATE_JAVACFLAGS) $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) $(xlint_unchecked) \
+    $(PRIVATE_JAVACFLAGS) $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
+	$(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )

@@ -9,6 +9,10 @@
 ## Sanity check for LOCAL_NDK_VERSION
 ######################################
 my_ndk_version_root :=
+ifeq ($(TARGET_SIMULATOR),true)
+  # NDK does not support sim build.
+  LOCAL_NDK_VERSION :=
+endif
 ifdef LOCAL_NDK_VERSION
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can not be used in host module)
@@ -345,6 +349,10 @@ all_objects := \
 	$(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(base_intermediates)
+
+ifndef LOCAL_NDK_VERSION
+  LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
+endif
 
 $(all_objects) : | $(LOCAL_GENERATED_SOURCES)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)

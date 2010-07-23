@@ -650,7 +650,7 @@ function mm()
         elif [ ! "$M" ]; then
             echo "Couldn't locate a makefile from the current directory."
         else
-            ONE_SHOT_MAKEFILE=$M make -C $T files $@
+            ONE_SHOT_MAKEFILE=$M make -C $T all_modules $@
         fi
     fi
 }
@@ -682,13 +682,15 @@ function mmm()
                     ARGS="$ARGS snod"
                 elif [ "$DIR" = showcommands ]; then
                     ARGS="$ARGS showcommands"
+                elif [ "$DIR" = dist ]; then
+                    ARGS="$ARGS dist"
                 else
                     echo "No Android.mk in $DIR."
                     return 1
                 fi
             fi
         done
-        ONE_SHOT_MAKEFILE="$MAKEFILE" make -C $T $DASH_ARGS files $ARGS
+        ONE_SHOT_MAKEFILE="$MAKEFILE" make -C $T $DASH_ARGS all_modules $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi

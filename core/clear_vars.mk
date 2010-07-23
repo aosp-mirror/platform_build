@@ -96,6 +96,7 @@ LOCAL_NO_EMMA_COMPILE:=
 LOCAL_PROGUARD_ENABLED:= # '',optonly,full,custom
 LOCAL_PROGUARD_FLAGS:=
 LOCAL_EMMA_COVERAGE_FILTER:=
+LOCAL_WARNINGS_ENABLE:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
