@@ -159,7 +159,13 @@ $(TARGET_CXX) \
 	$(TARGET_CRTEND_O)
 endef
 
-TARGET_GLOBAL_CFLAGS += -m32 -D__ANDROID__
+ifeq ($(TARGET_ARCH_VARIANT),x86-atom)
+    # Enable recent IA friendly memory routines (such as for Atom)
+    # These will not work on the earlier x86 machines
+    TARGET_GLOBAL_CFLAGS += -mtune=i686 -DUSE_SSSE3 -DUSE_SSE2
+endif
+
+TARGET_GLOBAL_CFLAGS += -D__ANDROID__
 TARGET_GLOBAL_LDFLAGS += -m32
 
 endif #simulator
