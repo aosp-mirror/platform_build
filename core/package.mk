@@ -61,6 +61,10 @@ ifneq (,$(LOCAL_JAVA_RESOURCE_FILES))
 $(error $(LOCAL_PATH): Package modules may not set LOCAL_JAVA_RESOURCE_FILES)
 endif
 
+ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
+LOCAL_MANIFEST_FILE := AndroidManifest.xml
+endif
+
 ifneq ($(strip $(LOCAL_MODULE_CLASS)),)
 $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
@@ -160,7 +164,7 @@ include $(BUILD_SYSTEM)/java.mk
 DONT_INSTALL_DEX_FILES := $(old_DONT_INSTALL_DEX_FILES)
 old_DONT_INSTALL_DEX_FILES =
 
-full_android_manifest := $(LOCAL_PATH)/AndroidManifest.xml
+full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 
