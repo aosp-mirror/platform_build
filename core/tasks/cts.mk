@@ -50,59 +50,8 @@ CTS_CORE_CASE_LIST := android.core.tests.annotation \
 	android.core.tests.xnet \
 	android.core.tests.runner
 
-CTS_SECURITY_APPS_LIST := \
-	CtsAppAccessData \
-	CtsAppWithData \
-	CtsInstrumentationAppDiffCert \
-	CtsPermissionDeclareApp \
-	CtsSharedUidInstall \
-	CtsSharedUidInstallDiffCert \
-	CtsSimpleAppInstall \
-	CtsSimpleAppInstallDiffCert \
-	CtsTargetInstrumentationApp \
-	CtsUsePermissionDiffCert
-
-CTS_CASE_LIST := \
-	TestDeviceSetup \
-	CtsTestStubs \
-	CtsAccessibilityServiceTestCases \
-	CtsAccountManagerTestCases \
-	CtsAppTestCases \
-	CtsBluetoothTestCases \
-	CtsContentTestCases \
-	CtsDatabaseTestCases \
-	CtsDelegatingAccessibilityService \
-	CtsDpiTestCases \
-	CtsDpiTestCases2 \
-	CtsExampleTestCases \
-	CtsGestureTestCases \
-	CtsGraphicsTestCases \
-	CtsHardwareTestCases \
-	CtsJniTestCases \
-	CtsLocationTestCases \
-	CtsMediaTestCases \
-	CtsOsTestCases \
-	CtsPermissionTestCases \
-	CtsPermission2TestCases \
-	CtsProviderTestCases \
-	CtsSpeechTestCases \
-	CtsTelephonyTestCases \
-	CtsTextTestCases \
-	CtsUtilTestCases \
-	CtsViewTestCases \
-	CtsWebkitTestCases \
-	CtsWidgetTestCases \
-	CtsNetTestCases \
-	SignatureTest \
-	CtsPerformanceTestCases \
-	CtsPerformance2TestCases \
-	CtsPerformance3TestCases \
-	CtsPerformance4TestCases \
-	CtsPerformance5TestCases \
-	ApiDemos \
-	ApiDemosReferenceTest \
-	$(CTS_CORE_CASE_LIST) \
-	$(CTS_SECURITY_APPS_LIST)
+-include cts/CtsTestCaseList.mk
+CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
 
 DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
