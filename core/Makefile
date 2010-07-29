@@ -215,7 +215,12 @@ APKCERTS_FILE := $(intermediates)/$(name).txt
 # but it should guarantee that the apkcerts file is rebuilt
 # if any packages change which certs they're signed with.
 all_built_packages := $(foreach p,$(PACKAGES),$(ALL_MODULES.$(p).BUILT))
+ifneq ($(TARGET_BUILD_APPS),)
+# We don't need to really build all the modules for apps_only build.
+$(APKCERTS_FILE):
+else
 $(APKCERTS_FILE): $(all_built_packages)
+endif
 	@echo APK certs list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
@@ -228,6 +233,8 @@ $(APKCERTS_FILE): $(all_built_packages)
 
 .PHONY: apkcerts-list
 apkcerts-list: $(APKCERTS_FILE)
+
+$(call dist-for-goals, apps_only, $(APKCERTS_FILE):apkcerts.txt)
 
 # -----------------------------------------------------------------
 # module info file
