@@ -23,7 +23,10 @@ void clone_elf(Elf *elf, Elf *newelf,
 #ifdef SUPPORT_ANDROID_PRELINK_TAGS
 			   , int *prelinked,
 			   int *elf_little,
-			   long *prelink_addr
+			   long *prelink_addr,
+                           int *retouched,
+                           unsigned int *retouch_byte_cnt,
+                           char *retouch_buf
 #endif
                , bool rebuild_shstrtab,
                bool strip_debug,

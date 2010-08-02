@@ -62,7 +62,8 @@ struct source_t {
     Elf_Data *shstrtab_data;
     int elf_fd;
     int newelf_fd; /* fd of output file, -1 if output == NULL */
-	struct stat elf_file_info;
+    int newelf_relo_fd; /* fd of relocaion output file */
+    struct stat elf_file_info;
     GElf_Ehdr elf_hdr, oldelf_hdr;
     size_t shstrndx;
     int shnum; /* number of sections */
