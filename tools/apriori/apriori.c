@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <common.h>
 #include <debug.h>
 #include <libelf.h>
@@ -53,6 +54,154 @@
 extern int verbose_flag;
 
 static source_t *sources = NULL;
+
+/* Retouch data is a very concise representation of the resolved relocations.
+   This data is used to randomize the location of prelinked libraries at
+   update time, on the device.
+ */
+
+// We will store retouch entries into this buffer, then dump them at the
+// end of the .so file before setup_prelink_info().
+#define RETOUCH_MAX_SIZE 500000
+static char *retouch_buf;
+static unsigned int retouch_byte_cnt;
+// Compression state.
+static int32_t offs_prev;
+static uint32_t cont_prev;
+
+#define false 0
+#define true 1
+
+void retouch_init(void) {
+    offs_prev = 0;
+    cont_prev = 0;
+    retouch_byte_cnt = 0;
+    retouch_buf = malloc(RETOUCH_MAX_SIZE+12);
+    FAILIF(retouch_buf == NULL,
+           "Could not allocate %d bytes.\n", RETOUCH_MAX_SIZE+12);
+}
+
+//
+// We use three encoding schemes; this takes care of much of the redundancy
+// inherent in lists of relocations:
+//
+//   * two bytes, leading 1, 2b for d_offset ("s"), 13b for d_contents ("c")
+//
+//     76543210 76543210
+//     1ssccccc cccccccc
+//
+//   * three bytes, leading 01, 2b for delta offset, 20b for delta contents
+//
+//     76543210 76543210 76543210
+//     01sscccc cccccccc cccccccc
+//
+//   * eigth bytes, leading 00, 30b for offset, 32b for contents
+//
+//     76543210 76543210 76543210 76543210
+//     00ssssss ssssssss ssssssss ssssssss + 4 bytes contents
+//
+// NOTE 1: All deltas are w.r.t. the previous line in the list.
+// NOTE 2: Two-bit ("ss") offsets mean: "00"=4, "01"=8, "10"=12, and "11"=16.
+// NOTE 3: Delta contents are signed. To map back to a int32 we refill with 1s.
+// NOTE 4: Special encoding for -1 offset. Extended back to 32b when decoded.
+//
+
+void retouch_encode(int32_t offset, uint32_t contents) {
+    int64_t d_offs = offset-offs_prev;
+    int64_t d_cont = (int64_t)contents-(int64_t)cont_prev;
+
+    uint8_t output[8];
+    uint32_t output_size;
+
+    if ((d_offs > 3) &&
+        (d_offs % 4) == 0 &&
+        (d_offs / 4) < 5 &&
+        (d_cont < 4000) &&
+        (d_cont > -4000)) {
+        // we can fit in 2 bytes
+        output[0] =
+          0x80 |
+          (((d_offs/4)-1) << 5) |
+          (((uint64_t)d_cont & 0x1f00) >> 8);
+        output[1] =
+          ((uint64_t)d_cont & 0xff);
+        output_size = 2;
+    } else if ((d_offs > 3) &&
+               (d_offs % 4) == 0 &&
+               (d_offs / 4) < 5 &&
+               (d_cont < 510000) &&
+               (d_cont > -510000)) {
+        // fit in 3 bytes
+        output[0] =
+          0x40 |
+          (((d_offs/4)-1) << 4) |
+          (((uint64_t)d_cont & 0xf0000) >> 16);
+        output[1] =
+          ((uint64_t)d_cont & 0xff00) >> 8;
+        output[2] =
+          ((uint64_t)d_cont & 0xff);
+        output_size = 3;
+    } else {
+        // fit in 8 bytes; we can't support files bigger than (1GB-1)
+        // with this encoding: no library is that big anyway..
+        FAILIF(offset < -1 || offset > 0x3ffffffe, "Offset out of range.\n");
+        output[0] = (offset & 0x3f000000) >> 24;
+        output[1] = (offset & 0xff0000) >> 16;
+        output[2] = (offset & 0xff00) >> 8;
+        output[3] = (offset & 0xff);
+        output[4] = (contents & 0xff000000) >> 24;
+        output[5] = (contents & 0xff0000) >> 16;
+        output[6] = (contents & 0xff00) >> 8;
+        output[7] = (contents & 0xff);
+        output_size = 8;
+    }
+
+    // If this happens, the retouch buffer size can be bumped up.
+    // Currently, the largest case is libwebcore, at about 250K.
+    FAILIF((retouch_byte_cnt+output_size) > RETOUCH_MAX_SIZE,
+           "About to overflow retouch buffer.\n");
+
+    memcpy(retouch_buf+retouch_byte_cnt, output, output_size);
+    retouch_byte_cnt += output_size;
+
+    offs_prev = offset;
+    cont_prev = contents;
+}
+
+void retouch_dump(const char *fname, int elf_little,
+                  unsigned int retouch_byte_cnt, char *retouch_buf) {
+    int fd = open(fname, O_WRONLY);
+    FAILIF(fd < 0,
+           "open(%s, O_WRONLY): %s (%d)\n" ,
+           fname, strerror(errno), errno);
+    off_t sz = lseek(fd, 0, SEEK_END);
+    FAILIF(sz == (off_t)-1,
+           "lseek(%d, 0, SEEK_END): %s (%d)!\n",
+           fd, strerror(errno), errno);
+
+    // The retouch blob ends with "RETOUCH XXXX", where XXXX is the 4-byte
+    // size of the retouch blob, in target endianness.
+    strncpy(retouch_buf+retouch_byte_cnt, "RETOUCH ", 8);
+    if (elf_little ^ is_host_little()) {
+        *(unsigned int *)(retouch_buf+retouch_byte_cnt+8) =
+          switch_endianness(retouch_byte_cnt);
+    } else {
+        *(unsigned int *)(retouch_buf+retouch_byte_cnt+8) =
+          retouch_byte_cnt;
+    }
+
+    int num_written = write(fd, retouch_buf, retouch_byte_cnt+12);
+    FAILIF(num_written < 0,
+           "write(%d, &info, sizeof(info)): %s (%d)\n",
+           fd, strerror(errno), errno);
+    FAILIF((retouch_byte_cnt+12) != num_written,
+           "Could not write %d bytes as expected (wrote %d bytes instead)!\n",
+           retouch_byte_cnt, num_written);
+    FAILIF(close(fd) < 0, "close(%d): %s (%d)!\n", fd, strerror(errno), errno);
+}
+
+/* End of retouch code.
+ */
 
 #if defined(DEBUG) && 0
 
@@ -324,6 +473,9 @@ static Elf * init_elf(source_t *source, bool create_new_sections)
             strcpy(source->output + dirlen + 1,
                    basename(source->name));
         }
+
+        /* Save some of the info; needed for retouching (ASLR). */
+        retouch_init();
 
         source->newelf_fd = open(source->output,
                                  O_RDWR | O_CREAT,
@@ -615,15 +767,15 @@ static source_t* init_source(const char *full_path,
            strerror(errno),
            errno);
 
-	FAILIF(fstat(source->elf_fd, &source->elf_file_info) < 0,
-		   "fstat(%s(fd %d)): %s (%d)\n",
-		   source->name,
-		   source->elf_fd,
-		   strerror(errno),
-		   errno);
-	INFO("File [%s]'s size is %lld bytes!\n",
-		 source->name,
-		 source->elf_file_info.st_size);
+    FAILIF(fstat(source->elf_fd, &source->elf_file_info) < 0,
+           "fstat(%s(fd %d)): %s (%d)\n",
+           source->name,
+           source->elf_fd,
+           strerror(errno),
+           errno);
+    INFO("File [%s]'s size is %lld bytes!\n",
+         source->name,
+         source->elf_file_info.st_size);
 
     INFO("Calling elf_begin(%s)...\n", full_path);
 
@@ -775,6 +927,11 @@ static void destroy_source(source_t *source)
                function setup_prelink_info() below. */
             INFO("%s: setting up prelink tag at end of file.\n",
                  source->output ? source->output : source->name);
+            retouch_encode(-1, source->base);
+            retouch_dump(source->output ? source->output : source->name,
+                         source->elf_hdr.e_ident[EI_DATA] == ELFDATA2LSB,
+                         retouch_byte_cnt,
+                         retouch_buf);
             setup_prelink_info(source->output ? source->output : source->name,
                                source->elf_hdr.e_ident[EI_DATA] == ELFDATA2LSB,
                                source->base);
@@ -785,6 +942,7 @@ static void destroy_source(source_t *source)
 #endif/*SUPPORT_ANDROID_PRELINK_TAGS*/
 
     do_destroy_source(source);
+    if (retouch_buf != NULL) { free(retouch_buf); retouch_buf = NULL; }
 
     if (source->shstrtab_data != NULL)
         FREEIF(source->shstrtab_data->d_buf); /* adjust_elf */
@@ -1226,8 +1384,11 @@ static int do_prelink(source_t *source,
                        rel->r_offset,
                        found_sym->st_value,
                        sym_source->base);
-                  if (!dry_run)
+                  if (!dry_run) {
+                    PRINT("WARNING: Relocation type not supported "
+                          "for retouching!");
                     *dest = found_sym->st_value + sym_source->base;
+                  }
                 }
               num_relocations++;
               break;
@@ -1240,8 +1401,15 @@ static int do_prelink(source_t *source,
                    sname,
                    symname ?: "(symbol has no name)",
                    rel->r_offset, *dest, source->base);
-              if (!dry_run)
+              if (!dry_run) {
                 *dest += source->base;
+
+                /* Output an entry for the ASLR touch-up process. */
+                retouch_encode(rel->r_offset
+                               -shdr_mem.sh_addr
+                               +shdr_mem.sh_offset,
+                               *dest);
+              }
               num_relocations++;
               break;
             case R_ARM_COPY:
@@ -1352,15 +1520,21 @@ static int do_prelink(source_t *source,
                             ASSERT(data->d_buf != NULL);
                             ASSERT(data->d_size >= rel->r_offset -
                                    shdr_mem.sh_addr);
-                            if (!dry_run)
-                              memcpy(dest, src, found_sym->st_size);
+                            if (!dry_run) {
+                                PRINT("WARNING: Relocation type not supported "
+                                      "for retouching!");
+                                memcpy(dest, src, found_sym->st_size);
+                            }
                           }
                         else {
                           ASSERT(src == NULL);
                           ASSERT(elf_ndxscn(src_scn) ==
                                  elf_ndxscn(sym_source->bss.scn));
-                          if (!dry_run)
-                            memset(dest, 0, found_sym->st_size);
+                          if (!dry_run) {
+                              PRINT("WARNING: Relocation type not supported "
+                                    "for retouching!");
+                              memset(dest, 0, found_sym->st_size);
+                          }
                         }
                       }
                     }

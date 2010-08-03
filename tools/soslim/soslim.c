@@ -27,7 +27,10 @@ void clone_elf(Elf *elf, Elf *newelf,
 #ifdef SUPPORT_ANDROID_PRELINK_TAGS
                , int *prelinked,
                int *elf_little,
-               long *prelink_addr
+               long *prelink_addr,
+               int *retouched,
+               unsigned int *retouch_byte_cnt,
+               char *retouch_buf
 #endif
                , bool rebuild_shstrtab,
                bool strip_debug,
@@ -70,6 +73,11 @@ void clone_elf(Elf *elf, Elf *newelf,
     ASSERT(elf_little);
     *elf_little = (ehdr->e_ident[EI_DATA] == ELFDATA2LSB);
     *prelinked = check_prelinked(elf_name, *elf_little, prelink_addr);
+    ASSERT(retouched);
+    ASSERT(retouch_byte_cnt);
+    ASSERT(retouch_buf);
+    *retouched = check_retouched(elf_name, *elf_little,
+                                 retouch_byte_cnt, retouch_buf);
 #endif
 
     INFO("\n\nCALCULATING MODIFICATIONS\n\n");

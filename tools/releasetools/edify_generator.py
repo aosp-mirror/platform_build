@@ -235,6 +235,20 @@ class EdifyGenerator(object):
              ",\0".join(['"' + i + '"' for i in sorted(links)]) + ");")
       self.script.append(self._WordWrap(cmd))
 
+  def RetouchBinaries(self, file_list):
+    """Execute the retouch instructions in files listed."""
+    cmd = ('retouch_binaries(' +
+           ', '.join(['"' + i[0] + '", "' + i[1] + '"' for i in file_list]) +
+           ');')
+    self.script.append(self._WordWrap(cmd))
+
+  def UndoRetouchBinaries(self, file_list):
+    """Undo the retouching (retouch to zero offset)."""
+    cmd = ('undo_retouch_binaries(' +
+           ', '.join(['"' + i[0] + '", "' + i[1] + '"' for i in file_list]) +
+           ');')
+    self.script.append(self._WordWrap(cmd))
+
   def AppendExtra(self, extra):
     """Append text verbatim to the output script."""
     self.script.append(extra)

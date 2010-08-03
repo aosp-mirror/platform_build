@@ -188,9 +188,13 @@ int main(int argc, char **argv)
             else INFO("Not building symbol filter, filter file is empty.\n");
         }
 #ifdef SUPPORT_ANDROID_PRELINK_TAGS
-        int prelinked = 0;
+        int prelinked = 0, retouched = 0;
         int elf_little; /* valid if prelinked != 0 */
         long prelink_addr; /* valid if prelinked != 0 */
+#define RETOUCH_MAX_SIZE 500000
+        /* _cnt valid if retouched != 0 */
+        unsigned int retouch_byte_cnt = RETOUCH_MAX_SIZE;
+        char retouch_buf[RETOUCH_MAX_SIZE]; /* valid if retouched != 0 */
 #endif
         clone_elf(elf, newelf,
                   infile, outfile,
@@ -200,7 +204,10 @@ int main(int argc, char **argv)
 #ifdef SUPPORT_ANDROID_PRELINK_TAGS
                   , &prelinked,
                   &elf_little,
-                  &prelink_addr
+                  &prelink_addr,
+                  &retouched,
+                  &retouch_byte_cnt,
+                  retouch_buf
 #endif
                   ,
                   true, /* rebuild the section-header-strings table */
@@ -223,6 +230,13 @@ int main(int argc, char **argv)
                infile, strerror(errno), errno);
 
 #ifdef SUPPORT_ANDROID_PRELINK_TAGS
+        if (retouched) {
+            INFO("File has retouch data, putting it back in place.\n");
+            retouch_dump(outfile != NULL ? outfile : infile,
+                         elf_little,
+                         retouch_byte_cnt,
+                         retouch_buf);
+        }
         if (prelinked) {
             INFO("File is prelinked, putting prelink TAG back in place.\n");
             setup_prelink_info(outfile != NULL ? outfile : infile,

@@ -144,23 +144,23 @@ def SetupToolsPath():
       uname = "darwin-ppc"
   elif uname == "Linux":
     uname = "linux-x86"
-  prefix = "./prebuilt/" + uname + "/toolchain/arm-eabi-4.4.3/bin/"
-  addr2line_cmd = prefix + "arm-eabi-addr2line"
+  prefix = "./prebuilt/" + uname + "/toolchain/arm-linux-androideabi-4.4.x/bin/"
+  addr2line_cmd = prefix + "arm-linux-androideabi-addr2line"
 
   if (not os.path.exists(addr2line_cmd)):
     try:
       prefix = os.environ['ANDROID_BUILD_TOP'] + "/prebuilt/" + uname + \
-               "/toolchain/arm-eabi-4.4.3/bin/"
+               "/toolchain/arm-linux-androideabi-4.4.x/bin/"
     except:
       prefix = "";
 
-    addr2line_cmd = prefix + "arm-eabi-addr2line"
+    addr2line_cmd = prefix + "arm-linux-androideabi-addr2line"
     if (not os.path.exists(addr2line_cmd)):
       print addr2line_cmd + " not found!"
       sys.exit(1)
 
-  objdump_cmd = prefix + "arm-eabi-objdump"
-  cppfilt_cmd = prefix + "arm-eabi-c++filt"
+  objdump_cmd = prefix + "arm-linux-androideabi-objdump"
+  cppfilt_cmd = prefix + "arm-linux-androideabi-c++filt"
 
 ###############################################################################
 # look up the function and file/line number for a raw stack trace line
