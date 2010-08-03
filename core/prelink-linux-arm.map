@@ -19,7 +19,7 @@
 #
 # note: look at the LOAD sections in the library header:
 #
-#   arm-eabi-objdump -x <lib>
+#   arm-linux-androideabi-objdump -x <lib>
 #
 
 # core system libraries
