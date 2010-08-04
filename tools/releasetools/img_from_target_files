@@ -74,6 +74,8 @@ def AddUserdata(output_zip):
   if USERIMAGE_OPTIONS.fs_type is not None and USERIMAGE_OPTIONS.fs_type.startswith("ext"):
     build_command = ["mkuserimg.sh",
                      user_dir, img.name, USERIMAGE_OPTIONS.fs_type, "userdata"]
+    if "userdata.img" in OPTIONS.max_image_size:
+      build_command.append(str(OPTIONS.max_image_size["userdata.img"]))
   else:
     build_command = ["mkyaffs2image", "-f",
                      user_dir, img.name]
@@ -82,7 +84,8 @@ def AddUserdata(output_zip):
   p.communicate()
   assert p.returncode == 0, "build userdata.img image failed"
 
-  common.CheckSize(img.name, "userdata.img")
+  if USERIMAGE_OPTIONS.fs_type is None or not USERIMAGE_OPTIONS.fs_type.startswith("ext"):
+    common.CheckSize(img.name, "userdata.img")
   output_zip.write(img.name, "userdata.img")
   img.close()
   os.rmdir(user_dir)
@@ -116,6 +119,8 @@ def AddSystem(output_zip):
     build_command = ["mkuserimg.sh",
                      os.path.join(OPTIONS.input_tmp, "system"), img.name,
                      USERIMAGE_OPTIONS.fs_type, "system"]
+    if "system.img" in OPTIONS.max_image_size:
+      build_command.append(str(OPTIONS.max_image_size["system.img"]))
   else:
     build_command = ["mkyaffs2image", "-f",
                      os.path.join(OPTIONS.input_tmp, "system"), img.name]
@@ -128,7 +133,8 @@ def AddSystem(output_zip):
   data = img.read()
   img.close()
 
-  common.CheckSize(data, "system.img")
+  if USERIMAGE_OPTIONS.fs_type is None or not USERIMAGE_OPTIONS.fs_type.startswith("ext"):
+    common.CheckSize(data, "system.img")
   common.ZipWriteStr(output_zip, "system.img", data)
 
 

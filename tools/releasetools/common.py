@@ -93,7 +93,7 @@ def LoadMaxSizes(info):
   except IOError, e:
     if e.errno == errno.ENOENT:
       def copy(x, y):
-        if x in info: OPTIONS.max_image_size[x+".img"] = int(info[x+y])
+        if x+y in info: OPTIONS.max_image_size[x+".img"] = int(info[x+y])
       copy("blocksize", "")
       copy("boot", "_size")
       copy("recovery", "_size")

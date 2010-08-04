@@ -547,6 +547,19 @@ function lunch()
     printconfig
 }
 
+# Tab completion for lunch.
+function _lunch()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    COMPREPLY=( $(compgen -W "${LUNCH_MENU_CHOICES[*]}" -- ${cur}) )
+    return 0
+}
+complete -F _lunch lunch
+
 # Configures the build to build unbundled apps.
 # Run tapas with one ore more app names (from LOCAL_PACKAGE_NAME)
 function tapas()
