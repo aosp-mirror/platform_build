@@ -748,22 +748,17 @@ endef
 ###########################################################
 ## Commands to compile RenderScript
 ###########################################################
-# $(1) the .rs file
-define _compile-one-rs-file
-$(hide) $(SLANG) \
-  --allow-rs-prefix \
-  -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw/$(patsubst %.rs,%.bc,$(notdir $(1))) \
-  -p $(PRIVATE_RS_OUTPUT_DIR)/src \
-  $(1)
-
-endef
 
 define transform-renderscripts-to-java-and-bc
 @echo "RenderScript: $(PRIVATE_MODULE) <= $(PRIVATE_RS_SOURCE_FILES)"
 $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/res/raw
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/src
-$(foreach rs,$(PRIVATE_RS_SOURCE_FILES),$(call _compile-one-rs-file,$(rs)))
+$(hide) $(SLANG) \
+  --allow-rs-prefix \
+  -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw \
+  -p $(PRIVATE_RS_OUTPUT_DIR)/src \
+  $(PRIVATE_RS_SOURCE_FILES)
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
