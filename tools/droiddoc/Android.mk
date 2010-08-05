@@ -14,5 +14,4 @@
 
 LOCAL_PATH := $(call my-dir)
 
-include $(LOCAL_PATH)/src/Android.mk
-
+# Droiddoc is now Doclava -- See external/doclava.

@@ -1,5 +1,5 @@
 <?cs # A link to a package ?><?cs 
-def:package_link(pkg)) ?>
+def:package_link(pkg) ?>
   <a href="<?cs var:toroot ?><?cs var:pkg.link ?>"><?cs var:pkg.name ?></a><?cs 
 /def ?>
 
