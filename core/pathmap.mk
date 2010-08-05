@@ -88,6 +88,7 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    wifi \
 	    vpn \
 	    keystore \
+	    voip \
 	 )
 
 #
