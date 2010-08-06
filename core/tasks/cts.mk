@@ -28,26 +28,13 @@ CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
 HOSTTESTLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
 
-CTS_CORE_CASE_LIST := android.core.tests.annotation \
-	android.core.tests.archive \
-	android.core.tests.concurrent \
-	android.core.tests.crypto \
+CTS_CORE_CASE_LIST := \
 	android.core.tests.dom \
-	android.core.tests.logging \
 	android.core.tests.luni.io \
 	android.core.tests.luni.lang \
 	android.core.tests.luni.net \
 	android.core.tests.luni.util \
-	android.core.tests.math \
-	android.core.tests.nio \
-	android.core.tests.nio_char \
-	android.core.tests.prefs \
-	android.core.tests.regex \
-	android.core.tests.security \
-	android.core.tests.sql \
-	android.core.tests.text \
 	android.core.tests.xml \
-	android.core.tests.xnet \
 	android.core.tests.runner
 
 -include cts/CtsTestCaseList.mk
@@ -95,8 +82,13 @@ $(hide) java $(PRIVATE_JAVAOPTS) \
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
+RUNNER_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junitrunner,,COMMON)
+SUPPORT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests-support,,COMMON)
+DOM_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests-dom,,COMMON)
+XML_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests-xml,,COMMON)
 TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(RUNNER_INTERMEDIATES)/classes.jar:$(SUPPORT_INTERMEDIATES)/classes.jar:$(DOM_INTERMEDIATES)/classes.jar:$(XML_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(JUNIT_INTERMEDIATES)/javalib.jar:$(RUNNER_INTERMEDIATES)/javalib.jar:$(SUPPORT_INTERMEDIATES)/javalib.jar:$(DOM_INTERMEDIATES)/javalib.jar:$(XML_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
 
 $(cts_dir)/all_cts_core_files_stamp: PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 $(cts_dir)/all_cts_core_files_stamp: PRIVATE_JAVAOPTS:=-Xmx256M
@@ -107,25 +99,10 @@ $(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.annotation,\
-		cts/tests/core/annotation/AndroidManifest.xml,\
-		tests.annotation.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.archive,\
-		cts/tests/core/archive/AndroidManifest.xml,\
-		tests.archive.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.concurrent,\
-		cts/tests/core/concurrent/AndroidManifest.xml,\
-		tests.concurrent.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.crypto,\
-		cts/tests/core/crypto/AndroidManifest.xml,\
-		tests.crypto.AllTests)
+$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(RUNNER_INTERMEDIATES)/javalib.jar $(SUPPORT_INTERMEDIATES)/javalib.jar $(DOM_INTERMEDIATES)/javalib.jar $(XML_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.dom,\
 		cts/tests/core/dom/AndroidManifest.xml,\
 		tests.dom.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.logging,\
-		cts/tests/core/logging/AndroidManifest.xml,\
-		tests.logging.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
 		cts/tests/core/luni-io/AndroidManifest.xml,\
 		tests.luni.AllTestsIo)
@@ -138,36 +115,9 @@ $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRA
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.util,\
 		cts/tests/core/luni-util/AndroidManifest.xml,\
 		tests.luni.AllTestsUtil)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.math,\
-		cts/tests/core/math/AndroidManifest.xml,\
-		tests.math.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.nio,\
-		cts/tests/core/nio/AndroidManifest.xml,\
-		tests.nio.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.nio_char,\
-		cts/tests/core/nio_char/AndroidManifest.xml,\
-		tests.nio_char.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.prefs,\
-		cts/tests/core/prefs/AndroidManifest.xml,\
-		tests.prefs.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.regex,\
-		cts/tests/core/regex/AndroidManifest.xml,\
-		tests.regex.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.security,\
-		cts/tests/core/security/AndroidManifest.xml,\
-		tests.security.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.sql,\
-		cts/tests/core/sql/AndroidManifest.xml,\
-		tests.sql.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.text,\
-		cts/tests/core/text/AndroidManifest.xml,\
-		tests.text.AllTests)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xml,\
 		cts/tests/core/xml/AndroidManifest.xml,\
 		tests.xml.AllTests)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xnet,\
-		cts/tests/core/xnet/AndroidManifest.xml,\
-		tests.xnet.AllTests)
 	$(hide) touch $@
 
 
@@ -177,17 +127,19 @@ CORE_VM_TEST_DESC := $(cts_dir)/$(cts_name)/repository/testcases/android.core.vm
 
 VMTESTS_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests,1,)
 # core tests only needed to get hold of junit-framework-classes
-TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
+RUNNER_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junitrunner,,COMMON)
+TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(RUNNER_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
 
 $(CORE_VM_TEST_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 $(CORE_VM_TEST_DESC): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
 $(CORE_VM_TEST_DESC): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 $(CORE_VM_TEST_DESC): PRIVATE_JAVAOPTS:=-Xmx256M
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
-$(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
+$(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(RUNNER_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(CORE_VM_TEST_DESC),\
 		cts/tests/vm-tests/AndroidManifest.xml,\
 		dot.junit.AllJunitHostTests, cts/tools/vm-tests/Android.mk)
