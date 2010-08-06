@@ -99,7 +99,7 @@ TARGET_C_INCLUDES := \
 	$(libstdc++_root)/include \
 	$(KERNEL_HEADERS) \
 	$(libm_root)/include \
-	$(libm_root)/include/arch/sh \
+	$(libm_root)/include/sh \
 	$(libthread_db_root)/include
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_STATIC_LIBRARIES)/crtbegin_static.o
