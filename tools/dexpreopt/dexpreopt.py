@@ -954,7 +954,7 @@ def MainInternal():
   # TODO: unlink the big userdata file now, since the emulator
   # has it open.
 
-  if not WaitForEmulator(ep, timeout=20): Fail('Emulator did not respond')
+  if not WaitForEmulator(ep, timeout=120): Fail('Emulator did not respond')
   if not ReplaceEmulatorPrompt(ep): Fail('Could not replace prompt')
 
   dest_root = '/data/dexpreopt-root'
