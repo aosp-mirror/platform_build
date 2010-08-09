@@ -130,11 +130,9 @@ droiddoc_templates := \
 
 droiddoc := \
 	$(HOST_JDK_TOOLS_JAR) \
-	$(HOST_OUT_JAVA_LIBRARIES)/droiddoc$(COMMON_JAVA_PACKAGE_SUFFIX) \
-	$(HOST_OUT_JAVA_LIBRARIES)/clearsilver$(COMMON_JAVA_PACKAGE_SUFFIX) \
-	$(HOST_OUT_SHARED_LIBRARIES)/libclearsilver-jni$(HOST_JNILIB_SUFFIX)
+	$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
 
-$(full_target): PRIVATE_DOCLETPATH := $(HOST_OUT_JAVA_LIBRARIES)/clearsilver$(COMMON_JAVA_PACKAGE_SUFFIX):$(HOST_OUT_JAVA_LIBRARIES)/droiddoc$(COMMON_JAVA_PACKAGE_SUFFIX):$(HOST_OUT_JAVA_LIBRARIES)/apicheck$(COMMON_JAVA_PACKAGE_SUFFIX)
+$(full_target): PRIVATE_DOCLETPATH := $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
 $(full_target): PRIVATE_CURRENT_BUILD := -hdf page.build $(BUILD_ID)-$(BUILD_NUMBER)
 $(full_target): PRIVATE_CURRENT_TIME :=  -hdf page.now "$(shell date "+%d %b %Y %k:%M")"
 $(full_target): PRIVATE_TEMPLATE_DIR := $(LOCAL_DROIDDOC_TEMPLATE_DIR)
@@ -160,14 +158,12 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
 	$(hide) ( \
-		LD_LIBRARY_PATH=$(HOST_OUT_SHARED_LIBRARIES) \
 		javadoc \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1024m \
-                -J-Djava.library.path=$(HOST_OUT_SHARED_LIBRARIES) \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 -quiet \
-                -doclet DroidDoc \
+                -doclet com.google.doclava.Doclava \
                 -docletpath $(PRIVATE_DOCLETPATH) \
                 -templatedir $(PRIVATE_CUSTOM_TEMPLATE_DIR) \
                 -templatedir $(PRIVATE_TEMPLATE_DIR) \
