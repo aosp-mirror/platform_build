@@ -44,6 +44,19 @@
 @com.google.common.annotations.VisibleForTesting *;
 }
 
+# Keep serializable classes and necessary members for serializable classes
+# Copied from the ProGuard manual at http://proguard.sourceforge.net.
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
 # Please specify classes to be kept explicitly in your package's configuration.
 # -keep class * extends android.app.Activity
 # -keep class * extends android.view.View
