@@ -1,103 +1,3 @@
-<?cs # This default template file is meant to be replaced. ?>
-<?cs # Use the -tempatedir arg to javadoc to set your own directory with a replacement for this file in it. ?>
-
-
-<?cs # The default search box that goes in the header ?><?cs 
-def:default_search_box() ?>
-  <div id="search" >
-      <div id="searchForm">
-          <form accept-charset="utf-8" class="gsc-search-box" 
-                onsubmit="return submit_search()">
-            <table class="gsc-search-box" cellpadding="0" cellspacing="0"><tbody>
-                <tr>
-                  <td class="gsc-input">
-                    <input id="search_autocomplete" class="gsc-input" type="text" size="33" autocomplete="off"
-                      title="search developer docs" name="q"
-                      value="search developer docs"
-                      onFocus="search_focus_changed(this, true)"
-                      onBlur="search_focus_changed(this, false)"
-                      onkeydown="return search_changed(event, true, '<?cs var:toroot?>')"
-                      onkeyup="return search_changed(event, false, '<?cs var:toroot?>')" />
-                  <div id="search_filtered_div" class="no-display">
-                      <table id="search_filtered" cellspacing=0>
-                      </table>
-                  </div>
-                  </td>
-                  <td class="gsc-search-button">
-                    <input type="submit" value="Search" title="search" id="search-button" class="gsc-search-button" />
-                  </td>
-                  <td class="gsc-clear-button">
-                    <div title="clear results" class="gsc-clear-button">&nbsp;</div>
-                  </td>
-                </tr></tbody>
-              </table>
-          </form>
-      </div><!-- searchForm -->
-  </div><!-- search --><?cs 
-/def ?>
-
-<?cs 
-def:custom_masthead() ?>
-  <div id="header">
-      <div id="headerLeft">
-          <a href="<?cs var:toroot ?>index.html" tabindex="-1"><img
-              src="<?cs var:toroot ?>assets/images/bg_logo.png" alt="Android Developers" /></a>
-          <?cs include:"header_tabs.cs" ?>     <?cs # The links are extracted so we can better manage localization ?>
-      </div>
-      <div id="headerRight">
-          <div id="headerLinks">
-          <?cs if:template.showLanguageMenu ?>
-            <img src="<?cs var:toroot ?>assets/images/icon_world.jpg" alt="Language:" /> 
-            <span id="language">
-             	<select name="language" onChange="changeLangPref(this.value, true)">
-          			<option value="en">English&nbsp;&nbsp;&nbsp;</option>
-          			<option value="ja">日本語</option>
-          			<?cs # 
-      			    <option value="de">Deutsch</option> 
-          			<option value="es">Español</option>
-          			<option value="fr">Français</option>
-          			<option value="it">Italiano</option>
-          			<option value="zh-CN">中文 (简体)</option>
-          			<option value="zh-TW">中文 (繁體)</option>
-      			    ?>
-             	</select>	
-             	<script type="text/javascript">
-             	  <!--  
-                  loadLangPref();  
-             	   //-->
-             	</script>
-            </span>
-          <?cs /if ?>
-          <a href="http://www.android.com">Android.com</a>
-          </div><?cs 
-          call:default_search_box() ?><?cs 
-    	 	  if:reference ?>
-    			  <div id="api-level-toggle">
-    			    <input type="checkbox" id="apiLevelCheckbox" onclick="toggleApiLevelSelector(this)" />
-    			    <label for="apiLevelCheckbox" class="disabled">Filter by API Level: </label>
-    			    <select id="apiLevelSelector">
-    			      <!-- option elements added by buildApiLevelSelector() -->
-    			    </select>
-    			  </div>
-    	 	    <script>
-              var SINCE_DATA = [ <?cs 
-                each:since = since ?>'<?cs 
-                  var:since.name ?>'<?cs 
-                  if:!last(since) ?>, <?cs /if ?><?cs
-                /each 
-              ?> ];
-              buildApiLevelSelector();
-            </script><?cs 
-    			/if ?>
-      </div><!-- headerRight -->
-      <script type="text/javascript">
-        <!--  
-        changeTabLang(getLangPref());
-        //-->
-      </script>
-  </div><!-- header --><?cs 
-/def ?>
-
 <?cs 
 def:sdk_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
@@ -107,7 +7,6 @@ def:sdk_nav() ?>
       </div>
     </div> <!-- end side-nav -->
 <?cs /def ?>
-
 <?cs 
 def:resources_tab_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
@@ -122,7 +21,6 @@ def:resources_tab_nav() ?>
         });
     </script>
 <?cs /def ?>
-
 <?cs 
 def:guide_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
@@ -250,3 +148,4 @@ def:custom_footerlinks() ?>
 def:custom_buildinfo() ?>
   Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> - <?cs var:page.now ?>
 <?cs /def ?>
+
