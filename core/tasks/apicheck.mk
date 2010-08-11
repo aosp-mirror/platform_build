@@ -36,7 +36,7 @@ APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/jsilver$(
 define check-api
 $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(APICHECK)
 	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK) -J"classpath $(APICHECK_CLASSPATH)" $(4) $(2) $(3) || ( $(5) ; exit 38 ) )
+	$(hide) ( $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)" $(4) $(2) $(3) || ( $(5) ; exit 38 ) )
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) touch $$@
 checkapi: $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
