@@ -16,6 +16,10 @@
 
 # Set up prog to be the path of this script, including following symlinks,
 # and set up progdir to be the fully-qualified pathname of its directory.
+#
+# The classpath and other java options used in apicheck are specified in
+# build/core/tasks/apicheck.mk.
+
 prog="$0"
 while [ -h "${prog}" ]; do
     newProg=`/bin/ls -ld "${prog}"`
@@ -34,8 +38,6 @@ progdir=`pwd`
 prog="${progdir}"/`basename "${prog}"`
 cd "${oldwd}"
 
-libdir=`dirname $progdir`/framework
-
 javaOpts=""
 while expr "x$1" : 'x-J' >/dev/null; do
     opt=`expr "x$1" : 'x-J\(.*\)'`
@@ -43,4 +45,4 @@ while expr "x$1" : 'x-J' >/dev/null; do
     shift
 done
 
-exec java $javaOpts -jar $libdir/apicheck.jar "$@"
+exec java $javaOpts com.google.doclava.apicheck.ApiCheck "$@"

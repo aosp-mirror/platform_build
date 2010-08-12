@@ -19,6 +19,10 @@
 
 ifneq ($(BUILD_TINY_ANDROID), true)
 
+APICHECK_CLASSPATH := $(HOST_JDK_TOOLS_JAR)
+APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
+APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX)
+
 .PHONY: checkapi
 
 # eval this to define a rule that runs apicheck.
@@ -32,7 +36,7 @@ ifneq ($(BUILD_TINY_ANDROID), true)
 define check-api
 $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(APICHECK)
 	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK) $(4) $(2) $(3) || ( $(5) ; exit 38 ) )
+	$(hide) ( $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)" $(4) $(2) $(3) || ( $(5) ; exit 38 ) )
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) touch $$@
 checkapi: $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
