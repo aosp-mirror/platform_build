@@ -62,7 +62,7 @@ static source_t *sources = NULL;
 
 // We will store retouch entries into this buffer, then dump them at the
 // end of the .so file before setup_prelink_info().
-#define RETOUCH_MAX_SIZE 500000
+#define RETOUCH_MAX_SIZE 550000
 static char *retouch_buf;
 static unsigned int retouch_byte_cnt;
 // Compression state.
