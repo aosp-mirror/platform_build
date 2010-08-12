@@ -191,7 +191,7 @@ int main(int argc, char **argv)
         int prelinked = 0, retouched = 0;
         int elf_little; /* valid if prelinked != 0 */
         long prelink_addr; /* valid if prelinked != 0 */
-#define RETOUCH_MAX_SIZE 500000
+#define RETOUCH_MAX_SIZE 550000
         /* _cnt valid if retouched != 0 */
         unsigned int retouch_byte_cnt = RETOUCH_MAX_SIZE;
         char retouch_buf[RETOUCH_MAX_SIZE]; /* valid if retouched != 0 */
