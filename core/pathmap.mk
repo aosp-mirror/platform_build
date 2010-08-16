@@ -83,6 +83,7 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    graphics \
 	    location \
 	    media \
+	    drm \
 	    opengl \
 	    sax \
 	    telephony \
