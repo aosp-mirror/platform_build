@@ -373,17 +373,18 @@ subdirs := \
 	dalvik/libdex \
 	dalvik/tools/dmtracedump \
 	dalvik/tools/hprof-conv \
-	development/tools/line_endings \
-	development/tools/etc1tool \
-	sdk/emulator/mksdcard \
-	sdk/sdklauncher \
 	development/host \
+	development/tools/etc1tool \
+	development/tools/line_endings \
+	external/easymock \
 	external/expat \
 	external/libpng \
 	external/qemu \
 	external/sqlite/dist \
 	external/zlib \
 	frameworks/base \
+	sdk/emulator/mksdcard \
+	sdk/sdklauncher \
 	system/core/adb \
 	system/core/fastboot \
 	system/core/libcutils \
