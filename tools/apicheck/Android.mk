@@ -35,10 +35,4 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/etc/apicheck | $(ACP)
 	$(copy-file-to-new-target)
 	$(hide) chmod 755 $@
 
-# the other stuff
-# ============================================================
-subdirs := $(addprefix $(LOCAL_PATH)/,$(addsuffix /Android.mk, \
-		src \
-	))
-
-include $(subdirs)
+# Apicheck is now part of Doclava -- See external/doclava.
