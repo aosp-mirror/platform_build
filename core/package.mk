@@ -220,7 +220,7 @@ $(R_file_stamp): $(resource_export_package)
 # add-assets-to-package looks at PRODUCT_AAPT_CONFIG, but this target
 # can't know anything about PRODUCT.  Clear it out just for this target.
 $(resource_export_package): PRODUCT_AAPT_CONFIG :=
-$(resource_export_package): $(all_res_assets) $(full_android_manifest) $(AAPT)
+$(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
 	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
 	$(add-assets-to-package)
