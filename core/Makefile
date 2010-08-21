@@ -972,7 +972,7 @@ target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 # OTA update package
 
 # disable ota for crespo temporarily.
-ifneq ($(TARGET_PRODUCT),crespo)
+ifneq ($(TARGET_DEVICE),crespo)
 ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
 ifneq ($(TARGET_DEVICE),generic)
