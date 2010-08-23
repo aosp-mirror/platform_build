@@ -23,6 +23,11 @@ Usage:  img_from_target_files [flags] input_target_files output_image_zip
   -b  (--board_config)  <file>
       Deprecated.
 
+  -f (--fs_type) <value>
+     The file system type of the user image files to be created.
+     It can be ext fs variants, such as ext2, ext3, ext4, etc.
+     efault is yaffs.
+
 """
 
 import sys
@@ -47,6 +52,9 @@ import common
 
 OPTIONS = common.OPTIONS
 
+class UserImageOptions(object): pass
+USERIMAGE_OPTIONS = UserImageOptions()
+USERIMAGE_OPTIONS.fs_type = None
 
 def AddUserdata(output_zip):
   """Create an empty userdata image and store it in output_zip."""
@@ -61,9 +69,19 @@ def AddUserdata(output_zip):
   os.mkdir(user_dir)
   img = tempfile.NamedTemporaryFile()
 
-  p = common.Run(["mkyaffs2image", "-f", user_dir, img.name])
+  build_command = []
+  if USERIMAGE_OPTIONS.fs_type is not None and USERIMAGE_OPTIONS.fs_type.startswith("ext"):
+    build_command = ["mkuserimg.sh",
+                     user_dir, img.name, USERIMAGE_OPTIONS.fs_type, "userdata"]
+    if "userdata.img" in OPTIONS.max_image_size:
+      build_command.append(str(OPTIONS.max_image_size["userdata.img"]))
+  else:
+    build_command = ["mkyaffs2image", "-f",
+                     user_dir, img.name]
+
+  p = common.Run(build_command)
   p.communicate()
-  assert p.returncode == 0, "mkyaffs2image of userdata.img image failed"
+  assert p.returncode == 0, "build userdata.img image failed"
 
   common.CheckSize(img.name, "userdata.img")
   output_zip.write(img.name, "userdata.img")
@@ -94,10 +112,20 @@ def AddSystem(output_zip):
     if (e.errno == errno.EEXIST):
       pass
 
-  p = common.Run(["mkyaffs2image", "-f",
-                  os.path.join(OPTIONS.input_tmp, "system"), img.name])
+  build_command = []
+  if USERIMAGE_OPTIONS.fs_type is not None and USERIMAGE_OPTIONS.fs_type.startswith("ext"):
+    build_command = ["mkuserimg.sh",
+                     os.path.join(OPTIONS.input_tmp, "system"), img.name,
+                     USERIMAGE_OPTIONS.fs_type, "system"]
+    if "system.img" in OPTIONS.max_image_size:
+      build_command.append(str(OPTIONS.max_image_size["system.img"]))
+  else:
+    build_command = ["mkyaffs2image", "-f",
+                     os.path.join(OPTIONS.input_tmp, "system"), img.name]
+
+  p = common.Run(build_command)
   p.communicate()
-  assert p.returncode == 0, "mkyaffs2image of system.img image failed"
+  assert p.returncode == 0, "build system.img image failed"
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
@@ -118,13 +146,15 @@ def main(argv):
   def option_handler(o, a):
     if o in ("-b", "--board_config"):
       pass       # deprecated
+    elif o in ("-f", "--fs_type"):
+      USERIMAGE_OPTIONS.fs_type = a
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:",
-                             extra_long_opts=["board_config="],
+                             extra_opts="b:f:",
+                             extra_long_opts=["board_config=", "fs_type="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
