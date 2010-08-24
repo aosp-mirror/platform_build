@@ -83,7 +83,8 @@ def AddUserdata(output_zip):
   p.communicate()
   assert p.returncode == 0, "build userdata.img image failed"
 
-  common.CheckSize(img.name, "userdata.img")
+  if USERIMAGE_OPTIONS.fs_type is None or not USERIMAGE_OPTIONS.fs_type.startswith("ext"):
+    common.CheckSize(img.name, "userdata.img")
   output_zip.write(img.name, "userdata.img")
   img.close()
   os.rmdir(user_dir)
@@ -131,7 +132,8 @@ def AddSystem(output_zip):
   data = img.read()
   img.close()
 
-  common.CheckSize(data, "system.img")
+  if USERIMAGE_OPTIONS.fs_type is None or not USERIMAGE_OPTIONS.fs_type.startswith("ext"):
+    common.CheckSize(data, "system.img")
   common.ZipWriteStr(output_zip, "system.img", data)
 
 
