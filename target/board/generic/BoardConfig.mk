@@ -12,3 +12,6 @@ BOARD_USES_GENERIC_AUDIO := true
 
 # no hardware camera
 USE_CAMERA_STUB := true
+
+# Set /system/bin/sh to mksh, not ash, to test the transition.
+TARGET_SHELL := mksh
