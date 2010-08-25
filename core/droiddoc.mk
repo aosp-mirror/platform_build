@@ -144,7 +144,7 @@ $(full_target): PRIVATE_IN_CUSTOM_ASSET_DIR := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_
 $(full_target): PRIVATE_OUT_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_ASSET_DIR)
 $(full_target): PRIVATE_OUT_CUSTOM_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_CUSTOM_ASSET_DIR)
 ifneq ($(strip $(LOCAL_DROIDDOC_HTML_DIR)),)
-$(full_target): PRIVATE_DROIDDOC_HTML_DIR := -htmldir $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR)
+$(full_target): PRIVATE_DROIDDOC_HTML_DIR := $(foreach dir,$(LOCAL_DROIDDOC_HTML_DIR),-htmldir $(dir))
 else
 $(full_target): PRIVATE_DROIDDOC_HTML_DIR := 
 endif
