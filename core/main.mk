@@ -571,7 +571,7 @@ else
 endif
 # Use tags to get the non-APPS user modules.  Use the product
 # definition files to get the APPS user modules.
-user_MODULES := $(sort $(call get-tagged-modules,user))
+user_MODULES := $(sort $(call get-tagged-modules,user shell_$(TARGET_SHELL)))
 user_MODULES := $(user_MODULES) $(user_PACKAGES)
 
 eng_MODULES := $(sort $(call get-tagged-modules,eng))

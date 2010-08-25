@@ -65,7 +65,7 @@ endif
 # Only the tags mentioned in this test are expected to be set by module
 # makefiles. Anything else is either a typo or a source of unexpected
 # behaviors.
-ifneq ($(filter-out user debug eng tests optional samples,$(LOCAL_MODULE_TAGS)),)
+ifneq ($(filter-out user debug eng tests optional samples shell_ash shell_mksh,$(LOCAL_MODULE_TAGS)),)
 $(warning unusual tags $(LOCAL_MODULE_TAGS) on $(LOCAL_MODULE) at $(LOCAL_PATH))
 endif
 
