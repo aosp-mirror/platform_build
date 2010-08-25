@@ -579,6 +579,7 @@ public class DroidDoc
             File f = new File(htmlDir);
             if (!f.isDirectory()) {
                 System.err.println("htmlDir not a directory: " + htmlDir);
+                continue;
             }
             writeDirectory(f, "");
         }
