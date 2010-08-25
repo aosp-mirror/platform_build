@@ -155,6 +155,11 @@ def BuildBootableImage(sourcedir):
     cmd.append("--base")
     cmd.append(open(fn).read().rstrip("\n"))
 
+  fn = os.path.join(sourcedir, "pagesize")
+  if os.access(fn, os.F_OK):
+    cmd.append("--pagesize")
+    cmd.append(open(fn).read().rstrip("\n"))
+
   cmd.extend(["--ramdisk", ramdisk_img.name,
               "--output", img.name])
 
