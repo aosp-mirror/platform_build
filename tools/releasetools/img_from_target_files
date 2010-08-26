@@ -77,8 +77,11 @@ def AddUserdata(output_zip):
     if "userdata.img" in OPTIONS.max_image_size:
       build_command.append(str(OPTIONS.max_image_size["userdata.img"]))
   else:
-    build_command = ["mkyaffs2image", "-f",
-                     user_dir, img.name]
+    build_command = ["mkyaffs2image", "-f"]
+    if OPTIONS.mkyaffs2_extra_flags is not None:
+      build_command.append(OPTIONS.mkyaffs2_extra_flags);
+    build_command.append(user_dir)
+    build_command.append(img.name)
 
   p = common.Run(build_command);
   p.communicate()
@@ -122,8 +125,11 @@ def AddSystem(output_zip):
     if "system.img" in OPTIONS.max_image_size:
       build_command.append(str(OPTIONS.max_image_size["system.img"]))
   else:
-    build_command = ["mkyaffs2image", "-f",
-                     os.path.join(OPTIONS.input_tmp, "system"), img.name]
+    build_command = ["mkyaffs2image", "-f"]
+    if OPTIONS.mkyaffs2_extra_flags is not None:
+      build_command.append(OPTIONS.mkyaffs2_extra_flags);
+    build_command.append(os.path.join(OPTIONS.input_tmp, "system"))
+    build_command.append(img.name)
 
   p = common.Run(build_command)
   p.communicate()
@@ -173,6 +179,8 @@ def main(argv):
     print "  WARNING:  Failed to load max image sizes; will not enforce"
     print "  image size limits."
     print
+
+  common.LoadMkyaffs2ExtraFlags()
 
   output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
 
