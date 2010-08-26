@@ -9,3 +9,6 @@ function showApiWarning(thing, selectedLevel, minLevel) {
     $("#naMessage").hide();
   }
 }
+
+// Direct searches to search.html
+HAS_SEARCH_PAGE = true;
