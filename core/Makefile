@@ -1001,6 +1001,9 @@ endif
 	$(hide) echo "system $(call image-size-from-data-size,$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
 	$(hide) echo "userdata $(call image-size-from-data-size,$(BOARD_USERDATAIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
 	$(hide) echo "$(tool_extensions)" > $(zip_root)/META/tool-extensions.txt
+ifdef mkyaffs2_extra_flags
+	$(hide) echo "$(mkyaffs2_extra_flags)" > $(zip_root)/META/mkyaffs2-extra-flags.txt
+endif
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 	@# Run fs_config on all the system files in the zip, and save the output
