@@ -36,6 +36,7 @@ OPTIONS.verbose = False
 OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
 OPTIONS.extras = {}
+OPTIONS.mkyaffs2_extra_flags = None
 
 
 # Values for "certificate" in apkcerts that mean special things.
@@ -64,6 +65,17 @@ def LoadMaxSizes():
       image = pieces[0]
       size = int(pieces[1])
       OPTIONS.max_image_size[image + ".img"] = size
+  except IOError, e:
+    if e.errno == errno.ENOENT:
+      pass
+
+
+def LoadMkyaffs2ExtraFlags():
+  """Load mkyaffs2 extra flags."""
+  try:
+    fn = os.path.join(OPTIONS.input_tmp, "META", "mkyaffs2-extra-flags.txt");
+    if os.access(fn, os.F_OK):
+      OPTIONS.mkyaffs2_extra_flags = open(fn).read().rstrip("\n")
   except IOError, e:
     if e.errno == errno.ENOENT:
       pass
