@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClearPage
 {
@@ -43,7 +44,7 @@ public class ClearPage
     private static boolean mTemplateDirSet = false;
 
     public static String outputDir = "docs";
-    public static String htmlDir = null;
+    public static List<String> htmlDirs = new ArrayList<String>();
     public static String toroot = null;
 
     public static void addTemplateDir(String dir)
@@ -76,7 +77,7 @@ public class ClearPage
 
     public static void write(HDF data, String templ, String filename, boolean fullPath)
     {
-        if (htmlDir != null) {
+        if (!htmlDirs.isEmpty()) {
             data.setValue("hasindex", "true");
         }
 
@@ -103,9 +104,11 @@ public class ClearPage
         }
 
         int i=0;
-        if (htmlDir != null) {
-            data.setValue("hdf.loadpaths." + i, htmlDir);
-            i++;
+        if (!htmlDirs.isEmpty()) {
+            for (String dir : htmlDirs) {
+                data.setValue("hdf.loadpaths." + i, dir);
+                i++;
+            }
         }
         if (mTemplateDirSet) {
             for (String dir: mTemplateDirs) {

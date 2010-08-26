@@ -122,7 +122,7 @@ public class DroidDoc
                 sampleCodes.add(new SampleCode(a[1], a[2], a[3]));
             }
             else if (a[0].equals("-htmldir")) {
-                ClearPage.htmlDir = a[1];
+                ClearPage.htmlDirs.add(a[1]);
             }
             else if (a[0].equals("-title")) {
                 DroidDoc.title = a[1];
@@ -224,7 +224,7 @@ public class DroidDoc
             }
 
             // HTML Pages
-            if (ClearPage.htmlDir != null) {
+            if (!ClearPage.htmlDirs.isEmpty()) {
                 writeHTMLPages();
             }
 
@@ -233,7 +233,7 @@ public class DroidDoc
 
             // Packages Pages
             writePackages(javadocDir
-                            + (ClearPage.htmlDir!=null
+                            + (!ClearPage.htmlDirs.isEmpty()
                                 ? "packages" + htmlExtension
                                 : "index" + htmlExtension));
 
@@ -575,11 +575,14 @@ public class DroidDoc
 
     public static void writeHTMLPages()
     {
-        File f = new File(ClearPage.htmlDir);
-        if (!f.isDirectory()) {
-            System.err.println("htmlDir not a directory: " + ClearPage.htmlDir);
+        for (String htmlDir : ClearPage.htmlDirs) {
+            File f = new File(htmlDir);
+            if (!f.isDirectory()) {
+                System.err.println("htmlDir not a directory: " + htmlDir);
+                continue;
+            }
+            writeDirectory(f, "");
         }
-        writeDirectory(f, "");
     }
 
     public static void writeLists()
