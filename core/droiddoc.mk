@@ -142,7 +142,7 @@ $(full_target): PRIVATE_IN_CUSTOM_ASSET_DIR := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_
 $(full_target): PRIVATE_OUT_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_ASSET_DIR)
 $(full_target): PRIVATE_OUT_CUSTOM_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_CUSTOM_ASSET_DIR)
 ifneq ($(strip $(LOCAL_DROIDDOC_HTML_DIR)),)
-$(full_target): PRIVATE_DROIDDOC_HTML_DIR := $(foreach dir,$(LOCAL_DROIDDOC_HTML_DIR),-htmldir $(dir))
+$(full_target): PRIVATE_DROIDDOC_HTML_DIR := -htmldir $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR)
 else
 $(full_target): PRIVATE_DROIDDOC_HTML_DIR := 
 endif
@@ -150,7 +150,7 @@ endif
 # TODO: not clear if this is used any more
 $(full_target): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
 
-html_dir_files := $(foreach dir,$(LOCAL_DROIDDOC_HTML_DIR),$(shell test -d $(dir) && find $(dir) -type f))
+html_dir_files := $(shell find $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR) -type f)
 
 $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_files) $(full_java_lib_deps)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)
