@@ -277,6 +277,8 @@ ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
 endif
 
+BUILD_WITHOUT_PV := true
+
 ## precise GC ##
 
 ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
