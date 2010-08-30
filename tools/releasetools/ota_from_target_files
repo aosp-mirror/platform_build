@@ -44,8 +44,8 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
 
-  -a  (--use_aslr)
-      Specify whether to build the package with ASLR enabled (off by default).
+  -a  (--aslr_mode)  <on|off>
+      Specify whether to turn on ASLR for the package (on by default).
 """
 
 import sys
@@ -77,7 +77,7 @@ OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
-OPTIONS.aslr_mode = False
+OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
 
 def MostPopularKey(d, default):
@@ -867,8 +867,11 @@ def main(argv):
       OPTIONS.omit_prereq = True
     elif o in ("-e", "--extra_script"):
       OPTIONS.extra_script = a
-    elif o in ("-a", "--use_aslr"):
-      OPTIONS.aslr_mode = True
+    elif o in ("-a", "--aslr_mode"):
+      if a in ("on", "On", "true", "True", "yes", "Yes"):
+        OPTIONS.aslr_mode = True
+      else:
+        OPTIONS.aslr_mode = False
     elif o in ("--worker_threads"):
       OPTIONS.worker_threads = int(a)
     else:
@@ -876,7 +879,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:a",
+                             extra_opts="b:k:i:d:wne:a:",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
@@ -884,7 +887,7 @@ def main(argv):
                                               "no_prereq",
                                               "extra_script=",
                                               "worker_threads=",
-                                              "use_aslr"],
+                                              "aslr_mode="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
