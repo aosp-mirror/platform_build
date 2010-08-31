@@ -59,6 +59,17 @@ public class DroidDoc
     public static String title = "";
     public static SinceTagger sinceTagger = new SinceTagger();
 
+    private static boolean parseComments = false;
+    private static boolean generateDocs = true;
+    
+    /**
+    * Returns true if we should parse javadoc comments,
+    * reporting errors in the process.
+    */
+    public static boolean parseComments() {
+        return generateDocs || parseComments;
+    }
+
     public static boolean checkLevel(int level)
     {
         return (showLevel & level) == level;
@@ -96,7 +107,6 @@ public class DroidDoc
         String stubsDir = null;
         //Create the dependency graph for the stubs directory
         boolean apiXML = false;
-        boolean noDocs = false;
         boolean offlineMode = false;
         String apiFile = null;
         String debugStubsFile = "";
@@ -191,7 +201,10 @@ public class DroidDoc
                 apiFile = a[1];
             }
             else if (a[0].equals("-nodocs")) {
-                noDocs = true;
+                generateDocs = false;
+            }
+            else if (a[0].equals("-parsecomments")) {
+                parseComments = true;
             }
             else if (a[0].equals("-since")) {
                 sinceTagger.addVersion(a[1], a[2]);
@@ -209,7 +222,7 @@ public class DroidDoc
         // Set up the data structures
         Converter.makeInfo(r);
 
-        if (!noDocs) {
+        if (generateDocs) {
             long startTime = System.nanoTime();
 
             // Apply @since tags from the XML file
@@ -419,6 +432,9 @@ public class DroidDoc
             return 2;
         }
         if (option.equals("-nodocs")) {
+            return 1;
+        }
+        if (option.equals("-parsecomments")) {
             return 1;
         }
         if (option.equals("-since")) {

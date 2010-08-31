@@ -334,8 +334,17 @@ public class Comment
     {
         isHidden();
         isDocOnly();
-        parseRegex(mText);
-        parseBriefTags();
+
+        // Don't bother parsing text if we aren't generating documentation.
+        if (DroidDoc.parseComments()) {
+            parseRegex(mText);
+            parseBriefTags();
+        } else {
+          // Forces methods to be recognized by findOverriddenMethods in MethodInfo.
+          mInlineTagsList.add(new TextTagInfo("Text", "Text", mText,
+                  SourcePositionInfo.add(mPosition, mText, 0)));
+        }
+
         mText = null;
         mInitialized = true;
 
