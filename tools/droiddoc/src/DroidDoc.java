@@ -434,6 +434,9 @@ public class DroidDoc
         if (option.equals("-nodocs")) {
             return 1;
         }
+        if (option.equals("-parsecomments")) {
+            return 1;
+        }
         if (option.equals("-since")) {
             return 3;
         }
