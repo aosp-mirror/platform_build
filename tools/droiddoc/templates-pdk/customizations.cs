@@ -1,6 +1,7 @@
 <?cs # This file defines custom definitions for the masthead (logo, searchbox, tabs, etc) and 
 left nav (toc) that gets placed on all pages, for the open source site. See also the components/
 directory. ?>
+
 <?cs def:community_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first side-nav-resizable" id="side-nav">
