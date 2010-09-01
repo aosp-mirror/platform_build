@@ -210,6 +210,8 @@ ALL_DOCS += $(full_target)
 .PHONY: $(LOCAL_MODULE)-docs
 $(LOCAL_MODULE)-docs : $(full_target)
 
+ifeq ($(strip $(LOCAL_UNINSTALLABLE_MODULE)),)
+
 # Define a rule to create a zip of these docs.
 out_zip := $(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip
 $(out_zip): PRIVATE_DOCS_DIR := $(out_dir)
@@ -220,3 +222,5 @@ $(out_zip): $(full_target)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_DOCS_DIR) && zip -rq $$F * )
 
 $(call dist-for-goals,docs,$(out_zip))
+
+endif
