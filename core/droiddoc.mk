@@ -40,11 +40,8 @@ ifeq ($(LOCAL_DROIDDOC_SOURCE_PATH),)
 LOCAL_DROIDDOC_SOURCE_PATH := $(LOCAL_PATH)
 endif
 
-ifeq ($(LOCAL_DROIDDOC_TEMPLATE_DIR),)
-LOCAL_DROIDDOC_TEMPLATE_DIR := $(SRC_DROIDDOC_DIR)/templates
-endif
 ifeq ($(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR),)
-LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR := $(SRC_DROIDDOC_DIR)/templates
+LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR := $(SRC_DROIDDOC_DIR)/$(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR)
 endif
 
 ifeq ($(LOCAL_DROIDDOC_ASSET_DIR),)
@@ -125,7 +122,6 @@ ifneq ($(strip $(LOCAL_DROIDDOC_USE_STANDARD_DOCLET)),true)
 ##
 
 droiddoc_templates := \
-    $(shell find $(LOCAL_DROIDDOC_TEMPLATE_DIR) -type f) \
     $(shell find $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR) -type f)
 
 droiddoc := \
@@ -135,9 +131,7 @@ droiddoc := \
 $(full_target): PRIVATE_DOCLETPATH := $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
 $(full_target): PRIVATE_CURRENT_BUILD := -hdf page.build $(BUILD_ID)-$(BUILD_NUMBER)
 $(full_target): PRIVATE_CURRENT_TIME :=  -hdf page.now "$(shell date "+%d %b %Y %k:%M")"
-$(full_target): PRIVATE_TEMPLATE_DIR := $(LOCAL_DROIDDOC_TEMPLATE_DIR)
 $(full_target): PRIVATE_CUSTOM_TEMPLATE_DIR := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR)
-$(full_target): PRIVATE_IN_ASSET_DIR := $(LOCAL_DROIDDOC_TEMPLATE_DIR)/$(LOCAL_DROIDDOC_ASSET_DIR)
 $(full_target): PRIVATE_IN_CUSTOM_ASSET_DIR := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR)/$(LOCAL_DROIDDOC_CUSTOM_ASSET_DIR)
 $(full_target): PRIVATE_OUT_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_ASSET_DIR)
 $(full_target): PRIVATE_OUT_CUSTOM_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_CUSTOM_ASSET_DIR)
@@ -166,7 +160,6 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
                 -doclet com.google.doclava.Doclava \
                 -docletpath $(PRIVATE_DOCLETPATH) \
                 -templatedir $(PRIVATE_CUSTOM_TEMPLATE_DIR) \
-                -templatedir $(PRIVATE_TEMPLATE_DIR) \
                 $(PRIVATE_DROIDDOC_HTML_DIR) \
                 $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
@@ -174,12 +167,6 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
                 -d $(PRIVATE_OUT_DIR) \
                 $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
-        && rm -rf $(PRIVATE_OUT_ASSET_DIR) \
-        && rm -rf $(PRIVATE_OUT_CUSTOM_ASSET_DIR) \
-        && mkdir -p $(PRIVATE_OUT_ASSET_DIR) \
-        && mkdir -p $(PRIVATE_OUT_CUSTOM_ASSET_DIR) \
-        && cp -fr $(PRIVATE_IN_ASSET_DIR)/* $(PRIVATE_OUT_ASSET_DIR)/ \
-        && cp -fr $(PRIVATE_IN_CUSTOM_ASSET_DIR)/* $(PRIVATE_OUT_CUSTOM_ASSET_DIR)/ \
         && touch -f $@ \
     ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
 
