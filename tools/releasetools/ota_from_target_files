@@ -887,7 +887,8 @@ def main(argv):
                                               "no_prereq",
                                               "extra_script=",
                                               "worker_threads=",
-                                              "aslr_mode="],
+                                              "aslr_mode=",
+                                              ],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
