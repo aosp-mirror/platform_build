@@ -1281,7 +1281,7 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-code , $(PLATFORM_SDK_VERSION))) \
     $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-name , $(PLATFORM_VERSION)-$(BUILD_NUMBER))) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
-    $(addprefix --rename-instrumentation-target-package , $(PRIVATE_INSTRUMENTATION_FOR_PACKAGE_NAME))
+    $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR))
 endef
 
 ifeq ($(HOST_OS),windows)
@@ -1432,7 +1432,7 @@ $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-code , $(PLATFORM_SDK_VERSION))) \
     $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-name , $(PLATFORM_VERSION)-$(BUILD_NUMBER))) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
-    $(addprefix --rename-instrumentation-target-package , $(PRIVATE_INSTRUMENTATION_FOR_PACKAGE_NAME)) \
+    $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     -F $@
 endef
 
@@ -1794,20 +1794,21 @@ endef
 #        tree root)
 #  $(2): Old LOCAL_PACKAGE_NAME value.
 #  $(3): New LOCAL_PACKAGE_NAME value.
-#  $(4): New LOCALE_MANIFEST_PACKAGE_NAME value.
-#  $(5): New LOCAL_INSTRUMENTATION_FOR_PACKAGE_NAME value.
-#  $(6): New LOCAL_CERTIFICATE value.
+#  $(4): New LOCAL_MANIFEST_PACKAGE_NAME value.
+#  $(5): New LOCAL_CERTIFICATE value.
+#  $(6): New LOCAL_INSTRUMENTATION_FOR value.
+#  $(7): New LOCAL_MANIFEST_INSTRUMENTATION_FOR value.
 #
 # Note that LOCAL_PACKAGE_OVERRIDES is NOT cleared in
 # clear_vars.mk.
 ###########################################################
 define inherit-package
-  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6)))
+  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6),$(7)))
 endef
 
 define inherit-package-internal
   LOCAL_PACKAGE_OVERRIDES \
-      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||&&$(strip $(5))||$(strip $(6)) $(LOCAL_PACKAGE_OVERRIDES)
+      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||&&$(strip $(5))||&&$(strip $(6))||&&$(strip $(7)) $(LOCAL_PACKAGE_OVERRIDES)
   include $(1)
   LOCAL_PACKAGE_OVERRIDES \
       := $(wordlist 1,$(words $(LOCAL_PACKAGE_OVERRIDES)), $(LOCAL_PACKAGE_OVERRIDES))
@@ -1829,8 +1830,9 @@ define set-inherited-package-variables-internal
   $(if $(filter $(word 2,$(_n)),$(LOCAL_PACKAGE_NAME)), \
     $(eval LOCAL_PACKAGE_NAME := $(word 3,$(_o))) \
     $(eval LOCAL_MANIFEST_PACKAGE_NAME := $(word 4,$(_o))) \
-    $(call keep-or-override,LOCAL_INSTRUMENTATION_FOR_PACKAGE_NAME,$(patsubst &&%,%,$(word 5,$(_o)))) \
-    $(call keep-or-override,LOCAL_CERTIFICATE,$(word 6,$(_o))) \
+    $(call keep-or-override,LOCAL_CERTIFICATE,$(patsubst &&%,%,$(word 5,$(_o)))) \
+    $(call keep-or-override,LOCAL_INSTRUMENTATION_FOR,$(patsubst &&%,%,$(word 6,$(_o)))) \
+    $(call keep-or-override,LOCAL_MANIFEST_INSTRUMENTATION_FOR,$(patsubst &&%,%,$(word 7,$(_o)))) \
     $(eval LOCAL_OVERRIDES_PACKAGES := $(sort $(LOCAL_OVERRIDES_PACKAGES) $(word 2,$(_o)))) \
     true \
   ,)
