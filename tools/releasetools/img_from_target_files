@@ -127,19 +127,13 @@ def AddSystem(output_zip):
   else:
     build_command = ["mkyaffs2image", "-f"]
     if OPTIONS.mkyaffs2_extra_flags is not None:
-      build_command.append(OPTIONS.mkyaffs2_extra_flags);
+      build_command.extend(OPTIONS.mkyaffs2_extra_flags.split());
     build_command.append(os.path.join(OPTIONS.input_tmp, "system"))
     build_command.append(img.name)
 
-  # p = common.Run(build_command)
-  # p.communicate()
-  # assert p.returncode == 0, "build system.img image failed"
-
-  # TODO: Why the above common.Run() generate different system.img for crespo?
-  str_command = " ".join(build_command)
-  print "running " + str_command
-  exit_code = os.system(str_command)
-  assert exit_code == 0, "build system.img image failed"
+  p = common.Run(build_command)
+  p.communicate()
+  assert p.returncode == 0, "build system.img image failed"
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
