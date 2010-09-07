@@ -46,8 +46,8 @@ $(INSTALLED_DEFAULT_PROP_TARGET):
 	$(hide) echo "#" > $@; \
 	        echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
 	        echo "#" >> $@;
-	$(hide) echo $(ADDITIONAL_DEFAULT_PROPERTIES) | sed 's/ \([^ ]*=\)/\n\1/g' >> $@;
-	$(hide) echo >> $@
+	$(hide) $(foreach line,$(ADDITIONAL_DEFAULT_PROPERTIES), \
+		echo "$(line)" >> $@;)
 
 # -----------------------------------------------------------------
 # build.prop
@@ -146,8 +146,8 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE)
 		        echo "#" >> $@; \
 		        echo "# ADDITIONAL_BUILD_PROPERTIES" >> $@; \
 		        echo "#" >> $@; )
-	$(hide) echo $(ADDITIONAL_BUILD_PROPERTIES) | sed 's/ \([^ ]*=\)/\n\1/g' >> $@;
-	$(hide) echo >> $@
+	$(hide) $(foreach line,$(ADDITIONAL_BUILD_PROPERTIES), \
+		echo "$(line)" >> $@;)
 
 build_desc :=
 
