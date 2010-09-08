@@ -217,16 +217,22 @@ ifneq (,$(user_variant))
     # Disable debugging in plain user builds.
     enable_target_debugging :=
   endif
- 
-  # TODO: Always set WITH_DEXPREOPT (for user builds) once it works on OSX.
-  # Also, remove the corresponding block in config/product_config.make.
+
+  # TODO: Remove this and the corresponding block in
+  # config/product_config.make once host-based Dalvik preoptimization is
+  # working.
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
   endif
-  
+
+  # TODO: Always set WITH_HOST_DALVIK (for user builds) once it works on OSX.
+  ifeq ($(HOST_OS),linux)
+    WITH_HOST_DALVIK := true
+  endif
+
   # Disallow mock locations by default for user builds
   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
-  
+
 else # !user_variant
   # Turn on checkjni for non-user builds.
   ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=1
