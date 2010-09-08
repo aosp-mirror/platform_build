@@ -129,7 +129,7 @@ GRANDFATHERED_USER_MODULES += \
 	fastboot \
 	framework \
 	FrameworkCoreHostTests \
-	framework-core-util-lib \
+	frameworks-core-util-lib \
 	fsck_msdos \
 	fs_get_stats \
 	fw_bcm4329_apsta.bin \
@@ -234,6 +234,7 @@ GRANDFATHERED_USER_MODULES += \
 	libexpat \
 	libext \
 	libfdlibm \
+	libfdlibm-host \
 	libFFTEm \
 	libfst \
 	libft2 \
