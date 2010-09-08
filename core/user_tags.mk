@@ -145,6 +145,9 @@ GRANDFATHERED_USER_MODULES += \
 	gzip \
 	hciattach \
 	hierarchyviewer \
+	hierarchyviewer1 \
+	hierarchyviewer2 \
+	hierarchyviewerlib \
 	hist_trace \
 	hosttestlib \
 	hprof-conv \
@@ -215,6 +218,7 @@ GRANDFATHERED_USER_MODULES += \
 	libdbus \
 	libdex \
 	libdiskconfig \
+	libdiskconfig_host \
 	libdl \
 	libdrm1 \
 	libdrm1_jni \
@@ -253,6 +257,7 @@ GRANDFATHERED_USER_MODULES += \
 	libiprouteutil \
 	libiptc \
 	libjavacore \
+	libjavacore-host \
 	libjnigraphics \
 	libjni_latinime \
 	libjni_pinyinime \
@@ -402,6 +407,7 @@ GRANDFATHERED_USER_MODULES += \
 	mkyaffs2image \
 	monkey \
 	monkeyrunner \
+	MonkeyRunnerTest \
 	mtpd \
 	ndc \
 	netcfg \
@@ -428,6 +434,7 @@ GRANDFATHERED_USER_MODULES += \
 	profile_trace \
 	q2dm \
 	q2g \
+	qemu-android \
 	qwerty2.kcm \
 	qwerty.kcm \
 	racoon \
