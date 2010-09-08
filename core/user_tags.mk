@@ -83,6 +83,8 @@ GRANDFATHERED_USER_MODULES += \
 	dasm \
 	dbus-daemon \
 	ddmlib \
+	ddmlibTests \
+	ddmlib-prebuilt \
 	ddms \
 	ddmuilib \
 	debuggerd \
@@ -163,6 +165,7 @@ GRANDFATHERED_USER_MODULES += \
 	jdwpspy \
 	jfreechart-1.0.9 \
 	jfreechart-1.0.9-swt \
+	jsilver \
 	jsr305 \
 	jsr305lib \
 	junit \
