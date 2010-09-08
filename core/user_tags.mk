@@ -91,6 +91,7 @@ GRANDFATHERED_USER_MODULES += \
 	dexdump \
 	dexlist \
 	dexopt \
+	dexpreopt \
 	dex-tools \
 	dhcpcd \
 	dhcpcd.conf \
@@ -126,6 +127,7 @@ GRANDFATHERED_USER_MODULES += \
 	fastboot \
 	framework \
 	FrameworkCoreHostTests \
+	framework-core-util-lib \
 	fsck_msdos \
 	fs_get_stats \
 	fw_bcm4329_apsta.bin \
