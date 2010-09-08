@@ -98,6 +98,7 @@ GRANDFATHERED_USER_MODULES += \
 	dexdump \
 	dexlist \
 	dexopt \
+	dexpreopt \
 	dex-tools \
 	dhcpcd \
 	dhcpcd.conf \
