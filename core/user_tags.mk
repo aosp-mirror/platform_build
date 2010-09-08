@@ -250,7 +250,7 @@ GRANDFATHERED_USER_MODULES += \
 	libiprouteutil \
 	libiptc \
 	libjavacore \
-	libjavacore_host \
+	libjavacore-host \
 	libjnigraphics \
 	libjni_latinime \
 	libjni_pinyinime \
