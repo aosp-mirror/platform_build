@@ -119,12 +119,11 @@ ifdef product_goals
     default_goal_substitution := $(DEFAULT_GOAL)
   endif
 
-  # Hack to make the linux build servers use dexpreopt.
-  # OSX is still a little flaky.  Most engineers don't use this
-  # type of target ("make PRODUCT-blah-user"), so this should
-  # only tend to happen when using buildbot.
-  # TODO: remove this and fix the matching lines in build/core/main.mk
-  # once dexpreopt works better on OSX.
+  # Hack to make the linux build servers use dexpreopt (emulator-based
+  # preoptimization). Most engineers don't use this type of target
+  # ("make PRODUCT-blah-user"), so this should only tend to happen when
+  # using buildbot.
+  # TODO: Remove this once host Dalvik preoptimization is working.
   ifeq ($(TARGET_BUILD_VARIANT),user)
     WITH_DEXPREOPT_buildbot := true
   endif
