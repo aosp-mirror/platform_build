@@ -69,6 +69,12 @@ ifneq ($(filter-out user debug eng tests optional samples shell_ash shell_mksh,$
 $(warning unusual tags $(LOCAL_MODULE_TAGS) on $(LOCAL_MODULE) at $(LOCAL_PATH))
 endif
 
+ifneq ($(filter $(LOCAL_MODULE_TAGS),user),)
+  ifeq ($(filter $(GRANDFATHERED_USER_MODULES),$(LOCAL_MODULE)),)
+    $(warning using user tag on $(LOCAL_MODULE) at $(LOCAL_PATH))
+  endif
+endif
+
 # Add implicit tags.
 #
 # If the local directory or one of its parents contains a MODULE_LICENSE_GPL
