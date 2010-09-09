@@ -98,6 +98,7 @@ GRANDFATHERED_USER_MODULES += \
 	dexdump \
 	dexlist \
 	dexopt \
+	dexpreopt \
 	dex-tools \
 	dhcpcd \
 	dhcpcd.conf \
@@ -266,6 +267,7 @@ GRANDFATHERED_USER_MODULES += \
 	libext2_uuid \
 	libext2_uuid_host \
 	libfdlibm \
+	libfdlibm-host \
 	libFFTEm \
 	libfst \
 	libft2 \
@@ -285,6 +287,7 @@ GRANDFATHERED_USER_MODULES += \
 	libiprouteutil \
 	libiptc \
 	libjavacore \
+	libjavacore-host \
 	libjnigraphics \
 	libjni_latinime \
 	libjni_pinyinime \
