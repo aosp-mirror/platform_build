@@ -99,6 +99,7 @@ LOCAL_EMMA_COVERAGE_FILTER:=
 LOCAL_WARNINGS_ENABLE:=
 LOCAL_MANIFEST_FILE:=
 LOCAL_RENDERSCRIPT_INCLUDES:=
+LOCAL_BUILD_HOST_DEX:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
