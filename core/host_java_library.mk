@@ -25,6 +25,30 @@ LOCAL_BUILT_MODULE_STEM := javalib.jar
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
+ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+full_classes_jar := $(intermediates.COMMON)/classes.jar
+built_dex := $(intermediates.COMMON)/classes.dex
+
+$(full_classes_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
+$(full_classes_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps)
+	$(transform-host-java-to-package)
+
+$(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
+$(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+$(built_dex): $(full_classes_jar) $(DX)
+	$(transform-classes.jar-to-dex)
+
+$(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
+$(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources) | $(AAPT)
+	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
+	$(create-empty-package)
+	$(add-dex-to-package)
+ifneq ($(extra_jar_args),)
+	$(add-java-resources-to-package)
+endif
+
+else
 $(LOCAL_BUILT_MODULE): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(LOCAL_BUILT_MODULE): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file)
 	$(transform-host-java-to-package)
+endif  # LOCAL_BUILD_HOST_DEX
