@@ -57,9 +57,12 @@ endif
 
 LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS))
 ifeq (,$(LOCAL_MODULE_TAGS))
+ifeq (,$(LOCAL_IS_HOST_MODULE))
 # Modules without tags fall back to user (which is changed to user eng below)
 LOCAL_MODULE_TAGS := user
-#$(warning default tags: $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))))
+else
+LOCAL_MODULE_TAGS := optional
+endif
 endif
 
 # Only the tags mentioned in this test are expected to be set by module
