@@ -831,6 +831,8 @@ $(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) \
 .PHONY: userdataimage-nodeps
 userdataimage-nodeps: $(INTERNAL_USERIMAGES_DEPS)
 	$(build-userdataimage-target)
+	$(hide)mkdir -p $(DIST_DIR)
+	$(hide)cp $(INSTALLED_USERDATAIMAGE_TARGET) $(DIST_DIR)
 
 #######
 ## data partition tarball
@@ -1101,7 +1103,16 @@ $(BUILT_TESTS_ZIP_PACKAGE): \
 		$(TARGET_OUT_DATA),$(zip_root)/DATA)
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 
+.PHONY: tests-zip-package
 tests-zip-package: $(BUILT_TESTS_ZIP_PACKAGE)
+
+# Dist the files needed by tests builds
+# So the build server can run the following commands to build tests packages while avoid a full build:
+# $make -j16 tests-zip-package userdataimage-nodeps dist showcommands TARGET_BUILD_VARIANT=tests TARGET_PRODUCT=passion
+ifeq ($(filter $(DEFAULT_GOAL) tests-zip-package,$(MAKECMDGOALS)),tests-zip-package)
+  $(call dist-for-goals, tests-zip-package, \
+     $(BUILT_TESTS_ZIP_PACKAGE))
+endif
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it

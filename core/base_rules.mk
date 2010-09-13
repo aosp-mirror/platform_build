@@ -349,8 +349,13 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_ja
 ifdef LOCAL_IS_HOST_MODULE
 # TODO: make prebuilt java libraries use the same
 #       intermediates path pattern as target java libraries.
+ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+else
 full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,$(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
 full_java_lib_deps := $(full_java_libs)
+endif # LOCAL_BUILD_HOST_DEX
 else
 ifdef LOCAL_SDK_VERSION
 ifneq ($(LOCAL_SDK_VERSION),current)
