@@ -12,16 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import copy
 import errno
 import getopt
 import getpass
 import imp
 import os
 import re
+import sha
 import shutil
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import zipfile
 
 # missing in Python 2.4 and before
@@ -581,3 +585,124 @@ class DeviceSpecificParams(object):
     this is used to install the image for the device's baseband
     processor."""
     return self._DoCall("IncrementalOTA_InstallEnd")
+
+class File(object):
+  def __init__(self, name, data):
+    self.name = name
+    self.data = data
+    self.size = len(data)
+    self.sha1 = sha.sha(data).hexdigest()
+
+  def WriteToTemp(self):
+    t = tempfile.NamedTemporaryFile()
+    t.write(self.data)
+    t.flush()
+    return t
+
+  def AddToZip(self, z):
+    ZipWriteStr(z, self.name, self.data)
+
+DIFF_PROGRAM_BY_EXT = {
+    ".gz" : "imgdiff",
+    ".zip" : ["imgdiff", "-z"],
+    ".jar" : ["imgdiff", "-z"],
+    ".apk" : ["imgdiff", "-z"],
+    ".img" : "imgdiff",
+    }
+
+class Difference(object):
+  def __init__(self, tf, sf):
+    self.tf = tf
+    self.sf = sf
+    self.patch = None
+
+  def ComputePatch(self):
+    """Compute the patch (as a string of data) needed to turn sf into
+    tf.  Returns the same tuple as GetPatch()."""
+
+    tf = self.tf
+    sf = self.sf
+
+    ext = os.path.splitext(tf.name)[1]
+    diff_program = DIFF_PROGRAM_BY_EXT.get(ext, "bsdiff")
+
+    ttemp = tf.WriteToTemp()
+    stemp = sf.WriteToTemp()
+
+    ext = os.path.splitext(tf.name)[1]
+
+    try:
+      ptemp = tempfile.NamedTemporaryFile()
+      if isinstance(diff_program, list):
+        cmd = copy.copy(diff_program)
+      else:
+        cmd = [diff_program]
+      cmd.append(stemp.name)
+      cmd.append(ttemp.name)
+      cmd.append(ptemp.name)
+      p = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      _, err = p.communicate()
+      if err or p.returncode != 0:
+        print "WARNING: failure running %s:\n%s\n" % (diff_program, err)
+        return None
+      diff = ptemp.read()
+    finally:
+      ptemp.close()
+      stemp.close()
+      ttemp.close()
+
+    self.patch = diff
+    return self.tf, self.sf, self.patch
+
+
+  def GetPatch(self):
+    """Return a tuple (target_file, source_file, patch_data).
+    patch_data may be None if ComputePatch hasn't been called, or if
+    computing the patch failed."""
+    return self.tf, self.sf, self.patch
+
+
+def ComputeDifferences(diffs):
+  """Call ComputePatch on all the Difference objects in 'diffs'."""
+  print len(diffs), "diffs to compute"
+
+  # Do the largest files first, to try and reduce the long-pole effect.
+  by_size = [(i.tf.size, i) for i in diffs]
+  by_size.sort(reverse=True)
+  by_size = [i[1] for i in by_size]
+
+  lock = threading.Lock()
+  diff_iter = iter(by_size)   # accessed under lock
+
+  def worker():
+    try:
+      lock.acquire()
+      for d in diff_iter:
+        lock.release()
+        start = time.time()
+        d.ComputePatch()
+        dur = time.time() - start
+        lock.acquire()
+
+        tf, sf, patch = d.GetPatch()
+        if sf.name == tf.name:
+          name = tf.name
+        else:
+          name = "%s (%s)" % (tf.name, sf.name)
+        if patch is None:
+          print "patching failed!                                  %s" % (name,)
+        else:
+          print "%8.2f sec %8d / %8d bytes (%6.2f%%) %s" % (
+              dur, len(patch), tf.size, 100.0 * len(patch) / tf.size, name)
+      lock.release()
+    except Exception, e:
+      print e
+      raise
+
+  # start worker threads; wait for them all to finish.
+  threads = [threading.Thread(target=worker)
+             for i in range(OPTIONS.worker_threads)]
+  for th in threads:
+    th.start()
+  while threads:
+    threads.pop().join()
