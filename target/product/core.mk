@@ -41,4 +41,5 @@ PRODUCT_PACKAGES := \
     UserDictionaryProvider \
     PackageInstaller \
     DefaultContainerService \
-    Bugreport
+    Bugreport \
+    ip
