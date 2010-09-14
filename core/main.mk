@@ -472,6 +472,13 @@ endif	# !BUILD_TINY_ANDROID
 
 endif	# !SDK_ONLY
 
+# Before we go and include all of the module makefiles, stash away
+# the PRODUCT_* values so you can't get to them.
+stash_product_vars:=#true
+ifeq ($(stash_product_vars),true)
+  $(call stash-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
+endif
+
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
@@ -501,6 +508,11 @@ subdir_makefiles := \
 
 include $(subdir_makefiles)
 endif # ONE_SHOT_MAKEFILE
+
+ifeq ($(stash_product_vars),true)
+  $(call assert-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
+  $(call restore-product-vars, __STASHED)
+endif
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
