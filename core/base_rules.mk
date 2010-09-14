@@ -74,7 +74,9 @@ endif
 
 ifneq ($(filter $(LOCAL_MODULE_TAGS),user),)
   ifeq ($(filter $(GRANDFATHERED_USER_MODULES),$(LOCAL_MODULE)),)
-    $(warning using user tag on $(LOCAL_MODULE) at $(LOCAL_PATH))
+    $(warning *** Module name: $(LOCAL_MODULE))
+    $(warning *** Makefile location: $(LOCAL_PATH))
+    $(error user tag detected on new module - user tags are only supported on legacy modules)
   endif
 endif
 
