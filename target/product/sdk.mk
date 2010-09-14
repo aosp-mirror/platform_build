@@ -51,6 +51,56 @@ PRODUCT_PACKAGES := \
 	CubeLiveWallpapers \
 	QuickSearchBox
 
+# Native host tools that are parts of the SDK.
+# See development/build/sdk.atree
+PRODUCT_PACKAGES += \
+	adb \
+	dmtracedump \
+	etc1tool \
+	hprof-conv \
+	mksdcard \
+	emulator \
+	ddms \
+	hierarchyviewer \
+	draw9patch \
+	layoutopt \
+	traceview \
+	android \
+	dexdump
+
+# Native host Java libraries that are parts of the SDK.
+# See development/build/sdk.atree
+PRODUCT_PACKAGES += \
+	androidprefs \
+	sdkstats \
+	archquery \
+	ddms \
+	ddmlib \
+	ddmuilib \
+	hierarchyviewer \
+	draw9patch \
+	layoutopt \
+	uix \
+	traceview \
+	anttasks \
+	sdklib \
+	sdkuilib \
+	sdkmanager \
+	swing-worker-1.1 \
+	groovy-all-1.7.0 \
+	commons-compress-1.0 \
+	emmalib \
+	org-netbeans-api-visual \
+	org-openide-util \
+	jcommon-1.0.12 \
+	jfreechart-1.0.9 \
+	jfreechart-1.0.9-swt \
+	org.eclipse.core.commands_3.4.0.I20080509-2000 \
+	org.eclipse.equinox.common_3.4.0.v20080421-2006 \
+	org.eclipse.jface_3.4.2.M20090107-0800 \
+	osgi \
+	layoutlib
+
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
