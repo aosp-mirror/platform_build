@@ -747,17 +747,6 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_RAMDISK_TARGET) \
    )
 
-  # Tests are installed in userdata.img.  If we're building the tests
-  # variant, copy it for "make tests dist".  Also copy a zip of the
-  # contents of userdata.img, so that people can easily extract a
-  # single .apk.
-  ifeq ($(TARGET_BUILD_VARIANT),tests)
-  $(call dist-for-goals, droid, \
-    $(INSTALLED_USERDATAIMAGE_TARGET) \
-    $(BUILT_TESTS_ZIP_PACKAGE) \
-   )
-  endif
-
 # Building a full system-- the default is to build droidcore
 droid: droidcore dist_libraries
 
