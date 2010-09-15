@@ -534,6 +534,30 @@ $(foreach lib,$(1),$(call _java-lib-full-dep,$(lib),$(2)))
 endef
 
 ###########################################################
+## Run rot13 on a string
+## $(1): the string.  Must be one line.
+###########################################################
+define rot13
+$(shell echo $(1) | tr 'a-zA-Z' 'n-za-mN-ZA-M')
+endef
+
+
+###########################################################
+## Returns true if $(1) and $(2) are equal.  Returns
+## the empty string if they are not equal.
+###########################################################
+define streq
+$(strip $(if $(strip $(1)),\
+  $(if $(strip $(2)),\
+    $(if $(filter-out __,_$(subst $(strip $(1)),,$(strip $(2)))$(subst $(strip $(2)),,$(strip $(1)))_),,true), \
+    ),\
+  $(if $(strip $(2)),\
+    ,\
+    true)\
+ ))
+endef
+
+###########################################################
 ## Convert "a b c" into "a:b:c"
 ###########################################################
 
