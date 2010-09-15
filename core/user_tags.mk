@@ -32,6 +32,8 @@ GRANDFATHERED_USER_MODULES += \
 	aapt \
 	acp \
 	adb \
+	AdbWinApi \
+	AdbWinUsbApi \
 	adbd \
 	aidl \
 	am \
@@ -524,6 +526,7 @@ GRANDFATHERED_USER_MODULES += \
 	screenshot \
 	screenshot2 \
 	sdcard \
+	sdklauncher \
 	sdklib \
 	sdkmanager \
 	sdkstats \
