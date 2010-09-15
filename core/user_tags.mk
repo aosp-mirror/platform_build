@@ -442,6 +442,7 @@ GRANDFATHERED_USER_MODULES += \
 	schedtest \
 	screenshot2 \
 	sdcard \
+	sdklauncher \
 	sdklib \
 	sdkmanager \
 	sdkstats \
