@@ -57,12 +57,9 @@ endif
 
 LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS))
 ifeq (,$(LOCAL_MODULE_TAGS))
-ifeq (,$(LOCAL_IS_HOST_MODULE))
 # Modules without tags fall back to user (which is changed to user eng below)
 LOCAL_MODULE_TAGS := user
-else
-LOCAL_MODULE_TAGS := optional
-endif
+#$(warning default tags: $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))))
 endif
 
 # Only the tags mentioned in this test are expected to be set by module
@@ -74,7 +71,9 @@ endif
 
 ifneq ($(filter $(LOCAL_MODULE_TAGS),user),)
   ifeq ($(filter $(GRANDFATHERED_USER_MODULES),$(LOCAL_MODULE)),)
-    $(warning using user tag on $(LOCAL_MODULE) at $(LOCAL_PATH))
+    $(warning *** Module name: $(LOCAL_MODULE))
+    $(warning *** Makefile location: $(LOCAL_PATH))
+    $(error user tag detected on new module - user tags are only supported on legacy modules)
   endif
 endif
 
