@@ -32,6 +32,7 @@ GRANDFATHERED_USER_MODULES += \
 	aapt \
 	acp \
 	adb \
+	AdbWinApi \
 	adbd \
 	aidl \
 	am \
