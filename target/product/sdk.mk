@@ -54,7 +54,7 @@ PRODUCT_PACKAGES := \
 	CubeLiveWallpapers \
 	QuickSearchBox
 
-# Native host tools that are parts of the SDK.
+# Host tools that are parts of the SDK.
 # See development/build/sdk.atree
 PRODUCT_PACKAGES += \
 	adb \
