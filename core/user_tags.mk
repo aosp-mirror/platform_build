@@ -96,6 +96,7 @@ GRANDFATHERED_USER_MODULES += \
 	descGen \
 	dexdeps \
 	dexdump \
+	dexgen \
 	dexlist \
 	dexopt \
 	dexpreopt \
@@ -138,6 +139,7 @@ GRANDFATHERED_USER_MODULES += \
 	fastboot \
 	framework \
 	FrameworkCoreHostTests \
+	frameworks-core-util-lib \
 	fsck_msdos \
 	fs_get_stats \
 	fw_bcm4329_apsta.bin \
@@ -165,6 +167,7 @@ GRANDFATHERED_USER_MODULES += \
 	init \
 	input \
 	installd \
+	ip \
 	iptables \
 	ip-up-vpn \
 	iself \
