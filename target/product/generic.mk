@@ -47,6 +47,10 @@ PRODUCT_PACKAGES := \
     CalendarProvider \
     SyncProvider
 
+PRODUCT_PACKAGES += \
+    icu.dat
+
+$(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 # Overrides
