@@ -32,6 +32,8 @@ GRANDFATHERED_USER_MODULES += \
 	aapt \
 	acp \
 	adb \
+	AdbWinApi \
+	AdbWinUsbApi \
 	adbd \
 	aidl \
 	am \
@@ -96,6 +98,7 @@ GRANDFATHERED_USER_MODULES += \
 	descGen \
 	dexdeps \
 	dexdump \
+	dexgen \
 	dexlist \
 	dexopt \
 	dexpreopt \
@@ -138,6 +141,7 @@ GRANDFATHERED_USER_MODULES += \
 	fastboot \
 	framework \
 	FrameworkCoreHostTests \
+	frameworks-core-util-lib \
 	fsck_msdos \
 	fs_get_stats \
 	fw_bcm4329_apsta.bin \
@@ -165,6 +169,7 @@ GRANDFATHERED_USER_MODULES += \
 	init \
 	input \
 	installd \
+	ip \
 	iptables \
 	ip-up-vpn \
 	iself \
@@ -186,6 +191,7 @@ GRANDFATHERED_USER_MODULES += \
 	kcm \
 	keystore \
 	kxml2-2.3.0 \
+	launch-wrapper \
 	layoutlib \
 	layoutlib_api \
 	layoutlib_create \
@@ -292,6 +298,7 @@ GRANDFATHERED_USER_MODULES += \
 	libjni_latinime \
 	libjni_pinyinime \
 	libjpeg \
+	libjs \
 	liblinenoise \
 	libLLVMAnalysis \
 	libLLVMARMAsmPrinter \
@@ -440,6 +447,7 @@ GRANDFATHERED_USER_MODULES += \
 	libvpx \
 	libwebcore \
 	libwpa_client \
+	libwrapsim \
 	libxml2 \
 	libxslt \
 	libz \
@@ -517,10 +525,12 @@ GRANDFATHERED_USER_MODULES += \
 	rild \
 	rsg-generator \
 	run-as \
+	runtime \
 	schedtest \
 	screenshot \
 	screenshot2 \
 	sdcard \
+	sdklauncher \
 	sdklib \
 	sdkmanager \
 	sdkstats \
@@ -540,6 +550,7 @@ GRANDFATHERED_USER_MODULES += \
 	signapk \
 	signature-tools \
 	simg2img \
+	simulator \
 	slang \
 	soslim \
 	spec-progress \

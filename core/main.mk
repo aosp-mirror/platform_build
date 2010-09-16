@@ -472,6 +472,13 @@ endif	# !BUILD_TINY_ANDROID
 
 endif	# !SDK_ONLY
 
+# Before we go and include all of the module makefiles, stash away
+# the PRODUCT_* values so you can't get to them.
+stash_product_vars:=#true
+ifeq ($(stash_product_vars),true)
+  $(call stash-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
+endif
+
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
@@ -501,6 +508,11 @@ subdir_makefiles := \
 
 include $(subdir_makefiles)
 endif # ONE_SHOT_MAKEFILE
+
+ifeq ($(stash_product_vars),true)
+  $(call assert-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
+  $(call restore-product-vars, __STASHED)
+endif
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
@@ -749,17 +761,6 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
    )
-
-  # Tests are installed in userdata.img.  If we're building the tests
-  # variant, copy it for "make tests dist".  Also copy a zip of the
-  # contents of userdata.img, so that people can easily extract a
-  # single .apk.
-  ifeq ($(TARGET_BUILD_VARIANT),tests)
-  $(call dist-for-goals, droid, \
-    $(INSTALLED_USERDATAIMAGE_TARGET) \
-    $(BUILT_TESTS_ZIP_PACKAGE) \
-   )
-  endif
 
 # Building a full system-- the default is to build droidcore
 droid: droidcore dist_libraries

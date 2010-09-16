@@ -186,3 +186,47 @@ endef
 define resolve-short-product-name
 $(strip $(call _resolve-short-product-name,$(1)))
 endef
+
+
+#
+# Rename the variables in _product_var_list.
+# $(1): Renamed prefix
+# $(2): New value prefix.  The new value will be $(2)$(VARNAME)
+#
+define stash-product-vars
+$(foreach v,$(_product_var_list), \
+        $(eval $(strip $(1))_$(call rot13,$(v)):=$$($$(v))) \
+        $(eval $(v):=$(2)$$(v)) \
+ )
+endef
+
+#
+# Assert that the the variable stashed by stash-product-vars remains untouched.
+# $(1): The prefix as supplied to stash-product-vars
+# $(2): The expected value prefix.  The value should be $(2)$(VARNAME)
+#
+define assert-product-vars
+$(strip \
+  $(eval changed_variables:=)
+  $(foreach v,$(_product_var_list), \
+    $(if $(call streq,$($(v)),$(2)$(v)),, \
+        $(eval $(warning $(v) has been modified: $($(v)))) \
+        $(eval changed_variables := $(changed_variables) $(v))) \
+   ) \
+  $(if $(changed_variables),\
+    $(eval $(error The following variables have been changed: $(changed_variables))),)
+)
+endef
+# ... $(eval $(warning $(v) $($(v)),$(2)$(v) streq-->$(call streq,$($(v)),$(2)$(v)))) \
+
+#
+# Restore the product variables as stashed by stash-product-vars
+# $(1): The prefix as supplied to stash-product-vars
+#
+define restore-product-vars
+$(foreach v,$(_product_var_list), \
+        $(eval $(v):=$($(strip $(1))_$(call rot13,$(v)))) \
+        $(eval $(strip $(1))_$(v):=) \
+ )
+endef
+

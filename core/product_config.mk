@@ -119,6 +119,11 @@ ifdef product_goals
     default_goal_substitution := $(DEFAULT_GOAL)
   endif
 
+  # For tests build, only build tests-build-target
+  ifeq (tests,$(TARGET_BUILD_VARIANT))
+    default_goal_substitution := tests-build-target
+  endif
+
   # Hack to make the linux build servers use dexpreopt (emulator-based
   # preoptimization). Most engineers don't use this type of target
   # ("make PRODUCT-blah-user"), so this should only tend to happen when
