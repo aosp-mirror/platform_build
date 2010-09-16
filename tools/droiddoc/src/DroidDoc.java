@@ -58,6 +58,7 @@ public class DroidDoc
     public static Map<Character,String> escapeChars = new HashMap<Character,String>();
     public static String title = "";
     public static SinceTagger sinceTagger = new SinceTagger();
+    public static HashSet<String> knownTags = new HashSet<String>();
 
     private static boolean parseComments = false;
     private static boolean generateDocs = true;
@@ -111,6 +112,7 @@ public class DroidDoc
         String apiFile = null;
         String debugStubsFile = "";
         HashSet<String> stubPackages = null;
+        ArrayList<String> knownTagsFiles = new ArrayList<String>();
 
         root = r;
 
@@ -124,6 +126,9 @@ public class DroidDoc
             }
             else if (a[0].equals("-hdf")) {
                 mHDFData.add(new String[] {a[1], a[2]});
+            }
+            else if (a[0].equals("-knowntags")) {
+                knownTagsFiles.add(a[1]);
             }
             else if (a[0].equals("-toroot")) {
                 ClearPage.toroot = a[1];
@@ -212,6 +217,10 @@ public class DroidDoc
             else if (a[0].equals("-offlinemode")) {
                 offlineMode = true;
             }
+        }
+
+        if (!readKnownTagsFiles(knownTags, knownTagsFiles)) {
+            return false;
         }
 
         // read some prefs from the template
@@ -316,6 +325,55 @@ public class DroidDoc
         return true;
     }
 
+    private static boolean readKnownTagsFiles(HashSet<String> knownTags,
+            ArrayList<String> knownTagsFiles) {
+        for (String fn: knownTagsFiles) {
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new FileReader(fn));
+                int lineno = 0;
+                boolean fail = false;
+                while (true) {
+                    lineno++;
+                    String line = in.readLine();
+                    if (line == null) {
+                        break;
+                    }
+                    line = line.trim();
+                    if (line.length() == 0) {
+                        continue;
+                    } else if (line.charAt(0) == '#') {
+                        continue;
+                    }
+                    String[] words = line.split("\\s+", 2);
+                    if (words.length == 2) {
+                        if (words[1].charAt(0) != '#') {
+                            System.err.println(fn + ":" + lineno
+                                    + ": Only one tag allowed per line: " + line);
+                            fail = true;
+                            continue;
+                        }
+                    }
+                    knownTags.add(words[0]);
+                }
+                if (fail) {
+                    return false;
+                }
+            } catch (IOException ex) {
+                System.err.println("Error reading file: " + fn + " (" + ex.getMessage() + ")");
+                return false;
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public static String escape(String s) {
         if (escapeChars.size() == 0) {
             return s;
@@ -370,6 +428,9 @@ public class DroidDoc
         }
         if (option.equals("-hdf")) {
             return 3;
+        }
+        if (option.equals("-knowntags")) {
+            return 2;
         }
         if (option.equals("-toroot")) {
             return 2;

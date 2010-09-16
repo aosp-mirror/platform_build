@@ -41,6 +41,7 @@ OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
 OPTIONS.extras = {}
 OPTIONS.mkyaffs2_extra_flags = None
+OPTIONS.info_dict = None
 
 
 # Values for "certificate" in apkcerts that mean special things.
@@ -58,9 +59,35 @@ def Run(args, **kwargs):
   return subprocess.Popen(args, **kwargs)
 
 
-def LoadMaxSizes():
+def LoadInfoDict():
+  """Read and parse the META/misc_info.txt key/value pairs from the
+  input target files and return a dict."""
+
+  d = {}
+  try:
+    for line in open(os.path.join(OPTIONS.input_tmp, "META", "misc_info.txt")):
+      line = line.strip()
+      if not line or line.startswith("#"): continue
+      k, v = line.split("=", 1)
+      d[k] = v
+  except IOError, e:
+    if e.errno == errno.ENOENT:
+      # ok if misc_info.txt file doesn't exist
+      pass
+    else:
+      raise
+
+  if "fs_type" not in d: info["fs_type"] = "yaffs2"
+  if "partition_type" not in d: info["partition_type"] = "MTD"
+
+  return d
+
+
+def LoadMaxSizes(info):
   """Load the maximum allowable images sizes from the input
-  target_files size."""
+  target_files.  Uses the imagesizes.txt file if it's available
+  (pre-gingerbread target_files), or the more general info dict (which
+  must be passed in) if not."""
   OPTIONS.max_image_size = {}
   try:
     for line in open(os.path.join(OPTIONS.input_tmp, "META", "imagesizes.txt")):
@@ -71,7 +98,15 @@ def LoadMaxSizes():
       OPTIONS.max_image_size[image + ".img"] = size
   except IOError, e:
     if e.errno == errno.ENOENT:
-      pass
+      def copy(x, y):
+        if x+y in info: OPTIONS.max_image_size[x+".img"] = int(info[x+y])
+      copy("blocksize", "")
+      copy("boot", "_size")
+      copy("recovery", "_size")
+      copy("system", "_size")
+      copy("userdata", "_size")
+    else:
+      raise
 
 
 def LoadMkyaffs2ExtraFlags():
@@ -263,8 +298,17 @@ def CheckSize(data, target):
   """Check the data string passed against the max size limit, if
   any, for the given target.  Raise exception if the data is too big.
   Print a warning if the data is nearing the maximum size."""
+
+  fs_type = OPTIONS.info_dict.get("fs_type", None)
+  if not fs_type: return
+
   limit = OPTIONS.max_image_size.get(target, None)
   if limit is None: return
+
+  if fs_type == "yaffs2":
+    # image size should be increased by 1/64th to account for the
+    # spare area (64 bytes per 2k page)
+    limit = limit / 2048 * (2048+64)
 
   size = len(data)
   pct = float(size) * 100.0 / limit
