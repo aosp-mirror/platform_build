@@ -191,6 +191,7 @@ GRANDFATHERED_USER_MODULES += \
 	kcm \
 	keystore \
 	kxml2-2.3.0 \
+	launch-wrapper \
 	layoutlib \
 	layoutlib_api \
 	layoutlib_create \
@@ -297,6 +298,7 @@ GRANDFATHERED_USER_MODULES += \
 	libjni_latinime \
 	libjni_pinyinime \
 	libjpeg \
+	libjs \
 	liblinenoise \
 	libLLVMAnalysis \
 	libLLVMARMAsmPrinter \
@@ -445,6 +447,7 @@ GRANDFATHERED_USER_MODULES += \
 	libvpx \
 	libwebcore \
 	libwpa_client \
+	libwrapsim \
 	libxml2 \
 	libxslt \
 	libz \
@@ -522,6 +525,7 @@ GRANDFATHERED_USER_MODULES += \
 	rild \
 	rsg-generator \
 	run-as \
+	runtime \
 	schedtest \
 	screenshot \
 	screenshot2 \
@@ -546,6 +550,7 @@ GRANDFATHERED_USER_MODULES += \
 	signapk \
 	signature-tools \
 	simg2img \
+	simulator \
 	slang \
 	soslim \
 	spec-progress \
