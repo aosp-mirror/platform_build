@@ -130,6 +130,8 @@ public class Errors
             UNAVAILABLE_SYMBOL,
             HIDDEN_SUPERCLASS,
             DEPRECATED,
+            DEPRECATION_MISMATCH,
+            MISSING_COMMENT,
             IO_ERROR,
             NO_SINCE_DATA,
         };
