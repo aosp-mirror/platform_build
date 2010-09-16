@@ -1011,8 +1011,8 @@ endif
 ifdef BOARD_USERDATAIMAGE_PARTITION_SIZE
 	$(hide) echo "userdata_size=$(BOARD_USERDATAIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
-ifeq ($(TARGET_USERIMAGES_USE_EXT4), true)
-	$(hide) echo "fs_type=ext4" >> $(zip_root)/META/misc_info.txt
+ifneq (,$(INTERNAL_USERIMAGES_EXT_VARIANT))
+	$(hide) echo "fs_type=$(INTERNAL_USERIMAGES_EXT_VARIANT)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "partition_type=EMMC" >> $(zip_root)/META/misc_info.txt
 	@# TODO: where is the right place to get this path from?  BoardConfig.mk?
 	$(hide) echo "partition_path=/dev/block/platform/sdhci-tegra.3/by-name/" >> $(zip_root)/META/misc_info.txt
@@ -1213,7 +1213,6 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 	$(hide) ./build/tools/releasetools/img_from_target_files -v \
 	   -s $(extensions) \
 	   -p $(HOST_OUT) \
-	   $(addprefix --fs_type ,$(INTERNAL_USERIMAGES_EXT_VARIANT)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: updatepackage
