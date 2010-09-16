@@ -23,7 +23,36 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
 PRODUCT_PACKAGES := \
+    bouncycastle \
+    core \
+    core-junit \
+    create_test_dmtrace \
+    dalvikvm \
+    dexdeps \
+    dexdump \
+    dexlist \
+    dexopt \
+    dmtracedump \
+    dvz \
+    dx \
+    ext \
     framework-res \
+    hprof-conv \
+    icu.dat \
+    jasmin \
+    jasmin.jar \
+    libcrypto \
+    libdex \
+    libdvm \
+    libexpat \
+    libicui18n \
+    libicuuc \
+    libjavacore \
+    libnativehelper \
+    libsqlite_jni \
+    libssl \
+    libz \
+    sqlite-jdbc \
     Browser \
     CarHomeLauncher \
     Contacts \
@@ -43,3 +72,18 @@ PRODUCT_PACKAGES := \
     PackageInstaller \
     DefaultContainerService \
     Bugreport
+
+# force WITH_HOST_DALVIK on userdebug and user builds.
+# TODO: this is redundant with a similar clause in build/core/main.mk.
+ifneq (,$(filter userdebug user,$(TARGET_BUILD_VARIANT)))
+    WITH_HOST_DALVIK := true
+endif
+
+# host-only dependencies
+ifeq ($(WITH_HOST_DALVIK),true)
+    PRODUCT_PACKAGES += \
+        bouncycastle-hostdex \
+        core-hostdex \
+        libjavacore-host
+endif
+

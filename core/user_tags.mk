@@ -61,7 +61,6 @@ GRANDFATHERED_USER_MODULES += \
 	bluetoothd \
 	bmgr \
 	bootanimation \
-	bouncycastle \
 	brcm_patchram_plus \
 	bugreport \
 	cfassembler \
@@ -73,15 +72,11 @@ GRANDFATHERED_USER_MODULES += \
 	com.android.phone.common \
 	commons-compress-1.0 \
 	copybit.qsd8k \
-	core \
-	core-junit \
 	coverage \
 	cpufeatures \
-	create_test_dmtrace \
 	cts \
 	CtsAppSecurityTests \
 	cts-dalvik-buildutil \
-	dalvikvm \
 	dasm \
 	dbus-daemon \
 	ddmlib \
@@ -89,17 +84,12 @@ GRANDFATHERED_USER_MODULES += \
 	ddmuilib \
 	debuggerd \
 	descGen \
-	dexdeps \
-	dexdump \
-	dexlist \
-	dexopt \
 	dexpreopt \
 	dex-tools \
 	dhcpcd \
 	dhcpcd.conf \
 	dhcpcd-run-hooks \
 	dictTest \
-	dmtracedump \
 	dnsmasq \
 	draw9patch \
 	droiddoc \
@@ -108,8 +98,6 @@ GRANDFATHERED_USER_MODULES += \
 	dump_regions \
 	dumpstate \
 	dumpsys \
-	dvz \
-	dx \
 	dx-tests \
 	easymock \
 	edify \
@@ -125,7 +113,6 @@ GRANDFATHERED_USER_MODULES += \
 	etc1tool \
 	eventanalyzer \
 	exc_dump \
-	ext \
 	fastboot \
 	framework \
 	FrameworkCoreHostTests \
@@ -147,7 +134,6 @@ GRANDFATHERED_USER_MODULES += \
 	hierarchyviewer \
 	hist_trace \
 	hosttestlib \
-	hprof-conv \
 	icudata \
 	idegen \
 	ime \
@@ -159,8 +145,6 @@ GRANDFATHERED_USER_MODULES += \
 	iself \
 	isprelinked \
 	jarjar \
-	jasmin \
-	jasmin.jar \
 	javax.obex \
 	jcommon-1.0.12 \
 	jdiff \
@@ -208,17 +192,14 @@ GRANDFATHERED_USER_MODULES += \
 	libcamerastub \
 	libc_common \
 	libc_nomalloc \
-	libcrypto \
 	libctest \
 	libcutils \
 	libdb \
 	libdbus \
-	libdex \
 	libdiskconfig \
 	libdl \
 	libdrm1 \
 	libdrm1_jni \
-	libdvm \
 	libebl \
 	libebl_arm \
 	libebl_sh \
@@ -231,7 +212,6 @@ GRANDFATHERED_USER_MODULES += \
 	libESR_Shared \
 	libETC1 \
 	libexif \
-	libexpat \
 	libext \
 	libfdlibm \
 	libfdlibm-host \
@@ -248,12 +228,8 @@ GRANDFATHERED_USER_MODULES += \
 	libhardware \
 	libhardware_legacy \
 	libhost \
-	libicui18n \
-	libicuuc \
 	libiprouteutil \
 	libiptc \
-	libjavacore \
-	libjavacore-host \
 	libjnigraphics \
 	libjni_latinime \
 	libjni_pinyinime \
@@ -271,7 +247,6 @@ GRANDFATHERED_USER_MODULES += \
 	libminzip \
 	libmtdutils \
 	libmusicbundle \
-	libnativehelper \
 	libneo_cgi \
 	libneo_cs \
 	libneo_util \
@@ -307,7 +282,6 @@ GRANDFATHERED_USER_MODULES += \
 	libspeex \
 	libsqlite \
 	libsqlite3_android \
-	libsqlite_jni \
 	libSR_AcousticModels \
 	libSR_AcousticState \
 	libSR_AudioIn \
@@ -321,7 +295,6 @@ GRANDFATHERED_USER_MODULES += \
 	libSR_Semproc \
 	libSR_Session \
 	libSR_Vocabulary \
-	libssl \
 	libstagefright \
 	libstagefright_aacdec \
 	libstagefright_aacenc \
@@ -376,7 +349,6 @@ GRANDFATHERED_USER_MODULES += \
 	libwpa_client \
 	libwrapsim \
 	libxml2 \
-	libz \
 	libzipfile \
 	lights.kraken \
 	lights.qsd8k \
@@ -470,7 +442,6 @@ GRANDFATHERED_USER_MODULES += \
 	soslim \
 	spec-progress \
 	sqlite3 \
-	sqlite-jdbc \
 	stack_dump \
 	stringtemplate \
 	surfaceflinger \
