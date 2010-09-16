@@ -355,7 +355,6 @@ public class DroidDoc
                         }
                     }
                     knownTags.add(words[0]);
-                    System.out.println("Known tag: " + words[0]);
                 }
                 if (fail) {
                     return false;
