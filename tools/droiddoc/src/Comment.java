@@ -55,8 +55,6 @@ public class Comment
             "@sample",
             "@include",
             "@serial",
-            "@com.intel.drl.spec_ref",
-            "@ar.org.fitc.spec_ref",
         };
 
     public Comment(String text, ContainerInfo base, SourcePositionInfo sp)
@@ -183,6 +181,9 @@ public class Comment
                     known = true;
                     break;
                 }
+            }
+            if (!known) {
+                known = DroidDoc.knownTags.contains(name);
             }
             if (!known) {
                 Errors.error(Errors.UNKNOWN_TAG, pos == null ? null : new SourcePositionInfo(pos),
