@@ -309,18 +309,17 @@ def CheckSize(data, target):
     # image size should be increased by 1/64th to account for the
     # spare area (64 bytes per 2k page)
     limit = limit / 2048 * (2048+64)
-
-  size = len(data)
-  pct = float(size) * 100.0 / limit
-  msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
-  if pct >= 99.0:
-    raise ExternalError(msg)
-  elif pct >= 95.0:
-    print
-    print "  WARNING: ", msg
-    print
-  elif OPTIONS.verbose:
-    print "  ", msg
+    size = len(data)
+    pct = float(size) * 100.0 / limit
+    msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
+    if pct >= 99.0:
+      raise ExternalError(msg)
+    elif pct >= 95.0:
+      print
+      print "  WARNING: ", msg
+      print
+    elif OPTIONS.verbose:
+      print "  ", msg
 
 
 def ReadApkCerts(tf_zip):

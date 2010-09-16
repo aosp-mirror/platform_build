@@ -304,7 +304,7 @@ def AppendAssertions(script, input_zip):
   script.AssertDevice(device)
 
 
-def MakeRecoveryPatch(output_zip, recovery_img, boot_img, info):
+def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   """Generate a binary patch that creates the recovery image starting
   with the boot image.  (Most of the space in these images is just the
   kernel, which is identical for the two, so the resulting patch
@@ -343,8 +343,8 @@ fi
         'header_sha1': header_sha1,
         'recovery_size': recovery_img.size,
         'recovery_sha1': recovery_img.sha1,
-        'partition_type': info["partition_type"],
-        'partition_path': info.get("partition_path", ""),
+        'partition_type': OPTIONS.info_dict["partition_type"],
+        'partition_path': OPTIONS.info_dict.get("partition_path", ""),
         }
   common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
@@ -397,7 +397,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
       os.path.join(OPTIONS.input_tmp, "BOOT")))
   recovery_img = common.File("recovery.img", common.BuildBootableImage(
       os.path.join(OPTIONS.input_tmp, "RECOVERY")))
-  MakeRecoveryPatch(output_zip, recovery_img, boot_img, info)
+  MakeRecoveryPatch(output_zip, recovery_img, boot_img)
 
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
@@ -476,8 +476,8 @@ def GetRecoveryAPIVersion(zip):
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = GetRecoveryAPIVersion(source_zip)
   target_version = GetRecoveryAPIVersion(target_zip)
-  partition_type = info["partition_type"]
-  partition_path = info.get("partition_path", "")
+  partition_type = OPTIONS.info_dict["partition_type"]
+  partition_path = OPTIONS.info_dict.get("partition_path", "")
 
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
@@ -658,7 +658,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # partition, include the binaries and image files from recovery in
     # the boot image (though not in the ramdisk) so they can be used
     # as fodder for constructing the recovery image.
-    MakeRecoveryPatch(output_zip, target_recovery, target_boot, info)
+    MakeRecoveryPatch(output_zip, target_recovery, target_boot)
     script.DeleteFiles(["/system/recovery-from-boot.p",
                         "/system/etc/install-recovery.sh"])
     print "recovery image changed; including as patch from boot."
