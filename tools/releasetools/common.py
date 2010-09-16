@@ -41,6 +41,7 @@ OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
 OPTIONS.extras = {}
 OPTIONS.mkyaffs2_extra_flags = None
+OPTIONS.info_dict = None
 
 
 # Values for "certificate" in apkcerts that mean special things.
@@ -85,7 +86,7 @@ def LoadInfoDict():
 def LoadMaxSizes(info):
   """Load the maximum allowable images sizes from the input
   target_files.  Uses the imagesizes.txt file if it's available
-  (pre-honeycomb target_files), or the more general info dict (which
+  (pre-gingerbread target_files), or the more general info dict (which
   must be passed in) if not."""
   OPTIONS.max_image_size = {}
   try:
@@ -297,8 +298,17 @@ def CheckSize(data, target):
   """Check the data string passed against the max size limit, if
   any, for the given target.  Raise exception if the data is too big.
   Print a warning if the data is nearing the maximum size."""
+
+  fs_type = OPTIONS.info_dict.get("fs_type", None)
+  if not fs_type: return
+
   limit = OPTIONS.max_image_size.get(target, None)
   if limit is None: return
+
+  if fs_type == "yaffs2":
+    # image size should be increased by 1/64th to account for the
+    # spare area (64 bytes per 2k page)
+    limit = limit / 2048 * (2048+64)
 
   size = len(data)
   pct = float(size) * 100.0 / limit
