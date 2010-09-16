@@ -32,6 +32,8 @@ GRANDFATHERED_USER_MODULES += \
 	aapt \
 	acp \
 	adb \
+	AdbWinApi \
+	AdbWinUsbApi \
 	adbd \
 	aidl \
 	am \
@@ -172,6 +174,7 @@ GRANDFATHERED_USER_MODULES += \
 	kcm \
 	keystore \
 	kxml2-2.3.0 \
+	launch-wrapper \
 	layoutlib \
 	layoutlib_api \
 	layoutlib_create \
@@ -371,6 +374,7 @@ GRANDFATHERED_USER_MODULES += \
 	libvpx \
 	libwebcore \
 	libwpa_client \
+	libwrapsim \
 	libxml2 \
 	libz \
 	libzipfile \
@@ -437,9 +441,11 @@ GRANDFATHERED_USER_MODULES += \
 	rild \
 	rsg-generator \
 	run-as \
+	runtime \
 	schedtest \
 	screenshot2 \
 	sdcard \
+	sdklauncher \
 	sdklib \
 	sdkmanager \
 	sdkstats \
@@ -460,6 +466,7 @@ GRANDFATHERED_USER_MODULES += \
 	signapk \
 	signature-tools \
 	simg2img \
+	simulator \
 	soslim \
 	spec-progress \
 	sqlite3 \
