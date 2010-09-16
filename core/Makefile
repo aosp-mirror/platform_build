@@ -1030,8 +1030,13 @@ endif
 	$(hide) echo "blocksize $(BOARD_FLASH_BLOCK_SIZE)" > $(zip_root)/META/imagesizes.txt
 	$(hide) echo "boot $(call image-size-from-data-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
 	$(hide) echo "recovery $(call image-size-from-data-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
+ifeq (true,$(INTERNAL_USERIMAGES_USE_EXT))
+	$(hide) echo "system $(BOARD_SYSTEMIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/imagesizes.txt
+	$(hide) echo "userdata $(BOARD_USERDATAIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/imagesizes.txt
+else
 	$(hide) echo "system $(call image-size-from-data-size,$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
 	$(hide) echo "userdata $(call image-size-from-data-size,$(BOARD_USERDATAIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/imagesizes.txt
+endif
 	$(hide) echo "$(tool_extensions)" > $(zip_root)/META/tool-extensions.txt
 ifdef mkyaffs2_extra_flags
 	$(hide) echo "$(mkyaffs2_extra_flags)" > $(zip_root)/META/mkyaffs2-extra-flags.txt
