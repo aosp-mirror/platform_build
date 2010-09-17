@@ -40,7 +40,6 @@ OPTIONS.verbose = False
 OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
 OPTIONS.extras = {}
-OPTIONS.mkyaffs2_extra_flags = None
 OPTIONS.info_dict = None
 
 
@@ -59,68 +58,78 @@ def Run(args, **kwargs):
   return subprocess.Popen(args, **kwargs)
 
 
-def LoadInfoDict():
+def LoadInfoDict(zip):
   """Read and parse the META/misc_info.txt key/value pairs from the
   input target files and return a dict."""
 
   d = {}
   try:
-    for line in open(os.path.join(OPTIONS.input_tmp, "META", "misc_info.txt")):
+    for line in zip.read("META/misc_info.txt").split("\n"):
       line = line.strip()
       if not line or line.startswith("#"): continue
       k, v = line.split("=", 1)
       d[k] = v
-  except IOError, e:
-    if e.errno == errno.ENOENT:
-      # ok if misc_info.txt file doesn't exist
-      pass
-    else:
-      raise
+  except KeyError:
+    # ok if misc_info.txt doesn't exist
+    pass
 
-  if "fs_type" not in d: info["fs_type"] = "yaffs2"
-  if "partition_type" not in d: info["partition_type"] = "MTD"
+  if "fs_type" not in d: d["fs_type"] = "yaffs2"
+  if "partition_type" not in d: d["partition_type"] = "MTD"
+
+  # backwards compatibility: These values used to be in their own
+  # files.  Look for them, in case we're processing an old
+  # target_files zip.
+
+  if "mkyaffs2_extra_flags" not in d:
+    try:
+      d["mkyaffs2_extra_flags"] = zip.read("META/mkyaffs2-extra-flags.txt").strip()
+    except KeyError:
+      # ok if flags don't exist
+      pass
+
+  if "recovery_api_version" not in d:
+    try:
+      d["recovery_api_version"] = zip.read("META/recovery-api-version.txt").strip()
+    except KeyError:
+      raise ValueError("can't find recovery API version in input target-files")
+
+  if "tool_extensions" not in d:
+    try:
+      d["tool_extensions"] = zip.read("META/tool-extensions.txt").strip()
+    except KeyError:
+      # ok if extensions don't exist
+      pass
+
+  try:
+    data = zip.read("META/imagesizes.txt")
+    for line in data.split("\n"):
+      if not line: continue
+      name, value = line.strip().split(None, 1)
+      if name == "blocksize":
+        d[name] = value
+      else:
+        d[name + "_size"] = value
+  except KeyError:
+    pass
+
+  def makeint(key):
+    if key in d:
+      d[key] = int(d[key], 0)
+
+  makeint("recovery_api_version")
+  makeint("blocksize")
+  makeint("system_size")
+  makeint("userdata_size")
+  makeint("recovery_size")
+  makeint("boot_size")
 
   return d
 
+def DumpInfoDict(d):
+  for k, v in sorted(d.items()):
+    print "%-25s = (%s) %s" % (k, type(v).__name__, v)
 
-def LoadMaxSizes(info):
-  """Load the maximum allowable images sizes from the input
-  target_files.  Uses the imagesizes.txt file if it's available
-  (pre-gingerbread target_files), or the more general info dict (which
-  must be passed in) if not."""
-  OPTIONS.max_image_size = {}
-  try:
-    for line in open(os.path.join(OPTIONS.input_tmp, "META", "imagesizes.txt")):
-      pieces = line.split()
-      if len(pieces) != 2: continue
-      image = pieces[0]
-      size = int(pieces[1], 0)
-      OPTIONS.max_image_size[image + ".img"] = size
-  except IOError, e:
-    if e.errno == errno.ENOENT:
-      def copy(x, y):
-        if x+y in info: OPTIONS.max_image_size[x+".img"] = int(info[x+y], 0)
-      copy("blocksize", "")
-      copy("boot", "_size")
-      copy("recovery", "_size")
-      copy("system", "_size")
-      copy("userdata", "_size")
-    else:
-      raise
-
-
-def LoadMkyaffs2ExtraFlags():
-  """Load mkyaffs2 extra flags."""
-  try:
-    fn = os.path.join(OPTIONS.input_tmp, "META", "mkyaffs2-extra-flags.txt");
-    if os.access(fn, os.F_OK):
-      OPTIONS.mkyaffs2_extra_flags = open(fn).read().rstrip("\n")
-  except IOError, e:
-    if e.errno == errno.ENOENT:
-      pass
-
-
-def BuildAndAddBootableImage(sourcedir, targetname, output_zip):
+def BuildAndAddBootableImage(sourcedir, targetname, output_zip, info_dict):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
   'sourcedir'), and turn them into a boot image.  Put the boot image
   into the output zip file under the name 'targetname'.  Returns
@@ -133,7 +142,7 @@ def BuildAndAddBootableImage(sourcedir, targetname, output_zip):
   if img is None:
     return None
 
-  CheckSize(img, targetname)
+  CheckSize(img, targetname, info_dict)
   ZipWriteStr(output_zip, targetname, img)
   return targetname
 
@@ -194,13 +203,13 @@ def BuildBootableImage(sourcedir):
   return data
 
 
-def AddRecovery(output_zip):
+def AddRecovery(output_zip, info_dict):
   BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "RECOVERY"),
-                           "recovery.img", output_zip)
+                           "recovery.img", output_zip, info_dict)
 
-def AddBoot(output_zip):
+def AddBoot(output_zip, info_dict):
   BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "BOOT"),
-                           "boot.img", output_zip)
+                           "boot.img", output_zip, info_dict)
 
 def UnzipTemp(filename, pattern=None):
   """Unzip the given archive into a temporary directory and return the name."""
@@ -294,12 +303,12 @@ def SignFile(input_name, output_name, key, password, align=None,
     temp.close()
 
 
-def CheckSize(data, target):
+def CheckSize(data, target, info_dict):
   """Check the data string passed against the max size limit, if
   any, for the given target.  Raise exception if the data is too big.
   Print a warning if the data is nearing the maximum size."""
 
-  fs_type = OPTIONS.info_dict.get("fs_type", None)
+  fs_type = info_dict.get("fs_type", None)
   if not fs_type: return
 
   limit = OPTIONS.max_image_size.get(target, None)

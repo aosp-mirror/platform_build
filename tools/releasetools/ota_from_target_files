@@ -363,7 +363,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
-      input_version=GetRecoveryAPIVersion(input_zip),
+      input_version=OPTIONS.info_dict["recovery_api_version"],
       output_zip=output_zip,
       script=script,
       input_tmp=OPTIONS.input_tmp,
@@ -402,7 +402,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
 
-  common.CheckSize(boot_img.data, "boot.img")
+  common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
   script.ShowProgress(0.2, 0)
 
@@ -457,32 +457,16 @@ def GetBuildProp(property, z):
   return m.group(1).strip()
 
 
-def GetRecoveryAPIVersion(zip):
-  """Returns the version of the recovery API.  Version 0 is the older
-  amend code (no separate binary)."""
-  try:
-    version = zip.read("META/recovery-api-version.txt")
-    return int(version)
-  except KeyError:
-    try:
-      # version one didn't have the recovery-api-version.txt file, but
-      # it did include an updater binary.
-      zip.getinfo("OTA/bin/updater")
-      return 1
-    except KeyError:
-      return 0
-
-
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
-  source_version = GetRecoveryAPIVersion(source_zip)
-  target_version = GetRecoveryAPIVersion(target_zip)
-  partition_type = OPTIONS.info_dict["partition_type"]
-  partition_path = OPTIONS.info_dict.get("partition_path", "")
+  source_version = OPTIONS.source_info_dict["recovery_api_version"]
+  target_version = OPTIONS.target_info_dict["recovery_api_version"]
+  partition_type = OPTIONS.target_info_dict["partition_type"]
+  partition_path = OPTIONS.target_info_dict.get("partition_path", "")
 
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
            "can't install it.")
-  script = edify_generator.EdifyGenerator(source_version, OPTIONS.info_dict)
+  script = edify_generator.EdifyGenerator(source_version, OPTIONS.target_info_dict)
 
   metadata = {"pre-device": GetBuildProp("ro.product.device", source_zip),
               "post-timestamp": GetBuildProp("ro.build.date.utc", target_zip),
@@ -778,33 +762,19 @@ def main(argv):
   print "unzipping target target-files..."
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
 
-  if OPTIONS.device_specific is None:
-    # look for the device-specific tools extension location in the input
-    try:
-      f = open(os.path.join(OPTIONS.input_tmp, "META", "tool-extensions.txt"))
-      ds = f.read().strip()
-      f.close()
-      if ds:
-        ds = os.path.normpath(ds)
-        print "using device-specific extensions in", ds
-        OPTIONS.device_specific = ds
-    except IOError, e:
-      if e.errno == errno.ENOENT:
-        # nothing specified in the file
-        pass
-      else:
-        raise
-
-  OPTIONS.info_dict = common.LoadInfoDict()
-  common.LoadMaxSizes(OPTIONS.info_dict)
-  if not OPTIONS.max_image_size:
-    print
-    print "  WARNING:  Failed to load max image sizes; will not enforce"
-    print "  image size limits."
-    print
-
   OPTIONS.target_tmp = OPTIONS.input_tmp
   input_zip = zipfile.ZipFile(args[0], "r")
+  OPTIONS.info_dict = common.LoadInfoDict(input_zip)
+  if OPTIONS.verbose:
+    print "--- target info ---"
+    common.DumpInfoDict(OPTIONS.info_dict)
+
+  if OPTIONS.device_specific is None:
+    OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions", None)
+  if OPTIONS.device_specific is not None:
+    OPTIONS.device_specific = os.path.normpath(OPTIONS.device_specific)
+    print "using device-specific extensions in", OPTIONS.device_specific
+
   if OPTIONS.package_key:
     temp_zip_file = tempfile.NamedTemporaryFile()
     output_zip = zipfile.ZipFile(temp_zip_file, "w",
@@ -819,6 +789,11 @@ def main(argv):
     print "unzipping source target-files..."
     OPTIONS.source_tmp = common.UnzipTemp(OPTIONS.incremental_source)
     source_zip = zipfile.ZipFile(OPTIONS.incremental_source, "r")
+    OPTIONS.target_info_dict = OPTIONS.info_dict
+    OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
+    if OPTIONS.verbose:
+      print "--- source info ---"
+      common.DumpInfoDict(OPTIONS.source_info_dict)
     WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
 
   output_zip.close()
