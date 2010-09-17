@@ -76,7 +76,9 @@ PRODUCT_PACKAGES := \
 # force WITH_HOST_DALVIK on userdebug and user builds.
 # TODO: this is redundant with a similar clause in build/core/main.mk.
 ifneq (,$(filter userdebug user,$(TARGET_BUILD_VARIANT)))
+  ifeq ($(HOST_OS),linux)
     WITH_HOST_DALVIK := true
+  endif
 endif
 
 # host-only dependencies
