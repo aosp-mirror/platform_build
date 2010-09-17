@@ -35,7 +35,6 @@ if not hasattr(os, "SEEK_SET"):
 class Options(object): pass
 OPTIONS = Options()
 OPTIONS.search_path = "out/host/linux-x86"
-OPTIONS.max_image_size = {}
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
@@ -104,7 +103,8 @@ def LoadInfoDict(zip):
     data = zip.read("META/imagesizes.txt")
     for line in data.split("\n"):
       if not line: continue
-      name, value = line.strip().split(None, 1)
+      name, value = line.split(" ", 1)
+      if not value: continue
       if name == "blocksize":
         d[name] = value
       else:
@@ -311,7 +311,8 @@ def CheckSize(data, target, info_dict):
   fs_type = info_dict.get("fs_type", None)
   if not fs_type: return
 
-  limit = OPTIONS.max_image_size.get(target, None)
+  if target.endswith(".img"): target = target[:-4]
+  limit = info_dict.get(target + "_size", None)
   if limit is None: return
 
   if fs_type == "yaffs2":
