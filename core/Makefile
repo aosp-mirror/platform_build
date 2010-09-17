@@ -1027,9 +1027,9 @@ endif
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) $(ACP) $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
 	$(hide)	echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
-	$(hide) echo "$(PRIVATE_RECOVERY_API_VERSION)" > $(zip_root)/META/recovery-api-version.txt
+	$(hide) echo "recovery_api_version=$(PRIVATE_RECOVERY_API_VERSION)" > $(zip_root)/META/misc_info.txt
 ifdef BOARD_FLASH_BLOCK_SIZE
-	$(hide) echo "blocksize=$(BOARD_FLASH_BLOCK_SIZE)" > $(zip_root)/META/misc_info.txt
+	$(hide) echo "blocksize=$(BOARD_FLASH_BLOCK_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 	$(hide) echo "boot_size=$(BOARD_BOOTIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
@@ -1052,9 +1052,9 @@ else
 	$(hide) echo "fs_type=yaffs2" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "partition_type=MTD" >> $(zip_root)/META/misc_info.txt
 endif
-	$(hide) echo "$(tool_extensions)" > $(zip_root)/META/tool-extensions.txt
+	$(hide) echo "tool_extensions=$(tool_extensions)" >> $(zip_root)/META/misc_info.txt
 ifdef mkyaffs2_extra_flags
-	$(hide) echo "$(mkyaffs2_extra_flags)" > $(zip_root)/META/mkyaffs2-extra-flags.txt
+	$(hide) echo "mkyaffs2_extra_flags=$(mkyaffs2_extra_flags)" >> $(zip_root)/META/misc_info.txt
 endif
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
