@@ -65,7 +65,6 @@ GRANDFATHERED_USER_MODULES += \
 	bluetoothd \
 	bmgr \
 	bootanimation \
-	bouncycastle \
 	brcm_patchram_plus \
 	bugreport \
 	cfassembler \
@@ -78,15 +77,11 @@ GRANDFATHERED_USER_MODULES += \
 	commons-compress-1.0 \
 	copybit.qsd8k \
 	copybit.s5pc110 \
-	core \
-	core-junit \
 	coverage \
 	cpufeatures \
-	create_test_dmtrace \
 	cts \
 	CtsAppSecurityTests \
 	cts-dalvik-buildutil \
-	dalvikvm \
 	dasm \
 	dbus-daemon \
 	ddmlib \
@@ -96,18 +91,13 @@ GRANDFATHERED_USER_MODULES += \
 	ddmuilib \
 	debuggerd \
 	descGen \
-	dexdeps \
-	dexdump \
 	dexgen \
-	dexlist \
-	dexopt \
 	dexpreopt \
 	dex-tools \
 	dhcpcd \
 	dhcpcd.conf \
 	dhcpcd-run-hooks \
 	dictTest \
-	dmtracedump \
 	dnsmasq \
 	doclava \
 	draw9patch \
@@ -116,8 +106,6 @@ GRANDFATHERED_USER_MODULES += \
 	dump_regions \
 	dumpstate \
 	dumpsys \
-	dvz \
-	dx \
 	dx-tests \
 	e2fsck \
 	e2fsck_host \
@@ -137,7 +125,6 @@ GRANDFATHERED_USER_MODULES += \
 	etc1tool \
 	eventanalyzer \
 	exc_dump \
-	ext \
 	fastboot \
 	framework \
 	FrameworkCoreHostTests \
@@ -162,7 +149,6 @@ GRANDFATHERED_USER_MODULES += \
 	hierarchyviewerlib \
 	hist_trace \
 	hosttestlib \
-	hprof-conv \
 	icudata \
 	idegen \
 	ime \
@@ -175,8 +161,6 @@ GRANDFATHERED_USER_MODULES += \
 	iself \
 	isprelinked \
 	jarjar \
-	jasmin \
-	jasmin.jar \
 	javax.obex \
 	jcommon-1.0.12 \
 	jdiff \
@@ -234,18 +218,15 @@ GRANDFATHERED_USER_MODULES += \
 	libclangParse \
 	libclangSema \
 	libc_nomalloc \
-	libcrypto \
 	libctest \
 	libcutils \
 	libdb \
 	libdbus \
-	libdex \
 	libdiskconfig \
 	libdiskconfig_host \
 	libdl \
 	libdrm1 \
 	libdrm1_jni \
-	libdvm \
 	libebl \
 	libebl_arm \
 	libebl_sh \
@@ -258,7 +239,6 @@ GRANDFATHERED_USER_MODULES += \
 	libESR_Shared \
 	libETC1 \
 	libexif \
-	libexpat \
 	libext \
 	libext2_blkid \
 	libext2_blkid_host \
@@ -288,12 +268,8 @@ GRANDFATHERED_USER_MODULES += \
 	libhardware_legacy \
 	libhost \
 	libhyphenation \
-	libicui18n \
-	libicuuc \
 	libiprouteutil \
 	libiptc \
-	libjavacore \
-	libjavacore-host \
 	libjnigraphics \
 	libjni_latinime \
 	libjni_pinyinime \
@@ -342,7 +318,9 @@ GRANDFATHERED_USER_MODULES += \
 	libmtdutils \
 	libmtp \
 	libmusicbundle \
-	libnativehelper \
+	libneo_cgi \
+	libneo_cs \
+	libneo_util \
 	libnetlink \
 	libnetutils \
 	libop \
@@ -378,7 +356,6 @@ GRANDFATHERED_USER_MODULES += \
 	libspeex \
 	libsqlite \
 	libsqlite3_android \
-	libsqlite_jni \
 	libSR_AcousticModels \
 	libSR_AcousticState \
 	libSR_AudioIn \
@@ -392,7 +369,6 @@ GRANDFATHERED_USER_MODULES += \
 	libSR_Semproc \
 	libSR_Session \
 	libSR_Vocabulary \
-	libssl \
 	libstagefright \
 	libstagefright_aacdec \
 	libstagefright_aacenc \
@@ -450,7 +426,6 @@ GRANDFATHERED_USER_MODULES += \
 	libwrapsim \
 	libxml2 \
 	libxslt \
-	libz \
 	libzipfile \
 	lights.kraken \
 	lights.qsd8k \
@@ -555,7 +530,6 @@ GRANDFATHERED_USER_MODULES += \
 	soslim \
 	spec-progress \
 	sqlite3 \
-	sqlite-jdbc \
 	stack_dump \
 	stingray-keypad.kcm \
 	stringtemplate \

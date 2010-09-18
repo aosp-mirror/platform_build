@@ -21,6 +21,7 @@ prebuilt_executables := $(LOCAL_PREBUILT_EXECUTABLES)
 prebuilt_java_libraries := $(LOCAL_PREBUILT_JAVA_LIBRARIES)
 prebuilt_static_java_libraries := $(LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES)
 prebuilt_is_host := $(LOCAL_IS_HOST_MODULE)
+prebuilt_module_tags := $(LOCAL_MODULE_TAGS)
 
 
 ifndef multi_prebuilt_once
@@ -29,9 +30,10 @@ multi_prebuilt_once := true
 # $(1): file list
 # $(2): IS_HOST_MODULE
 # $(3): MODULE_CLASS
-# $(4): OVERRIDE_BUILT_MODULE_PATH
-# $(5): UNINSTALLABLE_MODULE
-# $(6): BUILT_MODULE_STEM
+# $(4): MODULE_TAGS
+# $(5): OVERRIDE_BUILT_MODULE_PATH
+# $(6): UNINSTALLABLE_MODULE
+# $(7): BUILT_MODULE_STEM
 #
 # Elements in the file list may be bare filenames,
 # or of the form "<modulename>:<filename>".
@@ -45,8 +47,9 @@ $(foreach t,$(1), \
   $(eval include $(CLEAR_VARS)) \
   $(eval LOCAL_IS_HOST_MODULE := $(2)) \
   $(eval LOCAL_MODULE_CLASS := $(3)) \
-  $(eval OVERRIDE_BUILT_MODULE_PATH := $(4)) \
-  $(eval LOCAL_UNINSTALLABLE_MODULE := $(5)) \
+  $(eval LOCAL_MODULE_TAGS := $(4)) \
+  $(eval OVERRIDE_BUILT_MODULE_PATH := $(5)) \
+  $(eval LOCAL_UNINSTALLABLE_MODULE := $(6)) \
   $(eval tw := $(subst :, ,$(strip $(t)))) \
   $(if $(word 3,$(tw)),$(error $(LOCAL_PATH): Bad prebuilt filename '$(t)')) \
   $(if $(word 2,$(tw)), \
@@ -56,8 +59,8 @@ $(foreach t,$(1), \
     $(eval LOCAL_MODULE := $(basename $(notdir $(t)))) \
     $(eval LOCAL_SRC_FILES := $(t)) \
    ) \
-  $(if $(6), \
-    $(eval LOCAL_BUILT_MODULE_STEM := $(6)) \
+  $(if $(7), \
+    $(eval LOCAL_BUILT_MODULE_STEM := $(7)) \
    , \
     $(eval LOCAL_BUILT_MODULE_STEM := $(notdir $(LOCAL_SRC_FILES))) \
    ) \
@@ -73,6 +76,7 @@ $(call auto-prebuilt-boilerplate, \
     $(prebuilt_static_libs), \
     $(prebuilt_is_host), \
     STATIC_LIBRARIES, \
+    $(prebuilt_module_tags), \
     , \
     true)
 
@@ -80,17 +84,20 @@ $(call auto-prebuilt-boilerplate, \
     $(prebuilt_shared_libs), \
     $(prebuilt_is_host), \
     SHARED_LIBRARIES, \
+    $(prebuilt_module_tags), \
     $($(if $(prebuilt_is_host),HOST,TARGET)_OUT_INTERMEDIATE_LIBRARIES))
 
 $(call auto-prebuilt-boilerplate, \
     $(prebuilt_executables), \
     $(prebuilt_is_host), \
-    EXECUTABLES)
+    EXECUTABLES, \
+    $(prebuilt_module_tags))
 
 $(call auto-prebuilt-boilerplate, \
     $(prebuilt_java_libraries), \
     $(prebuilt_is_host), \
     JAVA_LIBRARIES, \
+    $(prebuilt_module_tags), \
     , \
     , \
     javalib.jar)
@@ -99,6 +106,7 @@ $(call auto-prebuilt-boilerplate, \
     $(prebuilt_static_java_libraries), \
     $(prebuilt_is_host), \
     JAVA_LIBRARIES, \
+    $(prebuilt_module_tags), \
     , \
     true, \
     javalib.jar)
@@ -109,3 +117,4 @@ prebuilt_executables :=
 prebuilt_java_libraries :=
 prebuilt_static_java_libraries :=
 prebuilt_is_host :=
+prebuilt_module_tags :=
