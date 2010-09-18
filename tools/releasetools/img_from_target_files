@@ -64,12 +64,13 @@ def AddUserdata(output_zip):
   if OPTIONS.info_dict.get("fs_type", "").startswith("ext"):
     build_command = ["mkuserimg.sh",
                      user_dir, img.name, OPTIONS.info_dict["fs_type"], "userdata"]
-    if "userdata.img" in OPTIONS.max_image_size:
-      build_command.append(str(OPTIONS.max_image_size["userdata.img"]))
+    if "userdata_size" in OPTIONS.info_dict:
+      build_command.append(str(OPTIONS.info_dict["userdata_size"]))
   else:
     build_command = ["mkyaffs2image", "-f"]
-    if OPTIONS.mkyaffs2_extra_flags is not None:
-      build_command.append(OPTIONS.mkyaffs2_extra_flags);
+    extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
+    if extra:
+      build_command.extend(extra.split())
     build_command.append(user_dir)
     build_command.append(img.name)
 
@@ -77,7 +78,7 @@ def AddUserdata(output_zip):
   p.communicate()
   assert p.returncode == 0, "build userdata.img image failed"
 
-  common.CheckSize(img.name, "userdata.img")
+  common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
   output_zip.write(img.name, "userdata.img")
   img.close()
   os.rmdir(user_dir)
@@ -111,12 +112,13 @@ def AddSystem(output_zip):
     build_command = ["mkuserimg.sh",
                      os.path.join(OPTIONS.input_tmp, "system"), img.name,
                      OPTIONS.info_dict["fs_type"], "system"]
-    if "system.img" in OPTIONS.max_image_size:
-      build_command.append(str(OPTIONS.max_image_size["system.img"]))
+    if "system_img" in OPTIONS.info_dict:
+      build_command.append(str(OPTIONS.info_dict["system_size"]))
   else:
     build_command = ["mkyaffs2image", "-f"]
-    if OPTIONS.mkyaffs2_extra_flags is not None:
-      build_command.extend(OPTIONS.mkyaffs2_extra_flags.split());
+    extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
+    if extra:
+      build_command.extend(extra.split())
     build_command.append(os.path.join(OPTIONS.input_tmp, "system"))
     build_command.append(img.name)
 
@@ -128,7 +130,7 @@ def AddSystem(output_zip):
   data = img.read()
   img.close()
 
-  common.CheckSize(data, "system.img")
+  common.CheckSize(data, "system.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "system.img", data)
 
 
@@ -158,20 +160,13 @@ def main(argv):
 
   OPTIONS.input_tmp = common.UnzipTemp(args[0])
 
-  OPTIONS.info_dict = common.LoadInfoDict()
-  common.LoadMaxSizes(OPTIONS.info_dict)
-  if not OPTIONS.max_image_size:
-    print
-    print "  WARNING:  Failed to load max image sizes; will not enforce"
-    print "  image size limits."
-    print
-
-  common.LoadMkyaffs2ExtraFlags()
+  input_zip = zipfile.ZipFile(args[0], "r")
+  OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
   output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
 
-  common.AddBoot(output_zip)
-  common.AddRecovery(output_zip)
+  common.AddBoot(output_zip, OPTIONS.info_dict)
+  common.AddRecovery(output_zip, OPTIONS.info_dict)
   AddSystem(output_zip)
   AddUserdata(output_zip)
   CopyInfo(output_zip)
