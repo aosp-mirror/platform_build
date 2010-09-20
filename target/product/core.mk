@@ -62,6 +62,7 @@ PRODUCT_PACKAGES := \
     ApplicationsProvider \
     ContactsProvider \
     DownloadProvider \
+    DownloadProviderUi \
     MediaProvider \
     PicoTts \
     SettingsProvider \
