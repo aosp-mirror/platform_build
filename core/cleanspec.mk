@@ -22,7 +22,7 @@
 # IDEALLY, THOSE STEPS SHOULD BE DONE ATOMICALLY.
 # **********************************************************************
 #
-INTERNAL_CLEAN_BUILD_VERSION := 5
+INTERNAL_CLEAN_BUILD_VERSION := 6
 #
 # ***********************************************************************
 # Do not touch INTERNAL_CLEAN_BUILD_VERSION if you've added a clean step!
