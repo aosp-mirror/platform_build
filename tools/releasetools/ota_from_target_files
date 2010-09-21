@@ -363,10 +363,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.ShowProgress(0.5, 0)
 
   if OPTIONS.wipe_user_data:
-    script.FormatPartition("userdata")
+    script.FormatPartition("/data")
 
-  script.FormatPartition("system")
-  script.Mount("system", "/system")
+  script.FormatPartition("/system")
+  script.Mount("/system")
   script.UnpackPackageDir("recovery", "/system")
   script.UnpackPackageDir("system", "/system")
 
@@ -387,7 +387,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.ShowProgress(0.2, 0)
 
   script.ShowProgress(0.2, 10)
-  script.WriteRawImage("boot", "boot.img")
+  script.WriteRawImage("/boot", "boot.img")
 
   script.ShowProgress(0.1, 0)
   device_specific.FullOTA_InstallEnd()
@@ -500,7 +500,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
 
-  script.Mount("system", "/system")
+  script.Mount("/system")
   script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = common.File("/tmp/boot.img",
@@ -564,7 +564,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
-    script.FormatPartition("userdata")
+    script.FormatPartition("/data")
 
   script.Print("Removing unneeded files...")
   script.DeleteFiles(["/"+i[0] for i in verbatim_targets] +
