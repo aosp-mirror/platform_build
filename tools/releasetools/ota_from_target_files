@@ -325,15 +325,33 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
 
+
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    # TODO: this is duplicated from edify_generator.py; fix.
+    PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
+                        "ext4": "EMMC", "emmc": "EMMC" }
+
+    boot_type = PARTITION_TYPES[fstab["/boot"].fs_type]
+    boot_device = fstab["/boot"].device
+
+    recovery_type = PARTITION_TYPES[fstab["/recovery"].fs_type]
+    recovery_device = fstab["/recovery"].device
+  else:
+    # backwards compatibility for target files w/o recovery.fstab
+    boot_type = recovery_type = OPTIONS.info_dict["partition_type"]
+    boot_device = OPTIONS.info_dict.get("partition_path", "") + "boot"
+    recovery_device = OPTIONS.info_dict.get("partition_path", "") + "recovery"
+
   # Images with different content will have a different first page, so
   # we check to see if this recovery has already been installed by
   # testing just the first 2k.
   HEADER_SIZE = 2048
   header_sha1 = sha.sha(recovery_img.data[:HEADER_SIZE]).hexdigest()
   sh = """#!/system/bin/sh
-if ! applypatch -c %(partition_type)s:%(partition_path)srecovery:%(header_size)d:%(header_sha1)s; then
+if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(header_size)d:%(header_sha1)s; then
   log -t recovery "Installing new recovery image"
-  applypatch %(partition_type)s:%(partition_path)sboot:%(boot_size)d:%(boot_sha1)s %(partition_type)s:%(partition_path)srecovery %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
+  applypatch %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
 else
   log -t recovery "Recovery image already installed"
 fi
@@ -343,8 +361,10 @@ fi
         'header_sha1': header_sha1,
         'recovery_size': recovery_img.size,
         'recovery_sha1': recovery_img.sha1,
-        'partition_type': OPTIONS.info_dict["partition_type"],
-        'partition_path': OPTIONS.info_dict.get("partition_path", ""),
+        'boot_type': boot_type,
+        'boot_device': boot_device,
+        'recovery_type': recovery_type,
+        'recovery_device': recovery_device,
         }
   common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
@@ -379,10 +399,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.ShowProgress(0.5, 0)
 
   if OPTIONS.wipe_user_data:
-    script.FormatPartition("userdata")
+    script.FormatPartition("/data")
 
-  script.FormatPartition("system")
-  script.Mount("system", "/system")
+  script.FormatPartition("/system")
+  script.Mount("/system")
   script.UnpackPackageDir("recovery", "/system")
   script.UnpackPackageDir("system", "/system")
 
@@ -407,7 +427,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.ShowProgress(0.2, 0)
 
   script.ShowProgress(0.2, 10)
-  script.WriteRawImage("boot", "boot.img")
+  script.WriteRawImage("/boot", "boot.img")
 
   script.ShowProgress(0.1, 0)
   device_specific.FullOTA_InstallEnd()
@@ -527,7 +547,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
 
-  script.Mount("system", "/system")
+  script.Mount("/system")
   script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = common.File("/tmp/boot.img",
@@ -592,7 +612,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
-    script.FormatPartition("userdata")
+    script.FormatPartition("/data")
 
   script.Print("Removing unneeded files...")
   script.DeleteFiles(["/"+i[0] for i in verbatim_targets] +
