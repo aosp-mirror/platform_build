@@ -61,9 +61,10 @@ def AddUserdata(output_zip):
   img = tempfile.NamedTemporaryFile()
 
   build_command = []
-  if OPTIONS.info_dict.get("fs_type", "").startswith("ext"):
+  if OPTIONS.info_dict["fstab"]["/data"].fs_type.startswith("ext"):
     build_command = ["mkuserimg.sh",
-                     user_dir, img.name, OPTIONS.info_dict["fs_type"], "userdata"]
+                     user_dir, img.name,
+                     OPTIONS.info_dict["fstab"]["/data"].fs_type, "userdata"]
     if "userdata_size" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["userdata_size"]))
   else:
@@ -108,10 +109,10 @@ def AddSystem(output_zip):
       pass
 
   build_command = []
-  if OPTIONS.info_dict.get("fs_type", "").startswith("ext"):
+  if OPTIONS.info_dict["fstab"]["/system"].fs_type.startswith("ext"):
     build_command = ["mkuserimg.sh",
                      os.path.join(OPTIONS.input_tmp, "system"), img.name,
-                     OPTIONS.info_dict["fs_type"], "system"]
+                     OPTIONS.info_dict["fstab"]["/system"].fs_type, "system"]
     if "system_img" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["system_size"]))
   else:
