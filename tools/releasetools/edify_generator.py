@@ -22,7 +22,8 @@ class EdifyGenerator(object):
   used from donut onwards."""
 
   # map recovery.fstab's fs_types to mount/format "partition types"
-  PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD", "ext4": "EMMC" }
+  PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
+                      "ext4": "EMMC", "emmc": "EMMC" }
 
   def __init__(self, version, info):
     self.script = []
