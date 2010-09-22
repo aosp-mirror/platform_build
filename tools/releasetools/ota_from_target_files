@@ -76,6 +76,10 @@ OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
 OPTIONS.worker_threads = 3
 
+# TODO: this is duplicated from edify_generator.py; fix.
+PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
+                    "ext4": "EMMC", "emmc": "EMMC" }
+
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
   value.  Returns 'default' if the dict is empty."""
@@ -90,6 +94,18 @@ def IsSymlink(info):
   symlink."""
   return (info.external_attr >> 16) == 0120777
 
+
+def GetTypeAndDevice(mount_point, info):
+  fstab = info["fstab"]
+  if fstab:
+    return PARTITION_TYPES[fstab[mount_point].fs_type], fstab[mount_point].device
+  else:
+    devices = {"/boot": "boot",
+               "/recovery": "recovery",
+               "/radio": "radio",
+               "/data": "userdata",
+               "/cache": "cache"}
+    return info["partition_type"], info.get("partition_path", "") + devices[mount_point]
 
 
 class Item:
@@ -312,15 +328,18 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
 
+  boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
+  recovery_type, recovery_device = GetTypeAndDevice("/recovery", OPTIONS.info_dict)
+
   # Images with different content will have a different first page, so
   # we check to see if this recovery has already been installed by
   # testing just the first 2k.
   HEADER_SIZE = 2048
   header_sha1 = sha.sha(recovery_img.data[:HEADER_SIZE]).hexdigest()
   sh = """#!/system/bin/sh
-if ! applypatch -c MTD:recovery:%(header_size)d:%(header_sha1)s; then
+if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(header_size)d:%(header_sha1)s; then
   log -t recovery "Installing new recovery image"
-  applypatch MTD:boot:%(boot_size)d:%(boot_sha1)s MTD:recovery %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
+  applypatch %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
 else
   log -t recovery "Recovery image already installed"
 fi
@@ -329,7 +348,12 @@ fi
         'header_size': HEADER_SIZE,
         'header_sha1': header_sha1,
         'recovery_size': recovery_img.size,
-        'recovery_sha1': recovery_img.sha1 }
+        'recovery_sha1': recovery_img.sha1,
+        'boot_type': boot_type,
+        'boot_device': boot_device,
+        'recovery_type': recovery_type,
+        'recovery_device': recovery_device,
+        }
   common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
 
@@ -549,8 +573,11 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
-    script.PatchCheck("MTD:boot:%d:%s:%d:%s" %
-                      (source_boot.size, source_boot.sha1,
+    boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
+
+    script.PatchCheck("%s:%s:%d:%s:%d:%s" %
+                      (boot_type, boot_device,
+                       source_boot.size, source_boot.sha1,
                        target_boot.size, target_boot.sha1))
     so_far += source_boot.size
     script.SetProgress(so_far / total_verify_size)
@@ -589,8 +616,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # contents of the boot partition, and write it back to the
     # partition.
     script.Print("Patching boot image...")
-    script.ApplyPatch("MTD:boot:%d:%s:%d:%s"
-                      % (source_boot.size, source_boot.sha1,
+    script.ApplyPatch("%s:%s:%d:%s:%d:%s"
+                      % (boot_type, boot_device,
+                         source_boot.size, source_boot.sha1,
                          target_boot.size, target_boot.sha1),
                       "-",
                       target_boot.size, target_boot.sha1,
