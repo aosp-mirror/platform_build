@@ -17,41 +17,10 @@
 # This is a generic phone product that isn't specialized for a specific device.
 # It includes the base Android platform.
 
-PRODUCT_POLICY := android.policy_phone
-
 PRODUCT_PACKAGES := \
-    AccountAndSyncSettings \
-    CarHome \
-    DeskClock \
-    AlarmProvider \
-    Bluetooth \
-    Calculator \
-    Calendar \
-    Camera \
-    CertInstaller \
-    DrmProvider \
-    Email \
-    Gallery3D \
-    LatinIME \
-    Launcher2 \
-    Mms \
-    Music \
-    Provision \
-    Phone \
-    Protips \
-    QuickSearchBox \
-    Settings \
-    Sync \
-    SystemUI \
-    Updater \
-    CalendarProvider \
-    SyncProvider
+    Mms
 
-PRODUCT_PACKAGES += \
-    icu.dat
-
-$(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
 
 # Overrides
 PRODUCT_BRAND := generic

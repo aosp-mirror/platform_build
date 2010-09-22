@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-# This is a generic product for devices with large display but not specialized
-# for a specific device. It includes the base Android platform.
+# This is a generic phone product that isn't specialized for a specific device.
+# It includes the base Android platform.
 
-PRODUCT_POLICY := android.policy_mid
+PRODUCT_POLICY := android.policy_phone
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
@@ -36,16 +36,23 @@ PRODUCT_PACKAGES := \
     Launcher2 \
     Music \
     Provision \
+    Phone \
+    Protips \
     QuickSearchBox \
     Settings \
     Sync \
+    SystemUI \
     Updater \
     CalendarProvider \
     SyncProvider
 
+PRODUCT_PACKAGES += \
+    icu.dat
+
+$(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 # Overrides
 PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
-PRODUCT_NAME := large_emu_hw
+PRODUCT_NAME := generic_no_telephony

@@ -19,19 +19,24 @@
 # build of the emulator, but all those aspects can be overridden
 # in inherited configurations.
 
+PRODUCT_PACKAGES := \
+    OpenWnn \
+    PinyinIME \
+    VoiceDialer \
+    libWnnEngDic \
+    libWnnJpnDic \
+    libwnndict
+
+# Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \
-    ro.com.android.dataroaming=true \
-    ro.ril.hsxpa=1 \
-    ro.ril.gprsclass=10
+    keyguard.no_require_sim=true \
+    ro.com.android.dateformat=MM-dd-yyyy
 
 PRODUCT_COPY_FILES := \
-    development/data/etc/apns-conf.xml:system/etc/apns-conf.xml
+    development/data/etc/vold.conf:system/etc/vold.conf
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_no_telephony.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
+# Pick up some sounds.
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage4.mk)
 
-# Overrides
-PRODUCT_NAME := full
-PRODUCT_BRAND := generic
-PRODUCT_DEVICE := generic
-PRODUCT_MODEL := Full Android
+# Get a list of languages.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
