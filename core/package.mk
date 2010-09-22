@@ -154,6 +154,14 @@ endif # all_resources
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
+ifeq (true,$(WITH_DEXPREOPT))
+ifneq (,$(LOCAL_SRC_FILES))
+ifndef LOCAL_DEX_PREOPT
+LOCAL_DEX_PREOPT := true
+endif
+endif
+endif
+
 # The dex files go in the package, so we don't
 # want to install them separately for this module.
 old_DONT_INSTALL_DEX_FILES := $(DONT_INSTALL_DEX_FILES)
@@ -314,6 +322,10 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
+ifeq ($(LOCAL_DEX_PREOPT),true)
+# Make sure the boot jars get dexpreopt-ed first
+$(LOCAL_BUILT_MODULE): $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT)
+endif
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries)
 ifneq ($(TARGET_BUILD_APPS),)
     # Include all resources for unbundled apps.
@@ -332,6 +344,14 @@ endif
 	$(sign-package)
 	@# Alignment must happen after all other zip operations.
 	$(align-package)
+ifeq ($(LOCAL_DEX_PREOPT),true)
+	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
+	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
+	$(call dexpreopt-remove-classes.dex,$@)
+
+built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
+$(built_odex): $(LOCAL_BUILT_MODULE)
+endif
 
 # Save information about this package
 PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))

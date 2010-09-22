@@ -737,7 +737,8 @@ INSTALLED_SYSTEMIMAGE := $(PRODUCT_OUT)/system.img
 
 ifdef WITH_DEXPREOPT
   ifndef DISABLE_DEXPREOPT
-    with_dexpreopt := true
+# TODO: remove the unnecessary code.
+#  with_dexpreopt := true
   endif
 endif
 ifdef with_dexpreopt
