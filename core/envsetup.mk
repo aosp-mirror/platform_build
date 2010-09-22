@@ -119,6 +119,11 @@ else
   HOST_PREBUILT_TAG := $(HOST_OS)-$(HOST_ARCH)
 endif
 
+# Build dalvikvm on hosts that support it
+ifeq ($(HOST_OS),linux)
+	WITH_HOST_DALVIK := true
+endif
+
 
 # ---------------------------------------------------------------
 # Set up configuration for target machine.
