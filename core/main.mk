@@ -225,11 +225,6 @@ ifneq (,$(user_variant))
     WITH_DEXPREOPT := true
   endif
 
-  # TODO: Always set WITH_HOST_DALVIK (for user builds) once it works on OSX.
-  ifeq ($(HOST_OS),linux)
-    WITH_HOST_DALVIK := true
-  endif
-
   # Disallow mock locations by default for user builds
   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
 
