@@ -16,6 +16,24 @@
       "revId": "5360e7c2e6d66da1d7f781fcb85a380d9fafd610",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA7n///eo\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-09-22T18:05:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AAAA7n///e0\u003d",
+      "revId": "5360e7c2e6d66da1d7f781fcb85a380d9fafd610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
