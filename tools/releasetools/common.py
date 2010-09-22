@@ -72,9 +72,6 @@ def LoadInfoDict(zip):
     # ok if misc_info.txt doesn't exist
     pass
 
-  if "fs_type" not in d: d["fs_type"] = "yaffs2"
-  if "partition_type" not in d: d["partition_type"] = "MTD"
-
   # backwards compatibility: These values used to be in their own
   # files.  Look for them, in case we're processing an old
   # target_files zip.
@@ -123,7 +120,44 @@ def LoadInfoDict(zip):
   makeint("recovery_size")
   makeint("boot_size")
 
+  d["fstab"] = LoadRecoveryFSTab(zip)
+  if not d["fstab"]:
+    if "fs_type" not in d: d["fs_type"] = "yaffs2"
+    if "partition_type" not in d: d["partition_type"] = "MTD"
+
   return d
+
+def LoadRecoveryFSTab(zip):
+  class Partition(object):
+    pass
+
+  try:
+    data = zip.read("RECOVERY/RAMDISK/etc/recovery.fstab")
+  except KeyError:
+    # older target-files that doesn't have a recovery.fstab; fall back
+    # to the fs_type and partition_type keys.
+    return
+
+  d = {}
+  for line in data.split("\n"):
+    line = line.strip()
+    if not line or line.startswith("#"): continue
+    pieces = line.split()
+    if not (3 <= len(pieces) <= 4):
+      raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
+
+    p = Partition()
+    p.mount_point = pieces[0]
+    p.fs_type = pieces[1]
+    p.device = pieces[2]
+    if len(pieces) == 4:
+      p.device2 = pieces[3]
+    else:
+      p.device2 = None
+
+    d[p.mount_point] = p
+  return d
+
 
 def DumpInfoDict(d):
   for k, v in sorted(d.items()):
@@ -308,12 +342,18 @@ def CheckSize(data, target, info_dict):
   any, for the given target.  Raise exception if the data is too big.
   Print a warning if the data is nearing the maximum size."""
 
-  fs_type = info_dict.get("fs_type", None)
-  if not fs_type: return
-
   if target.endswith(".img"): target = target[:-4]
-  limit = info_dict.get(target + "_size", None)
-  if limit is None: return
+  mount_point = "/" + target
+
+  if info_dict["fstab"]:
+    if mount_point == "/userdata": mount_point = "/data"
+    p = info_dict["fstab"][mount_point]
+    fs_type = p.fs_type
+    limit = info_dict.get(p.device + "_size", None)
+  else:
+    fs_type = info_dict.get("fs_type", None)
+    limit = info_dict.get(target + "_size", None)
+  if not fs_type or not limit: return
 
   if fs_type == "yaffs2":
     # image size should be increased by 1/64th to account for the

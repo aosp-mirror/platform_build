@@ -601,9 +601,14 @@ recovery_resources_common := $(call include-path-for, recovery)/res
 recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
   $(recovery_resources_private) -type f)
+recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
 
 ifeq ($(recovery_resources_private),)
   $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
+endif
+
+ifeq ($(recovery_fstab),)
+  $(info No recovery.fstab for TARGET_DEVICE $(TARGET_DEVICE))
 endif
 
 INTERNAL_RECOVERYIMAGE_ARGS := \
@@ -647,6 +652,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(recovery_initrc) $(recovery_kernel) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
 		$(recovery_build_prop) $(recovery_resource_deps) \
+		$(recovery_fstab) \
 		$(RECOVERY_INSTALL_OTA_KEYS)
 	@echo ----- Making recovery image ------
 	rm -rf $(TARGET_RECOVERY_OUT)
@@ -663,6 +669,8 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	cp -rf $(recovery_resources_common) $(TARGET_RECOVERY_ROOT_OUT)/
 	$(foreach item,$(recovery_resources_private), \
 	  cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/)
+	$(foreach item,$(recovery_fstab), \
+	  cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.fstab)
 	cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
 	cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
 	        > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
@@ -1010,15 +1018,6 @@ ifdef BOARD_SYSTEMIMAGE_PARTITION_SIZE
 endif
 ifdef BOARD_USERDATAIMAGE_PARTITION_SIZE
 	$(hide) echo "userdata_size=$(BOARD_USERDATAIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
-endif
-ifneq (,$(INTERNAL_USERIMAGES_EXT_VARIANT))
-	$(hide) echo "fs_type=$(INTERNAL_USERIMAGES_EXT_VARIANT)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "partition_type=EMMC" >> $(zip_root)/META/misc_info.txt
-	@# TODO: where is the right place to get this path from?  BoardConfig.mk?
-	$(hide) echo "partition_path=/dev/block/platform/sdhci-tegra.3/by-name/" >> $(zip_root)/META/misc_info.txt
-else
-	$(hide) echo "fs_type=yaffs2" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "partition_type=MTD" >> $(zip_root)/META/misc_info.txt
 endif
 	$(hide) echo "tool_extensions=$(tool_extensions)" >> $(zip_root)/META/misc_info.txt
 ifdef mkyaffs2_extra_flags
