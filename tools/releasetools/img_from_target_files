@@ -115,7 +115,7 @@ def AddSystem(output_zip):
     build_command = ["mkuserimg.sh",
                      os.path.join(OPTIONS.input_tmp, "system"), img.name,
                      fstab["/system"].fs_type, "system"]
-    if "system_img" in OPTIONS.info_dict:
+    if "system_size" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["system_size"]))
   else:
     build_command = ["mkyaffs2image", "-f"]
