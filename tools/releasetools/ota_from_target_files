@@ -79,6 +79,10 @@ OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
 
+# TODO: this is duplicated from edify_generator.py; fix.
+PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
+                    "ext4": "EMMC", "emmc": "EMMC" }
+
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
   value.  Returns 'default' if the dict is empty."""
@@ -97,6 +101,18 @@ def IsRegular(info):
   """Return true if the zipfile.ZipInfo object passed in represents a
   symlink."""
   return (info.external_attr >> 28) == 010
+
+def GetTypeAndDevice(mount_point, info):
+  fstab = info["fstab"]
+  if fstab:
+    return PARTITION_TYPES[fstab[mount_point].fs_type], fstab[mount_point].device
+  else:
+    devices = {"/boot": "boot",
+               "/recovery": "recovery",
+               "/radio": "radio",
+               "/data": "userdata",
+               "/cache": "cache"}
+    return info["partition_type"], info.get("partition_path", "") + devices[mount_point]
 
 
 class Item:
@@ -325,23 +341,8 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
 
-
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    # TODO: this is duplicated from edify_generator.py; fix.
-    PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
-                        "ext4": "EMMC", "emmc": "EMMC" }
-
-    boot_type = PARTITION_TYPES[fstab["/boot"].fs_type]
-    boot_device = fstab["/boot"].device
-
-    recovery_type = PARTITION_TYPES[fstab["/recovery"].fs_type]
-    recovery_device = fstab["/recovery"].device
-  else:
-    # backwards compatibility for target files w/o recovery.fstab
-    boot_type = recovery_type = OPTIONS.info_dict["partition_type"]
-    boot_device = OPTIONS.info_dict.get("partition_path", "") + "boot"
-    recovery_device = OPTIONS.info_dict.get("partition_path", "") + "recovery"
+  boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
+  recovery_type, recovery_device = GetTypeAndDevice("/recovery", OPTIONS.info_dict)
 
   # Images with different content will have a different first page, so
   # we check to see if this recovery has already been installed by
@@ -480,8 +481,6 @@ def GetBuildProp(property, z):
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = OPTIONS.source_info_dict["recovery_api_version"]
   target_version = OPTIONS.target_info_dict["recovery_api_version"]
-  partition_type = OPTIONS.target_info_dict["partition_type"]
-  partition_path = OPTIONS.target_info_dict.get("partition_path", "")
 
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
@@ -596,8 +595,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
-    script.PatchCheck("%s:%sboot:%d:%s:%d:%s" %
-                      (partition_type, partition_path,
+    boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
+
+    script.PatchCheck("%s:%s:%d:%s:%d:%s" %
+                      (boot_type, boot_device,
                        source_boot.size, source_boot.sha1,
                        target_boot.size, target_boot.sha1))
     so_far += source_boot.size
@@ -637,8 +638,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # contents of the boot partition, and write it back to the
     # partition.
     script.Print("Patching boot image...")
-    script.ApplyPatch("%s:%sboot:%d:%s:%d:%s"
-                      % (partition_type, partition_path,
+    script.ApplyPatch("%s:%s:%d:%s:%d:%s"
+                      % (boot_type, boot_device,
                          source_boot.size, source_boot.sha1,
                          target_boot.size, target_boot.sha1),
                       "-",
