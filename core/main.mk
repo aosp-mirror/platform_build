@@ -75,7 +75,7 @@ build_arch := $(shell uname -m)
 ifneq (64,$(findstring 64,$(build_arch)))
 $(warning ************************************************************)
 $(warning You are attempting to build on a 32-bit system.)
-$(warning Only 64-bit build environments are supported now.)
+$(warning Only 64-bit build environments are supported beyond froyo/2.2.)
 $(warning ************************************************************)
 $(error stop)
 endif
@@ -157,6 +157,9 @@ INTERNAL_MODIFIER_TARGETS := showcommands checkbuild
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
+# Bring in dex_preopt.mk
+include $(BUILD_SYSTEM)/dex_preopt.mk
+
 ifneq ($(filter eng user userdebug tests,$(MAKECMDGOALS)),)
 $(info ***************************************************************)
 $(info ***************************************************************)
@@ -223,11 +226,6 @@ ifneq (,$(user_variant))
   # working.
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
-  endif
-
-  # TODO: Always set WITH_HOST_DALVIK (for user builds) once it works on OSX.
-  ifeq ($(HOST_OS),linux)
-    WITH_HOST_DALVIK := true
   endif
 
   # Disallow mock locations by default for user builds
