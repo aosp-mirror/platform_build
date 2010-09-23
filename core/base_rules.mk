@@ -494,6 +494,16 @@ $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	$(copy-file-to-target-with-cp)
 endif
 
+ifeq ($(LOCAL_DEX_PREOPT),true)
+installed_odex := $(basename $(LOCAL_INSTALLED_MODULE)).odex
+built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
+$(installed_odex) : $(built_odex) | $(ACP)
+	@echo "Install: $@"
+	$(copy-file-to-target)
+
+$(LOCAL_INSTALLED_MODULE): $(installed_odex)
+endif
+
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 
