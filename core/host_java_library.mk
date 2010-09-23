@@ -23,14 +23,32 @@ LOCAL_MODULE_SUFFIX := $(COMMON_JAVA_PACKAGE_SUFFIX)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
-include $(BUILD_SYSTEM)/base_rules.mk
-
 ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+intermediates := $(call local-intermediates-dir)
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 built_dex := $(intermediates.COMMON)/classes.dex
 
+LOCAL_INTERMEDIATE_TARGETS += \
+    $(full_classes_jar) \
+    $(built_dex)
+
+LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
+endif # LOCAL_BUILD_HOST_DEX
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
+
+$(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
+
 $(full_classes_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
-$(full_classes_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps)
+$(full_classes_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file)
 	$(transform-host-java-to-package)
 
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
@@ -49,6 +67,6 @@ endif
 
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
-$(LOCAL_BUILT_MODULE): $(java_sources) $(java_resource_sources) $(full_java_lib_deps)
+$(LOCAL_BUILT_MODULE): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file)
 	$(transform-host-java-to-package)
 endif  # LOCAL_BUILD_HOST_DEX
