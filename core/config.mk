@@ -221,6 +221,8 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 SLANG := $(HOST_OUT_EXECUTABLES)/slang$(HOST_EXECUTABLE_SUFFIX)
+DEXOPT := $(HOST_OUT_EXECUTABLES)/dexopt$(HOST_EXECUTABLE_SUFFIX)
+DEXPREOPT := dalvik/tools/dex-preopt
 
 # ACP is always for the build OS, not for the host OS
 ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)
@@ -269,8 +271,8 @@ HOST_JDK_TOOLS_JAR :=
 else
 HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
 ifeq ($(wildcard $(HOST_JDK_TOOLS_JAR)),)
-$(error Error: could not find jdk tools.jar, please install JDK-5.0, \
-    update 12 or higher, which you can download from java.sun.com)
+$(error Error: could not find jdk tools.jar, please install JDK6, \
+    which you can download from java.sun.com)
 endif
 endif
 

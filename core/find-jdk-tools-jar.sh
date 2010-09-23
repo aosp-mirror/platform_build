@@ -3,7 +3,7 @@ if [ "x$ANDROID_JAVA_HOME" != x ] && [ -e "$ANDROID_JAVA_HOME/lib/tools.jar" ] ;
 else
     JAVAC=$(which javac)
     if [ -z "$JAVAC" ] ; then
-	exit 1
+        exit 1
     fi
     while [ -L $JAVAC ] ; do
         LSLINE=$(ls -l $JAVAC)
