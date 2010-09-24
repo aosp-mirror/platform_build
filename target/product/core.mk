@@ -53,6 +53,7 @@ PRODUCT_PACKAGES := \
     libssl \
     libz \
     sqlite-jdbc \
+    wpa_supplicant.conf \
     Browser \
     CarHomeLauncher \
     Contacts \
@@ -81,4 +82,3 @@ ifeq ($(WITH_HOST_DALVIK),true)
         core-hostdex \
         libjavacore-host
 endif
-
