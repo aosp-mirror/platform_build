@@ -28,7 +28,7 @@ ifdef LOCAL_NDK_VERSION
   ifndef LOCAL_SDK_VERSION
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION must be defined with LOCAL_SDK_VERSION)
   endif
-  my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/$(BUILD_OS)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
+  my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
   ifeq ($(wildcard $(my_ndk_version_root)),)
     $(error $(LOCAL_PATH): ndk version root does not exist: $(my_ndk_version_root))
   endif
