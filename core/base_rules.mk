@@ -499,7 +499,7 @@ $(installed_odex) : $(built_odex) | $(ACP)
 	@echo "Install: $@"
 	$(copy-file-to-target)
 
-$(LOCAL_INSTALLED_MODULE): $(installed_odex)
+$(LOCAL_INSTALLED_MODULE) : | $(installed_odex)
 endif
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
