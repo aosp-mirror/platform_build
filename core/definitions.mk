@@ -1470,7 +1470,12 @@ endef
 
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) $(AAPT) add -k $@ $(PRIVATE_DEX_FILE)
+$(if $(filter classes.dex,$(notdir $(PRIVATE_DEX_FILE))),\
+$(hide) $(AAPT) add -k $@ $(PRIVATE_DEX_FILE),\
+$(eval _adtp_classes.dex := $(dir $(PRIVATE_DEX_FILE))/classes.dex)\
+$(hide) cp $(PRIVATE_DEX_FILE) $(_adtp_classes.dex) && \
+$(AAPT) add -k $@ $(_adtp_classes.dex) && \
+rm -f $(_adtp_classes.dex))
 endef
 
 define add-java-resources-to-package
