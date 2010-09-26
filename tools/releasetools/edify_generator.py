@@ -21,10 +21,6 @@ class EdifyGenerator(object):
   """Class to generate scripts in the 'edify' recovery script language
   used from donut onwards."""
 
-  # map recovery.fstab's fs_types to mount/format "partition types"
-  PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
-                      "ext4": "EMMC", "emmc": "EMMC" }
-
   def __init__(self, version, info):
     self.script = []
     self.mounts = set()
@@ -141,7 +137,7 @@ class EdifyGenerator(object):
     if fstab:
       p = fstab[mount_point]
       self.script.append('mount("%s", "%s", "%s", "%s");' %
-                         (p.fs_type, self.PARTITION_TYPES[p.fs_type],
+                         (p.fs_type, common.PARTITION_TYPES[p.fs_type],
                           p.device, p.mount_point))
       self.mounts.add(p.mount_point)
     else:
@@ -176,7 +172,7 @@ class EdifyGenerator(object):
     if fstab:
       p = fstab[partition]
       self.script.append('format("%s", "%s", "%s");' %
-                         (p.fs_type, self.PARTITION_TYPES[p.fs_type], p.device))
+                         (p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device))
     else:
       # older target-files without per-partition types
       partition = self.info.get("partition_path", "") + partition
@@ -223,7 +219,7 @@ class EdifyGenerator(object):
     fstab = self.info["fstab"]
     if fstab:
       p = fstab[mount_point]
-      partition_type = self.PARTITION_TYPES[p.fs_type]
+      partition_type = common.PARTITION_TYPES[p.fs_type]
       args = {'device': p.device, 'fn': fn}
       if partition_type == "MTD":
         self.script.append(

@@ -765,3 +765,20 @@ def ComputeDifferences(diffs):
     th.start()
   while threads:
     threads.pop().join()
+
+
+# map recovery.fstab's fs_types to mount/format "partition types"
+PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
+                    "ext4": "EMMC", "emmc": "EMMC" }
+
+def GetTypeAndDevice(mount_point, info):
+  fstab = info["fstab"]
+  if fstab:
+    return PARTITION_TYPES[fstab[mount_point].fs_type], fstab[mount_point].device
+  else:
+    devices = {"/boot": "boot",
+               "/recovery": "recovery",
+               "/radio": "radio",
+               "/data": "userdata",
+               "/cache": "cache"}
+    return info["partition_type"], info.get("partition_path", "") + devices[mount_point]
