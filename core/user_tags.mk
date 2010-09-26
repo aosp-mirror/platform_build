@@ -156,7 +156,6 @@ GRANDFATHERED_USER_MODULES += \
 	installd \
 	ip \
 	iptables \
-	ip-up-vpn \
 	iself \
 	isprelinked \
 	jarjar \
