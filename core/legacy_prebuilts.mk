@@ -22,7 +22,9 @@
 # to add any new such module in the system
 
 GRANDFATHERED_ALL_PREBUILT := \
+	akmd2 \
 	am \
+	ap_gain.bin \
 	audio.conf \
 	auto_pairing.conf \
 	AVRCP.kl \
@@ -38,6 +40,7 @@ GRANDFATHERED_ALL_PREBUILT := \
 	brcm_guci_drv \
 	bypassfactory \
 	cacerts.bks \
+	cdt.bin \
 	chat-ril \
 	cmu6plus.ok.zip \
 	cpcap-key.kl \
@@ -60,6 +63,7 @@ GRANDFATHERED_ALL_PREBUILT := \
 	gps.conf \
 	gpsconfig.xml \
 	gps.stingray.so \
+	gralloc.omap3.so \
 	gralloc.tegra.so \
 	hosts \
 	hwcomposer.tegra.so \
@@ -68,12 +72,17 @@ GRANDFATHERED_ALL_PREBUILT := \
 	init.goldfish.sh \
 	init.olympus.rc \
 	init.rc \
+	init.sholes.rc \
 	init.stingray.rc \
 	input \
 	input.conf \
 	kernel \
+	lbl \
+	libEGL_POWERVR_SGX530_121.so \
 	libEGL_tegra.so \
+	libGLESv1_CM_POWERVR_SGX530_121.so \
 	libGLESv1_CM_tegra.so \
+	libGLESv2_POWERVR_SGX530_121.so \
 	libGLESv2_tegra.so \
 	libmdmctrl.a \
 	libmoto_ril.so \
@@ -82,6 +91,9 @@ GRANDFATHERED_ALL_PREBUILT := \
 	location \
 	location.cfg \
 	main.conf \
+	mbm.bin \
+	mbm_consumer.bin \
+	mdm_panicd \
 	monkey \
 	network.conf \
 	phone_type_choice.g2g \
@@ -96,6 +108,7 @@ GRANDFATHERED_ALL_PREBUILT := \
 	RFFstd_501.bmd \
 	savebpver \
 	sbin \
+	sholes-keypad.kl \
 	suplcerts.bks \
 	svc \
 	sys \
@@ -108,6 +121,7 @@ GRANDFATHERED_ALL_PREBUILT := \
 	ueventd.stingray.rc \
 	VoiceDialer.g2g \
 	vold.fstab \
+	wl1271.bin \
 	zoneinfo.dat \
 	zoneinfo.idx \
 	zoneinfo.version
