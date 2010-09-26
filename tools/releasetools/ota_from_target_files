@@ -76,10 +76,6 @@ OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
 OPTIONS.worker_threads = 3
 
-# TODO: this is duplicated from edify_generator.py; fix.
-PARTITION_TYPES = { "yaffs2": "MTD", "mtd": "MTD",
-                    "ext4": "EMMC", "emmc": "EMMC" }
-
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
   value.  Returns 'default' if the dict is empty."""
@@ -93,19 +89,6 @@ def IsSymlink(info):
   """Return true if the zipfile.ZipInfo object passed in represents a
   symlink."""
   return (info.external_attr >> 16) == 0120777
-
-
-def GetTypeAndDevice(mount_point, info):
-  fstab = info["fstab"]
-  if fstab:
-    return PARTITION_TYPES[fstab[mount_point].fs_type], fstab[mount_point].device
-  else:
-    devices = {"/boot": "boot",
-               "/recovery": "recovery",
-               "/radio": "radio",
-               "/data": "userdata",
-               "/cache": "cache"}
-    return info["partition_type"], info.get("partition_path", "") + devices[mount_point]
 
 
 class Item:
@@ -328,8 +311,8 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
 
-  boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
-  recovery_type, recovery_device = GetTypeAndDevice("/recovery", OPTIONS.info_dict)
+  boot_type, boot_device = common.GetTypeAndDevice("/boot", OPTIONS.info_dict)
+  recovery_type, recovery_device = common.GetTypeAndDevice("/recovery", OPTIONS.info_dict)
 
   # Images with different content will have a different first page, so
   # we check to see if this recovery has already been installed by
@@ -375,7 +358,8 @@ def WriteFullOTAPackage(input_zip, output_zip):
       output_zip=output_zip,
       script=script,
       input_tmp=OPTIONS.input_tmp,
-      metadata=metadata)
+      metadata=metadata,
+      info_dict=OPTIONS.info_dict)
 
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", input_zip)
@@ -476,7 +460,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       target_version=target_version,
       output_zip=output_zip,
       script=script,
-      metadata=metadata)
+      metadata=metadata,
+      info_dict=OPTIONS.info_dict)
 
   print "Loading target..."
   target_data = LoadSystemFiles(target_zip)
@@ -573,7 +558,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
-    boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
+    boot_type, boot_device = common.GetTypeAndDevice("/boot", OPTIONS.info_dict)
 
     script.PatchCheck("%s:%s:%d:%s:%d:%s" %
                       (boot_type, boot_device,
