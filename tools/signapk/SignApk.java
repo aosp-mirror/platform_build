@@ -220,10 +220,12 @@ class SignApk {
     /** Write to another stream and also feed it to the Signature object. */
     private static class SignatureOutputStream extends FilterOutputStream {
         private Signature mSignature;
+        private int mCount;
 
         public SignatureOutputStream(OutputStream out, Signature sig) {
             super(out);
             mSignature = sig;
+            mCount = 0;
         }
 
         @Override
@@ -234,6 +236,7 @@ class SignApk {
                 throw new IOException("SignatureException: " + e);
             }
             super.write(b);
+            mCount++;
         }
 
         @Override
@@ -244,11 +247,16 @@ class SignApk {
                 throw new IOException("SignatureException: " + e);
             }
             super.write(b, off, len);
+            mCount += len;
+        }
+
+        public int size() {
+            return mCount;
         }
     }
 
     /** Write a .SF file with a digest of the specified manifest. */
-    private static void writeSignatureFile(Manifest manifest, OutputStream out)
+    private static void writeSignatureFile(Manifest manifest, SignatureOutputStream out)
             throws IOException, GeneralSecurityException {
         Manifest sf = new Manifest();
         Attributes main = sf.getMainAttributes();
@@ -282,6 +290,15 @@ class SignApk {
         }
 
         sf.write(out);
+
+        // A bug in the java.util.jar implementation of Android platforms
+        // up to version 1.6 will cause a spurious IOException to be thrown
+        // if the length of the signature file is a multiple of 1024 bytes.
+        // As a workaround, add an extra CRLF in this case.
+        if ((out.size() % 1024) == 0) {
+            out.write('\r');
+            out.write('\n');
+        }
     }
 
     /** Write a .RSA file with a digital signature. */

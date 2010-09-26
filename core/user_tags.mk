@@ -26,7 +26,6 @@ GRANDFATHERED_USER_MODULES :=
 -include vendor/google/user_tags.mk
 
 GRANDFATHERED_USER_MODULES += \
-	01-test \
 	20-dns.conf \
 	95-configured \
 	aapt \

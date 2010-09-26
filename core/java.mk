@@ -51,9 +51,6 @@ endif
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
-# This is cleared below, and re-set if we really need it.
-full_classes_jar := $(intermediates.COMMON)/classes.jar
-
 # Emma source code coverage
 ifneq ($(EMMA_INSTRUMENT),true)
 LOCAL_NO_EMMA_INSTRUMENT := true
@@ -63,34 +60,54 @@ endif
 # Choose leaf name for the compiled jar file.
 ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
 full_classes_compiled_jar_leaf := classes-no-debug-var.jar
-built_dex_leaf := classes-no-local.dex
+built_dex_intermediate_leaf := classes-no-local.dex
 else
 full_classes_compiled_jar_leaf := classes-full-debug.jar
-built_dex_leaf := classes-with-local.dex
+built_dex_intermediate_leaf := classes-with-local.dex
 endif
-full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
-built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_leaf)
 
+LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
+ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
+LOCAL_PROGUARD_ENABLED :=
+endif
+
+# By giving different file name, files can be updated correctly when switching
+# between builds with and without Proguard enabled.
+ifdef LOCAL_PROGUARD_ENABLED
+proguard_jar_leaf := proguard.classes.jar
+built_dex_leaf := progaurd.classes.dex
+else
+proguard_jar_leaf := noproguard.classes.jar
+built_dex_leaf := noproguard.classes.dex
+endif
+
+full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
 jarjar_leaf := classes-jarjar.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
 emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # emma is hardcoded to use the leaf name of its input for the output file --
 # only the output directory can be changed
 full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
-full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 full_classes_full_names_jar := $(intermediates.COMMON)/classes-full-names.jar
-full_classes_proguard_jar := $(full_classes_jar)
-built_dex := $(intermediates.COMMON)/classes.dex
+full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
+built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)
+full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
+
+# full_classes_jar and built_dex are cleared below, and re-set if we really need them.
+full_classes_jar := $(intermediates.COMMON)/classes.jar
+built_dex := $(intermediates.COMMON)/$(built_dex_leaf)
 
 LOCAL_INTERMEDIATE_TARGETS += \
-    $(full_classes_jar) \
     $(full_classes_compiled_jar) \
+    $(full_classes_jarjar_jar) \
     $(full_classes_emma_jar) \
     $(full_classes_full_names_jar) \
-    $(full_classes_stubs_jar) \
-    $(full_classes_jarjar_jar) \
+    $(full_classes_proguard_jar) \
+    $(full_classes_jar) \
+    $(built_dex_intermediate) \
     $(built_dex) \
-    $(built_dex_intermediate)
+    $(full_classes_stubs_jar)
+
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
@@ -156,7 +173,7 @@ ifneq (,$(strip $(all_java_sources)))
 # LOCAL_BUILT_MODULE, so it will inherit the necessary PRIVATE_*
 # variable definitions.
 full_classes_jar := $(intermediates.COMMON)/classes.jar
-built_dex := $(intermediates.COMMON)/classes.dex
+built_dex := $(intermediates.COMMON)/$(built_dex_leaf)
 
 # Droiddoc isn't currently able to generate stubs for modules, so we're just
 # allowing it to use the classes.jar as the "stubs" that would be use to link
@@ -177,7 +194,7 @@ ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
-$(full_classes_compiled_jar): $(java_sources) $(full_java_lib_deps) $(jar_manifest_file)
+$(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file)
 	$(transform-java-to-classes.jar)
 
 # source files generated from RenderScript must be generated before java compiling
@@ -259,10 +276,6 @@ ifneq ($(strip $(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS))$
 proguard_flags := $(proguard_flags) -include $(BUILD_SYSTEM)/proguard_tests.flags
 endif # test package
 
-LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
-ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
-    LOCAL_PROGUARD_ENABLED :=
-endif
 ifneq ($(LOCAL_PROGUARD_ENABLED),)
 ifeq ($(LOCAL_PROGUARD_ENABLED),full)
     # full
@@ -289,6 +302,10 @@ $(full_classes_proguard_jar): $(full_classes_full_names_jar) | $(ACP) $(PROGUARD
 	$(call transform-jar-to-proguard)
 
 ALL_MODULES.$(LOCAL_MODULE).PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
+
+$(full_classes_jar) : $(full_classes_proguard_jar)
+	@echo Copying: $@
+	$(hide) $(ACP) $< $@
 
 # If you instrument class files that have local variable debug information in
 # them emma does not correctly maintain the local variable table.
