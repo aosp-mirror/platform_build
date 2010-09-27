@@ -73,7 +73,8 @@ PRODUCT_PACKAGES := \
     PackageInstaller \
     DefaultContainerService \
     Bugreport \
-    ip
+    ip \
+    screencap
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
