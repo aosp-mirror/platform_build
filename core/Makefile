@@ -1223,7 +1223,8 @@ atree_dir := development/build
 sdk_atree_files := \
 	$(atree_dir)/sdk.exclude.atree \
 	$(atree_dir)/sdk.atree \
-	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree
+	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree \
+	sdk/build/tools.atree
 
 deps := \
 	$(target_notice_file_txt) \
@@ -1237,6 +1238,7 @@ deps := \
 	$(INSTALLED_BUILD_PROP_TARGET) \
 	$(ATREE_FILES) \
 	$(atree_dir)/sdk.atree \
+	sdk/build/tools.atree \
 	$(HOST_OUT_EXECUTABLES)/atree \
     $(HOST_OUT_EXECUTABLES)/line_endings
 
