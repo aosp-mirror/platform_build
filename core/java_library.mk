@@ -23,6 +23,9 @@ all_res_assets :=
 
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
+intermediates := $(call local-intermediates-dir)
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+
 ifndef LOCAL_IS_HOST_MODULE
 ifeq (true,$(WITH_DEXPREOPT))
 ifndef LOCAL_DEX_PREOPT
