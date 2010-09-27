@@ -27,6 +27,9 @@ ifndef LOCAL_IS_HOST_MODULE
 ifeq (true,$(WITH_DEXPREOPT))
 ifndef LOCAL_DEX_PREOPT
 LOCAL_DEX_PREOPT := true
+
+jar_with_dex := $(intermediates.COMMON)/javalib.dex.jar
+LOCAL_INTERMEDIATE_TARGETS += $(jar_with_dex)
 endif
 endif
 endif
@@ -44,7 +47,6 @@ $(LOCAL_BUILT_MODULE): $(full_classes_jar)
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 ifeq ($(LOCAL_DEX_PREOPT),true)
-jar_with_dex := $(intermediates.COMMON)/javalib.dex.jar
 $(jar_with_dex): PRIVATE_DEX_FILE := $(built_dex)
 $(jar_with_dex) : $(built_dex) $(java_resource_sources) | $(AAPT)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
