@@ -694,14 +694,11 @@ endif
 
 
 # -----------------------------------------------------------------
-# system yaffs image
+# system image
 #
-# First, the "unoptimized" image, which contains .apk/.jar files
-# that contain regular, unoptimized/unverified .dex entries.
-#
-systemimage_unopt_intermediates := \
-	$(call intermediates-dir-for,PACKAGING,systemimage_unopt)
-BUILT_SYSTEMIMAGE_UNOPT := $(systemimage_unopt_intermediates)/system.img
+systemimage_intermediates := \
+	$(call intermediates-dir-for,PACKAGING,systemimage)
+BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
 
 INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
 	$(ALL_PREBUILT) \
@@ -728,26 +725,11 @@ define build-systemimage-target
 endef
 endif # INTERNAL_USERIMAGES_USE_EXT
 
-$(BUILT_SYSTEMIMAGE_UNOPT): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
+$(BUILT_SYSTEMIMAGE): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 	$(call build-systemimage-target,$@)
 
-# The installed image, which may be optimized or unoptimized.
-#
 INSTALLED_SYSTEMIMAGE := $(PRODUCT_OUT)/system.img
-
-ifdef WITH_DEXPREOPT
-  ifndef DISABLE_DEXPREOPT
-# TODO: remove the unnecessary code.
-#  with_dexpreopt := true
-  endif
-endif
-ifdef with_dexpreopt
-  # This file will set BUILT_SYSTEMIMAGE and SYSTEMIMAGE_SOURCE_DIR
-  include build/tools/dexpreopt/Config.mk
-else
-  BUILT_SYSTEMIMAGE := $(BUILT_SYSTEMIMAGE_UNOPT)
-  SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
-endif
+SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 
 # The system partition needs room for the recovery image as well.  We
 # now store the recovery image as a binary patch using the boot image

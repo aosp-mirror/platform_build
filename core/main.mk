@@ -224,8 +224,10 @@ ifneq (,$(user_variant))
   # TODO: Remove this and the corresponding block in
   # config/product_config.make once host-based Dalvik preoptimization is
   # working.
+  ifneq (true,$(DISABLE_DEXPREOPT))
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
+  endif
   endif
 
   # Disallow mock locations by default for user builds
