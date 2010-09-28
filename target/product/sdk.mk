@@ -20,7 +20,6 @@ PRODUCT_PACKAGES := \
 	AccountAndSyncSettings \
 	Camera \
 	Calculator \
-	CarHome \
 	DeskClock \
 	Development \
 	DrmProvider \
