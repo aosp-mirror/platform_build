@@ -19,7 +19,6 @@
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
-    CarHome \
     DeskClock \
     AlarmProvider \
     Bluetooth \
