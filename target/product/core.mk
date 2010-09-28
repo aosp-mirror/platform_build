@@ -54,7 +54,6 @@ PRODUCT_PACKAGES := \
     libz \
     sqlite-jdbc \
     Browser \
-    CarHomeLauncher \
     Contacts \
     Home \
     HTMLViewer \
