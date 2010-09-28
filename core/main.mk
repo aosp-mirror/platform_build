@@ -224,8 +224,10 @@ ifneq (,$(user_variant))
   # TODO: Remove this and the corresponding block in
   # config/product_config.make once host-based Dalvik preoptimization is
   # working.
+  ifneq (true,$(DISABLE_DEXPREOPT))
   ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
     WITH_DEXPREOPT := true
+  endif
   endif
 
   # Disallow mock locations by default for user builds
@@ -569,8 +571,7 @@ $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
     $(eval r := $(call module-installed-files,$(r))) \
-    $(eval i := $(ALL_MODULES.$(m).INSTALLED)) \
-    $(eval $(if $(i), $(call add-required-deps,$(i),$(r)))) \
+    $(eval $(call add-required-deps,$(ALL_MODULES.$(m).INSTALLED),$(r))) \
    ) \
  )
 m :=

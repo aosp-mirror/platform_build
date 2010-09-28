@@ -20,6 +20,9 @@
 PRODUCT_PACKAGES := \
     Mms
 
+PRODUCT_COPY_FILES := \
+	system/bluetooth/data/main.conf:system/etc/bluetooth/main.conf
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
 
 # Overrides
