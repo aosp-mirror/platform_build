@@ -571,8 +571,7 @@ $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
     $(eval r := $(call module-installed-files,$(r))) \
-    $(eval i := $(ALL_MODULES.$(m).INSTALLED)) \
-    $(eval $(if $(i), $(call add-required-deps,$(i),$(r)))) \
+    $(eval $(call add-required-deps,$(ALL_MODULES.$(m).INSTALLED),$(r))) \
    ) \
  )
 m :=
