@@ -572,7 +572,7 @@ INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 
 # $(1): src directory
 # $(2): output file
-# $(3): label
+# $(3): mount point
 # $(4): ext variant (ext2, ext3, ext4)
 # $(5): size of the partition
 define build-userimage-ext-target
@@ -694,14 +694,11 @@ endif
 
 
 # -----------------------------------------------------------------
-# system yaffs image
+# system image
 #
-# First, the "unoptimized" image, which contains .apk/.jar files
-# that contain regular, unoptimized/unverified .dex entries.
-#
-systemimage_unopt_intermediates := \
-	$(call intermediates-dir-for,PACKAGING,systemimage_unopt)
-BUILT_SYSTEMIMAGE_UNOPT := $(systemimage_unopt_intermediates)/system.img
+systemimage_intermediates := \
+	$(call intermediates-dir-for,PACKAGING,systemimage)
+BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
 
 INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
 	$(ALL_PREBUILT) \
@@ -728,26 +725,11 @@ define build-systemimage-target
 endef
 endif # INTERNAL_USERIMAGES_USE_EXT
 
-$(BUILT_SYSTEMIMAGE_UNOPT): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
+$(BUILT_SYSTEMIMAGE): $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 	$(call build-systemimage-target,$@)
 
-# The installed image, which may be optimized or unoptimized.
-#
 INSTALLED_SYSTEMIMAGE := $(PRODUCT_OUT)/system.img
-
-ifdef WITH_DEXPREOPT
-  ifndef DISABLE_DEXPREOPT
-# TODO: remove the unnecessary code.
-#  with_dexpreopt := true
-  endif
-endif
-ifdef with_dexpreopt
-  # This file will set BUILT_SYSTEMIMAGE and SYSTEMIMAGE_SOURCE_DIR
-  include build/tools/dexpreopt/Config.mk
-else
-  BUILT_SYSTEMIMAGE := $(BUILT_SYSTEMIMAGE_UNOPT)
-  SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
-endif
+SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 
 # The system partition needs room for the recovery image as well.  We
 # now store the recovery image as a binary patch using the boot image
@@ -815,7 +797,7 @@ ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 define build-userdataimage-target
     $(call pretty,"Target userdata fs image: $(INSTALLED_USERDATAIMAGE_TARGET)")
     @mkdir -p $(TARGET_OUT_DATA)
-    $(call build-userimage-ext-target,$(TARGET_OUT_DATA),$(INSTALLED_USERDATAIMAGE_TARGET),userdata,$(INTERNAL_USERIMAGES_EXT_VARIANT),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
+    $(call build-userimage-ext-target,$(TARGET_OUT_DATA),$(INSTALLED_USERDATAIMAGE_TARGET),data,$(INTERNAL_USERIMAGES_EXT_VARIANT),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
     $(hide) $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE),yaffs)
 endef
 
