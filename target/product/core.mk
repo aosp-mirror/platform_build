@@ -55,7 +55,6 @@ PRODUCT_PACKAGES := \
     sqlite-jdbc \
     wpa_supplicant.conf \
     Browser \
-    CarHomeLauncher \
     Contacts \
     Home \
     HTMLViewer \
