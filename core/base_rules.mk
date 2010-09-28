@@ -381,20 +381,8 @@ full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,$(addsuffix $(COMMON_J
 full_java_lib_deps := $(full_java_libs)
 endif # LOCAL_BUILD_HOST_DEX
 else
-ifdef LOCAL_SDK_VERSION
-ifneq ($(LOCAL_SDK_VERSION),current)
-full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-# For prebuilt sdk versions, we can't depend on the javalib.jar but classes.jar.
-full_java_lib_deps := $(call java-lib-deps,$(filter-out sdk_v$(LOCAL_SDK_VERSION),$(LOCAL_JAVA_LIBRARIES)),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps += $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION),$(LOCAL_IS_HOST_MODULE))
-else
 full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-endif # !current
-else
-full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-endif # LOCAL_SDK_VERSION
 endif # !LOCAL_IS_HOST_MODULE
 full_java_libs += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_lib_deps += $(full_static_java_libs) $(LOCAL_CLASSPATH)
