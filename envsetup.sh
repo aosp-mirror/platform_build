@@ -151,9 +151,6 @@ function set_stuff_for_environment()
     setpaths
     set_sequence_number
 
-    # Don't try to do preoptimization until it works better on OSX.
-    export DISABLE_DEXPREOPT=true
-
     export ANDROID_BUILD_TOP=$(gettop)
 }
 
