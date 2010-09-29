@@ -21,7 +21,6 @@ PRODUCT_POLICY := android.policy_phone
 
 PRODUCT_PACKAGES := \
     AccountAndSyncSettings \
-    CarHome \
     DeskClock \
     AlarmProvider \
     Bluetooth \
