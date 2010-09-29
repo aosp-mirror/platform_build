@@ -473,8 +473,7 @@ endef
 
 
 ###########################################################
-## Convert "framework framework-res ext" to "out/.../javalib.jar ..."
-## This lets us treat framework-res as a normal library.
+## Convert "core ext framework" to "out/.../javalib.jar ..."
 ## $(1): library list
 ## $(2): Non-empty if IS_HOST_MODULE
 ###########################################################
@@ -483,18 +482,13 @@ endef
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-dir
 $(call intermediates-dir-for, \
-	$(if $(filter framework-res,$(1)),APPS,JAVA_LIBRARIES),$(1),$(2))
-endef
-
-# $(1): library name
-define _java-lib-classes.jar
-$(if $(filter framework-res,$(1)),package$(COMMON_ANDROID_PACKAGE_SUFFIX),classes$(COMMON_JAVA_PACKAGE_SUFFIX))
+	JAVA_LIBRARIES,$(1),$(2),COMMON)
 endef
 
 # $(1): library name
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-full-classes.jar
-$(call _java-lib-dir,$(1),$(2))/$(call _java-lib-classes.jar,$(1))
+$(call _java-lib-dir,$(1),$(2))/classes$(COMMON_JAVA_PACKAGE_SUFFIX)
 endef
 
 # $(1): library name list
@@ -504,14 +498,9 @@ $(foreach lib,$(1),$(call _java-lib-full-classes.jar,$(lib),$(2)))
 endef
 
 # $(1): library name
-define _java-lib-dep
-$(if $(filter framework-res,$(1)),package$(COMMON_ANDROID_PACKAGE_SUFFIX),javalib$(COMMON_JAVA_PACKAGE_SUFFIX))
-endef
-
-# $(1): library name
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-full-dep
-$(call _java-lib-dir,$(1),$(2))/$(call _java-lib-dep,$(1))
+$(call _java-lib-dir,$(1),$(2))/javalib$(COMMON_JAVA_PACKAGE_SUFFIX)
 endef
 
 # $(1): library name list
