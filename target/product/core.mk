@@ -24,6 +24,8 @@ PRODUCT_PROPERTY_OVERRIDES := \
 
 PRODUCT_PACKAGES := \
     bouncycastle \
+    com.android.location.provider \
+    com.android.location.provider.xml \
     core \
     core-junit \
     create_test_dmtrace \
