@@ -260,11 +260,13 @@ endif # optonly
 endif # full
 endif # LOCAL_PROGUARD_ENABLED
 
+proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
+LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
+
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar): PRIVATE_INSTRUMENTATION_FOR:=$(strip $(LOCAL_INSTRUMENTATION_FOR))
-
-$(full_classes_proguard_jar): $(full_classes_full_names_jar) | $(ACP) $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_full_names_jar) $(proguard_flag_files) | $(ACP) $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
 ALL_MODULES.$(LOCAL_MODULE).PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
