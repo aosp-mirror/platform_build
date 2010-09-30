@@ -119,10 +119,14 @@ else
   HOST_PREBUILT_TAG := $(HOST_OS)-$(HOST_ARCH)
 endif
 
-# Build dalvikvm on hosts that support it, but not if we're building the sim
+# Default to building dalvikvm on hosts that support it...
 ifeq ($(HOST_OS),linux)
+# ... but not if we're building the sim...
 ifneq ($(TARGET_SIMULATOR),true)
+# ... or if the if the option is already set
+ifeq ($(WITH_HOST_DALVIK),)
 	WITH_HOST_DALVIK := true
+endif
 endif
 endif
 
