@@ -381,7 +381,7 @@ $(strip \
     $(if $(_idfName),, \
         $(error $(LOCAL_PATH): Name not defined in call to intermediates-dir-for)) \
     $(eval _idfPrefix := $(if $(strip $(3)),HOST,TARGET)) \
-    $(if $(filter $(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
+    $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_INTERMEDIATES)) \
       , \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_INTERMEDIATES)) \

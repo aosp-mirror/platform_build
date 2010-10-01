@@ -187,10 +187,8 @@ installclean_files := \
 	./$(PRODUCT_OUT)/recovery \
 	./$(PRODUCT_OUT)/root \
 	./$(PRODUCT_OUT)/system \
-	./$(PRODUCT_OUT)/dex_bootjars
-
-# TODO: move the dex-preopt files to a product-specific directory
-installclean_files += ./$(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*/javalib.jar
+	./$(PRODUCT_OUT)/dex_bootjars \
+	./$(PRODUCT_OUT)/obj/JAVA_LIBRARIES
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.
