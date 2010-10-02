@@ -42,6 +42,14 @@ $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
 endif
 endif
 
+ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+# for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
+# while the deps should be in the common dir, so we make a copy in the common dir.
+common_library_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(LOCAL_MODULE),,COMMON)/$(notdir $(LOCAL_BUILT_MODULE))
+$(common_library_jar) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
+	$(transform-prebuilt-to-target)
+endif
+
 ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   # The magic string "EXTERNAL" means this package will be signed with
   # the test key throughout the build process, but we expect the final
