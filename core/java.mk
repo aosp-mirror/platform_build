@@ -73,11 +73,15 @@ endif
 
 # By giving different file name, files can be updated correctly when switching
 # between builds with and without Proguard enabled.
+# Note that ANY intermediate targets between the proguard and
+# the final built_dex should be differently named!
 ifdef LOCAL_PROGUARD_ENABLED
 proguard_jar_leaf := proguard.classes.jar
+built_dex_intermediate_leaf := proguard.$(built_dex_intermediate_leaf)
 built_dex_leaf := progaurd.classes.dex
 else
 proguard_jar_leaf := noproguard.classes.jar
+built_dex_intermediate_leaf := noproguard.$(built_dex_intermediate_leaf)
 built_dex_leaf := noproguard.classes.dex
 endif
 
@@ -88,7 +92,6 @@ emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # emma is hardcoded to use the leaf name of its input for the output file --
 # only the output directory can be changed
 full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
-full_classes_full_names_jar := $(intermediates.COMMON)/classes-full-names.jar
 full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
@@ -101,9 +104,8 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_emma_jar) \
-    $(full_classes_full_names_jar) \
-    $(full_classes_proguard_jar) \
     $(full_classes_jar) \
+    $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
     $(built_dex) \
     $(full_classes_stubs_jar)
@@ -224,12 +226,11 @@ $(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(ACP)
 endif
 
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_full_names_jar): $(full_classes_emma_jar) | $(ACP)
+$(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) $< $@
 
-# Run proguard if necessary, otherwise just copy the file.  This is the last
-# part of this step, so the output of this command is full_classes_jar.
+# Run proguard if necessary, otherwise just copy the file.
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
 # Proguard doesn't like a class in both library and the jar to be processed.
 proguard_full_java_libs := $(filter-out $(full_static_java_libs),$(full_java_libs))
@@ -266,14 +267,10 @@ LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar): PRIVATE_INSTRUMENTATION_FOR:=$(strip $(LOCAL_INSTRUMENTATION_FOR))
-$(full_classes_proguard_jar) : $(full_classes_full_names_jar) $(proguard_flag_files) | $(ACP) $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_jar) $(proguard_flag_files) | $(ACP) $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
 ALL_MODULES.$(LOCAL_MODULE).PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
-
-$(full_classes_jar) : $(full_classes_proguard_jar)
-	@echo Copying: $@
-	$(hide) $(ACP) $< $@
 
 # If you instrument class files that have local variable debug information in
 # them emma does not correctly maintain the local variable table.
@@ -289,7 +286,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
-$(built_dex_intermediate): $(full_classes_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@

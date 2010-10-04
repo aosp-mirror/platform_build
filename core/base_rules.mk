@@ -342,7 +342,7 @@ ifneq ($(strip $(all_java_sources)$(all_res_assets)),)
 full_static_java_libs := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
       $(call intermediates-dir-for, \
-        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE))/javalib.jar)
+        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/javalib.jar)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_INSTALL_DIR := $(dir $(LOCAL_INSTALLED_MODULE))
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates)/classes
@@ -403,8 +403,8 @@ ifdef LOCAL_INSTRUMENTATION_FOR
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
 
   # link against the jar with full original names (before proguard processing).
-  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
-  full_java_lib_deps += $(link_instr_intermediates_dir.COMMON)/classes-full-names.jar
+  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes.jar
+  full_java_lib_deps += $(link_instr_intermediates_dir.COMMON)/classes.jar
 endif
 
 ifneq ($(strip $(LOCAL_JAR_MANIFEST)),)
