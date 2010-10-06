@@ -1002,6 +1002,21 @@ function isviewserverstarted()
     adb shell service call window 3
 }
 
+function key_home()
+{
+    adb shell input keyevent 3
+}
+
+function key_back()
+{
+    adb shell input keyevent 4
+}
+
+function key_menu()
+{
+    adb shell input keyevent 82
+}
+
 function smoketest()
 {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
