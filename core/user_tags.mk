@@ -208,14 +208,6 @@ GRANDFATHERED_USER_MODULES += \
 	libcamerastub \
 	libc_common \
 	libchromium_net \
-	libclangAnalysis \
-	libclangAST \
-	libclangBasic \
-	libclangCodeGen \
-	libclangIndex \
-	libclangLex \
-	libclangParse \
-	libclangSema \
 	libc_nomalloc \
 	libctest \
 	libcutils \
