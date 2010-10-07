@@ -45,7 +45,8 @@ DEFAULT_TEST_PLAN := $(PRIVATE_DIR)/resource/plans
 
 $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
 
-$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(ACP)
+-include cts/CtsHostLibraryList.mk
+$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(ACP)
 # Make necessary directory for CTS
 	@rm -rf $(PRIVATE_CTS_DIR)
 	@mkdir -p $(TMP_DIR)
@@ -53,15 +54,8 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB
 	@mkdir -p $(PRIVATE_DIR)/tools
 	@mkdir -p $(PRIVATE_DIR)/repository/testcases
 	@mkdir -p $(PRIVATE_DIR)/repository/plans
-# Copy executable to CTS directory
-	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(PRIVATE_DIR)/tools
-	$(hide) $(ACP) -fp $(CTS_EXECUTABLE_PATH) $(PRIVATE_DIR)/tools
-# Copy ddmlib prebuilt jar
-	$(hide) $(ACP) -fp $(DDMLIB_JAR) $(PRIVATE_DIR)/tools
-# Copy junit jar
-	$(hide) $(ACP) -fp $(PRIVATE_JUNIT_HOST_JAR) $(PRIVATE_DIR)/tools
-# Copy hosttestlib jar
-	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(PRIVATE_DIR)/tools
+# Copy executable and JARs to CTS directory
+	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(CTS_EXECUTABLE_PATH) $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
