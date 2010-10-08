@@ -770,6 +770,8 @@ $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/src
 $(hide) $(SLANG) \
   -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw \
   -p $(PRIVATE_RS_OUTPUT_DIR)/src \
+  -d $(PRIVATE_RS_OUTPUT_DIR) \
+  -a $@ -MD \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
   $(PRIVATE_RS_SOURCE_FILES)
 $(hide) mkdir -p $(dir $@)
