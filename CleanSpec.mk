@@ -54,6 +54,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libstagefright
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/android-info.txt)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
