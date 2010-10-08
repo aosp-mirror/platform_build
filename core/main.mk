@@ -474,7 +474,7 @@ endif	# !SDK_ONLY
 
 # Before we go and include all of the module makefiles, stash away
 # the PRODUCT_* values so you can't get to them.
-stash_product_vars:=true
+stash_product_vars:=#true
 ifeq ($(stash_product_vars),true)
   $(call stash-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
 endif
