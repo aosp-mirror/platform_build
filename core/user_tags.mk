@@ -516,7 +516,6 @@ GRANDFATHERED_USER_MODULES += \
 	signature-tools \
 	simg2img \
 	simulator \
-	slang \
 	soslim \
 	spec-progress \
 	sqlite3 \
