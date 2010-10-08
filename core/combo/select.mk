@@ -50,7 +50,7 @@ $(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
 $(combo_target)GLOBAL_LDFLAGS :=
 $(combo_target)GLOBAL_ARFLAGS := crsP
 
-$(combo_target)EXECUTABLE_SUFFIX := 
+$(combo_target)EXECUTABLE_SUFFIX :=
 $(combo_target)SHLIB_SUFFIX := .so
 $(combo_target)JNILIB_SUFFIX := $($(combo_target)SHLIB_SUFFIX)
 $(combo_target)STATIC_LIB_SUFFIX := .a
@@ -62,7 +62,12 @@ include $(BUILD_COMBOS)/$(combo_target)$(combo_os_arch).mk
 
 ifneq ($(USE_CCACHE),)
   ccache := prebuilt/$(HOST_PREBUILT_TAG)/ccache/ccache
-  $(combo_target)CC := $(ccache) $($(combo_target)CC)
-  $(combo_target)CXX := $(ccache) $($(combo_target)CXX)
+  # prepend ccache if necessary
+  ifneq ($(ccache),$(firstword $($(combo_target)CC)))
+    $(combo_target)CC := $(ccache) $($(combo_target)CC)
+  endif
+  ifneq ($(ccache),$(firstword $($(combo_target)CXX)))
+    $(combo_target)CXX := $(ccache) $($(combo_target)CXX)
+  endif
   ccache =
 endif

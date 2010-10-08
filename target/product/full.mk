@@ -43,6 +43,9 @@ PRODUCT_COPY_FILES := \
 # on smaller devices.
 $(call inherit-product, frameworks/base/data/sounds/OriginalAudio.mk)
 
+# Get the TTS language packs
+$(call inherit-product-if-exists, external/svox/pico/lang/all_pico_languages.mk)
+
 # Get a list of languages. We use the small list to save space
 # on smaller devices.
 $(call inherit-product, build/target/product/languages_small.mk)
@@ -54,4 +57,3 @@ PRODUCT_NAME := full
 PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
 PRODUCT_MODEL := Full Android
-
