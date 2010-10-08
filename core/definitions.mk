@@ -768,7 +768,6 @@ $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/res/raw
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/src
 $(hide) $(SLANG) \
-  --allow-rs-prefix \
   -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw \
   -p $(PRIVATE_RS_OUTPUT_DIR)/src \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
