@@ -65,7 +65,8 @@ PRODUCT_PACKAGES += \
 	layoutopt \
 	traceview \
 	android \
-	dexdump
+	dexdump \
+        monkeyrunner
 
 # Native host Java libraries that are parts of the SDK.
 # See development/build/sdk.atree
@@ -98,7 +99,11 @@ PRODUCT_PACKAGES += \
 	org.eclipse.equinox.common_3.4.0.v20080421-2006 \
 	org.eclipse.jface_3.4.2.M20090107-0800 \
 	osgi \
-	layoutlib
+	layoutlib \
+        monkeyrunner \
+        guavalib \
+        jsr305lib \
+	jython
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
