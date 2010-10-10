@@ -49,7 +49,12 @@ PRODUCT_PACKAGES := \
 	GestureBuilder \
 	SoftKeyboard \
 	CubeLiveWallpapers \
-	QuickSearchBox
+	QuickSearchBox \
+        monkeyrunner \
+        guavalib \
+        jsr305lib \
+	jython \
+        jsilver
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
