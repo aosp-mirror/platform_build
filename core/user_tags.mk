@@ -156,7 +156,6 @@ GRANDFATHERED_USER_MODULES += \
 	installd \
 	ip \
 	iptables \
-	ip-up-vpn \
 	iself \
 	isprelinked \
 	jarjar \
@@ -517,7 +516,6 @@ GRANDFATHERED_USER_MODULES += \
 	signature-tools \
 	simg2img \
 	simulator \
-	slang \
 	soslim \
 	spec-progress \
 	sqlite3 \
