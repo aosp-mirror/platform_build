@@ -118,32 +118,63 @@ PRODUCT_LOCALES := \
 	ldpi \
 	hdpi \
 	mdpi \
-	en_US \
-	en_GB \
-	en_CA \
+	ar_EG \
+	ar_IL \
+	bg_BG \
+	ca_ES \
+	cs_CZ \
+	da_DK \
+	de_AT \
+	de_CH \
+	de_DE \
+	de_LI \
+	el_GR \
 	en_AU \
+	en_CA \
+	en_GB \
+	en_IE \
+	en_IN \
 	en_NZ \
 	en_SG \
-	ja_JP \
-	fr_FR \
+	en_US \
+	en_ZA \
+	es_ES \
+	es_US \
+	fi_FI \
 	fr_BE \
 	fr_CA \
 	fr_CH \
-	it_IT \
+	fr_FR \
+	he_IL \
+	hi_IN \
+	hr_HR \
+	hu_HU \
+	id_ID \
 	it_CH \
-	es_ES \
-	de_DE \
-	de_AT \
-	de_CH \
-	de_LI \
-	nl_NL \
+	it_IT \
+	ja_JP \
+	ko_KR \
+	lt_LT \
+	lv_LV \
+	nb_NO \
 	nl_BE \
-	cs_CZ \
+	nl_NL \
 	pl_PL \
-	zh_CN \
-	zh_TW \
+	pt_BR \
+	pt_PT \
+	ro_RO \
 	ru_RU \
-	ko_KR
+	sk_SK \
+	sl_SI \
+	sr_RS \
+	sv_SE \
+	th_TH \
+	tl_PH \
+	tr_TR \
+	uk_UA \
+	vi_VN \
+	zh_CN \
+	zh_TW
 
 # include available languages for TTS in the system image
 include external/svox/pico/lang/PicoLangDeDeInSystem.mk
