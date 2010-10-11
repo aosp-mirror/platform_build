@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA73//+2g\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2010-10-11T23:18:32Z",
+      "side": 1,
+      "message": "How about changing it to:\nifeq ($(strip $(TARGET_ARCH_VARIANT)),)\nie, default it to x86 only if it\u0027s not set yet.",
+      "revId": "7c3f4cac58e8000a6d2db8691efedd30a8860f19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
