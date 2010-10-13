@@ -51,7 +51,12 @@ PRODUCT_PACKAGES := \
 	GestureBuilder \
 	SoftKeyboard \
 	CubeLiveWallpapers \
-	QuickSearchBox
+	QuickSearchBox \
+        monkeyrunner \
+        guavalib \
+        jsr305lib \
+	jython \
+        jsilver
 
 # Host tools that are parts of the SDK.
 # See development/build/sdk.atree
