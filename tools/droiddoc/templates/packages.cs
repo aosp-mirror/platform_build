@@ -22,7 +22,7 @@
 <?cs each:pkg = docs.packages ?>
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:pkg.since ?>" >
         <td class="jd-linkcol"><?cs call:package_link(pkg) ?></td>
-        <td class="jd-descrcol" width="100%"><?cs call:tag_list(pkg.shortDescr) ?>&nbsp;</td>
+        <td class="jd-descrcol" width="100%"><?cs call:tag_list(pkg.shortDescr) ?></td>
     </tr>
 <?cs set:count = count + #1 ?>
 <?cs /each ?>
