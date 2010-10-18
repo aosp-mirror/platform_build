@@ -473,10 +473,10 @@ endif	# !BUILD_TINY_ANDROID
 endif	# !SDK_ONLY
 
 # Before we go and include all of the module makefiles, stash away
-# the PRODUCT_* values so you can't get to them.
-stash_product_vars:=#true
+# the PRODUCT_* values so that later we can verify they are not modified.
+stash_product_vars:=true
 ifeq ($(stash_product_vars),true)
-  $(call stash-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
+  $(call stash-product-vars, __STASHED)
 endif
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
@@ -510,8 +510,7 @@ include $(subdir_makefiles)
 endif # ONE_SHOT_MAKEFILE
 
 ifeq ($(stash_product_vars),true)
-  $(call assert-product-vars, __STASHED, DO_NOT_USE_IN_ANDROID_MK_)
-  $(call restore-product-vars, __STASHED)
+  $(call assert-product-vars, __STASHED)
 endif
 
 include $(BUILD_SYSTEM)/legacy_prebuilts.mk
