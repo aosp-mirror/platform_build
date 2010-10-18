@@ -51,6 +51,7 @@ PRODUCT_PACKAGES := \
     libicuuc \
     libjavacore \
     libnativehelper \
+    libnfc_ndef \
     libsqlite_jni \
     libssl \
     libz \
