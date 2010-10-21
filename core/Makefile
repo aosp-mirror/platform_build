@@ -1061,13 +1061,14 @@ endif
 
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
-# -----------------------------------------------------------------
-# OTA update package
 
 ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
 ifneq ($(TARGET_DEVICE),generic)
 ifneq ($(TARGET_NO_KERNEL),true)
+
+# -----------------------------------------------------------------
+# OTA update package
 
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
@@ -1088,6 +1089,34 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+
+# -----------------------------------------------------------------
+# The update package
+
+name := $(TARGET_PRODUCT)
+ifeq ($(TARGET_BUILD_TYPE),debug)
+  name := $(name)_debug
+endif
+name := $(name)-img-$(FILE_NAME_TAG)
+
+INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
+
+ifeq ($(TARGET_RELEASETOOLS_EXTENSIONS),)
+# default to common dir for device vendor
+$(INTERNAL_UPDATE_PACKAGE_TARGET): extensions := $(TARGET_DEVICE_DIR)/../common
+else
+$(INTERNAL_UPDATE_PACKAGE_TARGET): extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
+endif
+
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
+	@echo "Package: $@"
+	$(hide) ./build/tools/releasetools/img_from_target_files -v \
+	   -s $(extensions) \
+	   -p $(HOST_OUT) \
+	   $(BUILT_TARGET_FILES_PACKAGE) $@
+
+.PHONY: updatepackage
+updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 
 endif    # TARGET_NO_KERNEL != true
 endif    # TARGET_DEVICE != generic
@@ -1218,40 +1247,6 @@ endif	# TARGET_SIMULATOR != true
 # dalvik something
 .PHONY: dalvikfiles
 dalvikfiles: $(INTERNAL_DALVIK_MODULES)
-
-# -----------------------------------------------------------------
-# The update package
-
-ifneq ($(TARGET_SIMULATOR),true)
-ifneq ($(TARGET_PRODUCT),sdk)
-
-name := $(TARGET_PRODUCT)
-ifeq ($(TARGET_BUILD_TYPE),debug)
-  name := $(name)_debug
-endif
-name := $(name)-img-$(FILE_NAME_TAG)
-
-INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
-
-ifeq ($(TARGET_RELEASETOOLS_EXTENSIONS),)
-# default to common dir for device vendor
-$(INTERNAL_UPDATE_PACKAGE_TARGET): extensions := $(TARGET_DEVICE_DIR)/../common
-else
-$(INTERNAL_UPDATE_PACKAGE_TARGET): extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
-endif
-
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
-	@echo "Package: $@"
-	$(hide) ./build/tools/releasetools/img_from_target_files -v \
-	   -s $(extensions) \
-	   -p $(HOST_OUT) \
-	   $(BUILT_TARGET_FILES_PACKAGE) $@
-
-.PHONY: updatepackage
-updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
-
-endif    # TARGET_PRODUCT != sdk
-endif    # TARGET_SIMULATOR != true
 
 # -----------------------------------------------------------------
 # The emulator package
