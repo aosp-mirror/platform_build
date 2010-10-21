@@ -48,6 +48,12 @@ ifeq ($(strip $(LOCAL_NO_FDO_SUPPORT)),)
 endif
 
 ###########################################################
+## Explicitly declare assembly-only __ASSEMBLY__ macro for
+## assembly source
+###########################################################
+LOCAL_ASFLAGS += -D__ASSEMBLY__
+
+###########################################################
 ## Define PRIVATE_ variables from global vars
 ###########################################################
 ifdef LOCAL_NDK_VERSION
