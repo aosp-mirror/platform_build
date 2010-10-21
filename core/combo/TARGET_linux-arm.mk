@@ -134,6 +134,11 @@ endif
 
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
+# More flags/options can be added here
+ifeq ($(NEED_WORKAROUND_CORTEX_A9_745320),true)
+TARGET_GLOBAL_CFLAGS += -DWORKAROUND_CORTEX_A9_745320
+endif
+
 TARGET_RELEASE_CFLAGS := \
 			-DNDEBUG \
 			-g \
