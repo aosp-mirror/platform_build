@@ -39,7 +39,7 @@ PRODUCT_COPY_FILES := \
 PRODUCT_LOCALES := en_US
 
 # Pick up some sounds.
-$(call inherit-product, frameworks/base/data/sounds/AudioPackage4.mk)
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackage4.mk)
 
 # Get a list of languages.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
