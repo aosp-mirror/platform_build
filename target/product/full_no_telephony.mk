@@ -35,6 +35,9 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_COPY_FILES := \
     development/data/etc/vold.conf:system/etc/vold.conf
 
+# Put en_US first in the list, so make it default.
+PRODUCT_LOCALES := en_US
+
 # Pick up some sounds.
 $(call inherit-product, frameworks/base/data/sounds/AudioPackage4.mk)
 
