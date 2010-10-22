@@ -19,8 +19,8 @@
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-$(call inherit-product, build/target/board/generic/device.mk)
-$(call inherit-product, build/target/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic/device.mk)
 
 # Overrides
 PRODUCT_NAME := full

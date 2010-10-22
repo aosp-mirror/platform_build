@@ -43,6 +43,6 @@ $(call inherit-product-if-exists, frameworks/base/data/sounds/OriginalAudio.mk)
 $(call inherit-product-if-exists, external/svox/pico/lang/all_pico_languages.mk)
 
 # Get the list of languages.
-$(call inherit-product, build/target/product/locales_full.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
 
-$(call inherit-product, build/target/product/generic.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
