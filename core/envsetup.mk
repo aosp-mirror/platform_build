@@ -26,7 +26,7 @@ ifeq ($(TARGET_PRODUCT),)
 ifeq ($(TARGET_SIMULATOR),true)
 TARGET_PRODUCT := sim
 else
-TARGET_PRODUCT := generic
+TARGET_PRODUCT := full
 endif
 endif
 

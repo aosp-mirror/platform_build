@@ -16,8 +16,8 @@
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
-# build of the emulator, but all those aspects can be overridden
-# in inherited configurations.
+# build quite specifically for the emulator, and might not be
+# entirely appropriate to inherit from for on-device configurations.
 
 PRODUCT_PACKAGES := \
     OpenWnn \
