@@ -30,7 +30,9 @@ PRODUCT_PACKAGES := \
 PRODUCT_PROPERTY_OVERRIDES := \
     keyguard.no_require_sim=true \
     ro.com.android.dateformat=MM-dd-yyyy \
-    ro.com.android.dataroaming=true
+    ro.com.android.dataroaming=true \
+    ro.config.ringtone=Ring_Synth_04.ogg \
+    ro.config.notification_sound=pixiedust.ogg
 
 # Put en_US first in the list, to make it default.
 PRODUCT_LOCALES := en_US
