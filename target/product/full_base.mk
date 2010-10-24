@@ -34,8 +34,8 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # Put en_US first in the list, so make it default.
 PRODUCT_LOCALES := en_US
 
-# Pick up some sounds.
-$(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackage4.mk)
+# Get some sounds
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
 
 # Get the TTS language packs
 $(call inherit-product-if-exists, external/svox/pico/lang/all_pico_languages.mk)
