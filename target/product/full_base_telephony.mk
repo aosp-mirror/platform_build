@@ -16,30 +16,15 @@
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
-# build of the emulator, but all those aspects can be overridden
-# in inherited configurations.
+# build quite specifically for the emulator, and might not be
+# entirely appropriate to inherit from for on-device configurations.
 
-PRODUCT_PACKAGES := \
-    OpenWnn \
-    PinyinIME \
-    VoiceDialer \
-    libWnnEngDic \
-    libWnnJpnDic \
-    libwnndict
-
-# Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \
     keyguard.no_require_sim=true \
-    ro.com.android.dateformat=MM-dd-yyyy
+    ro.com.android.dataroaming=true
 
 PRODUCT_COPY_FILES := \
-    development/data/etc/vold.conf:system/etc/vold.conf
+    development/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
-# Pick up some sounds.
-$(call inherit-product, frameworks/base/data/sounds/AudioPackage4.mk)
-
-# Get a list of languages.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
-
-# Get the TTS language packs
-$(call inherit-product-if-exists, external/svox/pico/lang/all_pico_languages.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)

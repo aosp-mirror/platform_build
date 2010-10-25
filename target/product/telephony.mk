@@ -14,13 +14,11 @@
 # limitations under the License.
 #
 
-# This is a generic phone product that isn't specialized for a specific device.
-# It includes the base Android platform.
+# This is the list of product-level settings that are specific
+# to products that have telephony hardware.
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+PRODUCT_PACKAGES := \
+    Mms
 
-# Overrides
-PRODUCT_BRAND := generic
-PRODUCT_DEVICE := generic
-PRODUCT_NAME := generic
+PRODUCT_COPY_FILES := \
+	system/bluetooth/data/main.conf:system/etc/bluetooth/main.conf
