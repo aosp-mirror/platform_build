@@ -943,7 +943,7 @@ p.table-caption {
 }
 
 .sidebox p {
-  margin-bottom: .25em;
+  margin-bottom: .75em;
 }
 
 .sidebox ul {
@@ -1054,7 +1054,7 @@ ol.toc li ol {
   margin: 0;
   padding: 0;
 }
-  
+
 ol.toc li li {
   padding: 0;
   margin: 0 0 0 1em;
@@ -1216,7 +1216,7 @@ table.download th {
   float: right;
 }
 
-  
+
 /* JQUERY RESIZABLE STYLES */
 .ui-resizable { position: relative; }
 .ui-resizable-handle { position: absolute; display: none; font-size: 0.1px; z-index:1; }
@@ -1252,7 +1252,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; }
   #body-content {
     position:inherit;
   }
-  
+
   #doc-content {
     margin-left:0 !important;
     height:auto !important;
