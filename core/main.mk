@@ -54,6 +54,9 @@ $(DEFAULT_GOAL):
 .PHONY: FORCE
 FORCE:
 
+# Targets that provide quick help on the build system.
+include $(BUILD_SYSTEM)/help.mk
+
 # Set up various standard variables based on configuration
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
@@ -842,3 +845,4 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
+
