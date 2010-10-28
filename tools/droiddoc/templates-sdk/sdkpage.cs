@@ -4,8 +4,8 @@
 <?cs if:sdk.redirect ?>
   <head>
     <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
-      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
+    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>index.html<?cs /if ?>">
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
@@ -22,8 +22,8 @@
 
 <div class="g-unit">
   <div id="jd-content">
-    <p>Redirecting to 
-    <a href="<?cs var:toroot ?>sdk/<?cs 
+    <p>Redirecting to
+    <a href="<?cs var:toroot ?>sdk/<?cs
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>index.html<?cs /if ?>"><?cs
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
@@ -37,11 +37,11 @@
   </div>
 
   <div id="jd-content">
-    <?cs 
-    if:ndk ?><?cs 
-    else ?><?cs 
-      if:android.whichdoc == "online" ?><p><em><?cs 
-      var:sdk.date ?></em></p><?cs 
+    <?cs
+    if:ndk ?><?cs
+    else ?><?cs
+      if:android.whichdoc == "online" ?><p><em><?cs
+      var:sdk.date ?></em></p><?cs
       /if ?><?cs
     /if ?>
 
@@ -63,7 +63,7 @@
 application developers build performance-critical portions of their apps in
 native code. It is designed for use <em>only</em> in conjunction with the
 Android SDK, so if you have not already installed the latest Android SDK, please
-do so before downloading the NDK. Also, please read <a href="#overview">What is 
+do so before downloading the NDK. Also, please read <a href="#overview">What is
 the Android NDK?</a> to get an understanding of what the NDK offers and whether
 it will be useful to you.</p>
 
@@ -114,16 +114,16 @@ computer. </p>
   improvements and new features for users and developers. Additionally, the SDK
   itself introduces several new capabilities that enable you to develop
   applications more efficiently. See the <a href="features.html">Android <?cs
-  var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
+  var:sdk.preview.version ?> Platform Highlights</a> document for a list of
   highlights.</p>
-<?cs /if ?> 
+<?cs /if ?>
 <?cs # end if NDK ... the following is for the SDK ?>
 
-<?cs #  
+<?cs #
     <div class="toggle-content special">
-    <p>The Android SDK has changed! If you've worked with the Android SDK before, 
+    <p>The Android SDK has changed! If you've worked with the Android SDK before,
     you will notice several important differences:</p>
-    
+
     <div class="toggle-content-toggleme" style="display:none">
     <ul style="padding-bottom:.0;">
     <li style="margin-top:.5em">The SDK downloadable package includes <em>only</em>
@@ -139,13 +139,13 @@ computer. </p>
     keep your development environment up-to-date. </li>
     </ul>
     <p style="margin-top:0">If you are currently using the Android 1.6 SDK, you
-    do not need to install the new SDK, because your existing SDK already 
-    includes the Android SDK and AVD Manager tool. To develop against Android 
-    2.0.1, for example, you can just download the Android 2.0.1 platform (and 
-    updated SDK Tools) into your existing SDK. Refer to <a 
+    do not need to install the new SDK, because your existing SDK already
+    includes the Android SDK and AVD Manager tool. To develop against Android
+    2.0.1, for example, you can just download the Android 2.0.1 platform (and
+    updated SDK Tools) into your existing SDK. Refer to <a
     href="adding-components.html">Adding SDK Components</a>.</p>
     </div>
-    
+
     <a href='#' class='toggle-content-button show' onclick="toggleContent(this,true);return false;">
       <span>show more</span><span style='display:none'>show less</span>
     </a>
@@ -156,9 +156,10 @@ computer. </p>
 href="#quickstart">Quick Start</a>, below, for an overview of how to install and
 set up the SDK. </p>
 
-  <p>If you are already using the Android SDK and would like to update to the
-latest tools or platforms, please use the <em>Android SDK and AVD Manager</em>
-to get the components, rather than downloading a new SDK package.</p>
+  <p>If you're already using the Android SDK, you should
+update to the latest tools or platform using the <em>Android SDK and AVD Manager</em>, rather than
+downloading a new SDK starter package. See <a
+href="{@docRoot}sdk/adding-components.html">Adding SDK Components</a>.</p>
 
   <table class="download">
     <tr>
@@ -168,13 +169,22 @@ to get the components, rather than downloading a new SDK package.</p>
       <th>MD5 Checksum</th>
   </tr>
   <tr>
-    <td>Windows</td>
+    <td rowspan="2">Windows</td>
     <td>
   <a onclick="onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
 ?>"><?cs var:sdk.win_download ?></a>
     </td>
     <td><?cs var:sdk.win_bytes ?> bytes</td>
     <td><?cs var:sdk.win_checksum ?></td>
+  </tr>
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_installer
+?>"><?cs var:sdk.win_installer ?></a> (Recommended)
+    </td>
+    <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
+    <td><?cs var:sdk.win_installer_checksum ?></td>
   </tr>
   <tr class="alt-color">
     <td>Mac OS X (intel)</td>
@@ -208,12 +218,12 @@ to get the components, rather than downloading a new SDK package.</p>
 
 
 <div id="next-steps" style="display:none">
-  <p><b>Your download of <em><span id="filename"></span></em> has begun!</b></p>
+  <p><b><em><span id="filename"></span></em> is now downloading. Follow the steps below to
+get started.</b></p>
 </div>
 
 <script type="text/javascript">
 function onDownload(link) {
-  $(link).parent().parent().children().css('background', '#fff');
   $("#filename").text($(link).html());
   $("#next-steps").show();
 }
@@ -221,7 +231,7 @@ function onDownload(link) {
 
   <?cs /if ?>
  <?cs /if ?>
-<?cs /if ?> 
+<?cs /if ?>
 
 <?cs if:android.whichdoc != "online" && sdk.preview ?>
   <p>Welcome developers! The next release of the Android platform will be
@@ -233,7 +243,7 @@ applications for it. </p>
 improvements and new features for users and developers. Additionally, the SDK
 itself introduces several new capabilities that enable you to develop
 applications more efficiently. See the <a
-href="http://developer.android.com/sdk/preview/features.html">Android 
+href="http://developer.android.com/sdk/preview/features.html">Android
 <?cs var:sdk.preview.version ?> Highlights</a> document for a list of
 highlights.</p>
 <?cs /if ?>
