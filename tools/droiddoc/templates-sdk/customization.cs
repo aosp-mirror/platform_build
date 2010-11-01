@@ -101,7 +101,7 @@ def:custom_masthead() ?>
 <?cs 
 def:sdk_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first not-resizable" id="side-nav">
+    <div class="g-unit g-first" id="side-nav">
       <div id="devdoc-nav"><?cs 
         include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
       </div>
@@ -110,8 +110,8 @@ def:sdk_nav() ?>
 
 <?cs 
 def:resources_tab_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+  <div class="g-section g-tpl-200" id="body-content">
+    <div class="g-unit g-first" id="side-nav">
       <div id="devdoc-nav"><?cs 
         include:"../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
       </div>
@@ -126,7 +126,7 @@ def:resources_tab_nav() ?>
 <?cs 
 def:guide_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+    <div class="g-unit g-first" id="side-nav">
       <div id="devdoc-nav"><?cs 
         include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
       </div>
@@ -141,7 +141,7 @@ def:guide_nav() ?>
 <?cs # The default side navigation for the reference docs ?><?cs 
 def:default_left_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first side-nav-resizable" id="side-nav">
+    <div class="g-unit g-first" id="side-nav">
       <div id="swapper">
         <div id="nav-panels">
           <div id="resize-packages-nav">
