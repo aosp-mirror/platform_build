@@ -692,6 +692,10 @@ else
 mkyaffs2_extra_flags :=
 endif
 
+ifneq ($(BOARD_NAND_SPARE_SIZE),)
+mkyaffs2_extra_flags += -s $(BOARD_NAND_SPARE_SIZE)
+endif
+
 
 # -----------------------------------------------------------------
 # system image
