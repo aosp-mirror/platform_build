@@ -34,10 +34,6 @@
   font-size:12px;
 }
 
-#side-nav.not-resizable {
-  background:url('images/sidenav-rule.png') no-repeat 243px 0;
-}
-
 #resize-packages-nav {
 /* keeps the resize handle below the h-scroll handle */
   height:270px;
@@ -1178,6 +1174,76 @@ table.download th {
   display: block;
   margin: 0;
   width: 243px;
+  float: right;
+}
+
+/* 200px */
+.g-tpl-200 .g-unit,
+.g-unit .g-tpl-200 .g-unit,
+.g-unit .g-unit .g-tpl-200 .g-unit {
+  display: block;
+  margin: 0 0 0 200px;
+  width: auto;
+  float: none;
+}
+.g-unit .g-unit .g-tpl-200 .g-first,
+.g-unit .g-tpl-200 .g-first,
+.g-tpl-200 .g-first {
+  display: block;
+  margin: 0;
+  width: 200px;
+  float: left;
+}
+/* 200px alt */
+.g-tpl-200-alt .g-unit,
+.g-unit .g-tpl-200-alt .g-unit,
+.g-unit .g-unit .g-tpl-200-alt .g-unit {
+  display: block;
+  margin: 0 200px 0 0;
+  width: auto;
+  float: none;
+}
+.g-unit .g-unit .g-tpl-200-alt .g-first,
+.g-unit .g-tpl-200-alt .g-first,
+.g-tpl-200-alt .g-first {
+  display: block;
+  margin: 0;
+  width: 200px;
+  float: right;
+}
+
+/* 190px */
+.g-tpl-190 .g-unit,
+.g-unit .g-tpl-190 .g-unit,
+.g-unit .g-unit .g-tpl-190 .g-unit {
+  display: block;
+  margin: 0 0 0 190px;
+  width: auto;
+  float: none;
+}
+.g-unit .g-unit .g-tpl-190 .g-first,
+.g-unit .g-tpl-190 .g-first,
+.g-tpl-190 .g-first {
+  display: block;
+  margin: 0;
+  width: 190px;
+  float: left;
+}
+/* 190px alt */
+.g-tpl-190-alt .g-unit,
+.g-unit .g-tpl-190-alt .g-unit,
+.g-unit .g-unit .g-tpl-190-alt .g-unit {
+  display: block;
+  margin: 0 190px 0 0;
+  width: auto;
+  float: none;
+}
+.g-unit .g-unit .g-tpl-190-alt .g-first,
+.g-unit .g-tpl-190-alt .g-first,
+.g-tpl-190-alt .g-first {
+  display: block;
+  margin: 0;
+  width: 190px;
   float: right;
 }
 
