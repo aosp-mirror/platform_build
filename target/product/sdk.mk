@@ -20,19 +20,11 @@ PRODUCT_PROPERTY_OVERRIDES :=
 PRODUCT_PACKAGES := \
 	SystemUI \
 	AccountAndSyncSettings \
-	Camera \
-	Calculator \
-	DeskClock \
 	Development \
 	DrmProvider \
-	Email \
 	Fallback \
-	Gallery \
 	GPSEnable \
 	Launcher2 \
-	Protips \
-	Music \
-	Mms \
 	Settings \
 	SdkSetup \
 	CustomLocale \
@@ -40,7 +32,6 @@ PRODUCT_PACKAGES := \
 	sqlite3 \
 	LatinIME \
 	PinyinIME \
-	Phone \
 	OpenWnn \
 	libWnnEngDic \
 	libWnnJpnDic \
@@ -52,11 +43,21 @@ PRODUCT_PACKAGES := \
 	SoftKeyboard \
 	CubeLiveWallpapers \
 	QuickSearchBox \
-        monkeyrunner \
-        guavalib \
-        jsr305lib \
+	monkeyrunner \
+	guavalib \
+	jsr305lib \
 	jython \
-        jsilver
+	jsilver
+#	Calculator \
+#	Camera \
+#	DeskClock \
+#	Email \
+#	Gallery \
+#	Music \
+#	Mms \
+#	Phone \
+#	Protips \
+
 
 # Host tools that are parts of the SDK.
 # See development/build/sdk.atree
@@ -74,7 +75,7 @@ PRODUCT_PACKAGES += \
 	traceview \
 	android \
 	dexdump \
-        monkeyrunner
+	monkeyrunner
 
 # Native host Java libraries that are parts of the SDK.
 # See development/build/sdk.atree
@@ -94,12 +95,9 @@ PRODUCT_PACKAGES += \
 	sdklib \
 	sdkuilib \
 	sdkmanager \
-	swing-worker-1.1 \
 	groovy-all-1.7.0 \
 	commons-compress-1.0 \
 	emmalib \
-	org-netbeans-api-visual \
-	org-openide-util \
 	jcommon-1.0.12 \
 	jfreechart-1.0.9 \
 	jfreechart-1.0.9-swt \
@@ -108,9 +106,9 @@ PRODUCT_PACKAGES += \
 	org.eclipse.jface_3.4.2.M20090107-0800 \
 	osgi \
 	layoutlib \
-        monkeyrunner \
-        guavalib \
-        jsr305lib \
+	monkeyrunner \
+	guavalib \
+	jsr305lib \
 	jython
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
@@ -121,6 +119,7 @@ PRODUCT_COPY_FILES := \
 	frameworks/base/data/sounds/effects/VideoRecord.ogg:system/media/audio/ui/VideoRecord.ogg \
 	frameworks/base/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml
 
+$(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
