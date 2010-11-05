@@ -273,7 +273,12 @@ ifneq ($(proto_sources),)
 proto_sources_fullpath := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(proto_sources))
 # By putting the generated java files into $(LOCAL_INTERMEDIATE_SOURCE_DIR), they will be
 # automatically found by the java compiling function transform-java-to-classes.jar.
+ifneq ($(LOCAL_INTERMEDIATE_SOURCE_DIR),)
 proto_java_intemediate_dir := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/proto
+else
+# LOCAL_INTERMEDIATE_SOURCE_DIR may be not defined in non-java modules.
+proto_java_intemediate_dir := $(intermediates)/proto
+endif
 proto_java_sources_file_stamp := $(proto_java_intemediate_dir)/Proto.stamp
 proto_java_sources_dir := $(proto_java_intemediate_dir)/src
 
