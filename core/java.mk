@@ -32,6 +32,16 @@ else
     LOCAL_JAVA_LIBRARIES := core core-junit ext framework $(LOCAL_JAVA_LIBRARIES)
   endif
 endif
+
+proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
+ifneq ($(proto_sources),)
+ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
+    LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-2.3.0-micro
+else
+    LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-2.3.0-lite
+endif
+endif
+
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
 
 LOCAL_BUILT_MODULE_STEM := $(strip $(LOCAL_BUILT_MODULE_STEM))
@@ -201,13 +211,9 @@ ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
-$(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file)
+$(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file) \
+	$(RenderScript_file_stamp) $(proto_java_sources_file_stamp)
 	$(transform-java-to-classes.jar)
-
-# source files generated from RenderScript must be generated before java compiling
-ifneq ($(RenderScript_file_stamp),)
-$(full_classes_compiled_jar): $(RenderScript_file_stamp)
-endif
 
 # All of the rules after full_classes_compiled_jar are very unlikely
 # to fail except for bugs in their respective tools.  If you would
