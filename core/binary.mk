@@ -160,6 +160,7 @@ proto_generated_objects := $(patsubst %.cc,%.o, $(proto_generated_cc_sources))
 
 $(proto_generated_cc_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
 $(proto_generated_cc_sources): PRIVATE_PROTO_CC_OUTPUT_DIR := $(proto_generated_cc_sources_dir)
+$(proto_generated_cc_sources): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
 $(proto_generated_cc_sources): $(proto_generated_cc_sources_dir)/%.pb.cc: %.proto $(PROTOC)
 	$(transform-proto-to-cc)
 
