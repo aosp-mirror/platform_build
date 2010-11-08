@@ -59,16 +59,26 @@
 <?cs else ?>
   <?cs if:ndk ?>
 
-<p>The Android NDK is a companion tool to the Android SDK that lets Android
-application developers build performance-critical portions of their apps in
-native code. It is designed for use <em>only</em> in conjunction with the
-Android SDK, so if you have not already installed the latest Android SDK, please
-do so before downloading the NDK. Also, please read <a href="#overview">What is 
-the Android NDK?</a> to get an understanding of what the NDK offers and whether
-it will be useful to you.</p>
+<p>The Android NDK is a companion tool to the Android SDK that lets you build
+performance-critical portions of your apps in native code. It provides headers and
+libraries that allow you to build activities, handle user input, use hardware sensors,
+access application resources, and more, when programming in C or C++. If you write
+native code, your applications are still packaged into an .apk file and they still run
+inside of a virtual machine on the device. The fundamental Android application model
+does not change.</p>
 
-<p>Select the download package that is appropriate for your development
-computer. </p>
+<p>Using native code does not result in an automatic performance increase, 
+but always increases application complexity. If you have not run into any limitations
+using the Android framework APIs, you probably do not need the NDK. Read <a 
+href="<?cs var:toroot ?>sdk/ndk/overview.html">What is the NDK?</a> for more information about what
+the NDK offers and whether it will be useful to you.
+</p>
+<p>
+The NDK is designed for use <em>only</em> in conjunction with the
+Android SDK. If you have not already installed and setup the <a
+href="http://developer.android.com/sdk/index.html">Android SDK</a>, please
+do so before downloading the NDK. 
+</p>
 
   <table class="download">
     <tr>

@@ -194,8 +194,11 @@ else
   $(call import-products, $(get-all-product-makefiles))
 endif # TARGET_BUILD_APPS
 $(check-all-products)
-#$(dump-products)
-#$(error done)
+
+ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
+$(dump-products)
+$(error done)
+endif
 
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.

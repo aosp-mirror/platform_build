@@ -102,6 +102,8 @@ LOCAL_MANIFEST_FILE:=
 LOCAL_RENDERSCRIPT_INCLUDES:=
 LOCAL_BUILD_HOST_DEX:=
 LOCAL_DEX_PREOPT:=
+LOCAL_PROTOC_OPTIMIZE_TYPE:= # lite(default),micro,full
+LOCAL_PROTOC_FLAGS:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
