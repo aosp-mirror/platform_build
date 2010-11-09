@@ -162,9 +162,8 @@ do so before downloading the NDK.
   </div>
 ?>
 
-  <p>Welcome Developers! If you are new to the Android SDK, please read the <a
-href="#quickstart">Quick Start</a>, below, for an overview of how to install and
-set up the SDK. </p>
+  <p>Welcome Developers! If you are new to the Android SDK, please read the steps below, for an
+overview of how to set up the SDK. </p>
 
   <p>If you are already using the Android SDK and would like to update to the
 latest tools or platforms, please use the <em>Android SDK and AVD Manager</em>
