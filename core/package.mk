@@ -201,15 +201,13 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 	$(create-resource-java-files)
 	$(hide) for GENERATED_MANIFEST_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
 					-name Manifest.java 2> /dev/null`; do \
-		dir=`grep package $$GENERATED_MANIFEST_FILE | head -n1 | \
-			awk '{print $$2}' | tr -d ";" | tr . /`; \
+		dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_MANIFEST_FILE`; \
 		mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
 		$(ACP) -fpt $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
 	done;
 	$(hide) for GENERATED_R_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
 					-name R.java 2> /dev/null`; do \
-		dir=`grep package $$GENERATED_R_FILE | head -n1 | \
-			awk '{print $$2}' | tr -d ";" | tr . /`; \
+		dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_R_FILE`; \
 		mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
 		$(ACP) -fpt $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
 			|| exit 31; \
