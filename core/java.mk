@@ -88,7 +88,7 @@ endif
 ifdef LOCAL_PROGUARD_ENABLED
 proguard_jar_leaf := proguard.classes.jar
 built_dex_intermediate_leaf := proguard.$(built_dex_intermediate_leaf)
-built_dex_leaf := progaurd.classes.dex
+built_dex_leaf := proguard.classes.dex
 else
 proguard_jar_leaf := noproguard.classes.jar
 built_dex_intermediate_leaf := noproguard.$(built_dex_intermediate_leaf)
