@@ -61,10 +61,13 @@ def AddUserdata(output_zip):
   img = tempfile.NamedTemporaryFile()
 
   build_command = []
-  if OPTIONS.info_dict["fstab"]["/data"].fs_type.startswith("ext"):
-    build_command = ["mkuserimg.sh",
-                     user_dir, img.name,
-                     OPTIONS.info_dict["fstab"]["/data"].fs_type, "data"]
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab and fstab["/data"].fs_type.startswith("ext"):
+    build_command = ["mkuserimg.sh"]
+    if "extfs_sparse_flag" in OPTIONS.info_dict:
+      build_command.append(OPTIONS.info_dict["extfs_sparse_flag"])
+    build_command.extend([user_dir, img.name,
+                     fstab["/data"].fs_type, "data"])
     if "userdata_size" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["userdata_size"]))
   else:
@@ -109,10 +112,14 @@ def AddSystem(output_zip):
       pass
 
   build_command = []
-  if OPTIONS.info_dict["fstab"]["/system"].fs_type.startswith("ext"):
-    build_command = ["mkuserimg.sh",
-                     os.path.join(OPTIONS.input_tmp, "system"), img.name,
-                     OPTIONS.info_dict["fstab"]["/system"].fs_type, "system"]
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab and fstab["/system"].fs_type.startswith("ext"):
+
+    build_command = ["mkuserimg.sh"]
+    if "extfs_sparse_flag" in OPTIONS.info_dict:
+      build_command.append(OPTIONS.info_dict["extfs_sparse_flag"])
+    build_command.extend([os.path.join(OPTIONS.input_tmp, "system"), img.name,
+                     fstab["/system"].fs_type, "system"])
     if "system_size" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["system_size"]))
   else:
