@@ -520,7 +520,7 @@ include $(BUILD_SYSTEM)/legacy_prebuilts.mk
 ifneq ($(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),)
   $(warning *** Some files have been added to ALL_PREBUILT.)
   $(warning *)
-  $(warning * ALL_PREBUILT is a depracated mechanism that)
+  $(warning * ALL_PREBUILT is a deprecated mechanism that)
   $(warning * should not be used for new files.)
   $(warning * As an alternative, use PRODUCT_COPY_FILES in)
   $(warning * the appropriate product definition.)
