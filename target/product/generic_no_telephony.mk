@@ -57,6 +57,7 @@ PRODUCT_COPY_FILES := \
         system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf
 
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
+$(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 # Overrides
