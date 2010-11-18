@@ -19,28 +19,22 @@ PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
 	SystemUI \
+	Launcher2 \
 	AccountAndSyncSettings \
 	Development \
 	DrmProvider \
 	Fallback \
 	GPSEnable \
-	Launcher2 \
 	Settings \
 	SdkSetup \
 	CustomLocale \
 	gpstest \
 	sqlite3 \
 	LatinIME \
-	PinyinIME \
-	OpenWnn \
-	libWnnEngDic \
-	libWnnJpnDic \
-	libwnndict \
 	CertInstaller \
 	LiveWallpapersPicker \
 	ApiDemos \
 	GestureBuilder \
-	SoftKeyboard \
 	CubeLiveWallpapers \
 	QuickSearchBox \
 	monkeyrunner \
@@ -48,6 +42,7 @@ PRODUCT_PACKAGES := \
 	jsr305lib \
 	jython \
 	jsilver
+
 #	Calculator \
 #	Camera \
 #	DeskClock \
@@ -55,8 +50,14 @@ PRODUCT_PACKAGES := \
 #	Gallery \
 #	Music \
 #	Mms \
+#	OpenWnn \
+#	libWnnEngDic \
+#	libWnnJpnDic \
+#	libwnndict \
 #	Phone \
+#	PinyinIME \
 #	Protips \
+#	SoftKeyboard \
 
 
 # Host tools that are parts of the SDK.
@@ -122,16 +123,18 @@ PRODUCT_COPY_FILES := \
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
-
 # Overrides
 PRODUCT_BRAND := generic
 PRODUCT_NAME := sdk
 PRODUCT_DEVICE := generic
-PRODUCT_LOCALES := \
+
+# locale + densities. en_US is both first and in alphabetical order to
+# ensure this is the default locale.
+PRODUCT_LOCALES = \
 	ldpi \
 	hdpi \
 	mdpi \
+	en_US \
 	ar_EG \
 	ar_IL \
 	bg_BG \
