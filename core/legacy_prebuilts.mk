@@ -27,7 +27,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	ap_gain.bin \
 	audio.conf \
 	auto_pairing.conf \
-	AVRCP.kl \
 	baseline11k.par \
 	baseline8k.par \
 	baseline.par \
@@ -43,7 +42,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	cdt.bin \
 	chat-ril \
 	cmu6plus.ok.zip \
-	cpcap-key.kl \
 	data \
 	dbus.conf \
 	dev \
