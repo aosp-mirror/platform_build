@@ -274,7 +274,7 @@ else # !sdk
 endif
 
 # build the full stagefright library
-ifneq ($(strip BUILD_WITH_FULL_STAGEFRIGHT),)
+ifneq ($(strip $(BUILD_WITH_FULL_STAGEFRIGHT)),)
 BUILD_WITH_FULL_STAGEFRIGHT := true
 endif
 
