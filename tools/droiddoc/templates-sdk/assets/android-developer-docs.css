@@ -730,37 +730,49 @@ div.special ol li {
   padding:0;
 }
 
-p.note, p.caution, p.warning {
+p.note, div.note,
+p.caution, div.caution,
+p.warning, div.warning {
   margin: 1em;
   padding: 0 0 0 .5em;
   border-left: 4px solid;
 }
 
-p.special-note {
+p.special-note,
+div.special-note {
   background-color:#EBF3DB;
   padding:10px 20px;
   margin:0 0 1em;
 }
 
-p.note {
+p.note,
+div.note {
  border-color: #99aacc;
 }
 
-p.warning {
+p.warning,
+div.warning {
   border-color: #aa0033;
 }
 
-p.caution {
+p.caution,
+div.caution {
   border-color: #ffcf00;
 }
 
-p.warning b, p.warning strong {
-  font-weight: bold;
-}
-
-li p.note, li p.warning {
+li .note,
+li .caution,
+li .warning {
   margin: .5em 0 0 0;
   padding: .2em .5em .2em .9em;
+}
+
+/* Makes sure the first paragraph does not add top-whitespace within the box*/
+li .note>p:first-child,
+li .caution>p:first-child,
+li .warning>p:first-child {
+  margin-top:0;
+  padding-top:0;
 }
 
 dl.xml dt {
@@ -1054,7 +1066,7 @@ ol.toc li ol {
   margin: 0;
   padding: 0;
 }
-  
+
 ol.toc li li {
   padding: 0;
   margin: 0 0 0 1em;
@@ -1216,7 +1228,7 @@ table.download th {
   float: right;
 }
 
-  
+
 /* JQUERY RESIZABLE STYLES */
 .ui-resizable { position: relative; }
 .ui-resizable-handle { position: absolute; display: none; font-size: 0.1px; z-index:1; }
@@ -1252,7 +1264,7 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; }
   #body-content {
     position:inherit;
   }
-  
+
   #doc-content {
     margin-left:0 !important;
     height:auto !important;
