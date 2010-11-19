@@ -76,13 +76,23 @@ endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
 TARGET_GLOBAL_CFLAGS += \
-			-march=i686 \
+			-Ulinux \
 			-m32 \
 			-fPIC \
 			-include $(call select-android-config-h,target_linux-x86)
 
 TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
+
+ifeq ($(TARGET_ARCH_VARIANT),x86-atom)
+    TARGET_GLOBAL_CFLAGS += -mtune=i686 -DUSE_SSSE3 -DUSE_SSE2 -mfpmath=sse -msse2
+else
+    TARGET_GLOBAL_CFLAGS += -march=i686
+endif
+
+TARGET_GLOBAL_CFLAGS += -D__ANDROID__
+TARGET_GLOBAL_LDFLAGS += -m32
+
 
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86/include \
@@ -111,7 +121,7 @@ $(TARGET_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	 -nostdlib -Wl,-soname,$(notdir $@) \
 	 -shared -Bsymbolic \
-	-fPIC -march=i686 \
+	$(TARGET_GLOBAL_CFLAGS) \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	$(TARGET_CRTBEGIN_SO_O) \
 	$(PRIVATE_ALL_OBJECTS) \
@@ -160,14 +170,5 @@ $(TARGET_CXX) \
 	-Wl,--end-group \
 	$(TARGET_CRTEND_O)
 endef
-
-ifeq ($(TARGET_ARCH_VARIANT),x86-atom)
-    # Enable recent IA friendly memory routines (such as for Atom)
-    # These will not work on the earlier x86 machines
-    TARGET_GLOBAL_CFLAGS += -mtune=i686 -DUSE_SSSE3 -DUSE_SSE2
-endif
-
-TARGET_GLOBAL_CFLAGS += -D__ANDROID__
-TARGET_GLOBAL_LDFLAGS += -m32
 
 endif #simulator
