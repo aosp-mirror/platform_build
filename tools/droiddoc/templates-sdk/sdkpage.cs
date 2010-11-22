@@ -52,7 +52,7 @@
   </div>
 <?cs /if ?>
 
-<?cs if:android.whichdoc != "online" && !android.preview ?>
+<?cs if:android.whichdoc != "online" && !sdk.preview ?>
 
 <!-- <p>The sections below provide an overview of how to install the SDK package. </p> -->
 
@@ -80,6 +80,7 @@ href="http://developer.android.com/sdk/index.html">Android SDK</a>, please
 do so before downloading the NDK. 
 </p>
 
+  <?cs if:sdk.whichdoc == "online" ?>
   <table class="download">
     <tr>
       <th>Platform</th>
@@ -112,8 +113,10 @@ do so before downloading the NDK.
     <td><?cs var:ndk.linux_checksum ?></td>
   </tr>
   </table>
+  <?cs /if ?><?cs # END if online ?>
 
-  <?cs else ?><?cs if:android.whichdoc == "online" ?>
+ <?cs else ?><?cs # END if ndk ?>
+  <?cs if:android.whichdoc == "online" ?>
 
   <?cs if:sdk.preview ?>
   <p>Welcome developers! The next release of the Android platform will be
@@ -126,41 +129,7 @@ do so before downloading the NDK.
   applications more efficiently. See the <a href="features.html">Android <?cs
   var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
   highlights.</p>
-<?cs /if ?> 
-<?cs # end if NDK ... the following is for the SDK ?>
-
-<?cs #  
-    <div class="toggle-content special">
-    <p>The Android SDK has changed! If you've worked with the Android SDK before, 
-    you will notice several important differences:</p>
-    
-    <div class="toggle-content-toggleme" style="display:none">
-    <ul style="padding-bottom:.0;">
-    <li style="margin-top:.5em">The SDK downloadable package includes <em>only</em>
-    the latest version of the Android SDK Tools.</li>
-    <li>Once you've installed the SDK, you now use the Android SDK and AVD Manager
-    to download all of the SDK components that you need, such as Android platforms,
-    SDK add-ons, tools, and documentation. </li>
-    <li>The new approach is modular &mdash; you can install only the components you
-    need and update any or all components without affecting other parts of your
-    development environment.</li>
-    <li>In short, once you've installed the new SDK, you will not need to download
-    an SDK package again. Instead, you will use the Android SDK and AVD Manager to
-    keep your development environment up-to-date. </li>
-    </ul>
-    <p style="margin-top:0">If you are currently using the Android 1.6 SDK, you
-    do not need to install the new SDK, because your existing SDK already 
-    includes the Android SDK and AVD Manager tool. To develop against Android 
-    2.0.1, for example, you can just download the Android 2.0.1 platform (and 
-    updated SDK Tools) into your existing SDK. Refer to <a 
-    href="adding-components.html">Adding SDK Components</a>.</p>
-    </div>
-    
-    <a href='#' class='toggle-content-button show' onclick="toggleContent(this,true);return false;">
-      <span>show more</span><span style='display:none'>show less</span>
-    </a>
-  </div>
-?>
+  <?cs /if ?><?cs # END if preview ?>
 
   <p>Welcome Developers! If you are new to the Android SDK, please read the steps below, for an
 overview of how to set up the SDK. </p>
@@ -228,23 +197,23 @@ function onDownload(link) {
 }
 </script>
 
-  <?cs /if ?>
- <?cs /if ?>
-<?cs /if ?> 
+  <?cs /if ?><?cs # END if online ?>
+ <?cs /if ?><?cs # END if/else ndk/sdk ?>
+<?cs /if ?><?cs # END if/else redirect ?>
 
-<?cs if:android.whichdoc != "online" && sdk.preview ?>
-  <p>Welcome developers! The next release of the Android platform will be
-Android <?cs var:sdk.preview.version ?> and we are pleased to announce the
-availability of an early look SDK to give you a head-start on developing
-applications for it. </p>
+<?cs if:android.whichdoc != "online" && sdk.preview && !ndk ?>
+  <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming <?cs
+var:sdk.preview.version ?> release, to give you a head-start on developing applications for it.
+</p>
 
-  <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
-improvements and new features for users and developers. Additionally, the SDK
-itself introduces several new capabilities that enable you to develop
-applications more efficiently. See the <a
-href="http://developer.android.com/sdk/preview/features.html">Android 
-<?cs var:sdk.preview.version ?> Highlights</a> document for a list of
-highlights.</p>
+  <p>See the <a
+href="<?cs var:toroot ?>sdk/preview/features.html">Introduction to
+<?cs var:sdk.preview.version ?></a> document for more information about new features and
+the <a href="<?cs var:toroot ?>sdk/preview/features.html">Getting Started</a> guide for
+information about how to setup the preview SDK.</p>
+<style type="text/css">
+.non-preview { display:none; }
+</style>
 <?cs /if ?>
 
       <?cs call:tag_list(root.descr) ?>
