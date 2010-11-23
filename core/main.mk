@@ -152,7 +152,7 @@ endif
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
-INTERNAL_MODIFIER_TARGETS := showcommands checkbuild
+INTERNAL_MODIFIER_TARGETS := showcommands checkbuild all
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
