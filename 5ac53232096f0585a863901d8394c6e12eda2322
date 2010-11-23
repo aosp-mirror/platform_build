@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA9n///Dc\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1319,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2010-11-23T23:33:08Z",
+      "side": 1,
+      "message": "How about this instead:\n\n-include $(sort $(wildcard vendor/*/build/tasks/*.mk))\n\nI\u0027d rather not have them in core, because that implies that it\u0027s part of the build system proper, which these aren\u0027t.  Also, we use wildcard and should sort them so that it\u0027s not subject to filesystem ordering.",
+      "revId": "5ac53232096f0585a863901d8394c6e12eda2322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
