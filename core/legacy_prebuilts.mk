@@ -114,7 +114,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	sys \
 	system \
 	tcmd \
-	tuttle2.kl \
 	ueventd.goldfish.rc \
 	ueventd.olympus.rc \
 	ueventd.rc \
