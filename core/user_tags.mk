@@ -539,7 +539,6 @@ GRANDFATHERED_USER_MODULES += \
 	traceview \
 	tune2fs \
 	tune2fs_host \
-	tuttle2.kcm \
 	uix \
 	usbtest \
 	vdc \
