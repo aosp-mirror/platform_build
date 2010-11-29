@@ -864,7 +864,9 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/bsdiff \
 	  $(HOST_OUT_EXECUTABLES)/imgdiff \
 	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
-	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar
+	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
+	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
+	  $(HOST_OUT_EXECUTABLES)/make_ext4fs
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
