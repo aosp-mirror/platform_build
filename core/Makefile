@@ -921,8 +921,8 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
 	  $(HOST_OUT_EXECUTABLES)/genext2fs \
 	  $(HOST_OUT_EXECUTABLES)/tune2fs \
-	  $(HOST_OUT_EXECUTABLES)/e2fsck
-
+	  $(HOST_OUT_EXECUTABLES)/e2fsck \
+	  $(HOST_OUT_EXECUTABLES)/make_ext4fs
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
