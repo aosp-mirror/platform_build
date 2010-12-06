@@ -1654,10 +1654,11 @@ endif
 
 # Convert a partition data size (eg, as reported in /proc/mtd) to the
 # size of the image used to flash that partition (which includes a
-# 64-byte spare area for each 2048-byte page).
+# spare area for each page).
 # $(1): the partition data size
 define image-size-from-data-size
-$(shell echo $$(($(1) / 2048 * (2048+64))))
+$(shell echo $$(($(1) / $(BOARD_NAND_PAGE_SIZE) * \
+  ($(BOARD_NAND_PAGE_SIZE)+$(BOARD_NAND_SPARE_SIZE)))))
 endef
 
 # $(1): The file(s) to check (often $@)
