@@ -153,7 +153,6 @@ GRANDFATHERED_USER_MODULES += \
 	ime \
 	init \
 	input \
-	installd \
 	ip \
 	iptables \
 	iself \
