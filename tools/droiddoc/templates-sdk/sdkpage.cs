@@ -168,7 +168,7 @@ overview of how to set up the SDK. </p>
   <p>If you're already using the Android SDK, you should
 update to the latest tools or platform using the <em>Android SDK and AVD Manager</em>, rather than
 downloading a new SDK starter package. See <a
-href="{@docRoot}sdk/adding-components.html">Adding SDK Components</a>.</p>
+href="<?cs var:toroot ?>sdk/adding-components.html">Adding SDK Components</a>.</p>
 
   <table class="download">
     <tr>
