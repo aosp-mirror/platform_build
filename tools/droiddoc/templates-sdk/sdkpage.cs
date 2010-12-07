@@ -134,9 +134,10 @@ do so before downloading the NDK.
   <p>Welcome Developers! If you are new to the Android SDK, please read the steps below, for an
 overview of how to set up the SDK. </p>
 
-  <p>If you are already using the Android SDK and would like to update to the
-latest tools or platforms, please use the <em>Android SDK and AVD Manager</em>
-to get the components, rather than downloading a new SDK package.</p>
+  <p>If you're already using the Android SDK, you should
+update to the latest tools or platform using the <em>Android SDK and AVD Manager</em>, rather than
+downloading a new SDK starter package. See <a
+href="<?cs var:toroot ?>sdk/adding-components.html">Adding SDK Components</a>.</p>
 
   <table class="download">
     <tr>
