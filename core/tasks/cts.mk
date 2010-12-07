@@ -48,12 +48,12 @@ $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
 -include cts/CtsHostLibraryList.mk
 $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(ACP)
 # Make necessary directory for CTS
-	@rm -rf $(PRIVATE_CTS_DIR)
-	@mkdir -p $(TMP_DIR)
-	@mkdir -p $(PRIVATE_DIR)/docs
-	@mkdir -p $(PRIVATE_DIR)/tools
-	@mkdir -p $(PRIVATE_DIR)/repository/testcases
-	@mkdir -p $(PRIVATE_DIR)/repository/plans
+	$(hide) rm -rf $(PRIVATE_CTS_DIR)
+	$(hide) mkdir -p $(TMP_DIR)
+	$(hide) mkdir -p $(PRIVATE_DIR)/docs
+	$(hide) mkdir -p $(PRIVATE_DIR)/tools
+	$(hide) mkdir -p $(PRIVATE_DIR)/repository/testcases
+	$(hide) mkdir -p $(PRIVATE_DIR)/repository/plans
 # Copy executable and JARs to CTS directory
 	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(CTS_EXECUTABLE_PATH) $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(PRIVATE_DIR)/tools
 # Change mode of the executables
@@ -164,7 +164,7 @@ $(INTERNAL_CTS_TARGET): PRIVATE_CTS_DIR := $(cts_dir)
 $(INTERNAL_CTS_TARGET): PRIVATE_DIR := $(cts_dir)/$(cts_name)
 $(INTERNAL_CTS_TARGET): TMP_DIR := $(cts_dir)/temp
 $(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN) $(CORE_VM_TEST_DESC)
-	@echo "Package CTS: $@"
+	$(hide) echo "Package CTS: $@"
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
 
 .PHONY: cts
