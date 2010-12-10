@@ -735,11 +735,11 @@ droidcore: files \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_FILES_FILE)
 
-# dist_libraries only for putting your library into the dist directory with a full build.
-.PHONY: dist_libraries
+# dist_files only for putting your library into the dist directory with a full build.
+.PHONY: dist_files
 
 ifeq ($(EMMA_INSTRUMENT),true)
-  $(call dist-for-goals, droid, $(EMMA_META_ZIP))
+  $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
 endif
 
 # Dist for droid if droid is among the cmd goals, or no cmd goal is given.
@@ -782,7 +782,7 @@ else # TARGET_BUILD_APPS
    )
 
 # Building a full system-- the default is to build droidcore
-droid: droidcore dist_libraries
+droid: droidcore dist_files
 
 endif # TARGET_BUILD_APPS
 endif # droid in $(MAKECMDGOALS)
@@ -845,4 +845,3 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
-
