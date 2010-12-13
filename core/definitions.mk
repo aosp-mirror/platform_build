@@ -1402,35 +1402,48 @@ define unzip-jar-files
   done
 endef
 
-# below we write the list of java files to java-source-list to avoid argument
-# list length problems with Cygwin we filter out duplicate java file names
-# because eclipse's compiler doesn't like them.
-define transform-java-to-classes.jar
-@echo "target Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
+# Common definition to invoke javac on the host and target.
+#
+# Some historical notes:
+# - below we write the list of java files to java-source-list to avoid argument
+#   list length problems with Cygwin
+# - we filter out duplicate java file names because eclipse's compiler
+#   doesn't like them.
+#
+# $(1): javac
+# $(2): bootclasspath
+define compile-java
 $(hide) rm -f $@
 $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
+$(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
-$(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES), \
-    $(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
 	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list; \
 fi
-$(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list \
-    | sort -u > $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq
-$(hide) $(TARGET_JAVAC) -encoding ascii $(PRIVATE_BOOTCLASSPATH) \
+$(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))java-source-list \
+    | sort -u > $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))java-source-list-uniq
+$(hide) $(1) -encoding ascii \
+    $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
+    $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
+    $(2) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
-    $(PRIVATE_JAVACFLAGS) $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
-	$(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
+    $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
-    \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq \
+    $(PRIVATE_JAVACFLAGS) \
+    \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
 $(hide) rm -f $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list
 $(hide) rm -f $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq
-$(hide) mkdir -p $(dir $@)
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
+endef
+
+define transform-java-to-classes.jar
+@echo "target Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
+$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_BOOTCLASSPATH))
 $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 endef
 
@@ -1553,31 +1566,12 @@ endef
 # new prebuilt rules to work, we should change this to copy the
 # resources to the out directory and then copy the resources.
 
-# Note: not using aapt tool for this because we aren't making
-# an android package for the host.
+# Note: we intentionally don't clean PRIVATE_CLASS_INTERMEDIATES_DIR
+# in transform-java-to-classes for the sake of vm-tests.
 define transform-host-java-to-package
 @echo "host Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
-@rm -f $@
-@rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
-@mkdir -p $(dir $@)
-@mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
-$(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES), \
-    $(PRIVATE_CLASS_INTERMEDIATES_DIR))
-$(call dump-words-to-file,$(sort\
-	$(PRIVATE_JAVA_SOURCES)),\
-	$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq)
-$(hide) $(HOST_JAVAC) -encoding ascii -g \
-	$(PRIVATE_JAVACFLAGS) $(xlint_unchecked) \
-	$(addprefix -classpath ,$(strip \
-		$(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
-	-extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR)\
-        \@$(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq || \
-	( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
-$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list
-$(hide) rm -f $(PRIVATE_INTERMEDIATES_DIR)/java-source-list-uniq
-$(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
-    $@ $(PRIVATE_JAR_MANIFEST) $(PRIVATE_EXTRA_JAR_ARGS) \
-    -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
+$(call compile-java,$(HOST_JAVAC),)
+$(hide) if [ ! -z "$(PRIVATE_EXTRA_JAR_ARGS)" ]; then jar uf $@ $(PRIVATE_EXTRA_JAR_ARGS); fi
 endef
 
 ###########################################################
