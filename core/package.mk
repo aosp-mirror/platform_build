@@ -76,8 +76,6 @@ ifeq ($(LOCAL_MODULE_TAGS),)
 LOCAL_MODULE_TAGS := optional
 endif
 
-#$(warning $(LOCAL_PATH) $(LOCAL_PACKAGE_NAME) $(sort $(LOCAL_MODULE_TAGS)))
-
 ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
 # Force localization check if it's not tagged as tests.
 LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
@@ -96,11 +94,6 @@ LOCAL_RESOURCE_DIR := \
   $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
     $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
   $(LOCAL_RESOURCE_DIR)
-
-# this is an app, so add the system libraries to the search path
-LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
-
-#$(warning Finding assets for $(LOCAL_ASSET_DIR))
 
 all_assets := $(call find-subdir-assets,$(LOCAL_ASSET_DIR))
 all_assets := $(addprefix $(LOCAL_ASSET_DIR)/,$(patsubst assets/%,%,$(all_assets)))
