@@ -41,7 +41,7 @@ ifeq "" "$(PLATFORM_VERSION)"
   # which is the version that we reveal to the end user.
   # Update this value when the platform version changes (rather
   # than overriding it somewhere else).  Can be an arbitrary string.
-  PLATFORM_VERSION := 2.3.1
+  PLATFORM_VERSION := 2.4
 endif
 
 ifeq "" "$(PLATFORM_SDK_VERSION)"
@@ -53,7 +53,7 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
-  PLATFORM_SDK_VERSION := 9
+  PLATFORM_SDK_VERSION := 10
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
