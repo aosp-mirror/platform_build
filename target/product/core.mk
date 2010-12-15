@@ -28,14 +28,12 @@ PRODUCT_PACKAGES := \
     com.android.location.provider.xml \
     core \
     core-junit \
-    create_test_dmtrace \
     dalvikvm \
     dexdeps \
     dexdump \
     dexlist \
     dexopt \
     dmtracedump \
-    dvz \
     dx \
     ext \
     framework-res \
@@ -43,8 +41,6 @@ PRODUCT_PACKAGES := \
     icu.dat \
     installd \
     ip-up-vpn \
-    jasmin \
-    jasmin.jar \
     libcrypto \
     libdex \
     libdvm \
