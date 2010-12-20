@@ -1119,7 +1119,7 @@ endef
 # it to be overriden en-masse see combo/linux-arm.make for an example.
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-shared-lib-inner
-$(HOST_CXX) \
+$(PRIVATE_CXX) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	-shared -Wl,-soname,$(notdir $@) \
@@ -1279,7 +1279,7 @@ endef
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner
-$(HOST_CXX) \
+$(PRIVATE_CXX) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	$(HOST_GLOBAL_LD_DIRS) \
