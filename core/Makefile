@@ -566,8 +566,12 @@ endif
 endif
 endif
 
+ifneq (true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED))
+  INTERNAL_USERIMAGES_SPARSE_EXT_FLAG := -s
+endif
+
 ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
-INTERNAL_USERIMAGES_DEPS := $(MKEXT2USERIMG) $(MAKE_EXT4FS)
+INTERNAL_USERIMAGES_DEPS := $(MKEXTUSERIMG) $(MAKE_EXT4FS)
 INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 
 # $(1): src directory
@@ -577,8 +581,8 @@ INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 # $(5): size of the partition
 define build-userimage-ext-target
   @mkdir -p $(dir $(2))
-    $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$(PATH) \
-	  $(MKEXT2USERIMG) $(1) $(2) $(4) $(3) $(5)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$(PATH) \
+	  $(MKEXTUSERIMG) $(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG) $(1) $(2) $(4) $(3) $(5)
 endef
 else
 INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
@@ -1043,6 +1047,9 @@ endif
 	$(hide) echo "tool_extensions=$(tool_extensions)" >> $(zip_root)/META/misc_info.txt
 ifdef mkyaffs2_extra_flags
 	$(hide) echo "mkyaffs2_extra_flags=$(mkyaffs2_extra_flags)" >> $(zip_root)/META/misc_info.txt
+endif
+ifdef INTERNAL_USERIMAGES_SPARSE_EXT_FLAG
+	$(hide) echo "extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)" >> $(zip_root)/META/misc_info.txt
 endif
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
