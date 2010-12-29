@@ -189,12 +189,53 @@ $(strip $(call _resolve-short-product-name,$(1)))
 endef
 
 
+_product_stash_var_list := $(_product_var_list) \
+	TARGET_ARCH \
+	TARGET_ARCH_VARIANT \
+	TARGET_BOARD_PLATFORM \
+	TARGET_BOARD_PLATFORM_GPU \
+	TARGET_BOOTLOADER_BOARD_NAME \
+	TARGET_COMPRESS_MODULE_SYMBOLS \
+	TARGET_PRELINK_MODULE \
+	TARGET_NO_BOOTLOADER \
+	TARGET_NO_KERNEL \
+	TARGET_NO_RECOVERY \
+	TARGET_NO_RADIOIMAGE \
+	TARGET_HARDWARE_3D \
+	TARGET_PROVIDES_INIT_RC \
+	TARGET_CPU_ABI \
+	TARGET_CPU_ABI2 \
+	TARGET_CPU_SMP \
+
+
+_product_stash_var_list += \
+	BOARD_WPA_SUPPLICANT_DRIVER \
+	BOARD_WLAN_DEVICE \
+	BOARD_USES_GENERIC_AUDIO \
+	BOARD_KERNEL_CMDLINE \
+	BOARD_KERNEL_BASE \
+	BOARD_HAVE_BLUETOOTH \
+	BOARD_HAVE_BLUETOOTH_BCM \
+	BOARD_VENDOR_QCOM_AMSS_VERSION \
+	BOARD_VENDOR_USE_AKMD \
+	BOARD_EGL_CFG \
+	BOARD_BOOTIMAGE_PARTITION_SIZE \
+	BOARD_RECOVERYIMAGE_PARTITION_SIZE \
+	BOARD_SYSTEMIMAGE_PARTITION_SIZE \
+	BOARD_USERDATAIMAGE_PARTITION_SIZE \
+	BOARD_FLASH_BLOCK_SIZE \
+	BOARD_SYSTEMIMAGE_PARTITION_SIZE \
+	BOARD_VENDOR_QCOM_GPS_LOC_API_HARDWARE \
+	BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION \
+	BOARD_INSTALLER_CMDLINE \
+
+
 #
-# Stash vaues of the variables in _product_var_list.
+# Stash vaues of the variables in _product_stash_var_list.
 # $(1): Renamed prefix
 #
 define stash-product-vars
-$(foreach v,$(_product_var_list), \
+$(foreach v,$(_product_stash_var_list), \
         $(eval $(strip $(1))_$(call rot13,$(v)):=$$($$(v))) \
  )
 endef
@@ -206,7 +247,7 @@ endef
 define assert-product-vars
 $(strip \
   $(eval changed_variables:=)
-  $(foreach v,$(_product_var_list), \
+  $(foreach v,$(_product_stash_var_list), \
     $(if $(call streq,$($(v)),$($(strip $(1))_$(call rot13,$(v)))),, \
         $(eval $(warning $(v) has been modified: $($(v)))) \
         $(eval $(warning previous value: $($(strip $(1))_$(call rot13,$(v))))) \
