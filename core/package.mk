@@ -331,6 +331,9 @@ $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abi)
 ifneq ($(TARGET_BUILD_APPS),)
     # Include all resources for unbundled apps.
+    LOCAL_AAPT_INCLUDE_ALL_RESOURCES := true
+endif
+ifeq ($(LOCAL_AAPT_INCLUDE_ALL_RESOURCES),true)
     $(LOCAL_BUILT_MODULE): PRODUCT_AAPT_CONFIG :=
 endif
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
