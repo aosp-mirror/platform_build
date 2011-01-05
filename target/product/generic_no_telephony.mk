@@ -42,7 +42,8 @@ PRODUCT_PACKAGES := \
     SystemUI \
     Updater \
     CalendarProvider \
-    SyncProvider
+    SyncProvider \
+    CryptKeeper
 
 PRODUCT_PACKAGES += \
     icu.dat
