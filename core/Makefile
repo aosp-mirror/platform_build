@@ -1370,6 +1370,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-I $(HOST_OUT) \
 			-I $(TARGET_COMMON_OUT_ROOT) \
 			-v "PLATFORM_NAME=android-$(PLATFORM_VERSION)" \
+			-v "OUT_DIR=$(OUT_DIR)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/platforms/android-$(PLATFORM_VERSION)/images/NOTICE.txt && \
