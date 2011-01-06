@@ -57,6 +57,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/android-info.txt)
 $(call add-clean-step, find $(PRODUCT_OUT) -name "*.apk" | xargs rm)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
