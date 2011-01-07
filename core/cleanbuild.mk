@@ -160,8 +160,6 @@ current_build_config :=
 
 # The files/dirs to delete during an installclean.  This includes the
 # non-common APPS directory, which may contain the wrong resources.
-# Use "./" in front of the paths to avoid accidentally deleting random
-# parts of the filesystem if any of the *_OUT vars resolve to blank.
 #
 # Deletes all of the files that change between different build types,
 # like "make user" vs. "make sdk".  This lets you work with different
@@ -174,28 +172,34 @@ current_build_config :=
 #     $ make -j8 sdk
 #
 installclean_files := \
-	./$(HOST_OUT)/obj/NOTICE_FILES \
-	./$(HOST_OUT)/sdk \
-	./$(PRODUCT_OUT)/*.img \
-	./$(PRODUCT_OUT)/*.txt \
-	./$(PRODUCT_OUT)/*.xlb \
-	./$(PRODUCT_OUT)/*.zip \
-	./$(PRODUCT_OUT)/data \
-	./$(PRODUCT_OUT)/obj/APPS \
-	./$(PRODUCT_OUT)/obj/NOTICE_FILES \
-	./$(PRODUCT_OUT)/obj/PACKAGING \
-	./$(PRODUCT_OUT)/recovery \
-	./$(PRODUCT_OUT)/root \
-	./$(PRODUCT_OUT)/system \
-	./$(PRODUCT_OUT)/dex_bootjars \
-	./$(PRODUCT_OUT)/obj/JAVA_LIBRARIES
+	$(HOST_OUT)/obj/NOTICE_FILES \
+	$(HOST_OUT)/sdk \
+	$(PRODUCT_OUT)/*.img \
+	$(PRODUCT_OUT)/*.txt \
+	$(PRODUCT_OUT)/*.xlb \
+	$(PRODUCT_OUT)/*.zip \
+	$(PRODUCT_OUT)/data \
+	$(PRODUCT_OUT)/obj/APPS \
+	$(PRODUCT_OUT)/obj/NOTICE_FILES \
+	$(PRODUCT_OUT)/obj/PACKAGING \
+	$(PRODUCT_OUT)/recovery \
+	$(PRODUCT_OUT)/root \
+	$(PRODUCT_OUT)/system \
+	$(PRODUCT_OUT)/dex_bootjars \
+	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.
 dataclean_files := \
-	./$(PRODUCT_OUT)/data/* \
-	./$(PRODUCT_OUT)/data-qemu/* \
-	./$(PRODUCT_OUT)/userdata-qemu.img
+	$(PRODUCT_OUT)/data/* \
+	$(PRODUCT_OUT)/data-qemu/* \
+	$(PRODUCT_OUT)/userdata-qemu.img
+
+# make sure *_OUT is set so that we won't result in deleting random parts
+# of the filesystem.
+ifneq (2,$(words $(HOST_OUT) $(PRODUCT_OUT)))
+  $(error both HOST_OUT and PRODUCT_OUT should be set at this point.)
+endif
 
 # Define the rules for commandline invocation.
 .PHONY: dataclean
@@ -212,6 +216,7 @@ installclean: dataclean
 
 ifeq "$(force_installclean)" "true"
   $(info *** Forcing "make installclean"...)
+  $(info *** rm -rf $(dataclean_files) $(installclean_files))
   $(shell rm -rf $(dataclean_files) $(installclean_files))
   $(info *** Done with the cleaning, now starting the real build.)
 endif
