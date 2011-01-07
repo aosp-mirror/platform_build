@@ -141,18 +141,20 @@ function init() {
     cookiePath = "reference_";
   } else if (location.href.indexOf("/guide/") != -1) {
     cookiePath = "guide_";
+  } else if (location.href.indexOf("/sdk/") != -1) {
+    cookiePath = "sdk_";
   } else if (location.href.indexOf("/resources/") != -1) {
     cookiePath = "resources_";
   }
 
   if (!isMobile) {
     $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizePackagesHeight(); } });
-    $(".side-nav-resizable").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
+    $("#side-nav").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
     var cookieWidth = readCookie(cookiePath+'width');
     var cookieHeight = readCookie(cookiePath+'height');
     if (cookieWidth) {
       restoreWidth(cookieWidth);
-    } else if ($(".side-nav-resizable").length) {
+    } else if ($("#side-nav").length) {
       resizeWidth();
     }
     if (cookieHeight) {
@@ -244,12 +246,12 @@ function highlightNav(fullPageName) {
   var lastSlashPos = fullPageName.lastIndexOf("/");
   var firstSlashPos;
   if (fullPageName.indexOf("/guide/") != -1) {
-      firstSlashPos = fullPageName.indexOf("/guide/");
-    } else if (fullPageName.indexOf("/sdk/") != -1) {
-      firstSlashPos = fullPageName.indexOf("/sdk/");
-    } else {
-      firstSlashPos = fullPageName.indexOf("/resources/");
-    }
+    firstSlashPos = fullPageName.indexOf("/guide/");
+  } else if (fullPageName.indexOf("/sdk/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/sdk/");
+  } else if (fullPageName.indexOf("/resources/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/resources/");
+  }
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
   }
@@ -328,10 +330,8 @@ function resizeHeight() {
     $("#classes-nav").css({height:swapperHeight - parseInt(resizePackagesNav.css("height")) + "px"});
     $("#nav-tree").css({height:swapperHeight + "px"});
 
-  // If in the dev guide docs, also resize the "devdoc-nav" div
-  } else if (href.indexOf("/guide/") != -1) {
-    $("#devdoc-nav").css({height:sidenav.css("height")});
-  } else if (href.indexOf("/resources/") != -1) {
+  // Also resize the "devdoc-nav" div
+  } else if ($("#devdoc-nav").length) {
     $("#devdoc-nav").css({height:sidenav.css("height")});
   }
 
@@ -347,6 +347,7 @@ function resizeHeight() {
  * which creates the resizable side bar */
 function resizeWidth() {
   var windowWidth = $(window).width() + "px";
+  var sidenav = $("#side-nav");
   if (sidenav.length) {
     var sidenavWidth = sidenav.css("width");
   } else {
@@ -362,7 +363,7 @@ function resizeWidth() {
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
 
-  if ($(".side-nav-resizable").length) { // Must check if the nav is resizable because IE6 calls resizeWidth() from resizeAll() for all pages
+  if (sidenav.length) { // Must check if the nav exists because IE6 calls resizeWidth() from resizeAll() for all pages
     var basePath = getBaseUri(location.pathname);
     var section = basePath.substring(1,basePath.indexOf("/",1));
     writeCookie("width", sidenavWidth, section, null);
