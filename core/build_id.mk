@@ -19,4 +19,4 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-export BUILD_ID=GRI11
+export BUILD_ID=GRI11B
