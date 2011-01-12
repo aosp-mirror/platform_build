@@ -30,8 +30,10 @@ common_javalib.jar := $(intermediates.COMMON)/$(LOCAL_BUILT_MODULE_STEM)
 LOCAL_INTERMEDIATE_TARGETS += $(common_javalib.jar)
 
 ifeq (true,$(WITH_DEXPREOPT))
+ifeq (,$(TARGET_BUILD_APPS))
 ifndef LOCAL_DEX_PREOPT
 LOCAL_DEX_PREOPT := true
+endif
 endif
 endif
 
