@@ -148,9 +148,11 @@ endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
 ifeq (true,$(WITH_DEXPREOPT))
+ifeq (,$(TARGET_BUILD_APPS))
 ifneq (,$(LOCAL_SRC_FILES))
 ifndef LOCAL_DEX_PREOPT
 LOCAL_DEX_PREOPT := true
+endif
 endif
 endif
 endif
