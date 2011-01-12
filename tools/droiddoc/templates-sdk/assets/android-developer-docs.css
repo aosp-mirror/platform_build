@@ -688,22 +688,6 @@ div.special {
   -webkit-border-radius:5px;
 }
 
-.toggle-content-toggleme {
-  display:none;
-}
-
-.toggle-content-button {
-  font-size:.9em;
-  line-height:.9em;
-  text-decoration:none;
-  position:relative;
-  top:5px;
-}
-
-.toggle-content-button:hover {
-  text-decoration:underline;
-}
-
 div.special p {
   margin: .5em 0 0 0;
 }
@@ -839,6 +823,22 @@ div.figure p.img-caption {
 p.table-caption {
   margin: 0 0 0.5em 1em; /* matches default table left-margin */
 }
+
+
+/* toggle for misc content (such as long sample code) 
+   see toggleContent() script in android-developer-docs.js */
+.toggle-content.closed .toggle-content-toggleme {
+  display:none;
+}
+
+.toggle-content a {
+  text-decoration:none;
+}
+
+#jd-content .toggle-content img.toggle-content-img {
+  margin:0;
+}
+
 
 /* BEGIN quickview sidebar element styles */
 
