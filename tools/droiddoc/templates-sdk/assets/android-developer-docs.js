@@ -575,16 +575,20 @@ function getLangPref() {
 }
 
 
+/* Used to hide and reveal supplemental content, such as long code samples.
+   See the companion CSS in android-developer-docs.css */
 function toggleContent(obj) {
-  var button = $(obj);
-  var div = $(obj.parentNode);
+  var div = $(obj.parentNode.parentNode);
   var toggleMe = $(".toggle-content-toggleme",div);
-  if (button.hasClass("show")) {
+  if (div.hasClass("closed")) { // if it's closed, open it
     toggleMe.slideDown();
-    button.removeClass("show").addClass("hide");
-  } else {
+    div.removeClass("closed").addClass("open");
+    $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot + "assets/images/triangle-opened.png");
+  } else { // if it's open, close it
     toggleMe.slideUp();
-    button.removeClass("hide").addClass("show");
+    div.removeClass("open").addClass("closed");
+    $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot + "assets/images/triangle-closed.png");
   }
-  $("span", button).toggle();
+  $(".toggle-content-text", obj).toggle();
+  return false;
 }
