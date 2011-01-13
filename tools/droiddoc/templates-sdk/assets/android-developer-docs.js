@@ -582,13 +582,15 @@ function toggleContent(obj) {
   var toggleMe = $(".toggle-content-toggleme",div);
   if (div.hasClass("closed")) { // if it's closed, open it
     toggleMe.slideDown();
+    $(".toggle-content-text", obj).toggle();
     div.removeClass("closed").addClass("open");
     $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot + "assets/images/triangle-opened.png");
   } else { // if it's open, close it
-    toggleMe.slideUp();
-    div.removeClass("open").addClass("closed");
-    $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot + "assets/images/triangle-closed.png");
+    toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
+      $(".toggle-content-text", obj).toggle();
+      div.removeClass("open").addClass("closed");
+      $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot + "assets/images/triangle-closed.png");
+    });
   }
-  $(".toggle-content-text", obj).toggle();
   return false;
 }
