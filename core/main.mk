@@ -397,13 +397,16 @@ subdirs := \
 	development/host \
 	development/tools/etc1tool \
 	development/tools/line_endings \
+	external/clang \
 	external/easymock \
 	external/expat \
 	external/libpng \
+	external/llvm \
 	external/qemu \
 	external/sqlite/dist \
 	external/zlib \
 	frameworks/base \
+	frameworks/compile \
 	sdk/emulator/mksdcard \
 	sdk/sdklauncher \
 	system/core/adb \
