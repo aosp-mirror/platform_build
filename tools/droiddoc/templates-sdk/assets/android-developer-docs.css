@@ -831,7 +831,7 @@ p.table-caption {
   display:none;
 }
 
-.toggle-content a {
+.toggle-content a[href="#"] {
   text-decoration:none;
 }
 
