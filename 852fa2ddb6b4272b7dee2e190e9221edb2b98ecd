@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA+3//8wA\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1004,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2011-01-13T19:02:13Z",
+      "side": 1,
+      "message": "PRIVATE_CXX",
+      "revId": "852fa2ddb6b4272b7dee2e190e9221edb2b98ecd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//8v8\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1164,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2011-01-13T19:02:13Z",
+      "side": 1,
+      "message": "ditto",
+      "revId": "852fa2ddb6b4272b7dee2e190e9221edb2b98ecd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
