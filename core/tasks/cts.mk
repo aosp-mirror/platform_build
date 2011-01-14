@@ -69,13 +69,14 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB
 # $1 : The output file where the description should be written (without the '.xml' extension)
 # $2 : The AndroidManifest.xml corresponding to the test package
 # $3 : The name of the TestSuite generator class to use
-# $4 : The Android.mk corresponding to the test package (required for host-side tests only)
+# $4 : The directory containing vogar expectations files
+# $5 : The Android.mk corresponding to the test package (required for host-side tests only)
 define generate-core-test-description
 @echo "Generate core-test description ("$(notdir $(1))")"
 $(hide) java $(PRIVATE_JAVAOPTS) \
 	-classpath $(PRIVATE_CLASSPATH) \
 	$(PRIVATE_PARAMS) CollectAllTests $(1) \
-	$(2) $(3) $(4)
+	$(2) $(3) $(4) $(5)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
@@ -99,22 +100,22 @@ $(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(RUNNER_INTERMEDIATES)/javalib.jar $(SUPPORT_INTERMEDIATES)/javalib.jar $(DOM_INTERMEDIATES)/javalib.jar $(XML_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.dom,\
 		cts/tests/core/dom/AndroidManifest.xml,\
-		tests.dom.AllTests)
+		tests.dom.AllTests, libcore/expectations)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
 		cts/tests/core/luni-io/AndroidManifest.xml,\
-		tests.luni.AllTestsIo)
+		tests.luni.AllTestsIo, libcore/expectations)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.lang,\
 		cts/tests/core/luni-lang/AndroidManifest.xml,\
-		tests.luni.AllTestsLang)
+		tests.luni.AllTestsLang, libcore/expectations)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.net,\
 		cts/tests/core/luni-net/AndroidManifest.xml,\
-		tests.luni.AllTestsNet)
+		tests.luni.AllTestsNet, libcore/expectations)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.util,\
 		cts/tests/core/luni-util/AndroidManifest.xml,\
-		tests.luni.AllTestsUtil)
+		tests.luni.AllTestsUtil, libcore/expectations)
 	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xml,\
 		cts/tests/core/xml/AndroidManifest.xml,\
-		tests.xml.AllTests)
+		tests.xml.AllTests, libcore/expectations)
 	$(hide) touch $@
 
 
@@ -139,7 +140,7 @@ $(CORE_VM_TEST_DESC): PRIVATE_JAVAOPTS:=-Xmx256M
 $(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(RUNNER_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar  $(HOSTTESTLIB_JAR) $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(CORE_VM_TEST_DESC),\
 		cts/tests/vm-tests/AndroidManifest.xml,\
-		dot.junit.AllJunitHostTests, cts/tools/vm-tests/Android.mk)
+		dot.junit.AllJunitHostTests, libcore/expectations, cts/tools/vm-tests/Android.mk)
 	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
 
 # Move app security host-side tests to the repository
