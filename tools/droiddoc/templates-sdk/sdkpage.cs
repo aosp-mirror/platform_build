@@ -29,7 +29,16 @@
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>Download the SDK<?cs /if ?>
     </a> ...</p>
+
 <?cs else ?>
+<?cs # else, if NOT redirect ...
+#
+#
+# The following is for SDK/NDK pages
+#
+#
+?>
+
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
@@ -37,13 +46,6 @@
   </div>
 
   <div id="jd-content">
-    <?cs
-    if:ndk ?><?cs
-    else ?><?cs
-      if:android.whichdoc == "online" ?><p><em><?cs
-      var:sdk.date ?></em></p><?cs
-      /if ?><?cs
-    /if ?>
 
 <?cs if:sdk.not_latest_version ?>
   <div class="special">
@@ -52,12 +54,23 @@
   </div>
 <?cs /if ?>
 
-<?cs if:android.whichdoc != "online" && !android.preview ?>
 
-<!-- <p>The sections below provide an overview of how to install the SDK package. </p> -->
-
-<?cs else ?>
-  <?cs if:ndk ?>
+<?cs if:ndk ?>
+<?cs #
+#
+#
+#
+#
+#
+#
+# the following is for the NDK
+#
+# (nested in if/else redirect)
+#
+#
+#
+#
+?>
 
 <p>The Android NDK is a companion tool to the Android SDK that lets you build
 performance-critical portions of your apps in native code. It provides headers and
@@ -113,54 +126,23 @@ do so before downloading the NDK.
   </tr>
   </table>
 
-  <?cs else ?><?cs if:android.whichdoc == "online" ?>
-
-  <?cs if:sdk.preview ?>
-  <p>Welcome developers! The next release of the Android platform will be
-  Android 1.6 and we are pleased to announce the availability of an early look
-  SDK to give you a head-start on developing applications for it. </p>
-
-  <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
-  improvements and new features for users and developers. Additionally, the SDK
-  itself introduces several new capabilities that enable you to develop
-  applications more efficiently. See the <a href="features.html">Android <?cs
-  var:sdk.preview.version ?> Platform Highlights</a> document for a list of
-  highlights.</p>
-<?cs /if ?>
-<?cs # end if NDK ... the following is for the SDK ?>
-
-<?cs #
-    <div class="toggle-content special">
-    <p>The Android SDK has changed! If you've worked with the Android SDK before,
-    you will notice several important differences:</p>
-
-    <div class="toggle-content-toggleme" style="display:none">
-    <ul style="padding-bottom:.0;">
-    <li style="margin-top:.5em">The SDK downloadable package includes <em>only</em>
-    the latest version of the Android SDK Tools.</li>
-    <li>Once you've installed the SDK, you now use the Android SDK and AVD Manager
-    to download all of the SDK components that you need, such as Android platforms,
-    SDK add-ons, tools, and documentation. </li>
-    <li>The new approach is modular &mdash; you can install only the components you
-    need and update any or all components without affecting other parts of your
-    development environment.</li>
-    <li>In short, once you've installed the new SDK, you will not need to download
-    an SDK package again. Instead, you will use the Android SDK and AVD Manager to
-    keep your development environment up-to-date. </li>
-    </ul>
-    <p style="margin-top:0">If you are currently using the Android 1.6 SDK, you
-    do not need to install the new SDK, because your existing SDK already
-    includes the Android SDK and AVD Manager tool. To develop against Android
-    2.0.1, for example, you can just download the Android 2.0.1 platform (and
-    updated SDK Tools) into your existing SDK. Refer to <a
-    href="adding-components.html">Adding SDK Components</a>.</p>
-    </div>
-
-    <a href='#' class='toggle-content-button show' onclick="toggleContent(this,true);return false;">
-      <span>show more</span><span style='display:none'>show less</span>
-    </a>
-  </div>
+  <?cs else ?>
+<?cs # end if NDK ... 
+#
+#
+#
+#
+#
+#
+# the following is for the SDK
+#
+# (nested in if/else redirect and if/else NDK)
+#
+#
+#
+#
 ?>
+  <?cs if:android.whichdoc == "online" ?>
 
   <p>Welcome Developers! If you are new to the Android SDK, please read the steps below, for an
 overview of how to set up the SDK. </p>
@@ -213,16 +195,6 @@ href="<?cs var:toroot ?>sdk/adding-components.html">Adding SDK Components</a>.</
     <td><?cs var:sdk.linux_bytes ?> bytes</td>
     <td><?cs var:sdk.linux_checksum ?></td>
   </tr>
-  <?cs if:adt.zip_download ?>
-  <tr class="alt-color">
-    <td>ADT Plugin for Eclipse <?cs var:adt.zip_version ?></td>
-    <td>
-  <a href="http://dl.google.com/android/<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
-    </td>
-    <td><?cs var:adt.zip_bytes ?> bytes</td>
-    <td><?cs var:adt.zip_checksum ?></td>
-  </tr>
-  <?cs /if ?>
   </table>
 
 
@@ -237,36 +209,21 @@ function onDownload(link) {
   $("#next-steps").show();
 }
 </script>
+  <?cs /if ?> <?cs # end if online ?>
 
-  <?cs /if ?>
- <?cs /if ?>
-<?cs /if ?>
+<?cs /if ?> <?cs # end if/else NDK ?>
 
-<?cs if:android.whichdoc != "online" && sdk.preview ?>
-  <p>Welcome developers! The next release of the Android platform will be
-Android <?cs var:sdk.preview.version ?> and we are pleased to announce the
-availability of an early look SDK to give you a head-start on developing
-applications for it. </p>
+<?cs /if ?> <?cs # end if/else redirect ?>
 
-  <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
-improvements and new features for users and developers. Additionally, the SDK
-itself introduces several new capabilities that enable you to develop
-applications more efficiently. See the <a
-href="http://developer.android.com/sdk/preview/features.html">Android
-<?cs var:sdk.preview.version ?> Highlights</a> document for a list of
-highlights.</p>
-<?cs /if ?>
+<?cs call:tag_list(root.descr) ?>
 
-      <?cs call:tag_list(root.descr) ?>
-
-<?cs /if ?>
 </div><!-- end jd-content -->
 
 <?cs if:!sdk.redirect ?>
-     <?cs include:"footer.cs" ?>
+<?cs include:"footer.cs" ?>
 <?cs /if ?>
 
-</div><!-- end doc-content -->
+</div><!-- end g-unit -->
 
 <?cs include:"trailer.cs" ?>
 
