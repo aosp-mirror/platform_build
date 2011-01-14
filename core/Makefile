@@ -1051,16 +1051,16 @@ ifdef BOARD_FLASH_BLOCK_SIZE
 	$(hide) echo "blocksize=$(BOARD_FLASH_BLOCK_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
-	$(hide) echo "boot_size=$(call image-size-from-data-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "boot_size=$(BOARD_BOOTIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
-	$(hide) echo "recovery_size=$(call image-size-from-data-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "recovery_size=$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_SYSTEMIMAGE_PARTITION_SIZE
-	$(hide) echo "system_size=$(call image-size-from-data-size,$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "system_size=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_USERDATAIMAGE_PARTITION_SIZE
-	$(hide) echo "userdata_size=$(call image-size-from-data-size,$(BOARD_USERDATAIMAGE_PARTITION_SIZE))" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "userdata_size=$(BOARD_USERDATAIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 	$(hide) echo "tool_extensions=$(tool_extensions)" >> $(zip_root)/META/misc_info.txt
 ifdef mkyaffs2_extra_flags
