@@ -4,7 +4,7 @@
 ####################################
 
 # TODO: replace it with device's BOOTCLASSPATH
-DEXPREOPT_BOOT_JARS := core:bouncycastle:ext:framework:android.policy:services:core-junit
+DEXPREOPT_BOOT_JARS := core:apache-xml:bouncycastle:ext:framework:android.policy:services:core-junit
 DEXPREOPT_BOOT_JARS_MODULES := $(subst :, ,$(DEXPREOPT_BOOT_JARS))
 
 DEXPREOPT_BUILD_DIR := $(OUT_DIR)
