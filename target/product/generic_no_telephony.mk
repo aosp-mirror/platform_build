@@ -48,6 +48,9 @@ PRODUCT_PACKAGES := \
 PRODUCT_PACKAGES += \
     icu.dat
 
+PRODUCT_PACKAGES += \
+    librs_jni
+
 PRODUCT_COPY_FILES := \
         system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
         system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
