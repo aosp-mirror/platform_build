@@ -41,7 +41,8 @@ PRODUCT_PACKAGES := \
 	guavalib \
 	jsr305lib \
 	jython \
-	jsilver
+	jsilver \
+	librs_jni
 
 #	Calculator \
 #	Camera \
