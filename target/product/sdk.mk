@@ -18,6 +18,20 @@ PRODUCT_POLICY := android.policy_phone
 PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
+	Calculator \
+	Camera \
+	DeskClock \
+	Email \
+	Gallery \
+	Music \
+	Mms \
+	OpenWnn \
+	libWnnEngDic \
+	libWnnJpnDic \
+	libwnndict \
+	PinyinIME \
+	Protips \
+	SoftKeyboard \
 	SystemUI \
 	Launcher2 \
 	AccountAndSyncSettings \
@@ -37,27 +51,14 @@ PRODUCT_PACKAGES := \
 	GestureBuilder \
 	CubeLiveWallpapers \
 	QuickSearchBox \
+	WidgetPreview \
 	monkeyrunner \
 	guavalib \
 	jsr305lib \
 	jython \
 	jsilver
 
-#	Calculator \
-#	Camera \
-#	DeskClock \
-#	Email \
-#	Gallery \
-#	Music \
-#	Mms \
-#	OpenWnn \
-#	libWnnEngDic \
-#	libWnnJpnDic \
-#	libwnndict \
 #	Phone \
-#	PinyinIME \
-#	Protips \
-#	SoftKeyboard \
 
 
 # Host tools that are parts of the SDK.
@@ -87,8 +88,8 @@ PRODUCT_PACKAGES += \
 	ddms \
 	ddmlib \
 	ddmuilib \
-	hierarchyviewer \
 	draw9patch \
+	hierarchyviewer \
 	layoutopt \
 	uix \
 	traceview \
