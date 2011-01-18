@@ -4,8 +4,8 @@
 <?cs if:sdk.redirect ?>
   <head>
     <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs 
-      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs 
+    <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs
+      if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>index.html<?cs /if ?>">
     <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
@@ -22,14 +22,23 @@
 
 <div class="g-unit">
   <div id="jd-content">
-    <p>Redirecting to 
-    <a href="<?cs var:toroot ?>sdk/<?cs 
+    <p>Redirecting to
+    <a href="<?cs var:toroot ?>sdk/<?cs
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>index.html<?cs /if ?>"><?cs
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>Download the SDK<?cs /if ?>
     </a> ...</p>
+
 <?cs else ?>
+<?cs # else, if NOT redirect ...
+#
+#
+# The following is for SDK/NDK pages
+#
+#
+?>
+
 <div class="g-unit" id="doc-content" >
   <div id="jd-header" class="guide-header" >
     <span class="crumb">&nbsp;</span>
@@ -37,13 +46,6 @@
   </div>
 
   <div id="jd-content">
-    <?cs 
-    if:ndk ?><?cs 
-    else ?><?cs 
-      if:android.whichdoc == "online" ?><p><em><?cs 
-      var:sdk.date ?></em></p><?cs 
-      /if ?><?cs
-    /if ?>
 
 <?cs if:sdk.not_latest_version ?>
   <div class="special">
@@ -52,12 +54,23 @@
   </div>
 <?cs /if ?>
 
-<?cs if:android.whichdoc != "online" && !sdk.preview ?>
 
-<!-- <p>The sections below provide an overview of how to install the SDK package. </p> -->
-
-<?cs else ?>
-  <?cs if:ndk ?>
+<?cs if:ndk ?>
+<?cs #
+#
+#
+#
+#
+#
+#
+# the following is for the NDK
+#
+# (nested in if/else redirect)
+#
+#
+#
+#
+?>
 
 <p>The Android NDK is a companion tool to the Android SDK that lets you build
 performance-critical portions of your apps in native code. It provides headers and
@@ -80,7 +93,6 @@ href="http://developer.android.com/sdk/index.html">Android SDK</a>, please
 do so before downloading the NDK. 
 </p>
 
-  <?cs if:sdk.whichdoc == "online" ?>
   <table class="download">
     <tr>
       <th>Platform</th>
@@ -113,23 +125,24 @@ do so before downloading the NDK.
     <td><?cs var:ndk.linux_checksum ?></td>
   </tr>
   </table>
-  <?cs /if ?><?cs # END if online ?>
 
- <?cs else ?><?cs # END if ndk ?>
+  <?cs else ?>
+<?cs # end if NDK ... 
+#
+#
+#
+#
+#
+#
+# the following is for the SDK
+#
+# (nested in if/else redirect and if/else NDK)
+#
+#
+#
+#
+?>
   <?cs if:android.whichdoc == "online" ?>
-
-  <?cs if:sdk.preview ?>
-  <p>Welcome developers! The next release of the Android platform will be
-  Android 1.6 and we are pleased to announce the availability of an early look
-  SDK to give you a head-start on developing applications for it. </p>
-
-  <p>The Android <?cs var:sdk.preview.version ?> platform includes a variety of
-  improvements and new features for users and developers. Additionally, the SDK
-  itself introduces several new capabilities that enable you to develop
-  applications more efficiently. See the <a href="features.html">Android <?cs
-  var:sdk.preview.version ?> Platform Highlights</a> document for a list of 
-  highlights.</p>
-  <?cs /if ?><?cs # END if preview ?>
 
   <p>Welcome Developers! If you are new to the Android SDK, please read the steps below, for an
 overview of how to set up the SDK. </p>
@@ -147,13 +160,22 @@ href="<?cs var:toroot ?>sdk/adding-components.html">Adding SDK Components</a>.</
       <th>MD5 Checksum</th>
   </tr>
   <tr>
-    <td>Windows</td>
+    <td rowspan="2">Windows</td>
     <td>
   <a onclick="onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
 ?>"><?cs var:sdk.win_download ?></a>
     </td>
     <td><?cs var:sdk.win_bytes ?> bytes</td>
     <td><?cs var:sdk.win_checksum ?></td>
+  </tr>
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_installer
+?>"><?cs var:sdk.win_installer ?></a> (Recommended)
+    </td>
+    <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
+    <td><?cs var:sdk.win_installer_checksum ?></td>
   </tr>
   <tr class="alt-color">
     <td>Mac OS X (intel)</td>
@@ -173,58 +195,49 @@ href="<?cs var:toroot ?>sdk/adding-components.html">Adding SDK Components</a>.</
     <td><?cs var:sdk.linux_bytes ?> bytes</td>
     <td><?cs var:sdk.linux_checksum ?></td>
   </tr>
-  <?cs if:adt.zip_download ?>
-  <tr class="alt-color">
-    <td>ADT Plugin for Eclipse <?cs var:adt.zip_version ?></td>
-    <td>
-  <a href="http://dl.google.com/android/<?cs var:adt.zip_download ?>"><?cs var:adt.zip_download ?></a>
-    </td>
-    <td><?cs var:adt.zip_bytes ?> bytes</td>
-    <td><?cs var:adt.zip_checksum ?></td>
-  </tr>
-  <?cs /if ?>
   </table>
 
 
 <div id="next-steps" style="display:none">
-  <p><b>Your download of <em><span id="filename"></span></em> has begun!</b></p>
+  <p><b><em><span id="filename"></span></em> is now downloading. Follow the steps below to
+get started.</b></p>
 </div>
 
 <script type="text/javascript">
 function onDownload(link) {
-  $(link).parent().parent().children().css('background', '#fff');
   $("#filename").text($(link).html());
   $("#next-steps").show();
 }
 </script>
+  <?cs /else ?> <?cs # end if online ?>
 
-  <?cs /if ?><?cs # END if online ?>
- <?cs /if ?><?cs # END if/else ndk/sdk ?>
-<?cs /if ?><?cs # END if/else redirect ?>
+    <?cs if:sdk.preview ?>
+      <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming
+    Android 3.0 release, to give you a head-start on developing applications for it.
+    </p>
+    
+      <p>See the <a
+    href="<?cs var:toroot ?>sdk/preview/start.html">Getting Started</a> document for more information
+    about how to set up the preview SDK and get started.</p>
+    <style type="text/css">
+    .non-preview { display:none; }
+    </style>
+    <?cs /if ?>
+  <?cs /if ?> <?cs end if/else online ?>
+  
+<?cs /if ?> <?cs # end if/else NDK ?>
 
-<?cs if:android.whichdoc != "online" && sdk.preview && !ndk ?>
-  <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming <?cs
-var:sdk.preview.version ?> release, to give you a head-start on developing applications for it.
-</p>
+<?cs /if ?> <?cs # end if/else redirect ?>
 
-  <p>See the <a
-href="<?cs var:toroot ?>sdk/preview/start.html">Getting Started</a> document for more information
-about how to set up the preview SDK and get started.</p>
-<style type="text/css">
-.non-preview { display:none; }
-</style>
-<?cs /if ?>
+<?cs call:tag_list(root.descr) ?>
 
-      <?cs call:tag_list(root.descr) ?>
-
-<?cs /if ?>
 </div><!-- end jd-content -->
 
 <?cs if:!sdk.redirect ?>
-     <?cs include:"footer.cs" ?>
+<?cs include:"footer.cs" ?>
 <?cs /if ?>
 
-</div><!-- end doc-content -->
+</div><!-- end g-unit -->
 
 <?cs include:"trailer.cs" ?>
 
