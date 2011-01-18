@@ -192,7 +192,6 @@ GRANDFATHERED_USER_MODULES += \
 	libaudiointerface \
 	libaudiopolicy \
 	libaudiopolicybase \
-	libbcc \
 	libbinder \
 	libbluedroid \
 	libbluetooth \
@@ -265,35 +264,6 @@ GRANDFATHERED_USER_MODULES += \
 	libjpeg \
 	libjs \
 	liblinenoise \
-	libLLVMAnalysis \
-	libLLVMARMAsmPrinter \
-	libLLVMARMCodeGen \
-	libLLVMARMDisassembler \
-	libLLVMARMInfo \
-	libLLVMAsmParser \
-	libLLVMAsmPrinter \
-	libLLVMBitReader \
-	libLLVMBitWriter \
-	libLLVMCodeGen \
-	libLLVMCore \
-	libLLVMInstCombine \
-	libLLVMInstrumentation \
-	libLLVMipa \
-	libLLVMipo \
-	libLLVMJIT \
-	libLLVMLinker \
-	libLLVMMC \
-	libLLVMMCParser \
-	libLLVMScalarOpts \
-	libLLVMSelectionDAG \
-	libLLVMSupport \
-	libLLVMSystem \
-	libLLVMTarget \
-	libLLVMTransformUtils \
-	libLLVMX86AsmPrinter \
-	libLLVMX86CodeGen \
-	libLLVMX86Disassembler \
-	libLLVMX86Info \
 	libloc_api-rpc \
 	liblog \
 	libm \
