@@ -75,7 +75,10 @@ PRODUCT_PACKAGES := \
     DefaultContainerService \
     Bugreport \
     ip \
-    screencap
+    screencap \
+    libvideoeditor_jni \
+    libvideoeditorplayer \
+    libvideoeditor_core
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
