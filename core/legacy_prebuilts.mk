@@ -32,6 +32,7 @@ GRANDFATHERED_ALL_PREBUILT := \
 	baseline8k.par \
 	baseline.par \
 	basic.ok \
+	batch \
 	bitmap_size.txt \
 	blacklist.conf \
 	bmgr \
