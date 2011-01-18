@@ -209,8 +209,22 @@ function onDownload(link) {
   $("#next-steps").show();
 }
 </script>
-  <?cs /if ?> <?cs # end if online ?>
+  <?cs /else ?> <?cs # end if online ?>
 
+    <?cs if:sdk.preview ?>
+      <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming
+    Android 3.0 release, to give you a head-start on developing applications for it.
+    </p>
+    
+      <p>See the <a
+    href="<?cs var:toroot ?>sdk/preview/start.html">Getting Started</a> document for more information
+    about how to set up the preview SDK and get started.</p>
+    <style type="text/css">
+    .non-preview { display:none; }
+    </style>
+    <?cs /if ?>
+  <?cs /if ?> <?cs end if/else online ?>
+  
 <?cs /if ?> <?cs # end if/else NDK ?>
 
 <?cs /if ?> <?cs # end if/else redirect ?>
