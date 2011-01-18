@@ -209,7 +209,7 @@ function onDownload(link) {
   $("#next-steps").show();
 }
 </script>
-  <?cs /else ?> <?cs # end if online ?>
+  <?cs else ?> <?cs # end if online ?>
 
     <?cs if:sdk.preview ?>
       <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming
@@ -223,7 +223,7 @@ function onDownload(link) {
     .non-preview { display:none; }
     </style>
     <?cs /if ?>
-  <?cs /if ?> <?cs end if/else online ?>
+  <?cs /if ?> <?cs # end if/else online ?>
   
 <?cs /if ?> <?cs # end if/else NDK ?>
 
