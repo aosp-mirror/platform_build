@@ -208,10 +208,8 @@ var:sdk.preview.version ?> release, to give you a head-start on developing appli
 </p>
 
   <p>See the <a
-href="<?cs var:toroot ?>sdk/preview/features.html">Introduction to
-<?cs var:sdk.preview.version ?></a> document for more information about new features and
-the <a href="<?cs var:toroot ?>sdk/preview/features.html">Getting Started</a> guide for
-information about how to setup the preview SDK.</p>
+href="<?cs var:toroot ?>sdk/preview/start.html">Getting Started</a> document for more information
+about how to set up the preview SDK and get started.</p>
 <style type="text/css">
 .non-preview { display:none; }
 </style>
