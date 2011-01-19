@@ -520,7 +520,7 @@ ifndef LOCAL_UNINSTALLABLE_MODULE
 ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE) | $(ACP)
 	@echo "Install: $@"
-	$(copy-file-to-target)
+	$(copy-file-to-new-target)
 else
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
@@ -534,7 +534,7 @@ $(installed_odex) : $(built_odex) | $(ACP)
 	@echo "Install: $@"
 	$(copy-file-to-target)
 
-$(LOCAL_INSTALLED_MODULE) : | $(installed_odex)
+$(LOCAL_INSTALLED_MODULE) : $(installed_odex)
 endif
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
