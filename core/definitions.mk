@@ -1634,9 +1634,12 @@ endef
 # Copy a single file from one place to another,
 # preserving permissions and overwriting any existing
 # file.
+# We disable the "-t" option for acp can not handle
+# high resolution timestamp correctly on file systems like ext4.
+# Therefore copy-file-to-target is the same as copy-file-to-new-target.
 define copy-file-to-target
 @mkdir -p $(dir $@)
-$(hide) $(ACP) -fpt $< $@
+$(hide) $(ACP) -fp $< $@
 endef
 
 # The same as copy-file-to-target, but use the local
@@ -1725,7 +1728,7 @@ endif
 # Command to copy the file with acp, if proguard is disabled.
 define proguard-disabled-commands
 @echo Copying: $@
-$(hide) $(ACP) $< $@
+$(hide) $(ACP) -fp $< $@
 endef
 
 # Command to call Proguard
