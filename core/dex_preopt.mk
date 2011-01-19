@@ -51,7 +51,7 @@ $(_dbj_odex) : $(_dbj_src_jar) | $(ACP) $(DEXPREOPT) $(DEXOPT)
 	@echo "Dexpreopt Boot Jar: $$@"
 	$(hide) rm -f $$@
 	$(hide) mkdir -p $$(dir $$@)
-	$(hide) $(ACP) -fpt $$< $$(PRIVATE_DBJ_JAR)
+	$(hide) $(ACP) -fp $$< $$(PRIVATE_DBJ_JAR)
 	$$(call dexpreopt-one-file,$$(PRIVATE_DBJ_JAR),$$@)
 
 $(_dbj_jar_no_dex) : $(_dbj_src_jar) | $(ACP) $(AAPT)
@@ -60,6 +60,7 @@ $(_dbj_jar_no_dex) : $(_dbj_src_jar) | $(ACP) $(AAPT)
 
 $(eval _dbj_jar :=)
 $(eval _dbj_odex :=)
+$(eval _dbj_jar_no_dex :=)
 $(eval _dbj_src_jar :=)
 endef
 

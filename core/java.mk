@@ -237,7 +237,7 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(JARJAR)
 else
 $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
 	@echo Copying: $@
-	$(hide) $(ACP) $< $@
+	$(hide) $(ACP) -fp $< $@
 endif
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
@@ -275,7 +275,7 @@ endif
 # Keep a copy of the jar just before proguard processing.
 $(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
-	$(hide) $(ACP) $< $@
+	$(hide) $(ACP) -fp $< $@
 
 # Run proguard if necessary, otherwise just copy the file.
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
@@ -337,7 +337,7 @@ $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
-	$(hide) $(ACP) $< $@
+	$(hide) $(ACP) -fp $< $@
 ifneq ($(GENERATE_DEX_DEBUG),)
 	$(install-dex-debug)
 endif
