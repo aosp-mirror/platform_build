@@ -136,8 +136,10 @@ RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
 renderscript_intermediate := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript
 
 # prepend the RenderScript system include path
-LOCAL_RENDERSCRIPT_INCLUDES := $(TOPDIR)frameworks/base/libs/rs/scriptc \
-    $(LOCAL_RENDERSCRIPT_INCLUDES)
+LOCAL_RENDERSCRIPT_INCLUDES := \
+     $(TOPDIR)external/clang/lib/Headers \
+     $(TOPDIR)frameworks/base/libs/rs/scriptc \
+     $(LOCAL_RENDERSCRIPT_INCLUDES)
 
 $(RenderScript_file_stamp): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
 $(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
