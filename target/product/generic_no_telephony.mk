@@ -49,7 +49,11 @@ PRODUCT_PACKAGES += \
     icu.dat
 
 PRODUCT_PACKAGES += \
-    librs_jni
+    librs_jni \
+    libvideoeditor_jni \
+    libvideoeditorplayer \
+    libvideoeditor_core
+
 
 PRODUCT_COPY_FILES := \
         system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
