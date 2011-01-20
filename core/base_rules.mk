@@ -416,12 +416,14 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_ja
 #                 to guarantee that the files in full_java_libs will
 #                 be up-to-date.
 ifdef LOCAL_IS_HOST_MODULE
-# TODO: make prebuilt java libraries use the same
-#       intermediates path pattern as target java libraries.
 ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-hostdex,$(LOCAL_IS_HOST_MODULE))
+
 full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 else
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
+
 full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,$(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
 full_java_lib_deps := $(full_java_libs)
 endif # LOCAL_BUILD_HOST_DEX

@@ -155,7 +155,23 @@ endif
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
-INTERNAL_MODIFIER_TARGETS := showcommands checkbuild all
+INTERNAL_MODIFIER_TARGETS := showcommands checkbuild all incrementaljavac
+
+.PHONY: incrementaljavac
+incrementaljavac: ;
+
+# WARNING:
+# ENABLE_INCREMENTALJAVAC should NOT be enabled by default, because change of
+# a Java source file won't trigger rebuild of its dependent Java files.
+# You can only enable it by adding "incrementaljavac" to your make command line.
+# You are responsible for the correctness of the incremental build.
+# This may decrease incremental build time dramatically for large Java libraries,
+# such as core.jar, framework.jar, etc.
+ENABLE_INCREMENTALJAVAC :=
+ifneq (,$(filter incrementaljavac, $(MAKECMDGOALS)))
+ENABLE_INCREMENTALJAVAC := true
+MAKECMDGOALS := $(filter-out incrementaljavac, $(MAKECMDGOALS))
+endif
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk

@@ -695,6 +695,8 @@ function mmm()
                     ARGS="$ARGS showcommands"
                 elif [ "$DIR" = dist ]; then
                     ARGS="$ARGS dist"
+                elif [ "$DIR" = incrementaljavac ]; then
+                    ARGS="$ARGS incrementaljavac"
                 else
                     echo "No Android.mk in $DIR."
                     return 1
