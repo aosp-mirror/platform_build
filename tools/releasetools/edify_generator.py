@@ -168,17 +168,21 @@ class EdifyGenerator(object):
     """Format the given partition, specified by its mount point (eg,
     "/system")."""
 
+    reserve_size = 0
     fstab = self.info.get("fstab", None)
     if fstab:
       p = fstab[partition]
-      self.script.append('format("%s", "%s", "%s");' %
-                         (p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device))
+      # Reserve the last 16 Kbytes of an EMMC /data for the crypto footer
+      if partition == "/data" and common.PARTITION_TYPES[p.fs_type] == "EMMC":
+        reserve_size = -16384
+      self.script.append('format("%s", "%s", "%s", "%s");' %
+                         (p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device, reserve_size)
     else:
       # older target-files without per-partition types
       partition = self.info.get("partition_path", "") + partition
-      self.script.append('format("%s", "%s", "%s");' %
+      self.script.append('format("%s", "%s", "%s", "%s");' %
                          (self.info["fs_type"], self.info["partition_type"],
-                          partition))
+                          partition, reserve_size))
 
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""
