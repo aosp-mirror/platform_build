@@ -176,7 +176,7 @@ class EdifyGenerator(object):
       if partition == "/data" and common.PARTITION_TYPES[p.fs_type] == "EMMC":
         reserve_size = -16384
       self.script.append('format("%s", "%s", "%s", "%s");' %
-                         (p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device, reserve_size)
+                         (p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device, reserve_size))
     else:
       # older target-files without per-partition types
       partition = self.info.get("partition_path", "") + partition
