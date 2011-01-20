@@ -1,4 +1,3 @@
-
 #
 # Copyright (C) 2008 The Android Open Source Project
 #
@@ -19,4 +18,4 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-export BUILD_ID=HRI19
+export BUILD_ID=HRI19B
