@@ -129,7 +129,7 @@ public class DocFile
         } else {
             if (outfile.indexOf("sdk/") != -1) {
                 hdf.setValue("sdk", "true");
-                if ((outfile.indexOf("index.html") != -1) || (outfile.indexOf("features.html") != -1)) {
+                if ((outfile.indexOf("index.html") != -1) && (outfile.indexOf("preview/") == -1)) {
                     ClearPage.write(hdf, "sdkpage.cs", outfile);
                 } else {
                     ClearPage.write(hdf, "docpage.cs", outfile);
