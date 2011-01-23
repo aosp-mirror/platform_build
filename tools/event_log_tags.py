@@ -90,6 +90,14 @@ class TagFile(object):
         else:
           description = None
 
+        if description:
+          # EventLog.java checks that the description field is
+          # surrounded by parens, so we should too (to avoid a runtime
+          # crash from badly-formatted descriptions).
+          if not re.match(r"\(.*\)\s*$", description):
+            self.AddError("tag \"%s\" has unparseable description" % (tagname,))
+            continue
+
         self.tags.append(Tag(tag, tagname, description,
                              self.filename, self.linenum))
     except (IOError, OSError), e:
