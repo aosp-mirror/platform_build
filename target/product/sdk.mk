@@ -197,9 +197,9 @@ PRODUCT_LOCALES = \
 	zh_TW
 
 # include available languages for TTS in the system image
-include external/svox/pico/lang/PicoLangDeDeInSystem.mk
-include external/svox/pico/lang/PicoLangEnGBInSystem.mk
-include external/svox/pico/lang/PicoLangEnUsInSystem.mk
-include external/svox/pico/lang/PicoLangEsEsInSystem.mk
-include external/svox/pico/lang/PicoLangFrFrInSystem.mk
-include external/svox/pico/lang/PicoLangItItInSystem.mk
+-include external/svox/pico/lang/PicoLangDeDeInSystem.mk
+-include external/svox/pico/lang/PicoLangEnGBInSystem.mk
+-include external/svox/pico/lang/PicoLangEnUsInSystem.mk
+-include external/svox/pico/lang/PicoLangEsEsInSystem.mk
+-include external/svox/pico/lang/PicoLangFrFrInSystem.mk
+-include external/svox/pico/lang/PicoLangItItInSystem.mk

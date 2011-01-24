@@ -298,6 +298,7 @@ ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
 endif
 
+ifneq ($(BUILD_TINY_ANDROID),true)
 # Install an apns-conf.xml file if one's not already being installed.
 ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
   PRODUCT_COPY_FILES += \
@@ -317,6 +318,7 @@ ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
             $(strip $(apns_to_use)):system/etc/apns-conf.xml
     endif
   endif
+endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
@@ -461,7 +463,6 @@ subdirs := \
 	build/target \
 	build/tools/acp \
 	build/tools/apriori \
-	build/tools/kcm \
 	build/tools/soslim \
 	external/elfcopy \
 	external/elfutils \
