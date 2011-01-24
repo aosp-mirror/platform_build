@@ -1418,12 +1418,12 @@ $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
-$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list)
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list; \
+	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
 fi
-$(hide) tr ' ' '\n' < $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))java-source-list \
-    | sort -u > $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))java-source-list-uniq
+$(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
+    | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) $(1) -encoding ascii \
     $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
     $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
@@ -1433,10 +1433,10 @@ $(hide) $(1) -encoding ascii \
     $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     $(PRIVATE_JAVACFLAGS) \
-    \@$(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))java-source-list-uniq \
+    \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
-$(hide) rm -f $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list
-$(hide) rm -f $(dir $(PRIVATE_CLASS_INTERMEDIATES_DIR))/java-source-list-uniq
+$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
 endef
@@ -1446,6 +1446,51 @@ define transform-java-to-classes.jar
 $(call compile-java,$(TARGET_JAVAC),$(PRIVATE_BOOTCLASSPATH))
 $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 endef
+
+# Override the above definitions if we want to do incremetal javac
+ifeq (true, $(ENABLE_INCREMENTALJAVAC))
+define compile-java
+$(hide) mkdir -p $(dir $@)
+$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
+$(hide) touch $(PRIVATE_CLASS_INTERMEDIATES_DIR)/newstamp
+$(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(hide) if [ -e $(PRIVATE_CLASS_INTERMEDIATES_DIR)/stamp ] ; then \
+        newerFlag=$$(echo -n "-newer $(PRIVATE_CLASS_INTERMEDIATES_DIR)/stamp") ; \
+    fi ; \
+    find $(PRIVATE_JAVA_SOURCES) $$newerFlag > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list ; \
+    if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+        find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' $$newerFlag >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
+    fi
+$(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
+    | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+@echo "(Incremental) build source files:"
+@cat $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
+    $(1) -encoding ascii \
+    $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
+    $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
+    $(2) \
+    $(addprefix -classpath ,$(strip \
+        $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES) $(PRIVATE_CLASS_INTERMEDIATES_DIR)))) \
+    $(if $(findstring true,$(LOCAL_WARNINGS_ENABLE)),$(xlint_unchecked),) \
+    -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
+    $(PRIVATE_JAVACFLAGS) \
+    \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
+    || ( exit 41 ) \
+fi
+$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
+$(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(hide) rm -f $@
+$(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
+    $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
+$(hide) mv $(PRIVATE_CLASS_INTERMEDIATES_DIR)/newstamp $(PRIVATE_CLASS_INTERMEDIATES_DIR)/stamp
+endef
+
+define transform-java-to-classes.jar
+@echo "target Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
+$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_BOOTCLASSPATH))
+endef
+endif # ENABLE_INCREMENTALJAVAC
 
 define transform-classes.jar-to-emma
 $(hide) java -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
@@ -1570,7 +1615,7 @@ endef
 # in transform-java-to-classes for the sake of vm-tests.
 define transform-host-java-to-package
 @echo "host Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
-$(call compile-java,$(HOST_JAVAC),)
+$(call compile-java,$(HOST_JAVAC),$(PRIVATE_BOOTCLASSPATH))
 $(hide) if [ ! -z "$(PRIVATE_EXTRA_JAR_ARGS)" ]; then jar uf $@ $(PRIVATE_EXTRA_JAR_ARGS); fi
 endef
 
