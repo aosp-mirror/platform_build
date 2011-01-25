@@ -64,9 +64,9 @@ define transform-host-o-to-shared-lib-inner
         $(HOST_GLOBAL_LD_DIRS) \
         $(HOST_GLOBAL_LDFLAGS) \
         $(PRIVATE_ALL_OBJECTS) \
-        $(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
-        $(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
-        $(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
+        $(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+        $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
         $(PRIVATE_LDLIBS) \
         -o $@ \
         $(PRIVATE_LDFLAGS) \
@@ -79,10 +79,10 @@ $(HOST_CXX) \
         -Wl,-dynamic -headerpad_max_install_names \
         $(HOST_GLOBAL_LD_DIRS) \
         $(HOST_GLOBAL_LDFLAGS) \
-        $(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
+        $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(PRIVATE_ALL_OBJECTS) \
-        $(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
-        $(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+        $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
         $(PRIVATE_LDFLAGS) \
         $(PRIVATE_LDLIBS) \
         $(HOST_LIBGCC)
