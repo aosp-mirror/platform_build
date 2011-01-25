@@ -29,6 +29,7 @@ PRODUCT_PACKAGES := \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
+        Phone \
 	PinyinIME \
 	Protips \
 	SoftKeyboard \
@@ -58,8 +59,6 @@ PRODUCT_PACKAGES := \
 	jython \
 	jsilver \
 	librs_jni
-
-#	Phone \
 
 
 # Host tools that are parts of the SDK.
