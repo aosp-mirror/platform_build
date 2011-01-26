@@ -19,7 +19,6 @@ import getpass
 import imp
 import os
 import re
-import sha
 import shutil
 import subprocess
 import sys
@@ -27,6 +26,13 @@ import tempfile
 import threading
 import time
 import zipfile
+
+try:
+  import hashlib
+  sha1 = hashlib.sha1
+except ImportError:
+  import sha
+  sha1 = sha.sha
 
 # missing in Python 2.4 and before
 if not hasattr(os, "SEEK_SET"):
@@ -163,23 +169,6 @@ def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     print "%-25s = (%s) %s" % (k, type(v).__name__, v)
 
-def BuildAndAddBootableImage(sourcedir, targetname, output_zip, info_dict):
-  """Take a kernel, cmdline, and ramdisk directory from the input (in
-  'sourcedir'), and turn them into a boot image.  Put the boot image
-  into the output zip file under the name 'targetname'.  Returns
-  targetname on success or None on failure (if sourcedir does not
-  appear to contain files for the requested image)."""
-
-  print "creating %s..." % (targetname,)
-
-  img = BuildBootableImage(sourcedir)
-  if img is None:
-    return None
-
-  CheckSize(img, targetname, info_dict)
-  ZipWriteStr(output_zip, targetname, img)
-  return targetname
-
 def BuildBootableImage(sourcedir):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
   'sourcedir'), and turn them into a boot image.  Return the image
@@ -237,28 +226,53 @@ def BuildBootableImage(sourcedir):
   return data
 
 
-def AddRecovery(output_zip, info_dict):
-  BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "RECOVERY"),
-                           "recovery.img", output_zip, info_dict)
+def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir):
+  """Return a File object (with name 'name') with the desired bootable
+  image.  Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name
+  'prebuilt_name', otherwise construct it from the source files in
+  'unpack_dir'/'tree_subdir'."""
 
-def AddBoot(output_zip, info_dict):
-  BuildAndAddBootableImage(os.path.join(OPTIONS.input_tmp, "BOOT"),
-                           "boot.img", output_zip, info_dict)
+  prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    print "using prebuilt %s..." % (prebuilt_name,)
+    return File.FromLocalFile(name, prebuilt_path)
+  else:
+    print "building image from target_files %s..." % (tree_subdir,)
+    return File(name, BuildBootableImage(os.path.join(unpack_dir, tree_subdir)))
+
 
 def UnzipTemp(filename, pattern=None):
-  """Unzip the given archive into a temporary directory and return the name."""
+  """Unzip the given archive into a temporary directory and return the name.
+
+  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a
+  temp dir, then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+
+  Returns (tempdir, zipobj) where zipobj is a zipfile.ZipFile (of the
+  main file), open for reading.
+  """
 
   tmp = tempfile.mkdtemp(prefix="targetfiles-")
   OPTIONS.tempfiles.append(tmp)
-  cmd = ["unzip", "-o", "-q", filename, "-d", tmp]
-  if pattern is not None:
-    cmd.append(pattern)
-  p = Run(cmd, stdout=subprocess.PIPE)
-  p.communicate()
-  if p.returncode != 0:
-    raise ExternalError("failed to unzip input target-files \"%s\"" %
-                        (filename,))
-  return tmp
+
+  def unzip_to_dir(filename, dirname):
+    cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
+    if pattern is not None:
+      cmd.append(pattern)
+    p = Run(cmd, stdout=subprocess.PIPE)
+    p.communicate()
+    if p.returncode != 0:
+      raise ExternalError("failed to unzip input target-files \"%s\"" %
+                          (filename,))
+
+  m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
+  if m:
+    unzip_to_dir(m.group(1), tmp)
+    unzip_to_dir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"))
+    filename = m.group(1)
+  else:
+    unzip_to_dir(filename, tmp)
+
+  return tmp, zipfile.ZipFile(filename, "r")
 
 
 def GetKeyPasswords(keylist):
@@ -650,7 +664,14 @@ class File(object):
     self.name = name
     self.data = data
     self.size = len(data)
-    self.sha1 = sha.sha(data).hexdigest()
+    self.sha1 = sha1(data).hexdigest()
+
+  @classmethod
+  def FromLocalFile(cls, name, diskname):
+    f = open(diskname, "rb")
+    data = f.read()
+    f.close()
+    return File(name, data)
 
   def WriteToTemp(self):
     t = tempfile.NamedTemporaryFile()

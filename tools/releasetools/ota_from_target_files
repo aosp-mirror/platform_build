@@ -58,7 +58,6 @@ import copy
 import errno
 import os
 import re
-import sha
 import subprocess
 import tempfile
 import time
@@ -279,7 +278,7 @@ def CopySystemFiles(input_zip, output_zip=None,
             data = input_zip.read(info.filename)
           if info.filename.startswith("SYSTEM/lib/") and IsRegular(info):
             retouch_files.append(("/system/" + basefilename,
-                                  sha.sha(data).hexdigest()))
+                                  common.sha1(data).hexdigest()))
           output_zip.writestr(info2, data)
         if fn.endswith("/"):
           Item.Get(fn[:-1], dir=True)
@@ -331,7 +330,7 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   # we check to see if this recovery has already been installed by
   # testing just the first 2k.
   HEADER_SIZE = 2048
-  header_sha1 = sha.sha(recovery_img.data[:HEADER_SIZE]).hexdigest()
+  header_sha1 = common.sha1(recovery_img.data[:HEADER_SIZE]).hexdigest()
   sh = """#!/system/bin/sh
 if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(header_size)d:%(header_sha1)s; then
   log -t recovery "Installing new recovery image"
@@ -398,10 +397,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   else:
     script.UndoRetouchBinaries(retouch_files)
 
-  boot_img = common.File("boot.img", common.BuildBootableImage(
-      os.path.join(OPTIONS.input_tmp, "BOOT")))
-  recovery_img = common.File("recovery.img", common.BuildBootableImage(
-      os.path.join(OPTIONS.input_tmp, "RECOVERY")))
+  boot_img = common.GetBootableImage("boot.img", "boot.img",
+                                     OPTIONS.input_tmp, "BOOT")
+  recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
+                                         OPTIONS.input_tmp, "RECOVERY")
   MakeRecoveryPatch(output_zip, recovery_img, boot_img)
 
   Item.GetMetadata(input_zip)
@@ -523,7 +522,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       verbatim_targets.append((tf.name, tf.size))
     else:
       common.ZipWriteStr(output_zip, "patch/" + tf.name + ".p", d)
-      patch_list.append((tf.name, tf, sf, tf.size, sha.sha(d).hexdigest()))
+      patch_list.append((tf.name, tf, sf, tf.size, common.sha1(d).hexdigest()))
       largest_source_size = max(largest_source_size, sf.size)
 
   source_fp = GetBuildProp("ro.build.fingerprint", source_zip)
@@ -534,20 +533,16 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script.Mount("/system")
   script.AssertSomeFingerprint(source_fp, target_fp)
 
-  source_boot = common.File("/tmp/boot.img",
-                            common.BuildBootableImage(
-                                os.path.join(OPTIONS.source_tmp, "BOOT")))
-  target_boot = common.File("/tmp/boot.img",
-                            common.BuildBootableImage(
-                                os.path.join(OPTIONS.target_tmp, "BOOT")))
+  source_boot = common.GetBootableImage(
+      "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT")
+  target_boot = common.GetBootableImage(
+      "/tmp/boot.img", "boot.img", OPTIONS.target_tmp, "BOOT")
   updating_boot = (source_boot.data != target_boot.data)
 
-  source_recovery = common.File("system/recovery.img",
-                                common.BuildBootableImage(
-                                    os.path.join(OPTIONS.source_tmp, "RECOVERY")))
-  target_recovery = common.File("system/recovery.img",
-                                common.BuildBootableImage(
-                                    os.path.join(OPTIONS.target_tmp, "RECOVERY")))
+  source_recovery = common.GetBootableImage(
+      "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY")
+  target_recovery = common.GetBootableImage(
+      "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
   updating_recovery = (source_recovery.data != target_recovery.data)
 
   # Here's how we divide up the progress bar:
@@ -766,10 +761,9 @@ def main(argv):
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
   print "unzipping target target-files..."
-  OPTIONS.input_tmp = common.UnzipTemp(args[0])
+  OPTIONS.input_tmp, input_zip = common.UnzipTemp(args[0])
 
   OPTIONS.target_tmp = OPTIONS.input_tmp
-  input_zip = zipfile.ZipFile(args[0], "r")
   OPTIONS.info_dict = common.LoadInfoDict(input_zip)
   if OPTIONS.verbose:
     print "--- target info ---"
@@ -793,8 +787,7 @@ def main(argv):
     WriteFullOTAPackage(input_zip, output_zip)
   else:
     print "unzipping source target-files..."
-    OPTIONS.source_tmp = common.UnzipTemp(OPTIONS.incremental_source)
-    source_zip = zipfile.ZipFile(OPTIONS.incremental_source, "r")
+    OPTIONS.source_tmp, source_zip = common.UnzipTemp(OPTIONS.incremental_source)
     OPTIONS.target_info_dict = OPTIONS.info_dict
     OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
     if OPTIONS.verbose:
