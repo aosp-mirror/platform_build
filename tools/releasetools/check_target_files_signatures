@@ -47,7 +47,6 @@ if sys.hexversion < 0x02040000:
 
 import os
 import re
-import sha
 import shutil
 import subprocess
 import tempfile
@@ -112,7 +111,7 @@ class CertDB(object):
         self.certs[cert] = self.certs[cert] + "," + name
     else:
       if name is None:
-        name = "unknown cert %s (%s)" % (sha.sha(cert).hexdigest()[:12],
+        name = "unknown cert %s (%s)" % (common.sha1(cert).hexdigest()[:12],
                                          GetCertSubject(cert))
       self.certs[cert] = name
 
@@ -245,7 +244,7 @@ class TargetFiles(object):
     self.max_fn_len = 20
 
   def LoadZipFile(self, filename):
-    d = common.UnzipTemp(filename, '*.apk')
+    d, z = common.UnzipTemp(filename, '*.apk')
     try:
       self.apks = {}
       self.apks_by_basename = {}
@@ -263,7 +262,6 @@ class TargetFiles(object):
     finally:
       shutil.rmtree(d)
 
-    z = zipfile.ZipFile(open(filename, "rb"))
     self.certmap = common.ReadApkCerts(z)
     z.close()
 
