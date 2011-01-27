@@ -263,6 +263,38 @@ event_log_tags :=
 endif
 
 ###########################################################
+## .proto files: Compile proto files to .java
+###########################################################
+proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
+# Because names of the .java files compiled from .proto files are unknown until the
+# .proto files are compiled, we use a timestamp file as depedency.
+proto_java_sources_file_stamp :=
+ifneq ($(proto_sources),)
+proto_sources_fullpath := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(proto_sources))
+# By putting the generated java files into $(LOCAL_INTERMEDIATE_SOURCE_DIR), they will be
+# automatically found by the java compiling function transform-java-to-classes.jar.
+proto_java_intemediate_dir := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/proto
+proto_java_sources_file_stamp := $(proto_java_intemediate_dir)/Proto.stamp
+proto_java_sources_dir := $(proto_java_intemediate_dir)/src
+
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_INCLUDES := $(TOP)
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_SRC_FILES := $(proto_sources_fullpath)
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_DIR := $(proto_java_sources_dir)
+ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javamicro_out
+else
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
+endif
+$(proto_java_sources_file_stamp) : $(proto_sources_fullpath) $(PROTOC)
+	$(call transform-proto-to-java)
+
+#TODO: protoc should output the dependencies introduced by imports.
+
+LOCAL_INTERMEDIATE_TARGETS += $(proto_java_sources_file_stamp)
+endif # proto_sources
+
+
+###########################################################
 ## Java: Compile .java files to .class
 ###########################################################
 #TODO: pull this into java.make once host and target are combined
