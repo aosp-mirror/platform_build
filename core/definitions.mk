@@ -236,6 +236,19 @@ $(patsubst ./%,%, \
 endef
 
 ###########################################################
+## Find all of the .proto files under the named directories.
+## Meant to be used like:
+##    SRC_FILES := $(call all-proto-files-under,src)
+###########################################################
+
+define all-proto-files-under
+$(patsubst ./%,%, \
+  $(shell cd $(LOCAL_PATH) ; \
+          find $(1) -name "*.proto" -and -not -name ".*") \
+  )
+endef
+
+###########################################################
 ## Find all of the html files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-html-files-under,src tests)
@@ -742,6 +755,34 @@ define transform-logtags-to-java
 @mkdir -p $(dir $@)
 @echo "logtags: $@ <= $<"
 $(hide) $(JAVATAGS) -o $@ $^
+endef
+
+
+###########################################################
+## Commands for running protoc to compile .proto into .java
+###########################################################
+
+define transform-proto-to-java
+@mkdir -p $(dir $@)
+@echo "Protoc: $@ <= $(PRIVATE_PROTO_SRC_FILES)"
+@rm -rf $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
+@mkdir -p $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
+$(hide) $(PROTOC) \
+	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
+	$(PRIVATE_PROTO_JAVA_OUTPUT_OPTION)=$(PRIVATE_PROTO_JAVA_OUTPUT_DIR) \
+	$(PRIVATE_PROTO_SRC_FILES)
+$(hide) touch $@
+endef
+
+######################################################################
+## Commands for running protoc to compile .proto into .pb.cc and .pb.h
+######################################################################
+define transform-proto-to-cc
+@mkdir -p $(dir $@)
+@echo "Protoc: $@ <= $<"
+$(hide) $(PROTOC) \
+	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
+	--cpp_out=$(PRIVATE_PROTO_CC_OUTPUT_DIR) $<
 endef
 
 
