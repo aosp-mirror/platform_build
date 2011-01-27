@@ -200,6 +200,7 @@ GRANDFATHERED_USER_MODULES += \
 	libcameraservice \
 	libcamerastub \
 	libc_common \
+	libchromium_net \
 	libc_nomalloc \
 	libctest \
 	libcutils \
@@ -250,6 +251,7 @@ GRANDFATHERED_USER_MODULES += \
 	libhardware \
 	libhardware_legacy \
 	libhost \
+	libhyphenation \
 	libiprouteutil \
 	libiptc \
 	libjnigraphics \
@@ -371,6 +373,7 @@ GRANDFATHERED_USER_MODULES += \
 	libwpa_client \
 	libwrapsim \
 	libxml2 \
+	libxslt \
 	libzipfile \
 	lights.kraken \
 	lights.qsd8k \
