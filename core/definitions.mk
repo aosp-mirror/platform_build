@@ -770,6 +770,7 @@ define transform-proto-to-java
 $(hide) $(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
 	$(PRIVATE_PROTO_JAVA_OUTPUT_OPTION)=$(PRIVATE_PROTO_JAVA_OUTPUT_DIR) \
+	$(PRIVATE_PROTOC_FLAGS) \
 	$(PRIVATE_PROTO_SRC_FILES)
 $(hide) touch $@
 endef
@@ -782,6 +783,7 @@ define transform-proto-to-cc
 @echo "Protoc: $@ <= $<"
 $(hide) $(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
+	$(PRIVATE_PROTOC_FLAGS) \
 	--cpp_out=$(PRIVATE_PROTO_CC_OUTPUT_DIR) $<
 endef
 
