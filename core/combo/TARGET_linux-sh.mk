@@ -114,7 +114,7 @@ TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 
 TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
-$(TARGET_CXX) \
+$(PRIVATE_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/shlelf.xsc \
 	-Wl,--gc-sections -Wl,-z,norelro \
 	-Wl,-shared,-Bsymbolic \
@@ -134,7 +134,7 @@ $(TARGET_CXX) \
 endef
 
 define transform-o-to-executable-inner
-$(TARGET_CXX) -nostdlib -Bdynamic  -Wl,-T,$(BUILD_SYSTEM)/shlelf.x \
+$(PRIVATE_CXX) -nostdlib -Bdynamic  -Wl,-T,$(BUILD_SYSTEM)/shlelf.x \
 	-Wl,-dynamic-linker,/system/bin/linker \
 	-Wl,--gc-sections -Wl,-z,norelro \
 	-Wl,-z,nocopyreloc \
@@ -152,7 +152,7 @@ $(TARGET_CXX) -nostdlib -Bdynamic  -Wl,-T,$(BUILD_SYSTEM)/shlelf.x \
 endef
 
 define transform-o-to-static-executable-inner
-$(TARGET_CXX) -nostdlib -Bstatic  -Wl,-T,$(BUILD_SYSTEM)/shlelf.x \
+$(PRIVATE_CXX) -nostdlib -Bstatic  -Wl,-T,$(BUILD_SYSTEM)/shlelf.x \
 	-Wl,--gc-sections -Wl,-z,norelro \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \
