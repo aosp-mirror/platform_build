@@ -1056,19 +1056,24 @@ $(call _concat-if-arg2-not-empty,$(1),$(wordlist 2501,3000,$(2)))
 $(call _concat-if-arg2-not-empty,$(1),$(wordlist 3001,99999,$(2)))
 endef
 
+# $(1): the full path of the source static library.
+define _extract-and-include-single-target-whole-static-lib
+@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(1)]"
+$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
+    rm -rf $$ldir; \
+    mkdir -p $$ldir; \
+    filelist=; \
+    for f in `$(TARGET_AR) t $(1)`; do \
+        $(TARGET_AR) p $(1) $$f > $$ldir/$$f; \
+        filelist="$$filelist $$ldir/$$f"; \
+    done ; \
+    $(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist
+
+endef
+
 define extract-and-include-target-whole-static-libs
 $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
-	$(hide) echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
-	ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(lib)))_objs;\
-	rm -rf $$ldir; \
-	mkdir -p $$ldir; \
-	filelist=; \
-	for f in `$(TARGET_AR) t $(lib)`; do \
-	    $(TARGET_AR) p $(lib) $$f > $$ldir/$$f; \
-	    filelist="$$filelist $$ldir/$$f"; \
-	done ; \
-	$(TARGET_AR) $(TARGET_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist;\
-)
+    $(call _extract-and-include-single-target-whole-static-lib, $(lib)))
 endef
 
 # Explicitly delete the archive first so that ar doesn't
@@ -1085,19 +1090,24 @@ endef
 ## Commands for running host ar
 ###########################################################
 
+# $(1): the full path of the source static library.
+define _extract-and-include-single-host-whole-static-lib
+@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(1)]"
+$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
+    rm -rf $$ldir; \
+    mkdir -p $$ldir; \
+    filelist=; \
+    for f in `$(HOST_AR) t $(1) | grep '\.o$$'`; do \
+        $(HOST_AR) p $(1) $$f > $$ldir/$$f; \
+        filelist="$$filelist $$ldir/$$f"; \
+    done ; \
+    $(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist
+
+endef
+
 define extract-and-include-host-whole-static-libs
 $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
-	$(hide) echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(lib)]"; \
-	ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(lib)))_objs;\
-	rm -rf $$ldir; \
-	mkdir -p $$ldir; \
-	filelist=; \
-	for f in `$(HOST_AR) t $(lib) | grep '\.o$$'`; do \
-	    $(HOST_AR) p $(lib) $$f > $$ldir/$$f; \
-	    filelist="$$filelist $$ldir/$$f"; \
-	done ; \
-	$(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist;\
-)
+    $(call _extract-and-include-single-host-whole-static-lib, $(lib)))
 endef
 
 # Explicitly delete the archive first so that ar doesn't
