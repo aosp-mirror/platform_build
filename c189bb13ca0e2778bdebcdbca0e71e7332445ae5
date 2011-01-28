@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA+3//7PM\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-01-28T17:12:56Z",
+      "side": 1,
+      "message": "I\u0027m pretty sure this is not needed, hope someone on the compiler team can confirm",
+      "revId": "c189bb13ca0e2778bdebcdbca0e71e7332445ae5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
