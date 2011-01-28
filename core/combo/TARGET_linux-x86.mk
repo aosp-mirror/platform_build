@@ -117,7 +117,7 @@ TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
 
 TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	 -nostdlib -Wl,-soname,$(notdir $@) \
 	 -shared -Bsymbolic \
@@ -138,7 +138,7 @@ endef
 
 
 define transform-o-to-executable-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	-nostdlib -Bdynamic \
 	-Wl,-dynamic-linker,/system/bin/linker \
@@ -156,7 +156,7 @@ $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-static-executable-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	-nostdlib -Bstatic \
 	-o $@ \

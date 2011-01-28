@@ -231,7 +231,7 @@ ifeq ($(strip $(WITH_JIT)),)
 endif
 
 define transform-o-to-shared-lib-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/armelf.xsc \
 	-Wl,--gc-sections \
 	-Wl,-shared,-Bsymbolic \
@@ -252,7 +252,7 @@ $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-executable-inner
-$(PRIVATE_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 	-Wl,-dynamic-linker,/system/bin/linker \
     -Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
@@ -271,7 +271,7 @@ $(PRIVATE_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
 endef
 
 define transform-o-to-static-executable-inner
-$(PRIVATE_CXX) -nostdlib -Bstatic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bstatic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
     -Wl,--gc-sections \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \

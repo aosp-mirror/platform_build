@@ -59,7 +59,7 @@ HOST_GLOBAL_ARFLAGS := cqs
 HOST_CUSTOM_LD_COMMAND := true
 
 define transform-host-o-to-shared-lib-inner
-    $(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
         -dynamiclib -single_module -read_only_relocs suppress \
         $(HOST_GLOBAL_LD_DIRS) \
         $(HOST_GLOBAL_LDFLAGS) \
@@ -74,7 +74,7 @@ define transform-host-o-to-shared-lib-inner
 endef
 
 define transform-host-o-to-executable-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
         -o $@ \
         -Wl,-dynamic -headerpad_max_install_names \
         $(HOST_GLOBAL_LD_DIRS) \

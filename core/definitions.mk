@@ -735,7 +735,7 @@ endef
 ###########################################################
 
 define transform-d-to-p
-@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+$(hide) cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 		-e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
 	rm -f $(@:%.o=%.d)
@@ -875,7 +875,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
 	-MD -o $@ $<
-$(hide) $(transform-d-to-p)
+$(transform-d-to-p)
 endef
 
 
@@ -919,12 +919,12 @@ endef
 
 define transform-c-to-o
 $(transform-c-to-o-no-deps)
-$(hide) $(transform-d-to-p)
+$(transform-d-to-p)
 endef
 
 define transform-s-to-o
 $(transform-s-to-o-no-deps)
-$(hide) $(transform-d-to-p)
+$(transform-d-to-p)
 endef
 
 ###########################################################
@@ -940,7 +940,7 @@ endef
 
 define transform-m-to-o
 $(transform-m-to-o-no-deps)
-$(hide) $(transform-d-to-p)
+$(transform-d-to-p)
 endef
 
 ###########################################################
@@ -1129,7 +1129,7 @@ endef
 # it to be overriden en-masse see combo/linux-arm.make for an example.
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-shared-lib-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	-Wl,-rpath-link=$(HOST_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	-shared -Wl,-soname,$(notdir $@) \
@@ -1152,13 +1152,13 @@ endif
 define transform-host-o-to-shared-lib
 @mkdir -p $(dir $@)
 @echo "host SharedLib: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-host-o-to-shared-lib-inner)
+$(transform-host-o-to-shared-lib-inner)
 endef
 
 define transform-host-o-to-package
 @mkdir -p $(dir $@)
 @echo "host Package: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-host-o-to-shared-lib-inner)
+$(transform-host-o-to-shared-lib-inner)
 endef
 
 
@@ -1179,7 +1179,7 @@ endef
 # it to be overriden en-masse see combo/linux-arm.make for an example.
 ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-shared-lib-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
@@ -1200,13 +1200,13 @@ endif
 define transform-o-to-shared-lib
 @mkdir -p $(dir $@)
 @echo "target SharedLib: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-o-to-shared-lib-inner)
+$(transform-o-to-shared-lib-inner)
 endef
 
 define transform-o-to-package
 @mkdir -p $(dir $@)
 @echo "target Package: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-o-to-shared-lib-inner)
+$(transform-o-to-shared-lib-inner)
 endef
 
 
@@ -1238,7 +1238,7 @@ endef
 
 ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-executable-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	$(TARGET_GLOBAL_LD_DIRS) \
@@ -1260,7 +1260,7 @@ endif
 define transform-o-to-executable
 @mkdir -p $(dir $@)
 @echo "target Executable: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-o-to-executable-inner)
+$(transform-o-to-executable-inner)
 endef
 
 
@@ -1279,7 +1279,7 @@ endif
 define transform-o-to-static-executable
 @mkdir -p $(dir $@)
 @echo "target StaticExecutable: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-o-to-static-executable-inner)
+$(transform-o-to-static-executable-inner)
 endef
 
 
@@ -1289,7 +1289,7 @@ endef
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner
-$(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX) \
 	-Wl,-rpath-link=$(HOST_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	$(HOST_GLOBAL_LD_DIRS) \
@@ -1311,7 +1311,7 @@ endif
 define transform-host-o-to-executable
 @mkdir -p $(dir $@)
 @echo "host Executable: $(PRIVATE_MODULE) ($@)"
-$(hide) $(transform-host-o-to-executable-inner)
+$(transform-host-o-to-executable-inner)
 endef
 
 
