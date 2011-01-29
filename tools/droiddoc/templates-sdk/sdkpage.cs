@@ -224,7 +224,7 @@ function onDownload(link) {
     </style>
     <?cs /if ?>
   <?cs /if ?> <?cs # end if/else online ?>
-  
+
 <?cs /if ?> <?cs # end if/else NDK ?>
 
 <?cs /if ?> <?cs # end if/else redirect ?>
