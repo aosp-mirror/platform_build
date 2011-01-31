@@ -408,6 +408,7 @@ GRANDFATHERED_USER_MODULES += \
 	ndc \
 	netcfg \
 	netd \
+	network \
 	ninepatch \
 	oauth \
 	obbtool \
