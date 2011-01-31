@@ -28,6 +28,9 @@ CTS_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts.jar
 DDMLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/ddmlib-prebuilt.jar
 junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
 HOSTTESTLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
+TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar
+CTS_TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts-tradefed.jar
+CTS_TF_EXEC_PATH := $(HOST_OUT_EXECUTABLES)/cts-tradefed
 
 CTS_CORE_CASE_LIST := \
 	android.core.tests.dom \
@@ -46,7 +49,7 @@ DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
 $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
 
 -include cts/CtsHostLibraryList.mk
-$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(ACP)
 # Make necessary directory for CTS
 	$(hide) rm -rf $(PRIVATE_CTS_DIR)
 	$(hide) mkdir -p $(TMP_DIR)
@@ -55,7 +58,7 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB
 	$(hide) mkdir -p $(PRIVATE_DIR)/repository/testcases
 	$(hide) mkdir -p $(PRIVATE_DIR)/repository/plans
 # Copy executable and JARs to CTS directory
-	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(CTS_EXECUTABLE_PATH) $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(PRIVATE_DIR)/tools
+	$(hide) $(ACP) -fp $(CTS_HOST_JAR) $(CTS_EXECUTABLE_PATH) $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(hide) chmod ug+rwX $(PRIVATE_DIR)/tools/$(notdir $(CTS_EXECUTABLE_PATH))
 	$(foreach apk,$(CTS_CASE_LIST), \
