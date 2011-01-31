@@ -246,6 +246,7 @@ GRANDFATHERED_USER_MODULES += \
 	libGLES_android \
 	libGLESv1_CM \
 	libGLESv2 \
+	libglib \
 	libglib_static \
 	libgui \
 	libhardware \
@@ -408,6 +409,7 @@ GRANDFATHERED_USER_MODULES += \
 	ndc \
 	netcfg \
 	netd \
+	network \
 	ninepatch \
 	oauth \
 	obbtool \
