@@ -16,6 +16,24 @@
       "revId": "c189bb13ca0e2778bdebcdbca0e71e7332445ae5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//6tM\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2011-02-01T15:57:53Z",
+      "side": 1,
+      "message": "There may be a problem with sincos() in the bionic library. If -mbionic isn\u0027t specified with the toolchain that I am currently using, the system crashes during boot.\n\nI\u0027ll split this out as a separate commit for now. We may need to keep it in until we determine the issue.",
+      "parentUuid": "AAAA+3//7PM\u003d",
+      "revId": "c189bb13ca0e2778bdebcdbca0e71e7332445ae5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
