@@ -833,6 +833,7 @@ p.table-caption {
 
 .toggle-content a[href="#"] {
   text-decoration:none;
+  color:#000;
 }
 
 #jd-content .toggle-content img.toggle-content-img {
