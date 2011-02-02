@@ -204,6 +204,17 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
   except KeyError:
     raise ExternalError("can't read META/otakeys.txt from input")
 
+  misc_info = common.LoadInfoDict(input_tf_zip)
+
+  extra_recovery_keys = misc_info.get("extra_recovery_keys", None)
+  if extra_recovery_keys:
+    extra_recovery_keys = [OPTIONS.key_map.get(k, k) + ".x509.pem"
+                           for k in extra_recovery_keys.split()]
+    if extra_recovery_keys:
+      print "extra recovery-only key(s): " + ", ".join(extra_recovery_keys)
+  else:
+    extra_recovery_keys = []
+
   mapped_keys = []
   for k in keylist:
     m = re.match(r"^(.*)\.x509\.pem$", k)
@@ -217,15 +228,18 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
     print "for OTA package verification"
   else:
     mapped_keys.append(
-        OPTIONS.key_map["build/target/product/security/testkey"] + ".x509.pem")
+        OPTIONS.key_map.get("build/target/product/security/testkey",
+                            "build/target/product/security/testkey")
+        + ".x509.pem")
     print "META/otakeys.txt has no keys; using", mapped_keys[0]
 
   # recovery uses a version of the key that has been slightly
   # predigested (by DumpPublicKey.java) and put in res/keys.
+  # extra_recovery_keys are used only in recovery.
 
   p = common.Run(["java", "-jar",
                   os.path.join(OPTIONS.search_path, "framework", "dumpkey.jar")]
-                 + mapped_keys,
+                 + mapped_keys + extra_recovery_keys,
                  stdout=subprocess.PIPE)
   data, _ = p.communicate()
   if p.returncode != 0:
@@ -234,6 +248,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
 
   # SystemUpdateActivity uses the x509.pem version of the keys, but
   # put into a zipfile system/etc/security/otacerts.zip.
+  # We DO NOT include the extra_recovery_keys (if any) here.
 
   tempfile = cStringIO.StringIO()
   certs_zip = zipfile.ZipFile(tempfile, "w")
