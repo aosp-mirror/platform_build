@@ -738,6 +738,10 @@ boottarball: $(INSTALLED_BOOTTARBALL_TARGET)
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
 
+ifneq (,$(filter userdataimage, $(MAKECMDGOALS)))
+$(call dist-for-goals, userdataimage, $(BUILT_USERDATAIMAGE_TARGET))
+endif
+
 .PHONY: userdatatarball
 userdatatarball: $(INSTALLED_USERDATATARBALL_TARGET)
 
