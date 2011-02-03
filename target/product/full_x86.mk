@@ -27,8 +27,10 @@ ifdef NET_ETH0_STARTONBOOT
 endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 
 # Overrides
 PRODUCT_NAME := full_x86
 PRODUCT_DEVICE := generic_x86
+PRODUCT_BRAND := Android
 PRODUCT_MODEL := Full Android x86
