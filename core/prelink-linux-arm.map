@@ -93,7 +93,6 @@ libjnigraphics.so       0xA9D00000 # [<64K]
 libskiagl.so            0xA9C00000 # [~1M]
 
 # audio
-libFLAC.so              0xA9B00000 # [???]
 libaudiopolicy.so       0xA9A00000 # [~1M]
 libeffects.so           0xA9980000 # [<64K]
 libaudioeffect_jni.so   0xA9900000 # [<64K]
