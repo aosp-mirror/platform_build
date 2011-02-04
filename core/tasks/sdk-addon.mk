@@ -27,10 +27,23 @@ staging := $(intermediates)/$(addon_dir_leaf)
 sdk_addon_deps :=
 files_to_copy :=
 
+define stub-addon-jar-file
+$(subst .jar,_stub-addon.jar,$(1))
+endef
+
+define stub-addon-jar
+$(call stub-addon-jar-file,$(1)): $(1) | mkstubs
+	$(info Stubbing addon jar using $(PRODUCT_SDK_ADDON_STUB_DEFS))
+	$(hide) java -jar $(call module-installed-files,mkstubs) $(if $(hide),,--v) \
+		"$$<" "$$@" @$(PRODUCT_SDK_ADDON_STUB_DEFS)
+endef
+
 # Files that are built and then copied into the sdk-addon
 ifneq ($(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_MODULES)),)
 $(foreach cf,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_MODULES), \
   $(eval _src := $(call module-stubs-files,$(call word-colon,1,$(cf)))) \
+  $(eval $(call stub-addon-jar,$(_src))) \
+  $(eval _src := $(call stub-addon-jar-file,$(_src))) \
   $(if $(_src),,$(eval $(error Unknown or unlinkable module: $(call word-colon,1,$(cf)). Requested by $(INTERNAL_PRODUCT)))) \
   $(eval _dest := $(call word-colon,2,$(cf))) \
   $(eval files_to_copy += $(_src):$(_dest)) \
