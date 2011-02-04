@@ -56,7 +56,7 @@ function changeApiLevel() {
   if (userApiLevelEnabled == 0) {
     toggleVisisbleApis(selectedLevel, "body");
   } else {
-    selectedLevel = $("#apiLevelSelector option:selected").val();
+    selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
     toggleVisisbleApis(selectedLevel, "body");
     
     var date = new Date();
