@@ -443,6 +443,7 @@ subdirs += \
 	sdk/archquery \
 	sdk/androidprefs \
 	sdk/apkbuilder \
+	sdk/common \
 	sdk/ddms \
 	sdk/hierarchyviewer2 \
 	sdk/ide_common \
