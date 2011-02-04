@@ -61,7 +61,7 @@
 }
 
 #side-nav ul ul {
-  margin: .35em 0 0 0;
+  margin: .5em 0 0 0;
   padding: 0;
 }
 
@@ -517,16 +517,24 @@ hr {
 }
 
 #jd-content h3 {
-  font-size:1.2em;
-  color:#222;
-  padding: .75em 0 .65em 0;
-  margin:0;
+  font-size:1.3em;
+  color:#3a3a3a;
+  padding: 0;
+  margin: 1.5em 0 .65em 0;
 }
 
 #jd-content h4 {
   font-size:1.1em;
-  margin-bottom:.5em;
-  color:#222;
+  color:#3a3a3a;
+  padding: 0;
+  margin: 1.25em 0 .65em 0;
+}
+
+#jd-content h5 {
+  font-size:1.0em;
+  color:#3a3a3a;
+  padding: 0;
+  margin: 1em 0 .65em 0;
 }
 
 #jd-content .small-header {
@@ -833,7 +841,7 @@ p.table-caption {
 
 .toggle-content a[href="#"] {
   text-decoration:none;
-  color:#000;
+  color:inherit;
 }
 
 #jd-content .toggle-content img.toggle-content-img {
