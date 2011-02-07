@@ -196,8 +196,8 @@ blockquote {
 /* LAYOUT */
 
 #body-content {
-  /* "Preliminary" watermark for preview releases and interim builds.*/
-  background:transparent url(images/preliminary.png) repeat scroll 0 0;
+  /* "Preliminary" watermark for preview releases and interim builds.
+  background:transparent url(images/preliminary.png) repeat scroll 0 0; */
   margin:0;
   position:relative;
   width:100%;
