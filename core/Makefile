@@ -1085,7 +1085,7 @@ target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
 ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
-ifneq ($(TARGET_DEVICE),generic)
+ifeq ($(filter generic%,$(TARGET_DEVICE)),)
 ifneq ($(TARGET_NO_KERNEL),true)
 
 # -----------------------------------------------------------------
@@ -1140,7 +1140,7 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 
 endif    # TARGET_NO_KERNEL != true
-endif    # TARGET_DEVICE != generic
+endif    # TARGET_DEVICE != generic*
 endif    # TARGET_PRODUCT != sdk
 endif    # TARGET_SIMULATOR != true
 
