@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA+3//5V0\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-02-09T22:01:00Z",
+      "side": 1,
+      "message": "really? If true, I think it would make sense to put a comment to explain that this forces the guest system to use the proper goldfish-specific device file.",
+      "revId": "83ca95d41191eb7cc5577d02a48b57adc5c0abcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//5V4\u003d",
+        "filename": "target/board/generic_x86/README.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-02-09T22:01:00Z",
+      "side": 1,
+      "message": "This seems to be a copy of the generic README.txt. It would be so much better if you could replace that with a proper description of generic_x86 instead.",
+      "revId": "83ca95d41191eb7cc5577d02a48b57adc5c0abcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
