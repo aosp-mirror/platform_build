@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AAAA+3//5Tk\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-02-09T23:14:53Z",
+      "side": 1,
+      "message": "Yes, it certainly does.",
+      "parentUuid": "AAAA+3//5Ts\u003d",
+      "revId": "83ca95d41191eb7cc5577d02a48b57adc5c0abcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAA+3//5V4\u003d",
         "filename": "target/board/generic_x86/README.txt",
         "patchSetId": 1
