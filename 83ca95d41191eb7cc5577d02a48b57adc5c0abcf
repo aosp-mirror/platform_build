@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AAAA+3//5Ts\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2011-02-09T23:11:48Z",
+      "side": 1,
+      "message": "looks like sound isn\u0027t expected to work. I\u0027ll remove it from AndroidBoard.mk.\n\nI see that it is in the generic one... does sound work in the ARM emulator?",
+      "parentUuid": "AAAA+3//5U4\u003d",
+      "revId": "83ca95d41191eb7cc5577d02a48b57adc5c0abcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAA+3//5V4\u003d",
         "filename": "target/board/generic_x86/README.txt",
         "patchSetId": 1
