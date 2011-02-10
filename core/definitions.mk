@@ -1833,10 +1833,8 @@ endif
 # spare area for each page).
 # $(1): the partition data size
 define image-size-from-data-size
-$(strip $(eval _isfds_value := $(shell echo $$(($(1) / $(BOARD_NAND_PAGE_SIZE) * \
-  ($(BOARD_NAND_PAGE_SIZE)+$(BOARD_NAND_SPARE_SIZE))))))\
-$(if $(filter 0, $(_isfds_value)),$(shell echo $$(($(BOARD_NAND_PAGE_SIZE)+$(BOARD_NAND_SPARE_SIZE)))),$(_isfds_value))\
-$(eval _isfds_value :=))
+$(shell echo $$(($(1) / $(BOARD_NAND_PAGE_SIZE) * \
+  ($(BOARD_NAND_PAGE_SIZE)+$(BOARD_NAND_SPARE_SIZE)))))
 endef
 
 # $(1): The file(s) to check (often $@)
