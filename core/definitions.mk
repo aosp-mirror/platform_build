@@ -927,7 +927,7 @@ define transform-host-m-to-o-no-deps
 $(call transform-host-c-or-s-to-o-no-deps)
 endef
 
-define tranform-host-m-to-o
+define transform-host-m-to-o
 $(transform-host-m-to-o-no-deps)
 $(transform-d-to-p)
 endef
