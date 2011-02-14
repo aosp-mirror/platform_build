@@ -844,6 +844,10 @@ p.table-caption {
   color:inherit;
 }
 
+.toggle-content-toggleme {
+  padding-bottom:1px; /* fixes animation bounce due to margins */
+}
+
 #jd-content .toggle-content img.toggle-content-img {
   margin:0;
 }
