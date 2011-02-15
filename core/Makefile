@@ -215,16 +215,9 @@ name := $(name)-apkcerts-$(FILE_NAME_TAG)
 intermediates := \
 	$(call intermediates-dir-for,PACKAGING,apkcerts)
 APKCERTS_FILE := $(intermediates)/$(name).txt
-# Depending on the built packages isn't exactly right,
-# but it should guarantee that the apkcerts file is rebuilt
-# if any packages change which certs they're signed with.
-all_built_packages := $(foreach p,$(PACKAGES),$(ALL_MODULES.$(p).BUILT))
-ifneq ($(TARGET_BUILD_APPS),)
-# We don't need to really build all the modules for apps_only build.
+# We don't need to really build all the modules.
+# TODO: rebuild APKCERTS_FILE if any app change its cert.
 $(APKCERTS_FILE):
-else
-$(APKCERTS_FILE): $(all_built_packages)
-endif
 	@echo APK certs list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
@@ -238,7 +231,9 @@ endif
 .PHONY: apkcerts-list
 apkcerts-list: $(APKCERTS_FILE)
 
-$(call dist-for-goals, apps_only, $(APKCERTS_FILE):apkcerts.txt)
+ifneq (,$(TARGET_BUILD_APPS))
+  $(call dist-for-goals, apps_only, $(APKCERTS_FILE):apkcerts.txt)
+endif
 
 # -----------------------------------------------------------------
 # module info file
