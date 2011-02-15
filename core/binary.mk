@@ -388,6 +388,7 @@ all_objects := \
 	$(gen_asm_objects) \
 	$(c_objects) \
 	$(gen_c_objects) \
+	$(objc_objects) \
 	$(yacc_objects) \
 	$(lex_objects) \
 	$(proto_generated_objects) \
