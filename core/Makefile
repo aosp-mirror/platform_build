@@ -1100,8 +1100,12 @@ $(INSTALLED_FILES_FILE): $(INSTALLED_SYSTEMIMAGE)
 
 .PHONY: installed-file-list
 installed-file-list: $(INSTALLED_FILES_FILE)
-$(call dist-for-goals, sdk, $(INSTALLED_FILES_FILE))
+ifneq ($(filter sdk win_sdk,$(MAKECMDGOALS)),)
+$(call dist-for-goals, sdk win_sdk, $(INSTALLED_FILES_FILE))
+endif
+ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
 $(call dist-for-goals, sdk_addon, $(INSTALLED_FILES_FILE))
+endif
 
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".
@@ -1346,9 +1350,10 @@ $(INTERNAL_SDK_TARGET): $(deps)
 
 # Is a Windows SDK requested? If so, we need some definitions from here
 # in order to find the Linux SDK used to create the Windows one.
+MAIN_SDK_NAME := $(sdk_name)
+MAIN_SDK_DIR  := $(sdk_dir)
+MAIN_SDK_ZIP  := $(INTERNAL_SDK_TARGET)
 ifneq ($(filter win_sdk,$(MAKECMDGOALS)),)
-LINUX_SDK_NAME := $(sdk_name)
-LINUX_SDK_DIR  := $(sdk_dir)
 include $(TOPDIR)development/build/tools/windows_sdk.mk
 endif
 
@@ -1373,3 +1378,12 @@ $(INTERNAL_FINDBUGS_HTML_TARGET): $(INTERNAL_FINDBUGS_XML_TARGET)
 # -----------------------------------------------------------------
 # These are some additional build tasks that need to be run.
 include $(sort $(wildcard $(BUILD_SYSTEM)/tasks/*.mk))
+-include $(sort $(wildcard vendor/*/build/tasks/*.mk))
+
+# -----------------------------------------------------------------
+# Create SDK repository packages. Must be done after tasks/* since
+# we need the addon rules defined.
+ifneq ($(sdk_repo_goal),)
+include $(TOPDIR)development/build/tools/sdk_repo.mk
+endif
+
