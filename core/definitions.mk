@@ -679,6 +679,7 @@ define dump-module-variables
 @echo PRIVATE_ALL_STATIC_LIBRARIES=$(PRIVATE_ALL_STATIC_LIBRARIES);
 @echo PRIVATE_ALL_WHOLE_STATIC_LIBRARIES=$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES);
 @echo PRIVATE_ALL_OBJECTS=$(PRIVATE_ALL_OBJECTS);
+@echo PRIVATE_NO_CRT=$(PRIVATE_NO_CRT);
 endef
 
 ###########################################################

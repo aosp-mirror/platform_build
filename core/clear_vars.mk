@@ -102,6 +102,7 @@ LOCAL_BUILD_HOST_DEX:=
 LOCAL_DEX_PREOPT:=
 LOCAL_PROTOC_OPTIMIZE_TYPE:= # lite(default),micro,full
 LOCAL_PROTOC_FLAGS:=
+LOCAL_NO_CRT:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
