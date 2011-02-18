@@ -1,34 +1,26 @@
+#
+# Copyright (C) 2007 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 # This is a generic product that isn't specialized for a specific device.
-# It includes the base Android platform. If you need Google-specific features,
-# you should derive from generic_with_google.mk
+# It includes the base Android platform.
 
-PRODUCT_PACKAGES := \
-    DeskClock \
-    AlarmProvider \
-    Calendar \
-    Camera \
-    DrmProvider \
-    LatinIME \
-    Mms \
-    Music \
-    Settings \
-    Sync \
-    Updater \
-    CalendarProvider \
-    SubscribedFeedsProvider \
-    SyncProvider
-
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 # Overrides
 PRODUCT_BRAND := generic_x86
 PRODUCT_DEVICE := generic_x86
 PRODUCT_NAME := generic_x86
-PRODUCT_POLICY := android.policy_phone
-
-# If running on an emulator or some other device that has a LAN connection
-# that isn't a wifi connection. This will instruct init.rc to enable the
-# network connection so that you can use it with ADB
-ifdef NET_ETH0_STARTONBOOT
-  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
-endif
