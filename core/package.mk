@@ -157,15 +157,9 @@ endif
 endif
 endif
 
-# The dex files go in the package, so we don't
-# want to install them separately for this module.
-old_DONT_INSTALL_DEX_FILES := $(DONT_INSTALL_DEX_FILES)
-DONT_INSTALL_DEX_FILES := true
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################
-DONT_INSTALL_DEX_FILES := $(old_DONT_INSTALL_DEX_FILES)
-old_DONT_INSTALL_DEX_FILES =
 
 full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
 $(LOCAL_INTERMEDIATE_TARGETS): \
