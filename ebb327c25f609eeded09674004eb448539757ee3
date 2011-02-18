@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA+3//4Nw\u003d",
+        "filename": "target/board/generic_x86/AndroidBoard.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003957
+      },
+      "writtenOn": "2011-02-18T20:08:49Z",
+      "side": 1,
+      "message": "What do you need the tuttle keymap for?\n\nWe deleted it recently.",
+      "revId": "ebb327c25f609eeded09674004eb448539757ee3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//4No\u003d",
+        "filename": "target/board/generic_x86/device.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003957
+      },
+      "writtenOn": "2011-02-18T20:08:49Z",
+      "side": 1,
+      "message": "New file.  Bump copyright date to 2011.",
+      "revId": "ebb327c25f609eeded09674004eb448539757ee3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
