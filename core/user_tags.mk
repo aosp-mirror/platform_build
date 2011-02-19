@@ -169,7 +169,6 @@ GRANDFATHERED_USER_MODULES += \
 	jsr305lib \
 	junit \
 	jython \
-	kcm \
 	keystore \
 	kxml2-2.3.0 \
 	launch-wrapper \
@@ -395,7 +394,6 @@ GRANDFATHERED_USER_MODULES += \
 	logcat \
 	logwrapper \
 	lsd \
-	mahimahi-keypad.kcm \
 	make_cfst \
 	makedict \
 	make_ext4fs \
@@ -446,8 +444,6 @@ GRANDFATHERED_USER_MODULES += \
 	q2dm \
 	q2g \
 	qemu-android \
-	qwerty2.kcm \
-	qwerty.kcm \
 	racoon \
 	read_addr \
 	read_method \
@@ -489,7 +485,6 @@ GRANDFATHERED_USER_MODULES += \
 	spec-progress \
 	sqlite3 \
 	stack_dump \
-	stingray-keypad.kcm \
 	stringtemplate \
 	surfaceflinger \
 	svc \
