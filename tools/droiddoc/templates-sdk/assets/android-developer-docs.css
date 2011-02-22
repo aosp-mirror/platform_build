@@ -791,13 +791,18 @@ ul.no-style {
   padding-left:1em;
 }
 
-.new {
+.new,
+.new-child {
   font-size: .78em;
   font-weight: bold;
   color: #ff3d3d;
   text-decoration: none;
   vertical-align:top;
   line-height:.9em;
+}
+
+.toggle-list.open .new-child {
+  display:none;
 }
 
 pre.classic {
