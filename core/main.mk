@@ -209,13 +209,8 @@ endif
 ###
 
 is_sdk_build :=
-ifneq ($(filter sdk,$(MAKECMDGOALS)),)
-is_sdk_build := true
-endif
-ifneq ($(filter win_sdk,$(MAKECMDGOALS)),)
-is_sdk_build := true
-endif
-ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
+
+ifneq ($(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
 
@@ -290,6 +285,11 @@ endif
 ## sdk ##
 
 ifdef is_sdk_build
+
+# Detect if we want to build a repository for the SDK
+sdk_repo_goal := $(strip $(filter sdk_repo,$(MAKECMDGOALS)))
+MAKECMDGOALS := $(strip $(filter-out sdk_repo,$(MAKECMDGOALS)))
+
 ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
@@ -828,8 +828,8 @@ docs: $(ALL_DOCS)
 .PHONY: sdk
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
-ifneq ($(filter sdk,$(MAKECMDGOALS)),)
-$(call dist-for-goals,sdk, \
+ifneq ($(filter sdk win_sdk,$(MAKECMDGOALS)),)
+$(call dist-for-goals,sdk win_sdk, \
 	$(ALL_SDK_TARGETS) \
 	$(SYMBOLS_ZIP) \
  )
