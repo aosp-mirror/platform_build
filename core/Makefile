@@ -277,12 +277,15 @@ $(all_event_log_tags_file): $(all_event_log_tags_src)
 
 event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
 
-# Include tags from all packages included in this product.
+# Include tags from all packages included in this product, plus all
+# tags that are part of the system (ie, not in a vendor/ or device/
+# directory).
 event_log_tags_src := \
     $(sort $(foreach m,\
       $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES) \
       $(call module-names-for-tag-list,user), \
-      $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
+      $(ALL_MODULES.$(m).EVENT_LOG_TAGS)) \
+      $(filter-out vendor/% device/% out/%,$(all_event_log_tags_src)))
 
 $(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
 $(event_log_tags_file): PRIVATE_MERGED_FILE := $(all_event_log_tags_file)
