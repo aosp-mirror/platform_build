@@ -28,6 +28,7 @@ ifdef LOCAL_NDK_VERSION
   ifndef LOCAL_SDK_VERSION
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION must be defined with LOCAL_SDK_VERSION)
   endif
+  my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/sources
   my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
   ifeq ($(wildcard $(my_ndk_version_root)),)
     $(error $(LOCAL_PATH): ndk version root does not exist: $(my_ndk_version_root))
@@ -59,6 +60,8 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ifdef LOCAL_NDK_VERSION
 my_target_project_includes :=
 my_target_c_inclues := $(my_ndk_version_root)/usr/include
+# Starting from NDK-r5 the c++ stl headers reside in a separate directory
+my_target_c_inclues += $(my_ndk_source_root)/cxx-stl/system/include
 # TODO: more reliable way to remove platform stuff.
 my_target_global_cflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CFLAGS))
 my_target_global_cppflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CPPFLAGS))
