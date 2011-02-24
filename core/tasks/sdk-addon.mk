@@ -94,11 +94,16 @@ $(full_target): $(sdk_addon_deps) | $(ACP)
 .PHONY: sdk_addon
 sdk_addon: $(full_target)
 
-# Keep the name of the addon final zip around for sdk_repo.
-# This is used by development/build/tools/sdk_repo.mk.
+ifneq ($(sdk_repo_goal),)
+# If we're building the sdk_repo, keep the name of the addon zip
+# around so that development/build/tools/sdk_repo.mk can dist it
+# at the appropriate location.
 ADDON_SDK_ZIP := $(full_target)
-
+else
+# When not building an sdk_repo, just dist the addon zip file
+# as-is.
 $(call dist-for-goals, sdk_addon, $(full_target))
+endif
 
 else # addon_name
 ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
