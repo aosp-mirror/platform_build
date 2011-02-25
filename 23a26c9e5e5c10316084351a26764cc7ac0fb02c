@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "AAAA+3//3dk\u003d",
+        "filename": "target/board/generic_x86/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1001414
+      },
+      "writtenOn": "2011-02-25T03:10:55Z",
+      "side": 1,
+      "message": "if it\u0027s a copy of a file from somewhere else, this is fine.",
+      "parentUuid": "AAAA+3//3lI\u003d",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAA+3//3ec\u003d",
         "filename": "target/board/generic_x86/device.mk",
         "patchSetId": 5
@@ -170,6 +188,24 @@
       "side": 1,
       "message": "Sure you want this changed?\nThis is a copy of a file from elsewhere... and the original copyright date is probably correct.",
       "parentUuid": "AAAA+3//3oA\u003d",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3dg\u003d",
+        "filename": "target/product/generic_x86.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1001414
+      },
+      "writtenOn": "2011-02-25T03:10:55Z",
+      "side": 1,
+      "message": "yeah this is fine.",
+      "parentUuid": "AAAA+3//3lM\u003d",
       "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
