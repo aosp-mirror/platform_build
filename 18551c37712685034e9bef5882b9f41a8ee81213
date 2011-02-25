@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA+3//3fc\u003d",
+        "filename": "target/board/vbox_x86/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "should be androidboot.hardware\u003dvbox_x86",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3fY\u003d",
+        "filename": "target/board/vbox_x86/README.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "Maybe just \"vbox\"? It\u0027s clear enough since we don\u0027t have \"vbox_arm\".",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3fU\u003d",
+        "filename": "target/board/vbox_x86/device.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be 2011?",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3fQ\u003d",
+        "filename": "target/board/vbox_x86/device.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "Why put an obsolete file? This line should be removed.",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3fM\u003d",
+        "filename": "target/board/vbox_x86/init.rc",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "remove the whitespace",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3fE\u003d",
+        "filename": "target/board/vbox_x86/system.prop",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "Are the rild settings necessary?",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3fA\u003d",
+        "filename": "target/product/vbox_x86.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T01:56:53Z",
+      "side": 1,
+      "message": "2011",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
