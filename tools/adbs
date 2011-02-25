@@ -113,7 +113,7 @@ def FindSymbolsDir():
     path = os.environ['ANDROID_PRODUCT_OUT'] + "/symbols"
   except:
     cmd = "CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core " \
-      + "SRC_TARGET_DIR=build/target make -f build/core/envsetup.mk " \
+      + "SRC_TARGET_DIR=build/target make -f build/core/config.mk " \
       + "dumpvar-abs-TARGET_OUT_UNSTRIPPED"
     stream = os.popen(cmd)
     str = stream.read()
