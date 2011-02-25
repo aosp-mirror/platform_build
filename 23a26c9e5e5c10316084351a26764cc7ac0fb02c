@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "AAAA+3//3eQ\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T02:26:13Z",
+      "side": 1,
+      "message": "We should keep the \"generic_x86\" target as generic as possible. So I don\u0027t agree this line.",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAA+3//3oE\u003d",
         "filename": "target/board/generic_x86/device.mk",
         "patchSetId": 5
@@ -31,6 +48,75 @@
       "side": 1,
       "message": "Sure you want this changed?\nThis is a copy of a file from elsewhere... and the original copyright date is probably correct.",
       "parentUuid": "AAAA+3//3oE\u003d",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3eg\u003d",
+        "filename": "target/board/generic_x86/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T02:26:13Z",
+      "side": 1,
+      "message": "I agree 2011. It should reflect the date the file been created.",
+      "parentUuid": "AAAA+3//3lI\u003d",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3ec\u003d",
+        "filename": "target/board/generic_x86/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T02:26:13Z",
+      "side": 1,
+      "message": "What\u0027s the purpose of the ril properties? Is it meaningful to an x86 target?",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3eY\u003d",
+        "filename": "target/board/generic_x86/device.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T02:26:13Z",
+      "side": 1,
+      "message": "The line should be removed.",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA+3//3eU\u003d",
+        "filename": "target/board/generic_x86/system.prop",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-02-25T02:26:13Z",
+      "side": 1,
+      "message": "Does it make sense?",
       "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
