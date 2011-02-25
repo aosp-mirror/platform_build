@@ -30,6 +30,7 @@ PRODUCT_PACKAGES := \
     CertInstaller \
     DrmProvider \
     Email \
+    Exchange \
     Gallery3D \
     LatinIME \
     Launcher2 \

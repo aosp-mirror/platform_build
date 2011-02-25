@@ -22,6 +22,7 @@ PRODUCT_PACKAGES := \
 	Camera \
 	DeskClock \
 	Email \
+	Exchange \
 	Gallery \
 	Music \
 	Mms \
