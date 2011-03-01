@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AAAA/H///60\u003d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003004
+      },
+      "writtenOn": "2011-03-01T02:09:01Z",
+      "side": 1,
+      "message": "You could enable x86-atom on your build (by buildspec.mk or something similar), but don\u0027t enable it by default.\n\nSuppose you enable armv7 for the generic build, would it be acceptable?",
+      "parentUuid": "AAAA+3//3eA\u003d",
+      "revId": "23a26c9e5e5c10316084351a26764cc7ac0fb02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAA+3//3oE\u003d",
         "filename": "target/board/generic_x86/device.mk",
         "patchSetId": 5
