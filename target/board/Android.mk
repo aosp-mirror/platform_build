@@ -20,9 +20,6 @@ else
   INSTALLED_KERNEL_TARGET :=
 endif
 
-# Use the add-radio-file function to add values to this variable.
-INSTALLED_RADIOIMAGE_TARGET :=
-
 -include $(TARGET_DEVICE_DIR)/AndroidBoard.mk
 
 # Generate a file that contains various information about the
