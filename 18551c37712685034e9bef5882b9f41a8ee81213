@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AAAA/H///qI\u003d",
+        "filename": "target/board/vbox_x86/BoardConfig.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-03-02T12:45:22Z",
+      "side": 1,
+      "message": "I think the idea is that vbox_x86 is not product-specific, but something a real board config would inherit from. It probably makes sense to use the same stuff than generic_x86 here.\n\nWould like some clarifications though.",
+      "parentUuid": "AAAA+3//3fc\u003d",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAA+3//3fY\u003d",
         "filename": "target/board/vbox_x86/README.txt",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2011-02-25T01:56:53Z",
       "side": 1,
       "message": "Maybe just \"vbox\"? It\u0027s clear enough since we don\u0027t have \"vbox_arm\".",
+      "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA/H///qM\u003d",
+        "filename": "target/board/vbox_x86/README.txt",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-03-02T12:45:22Z",
+      "side": 1,
+      "message": "I think it\u0027s better to put the x86 in the name, it makes the product\u0027s purpose very explicit.",
+      "parentUuid": "AAAA+3//3fY\u003d",
       "revId": "18551c37712685034e9bef5882b9f41a8ee81213",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
