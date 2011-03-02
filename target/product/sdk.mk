@@ -60,6 +60,8 @@ PRODUCT_PACKAGES += \
 	hprof-conv \
 	mksdcard \
 	emulator \
+	bios.bin \
+	vgabios-cirrus.bin \
 	ddms \
 	hierarchyviewer \
 	draw9patch \
