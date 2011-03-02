@@ -202,18 +202,6 @@ class EdifyGenerator(object):
     cmd = "".join(cmd)
     self.script.append(self._WordWrap(cmd))
 
-  def WriteFirmwareImage(self, kind, fn):
-    """Arrange to update the given firmware image (kind must be
-    "hboot" or "radio") when recovery finishes."""
-    if self.version == 1:
-      self.script.append(
-          ('assert(package_extract_file("%(fn)s", "/tmp/%(kind)s.img"),\n'
-           '       write_firmware_image("/tmp/%(kind)s.img", "%(kind)s"));')
-          % {'kind': kind, 'fn': fn})
-    else:
-      self.script.append(
-          'write_firmware_image("PACKAGE:%s", "%s");' % (fn, kind))
-
   def WriteRawImage(self, mount_point, fn):
     """Write the given package file into the partition for the given
     mount point."""
