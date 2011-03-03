@@ -59,7 +59,7 @@ option {
   padding:0 4px;
 }
 
-p {
+p, form {
   padding:0;
   margin:0 0 1em;
 }
