@@ -339,7 +339,7 @@ endef
 
 define find-parent-file
 $(strip \
-  $(eval _fpf := $(wildcard $(strip $(1))/$(strip $(2)))) \
+  $(eval _fpf := $(wildcard $(foreach f, $(2), $(strip $(1))/$(f)))) \
   $(if $(_fpf),$(_fpf), \
        $(if $(filter-out ./ .,$(1)), \
              $(call find-parent-file,$(patsubst %/,%,$(dir $(1))),$(2)) \
