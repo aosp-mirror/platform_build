@@ -140,13 +140,6 @@ class EdifyGenerator(object):
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
                           p.device, p.mount_point))
       self.mounts.add(p.mount_point)
-    else:
-      what = mount_point.lstrip("/")
-      what = self.info.get("partition_path", "") + what
-      self.script.append('mount("%s", "%s", "%s", "%s");' %
-                         (self.info["fs_type"], self.info["partition_type"],
-                          what, mount_point))
-      self.mounts.add(mount_point)
 
   def UnpackPackageDir(self, src, dst):
     """Unpack a given directory from the OTA package into the given
@@ -173,12 +166,6 @@ class EdifyGenerator(object):
       p = fstab[partition]
       self.script.append('format("%s", "%s", "%s");' %
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type], p.device))
-    else:
-      # older target-files without per-partition types
-      partition = self.info.get("partition_path", "") + partition
-      self.script.append('format("%s", "%s", "%s");' %
-                         (self.info["fs_type"], self.info["partition_type"],
-                          partition))
 
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""
@@ -231,23 +218,6 @@ class EdifyGenerator(object):
             'package_extract_file("%(fn)s", "%(device)s");' % args)
       else:
         raise ValueError("don't know how to write \"%s\" partitions" % (p.fs_type,))
-    else:
-      # backward compatibility with older target-files that lack recovery.fstab
-      if self.info["partition_type"] == "MTD":
-        self.script.append(
-            ('assert(package_extract_file("%(fn)s", "/tmp/%(partition)s.img"),\n'
-             '       write_raw_image("/tmp/%(partition)s.img", "%(partition)s"),\n'
-             '       delete("/tmp/%(partition)s.img"));')
-            % {'partition': partition, 'fn': fn})
-      elif self.info["partition_type"] == "EMMC":
-        self.script.append(
-            ('package_extract_file("%(fn)s", "%(dir)s%(partition)s");')
-            % {'partition': partition, 'fn': fn,
-               'dir': self.info.get("partition_path", ""),
-               })
-      else:
-        raise ValueError("don't know how to write \"%s\" partitions" %
-                         (self.info["partition_type"],))
 
   def SetPermissions(self, fn, uid, gid, mode):
     """Set file ownership and permissions."""

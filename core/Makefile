@@ -1025,6 +1025,7 @@ ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
 ifneq ($(TARGET_DEVICE),generic)
 ifneq ($(TARGET_NO_KERNEL),true)
+ifneq ($(recovery_fstab),)
 
 # -----------------------------------------------------------------
 # OTA update package
@@ -1077,6 +1078,7 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 .PHONY: updatepackage
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 
+endif    # recovery_fstab is defined
 endif    # TARGET_NO_KERNEL != true
 endif    # TARGET_DEVICE != generic
 endif    # TARGET_PRODUCT != sdk
