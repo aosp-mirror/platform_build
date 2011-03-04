@@ -920,20 +920,6 @@ p.table-caption {
   padding:0 10px;
 }
 
-#qv-extra #rule {
-  padding: 0 10px;
-  margin: 0;
-}
-
-#qv-sub-rule {
-  padding: 6px 20px;
-  margin: 0;
-}
-
-#qv-sub-rule p {
-  margin: 0;
-}
-
 #jd-content #qv h2 {
   font-size:1.05em;
   font-weight:bold;
@@ -944,6 +930,21 @@ p.table-caption {
   border:none;
   left:0;
   z-index:1;
+}
+
+#qv-extra #rule {
+  padding: 0 10px;
+  margin: 0;
+}
+
+#qv-sub-rule {
+  padding: 5px 15px 10px;
+  margin: 0;
+}
+
+#jd-content
+#qv-sub-rule h2 {
+  margin: 0 0 .5em 0;
 }
 
 /* END quickview sidebar element styles */
