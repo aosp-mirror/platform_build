@@ -33,6 +33,38 @@ ifdef LOCAL_NDK_VERSION
   ifeq ($(wildcard $(my_ndk_version_root)),)
     $(error $(LOCAL_PATH): ndk version root does not exist: $(my_ndk_version_root))
   endif
+
+  # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
+  # See ndk/docs/CPLUSPLUS-SUPPORT.html
+  my_ndk_stl_include_path :=
+  my_ndk_stl_shared_lib_fullpath :=
+  my_ndk_stl_shared_lib :=
+  my_ndk_stl_static_lib :=
+  ifeq (,$(LOCAL_NDK_STL_VARIANT))
+    LOCAL_NDK_STL_VARIANT := system
+  endif
+  ifneq (1,$(words $(filter system stlport_static stlport_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
+    $(error $(LOCAL_PATH): Unkown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
+  endif
+  ifeq (system,$(LOCAL_NDK_STL_VARIANT))
+    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/system/include
+    # for "system" variant, the shared library exists in the system library and -lstdc++ is added by default.
+  else # LOCAL_NDK_STL_VARIANT is not system
+  ifneq (,$(filter stlport_%, $(LOCAL_NDK_STL_VARIANT)))
+    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/stlport/stlport
+    ifeq (stlport_static,$(LOCAL_NDK_STL_VARIANT))
+      my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(TARGET_CPU_ABI)/libstlport_static.a
+    else
+      my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(TARGET_CPU_ABI)/libstlport_shared.so
+      my_ndk_stl_shared_lib := -lstlport_shared
+    endif
+  else
+    # LOCAL_NDK_STL_VARIANT is gnustl_static
+    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/include
+    my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_CPU_ABI)/libstdc++.a
+  endif
+  endif
+
 endif
 
 #######################################
@@ -59,9 +91,7 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ###########################################################
 ifdef LOCAL_NDK_VERSION
 my_target_project_includes :=
-my_target_c_inclues := $(my_ndk_version_root)/usr/include
-# Starting from NDK-r5 the c++ stl headers reside in a separate directory
-my_target_c_inclues += $(my_ndk_source_root)/cxx-stl/system/include
+my_target_c_inclues := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
 # TODO: more reliable way to remove platform stuff.
 my_target_global_cflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CFLAGS))
 my_target_global_cppflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CPPFLAGS))
@@ -496,8 +526,10 @@ installed_shared_libraries := \
     $(addprefix $($(my_prefix)OUT_SHARED_LIBRARIES)/, \
       $(notdir $(built_shared_libraries)))
 
-my_system_shared_libraries_fullpath := $(addprefix $(my_ndk_version_root)/usr/lib/, \
-    $(addsuffix $(so_suffix), $(LOCAL_SYSTEM_SHARED_LIBRARIES)))
+my_system_shared_libraries_fullpath := \
+    $(my_ndk_stl_shared_lib_fullpath) \
+    $(addprefix $(my_ndk_version_root)/usr/lib/, \
+        $(addsuffix $(so_suffix), $(LOCAL_SYSTEM_SHARED_LIBRARIES)))
 
 built_shared_libraries += $(my_system_shared_libraries_fullpath)
 LOCAL_SHARED_LIBRARIES += $(LOCAL_SYSTEM_SHARED_LIBRARIES)
@@ -517,6 +549,10 @@ built_static_libraries := \
     $(foreach lib,$(LOCAL_STATIC_LIBRARIES), \
       $(call intermediates-dir-for, \
         STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE))/$(lib)$(a_suffix))
+
+ifdef LOCAL_NDK_VERSION
+built_static_libraries += $(my_ndk_stl_static_lib)
+endif
 
 built_whole_libraries := \
     $(foreach lib,$(LOCAL_WHOLE_STATIC_LIBRARIES), \
