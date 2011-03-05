@@ -40,6 +40,7 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/full_x86.mk \
     $(LOCAL_DIR)/vbox_x86.mk \
     $(LOCAL_DIR)/sdk.mk \
+    $(LOCAL_DIR)/sdk_x86.mk \
     $(LOCAL_DIR)/sim.mk \
     $(LOCAL_DIR)/large_emu_hw.mk
 endif
