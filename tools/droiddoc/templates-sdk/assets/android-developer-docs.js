@@ -502,14 +502,25 @@ function scrollIntoView(nav) {
   if (navObj.is(':visible')) {
     var selected = $(".selected", navObj);
     if (selected.length == 0) return;
-    if (selected.is("div")) selected = selected.parent();
+    if (selected.is("div")) selected = selected.parent(); // when the selected item is a parent
 
     var scrolling = document.getElementById(nav);
     var navHeight = navObj.height();
     var offsetTop = selected.position().top;
-    if (selected.parent().parent().is(".toggle-list")) offsetTop += selected.parent().parent().position().top;
-    if(offsetTop > navHeight - 92) {
-      scrolling.scrollTop = offsetTop - navHeight + 92;
+
+    // handle nested items
+    if (selected.parent().parent().is(".toggle-list")) {
+      selected = selected.parent().parent();
+      // handle second level nested items
+      if (selected.parent().parent().is(".toggle-list")) {
+        selected = selected.parent().parent();
+      }
+      offsetTop += selected.position().top;
+    }
+
+    // 180px from the bottom of the list is the threshold
+    if(offsetTop > navHeight - 180) {
+      scrolling.scrollTop = offsetTop - navHeight + 180;
     }
   }
 }
