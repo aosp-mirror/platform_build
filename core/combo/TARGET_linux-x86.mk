@@ -38,7 +38,7 @@ endif
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
 TARGET_TOOLS_PREFIX := \
-	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/i686-unknown-linux-gnu-4.2.1/bin/i686-unknown-linux-gnu-
+	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/i686-android-linux-4.4.3/bin/i686-android-linux-
 endif
 
 TARGET_CC := $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
@@ -51,8 +51,7 @@ TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-debug $< -o $@
 
 ifneq ($(wildcard $(TARGET_CC)),)
 TARGET_LIBGCC := \
-	$(shell $(TARGET_CC) -m32 -print-file-name=libgcc.a) \
-        $(shell $(TARGET_CC) -m32 -print-file-name=libgcc_eh.a)
+	$(shell $(TARGET_CC) -m32 -print-file-name=libgcc.a)
 endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
@@ -85,7 +84,7 @@ TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
 ifeq ($(TARGET_ARCH_VARIANT),x86-atom)
-    TARGET_GLOBAL_CFLAGS += -mtune=i686 -DUSE_SSSE3 -DUSE_SSE2 -mfpmath=sse -msse2
+    TARGET_GLOBAL_CFLAGS += -march=atom -mstackrealign -DUSE_SSSE3 -DUSE_SSE2 -mfpmath=sse
 else
     TARGET_GLOBAL_CFLAGS += -march=i686
 endif
