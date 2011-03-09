@@ -163,7 +163,7 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
 		LD_LIBRARY_PATH=$(HOST_OUT_SHARED_LIBRARIES) \
 		javadoc \
                 \@$(PRIVATE_SRC_LIST_FILE) \
-                -J-Xmx768m \
+                -J-Xmx1280m \
                 -J-Djava.library.path=$(HOST_OUT_SHARED_LIBRARIES) \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 -quiet \
