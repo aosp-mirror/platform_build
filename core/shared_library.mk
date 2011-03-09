@@ -13,9 +13,6 @@ endif
 ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 LOCAL_MODULE_SUFFIX := $(TARGET_SHLIB_SUFFIX)
 endif
-ifeq ($(strip $(LOCAL_PRELINK_MODULE)),)
-LOCAL_PRELINK_MODULE := $(strip $(TARGET_PRELINK_MODULE))
-endif
 ifneq ($(strip $(OVERRIDE_BUILT_MODULE_PATH)),)
 $(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
 endif

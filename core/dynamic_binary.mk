@@ -88,47 +88,9 @@ endif
 
 
 ###########################################################
-## Pre-link
-###########################################################
-prelink_input := $(compress_output)
-# The output of the prelink step is the binary we want to use
-# for symbolic debugging;  the prelink step may move sections
-# around, so we have to use this version.
-prelink_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_BUILT_MODULE_STEM)
-
-# Skip prelinker if it is FDO instrumentation build.
-ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
-ifneq ($(LOCAL_NO_FDO_SUPPORT),true)
-LOCAL_PRELINK_MODULE := false
-endif
-endif
-
-ifeq ($(LOCAL_PRELINK_MODULE),true)
-$(prelink_output): $(prelink_input) $(TARGET_PRELINKER_MAP) $(APRIORI)
-	$(transform-to-prelinked)
-else
-# Don't prelink the binary, just copy it.  We can't skip this step
-# because people always expect a copy of the binary to appear
-# in the UNSTRIPPED directory.
-#
-# If the binary we're copying is acp or a prerequisite,
-# use cp(1) instead.
-ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
-$(prelink_output): $(prelink_input) | $(ACP)
-	@echo "target Non-prelinked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
-else
-$(prelink_output): $(prelink_input)
-	@echo "target Non-prelinked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target-with-cp)
-endif
-endif
-
-
-###########################################################
 ## Strip
 ###########################################################
-strip_input := $(prelink_output)
+strip_input := $(compress_output)
 strip_output := $(LOCAL_BUILT_MODULE)
 
 ifeq ($(strip $(LOCAL_STRIP_MODULE)),)
@@ -160,5 +122,4 @@ endif # LOCAL_STRIP_MODULE
 $(cleantarget): PRIVATE_CLEAN_FILES := \
 			$(PRIVATE_CLEAN_FILES) \
 			$(linked_module) \
-			$(compress_output) \
-			$(prelink_output)
+			$(compress_output)

@@ -66,7 +66,7 @@ ALL_GENERATED_SOURCES:=
 # These all have an order-only dependency on the copied headers
 ALL_C_CPP_ETC_OBJECTS:=
 
-# The list of dynamic binaries that haven't been stripped/compressed/prelinked.
+# The list of dynamic binaries that haven't been stripped/compressed/etc.
 ALL_ORIGINAL_DYNAMIC_BINARIES:=
 
 # These files go into the SDK
@@ -1219,17 +1219,6 @@ define transform-to-stripped
 @mkdir -p $(dir $@)
 @echo "target Strip: $(PRIVATE_MODULE) ($@)"
 $(hide) $(TARGET_STRIP_COMMAND)
-endef
-
-define transform-to-prelinked
-@mkdir -p $(dir $@)
-@echo "target Prelink: $(PRIVATE_MODULE) ($@)"
-$(hide) $(APRIORI) \
-		--prelinkmap $(TARGET_PRELINKER_MAP) \
-		--locals-only \
-		--quiet \
-		$< \
-		--output $@
 endef
 
 

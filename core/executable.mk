@@ -12,11 +12,6 @@ ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 LOCAL_MODULE_SUFFIX := $(TARGET_EXECUTABLE_SUFFIX)
 endif
 
-# Executables are not prelinked.  If we decide to start prelinking
-# them, the LOCAL_PRELINK_MODULE definitions should be moved from
-# here and shared_library.make and consolidated in dynamic_binary.make.
-LOCAL_PRELINK_MODULE := false
-
 include $(BUILD_SYSTEM)/dynamic_binary.mk
 
 ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)

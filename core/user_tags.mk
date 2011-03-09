@@ -49,7 +49,6 @@ GRANDFATHERED_USER_MODULES += \
 	apkcheck \
 	applypatch \
 	app_process \
-	apriori \
 	archquery \
 	asm-3.1 \
 	atree \
@@ -155,8 +154,6 @@ GRANDFATHERED_USER_MODULES += \
 	input \
 	ip \
 	iptables \
-	iself \
-	isprelinked \
 	jarjar \
 	javax.obex \
 	jcommon-1.0.12 \
@@ -221,7 +218,6 @@ GRANDFATHERED_USER_MODULES += \
 	libeffects \
 	libEGL \
 	libelf \
-	libelfcopy \
 	libESR_Portable \
 	libESR_Shared \
 	libETC1 \
@@ -481,7 +477,6 @@ GRANDFATHERED_USER_MODULES += \
 	signature-tools \
 	simg2img \
 	simulator \
-	soslim \
 	spec-progress \
 	sqlite3 \
 	stack_dump \

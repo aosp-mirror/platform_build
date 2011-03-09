@@ -105,9 +105,6 @@ TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=addre
 # TODO: do symbol compression
 TARGET_COMPRESS_MODULE_SYMBOLS := false
 
-# Default is to prelink modules.
-TARGET_PRELINK_MODULE := true
-
 # Default shell is ash. Other possible value is mksh.
 TARGET_SHELL := ash
 
@@ -235,10 +232,6 @@ ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign$(HOST_EXECUTABLE_SUFFIX)
 FINDBUGS := prebuilt/common/findbugs/bin/findbugs
 LOCALIZE := $(HOST_OUT_EXECUTABLES)/localize$(HOST_EXECUTABLE_SUFFIX)
 EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
-
-# Binary prelinker/compressor tools
-APRIORI := $(HOST_OUT_EXECUTABLES)/apriori$(HOST_EXECUTABLE_SUFFIX)
-LSD := $(HOST_OUT_EXECUTABLES)/lsd$(HOST_EXECUTABLE_SUFFIX)
 
 # Deal with archaic version of bison on Mac OS X.
 ifeq ($(filter 1.28,$(shell $(YACC) -V)),)
