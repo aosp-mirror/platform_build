@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA/H//+eM\u003d",
+        "filename": "core/combo/select.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1001100
+      },
+      "writtenOn": "2011-03-13T20:20:36Z",
+      "side": 1,
+      "message": "In the case of mingw/linux, you\u0027ll have HOST_OS\u003dwindow (what we\u0027re building) versus BUILD_OS\u003dlinux (what is building it) -- see envsetup.mk.\n\nSo really all we have to do use $(BUILD_OS) in CCACHE_HOST_TAG.\n\nThere\u0027s also BUILD_OS vs BUILD_ARCH, but these will be x86 in both cases.",
+      "revId": "12630b776ebf656916b270d67eeb024c60cedfd8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
