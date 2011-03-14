@@ -86,11 +86,20 @@ else
 compress_output := $(compress_input)
 endif
 
+###########################################################
+## Store a copy with symbols for symbolic debugging
+###########################################################
+symbolic_input := $(compress_output)
+symbolic_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_BUILT_MODULE_STEM)
+$(symbolic_output) : $(symbolic_input) | $(ACP)
+	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
+	$(copy-file-to-target)
+
 
 ###########################################################
 ## Strip
 ###########################################################
-strip_input := $(compress_output)
+strip_input := $(symbolic_output)
 strip_output := $(LOCAL_BUILT_MODULE)
 
 ifeq ($(strip $(LOCAL_STRIP_MODULE)),)
@@ -122,4 +131,5 @@ endif # LOCAL_STRIP_MODULE
 $(cleantarget): PRIVATE_CLEAN_FILES := \
 			$(PRIVATE_CLEAN_FILES) \
 			$(linked_module) \
+			$(symbolic_output) \
 			$(compress_output)
