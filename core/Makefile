@@ -1405,6 +1405,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/platforms/android-$(PLATFORM_VERSION)/images/NOTICE.txt && \
 		cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/tools/NOTICE.txt && \
+		cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/platform-tools/NOTICE.txt && \
 		if [ -f $(PRIVATE_DIR)/platform-tools/llvm-rs-cc ]; then \
 			$(HOST_STRIP_SDK_LLVM) $(PRIVATE_DIR)/platform-tools/llvm-rs-cc; \
 		fi && \
