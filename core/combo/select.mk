@@ -62,13 +62,23 @@ $(combo_target)PRELINKER_MAP := $(BUILD_SYSTEM)/prelink-$(combo_os_arch).map
 include $(BUILD_COMBOS)/$(combo_target)$(combo_os_arch).mk
 
 ifneq ($(USE_CCACHE),)
-  ccache := prebuilt/$(HOST_PREBUILT_TAG)/ccache/ccache
-  # prepend ccache if necessary
-  ifneq ($(ccache),$(firstword $($(combo_target)CC)))
-    $(combo_target)CC := $(ccache) $($(combo_target)CC)
+  CCACHE_HOST_TAG := $(HOST_PREBUILT_TAG)
+  # If we are cross-compiling Windows binaries on Linux
+  # then use the linux ccache binary instead.
+  ifeq ($(HOST_OS)-$(BUILD_OS),windows-linux)
+    CCACHE_HOST_TAG := linux-$(BUILD_ARCH)
   endif
-  ifneq ($(ccache),$(firstword $($(combo_target)CXX)))
-    $(combo_target)CXX := $(ccache) $($(combo_target)CXX)
+  ccache := prebuilt/$(CCACHE_HOST_TAG)/ccache/ccache
+  # Check that the executable is here.
+  ccache := $(strip $(wildcard $(ccache)))
+  ifdef ccache
+    # prepend ccache if necessary
+    ifneq ($(ccache),$(firstword $($(combo_target)CC)))
+      $(combo_target)CC := $(ccache) $($(combo_target)CC)
+    endif
+    ifneq ($(ccache),$(firstword $($(combo_target)CXX)))
+      $(combo_target)CXX := $(ccache) $($(combo_target)CXX)
+    endif
+    ccache =
   endif
-  ccache =
 endif
