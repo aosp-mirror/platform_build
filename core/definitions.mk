@@ -1322,12 +1322,12 @@ endef
 # Maybe we should just use approach (1).
 
 # This rule creates the R.java and Manifest.java files, both of which
-# are PRODUCT-neutral.  Don't pass PRODUCT_AAPT_CONFIG to this invocation.
+# are PRODUCT-neutral.  Don't pass PRIVATE_PRODUCT_AAPT_CONFIG to this invocation.
 define create-resource-java-files
 @mkdir -p $(PRIVATE_SOURCE_INTERMEDIATES_DIR)
 @mkdir -p $(dir $(PRIVATE_RESOURCE_PUBLICS_OUTPUT))
 $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
-    $(eval # PRODUCT_AAPT_CONFIG is intentionally missing-- see comment.) \
+    $(eval # PRIVATE_PRODUCT_AAPT_CONFIG is intentionally missing-- see comment.) \
     $(addprefix -J , $(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
     $(addprefix -P , $(PRIVATE_RESOURCE_PUBLICS_OUTPUT)) \
@@ -1539,7 +1539,7 @@ endef
 #them in their manifest.
 define add-assets-to-package
 $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
-    $(addprefix -c , $(PRODUCT_AAPT_CONFIG)) \
+    $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \

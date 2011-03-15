@@ -117,13 +117,13 @@ else
   building_sdk :=
 endif
 
-# A change in the list of locales warrants an installclean, too.
-locale_list := $(subst $(space),$(comma),$(strip $(PRODUCT_LOCALES)))
+# A change in the list of aapt configs warrants an installclean, too.
+aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG))
 
 current_build_config := \
-    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(locale_list)}
+    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(aapt_config_list)}
 building_sdk :=
-locale_list :=
+aapt_config_list :=
 force_installclean := false
 
 # Read the current state from the file, if present.
