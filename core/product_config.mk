@@ -226,17 +226,18 @@ ifneq (,$(extra_locales))
   extra_locales :=
 endif
 
+# Add PRODUCT_LOCALES to PRODUCT_AAPT_CONFIG
+PRODUCT_AAPT_CONFIG := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_CONFIG))
+PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES) $(PRODUCT_AAPT_CONFIG)
+
 # Default to medium-density assets.
-# (Can be overridden in the device config, e.g.: PRODUCT_LOCALES += hdpi)
-PRODUCT_LOCALES := $(strip \
-	$(PRODUCT_LOCALES) \
-	$(if $(filter %dpi,$(PRODUCT_LOCALES)),,mdpi))
+# (Can be overridden in the device config, e.g.: PRODUCT_AAPT_CONFIG += hdpi)
+PRODUCT_AAPT_CONFIG := $(strip \
+	$(PRODUCT_AAPT_CONFIG) \
+	$(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
 
 # Everyone gets nodpi assets which are density-independent.
-PRODUCT_LOCALES += nodpi
-
-# Assemble the list of options.
-PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES)
+PRODUCT_AAPT_CONFIG += nodpi
 
 # Convert spaces to commas.
 comma := ,

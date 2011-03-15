@@ -19,7 +19,7 @@
 ##
 ## Additional inputs from base_rules.make:
 ## LOCAL_PACKAGE_NAME: The name of the package; the directory
-##		will be called this.
+## will be called this.
 ##
 ## MODULE, MODULE_PATH, and MODULE_SUFFIX will
 ## be set for you.
@@ -214,7 +214,7 @@ $(R_file_stamp): $(resource_export_package)
 
 # add-assets-to-package looks at PRODUCT_AAPT_CONFIG, but this target
 # can't know anything about PRODUCT.  Clear it out just for this target.
-$(resource_export_package): PRODUCT_AAPT_CONFIG :=
+$(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
 	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
@@ -330,7 +330,9 @@ ifneq ($(TARGET_BUILD_APPS),)
     LOCAL_AAPT_INCLUDE_ALL_RESOURCES := true
 endif
 ifeq ($(LOCAL_AAPT_INCLUDE_ALL_RESOURCES),true)
-    $(LOCAL_BUILT_MODULE): PRODUCT_AAPT_CONFIG :=
+    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG :=
+else
+    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG := $(PRODUCT_AAPT_CONFIG)
 endif
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
