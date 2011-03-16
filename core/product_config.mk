@@ -304,6 +304,10 @@ ADDITIONAL_BUILD_PROPERTIES := \
 PRODUCT_OTA_PUBLIC_KEYS := $(sort \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_PUBLIC_KEYS))
 
+PRODUCT_EXTRA_RECOVERY_KEYS := $(sort \
+    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_EXTRA_RECOVERY_KEYS))
+
+
 # ---------------------------------------------------------------
 # Simulator overrides
 ifeq ($(TARGET_PRODUCT),sim)
