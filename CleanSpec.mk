@@ -71,7 +71,6 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
-
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/lib/*.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/*.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/system/lib/*.so)
@@ -80,6 +79,10 @@ $(call add-clean-step, rm -rf $(HOST_OUT_EXECUTABLES)/lsd)
 $(call add-clean-step, rm -rf $(HOST_OUT_EXECUTABLES)/apriori)
 $(call add-clean-step, rm -rf $(HOST_OUT_EXECUTABLES)/isprelinked)
 $(call add-clean-step, rm -rf $(HOST_OUT_EXECUTABLES)/soslim)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/lib/*.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/*.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/system/lib/*.so)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
