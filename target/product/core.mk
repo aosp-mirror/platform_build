@@ -85,5 +85,6 @@ ifeq ($(WITH_HOST_DALVIK),true)
     PRODUCT_PACKAGES += \
         bouncycastle-hostdex \
         core-hostdex \
-        libjavacore-host
+        libjavacore-host \
+        dalvik
 endif
