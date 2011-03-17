@@ -51,8 +51,11 @@ PRODUCT_PACKAGES := \
     libjavacore \
     libnativehelper \
     libnfc_ndef \
+    libOpenMAXAL \
+    libOpenSLES \
     libsqlite_jni \
     libssl \
+    libwilhelm \
     libz \
     sqlite-jdbc \
     wpa_supplicant.conf \
