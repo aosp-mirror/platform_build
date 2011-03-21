@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA/X///H8\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 8
+      },
+      "lineNbr": 1383,
+      "author": {
+        "id": 1005562
+      },
+      "writtenOn": "2011-03-21T23:37:52Z",
+      "side": 1,
+      "message": "This can fail silently, and the copy does not happen.",
+      "revId": "18a130e98a654b99057d974f563a645dbb96010c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
