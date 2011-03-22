@@ -16,19 +16,14 @@
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
-# x86 build, but all those aspects can be overridden
-# in inherited configurations.
+# build quite specifically for the emulator, and might not be
+# entirely appropriate to inherit from for on-device configurations.
 
-# If running on an emulator or some other device that has a LAN connection
-# that isn't a wifi connection. This will instruct init.rc to enable the
-# network connection so that you can use it with ADB
-ifdef NET_ETH0_STARTONBOOT
-  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
-endif
-
-$(call inherit-product, build/target/product/full.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic/device.mk)
 
 # Overrides
 PRODUCT_NAME := full_x86
 PRODUCT_DEVICE := generic_x86
-PRODUCT_MODEL := Full Android x86
+PRODUCT_BRAND := Android
+PRODUCT_MODEL := Full Android on x86 Emulator
