@@ -1326,11 +1326,21 @@ endif
 
 atree_dir := development/build
 
+# sdk/build/tools.atree contains the generic rules, while
+#
+# sdk/build/tools.$(TARGET_ARCH).atree contains target-specific rules
+# the latter is optional.
+#
+sdk_tools_atree_files := sdk/build/tools.atree
+ifneq (,$(strip $(wildcard sdk/build/tools.$(TARGET_ARCH).atree)))
+  sdk_tools_atree_files += sdk/build/tools.$(TARGET_ARCH).atree
+endif
+
 sdk_atree_files := \
 	$(atree_dir)/sdk.exclude.atree \
 	$(atree_dir)/sdk.atree \
 	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree \
-	sdk/build/tools.atree
+	$(sdk_tools_atree_files)
 
 deps := \
 	$(target_notice_file_txt) \
@@ -1344,7 +1354,7 @@ deps := \
 	$(INSTALLED_BUILD_PROP_TARGET) \
 	$(ATREE_FILES) \
 	$(atree_dir)/sdk.atree \
-	sdk/build/tools.atree \
+	$(sdk_tools_atree_files) \
 	$(HOST_OUT_EXECUTABLES)/atree \
     $(HOST_OUT_EXECUTABLES)/line_endings
 
