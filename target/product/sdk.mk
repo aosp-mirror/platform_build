@@ -111,7 +111,8 @@ PRODUCT_PACKAGES += \
 	monkeyrunner \
 	guavalib \
 	jsr305lib \
-	jython
+	jython \
+	ddmlib-tests
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
