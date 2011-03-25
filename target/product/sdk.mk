@@ -108,11 +108,16 @@ PRODUCT_PACKAGES += \
 	org.eclipse.jface_3.4.2.M20090107-0800 \
 	osgi \
 	layoutlib \
-        monkeyrunner \
-        guavalib \
-        jsr305lib \
+	monkeyrunner \
+	guavalib \
+	jsr305lib \
 	jython \
-        ddmlib-tests
+	ddmlib-tests \
+	ninepatch-tests \
+	common-tests \
+	sdklib-tests \
+	sdkuilib-tests
+
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
