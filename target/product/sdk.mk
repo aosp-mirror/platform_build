@@ -115,7 +115,11 @@ PRODUCT_PACKAGES += \
 	guavalib \
 	jsr305lib \
 	jython \
-	ddmlib-tests
+	ddmlib-tests \
+	ninepatch-tests \
+	common-tests \
+	sdklib-tests \
+	sdkuilib-tests
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
