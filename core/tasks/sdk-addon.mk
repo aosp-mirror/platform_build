@@ -94,6 +94,10 @@ $(full_target): $(sdk_addon_deps) | $(ACP)
 .PHONY: sdk_addon
 sdk_addon: $(full_target)
 
+# Keep the name of the addon final zip around for sdk_repo.
+# This is used by development/build/tools/sdk_repo.mk.
+ADDON_SDK_ZIP := $(full_target)
+
 $(call dist-for-goals, sdk_addon, $(full_target))
 
 else # addon_name
