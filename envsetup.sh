@@ -907,10 +907,10 @@ function runhat()
 {
     # process standard adb options
     local adbTarget=""
-    if [ $1 = "-d" -o $1 = "-e" ]; then
+    if [ "$1" = "-d" -o "$1" = "-e" ]; then
         adbTarget=$1
         shift 1
-    elif [ $1 = "-s" ]; then
+    elif [ "$1" = "-s" ]; then
         adbTarget="$1 $2"
         shift 2
     fi
