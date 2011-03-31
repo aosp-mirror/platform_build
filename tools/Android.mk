@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := $(my-dir)
+LOCAL_PATH := $(call my-dir)
 
 # If we're building only unbundled apps, this is the only tool we need.
 ifneq ($(TARGET_BUILD_APPS),)
