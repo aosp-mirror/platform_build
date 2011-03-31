@@ -154,7 +154,7 @@ endef
 
 # $(1): List of directories to look for under this directory
 define all-named-subdir-makefiles
-$(wildcard $(addsuffix /Android.mk, $(addprefix $(my-dir)/,$(1))))
+$(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1))))
 endef
 
 ###########################################################
