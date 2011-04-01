@@ -42,10 +42,13 @@ include $(BUILD_SYSTEM)/java.mk
 #################################
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-# No dex or resources; all we want are the .class files.
-$(common_javalib.jar) : $(full_classes_jar)
+# No dex; all we want are the .class files with resources.
+$(common_javalib.jar) : $(full_classes_jar) $(java_resource_sources)
 	@echo "target Static Jar: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
+ifneq ($(extra_jar_args),)
+	$(add-java-resources-to-package)
+endif
 
 $(LOCAL_BUILT_MODULE): $(common_javalib.jar)
 	$(copy-file-to-target)

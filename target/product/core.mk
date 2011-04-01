@@ -57,7 +57,6 @@ PRODUCT_PACKAGES := \
     libssl \
     libwilhelm \
     libz \
-    sqlite-jdbc \
     wpa_supplicant.conf \
     Browser \
     Contacts \
