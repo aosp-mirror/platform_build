@@ -110,4 +110,3 @@ ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
 $(error Trying to build sdk_addon, but product '$(INTERNAL_PRODUCT)' does not define one)
 endif
 endif # addon_name
-
