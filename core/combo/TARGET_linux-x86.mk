@@ -80,6 +80,9 @@ TARGET_GLOBAL_CFLAGS += \
 			-fPIC \
 			-include $(call select-android-config-h,target_linux-x86)
 
+# Fix this after ssp.c is fixed for x86
+# TARGET_GLOBAL_CFLAGS += -fstack-protector
+
 TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
