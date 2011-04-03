@@ -1349,6 +1349,12 @@ else
 xlint_unchecked := -Xlint:unchecked
 endif
 
+ifeq (true, $(ENABLE_INCREMENTALJAVAC))
+incremental_dex := --incremental
+else
+incremental_dex :=
+endif
+
 # emit-line, <word list>, <output file>
 define emit-line
    $(if $(1),echo -n '$(strip $(1)) ' >> $(2))
@@ -1507,6 +1513,7 @@ define transform-classes.jar-to-dex
 $(hide) $(DX) \
     $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx1536M) \
     --dex --output=$@ \
+    $(incremental_dex) \
     $(if $(NO_OPTIMIZE_DX), \
         --no-optimize) \
     $(if $(GENERATE_DEX_DEBUG), \

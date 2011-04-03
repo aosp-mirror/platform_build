@@ -34,12 +34,7 @@ CTS_TF_EXEC_PATH := $(HOST_OUT_EXECUTABLES)/cts-tradefed
 CTS_TF_README_PATH := $(cts_tools_src_dir)/tradefed-host/README
 
 CTS_CORE_CASE_LIST := \
-	android.core.tests.dom \
-	android.core.tests.luni.io \
-	android.core.tests.luni.lang \
-	android.core.tests.luni.net \
-	android.core.tests.luni.util \
-	android.core.tests.xml \
+	android.core.tests.libcore \
 	android.core.tests.runner
 
 -include cts/CtsTestCaseList.mk
@@ -72,54 +67,37 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB
 # Parameters:
 # $1 : The output file where the description should be written (without the '.xml' extension)
 # $2 : The AndroidManifest.xml corresponding to the test package
-# $3 : The name of the TestSuite generator class to use
+# $3 : The jar file name on PRIVATE_CLASSPATH containing junit tests to search for
 # $4 : The directory containing vogar expectations files
 # $5 : The Android.mk corresponding to the test package (required for host-side tests only)
 define generate-core-test-description
 @echo "Generate core-test description ("$(notdir $(1))")"
-$(hide) java $(PRIVATE_JAVAOPTS) \
-	-classpath $(PRIVATE_CLASSPATH) \
+$(hide) java -Xmx256M \
+	-classpath $(PRIVATE_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR) \
 	$(PRIVATE_PARAMS) CollectAllTests $(1) \
 	$(2) $(3) $(4) $(5)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+BOUNCYCASTLE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,bouncycastle,,COMMON)
+APACHEXML_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,apache-xml,,COMMON)
+SQLITEJDBC_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,sqlite-jdbc,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
-RUNNER_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junitrunner,,COMMON)
-SUPPORT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests-support,,COMMON)
-DOM_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests-dom,,COMMON)
-XML_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests-xml,,COMMON)
-TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(RUNNER_INTERMEDIATES)/classes.jar:$(SUPPORT_INTERMEDIATES)/classes.jar:$(DOM_INTERMEDIATES)/classes.jar:$(XML_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(CORE_INTERMEDIATES)/javalib.jar:$(JUNIT_INTERMEDIATES)/javalib.jar:$(RUNNER_INTERMEDIATES)/javalib.jar:$(SUPPORT_INTERMEDIATES)/javalib.jar:$(DOM_INTERMEDIATES)/javalib.jar:$(XML_INTERMEDIATES)/javalib.jar:$(TESTS_INTERMEDIATES)/javalib.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR)
+CORETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar
 
 $(cts_dir)/all_cts_core_files_stamp: PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
-$(cts_dir)/all_cts_core_files_stamp: PRIVATE_JAVAOPTS:=-Xmx256M
-$(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
-$(cts_dir)/all_cts_core_files_stamp: PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
 # Why does this depend on javalib.jar instead of classes.jar?  Because
 # even though the tool will operate on the classes.jar files, the
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(RUNNER_INTERMEDIATES)/javalib.jar $(SUPPORT_INTERMEDIATES)/javalib.jar $(DOM_INTERMEDIATES)/javalib.jar $(XML_INTERMEDIATES)/javalib.jar $(TESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.dom,\
-		cts/tests/core/dom/AndroidManifest.xml,\
-		tests.dom.AllTests, libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.io,\
-		cts/tests/core/luni-io/AndroidManifest.xml,\
-		tests.luni.AllTestsIo, libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.lang,\
-		cts/tests/core/luni-lang/AndroidManifest.xml,\
-		tests.luni.AllTestsLang, libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.net,\
-		cts/tests/core/luni-net/AndroidManifest.xml,\
-		tests.luni.AllTestsNet, libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.luni.util,\
-		cts/tests/core/luni-util/AndroidManifest.xml,\
-		tests.luni.AllTestsUtil, libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.xml,\
-		cts/tests/core/xml/AndroidManifest.xml,\
-		tests.xml.AllTests, libcore/expectations)
+$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore,\
+		cts/tests/core/libcore/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,\
+		libcore/expectations)
 	$(hide) touch $@
 
 
@@ -131,20 +109,17 @@ VMTESTS_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests,1,)
 # core tests only needed to get hold of junit-framework-classes
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
-RUNNER_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junitrunner,,COMMON)
-TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(RUNNER_INTERMEDIATES)/classes.jar:$(TESTS_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOSTTESTLIB_JAR):$(DDMLIB_JAR):$(HOST_JDK_TOOLS_JAR)
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar:$(HOSTTESTLIB_JAR):$(DDMLIB_JAR)
 
 $(CORE_VM_TEST_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
-$(CORE_VM_TEST_DESC): PRIVATE_PARAMS:=-Dcts.useSuppliedTestResult=true
-$(CORE_VM_TEST_DESC): PRIVATE_PARAMS+=-Dcts.useEnhancedJunit=true
-$(CORE_VM_TEST_DESC): PRIVATE_JAVAOPTS:=-Xmx256M
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
-$(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(RUNNER_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(TESTS_INTERMEDIATES)/javalib.jar  $(HOSTTESTLIB_JAR) $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
+$(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(HOSTTESTLIB_JAR) $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(CORE_VM_TEST_DESC),\
 		cts/tests/vm-tests/AndroidManifest.xml,\
-		dot.junit.AllJunitHostTests, libcore/expectations, cts/tools/vm-tests/Android.mk)
+		$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar,\
+		libcore/expectations,\
+		cts/tools/vm-tests/Android.mk)
 	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
 
 # Move app security host-side tests to the repository
