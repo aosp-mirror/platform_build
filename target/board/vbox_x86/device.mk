@@ -27,6 +27,6 @@ LOCAL_KERNEL := prebuilt/android-x86/kernel/kernel-vbox
 
 PRODUCT_COPY_FILES := \
     development/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
-    development/data/etc/vold.conf:system/etc/vold.conf
-    $(LOCAL_KERNEL):kernel \
-    $(LOCAL_PATH)/init.rc:root/init.rc
+    development/data/etc/vold.conf:system/etc/vold.conf \
+    build/target/board/vbox_x86/init.rc:root/init.rc \
+    $(LOCAL_KERNEL):kernel
