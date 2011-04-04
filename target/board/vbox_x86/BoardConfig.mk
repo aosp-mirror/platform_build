@@ -17,7 +17,7 @@ TARGET_BOOTIMAGE_USE_EXT2 := true
 
 # For VirtualBox and likely other emulators
 BOARD_INSTALLER_CMDLINE := init=/init console=ttyS0 console=tty0 vga=788 verbose
-BOARD_KERNEL_CMDLINE :=    init=/init console=ttyS0 console=tty0 vga=788 verbose androidboot.hardware=generic_x86 androidboot.console=ttyS0
+BOARD_KERNEL_CMDLINE :=    BOARD_KERNEL_CMDLINE :=    init=/init qemu=1 console=ttyS0 console=tty0 vga=788 verbose androidboot.hardware=vbox_x86 androidboot.console=ttyS0 android.qemud=ttyS1
 TARGET_USE_DISKINSTALLER := true
 
 TARGET_DISK_LAYOUT_CONFIG := build/target/board/vbox_x86/disk_layout.conf

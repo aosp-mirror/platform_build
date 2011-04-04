@@ -18,8 +18,12 @@
 # Open-Source part of the tree. It's geared toward a US-centric
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
+ifdef NET_ETH0_STARTONBOOT
+  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
+endif
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_x86.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/vbox_x86/device.mk)
 
 PRODUCT_NAME := vbox_x86
 PRODUCT_DEVICE := vbox_x86
