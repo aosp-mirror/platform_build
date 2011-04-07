@@ -326,17 +326,33 @@ $(full_classes_proguard_jar) : $(full_classes_jar) $(proguard_flag_files) | $(AC
 
 ALL_MODULES.$(LOCAL_MODULE).PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
 
+# Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
+# will work even when intermediates != intermediates.COMMON.
+$(built_dex_intermediate): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
+
+ifeq (,$(filter --target-api=%, $(LOCAL_DX_FLAGS)))
+possible_dx_target_api :=
+ifneq (,$(LOCAL_MANIFEST_FILE))
+  manifest_min_sdk_version := \
+      $(shell grep -o 'android:minSdkVersion="[0-9]\{1,\}"' $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE) 2>/dev/null)
+  possible_dx_target_api := $(patsubst android:minSdkVersion="%",%,$(firstword $(manifest_min_sdk_version)))
+endif
+ifeq (,$(possible_dx_target_api))
+# In case minSdkVersion is not available, eg shared library built against SDK,
+# LOCAL_SDK_VERSION may be a good guess
+ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+  possible_dx_target_api := $(LOCAL_SDK_VERSION)
+endif
+endif
+LOCAL_DX_FLAGS += $(addprefix --target-api=, $(possible_dx_target_api))
+endif # --target-api not defined in LOCAL_DX_FLAGS
+$(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 # If you instrument class files that have local variable debug information in
 # them emma does not correctly maintain the local variable table.
 # This will cause an error when you try to convert the class files for Android.
 # The workaround here is to build different dex file here based on emma switch
 # then later copy into classes.dex. When emma is on, dx is run with --no-locals
 # option to remove local variable information
-
-# Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
-# will work even when intermediates != intermediates.COMMON.
-$(built_dex_intermediate): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
-$(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
