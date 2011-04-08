@@ -349,7 +349,7 @@ TARGET_AVAILABLE_NDK_VERSIONS := $(call numerically_sort,\
     $(patsubst $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r%,%, \
     $(wildcard $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r*)))
 
-INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.xml
+INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.txt
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so

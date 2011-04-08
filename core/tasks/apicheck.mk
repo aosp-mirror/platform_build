@@ -29,8 +29,8 @@ APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/jsilver$(
 #
 # Args:
 #    $(1)  target
-#    $(2)  stable api xml file
-#    $(3)  api xml file to be tested
+#    $(2)  stable api file
+#    $(3)  api file to be tested
 #    $(4)  arguments for apicheck
 #    $(5)  command to run if apicheck failed
 define check-api
@@ -45,10 +45,11 @@ endef
 # Run the checkapi rules by default.
 droidcore: checkapi
 
-last_released_sdk_version := $(lastword $(call numerically_sort,\
-    $(patsubst $(SRC_API_DIR)/%.xml,%, \
-    $(filter-out $(SRC_API_DIR)/current.xml, \
-    $(wildcard $(SRC_API_DIR)/*.xml)))))
+last_released_sdk_version := $(lastword $(call numerically_sort, \
+            $(filter-out $(SRC_API_DIR)/current, \
+                $(patsubst $(SRC_API_DIR)/%.txt,%, $(wildcard $(SRC_API_DIR)/*.txt)) \
+             )\
+        ))
 
 # INTERNAL_PLATFORM_API_FILE is the one build by droiddoc.
 
@@ -56,7 +57,7 @@ last_released_sdk_version := $(lastword $(call numerically_sort,\
 # SDK version.
 $(eval $(call check-api, \
 	checkapi-last, \
-	$(SRC_API_DIR)/$(last_released_sdk_version).xml, \
+	$(SRC_API_DIR)/$(last_released_sdk_version).txt, \
 	$(INTERNAL_PLATFORM_API_FILE), \
 	-hide 2 -hide 3 -hide 4 -hide 5 -hide 6 -hide 24 -hide 25 \
 	-error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
@@ -68,7 +69,7 @@ $(eval $(call check-api, \
 # SDK version.
 $(eval $(call check-api, \
 	checkapi-current, \
-	$(SRC_API_DIR)/current.xml, \
+	$(SRC_API_DIR)/current.txt, \
 	$(INTERNAL_PLATFORM_API_FILE), \
 	-error 2 -error 3 -error 4 -error 5 -error 6 \
 	-error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
@@ -79,7 +80,7 @@ $(eval $(call check-api, \
 
 .PHONY: update-api
 update-api: $(INTERNAL_PLATFORM_API_FILE) | $(ACP)
-	@echo Copying current.xml
-	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) $(SRC_API_DIR)/current.xml
+	@echo Copying current.txt
+	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) $(SRC_API_DIR)/current.txt
 
 endif
