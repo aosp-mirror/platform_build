@@ -31,7 +31,7 @@ PRODUCT_PACKAGES := \
     DrmProvider \
     Email \
     Exchange \
-    Gallery3D \
+    GalleryNew3D \
     LatinIME \
     Launcher2 \
     Music \
