@@ -277,6 +277,11 @@ else
 MD5SUM:=md5sum
 endif
 
+APICHECK_CLASSPATH := $(HOST_JDK_TOOLS_JAR)
+APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
+APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX)
+APICHECK_COMMAND := $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)"
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
