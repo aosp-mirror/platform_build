@@ -163,7 +163,14 @@ include $(BUILD_SYSTEM)/java.mk
 
 full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
 $(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
+    PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
+ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+$(LOCAL_INTERMEDIATE_TARGETS): \
+    PRIVATE_DEFAULT_APP_TARGET_SDK := $(LOCAL_SDK_VERSION)
+else
+$(LOCAL_INTERMEDIATE_TARGETS): \
+    PRIVATE_DEFAULT_APP_TARGET_SDK := $(DEFAULT_APP_TARGET_SDK)
+endif
 
 ifneq ($(all_resources),)
 
@@ -233,7 +240,7 @@ ifneq ($(full_classes_jar),)
 $(full_classes_compiled_jar): $(R_file_stamp)
 endif
 
-endif	# all_resources
+endif  # all_resources
 
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # We need to explicitly clear this var so that we don't
@@ -246,20 +253,20 @@ else
 ifneq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
-	$(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/android.jar
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/android.jar
 framework_res_package_export_deps := $(framework_res_package_export)
 else # LOCAL_SDK_VERSION
 framework_res_package_export := \
-	$(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
+    $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
 # We can't depend directly on the export.apk file; it won't get its
 # PRIVATE_ vars set up correctly if we do.  Instead, depend on the
 # corresponding R.stamp file, which lists the export.apk as a dependency.
 framework_res_package_export_deps := \
-	$(dir $(framework_res_package_export))src/R.stamp
+    $(dir $(framework_res_package_export))src/R.stamp
 endif # LOCAL_SDK_VERSION
 $(R_file_stamp): $(framework_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
+    PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
 endif # LOCAL_NO_STANDARD_LIBRARIES
 
 ifneq ($(full_classes_jar),)
