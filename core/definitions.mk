@@ -860,11 +860,14 @@ $(hide) $(PRIVATE_CXX) \
 	    $(PRIVATE_C_INCLUDES) \
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(PRIVATE_TARGET_PROJECT_INCLUDES) \
-		$(PRIVATE_TARGET_C_INCLUDES) \
 	     ) \
 	  , \
 	    -I $(incdir) \
 	 ) \
+	$(addprefix -isystem ,\
+	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+	        $(filter-out $(PRIVATE_C_INCLUDES), \
+	            $(PRIVATE_TARGET_C_INCLUDES)))) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
@@ -892,11 +895,14 @@ $(hide) $(PRIVATE_CC) \
 	    $(PRIVATE_C_INCLUDES) \
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(PRIVATE_TARGET_PROJECT_INCLUDES) \
-		$(PRIVATE_TARGET_C_INCLUDES) \
 	     ) \
 	  , \
 	    -I $(incdir) \
 	 ) \
+	$(addprefix -isystem ,\
+	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+	        $(filter-out $(PRIVATE_C_INCLUDES), \
+	            $(PRIVATE_TARGET_C_INCLUDES)))) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
