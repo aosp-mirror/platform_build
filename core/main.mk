@@ -323,18 +323,6 @@ ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
     $(warning implicitly installing apns-conf_sdk.xml)
   endif
 endif
-# If we're on an eng or tests build, but not on the sdk, and we have
-# a better one, use that instead.
-ifneq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
-  ifndef is_sdk_build
-    apns_to_use := $(wildcard vendor/google/etc/apns-conf.xml)
-    ifneq ($(strip $(apns_to_use)),)
-      PRODUCT_COPY_FILES := \
-            $(filter-out %:system/etc/apns-conf.xml,$(PRODUCT_COPY_FILES)) \
-            $(strip $(apns_to_use)):system/etc/apns-conf.xml
-    endif
-  endif
-endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
