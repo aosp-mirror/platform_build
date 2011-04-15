@@ -100,7 +100,8 @@ function setpaths()
         export PATH=${PATH/$ANDROID_BUILD_PATHS/}
     fi
     if [ -n $ANDROID_PRE_BUILD_PATHS ] ; then
-        export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
+        shopt -s extglob
+        export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS?(:)/}
     fi
 
     # and in with the new
