@@ -429,6 +429,7 @@ subdirs += \
 	sdk/ninepatch \
 	sdk/sdkstats \
 	sdk/sdkmanager \
+	sdk/swtmenubar \
 	development/apps \
 	development/tools/mkstubs \
 	packages
