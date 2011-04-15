@@ -50,11 +50,11 @@ PRODUCT_PACKAGES := \
 	SoftKeyboard \
 	CubeLiveWallpapers \
 	QuickSearchBox \
-        monkeyrunner \
-        guavalib \
-        jsr305lib \
+	monkeyrunner \
+	guavalib \
+	jsr305lib \
 	jython \
-        jsilver
+	jsilver
 
 # Host tools that are parts of the SDK.
 # See development/build/sdk.atree
@@ -74,7 +74,7 @@ PRODUCT_PACKAGES += \
 	traceview \
 	android \
 	dexdump \
-        monkeyrunner
+	monkeyrunner
 
 # Native host Java libraries that are parts of the SDK.
 # See development/build/sdk.atree
@@ -94,6 +94,7 @@ PRODUCT_PACKAGES += \
 	sdklib \
 	sdkuilib \
 	sdkmanager \
+	swtmenubar \
 	swing-worker-1.1 \
 	groovy-all-1.7.0 \
 	commons-compress-1.0 \
