@@ -100,6 +100,8 @@ PRODUCT_PACKAGES += \
 	sdklib \
 	sdkuilib \
 	sdkmanager \
+	swtmenubar \
+	swing-worker-1.1 \
 	groovy-all-1.7.0 \
 	commons-compress-1.0 \
 	emmalib \
