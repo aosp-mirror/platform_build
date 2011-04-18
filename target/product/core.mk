@@ -25,6 +25,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_PACKAGES := \
     apache-xml \
     bouncycastle \
+    bu \
     cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
@@ -64,6 +65,7 @@ PRODUCT_PACKAGES := \
     Home \
     HTMLViewer \
     ApplicationsProvider \
+    BackupRestoreConfirmation \
     ContactsProvider \
     DownloadProvider \
     DownloadProviderUi \
