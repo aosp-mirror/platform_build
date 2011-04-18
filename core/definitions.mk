@@ -856,17 +856,11 @@ define transform-cpp-to-o
 @mkdir -p $(dir $@)
 @echo "target $(PRIVATE_ARM_MODE) C++: $(PRIVATE_MODULE) <= $<"
 $(hide) $(PRIVATE_CXX) \
-	$(foreach incdir, \
-	    $(PRIVATE_C_INCLUDES) \
-	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-		$(PRIVATE_TARGET_PROJECT_INCLUDES) \
-	     ) \
-	  , \
-	    -I $(incdir) \
-	 ) \
+	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(addprefix -isystem ,\
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	        $(filter-out $(PRIVATE_C_INCLUDES), \
+	            $(PRIVATE_TARGET_PROJECT_INCLUDES) \
 	            $(PRIVATE_TARGET_C_INCLUDES)))) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
@@ -891,17 +885,11 @@ endef
 define transform-c-or-s-to-o-no-deps
 @mkdir -p $(dir $@)
 $(hide) $(PRIVATE_CC) \
-	$(foreach incdir, \
-	    $(PRIVATE_C_INCLUDES) \
-	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-		$(PRIVATE_TARGET_PROJECT_INCLUDES) \
-	     ) \
-	  , \
-	    -I $(incdir) \
-	 ) \
+	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(addprefix -isystem ,\
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	        $(filter-out $(PRIVATE_C_INCLUDES), \
+	            $(PRIVATE_TARGET_PROJECT_INCLUDES) \
 	            $(PRIVATE_TARGET_C_INCLUDES)))) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
@@ -958,15 +946,12 @@ define transform-host-cpp-to-o
 @mkdir -p $(dir $@)
 @echo "host C++: $(PRIVATE_MODULE) <= $<"
 $(hide) $(PRIVATE_CXX) \
-	$(foreach incdir, \
-	    $(PRIVATE_C_INCLUDES) \
+	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
+	$(addprefix -isystem ,\
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-		$(HOST_PROJECT_INCLUDES) \
-		$(HOST_C_INCLUDES) \
-	     ) \
-	  , \
-	    -I $(incdir) \
-	 ) \
+	        $(filter-out $(PRIVATE_C_INCLUDES), \
+	            $(HOST_PROJECT_INCLUDES) \
+	            $(HOST_C_INCLUDES)))) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(HOST_GLOBAL_CFLAGS) \
@@ -988,15 +973,12 @@ endef
 define transform-host-c-or-s-to-o-no-deps
 @mkdir -p $(dir $@)
 $(hide) $(PRIVATE_CC) \
-	$(foreach incdir, \
-	    $(PRIVATE_C_INCLUDES) \
+	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
+	$(addprefix -isystem ,\
 	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-		$(HOST_PROJECT_INCLUDES) \
-		$(HOST_C_INCLUDES) \
-	     ) \
-	  , \
-	    -I $(incdir) \
-	 ) \
+	        $(filter-out $(PRIVATE_C_INCLUDES), \
+	            $(HOST_PROJECT_INCLUDES) \
+	            $(HOST_C_INCLUDES)))) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(HOST_GLOBAL_CFLAGS) \
