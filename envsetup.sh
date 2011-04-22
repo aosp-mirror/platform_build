@@ -100,8 +100,9 @@ function setpaths()
         export PATH=${PATH/$ANDROID_BUILD_PATHS/}
     fi
     if [ -n $ANDROID_PRE_BUILD_PATHS ] ; then
-        shopt -s extglob
-        export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS?(:)/}
+        export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
+        # strip trailing ':', if any
+        export PATH=${PATH/%:/}
     fi
 
     # and in with the new
@@ -1065,7 +1066,7 @@ function godir () {
         echo ""
     fi
     local lines
-    lines=($(grep "$1" $T/filelist | sed -e 's/\/[^/]*$//' | sort | uniq)) 
+    lines=($(grep "$1" $T/filelist | sed -e 's/\/[^/]*$//' | sort | uniq))
     if [[ ${#lines[@]} = 0 ]]; then
         echo "Not found"
         return
@@ -1078,7 +1079,7 @@ function godir () {
             local line
             for line in ${lines[@]}; do
                 printf "%6s %s\n" "[$index]" $line
-                index=$(($index + 1)) 
+                index=$(($index + 1))
             done
             echo
             echo -n "Select one: "
