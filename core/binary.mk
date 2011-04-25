@@ -137,6 +137,12 @@ ifeq ($(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS)),)
 endif
 endif
 
+ifeq (true,$(LOCAL_GROUP_STATIC_LIBRARIES))
+$(LOCAL_BUILT_MODULE): PRIVATE_GROUP_STATIC_LIBRARIES := true
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_GROUP_STATIC_LIBRARIES :=
+endif
+
 ###########################################################
 ## Define arm-vs-thumb-mode flags.
 ###########################################################
