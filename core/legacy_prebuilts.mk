@@ -40,7 +40,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	bp.img \
 	brcm_guci_drv \
 	bypassfactory \
-	cacerts.bks \
 	cdt.bin \
 	chat-ril \
 	cmu6plus.ok.zip \
