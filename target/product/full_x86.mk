@@ -22,6 +22,11 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic/device.mk)
 
+# Ensure we package the BIOS files too.
+PRODUCT_PACKAGES += \
+	bios.bin \
+	vgabios-cirrus.bin \
+
 # Overrides
 PRODUCT_NAME := full_x86
 PRODUCT_DEVICE := generic_x86
