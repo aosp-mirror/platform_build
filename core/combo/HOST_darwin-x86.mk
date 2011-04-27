@@ -66,7 +66,9 @@ $(hide) $(PRIVATE_CXX) \
         $(PRIVATE_ALL_OBJECTS) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+        $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
         $(PRIVATE_LDLIBS) \
         -o $@ \
         $(PRIVATE_LDFLAGS) \
@@ -82,7 +84,9 @@ $(hide) $(PRIVATE_CXX) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(PRIVATE_ALL_OBJECTS) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+        $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
         $(PRIVATE_LDFLAGS) \
         $(PRIVATE_LDLIBS) \
         $(HOST_LIBGCC)
