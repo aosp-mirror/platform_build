@@ -55,6 +55,9 @@ PRODUCT_PACKAGES += \
     libvideoeditorplayer \
     libvideoeditor_core
 
+PRODUCT_PACKAGES += \
+    audio.primary.default \
+    audio_policy.default
 
 PRODUCT_COPY_FILES := \
         system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
