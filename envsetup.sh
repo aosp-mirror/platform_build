@@ -785,7 +785,11 @@ function gdbclient()
        local PID
        local PROG="$3"
        if [ "$PROG" ] ; then
-           PID=`pid $3`
+           if [[ "$PROG" =~ ^[0-9]+$ ]] ; then
+               PID="$3"
+           else
+               PID=`pid $3`
+           fi
            adb forward "tcp$PORT" "tcp$PORT"
            adb shell gdbserver $PORT --attach $PID &
            sleep 2
