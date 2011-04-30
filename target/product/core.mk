@@ -25,6 +25,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_PACKAGES := \
     apache-xml \
     bouncycastle \
+    cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
     core \
