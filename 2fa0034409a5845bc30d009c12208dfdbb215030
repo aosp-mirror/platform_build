@@ -16,6 +16,24 @@
       "revId": "2fa0034409a5845bc30d009c12208dfdbb215030",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA/3//++c\u003d",
+        "filename": "target/product/full.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-05-03T16:33:43Z",
+      "side": 1,
+      "message": "There is no such BoardConfig variable, and we\u0027re still in experimental phase.\n\nThis patch is not intended to be submitted directly. I have uploaded it to share it with GraphTech.\n\nAlso, some wallpapers do work when OpenGL ES emulation is *not* enabled, and fail when it is enabled. So having different env variables to control the build helps debug the situation.\n\nApart from that, where would you recommend putting this for all emulator products exactly (full-eng, full_x86-eng, goop-eng, sdk-eng, sdk_x86-eng)?",
+      "parentUuid": "AAAA/3//++s\u003d",
+      "revId": "2fa0034409a5845bc30d009c12208dfdbb215030",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
