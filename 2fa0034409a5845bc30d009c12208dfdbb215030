@@ -34,6 +34,24 @@
       "revId": "2fa0034409a5845bc30d009c12208dfdbb215030",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAA/3//++I\u003d",
+        "filename": "target/product/full.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2011-05-03T16:58:51Z",
+      "side": 1,
+      "message": "Their nearest ancestor is core.mk, which is unfortunately the base of all builds.",
+      "parentUuid": "AAAA/3//++c\u003d",
+      "revId": "2fa0034409a5845bc30d009c12208dfdbb215030",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
