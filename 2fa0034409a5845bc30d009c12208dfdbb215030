@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAA/3//++s\u003d",
+        "filename": "target/product/full.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2011-05-03T16:26:12Z",
+      "side": 1,
+      "message": "Why use an environmental variable? is there any var in the BoardConfig that indicates OpenGL HW emulation is enabled?",
+      "revId": "2fa0034409a5845bc30d009c12208dfdbb215030",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
