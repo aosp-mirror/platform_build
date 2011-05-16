@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AAABAn///7w\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1003498
+      },
+      "writtenOn": "2011-05-16T17:05:02Z",
+      "side": 1,
+      "message": "We have -fno-short-enums because enum size is not specified in ARM EABI.  Do we have the same issue on x86?",
+      "parentUuid": "AAABAn///9Y\u003d",
+      "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAABAn///9c\u003d",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 3
