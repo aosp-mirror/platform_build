@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAABAn///9Y\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-05-16T14:23:38Z",
+      "side": 1,
+      "message": "Generally speaking, shouldn\u0027t this flag be the default with the x86 toolchain? Same for -Wa,--noexecstack or f-unwind-tables",
+      "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABAn///9c\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-05-16T14:23:38Z",
+      "side": 1,
+      "message": "it looks line this line and a few below are already defined above, started from 82",
+      "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABAn///9U\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-05-16T14:23:38Z",
+      "side": 1,
+      "message": "Also, this should really be defined by default by the toolchain, preferrably.",
+      "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
