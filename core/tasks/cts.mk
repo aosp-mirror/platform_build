@@ -132,11 +132,11 @@ VMTESTSTF_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests-tf,1
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar:$(HOSTTESTLIB_JAR):$(DDMLIB_JAR)
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar:$(DDMLIB_JAR):$(TF_JAR)
 
 $(CORE_VM_TEST_TF_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
-$(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar $(HOSTTESTLIB_JAR) $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
+$(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(CORE_VM_TEST_TF_DESC),\
 		cts/tests/vm-tests-tf/AndroidManifest.xml,\
 		$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar,\
