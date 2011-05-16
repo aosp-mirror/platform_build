@@ -57,6 +57,14 @@ PRODUCT_PACKAGES := \
     libOpenSLES \
     libsqlite_jni \
     libssl \
+    libstagefright_soft_aacdec \
+    libstagefright_soft_amrdec \
+    libstagefright_soft_avcdec \
+    libstagefright_soft_g711dec \
+    libstagefright_soft_mp3dec \
+    libstagefright_soft_mpeg4dec \
+    libstagefright_soft_vorbisdec \
+    libstagefright_soft_vpxdec \
     libwilhelm \
     libz \
     wpa_supplicant.conf \
