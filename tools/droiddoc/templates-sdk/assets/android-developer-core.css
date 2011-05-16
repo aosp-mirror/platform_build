@@ -1139,6 +1139,7 @@ ul.videoPreviews p.toggle a:hover {
 #mainBodyRight ul.videoPreviews h3 {
   padding:0;
   margin:0;
+  font-size:100%;
 }
 
 #mainBodyRight ul.videoPreviews a {
