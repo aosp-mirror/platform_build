@@ -82,13 +82,13 @@ $(full_target): PRIVATE_CLASSPATH := $(subst $(space),:,$(full_java_libs))
 
 endif # !LOCAL_IS_HOST_MODULE
 
-intermediates := $(call local-intermediates-dir)
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 $(full_target): PRIVATE_SOURCE_PATH := $(call normalize-path-list,$(LOCAL_DROIDDOC_SOURCE_PATH))
 $(full_target): PRIVATE_JAVA_FILES := $(filter %.java,$(full_src_files))
 $(full_target): PRIVATE_JAVA_FILES += $(addprefix $($(my_prefix)OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
-$(full_target): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates)/src
-$(full_target): PRIVATE_SRC_LIST_FILE := $(intermediates)/droiddoc-src-list
+$(full_target): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/src
+$(full_target): PRIVATE_SRC_LIST_FILE := $(intermediates.COMMON)/droiddoc-src-list
 
 ifneq ($(strip $(LOCAL_ADDITIONAL_JAVA_DIR)),)
 $(full_target): PRIVATE_ADDITIONAL_JAVA_DIR := $(LOCAL_ADDITIONAL_JAVA_DIR)
