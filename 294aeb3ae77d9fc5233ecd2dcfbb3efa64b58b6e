@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AAABAn///dE\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1005665
+      },
+      "writtenOn": "2011-05-18T20:46:00Z",
+      "side": 1,
+      "message": "The x86 toolchain (4.4.3) does not have any of these implemented as defaults.\nI\u0027ve heard conflicting directions regarding adding them as defaults.\nFor now, we need to leave these in place to ensure the proper generation of executables.\n\nIF we get the direction to implements these in the toolchain, updates to this file and the NDK build scripts will need to be done and committed with the update toolchain.",
+      "parentUuid": "AAABAn///9Y\u003d",
+      "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAABAn///9c\u003d",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 3
@@ -48,6 +66,24 @@
       "writtenOn": "2011-05-16T14:23:38Z",
       "side": 1,
       "message": "it looks line this line and a few below are already defined above, started from 82",
+      "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABAn///dA\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1005665
+      },
+      "writtenOn": "2011-05-18T20:46:00Z",
+      "side": 1,
+      "message": "Good catch, I\u0027ll update the Patch Set to remove the dups and re-upload.",
+      "parentUuid": "AAABAn///9c\u003d",
       "revId": "294aeb3ae77d9fc5233ecd2dcfbb3efa64b58b6e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
