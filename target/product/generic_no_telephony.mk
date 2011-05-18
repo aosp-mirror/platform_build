@@ -64,7 +64,8 @@ PRODUCT_COPY_FILES := \
         system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
         system/bluetooth/data/blacklist.conf:system/etc/bluetooth/blacklist.conf \
         system/bluetooth/data/input.conf:system/etc/bluetooth/input.conf \
-        system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf
+        system/bluetooth/data/network.conf:system/etc/bluetooth/network.conf \
+        frameworks/base/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf
 
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
