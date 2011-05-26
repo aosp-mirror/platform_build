@@ -199,15 +199,15 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 					-name Manifest.java 2> /dev/null`; do \
 		dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_MANIFEST_FILE`; \
 		mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-		$(ACP) -fpt $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
+		$(ACP) -fp $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
 	done;
 	$(hide) for GENERATED_R_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
 					-name R.java 2> /dev/null`; do \
 		dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_R_FILE`; \
 		mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-		$(ACP) -fpt $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
+		$(ACP) -fp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
 			|| exit 31; \
-		$(ACP) -fpt $$GENERATED_R_FILE $@ || exit 32; \
+		$(ACP) -fp $$GENERATED_R_FILE $@ || exit 32; \
 	done; \
 
 $(proguard_options_file): $(R_file_stamp)
