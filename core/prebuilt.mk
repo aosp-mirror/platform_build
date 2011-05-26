@@ -16,6 +16,16 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
+ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
+ifeq (true,$(WITH_DEXPREOPT))
+ifeq (,$(TARGET_BUILD_APPS))
+ifndef LOCAL_DEX_PREOPT
+LOCAL_DEX_PREOPT := true
+endif
+endif
+endif
+endif
+
 include $(BUILD_SYSTEM)/base_rules.mk
 
 # Deal with the OSX library timestamp issue when installing
@@ -30,8 +40,20 @@ PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
 # Ensure that prebuilt .apks have been aligned.
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
+ifeq ($(LOCAL_DEX_PREOPT),true)
+# Make sure the boot jars get dexpreopt-ed first
+$(LOCAL_BUILT_MODULE): $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT) $(AAPT)
+endif
 $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ZIPALIGN)
 	$(transform-prebuilt-to-target-with-zipalign)
+ifeq ($(LOCAL_DEX_PREOPT),true)
+	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
+	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
+	$(call dexpreopt-remove-classes.dex,$@)
+
+built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
+$(built_odex): $(LOCAL_BUILT_MODULE)
+endif
 else
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
