@@ -781,7 +781,7 @@ define transform-renderscripts-to-java-and-bc
 $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/res/raw
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/src
-$(hide) $(LLVM_RS_CC) \
+$(hide) $(PRIVATE_RS_CC) \
   -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw \
   -p $(PRIVATE_RS_OUTPUT_DIR)/src \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
