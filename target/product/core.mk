@@ -88,7 +88,8 @@ PRODUCT_PACKAGES := \
     DefaultContainerService \
     Bugreport \
     ip \
-    screencap
+    screencap \
+    sensorservice
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
