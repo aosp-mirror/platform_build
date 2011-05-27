@@ -34,7 +34,12 @@ CTS_TF_EXEC_PATH := $(HOST_OUT_EXECUTABLES)/cts-tradefed
 CTS_TF_README_PATH := $(cts_tools_src_dir)/tradefed-host/README
 
 CTS_CORE_CASE_LIST := \
-	android.core.tests.libcore \
+	android.core.tests.libcore.package.dalvik \
+	android.core.tests.libcore.package.com \
+	android.core.tests.libcore.package.sun \
+	android.core.tests.libcore.package.tests \
+	android.core.tests.libcore.package.org \
+	android.core.tests.libcore.package.libcore \
 	android.core.tests.runner
 
 -include cts/CtsTestCaseList.mk
@@ -68,14 +73,14 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB
 # $1 : The output file where the description should be written (without the '.xml' extension)
 # $2 : The AndroidManifest.xml corresponding to the test package
 # $3 : The jar file name on PRIVATE_CLASSPATH containing junit tests to search for
-# $4 : The directory containing vogar expectations files
-# $5 : The Android.mk corresponding to the test package (required for host-side tests only)
+# $4 : The package prefix of classes to include, possible empty
+# $5 : The directory containing vogar expectations files
+# $6 : The Android.mk corresponding to the test package (required for host-side tests only)
 define generate-core-test-description
 @echo "Generate core-test description ("$(notdir $(1))")"
 $(hide) java -Xmx256M \
 	-classpath $(PRIVATE_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR) \
-	$(PRIVATE_PARAMS) CollectAllTests $(1) \
-	$(2) $(3) $(4) $(5)
+	$(PRIVATE_PARAMS) CollectAllTests $(1) $(2) $(3) "$(4)" $(5) $(6)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
@@ -94,9 +99,29 @@ $(cts_dir)/all_cts_core_files_stamp: PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
 $(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore,\
-		cts/tests/core/libcore/AndroidManifest.xml,\
-		$(CORETESTS_INTERMEDIATES)/javalib.jar,\
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.dalvik,\
+		cts/tests/core/libcore/dalvik/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,dalvik,\
+		libcore/expectations)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.com,\
+		cts/tests/core/libcore/com/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,com,\
+		libcore/expectations)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.sun,\
+		cts/tests/core/libcore/sun/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,sun,\
+		libcore/expectations)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.tests,\
+		cts/tests/core/libcore/tests/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,tests,\
+		libcore/expectations)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.org,\
+		cts/tests/core/libcore/org/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,org,\
+		libcore/expectations)
+	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.libcore,\
+		cts/tests/core/libcore/libcore/AndroidManifest.xml,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,libcore,\
 		libcore/expectations)
 	$(hide) touch $@
 
@@ -118,7 +143,7 @@ $(CORE_VM_TEST_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 $(CORE_VM_TEST_DESC): vm-tests $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(HOSTTESTLIB_JAR) $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(CORE_VM_TEST_DESC),\
 		cts/tests/vm-tests/AndroidManifest.xml,\
-		$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar,\
+		$(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar,"",\
 		libcore/expectations,\
 		cts/tools/vm-tests/Android.mk)
 	$(ACP) -fv $(VMTESTS_INTERMEDIATES)/android.core.vm-tests.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests.jar
