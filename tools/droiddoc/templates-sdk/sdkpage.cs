@@ -211,7 +211,7 @@ function onDownload(link) {
 </script>
   <?cs else ?> <?cs # end if online ?>
 
-    <?cs if:sdk.preview ?>
+    <?cs if:sdk.preview ?><?cs # it's preview offline docs ?>
       <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming
     Android 3.0 release, to give you a head-start on developing applications for it.
     </p>
@@ -222,7 +222,14 @@ function onDownload(link) {
     <style type="text/css">
     .non-preview { display:none; }
     </style>
+    
+    <?cs else ?><?cs # it's normal offline docs ?>
+      <style type="text/css">
+        p.offline-message { display:block; }
+        p.online-message { display:none; }
+      </style>
     <?cs /if ?>
+    
   <?cs /if ?> <?cs # end if/else online ?>
   
 <?cs /if ?> <?cs # end if/else NDK ?>
