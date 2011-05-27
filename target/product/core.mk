@@ -75,6 +75,7 @@ PRODUCT_PACKAGES := \
     ApplicationsProvider \
     BackupRestoreConfirmation \
     ContactsProvider \
+    VoicemailProvider \
     DownloadProvider \
     DownloadProviderUi \
     MediaProvider \
