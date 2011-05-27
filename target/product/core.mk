@@ -66,6 +66,7 @@ PRODUCT_PACKAGES := \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
     libwilhelm \
+    libfilterfw \
     libz \
     wpa_supplicant.conf \
     Browser \
