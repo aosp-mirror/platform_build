@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 The Android Open Source Project
+# Copyright (C) 2009 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 # limitations under the License.
 #
 
-# This is a generic product that isn't specialized for a specific device.
-# It includes the base Android platform.
+# This is a build configuration for the product aspects that
+# are specific to the emulator.
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
+PRODUCT_PROPERTY_OVERRIDES := \
+    ro.ril.hsxpa=1 \
+    ro.ril.gprsclass=10
 
-# Overrides
-PRODUCT_BRAND := generic_x86
-PRODUCT_DEVICE := generic_x86
-PRODUCT_NAME := generic_x86
+PRODUCT_COPY_FILES := \
+    development/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
+    development/data/etc/vold.conf:system/etc/vold.conf
