@@ -124,15 +124,6 @@ ifdef product_goals
     default_goal_substitution := tests-build-target
   endif
 
-  # Hack to make the linux build servers use dexpreopt (emulator-based
-  # preoptimization). Most engineers don't use this type of target
-  # ("make PRODUCT-blah-user"), so this should only tend to happen when
-  # using buildbot.
-  # TODO: Remove this once host Dalvik preoptimization is working.
-  ifeq ($(TARGET_BUILD_VARIANT),user)
-    WITH_DEXPREOPT_buildbot := true
-  endif
-
   # Replace the PRODUCT-* goal with the build goal that it refers to.
   # Note that this will ensure that it appears in the same relative
   # position, in case it matters.

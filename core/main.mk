@@ -235,13 +235,15 @@ ifneq (,$(user_variant))
     enable_target_debugging :=
   endif
 
-  # TODO: Remove this and the corresponding block in
-  # config/product_config.make once host-based Dalvik preoptimization is
-  # working.
+  # Turn on Dalvik preoptimization for user builds, but only if not
+  # explicitly disabled and the build is running on Linux (since host
+  # Dalvik isn't built for non-Linux hosts).
   ifneq (true,$(DISABLE_DEXPREOPT))
-  ifeq ($(HOST_OS)-$(WITH_DEXPREOPT_buildbot),linux-true)
-    WITH_DEXPREOPT := true
-  endif
+    ifeq ($(user_variant),user)
+      ifeq ($(HOST_OS),linux)
+        WITH_DEXPREOPT := true
+      endif
+    endif
   endif
 
   # Disallow mock locations by default for user builds
