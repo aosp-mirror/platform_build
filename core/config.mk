@@ -142,6 +142,14 @@ include $(board_config_mk)
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
+# This is the standard way to name a directory containing prebuilt target
+# objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
+ifeq ($(TARGET_SIMULATOR),true)
+  TARGET_PREBUILT_TAG := $(TARGET_OS)-$(TARGET_ARCH)
+else
+  TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
+endif
+
 include $(BUILD_SYSTEM)/dumpvar.mk
 
 # Clean up/verify variables defined by the board config file.

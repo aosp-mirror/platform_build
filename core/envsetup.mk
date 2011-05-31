@@ -158,14 +158,6 @@ ifneq ($(TARGET_BUILD_TYPE),debug)
 TARGET_BUILD_TYPE := release
 endif
 
-# This is the standard way to name a directory containing prebuilt target
-# objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
-ifeq ($(TARGET_SIMULATOR),true)
-  TARGET_PREBUILT_TAG := $(TARGET_OS)-$(TARGET_ARCH)
-else
-  TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
-endif
-
 # ---------------------------------------------------------------
 # figure out the output directories
 
