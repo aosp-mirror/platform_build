@@ -267,6 +267,12 @@ else
 HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
 endif
 
+# Is the host JDK 64-bit version?
+HOST_JDK_IS_64BIT_VERSION :=
+ifneq ($(filter 64-Bit, $(shell java -version 2>&1)),)
+HOST_JDK_IS_64BIT_VERSION := true
+endif
+
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
 MD5SUM:=md5 -q
