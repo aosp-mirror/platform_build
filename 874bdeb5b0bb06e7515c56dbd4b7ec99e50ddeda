@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAABB3///4c\u003d",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 3
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2011-06-01T16:19:14Z",
+      "side": 1,
+      "message": "Calling sys.exit() here will leave behind some temp files in /tmp.  Throw an exception instead, and put the call to common.Cleanup() in main() in a finally block.\n\nAlso, we indent python 2 spaces, not 6, and there should be no space before a colon.",
+      "revId": "874bdeb5b0bb06e7515c56dbd4b7ec99e50ddeda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
