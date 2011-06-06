@@ -75,10 +75,30 @@ endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
 TARGET_GLOBAL_CFLAGS += \
+			-O2 \
 			-Ulinux \
-			-m32 \
+			-Wa,--noexecstack \
+			-Werror=format-security \
+			-Wstrict-aliasing=2 \
 			-fPIC \
+			-ffunction-sections \
+			-finline-functions \
+			-finline-limit=300 \
+			-fno-inline-functions-called-once \
+			-fno-short-enums \
+			-fstrict-aliasing \
+			-funswitch-loops \
+			-funwind-tables \
 			-include $(call select-android-config-h,target_linux-x86)
+
+# Needs to be fixed later
+#TARGET_GLOBAL_CFLAGS += \
+#			-fstack-protector
+
+# Needs to be added for RELEASE
+#TARGET_GLOBAL_CFLAGS += \
+#			-DNDEBUG
+
 
 # Fix this after ssp.c is fixed for x86
 # TARGET_GLOBAL_CFLAGS += -fstack-protector
@@ -94,8 +114,10 @@ endif
 
 TARGET_GLOBAL_CFLAGS += -mbionic
 TARGET_GLOBAL_CFLAGS += -D__ANDROID__
-TARGET_GLOBAL_LDFLAGS += -m32
 
+TARGET_GLOBAL_LDFLAGS += -m32
+TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack
+TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
 
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86/include \
