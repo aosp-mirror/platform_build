@@ -91,9 +91,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-funwind-tables \
 			-include $(call select-android-config-h,target_linux-x86)
 
-# Needs to be fixed later
-#TARGET_GLOBAL_CFLAGS += \
-#			-fstack-protector
+TARGET_GLOBAL_CFLAGS += -fstack-protector
 
 # Needs to be added for RELEASE
 #TARGET_GLOBAL_CFLAGS += \
