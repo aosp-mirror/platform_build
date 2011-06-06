@@ -1576,7 +1576,9 @@ rm -f $(_adtp_classes.dex))
 endef
 
 define add-java-resources-to-package
-$(hide) jar uf $@ $(PRIVATE_EXTRA_JAR_ARGS)
+$(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(dir $@)jar-arg-list)
+$(hide) jar uf $@ @$(dir $@)jar-arg-list
+@rm -f $(dir $@)jar-arg-list
 endef
 
 # Sign a package using the specified key/cert.
@@ -1619,7 +1621,7 @@ endef
 define transform-host-java-to-package
 @echo "host Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
 $(call compile-java,$(HOST_JAVAC),$(PRIVATE_BOOTCLASSPATH))
-$(hide) if [ ! -z "$(PRIVATE_EXTRA_JAR_ARGS)" ]; then jar uf $@ $(PRIVATE_EXTRA_JAR_ARGS); fi
+$(if $(PRIVATE_EXTRA_JAR_ARGS), $(call add-java-resources-to-package))
 endef
 
 ###########################################################
