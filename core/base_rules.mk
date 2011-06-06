@@ -368,10 +368,11 @@ ifdef java_resource_file_groups
 	) \
     )
   # The arguments to jar that will include these files in a jar file.
+  # Quote the file name to handle special characters (such as #) correctly.
   extra_jar_args := \
     $(foreach group,$(java_resource_file_groups), \
-	$(addprefix -C $(word 1,$(subst :,$(space),$(group))) , \
-	    $(wordlist 2,9999,$(subst :,$(space),$(group))) \
+	$(addprefix -C "$(word 1,$(subst :,$(space),$(group)))" , \
+	    $(foreach w, $(wordlist 2,9999,$(subst :,$(space),$(group))), "$(w)" ) \
 	) \
     )
   java_resource_file_groups :=
