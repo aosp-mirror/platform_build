@@ -67,6 +67,7 @@ PRODUCT_PACKAGES := \
     libstagefright_soft_vpxdec \
     libwilhelm \
     libfilterfw \
+    libfilterpack_imageproc \
     libz \
     wpa_supplicant.conf \
     KeyChain \
