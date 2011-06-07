@@ -48,6 +48,7 @@ PRODUCT_PACKAGES := \
     libdex \
     libdvm \
     libexpat \
+    libgabi++ \
     libicui18n \
     libicuuc \
     libjavacore \
