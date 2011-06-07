@@ -575,7 +575,9 @@ installed_static_library_notice_file_targets := \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
 
 # Default is -fno-rtti.
-LOCAL_RTTI_FLAG ?= -fno-rtti
+ifeq ($(strip $(LOCAL_RTTI_FLAG)),)
+LOCAL_RTTI_FLAG := -fno-rtti
+endif
 
 ###########################################################
 # Rule-specific variable definitions
