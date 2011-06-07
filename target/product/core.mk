@@ -69,6 +69,7 @@ PRODUCT_PACKAGES := \
     libfilterfw \
     libz \
     wpa_supplicant.conf \
+    KeyChain \
     Browser \
     Contacts \
     Home \
