@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAABCH///0c\u003d",
+        "filename": "tools/droiddoc/src/Comment.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2011-06-08T18:22:19Z",
+      "side": 1,
+      "message": "Could you replace the tab indentation with space?",
+      "revId": "3631d07e5f4ad865a142e1f3b92eac9493746232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABCH///0Y\u003d",
+        "filename": "tools/droiddoc/src/Comment.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2011-06-08T18:22:19Z",
+      "side": 1,
+      "message": "It\u0027s really strange. Jesse may know more.",
+      "revId": "3631d07e5f4ad865a142e1f3b92eac9493746232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
