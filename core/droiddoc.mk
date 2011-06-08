@@ -154,7 +154,7 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
 	$(hide) ( \
 		javadoc \
                 \@$(PRIVATE_SRC_LIST_FILE) \
-                -J-Xmx1024m \
+                -J-Xmx1280m \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 -quiet \
                 -doclet com.google.doclava.Doclava \
