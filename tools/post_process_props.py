@@ -74,9 +74,8 @@ def main(argv):
     sys.stderr.write("bad command line: " + str(argv) + "\n")
     sys.exit(1)
 
-  f = open(filename)
-  #properties.write(f)
-  properties.write(sys.stdout)
+  f = open(filename, 'w+')
+  properties.write(f)
   f.close()
 
 if __name__ == "__main__":
