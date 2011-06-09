@@ -44,7 +44,7 @@ PRODUCT_PACKAGES := \
     Updater \
     CalendarProvider \
     SyncProvider \
-    CryptKeeper
+    VpnDialogs
 
 PRODUCT_PACKAGES += \
     icu.dat
