@@ -20,6 +20,9 @@
 # in inherited configurations.
 
 PRODUCT_PACKAGES := \
+    drmserver \
+    libdrmframework \
+    libdrmframework_jni \
     OpenWnn \
     PinyinIME \
     libWnnEngDic \
