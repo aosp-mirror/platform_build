@@ -125,6 +125,9 @@ function setpaths()
     export ANDROID_PRODUCT_OUT=$(get_abs_build_var PRODUCT_OUT)
     export OUT=$ANDROID_PRODUCT_OUT
 
+    unset ANDROID_HOST_OUT
+    export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
+
     # needed for building linux on MacOS
     # TODO: fix the path
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
