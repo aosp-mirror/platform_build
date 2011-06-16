@@ -106,8 +106,8 @@ TARGET_COMPRESS_MODULE_SYMBOLS := false
 # Default is to prelink modules.
 TARGET_PRELINK_MODULE := true
 
-# Default shell is ash. Other possible value is mksh.
-TARGET_SHELL := ash
+# Default shell is mksh. Other possible value is ash.
+TARGET_SHELL := mksh
 
 # ###############################################################
 # Include sub-configuration files
