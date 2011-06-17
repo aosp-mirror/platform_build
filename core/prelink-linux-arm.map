@@ -108,8 +108,8 @@ libSR_AudioIn.so        0xA8E00000 # [~1M] for external/srec
 libaudioflinger.so      0xA8D00000 # [~1M]
 
 # assorted system libraries
-libsqlite.so            0xA8B00000 # [~2M]
-libexpat.so             0xA8A00000 # [~1M]
+libsqlite.so            0xA8B80000 # [~1.5M]
+libexpat.so             0xA8B00000 # [~0.5M]
 libwebcore.so           0xA8300000 # [~7M]
 libbinder.so            0xA8200000 # [~1M]
 libutils.so             0xA8100000 # [~1M]
