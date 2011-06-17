@@ -48,7 +48,8 @@ pathmap_INCL := \
     libthread_db:bionic/libthread_db/include \
     mkbootimg:system/core/mkbootimg \
     recovery:bootable/recovery \
-    system-core:system/core/include
+    system-core:system/core/include \
+    speex:external/speex/include
 
 #
 # Returns the path to the requested module's include directory,

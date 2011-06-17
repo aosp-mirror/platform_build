@@ -94,7 +94,8 @@ PRODUCT_PACKAGES := \
     Bugreport \
     ip \
     screencap \
-    sensorservice
+    sensorservice \
+    libspeexresampler
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
