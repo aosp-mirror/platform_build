@@ -110,7 +110,7 @@ libaudioflinger.so      0xA8D00000 # [~1M]
 # assorted system libraries
 libsqlite.so            0xA8B80000 # [~1.5M]
 libexpat.so             0xA8B00000 # [~0.5M]
-libwebcore.so           0xA8300000 # [~7M]
+libwebcore.so           0xA8300000 # [~8M]
 libbinder.so            0xA8200000 # [~1M]
 libutils.so             0xA8100000 # [~1M]
 libcameraservice.so     0xA8000000 # [~1M]
@@ -211,3 +211,5 @@ libstlport.so           0x9D100000 # [~3M] for external/stlport
 libzxing.so             0x9D000000 # [<64K] for goggles
 libinterstitial.so      0x9CF00000 # [<64K] for goggles
 liblept.so              0x9CA00000 # [~5M] for external/leptonica
+network.so              0x9C9C0000 # [~0.25M]
+libglib.so              0x9C800000 # [~1.75M]
