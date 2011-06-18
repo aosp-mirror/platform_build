@@ -100,6 +100,7 @@ PRODUCT_PACKAGES := \
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
     PRODUCT_PACKAGES += \
+        apache-xml-hostdex \
         bouncycastle-hostdex \
         core-hostdex \
         libjavacore-host \

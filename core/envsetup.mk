@@ -36,18 +36,6 @@ ifeq ($(strip $(TARGET_BUILD_VARIANT)),)
 TARGET_BUILD_VARIANT := eng
 endif
 
-# Read the product specs so we an get TARGET_DEVICE and other
-# variables that we need in order to locate the output files.
-include $(BUILD_SYSTEM)/product_config.mk
-
-build_variant := $(filter-out eng user userdebug tests,$(TARGET_BUILD_VARIANT))
-ifneq ($(build_variant)-$(words $(TARGET_BUILD_VARIANT)),-1)
-$(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
-$(error must be empty or one of: eng user userdebug tests)
-endif
-
-
-
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
 # compiles except for arm, so the HOST is whatever we are
@@ -119,17 +107,15 @@ else
   HOST_PREBUILT_TAG := $(HOST_OS)-$(HOST_ARCH)
 endif
 
-# Default to building dalvikvm on hosts that support it...
-ifeq ($(HOST_OS),linux)
-# ... but not if we're building the sim...
-ifneq ($(TARGET_SIMULATOR),true)
-# ... or if the if the option is already set
-ifeq ($(WITH_HOST_DALVIK),)
-	WITH_HOST_DALVIK := true
-endif
-endif
-endif
+# Read the product specs so we an get TARGET_DEVICE and other
+# variables that we need in order to locate the output files.
+include $(BUILD_SYSTEM)/product_config.mk
 
+build_variant := $(filter-out eng user userdebug tests,$(TARGET_BUILD_VARIANT))
+ifneq ($(build_variant)-$(words $(TARGET_BUILD_VARIANT)),-1)
+$(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
+$(error must be empty or one of: eng user userdebug tests)
+endif
 
 # ---------------------------------------------------------------
 # Set up configuration for target machine.

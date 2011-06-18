@@ -164,6 +164,27 @@ $(unbundled_goals): $(MAKECMDGOALS)
 endif # unbundled_goals
 
 # ---------------------------------------------------------------
+# Simulator overrides
+ifeq ($(TARGET_PRODUCT),sim)
+  # Tell the build system to turn on some special cases
+  # to deal with the simulator product.
+  TARGET_SIMULATOR := true
+  # dexpreopt doesn't work when building the simulator
+  DISABLE_DEXPREOPT := true
+endif
+
+# Default to building dalvikvm on hosts that support it...
+ifeq ($(HOST_OS),linux)
+# ... but not if we're building the sim...
+ifneq ($(TARGET_SIMULATOR),true)
+# ... or if the if the option is already set
+ifeq ($(WITH_HOST_DALVIK),)
+	WITH_HOST_DALVIK := true
+endif
+endif
+endif
+
+# ---------------------------------------------------------------
 # Include the product definitions.
 # We need to do this to translate TARGET_PRODUCT into its
 # underlying TARGET_DEVICE before we start defining any rules.
@@ -303,14 +324,3 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort \
 
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_EXTRA_RECOVERY_KEYS))
-
-
-# ---------------------------------------------------------------
-# Simulator overrides
-ifeq ($(TARGET_PRODUCT),sim)
-  # Tell the build system to turn on some special cases
-  # to deal with the simulator product.
-  TARGET_SIMULATOR := true
-  # dexpreopt doesn't work when building the simulator
-  DISABLE_DEXPREOPT := true
-endif
