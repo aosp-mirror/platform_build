@@ -16,17 +16,16 @@ endif
 # e.g., "system/etc/file.xml".
 # The filter part means "only eval the copy-one-file rule if this
 # src:dest pair is the first one to match the same dest"
-unique_product_copy_files_destinations := $(sort \
-    $(foreach cf,$(PRODUCT_COPY_FILES), $(call word-colon,2,$(cf))))
+unique_product_copy_files_destinations :=
 $(foreach cf,$(PRODUCT_COPY_FILES), \
     $(eval _src := $(call word-colon,1,$(cf))) \
     $(eval _dest := $(call word-colon,2,$(cf))) \
-    $(if $(filter $(unique_product_copy_files_destinations),$(_dest)), \
+    $(if $(filter $(unique_product_copy_files_destinations),$(_dest)),, \
         $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
         $(eval $(call copy-one-file,$(_src),$(_fulldest))) \
         $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_fulldest)) \
-        $(eval unique_product_copy_files_destinations := $(filter-out $(_dest), \
-            $(unique_product_copy_files_destinations)))))
+        $(eval unique_product_copy_files_destinations += $(_dest))))
+unique_product_copy_files_destinations :=
 
 # -----------------------------------------------------------------
 # docs/index.html
@@ -41,9 +40,11 @@ $(gen): frameworks/base/docs/docs-redirect-index.html
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_TARGET)
 ADDITIONAL_DEFAULT_PROPERTIES := \
-	$(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES))
+    $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES))
 ADDITIONAL_DEFAULT_PROPERTIES += \
-	$(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+ADDITIONAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(ADDITIONAL_DEFAULT_PROPERTIES),=)
 
 $(INSTALLED_DEFAULT_PROP_TARGET):
 	@echo Target buildinfo: $@
@@ -60,7 +61,9 @@ $(INSTALLED_DEFAULT_PROP_TARGET):
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
 ADDITIONAL_BUILD_PROPERTIES := \
-	$(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))
+    $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))
+ADDITIONAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(ADDITIONAL_BUILD_PROPERTIES),=)
 
 # A list of arbitrary tags describing the build configuration.
 # Force ":=" so we can use +=

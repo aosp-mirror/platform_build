@@ -600,6 +600,21 @@ $(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
 endef
 
 ###########################################################
+## Given a list of pairs, if multiple pairs have the same
+## first components, keep only the first pair.
+##
+## $(1): list of pairs
+## $(2): the separator word, such as ":", "=", etc.
+define uniq-pairs-by-first-component
+$(eval _upbfc_fc_set :=)\
+$(strip $(foreach w,$(1), $(eval _first := $(word 1,$(subst $(2),$(space),$(w))))\
+    $(if $(filter $(_upbfc_fc_set),$(_first)),,$(w)\
+        $(eval _upbfc_fc_set += $(_first)))))\
+$(eval _upbfc_fc_set :=)\
+$(eval _first:=)
+endef
+
+###########################################################
 ## MODULE_TAG set operations
 ###########################################################
 
