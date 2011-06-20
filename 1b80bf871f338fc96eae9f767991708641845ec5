@@ -34,6 +34,42 @@
       "revId": "1b80bf871f338fc96eae9f767991708641845ec5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABDX///uw\u003d",
+        "filename": "target/board/generic/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-06-20T12:58:45Z",
+      "side": 1,
+      "message": "Ow, that\u0027s surprising. I will add a check-for-Linux bit then because I really want the Dex preopt generation for any future SDK platform image (and for the full-eng / full_x86-eng stuff as well).",
+      "parentUuid": "AAABDX///38\u003d",
+      "revId": "1b80bf871f338fc96eae9f767991708641845ec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABDX///us\u003d",
+        "filename": "target/board/generic/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2011-06-20T12:58:45Z",
+      "side": 1,
+      "message": "Yes, but the point is to enable this even for userdebug builds, like the SDK platform images. Thanks anyway",
+      "parentUuid": "AAABDX///3w\u003d",
+      "revId": "1b80bf871f338fc96eae9f767991708641845ec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
