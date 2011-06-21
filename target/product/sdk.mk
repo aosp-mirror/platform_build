@@ -121,7 +121,8 @@ PRODUCT_PACKAGES += \
 	ninepatch-tests \
 	common-tests \
 	sdklib-tests \
-	sdkuilib-tests
+	sdkuilib-tests \
+	layoutlib-tests
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
