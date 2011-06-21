@@ -70,6 +70,24 @@
       "revId": "1b80bf871f338fc96eae9f767991708641845ec5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAABDX///Uc\u003d",
+        "filename": "target/board/generic/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1001414
+      },
+      "writtenOn": "2011-06-21T19:04:02Z",
+      "side": 1,
+      "message": "doing the pre-opt only on linux is fine since we now only ship the system image that is built by linux. It is used by win/mac users as well.",
+      "parentUuid": "AAABDX///uw\u003d",
+      "revId": "1b80bf871f338fc96eae9f767991708641845ec5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
