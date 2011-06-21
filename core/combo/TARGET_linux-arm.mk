@@ -56,7 +56,12 @@ ifneq ($(wildcard $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)),)
     TARGET_OBJCOPY := $(TARGET_TOOLS_PREFIX)objcopy$(HOST_EXECUTABLE_SUFFIX)
     TARGET_LD := $(TARGET_TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
     TARGET_STRIP := $(TARGET_TOOLS_PREFIX)strip$(HOST_EXECUTABLE_SUFFIX)
-    TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@
+    ifeq ($(TARGET_BUILD_VARIANT),user)
+        TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@
+    else
+        TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@ && \
+	    $(TARGET_OBJCOPY) --add-gnu-debuglink=$< $@
+    endif
 endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
