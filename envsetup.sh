@@ -700,7 +700,6 @@ function mmm()
                 fi
             fi
         done
-        echo "ONE_SHOT_MAKEFILE=$MAKEFILE make -C $T $DASH_ARGS all_modules $ARGS"
         ONE_SHOT_MAKEFILE="$MAKEFILE" make -C $T $DASH_ARGS all_modules $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
