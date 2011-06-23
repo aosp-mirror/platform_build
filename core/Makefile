@@ -1358,6 +1358,14 @@ sdk_atree_files := \
 	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree \
 	$(sdk_tools_atree_files)
 
+# development/build/sdk-android-<abi>.atree is used to differentiate
+# between architecture models (e.g. ARMv5TE versus ARMv7) when copying
+# files like the kernel image. We use TARGET_CPU_ABI because we don't
+# have a better way to distinguish between CPU models.
+ifneq (,$(strip $(wildcard $(atree_dir)/sdk-android-$(TARGET_CPU_ABI).atree)))
+  sdk_atree_files += $(atree_dir)/sdk-android-$(TARGET_CPU_ABI).atree
+endif
+
 deps := \
 	$(target_notice_file_txt) \
 	$(tools_notice_file_txt) \
