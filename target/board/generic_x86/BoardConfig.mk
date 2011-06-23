@@ -21,3 +21,8 @@ USE_CAMERA_STUB := true
 # Set /system/bin/sh to mksh, not ash, to test the transition.
 TARGET_SHELL := mksh
 
+# Enable dex-preoptimization to speed up the first boot sequence
+# of an SDK AVD. Note that this operation only works on Linux for now
+ifeq ($(HOST_OS),linux)
+WITH_DEXPREOPT := true
+endif
