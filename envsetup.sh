@@ -1109,13 +1109,15 @@ function set_java_home() {
     fi
 }
 
-case `ps -o command -p $$` in
-    *bash*)
-        ;;
-    *)
-        echo "WARNING: Only bash is supported, use of other shell would lead to erroneous results"
-        ;;
-esac
+if [ "x$SHELL" != "x/bin/bash" ]; then
+    case `ps -o command -p $$` in
+        *bash*)
+            ;;
+        *)
+            echo "WARNING: Only bash is supported, use of other shell would lead to erroneous results"
+            ;;
+    esac
+fi
 
 # Execute the contents of any vendorsetup.sh files we can find.
 for f in `/bin/ls vendor/*/vendorsetup.sh vendor/*/*/vendorsetup.sh device/*/*/vendorsetup.sh 2> /dev/null`
