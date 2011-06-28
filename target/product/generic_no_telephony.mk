@@ -60,6 +60,9 @@ PRODUCT_PACKAGES += \
     audio.primary.default \
     audio_policy.default
 
+PRODUCT_PACKAGES += \
+    local_time.default
+
 PRODUCT_COPY_FILES := \
         system/bluetooth/data/audio.conf:system/etc/bluetooth/audio.conf \
         system/bluetooth/data/auto_pairing.conf:system/etc/bluetooth/auto_pairing.conf \
