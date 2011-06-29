@@ -39,6 +39,7 @@ PRODUCT_PACKAGES := \
     dmtracedump \
     dx \
     ext \
+    filterfw \
     framework-res \
     hprof-conv \
     icu.dat \
