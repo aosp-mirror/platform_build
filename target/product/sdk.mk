@@ -59,7 +59,8 @@ PRODUCT_PACKAGES := \
 	jsr305lib \
 	jython \
 	jsilver \
-	librs_jni
+	librs_jni \
+	ConnectivityTest
 
 
 # Host tools that are parts of the SDK.
