@@ -131,12 +131,11 @@ function setpaths()
     export PATH=$PATH$ANDROID_BUILD_PATHS
 
     unset ANDROID_JAVA_TOOLCHAIN
+    unset ANDROID_PRE_BUILD_PATHS
     if [ -n "$JAVA_HOME" ]; then
         export ANDROID_JAVA_TOOLCHAIN=$JAVA_HOME/bin
-    fi
-    export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN
-    if [ -n "$ANDROID_PRE_BUILD_PATHS" ]; then
-        export PATH=$ANDROID_PRE_BUILD_PATHS:$PATH
+        export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN:
+        export PATH=$ANDROID_PRE_BUILD_PATHS$PATH
     fi
 
     unset ANDROID_PRODUCT_OUT
