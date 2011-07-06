@@ -26,7 +26,22 @@ endif
 endif
 endif
 
-include $(BUILD_SYSTEM)/base_rules.mk
+ifeq ($(LOCAL_STRIP_MODULE),true)
+  ifdef LOCAL_IS_HOST_MODULE
+    $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
+  endif
+  ifeq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
+    $(error Can strip only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
+  endif
+  ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
+    $(error Cannot strip scripts LOCAL_PATH=$(LOCAL_PATH))
+  endif
+  include $(BUILD_SYSTEM)/dynamic_binary.mk
+  built_module := $(linked_module)
+else
+  include $(BUILD_SYSTEM)/base_rules.mk
+  built_module := $(LOCAL_BUILT_MODULE)
+endif
 
 # Deal with the OSX library timestamp issue when installing
 # a prebuilt simulator library.
@@ -42,24 +57,24 @@ PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
 ifeq ($(LOCAL_DEX_PREOPT),true)
 # Make sure the boot jars get dexpreopt-ed first
-$(LOCAL_BUILT_MODULE): $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT) $(AAPT)
+$(built_module): $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT) $(AAPT)
 endif
-$(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ZIPALIGN)
+$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ZIPALIGN)
 	$(transform-prebuilt-to-target-with-zipalign)
 ifeq ($(LOCAL_DEX_PREOPT),true)
 	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
 	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
 	$(call dexpreopt-remove-classes.dex,$@)
 
-built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
-$(built_odex): $(LOCAL_BUILT_MODULE)
+built_odex := $(basename $(built_module)).odex
+$(built_odex): $(built_module)
 endif
 else
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-$(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
 	$(transform-prebuilt-to-target-strip-comments)
 else
-$(LOCAL_BUILT_MODULE) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
+$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
 	$(transform-prebuilt-to-target)
 endif
 endif
@@ -79,7 +94,7 @@ $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
 	$(transform-prebuilt-to-target)
 
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
-$(LOCAL_BUILT_MODULE) : $(common_javalib_jar)
+$(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
 
 ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
