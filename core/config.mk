@@ -142,6 +142,16 @@ include $(board_config_mk)
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
+# This is the standard way to name a directory containing prebuilt target
+# objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
+ifeq ($(TARGET_SIMULATOR),true)
+  TARGET_PREBUILT_TAG := $(TARGET_OS)-$(TARGET_ARCH)
+else
+  TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
+endif
+
+include $(BUILD_SYSTEM)/dumpvar.mk
+
 # Clean up/verify variables defined by the board config file.
 TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
 TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
@@ -232,7 +242,6 @@ EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
 # Binary prelinker/compressor tools
 APRIORI := $(HOST_OUT_EXECUTABLES)/apriori$(HOST_EXECUTABLE_SUFFIX)
 LSD := $(HOST_OUT_EXECUTABLES)/lsd$(HOST_EXECUTABLE_SUFFIX)
-SOSLIM := $(HOST_OUT_EXECUTABLES)/soslim$(HOST_EXECUTABLE_SUFFIX)
 
 # Deal with archaic version of bison on Mac OS X.
 ifeq ($(filter 1.28,$(shell $(YACC) -V)),)

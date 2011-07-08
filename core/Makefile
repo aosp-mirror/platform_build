@@ -1219,7 +1219,7 @@ ifneq ($(TARGET_SIMULATOR),true)
 
 INTERNAL_EMULATOR_PACKAGE_FILES += \
         $(HOST_OUT_EXECUTABLES)/emulator$(HOST_EXECUTABLE_SUFFIX) \
-        prebuilt/android-arm/kernel/kernel-qemu \
+        prebuilt/android-$(TARGET_ARCH)/kernel/kernel-qemu \
         $(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_USERDATAIMAGE_TARGET)
@@ -1291,6 +1291,14 @@ sdk_atree_files := \
 	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree \
 	sdk/build/tools.atree
 
+# development/build/sdk-android-<abi>.atree is used to differentiate
+# between architecture models (e.g. ARMv5TE versus ARMv7) when copying
+# files like the kernel image. We use TARGET_CPU_ABI because we don't
+# have a better way to distinguish between CPU models.
+ifneq (,$(strip $(wildcard $(atree_dir)/sdk-android-$(TARGET_CPU_ABI).atree)))
+  sdk_atree_files += $(atree_dir)/sdk-android-$(TARGET_CPU_ABI).atree
+endif
+
 deps := \
 	$(target_notice_file_txt) \
 	$(tools_notice_file_txt) \
@@ -1337,9 +1345,11 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-I $(HOST_OUT) \
 			-I $(TARGET_COMMON_OUT_ROOT) \
 			-v "PLATFORM_NAME=android-$(PLATFORM_VERSION)" \
+			-v "TARGET_ARCH=$(TARGET_ARCH)" \
+			-v "TARGET_CPU_ABI=$(TARGET_CPU_ABI)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
-				$(PRIVATE_DIR)/platforms/android-$(PLATFORM_VERSION)/images/NOTICE.txt && \
+				$(PRIVATE_DIR)/platforms/android-$(PLATFORM_VERSION)/images/$(TARGET_CPU_ABI)/NOTICE.txt && \
 		cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/tools/NOTICE.txt && \
 		HOST_OUT_EXECUTABLES=$(HOST_OUT_EXECUTABLES) HOST_OS=$(HOST_OS) \
                 development/build/tools/sdk_clean.sh $(PRIVATE_DIR) && \

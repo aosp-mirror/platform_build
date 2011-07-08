@@ -28,6 +28,7 @@ combo_os_arch := $($(combo_target)OS)-$($(combo_target)ARCH)
 $(combo_target)CC := $(CC)
 $(combo_target)CXX := $(CXX)
 $(combo_target)AR := $(AR)
+$(combo_target)STRIP := $(STRIP)
 
 $(combo_target)BINDER_MINI := 0
 
