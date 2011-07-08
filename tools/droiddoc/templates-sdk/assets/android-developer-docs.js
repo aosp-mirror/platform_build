@@ -143,7 +143,8 @@ function init() {
     cookiePath = "guide_";
   } else if (location.href.indexOf("/sdk/") != -1) {
     cookiePath = "sdk_";
-  } else if (location.href.indexOf("/resources/") != -1) {
+  } else if ((location.href.indexOf("/resources/") != -1) || 
+             (location.href.indexOf("/training/") != -1)) {
     cookiePath = "resources_";
   }
 
@@ -251,6 +252,8 @@ function highlightNav(fullPageName) {
     firstSlashPos = fullPageName.indexOf("/sdk/");
   } else if (fullPageName.indexOf("/resources/") != -1) {
     firstSlashPos = fullPageName.indexOf("/resources/");
+  } else if (fullPageName.indexOf("/training/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/training/");
   }
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
