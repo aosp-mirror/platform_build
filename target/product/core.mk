@@ -26,6 +26,7 @@ PRODUCT_PACKAGES := \
     apache-xml \
     bouncycastle \
     bu \
+    bluetooth-health \
     cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
