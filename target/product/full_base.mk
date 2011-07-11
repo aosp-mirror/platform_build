@@ -25,6 +25,7 @@ PRODUCT_PACKAGES := \
     libdrmframework_jni \
     libfwdlockengine \
     OpenWnn \
+    PhotoEditor \
     PinyinIME \
     libWnnEngDic \
     libWnnJpnDic \
