@@ -15,8 +15,6 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-ifneq ($(TARGET_SIMULATOR),true)
-
 LOCAL_SRC_FILES := check_prereq.c
 LOCAL_MODULE := check_prereq
 LOCAL_FORCE_STATIC_EXECUTABLE := true
@@ -25,6 +23,3 @@ LOCAL_C_INCLUDES +=
 LOCAL_STATIC_LIBRARIES += libcutils libc
 
 include $(BUILD_EXECUTABLE)
-
-endif  # !TARGET_SIMULATOR
-

@@ -9,10 +9,6 @@
 ## Sanity check for LOCAL_NDK_VERSION
 ######################################
 my_ndk_version_root :=
-ifeq ($(TARGET_SIMULATOR),true)
-  # NDK does not support sim build.
-  LOCAL_NDK_VERSION :=
-endif
 ifdef LOCAL_NDK_VERSION
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can not be used in host module)
@@ -272,7 +268,7 @@ endif
 ## C++: Compile .cpp files to .o.
 ###########################################################
 
-# we also do this on host modules and sim builds, even though
+# we also do this on host modules, even though
 # it's not really arm, because there are files that are shared.
 cpp_arm_sources    := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(LOCAL_SRC_FILES)))
 cpp_arm_objects    := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))

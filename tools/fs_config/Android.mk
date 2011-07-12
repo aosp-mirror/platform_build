@@ -15,13 +15,9 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-ifneq ($(TARGET_SIMULATOR),true)
-
 LOCAL_SRC_FILES := fs_config.c
 LOCAL_MODULE := fs_config
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_TAGS := eng
 
 include $(BUILD_HOST_EXECUTABLE)
-
-endif  # !TARGET_SIMULATOR

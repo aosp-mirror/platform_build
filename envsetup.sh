@@ -54,8 +54,9 @@ function check_product()
         return
     fi
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-        TARGET_PRODUCT=$1 TARGET_BUILD_VARIANT= \
-        TARGET_SIMULATOR= TARGET_BUILD_TYPE= \
+        TARGET_PRODUCT=$1 \
+        TARGET_BUILD_VARIANT= \
+        TARGET_BUILD_TYPE= \
         TARGET_BUILD_APPS= \
         get_build_var TARGET_DEVICE > /dev/null
     # hide successful answers, but allow the errors to show
@@ -189,74 +190,6 @@ function settitle()
     fi
 }
 
-case `uname -s` in
-    Linux)
-        function choosesim()
-        {
-            echo "Build for the simulator or the device?"
-            echo "     1. Device"
-            echo "     2. Simulator"
-            echo
-
-            export TARGET_SIMULATOR=
-            local ANSWER
-            while [ -z $TARGET_SIMULATOR ]
-            do
-                echo -n "Which would you like? [1] "
-                if [ -z "$1" ] ; then
-                    read ANSWER
-                else
-                    echo $1
-                    ANSWER=$1
-                fi
-                case $ANSWER in
-                "")
-                    export TARGET_SIMULATOR=false
-                    ;;
-                1)
-                    export TARGET_SIMULATOR=false
-                    ;;
-                Device)
-                    export TARGET_SIMULATOR=false
-                    ;;
-                2)
-                    export TARGET_SIMULATOR=true
-                    ;;
-                Simulator)
-                    export TARGET_SIMULATOR=true
-                    ;;
-                *)
-                    echo
-                    echo "I didn't understand your response.  Please try again."
-                    echo
-                    ;;
-                esac
-                if [ -n "$1" ] ; then
-                    break
-                fi
-            done
-
-            set_stuff_for_environment
-        }
-        ;;
-    *)
-        function choosesim()
-        {
-            echo "Only device builds are supported for" `uname -s`
-            echo "     Forcing TARGET_SIMULATOR=false"
-            echo
-            if [ -z "$1" ]
-            then
-                echo -n "Press enter: "
-                read
-            fi
-
-            export TARGET_SIMULATOR=false
-            set_stuff_for_environment
-        }
-        ;;
-esac
-
 function choosetype()
 {
     echo "Build type choices are:"
@@ -265,13 +198,8 @@ function choosetype()
     echo
 
     local DEFAULT_NUM DEFAULT_VALUE
-    if [ $TARGET_SIMULATOR = "false" ] ; then
-        DEFAULT_NUM=1
-        DEFAULT_VALUE=release
-    else
-        DEFAULT_NUM=2
-        DEFAULT_VALUE=debug
-    fi
+    DEFAULT_NUM=1
+    DEFAULT_VALUE=release
 
     export TARGET_BUILD_TYPE=
     local ANSWER
@@ -325,11 +253,7 @@ function chooseproduct()
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
     else
-        if [ "$TARGET_SIMULATOR" = true ] ; then
-            default_value=sim
-        else
-            default_value=full
-        fi
+        default_value=full
     fi
 
     export TARGET_PRODUCT=
@@ -411,19 +335,15 @@ function choosevariant()
 
 function choosecombo()
 {
-    choosesim $1
+    choosetype $1
 
     echo
     echo
-    choosetype $2
+    chooseproduct $2
 
     echo
     echo
-    chooseproduct $3
-
-    echo
-    echo
-    choosevariant $4
+    choosevariant $3
 
     echo
     set_stuff_for_environment
@@ -486,9 +406,6 @@ function lunch()
     if [ -z "$answer" ]
     then
         selection=full-eng
-    elif [ "$answer" = "simulator" ]
-    then
-        selection=simulator
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
         if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
@@ -509,45 +426,35 @@ function lunch()
 
     export TARGET_BUILD_APPS=
 
-    # special case the simulator
-    if [ "$selection" = "simulator" ]
+    local product=$(echo -n $selection | sed -e "s/-.*$//")
+    check_product $product
+    if [ $? -ne 0 ]
     then
-        export TARGET_PRODUCT=sim
-        export TARGET_BUILD_VARIANT=eng
-        export TARGET_SIMULATOR=true
-        export TARGET_BUILD_TYPE=debug
-    else
-        local product=$(echo -n $selection | sed -e "s/-.*$//")
-        check_product $product
-        if [ $? -ne 0 ]
-        then
-            echo
-            echo "** Don't have a product spec for: '$product'"
-            echo "** Do you have the right repo manifest?"
-            product=
-        fi
+        echo
+        echo "** Don't have a product spec for: '$product'"
+        echo "** Do you have the right repo manifest?"
+        product=
+    fi
 
-        local variant=$(echo -n $selection | sed -e "s/^[^\-]*-//")
-        check_variant $variant
-        if [ $? -ne 0 ]
-        then
-            echo
-            echo "** Invalid variant: '$variant'"
-            echo "** Must be one of ${VARIANT_CHOICES[@]}"
-            variant=
-        fi
+    local variant=$(echo -n $selection | sed -e "s/^[^\-]*-//")
+    check_variant $variant
+    if [ $? -ne 0 ]
+    then
+        echo
+        echo "** Invalid variant: '$variant'"
+        echo "** Must be one of ${VARIANT_CHOICES[@]}"
+        variant=
+    fi
 
-        if [ -z "$product" -o -z "$variant" ]
-        then
-            echo
-            return 1
-        fi
+    if [ -z "$product" -o -z "$variant" ]
+    then
+        echo
+        return 1
+    fi
 
-        export TARGET_PRODUCT=$product
-        export TARGET_BUILD_VARIANT=$variant
-        export TARGET_SIMULATOR=false
-        export TARGET_BUILD_TYPE=release
-    fi # !simulator
+    export TARGET_PRODUCT=$product
+    export TARGET_BUILD_VARIANT=$variant
+    export TARGET_BUILD_TYPE=release
 
     echo
 
@@ -588,7 +495,6 @@ function tapas()
 
     export TARGET_PRODUCT=full
     export TARGET_BUILD_VARIANT=$variant
-    export TARGET_SIMULATOR=false
     export TARGET_BUILD_TYPE=release
     export TARGET_BUILD_APPS=$apps
 

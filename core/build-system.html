@@ -516,16 +516,8 @@ specified here as well.</p>
 </tr>
 </table>
 
-<h4>TARGET_SIMULATOR</h4>
-<p>If we're building the simulator, as opposed to the arm or emulator builds,
-<code>TARGET_SIMULATOR</code> will be set to <code>true</code>.
-
 <h4>Some Examples</h4>
-<pre>ifeq ($(TARGET_SIMULATOR),true)
-LOCAL_CFLAGS += -DSIMULATOR
-endif
-
-ifeq ($(TARGET_BUILD_TYPE),release)
+<pre>ifeq ($(TARGET_BUILD_TYPE),release)
 LOCAL_CFLAGS += -DNDEBUG=1
 endif
 

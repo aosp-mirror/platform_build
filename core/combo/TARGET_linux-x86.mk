@@ -17,19 +17,6 @@
 # Configuration for Linux on x86 as a target.
 # Included by combo/select.mk
 
-ifeq ($(TARGET_SIMULATOR),true)
-# When building for the simulator, use the HOST settings as TARGET settings
-TARGET_CC := $(HOST_CC)
-TARGET_CXX := $(HOST_CXX)
-TARGET_AR := $(HOST_AR)
-TARGET_GLOBAL_CFLAGS := $(HOST_GLOBAL_CFLAGS) -m32
-TARGET_GLOBAL_LDFLAGS := $(HOST_GLOBAL_LDFLAGS) -m32 -lpthread
-TARGET_NO_UNDEFINED_LDFLAGS := $(HOST_NO_UNDEFINED_LDFLAGS)
-ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
-TARGET_ARCH_VARIANT := x86
-endif
-else #simulator
-
 # Provide a default variant.
 ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := x86
@@ -204,5 +191,3 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(TARGET_CRTEND_O))
 endef
-
-endif #simulator

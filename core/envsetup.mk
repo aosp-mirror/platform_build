@@ -1,6 +1,5 @@
 # Variables we check:
 #     HOST_BUILD_TYPE = { release debug }
-#     TARGET_SIMULATOR = { true <null> }
 #     TARGET_BUILD_TYPE = { release debug }
 # and we output a bunch of variables, see the case statement at
 # the bottom for the full list
@@ -19,15 +18,11 @@ include $(BUILD_SYSTEM)/version_defaults.mk
 CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 10
 
 # ---------------------------------------------------------------
-# The product defaults to generic on hardware and sim on sim
+# The product defaults to generic on hardware
 # NOTE: This will be overridden in product_config.mk if make
 # was invoked with a PRODUCT-xxx-yyy goal.
 ifeq ($(TARGET_PRODUCT),)
-ifeq ($(TARGET_SIMULATOR),true)
-TARGET_PRODUCT := sim
-else
 TARGET_PRODUCT := full
-endif
 endif
 
 
@@ -124,20 +119,10 @@ endif
 # 		TARGET_ARCH = { arm | x86 }
 
 
-# if we're build the simulator, HOST_* is TARGET_* (except for BUILD_TYPE)
-# otherwise  it's <arch>-linux
-ifeq ($(TARGET_SIMULATOR),true)
-ifneq ($(HOST_OS),linux)
-$(error TARGET_SIMULATOR=true is only supported under Linux)
-endif
-TARGET_ARCH := $(HOST_ARCH)
-TARGET_OS := $(HOST_OS)
-else
 ifeq ($(TARGET_ARCH),)
 TARGET_ARCH := arm
 endif
 TARGET_OS := linux
-endif
 
 # the target build type defaults to release
 ifneq ($(TARGET_BUILD_TYPE),debug)
@@ -169,15 +154,7 @@ HOST_OUT := $(HOST_OUT_$(HOST_BUILD_TYPE))
 
 BUILD_OUT := $(OUT_DIR)/host/$(BUILD_OS)-$(BUILD_ARCH)
 
-ifeq ($(TARGET_SIMULATOR),true)
-  # Any arch- or os-specific parts of the simulator (everything
-  # under product/) are actually host-dependent.
-  # But, the debug type is controlled by TARGET_BUILD_TYPE and not
-  # HOST_BUILD_TYPE.
-  TARGET_PRODUCT_OUT_ROOT := $(HOST_OUT_$(TARGET_BUILD_TYPE))/pr
-else
-  TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
-endif
+TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
 
 TARGET_COMMON_OUT_ROOT := $(TARGET_OUT_ROOT)/common
 HOST_COMMON_OUT_ROOT := $(HOST_OUT_ROOT)/common

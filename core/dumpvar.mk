@@ -5,14 +5,10 @@ ifeq ($(CALLED_FROM_SETUP),true)
 
 ABP:=$(PWD)/$(HOST_OUT_EXECUTABLES)
 
-ifeq ($(TARGET_SIMULATOR),true)
-	ABP:=$(ABP):$(TARGET_OUT_EXECUTABLES)
-else
-	# Add the toolchain bin dir if it actually exists
-	ifneq ($(wildcard $(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-linux-androideabi-4.4.x/bin),)
-		# this should be copied to HOST_OUT_EXECUTABLES instead
-		ABP:=$(ABP):$(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-linux-androideabi-4.4.x/bin
-	endif
+# Add the toolchain bin dir if it actually exists
+ifneq ($(wildcard $(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-linux-androideabi-4.4.x/bin),)
+	# this should be copied to HOST_OUT_EXECUTABLES instead
+	ABP:=$(ABP):$(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-linux-androideabi-4.4.x/bin
 endif
 ANDROID_BUILD_PATHS := $(ABP)
 ANDROID_PREBUILTS := prebuilt/$(HOST_PREBUILT_TAG)
@@ -68,7 +64,6 @@ $(info   PLATFORM_VERSION_CODENAME=$(PLATFORM_VERSION_CODENAME))
 $(info   PLATFORM_VERSION=$(PLATFORM_VERSION))
 $(info   TARGET_PRODUCT=$(TARGET_PRODUCT))
 $(info   TARGET_BUILD_VARIANT=$(TARGET_BUILD_VARIANT))
-$(info   TARGET_SIMULATOR=$(TARGET_SIMULATOR))
 $(info   TARGET_BUILD_TYPE=$(TARGET_BUILD_TYPE))
 $(info   TARGET_BUILD_APPS=$(TARGET_BUILD_APPS))
 $(info   TARGET_ARCH=$(TARGET_ARCH))
