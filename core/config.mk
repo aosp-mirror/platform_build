@@ -317,13 +317,9 @@ TARGET_PROJECT_INCLUDES:= $(SRC_HEADERS) $(TARGET_OUT_HEADERS)
 
 # Many host compilers don't support these flags, so we have to make
 # sure to only specify them for the target compilers checked in to
-# the source tree. The simulator passes the target flags to the
-# host compiler, so only set them for the target when the target
-# is not the simulator.
-ifneq ($(TARGET_SIMULATOR),true)
+# the source tree.
 TARGET_GLOBAL_CFLAGS += $(TARGET_ERROR_FLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_ERROR_FLAGS)
-endif
 
 HOST_GLOBAL_CFLAGS += $(HOST_RELEASE_CFLAGS)
 HOST_GLOBAL_CPPFLAGS += $(HOST_RELEASE_CPPFLAGS)
@@ -369,10 +365,6 @@ INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/publi
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
-ifeq ($(TARGET_SIMULATOR),true)
-  TARGET_PREBUILT_TAG := $(TARGET_OS)-$(TARGET_ARCH)
-else
-  TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
-endif
+TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
 
 include $(BUILD_SYSTEM)/dumpvar.mk

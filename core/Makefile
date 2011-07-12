@@ -265,7 +265,7 @@ endif
 DEFAULT_KEY_CERT_PAIR := $(SRC_TARGET_DIR)/product/security/testkey
 
 
-# Rules that need to be present for the simulator, even
+# Rules that need to be present for the all targets, even
 # if they don't do anything.
 .PHONY: systemimage
 systemimage:
@@ -312,8 +312,6 @@ event-log-tags: $(event_log_tags_file)
 
 ALL_DEFAULT_INSTALLED_MODULES += $(event_log_tags_file)
 
-
-ifneq ($(TARGET_SIMULATOR),true)
 
 # #################################################################
 # Targets for boot/OS images
@@ -1088,7 +1086,6 @@ endif
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
 
-ifneq ($(TARGET_SIMULATOR),true)
 ifneq ($(TARGET_PRODUCT),sdk)
 ifeq ($(filter generic%,$(TARGET_DEVICE)),)
 ifneq ($(TARGET_NO_KERNEL),true)
@@ -1149,7 +1146,6 @@ endif    # recovery_fstab is defined
 endif    # TARGET_NO_KERNEL != true
 endif    # TARGET_DEVICE != generic*
 endif    # TARGET_PRODUCT != sdk
-endif    # TARGET_SIMULATOR != true
 
 # -----------------------------------------------------------------
 # installed file list
@@ -1269,8 +1265,6 @@ $(EMMA_META_ZIP): $(INSTALLED_SYSTEMIMAGE)
 	$(hide) find $(TARGET_COMMON_OUT_ROOT) -name "coverage.em" | \
 		zip -@ -q $@
 
-endif	# TARGET_SIMULATOR != true
-
 # -----------------------------------------------------------------
 # dalvik something
 .PHONY: dalvikfiles
@@ -1278,8 +1272,6 @@ dalvikfiles: $(INTERNAL_DALVIK_MODULES)
 
 # -----------------------------------------------------------------
 # The emulator package
-
-ifneq ($(TARGET_SIMULATOR),true)
 
 INTERNAL_EMULATOR_PACKAGE_FILES += \
         $(HOST_OUT_EXECUTABLES)/emulator$(HOST_EXECUTABLE_SUFFIX) \
@@ -1296,8 +1288,6 @@ $(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES)
 	@echo "Package: $@"
 	$(hide) zip -qj $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
 
-endif
-
 # -----------------------------------------------------------------
 # The pdk package (Platform Development Kit)
 
@@ -1307,8 +1297,6 @@ endif
 
 # -----------------------------------------------------------------
 # The SDK
-
-ifneq ($(TARGET_SIMULATOR),true)
 
 # The SDK includes host-specific components, so it belongs under HOST_OUT.
 sdk_dir := $(HOST_OUT)/sdk
@@ -1451,8 +1439,6 @@ MAIN_SDK_ZIP  := $(INTERNAL_SDK_TARGET)
 ifneq ($(filter win_sdk,$(MAKECMDGOALS)),)
 include $(TOPDIR)development/build/tools/windows_sdk.mk
 endif
-
-endif # !simulator
 
 # -----------------------------------------------------------------
 # Findbugs

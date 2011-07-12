@@ -476,7 +476,6 @@ GRANDFATHERED_USER_MODULES += \
 	signapk \
 	signature-tools \
 	simg2img \
-	simulator \
 	spec-progress \
 	sqlite3 \
 	stack_dump \

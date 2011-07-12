@@ -45,13 +45,8 @@ endif # TARGET_PRODUCT == sdk
 # We build everything in 32-bit, because some host tools are
 # 32-bit-only anyway (emulator, acc), and because it gives us
 # more consistency between the host tools and the target.
-# The exception is the host side of the simulator, which
-# requires to use the default size, as wxWidgets code otherwise
-# fails to build.
-ifneq ($(TARGET_SIMULATOR),true)
 HOST_GLOBAL_CFLAGS += -m32
 HOST_GLOBAL_LDFLAGS += -m32
-endif
 
 HOST_GLOBAL_CFLAGS += -fPIC
 HOST_GLOBAL_CFLAGS += \

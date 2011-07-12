@@ -45,16 +45,9 @@ ifndef CUSTOM_MODULES
 #CUSTOM_MODULES:=
 endif
 
-# Uncomment this if you want the simulator, otherwise, build for arm
-ifndef TARGET_SIMULATOR
-#TARGET_SIMULATOR:=true
-endif
-
-# Set this to debug or release if you care.  Otherwise, it defaults to
-# release for arm and debug for the simulator.
+# Set this to debug or release if you care.  Otherwise, it defaults to release.
 ifndef TARGET_BUILD_TYPE
 #TARGET_BUILD_TYPE:=release
-#TARGET_BUILD_TYPE:=debug
 endif
 
 # Uncomment this if you want the host tools built in debug mode.  Otherwise
