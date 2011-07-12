@@ -255,23 +255,23 @@ function highlightNav(fullPageName) {
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
   }
-  // First check if the exact URL, with query string and all, is in the navigation menu
-  var pathPageName = fullPageName.substr(firstSlashPos);
+
+  // get the path and page name from the URL (such as 'guide/topics/graphics/index.html')
+  var htmlPos = fullPageName.indexOf(".html");
+  var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5); // +5 advances past ".html"
+  // find instances of the page name in the side nav
   var link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-  if (link.length == 0) {
-    var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
-    pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5); // +5 advances past ".html"
-    link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-    if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) || (fullPageName.indexOf("/resources/") != -1))) {
-      // if there's no match, then let's backstep through the directory until we find an index.html page
-      // that matches our ancestor directories (only for dev guide and resources)
-      lastBackstep = pathPageName.lastIndexOf("/");
-      while (link.length == 0) {
-        backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
-        link = $("#devdoc-nav a[href$='"+ pathPageName.slice(0, backstepDirectory + 1)+"index.html']");
-        lastBackstep = pathPageName.lastIndexOf("/", lastBackstep - 1);
-        if (lastBackstep == 0) break;
-      }
+  // if there's no match, then let's backstep through the directory until we find an index.html
+  // page that matches our ancestor directories (only for dev guide and resources)
+  if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) ||
+                  (fullPageName.indexOf("/resources/") != -1))) {
+    lastBackstep = pathPageName.lastIndexOf("/");
+    while (link.length == 0) {
+      backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
+      link = $("#devdoc-nav a[href$='"+ pathPageName.slice(0, backstepDirectory +
+                      1)+"index.html']");
+      lastBackstep = pathPageName.lastIndexOf("/", lastBackstep - 1);
+      if (lastBackstep == 0) break;
     }
   }
 
