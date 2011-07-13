@@ -164,7 +164,7 @@ $(CORE_VM_TEST_TF_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 $(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
 	$(call generate-core-test-description,$(CORE_VM_TEST_TF_DESC),\
 		cts/tests/vm-tests-tf/AndroidManifest.xml,\
-		$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar,\
+		$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar,"",\
 		libcore/expectations,\
 		cts/tools/vm-tests-tf/Android.mk)
 	$(ACP) -fv $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests-tf.jar
