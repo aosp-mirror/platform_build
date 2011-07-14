@@ -102,11 +102,6 @@ COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 # list of flags to turn specific warnings in to errors
 TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point
 
-# Temporarily turn off Wunsed-but-set-variables warning in gcc-4.6
-# since this warning becomes an error in dalvik, core and renderscript.
-# This is ignored by gcc-4.4.x.
-TARGET_ERROR_FLAGS += -Wno-unused-but-set-variable
-
 # TODO: do symbol compression
 TARGET_COMPRESS_MODULE_SYMBOLS := false
 

@@ -114,6 +114,13 @@ TARGET_GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(arch_include_dir)
 
+# This warning causes dalvik not to build with gcc 4.6 and -Werror.
+# We cannot turn it off blindly since the option is not available
+# in gcc-4.4.x
+ifneq ($(filter 4.6.0%, $(shell $(TARGET_CC) --version)),)
+TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable
+endif
+
 # This is to avoid the dreaded warning compiler message:
 #   note: the mangling of 'va_list' has changed in GCC 4.4
 #
