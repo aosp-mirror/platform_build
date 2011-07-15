@@ -190,6 +190,29 @@ function settitle()
     fi
 }
 
+function addcompletions()
+{
+    local T dir f
+
+    # Keep us from trying to run in something that isn't bash.
+    if [ -z "${BASH_VERSION}" ]; then
+        return
+    fi
+
+    # Keep us from trying to run in bash that's too old.
+    if [ ${BASH_VERSINFO[0]} -lt 3 ]; then
+        return
+    fi
+
+    dir="sdk/bash_completion"
+    if [ -d ${dir} ]; then
+        for f in ${dir}/[a-z]*; do
+            echo "including $f"
+            . $f
+        done
+    fi
+}
+
 function choosetype()
 {
     echo "Build type choices are:"
@@ -1046,3 +1069,5 @@ do
     . $f
 done
 unset f
+
+addcompletions
