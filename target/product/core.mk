@@ -60,6 +60,7 @@ PRODUCT_PACKAGES := \
     libOpenSLES \
     libsqlite_jni \
     libssl \
+    libvariablespeed \
     libstagefright_soft_aacdec \
     libstagefright_soft_amrdec \
     libstagefright_soft_avcdec \
