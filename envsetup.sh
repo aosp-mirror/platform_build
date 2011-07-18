@@ -207,7 +207,7 @@ function addcompletions()
 
     dir="sdk/bash_completion"
     if [ -d ${dir} ]; then
-        for f in ${dir}/[a-z]*; do
+        for f in ${dir}/[a-z]*.bash; do
             echo "including $f"
             . $f
         done
