@@ -100,7 +100,8 @@ PRODUCT_PACKAGES := \
     sensorservice \
     libspeexresampler \
     libwebrtc_audio_preprocessing \
-    libaudiopreprocessing
+    libaudiopreprocessing \
+    hostapd
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
