@@ -101,7 +101,8 @@ PRODUCT_PACKAGES := \
     libspeexresampler \
     libwebrtc_audio_preprocessing \
     libaudiopreprocessing \
-    hostapd
+    hostapd \
+    libpowermanager
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
