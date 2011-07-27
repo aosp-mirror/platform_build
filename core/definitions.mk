@@ -1584,10 +1584,9 @@ endef
 define add-dex-to-package
 $(if $(filter classes.dex,$(notdir $(PRIVATE_DEX_FILE))),\
 $(hide) $(AAPT) add -k $@ $(PRIVATE_DEX_FILE),\
-$(eval _adtp_classes.dex := $(dir $(PRIVATE_DEX_FILE))/classes.dex)\
-$(hide) cp $(PRIVATE_DEX_FILE) $(_adtp_classes.dex) && \
-$(AAPT) add -k $@ $(_adtp_classes.dex) && \
-rm -f $(_adtp_classes.dex))
+$(hide) _adtp_classes_dex=$(dir $(PRIVATE_DEX_FILE))classes.dex; \
+cp $(PRIVATE_DEX_FILE) $$_adtp_classes_dex && \
+$(AAPT) add -k $@ $$_adtp_classes_dex && rm -f $$_adtp_classes_dex)
 endef
 
 define add-java-resources-to-package
