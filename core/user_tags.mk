@@ -153,7 +153,6 @@ GRANDFATHERED_USER_MODULES += \
 	init \
 	input \
 	ip \
-	iptables \
 	jarjar \
 	javax.obex \
 	jcommon-1.0.12 \

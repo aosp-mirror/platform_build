@@ -23,10 +23,31 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
 PRODUCT_PACKAGES := \
+    ApplicationsProvider \
+    BackupRestoreConfirmation \
+    Browser \
+    Bugreport \
+    Contacts \
+    ContactsProvider \
+    DefaultContainerService \
+    DownloadProvider \
+    DownloadProviderUi \
+    HTMLViewer \
+    Home \
+    KeyChain \
+    MediaProvider \
+    PackageInstaller \
+    PicoTts \
+    SettingsProvider \
+    TelephonyProvider \
+    TtsService \
+    UserDictionaryProvider \
+    VoicemailProvider \
+    VpnServices \
     apache-xml \
+    bluetooth-health \
     bouncycastle \
     bu \
-    bluetooth-health \
     cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
@@ -42,25 +63,33 @@ PRODUCT_PACKAGES := \
     ext \
     filterfw \
     framework-res \
+    hostapd \
     hprof-conv \
     icu.dat \
     installd \
+    ip \
     ip-up-vpn \
+    ip6tables \
+    iptables \
+    libOpenMAXAL \
+    libOpenSLES \
+    libaudiopreprocessing \
     libcrypto \
     libdex \
     libdvm \
     libexpat \
+    libfilterfw \
+    libfilterpack_imageproc \
     libgabi++ \
     libicui18n \
     libicuuc \
     libjavacore \
     libnativehelper \
     libnfc_ndef \
-    libOpenMAXAL \
-    libOpenSLES \
+    libpowermanager \
+    libspeexresampler \
     libsqlite_jni \
     libssl \
-    libvariablespeed \
     libstagefright_soft_aacdec \
     libstagefright_soft_amrdec \
     libstagefright_soft_avcdec \
@@ -69,40 +98,13 @@ PRODUCT_PACKAGES := \
     libstagefright_soft_mpeg4dec \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
+    libvariablespeed \
+    libwebrtc_audio_preprocessing \
     libwilhelm \
-    libfilterfw \
-    libfilterpack_imageproc \
     libz \
-    wpa_supplicant.conf \
-    KeyChain \
-    Browser \
-    Contacts \
-    Home \
-    HTMLViewer \
-    ApplicationsProvider \
-    BackupRestoreConfirmation \
-    ContactsProvider \
-    VoicemailProvider \
-    DownloadProvider \
-    DownloadProviderUi \
-    MediaProvider \
-    PicoTts \
-    SettingsProvider \
-    TelephonyProvider \
-    TtsService \
-    VpnServices \
-    UserDictionaryProvider \
-    PackageInstaller \
-    DefaultContainerService \
-    Bugreport \
-    ip \
     screencap \
     sensorservice \
-    libspeexresampler \
-    libwebrtc_audio_preprocessing \
-    libaudiopreprocessing \
-    hostapd \
-    libpowermanager
+    wpa_supplicant.conf
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
