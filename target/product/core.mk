@@ -23,6 +23,24 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
 PRODUCT_PACKAGES := \
+    ApplicationsProvider \
+    Browser \
+    Bugreport \
+    Contacts \
+    ContactsProvider \
+    DefaultContainerService \
+    DownloadProvider \
+    DownloadProviderUi \
+    HTMLViewer \
+    Home \
+    MediaProvider \
+    PackageInstaller \
+    PicoTts \
+    SettingsProvider \
+    TelephonyProvider \
+    TtsService \
+    UserDictionaryProvider \
+    VpnServices \
     apache-xml \
     bouncycastle \
     com.android.location.provider \
@@ -41,7 +59,12 @@ PRODUCT_PACKAGES := \
     hprof-conv \
     icu.dat \
     installd \
+    ip \
     ip-up-vpn \
+    ip6tables \
+    iptables \
+    libOpenMAXAL \
+    libOpenSLES \
     libcrypto \
     libdex \
     libdvm \
@@ -51,34 +74,13 @@ PRODUCT_PACKAGES := \
     libjavacore \
     libnativehelper \
     libnfc_ndef \
-    libOpenMAXAL \
-    libOpenSLES \
     libsqlite_jni \
     libssl \
     libwilhelm \
     libz \
+    screencap \
     sqlite-jdbc \
-    wpa_supplicant.conf \
-    Browser \
-    Contacts \
-    Home \
-    HTMLViewer \
-    ApplicationsProvider \
-    ContactsProvider \
-    DownloadProvider \
-    DownloadProviderUi \
-    MediaProvider \
-    PicoTts \
-    SettingsProvider \
-    TelephonyProvider \
-    TtsService \
-    VpnServices \
-    UserDictionaryProvider \
-    PackageInstaller \
-    DefaultContainerService \
-    Bugreport \
-    ip \
-    screencap
+    wpa_supplicant.conf
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
