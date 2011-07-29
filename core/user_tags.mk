@@ -154,7 +154,6 @@ GRANDFATHERED_USER_MODULES += \
 	init \
 	input \
 	ip \
-	iptables \
 	iself \
 	isprelinked \
 	jarjar \
