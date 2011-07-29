@@ -427,6 +427,7 @@ subdirs += \
 	sdk/archquery \
 	sdk/androidprefs \
 	sdk/apkbuilder \
+	sdk/assetstudio \
 	sdk/common \
 	sdk/ddms \
 	sdk/hierarchyviewer2 \
