@@ -60,7 +60,8 @@ PRODUCT_PACKAGES := \
 	jython \
 	jsilver \
 	librs_jni \
-	ConnectivityTest
+	ConnectivityTest \
+	GpsLocationTest
 
 
 # Host tools that are parts of the SDK.
