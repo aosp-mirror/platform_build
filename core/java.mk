@@ -135,6 +135,24 @@ renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sour
 RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
 renderscript_intermediate := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript
 
+renderscript_target_api :=
+ifneq (,$(LOCAL_SDK_VERSION))
+# Only HC (version 11) should be using the prebuilt RS tools.
+ifeq (11,$(LOCAL_SDK_VERSION))
+ifeq ($(LOCAL_RENDERSCRIPT_CC),)
+LOCAL_RENDERSCRIPT_CC := prebuilt/$(HOST_PREBUILT_TAG)/llvm-rs-cc/llvm-rs-cc
+endif
+endif
+# Set target-api for LOCAL_SDK_VERSIONs other than 11 and current.
+ifneq (,$(filter-out 11 current, $(LOCAL_SDK_VERSION)))
+renderscript_target_api := $(LOCAL_SDK_VERSION)
+endif
+endif  # LOCAL_SDK_VERSION is set
+
+ifeq ($(LOCAL_RENDERSCRIPT_CC),)
+LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
+endif
+
 # prepend the RenderScript system include path
 ifneq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
 LOCAL_RENDERSCRIPT_INCLUDES := \
@@ -143,13 +161,9 @@ LOCAL_RENDERSCRIPT_INCLUDES := \
     $(LOCAL_RENDERSCRIPT_INCLUDES)
 else
 LOCAL_RENDERSCRIPT_INCLUDES := \
-     $(TOPDIR)external/clang/lib/Headers \
-     $(TOPDIR)frameworks/base/libs/rs/scriptc \
-     $(LOCAL_RENDERSCRIPT_INCLUDES)
-endif
-
-ifeq ($(LOCAL_RENDERSCRIPT_CC),)
-LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
+    $(TOPDIR)external/clang/lib/Headers \
+    $(TOPDIR)frameworks/base/libs/rs/scriptc \
+    $(LOCAL_RENDERSCRIPT_INCLUDES)
 endif
 
 $(RenderScript_file_stamp): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
@@ -158,6 +172,7 @@ $(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fu
 # By putting the generated java files into $(LOCAL_INTERMEDIATE_SOURCE_DIR), they will be
 # automatically found by the java compiling function transform-java-to-classes.jar.
 $(RenderScript_file_stamp): PRIVATE_RS_OUTPUT_DIR := $(renderscript_intermediate)
+$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
 $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
 	$(transform-renderscripts-to-java-and-bc)
 
