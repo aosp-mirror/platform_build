@@ -52,6 +52,11 @@ import subprocess
 import tempfile
 import zipfile
 
+try:
+  from hashlib import sha1 as sha1
+except ImportError:
+  from sha import sha as sha1
+
 import common
 
 # Work around a bug in python's zipfile module that prevents opening

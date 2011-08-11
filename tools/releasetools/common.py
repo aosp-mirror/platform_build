@@ -29,11 +29,9 @@ import time
 import zipfile
 
 try:
-  import hashlib
-  sha1 = hashlib.sha1
+  from hashlib import sha1 as sha1
 except ImportError:
-  import sha
-  sha1 = sha.sha
+  from sha import sha as sha1
 
 # missing in Python 2.4 and before
 if not hasattr(os, "SEEK_SET"):
