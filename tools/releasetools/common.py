@@ -20,7 +20,6 @@ import imp
 import os
 import platform
 import re
-import sha
 import shutil
 import subprocess
 import sys
@@ -28,6 +27,11 @@ import tempfile
 import threading
 import time
 import zipfile
+
+try:
+  from hashlib import sha1 as sha1
+except ImportError:
+  from sha import sha as sha1
 
 # missing in Python 2.4 and before
 if not hasattr(os, "SEEK_SET"):
@@ -659,7 +663,7 @@ class File(object):
     self.name = name
     self.data = data
     self.size = len(data)
-    self.sha1 = sha.sha(data).hexdigest()
+    self.sha1 = sha1(data).hexdigest()
 
   def WriteToTemp(self):
     t = tempfile.NamedTemporaryFile()
