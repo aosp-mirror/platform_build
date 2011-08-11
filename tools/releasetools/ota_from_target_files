@@ -63,6 +63,11 @@ import tempfile
 import time
 import zipfile
 
+try:
+  from hashlib import sha1 as sha1
+except ImportError:
+  from sha import sha as sha1
+
 import common
 import edify_generator
 
