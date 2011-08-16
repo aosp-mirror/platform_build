@@ -467,6 +467,7 @@ subdirs := \
 	build/libs \
 	build/target \
 	build/tools/acp \
+	external/mksh \
 	external/yaffs2 \
 	external/zlib
 else	# !BUILD_TINY_ANDROID
