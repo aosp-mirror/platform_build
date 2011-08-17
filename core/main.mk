@@ -436,6 +436,7 @@ subdirs += \
 	sdk/layoutlib_api \
 	sdk/layoutopt \
 	sdk/ninepatch \
+	sdk/rule_api \
 	sdk/sdkstats \
 	sdk/sdkmanager \
 	sdk/swtmenubar \
