@@ -125,6 +125,11 @@ PRODUCT_PACKAGES += \
 	sdkuilib-tests \
 	layoutlib-tests
 
+# audio libraries.
+PRODUCT_PACKAGES += \
+	audio.primary.goldfish \
+	audio_policy.default
+
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
