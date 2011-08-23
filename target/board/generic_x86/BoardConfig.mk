@@ -26,3 +26,6 @@ TARGET_SHELL := mksh
 ifeq ($(HOST_OS),linux)
 WITH_DEXPREOPT := true
 endif
+
+# Build OpenGLES emulation host and guest libraries
+BUILD_EMULATOR_OPENGL := true
