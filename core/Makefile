@@ -1421,6 +1421,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-v "OUT_DIR=$(OUT_DIR)" \
 			-v "TARGET_ARCH=$(TARGET_ARCH)" \
 			-v "TARGET_CPU_ABI=$(TARGET_CPU_ABI)" \
+			-v "DLL_EXTENSION=$(HOST_SHLIB_SUFFIX)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/platforms/android-$(PLATFORM_VERSION)/images/$(TARGET_CPU_ABI)/NOTICE.txt && \
