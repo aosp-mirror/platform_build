@@ -399,6 +399,7 @@ subdirs := \
 	development/host \
 	development/tools/etc1tool \
 	development/tools/line_endings \
+	development/tools/emulator/opengl \
 	external/clang \
 	external/easymock \
 	external/expat \
