@@ -390,6 +390,7 @@ subdirs := \
 	development/host \
 	development/tools/etc1tool \
 	development/tools/line_endings \
+	development/tools/emulator/opengl \
 	external/easymock \
 	external/expat \
 	external/libpng \
