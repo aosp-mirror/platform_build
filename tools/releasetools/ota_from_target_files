@@ -613,7 +613,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   so_far = 0
 
   script.Print("Patching system files...")
-  for fn, tf, sf, size, _ in patch_list:
+  deferred_patch_list = []
+  for item in patch_list:
+    fn, tf, sf, size, _ = item
+    if tf.name == "system/build.prop":
+      deferred_patch_list.append(item)
+      continue
     script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
     so_far += tf.size
     script.SetProgress(so_far / total_patch_size)
@@ -714,6 +719,15 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   if OPTIONS.extra_script is not None:
     script.AppendExtra(OPTIONS.extra_script)
+
+  # Patch the build.prop file last, so if something fails but the
+  # device can still come up, it appears to be the old build and will
+  # get set the OTA package again to retry.
+  script.Print("Patching remaining system files...")
+  for item in deferred_patch_list:
+    fn, tf, sf, size, _ = item
+    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
+  script.SetPermissions("/system/build.prop", 0, 0, 0644)
 
   script.AddToZip(target_zip, output_zip)
   WriteMetadata(metadata, output_zip)
