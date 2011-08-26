@@ -97,10 +97,6 @@ TARGET_GLOBAL_CFLAGS += -fstack-protector
 #TARGET_GLOBAL_CFLAGS += \
 #			-DNDEBUG
 
-
-# Fix this after ssp.c is fixed for x86
-# TARGET_GLOBAL_CFLAGS += -fstack-protector
-
 TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
