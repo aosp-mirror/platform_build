@@ -30,3 +30,6 @@ USE_CAMERA_STUB := true
 
 # Set /system/bin/sh to ash, not mksh, to make sure we can switch back.
 TARGET_SHELL := ash
+
+# Build OpenGLES emulation guest and host libraries
+BUILD_EMULATOR_OPENGL := true
