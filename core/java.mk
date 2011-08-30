@@ -136,18 +136,17 @@ RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
 renderscript_intermediate := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript
 
 renderscript_target_api :=
+
+ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
+renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+else
 ifneq (,$(LOCAL_SDK_VERSION))
-# Only HC (version 11) should be using the prebuilt RS tools.
-ifeq (11,$(LOCAL_SDK_VERSION))
-ifeq ($(LOCAL_RENDERSCRIPT_CC),)
-LOCAL_RENDERSCRIPT_CC := prebuilt/$(HOST_PREBUILT_TAG)/llvm-rs-cc/llvm-rs-cc
-endif
-endif
-# Set target-api for LOCAL_SDK_VERSIONs other than 11 and current.
-ifneq (,$(filter-out 11 current, $(LOCAL_SDK_VERSION)))
+# Set target-api for LOCAL_SDK_VERSIONs other than current.
+ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
 renderscript_target_api := $(LOCAL_SDK_VERSION)
 endif
 endif  # LOCAL_SDK_VERSION is set
+endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
 
 ifeq ($(LOCAL_RENDERSCRIPT_CC),)
 LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
