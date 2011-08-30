@@ -16,16 +16,6 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
-ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
-ifeq (true,$(WITH_DEXPREOPT))
-ifeq (,$(TARGET_BUILD_APPS))
-ifndef LOCAL_DEX_PREOPT
-LOCAL_DEX_PREOPT := true
-endif
-endif
-endif
-endif
-
 ifeq ($(LOCAL_STRIP_MODULE),true)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
@@ -55,20 +45,8 @@ PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
 # Ensure that prebuilt .apks have been aligned.
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
-ifeq ($(LOCAL_DEX_PREOPT),true)
-# Make sure the boot jars get dexpreopt-ed first
-$(built_module): $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT) $(AAPT)
-endif
 $(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ZIPALIGN)
 	$(transform-prebuilt-to-target-with-zipalign)
-ifeq ($(LOCAL_DEX_PREOPT),true)
-	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
-	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
-	$(call dexpreopt-remove-classes.dex,$@)
-
-built_odex := $(basename $(built_module)).odex
-$(built_odex): $(built_module)
-endif
 else
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
