@@ -590,6 +590,13 @@ ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 INTERNAL_USERIMAGES_DEPS := $(MKEXTUSERIMG) $(MAKE_EXT4FS)
 INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 
+# Calculate size of all files for device image and report on filesizes
+# $(1): src directory
+define calculate-userimage-ext-size
+  @echo Calculating image size...
+  @find $(1) -type f | xargs du -k | sort -gr > $(PRODUCT_OUT)/imagesize-report.txt
+endef
+
 # $(1): src directory
 # $(2): output file
 # $(3): mount point
@@ -738,6 +745,7 @@ ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 # $(1): output file
 define build-systemimage-target
     @echo "Target system fs image: $(1)"
+    $(call calculate-userimage-ext-size,$(TARGET_OUT))
     $(call build-userimage-ext-target,$(TARGET_OUT),$(1),system,$(INTERNAL_USERIMAGES_EXT_VARIANT),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 endef
 
