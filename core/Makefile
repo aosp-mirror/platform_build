@@ -595,6 +595,7 @@ INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 define calculate-userimage-ext-size
   @echo Calculating image size...
   @find $(1) -type f | xargs du -k | sort -gr > $(PRODUCT_OUT)/imagesize-report.txt
+  @du -s -h -k $(1)
 endef
 
 # $(1): src directory
