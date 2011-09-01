@@ -480,10 +480,15 @@ subdirs := \
 	external/zlib
 else	# !BUILD_TINY_ANDROID
 
+ifneq ($(TARGET_SUBDIRS),)
+subdirs := $(TARGET_SUBDIRS)
+else
 #
 # Typical build; include any Android.mk files we can find.
 #
 subdirs := $(TOP)
+
+endif	# !TARGET_SUBDIRS
 
 FULL_BUILD := true
 
