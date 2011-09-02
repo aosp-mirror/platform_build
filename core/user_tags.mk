@@ -69,7 +69,6 @@ GRANDFATHERED_USER_MODULES += \
 	check_stack \
 	check_trace \
 	cmu2nuance \
-	com.android.inputmethod.pinyin.lib \
 	com.android.phone.common \
 	com.android.vcard \
 	commons-compress-1.0 \
@@ -254,7 +253,6 @@ GRANDFATHERED_USER_MODULES += \
 	libiptc \
 	libjnigraphics \
 	libjni_latinime \
-	libjni_pinyinime \
 	libjpeg \
 	libjs \
 	liblinenoise \
