@@ -446,6 +446,7 @@ subdirs += \
 	sdk/sdkstats \
 	sdk/sdkmanager \
 	sdk/swtmenubar \
+	sdk/traceview \
 	development/apps \
 	development/tools/mkstubs \
 	packages
