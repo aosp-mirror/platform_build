@@ -1,4 +1,4 @@
-The "generic_arm5" product defines a non-hardware-specific target
+The "generic_armv5" product defines a non-hardware-specific target
 without a kernel or bootloader.
 
 It is not a product "base class"; no other products inherit
