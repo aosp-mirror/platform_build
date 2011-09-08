@@ -174,7 +174,7 @@ $(call dist-for-goals,cts,$(INTERNAL_CTS_TARGET))
 
 define copy-testcase-apk
 
-$(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk.unaligned \
+$(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk \
 	$(PRIVATE_DIR)/repository/testcases/$(1).apk
 
 endef
