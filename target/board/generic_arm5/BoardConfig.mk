@@ -19,3 +19,5 @@ include build/target/board/generic/BoardConfig.mk
 TARGET_ARCH_VARIANT :=
 TARGET_CPU_ABI := armeabi
 TARGET_CPU_ABI2 :=
+
+WITH_DEXPREOPT := false
