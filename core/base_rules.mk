@@ -122,12 +122,16 @@ ifneq (,$(filter $(LOCAL_MODULE),$(CUSTOM_MODULES)))
   LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS) user)
 endif
 
-# The definition of should-install-to-system will be different depending
-# on which goal (e.g., sdk or just droid) is being built.
 ifdef LOCAL_IS_HOST_MODULE
-  use_data :=
+  partition_tag :=
 else
-  use_data := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
+ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
+  partition_tag := _VENDOR
+else
+  # The definition of should-install-to-system will be different depending
+  # on which goal (e.g., sdk or just droid) is being built.
+  partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
+endif
 endif
 
 LOCAL_MODULE_CLASS := $(strip $(LOCAL_MODULE_CLASS))
@@ -145,7 +149,7 @@ endif
 
 LOCAL_MODULE_PATH := $(strip $(LOCAL_MODULE_PATH))
 ifeq ($(LOCAL_MODULE_PATH),)
-  LOCAL_MODULE_PATH := $($(my_prefix)OUT$(use_data)_$(LOCAL_MODULE_CLASS))
+  LOCAL_MODULE_PATH := $($(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS))
   ifeq ($(strip $(LOCAL_MODULE_PATH)),)
     $(error $(LOCAL_PATH): unhandled LOCAL_MODULE_CLASS "$(LOCAL_MODULE_CLASS)")
   endif
