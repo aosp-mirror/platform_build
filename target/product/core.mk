@@ -42,7 +42,6 @@ PRODUCT_PACKAGES := \
     TelephonyProvider \
     TtsService \
     UserDictionaryProvider \
-    VoicemailProvider \
     VpnServices \
     apache-xml \
     bluetooth-health \
