@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdarg.h>
 #include "options.h"
 #include "files.h"
 #include "fs.h"
@@ -10,7 +12,7 @@
 
 using namespace std;
 
-bool g_debug = false;
+bool g_debug = getenv("ATREE_DEBUG") != NULL;
 vector<string> g_listFiles;
 vector<string> g_inputBases;
 map<string, string> g_variables;
@@ -33,6 +35,7 @@ const char* USAGE =
 "  -m DEPENDENCY  Output a make-formatted file containing the list.\n"
 "                 of files included.  It sets the variable ATREE_FILES.\n"
 "  -v VAR=VAL     Replaces ${VAR} by VAL when reading input files.\n"
+"  -d             Verbose debug mode.\n"
 "\n"
 "FILELIST file format:\n"
 "  The FILELIST files contain the list of files that will end up\n"
@@ -42,11 +45,13 @@ const char* USAGE =
 "  In a FILELIST file, comment lines start with a #.  Other lines\n"
 "  are of the format:\n"
 "\n"
-"    DEST\n"
-"    SRC DEST\n"
+"    [rm|strip] DEST\n"
+"    SRC [strip] DEST\n"
 "    -SRCPATTERN\n"
 "\n"
 "  DEST should be path relative to the output directory.\n"
+"  'rm DEST' removes the destination file and fails if it's missing.\n"
+"  'strip DEST' strips the binary destination file.\n"
 "  If SRC is supplied, the file names can be different.\n"
 "  SRCPATTERN is a pattern for the filenames.\n"
 "\n";
@@ -72,13 +77,26 @@ add_variable(const char* arg) {
     return true;
 }
 
+static void
+debug_printf(const char* format, ...)
+{
+    if (g_debug) {
+        fflush(stderr);
+        va_list ap;
+        va_start(ap, format);
+        vprintf(format, ap);
+        va_end(ap);
+        fflush(stdout);
+    }
+}
+
 int
 main(int argc, char* const* argv)
 {
     int err;
     bool done = false;
     while (!done) {
-        int opt = getopt(argc, argv, "f:I:o:hlm:v:");
+        int opt = getopt(argc, argv, "f:I:o:hlm:v:d");
         switch (opt)
         {
             case -1:
@@ -116,6 +134,9 @@ main(int argc, char* const* argv)
                             argv[0], optarg);
                     return usage();
                 }
+                break;
+            case 'd':
+                g_debug = true;
                 break;
             default:
             case '?':
@@ -169,7 +190,7 @@ main(int argc, char* const* argv)
 
     // read file lists
     for (vector<string>::iterator it=g_listFiles.begin();
-                                it!=g_listFiles.end(); it++) {
+                                 it!=g_listFiles.end(); it++) {
         err = read_list_file(*it, g_variables, &files, &excludes);
         if (err != 0) {
             return err;
@@ -181,9 +202,8 @@ main(int argc, char* const* argv)
     for (vector<FileRecord>::iterator it=files.begin();
                                 it!=files.end(); it++) {
         err |= locate(&(*it), g_inputBases);
-
     }
-    
+
     // expand the directories that we should copy into a list of files
     for (vector<FileRecord>::iterator it=files.begin();
                                 it!=files.end(); it++) {
@@ -219,8 +239,8 @@ main(int argc, char* const* argv)
         }
     }
 
-    // gather files that should become directores and directories that should
-    // become files
+    // gather files that should become directores
+    // and directories that should become files
     for (vector<FileRecord>::iterator it=files.begin();
                                 it!=files.end(); it++) {
         if (it->outMod != 0 && it->sourceIsDir != it->outIsDir) {
@@ -231,48 +251,66 @@ main(int argc, char* const* argv)
     // delete files
     for (set<string>::iterator it=deleted.begin();
                                 it!=deleted.end(); it++) {
-        if (g_debug) {
-            printf("deleting %s\n", it->c_str());
-        }
+        debug_printf("deleting %s\n", it->c_str());
         err = remove_recursively(*it);
         if (err != 0) {
             return err;
         }
     }
 
+    // remove all files or directories as requested from the input atree file.
+    // must be done before create new directories.
+    for (vector<FileRecord>::iterator it=files.begin();
+                                it!=files.end(); it++) {
+        if (!it->sourceIsDir) {
+            if (it->fileOp == FILE_OP_REMOVE &&
+                    deleted.count(it->outPath) == 0) {
+                debug_printf("remove %s\n", it->outPath.c_str());
+                err = remove_recursively(it->outPath);
+                if (err != 0) {
+                    return err;
+                }
+            }
+        }
+    }
+
     // make directories
     for (set<string>::iterator it=directories.begin();
                                 it!=directories.end(); it++) {
-        if (g_debug) {
-            printf("mkdir %s\n", it->c_str());
-        }
+        debug_printf("mkdir %s\n", it->c_str());
         err = mkdir_recursively(*it);
         if (err != 0) {
             return err;
         }
     }
 
-    // copy (or link) files
+    // copy (or link) files that are newer or of different size
     for (vector<FileRecord>::iterator it=files.begin();
                                 it!=files.end(); it++) {
         if (!it->sourceIsDir) {
-            if (g_debug) {
-                printf("copy %s(%ld) ==> %s(%ld)", it->sourcePath.c_str(),
-                    it->sourceMod, it->outPath.c_str(), it->outMod);
-                fflush(stdout);
+            if (it->fileOp == FILE_OP_REMOVE) {
+                continue;
             }
 
-            if (it->outMod < it->sourceMod) {
+            debug_printf("copy %s(%ld) ==> %s(%ld)",
+                it->sourcePath.c_str(), it->sourceMod,
+                it->outPath.c_str(), it->outMod);
+
+            if (it->outSize != it->sourceSize || it->outMod < it->sourceMod) {
                 err = copy_file(it->sourcePath, it->outPath);
-                if (g_debug) {
-                    printf(" done.\n");
-                }
+                debug_printf(" done.\n");
                 if (err != 0) {
                     return err;
                 }
             } else {
-                if (g_debug) {
-                    printf(" skipping.\n");
+                debug_printf(" skipping.\n");
+            }
+
+            if (it->fileOp == FILE_OP_STRIP) {
+                debug_printf("strip %s\n", it->outPath.c_str());
+                err = strip_file(it->outPath);
+                if (err != 0) {
+                    return err;
                 }
             }
         }
