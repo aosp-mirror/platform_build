@@ -61,8 +61,64 @@ ifdef LOCAL_NDK_VERSION
     my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_CPU_ABI)/libstdc++.a
   endif
   endif
-
 endif
+
+##################################################
+# Compute the dependency of the shared libraries
+##################################################
+# On the target, we compile with -nostdlib, so we must add in the
+# default system shared libraries, unless they have requested not
+# to by supplying a LOCAL_SYSTEM_SHARED_LIBRARIES value.  One would
+# supply that, for example, when building libc itself.
+ifdef LOCAL_IS_HOST_MODULE
+  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+      LOCAL_SYSTEM_SHARED_LIBRARIES :=
+  endif
+else
+  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+      LOCAL_SYSTEM_SHARED_LIBRARIES := $(TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES)
+  endif
+endif
+
+# Logging used to be part of libcutils (target) and libutils (sim);
+# hack modules that use those other libs to also include liblog.
+# All of this complexity is to make sure that liblog only appears
+# once, and appears just before libcutils or libutils on the link
+# line.
+# TODO: remove this hack and change all modules to use liblog
+# when necessary.
+define insert-liblog
+  $(if $(filter liblog,$(1)),$(1), \
+    $(if $(filter libcutils,$(1)), \
+      $(patsubst libcutils,liblog libcutils,$(1)) \
+     , \
+      $(patsubst libutils,liblog libutils,$(1)) \
+     ) \
+   )
+endef
+ifneq (,$(filter libcutils libutils,$(LOCAL_SHARED_LIBRARIES)))
+  LOCAL_SHARED_LIBRARIES := $(call insert-liblog,$(LOCAL_SHARED_LIBRARIES))
+endif
+ifneq (,$(filter libcutils libutils,$(LOCAL_STATIC_LIBRARIES)))
+  LOCAL_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_STATIC_LIBRARIES))
+endif
+ifneq (,$(filter libcutils libutils,$(LOCAL_WHOLE_STATIC_LIBRARIES)))
+  LOCAL_WHOLE_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_WHOLE_STATIC_LIBRARIES))
+endif
+
+ifdef LOCAL_NDK_VERSION
+  # Get the list of INSTALLED libraries as module names.
+  # We can not compute the full path of the LOCAL_SHARED_LIBRARIES for
+  # they may cusomize their install path with LOCAL_MODULE_PATH
+  installed_shared_library_module_names := \
+      $(LOCAL_SHARED_LIBRARIES)
+else
+  installed_shared_library_module_names := \
+      $(LOCAL_SYSTEM_SHARED_LIBRARIES) $(LOCAL_SHARED_LIBRARIES)
+endif
+# The real dependency will be added after all Android.mks are loaded and the install paths
+# of the shared libraries are determined.
+LOCAL_REQUIRED_MODULES += $(installed_shared_library_module_names)
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -446,47 +502,7 @@ include $(BUILD_COPY_HEADERS)
 
 ###########################################################
 # Standard library handling.
-#
-# On the target, we compile with -nostdlib, so we must add in the
-# default system shared libraries, unless they have requested not
-# to by supplying a LOCAL_SYSTEM_SHARED_LIBRARIES value.  One would
-# supply that, for example, when building libc itself.
 ###########################################################
-ifdef LOCAL_IS_HOST_MODULE
-  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-    LOCAL_SYSTEM_SHARED_LIBRARIES :=
-  endif
-else
-  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-    LOCAL_SYSTEM_SHARED_LIBRARIES := $($(my_prefix)DEFAULT_SYSTEM_SHARED_LIBRARIES)
-  endif
-endif
-
-# Logging used to be part of libcutils (target) and libutils (sim);
-# hack modules that use those other libs to also include liblog.
-# All of this complexity is to make sure that liblog only appears
-# once, and appears just before libcutils or libutils on the link
-# line.
-# TODO: remove this hack and change all modules to use liblog
-# when necessary.
-define insert-liblog
-  $(if $(filter liblog,$(1)),$(1), \
-    $(if $(filter libcutils,$(1)), \
-      $(patsubst libcutils,liblog libcutils,$(1)) \
-     , \
-      $(patsubst libutils,liblog libutils,$(1)) \
-     ) \
-   )
-endef
-ifneq (,$(filter libcutils libutils,$(LOCAL_SHARED_LIBRARIES)))
-  LOCAL_SHARED_LIBRARIES := $(call insert-liblog,$(LOCAL_SHARED_LIBRARIES))
-endif
-ifneq (,$(filter libcutils libutils,$(LOCAL_STATIC_LIBRARIES)))
-  LOCAL_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_STATIC_LIBRARIES))
-endif
-ifneq (,$(filter libcutils libutils,$(LOCAL_WHOLE_STATIC_LIBRARIES)))
-  LOCAL_WHOLE_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_WHOLE_STATIC_LIBRARIES))
-endif
 
 ###########################################################
 # The list of libraries that this module will link against are in
@@ -523,12 +539,6 @@ built_shared_libraries := \
       $(addsuffix $(so_suffix), \
         $(LOCAL_SHARED_LIBRARIES)))
 
-# Get the list of INSTALLED libraries.  Strip off the various
-# intermediates directories and point to the common lib dirs.
-installed_shared_libraries := \
-    $(addprefix $($(my_prefix)OUT_SHARED_LIBRARIES)/, \
-      $(notdir $(built_shared_libraries)))
-
 my_system_shared_libraries_fullpath := \
     $(my_ndk_stl_shared_lib_fullpath) \
     $(addprefix $(my_ndk_version_root)/usr/lib/, \
@@ -542,10 +552,6 @@ built_shared_libraries := \
     $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(LOCAL_SHARED_LIBRARIES)))
-
-installed_shared_libraries := \
-    $(addprefix $($(my_prefix)OUT_SHARED_LIBRARIES)/, \
-      $(notdir $(built_shared_libraries)))
 endif
 
 built_static_libraries := \
@@ -605,12 +611,6 @@ all_libraries := \
     $(built_shared_libraries) \
     $(built_static_libraries) \
     $(built_whole_libraries)
-
-# Make LOCAL_INSTALLED_MODULE depend on the installed versions of the
-# libraries so they get installed along with it.  We don't need to
-# rebuild it when installing it, though, so this can be an order-only
-# dependency.
-$(LOCAL_INSTALLED_MODULE): | $(installed_shared_libraries)
 
 # Also depend on the notice files for any static libraries that
 # are linked into this module.  This will force them to be installed
