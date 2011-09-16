@@ -415,6 +415,7 @@ subdirs := \
 	external/zlib \
 	frameworks/base \
 	frameworks/compile \
+	sdk/avdlauncher \
 	sdk/emulator/mksdcard \
 	sdk/sdklauncher \
 	system/core/adb \
