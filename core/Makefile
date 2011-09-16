@@ -1393,12 +1393,6 @@ $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
 #
 #SDK_GNU_ERROR := true
 
-ifeq ($(HOST_OS),darwin)
-HOST_STRIP_SDK_LLVM := strip
-else
-HOST_STRIP_SDK_LLVM := strip --strip-all
-endif
-
 $(INTERNAL_SDK_TARGET): $(deps)
 	@echo "Package SDK: $@"
 	$(hide) rm -rf $(PRIVATE_DIR) $@
@@ -1428,9 +1422,6 @@ $(INTERNAL_SDK_TARGET): $(deps)
 				$(PRIVATE_DIR)/platforms/android-$(PLATFORM_VERSION)/images/$(TARGET_CPU_ABI)/NOTICE.txt && \
 		cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/tools/NOTICE.txt && \
 		cp -f $(tools_notice_file_txt) $(PRIVATE_DIR)/platform-tools/NOTICE.txt && \
-		for f in $(PRIVATE_DIR)/platform-tools/llvm-rs-cc-* ; do \
-			if [ -f "$$f" ]; then $(HOST_STRIP_SDK_LLVM) "$$f"; fi; \
-		done && \
 		HOST_OUT_EXECUTABLES=$(HOST_OUT_EXECUTABLES) HOST_OS=$(HOST_OS) \
 			development/build/tools/sdk_clean.sh $(PRIVATE_DIR) && \
 		chmod -R ug+rwX $(PRIVATE_DIR) && \
