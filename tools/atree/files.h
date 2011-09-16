@@ -8,8 +8,16 @@
 
 using namespace std;
 
+enum FileOpType {
+    FILE_OP_COPY = 0,
+    FILE_OP_REMOVE,
+    FILE_OP_STRIP
+};
+
 struct FileRecord
 {
+    FileRecord();
+
     string listFile;
     int listLine;
 
@@ -18,9 +26,12 @@ struct FileRecord
     string sourcePath;
     bool sourceIsDir;
     time_t sourceMod;
+    off_t  sourceSize;
+    FileOpType fileOp;
 
     string outName;
     string outPath;
+    off_t  outSize;
     time_t outMod;
     bool outIsDir;
     unsigned int mode;
