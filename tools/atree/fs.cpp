@@ -1,7 +1,9 @@
 #include "fs.h"
 #include "files.h"
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <string>
 #include <vector>
@@ -64,10 +66,10 @@ remove_recursively(const string& path)
 #ifdef HAVE_DIRENT_D_TYPE
             bool is_directory = (ent->d_type == DT_DIR);
 #else
-	    	// If dirent.d_type is missing, then use stat instead
-			struct stat stat_buf;
-			stat(full.c_str(), &stat_buf);
-			bool is_directory = S_ISDIR(stat_buf.st_mode);
+            // If dirent.d_type is missing, then use stat instead
+            struct stat stat_buf;
+            stat(full.c_str(), &stat_buf);
+            bool is_directory = S_ISDIR(stat_buf.st_mode);
 #endif
             if (is_directory) {
                 dirs.push_back(full);
@@ -146,3 +148,27 @@ copy_file(const string& src, const string& dst)
                     COPY_NO_DEREFERENCE | COPY_FORCE | COPY_PERMISSIONS);
     return err;
 }
+
+int
+strip_file(const string& path)
+{
+    // Default strip command to run is "strip" unless overridden by the STRIP env var.
+    const char* strip_cmd = getenv("STRIP");
+    if (!strip_cmd || !strip_cmd[0]) {
+        strip_cmd = "strip";
+    }
+    pid_t pid = fork();
+    if (pid == -1) {
+        // Fork failed. errno should be set.
+        return -1;
+    } else if (pid == 0) {
+        // Exec in the child. Only returns if execve failed.
+        return execlp(strip_cmd, strip_cmd, path.c_str(), (char *)NULL);
+    } else {
+        // Wait for child pid and return its exit code.
+        int status;
+        waitpid(pid, &status, 0);
+        return status;
+    }
+}
+
