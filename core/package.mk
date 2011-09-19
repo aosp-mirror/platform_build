@@ -161,6 +161,11 @@ endif
 include $(BUILD_SYSTEM)/java.mk
 #################################
 
+LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
+ifeq ($(LOCAL_SDK_RES_VERSION),)
+  LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
+endif
+
 full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
@@ -250,12 +255,12 @@ else
 # Most packages should link against the resources defined by framework-res.
 # Even if they don't have their own resources, they may use framework
 # resources.
-ifneq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
+ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION)),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/android.jar
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
 framework_res_package_export_deps := $(framework_res_package_export)
-else # LOCAL_SDK_VERSION
+else # LOCAL_SDK_RES_VERSION
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
 # We can't depend directly on the export.apk file; it won't get its
@@ -263,7 +268,7 @@ framework_res_package_export := \
 # corresponding R.stamp file, which lists the export.apk as a dependency.
 framework_res_package_export_deps := \
     $(dir $(framework_res_package_export))src/R.stamp
-endif # LOCAL_SDK_VERSION
+endif # LOCAL_SDK_RES_VERSION
 $(R_file_stamp): $(framework_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
