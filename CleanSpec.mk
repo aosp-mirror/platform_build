@@ -102,6 +102,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/JAVA_LIBRARIES/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/framework/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
