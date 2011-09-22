@@ -232,6 +232,9 @@ function tryPopulateResourcesNav() {
         if (tags[j] == 'new') {
           listItemNode.get(0).innerHTML += '&nbsp;<span class="new">new!</span>';
           break;
+        } else if (tags[j] == 'updated') {
+          listItemNode.get(0).innerHTML += '&nbsp;<span class="new">updated!</span>';
+          break;
         }
       }
       listNode.append(listItemNode);
