@@ -38,7 +38,9 @@ function buildApiLevelSelector() {
 
   minLevel = parseInt($("body").attr("class"));
   // Handle provisional api levels; the provisional level will always be the highest possible level
-  if (isNaN(minLevel)) {
+  // Provisional api levels will also have a length; other stuff that's just missing a level won't,
+  // so leave those kinds of entities at the default level of 1 (for example, the R.styleable class)
+  if (isNaN(minLevel) && minLevel.length) {
     minLevel = maxLevel;
   }
   var select = $("#apiLevelSelector").html("").change(changeApiLevel);
