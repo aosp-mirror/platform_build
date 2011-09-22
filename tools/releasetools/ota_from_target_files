@@ -24,9 +24,14 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -b  (--board_config)  <file>
       Deprecated.
 
-  -k  (--package_key)  <key>
-      Key to use to sign the package (default is
-      "build/target/product/security/testkey").
+  -k (--package_key) <key> Key to use to sign the package (default is
+      the value of default_system_dev_certificate from the input
+      target-files's META/misc_info.txt, or
+      "build/target/product/security/testkey" if that value is not
+      specified).
+
+      For incremental OTAs, the default value is based on the source
+      target-file, not the target build.
 
   -i  (--incremental_from)  <file>
       Generate an incremental OTA using the given target-files zip as
@@ -72,7 +77,7 @@ import common
 import edify_generator
 
 OPTIONS = common.OPTIONS
-OPTIONS.package_key = "build/target/product/security/testkey"
+OPTIONS.package_key = None
 OPTIONS.incremental_source = None
 OPTIONS.require_verbatim = set()
 OPTIONS.prohibit_verbatim = set(("system/build.prop",))
@@ -794,30 +799,34 @@ def main(argv):
     OPTIONS.device_specific = os.path.normpath(OPTIONS.device_specific)
     print "using device-specific extensions in", OPTIONS.device_specific
 
-  if OPTIONS.package_key:
-    temp_zip_file = tempfile.NamedTemporaryFile()
-    output_zip = zipfile.ZipFile(temp_zip_file, "w",
-                                 compression=zipfile.ZIP_DEFLATED)
-  else:
-    output_zip = zipfile.ZipFile(args[1], "w",
-                                 compression=zipfile.ZIP_DEFLATED)
+  temp_zip_file = tempfile.NamedTemporaryFile()
+  output_zip = zipfile.ZipFile(temp_zip_file, "w",
+                               compression=zipfile.ZIP_DEFLATED)
 
   if OPTIONS.incremental_source is None:
     WriteFullOTAPackage(input_zip, output_zip)
+    if OPTIONS.package_key is None:
+      OPTIONS.package_key = OPTIONS.info_dict.get(
+          "default_system_dev_certificate",
+          "build/target/product/security/testkey")
   else:
     print "unzipping source target-files..."
     OPTIONS.source_tmp, source_zip = common.UnzipTemp(OPTIONS.incremental_source)
     OPTIONS.target_info_dict = OPTIONS.info_dict
     OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
+    if OPTIONS.package_key is None:
+      OPTIONS.package_key = OPTIONS.source_dict.get(
+          "default_system_dev_certificate",
+          "build/target/product/security/testkey")
     if OPTIONS.verbose:
       print "--- source info ---"
       common.DumpInfoDict(OPTIONS.source_info_dict)
     WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
 
   output_zip.close()
-  if OPTIONS.package_key:
-    SignOutput(temp_zip_file.name, args[1])
-    temp_zip_file.close()
+
+  SignOutput(temp_zip_file.name, args[1])
+  temp_zip_file.close()
 
   common.Cleanup()
 

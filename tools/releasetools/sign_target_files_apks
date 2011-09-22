@@ -36,10 +36,16 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
   -d  (--default_key_mappings)  <dir>
       Set up the following key mappings:
 
-        build/target/product/security/testkey   ==>  $dir/releasekey
-        build/target/product/security/media     ==>  $dir/media
-        build/target/product/security/shared    ==>  $dir/shared
-        build/target/product/security/platform  ==>  $dir/platform
+        $devkey/devkey    ==>  $dir/releasekey
+        $devkey/testkey   ==>  $dir/releasekey
+        $devkey/media     ==>  $dir/media
+        $devkey/shared    ==>  $dir/shared
+        $devkey/platform  ==>  $dir/platform
+
+      where $devkey is the directory part of the value of
+      default_system_dev_certificate from the input target-files's
+      META/misc_info.txt.  (Defaulting to "build/target/product/security"
+      if the value is not present in misc_info.
 
       -d and -k options are added to the set of mappings in the order
       in which they appear on the command line.
@@ -55,7 +61,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       the last component of the build fingerprint).  Prefix each with
       '+' or '-' to indicate whether that tag should be added or
       removed.  Changes are processed in the order they appear.
-      Default value is "-test-keys,+release-keys".
+      Default value is "-test-keys,-dev-keys,+release-keys".
 
 """
 
@@ -80,7 +86,7 @@ OPTIONS = common.OPTIONS
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
-OPTIONS.tag_changes = ("-test-keys", "+release-keys")
+OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
   certmap = common.ReadApkCerts(tf_zip)
@@ -198,13 +204,11 @@ def RewriteProps(data):
   return "\n".join(output) + "\n"
 
 
-def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
+def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   try:
     keylist = input_tf_zip.read("META/otakeys.txt").split()
   except KeyError:
     raise ExternalError("can't read META/otakeys.txt from input")
-
-  misc_info = common.LoadInfoDict(input_tf_zip)
 
   extra_recovery_keys = misc_info.get("extra_recovery_keys", None)
   if extra_recovery_keys:
@@ -227,10 +231,10 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
     print "using:\n   ", "\n   ".join(mapped_keys)
     print "for OTA package verification"
   else:
+    devkey = misc_info.get("default_system_dev_certificate",
+                           "build/target/product/security/testkey")
     mapped_keys.append(
-        OPTIONS.key_map.get("build/target/product/security/testkey",
-                            "build/target/product/security/testkey")
-        + ".x509.pem")
+        OPTIONS.key_map.get(devkey, devkey) + ".x509.pem")
     print "META/otakeys.txt has no keys; using", mapped_keys[0]
 
   # recovery uses a version of the key that has been slightly
@@ -259,7 +263,27 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip):
                      tempfile.getvalue())
 
 
+def BuildKeyMap(misc_info, key_mapping_options):
+  for s, d in key_mapping_options:
+    if s is None:   # -d option
+      devkey = misc_info.get("default_system_dev_certificate",
+                             "build/target/product/security/testkey")
+      devkeydir = os.path.dirname(devkey)
+
+      OPTIONS.key_map.update({
+          devkeydir + "/testkey":  d + "/releasekey",
+          devkeydir + "/devkey":   d + "/releasekey",
+          devkeydir + "/media":    d + "/media",
+          devkeydir + "/shared":   d + "/shared",
+          devkeydir + "/platform": d + "/platform",
+          })
+    else:
+      OPTIONS.key_map[s] = d
+
+
 def main(argv):
+
+  key_mapping_options = []
 
   def option_handler(o, a):
     if o in ("-e", "--extra_apks"):
@@ -268,15 +292,9 @@ def main(argv):
       for n in names:
         OPTIONS.extra_apks[n] = key
     elif o in ("-d", "--default_key_mappings"):
-      OPTIONS.key_map.update({
-          "build/target/product/security/testkey": "%s/releasekey" % (a,),
-          "build/target/product/security/media": "%s/media" % (a,),
-          "build/target/product/security/shared": "%s/shared" % (a,),
-          "build/target/product/security/platform": "%s/platform" % (a,),
-          })
+      key_mapping_options.append((None, a))
     elif o in ("-k", "--key_mapping"):
-      s, d = a.split("=")
-      OPTIONS.key_map[s] = d
+      key_mapping_options.append(a.split("=", 1))
     elif o in ("-o", "--replace_ota_keys"):
       OPTIONS.replace_ota_keys = True
     elif o in ("-t", "--tag_changes"):
@@ -306,6 +324,10 @@ def main(argv):
 
   input_zip = zipfile.ZipFile(args[0], "r")
   output_zip = zipfile.ZipFile(args[1], "w")
+
+  misc_info = common.LoadInfoDict(input_zip)
+
+  BuildKeyMap(misc_info, key_mapping_options)
 
   apk_key_map = GetApkCerts(input_zip)
   CheckAllApksSigned(input_zip, apk_key_map)
