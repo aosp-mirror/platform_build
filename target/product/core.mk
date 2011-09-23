@@ -39,6 +39,7 @@ PRODUCT_PACKAGES := \
     PackageInstaller \
     PicoTts \
     SettingsProvider \
+    SharedStorageBackup \
     TelephonyProvider \
     TtsService \
     UserDictionaryProvider \
