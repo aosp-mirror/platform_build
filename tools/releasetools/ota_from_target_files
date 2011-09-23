@@ -815,7 +815,7 @@ def main(argv):
     OPTIONS.target_info_dict = OPTIONS.info_dict
     OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
     if OPTIONS.package_key is None:
-      OPTIONS.package_key = OPTIONS.source_dict.get(
+      OPTIONS.package_key = OPTIONS.source_info_dict.get(
           "default_system_dev_certificate",
           "build/target/product/security/testkey")
     if OPTIONS.verbose:
