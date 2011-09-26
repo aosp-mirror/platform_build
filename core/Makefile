@@ -234,6 +234,8 @@ $(APKCERTS_FILE):
 	         private_key=""' >> $@;,\
 	    echo 'name="$(p).apk" certificate="$(PACKAGES.$(p).CERTIFICATE)" \
 	         private_key="$(PACKAGES.$(p).PRIVATE_KEY)"' >> $@;))
+	# In case $(PACKAGES) is empty.
+	$(hide) touch $@
 
 .PHONY: apkcerts-list
 apkcerts-list: $(APKCERTS_FILE)
