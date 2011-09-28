@@ -30,7 +30,7 @@ PRODUCT_PACKAGES := \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
-        Phone \
+    Phone \
 	PinyinIME \
 	Protips \
 	SoftKeyboard \
@@ -61,7 +61,9 @@ PRODUCT_PACKAGES := \
 	jsilver \
 	librs_jni \
 	ConnectivityTest \
-	GpsLocationTest
+	GpsLocationTest \
+	CalendarProvider \
+	Calendar
 
 
 # Host tools that are parts of the SDK.
