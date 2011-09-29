@@ -187,7 +187,7 @@ def CertFromPKCS7(data, filename):
 class APK(object):
   def __init__(self, full_filename, filename):
     self.filename = filename
-    self.cert = None
+    self.certs = set()
     Push(filename+":")
     try:
       self.RecordCert(full_filename)
@@ -203,11 +203,10 @@ class APK(object):
       for info in apk.infolist():
         if info.filename.startswith("META-INF/") and \
            (info.filename.endswith(".DSA") or info.filename.endswith(".RSA")):
-          if pkcs7 is not None:
-            AddProblem("multiple certs")
           pkcs7 = apk.read(info.filename)
-          self.cert = CertFromPKCS7(pkcs7, info.filename)
-          ALL_CERTS.Add(self.cert)
+          cert = CertFromPKCS7(pkcs7, info.filename)
+          self.certs.add(cert)
+          ALL_CERTS.Add(cert)
       if not pkcs7:
         AddProblem("no signature")
     finally:
@@ -281,24 +280,19 @@ class TargetFiles(object):
     for uid in sorted(apks_by_uid.keys()):
       apks = apks_by_uid[uid]
       for apk in apks[1:]:
-        if apk.cert != apks[0].cert:
+        if apk.certs != apks[0].certs:
           break
       else:
-        # all the certs are the same; this uid is fine
+        # all packages have the same set of certs; this uid is fine.
         continue
 
-      AddProblem("uid %s shared across multiple certs" % (uid,))
+      AddProblem("different cert sets for packages with uid %s" % (uid,))
 
-      print "uid %s is shared by packages with different certs:" % (uid,)
-      x = [(i.cert, i.package, i) for i in apks]
-      x.sort()
-      lastcert = None
-      for cert, _, apk in x:
-        if cert != lastcert:
-          lastcert = cert
-          print "    %s:" % (ALL_CERTS.Get(cert),)
-        print "        %-*s  [%s]" % (self.max_pkg_len,
-                                      apk.package, apk.filename)
+      print "uid %s is shared by packages with different cert sets:" % (uid,)
+      for apk in apks:
+        print "%-*s  [%s]" % (self.max_pkg_len, apk.package, apk.filename)
+        for cert in apk.certs:
+          print "   ", ALL_CERTS.Get(cert)
       print
 
   def CheckExternalSignatures(self):
@@ -319,7 +313,8 @@ class TargetFiles(object):
     """Display a table of packages grouped by cert."""
     by_cert = {}
     for apk in self.apks.itervalues():
-      by_cert.setdefault(apk.cert, []).append((apk.package, apk))
+      for cert in apk.certs:
+        by_cert.setdefault(cert, []).append((apk.package, apk))
 
     order = [(-len(v), k) for (k, v) in by_cert.iteritems()]
     order.sort()
@@ -352,10 +347,10 @@ class TargetFiles(object):
     for i in all:
       if i in self.apks:
         if i in other.apks:
-          # in both; should have the same cert
-          if self.apks[i].cert != other.apks[i].cert:
-            by_certpair.setdefault((other.apks[i].cert,
-                                    self.apks[i].cert), []).append(i)
+          # in both; should have at least one cert in common
+          if not (self.apks[i].cert & other.apks[i].cert):
+            by_certpair.setdefault((other.apks[i].certs,
+                                    self.apks[i].certs), []).append(i)
         else:
           print "%s [%s]: new APK (not in comparison target_files)" % (
               i, self.apks[i].filename)
@@ -368,8 +363,16 @@ class TargetFiles(object):
       AddProblem("some APKs changed certs")
       Banner("APK signing differences")
       for (old, new), packages in sorted(by_certpair.items()):
-        print "was", ALL_CERTS.Get(old)
-        print "now", ALL_CERTS.Get(new)
+        for i, o in enumerate(old):
+          if i == 0:
+            print "was", ALL_CERTS.Get(o)
+          else:
+            print "   ", ALL_CERTS.Get(o)
+        for i, n in enumerate(new):
+          if i == 0:
+            print "now", ALL_CERTS.Get(n)
+          else:
+            print "   ", ALL_CERTS.Get(n)
         for i in sorted(packages):
           old_fn = other.apks[i].filename
           new_fn = self.apks[i].filename
