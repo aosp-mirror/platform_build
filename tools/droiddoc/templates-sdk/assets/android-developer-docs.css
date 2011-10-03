@@ -718,6 +718,17 @@ div.special ol li {
   padding:0;
 }
 
+#jd-content div.special.reference h2,
+#jd-content div.special.reference h3,
+#jd-content div.special.reference h4 {
+  color:#000;
+  font-size:1em;
+  border:none;
+  font-weight:bold;
+  margin:.5em 0;
+  padding:0;
+}
+
 p.note, div.note,
 p.caution, div.caution,
 p.warning, div.warning {
