@@ -649,6 +649,7 @@ td.gsc-search-button {
 #doc-content .gsc-tabHeader {
   padding: 3px 6px;
   position:relative;
+  width:auto;
 }
 
 #doc-content .gsc-tabHeader.gsc-tabhActive {
