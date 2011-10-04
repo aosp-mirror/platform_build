@@ -77,9 +77,9 @@ BUILD_VERSION_TAGS := $(BUILD_VERSION_TAGS)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   BUILD_VERSION_TAGS += debug
 endif
-# Apps are always signed with test keys, and may be re-signed in a post-build
-# step.  If that happens, the "test-keys" tag will be removed by that step.
-BUILD_VERSION_TAGS += test-keys
+# Apps are always signed with dev keys, and may be re-signed in a post-build
+# step.  If that happens, the "dev-keys" tag will be removed by that step.
+BUILD_VERSION_TAGS += dev-keys
 BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
 
 # A human-readable string that descibes this build in detail.
@@ -266,11 +266,11 @@ endif
 
 # -----------------------------------------------------------------
 
-# The test key is used to sign this package, and as the key required
+# The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
 # deliverables will be re-signed by hand.  We expect this file to
 # exist with the suffixes ".x509.pem" and ".pk8".
-DEFAULT_KEY_CERT_PAIR := $(SRC_TARGET_DIR)/product/security/testkey
+DEFAULT_KEY_CERT_PAIR := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
 
 
 # Rules that need to be present for the all targets, even
@@ -657,9 +657,9 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 
 # Keys authorized to sign OTA packages this build will accept.  The
-# build always uses test-keys for this; release packaging tools will
+# build always uses dev-keys for this; release packaging tools will
 # substitute other keys for this one.
-OTA_PUBLIC_KEYS := $(SRC_TARGET_DIR)/product/security/testkey.x509.pem
+OTA_PUBLIC_KEYS := $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
 
 # Generate a file containing the keys that will be read by the
 # recovery binary.
@@ -1106,6 +1106,7 @@ endif
 ifdef INTERNAL_USERIMAGES_SPARSE_EXT_FLAG
 	$(hide) echo "extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)" >> $(zip_root)/META/misc_info.txt
 endif
+	$(hide) echo "default_system_dev_certificate=$(DEFAULT_SYSTEM_DEV_CERTIFICATE)" >> $(zip_root)/META/misc_info.txt
 ifdef PRODUCT_EXTRA_RECOVERY_KEYS
 	$(hide) echo "extra_recovery_keys=$(PRODUCT_EXTRA_RECOVERY_KEYS)" >> $(zip_root)/META/misc_info.txt
 endif
