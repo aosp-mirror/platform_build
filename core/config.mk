@@ -288,6 +288,13 @@ APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(
 APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX)
 APICHECK_COMMAND := $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)"
 
+# The default key if not set as LOCAL_CERTIFICATE
+ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
+  DEFAULT_SYSTEM_DEV_CERTIFICATE := $(PRODUCT_DEFAULT_DEV_CERTIFICATE)
+else
+  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
+endif
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
