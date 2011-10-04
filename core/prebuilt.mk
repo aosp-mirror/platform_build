@@ -93,7 +93,7 @@ ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   #
   # This can be used for packages where we don't have access to the
   # keys, but want the package to be predexopt'ed.
-  LOCAL_CERTIFICATE := testkey
+  LOCAL_CERTIFICATE := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
   PACKAGES.$(LOCAL_MODULE).EXTERNAL_KEY := 1
 endif
 ifeq ($(LOCAL_CERTIFICATE),)
@@ -114,7 +114,7 @@ else ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
 else
   # If this is not an absolute certificate, assign it to a generic one.
   ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
-      LOCAL_CERTIFICATE := $(SRC_TARGET_DIR)/product/security/$(LOCAL_CERTIFICATE)
+      LOCAL_CERTIFICATE := $(dir $(DEFAULT_SYSTEM_DEV_CERTIFICATE))$(LOCAL_CERTIFICATE)
   endif
 
   PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
