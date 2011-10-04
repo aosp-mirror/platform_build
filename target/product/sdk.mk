@@ -156,6 +156,7 @@ PRODUCT_LOCALES = \
 	ldpi \
 	hdpi \
 	mdpi \
+	xhdpi \
 	en_US \
 	ar_EG \
 	ar_IL \
