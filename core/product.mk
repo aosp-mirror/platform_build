@@ -82,7 +82,9 @@ _product_var_list := \
     PRODUCT_SDK_ADDON_COPY_FILES \
     PRODUCT_SDK_ADDON_COPY_MODULES \
     PRODUCT_SDK_ADDON_DOC_MODULE \
-    PRODUCT_DEFAULT_WIFI_CHANNELS
+    PRODUCT_DEFAULT_WIFI_CHANNELS \
+    PRODUCT_DEFAULT_DEV_CERTIFICATE \
+
 
 define dump-product
 $(info ==== $(1) ====)\
@@ -231,6 +233,9 @@ _product_stash_var_list += \
 	BOARD_VENDOR_QCOM_GPS_LOC_API_AMSS_VERSION \
 	BOARD_INSTALLER_CMDLINE \
 
+
+_product_stash_var_list += \
+	DEFAULT_SYSTEM_DEV_CERTIFICATE
 
 #
 # Stash vaues of the variables in _product_stash_var_list.

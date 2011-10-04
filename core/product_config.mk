@@ -112,8 +112,8 @@ ifdef product_goals
   # The build server wants to do make PRODUCT-dream-installclean
   # which really means TARGET_PRODUCT=dream make installclean.
   ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
-	MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
-	TARGET_BUILD_VARIANT := eng
+    MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
+    TARGET_BUILD_VARIANT := eng
     default_goal_substitution :=
   else
     default_goal_substitution := $(DEFAULT_GOAL)
@@ -232,8 +232,8 @@ PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES) $(PRODUCT_AAPT_CONFIG)
 # Default to medium-density assets.
 # (Can be overridden in the device config, e.g.: PRODUCT_AAPT_CONFIG += hdpi)
 PRODUCT_AAPT_CONFIG := $(strip \
-	$(PRODUCT_AAPT_CONFIG) \
-	$(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
+    $(PRODUCT_AAPT_CONFIG) \
+    $(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
 
 # Everyone gets nodpi assets which are density-independent.
 PRODUCT_AAPT_CONFIG += nodpi
@@ -241,7 +241,7 @@ PRODUCT_AAPT_CONFIG += nodpi
 # Convert spaces to commas.
 comma := ,
 PRODUCT_AAPT_CONFIG := \
-	$(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
+    $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
 
 PRODUCT_BRAND := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BRAND))
 
@@ -251,7 +251,7 @@ ifndef PRODUCT_MODEL
 endif
 
 PRODUCT_MANUFACTURER := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MANUFACTURER))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MANUFACTURER))
 ifndef PRODUCT_MANUFACTURER
   PRODUCT_MANUFACTURER := unknown
 endif
@@ -263,7 +263,16 @@ else
 endif
 
 PRODUCT_DEFAULT_WIFI_CHANNELS := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_WIFI_CHANNELS))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_WIFI_CHANNELS))
+
+PRODUCT_DEFAULT_DEV_CERTIFICATE := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_DEV_CERTIFICATE))
+ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
+ifneq (1,$(words $(PRODUCT_DEFAULT_DEV_CERTIFICATE)))
+    $(error PRODUCT_DEFAULT_DEV_CERTIFICATE='$(PRODUCT_DEFAULT_DEV_CERTIFICATE)', \
+      only 1 certificate is allowed.)
+endif
+endif
 
 # A list of words like <source path>:<destination path>.  The file at
 # the source path should be copied to the destination path when building
@@ -271,26 +280,26 @@ PRODUCT_DEFAULT_WIFI_CHANNELS := \
 # it should look like, e.g., "system/etc/file.xml".  The rules
 # for these copy steps are defined in config/Makefile.
 PRODUCT_COPY_FILES := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
 
 # The HTML file containing the contributors to the project.
 PRODUCT_CONTRIBUTORS_FILE := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CONTRIBUTORS_FILE))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CONTRIBUTORS_FILE))
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
 PRODUCT_PROPERTY_OVERRIDES := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES))
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
 # used for adding properties to default.prop
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
-	$(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
 DEVICE_PACKAGE_OVERLAYS := \
         $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).DEVICE_PACKAGE_OVERLAYS))
 
@@ -299,8 +308,8 @@ PRODUCT_TAGS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_TAGS))
 
 # Add the product-defined properties to the build properties.
 ADDITIONAL_BUILD_PROPERTIES := \
-	$(ADDITIONAL_BUILD_PROPERTIES) \
-	$(PRODUCT_PROPERTY_OVERRIDES)
+    $(ADDITIONAL_BUILD_PROPERTIES) \
+    $(PRODUCT_PROPERTY_OVERRIDES)
 
 # The OTA key(s) specified by the product config, if any.  The names
 # of these keys are stored in the target-files zip so that post-build
