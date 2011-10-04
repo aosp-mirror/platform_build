@@ -299,20 +299,20 @@ endif
 # Secure release builds will have their packages signed after the fact,
 # so it's ok for these private keys to be in the clear.
 ifeq ($(LOCAL_CERTIFICATE),)
-    LOCAL_CERTIFICATE := testkey
+    LOCAL_CERTIFICATE := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
 endif
 
 ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   # The special value "EXTERNAL" means that we will sign it with the
-  # default testkey, apply predexopt, but then expect the final .apk
+  # default devkey, apply predexopt, but then expect the final .apk
   # (after dexopting) to be signed by an outside tool.
-  LOCAL_CERTIFICATE := testkey
+  LOCAL_CERTIFICATE := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
   PACKAGES.$(LOCAL_PACKAGE_NAME).EXTERNAL_KEY := 1
 endif
 
 # If this is not an absolute certificate, assign it to a generic one.
 ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
-    LOCAL_CERTIFICATE := $(SRC_TARGET_DIR)/product/security/$(LOCAL_CERTIFICATE)
+    LOCAL_CERTIFICATE := $(dir $(DEFAULT_SYSTEM_DEV_CERTIFICATE))$(LOCAL_CERTIFICATE)
 endif
 private_key := $(LOCAL_CERTIFICATE).pk8
 certificate := $(LOCAL_CERTIFICATE).x509.pem
