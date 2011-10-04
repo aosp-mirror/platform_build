@@ -153,11 +153,11 @@ PRODUCT_DEVICE := generic
 # locale + densities. en_US is both first and in alphabetical order to
 # ensure this is the default locale.
 PRODUCT_LOCALES = \
+	en_US \
 	ldpi \
 	hdpi \
 	mdpi \
 	xhdpi \
-	en_US \
 	ar_EG \
 	ar_IL \
 	bg_BG \
