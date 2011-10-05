@@ -336,7 +336,7 @@ def main(argv):
   SignApks(input_zip, output_zip, apk_key_map, key_passwords)
 
   if OPTIONS.replace_ota_keys:
-    ReplaceOtaKeys(input_zip, output_zip)
+    ReplaceOtaKeys(input_zip, output_zip, misc_info)
 
   input_zip.close()
   output_zip.close()
