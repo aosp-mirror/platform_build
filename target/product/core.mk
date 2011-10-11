@@ -26,7 +26,6 @@ PRODUCT_PACKAGES := \
     ApplicationsProvider \
     BackupRestoreConfirmation \
     Browser \
-    Bugreport \
     Contacts \
     ContactsProvider \
     DefaultContainerService \
@@ -41,11 +40,8 @@ PRODUCT_PACKAGES := \
     SettingsProvider \
     SharedStorageBackup \
     TelephonyProvider \
-    TtsService \
     UserDictionaryProvider \
-    VpnServices \
     apache-xml \
-    bluetooth-health \
     bouncycastle \
     bu \
     cacerts \
@@ -63,7 +59,6 @@ PRODUCT_PACKAGES := \
     ext \
     filterfw \
     framework-res \
-    hostapd \
     hprof-conv \
     icu.dat \
     installd \
@@ -75,7 +70,6 @@ PRODUCT_PACKAGES := \
     libOpenSLES \
     libaudiopreprocessing \
     libcrypto \
-    libdex \
     libdvm \
     libexpat \
     libfilterfw \
@@ -83,7 +77,6 @@ PRODUCT_PACKAGES := \
     libgabi++ \
     libicui18n \
     libicuuc \
-    libjavacore \
     libnativehelper \
     libnfc_ndef \
     libpowermanager \
@@ -92,7 +85,6 @@ PRODUCT_PACKAGES := \
     libssl \
     libstagefright_soft_aacdec \
     libstagefright_soft_amrdec \
-    libstagefright_soft_avcdec \
     libstagefright_soft_g711dec \
     libstagefright_soft_mp3dec \
     libstagefright_soft_mpeg4dec \
@@ -103,8 +95,7 @@ PRODUCT_PACKAGES := \
     libwilhelm \
     libz \
     screencap \
-    sensorservice \
-    wpa_supplicant.conf
+    sensorservice
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
@@ -112,6 +103,5 @@ ifeq ($(WITH_HOST_DALVIK),true)
         apache-xml-hostdex \
         bouncycastle-hostdex \
         core-hostdex \
-        libjavacore-host \
         dalvik
 endif

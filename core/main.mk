@@ -669,6 +669,11 @@ ifdef is_sdk_build
   $(info Removing from sdk:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
   modules_to_install := \
               $(filter-out $(target_gnu_MODULES),$(modules_to_install))
+
+  # Ensure every module listed in PRODUCT_PACKAGES gets something installed
+  $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
+      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+          $(error Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
 endif
 
 

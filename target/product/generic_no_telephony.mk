@@ -20,7 +20,6 @@
 PRODUCT_POLICY := android.policy_phone
 
 PRODUCT_PACKAGES := \
-    AccountAndSyncSettings \
     DeskClock \
     AlarmProvider \
     Bluetooth \
@@ -44,7 +43,10 @@ PRODUCT_PACKAGES := \
     Updater \
     CalendarProvider \
     SyncProvider \
-    VpnDialogs
+    VpnDialogs \
+    bluetooth-health \
+    hostapd \
+    wpa_supplicant.conf
 
 PRODUCT_PACKAGES += \
     icu.dat
