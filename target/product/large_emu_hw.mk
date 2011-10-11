@@ -20,7 +20,6 @@
 PRODUCT_POLICY := android.policy_mid
 
 PRODUCT_PACKAGES := \
-    AccountAndSyncSettings \
     CarHome \
     DeskClock \
     AlarmProvider \
@@ -42,7 +41,11 @@ PRODUCT_PACKAGES := \
     Sync \
     Updater \
     CalendarProvider \
-    SyncProvider
+    SyncProvider \
+    bluetooth-health \
+    hostapd \
+    wpa_supplicant.conf
+
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
