@@ -282,10 +282,6 @@ endif
 PRODUCT_COPY_FILES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
 
-# The HTML file containing the contributors to the project.
-PRODUCT_CONTRIBUTORS_FILE := \
-    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CONTRIBUTORS_FILE))
-
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
 PRODUCT_PROPERTY_OVERRIDES := \
