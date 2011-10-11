@@ -18,7 +18,6 @@
 # It includes the base Android platform.
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 # Overrides
 PRODUCT_BRAND := generic_x86

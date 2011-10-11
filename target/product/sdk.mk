@@ -30,21 +30,18 @@ PRODUCT_PACKAGES := \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
-    Phone \
+	Phone \
 	PinyinIME \
 	Protips \
 	SoftKeyboard \
 	SystemUI \
 	Launcher2 \
-	AccountAndSyncSettings \
 	Development \
 	DrmProvider \
 	Fallback \
-	GPSEnable \
 	Settings \
 	SdkSetup \
 	CustomLocale \
-	gpstest \
 	sqlite3 \
 	LatinIME \
 	CertInstaller \
