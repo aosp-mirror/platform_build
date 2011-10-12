@@ -25,7 +25,6 @@ PRODUCT_PACKAGES := \
     libdrmframework_jni \
     libfwdlockengine \
     OpenWnn \
-    PhotoEditor \
     PinyinIME \
     libWnnEngDic \
     libWnnJpnDic \
@@ -53,4 +52,3 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
 
 # Get everything else from the parent package
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
-
