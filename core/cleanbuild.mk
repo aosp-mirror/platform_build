@@ -186,7 +186,8 @@ installclean_files := \
 	$(PRODUCT_OUT)/root \
 	$(PRODUCT_OUT)/system \
 	$(PRODUCT_OUT)/dex_bootjars \
-	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES
+	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES \
+	$(PRODUCT_OUT)/fake_packages
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.
