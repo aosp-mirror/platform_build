@@ -289,6 +289,18 @@ jni_shared_libraries := \
       $(addsuffix $(so_suffix), \
         $(LOCAL_JNI_SHARED_LIBRARIES)))
 
+# App explicitly requires the prebuilt NDK libstlport_shared.so.
+# libstlport_shared.so should never go to the system image.
+# Instead it should be packaged into the apk.
+ifeq (stlport_shared,$(LOCAL_NDK_STL_VARIANT))
+ifndef LOCAL_NDK_VERSION
+$(error LOCAL_NDK_VERSION has to be defined together with LOCAL_NDK_STL_VARIANT, \
+    LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
+endif
+jni_shared_libraries += \
+    $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/sources/cxx-stl/stlport/libs/$(TARGET_CPU_ABI)/libstlport_shared.so
+endif
+
 # Set the abi directory used by the local JNI shared libraries.
 # (Doesn't change how the local shared libraries are compiled, just
 # sets where they are stored in the apk.)
