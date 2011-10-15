@@ -228,12 +228,14 @@ endif
 # Add PRODUCT_LOCALES to PRODUCT_AAPT_CONFIG
 PRODUCT_AAPT_CONFIG := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_CONFIG))
 PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES) $(PRODUCT_AAPT_CONFIG)
+PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_PREF_CONFIG))
 
 # Default to medium-density assets.
 # (Can be overridden in the device config, e.g.: PRODUCT_AAPT_CONFIG += hdpi)
 PRODUCT_AAPT_CONFIG := $(strip \
     $(PRODUCT_AAPT_CONFIG) \
     $(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
+PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCT_AAPT_PREF_CONFIG))
 
 # Everyone gets nodpi assets which are density-independent.
 PRODUCT_AAPT_CONFIG += nodpi
@@ -242,6 +244,8 @@ PRODUCT_AAPT_CONFIG += nodpi
 comma := ,
 PRODUCT_AAPT_CONFIG := \
     $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
+PRODUCT_AAPT_PREF_CONFIG := \
+    $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_PREF_CONFIG)))
 
 PRODUCT_BRAND := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BRAND))
 
