@@ -118,7 +118,7 @@ else
 endif
 
 # A change in the list of aapt configs warrants an installclean, too.
-aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG))
+aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG) $(PRODUCT_AAPT_PREF_CONFIG))
 
 current_build_config := \
     $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(aapt_config_list)}
