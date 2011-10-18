@@ -500,7 +500,6 @@ GRANDFATHERED_USER_MODULES += \
 	vm-tests \
 	vold \
 	wdsclient \
-	whisperd \
 	wpa_supplicant \
 	yuv420sp2rgb \
 	zipalign
