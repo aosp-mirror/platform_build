@@ -389,13 +389,17 @@ div#naMessage {
 }
 
 div#naMessage div {
+  z-index:99;
   width:450px;
   position:fixed;
   margin:50px 0;
   padding:4em 4em 3em;
   background:#FFF;
-  background:rgba(255,255,255,0.7);
+  background:rgba(255,255,255,1);
   border:1px solid #dddd00;
+  box-shadow:-10px 10px 40px #888;
+  -moz-box-shadow:-10px 10px 40px #888;
+  -webkit-box-shadow:-10px 10px 40px #888;
 }
 /* IE6 can't position fixed */
 * html div#naMessage div { position:absolute; }
