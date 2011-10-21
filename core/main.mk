@@ -444,6 +444,7 @@ subdirs += \
 	sdk/layoutopt \
 	sdk/ninepatch \
 	sdk/rule_api \
+	sdk/lint \
 	sdk/sdkstats \
 	sdk/sdkmanager \
 	sdk/swtmenubar \
