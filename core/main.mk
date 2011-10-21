@@ -441,7 +441,6 @@ subdirs += \
 	sdk/ide_common \
 	sdk/jarutils \
 	sdk/layoutlib_api \
-	sdk/layoutopt \
 	sdk/ninepatch \
 	sdk/rule_api \
 	sdk/lint \
