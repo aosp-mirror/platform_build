@@ -41,6 +41,7 @@ PRODUCT_PACKAGES := \
     SharedStorageBackup \
     TelephonyProvider \
     UserDictionaryProvider \
+    VpnDialogs \
     apache-xml \
     bouncycastle \
     bu \
