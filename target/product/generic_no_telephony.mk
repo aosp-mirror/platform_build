@@ -43,7 +43,6 @@ PRODUCT_PACKAGES := \
     Updater \
     CalendarProvider \
     SyncProvider \
-    VpnDialogs \
     bluetooth-health \
     hostapd \
     wpa_supplicant.conf
