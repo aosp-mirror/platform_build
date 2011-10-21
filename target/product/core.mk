@@ -43,7 +43,7 @@ PRODUCT_PACKAGES := \
     TelephonyProvider \
     TtsService \
     UserDictionaryProvider \
-    VpnServices \
+    VpnDialogs \
     apache-xml \
     bluetooth-health \
     bouncycastle \

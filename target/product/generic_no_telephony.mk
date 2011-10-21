@@ -43,8 +43,7 @@ PRODUCT_PACKAGES := \
     SystemUI \
     Updater \
     CalendarProvider \
-    SyncProvider \
-    VpnDialogs
+    SyncProvider
 
 PRODUCT_PACKAGES += \
     icu.dat
