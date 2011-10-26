@@ -102,7 +102,7 @@ android_config_h := $(call select-android-config-h,linux-arm)
 arch_include_dir := $(dir $(android_config_h))
 
 TARGET_GLOBAL_CFLAGS += \
-			-msoft-float -fpic \
+			-msoft-float -fpic -fPIE \
 			-ffunction-sections \
 			-fdata-sections \
 			-funwind-tables \
@@ -266,7 +266,7 @@ $(hide) $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-executable-inner
-$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
 	-Wl,-dynamic-linker,/system/bin/linker \
     -Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
