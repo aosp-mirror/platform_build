@@ -77,6 +77,7 @@ PRODUCT_PACKAGES += \
 	ddms \
 	hierarchyviewer \
 	draw9patch \
+	layoutopt \
 	traceview \
 	android \
 	dexdump \
@@ -94,6 +95,7 @@ PRODUCT_PACKAGES += \
 	ddmuilib \
 	draw9patch \
 	hierarchyviewer \
+	layoutopt \
 	uix \
 	traceview \
 	anttasks \
@@ -102,6 +104,7 @@ PRODUCT_PACKAGES += \
 	sdkmanager \
 	swtmenubar \
 	swing-worker-1.1 \
+	groovy-all-1.7.0 \
 	commons-compress-1.0 \
 	emmalib \
 	jcommon-1.0.12 \

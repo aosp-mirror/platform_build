@@ -134,6 +134,7 @@ GRANDFATHERED_USER_MODULES += \
 	gps.mahimahi \
 	gralloc.default \
 	gralloc.qsd8k \
+	groovy-all-1.7.0 \
 	grxmlcompile \
 	guava \
 	guavalib \
@@ -170,6 +171,7 @@ GRANDFATHERED_USER_MODULES += \
 	layoutlib_api \
 	layoutlib_create \
 	layoutlib_utils \
+	layoutopt \
 	liba2dp \
 	libabi \
 	libandroid \
