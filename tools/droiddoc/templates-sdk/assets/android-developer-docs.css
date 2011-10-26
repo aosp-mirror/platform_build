@@ -381,6 +381,21 @@ div.api-level a {
   color:#999;
 }
 
+div#deprecatedSticker {
+  display:none;
+  z-index:99;
+  position:fixed;
+  right:15px;
+  top:114px;
+  margin:0;
+  padding:1em;
+  background:#FFF;
+  border:1px solid #dddd00;
+  box-shadow:-5px 5px 10px #ccc;
+  -moz-box-shadow:-5px 5px 10px #ccc;
+  -webkit-box-shadow:-5px 5px 10px #ccc;
+}
+
 div#naMessage {
   display:none;
   width:555px;
@@ -395,7 +410,6 @@ div#naMessage div {
   margin:50px 0;
   padding:4em 4em 3em;
   background:#FFF;
-  background:rgba(255,255,255,1);
   border:1px solid #dddd00;
   box-shadow:-10px 10px 40px #888;
   -moz-box-shadow:-10px 10px 40px #888;
