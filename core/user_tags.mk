@@ -171,7 +171,6 @@ GRANDFATHERED_USER_MODULES += \
 	layoutlib_api \
 	layoutlib_create \
 	layoutlib_utils \
-	layoutopt \
 	liba2dp \
 	libabi \
 	libandroid \
