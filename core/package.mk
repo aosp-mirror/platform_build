@@ -147,7 +147,9 @@ endif # all_resources
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
-ifeq (true,$(WITH_DEXPREOPT))
+ifneq (true,$(WITH_DEXPREOPT))
+LOCAL_DEX_PREOPT :=
+else
 ifeq (,$(TARGET_BUILD_APPS))
 ifneq (,$(LOCAL_SRC_FILES))
 ifndef LOCAL_DEX_PREOPT
@@ -155,6 +157,9 @@ LOCAL_DEX_PREOPT := true
 endif
 endif
 endif
+endif
+ifeq (false,$(LOCAL_DEX_PREOPT))
+LOCAL_DEX_PREOPT :=
 endif
 
 #################################
@@ -344,7 +349,7 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
-ifeq ($(LOCAL_DEX_PREOPT),true)
+ifdef LOCAL_DEX_PREOPT
 # Make sure the boot jars get dexpreopt-ed first
 $(LOCAL_BUILT_MODULE): $(DEXPREOPT_BOOT_ODEXS) | $(DEXPREOPT) $(DEXOPT)
 endif
@@ -374,10 +379,12 @@ endif
 	$(sign-package)
 	@# Alignment must happen after all other zip operations.
 	$(align-package)
-ifeq ($(LOCAL_DEX_PREOPT),true)
+ifdef LOCAL_DEX_PREOPT
 	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
 	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
+endif
 
 built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
 $(built_odex): $(LOCAL_BUILT_MODULE)

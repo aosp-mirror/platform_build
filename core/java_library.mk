@@ -29,12 +29,17 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 common_javalib.jar := $(intermediates.COMMON)/$(LOCAL_BUILT_MODULE_STEM)
 LOCAL_INTERMEDIATE_TARGETS += $(common_javalib.jar)
 
-ifeq (true,$(WITH_DEXPREOPT))
+ifneq (true,$(WITH_DEXPREOPT))
+LOCAL_DEX_PREOPT :=
+else
 ifeq (,$(TARGET_BUILD_APPS))
 ifndef LOCAL_DEX_PREOPT
 LOCAL_DEX_PREOPT := true
 endif
 endif
+endif
+ifeq (false,$(LOCAL_DEX_PREOPT))
+LOCAL_DEX_PREOPT :=
 endif
 
 #################################
@@ -64,7 +69,7 @@ ifneq ($(extra_jar_args),)
 	$(add-java-resources-to-package)
 endif
 
-ifeq ($(LOCAL_DEX_PREOPT),true)
+ifdef LOCAL_DEX_PREOPT
 dexpreopt_boot_jar_module := $(filter $(LOCAL_MODULE),$(DEXPREOPT_BOOT_JARS_MODULES))
 ifneq ($(dexpreopt_boot_jar_module),)
 # boot jar's rules are defined in dex_preopt.mk
@@ -89,7 +94,9 @@ $(built_odex) : $(common_javalib.jar) | $(DEXPREOPT) $(DEXOPT)
 
 $(LOCAL_BUILT_MODULE) : $(common_javalib.jar) | $(ACP) $(AAPT)
 	$(call copy-file-to-target)
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
+endif
 
 endif # dexpreopt_boot_jar_module
 
