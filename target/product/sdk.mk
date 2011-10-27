@@ -94,8 +94,6 @@ PRODUCT_PACKAGES += \
 	ddmuilib \
 	draw9patch \
 	hierarchyviewer \
-	layoutopt \
-	uix \
 	traceview \
 	anttasks \
 	sdklib \

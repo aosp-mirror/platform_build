@@ -493,7 +493,6 @@ GRANDFATHERED_USER_MODULES += \
 	traceview \
 	tune2fs \
 	tune2fs_host \
-	uix \
 	usbtest \
 	vdc \
 	vm-tests \
