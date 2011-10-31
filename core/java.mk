@@ -238,13 +238,19 @@ $(full_classes_stubs_jar) : $(LOCAL_BUILT_MODULE) | $(ACP)
 	$(hide) $(ACP) -fp $(PRIVATE_SOURCE_FILE) $@
 ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 
+# The layers file allows you to enforce a layering between java packages.
+# Run build/tools/java-layers.py for more details.
+layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
+$(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
+
 # Compile the java files to a .jar file.
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
-$(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) $(jar_manifest_file) \
-	$(RenderScript_file_stamp) $(proto_java_sources_file_stamp)
+$(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps)\
+                            $(jar_manifest_file) $(layers_file) \
+                            $(RenderScript_file_stamp) $(proto_java_sources_file_stamp)
 	$(transform-java-to-classes.jar)
 
 # All of the rules after full_classes_compiled_jar are very unlikely
