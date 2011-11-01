@@ -47,6 +47,7 @@ import zipfile
 if not hasattr(os, "SEEK_SET"):
   os.SEEK_SET = 0
 
+import build_image
 import common
 
 OPTIONS = common.OPTIONS
@@ -64,27 +65,13 @@ def AddUserdata(output_zip):
   os.mkdir(user_dir)
   img = tempfile.NamedTemporaryFile()
 
-  build_command = []
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "data")
   fstab = OPTIONS.info_dict["fstab"]
-  if fstab and fstab["/data"].fs_type.startswith("ext"):
-    build_command = ["mkuserimg.sh"]
-    if "extfs_sparse_flag" in OPTIONS.info_dict:
-      build_command.append(OPTIONS.info_dict["extfs_sparse_flag"])
-    build_command.extend([user_dir, img.name,
-                     fstab["/data"].fs_type, "data"])
-    if "userdata_size" in OPTIONS.info_dict:
-      build_command.append(str(OPTIONS.info_dict["userdata_size"]))
-  else:
-    build_command = ["mkyaffs2image", "-f"]
-    extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
-    if extra:
-      build_command.extend(extra.split())
-    build_command.append(user_dir)
-    build_command.append(img.name)
-
-  p = common.Run(build_command);
-  p.communicate()
-  assert p.returncode == 0, "build userdata.img image failed"
+  if fstab:
+    image_props["fs_type" ] = fstab["/data"].fs_type
+  succ = build_image.BuildImage(user_dir, image_props, img.name)
+  assert succ, "build userdata.img image failed"
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
   output_zip.write(img.name, "userdata.img")
@@ -115,28 +102,14 @@ def AddSystem(output_zip):
     if (e.errno == errno.EEXIST):
       pass
 
-  build_command = []
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "system")
   fstab = OPTIONS.info_dict["fstab"]
-  if fstab and fstab["/system"].fs_type.startswith("ext"):
-
-    build_command = ["mkuserimg.sh"]
-    if "extfs_sparse_flag" in OPTIONS.info_dict:
-      build_command.append(OPTIONS.info_dict["extfs_sparse_flag"])
-    build_command.extend([os.path.join(OPTIONS.input_tmp, "system"), img.name,
-                     fstab["/system"].fs_type, "system"])
-    if "system_size" in OPTIONS.info_dict:
-      build_command.append(str(OPTIONS.info_dict["system_size"]))
-  else:
-    build_command = ["mkyaffs2image", "-f"]
-    extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
-    if extra:
-      build_command.extend(extra.split())
-    build_command.append(os.path.join(OPTIONS.input_tmp, "system"))
-    build_command.append(img.name)
-
-  p = common.Run(build_command)
-  p.communicate()
-  assert p.returncode == 0, "build system.img image failed"
+  if fstab:
+    image_props["fs_type" ] = fstab["/system"].fs_type
+  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "system"),
+                                image_props, img.name)
+  assert succ, "build system.img image failed"
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
