@@ -1455,6 +1455,8 @@ $(hide) $(1) -encoding UTF-8 \
     $(PRIVATE_JAVACFLAGS) \
     \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 )
+$(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/tools/java-layers.py \
+    $(PRIVATE_JAVA_LAYERS_FILE) \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq,)
 $(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
 $(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
