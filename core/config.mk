@@ -117,7 +117,10 @@ TARGET_SHELL := mksh
 # If this file doesn't exist, the environemnt variables will
 # be used, and if that doesn't work, then the default is an
 # arm build
--include $(TOPDIR)buildspec.mk
+ifndef ANDROID_BUILDSPEC
+ANDROID_BUILDSPEC := $(TOPDIR)buildspec.mk
+endif
+-include $(ANDROID_BUILDSPEC)
 
 # ---------------------------------------------------------------
 # Define most of the global variables.  These are the ones that
