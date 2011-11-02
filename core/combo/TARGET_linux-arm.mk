@@ -288,7 +288,7 @@ $(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
 endef
 
 define transform-o-to-static-executable-inner
-$(hide) $(PRIVATE_CXX) -nostdlib -Bstatic -Wl,-T,$(BUILD_SYSTEM)/armelf.x \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bstatic \
     -Wl,--gc-sections \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \
