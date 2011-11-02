@@ -80,34 +80,6 @@ def AddUserdata(output_zip):
   os.rmdir(temp_dir)
 
 
-def AddCache(output_zip):
-  """Create an empty cache image and store it in output_zip."""
-
-  print "creating cache.img..."
-
-  # The name of the directory it is making an image out of matters to
-  # mkyaffs2image.  So we create a temp dir, and within it we create an
-  # empty dir named "cache", and build the image from that.
-  temp_dir = tempfile.mkdtemp()
-  user_dir = os.path.join(temp_dir, "cache")
-  os.mkdir(user_dir)
-  img = tempfile.NamedTemporaryFile()
-
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "cache")
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type" ] = fstab["/cache"].fs_type
-  succ = build_image.BuildImage(user_dir, image_props, img.name)
-  assert succ, "build cache.img image failed"
-
-  common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
-  output_zip.write(img.name, "cache.img")
-  img.close()
-  os.rmdir(user_dir)
-  os.rmdir(temp_dir)
-
-
 def AddSystem(output_zip):
   """Turn the contents of SYSTEM into a system image and store it in
   output_zip."""
@@ -191,7 +163,6 @@ def main(argv):
   if not bootable_only:
     AddSystem(output_zip)
     AddUserdata(output_zip)
-    AddCache(output_zip)
     CopyInfo(output_zip)
 
   print "cleaning up..."
