@@ -83,6 +83,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "data":
     if "userdata_size" in glob_dict:
       d["partition_size"] = str(glob_dict["userdata_size"])
+  elif mount_point == "cache":
+    if "cache_size" in glob_dict:
+      d["partition_size"] = str(glob_dict["cache_size"])
 
   return d
 
@@ -117,6 +120,8 @@ def main(argv):
     mount_point = "system"
   elif image_filename == "userdata.img":
     mount_point = "data"
+  elif image_filename == "cache.img":
+    mount_point = "cache"
 
   image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
   if not BuildImage(in_dir, image_properties, out_file):

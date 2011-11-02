@@ -138,6 +138,7 @@ def LoadInfoDict(zip):
   makeint("blocksize")
   makeint("system_size")
   makeint("userdata_size")
+  makeint("cache_size")
   makeint("recovery_size")
   makeint("boot_size")
 
