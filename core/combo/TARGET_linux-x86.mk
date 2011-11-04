@@ -73,7 +73,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-Wa,--noexecstack \
 			-Werror=format-security \
 			-Wstrict-aliasing=2 \
-			-fPIC \
+			-fPIC -fPIE \
 			-ffunction-sections \
 			-finline-functions \
 			-finline-limit=300 \
@@ -158,6 +158,7 @@ $(hide) $(PRIVATE_CXX) \
 	-nostdlib -Bdynamic \
 	-Wl,-dynamic-linker,/system/bin/linker \
 	-Wl,-z,nocopyreloc \
+	-fPIE -pie \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
