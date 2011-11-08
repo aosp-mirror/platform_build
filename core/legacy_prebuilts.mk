@@ -84,7 +84,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	libGLESv1_CM_tegra.so \
 	libGLESv2_POWERVR_SGX530_121.so \
 	libGLESv2_tegra.so \
-	libmdmctrl.a \
 	libmoto_ril.so \
 	libpppd_plugin-ril.so \
 	libril_rds.so \
