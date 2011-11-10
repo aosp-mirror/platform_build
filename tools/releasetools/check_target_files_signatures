@@ -347,8 +347,8 @@ class TargetFiles(object):
     for i in all:
       if i in self.apks:
         if i in other.apks:
-          # in both; should have at least one cert in common
-          if not (self.apks[i].cert & other.apks[i].cert):
+          # in both; should have same set of certs
+          if self.apks[i].certs != other.apks[i].certs:
             by_certpair.setdefault((other.apks[i].certs,
                                     self.apks[i].certs), []).append(i)
         else:
