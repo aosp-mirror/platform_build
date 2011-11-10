@@ -67,22 +67,28 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     mount_point: such as "system", "data" etc.
   """
   d = {}
+
+  def copy_prop(src_p, dest_p):
+    if src_p in glob_dict:
+      d[dest_p] = str(glob_dict[src_p])
+
   common_props = (
-      "fs_type",
       "extfs_sparse_flag",
       "mkyaffs2_extra_flags",
       )
   for p in common_props:
-    if p in glob_dict:
-      d[p] = glob_dict[p]
+    copy_prop(p, p)
 
   d["mount_point"] = mount_point
   if mount_point == "system":
-    if "system_size" in glob_dict:
-      d["partition_size"] = str(glob_dict["system_size"])
+    copy_prop("fs_type", "fs_type")
+    copy_prop("system_size", "partition_size")
   elif mount_point == "data":
-    if "userdata_size" in glob_dict:
-      d["partition_size"] = str(glob_dict["userdata_size"])
+    copy_prop("fs_type", "fs_type")
+    copy_prop("userdata_size", "partition_size")
+  elif mount_point == "cache":
+    copy_prop("cache_fs_type", "fs_type")
+    copy_prop("cache_size", "partition_size")
 
   return d
 
@@ -117,6 +123,11 @@ def main(argv):
     mount_point = "system"
   elif image_filename == "userdata.img":
     mount_point = "data"
+  elif image_filename == "cache.img":
+    mount_point = "cache"
+  else:
+    print >> sys.stderr, "error: unknown image file name ", image_filename
+    exit(1)
 
   image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
   if not BuildImage(in_dir, image_properties, out_file):
