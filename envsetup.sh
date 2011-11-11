@@ -704,6 +704,14 @@ function gdbclient()
    local OUT_SO_SYMBOLS=$(get_abs_build_var TARGET_OUT_SHARED_LIBRARIES_UNSTRIPPED)
    local OUT_EXE_SYMBOLS=$(get_abs_build_var TARGET_OUT_EXECUTABLES_UNSTRIPPED)
    local PREBUILTS=$(get_abs_build_var ANDROID_PREBUILTS)
+   local ARCH=$(get_build_var TARGET_ARCH)
+   local GDB
+   case "$ARCH" in
+       x86) GDB=i686-android-linux-gdb;;
+       arm) GDB=arm-linux-androideabi-gdb;;
+       *) echo "Unknown arch $ARCH"; return 1;;
+   esac
+
    if [ "$OUT_ROOT" -a "$PREBUILTS" ]; then
        local EXE="$1"
        if [ "$EXE" ] ; then
@@ -744,7 +752,7 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       arm-linux-androideabi-gdb -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       $GDB -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
