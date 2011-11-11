@@ -69,26 +69,21 @@ $(foreach cf,$(files_to_copy), \
   $(eval sdk_addon_deps += $(_dest)) \
  )
 
-# We don't know about all of the docs files, so depend on the timestamp for
-# that, and record the directory, and the packaging rule will just copy the
+# We don't know about all of the docs files, so depend on the timestamps for
+# them, and record the directories, and the packaging rule will just copy the
 # whole thing.
-doc_module := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_DOC_MODULE))
-ifneq ($(doc_module),)
-  doc_timestamp := $(call doc-timestamp-for, $(doc_module))
-  sdk_addon_deps += $(doc_timestamp)
-  $(full_target): PRIVATE_DOCS_DIR := $(OUT_DOCS)/$(doc_module)
-else
-  $(full_target): PRIVATE_DOCS_DIR :=
-endif
+doc_modules := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_DOC_MODULES))
+sdk_addon_deps += $(foreach dm, $(doc_modules), $(call doc-timestamp-for, $(dm)))
+$(full_target): PRIVATE_DOCS_DIRS := $(addprefix $(OUT_DOCS)/, $(doc_modules))
 
 $(full_target): PRIVATE_STAGING_DIR := $(staging)
 
 $(full_target): $(sdk_addon_deps) | $(ACP)
 	@echo Packaging SDK Addon: $@
 	$(hide) mkdir -p $(PRIVATE_STAGING_DIR)/docs/reference
-	$(hide) if [ -n "$(PRIVATE_DOCS_DIR)" ] ; then \
-	    $(ACP) -r $(PRIVATE_DOCS_DIR)/* $(PRIVATE_STAGING_DIR)/docs/reference ;\
-	  fi
+	$(hide) for d in $(PRIVATE_DOCS_DIRS); do \
+	    $(ACP) -r $$d/* $(PRIVATE_STAGING_DIR)/docs/reference ;\
+	  done
 	$(hide) mkdir -p $(dir $@)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rq $$F * )
 
