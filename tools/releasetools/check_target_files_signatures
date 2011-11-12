@@ -187,15 +187,15 @@ def CertFromPKCS7(data, filename):
 class APK(object):
   def __init__(self, full_filename, filename):
     self.filename = filename
-    self.certs = set()
     Push(filename+":")
     try:
-      self.RecordCert(full_filename)
+      self.RecordCerts(full_filename)
       self.ReadManifest(full_filename)
     finally:
       Pop()
 
-  def RecordCert(self, full_filename):
+  def RecordCerts(self, full_filename):
+    out = set()
     try:
       f = open(full_filename)
       apk = zipfile.ZipFile(f, "r")
@@ -205,12 +205,13 @@ class APK(object):
            (info.filename.endswith(".DSA") or info.filename.endswith(".RSA")):
           pkcs7 = apk.read(info.filename)
           cert = CertFromPKCS7(pkcs7, info.filename)
-          self.certs.add(cert)
+          out.add(cert)
           ALL_CERTS.Add(cert)
       if not pkcs7:
         AddProblem("no signature")
     finally:
       f.close()
+      self.certs = frozenset(out)
 
   def ReadManifest(self, full_filename):
     p = common.Run(["aapt", "dump", "xmltree", full_filename,
