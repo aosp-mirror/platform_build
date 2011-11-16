@@ -1206,11 +1206,12 @@ BUILT_TESTS_ZIP_PACKAGE := $(intermediates)/$(name).zip
 $(BUILT_TESTS_ZIP_PACKAGE): intermediates := $(intermediates)
 $(BUILT_TESTS_ZIP_PACKAGE): zip_root := $(intermediates)/$(name)
 
-# Depending on the images guarantees that the underlying
+# Depending on the dependencies of system image and userdata image.
+# But we don't need to really create them.
 # directories are up-to-date.
 $(BUILT_TESTS_ZIP_PACKAGE): \
-		$(BUILT_SYSTEMIMAGE) \
-		$(INSTALLED_USERDATAIMAGE_TARGET) \
+		$(FULL_SYSTEMIMAGE_DEPS) \
+		$(INTERNAL_USERDATAIMAGE_FILES) \
 		| $(ACP)
 	@echo "Package test files: $@"
 	$(hide) rm -rf $@ $(zip_root)
