@@ -1214,6 +1214,7 @@ endif    # TARGET_NO_KERNEL != true
 endif    # TARGET_DEVICE != generic*
 endif    # TARGET_PRODUCT != sdk
 
+ifdef is_tests_build
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".
 # This is very similar to BUILT_TARGET_FILES_PACKAGE, but we
@@ -1244,23 +1245,13 @@ $(BUILT_TESTS_ZIP_PACKAGE): \
 		$(TARGET_OUT_DATA),$(zip_root)/DATA)
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
 
-.PHONY: tests-zip-package
-tests-zip-package: $(BUILT_TESTS_ZIP_PACKAGE)
-
-# Target needed by tests build
-.PHONY: tests-build-target
-tests-build-target: $(BUILT_TESTS_ZIP_PACKAGE)
-
-ifneq (,$(filter $(MAKECMDGOALS),tests-build-target))
-  $(call dist-for-goals, tests-build-target, \
-          $(BUILT_TESTS_ZIP_PACKAGE))
-endif
-
 .PHONY: tests
 tests: $(BUILT_TESTS_ZIP_PACKAGE)
+
 ifneq (,$(filter tests, $(MAKECMDGOALS)))
-$(call dist-for-goals, tests, $(BUILT_TESTS_ZIP_PACKAGE))
+  $(call dist-for-goals, tests, $(BUILT_TESTS_ZIP_PACKAGE))
 endif
+endif # is_tests_build
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it

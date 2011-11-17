@@ -232,8 +232,8 @@ include $(BUILD_SYSTEM)/dex_preopt.mk
 ifneq ($(filter user userdebug eng,$(MAKECMDGOALS)),)
 $(info ***************************************************************)
 $(info ***************************************************************)
-$(info Do not pass '$(filter user userdebug eng tests,$(MAKECMDGOALS))' on \
-		the make command line.)
+$(info Do not pass '$(filter user userdebug eng,$(MAKECMDGOALS))' on \
+       the make command line.)
 $(info Set TARGET_BUILD_VARIANT in buildspec.mk, or use lunch or)
 $(info choosecombo.)
 $(info ***************************************************************)
@@ -343,12 +343,6 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
           $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))) \
           ro.setupwizard.mode=OPTIONAL
 endif
-endif
-
-## tests ##
-
-ifeq ($(TARGET_BUILD_VARIANT),tests)
-tags_to_install := debug eng tests
 endif
 
 ## sdk ##
