@@ -101,3 +101,17 @@ FRAMEWORKS_BASE_SUBDIRS := \
 #
 FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/base/,$(FRAMEWORKS_BASE_SUBDIRS))
+
+#
+# A list of all source roots under frameworks/support.
+#
+FRAMEWORKS_SUPPORT_SUBDIRS := \
+	v4 \
+	v13 \
+
+#
+# A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
+# the root of the tree.
+#
+FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
+	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS))
