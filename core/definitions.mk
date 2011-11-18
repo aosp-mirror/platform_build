@@ -1104,7 +1104,7 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
     filelist=; \
-    for f in `$(HOST_AR) t $(1) | grep '\.o$$'`; do \
+    for f in `$(HOST_AR) t $(1) | \grep '\.o$$'`; do \
         $(HOST_AR) p $(1) $$f > $$ldir/$$f; \
         filelist="$$filelist $$ldir/$$f"; \
     done ; \

@@ -502,8 +502,8 @@ complete -F _lunch lunch
 # Run tapas with one ore more app names (from LOCAL_PACKAGE_NAME)
 function tapas()
 {
-    local variant=$(echo -n $(echo $* | xargs -n 1 echo | grep -E '^(user|userdebug|eng)$'))
-    local apps=$(echo -n $(echo $* | xargs -n 1 echo | grep -E -v '^(user|userdebug|eng)$'))
+    local variant=$(echo -n $(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$'))
+    local apps=$(echo -n $(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng)$'))
 
     if [ $(echo $variant | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build variants supplied: $variant"
@@ -1015,7 +1015,7 @@ function godir () {
         echo ""
     fi
     local lines
-    lines=($(grep "$1" $T/filelist | sed -e 's/\/[^/]*$//' | sort | uniq))
+    lines=($(\grep "$1" $T/filelist | sed -e 's/\/[^/]*$//' | sort | uniq))
     if [[ ${#lines[@]} = 0 ]]; then
         echo "Not found"
         return
