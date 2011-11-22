@@ -16,6 +16,17 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
+ifdef LOCAL_IS_HOST_MODULE
+  my_prefix:=HOST_
+else
+  my_prefix:=TARGET_
+endif
+ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
+  # Put the built targets of all shared libraries in a common directory
+  # to simplify the link line.
+  OVERRIDE_BUILT_MODULE_PATH := $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
+endif
+
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
 ifeq (true,$(WITH_DEXPREOPT))
 ifeq (,$(TARGET_BUILD_APPS))
