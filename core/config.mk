@@ -340,7 +340,7 @@ PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 # ###############################################################
 
 HISTORICAL_SDK_VERSIONS_ROOT := $(TOPDIR)prebuilts/sdk
-HISTORICAL_NDK_VERSIONS_ROOT := $(TOPDIR)prebuilt/ndk
+HISTORICAL_NDK_VERSIONS_ROOT := $(TOPDIR)prebuilts/ndk
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.
