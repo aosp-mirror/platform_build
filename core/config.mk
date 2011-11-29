@@ -339,7 +339,7 @@ PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 # For use with the LOCAL_SDK_VERSION variable for include $(BUILD_PACKAGE)
 # ###############################################################
 
-HISTORICAL_SDK_VERSIONS_ROOT := $(TOPDIR)prebuilt/sdk
+HISTORICAL_SDK_VERSIONS_ROOT := $(TOPDIR)prebuilts/sdk
 HISTORICAL_NDK_VERSIONS_ROOT := $(TOPDIR)prebuilt/ndk
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
