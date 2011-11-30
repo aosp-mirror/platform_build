@@ -611,12 +611,17 @@ function mmm()
     T=$(gettop)
     if [ "$T" ]; then
         local MAKEFILE=
+        local MODULES=
         local ARGS=
         local DIR TO_CHOP
         local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
         local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
         for DIR in $DIRS ; do
-            DIR=`echo $DIR | sed -e 's:/$::'`
+            MODULES=`echo $DIR | sed -n -e 's/.*:\(.*$\)/\1/p' | sed 's/,/ /'`
+            if [ "$MODULES" = "" ]; then
+                MODULES=all_modules
+            fi
+            DIR=`echo $DIR | sed -e 's/:.*//' -e 's:/$::'`
             if [ -f $DIR/Android.mk ]; then
                 TO_CHOP=`(cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
                 TO_CHOP=`expr $TO_CHOP + 1`
@@ -643,7 +648,7 @@ function mmm()
                 fi
             fi
         done
-        ONE_SHOT_MAKEFILE="$MAKEFILE" make -C $T $DASH_ARGS all_modules $ARGS
+        ONE_SHOT_MAKEFILE="$MAKEFILE" make -C $T $DASH_ARGS $MODULES $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi
