@@ -1865,7 +1865,6 @@ $(if $(2), \
   size=$$(for i in $(1); do $(call get-file-size,$$i); echo +; done; echo 0); \
   total=$$(( $$( echo "$$size" ) )); \
   printname=$$(echo -n "$(1)" | tr " " +); \
-  echo "$$printname total size is $$total"; \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
   if [ "$(3)" == "yaffs" ]; then \
     reservedblocks=8; \
@@ -1877,6 +1876,7 @@ $(if $(2), \
   reserve=$$(((twoblocks > onepct ? twoblocks : onepct) + \
                reservedblocks * img_blocksize)); \
   maxsize=$$(($(2) - reserve)); \
+  echo "$$printname maxsize=$$maxsize blocksize=$$img_blocksize total=$$total reserve=$$reserve"; \
   if [ "$$total" -gt "$$maxsize" ]; then \
     echo "error: $$printname too large ($$total > [$(2) - $$reserve])"; \
     false; \
