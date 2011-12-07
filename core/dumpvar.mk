@@ -3,7 +3,11 @@
 # what to add to the path given the config we have chosen.
 ifeq ($(CALLED_FROM_SETUP),true)
 
+ifneq ($(filter /%,$(HOST_OUT_EXECUTABLES)),)
+ABP:=$(HOST_OUT_EXECUTABLES)
+else
 ABP:=$(PWD)/$(HOST_OUT_EXECUTABLES)
+endif
 
 # Add the toolchain bin dir if it actually exists
 ifneq ($(wildcard $(PWD)/prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-linux-androideabi-4.4.x/bin),)
@@ -72,5 +76,6 @@ $(info   HOST_ARCH=$(HOST_ARCH))
 $(info   HOST_OS=$(HOST_OS))
 $(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
 $(info   BUILD_ID=$(BUILD_ID))
+$(info   OUT_DIR=$(OUT_DIR))
 $(info ============================================)
 endif
