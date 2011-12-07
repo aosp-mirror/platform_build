@@ -42,7 +42,11 @@ ifdef dumpvar_goals
   absolute_dumpvar := $(strip $(filter abs-%,$(dumpvar_goals)))
   ifdef absolute_dumpvar
     dumpvar_goals := $(patsubst abs-%,%,$(dumpvar_goals))
-    DUMPVAR_VALUE := $(PWD)/$($(dumpvar_goals))
+    ifneq ($(filter /%,$($(dumpvar_goals))),)
+      DUMPVAR_VALUE := $($(dumpvar_goals))
+    else
+      DUMPVAR_VALUE := $(PWD)/$($(dumpvar_goals))
+    endif
     dumpvar_target := dumpvar-abs-$(dumpvar_goals)
   else
     DUMPVAR_VALUE := $($(dumpvar_goals))
