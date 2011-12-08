@@ -802,6 +802,7 @@ $(hide) $(PRIVATE_RS_CC) \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
   -a $@ -MD \
   $(addprefix -target-api , $(PRIVATE_RS_TARGET_API)) \
+  $(PRIVATE_RS_FLAGS) \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
   $(PRIVATE_RS_SOURCE_FILES)
 #$(hide) $(LLVM_RS_LINK) \

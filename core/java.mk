@@ -152,6 +152,11 @@ ifeq ($(LOCAL_RENDERSCRIPT_CC),)
 LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
 endif
 
+# Turn on all warnings and warnings as errors for RS compiles.
+# This can be disabled with LOCAL_RENDERSCRIPT_FLAGS := -Wno-error
+renderscript_flags := -Wall -Werror
+renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
+
 # prepend the RenderScript system include path
 ifneq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
 LOCAL_RENDERSCRIPT_INCLUDES := \
@@ -171,6 +176,7 @@ endif
 
 $(RenderScript_file_stamp): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
 $(RenderScript_file_stamp): PRIVATE_RS_CC := $(LOCAL_RENDERSCRIPT_CC)
+$(RenderScript_file_stamp): PRIVATE_RS_FLAGS := $(renderscript_flags)
 $(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
 # By putting the generated java files into $(LOCAL_INTERMEDIATE_SOURCE_DIR), they will be
 # automatically found by the java compiling function transform-java-to-classes.jar.
