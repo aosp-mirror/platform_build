@@ -110,8 +110,10 @@ endif
 # find files like MODULE_LICENSE_GPL_AND_AFL but exclude files like
 # MODULE_LICENSE_LGPL.
 #
-ifneq ($(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*_GPL* MODULE_LICENSE*_MPL*),)
+gpl_license_file := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*_GPL* MODULE_LICENSE*_MPL*)
+ifneq ($(gpl_license_file),)
   LOCAL_MODULE_TAGS += gnu
+  ALL_GPL_MODULE_LICENSE_FILES := $(sort $(ALL_GPL_MODULE_LICENSE_FILES) $(gpl_license_file))
 endif
 
 #
