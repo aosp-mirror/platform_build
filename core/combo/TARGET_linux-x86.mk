@@ -96,8 +96,25 @@ TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
 ifeq ($(TARGET_ARCH_VARIANT),x86-atom)
-    TARGET_GLOBAL_CFLAGS += -march=atom -mstackrealign -DUSE_SSSE3 -DUSE_SSE2 -mfpmath=sse
+    # Basic ATOM flags.
+    TARGET_GLOBAL_CFLAGS += -march=atom -mstackrealign -mfpmath=sse
+
+    # There are various levels of ATOM processors out there. Different ones have different
+    # capabilities. This first define matches the NDK's minimum ABI requirements.
+    # Note: Not all of the flags set here are actually used in Android. They are provided
+    # to allow for the addition of corresponding optimizations.
+    TARGET_GLOBAL_CFLAGS += -DUSE_MMX -DUSE_SSE -DUSE_SSE2 -DUSE_SSE3
+
+    # If you wish to build a BSP that will only be used on hardware that has additional
+    # available instructions, enable them here. By default, this is commented off so that
+    # the default images can run on all processors that are NDK ABI compliant.
+    # TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3
 else
+    # Plain 'x86' - lowest common denominator. This should run pretty much on any hardware.
+    #
+    # Note: The NDK's ABI (see the NDK ABI documentation) requires many of the more recent
+    # instruction set additions. You can build an "x86" BSP that will run on very old hardware,
+    # but it won't be able to run much of the x86 NDK compliant code.
     TARGET_GLOBAL_CFLAGS += -march=i686
 endif
 
