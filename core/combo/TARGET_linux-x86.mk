@@ -22,6 +22,18 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := x86
 endif
 
+# Include the arch-variant-specific configuration file.
+# Its role is to define various ARCH_X86_HAVE_XXX feature macros,
+# plus initial values for TARGET_GLOBAL_CFLAGS
+#
+TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
+ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
+$(error Unknown $(TARGET_ARCH) architecture version: $(TARGET_ARCH_VARIANT))
+endif
+
+include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
+
+
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
 TARGET_TOOLS_PREFIX := \
@@ -84,44 +96,48 @@ TARGET_GLOBAL_CFLAGS += \
 			-funwind-tables \
 			-include $(call select-android-config-h,target_linux-x86)
 
-# Needs to be fixed later
-#TARGET_GLOBAL_CFLAGS += \
-#			-fstack-protector
-
-# Needs to be added for RELEASE
-#TARGET_GLOBAL_CFLAGS += \
-#			-DNDEBUG
-
+# XXX: Not sure this is still needed. Must check with our toolchains.
 TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
-ifeq ($(TARGET_ARCH_VARIANT),x86-atom)
-    # Basic ATOM flags.
-    TARGET_GLOBAL_CFLAGS += -march=atom -mstackrealign -mfpmath=sse
+# XXX: Our toolchain is normally configured to always set these flags by default
+# however, there have been reports that this is sometimes not the case. So make
+# them explicit here unless we have the time to carefully check it
+#
+TARGET_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse
 
-    # There are various levels of ATOM processors out there. Different ones have different
-    # capabilities. This first define matches the NDK's minimum ABI requirements.
-    # Note: Not all of the flags set here are actually used in Android. They are provided
-    # to allow for the addition of corresponding optimizations.
-    TARGET_GLOBAL_CFLAGS += -DUSE_MMX -DUSE_SSE -DUSE_SSE2 -DUSE_SSE3
-
-    # If you wish to build a BSP that will only be used on hardware that has additional
-    # available instructions, enable them here. By default, this is commented off so that
-    # the default images can run on all processors that are NDK ABI compliant.
-    # TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3
-else
-    # Plain 'x86' - lowest common denominator. This should run pretty much on any hardware.
-    #
-    # Note: The NDK's ABI (see the NDK ABI documentation) requires many of the more recent
-    # instruction set additions. You can build an "x86" BSP that will run on very old hardware,
-    # but it won't be able to run much of the x86 NDK compliant code.
-    TARGET_GLOBAL_CFLAGS += -march=i686
+# XXX: These flags should not be defined here anymore. Instead, the Android.mk
+# of the modules that depend on these features should instead check the
+# corresponding macros (e.g. ARCH_X86_HAVE_SSE2 and ARCH_X86_HAVE_SSSE3)
+# Keep them here until this is all cleared up.
+#
+ifeq ($(ARCH_X86_HAVE_SSE2),true)
+TARGET_GLOBAL_CFLAGS += -DUSE_SSE2
 endif
 
+ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
+TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3
+endif
+
+# XXX: This flag is probably redundant. I believe our toolchain always sets
+# it by default. Consider for removal.
+#
 TARGET_GLOBAL_CFLAGS += -mbionic
+
+# XXX: This flag is probably redundant. The macro should be defined by our
+# toolchain binaries automatically (as a compiler built-in).
+# Check with: $BINPREFIX-gcc -dM -E < /dev/null
+#
+# Consider for removal.
+#
 TARGET_GLOBAL_CFLAGS += -D__ANDROID__
 
+# XXX: This flag is probably redundant since our toolchain binaries already
+# generate 32-bit machine code. It probably dates back to the old days
+# where we were using the host toolchain on Linux to build the platform
+# images. Consider it for removal.
 TARGET_GLOBAL_LDFLAGS += -m32
+
 TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack
 TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
 
@@ -205,3 +221,21 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(TARGET_CRTEND_O))
 endef
+
+# Special check for x86 NDK ABI compatibility.
+# The TARGET_CPU_ABI variable should be defined in BoardConfig.mk to 'x86'
+# *only* if the platform image is compatible with the NDK x86 ABI.
+#
+# We perform a small check here to ensure that nothing bad can happen.
+#
+ifeq ($(TARGET_CPU_ABI),x86)
+  ifneq (true-true-true-true,$(ARCH_X86_HAVE_MMX)-$(ARCH_X86_HAVE_SSE)-$(ARCH_X86_HAVE_SSE2)-$(ARCH_X86_HAVE_SSE3))
+    $(info ERROR: Your x86 platform image is not compatible with the NDK x86 ABI)
+    $(info As such, you should *not* define TARGET_CPU_ABI to 'x86' in your BoardConfig.mk)
+    $(info to ensure that your device will not be mistakenly listed as compatible by
+    $(info the Android Market. Also, it is likely that the image will fail the CTS tests)
+    $(info Please undefine TARGET_CPU_ABI in your BoardConfig.mk, or select the value 'none')
+    $(info The corresponding image will still be able to run Dalvik-based Android applications)
+    $(error Aborting build! Please fix your BoardConfig.mk)
+  endif
+endif
