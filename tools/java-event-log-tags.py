@@ -26,6 +26,7 @@ tags in the given input file.
 import cStringIO
 import getopt
 import os
+import os.path
 import re
 import sys
 
@@ -143,5 +144,9 @@ for t in tagfile.tags:
 
 
 buffer.write("}\n");
+
+output_dir = os.path.dirname(output_file)
+if not os.path.exists(output_dir):
+  os.makedirs(output_dir)
 
 event_log_tags.WriteOutput(output_file, buffer)
