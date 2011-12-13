@@ -19,7 +19,8 @@
 
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.hsxpa=1 \
-    ro.ril.gprsclass=10
+    ro.ril.gprsclass=10 \
+    ro.adb.qemud=1
 
 PRODUCT_COPY_FILES := \
     development/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
