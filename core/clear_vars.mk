@@ -116,6 +116,7 @@ LOCAL_PROTOC_FLAGS:=
 LOCAL_NO_CRT:=
 LOCAL_PROPRIETARY_MODULE:=
 LOCAL_MODULE_OWNER:=
+LOCAL_CTS_TEST_PACKAGE:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
