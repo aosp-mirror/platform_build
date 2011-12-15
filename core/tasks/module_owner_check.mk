@@ -17,6 +17,12 @@
 # Restrict the vendor module owners here.
 
 _vendor_owner_whitelist := \
+	broadcom \
+	imgtec \
+	invensense \
+	nxp \
+	samsung \
+	ti
 
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
