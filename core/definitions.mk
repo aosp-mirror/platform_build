@@ -1424,7 +1424,7 @@ define unzip-jar-files
     unzip -qo $$f -d $(2); \
     (cd $(2) && rm -rf META-INF); \
   done
-  $(hide) find $(2) -name 'R.class' -o -name 'R$$*.class' -o -name 'Manifest.class' -o -name 'Manifest$$*.class' | xargs rm -rf
+  # $(hide) find $(2) -name 'R.class' -o -name 'R$$*.class' -o -name 'Manifest.class' -o -name 'Manifest$$*.class' | xargs rm -rf
 endef
 
 # Common definition to invoke javac on the host and target.
