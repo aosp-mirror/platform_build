@@ -14,8 +14,10 @@ ifneq (,$(LOCAL_ASSET_DIR))
 $(error $(LOCAL_PATH): Target java libraries may not set LOCAL_ASSET_DIR)
 endif
 
+ifneq (true,$(LOCAL_IS_STATIC_JAVA_LIBRARY))
 ifneq (,$(LOCAL_RESOURCE_DIR))
 $(error $(LOCAL_PATH): Target java libraries may not set LOCAL_RESOURCE_DIR)
+endif
 endif
 
 #xxx base_rules.mk looks at this

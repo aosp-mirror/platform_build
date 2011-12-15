@@ -1408,6 +1408,9 @@ endef
 
 # For a list of jar files, unzip them to a specified directory,
 # but make sure that no META-INF files come along for the ride.
+# We also remove any R.class/Manifest.class from the jar files;
+# R/Manifest class for the static Java libraries should be
+# re-generate in the app module instead.
 #
 # $(1): files to unzip
 # $(2): destination directory
@@ -1421,6 +1424,7 @@ define unzip-jar-files
     unzip -qo $$f -d $(2); \
     (cd $(2) && rm -rf META-INF); \
   done
+  $(hide) find $(2) -name 'R.class' -o -name 'R$$*.class' -o -name 'Manifest.class' -o -name 'Manifest$$*.class' | xargs rm -rf
 endef
 
 # Common definition to invoke javac on the host and target.
