@@ -1408,9 +1408,6 @@ endef
 
 # For a list of jar files, unzip them to a specified directory,
 # but make sure that no META-INF files come along for the ride.
-# We also remove any R.class/Manifest.class from the jar files;
-# R/Manifest class for the static Java libraries should be
-# re-generate in the app module instead.
 #
 # $(1): files to unzip
 # $(2): destination directory
@@ -1424,7 +1421,6 @@ define unzip-jar-files
     unzip -qo $$f -d $(2); \
     (cd $(2) && rm -rf META-INF); \
   done
-  # $(hide) find $(2) -name 'R.class' -o -name 'R$$*.class' -o -name 'Manifest.class' -o -name 'Manifest$$*.class' | xargs rm -rf
 endef
 
 # Common definition to invoke javac on the host and target.
@@ -1464,6 +1460,10 @@ $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; the
 fi
 $(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list
 $(hide) rm -f $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
+$(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
+    -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
+    $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
+    | xargs rm -rf)
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
 endef

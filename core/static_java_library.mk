@@ -34,6 +34,13 @@ all_resources := $(strip \
         ) \
       ) \
     ))
+
+ifneq (,$(all_resources))
+# Those files will be excluded from the built jar.
+# The R/Manifest classes should be re-generated in the app Module instead.
+# Use '' and $ escape because they will be passed to bash.
+LOCAL_JAR_EXCLUDE_FILES := 'R.class' 'R$$*.class' 'Manifest.class' 'Manifest$$*.class'
+endif
 endif
 
 include $(BUILD_SYSTEM)/java_library.mk
@@ -93,3 +100,4 @@ endif
 endif  # $(all_resources) not empty
 
 LOCAL_IS_STATIC_JAVA_LIBRARY :=
+LOCAL_JAR_EXCLUDE_FILES :=
