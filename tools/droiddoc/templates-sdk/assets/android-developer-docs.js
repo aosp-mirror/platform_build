@@ -425,7 +425,7 @@ function loadLast(cookiePath) {
 
 $(window).unload(function(){
   var path = getBaseUri(location.pathname);
-  if (path.indexOf("/reference/") != -1) {
+  if ((path.indexOf("/reference/") != -1) || (path.indexOf("/training/") != -1)) {
     writeCookie("lastpage", path, "reference", null);
   } else if (path.indexOf("/guide/") != -1) {
     writeCookie("lastpage", path, "guide", null);
