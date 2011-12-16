@@ -67,8 +67,7 @@
 
 #side-nav li {
   padding:0;
-  line-height:16px;
-  white-space:nowrap;
+  padding:1px 0 1px 0;
   zoom:1;
 }
 
@@ -80,6 +79,7 @@
 }
 
 #side-nav li a {
+  display: inline-block; /* needed to apply padding to line-wraps */
   text-decoration:none;
   padding: 0 0 0 18px;
   zoom:1;
