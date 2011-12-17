@@ -78,6 +78,9 @@ INTERNAL_DALVIK_MODULES:=
 # All findbugs xml files
 ALL_FINDBUGS_FILES:=
 
+# GPL module license files
+ALL_GPL_MODULE_LICENSE_FILES:=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
