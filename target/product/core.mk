@@ -70,6 +70,7 @@ PRODUCT_PACKAGES := \
     libOpenMAXAL \
     libOpenSLES \
     libaudiopreprocessing \
+    libaudioutils \
     libcrypto \
     libdvm \
     libexpat \
