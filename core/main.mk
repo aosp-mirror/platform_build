@@ -37,7 +37,9 @@ endif
 #TOPDIR := $(TOP)/
 #endif
 
-# check for broken versions of make
+# Check for broken versions of make.
+# (Allow any version under Cygwin since we don't actually build the platform there.)
+ifeq (,$(findstring CYGWIN,$(shell uname -sm)))
 ifeq (0,$(shell expr $$(echo $(MAKE_VERSION) | sed "s/[^0-9\.].*//") = 3.81))
 $(warning ********************************************************************************)
 $(warning *  You are using version $(MAKE_VERSION) of make.)
@@ -45,6 +47,7 @@ $(warning *  Android can only be built by version 3.81.)
 $(warning *  see http://source.android.com/source/download.html)
 $(warning ********************************************************************************)
 $(error stopping)
+endif
 endif
 
 TOP := .
