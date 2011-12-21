@@ -397,6 +397,7 @@ ifeq ($(SDK_ONLY),true)
 
 subdirs := \
 	prebuilt \
+	prebuilts \
 	build/libs/host \
 	build/tools/zipalign \
 	dalvik/dexdump \
@@ -443,6 +444,7 @@ subdirs += \
 	sdk/ide_common \
 	sdk/jarutils \
 	sdk/layoutlib_api \
+	sdk/manifmerger \
 	sdk/ninepatch \
 	sdk/rule_api \
 	sdk/lint \
