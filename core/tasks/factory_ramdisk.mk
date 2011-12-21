@@ -25,8 +25,10 @@ INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES :=
 $(foreach m, $(factory_ramdisk_modules), \
     $(eval _fr_m_name := $(call word-colon,1,$(m))) \
     $(eval _fr_dest := $(call word-colon,2,$(m))) \
-    $(eval _fr_m_built := $(filter $(PRODUCT_OUT)/%, $(ALL_MODULES.$(_fr_m_name).BUILT))) \
+    $(eval _fr_m_built := $(filter-out %.a, $(filter $(PRODUCT_OUT)/%, $(ALL_MODULES.$(_fr_m_name).BUILT)))) \
     $(if $(_fr_m_built), \
+        $(if $(filter-out 1, $(words $(_fr_m_built))), \
+            $(error Error: module "$(m)" has multiple built files: "$(_fr_m_built)")) \
         $(eval _fulldest := $(TARGET_FACTORY_RAMDISK_OUT)/$(_fr_dest)) \
         $(eval $(call copy-one-file,$(_fr_m_built),$(_fulldest))) \
         $(eval INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES += $(_fulldest)), \
