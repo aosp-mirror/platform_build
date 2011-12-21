@@ -14,26 +14,42 @@
 # limitations under the License.
 #
 
-# PRODUCT_FACTORY_RAMDISK_MODULES consists of "<module_name>:<install_path>" pairs.
+# PRODUCT_FACTORY_RAMDISK_MODULES consists of "<module_name>:<install_path>[:<install_path>...]" tuples.
 # <install_path> is relative to TARGET_FACTORY_RAMDISK_OUT.
+# We can have multiple <install_path>s because multiple modules may have the same name.
 # For example:
 # PRODUCT_FACTORY_RAMDISK_MODULES := \
-#     toolbox:bin/toolbox adbd:sbin/adbd adb:bin/adb
+#     toolbox:system/bin/toolbox adbd:sbin/adbd adb:system/bin/adb
 factory_ramdisk_modules := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_FACTORY_RAMDISK_MODULES))
 ifneq (,$(factory_ramdisk_modules))
+
+# A module name may end up in multiple modules (so multiple built files)
+# with the same name.
+# This function selects the module built file based on the install path.
+# $(1): the dest install path
+# $(2): the module built files
+define install-one-factory-ramdisk-module
+$(eval _iofrm_suffix := $(suffix $(1))) \
+$(if $(_iofrm_suffix), \
+    $(eval _iofrm_pattern := %$(_iofrm_suffix)), \
+    $(eval _iofrm_pattern := %$(notdir $(1)))) \
+$(eval _iofrm_src := $(filter $(_iofrm_pattern),$(2))) \
+$(if $(filter 1,$(words $(_iofrm_src))), \
+    $(eval _fulldest := $(TARGET_FACTORY_RAMDISK_OUT)/$(1)) \
+    $(eval $(call copy-one-file,$(_iofrm_src),$(_fulldest))) \
+    $(eval INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES += $(_fulldest)), \
+    $(error Error: Can not find match in "$(2)" for "$(1)") \
+    )
+endef
+
 INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES :=
 $(foreach m, $(factory_ramdisk_modules), \
-    $(eval _fr_m_name := $(call word-colon,1,$(m))) \
-    $(eval _fr_dest := $(call word-colon,2,$(m))) \
-    $(eval _fr_m_built := $(filter-out %.a, $(filter $(PRODUCT_OUT)/%, $(ALL_MODULES.$(_fr_m_name).BUILT)))) \
-    $(if $(_fr_m_built), \
-        $(if $(filter-out 1, $(words $(_fr_m_built))), \
-            $(error Error: module "$(m)" has multiple built files: "$(_fr_m_built)")) \
-        $(eval _fulldest := $(TARGET_FACTORY_RAMDISK_OUT)/$(_fr_dest)) \
-        $(eval $(call copy-one-file,$(_fr_m_built),$(_fulldest))) \
-        $(eval INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES += $(_fulldest)), \
-        $(error Error: module "$(m)" in PRODUCT_FACTORY_RAMDISK_MODULES is not a target module!) \
-    ))
+    $(eval _fr_m_tuple := $(subst :, ,$(m))) \
+    $(eval _fr_m_name := $(word 1,$(_fr_m_tuple))) \
+    $(eval _fr_dests := $(wordlist 2,999,$(_fr_m_tuple))) \
+    $(eval _fr_m_built := $(filter $(PRODUCT_OUT)/%, $(ALL_MODULES.$(_fr_m_name).BUILT))) \
+    $(foreach d,$(_fr_dests),$(call install-one-factory-ramdisk-module,$(d),$(_fr_m_built))) \
+    )
 endif
 
 # Files may also be installed via PRODUCT_COPY_FILES, PRODUCT_PACKAGES etc.
