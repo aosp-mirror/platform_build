@@ -53,7 +53,11 @@ HOST_JNILIB_SUFFIX := .jnilib
 
 HOST_GLOBAL_CFLAGS += \
 	-include $(call select-android-config-h,darwin-x86)
-HOST_RUN_RANLIB_AFTER_COPYING := true
+ifneq ($(filter 10.7.%, $(build_mac_version)),)
+       HOST_RUN_RANLIB_AFTER_COPYING := false
+else
+       HOST_RUN_RANLIB_AFTER_COPYING := true
+endif
 HOST_GLOBAL_ARFLAGS := cqs
 
 HOST_CUSTOM_LD_COMMAND := true
