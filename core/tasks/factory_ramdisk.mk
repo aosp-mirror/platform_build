@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-ifneq (,$(ONE_SHOT_MAKEFILE))
+ifeq (,$(ONE_SHOT_MAKEFILE))
 
 # PRODUCT_FACTORY_RAMDISK_MODULES consists of "<module_name>:<install_path>[:<install_path>...]" tuples.
 # <install_path> is relative to TARGET_FACTORY_RAMDISK_OUT.
