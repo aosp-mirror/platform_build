@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+ifneq (,$(ONE_SHOT_MAKEFILE))
+
 # PRODUCT_FACTORY_RAMDISK_MODULES consists of "<module_name>:<install_path>[:<install_path>...]" tuples.
 # <install_path> is relative to TARGET_FACTORY_RAMDISK_OUT.
 # We can have multiple <install_path>s because multiple modules may have the same name.
@@ -67,3 +69,5 @@ $(INSTALLED_FACTORY_RAMDISK_TARGET) : $(MKBOOTFS) \
 	$(hide) $(MKBOOTFS) $(TARGET_FACTORY_RAMDISK_OUT) | $(MINIGZIP) > $@
 
 endif
+
+endif # ONE_SHOT_MAKEFILE
