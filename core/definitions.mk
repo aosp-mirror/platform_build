@@ -894,7 +894,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_CFLAGS) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
-	-MD -o $@ $<
+	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 $(transform-d-to-p)
 endef
 
@@ -921,7 +921,7 @@ $(hide) $(PRIVATE_CC) \
 	$(PRIVATE_CFLAGS) \
 	$(1) \
 	$(PRIVATE_DEBUG_CFLAGS) \
-	-MD -o $@ $<
+	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
 
 define transform-c-to-o-no-deps
@@ -982,7 +982,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_CFLAGS) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
-	-MD -o $@ $<
+	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 $(transform-d-to-p)
 endef
 
@@ -1008,7 +1008,7 @@ $(hide) $(PRIVATE_CC) \
 	$(PRIVATE_CFLAGS) \
 	$(1) \
 	$(PRIVATE_DEBUG_CFLAGS) \
-	-MD -o $@ $<
+	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
 
 define transform-host-c-to-o-no-deps
