@@ -50,7 +50,6 @@ GRANDFATHERED_USER_MODULES += \
 	applypatch \
 	app_process \
 	archquery \
-	asm-3.1 \
 	atree \
 	audio \
 	badblocks \
