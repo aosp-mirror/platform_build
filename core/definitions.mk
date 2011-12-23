@@ -691,7 +691,7 @@ define _get-package-overrides
 endef
 
 define get-package-overrides
-$(strip $(sort $(call _get-package-overrides,$(1))))
+$(sort $(strip $(call _get-package-overrides,$(1))))
 endef
 
 ###########################################################
