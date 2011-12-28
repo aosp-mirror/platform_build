@@ -18,6 +18,7 @@
 
 _vendor_owner_whitelist := \
 	broadcom \
+	csr \
 	imgtec \
 	invensense \
 	nxp \
