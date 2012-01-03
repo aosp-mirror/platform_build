@@ -53,6 +53,11 @@ LOCAL_MANIFEST_FILE := AndroidManifest.xml
 endif
 full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
 
+LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
+ifeq ($(LOCAL_SDK_RES_VERSION),)
+  LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
+endif
+
 framework_res_package_export :=
 framework_res_package_export_deps :=
 # Please refer to package.mk
