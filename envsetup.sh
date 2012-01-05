@@ -658,6 +658,17 @@ function mmm()
     fi
 }
 
+function hmm()
+{
+cat <<EOF
+- m:       Makes from the top of the tree.
+- mm:      Builds all of the modules in the current directory.
+- mmm dir: Same as 'cd dir; mm'
+
+Type 'help' for more commands.
+EOF
+}
+
 function croot()
 {
     T=$(gettop)
