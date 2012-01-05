@@ -57,6 +57,7 @@ ifneq ($(filter 10.7.%, $(build_mac_version)),)
        HOST_RUN_RANLIB_AFTER_COPYING := false
 else
        HOST_RUN_RANLIB_AFTER_COPYING := true
+       PRE_LION_DYNAMIC_LINKER_OPTIONS := -Wl,-dynamic
 endif
 HOST_GLOBAL_ARFLAGS := cqs
 
@@ -82,7 +83,7 @@ endef
 define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
         -o $@ \
-        -Wl,-dynamic -headerpad_max_install_names \
+        $(PRE_LION_DYNAMIC_LINKER_OPTIONS) -headerpad_max_install_names \
         $(HOST_GLOBAL_LD_DIRS) \
         $(HOST_GLOBAL_LDFLAGS) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
