@@ -19,8 +19,8 @@
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
-TARGET_TOOLS_PREFIX := \
-	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/sh-4.3.3/bin/sh-linux-gnu-
+TARGET_TOOLCHAIN_ROOT := prebuilt/$(HOST_PREBUILT_TAG)/toolchain/sh-4.3.3
+TARGET_TOOLS_PREFIX := $(TARGET_TOOLCHAIN_ROOT)/bin/sh-linux-gnu-
 endif
 
 TARGET_CC := $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)
