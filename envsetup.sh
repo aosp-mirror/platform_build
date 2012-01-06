@@ -112,12 +112,13 @@ function setpaths()
     # and in with the new
     CODE_REVIEWS=
     prebuiltdir=$(getprebuilt)
+    gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
     export ANDROID_EABI_TOOLCHAIN=
-    toolchaindir=toolchain/arm-linux-androideabi-4.4.x/bin
-    if [ -d "$prebuiltdir/$toolchaindir" ]; then
-        export ANDROID_EABI_TOOLCHAIN=$prebuiltdir/$toolchaindir
+    toolchaindir=arm/arm-linux-androideabi-4.6/bin
+    if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
+        export ANDROID_EABI_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
     fi
 
     export ARM_EABI_TOOLCHAIN=
