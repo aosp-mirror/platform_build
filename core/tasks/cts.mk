@@ -25,6 +25,9 @@ CTS_TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts-tradefed.jar
 CTS_TF_EXEC_PATH := $(HOST_OUT_EXECUTABLES)/cts-tradefed
 CTS_TF_README_PATH := $(cts_tools_src_dir)/tradefed-host/README
 
+VMTESTSTF_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests-tf,1,)
+VMTESTSTF_JAR := $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar
+
 CTS_CORE_CASE_LIST := \
 	android.core.tests.libcore.package.dalvik \
 	android.core.tests.libcore.package.com \
@@ -34,6 +37,10 @@ CTS_CORE_CASE_LIST := \
 	android.core.tests.libcore.package.libcore \
 	android.core.tests.runner
 
+# Depend on the full package paths rather than the phony targets to avoid
+# rebuilding the packages every time.
+CTS_CORE_CASES := $(foreach pkg,$(CTS_CORE_CASE_LIST),$(call intermediates-dir-for,APPS,$(pkg))/package.apk)
+
 -include cts/CtsTestCaseList.mk
 CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
 
@@ -41,8 +48,7 @@ DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
 
 $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
 
--include cts/CtsHostLibraryList.mk
-$(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(CTS_TEST_CASES) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
 # Make necessary directory for CTS
 	$(hide) rm -rf $(PRIVATE_CTS_DIR)
 	$(hide) mkdir -p $(TMP_DIR)
@@ -51,6 +57,7 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CASE_LIST) $(CTS_TEST_CASES) $(junit_host_
 	$(hide) mkdir -p $(PRIVATE_DIR)/repository/testcases
 	$(hide) mkdir -p $(PRIVATE_DIR)/repository/plans
 # Copy executable and JARs to CTS directory
+	$(hide) $(ACP) -fp $(VMTESTSTF_JAR) $(PRIVATE_DIR)/repository/testcases
 	$(hide) $(ACP) -fp $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(foreach apk,$(CTS_CASE_LIST),$(call copy-testcase-apk,$(apk)))
@@ -81,73 +88,72 @@ CORETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests
 
 GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar
 
-$(cts_dir)/all_cts_core_files_stamp: PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
+CTS_CORE_XMLS := \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml
+
+$(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Why does this depend on javalib.jar instead of classes.jar?  Because
 # even though the tool will operate on the classes.jar files, the
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(cts_dir)/all_cts_core_files_stamp: $(CTS_CORE_CASE_LIST) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(cts_dir)/all_cts_files_stamp | $(ACP)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.dalvik,\
+$(CTS_CORE_XMLS): $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik,\
 		cts/tests/core/libcore/dalvik/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,dalvik,\
 		libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.com,\
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com,\
 		cts/tests/core/libcore/com/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,com,\
 		libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.sun,\
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun,\
 		cts/tests/core/libcore/sun/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,sun,\
 		libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.tests,\
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests,\
 		cts/tests/core/libcore/tests/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,tests,\
 		libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.org,\
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org,\
 		cts/tests/core/libcore/org/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org,\
 		libcore/expectations)
-	$(call generate-core-test-description,$(cts_dir)/$(cts_name)/repository/testcases/android.core.tests.libcore.package.libcore,\
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore,\
 		cts/tests/core/libcore/libcore/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,libcore,\
 		libcore/expectations)
-	$(hide) touch $@
 
 # ----- Generate the test descriptions for the vm-tests-tf -----
 #
-CORE_VM_TEST_TF_DESC := $(cts_dir)/$(cts_name)/repository/testcases/android.core.vm-tests-tf
+CORE_VM_TEST_TF_DESC := $(CTS_TESTCASES_OUT)/android.core.vm-tests-tf.xml
 
-VMTESTSTF_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests-tf,1,)
 # core tests only needed to get hold of junit-framework-classes
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar:$(DDMLIB_JAR):$(TF_JAR)
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_JAR):$(DDMLIB_JAR):$(TF_JAR)
 
 $(CORE_VM_TEST_TF_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
-$(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar $(DDMLIB_JAR) $(cts_dir)/all_cts_files_stamp | $(ACP)
-	$(call generate-core-test-description,$(CORE_VM_TEST_TF_DESC),\
+$(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_JAR) $(DDMLIB_JAR) | $(ACP)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.vm-tests-tf,\
 		cts/tests/vm-tests-tf/AndroidManifest.xml,\
-		$(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar,"",\
+		$(VMTESTSTF_JAR),"",\
 		libcore/expectations,\
 		cts/tools/vm-tests-tf/Android.mk)
-	$(ACP) -fv $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar $(PRIVATE_DIR)/repository/testcases/android.core.vm-tests-tf.jar
-
-
-# Move app security host-side tests to the repository
-APP_SECURITY_LIB := $(cts_dir)/$(cts_name)/repository/testcases/CtsAppSecurityTests.jar
-
-$(APP_SECURITY_LIB): $(HOST_OUT_JAVA_LIBRARIES)/CtsAppSecurityTests.jar $(cts_dir)/all_cts_files_stamp $(ACP)
-	$(ACP) -fv $(HOST_OUT_JAVA_LIBRARIES)/CtsAppSecurityTests.jar $(APP_SECURITY_LIB)
-
 
 # Generate the default test plan for User.
 # Usage: buildCts.py <testRoot> <ctsOutputDir> <tempDir> <androidRootDir> <docletPath>
 
-$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_dir)/all_cts_core_files_stamp $(cts_tools_src_dir)/utils/buildCts.py $(CORE_VM_TEST_TF_DESC) $(APP_SECURITY_LIB) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CTS_TEST_XMLS) | $(ACP)
-	$(hide) $(ACP) -fp $(CTS_TEST_XMLS) $(PRIVATE_DIR)/repository/testcases
+$(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/buildCts.py $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CTS_CORE_XMLS) $(CTS_TEST_XMLS) $(CORE_VM_TEST_TF_DESC) | $(ACP)
+	$(hide) $(ACP) -fp $(CTS_CORE_XMLS) $(CTS_TEST_XMLS) $(CORE_VM_TEST_TF_DESC) $(PRIVATE_DIR)/repository/testcases
 	$(hide) $(cts_tools_src_dir)/utils/buildCts.py cts/tests/tests/ $(PRIVATE_DIR) $(TMP_DIR) \
 		$(TOP) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar
 
