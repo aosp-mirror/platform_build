@@ -24,7 +24,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.gprsclass=10 \
     ro.adb.qemud=1
 
-LOCAL_KERNEL := prebuilt/android-x86/kernel/kernel-vbox
+LOCAL_KERNEL := prebuilts/qemu-kernel/x86/kernel-vbox
 
 PRODUCT_COPY_FILES := \
     development/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
