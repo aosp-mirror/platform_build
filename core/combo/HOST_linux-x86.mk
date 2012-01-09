@@ -33,7 +33,7 @@ endef
 # LOCAL_CC and LOCAL_CXX to override this.
 #
 ifeq ($(TARGET_PRODUCT),sdk)
-HOST_SDK_TOOLCHAIN_PREFIX := prebuilt/linux-x86/toolchain/i686-linux-glibc2.7-4.4.3/bin/i686-linux
+HOST_SDK_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/i686-linux-glibc2.7-4.4.3/bin/i686-linux
 # Don't do anything if the toolchain is not there
 ifneq (,$(strip $(wildcard $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc)))
 HOST_CC  := $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc
