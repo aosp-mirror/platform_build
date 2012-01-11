@@ -21,7 +21,8 @@ LOCAL_PATH := $(call my-dir)
 
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.hsxpa=1 \
-    ro.ril.gprsclass=10
+    ro.ril.gprsclass=10 \
+    ro.adb.qemud=1
 
 LOCAL_KERNEL := prebuilts/qemu-kernel/x86/kernel-vbox
 
