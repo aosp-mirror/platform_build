@@ -28,7 +28,8 @@
              	   //-->
              	</script>
             </span>
-          <?cs /if ?>
+          <?cs /if ?>&nbsp;&nbsp;
+          <a href="<?cs var:toroot ?>design/index.html">Android Design</a>&nbsp;&nbsp;
           <a href="http://www.android.com">Android.com</a>
           </div><?cs 
           call:default_search_box() ?><?cs 
