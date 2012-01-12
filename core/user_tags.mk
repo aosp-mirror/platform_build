@@ -171,7 +171,6 @@ GRANDFATHERED_USER_MODULES += \
 	layoutlib_api \
 	layoutlib_create \
 	layoutlib_utils \
-	layoutopt \
 	liba2dp \
 	libabi \
 	libandroid \
@@ -494,7 +493,6 @@ GRANDFATHERED_USER_MODULES += \
 	traceview \
 	tune2fs \
 	tune2fs_host \
-	uix \
 	usbtest \
 	vdc \
 	vm-tests \
