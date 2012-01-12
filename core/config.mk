@@ -344,6 +344,9 @@ HOST_GLOBAL_CPPFLAGS += $(HOST_RELEASE_CPPFLAGS)
 TARGET_GLOBAL_CFLAGS += $(TARGET_RELEASE_CFLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
 
+# define llvm tools and global flags
+include $(BUILD_SYSTEM)/llvm_config.mk
+
 PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
 
 # ###############################################################
