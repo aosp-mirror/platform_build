@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAACCX////A\u003d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2012-01-13T18:20:16Z",
+      "side": 1,
+      "message": "Hm, it might not be best to have this here. How many projects really need it? LOCAL_C_INCLUDES in every Android.mk that needs it should be sufficient.",
+      "revId": "dadaf4f3eded4d5a81094f30503313ca9544c070",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
