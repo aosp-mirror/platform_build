@@ -77,7 +77,6 @@ PRODUCT_PACKAGES += \
 	ddms \
 	hierarchyviewer \
 	draw9patch \
-	layoutopt \
 	traceview \
 	android \
 	dexdump \
@@ -95,8 +94,6 @@ PRODUCT_PACKAGES += \
 	ddmuilib \
 	draw9patch \
 	hierarchyviewer \
-	layoutopt \
-	uix \
 	traceview \
 	anttasks \
 	sdklib \
