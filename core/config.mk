@@ -169,6 +169,14 @@ include $(BUILD_SYSTEM)/combo/select.mk
 combo_target := TARGET_
 include $(BUILD_SYSTEM)/combo/select.mk
 
+# Compute TARGET_TOOLCHAIN_ROOT from TARGET_TOOLS_PREFIX
+# if only TARGET_TOOLS_PREFIX is passed to the make command.
+ifndef TARGET_TOOLCHAIN_ROOT
+TARGET_TOOLCHAIN_ROOT := $(patsubst %/, %, $(dir $(TARGET_TOOLS_PREFIX)))
+TARGET_TOOLCHAIN_ROOT := $(patsubst %/, %, $(dir $(TARGET_TOOLCHAIN_ROOT)))
+TARGET_TOOLCHAIN_ROOT := $(wildcard $(TARGET_TOOLCHAIN_ROOT))
+endif
+
 # Pick a Java compiler.
 include $(BUILD_SYSTEM)/combo/javac.mk
 
