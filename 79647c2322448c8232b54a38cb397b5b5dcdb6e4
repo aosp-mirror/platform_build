@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAACCX///+0\u003d",
+        "filename": "core/legacy_prebuilts.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2012-01-13T18:21:43Z",
+      "side": 1,
+      "message": "You should not add new prebuilts to this file as this comment says.\n\nIf it needs to be in all configurations, look at build/target/product/core.mk",
+      "revId": "79647c2322448c8232b54a38cb397b5b5dcdb6e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
