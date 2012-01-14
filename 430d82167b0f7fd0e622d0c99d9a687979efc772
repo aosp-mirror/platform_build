@@ -34,6 +34,24 @@
       "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAACC3///9c\u003d",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-01-14T02:01:05Z",
+      "side": 1,
+      "message": "We called that an \"unbundled\" apps, which should also be built against a given SDK (LOCAL_SDK_VERSION :\u003d 8, for example).\nIn that case, you should use LOCAL_JNI_SHARED_LIBRARIES.",
+      "parentUuid": "AAACC3///9w\u003d",
+      "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
