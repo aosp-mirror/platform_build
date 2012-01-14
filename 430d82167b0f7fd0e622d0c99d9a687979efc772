@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAACC3///+A\u003d",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-01-14T01:22:14Z",
+      "side": 1,
+      "message": "The assumption is incorrect.\nWe do need to package the jni libraryies into the apk sometimes, for example when we build apps that will be published in the Android market.",
+      "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
