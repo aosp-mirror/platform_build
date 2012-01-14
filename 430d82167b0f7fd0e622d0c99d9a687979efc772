@@ -52,6 +52,24 @@
       "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAACC3///9U\u003d",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1002612
+      },
+      "writtenOn": "2012-01-14T02:47:52Z",
+      "side": 1,
+      "message": "ok. sounds reasonable.",
+      "parentUuid": "AAACC3///9c\u003d",
+      "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
