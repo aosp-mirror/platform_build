@@ -16,6 +16,24 @@
       "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAACC3///9w\u003d",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1002612
+      },
+      "writtenOn": "2012-01-14T01:43:37Z",
+      "side": 1,
+      "message": "and how do you build the apps? by using the \"mm\" or build them all? my idea is to separate the \"mm\" from the whole image building. so if developer make in the package sub-folder, the jni library will be included in the APK while the building the system image won\u0027t.",
+      "parentUuid": "AAACC3///+A\u003d",
+      "revId": "430d82167b0f7fd0e622d0c99d9a687979efc772",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
