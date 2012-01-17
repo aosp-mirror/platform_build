@@ -52,6 +52,7 @@ PRODUCT_PACKAGES += \
     libfilterfw \
     libsqlite_jni \
     libwilhelm \
+    logd \
     make_ext4fs \
     screencap \
     sensorservice \
