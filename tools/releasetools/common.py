@@ -660,6 +660,10 @@ class DeviceSpecificParams(object):
     assertions they like."""
     return self._DoCall("FullOTA_Assertions")
 
+  def FullOTA_InstallBegin(self):
+    """Called at the start of full OTA installation."""
+    return self._DoCall("FullOTA_InstallBegin")
+
   def FullOTA_InstallEnd(self):
     """Called at the end of full OTA installation; typically this is
     used to install the image for the device's baseband processor."""
@@ -671,11 +675,22 @@ class DeviceSpecificParams(object):
     additional assertions they like."""
     return self._DoCall("IncrementalOTA_Assertions")
 
+  def IncrementalOTA_VerifyBegin(self):
+    """Called at the start of the verification phase of incremental
+    OTA installation; additional checks can be placed here to abort
+    the script before any changes are made."""
+    return self._DoCall("IncrementalOTA_VerifyBegin")
+
   def IncrementalOTA_VerifyEnd(self):
     """Called at the end of the verification phase of incremental OTA
     installation; additional checks can be placed here to abort the
     script before any changes are made."""
     return self._DoCall("IncrementalOTA_VerifyEnd")
+
+  def IncrementalOTA_InstallBegin(self):
+    """Called at the start of incremental OTA installation (after
+    verification is complete)."""
+    return self._DoCall("IncrementalOTA_InstallBegin")
 
   def IncrementalOTA_InstallEnd(self):
     """Called at the end of incremental OTA installation; typically

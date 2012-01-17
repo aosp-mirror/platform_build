@@ -382,6 +382,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   AppendAssertions(script, input_zip)
   device_specific.FullOTA_Assertions()
+  device_specific.FullOTA_InstallBegin()
 
   script.ShowProgress(0.5, 0)
 
@@ -559,6 +560,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   script.Print("Verifying current system...")
 
+  device_specific.IncrementalOTA_VerifyBegin()
+
   script.ShowProgress(0.1, 0)
   total_verify_size = float(sum([i[2].size for i in patch_list]) + 1)
   if updating_boot:
@@ -593,6 +596,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   device_specific.IncrementalOTA_VerifyEnd()
 
   script.Comment("---- start making changes here ----")
+
+  device_specific.IncrementalOTA_InstallBegin()
 
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
