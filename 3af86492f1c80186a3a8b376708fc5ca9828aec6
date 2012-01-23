@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAACTn////w\u003d",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 4
+      },
+      "lineNbr": 487,
+      "author": {
+        "id": 1006257
+      },
+      "writtenOn": "2012-01-23T23:15:32Z",
+      "side": 1,
+      "message": "FYI, you could also do:\n  metadata \u003d {\"pre-device\": GetBuildProp(\"ro.build.date.utc\", target_zip)}\n  if not OPTIONS.dummy_source:\n    metadata[\"pre-device\"] \u003d GetBuildProp(\"ro.product.device\", source_zip)",
+      "revId": "3af86492f1c80186a3a8b376708fc5ca9828aec6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
