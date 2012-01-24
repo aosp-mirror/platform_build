@@ -22,7 +22,6 @@ PRODUCT_POLICY := android.policy_mid
 PRODUCT_PACKAGES := \
     CarHome \
     DeskClock \
-    AlarmProvider \
     Bluetooth \
     Calculator \
     Calendar \
