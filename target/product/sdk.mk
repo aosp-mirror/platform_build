@@ -87,6 +87,7 @@ PRODUCT_PACKAGES += \
 # See development/build/sdk.atree
 PRODUCT_PACKAGES += \
 	androidprefs \
+	annotations \
 	sdkstats \
 	archquery \
 	ddms \
