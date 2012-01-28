@@ -97,10 +97,13 @@ PRODUCT_PACKAGES += \
 	hierarchyviewer \
 	traceview \
 	anttasks \
+	ide_common \
 	sdklib \
 	sdkuilib \
 	sdkmanager \
 	swtmenubar \
+	rule_api \
+	assetstudio \
 	swing-worker-1.1 \
 	groovy-all-1.7.0 \
 	commons-compress-1.0 \
