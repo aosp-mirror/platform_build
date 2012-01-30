@@ -85,10 +85,11 @@ PRODUCT_PACKAGES := \
     libspeexresampler \
     libsqlite_jni \
     libssl \
-    libstagefright_soft_h264dec \
     libstagefright_soft_aacdec \
+    libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
     libstagefright_soft_g711dec \
+    libstagefright_soft_h264dec \
     libstagefright_soft_mp3dec \
     libstagefright_soft_mpeg4dec \
     libstagefright_soft_vorbisdec \
