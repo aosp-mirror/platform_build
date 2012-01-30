@@ -852,7 +852,7 @@ $(hide) for f in $(PRIVATE_PROTO_SRC_FILES); do \
         $(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
         $(PRIVATE_PROTO_JAVA_OUTPUT_OPTION)=$(PRIVATE_PROTO_JAVA_OUTPUT_DIR) \
         $(PRIVATE_PROTOC_FLAGS) \
-        $$f; \
+        $$f || exit 33; \
         done
 $(hide) touch $@
 endef
