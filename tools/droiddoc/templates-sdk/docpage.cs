@@ -2,19 +2,19 @@
 <?cs include:"macros.cs" ?>
 <html>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation">
+<body class="gc-documentation" itemscope itemtype="http://schema.org/Article">
 <?cs include:"header.cs" ?>
 
 <div class="g-unit" id="doc-content"><a name="top"></a>
 
 <div id="jd-header" class="guide-header">
-  <span class="crumb">
+  <span class="crumb" itemprop="breadcrumb">
     <?cs if:parent.link ?>
       <a href="<?cs var:parent.link ?>"><?cs var:parent.title ?></a>:
     <?cs else ?>&nbsp;
     <?cs /if ?>
   </span>
-<h1><?cs var:page.title ?></h1>
+<h1 itemprop="name"><?cs var:page.title ?></h1>
 </div>
 
   <?cs # THIS IS THE MAIN DOC CONTENT ?>
@@ -61,7 +61,7 @@
     <?cs /if ?><?cs # end if trainingnavtop ?>
 
 
-    <div class="jd-descr">
+    <div class="jd-descr" itemprop="articleBody">
     <?cs call:tag_list(root.descr) ?>
     </div>
 
