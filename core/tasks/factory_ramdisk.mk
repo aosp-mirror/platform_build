@@ -60,6 +60,10 @@ INTERNAL_FACTORY_RAMDISK_FILES := $(filter $(TARGET_FACTORY_RAMDISK_OUT)/%, \
 
 ifneq (,$(INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES)$(INTERNAL_FACTORY_RAMDISK_FILES))
 
+# These files are made by magic in build/core/Makefile so we need to explicitly include them
+$(eval $(call copy-one-file,$(TARGET_OUT)/build.prop,$(TARGET_FACTORY_RAMDISK_OUT)/system/build.prop))
+INTERNAL_FACTORY_RAMDISK_FILES += $(TARGET_FACTORY_RAMDISK_OUT)/system/build.prop
+
 BUILT_FACTORY_RAMDISK_FS := $(PRODUCT_OUT)/factory_ramdisk.gz
 BUILT_FACTORY_RAMDISK_TARGET := $(PRODUCT_OUT)/factory_ramdisk.img
 
