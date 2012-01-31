@@ -72,7 +72,8 @@
   zoom:1;
 }
 
-#side-nav li span.heading {
+#side-nav li span.heading,
+#side-nav li h2 {
   display:block;
   font-size:12px;
   font-weight: bold;
