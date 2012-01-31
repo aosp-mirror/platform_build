@@ -138,9 +138,11 @@ def:custom_copyright() ?>
 <?cs 
 def:custom_footerlinks() ?>
   <p>
-    <a href="http://www.android.com/terms.html">Site Terms of Service</a> -
-    <a href="http://www.android.com/privacy.html">Privacy Policy</a> -
-    <a href="http://www.android.com/branding.html">Brand Guidelines</a>
+    <a href="http://www.google.com/intl/en/policies/" target="_blank">Privacy &amp; Terms</a> -
+    <a href="http://www.android.com/branding.html" target="_blank">Brand Guidelines</a> -
+    <a
+href="http://code.google.com/p/android/issues/entry?template=Developer%20Documentation"
+target="_blank">Report Document Issues</a>
   </p><?cs 
 /def ?>
 
