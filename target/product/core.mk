@@ -89,6 +89,7 @@ PRODUCT_PACKAGES := \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
     libstagefright_soft_amrnbenc \
+    libstagefright_soft_amrwbenc \
     libstagefright_soft_g711dec \
     libstagefright_soft_h264dec \
     libstagefright_soft_mp3dec \
