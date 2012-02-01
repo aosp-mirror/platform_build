@@ -68,10 +68,8 @@ define _darwin-extract-and-include-single-whole-static-lib
 @echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(1)]"
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     mkdir -p $$ldir; \
-    filelist=; \
     for f in `$(TARGET_AR) t $(1)`; do \
         $(TARGET_AR) p $(1) $$f > $$ldir/$$f; \
-        filelist="$$filelist $$ldir/$$f"; \
     done ;
 
 endef
