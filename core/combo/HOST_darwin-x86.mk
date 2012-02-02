@@ -80,12 +80,6 @@ $(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
     $(call _darwin-extract-and-include-single-whole-static-lib, $(lib)))
 endef
 
-ifeq (,$(filter /%,$(HOST_OUT_SHARED_LIBRARIES)))
-ABP_HOST_OUT_SHARED_LIBRARIES := $(shell pwd)/$(HOST_OUT_SHARED_LIBRARIES)
-else
-ABP_HOST_OUT_SHARED_LIBRARIES := $(HOST_OUT_SHARED_LIBRARIES)
-endif
-
 define transform-host-o-to-shared-lib-inner
 $(call darwin-extract-and-include-whole-static-libs)
 $(hide) $(PRIVATE_CXX) \
@@ -100,13 +94,15 @@ $(hide) $(PRIVATE_CXX) \
         $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
         $(PRIVATE_LDLIBS) \
         -o $@ \
-        -install_name $(ABP_HOST_OUT_SHARED_LIBRARIES)/$(notdir $@) \
+        -install_name @rpath/$(notdir $@) \
+        -Wl,-rpath,@loader_path/../lib \
         $(PRIVATE_LDFLAGS) \
         $(HOST_LIBGCC)
 endef
 
 define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
+        -Wl,-rpath,@loader_path/../lib \
         -o $@ \
         $(PRE_LION_DYNAMIC_LINKER_OPTIONS) -headerpad_max_install_names \
         $(HOST_GLOBAL_LD_DIRS) \
