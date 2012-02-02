@@ -100,6 +100,7 @@ PRODUCT_PACKAGES := \
     libwebrtc_audio_preprocessing \
     libwilhelm \
     libz \
+    requestsync \
     screencap \
     sensorservice
 
