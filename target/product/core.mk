@@ -102,7 +102,9 @@ PRODUCT_PACKAGES := \
     libz \
     requestsync \
     screencap \
-    sensorservice
+    sensorservice \
+    lint
+
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
