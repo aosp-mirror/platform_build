@@ -43,6 +43,7 @@ GRANDFATHERED_ALL_PREBUILT := \
 	cdt.bin \
 	chat-ril \
 	cmu6plus.ok.zip \
+	content \
 	cpcap-key.kl \
 	data \
 	dbus.conf \

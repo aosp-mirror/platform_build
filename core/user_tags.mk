@@ -71,6 +71,7 @@ GRANDFATHERED_USER_MODULES += \
 	com.android.phone.common \
 	com.android.vcard \
 	commons-compress-1.0 \
+	content \
 	copybit.qsd8k \
 	copybit.s5pc110 \
 	coverage \
