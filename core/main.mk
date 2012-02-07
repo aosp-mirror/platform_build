@@ -416,6 +416,7 @@ subdirs := \
 	build/libs \
 	build/target \
 	build/tools/acp \
+	external/gcc-demangle \
 	external/mksh \
 	external/yaffs2 \
 	external/zlib
