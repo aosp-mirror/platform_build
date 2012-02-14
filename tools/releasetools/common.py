@@ -390,24 +390,27 @@ def CheckSize(data, target, info_dict):
     if mount_point == "/userdata": mount_point = "/data"
     p = info_dict["fstab"][mount_point]
     fs_type = p.fs_type
-    limit = info_dict.get(p.device + "_size", None)
+    device = p.device
+    if "/" in device:
+      device = device[device.rfind("/")+1:]
+    limit = info_dict.get(device + "_size", None)
   if not fs_type or not limit: return
 
   if fs_type == "yaffs2":
     # image size should be increased by 1/64th to account for the
     # spare area (64 bytes per 2k page)
     limit = limit / 2048 * (2048+64)
-    size = len(data)
-    pct = float(size) * 100.0 / limit
-    msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
-    if pct >= 99.0:
-      raise ExternalError(msg)
-    elif pct >= 95.0:
-      print
-      print "  WARNING: ", msg
-      print
-    elif OPTIONS.verbose:
-      print "  ", msg
+  size = len(data)
+  pct = float(size) * 100.0 / limit
+  msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
+  if pct >= 99.0:
+    raise ExternalError(msg)
+  elif pct >= 95.0:
+    print
+    print "  WARNING: ", msg
+    print
+  elif OPTIONS.verbose:
+    print "  ", msg
 
 
 def ReadApkCerts(tf_zip):
