@@ -470,7 +470,6 @@ GRANDFATHERED_USER_MODULES += \
 	sig-create \
 	signapk \
 	signature-tools \
-	simg2img \
 	spec-progress \
 	sqlite3 \
 	stack_dump \
