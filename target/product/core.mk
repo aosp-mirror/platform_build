@@ -67,6 +67,7 @@ PRODUCT_PACKAGES := \
     ip-up-vpn \
     ip6tables \
     iptables \
+    libandroidfw \
     libOpenMAXAL \
     libOpenSLES \
     libaudiopreprocessing \
