@@ -8,6 +8,7 @@ ARCH_ARM_HAVE_HALFWORD_MULTIPLY := true
 ARCH_ARM_HAVE_CLZ               := true
 ARCH_ARM_HAVE_FFS               := true
 ARCH_ARM_HAVE_ARMV7A            := true
+ARCH_ARM_HAVE_TLS_REGISTER      := true
 ARCH_ARM_HAVE_VFP               := true
 ARCH_ARM_HAVE_VFP_D32           := true
 ARCH_ARM_HAVE_NEON              := true
