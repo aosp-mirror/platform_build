@@ -821,6 +821,12 @@ systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
 	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE))
 	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE),yaffs)
 
+ifneq (,$(filter systemimage-nodeps snod, $(MAKECMDGOALS)))
+ifeq (true,$(WITH_DEXPREOPT))
+$(warning Warning: with dexpreopt enabled, you may need a full rebuild.)
+endif
+endif
+
 #######
 ## system tarball
 define build-systemtarball-target
