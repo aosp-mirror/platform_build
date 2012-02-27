@@ -207,6 +207,32 @@ $(info ***************************************************************)
 $(error stopping)
 endif
 
+# -----------------------------------------------------------------
+# The pdk (Platform Development Kit) build
+# pdk1 : for building binary blob necessary for pdk2 build
+# pdk2 : HAL build for chipset vendors
+
+PDK_BUILD_TYPE:= $(filter pdk1 pdk2,$(MAKECMDGOALS))
+ifneq (1,$(words $(PDK_BUILD_TYPE)))
+  $(error You can't build pdk1 and pdk2 in the same run.)
+endif
+ifneq ($(PDK_BUILD_TYPE),)
+  $(info PDK build type $(PDK_BUILD_TYPE))
+  BUILD_PDK:= true
+  include pdk/build/pdk.mk
+  # force droid target
+  MAKECMDGOALS:= $(subst $(PDK_BUILD_TYPE),droid,$(MAKECMDGOALS))
+ifeq ($(PDK_BUILD_TYPE), pdk1)
+  .PHONY: pdk1
+  pdk1: droid pdk_bin_zip
+
+else  # pdk2
+  .PHONY: pdk2
+  pdk2: droid
+
+endif # pdk2
+endif # PDK_BUILD_TYPE
+# -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
 ### between the build variants
@@ -421,13 +447,18 @@ subdirs := \
 	external/yaffs2 \
 	external/zlib
 else	# !BUILD_TINY_ANDROID
-
+ifneq ($(BUILD_PDK),)
+subdirs := $(BUILD_PDK_SUBDIRS)
+FULL_BUILD := true
+else # Normal droid build
 #
 # Typical build; include any Android.mk files we can find.
 #
 subdirs := $(TOP)
 
 FULL_BUILD := true
+
+endif  # !BUILD_PDK
 
 endif	# !BUILD_TINY_ANDROID
 
@@ -696,6 +727,9 @@ cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
 ifeq ($(BUILD_TINY_ANDROID), true)
+INSTALLED_RECOVERYIMAGE_TARGET :=
+endif
+ifneq ($(BUILD_PDK),)
 INSTALLED_RECOVERYIMAGE_TARGET :=
 endif
 

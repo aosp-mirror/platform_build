@@ -624,7 +624,7 @@ endef
 # Recovery image
 
 # If neither TARGET_NO_KERNEL nor TARGET_NO_RECOVERY are true
-ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY) $(BUILD_TINY_ANDROID)))
+ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY) $(BUILD_TINY_ANDROID) $(BUILD_PDK)))
 
 INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
 
@@ -1325,11 +1325,13 @@ $(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES)
 	$(hide) zip -qj $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
 
 # -----------------------------------------------------------------
+# Old PDK stuffs, retired
 # The pdk package (Platform Development Kit)
 
-ifneq (,$(filter pdk,$(MAKECMDGOALS)))
-  include development/pdk/Pdk.mk
-endif
+#ifneq (,$(filter pdk,$(MAKECMDGOALS)))
+#  include development/pdk/Pdk.mk
+#endif
+
 
 # -----------------------------------------------------------------
 # The SDK
