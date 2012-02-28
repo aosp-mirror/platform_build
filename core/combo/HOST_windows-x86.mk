@@ -26,13 +26,19 @@ TOOLS_EXE_SUFFIX := .exe
 ifneq ($(findstring Linux,$(UNAME)),)
 ifneq ($(strip $(USE_MINGW)),)
 HOST_ACP_UNAVAILABLE := true
-TOOLS_PREFIX := /usr/bin/i586-mingw32msvc-
 TOOLS_EXE_SUFFIX :=
 HOST_GLOBAL_CFLAGS += -DUSE_MINGW
+ifneq ($(strip $(BUILD_HOST_64bit)),)
+TOOLS_PREFIX := /usr/bin/amd64-mingw32msvc-
+HOST_C_INCLUDES += /usr/lib/gcc/amd64-mingw32msvc/4.4.2/include
+HOST_GLOBAL_LD_DIRS += -L/usr/amd64-mingw32msvc/lib
+else
+TOOLS_PREFIX := /usr/bin/i586-mingw32msvc-
 HOST_C_INCLUDES += /usr/lib/gcc/i586-mingw32msvc/3.4.4/include
 HOST_GLOBAL_LD_DIRS += -L/usr/i586-mingw32msvc/lib
-endif
-endif
+endif # BUILD_HOST_64bit
+endif # USE_MINGW
+endif # Linux
 
 HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
 HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)

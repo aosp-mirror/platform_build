@@ -17,11 +17,17 @@
 # Configuration for Darwin (Mac OS X) on x86.
 # Included by combo/select.mk
 
-# We build everything in 32-bit, because some host tools are
-# 32-bit-only anyway (emulator, acc), and because it gives us
+ifneq ($(strip $(BUILD_HOST_64bit)),)
+# By default we build everything in 32-bit, because it gives us
 # more consistency between the host tools and the target.
+# BUILD_HOST_64bit=1 overrides it for tool like emulator
+# which can benefit from 64-bit host arch.
+HOST_GLOBAL_CFLAGS += -m64
+HOST_GLOBAL_LDFLAGS += -m64
+else
 HOST_GLOBAL_CFLAGS += -m32
 HOST_GLOBAL_LDFLAGS += -m32
+endif # BUILD_HOST_64bit
 
 # Use the Mac OSX SDK 10.5 if the build host is 10.6
 build_mac_version := $(shell sw_vers -productVersion)
