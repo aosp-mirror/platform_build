@@ -137,7 +137,7 @@ static int copyFileContents(const char* dst, int dstFd, const char* src, int src
                 return -1;
             }
             if (writeCount != readCount) {
-                fprintf(stderr, "acp: partial write to '%s' (%d of %d)\n",
+                fprintf(stderr, "acp: partial write to '%s' (%zd of %zd)\n",
                     dst, writeCount, readCount);
                 return -1;
             }
