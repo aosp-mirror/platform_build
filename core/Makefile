@@ -410,12 +410,15 @@ endif
 # ALL_DEFAULT_INSTALLED_MODULES, which those use to pick which files
 # go into the systemimage.
 
+.PHONY: notice_files
+
 # Create the rule to combine the files into text and html forms
-# $(1) - HTML output file
-# $(2) - File title
-# $(3) - Directory to use.  Notice files are all $(3)/src.  Other
+# $(1) - Plain text output file
+# $(2) - HTML output file
+# $(3) - File title
+# $(4) - Directory to use.  Notice files are all $(4)/src.  Other
 #		 directories in there will be used for scratch
-# $(4) - Dependencies for the output files
+# $(5) - Dependencies for the output files
 #
 # The algorithm here is that we go collect a hash for each of the notice
 # files and write the names of the files that match that hash.  Then
@@ -429,9 +432,9 @@ endif
 # original notice files instead of making rules to copy them somwehere.
 # Then we could traverse that without quite as much bash drama.
 define combine-notice-files
-$(1): PRIVATE_MESSAGE := $(2)
-$(1) $(3)/hash-timestamp: PRIVATE_DIR := $(3)
-$(3)/hash-timestamp: $(4) $(BUILD_SYSTEM)/Makefile
+$(1) $(2): PRIVATE_MESSAGE := $(3)
+$(1) $(2) $(4)/hash-timestamp: PRIVATE_DIR := $(4)
+$(4)/hash-timestamp: $(5) $(BUILD_SYSTEM)/Makefile
 	@echo Finding NOTICE files: $$@
 	$$(hide) rm -rf $$@ $$(PRIVATE_DIR)/hash
 	$$(hide) mkdir -p $$(PRIVATE_DIR)/hash
@@ -441,7 +444,32 @@ $(3)/hash-timestamp: $(4) $(BUILD_SYSTEM)/Makefile
 			echo $$$$file >> $$$$hashfile; \
 		done
 	$$(hide) touch $$@
-$(1): $(3)/hash-timestamp
+$(1): $(4)/hash-timestamp
+	@echo Combining NOTICE files: $$@
+	$$(hide) mkdir -p $$(dir $$@)
+	$$(hide) echo $$(PRIVATE_MESSAGE) > $$@
+	$$(hide) find $$(PRIVATE_DIR)/hash -type f | xargs cat | sort | \
+		sed -e "s:$$(PRIVATE_DIR)/src\(.*\)\.txt:  \1:" >> $$@
+	$$(hide) echo >> $$@
+	$$(hide) echo >> $$@
+	$$(hide) echo >> $$@
+	$$(hide) for hashfile in $$$$(find $$(PRIVATE_DIR)/hash -type f); do \
+			echo "============================================================"\
+				>> $$@; \
+			echo "Notices for file(s):" >> $$@; \
+			cat $$$$hashfile | sort | \
+				sed -e "s:$$(PRIVATE_DIR)/src\(.*\)\.txt:  \1:" >> \
+				$$@; \
+			echo "------------------------------------------------------------"\
+				>> $$@; \
+			echo >> $$@; \
+			orig=$$$$(head -n 1 $$$$hashfile); \
+			cat $$$$orig >> $$@; \
+			echo >> $$@; \
+			echo >> $$@; \
+			echo >> $$@; \
+		done
+$(2): $(4)/hash-timestamp
 	@echo Combining NOTICE files: $$@
 	$$(hide) mkdir -p $$(dir $$@)
 	$$(hide) echo "<html><head>" > $$@
@@ -477,25 +505,30 @@ $(1): $(3)/hash-timestamp
 		done
 	$$(hide) echo "</table>" >> $$@
 	$$(hide) echo "</body></html>" >> $$@
+notice_files: $(1) $(2)
 endef
 
 # TODO These intermediate NOTICE.txt/NOTICE.html files should go into
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
 
+target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
 target_notice_file_html := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
 target_notice_file_html_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
+tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 
 $(eval $(call combine-notice-files, \
+			$(target_notice_file_txt), \
 			$(target_notice_file_html), \
 			"Notices for files contained in the filesystem images in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
 			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file)))
 
 $(eval $(call combine-notice-files, \
+			$(tools_notice_file_txt), \
 			$(tools_notice_file_html), \
 			"Notices for files contained in the tools directory:", \
 			$(HOST_OUT_NOTICE_FILES), \
