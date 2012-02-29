@@ -42,11 +42,17 @@ HOST_AR  := $(HOST_SDK_TOOLCHAIN_PREFIX)-ar
 endif # $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc exists
 endif # TARGET_PRODUCT == sdk
 
-# We build everything in 32-bit, because some host tools are
-# 32-bit-only anyway (emulator, acc), and because it gives us
+ifneq ($(strip $(BUILD_HOST_64bit)),)
+# By default we build everything in 32-bit, because it gives us
 # more consistency between the host tools and the target.
+# BUILD_HOST_64bit=1 overrides it for tool like emulator
+# which can benefit from 64-bit host arch.
+HOST_GLOBAL_CFLAGS += -m64
+HOST_GLOBAL_LDFLAGS += -m64
+else
 HOST_GLOBAL_CFLAGS += -m32
 HOST_GLOBAL_LDFLAGS += -m32
+endif # BUILD_HOST_64bit
 
 HOST_GLOBAL_CFLAGS += -fPIC
 HOST_GLOBAL_CFLAGS += \
