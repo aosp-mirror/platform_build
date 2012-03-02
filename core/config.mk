@@ -73,6 +73,8 @@ BUILD_COPY_HEADERS := $(BUILD_SYSTEM)/copy_headers.mk
 BUILD_NATIVE_TEST := $(BUILD_SYSTEM)/native_test.mk
 BUILD_HOST_NATIVE_TEST := $(BUILD_SYSTEM)/host_native_test.mk
 
+-include cts/build/config.mk
+
 # ###############################################################
 # Parse out any modifier targets.
 # ###############################################################
