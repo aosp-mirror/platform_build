@@ -47,6 +47,7 @@ pathmap_INCL := \
     libstdc++:bionic/libstdc++/include \
     libthread_db:bionic/libthread_db/include \
     mkbootimg:system/core/mkbootimg \
+    opengl-tests-includes:frameworks/base/opengl/tests/include \
     recovery:bootable/recovery \
     system-core:system/core/include \
     speex:external/speex/include
