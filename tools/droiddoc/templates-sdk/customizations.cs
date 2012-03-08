@@ -35,6 +35,10 @@ def:guide_nav() ?>
         });
     </script>
 <?cs /def ?>
+<?cs
+def:design_nav() ?>
+  <?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+<?cs /def ?>
 
 <?cs # The default side navigation for the reference docs ?><?cs 
 def:default_left_nav() ?>
