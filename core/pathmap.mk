@@ -34,6 +34,7 @@ pathmap_INCL := \
     corecg:external/skia/include/core \
     dbus:external/dbus \
     frameworks-base:frameworks/base/include \
+    frameworks-native:frameworks/native/include \
     graphics:external/skia/include/core \
     libc:bionic/libc/include \
     libdrm1:frameworks/base/media/libdrm/mobile1/include \
