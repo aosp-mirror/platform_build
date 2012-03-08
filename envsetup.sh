@@ -1,4 +1,4 @@
-function help() {
+function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
 - croot:   Changes directory to the top of the tree.
@@ -656,17 +656,6 @@ function mmm()
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi
-}
-
-function hmm()
-{
-cat <<EOF
-- m:       Makes from the top of the tree.
-- mm:      Builds all of the modules in the current directory.
-- mmm dir: Same as 'cd dir; mm'
-
-Type 'help' for more commands.
-EOF
 }
 
 function croot()
