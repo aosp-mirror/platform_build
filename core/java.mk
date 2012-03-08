@@ -160,8 +160,8 @@ renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
 # prepend the RenderScript system include path
 ifneq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
 LOCAL_RENDERSCRIPT_INCLUDES := \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/renderscript/clang-include \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/renderscript/include \
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/clang-include \
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/include \
     $(LOCAL_RENDERSCRIPT_INCLUDES)
 else
 LOCAL_RENDERSCRIPT_INCLUDES := \
