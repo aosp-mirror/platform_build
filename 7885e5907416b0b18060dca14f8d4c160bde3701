@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAADsn///8k\u003d",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-03-08T23:08:18Z",
+      "side": 1,
+      "message": "We have since removed the use of mips-r2* abi names.",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
