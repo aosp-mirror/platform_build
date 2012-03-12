@@ -213,7 +213,7 @@ endif
 # pdk2 : HAL build for chipset vendors
 
 PDK_BUILD_TYPE:= $(filter pdk1 pdk2,$(MAKECMDGOALS))
-ifneq (1,$(words $(PDK_BUILD_TYPE)))
+ifeq (2,$(words $(PDK_BUILD_TYPE)))
   $(error You can't build pdk1 and pdk2 in the same run.)
 endif
 ifneq ($(PDK_BUILD_TYPE),)
