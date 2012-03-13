@@ -1206,7 +1206,7 @@ endif    # TARGET_PRODUCT != sdk
 # -----------------------------------------------------------------
 # A zip of the tests that are built when running "make tests".
 # This is very similar to BUILT_TARGET_FILES_PACKAGE, but we
-# only grab SYSTEM and DATA, and it's called "*-tests-*.zip".
+# only grab DATA, and it's called "*-tests-*.zip".
 #
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
@@ -1222,21 +1222,11 @@ $(BUILT_TESTS_ZIP_PACKAGE): zip_root := $(intermediates)/$(name)
 # Depending on the images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TESTS_ZIP_PACKAGE): \
-		$(BUILT_SYSTEMIMAGE) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		| $(ACP)
 	@echo "Package test files: $@"
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
-	@# Some parts of the system image
-	$(hide) $(call package_files-copy-root, \
-		$(SYSTEMIMAGE_SOURCE_DIR)/xbin,$(zip_root)/SYSTEM/xbin)
-	$(hide) $(call package_files-copy-root, \
-		$(SYSTEMIMAGE_SOURCE_DIR)/lib,$(zip_root)/SYSTEM/lib)
-	$(hide) $(call package_files-copy-root, \
-		$(SYSTEMIMAGE_SOURCE_DIR)/framework, \
-		$(zip_root)/SYSTEM/framework)
-	$(hide) $(ACP) $(SYSTEMIMAGE_SOURCE_DIR)/build.prop $(zip_root)/SYSTEM
 	@# Contents of the data image
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_OUT_DATA),$(zip_root)/DATA)
