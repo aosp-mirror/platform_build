@@ -137,11 +137,7 @@ def SetupToolsPath():
 
   uname = os.uname()[0]
   if uname == "Darwin":
-    proc = os.uname()[-1]
-    if proc == "i386":
-      uname = "darwin-x86"
-    else:
-      uname = "darwin-ppc"
+    uname = "darwin-x86"
   elif uname == "Linux":
     uname = "linux-x86"
   prefix = "./prebuilt/" + uname + "/toolchain/arm-linux-androideabi-4.4.x/bin/"
