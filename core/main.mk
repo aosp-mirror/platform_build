@@ -183,7 +183,7 @@ include $(BUILD_SYSTEM)/definitions.mk
 # Bring in dex_preopt.mk
 include $(BUILD_SYSTEM)/dex_preopt.mk
 
-ifneq ($(filter eng user userdebug tests,$(MAKECMDGOALS)),)
+ifneq ($(filter eng user userdebug,$(MAKECMDGOALS)),)
 $(info ***************************************************************)
 $(info ***************************************************************)
 $(info Don't pass '$(filter eng user userdebug tests,$(MAKECMDGOALS))' on \
@@ -797,8 +797,7 @@ endif # TARGET_BUILD_APPS
 endif # droid in $(MAKECMDGOALS)
 
 
-.PHONY: droid tests
-tests: droidcore
+.PHONY: droid
 
 # phony target that include any targets in $(ALL_MODULES)
 .PHONY: all_modules
