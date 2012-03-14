@@ -1224,7 +1224,6 @@ endif    # TARGET_PRODUCT != sdk
 # This is very similar to BUILT_TARGET_FILES_PACKAGE, but we
 # only grab DATA, and it's called "*-tests-*.zip".
 #
-ifdef is_tests_build
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -1268,7 +1267,6 @@ tests: $(BUILT_TESTS_ZIP_PACKAGE)
 ifneq (,$(filter tests, $(MAKECMDGOALS)))
 $(call dist-for-goals, tests, $(BUILT_TESTS_ZIP_PACKAGE))
 endif
-endif  # is_tests_build
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
