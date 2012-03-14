@@ -9,6 +9,8 @@ else
   FILE_NAME_TAG := $(BUILD_NUMBER)
 endif
 
+is_tests_build := $(filter tests,$(MAKECMDGOALS))
+
 # -----------------------------------------------------------------
 # Define rules to copy PRODUCT_COPY_FILES defined by the product.
 # PRODUCT_COPY_FILES contains words like <source file>:<dest file>.
@@ -741,10 +743,18 @@ endif
 #
 
 INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
-	$(ALL_PREBUILT) \
-	$(ALL_COPIED_HEADERS) \
-	$(ALL_GENERATED_SOURCES) \
-	$(ALL_DEFAULT_INSTALLED_MODULES))
+    $(ALL_PREBUILT) \
+    $(ALL_COPIED_HEADERS) \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+ifdef is_tests_build
+# We don't want to install tests modules to the system partition
+# when building "tests", because now "tests" may be built in a user, userdebug
+# or eng build variant and we don't want to pollute the system partition.
+# INTERNAL_SYSTEMIMAGE_FILES += $(filter $(TARGET_OUT)/%, \
+#    $(tests_MODULES))
+endif
 
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 # -----------------------------------------------------------------
@@ -887,6 +897,12 @@ boottarball-nodeps btnod: $(FS_GET_STATS) \
 # data partition image
 INTERNAL_USERDATAIMAGE_FILES := \
     $(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
+
+# If we build "tests" at the same time, make sure $(tests_MODULES) get covered.
+ifdef is_tests_build
+INTERNAL_USERDATAIMAGE_FILES += \
+    $(filter $(TARGET_OUT_DATA)/%,$(tests_MODULES))
+endif
 
 userdataimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,userdata)
@@ -1208,6 +1224,7 @@ endif    # TARGET_PRODUCT != sdk
 # This is very similar to BUILT_TARGET_FILES_PACKAGE, but we
 # only grab DATA, and it's called "*-tests-*.zip".
 #
+ifdef is_tests_build
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -1222,8 +1239,8 @@ $(BUILT_TESTS_ZIP_PACKAGE): zip_root := $(intermediates)/$(name)
 # Depending on the images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TESTS_ZIP_PACKAGE): \
-		$(INSTALLED_USERDATAIMAGE_TARGET) \
-		| $(ACP)
+    $(INSTALLED_USERDATAIMAGE_TARGET) \
+    | $(ACP)
 	@echo "Package test files: $@"
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
@@ -1245,6 +1262,13 @@ ifneq (,$(filter $(MAKECMDGOALS),tests-build-target))
           $(BUILT_TESTS_ZIP_PACKAGE) \
           $(BUILT_USERDATAIMAGE_TARGET))
 endif
+
+.PHONY: tests
+tests: $(BUILT_TESTS_ZIP_PACKAGE)
+ifneq (,$(filter tests, $(MAKECMDGOALS)))
+$(call dist-for-goals, tests, $(BUILT_TESTS_ZIP_PACKAGE))
+endif
+endif  # is_tests_build
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
