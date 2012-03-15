@@ -151,6 +151,28 @@ include $(board_config_mk)
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
+# pull in device specific kernel headers. Files should be in
+# $(TARGET_DEVICE_DIR)/kernel-headers, e.g.
+# $(TARGET_DEVICE_DIR)/kernel-headers/linux/
+# $(TARGET_DEVICE_DIR)/kernel-headers/media/
+# $(TARGET_DEVICE_DIR)/kernel-headers/video/
+# etc.
+TARGET_DEVICE_KERNEL_HEADERS := $(strip $(wildcard $(TARGET_DEVICE_DIR)/kernel-headers))
+
+# also allow the board config to provide additional directories since
+# there could be device/oem/base_hw and device/oem/derived_hw
+# that both are valid devices but derived_hw needs to use kernel headers
+# from base_hw.
+TARGET_BOARD_KERNEL_HEADERS := $(strip $(wildcard $(TARGET_BOARD_KERNEL_HEADERS)))
+TARGET_BOARD_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_BOARD_KERNEL_HEADERS))
+_bad_kernel_hdr_dirs := \
+	$(foreach hdr_dir,$(TARGET_BOARD_KERNEL_HEADERS),\
+		$(filter-out kernel-headers,$(notdir $(hdr_dir))))
+ifneq ($(words $(_bad_kernel_hdr_dirs)),0)
+  $(error Board kernel header dirs must be end in kernel-headers: $(TARGET_BOARD_KERNEL_HEADERS))
+endif
+_bad_kernel_hdr_dirs :=
+
 # Clean up/verify variables defined by the board config file.
 TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
 TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
@@ -330,7 +352,8 @@ HOST_GLOBAL_LD_DIRS += -L$(HOST_OUT_INTERMEDIATE_LIBRARIES)
 TARGET_GLOBAL_LD_DIRS += -L$(TARGET_OUT_INTERMEDIATE_LIBRARIES)
 
 HOST_PROJECT_INCLUDES:= $(SRC_HEADERS) $(SRC_HOST_HEADERS) $(HOST_OUT_HEADERS)
-TARGET_PROJECT_INCLUDES:= $(SRC_HEADERS) $(TARGET_OUT_HEADERS)
+TARGET_PROJECT_INCLUDES:= $(SRC_HEADERS) $(TARGET_OUT_HEADERS) \
+		$(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS)
 
 # Many host compilers don't support these flags, so we have to make
 # sure to only specify them for the target compilers checked in to
