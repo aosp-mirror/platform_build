@@ -209,12 +209,12 @@ endif
 
 # -----------------------------------------------------------------
 # The pdk (Platform Development Kit) build
-# pdk1 : for building binary blob necessary for pdk2 build
-# pdk2 : HAL build for chipset vendors
+# pdk_eng : for building binary blob necessary for pdk_rel build
+# pdk_rel : HAL build for chipset vendors
 
-PDK_BUILD_TYPE:= $(filter pdk1 pdk2,$(MAKECMDGOALS))
+PDK_BUILD_TYPE:= $(filter pdk_eng pdk_rel,$(MAKECMDGOALS))
 ifeq (2,$(words $(PDK_BUILD_TYPE)))
-  $(error You can't build pdk1 and pdk2 in the same run.)
+  $(error You can't build pdk_eng and pdk_rel in the same run.)
 endif
 ifneq ($(PDK_BUILD_TYPE),)
   $(info PDK build type $(PDK_BUILD_TYPE))
@@ -222,15 +222,15 @@ ifneq ($(PDK_BUILD_TYPE),)
   include pdk/build/pdk.mk
   # force droid target
   MAKECMDGOALS:= $(subst $(PDK_BUILD_TYPE),droid,$(MAKECMDGOALS))
-ifeq ($(PDK_BUILD_TYPE), pdk1)
-  .PHONY: pdk1
-  pdk1: droid pdk_bin_zip
+ifeq ($(PDK_BUILD_TYPE), pdk_eng)
+  .PHONY: pdk_eng
+  pdk_eng: droid pdk_bin_zip
 
-else  # pdk2
-  .PHONY: pdk2
-  pdk2: droid
+else  # pdk_rel
+  .PHONY: pdk_rel
+  pdk_rel: droid
 
-endif # pdk2
+endif # pdk_rel
 endif # PDK_BUILD_TYPE
 # -----------------------------------------------------------------
 ###
