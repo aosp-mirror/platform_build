@@ -306,6 +306,10 @@ DEVICE_PACKAGE_OVERLAYS := \
 # An list of whitespace-separated words.
 PRODUCT_TAGS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_TAGS))
 
+# The list of product-specific kernel header dirs
+PRODUCT_VENDOR_KERNEL_HEADERS := \
+    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_KERNEL_HEADERS)
+
 # Add the product-defined properties to the build properties.
 ADDITIONAL_BUILD_PROPERTIES := \
     $(ADDITIONAL_BUILD_PROPERTIES) \

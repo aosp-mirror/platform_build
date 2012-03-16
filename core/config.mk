@@ -159,19 +159,24 @@ board_config_mk :=
 # etc.
 TARGET_DEVICE_KERNEL_HEADERS := $(strip $(wildcard $(TARGET_DEVICE_DIR)/kernel-headers))
 
+define validate-kernel-headers
+$(if $(firstword $(foreach hdr_dir,$(1),\
+         $(filter-out kernel-headers,$(notdir $(hdr_dir))))),\
+     $(error Kernel header dirs must be end in kernel-headers: $(1)))
+endef
 # also allow the board config to provide additional directories since
 # there could be device/oem/base_hw and device/oem/derived_hw
 # that both are valid devices but derived_hw needs to use kernel headers
 # from base_hw.
 TARGET_BOARD_KERNEL_HEADERS := $(strip $(wildcard $(TARGET_BOARD_KERNEL_HEADERS)))
 TARGET_BOARD_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_BOARD_KERNEL_HEADERS))
-_bad_kernel_hdr_dirs := \
-	$(foreach hdr_dir,$(TARGET_BOARD_KERNEL_HEADERS),\
-		$(filter-out kernel-headers,$(notdir $(hdr_dir))))
-ifneq ($(words $(_bad_kernel_hdr_dirs)),0)
-  $(error Board kernel header dirs must be end in kernel-headers: $(TARGET_BOARD_KERNEL_HEADERS))
-endif
-_bad_kernel_hdr_dirs :=
+$(call validate-kernel-headers,$(TARGET_BOARD_KERNEL_HEADERS))
+
+# then add product-inherited includes, to allow for
+# hardware/sivendor/chip/chip.mk to include their own headers
+TARGET_PRODUCT_KERNEL_HEADERS := $(strip $(wildcard $(PRODUCT_VENDOR_KERNEL_HEADERS)))
+TARGET_PRODUCT_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_PRODUCT_KERNEL_HEADERS))
+$(call validate-kernel-headers,$(TARGET_PRODUCT_KERNEL_HEADERS))
 
 # Clean up/verify variables defined by the board config file.
 TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
@@ -353,7 +358,8 @@ TARGET_GLOBAL_LD_DIRS += -L$(TARGET_OUT_INTERMEDIATE_LIBRARIES)
 
 HOST_PROJECT_INCLUDES:= $(SRC_HEADERS) $(SRC_HOST_HEADERS) $(HOST_OUT_HEADERS)
 TARGET_PROJECT_INCLUDES:= $(SRC_HEADERS) $(TARGET_OUT_HEADERS) \
-		$(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS)
+		$(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) \
+		$(TARGET_PRODUCT_KERNEL_HEADERS)
 
 # Many host compilers don't support these flags, so we have to make
 # sure to only specify them for the target compilers checked in to
