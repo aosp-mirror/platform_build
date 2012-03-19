@@ -26,3 +26,4 @@ PRODUCT_COPY_FILES := \
     development/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
     development/data/etc/vold.conf:system/etc/vold.conf \
     development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml \
+    development/tools/emulator/system/camera/media_codecs.xml:system/etc/media_codecs.xml \
