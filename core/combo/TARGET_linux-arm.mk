@@ -135,6 +135,8 @@ TARGET_GLOBAL_CFLAGS += -Wno-psabi
 
 TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
+			-Wl,-z,relro \
+			-Wl,-z,now \
 			-Wl,--icf=safe \
 			$(arch_variant_ldflags)
 
@@ -246,7 +248,7 @@ endif
 
 define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
-	-nostdlib -Wl,-soname,$(notdir $@) -Wl,-T,$(BUILD_SYSTEM)/armelf.xsc \
+	-nostdlib -Wl,-soname,$(notdir $@) \
 	-Wl,--gc-sections \
 	-Wl,-shared,-Bsymbolic \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
