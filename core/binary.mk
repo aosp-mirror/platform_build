@@ -123,6 +123,12 @@ LOCAL_REQUIRED_MODULES += $(installed_shared_library_module_names)
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+ifeq ($(strip $(LOCAL_CLANG)),true)
+  LOCAL_CFLAGS += $(CLANG_CONFIG_EXTRA_CFLAGS)
+  LOCAL_LDFLAGS += $(CLANG_CONFIG_EXTRA_LDFLAGS)
+  LOCAL_C_INCLUDES += $(CLANG_CONFIG_EXTRA_C_INCLUDES)
+  LOCAL_COMPILER_DEPENDENCIES := $(CLANG) $(CLANG_CXX)
+endif
 
 ####################################################
 ## Add FDO flags if FDO is turned on and supported
@@ -142,16 +148,22 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ###########################################################
 ## Define PRIVATE_ variables from global vars
 ###########################################################
+ifeq ($(strip $(LOCAL_CLANG)),true)
+my_target_global_cflags := $(TARGET_GLOBAL_CLANG_FLAGS)
+else
+my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
+endif
+
 ifdef LOCAL_NDK_VERSION
 my_target_project_includes :=
 my_target_c_inclues := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
 # TODO: more reliable way to remove platform stuff.
-my_target_global_cflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CFLAGS))
+my_target_global_cflags := $(filter-out -include -I system/%, $(my_target_global_cflags))
 my_target_global_cppflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CPPFLAGS))
 else
 my_target_project_includes := $(TARGET_PROJECT_INCLUDES)
 my_target_c_inclues := $(TARGET_C_INCLUDES)
-my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
+my_target_global_cflags := $(my_target_global_cflags)
 my_target_global_cppflags := $(TARGET_GLOBAL_CPPFLAGS)
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
@@ -166,12 +178,20 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
 	$(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
 
 ifeq ($(strip $(LOCAL_CC)),)
-  LOCAL_CC := $($(my_prefix)CC)
+  ifeq ($(strip $(LOCAL_CLANG)),true)
+    LOCAL_CC := $(CLANG)
+  else
+    LOCAL_CC := $($(my_prefix)CC)
+  endif
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(LOCAL_CC)
 
 ifeq ($(strip $(LOCAL_CXX)),)
-  LOCAL_CXX := $($(my_prefix)CXX)
+  ifeq ($(strip $(LOCAL_CLANG)),true)
+    LOCAL_CXX := $(CLANG_CXX)
+  else
+    LOCAL_CXX := $($(my_prefix)CXX)
+  endif
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(LOCAL_CXX)
 
@@ -343,7 +363,8 @@ cpp_objects        := $(cpp_arm_objects) $(cpp_normal_objects)
 ifneq ($(strip $(cpp_objects)),)
 $(cpp_objects): $(intermediates)/%.o: \
 		$(TOPDIR)$(LOCAL_PATH)/%$(LOCAL_CPP_EXTENSION) \
-		$(yacc_cpps) $(proto_generated_headers) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+		$(yacc_cpps) $(proto_generated_headers) $(LOCAL_COMPILER_DEPENDENCIES) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(cpp_objects:%.o=%.P)
 endif
@@ -360,7 +381,10 @@ ifneq ($(strip $(gen_cpp_objects)),)
 # TODO: support compiling certain generated files as arm.
 $(gen_cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(gen_cpp_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION) $(yacc_cpps) $(proto_generated_headers) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(gen_cpp_objects): $(intermediates)/%.o: \
+    $(intermediates)/%$(LOCAL_CPP_EXTENSION) $(yacc_cpps) \
+    $(proto_generated_headers)  $(LOCAL_COMPILER_DEPENDENCIES) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(gen_cpp_objects:%.o=%.P)
 endif
@@ -373,7 +397,8 @@ gen_S_sources := $(filter %.S,$(LOCAL_GENERATED_SOURCES))
 gen_S_objects := $(gen_S_sources:%.S=%.o)
 
 ifneq ($(strip $(gen_S_sources)),)
-$(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S \
+    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(gen_S_objects:%.o=%.P)
 endif
@@ -382,7 +407,8 @@ gen_s_sources := $(filter %.s,$(LOCAL_GENERATED_SOURCES))
 gen_s_objects := $(gen_s_sources:%.s=%.o)
 
 ifneq ($(strip $(gen_s_objects)),)
-$(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s \
+     $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(gen_s_objects:%.o=%.P)
 endif
@@ -407,7 +433,8 @@ $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 c_objects        := $(c_arm_objects) $(c_normal_objects)
 
 ifneq ($(strip $(c_objects)),)
-$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) \
+    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(c_objects:%.o=%.P)
 endif
@@ -424,7 +451,8 @@ ifneq ($(strip $(gen_c_objects)),)
 # TODO: support compiling certain generated files as arm.
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) \
+    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(gen_c_objects:%.o=%.P)
 endif
@@ -437,7 +465,8 @@ objc_sources := $(filter %.m,$(LOCAL_SRC_FILES))
 objc_objects := $(addprefix $(intermediates)/,$(objc_sources:.m=.o))
 
 ifneq ($(strip $(objc_objects)),)
-$(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $(proto_generated_headers) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $(proto_generated_headers) \
+    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)m-to-o)
 -include $(objc_objects:%.o=%.P)
 endif
@@ -450,7 +479,8 @@ asm_sources_S := $(filter %.S,$(LOCAL_SRC_FILES))
 asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
 
 ifneq ($(strip $(asm_objects_S)),)
-$(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
+    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(asm_objects_S:%.o=%.P)
 endif
@@ -459,7 +489,8 @@ asm_sources_s := $(filter %.s,$(LOCAL_SRC_FILES))
 asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
 
 ifneq ($(strip $(asm_objects_s)),)
-$(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s \
+    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(asm_objects_s:%.o=%.P)
 endif
