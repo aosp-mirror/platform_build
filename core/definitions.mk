@@ -1927,6 +1927,21 @@ $$(PRODUCT_OUT)/$(2) : $$(LOCAL_PATH)/$(1) | $$(ACP)
 	$$(transform-prebuilt-to-target)
 endef
 
+# Version of add-radio-file that also arranges for the version of the
+# file to be checked against the contents of
+# $(TARGET_BOARD_INFO_FILE).
+# $(1): filename
+# $(2): name of version variable in board-info (eg, "version-baseband")
+define add-radio-file-checked
+  $(eval $(call add-radio-file-checked-internal,$(1),$(notdir $(1)),$(2)))
+endef
+define add-radio-file-checked-internal
+INSTALLED_RADIOIMAGE_TARGET += $$(PRODUCT_OUT)/$(2)
+BOARD_INFO_CHECK += $(3):$(LOCAL_PATH)/$(1)
+$$(PRODUCT_OUT)/$(2) : $$(LOCAL_PATH)/$(1) | $$(ACP)
+	$$(transform-prebuilt-to-target)
+endef
+
 
 ###########################################################
 # Override the package defined in $(1), setting the
