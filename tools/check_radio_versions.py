@@ -22,6 +22,9 @@ try:
 except ImportError:
   from sha import sha as sha1
 
+if len(sys.argv) < 2:
+  sys.exit(0)
+
 build_info = {}
 f = open(sys.argv[1])
 for line in f:
