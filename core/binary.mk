@@ -571,7 +571,7 @@ built_whole_libraries := \
 # We don't care about installed static libraries, since the
 # libraries have already been linked into the module at that point.
 # We do, however, care about the NOTICE files for any static
-# libraries that we use. (see notice_files.make)
+# libraries that we use. (see notice_files.mk)
 
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(LOCAL_STATIC_LIBRARIES) $(LOCAL_WHOLE_STATIC_LIBRARIES), \

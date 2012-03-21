@@ -408,6 +408,11 @@ endif
 # -----------------------------------------------------------------
 # NOTICE files
 #
+# We are required to publish the licenses for all code under BSD, GPL and
+# Apache licenses (and possibly other more exotic ones as well). We err on the
+# side of caution, so the licenses for other third-party code are included here
+# too.
+#
 # This needs to be before the systemimage rules, because it adds to
 # ALL_DEFAULT_INSTALLED_MODULES, which those use to pick which files
 # go into the systemimage.
