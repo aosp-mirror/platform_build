@@ -1258,13 +1258,11 @@ tests-zip-package: $(BUILT_TESTS_ZIP_PACKAGE)
 
 # Target needed by tests build
 .PHONY: tests-build-target
-tests-build-target: $(BUILT_TESTS_ZIP_PACKAGE) \
-                    $(BUILT_USERDATAIMAGE_TARGET)
+tests-build-target: $(BUILT_TESTS_ZIP_PACKAGE)
 
 ifneq (,$(filter $(MAKECMDGOALS),tests-build-target))
   $(call dist-for-goals, tests-build-target, \
-          $(BUILT_TESTS_ZIP_PACKAGE) \
-          $(BUILT_USERDATAIMAGE_TARGET))
+          $(BUILT_TESTS_ZIP_PACKAGE))
 endif
 
 .PHONY: tests
