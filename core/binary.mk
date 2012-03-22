@@ -123,11 +123,12 @@ LOCAL_REQUIRED_MODULES += $(installed_shared_library_module_names)
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+my_compiler_dependencies :=
 ifeq ($(strip $(LOCAL_CLANG)),true)
   LOCAL_CFLAGS += $(CLANG_CONFIG_EXTRA_CFLAGS)
   LOCAL_LDFLAGS += $(CLANG_CONFIG_EXTRA_LDFLAGS)
   LOCAL_C_INCLUDES += $(CLANG_CONFIG_EXTRA_C_INCLUDES)
-  LOCAL_COMPILER_DEPENDENCIES := $(CLANG) $(CLANG_CXX)
+  my_compiler_dependencies := $(CLANG) $(CLANG_CXX)
 endif
 
 ####################################################
@@ -175,7 +176,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_glo
 ## Define PRIVATE_ variables used by multiple module types
 ###########################################################
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
-	$(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
+    $(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
 
 ifeq ($(strip $(LOCAL_CC)),)
   ifeq ($(strip $(LOCAL_CLANG)),true)
@@ -267,7 +268,7 @@ ifneq ($(proto_sources),)
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 proto_generated_cc_sources_dir := $(intermediates)/proto
 proto_generated_cc_sources := $(addprefix $(proto_generated_cc_sources_dir)/, \
-	$(patsubst %.proto,%.pb.cc,$(proto_sources_fullpath)))
+    $(patsubst %.proto,%.pb.cc,$(proto_sources_fullpath)))
 proto_generated_objects := $(patsubst %.cc,%.o, $(proto_generated_cc_sources))
 
 $(proto_generated_cc_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
@@ -301,14 +302,14 @@ endif
 
 yacc_sources := $(filter %.y,$(LOCAL_SRC_FILES))
 yacc_cpps := $(addprefix \
-	$(intermediates)/,$(yacc_sources:.y=$(LOCAL_CPP_EXTENSION)))
+    $(intermediates)/,$(yacc_sources:.y=$(LOCAL_CPP_EXTENSION)))
 yacc_headers := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.h)
 yacc_objects := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.o)
 
 ifneq ($(strip $(yacc_cpps)),)
 $(yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
-		$(TOPDIR)$(LOCAL_PATH)/%.y \
-		$(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(TOPDIR)$(LOCAL_PATH)/%.y \
+    $(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
 $(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 
@@ -324,20 +325,20 @@ endif
 
 lex_sources := $(filter %.l,$(LOCAL_SRC_FILES))
 lex_cpps := $(addprefix \
-	$(intermediates)/,$(lex_sources:.l=$(LOCAL_CPP_EXTENSION)))
+    $(intermediates)/,$(lex_sources:.l=$(LOCAL_CPP_EXTENSION)))
 lex_objects := $(lex_cpps:$(LOCAL_CPP_EXTENSION)=.o)
 
 ifneq ($(strip $(lex_cpps)),)
 $(lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
-		$(TOPDIR)$(LOCAL_PATH)/%.l
+    $(TOPDIR)$(LOCAL_PATH)/%.l
 	$(transform-l-to-cpp)
 
 $(lex_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(lex_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(lex_objects): $(intermediates)/%.o: \
-		$(intermediates)/%$(LOCAL_CPP_EXTENSION) \
-		$(LOCAL_ADDITIONAL_DEPENDENCIES) \
-		$(yacc_headers)
+    $(intermediates)/%$(LOCAL_CPP_EXTENSION) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+    $(yacc_headers)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 endif
 
@@ -362,8 +363,8 @@ cpp_objects        := $(cpp_arm_objects) $(cpp_normal_objects)
 
 ifneq ($(strip $(cpp_objects)),)
 $(cpp_objects): $(intermediates)/%.o: \
-		$(TOPDIR)$(LOCAL_PATH)/%$(LOCAL_CPP_EXTENSION) \
-		$(yacc_cpps) $(proto_generated_headers) $(LOCAL_COMPILER_DEPENDENCIES) \
+    $(TOPDIR)$(LOCAL_PATH)/%$(LOCAL_CPP_EXTENSION) \
+    $(yacc_cpps) $(proto_generated_headers) $(my_compiler_dependencies) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(cpp_objects:%.o=%.P)
@@ -383,7 +384,7 @@ $(gen_cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_cpp_objects): $(intermediates)/%.o: \
     $(intermediates)/%$(LOCAL_CPP_EXTENSION) $(yacc_cpps) \
-    $(proto_generated_headers)  $(LOCAL_COMPILER_DEPENDENCIES) \
+    $(proto_generated_headers)  $(my_compiler_dependencies) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(gen_cpp_objects:%.o=%.P)
@@ -398,7 +399,7 @@ gen_S_objects := $(gen_S_sources:%.S=%.o)
 
 ifneq ($(strip $(gen_S_sources)),)
 $(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S \
-    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(gen_S_objects:%.o=%.P)
 endif
@@ -408,7 +409,7 @@ gen_s_objects := $(gen_s_sources:%.s=%.o)
 
 ifneq ($(strip $(gen_s_objects)),)
 $(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s \
-     $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(gen_s_objects:%.o=%.P)
 endif
@@ -434,7 +435,7 @@ c_objects        := $(c_arm_objects) $(c_normal_objects)
 
 ifneq ($(strip $(c_objects)),)
 $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(c_objects:%.o=%.P)
 endif
@@ -452,7 +453,7 @@ ifneq ($(strip $(gen_c_objects)),)
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(gen_c_objects:%.o=%.P)
 endif
@@ -466,7 +467,7 @@ objc_objects := $(addprefix $(intermediates)/,$(objc_sources:.m=.o))
 
 ifneq ($(strip $(objc_objects)),)
 $(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)m-to-o)
 -include $(objc_objects:%.o=%.P)
 endif
@@ -480,7 +481,7 @@ asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
 
 ifneq ($(strip $(asm_objects_S)),)
 $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
-    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(asm_objects_S:%.o=%.P)
 endif
@@ -490,7 +491,7 @@ asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
 
 ifneq ($(strip $(asm_objects_s)),)
 $(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s \
-    $(LOCAL_COMPILER_DEPENDENCIES) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_compiler_dependencies) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(asm_objects_s:%.o=%.P)
 endif
@@ -505,17 +506,17 @@ asm_objects := $(asm_objects_S) $(asm_objects_s)
 # some rules depend on asm_objects being first.  If your code depends on
 # being first, it's reasonable to require it to be assembly
 all_objects := \
-	$(asm_objects) \
-	$(cpp_objects) \
-	$(gen_cpp_objects) \
-	$(gen_asm_objects) \
-	$(c_objects) \
-	$(gen_c_objects) \
-	$(objc_objects) \
-	$(yacc_objects) \
-	$(lex_objects) \
-	$(proto_generated_objects) \
-	$(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
+    $(asm_objects) \
+    $(cpp_objects) \
+    $(gen_cpp_objects) \
+    $(gen_asm_objects) \
+    $(c_objects) \
+    $(gen_c_objects) \
+    $(objc_objects) \
+    $(yacc_objects) \
+    $(lex_objects) \
+    $(proto_generated_objects) \
+    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(base_intermediates)
 
