@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAEOX////A\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2012-03-22T20:01:32Z",
+      "side": 1,
+      "message": "I\u0027m told that people would prefer to see \"Apple\u0027s\", to avoid trademark issues.",
+      "revId": "506c22dad3dcbd41df3c7672802a675d3655e262",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEOX///+8\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2012-03-22T20:01:32Z",
+      "side": 1,
+      "message": "Same",
+      "revId": "506c22dad3dcbd41df3c7672802a675d3655e262",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
