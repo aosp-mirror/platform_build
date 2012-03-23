@@ -218,7 +218,8 @@ ifeq (2,$(words $(PDK_BUILD_TYPE)))
 endif
 ifneq ($(PDK_BUILD_TYPE),)
   $(info PDK build type $(PDK_BUILD_TYPE))
-  BUILD_PDK:= true
+  BUILD_PDK:=true
+  TARGET_BUILD_PDK:=true
   include pdk/build/pdk.mk
   # force droid target
   MAKECMDGOALS:= $(subst $(PDK_BUILD_TYPE),droid,$(MAKECMDGOALS))
@@ -729,7 +730,7 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 ifeq ($(BUILD_TINY_ANDROID), true)
 INSTALLED_RECOVERYIMAGE_TARGET :=
 endif
-ifneq ($(BUILD_PDK),)
+ifneq ($(TARGET_BUILD_PDK),)
 INSTALLED_RECOVERYIMAGE_TARGET :=
 endif
 
