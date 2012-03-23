@@ -22,6 +22,7 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
 ifeq ($(TARGET_ARCH),arm)
   CLANG_CONFIG_EXTRA_CFLAGS += \
     -target arm-linux-androideabi \
+    -B$(TARGET_TOOLCHAIN_ROOT)/arm-linux-androideabi/bin \
     -mllvm -arm-enable-ehabi
   CLANG_CONFIG_EXTRA_LDFLAGS += \
     -target arm-linux-androideabi \
@@ -35,7 +36,8 @@ ifeq ($(TARGET_ARCH),arm)
 endif
 ifeq ($(TARGET_ARCH),x86)
   CLANG_CONFIG_EXTRA_CFLAGS += \
-    -target i686-android-linux
+    -target i686-android-linux \
+    -B$(TARGET_TOOLCHAIN_ROOT)/i686-android-linux/bin
   CLANG_CONFIG_EXTRA_LDFLAGS += \
     -target i686-android-linux \
     -B$(TARGET_TOOLCHAIN_ROOT)/i686-android-linux/bin
