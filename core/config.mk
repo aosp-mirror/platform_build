@@ -31,6 +31,7 @@ SRC_HEADERS := \
 	$(TOPDIR)dalvik/libnativehelper/include \
 	$(TOPDIR)frameworks/native/include \
 	$(TOPDIR)frameworks/native/opengl/include \
+	$(TOPDIR)frameworks/av/include \
 	$(TOPDIR)frameworks/base/include \
 	$(TOPDIR)frameworks/base/opengl/include \
 	$(TOPDIR)frameworks/base/native/include \
