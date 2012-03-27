@@ -49,6 +49,8 @@ pathmap_INCL := \
     mkbootimg:system/core/mkbootimg \
     recovery:bootable/recovery \
     system-core:system/core/include \
+    wilhelm:system/media/wilhelm/include \
+    wilhelm-ut:system/media/wilhelm/src/ut \
     speex:external/speex/include
 
 #
