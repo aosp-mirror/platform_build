@@ -53,8 +53,8 @@ pathmap_INCL := \
     system-core:system/core/include \
     audio-effects:system/media/audio_effects/include \
     audio-utils:system/media/audio_utils/include \
-    wilhelm:system/media/wilhelm/include \
-    wilhelm-ut:system/media/wilhelm/src/ut \
+    wilhelm:frameworks/wilhelm/include \
+    wilhelm-ut:frameworks/wilhelm/src/ut \
     speex:external/speex/include
 
 #
