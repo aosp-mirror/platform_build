@@ -579,7 +579,7 @@ hr {
 
 #jd-content li img,
 #jd-content dd img {
-  margin:.5em 0 0 1em;
+  margin:.5em 0 .5em 1em;
 }
 
 .nolist {
@@ -713,7 +713,7 @@ div.design-announce {
   border-bottom:1px solid #33B5E5;
   padding:5px 10px 10px 55px;
   margin:2em 0;
-  background:url('../design/static/ico_styleguide.png') 5px 13px no-repeat;
+  background:url('images/icon_design.png') 5px 13px no-repeat;
 }
 
 div.design-announce p {
