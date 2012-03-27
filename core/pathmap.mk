@@ -89,6 +89,9 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    graphics \
 	    location \
 	    media \
+	    media/mca/effect \
+	    media/mca/filterfw \
+	    media/mca/filterpacks \
 	    drm \
 	    opengl \
 	    sax \
