@@ -85,6 +85,7 @@ PRODUCT_PACKAGES := \
     libicui18n \
     libicuuc \
     libkeystore \
+    libmdnssd \
     libnativehelper \
     libnfc_ndef \
     libpowermanager \
@@ -107,6 +108,7 @@ PRODUCT_PACKAGES := \
     libwebrtc_audio_preprocessing \
     libwilhelm \
     libz \
+    mdnsd \
     requestsync \
     screencap \
     sensorservice \
