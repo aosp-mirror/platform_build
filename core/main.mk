@@ -349,17 +349,6 @@ ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
 endif
 
-ifneq ($(BUILD_TINY_ANDROID),true)
-# Install an apns-conf.xml file if one's not already being installed.
-ifeq (,$(filter %:system/etc/apns-conf.xml, $(PRODUCT_COPY_FILES)))
-  PRODUCT_COPY_FILES += \
-        development/data/etc/apns-conf_sdk.xml:system/etc/apns-conf.xml
-  ifeq ($(filter eng tests,$(TARGET_BUILD_VARIANT)),)
-    $(warning implicitly installing apns-conf_sdk.xml)
-  endif
-endif
-endif
-
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
 # enable vm tracing in files for now to help track
