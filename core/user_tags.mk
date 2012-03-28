@@ -164,7 +164,6 @@ GRANDFATHERED_USER_MODULES += \
 	jsr305lib \
 	junit \
 	jython \
-	keystore \
 	kxml2-2.3.0 \
 	launch-wrapper \
 	layoutlib \

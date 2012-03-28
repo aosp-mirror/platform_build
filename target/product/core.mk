@@ -66,6 +66,8 @@ PRODUCT_PACKAGES := \
     ip-up-vpn \
     ip6tables \
     iptables \
+    keystore \
+    keystore.default \
     libandroidfw \
     libOpenMAXAL \
     libOpenSLES \
@@ -79,6 +81,7 @@ PRODUCT_PACKAGES := \
     libgabi++ \
     libicui18n \
     libicuuc \
+    libkeystore \
     libnativehelper \
     libnfc_ndef \
     libpowermanager \
