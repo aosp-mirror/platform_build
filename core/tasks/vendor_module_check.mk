@@ -22,6 +22,7 @@ _vendor_owner_whitelist := \
 	invensense \
 	nxp \
 	samsung \
+	samsung_arm \
 	ti
 
 
