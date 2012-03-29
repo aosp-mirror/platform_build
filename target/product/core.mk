@@ -56,6 +56,7 @@ PRODUCT_PACKAGES := \
     dexlist \
     dexopt \
     dmtracedump \
+    drmserver \
     dx \
     ext \
     framework-res \
@@ -75,6 +76,8 @@ PRODUCT_PACKAGES := \
     libaudioutils \
     libcrypto \
     libdvm \
+    libdrmframework \
+    libdrmframework_jni \
     libexpat \
     libfilterfw \
     libfilterpack_imageproc \
