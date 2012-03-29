@@ -719,9 +719,6 @@ bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 ifeq ($(BUILD_TINY_ANDROID), true)
 INSTALLED_RECOVERYIMAGE_TARGET :=
 endif
-ifneq ($(TARGET_BUILD_PDK),)
-INSTALLED_RECOVERYIMAGE_TARGET :=
-endif
 
 # Build files and then package it into the rom formats
 .PHONY: droidcore
@@ -769,9 +766,6 @@ else # TARGET_BUILD_APPS
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
     $(SYMBOLS_ZIP) \
-    $(APPS_ZIP) \
-    $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
-    $(PACKAGE_STATS_FILE) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_BUILD_PROP_TARGET) \
     $(BUILT_TARGET_FILES_PACKAGE) \
@@ -779,6 +773,14 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_FACTORY_RAMDISK_TARGET) \
    )
+
+  ifneq ($(TARGET_BUILD_PDK),true)
+    $(call dist-for-goals, droidcore, \
+      $(APPS_ZIP) \
+      $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
+      $(PACKAGE_STATS_FILE) \
+    )
+  endif
 
 # Building a full system-- the default is to build droidcore
 droid: droidcore dist_files
