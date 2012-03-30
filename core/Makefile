@@ -440,78 +440,9 @@ endif
 # Then we could traverse that without quite as much bash drama.
 define combine-notice-files
 $(1) $(2): PRIVATE_MESSAGE := $(3)
-$(1) $(2) $(4)/hash-timestamp: PRIVATE_DIR := $(4)
-$(4)/hash-timestamp: $(5) $(BUILD_SYSTEM)/Makefile
-	@echo Finding NOTICE files: $$@
-	$$(hide) rm -rf $$@ $$(PRIVATE_DIR)/hash
-	$$(hide) mkdir -p $$(PRIVATE_DIR)/hash
-	$$(hide) for file in $$$$(find $$(PRIVATE_DIR)/src -type f); do \
-			hash=$$$$($(MD5SUM) $$$$file | sed -e "s/ .*//"); \
-			hashfile=$$(PRIVATE_DIR)/hash/$$$$hash; \
-			echo $$$$file >> $$$$hashfile; \
-		done
-	$$(hide) touch $$@
-$(1): $(4)/hash-timestamp
-	@echo Combining NOTICE files: $$@
-	$$(hide) mkdir -p $$(dir $$@)
-	$$(hide) echo $$(PRIVATE_MESSAGE) > $$@
-	$$(hide) find $$(PRIVATE_DIR)/hash -type f | xargs cat | sort | \
-		sed -e "s:$$(PRIVATE_DIR)/src\(.*\)\.txt:  \1:" >> $$@
-	$$(hide) echo >> $$@
-	$$(hide) echo >> $$@
-	$$(hide) echo >> $$@
-	$$(hide) for hashfile in $$$$(find $$(PRIVATE_DIR)/hash -type f); do \
-			echo "============================================================"\
-				>> $$@; \
-			echo "Notices for file(s):" >> $$@; \
-			cat $$$$hashfile | sort | \
-				sed -e "s:$$(PRIVATE_DIR)/src\(.*\)\.txt:  \1:" >> \
-				$$@; \
-			echo "------------------------------------------------------------"\
-				>> $$@; \
-			echo >> $$@; \
-			orig=$$$$(head -n 1 $$$$hashfile); \
-			cat $$$$orig >> $$@; \
-			echo >> $$@; \
-			echo >> $$@; \
-			echo >> $$@; \
-		done
-$(2): $(4)/hash-timestamp
-	@echo Combining NOTICE files: $$@
-	$$(hide) mkdir -p $$(dir $$@)
-	$$(hide) echo "<html><head>" > $$@
-	$$(hide) echo "<style type=\"text/css\">" >> $$@
-	$$(hide) echo "body { padding: 0; font-family: sans-serif; }" >> $$@
-	$$(hide) echo ".same-license { background-color: #eeeeee; border-top: 20px solid white; padding: 10px; }" >> $$@
-	$$(hide) echo ".label { font-weight: bold; }" >> $$@
-	$$(hide) echo ".file-list { margin-left: 1em; font-color: blue; }" >> $$@
-	$$(hide) echo "</style>" >> $$@
-	$$(hide) echo "</head><body topmargin=\"0\" leftmargin=\"0\" rightmargin=\"0\" bottommargin=\"0\">" >> $$@
-	$$(hide) echo "<table cellpading=\"0\" cellspacing=\"0\" border=\"0\">" \
-		>> $$@
-	$$(hide) for hashfile in $$$$(find $$(PRIVATE_DIR)/hash -type f); do \
-			cat $$$$hashfile | sort | \
-				sed -e "s:$$(PRIVATE_DIR)/src\(.*\)\.txt:  <a name=\"\1\"></a>:" >> \
-				$$@; \
-			echo "<tr><td class=\"same-license\">" >> $$@; \
-			echo "<div class=\"label\">Notices for file(s):</div>" >> $$@; \
-			echo "<div class=\"file-list\">" >> $$@; \
-			cat $$$$hashfile | sort | \
-				sed -e "s:$$(PRIVATE_DIR)/src\(.*\)\.txt:  \1<br/>:" >> $$@; \
-			echo "</div><!-- file-list -->" >> $$@; \
-			echo >> $$@; \
-			orig=$$$$(head -n 1 $$$$hashfile); \
-			echo "<pre class=\"license-text\">" >> $$@; \
-			cat $$$$orig | sed -e "s/\&/\&amp;/g" | sed -e "s/</\&lt;/g" \
-					| sed -e "s/>/\&gt;/g" >> $$@; \
-			echo "</pre><!-- license-text -->" >> $$@; \
-			echo "</td></tr><!-- same-license -->" >> $$@; \
-			echo >> $$@; \
-			echo >> $$@; \
-			echo >> $$@; \
-		done
-	$$(hide) echo "</table>" >> $$@
-	$$(hide) echo "</body></html>" >> $$@
+$(1) $(2): PRIVATE_DIR := $(4)
+$(1) $(2): $(5) $(BUILD_SYSTEM)/Makefile build/tools/generate-notice-files.py
+	build/tools/generate-notice-files.py $(1) $(2) $$(PRIVATE_MESSAGE) $$(PRIVATE_DIR)/src
 notice_files: $(1) $(2)
 endef
 
