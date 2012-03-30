@@ -127,7 +127,6 @@ my_compiler_dependencies :=
 ifeq ($(strip $(LOCAL_CLANG)),true)
   LOCAL_CFLAGS += $(CLANG_CONFIG_EXTRA_CFLAGS)
   LOCAL_LDFLAGS += $(CLANG_CONFIG_EXTRA_LDFLAGS)
-  LOCAL_C_INCLUDES += $(CLANG_CONFIG_EXTRA_C_INCLUDES)
   my_compiler_dependencies := $(CLANG) $(CLANG_CXX)
 endif
 
@@ -157,18 +156,21 @@ endif
 
 ifdef LOCAL_NDK_VERSION
 my_target_project_includes :=
-my_target_c_inclues := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
+my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
 # TODO: more reliable way to remove platform stuff.
 my_target_global_cflags := $(filter-out -include -I system/%, $(my_target_global_cflags))
 my_target_global_cppflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CPPFLAGS))
 else
 my_target_project_includes := $(TARGET_PROJECT_INCLUDES)
-my_target_c_inclues := $(TARGET_C_INCLUDES)
+my_target_c_includes := $(TARGET_C_INCLUDES)
 my_target_global_cflags := $(my_target_global_cflags)
 my_target_global_cppflags := $(TARGET_GLOBAL_CPPFLAGS)
+ifeq ($(strip $(LOCAL_CLANG)),true)
+  my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
+endif
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_inclues)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
 
