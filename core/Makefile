@@ -869,6 +869,21 @@ systemtarball-nodeps: $(FS_GET_STATS) \
 .PHONY: stnod
 stnod: systemtarball-nodeps
 
+#######
+## platform.zip: system in a zip file
+INSTALLED_PLATFROM_ZIP := $(PRODUCT_OUT)/platform.zip
+$(INSTALLED_PLATFROM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
+	$(call pretty,"Platform zip package: $(INSTALLED_PLATFROM_ZIP)")
+	$(hide) rm -f $@
+	$(hide) cd $(dir $@) && zip -qry $(notdir $@) system
+
+.PHONY: platform
+platform: $(INSTALLED_PLATFROM_ZIP)
+
+# Dist the platform.zip
+ifneq (,$(filter platform, $(MAKECMDGOALS)))
+$(call dist-for-goals, platform, $(INSTALLED_PLATFROM_ZIP))
+endif
 
 #######
 ## boot tarball
