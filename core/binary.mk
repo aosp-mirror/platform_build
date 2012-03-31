@@ -518,7 +518,7 @@ all_objects := \
     $(proto_generated_objects) \
     $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 
-LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(base_intermediates)
+LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates)
 
 ifndef LOCAL_NDK_VERSION
   LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
