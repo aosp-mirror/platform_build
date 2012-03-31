@@ -209,30 +209,8 @@ endif
 
 # -----------------------------------------------------------------
 # The pdk (Platform Development Kit) build
-# pdk_eng : for building binary blob necessary for pdk_rel build
-# pdk_rel : HAL build for chipset vendors
+include build/core/pdk_config.mk
 
-PDK_BUILD_TYPE:= $(filter pdk_eng pdk_rel,$(MAKECMDGOALS))
-ifeq (2,$(words $(PDK_BUILD_TYPE)))
-  $(error You can't build pdk_eng and pdk_rel in the same run.)
-endif
-ifneq ($(PDK_BUILD_TYPE),)
-  $(info PDK build type $(PDK_BUILD_TYPE))
-  BUILD_PDK:=true
-  TARGET_BUILD_PDK:=true
-  include pdk/build/pdk.mk
-  # force droid target
-  MAKECMDGOALS:= $(subst $(PDK_BUILD_TYPE),droid,$(MAKECMDGOALS))
-ifeq ($(PDK_BUILD_TYPE), pdk_eng)
-  .PHONY: pdk_eng
-  pdk_eng: droid pdk_bin_zip
-
-else  # pdk_rel
-  .PHONY: pdk_rel
-  pdk_rel: droid
-
-endif # pdk_rel
-endif # PDK_BUILD_TYPE
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
@@ -437,18 +415,12 @@ subdirs := \
 	external/yaffs2 \
 	external/zlib
 else	# !BUILD_TINY_ANDROID
-ifneq ($(BUILD_PDK),)
-subdirs := $(BUILD_PDK_SUBDIRS)
-FULL_BUILD := true
-else # Normal droid build
 #
 # Typical build; include any Android.mk files we can find.
 #
 subdirs := $(TOP)
 
 FULL_BUILD := true
-
-endif  # !BUILD_PDK
 
 endif	# !BUILD_TINY_ANDROID
 
