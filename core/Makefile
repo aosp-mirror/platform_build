@@ -682,7 +682,8 @@ INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
     $(ALL_PREBUILT) \
     $(ALL_COPIED_HEADERS) \
     $(ALL_GENERATED_SOURCES) \
-    $(ALL_DEFAULT_INSTALLED_MODULES))
+    $(ALL_DEFAULT_INSTALLED_MODULES)\
+    $(ALL_PDK_FUSION_FILES))
 
 ifdef is_tests_build
 # We don't want to install tests modules to the system partition
