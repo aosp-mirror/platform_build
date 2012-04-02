@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAEcX///8o\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1173,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2012-04-02T17:35:15Z",
+      "side": 1,
+      "message": "Why the odd indentation?  (Or is gerrit displaying things oddly?)",
+      "revId": "dff63c20fb328a0595f9c52fecc93c06219eb1ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEcX///8s\u003d",
+        "filename": "tools/releasetools/edify_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2012-04-02T17:35:15Z",
+      "side": 1,
+      "message": "Why not just make format always take the mount point as an argument?",
+      "revId": "dff63c20fb328a0595f9c52fecc93c06219eb1ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
