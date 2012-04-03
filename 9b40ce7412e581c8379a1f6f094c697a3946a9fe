@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAEbn///5E\u003d",
+        "filename": "tools/releasetools/edify_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2012-04-03T17:46:10Z",
+      "side": 1,
+      "message": "Have you changed the updater\u0027s install.c?  Last I looked its argument processing contained #ifdef HAVE_SELINUXes.",
+      "revId": "9b40ce7412e581c8379a1f6f094c697a3946a9fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
