@@ -21,7 +21,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
              Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
     else
       ifeq ($(LOCAL_SDK_VERSION),current)
-        LOCAL_JAVA_LIBRARIES := android_stubs_$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+        LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
       else
         LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
       endif

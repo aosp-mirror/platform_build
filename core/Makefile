@@ -38,11 +38,13 @@ unique_product_copy_files_destinations :=
 
 # -----------------------------------------------------------------
 # docs/index.html
+ifeq (,$(TARGET_BUILD_APPS))
 gen := $(OUT_DOCS)/index.html
 ALL_DOCS += $(gen)
 $(gen): frameworks/base/docs/docs-redirect-index.html
 	@mkdir -p $(dir $@)
 	@cp -f $< $@
+endif
 
 # -----------------------------------------------------------------
 # default.prop
