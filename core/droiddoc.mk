@@ -63,9 +63,17 @@ endif
 
 ifneq ($(LOCAL_IS_HOST_MODULE),true)
 
-ifeq ($(LOCAL_JAVA_LIBRARIES),)
-LOCAL_JAVA_LIBRARIES := core ext framework
-endif
+ifneq ($(LOCAL_SDK_VERSION),)
+  ifeq ($(LOCAL_SDK_VERSION),current)
+    LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
+  else
+    LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+  endif
+else
+  LOCAL_JAVA_LIBRARIES := core ext framework $(LOCAL_JAVA_LIBRARIES)
+endif  # LOCAL_SDK_VERSION
+LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
+
 full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 
