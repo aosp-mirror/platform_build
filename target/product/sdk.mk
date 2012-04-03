@@ -110,9 +110,9 @@ PRODUCT_PACKAGES += \
 	jcommon-1.0.12 \
 	jfreechart-1.0.9 \
 	jfreechart-1.0.9-swt \
-	org.eclipse.core.commands_3.6.0.I20100512-1500 \
-	org.eclipse.equinox.common_3.6.0.v20100503 \
-	org.eclipse.jface_3.6.2.M20110210-1200 \
+	org.eclipse.core.commands_3.4.0.I20080509-2000 \
+	org.eclipse.equinox.common_3.4.0.v20080421-2006 \
+	org.eclipse.jface_3.4.2.M20090107-0800 \
 	osgi \
 	layoutlib \
 	lint \
