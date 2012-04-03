@@ -68,7 +68,6 @@
 #side-nav li {
   padding:0;
   padding:1px 0 1px 0;
-  white-space:nowrap;
   zoom:1;
 }
 
@@ -85,7 +84,6 @@
   display: inline-block; /* needed to apply padding to line-wraps */
   text-decoration:none;
   padding: 0 0 0 18px;
-  white-space:normal;
   zoom:1;
 }
 
@@ -844,6 +842,7 @@ ul.no-style {
   text-decoration: none;
   vertical-align:top;
   line-height:.9em;
+  white-space:nowrap;
 }
 
 .toggle-list.open .new-child {
