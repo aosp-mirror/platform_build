@@ -416,6 +416,9 @@ GRANDFATHERED_USER_MODULES += \
 	oauth \
 	obbtool \
 	omx_tests \
+	org.eclipse.core.commands_3.4.0.I20080509-2000 \
+	org.eclipse.equinox.common_3.4.0.v20080421-2006 \
+	org.eclipse.jface_3.4.2.M20090107-0800 \
 	org-netbeans-api-visual \
 	org-openide-util \
 	osgi \
