@@ -31,6 +31,8 @@ PRODUCT_COPY_FILES := \
     development/data/etc/vold.conf:system/etc/vold.conf \
     development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml \
     development/tools/emulator/system/camera/media_codecs.xml:system/etc/media_codecs.xml \
-    build/target/board/vbox_x86/init.rc:root/init.rc \
+    system/core/rootdir/init.rc:root/init.rc \
     build/target/board/vbox_x86/init.vbox_x86.rc:root/init.vbox_x86.rc \
     $(LOCAL_KERNEL):kernel
+
+$(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)

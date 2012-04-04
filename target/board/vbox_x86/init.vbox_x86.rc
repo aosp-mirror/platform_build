@@ -1,5 +1,12 @@
+on early-init
+    export EXTERNAL_STORAGE /mnt/sdcard
+    mkdir /mnt/sdcard 0000 system system
+    # for backwards compatibility
+    symlink /mnt/sdcard /sdcard
+
 on boot
     setprop ARGH ARGH
+    setprop net.eth0.gw 10.0.2.2
     setprop net.eth0.dns1 10.0.2.3
     setprop net.gprs.local-ip 10.0.2.15
     setprop ro.radio.use-ppp no
@@ -16,7 +23,20 @@ on boot
     stop dund
     stop akmd
 
+# start essential services
+    start qemud
+    start goldfish-logcat
+#   start goldfish-setup
+    start netcfg
+
     setprop ro.setupwizard.mode EMULATOR
+
+on fs
+# mount sda partitions
+    mount ext4 /dev/block/sda6 /system
+    mount ext4 /dev/block/sda6 /system ro remount
+    mount ext4 /dev/block/sda7 /data nosuid nodev
+    mount ext4 /dev/block/sda8 /cache nosuid nodev
 
 # enable Google-specific location features,
 # like NetworkLocationProvider and LocationCollector
@@ -36,7 +56,21 @@ on boot
 # something else.
 
 service goldfish-setup /system/etc/init.goldfish.sh
-   oneshot
+    user root
+    group root
+    oneshot
+
+# The qemu-props program is used to set various system
+# properties on boot. It must be run early during the boot
+# process to avoid race conditions with other daemons that
+# might read them (e.g. surface flinger), so define it in
+# class 'core'
+#
+service qemu-props /system/bin/qemu-props
+    class core
+    user root
+    group root
+    oneshot
 
 service qemud /system/bin/qemud
     socket qemud    stream 666
@@ -46,7 +80,11 @@ service qemud /system/bin/qemud
 # program to check wether it runs on the emulator
 # if it does, it redirects its output to the device
 # named by the androidboot.console kernel option
-# if not, is simply exit immediately
+# if not, it simply exits immediately
 
 service goldfish-logcat /system/bin/logcat -Q
+    oneshot
+
+# Enable networking so that adb can connect
+service netcfg /system/bin/netcfg eth0 dhcp
     oneshot
