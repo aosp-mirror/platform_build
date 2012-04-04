@@ -123,6 +123,15 @@ LOCAL_REQUIRED_MODULES += $(installed_shared_library_module_names)
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+
+ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
+  LOCAL_CLANG := true
+  LOCAL_CFLAGS += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+  LOCAL_LDFLAGS += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS)
+  LOCAL_SHARED_LIBRARIES += $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES)
+  LOCAL_STATIC_LIBRARIES += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
+endif
+
 my_compiler_dependencies :=
 ifeq ($(strip $(LOCAL_CLANG)),true)
   LOCAL_CFLAGS += $(CLANG_CONFIG_EXTRA_CFLAGS)
