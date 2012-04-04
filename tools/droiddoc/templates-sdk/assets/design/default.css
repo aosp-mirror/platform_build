@@ -18,8 +18,8 @@ html, body {
   background-image: -moz-linear-gradient(top, #dddddd, #f2f2f2, #f2f2f2, #dddddd);
   -webkit-font-smoothing: antialiased;
   /* prevent subpixel antialiasing, which thickens the text */
-  text-rendering: optimizeLegibility;
-  /* opentype ftw */ }
+  /* text-rendering: optimizeLegibility; */
+  /* turned off ligatures due to bug 5945455 */ }
 
 body {
   color: #555555;
@@ -552,7 +552,7 @@ li.no-bullet {
 
 /* video  containers */
 .framed-galaxynexus-land-span-13 {
-  background: transparent url(content/misc_full_galaxynexus_blank_land_span13.png) no-repeat scroll top left;
+  background: transparent url(device_galaxynexus_blank_land_span13.png) no-repeat scroll top left;
   padding: 42px 122px 62px 126px;
   overflow: hidden; }
   .framed-galaxynexus-land-span-13, .framed-galaxynexus-land-span-13 video, .framed-galaxynexus-land-span-13 img {
@@ -560,7 +560,7 @@ li.no-bullet {
     height: 286px; }
 
 .framed-galaxynexus-port-span-9 {
-  background: transparent url(content/misc_full_galaxynexus_blank_port_span9.png) no-repeat scroll top left;
+  background: transparent url(device_galaxynexus_blank_port_span9.png) no-repeat scroll top left;
   padding: 95px 122px 107px 124px;
   overflow: hidden; }
   .framed-galaxynexus-port-span-9, .framed-galaxynexus-port-span-9 video, .framed-galaxynexus-port-span-9 img {
@@ -568,7 +568,7 @@ li.no-bullet {
     height: 488px; }
 
 .framed-galaxynexus-port-span-5 {
-  background: transparent url(content/misc_full_galaxynexus_blank_port_span5.png) no-repeat scroll top left;
+  background: transparent url(device_galaxynexus_blank_port_span5.png) no-repeat scroll top left;
   padding: 75px 31px 76px 33px;
   overflow: hidden; }
   .framed-galaxynexus-port-span-5, .framed-galaxynexus-port-span-5 video, .framed-galaxynexus-port-span-5 img {
@@ -639,3 +639,38 @@ li.no-bullet {
     color: #fff !important; }
   .download-button:active {
     background-color: #006699; }
+
+/* UI tables and other things found in Writing style and Settings pattern */
+.ui-table {
+  width: 100%;
+  background: #282828;
+  color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  border-collapse: separate; }
+  .ui-table th,
+  .ui-table td {
+    padding: 5px 10px; }
+  .ui-table thead th {
+    font-weight: 600; }
+  .ui-table tfoot td {
+    border-top: 1px solid #494949;
+    border-right: 1px solid #494949;
+    text-align: center; }
+    .ui-table tfoot td:last-child {
+      border-right: 0; }
+
+.layout-with-list-item-margins {
+  margin-left: 30px !important; }
+
+.emulate-content-left-padding {
+  margin-left: 10px; }
+
+.do-dont-label {
+  margin-bottom: 10px;
+  padding-left: 20px;
+  background: transparent none no-repeat scroll 0px 3px; }
+  .do-dont-label.bad {
+    background-image: url(ico_wrong.png); }
+  .do-dont-label.good {
+    background-image: url(ico_good.png); }
