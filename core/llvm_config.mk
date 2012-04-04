@@ -50,7 +50,7 @@ ifeq ($(TARGET_ARCH),x86)
     -mbionic
 endif
 
-CLANG_CONFIG_EXTRA_C_INCLUDES := external/clang/lib/Headers
+CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include
 
 # remove unknown flags to define CLANG_FLAGS
 TARGET_GLOBAL_CLANG_FLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(TARGET_GLOBAL_CFLAGS))
