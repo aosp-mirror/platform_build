@@ -32,11 +32,11 @@ on boot
     setprop ro.setupwizard.mode EMULATOR
 
 on fs
-# mount sda partitions
+# mount sda (system) and sdb (data) partitions
     mount ext4 /dev/block/sda6 /system
     mount ext4 /dev/block/sda6 /system ro remount
-    mount ext4 /dev/block/sda7 /data nosuid nodev
-    mount ext4 /dev/block/sda8 /cache nosuid nodev
+    mount ext4 /dev/block/sdb6 /data nosuid nodev
+    mount ext4 /dev/block/sdb7 /cache nosuid nodev
 
 # enable Google-specific location features,
 # like NetworkLocationProvider and LocationCollector
