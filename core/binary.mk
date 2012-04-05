@@ -239,8 +239,14 @@ normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 # Read the values from something like TARGET_arm_CFLAGS or
 # TARGET_thumb_CFLAGS.  HOST_(arm|thumb)_CFLAGS values aren't
 # actually used (although they are usually empty).
+ifeq ($(strip $(LOCAL_CLANG)),true)
+arm_objects_cflags := $($(my_prefix)$(arm_objects_mode)_CLANG_CFLAGS)
+normal_objects_cflags := $($(my_prefix)$(normal_objects_mode)_CLANG_CFLAGS)
+else
 arm_objects_cflags := $($(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(my_prefix)$(normal_objects_mode)_CFLAGS)
+endif
+
 else
 arm_objects_mode :=
 normal_objects_mode :=

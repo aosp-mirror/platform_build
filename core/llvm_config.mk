@@ -33,6 +33,9 @@ ifeq ($(TARGET_ARCH),arm)
     -fgcse-after-reload \
     -frerun-cse-after-loop \
     -frename-registers \
+    -fno-builtin-sin \
+    -fno-strict-volatile-bitfields \
+    -fno-align-jumps \
     -Wa,--noexecstack
 endif
 ifeq ($(TARGET_ARCH),x86)
@@ -50,11 +53,14 @@ ifeq ($(TARGET_ARCH),x86)
     -mbionic
 endif
 
-CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include
+CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include $(TARGET_OUT_HEADERS)/clang
 
 # remove unknown flags to define CLANG_FLAGS
 TARGET_GLOBAL_CLANG_FLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(TARGET_GLOBAL_CFLAGS))
 HOST_GLOBAL_CLANG_FLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(HOST_GLOBAL_CFLAGS))
+
+TARGET_arm_CLANG_CFLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(TARGET_arm_CFLAGS))
+TARGET_thumb_CLANG_CFLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(TARGET_thumb_CFLAGS))
 
 # llvm does not yet support -march=armv5e nor -march=armv5te, fall back to armv5 or armv5t
 $(call clang-flags-subst,-march=armv5te,-march=armv5t)
