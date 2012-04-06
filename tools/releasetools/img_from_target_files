@@ -27,6 +27,10 @@ Usage:  img_from_target_files [flags] input_target_files output_image_zip
       Include only the bootable images (eg 'boot' and 'recovery') in
       the output.
 
+  -S  (--file_context) <file>
+      the file contexts configuration used to assign SELinux file
+      context attributes.
+
 """
 
 import sys
@@ -50,6 +54,7 @@ if not hasattr(os, "SEEK_SET"):
 import common
 
 OPTIONS = common.OPTIONS
+OPTIONS.selinux_fc = None
 
 def AddUserdata(output_zip):
   """Create an empty userdata image and store it in output_zip."""
@@ -74,6 +79,8 @@ def AddUserdata(output_zip):
                      fstab["/data"].fs_type, "data"])
     if "userdata_size" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["userdata_size"]))
+    if OPTIONS.selinux_fc is not None:
+      build_command.append(OPTIONS.selinux_fc)
   else:
     build_command = ["mkyaffs2image", "-f"]
     extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
@@ -81,6 +88,9 @@ def AddUserdata(output_zip):
       build_command.extend(extra.split())
     build_command.append(user_dir)
     build_command.append(img.name)
+    if OPTIONS.selinux_fc is not None:
+      build_command.append(OPTIONS.selinux_fc)
+      build_command.append("/data")
 
   p = common.Run(build_command);
   p.communicate()
@@ -126,6 +136,8 @@ def AddSystem(output_zip):
                      fstab["/system"].fs_type, "system"])
     if "system_size" in OPTIONS.info_dict:
       build_command.append(str(OPTIONS.info_dict["system_size"]))
+    if OPTIONS.selinux_fc is not None:
+      build_command.append(OPTIONS.selinux_fc)
   else:
     build_command = ["mkyaffs2image", "-f"]
     extra = OPTIONS.info_dict.get("mkyaffs2_extra_flags", None)
@@ -133,6 +145,9 @@ def AddSystem(output_zip):
       build_command.extend(extra.split())
     build_command.append(os.path.join(OPTIONS.input_tmp, "system"))
     build_command.append(img.name)
+    if OPTIONS.selinux_fc is not None:
+      build_command.append(OPTIONS.selinux_fc)
+      build_command.append("/system")
 
   p = common.Run(build_command)
   p.communicate()
@@ -160,14 +175,17 @@ def main(argv):
       pass       # deprecated
     if o in ("-z", "--bootable_zip"):
       bootable_only[0] = True
+    if o in ("-S", "--file_context"):
+      OPTIONS.selinux_fc = a
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:z",
+                             extra_opts="b:zS:",
                              extra_long_opts=["board_config=",
-                                              "bootable_zip"],
+                                              "bootable_zip",
+                                              "file_context="],
                              extra_option_handler=option_handler)
 
   bootable_only = bootable_only[0]
