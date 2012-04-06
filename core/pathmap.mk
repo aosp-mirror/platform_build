@@ -31,6 +31,7 @@ pathmap_INCL := \
     bluez:external/bluetooth/bluez \
     glib:external/bluetooth/glib \
     bootloader:bootable/bootloader/legacy/include \
+    camera:system/media/camera/include \
     corecg:external/skia/include/core \
     dbus:external/dbus \
     frameworks-base:frameworks/base/include \
