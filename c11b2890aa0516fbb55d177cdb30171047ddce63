@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAEgX///4Y\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 619,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "Missing \"\\\" at the end of the line.",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///4U\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "Don\u0027t remove $(hide) at the beginning of the command.",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///4Q\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "Missing \"\\\".",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///4M\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 622,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "$(hide)",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///4I\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "Missing \"\\\".",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///4E\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 798,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "$(hide) and \"\\\".",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///4A\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "$(hide)",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAEgX///38\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-04-06T18:01:35Z",
+      "side": 1,
+      "message": "ditto.",
+      "revId": "c11b2890aa0516fbb55d177cdb30171047ddce63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
