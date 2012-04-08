@@ -46,12 +46,17 @@ def BuildImage(in_dir, prop_dict, out_file):
                           prop_dict["mount_point"]])
     if "partition_size" in prop_dict:
       build_command.append(prop_dict["partition_size"])
+    if "selinux_fc" in prop_dict:
+      build_command.append(prop_dict["selinux_fc"])
   else:
     build_command = ["mkyaffs2image", "-f"]
     if prop_dict.get("mkyaffs2_extra_flags", None):
       build_command.extend(prop_dict["mkyaffs2_extra_flags"].split())
     build_command.append(in_dir)
     build_command.append(out_file)
+    if "selinux_fc" in prop_dict:
+      build_command.append(prop_dict["selinux_fc"])
+      build_command.append(prop_dict["mount_point"])
 
   print "Running: ", " ".join(build_command)
   p = subprocess.Popen(build_command);
@@ -75,6 +80,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "mkyaffs2_extra_flags",
+      "selinux_fc",
       )
   for p in common_props:
     copy_prop(p, p)
