@@ -165,9 +165,9 @@ class EdifyGenerator(object):
     fstab = self.info.get("fstab", None)
     if fstab:
       p = fstab[partition]
-      self.script.append('format("%s", "%s", "%s", "%s");' %
+      self.script.append('format("%s", "%s", "%s", "%s", "%s");' %
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
-                          p.device, p.length))
+                          p.device, p.length, p.mount_point))
 
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""
