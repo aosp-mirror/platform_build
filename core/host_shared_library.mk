@@ -18,6 +18,9 @@ endif
 ifneq ($(strip $(OVERRIDE_BUILT_MODULE_PATH)),)
 $(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
 endif
+ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
+$(error $(LOCAL_PATH): Can not set module stem for a library)
+endif
 
 # Put the built modules of all shared libraries in a common directory
 # to simplify the link line.

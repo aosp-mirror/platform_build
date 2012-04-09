@@ -510,6 +510,26 @@ endif
 asm_objects := $(asm_objects_S) $(asm_objects_s)
 
 
+####################################################
+## Import includes
+####################################################
+import_includes := $(intermediates)/import_includes
+import_includes_deps := $(strip \
+    $(foreach l, $(installed_shared_library_module_names), \
+      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE))/export_includes) \
+    $(foreach l, $(LOCAL_STATIC_LIBRARIES) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
+      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE))/export_includes))
+$(import_includes) : $(import_includes_deps)
+	@echo Import includes file: $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+ifdef import_includes_deps
+	$(hide) for f in $^; do \
+	  cat $$f >> $@; \
+	done
+else
+	$(hide) touch $@
+endif
+
 ###########################################################
 ## Common object handling.
 ###########################################################
@@ -535,7 +555,7 @@ ifndef LOCAL_NDK_VERSION
   LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 endif
 
-$(all_objects) : | $(LOCAL_GENERATED_SOURCES)
+$(all_objects) : | $(LOCAL_GENERATED_SOURCES) $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 ###########################################################
@@ -635,6 +655,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CPPFLAGS := $(LOCAL_CPPFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RTTI_FLAG := $(LOCAL_RTTI_FLAG)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEBUG_CFLAGS := $(debug_cflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_C_INCLUDES := $(LOCAL_C_INCLUDES)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_IMPORT_INCLUDES := $(import_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDFLAGS := $(LOCAL_LDFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDLIBS := $(LOCAL_LDLIBS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_CRT := $(LOCAL_NO_CRT)
@@ -659,3 +680,19 @@ all_libraries := \
 # are linked into this module.  This will force them to be installed
 # when this module is.
 $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
+
+###########################################################
+# Export includes
+###########################################################
+export_includes := $(intermediates)/export_includes
+$(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
+$(export_includes) :
+	@echo Export includes file: $< -- $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
+	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
+	        echo "-I $$d" >> $@; \
+	        done
+else
+	$(hide) touch $@
+endif
