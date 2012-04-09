@@ -443,7 +443,8 @@ endif
 define combine-notice-files
 $(1) $(2): PRIVATE_MESSAGE := $(3)
 $(1) $(2): PRIVATE_DIR := $(4)
-$(1) $(2): $(5) $(BUILD_SYSTEM)/Makefile build/tools/generate-notice-files.py
+$(1) : $(2)
+$(2) : $(5) $(BUILD_SYSTEM)/Makefile build/tools/generate-notice-files.py
 	build/tools/generate-notice-files.py $(1) $(2) $$(PRIVATE_MESSAGE) $$(PRIVATE_DIR)/src
 notice_files: $(1) $(2)
 endef
