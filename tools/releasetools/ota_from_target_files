@@ -48,6 +48,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
+
+  -a  (--aslr_mode)  <on|off>
+      Specify whether to turn on ASLR for the package (on by default).
+
 """
 
 import sys
@@ -381,6 +385,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if OPTIONS.wipe_user_data:
     script.FormatPartition("/data")
 
+  if "selinux_fc" in OPTIONS.info_dict:
+    WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
+
   script.FormatPartition("/system")
   script.Mount("/system")
   script.UnpackPackageDir("recovery", "/system")
@@ -415,14 +422,16 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.AddToZip(input_zip, output_zip)
   WriteMetadata(metadata, output_zip)
 
+def WritePolicyConfig(file_context, output_zip):
+  f = open(file_context, 'r');
+  basename = os.path.basename(file_context)
+  common.ZipWriteStr(output_zip, basename, f.read())
+
 
 def WriteMetadata(metadata, output_zip):
   common.ZipWriteStr(output_zip, "META-INF/com/android/metadata",
                      "".join(["%s=%s\n" % kv
                               for kv in sorted(metadata.iteritems())]))
-
-
-
 
 def LoadSystemFiles(z):
   """Load all the files from SYSTEM/... in a given target-files
