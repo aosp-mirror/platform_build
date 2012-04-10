@@ -1388,6 +1388,12 @@ sdk_tools_atree_files := sdk/build/tools.atree
 ifneq (,$(strip $(wildcard sdk/build/tools.$(TARGET_ARCH).atree)))
   sdk_tools_atree_files += sdk/build/tools.$(TARGET_ARCH).atree
 endif
+ifneq (,$(strip $(wildcard sdk/build/tools.$(HOST_OS).atree)))
+  sdk_tools_atree_files += sdk/build/tools.$(HOST_OS).atree
+endif
+ifneq (,$(strip $(wildcard sdk/build/tools.$(HOST_OS)-$(HOST_ARCH).atree)))
+  sdk_tools_atree_files += sdk/build/tools.$(HOST_OS)-$(HOST_ARCH).atree
+endif
 
 sdk_atree_files := \
 	$(atree_dir)/sdk.exclude.atree \
