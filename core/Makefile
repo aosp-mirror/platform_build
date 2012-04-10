@@ -464,13 +464,14 @@ tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
+pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
 $(eval $(call combine-notice-files, \
 			$(target_notice_file_txt), \
 			$(target_notice_file_html), \
 			"Notices for files contained in the filesystem images in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file)))
+			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
 
 $(eval $(call combine-notice-files, \
 			$(tools_notice_file_txt), \
@@ -810,12 +811,15 @@ systemtarball-nodeps: $(FS_GET_STATS) \
 stnod: systemtarball-nodeps
 
 #######
-## platform.zip: system in a zip file
+## platform.zip: system, plus other files to be used in PDK fusion build,
+## in a zip file
 INSTALLED_PLATFROM_ZIP := $(PRODUCT_OUT)/platform.zip
 $(INSTALLED_PLATFROM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFROM_ZIP)")
 	$(hide) rm -f $@
-	$(hide) cd $(dir $@) && zip -qry $(notdir $@) system
+	$(hide) cd $(dir $@) && zip -qry $(notdir $@) \
+		$(TARGET_COPY_OUT_SYSTEM) \
+		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES))
 
 .PHONY: platform
 platform: $(INSTALLED_PLATFROM_ZIP)
