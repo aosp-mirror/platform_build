@@ -1525,7 +1525,7 @@ define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 $(hide) $(DX) \
-    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx1536M) \
+    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx2048M) \
     --dex --output=$@ \
     $(incremental_dex) \
     $(if $(NO_OPTIMIZE_DX), \
