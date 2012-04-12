@@ -300,17 +300,20 @@ systemimage:
 
 all_event_log_tags_file := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
 
+event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
+
 # Include tags from all packages that we know about
 all_event_log_tags_src := \
     $(sort $(foreach m, $(ALL_MODULES), $(ALL_MODULES.$(m).EVENT_LOG_TAGS)))
 
-$(all_event_log_tags_file): PRIVATE_SRC_FILES := $(all_event_log_tags_src)
-$(all_event_log_tags_file): $(all_event_log_tags_src)
+# PDK builds will already have a full list of tags that needs to get merged
+# in with the ones from source
+pdk_fusion_log_tags_file := $(patsubst $(PRODUCT_OUT)/%,$(_pdk_fusion_intermediates)/%,$(filter $(event_log_tags_file),$(ALL_PDK_FUSION_FILES)))
+
+$(all_event_log_tags_file): PRIVATE_SRC_FILES := $(all_event_log_tags_src) $(pdk_fusion_log_tags_file)
+$(all_event_log_tags_file): $(all_event_log_tags_src) $(pdk_fusion_log_tags_file)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) build/tools/merge-event-log-tags.py -o $@ $(PRIVATE_SRC_FILES)
-
-
-event_log_tags_file := $(TARGET_OUT)/etc/event-log-tags
 
 # Include tags from all packages included in this product, plus all
 # tags that are part of the system (ie, not in a vendor/ or device/
@@ -322,9 +325,9 @@ event_log_tags_src := \
       $(ALL_MODULES.$(m).EVENT_LOG_TAGS)) \
       $(filter-out vendor/% device/% out/%,$(all_event_log_tags_src)))
 
-$(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src)
+$(event_log_tags_file): PRIVATE_SRC_FILES := $(event_log_tags_src) $(pdk_fusion_log_tags_file)
 $(event_log_tags_file): PRIVATE_MERGED_FILE := $(all_event_log_tags_file)
-$(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file)
+$(event_log_tags_file): $(event_log_tags_src) $(all_event_log_tags_file) $(pdk_fusion_log_tags_file)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) build/tools/merge-event-log-tags.py -o $@ -m $(PRIVATE_MERGED_FILE) $(PRIVATE_SRC_FILES)
 
