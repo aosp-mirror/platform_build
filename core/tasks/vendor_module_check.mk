@@ -23,7 +23,8 @@ _vendor_owner_whitelist := \
 	nxp \
 	samsung \
 	samsung_arm \
-	ti
+	ti \
+	widevine
 
 
 ifneq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
