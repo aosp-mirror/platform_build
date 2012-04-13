@@ -74,6 +74,9 @@ PRODUCT_COPY_FILES := \
         frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf \
         hardware/libhardware_legacy/audio/audio_policy.conf:system/etc/audio_policy.conf
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.carrier=unknown
+
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, external/lohit-fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
