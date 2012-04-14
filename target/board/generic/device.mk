@@ -27,6 +27,7 @@ PRODUCT_COPY_FILES := \
     development/data/etc/vold.conf:system/etc/vold.conf \
     development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml \
     development/tools/emulator/system/camera/media_codecs.xml:system/etc/media_codecs.xml \
+    hardware/libhardware_legacy/audio/audio_policy.conf:system/etc/audio_policy.conf
 
 PRODUCT_PACKAGES := \
     audio.primary.goldfish \
