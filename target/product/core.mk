@@ -114,6 +114,8 @@ PRODUCT_PACKAGES := \
     sensorservice \
     lint
 
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.usb.rc:root/init.usb.rc \
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
