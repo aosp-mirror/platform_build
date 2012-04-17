@@ -59,7 +59,10 @@ PRODUCT_PACKAGES := \
 	ConnectivityTest \
 	GpsLocationTest \
 	CalendarProvider \
-	Calendar
+	Calendar \
+	SmokeTest \
+	SmokeTestApp
+
 
 
 # Host tools that are parts of the SDK.
