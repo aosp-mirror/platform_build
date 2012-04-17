@@ -116,15 +116,19 @@ function setpaths()
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
     export ANDROID_EABI_TOOLCHAIN=
-    toolchaindir=arm/arm-linux-androideabi-4.6/bin
+    local ARCH=$(get_build_var TARGET_ARCH)
+    case $ARCH in
+        x86) toolchaindir=x86/i686-android-linux-4.4.3/bin
+            ;;
+        arm) toolchaindir=arm/arm-linux-androideabi-4.6/bin
+            ;;
+        *)
+            echo "Can't find toolchain for unknown architecture: $ARCH"
+            toolchaindir=xxxxxxxxx
+            ;;
+    esac
     if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
         export ANDROID_EABI_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
-    fi
-
-    export ARM_EABI_TOOLCHAIN=
-    toolchaindir=arm/arm-eabi-4.6/bin
-    if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
-        export ARM_EABI_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
     fi
 
     export ANDROID_TOOLCHAIN=$ANDROID_EABI_TOOLCHAIN
@@ -762,7 +766,7 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       $GDB -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       $ANDROID_TOOLCHAIN/$GDB -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
