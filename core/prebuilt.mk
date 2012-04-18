@@ -56,6 +56,8 @@ ifdef prebuilt_module_is_a_library
 $(intermediates)/export_includes:
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(hide) touch $@
+
+$(LOCAL_BUILT_MODULE) : $(intermediates)/export_includes
 endif
 endif
 
