@@ -17,7 +17,7 @@ pdk fusion: $(DEFAULT_GOAL)
 # 2) TARGET_BUILD_PDK is passed in from the environment
 
 # TODO: what's the best default location?
-_pdk_fusion_default_platform_zip := $(OUT_DIR)/platform.zip
+_pdk_fusion_default_platform_zip := vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip
 ifneq (,$(wildcard $(_pdk_fusion_default_platform_zip)))
 $(info $(_pdk_fusion_default_platform_zip) found, do a PDK fusion build.)
 PDK_FUSION_PLATFORM_ZIP := $(_pdk_fusion_default_platform_zip)
