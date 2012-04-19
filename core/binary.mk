@@ -702,3 +702,6 @@ ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
 else
 	$(hide) touch $@
 endif
+
+# Make sure export_includes gets generated when you are running mm/mmm
+$(LOCAL_BUILT_MODULE) : | $(export_includes)
