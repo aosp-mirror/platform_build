@@ -64,11 +64,3 @@ $(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/%
 ALL_PDK_FUSION_FILES := $(addprefix $(PRODUCT_OUT)/, $(_pdk_fusion_file_list))
 
 endif
-
-ifeq ($(TARGET_BUILD_PDK),true)
-
-# SDK used for Java build under PDK
-PDK_BUILD_SDK_VERSION := $(lastword $(TARGET_AVAILABLE_SDK_VERSIONS))
-$(info PDK Build uses SDK $(PDK_BUILD_SDK_VERSION))
-
-endif # BUILD_PDK
