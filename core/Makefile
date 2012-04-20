@@ -956,24 +956,23 @@ include bootable/diskinstaller/config.mk
 endif
 
 # -----------------------------------------------------------------
-# host tools needed to build OTA packages
+# host tools needed to build dist and OTA packages
 
-OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
+DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/mkbootfs \
 	  $(HOST_OUT_EXECUTABLES)/mkbootimg \
 	  $(HOST_OUT_EXECUTABLES)/fs_config \
 	  $(HOST_OUT_EXECUTABLES)/mkyaffs2image \
 	  $(HOST_OUT_EXECUTABLES)/zipalign \
-	  $(HOST_OUT_EXECUTABLES)/aapt \
 	  $(HOST_OUT_EXECUTABLES)/bsdiff \
 	  $(HOST_OUT_EXECUTABLES)/imgdiff \
 	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
 	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
 	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
-	  $(HOST_OUT_EXECUTABLES)/genext2fs \
-	  $(HOST_OUT_EXECUTABLES)/tune2fs \
-	  $(HOST_OUT_EXECUTABLES)/e2fsck \
 	  $(HOST_OUT_EXECUTABLES)/make_ext4fs
+
+OTATOOLS := $(DISTTOOLS) \
+	  $(HOST_OUT_EXECUTABLES)/aapt
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
@@ -1143,7 +1142,7 @@ INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS) $(SELINUX_DEPENDS)
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS) $(SELINUX_DEPENDS)
 	@echo "Package OTA: $@"
 	$(hide) ./build/tools/releasetools/ota_from_target_files -v \
 	   -p $(HOST_OUT) \
@@ -1171,7 +1170,7 @@ else
 $(INTERNAL_UPDATE_PACKAGE_TARGET): extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
 endif
 
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS) $(SELINUX_DEPENDS)
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS) $(SELINUX_DEPENDS)
 	@echo "Package: $@"
 	$(hide) ./build/tools/releasetools/img_from_target_files -v \
 	   -s $(extensions) \
