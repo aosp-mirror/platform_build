@@ -9,7 +9,7 @@ def:sdk_nav() ?>
 <?cs /def ?>
 <?cs 
 def:resources_tab_nav() ?>
-  <div class="g-section g-tpl-200" id="body-content">
+  <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav"><?cs 
         include:"../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
