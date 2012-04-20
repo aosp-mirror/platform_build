@@ -372,6 +372,7 @@ function resizeWidth() {
   if (sidenav.length) { // Must check if the nav exists because IE6 calls resizeWidth() from resizeAll() for all pages
     var basePath = getBaseUri(location.pathname);
     var section = basePath.substring(1,basePath.indexOf("/",1));
+    section = section.indexOf("training") != -1 ? "resources" : section;
     writeCookie("width", sidenavWidth, section, null);
   }
 }
