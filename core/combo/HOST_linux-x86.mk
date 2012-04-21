@@ -32,7 +32,6 @@ endef
 # which is loaded by the 64-bit JVM through JNI), will have to use
 # LOCAL_CC and LOCAL_CXX to override this.
 #
-ifeq ($(TARGET_PRODUCT),sdk)
 HOST_SDK_TOOLCHAIN_PREFIX := prebuilts/tools/gcc-sdk
 # Don't do anything if the toolchain is not there
 ifneq (,$(strip $(wildcard $(HOST_SDK_TOOLCHAIN_PREFIX)/gcc)))
@@ -40,7 +39,6 @@ HOST_CC  := $(HOST_SDK_TOOLCHAIN_PREFIX)/gcc
 HOST_CXX := $(HOST_SDK_TOOLCHAIN_PREFIX)/g++
 HOST_AR  := $(HOST_SDK_TOOLCHAIN_PREFIX)/ar
 endif # $(HOST_SDK_TOOLCHAIN_PREFIX)/gcc exists
-endif # TARGET_PRODUCT == sdk
 
 ifneq ($(strip $(BUILD_HOST_64bit)),)
 # By default we build everything in 32-bit, because it gives us
