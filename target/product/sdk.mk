@@ -62,68 +62,9 @@ PRODUCT_PACKAGES := \
 	CalendarProvider \
 	Calendar
 
-
-# Host tools that are parts of the SDK.
-# See development/build/sdk.atree
-PRODUCT_PACKAGES += \
-	adb \
-	dmtracedump \
-	etc1tool \
-	hprof-conv \
-	mksdcard \
-	emulator \
-	bios.bin \
-	vgabios-cirrus.bin \
-	ddms \
-	hierarchyviewer \
-	draw9patch \
-	traceview \
-	android \
-	dexdump \
-	lint \
-	monkeyrunner
-
-# Native host Java libraries that are parts of the SDK.
-# See development/build/sdk.atree
-PRODUCT_PACKAGES += \
-	androidprefs \
-	annotations \
-	sdkstats \
-	archquery \
-	ddms \
-	ddmlib \
-	ddmuilib \
-	draw9patch \
-	hierarchyviewer \
-	traceview \
-	anttasks \
-	sdklib \
-	sdkuilib \
-	sdkmanager \
-	swtmenubar \
-	swing-worker-1.1 \
-	groovy-all-1.7.0 \
-	commons-compress-1.0 \
-	emmalib \
-	jcommon-1.0.12 \
-	jfreechart-1.0.9 \
-	jfreechart-1.0.9-swt \
-	org.eclipse.core.commands_3.4.0.I20080509-2000 \
-	org.eclipse.equinox.common_3.4.0.v20080421-2006 \
-	org.eclipse.jface_3.4.2.M20090107-0800 \
-	osgi \
-	layoutlib \
-	lint \
-	monkeyrunner \
-	guavalib \
-	jsr305lib \
-	jython \
-	ddmlib-tests \
-	ninepatch-tests \
-	common-tests \
-	sdklib-tests \
-	sdkuilib-tests \
-	layoutlib-tests
+# Define the host tools and libs that are parts of the SDK.
+include sdk/build/product_sdk.mk
+include development/build/product_sdk.mk
 
 # audio libraries.
 PRODUCT_PACKAGES += \
