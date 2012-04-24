@@ -99,6 +99,7 @@ PRODUCT_PACKAGES := \
     libstagefright_soft_amrwbenc \
     libstagefright_soft_g711dec \
     libstagefright_soft_h264dec \
+    libstagefright_soft_h264enc \
     libstagefright_soft_mp3dec \
     libstagefright_soft_mpeg4dec \
     libstagefright_soft_vorbisdec \
