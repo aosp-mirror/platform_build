@@ -692,7 +692,7 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 ###########################################################
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
-$(export_includes) :
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
