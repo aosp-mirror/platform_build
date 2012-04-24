@@ -113,11 +113,11 @@ endef
 # Figure out where we are.
 define my-dir
 $(strip \
-  $(eval md_file_ := $$(lastword $$(MAKEFILE_LIST))) \
-  $(if $(filter $(CLEAR_VARS),$(md_file_)), \
+  $(eval LOCAL_MODULE_MAKEFILE := $$(lastword $$(MAKEFILE_LIST))) \
+  $(if $(filter $(CLEAR_VARS),$(LOCAL_MODULE_MAKEFILE)), \
     $(error LOCAL_PATH must be set before including $$(CLEAR_VARS)) \
    , \
-    $(patsubst %/,%,$(dir $(md_file_))) \
+    $(patsubst %/,%,$(dir $(LOCAL_MODULE_MAKEFILE))) \
    ) \
  )
 endef
