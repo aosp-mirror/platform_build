@@ -46,7 +46,7 @@ $(_pdk_fusion_stamp) : $(PDK_FUSION_PLATFORM_ZIP)
 	@echo "Unzip $(dir $@) <- $<"
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
 	$(hide) unzip -qo $< -d $(dir $@)
-	$(hide) touch $@
+	$(hide) touch $@ $(_pdk_fusion_files)
 
 _pdk_fusion_file_list := $(shell unzip -Z -1 $(PDK_FUSION_PLATFORM_ZIP) '*[^/]' 2>/dev/null)
 _pdk_fusion_files := $(addprefix $(_pdk_fusion_intermediates)/, $(_pdk_fusion_file_list))
@@ -57,7 +57,7 @@ $(_pdk_fusion_files) : $(_pdk_fusion_stamp)
 # the pattern rule will be just ignored by make.
 # That's desired by us: we want only absent files from the platform zip package.
 # Copy with the last-modified time preserved, never follow symbolic links.
-$(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/%
+$(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/% $(_pdk_fusion_stamp)
 	@mkdir -p $(dir $@)
 	$(hide) cp -fpPR $< $@
 
