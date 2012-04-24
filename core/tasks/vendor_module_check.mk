@@ -16,6 +16,7 @@
 
 # Restrict the vendor module owners here.
 _vendor_owner_whitelist := \
+	audience \
 	broadcom \
 	csr \
 	imgtec \
