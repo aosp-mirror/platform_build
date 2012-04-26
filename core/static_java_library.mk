@@ -39,7 +39,9 @@ ifneq (,$(all_resources))
 # Those files will be excluded from the built jar.
 # The R/Manifest classes should be re-generated in the app Module instead.
 # Use '' and $ escape because they will be passed to bash.
+ifneq (true,$(LOCAL_KEEP_R_CLASS_IN_STATIC_JAVA_LIBRARY))
 LOCAL_JAR_EXCLUDE_FILES := 'R.class' 'R$$*.class' 'Manifest.class' 'Manifest$$*.class'
+endif
 endif
 endif
 
