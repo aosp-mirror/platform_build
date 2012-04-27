@@ -29,6 +29,11 @@ HOST_GLOBAL_CFLAGS += -m32
 HOST_GLOBAL_LDFLAGS += -m32
 endif # BUILD_HOST_64bit
 
+ifneq ($(strip $(BUILD_HOST_static)),)
+# Statically-linked binaries are desirable for sandboxed environment
+HOST_GLOBAL_LDFLAGS += -static
+endif # BUILD_HOST_static
+
 # Use the Mac OSX SDK 10.5 if the build host is 10.6
 build_mac_version := $(shell sw_vers -productVersion)
 ifneq ($(filter 10.6.%, $(build_mac_version)),)

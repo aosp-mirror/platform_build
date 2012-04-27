@@ -46,6 +46,10 @@ HOST_AR := $(TOOLS_PREFIX)ar$(TOOLS_EXE_SUFFIX)
 
 HOST_GLOBAL_CFLAGS += -include $(call select-android-config-h,windows)
 HOST_GLOBAL_LDFLAGS += --enable-stdcall-fixup
+ifneq ($(strip $(BUILD_HOST_static)),)
+# Statically-linked binaries are desirable for sandboxed environment
+HOST_GLOBAL_LDFLAGS += -static
+endif # BUILD_HOST_static
 
 # when building under Cygwin, ensure that we use Mingw compilation by default.
 # you can disable this (i.e. to generate Cygwin executables) by defining the
