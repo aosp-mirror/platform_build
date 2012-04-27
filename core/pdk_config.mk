@@ -46,7 +46,8 @@ $(_pdk_fusion_stamp) : $(PDK_FUSION_PLATFORM_ZIP)
 	@echo "Unzip $(dir $@) <- $<"
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
 	$(hide) unzip -qo $< -d $(dir $@)
-	$(hide) touch $@ $(_pdk_fusion_files)
+	$(hide) touch $@
+	$(call split-long-arguments,touch,$(_pdk_fusion_files))
 
 _pdk_fusion_file_list := $(shell unzip -Z -1 $(PDK_FUSION_PLATFORM_ZIP) '*[^/]' 2>/dev/null)
 _pdk_fusion_files := $(addprefix $(_pdk_fusion_intermediates)/, $(_pdk_fusion_file_list))
