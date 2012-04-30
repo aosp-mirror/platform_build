@@ -30,21 +30,8 @@ _vendor_owner_whitelist := \
 
 ifneq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
 
-_check_modules := $(sort $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
-
-# expand with the required modules
-# $(1) the module name set to expand
-define _expand_required_modules
-$(eval _erm_new_modules:=)\
-$(foreach m, $(1), $(eval r:=$(ALL_MODULES.$(m).REQUIRED))\
-  $(if $(r), $(if $(filter $(_check_modules), $(r)),,\
-    $(eval _check_modules := $(_check_modules) $(r))\
-    $(eval _erm_new_modules := $(_erm_new_modules) $(r)))))\
-$(if $(_erm_new_modules), $(call _expand_required_modules, $(_erm_new_modules)))
-endef
-
-$(call _expand_required_modules, $(_check_modules))
-
+_vendor_check_modules := $(sort $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
+$(call expand-required-modules,_vendor_check_modules,$(_vendor_check_modules))
 
 # Restrict owners
 ifneq (,$(filter true owner all, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES)))
@@ -58,7 +45,7 @@ $(error Error: Product "$(TARGET_PRODUCT)" can not have PRODUCT_COPY_FILES from 
     $(filter vendor/%, $(PRODUCT_COPY_FILES)))
 endif
 
-$(foreach m, $(_check_modules), \
+$(foreach m, $(_vendor_check_modules), \
   $(if $(filter vendor/%, $(ALL_MODULES.$(m).PATH)),\
     $(if $(filter $(_vendor_owner_whitelist), $(ALL_MODULES.$(m).OWNER)),,\
       $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) with unknown owner \
@@ -70,7 +57,7 @@ endif
 # Restrict paths
 ifneq (,$(filter path all, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES)))
 
-$(foreach m, $(_check_modules), \
+$(foreach m, $(_vendor_check_modules), \
   $(if $(filter vendor/%, $(ALL_MODULES.$(m).PATH)),\
     $(if $(filter $(TARGET_OUT_VENDOR)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
       $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) \
@@ -79,4 +66,5 @@ $(foreach m, $(_check_modules), \
 
 endif
 
+_vendor_check_modules :=
 endif
