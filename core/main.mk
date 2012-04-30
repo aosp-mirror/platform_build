@@ -546,13 +546,9 @@ ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
   # by the appropriate product definition file, which was included
   # by product_config.make.
-  user_PACKAGES := $(call module-installed-files, \
-                       $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
-  ifeq (0,1)
-    $(info user packages for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-    $(foreach p,$(user_PACKAGES),$(info :   $(p)))
-    $(error done)
-  endif
+  user_PACKAGES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  $(call expand-required-modules,user_PACKAGES,$(user_PACKAGES))
+  user_PACKAGES := $(call module-installed-files, $(user_PACKAGES))
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
