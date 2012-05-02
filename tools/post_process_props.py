@@ -21,7 +21,6 @@ import sys
 def mangle_build_prop(prop):
   pass
 
-
 # Put the modifications that you need to make into the /system/build.prop into this
 # function. The prop object has get(name) and put(name,value) methods.
 def mangle_default_prop(prop):
@@ -34,7 +33,11 @@ def mangle_default_prop(prop):
     else:
       val = val + ",adb"
     prop.put("persist.sys.usb.config", val)
-
+  # UsbDeviceManager expects a value here.  If it doesn't get it, it will
+  # default to "adb". That might not the right policy there, but it's better
+  # to be explicit.
+  if not prop.get("persist.sys.usb.config"):
+    prop.put("persist.sys.usb.config", "none");
 
 class PropFile:
   def __init__(self, lines):
