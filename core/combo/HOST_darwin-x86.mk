@@ -69,31 +69,13 @@ HOST_GLOBAL_ARFLAGS := cqs
 
 HOST_CUSTOM_LD_COMMAND := true
 
-# Workaround for lack of "-Wl,--whole-archive" in MacOS's linker.
-define _darwin-extract-and-include-single-whole-static-lib
-@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(1)]"
-$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
-    mkdir -p $$ldir; \
-    for f in `$(HOST_AR) t $(1)`; do \
-        $(HOST_AR) p $(1) $$f > $$ldir/$$f; \
-    done ;
-
-endef
-
-define darwin-extract-and-include-whole-static-libs
-$(if $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), $(hide) rm -rf $(PRIVATE_INTERMEDIATES_DIR)/WHOLE)
-$(foreach lib,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), \
-    $(call _darwin-extract-and-include-single-whole-static-lib, $(lib)))
-endef
-
 define transform-host-o-to-shared-lib-inner
-$(call darwin-extract-and-include-whole-static-libs)
 $(hide) $(PRIVATE_CXX) \
         -dynamiclib -single_module -read_only_relocs suppress \
         $(HOST_GLOBAL_LD_DIRS) \
         $(HOST_GLOBAL_LDFLAGS) \
         $(PRIVATE_ALL_OBJECTS) \
-        $(if $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES), `find $(PRIVATE_INTERMEDIATES_DIR)/WHOLE -name '*.o' 2>/dev/null`) \
+        $(addprefix -force_load , $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
