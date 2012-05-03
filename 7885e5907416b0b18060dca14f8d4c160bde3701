@@ -2,6 +2,91 @@
   "comments": [
     {
       "key": {
+        "uuid": "AAAFPX///98\u003d",
+        "filename": "core/combo/TARGET_linux-mips.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "In the current aosp/master branch, this location should perhaps be\n\nprebuilt/$(HOST_PREBUILT_TAG)/toolchain/mips-linux-android-4.5.2/bin/mips-linux-android-\n\nThat\u0027s the naming pattern used in TARGET_linux-arm.mk and TARGET_linux-x86.mk\nPlease recheck this.",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///94\u003d",
+        "filename": "core/dumpvar.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "Should this be mips-linux-android-4.5.2 instead of mips-linux-gnu-4.5.2 ?",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///9w\u003d",
+        "filename": "core/dumpvar.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "Should this be mips-linux-android-4.5.2 instead of mips-4.5.2 ?",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///9s\u003d",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "The current aosp/master version of envsetup.sh has change a lot in how it sets up toolchaindir; the version shown here will not merge easily.  I have a rewrite that merges well, but will need your review.",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///9o\u003d",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "This entire sequence should be skipped, if TARGET_CPU_ABI was already explicitly defined by the developer\u0027s build script.",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAADsn///8k\u003d",
         "filename": "target/board/generic_mips/BoardConfig.mk",
         "patchSetId": 2
@@ -13,6 +98,58 @@
       "writtenOn": "2012-03-08T23:08:18Z",
       "side": 1,
       "message": "We have since removed the use of mips-r2* abi names.",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///9k\u003d",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "Correction.  When doing a default make of the SDK, TARGET_CPU_ABI must default to \u0027mips\u0027.  But the mips-r2 etc choices should remain available for NDK users and non-default builds of Android itself.  So this current coding is okay as is. \n\nSkipping the whole thing if TARGET_CPU_ABI already exists would be good for future flexibility, and allow stripping out these spelling-sensitive pattern matchers.",
+      "parentUuid": "AAADsn///8k\u003d",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///9g\u003d",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "Also require \n\n$(LOCAL_DIR)/sdk_mips.mk",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///9c\u003d",
+        "filename": "target/product/generic_mips.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-03T23:00:43Z",
+      "side": 1,
+      "message": "Also need a new file  \"sdk_mips.mk\", analogous to sdk.mk and sdk_x86.mk .",
       "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
