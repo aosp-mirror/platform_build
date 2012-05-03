@@ -181,7 +181,7 @@ TARGET_FDO_CFLAGS:=
 TARGET_FDO_LIB:=
 
 target_libgcov := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
-        --print-file-name=libgcov.a)
+        -print-file-name=libgcov.a)
 ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
   # Set BUILD_FDO_INSTRUMENT=true to turn on FDO instrumentation.
   # The profile will be generated on /data/local/tmp/profile on the device.
