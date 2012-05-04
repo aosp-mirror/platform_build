@@ -122,6 +122,24 @@
     },
     {
       "key": {
+        "uuid": "AAAFPX///6M\u003d",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-04T19:01:42Z",
+      "side": 1,
+      "message": "Current code is fine as is.\n\nDone",
+      "parentUuid": "AAAFPX///9k\u003d",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAFPX///9g\u003d",
         "filename": "target/product/AndroidProducts.mk",
         "patchSetId": 2
@@ -139,6 +157,24 @@
     },
     {
       "key": {
+        "uuid": "AAAFPX///6Q\u003d",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-04T19:01:42Z",
+      "side": 1,
+      "message": "Addition of sdk_mips.mk is handled by separate patch Ie91e28db.\n\nDone",
+      "parentUuid": "AAAFPX///9g\u003d",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAFPX///9c\u003d",
         "filename": "target/product/generic_mips.mk",
         "patchSetId": 2
@@ -150,6 +186,24 @@
       "writtenOn": "2012-05-03T23:00:43Z",
       "side": 1,
       "message": "Also need a new file  \"sdk_mips.mk\", analogous to sdk.mk and sdk_x86.mk .",
+      "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFPX///6U\u003d",
+        "filename": "target/product/generic_mips.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2012-05-04T19:01:42Z",
+      "side": 1,
+      "message": "That file sdk_mips.mk is handled by a separate patch Ie91e28db.\\\n\nDone",
+      "parentUuid": "AAAFPX///9c\u003d",
       "revId": "7885e5907416b0b18060dca14f8d4c160bde3701",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
