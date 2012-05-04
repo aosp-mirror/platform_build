@@ -43,7 +43,7 @@ pathmap_INCL := \
     libhardware_legacy:hardware/libhardware_legacy/include \
     libhost:build/libs/host/include \
     libm:bionic/libm/include \
-    libnativehelper:dalvik/libnativehelper/include \
+    libnativehelper:libnativehelper/include \
     libpagemap:system/extras/libpagemap/include \
     libril:hardware/ril/include \
     libstdc++:bionic/libstdc++/include \
