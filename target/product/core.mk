@@ -97,7 +97,10 @@ PRODUCT_PACKAGES := \
     libwilhelm \
     libz \
     screencap \
-    sensorservice
+    sensorservice \
+    drmserver \
+    libdrmframework \
+    libdrmframework_jni
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
