@@ -21,7 +21,7 @@ PRODUCT_PACKAGES := \
 	Calculator \
 	DeskClock \
 	Email \
-	Exchange \
+	Exchange2 \
 	Gallery \
 	Music \
 	Mms \
