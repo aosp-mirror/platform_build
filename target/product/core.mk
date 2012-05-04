@@ -84,6 +84,7 @@ PRODUCT_PACKAGES := \
     libgabi++ \
     libicui18n \
     libicuuc \
+    libjavacore \
     libkeystore \
     libmdnssd \
     libnativehelper \
@@ -125,5 +126,12 @@ ifeq ($(WITH_HOST_DALVIK),true)
         apache-xml-hostdex \
         bouncycastle-hostdex \
         core-hostdex \
+        libcrypto \
+        libexpat \
+        libicui18n \
+        libicuuc \
+        libjavacore \
+        libssl \
+        libz-host \
         dalvik
 endif
