@@ -196,7 +196,7 @@ def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     print "%-25s = (%s) %s" % (k, type(v).__name__, v)
 
-def BuildBootableImage(sourcedir):
+def BuildBootableImage(sourcedir, fs_config_file):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
   'sourcedir'), and turn them into a boot image.  Return the image
   data, or None if sourcedir does not appear to contains files for
@@ -209,8 +209,11 @@ def BuildBootableImage(sourcedir):
   ramdisk_img = tempfile.NamedTemporaryFile()
   img = tempfile.NamedTemporaryFile()
 
-  p1 = Run(["mkbootfs", os.path.join(sourcedir, "RAMDISK")],
-           stdout=subprocess.PIPE)
+  if os.access(fs_config_file, os.F_OK):
+    cmd = ["mkbootfs", "-f", fs_config_file, os.path.join(sourcedir, "RAMDISK")]
+  else:
+    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+  p1 = Run(cmd, stdout=subprocess.PIPE)
   p2 = Run(["minigzip"],
            stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
 
@@ -265,7 +268,9 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir):
     return File.FromLocalFile(name, prebuilt_path)
   else:
     print "building image from target_files %s..." % (tree_subdir,)
-    return File(name, BuildBootableImage(os.path.join(unpack_dir, tree_subdir)))
+    fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
+    return File(name, BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
+                                         os.path.join(unpack_dir, fs_config)))
 
 
 def UnzipTemp(filename, pattern=None):
