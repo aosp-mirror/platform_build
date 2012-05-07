@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAFUX///xs\u003d",
+        "filename": "target/board/generic_mips/AndroidBoard.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-07T22:36:55Z",
+      "side": 1,
+      "message": "AndroidBoard.mk is deprecated.\nYou can just replace it with a plain Android.mk.",
+      "revId": "76506eba9d11867e53069c97038996bddd7dd5a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFUX///xo\u003d",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-07T22:36:55Z",
+      "side": 1,
+      "message": "It\u0027s wired HTC is referenced here.\nI see it\u0027s also in build/target/board/generic/BoardConfig.mk.\nJBQ, do you have any idea?",
+      "revId": "76506eba9d11867e53069c97038996bddd7dd5a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFUX///xY\u003d",
+        "filename": "target/product/core.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-07T22:36:55Z",
+      "side": 1,
+      "message": "Can we move it to target/board/generic_mips/device.mk?\nOn the other hand, since libffi is in the LOCAL_SHARED_LIBRARIES of libdvm, libffi will get installed automatically with libdvm by the build system and you don\u0027t need to put it into PRODUCT_PACKAGES.",
+      "revId": "76506eba9d11867e53069c97038996bddd7dd5a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
