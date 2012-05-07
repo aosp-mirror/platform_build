@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAFT3///uk\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-07T22:20:14Z",
+      "side": 1,
+      "message": "How about let the var point to the actual path? \nThat will be more flexible in case we have some inherit hierarchy for the device, such as you can share init.rc in the base tuna dir for toro and maguro.",
+      "revId": "c7deb9807383ba2ca4f8c10317aea4bdbb6e3955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFUH///ek\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-07T22:20:14Z",
+      "side": 1,
+      "message": "We\u0027d better move it close to the above assignment.",
+      "revId": "c7deb9807383ba2ca4f8c10317aea4bdbb6e3955",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
