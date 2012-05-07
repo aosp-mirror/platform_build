@@ -1,4 +1,19 @@
-# config.mk
+#
+# Copyright (C) 2011 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# BoardConfig.mk
 #
 # Product-specific compile-time definitions.
 #
@@ -7,20 +22,11 @@
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_KERNEL := true
 
-# Note: we build the platform images for ARMv7-A _without_ NEON.
-#
-# Technically, the emulator supports ARMv7-A _and_ NEON instructions, but
-# emulated NEON code paths typically ends up 2x slower than the normal C code
-# it is supposed to replace (unlike on real devices where it is 2x to 3x
-# faster).
-#
-# What this means is that the platform image will not use NEON code paths
-# that are slower to emulate. On the other hand, it is possible to emulate
-# application code generated with the NDK that uses NEON in the emulator.
-#
-TARGET_ARCH_VARIANT := armv7-a
-TARGET_CPU_ABI := armeabi-v7a
-TARGET_CPU_ABI2 := armeabi
+TARGET_ARCH := mips
+ifeq (,$(TARGET_ARCH_VARIANT))
+TARGET_ARCH_VARIANT := mips32r2-fp
+endif
+GET_CPU_ABI  := mips
 
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
