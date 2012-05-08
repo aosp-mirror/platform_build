@@ -53,8 +53,7 @@ PRODUCT_PACKAGES += \
     librs_jni \
     libvideoeditor_jni \
     libvideoeditorplayer \
-    libvideoeditor_core \
-    libdownmix
+    libvideoeditor_core
 
 PRODUCT_PACKAGES += \
     audio.primary.default \
