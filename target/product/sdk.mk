@@ -42,6 +42,7 @@ PRODUCT_PACKAGES := \
 	SdkSetup \
 	CustomLocale \
 	sqlite3 \
+	InputDevices \
 	LatinIME \
 	CertInstaller \
 	LiveWallpapersPicker \
