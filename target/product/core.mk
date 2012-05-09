@@ -75,6 +75,7 @@ PRODUCT_PACKAGES := \
     libaudiopreprocessing \
     libaudioutils \
     libcrypto \
+    libdownmix \
     libdvm \
     libdrmframework \
     libdrmframework_jni \
