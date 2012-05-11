@@ -432,7 +432,7 @@ $(shell function sgrax() { \
     ( sgrax $(1) | sort -g ) )
 endef
 
-TARGET_AVAILABLE_SDK_VERSIONS := current $(call numerically_sort,\
+TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
     $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
