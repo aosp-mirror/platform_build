@@ -64,7 +64,7 @@ framework_res_package_export :=
 framework_res_package_export_deps :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION)),)
+ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
 framework_res_package_export_deps := $(framework_res_package_export)

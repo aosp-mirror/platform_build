@@ -64,7 +64,8 @@ endif
 ifneq ($(LOCAL_IS_HOST_MODULE),true)
 
 ifneq ($(LOCAL_SDK_VERSION),)
-  ifeq ($(LOCAL_SDK_VERSION),current)
+  ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+    # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
     LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
   else
     LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)

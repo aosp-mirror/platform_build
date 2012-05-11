@@ -226,7 +226,8 @@ endif
 aidl_preprocess_import :=
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 ifdef LOCAL_SDK_VERSION
-ifeq ($(LOCAL_SDK_VERSION),current)
+ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
   aidl_preprocess_import := $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/framework.aidl
@@ -399,7 +400,8 @@ ifeq ($(my_prefix),TARGET_)
 ifeq ($(LOCAL_SDK_VERSION),)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core)
 else
-ifeq ($(LOCAL_SDK_VERSION),current)
+ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+# LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,android_stubs_current)
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION))
