@@ -267,7 +267,7 @@ else
 # Most packages should link against the resources defined by framework-res.
 # Even if they don't have their own resources, they may use framework
 # resources.
-ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION)),)
+ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_RES_VERSION))),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
