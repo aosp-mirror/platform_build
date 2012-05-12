@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAFYn///8I\u003d",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2012-05-12T06:28:29Z",
+      "side": 1,
+      "message": "I have uploaded 3rd patch set of https://android-review.googlesource.com/#/c/36450/ which works with -Wl,--gc-sections.  No need to comment it out now.",
+      "revId": "3326e1427d29571fddecb844fd67dad66068ff19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
