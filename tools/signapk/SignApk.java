@@ -76,6 +76,8 @@ class SignApk {
     private static final String CERT_SF_NAME = "META-INF/CERT.SF";
     private static final String CERT_RSA_NAME = "META-INF/CERT.RSA";
 
+    private static final String OTACERT_NAME = "META-INF/com/android/otacert";
+
     // Files matching this pattern are not copied to the output.
     private static Pattern stripPattern =
             Pattern.compile("^META-INF/(.*)[.](SF|RSA|DSA)$");
@@ -199,6 +201,7 @@ class SignApk {
             String name = entry.getName();
             if (!entry.isDirectory() && !name.equals(JarFile.MANIFEST_NAME) &&
                 !name.equals(CERT_SF_NAME) && !name.equals(CERT_RSA_NAME) &&
+                !name.equals(OTACERT_NAME) &&
                 (stripPattern == null ||
                  !stripPattern.matcher(name).matches())) {
                 InputStream data = jar.getInputStream(entry);
@@ -216,6 +219,39 @@ class SignApk {
 
         return output;
     }
+
+    /**
+     * Add a copy of the public key to the archive; this should
+     * exactly match one of the files in
+     * /system/etc/security/otacerts.zip on the device.  (The same
+     * cert can be extracted from the CERT.RSA file but this is much
+     * easier to get at.)
+     */
+    private static void addOtacert(JarOutputStream outputJar,
+                                   File publicKeyFile,
+                                   long timestamp,
+                                   Manifest manifest)
+        throws IOException, GeneralSecurityException {
+        BASE64Encoder base64 = new BASE64Encoder();
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+
+        JarEntry je = new JarEntry(OTACERT_NAME);
+        je.setTime(timestamp);
+        outputJar.putNextEntry(je);
+        FileInputStream input = new FileInputStream(publicKeyFile);
+        byte[] b = new byte[4096];
+        int read;
+        while ((read = input.read(b)) != -1) {
+            outputJar.write(b, 0, read);
+            md.update(b, 0, read);
+        }
+        input.close();
+
+        Attributes attr = new Attributes();
+        attr.putValue("SHA1-Digest", base64.encode(md.digest()));
+        manifest.getEntries().put(OTACERT_NAME, attr);
+    }
+
 
     /** Write to another stream and also feed it to the Signature object. */
     private static class SignatureOutputStream extends FilterOutputStream {
@@ -445,7 +481,8 @@ class SignApk {
         FileOutputStream outputFile = null;
 
         try {
-            X509Certificate publicKey = readPublicKey(new File(args[argstart+0]));
+            File publicKeyFile = new File(args[argstart+0]);
+            X509Certificate publicKey = readPublicKey(publicKeyFile);
 
             // Assume the certificate is valid for at least an hour.
             long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
@@ -464,8 +501,17 @@ class SignApk {
 
             JarEntry je;
 
-            // MANIFEST.MF
             Manifest manifest = addDigestsToManifest(inputJar);
+
+            // Everything else
+            copyFiles(manifest, inputJar, outputJar, timestamp);
+
+            // otacert
+            if (signWholeFile) {
+                addOtacert(outputJar, publicKeyFile, timestamp, manifest);
+            }
+
+            // MANIFEST.MF
             je = new JarEntry(JarFile.MANIFEST_NAME);
             je.setTime(timestamp);
             outputJar.putNextEntry(je);
@@ -485,9 +531,6 @@ class SignApk {
             je.setTime(timestamp);
             outputJar.putNextEntry(je);
             writeSignatureBlock(signature, publicKey, outputJar);
-
-            // Everything else
-            copyFiles(manifest, inputJar, outputJar, timestamp);
 
             outputJar.close();
             outputJar = null;
