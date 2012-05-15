@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "AAAFbn///9w\u003d",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1010084
+      },
+      "writtenOn": "2012-05-15T20:08:19Z",
+      "side": 1,
+      "message": "The whole archive will force the linker enforce to include whole library even unused symbol/code.\n\nThe original reason is make it including whole libaprof for constructor/destructor. It\u0027s easier way to impalement.\n\nHowever we have LOCAL_WHOLE_STATIC_LIBRARIES(will transform to PRIVATE_ALL_WHOLE_STATIC_LIBRARIES here) for shared library,\nso I think make LOCAL_WHOLE_STATIC_LIBRARIES available for static library and executable is reasonable.",
+      "parentUuid": "AAAFYH///Fo\u003d",
+      "revId": "61c37e7a4f929a79efb8abf4489bac0c1ffec8ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAFYH///Fk\u003d",
         "filename": "core/combo/TARGET_linux-arm.mk",
         "patchSetId": 1
