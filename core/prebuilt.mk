@@ -35,6 +35,13 @@ else
   prebuilt_module_is_a_library :=
 endif
 
+# Don't install static libraries by default.
+ifndef LOCAL_UNINSTALLABLE_MODULE
+ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
+  LOCAL_UNINSTALLABLE_MODULE := true
+endif
+endif
+
 ifeq ($(LOCAL_STRIP_MODULE),true)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
