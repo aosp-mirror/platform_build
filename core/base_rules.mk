@@ -55,6 +55,7 @@ endif
 #space := $(empty) $(empty)
 #$(shell echo $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))),$(LOCAL_MODULE),$(strip $(LOCAL_MODULE_CLASS)),$(subst $(space),$(comma),$(sort $(LOCAL_MODULE_TAGS))) >> tag-list.csv)
 
+LOCAL_UNINSTALLABLE_MODULE := $(strip $(LOCAL_UNINSTALLABLE_MODULE))
 LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS))
 ifeq (,$(LOCAL_MODULE_TAGS))
 ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
@@ -124,18 +125,6 @@ ifneq (,$(filter $(LOCAL_MODULE),$(CUSTOM_MODULES)))
   LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS) user)
 endif
 
-ifdef LOCAL_IS_HOST_MODULE
-  partition_tag :=
-else
-ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
-  partition_tag := _VENDOR
-else
-  # The definition of should-install-to-system will be different depending
-  # on which goal (e.g., sdk or just droid) is being built.
-  partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
-endif
-endif
-
 LOCAL_MODULE_CLASS := $(strip $(LOCAL_MODULE_CLASS))
 ifneq ($(words $(LOCAL_MODULE_CLASS)),1)
   $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS must contain exactly one word, not "$(LOCAL_MODULE_CLASS)")
@@ -149,6 +138,19 @@ ifeq ($(LOCAL_MODULE_CLASS),APPS)
   endif
 endif
 
+ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+ifdef LOCAL_IS_HOST_MODULE
+  partition_tag :=
+else
+ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
+  partition_tag := _VENDOR
+else
+  # The definition of should-install-to-system will be different depending
+  # on which goal (e.g., sdk or just droid) is being built.
+  partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
+endif
+endif
+
 LOCAL_MODULE_PATH := $(strip $(LOCAL_MODULE_PATH))
 ifeq ($(LOCAL_MODULE_PATH),)
   LOCAL_MODULE_PATH := $($(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS))
@@ -156,6 +158,7 @@ ifeq ($(LOCAL_MODULE_PATH),)
     $(error $(LOCAL_PATH): unhandled LOCAL_MODULE_CLASS "$(LOCAL_MODULE_CLASS)")
   endif
 endif
+endif # not LOCAL_UNINSTALLABLE_MODULE
 
 ifneq ($(strip $(LOCAL_BUILT_MODULE)$(LOCAL_INSTALLED_MODULE)),)
   $(error $(LOCAL_PATH): LOCAL_BUILT_MODULE and LOCAL_INSTALLED_MODULE must not be defined by component makefiles)
@@ -200,7 +203,6 @@ endif
 LOCAL_BUILT_MODULE := $(built_module_path)/$(LOCAL_BUILT_MODULE_STEM)
 built_module_path :=
 
-LOCAL_UNINSTALLABLE_MODULE := $(strip $(LOCAL_UNINSTALLABLE_MODULE))
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   LOCAL_INSTALLED_MODULE := $(LOCAL_MODULE_PATH)/$(LOCAL_INSTALLED_MODULE_STEM)
 endif
