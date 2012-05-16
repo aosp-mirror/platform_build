@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "AAAFYH///CU\u003d",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2012-05-16T00:20:45Z",
+      "side": 1,
+      "message": "Is libaprof the only library that is linked through the PRIVATE_ALL_WHOLE_STATIC_LIBRARIES variable? My concern is it will increase the overall size of other executables.",
+      "parentUuid": "AAAFbn///9w\u003d",
+      "revId": "61c37e7a4f929a79efb8abf4489bac0c1ffec8ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAFYH///Fk\u003d",
         "filename": "core/combo/TARGET_linux-arm.mk",
         "patchSetId": 1
