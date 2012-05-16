@@ -117,7 +117,7 @@ function setpaths()
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
     export ANDROID_EABI_TOOLCHAIN=
     case $(get_build_var TARGET_ARCH) in
-        x86) toolchaindir=x86/i686-android-linux-4.4.3/bin
+        x86) toolchaindir=x86/i686-linux-android-4.6/bin
             ;;
         arm|*) toolchaindir=arm/arm-linux-androideabi-4.6/bin
             ;;
