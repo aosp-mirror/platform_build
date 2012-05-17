@@ -41,12 +41,12 @@ ifeq ($(TARGET_ARCH),arm)
 endif
 ifeq ($(TARGET_ARCH),x86)
   CLANG_CONFIG_EXTRA_CFLAGS += \
-    -target i686-android-linux \
+    -target i686-linux-android \
     -nostdlibinc \
-    -B$(TARGET_TOOLCHAIN_ROOT)/i686-android-linux/bin
+    -B$(TARGET_TOOLCHAIN_ROOT)/i686-linux-android/bin
   CLANG_CONFIG_EXTRA_LDFLAGS += \
-    -target i686-android-linux \
-    -B$(TARGET_TOOLCHAIN_ROOT)/i686-android-linux/bin
+    -target i686-linux-android \
+    -B$(TARGET_TOOLCHAIN_ROOT)/i686-linux-android/bin
   CLANG_CONFIG_UNKNOWN_CFLAGS += \
     -finline-limit=300 \
     -fno-inline-functions-called-once \

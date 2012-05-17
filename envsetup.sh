@@ -118,7 +118,7 @@ function setpaths()
     export ANDROID_EABI_TOOLCHAIN=
     local ARCH=$(get_build_var TARGET_ARCH)
     case $ARCH in
-        x86) toolchaindir=x86/i686-android-linux-4.4.3/bin
+        x86) toolchaindir=x86/i686-linux-android-4.6/bin
             ;;
         arm) toolchaindir=arm/arm-linux-androideabi-4.6/bin
             ;;
@@ -737,7 +737,7 @@ function gdbclient()
    local ARCH=$(get_build_var TARGET_ARCH)
    local GDB
    case "$ARCH" in
-       x86) GDB=i686-android-linux-gdb;;
+       x86) GDB=i686-linux-android-gdb;;
        arm) GDB=arm-linux-androideabi-gdb;;
        *) echo "Unknown arch $ARCH"; return 1;;
    esac
