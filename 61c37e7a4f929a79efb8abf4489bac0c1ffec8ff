@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "AAAFZX///+o\u003d",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1010084
+      },
+      "writtenOn": "2012-05-17T16:33:25Z",
+      "side": 1,
+      "message": "It\u0027s possible to increase the code size of executable, but it would not increase the size of other executable since PRIVATE_ALL_WHOLE_STATIC_LIBRARIES is only come from LOCAL_WHOLE_STATIC_LIBRARIES.\n\n\nbtw, the default implementation of `transform-o-to-executable-inner` (which is the rule to build executable) in build/core/definitions.mk have provider whole archive feature (implement by same command in build/core/definitions.mk:1250), but every target specify implementation don\u0027t provide it.\n\n\n\nThe libaprof is the only library linked  through the PRIVATE_ALL_WHOLE_STATIC_LIBRARIES with executable now, but the PRIVATE_ALL_WHOLE_STATIC_LIBRARIES (LOCAL_WHOLE_STATIC_LIBRARIES) variable is already use for build static libraries and shared libraries in many project including bionic.\n\n\nhere is the reference search result for LOCAL_WHOLE_STATIC_LIBRARIES:\n\nhttp://tools.oesf.biz/android-4.0.4_r1.0/search?q\u003dLOCAL_WHOLE_STATIC_LIBRARIES\u0026defs\u003d\u0026refs\u003d\u0026path\u003dmk\u0026hist\u003d",
+      "parentUuid": "AAAFYH///CU\u003d",
+      "revId": "61c37e7a4f929a79efb8abf4489bac0c1ffec8ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "AAAFYH///Fk\u003d",
         "filename": "core/combo/TARGET_linux-arm.mk",
         "patchSetId": 1
