@@ -53,8 +53,8 @@ ifneq (,$(strip $(copied_files)))
 #
 # These files are made by magic so we need to explicitly include them
 #
-$(eval $(call copy-one-file,$(TARGET_OUT)/build.prop,$(root_dir)/factory/build.prop))
-copied_files += $(root_dir)/factory/build.prop
+$(eval $(call copy-one-file,$(TARGET_OUT)/build.prop,$(root_dir)/build.prop))
+copied_files += $(root_dir)/build.prop
 
 $(eval $(call copy-one-file,$(PRODUCT_OUT)/factory_ramdisk.img,$(root_dir)/factory_ramdisk.img))
 copied_files += $(root_dir)/factory_ramdisk.img
