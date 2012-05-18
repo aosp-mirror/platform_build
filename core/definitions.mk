@@ -1707,6 +1707,18 @@ $(2): $(1) | $(ACP)
 	$$(copy-file-to-target)
 endef
 
+# Copies many files.
+# $(1): The files to copy.  Each entry is a ':' separated src:dst pair
+# Evaluates to the list of the dst files (ie suitable for a dependency list)
+define copy-many-files
+$(foreach f, $(1), $(strip \
+    $(eval _cmf_tuple := $(subst :, ,$(f))) \
+    $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
+    $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
+    $(eval $(call copy-one-file,$(_cmf_src),$(_cmf_dest))) \
+    $(_cmf_dest)))
+endef
+
 # Copy the file only if it's a well-formed xml file. For use via $(eval).
 # $(1): source file
 # $(2): destination file, must end with .xml.
