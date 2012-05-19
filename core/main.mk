@@ -660,6 +660,8 @@ ifdef is_sdk_build
           $(error Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
 endif
 
+# Install all of the host modules
+modules_to_install += $(sort $(modules_to_install) $(ALL_HOST_INSTALLED_FILES))
 
 # build/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES

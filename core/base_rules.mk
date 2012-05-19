@@ -58,14 +58,18 @@ endif
 LOCAL_UNINSTALLABLE_MODULE := $(strip $(LOCAL_UNINSTALLABLE_MODULE))
 LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS))
 ifeq (,$(LOCAL_MODULE_TAGS))
-ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-LOCAL_MODULE_TAGS := optional
-else
-# Installable modules without tags fall back to user (which is changed to user eng below)
-LOCAL_MODULE_TAGS := user
+  ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+    LOCAL_MODULE_TAGS := optional
+  else
+    ifneq ($(LOCAL_IS_HOST_MODULE),true)
+      # Installable target modules without tags fall back to user (which is changed to user eng
+      # below)
+      LOCAL_MODULE_TAGS := user
+    endif
+  endif
+  #$(warning default tags: $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))))
 endif
-#$(warning default tags: $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))))
-endif
+
 
 # Only the tags mentioned in this test are expected to be set by module
 # makefiles. Anything else is either a typo or a source of unexpected
@@ -92,7 +96,7 @@ ifneq ($(filter $(LOCAL_MODULE_TAGS),user),)
     $(warning *    Android.mk for the affected module, and add)
     $(warning *    the LOCAL_MODULE value for that component)
     $(warning *    into the PRODUCT_PACKAGES section of product)
-    $(warning *    makefile(s) where it's necessary, if)
+    $(warning *    makefile(s) where it is necessary, if)
     $(warning *    appropriate.)
     $(warning * )
     $(warning * If the component should be in EVERY build of ALL)
@@ -542,6 +546,17 @@ $(installed_odex) : $(built_odex) | $(ACP)
 	$(copy-file-to-target)
 
 $(LOCAL_INSTALLED_MODULE) : $(installed_odex)
+endif
+
+# All host modules that are not tagged with optional are automatically installed.
+# Save the installed files in ALL_HOST_INSTALLED_FILES.
+ifeq ($(LOCAL_IS_HOST_MODULE),true)
+  ifneq ($(filter optional,$(LOCAL_MODULE_TAGS)),optional)
+    ALL_HOST_INSTALLED_FILES += $(LOCAL_INSTALLED_MODULE)
+  endif
+  ifneq ($(filter user debug eng tests, $(LOCAL_MODULE_TAGS)),)
+    $(error $(LOCAL_MODULE_MAKEFILE): Module "$(LOCAL_MODULE)" has useless module tags: $(filter user debug eng tests, $(LOCAL_MODULE_TAGS)). It will be installed anyway.)
+  endif
 endif
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
