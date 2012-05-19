@@ -871,3 +871,7 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
+
+.PHONY: nothing
+nothing:
+	@echo Successfully read the makefiles.
