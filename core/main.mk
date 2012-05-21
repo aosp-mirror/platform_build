@@ -616,6 +616,18 @@ endif
 # Use tags to get the non-APPS user modules.  Use the product
 # definition files to get the APPS user modules.
 user_MODULES := $(sort $(call get-tagged-modules,user shell_$(TARGET_SHELL)))
+
+# Print the user modules that are not in ...PRODUCT_PACKAGES
+ifeq (1,1)
+  $(warning Writing modules list: modules/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT).txt)
+  $(shell rm -f modules/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT).txt)
+  $(foreach m, \
+      $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
+          $(call module-names-for-tag-list, user)), \
+      $(shell echo $m >> modules/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT).txt))
+endif
+
+
 user_MODULES := $(user_MODULES) $(user_PACKAGES)
 
 eng_MODULES := $(sort \
@@ -667,16 +679,16 @@ ifdef is_sdk_build
   # TODO: Should we do this for all builds and not just the sdk?
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
       $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
+          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
       $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
+          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG), \
       $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
+          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS), \
       $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
+          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
 # Install all of the host modules
@@ -692,6 +704,16 @@ modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 endif # dont_bother
+
+# Print the modules that we think we will install
+ifeq (1,1)
+  $(warning Writing installed file list: installed/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT).txt)
+  $(shell rm -f installed/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT).txt)
+  $(foreach m, $(modules_to_install), \
+      $(shell echo $m >> installed/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT).txt))
+  $(error stop)
+endif
+
 
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
