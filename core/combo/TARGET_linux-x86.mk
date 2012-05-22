@@ -132,11 +132,6 @@ TARGET_GLOBAL_CFLAGS += -mbionic
 #
 TARGET_GLOBAL_CFLAGS += -D__ANDROID__
 
-# instructions "movbe" is only available in Intel atom.  Disable it
-# for general x86 device and x86 host which runs emulator-x86
-#
-TARGET_GLOBAL_CFLAGS += -mno-movbe
-
 # XXX: This flag is probably redundant since our toolchain binaries already
 # generate 32-bit machine code. It probably dates back to the old days
 # where we were using the host toolchain on Linux to build the platform
