@@ -20,9 +20,6 @@
 # in inherited configurations.
 
 PRODUCT_PACKAGES := \
-    drmserver \
-    libdrmframework \
-    libdrmframework_jni \
     libfwdlockengine \
     OpenWnn \
     PinyinIME \
