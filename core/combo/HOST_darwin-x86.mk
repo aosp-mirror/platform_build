@@ -50,7 +50,7 @@ HOST_GLOBAL_CFLAGS += -isysroot $(sdk_105_root) -mmacosx-version-min=10.5
 HOST_GLOBAL_LDFLAGS += -isysroot $(sdk_105_root) -mmacosx-version-min=10.5
 endif # build_mac_version is 10.6
 
-HOST_GLOBAL_CFLAGS += -fPIC
+HOST_GLOBAL_CFLAGS += -fPIC -funwind-tables
 HOST_NO_UNDEFINED_LDFLAGS := -Wl,-undefined,error
 
 GCC_REALPATH = $(realpath $(shell which gcc))
