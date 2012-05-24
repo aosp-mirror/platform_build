@@ -10,7 +10,6 @@ TARGET_HARDWARE_3D := false
 BOARD_USES_GENERIC_AUDIO := true
 USE_CAMERA_STUB := true
 TARGET_PROVIDES_INIT_RC := true
-USE_CUSTOM_RUNTIME_HEAP_MAX := "32M"
 TARGET_CPU_ABI := x86
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_BOOTIMAGE_USE_EXT2 := true
@@ -36,3 +35,5 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 268435456
 # The eth0 device should be started with dhcp on boot.
 # Useful for emulators that don't provide a wifi connection.
 NET_ETH0_STARTONBOOT := true
+
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.heapsize=32m
