@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAFxH///8A\u003d",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-24T18:05:27Z",
+      "side": 1,
+      "message": "Then this is not needed any more.",
+      "revId": "d2cad4d275001fc358f2c995b7c044f6e19ae86d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFxH///8I\u003d",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-24T18:05:27Z",
+      "side": 1,
+      "message": "So the only difference between LOCAL_ENABLE_APROF and  LOCAL_ENABLE_APROF_JNI is the additional libaprof_jni?\nIf so, you can force LOCAL_ENABLE_APROF if LOCAL_ENABLE_APROF_JNI is true to reduce dup code:\nifdef LOCAL_ENABLE_APROF_JNI\nLOCAL_WHOLE_STATIC_LIBRARIES +\u003d libaprof_jni\nLOCAL_ENABLE_APROF :\u003d true\nendif\nifdef LOCAL_ENABLE_APROF\nLOCAL_SHARED_LIBRARIES +\u003d libaprof libaprof_runtime\nendif",
+      "revId": "d2cad4d275001fc358f2c995b7c044f6e19ae86d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAFxH///9I\u003d",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-05-24T18:05:27Z",
+      "side": 1,
+      "message": "extra blank line.",
+      "revId": "d2cad4d275001fc358f2c995b7c044f6e19ae86d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
