@@ -75,7 +75,7 @@ $(_pdk_fusion_stamp) : $(PDK_FUSION_PLATFORM_ZIP)
 	@echo "Unzip $(dir $@) <- $<"
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
 	$(hide) unzip -qo $< -d $(dir $@)
-	$(call split-long-arguments,touch,$(_pdk_fusion_files))
+	$(call split-long-arguments,-touch,$(_pdk_fusion_files))
 	$(hide) touch $@
 
 
