@@ -94,12 +94,14 @@ endif
 ifeq (,$(LOCAL_RESOURCE_DIR))
   LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 endif
-LOCAL_RESOURCE_DIR := \
-  $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
-    $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
-  $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
-    $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
-  $(LOCAL_RESOURCE_DIR)
+
+package_resource_overlays := $(strip \
+    $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
+      $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
+    $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
+      $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
+
+LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
 
 all_assets := $(call find-subdir-assets,$(LOCAL_ASSET_DIR))
 all_assets := $(addprefix $(LOCAL_ASSET_DIR)/,$(patsubst assets/%,%,$(all_assets)))
@@ -399,6 +401,9 @@ endif
 # Save information about this package
 PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_FILES := $(all_resources)
+ifdef package_resource_overlays
+PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_OVERLAYS := $(package_resource_overlays)
+endif
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
 
