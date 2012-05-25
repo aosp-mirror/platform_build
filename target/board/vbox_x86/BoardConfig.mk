@@ -37,3 +37,5 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 268435456
 # The eth0 device should be started with dhcp on boot.
 # Useful for emulators that don't provide a wifi connection.
 NET_ETH0_STARTONBOOT := true
+
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.heapsize=32m
