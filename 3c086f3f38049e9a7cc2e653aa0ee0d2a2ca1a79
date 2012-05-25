@@ -16,6 +16,24 @@
       "revId": "3c086f3f38049e9a7cc2e653aa0ee0d2a2ca1a79",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAF1H///+A\u003d",
+        "filename": "target/product/generic_x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003360
+      },
+      "writtenOn": "2012-05-25T16:24:28Z",
+      "side": 1,
+      "message": "I originally used inherit... but that caused issues because it does appends of variables (when a variable is specified in both files). In this case... it really wants to be a pure override.",
+      "parentUuid": "AAAFun///5s\u003d",
+      "revId": "3c086f3f38049e9a7cc2e653aa0ee0d2a2ca1a79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
