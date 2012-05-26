@@ -34,17 +34,21 @@ ifneq ($(strip $(BUILD_HOST_static)),)
 HOST_GLOBAL_LDFLAGS += -static
 endif # BUILD_HOST_static
 
-mac_sdk_version := 10.6
-mac_sdk_root := /Developer/SDKs/MacOSX$(mac_sdk_version).sdk
-ifeq ($(wildcard $(mac_sdk_root)),)
+# Use the Mac OSX SDK 10.5 if the build host is 10.6
+build_mac_version := $(shell sw_vers -productVersion)
+ifneq ($(filter 10.6.%, $(build_mac_version)),)
+sdk_105_root := /Developer/SDKs/MacOSX10.5.sdk
+ifeq ($(wildcard $(sdk_105_root)),)
 $(warning *****************************************************)
-$(warning * Can not find SDK $(mac_sdk_version) at $(mac_sdk_root))
+$(warning * You are building on Mac OSX 10.6.)
+$(warning * Can not find SDK 10.5 at $(sdk_105_root))
 $(warning *****************************************************)
 $(error Stop.)
 endif
 
-HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
-HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
+HOST_GLOBAL_CFLAGS += -isysroot $(sdk_105_root) -mmacosx-version-min=10.5
+HOST_GLOBAL_LDFLAGS += -isysroot $(sdk_105_root) -mmacosx-version-min=10.5
+endif # build_mac_version is 10.6
 
 HOST_GLOBAL_CFLAGS += -fPIC -funwind-tables
 HOST_NO_UNDEFINED_LDFLAGS := -Wl,-undefined,error
