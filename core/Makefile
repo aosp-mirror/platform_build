@@ -843,7 +843,7 @@ platform-java: platform
 
 # Dist the platform.zip
 ifneq (,$(filter platform, $(MAKECMDGOALS)))
-$(call dist-for-goals, platform, $(INSTALLED_PLATFROM_ZIP))
+$(call dist-for-goals, platform, $(INSTALLED_PLATFORM_ZIP))
 endif
 
 #######
