@@ -98,7 +98,7 @@ empty :=
 space := $(empty) $(empty)
 define uniq-word
 $(strip \
-  $(if $(filter $(2),$(1)), \
+  $(if $(filter-out 0 1,$(words $(filter $(2),$(1)))), \
     $(eval h := |||$(subst $(space),|||,$(strip $(1)))|||) \
     $(eval h := $(subst |||$(strip $(2))|||,|||$(space)|||,$(h))) \
     $(eval h := $(word 1,$(h)) $(2) $(wordlist 2,9999,$(h))) \
