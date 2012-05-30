@@ -842,8 +842,8 @@ platform: $(INSTALLED_PLATFORM_ZIP)
 platform-java: platform
 
 # Dist the platform.zip
-ifneq (,$(filter platform, $(MAKECMDGOALS)))
-$(call dist-for-goals, platform, $(INSTALLED_PLATFORM_ZIP))
+ifneq (,$(filter platform platform-java, $(MAKECMDGOALS)))
+$(call dist-for-goals, platform platform-java, $(INSTALLED_PLATFORM_ZIP))
 endif
 
 #######
