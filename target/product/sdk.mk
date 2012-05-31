@@ -62,7 +62,8 @@ PRODUCT_PACKAGES := \
 	CalendarProvider \
 	Calendar \
 	SmokeTest \
-	SmokeTestApp
+	SmokeTestApp \
+	rild
 
 
 # Define the host tools and libs that are parts of the SDK.

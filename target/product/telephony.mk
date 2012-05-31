@@ -18,6 +18,7 @@
 # to products that have telephony hardware.
 
 PRODUCT_PACKAGES := \
-    Mms
+    Mms \
+    rild
 
 PRODUCT_COPY_FILES := \
