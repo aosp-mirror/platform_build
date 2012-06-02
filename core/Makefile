@@ -831,7 +831,7 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 		$(TARGET_COPY_OUT_SYSTEM) \
 		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES))
 ifeq (true,$(PLATFORM_ZIP_ADD_JAVA))
-	$(hide) cd $(OUT_DIR) && zip -qry ../$(INSTALLED_PLATFORM_ZIP) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
+	$(hide) cd $(OUT_DIR) && zip -qry $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
 endif
 
 
