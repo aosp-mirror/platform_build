@@ -16,11 +16,14 @@
 
 # Restrict the vendor module owners here.
 _vendor_owner_whitelist := \
+        asus \
 	audience \
 	broadcom \
 	csr \
+        elan \
 	imgtec \
 	invensense \
+        nvidia \
 	nxp \
 	samsung \
 	samsung_arm \
