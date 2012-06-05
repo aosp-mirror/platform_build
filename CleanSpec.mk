@@ -127,6 +127,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# Now we switched to build against Mac OS X SDK 10.6
+$(call add-clean-step, rm -rf $(OUT_DIR)/host/linux-x86/obj)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
