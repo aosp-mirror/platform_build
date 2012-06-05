@@ -566,9 +566,18 @@ endif
 user_MODULES := $(sort $(call get-tagged-modules,user shell_$(TARGET_SHELL)))
 user_MODULES := $(user_MODULES) $(user_PACKAGES)
 
-eng_MODULES := $(sort $(call get-tagged-modules,eng))
-debug_MODULES := $(sort $(call get-tagged-modules,debug))
-tests_MODULES := $(sort $(call get-tagged-modules,tests))
+eng_MODULES := $(sort \
+        $(call get-tagged-modules,eng) \
+        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG)) \
+    )
+debug_MODULES := $(sort \
+        $(call get-tagged-modules,debug) \
+        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG)) \
+    )
+tests_MODULES := $(sort \
+        $(call get-tagged-modules,tests) \
+        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
+    )
 
 ifeq ($(strip $(tags_to_install)),)
 $(error ASSERTION FAILED: tags_to_install should not be empty)
@@ -602,10 +611,20 @@ ifdef is_sdk_build
   modules_to_install := \
               $(filter-out $(target_gnu_MODULES),$(modules_to_install))
 
-  # Ensure every module listed in PRODUCT_PACKAGES gets something installed
+  # Ensure every module listed in PRODUCT_PACKAGES* gets something installed
+  # TODO: Should we do this for all builds and not just the sdk?
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
       $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
           $(error Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
+  $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
+      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+          $(error Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
+  $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG), \
+      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+          $(error Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
+  $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS), \
+      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+          $(error Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
 
