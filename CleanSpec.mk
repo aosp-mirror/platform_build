@@ -122,6 +122,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Changing where ro.carrier value is instantiated for system/build.prop
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# Now we switched to build against Mac OS X SDK 10.6
+$(call add-clean-step, rm -rf $(OUT_DIR)/host/darwin-x86/obj)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
