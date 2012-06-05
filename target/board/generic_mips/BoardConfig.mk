@@ -26,7 +26,7 @@ TARGET_ARCH := mips
 ifeq (,$(TARGET_ARCH_VARIANT))
 TARGET_ARCH_VARIANT := mips32r2-fp
 endif
-GET_CPU_ABI  := mips
+TARGET_CPU_ABI  := mips
 
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
@@ -51,3 +51,7 @@ BUILD_EMULATOR_OPENGL := true
 # Build and enable the OpenGL ES View renderer. When running on the emulator,
 # the GLES renderer disables itself if host GL acceleration isn't available.
 USE_OPENGL_RENDERER := true
+
+# Default to JSC until we get v8 landed
+HTTP := android
+JS_ENGINE := jsc
