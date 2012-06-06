@@ -466,7 +466,11 @@ subdir_makefiles := \
 	$(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git $(subdirs) Android.mk)
 
 include $(subdir_makefiles)
+
 endif # ONE_SHOT_MAKEFILE
+
+# Now with all Android.mks loaded we can do post cleaning steps.
+include $(BUILD_SYSTEM)/post_clean.mk
 
 ifeq ($(stash_product_vars),true)
   $(call assert-product-vars, __STASHED)
