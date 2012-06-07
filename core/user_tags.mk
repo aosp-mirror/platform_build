@@ -217,7 +217,6 @@ GRANDFATHERED_USER_MODULES += \
 	libESR_Portable \
 	libESR_Shared \
 	libETC1 \
-	libexif \
 	libext \
 	libext2_blkid \
 	libext2_blkid_host \
