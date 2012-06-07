@@ -32,10 +32,15 @@ endif # BUILD_HOST_64bit
 mac_sdk_version := 10.6
 mac_sdk_root := /Developer/SDKs/MacOSX$(mac_sdk_version).sdk
 ifeq ($(wildcard $(mac_sdk_root)),)
+recent_xcode4_mac_sdk_root := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(mac_sdk_version).sdk
+ifeq ($(wildcard $(recent_xcode4_mac_sdk_root)),)
 $(warning *****************************************************)
 $(warning * Can not find SDK $(mac_sdk_version) at $(mac_sdk_root))
+$(warning * or $(recent_xcode4_mac_sdk_root))
 $(warning *****************************************************)
 $(error Stop.)
+endif
+mac_sdk_root := $(recent_xcode4_mac_sdk_root)
 endif
 
 HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
