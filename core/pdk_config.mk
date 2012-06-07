@@ -51,6 +51,15 @@ PDK_PLATFORM_JAVA_ZIP_CONTENTS := \
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
     $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
 
+# check and override java support level
+ifeq ($(TARGET_BUILD_PDK),true)
+ifneq ($(wildcard external/proguard),)
+TARGET_BUILD_JAVA_SUPPORT_LEVEL := sdk
+else # no proguard
+TARGET_BUILD_JAVA_SUPPORT_LEVEL :=
+endif
+# platform supprot is set after checking platform.zip
+endif # PDK
 
 ifdef PDK_FUSION_PLATFORM_ZIP
 TARGET_BUILD_PDK := true
@@ -67,8 +76,14 @@ _pdk_fusion_java_file_list := \
 	$(shell unzip -Z -1 $(PDK_FUSION_PLATFORM_ZIP) 'target/common/*' 2>/dev/null)
 _pdk_fusion_files := $(addprefix $(_pdk_fusion_intermediates)/,\
     $(_pdk_fusion_file_list) $(_pdk_fusion_java_file_list))
+
 ifneq ($(_pdk_fusion_java_file_list),)
-TARGET_BUILD_PDK_JAVA := true
+# This represents whether java build can use platform API or not
+# This should not be used in Android.mk
+TARGET_BUILD_PDK_JAVA_PLATFORM := true
+ifneq ($(TARGET_BUILD_JAVA_SUPPORT_LEVEL),)
+TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
+endif
 endif
 
 $(_pdk_fusion_stamp) : $(PDK_FUSION_PLATFORM_ZIP)
@@ -91,7 +106,7 @@ $(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/% $(_pdk_fusion_stamp)
 	@mkdir -p $(dir $@)
 	$(hide) cp -fpPR $< $@
 
-ifeq (true,$(TARGET_BUILD_PDK_JAVA))
+ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
 
 define JAVA_dependency_template
 $(OUT_DIR)/$(strip $(1)): $(_pdk_fusion_intermediates)/$(strip $(1)) $(OUT_DIR)/$(strip $(2)) \
@@ -122,7 +137,7 @@ endif # PDK_FUSION_PLATFORM_ZIP
 
 ifeq ($(TARGET_BUILD_PDK),true)
 
-ifeq ($(TARGET_BUILD_PDK_JAVA),)
+ifeq ($(TARGET_BUILD_PDK_JAVA_PLATFORM),)
 
 # SDK used for Java build under PDK
 PDK_BUILD_SDK_VERSION := $(lastword $(TARGET_AVAILABLE_SDK_VERSIONS))
