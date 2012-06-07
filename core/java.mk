@@ -4,7 +4,7 @@
 # all_res_assets
 
 ifeq ($(TARGET_BUILD_PDK),true)
-ifeq ($(TARGET_BUILD_PDK_JAVA),)
+ifeq ($(TARGET_BUILD_PDK_JAVA_PLATFORM),)
 # LOCAL_SDK not defined or set to current
 ifeq ($(filter-out current,$(LOCAL_SDK_VERSION)),)
 LOCAL_SDK_VERSION := $(PDK_BUILD_SDK_VERSION)
