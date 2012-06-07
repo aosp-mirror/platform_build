@@ -152,8 +152,8 @@ copy_file(const string& src, const string& dst)
 int
 strip_file(const string& path)
 {
-    // Default strip command to run is "strip" unless overridden by the STRIP env var.
-    const char* strip_cmd = getenv("STRIP");
+    // Default strip command to run is "strip" unless overridden by the ATREE_STRIP env var.
+    const char* strip_cmd = getenv("ATREE_STRIP");
     if (!strip_cmd || !strip_cmd[0]) {
         strip_cmd = "strip";
     }
@@ -163,7 +163,52 @@ strip_file(const string& path)
         return -1;
     } else if (pid == 0) {
         // Exec in the child. Only returns if execve failed.
-        return execlp(strip_cmd, strip_cmd, path.c_str(), (char *)NULL);
+
+        int num_args = 0;
+        const char *s = strip_cmd;
+        while (*s) {
+            while (*s == ' ') ++s;
+            if (*s && *s != ' ') {
+                ++num_args;
+                while (*s && *s != ' ') ++s;
+            }
+        }
+
+        if (num_args <= 0) {
+            fprintf(stderr, "Invalid ATREE_STRIP command '%s'\n", strip_cmd);
+            return 1;
+
+        } else if (num_args == 1) {
+            return execlp(strip_cmd, strip_cmd, path.c_str(), (char *)NULL);
+
+        } else {
+            // Split the arguments if more than 1
+            char* cmd = strdup(strip_cmd);
+            const char** args = (const char**) malloc(sizeof(const char*) * (num_args + 2));
+
+            const char** curr = args;
+            char* s = cmd;
+            while (*s) {
+                while (*s == ' ') ++s;
+                if (*s && *s != ' ') {
+                    *curr = s;
+                    ++curr;
+                    while (*s && *s != ' ') ++s;
+                    if (*s) {
+                        *s = '\0';
+                        ++s;
+                    }
+                }
+            }
+
+            args[num_args] = path.c_str();
+            args[num_args + 1] = NULL;
+
+            int ret = execvp(args[0], (char* const*)args);
+            free(args);
+            free(cmd);
+            return ret;
+        }
     } else {
         // Wait for child pid and return its exit code.
         int status;
