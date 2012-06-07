@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAGXX///8k\u003d",
+        "filename": "tools/atree/fs.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-06-07T17:12:50Z",
+      "side": 1,
+      "message": "Why not use execl(\"sh -c\" + \u003cstrip command\u003e), or simpler system(\u003cstrip command\u003e), rather than bother splitting the arguments?",
+      "revId": "ec5fe91ead27bf4bfb4e728222ac6d475f04a18b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
