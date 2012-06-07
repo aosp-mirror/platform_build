@@ -48,8 +48,8 @@ endif
 mac_sdk_root := $(recent_xcode4_mac_sdk_root)
 endif
 
-HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
-HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
+HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version) -DMACOSX_DEPLOYMENT_TARGET=$(mac_sdk_version)
+HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -Wl,-syslibroot,$(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
 
 HOST_GLOBAL_CFLAGS += -fPIC -funwind-tables
 HOST_NO_UNDEFINED_LDFLAGS := -Wl,-undefined,error
