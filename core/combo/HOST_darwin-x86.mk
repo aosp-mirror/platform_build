@@ -23,6 +23,7 @@
 HOST_GLOBAL_CFLAGS += -m32
 HOST_GLOBAL_LDFLAGS += -m32
 
+build_mac_version := $(shell sw_vers -productVersion)
 mac_sdk_version := 10.6
 mac_sdk_root := /Developer/SDKs/MacOSX$(mac_sdk_version).sdk
 ifeq ($(wildcard $(mac_sdk_root)),)
