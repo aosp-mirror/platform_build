@@ -34,6 +34,7 @@ ifneq ($(strip $(BUILD_HOST_static)),)
 HOST_GLOBAL_LDFLAGS += -static
 endif # BUILD_HOST_static
 
+build_mac_version := $(shell sw_vers -productVersion)
 mac_sdk_version := 10.6
 mac_sdk_root := /Developer/SDKs/MacOSX$(mac_sdk_version).sdk
 ifeq ($(wildcard $(mac_sdk_root)),)
