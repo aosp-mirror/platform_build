@@ -10,7 +10,9 @@ var NAV_PREF_PANELS = "panels";
 var nav_pref;
 var toRoot;
 var isMobile = false; // true if mobile, so we can adjust some layout
+var isIE6 = false; // true if IE6
 
+// TODO: use $(document).ready instead
 function addLoadEvent(newfun) {
   var current = window.onload;
   if (typeof window.onload != 'function') {
@@ -23,17 +25,25 @@ function addLoadEvent(newfun) {
   }
 }
 
-var agent = navigator['userAgent'];
-if ((agent.indexOf("Mobile") != -1) || 
-    (agent.indexOf("BlackBerry") != -1) || 
-    (agent.indexOf("Mini") != -1)) {
+var agent = navigator['userAgent'].toLowerCase();
+// If a mobile phone, set flag and do mobile setup
+if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod
+    (agent.indexOf("blackberry") != -1) ||
+    (agent.indexOf("webos") != -1) ||
+    (agent.indexOf("mini") != -1)) {        // opera mini browsers
   isMobile = true;
   addLoadEvent(mobileSetup);
+// If not a mobile browser, set the onresize event for IE6, and others
+} else if (agent.indexOf("msie 6") != -1) {
+  isIE6 = true;
+  addLoadEvent(function() {
+    window.onresize = resizeAll;
+  });
+} else {
+  addLoadEvent(function() {
+    window.onresize = resizeHeight;
+  });
 }
-
-addLoadEvent(function() {
-window.onresize = resizeAll;
-});
 
 function mobileSetup() {
   $("body").css({'overflow':'auto'});
@@ -53,6 +63,11 @@ addLoadEvent( function() {
   document.getElementsByTagName("head")[0].appendChild(lists);
 } );
 
+addLoadEvent( function() {
+  $("pre:not(.no-pretty-print)").addClass("prettyprint");
+  prettyPrint();
+} );
+
 function setToRoot(root) {
   toRoot = root;
   // note: toRoot also used by carousel.js
@@ -60,8 +75,12 @@ function setToRoot(root) {
 
 function restoreWidth(navWidth) {
   var windowWidth = $(window).width() + "px";
-  content.css({marginLeft:parseInt(navWidth) + 6 + "px", //account for 6px-wide handle-bar
-               width:parseInt(windowWidth) - parseInt(navWidth) - 6 + "px"});
+  content.css({marginLeft:parseInt(navWidth) + 6 + "px"}); //account for 6px-wide handle-bar
+
+  if (isIE6) {
+    content.css({width:parseInt(windowWidth) - parseInt(navWidth) - 6 + "px"}); // necessary in order for scrollbars to be visible
+  }
+
   sidenav.css({width:navWidth});
   resizePackagesNav.css({width:navWidth});
   classesNav.css({width:navWidth});
@@ -99,15 +118,15 @@ function readCookie(cookie) {
 }
 
 function writeCookie(cookie, val, section, expiration) {
-  if (!val) return;  
+  if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
   if (expiration == null) {
     var date = new Date();
     date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
     expiration = date.toGMTString();
   }
-  document.cookie = cookie_namespace+section+cookie+"="+val+"; expires="+expiration+"; path=/";
-} 
+  document.cookie = cookie_namespace + section + cookie + "=" + val + "; expires=" + expiration+"; path=/";
+}
 
 function init() {
   $("#side-nav").css({position:"absolute",left:0});
@@ -117,20 +136,26 @@ function init() {
   sidenav = $("#side-nav");
   devdocNav = $("#devdoc-nav");
 
+  var cookiePath = "";
   if (location.href.indexOf("/reference/") != -1) {
-    var cookiePath = "reference_";
+    cookiePath = "reference_";
   } else if (location.href.indexOf("/guide/") != -1) {
-    var cookiePath = "guide_";
+    cookiePath = "guide_";
+  } else if (location.href.indexOf("/sdk/") != -1) {
+    cookiePath = "sdk_";
+  } else if ((location.href.indexOf("/resources/") != -1) || 
+             (location.href.indexOf("/training/") != -1)) {
+    cookiePath = "resources_";
   }
 
   if (!isMobile) {
-    $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizeHeight(); } });
-    $(".side-nav-resizable").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
+    $("#resize-packages-nav").resizable({handles: "s", resize: function(e, ui) { resizePackagesHeight(); } });
+    $("#side-nav").resizable({handles: "e", resize: function(e, ui) { resizeWidth(); } });
     var cookieWidth = readCookie(cookiePath+'width');
     var cookieHeight = readCookie(cookiePath+'height');
     if (cookieWidth) {
       restoreWidth(cookieWidth);
-    } else if ($(".side-nav-resizable").length) {
+    } else if ($("#side-nav").length) {
       resizeWidth();
     }
     if (cookieHeight) {
@@ -140,81 +165,224 @@ function init() {
     }
   }
 
-  if (devdocNav.length) { // only dev guide and sdk 
-    highlightNav(location.href); 
+  if (devdocNav.length) { // only dev guide, resources, and sdk
+    tryPopulateResourcesNav();
+    highlightNav(location.href);
   }
 }
 
+function tryPopulateResourcesNav() {
+  var sampleList = $('#devdoc-nav-sample-list');
+  var articleList = $('#devdoc-nav-article-list');
+  var tutorialList = $('#devdoc-nav-tutorial-list');
+  var topicList = $('#devdoc-nav-topic-list');
+
+  if (!topicList.length || !ANDROID_TAGS || !ANDROID_RESOURCES)
+    return;
+
+  var topics = [];
+  for (var topic in ANDROID_TAGS['topic']) {
+    topics.push({name:topic,title:ANDROID_TAGS['topic'][topic]});
+  }
+  topics.sort(function(x,y){ return (x.title < y.title) ? -1 : 1; });
+  for (var i = 0; i < topics.length; i++) {
+    topicList.append(
+        $('<li>').append(
+          $('<a>')
+            .attr('href', toRoot + "resources/browser.html?tag=" + topics[i].name)
+            .append($('<span>')
+              .addClass('en')
+              .html(topics[i].title)
+            )
+          )
+        );
+  }
+
+  var _renderResourceList = function(tag, listNode) {
+    var resources = [];
+    var tags;
+    var resource;
+    var i, j;
+    for (i = 0; i < ANDROID_RESOURCES.length; i++) {
+      resource = ANDROID_RESOURCES[i];
+      tags = resource.tags || [];
+      var hasTag = false;
+      for (j = 0; j < tags.length; j++)
+        if (tags[j] == tag) {
+          hasTag = true;
+          break;
+        }
+      if (!hasTag)
+        continue;
+      resources.push(resource);
+    }
+    //resources.sort(function(x,y){ return (x.title.en < y.title.en) ? -1 : 1; });
+    for (i = 0; i < resources.length; i++) {
+      resource = resources[i];
+      var listItemNode = $('<li>').append(
+          $('<a>')
+            .attr('href', toRoot + "resources/" + resource.path)
+            .append($('<span>')
+              .addClass('en')
+              .html(resource.title.en)
+            )
+          );
+      tags = resource.tags || [];
+      for (j = 0; j < tags.length; j++) {
+        if (tags[j] == 'new') {
+          listItemNode.get(0).innerHTML += '&nbsp;<span class="new">new!</span>';
+          break;
+        } else if (tags[j] == 'updated') {
+          listItemNode.get(0).innerHTML += '&nbsp;<span class="new">updated!</span>';
+          break;
+        }
+      }
+      listNode.append(listItemNode);
+    }
+  };
+
+  _renderResourceList('sample', sampleList);
+  _renderResourceList('article', articleList);
+  _renderResourceList('tutorial', tutorialList);
+}
+
 function highlightNav(fullPageName) {
-  fullPageName = fullPageName.replace(/^https?:\/\//, '');
   var lastSlashPos = fullPageName.lastIndexOf("/");
-  var firstSlashPos = fullPageName.indexOf("/"); 
+  var firstSlashPos;
+  if (fullPageName.indexOf("/guide/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/guide/");
+  } else if (fullPageName.indexOf("/sdk/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/sdk/");
+  } else if (fullPageName.indexOf("/resources/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/resources/");
+  } else if (fullPageName.indexOf("/training/") != -1) {
+    firstSlashPos = fullPageName.indexOf("/training/");
+  }
   if (lastSlashPos == (fullPageName.length - 1)) { // if the url ends in slash (add 'index.html')
     fullPageName = fullPageName + "index.html";
   }
-  var htmlPos = fullPageName.lastIndexOf(".html", fullPageName.length);
-  var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5);
+
+  // get the path and page name from the URL (such as 'guide/topics/graphics/index.html')
+  var htmlPos = fullPageName.indexOf(".html");
+  var pathPageName = fullPageName.slice(firstSlashPos, htmlPos + 5); // +5 advances past ".html"
+  // find instances of the page name in the side nav
   var link = $("#devdoc-nav a[href$='"+ pathPageName+"']");
-  if ((link.length == 0) && (fullPageName.indexOf("/guide/") != -1)) { 
-// if there's no match, then let's backstep through the directory until we find an index.html page that matches our ancestor directories (only for dev guide)
+  // if there's no match, then let's backstep through the directory until we find an index.html
+  // page that matches our ancestor directories (only for dev guide and resources)
+  if ((link.length == 0) && ((fullPageName.indexOf("/guide/") != -1) ||
+                  (fullPageName.indexOf("/resources/") != -1))) {
     lastBackstep = pathPageName.lastIndexOf("/");
     while (link.length == 0) {
       backstepDirectory = pathPageName.lastIndexOf("/", lastBackstep);
-      link = $("#devdoc-nav a[href$='"+ pathPageName.slice(0, backstepDirectory + 1)+"index.html']");
+      link = $("#devdoc-nav a[href$='"+ pathPageName.slice(0, backstepDirectory +
+                      1)+"index.html']");
       lastBackstep = pathPageName.lastIndexOf("/", lastBackstep - 1);
       if (lastBackstep == 0) break;
     }
   }
+
+  // add 'selected' to the <li> or <div> that wraps this <a>
   link.parent().addClass('selected');
-  if (link.parent().parent().is(':hidden')) {
-    toggle(link.parent().parent().parent(), false);
-  } else if (link.parent().parent().hasClass('toggle-list')) {
-    toggle(link.parent().parent(), false);
+
+  // if we're in a toggleable root link (<li class=toggle-list><div><a>)
+  if (link.parent().parent().hasClass('toggle-list')) {
+    toggle(link.parent().parent(), false); // open our own list
+    // then also check if we're in a third-level nested list that's toggleable
+    if (link.parent().parent().parent().is(':hidden')) {
+      toggle(link.parent().parent().parent().parent(), false); // open the super parent list
+    }
+  }
+  // if we're in a normal nav link (<li><a>) and the parent <ul> is hidden
+  else if (link.parent().parent().is(':hidden')) {
+    toggle(link.parent().parent().parent(), false); // open the parent list
+    // then also check if the parent list is also nested in a hidden list
+    if (link.parent().parent().parent().parent().is(':hidden')) {
+      toggle(link.parent().parent().parent().parent().parent(), false); // open the super parent list
+    }
   }
 }
 
-function resizeHeight() {
+/* Resize the height of the nav panels in the reference,
+ * and save the new size to a cookie */
+function resizePackagesHeight() {
   var windowHeight = ($(window).height() - HEADER_HEIGHT);
-  var swapperHeight = windowHeight - 13;
-  $("#swapper").css({height:swapperHeight + "px"});
-  sidenav.css({height:windowHeight + "px"});
-  content.css({height:windowHeight + "px"});
+  var swapperHeight = windowHeight - 13; // move 13px for swapper link at the bottom
   resizePackagesNav.css({maxHeight:swapperHeight + "px"});
   classesNav.css({height:swapperHeight - parseInt(resizePackagesNav.css("height")) + "px"});
+
+  $("#swapper").css({height:swapperHeight + "px"});
   $("#packages-nav").css({height:parseInt(resizePackagesNav.css("height")) - 6 + "px"}); //move 6px for handle
-  devdocNav.css({height:sidenav.css("height")});
-  $("#nav-tree").css({height:swapperHeight + "px"});
-  
+
   var basePath = getBaseUri(location.pathname);
   var section = basePath.substring(1,basePath.indexOf("/",1));
   writeCookie("height", resizePackagesNav.css("height"), section, null);
 }
 
+/* Resize the height of the side-nav and doc-content divs,
+ * which creates the frame effect */
+function resizeHeight() {
+  var docContent = $("#doc-content");
+
+  // Get the window height and always resize the doc-content and side-nav divs
+  var windowHeight = ($(window).height() - HEADER_HEIGHT);
+  docContent.css({height:windowHeight + "px"});
+  $("#side-nav").css({height:windowHeight + "px"});
+
+  var href = location.href;
+  // If in the reference docs, also resize the "swapper", "classes-nav", and "nav-tree"  divs
+  if (href.indexOf("/reference/") != -1) {
+    var swapperHeight = windowHeight - 13;
+    $("#swapper").css({height:swapperHeight + "px"});
+    $("#classes-nav").css({height:swapperHeight - parseInt(resizePackagesNav.css("height")) + "px"});
+    $("#nav-tree").css({height:swapperHeight + "px"});
+
+  // Also resize the "devdoc-nav" div
+  } else if ($("#devdoc-nav").length) {
+    $("#devdoc-nav").css({height:sidenav.css("height")});
+  }
+
+  // Hide the "Go to top" link if there's no vertical scroll
+  if ( parseInt($("#jd-content").css("height")) <= parseInt(docContent.css("height")) ) {
+    $("a[href='#top']").css({'display':'none'});
+  } else {
+    $("a[href='#top']").css({'display':'inline'});
+  }
+}
+
+/* Resize the width of the "side-nav" and the left margin of the "doc-content" div,
+ * which creates the resizable side bar */
 function resizeWidth() {
   var windowWidth = $(window).width() + "px";
+  var sidenav = $("#side-nav");
   if (sidenav.length) {
     var sidenavWidth = sidenav.css("width");
   } else {
     var sidenavWidth = 0;
   }
-  content.css({marginLeft:parseInt(sidenavWidth) + 6 + "px", //account for 6px-wide handle-bar
-               width:parseInt(windowWidth) - parseInt(sidenavWidth) - 6 + "px"});
+  content.css({marginLeft:parseInt(sidenavWidth) + 6 + "px"}); //account for 6px-wide handle-bar
+
+  if (isIE6) {
+    content.css({width:parseInt(windowWidth) - parseInt(sidenavWidth) - 6 + "px"}); // necessary in order to for scrollbars to be visible
+  }
+
   resizePackagesNav.css({width:sidenavWidth});
   classesNav.css({width:sidenavWidth});
   $("#packages-nav").css({width:sidenavWidth});
-  
-  var basePath = getBaseUri(location.pathname);
-  var section = basePath.substring(1,basePath.indexOf("/",1));
-  writeCookie("width", sidenavWidth, section, null);
+
+  if (sidenav.length) { // Must check if the nav exists because IE6 calls resizeWidth() from resizeAll() for all pages
+    var basePath = getBaseUri(location.pathname);
+    var section = basePath.substring(1,basePath.indexOf("/",1));
+    section = section.indexOf("training") != -1 ? "resources" : section;
+    writeCookie("width", sidenavWidth, section, null);
+  }
 }
 
+/* For IE6 only,
+ * because it can't properly perform auto width for "doc-content" div,
+ * avoiding this for all browsers provides better performance */
 function resizeAll() {
-  if (!isMobile) {
-    resizeHeight();
-    if ($(".side-nav-resizable").length) {
-      resizeWidth();
-    }
-  }
+  resizeHeight();
+  resizeWidth();
 }
 
 function getBaseUri(uri) {
@@ -262,11 +430,13 @@ $(window).unload(function(){
     writeCookie("lastpage", path, "reference", null);
   } else if (path.indexOf("/guide/") != -1) {
     writeCookie("lastpage", path, "guide", null);
+  } else if ((path.indexOf("/resources/") != -1) || (path.indexOf("/training/") != -1)) {
+    writeCookie("lastpage", path, "resources", null);
   }
 });
 
 function toggle(obj, slide) {
-  var ul = $("ul", obj);
+  var ul = $("ul:first", obj);
   var li = ul.parent();
   if (li.hasClass("closed")) {
     if (slide) {
@@ -288,7 +458,7 @@ function toggle(obj, slide) {
 function buildToggleLists() {
   $(".toggle-list").each(
     function(i) {
-      $("div", this).append("<a class='toggle-img' href='#' title='show pages' onClick='toggle(this.parentNode.parentNode, true); return false;'></a>");
+      $("div:first", this).append("<a class='toggle-img' href='#' title='show pages' onClick='toggle(this.parentNode.parentNode, true); return false;'></a>");
       $(this).addClass("closed");
     });
 }
@@ -339,63 +509,37 @@ function scrollIntoView(nav) {
   if (navObj.is(':visible')) {
     var selected = $(".selected", navObj);
     if (selected.length == 0) return;
-    if (selected.is("div")) selected = selected.parent();
+    if (selected.is("div")) selected = selected.parent(); // when the selected item is a parent
 
     var scrolling = document.getElementById(nav);
     var navHeight = navObj.height();
     var offsetTop = selected.position().top;
-    if (selected.parent().parent().is(".toggle-list")) offsetTop += selected.parent().parent().position().top;
-    if(offsetTop > navHeight - 92) {
-      scrolling.scrollTop = offsetTop - navHeight + 92;
+
+    // handle nested items
+    if (selected.parent().parent().is(".toggle-list")) {
+      selected = selected.parent().parent();
+      // handle second level nested items
+      if (selected.parent().parent().is(".toggle-list")) {
+        selected = selected.parent().parent();
+      }
+      offsetTop += selected.position().top;
+    }
+
+    // 180px from the bottom of the list is the threshold
+    if(offsetTop > navHeight - 180) {
+      scrolling.scrollTop = offsetTop - navHeight + 180;
     }
   }
 }
 
-function toggleAllInherited(linkObj, expand) {
-  var a = $(linkObj);
-  var table = $(a.parent().parent().parent());
-  var expandos = $(".jd-expando-trigger", table);
-  if ( (expand == null && a.text() == "[Expand]") || expand ) {
-    expandos.each(function(i) {
-      toggleInherited(this, true);
-    });
-    a.text("[Collapse]");
-  } else if ( (expand == null && a.text() == "[Collapse]") || (expand == false) ) {
-    expandos.each(function(i) {
-      toggleInherited(this, false);
-    });
-    a.text("[Expand]");
-  }
-  return false;
-}
-
-function toggleAllSummaryInherited(linkObj) {
-  var a = $(linkObj);
-  var content = $(a.parent().parent().parent());
-  var toggles = $(".toggle-all", content);
-  if (a.text() == "[Expand All]") {
-    toggles.each(function(i) {
-      toggleAllInherited(this, true);
-    });
-    a.text("[Collapse All]");
-  } else {
-    toggles.each(function(i) {
-      toggleAllInherited(this, false);
-    });
-    a.text("[Expand All]");
-  }
-  return false;
-}
-
-
 function changeTabLang(lang) {
   var nodes = $("#header-tabs").find("."+lang);
-  for (i=0; i < nodes.length; i++) { // for each node in this language 
+  for (i=0; i < nodes.length; i++) { // for each node in this language
     var node = $(nodes[i]);
-    node.siblings().css("display","none"); // hide all siblings 
-    if (node.not(":empty").length != 0) { //if this languages node has a translation, show it 
+    node.siblings().css("display","none"); // hide all siblings
+    if (node.not(":empty").length != 0) { //if this languages node has a translation, show it
       node.css("display","inline");
-    } else { //otherwise, show English instead 
+    } else { //otherwise, show English instead
       node.css("display","none");
       node.siblings().filter(".en").css("display","inline");
     }
@@ -404,12 +548,12 @@ function changeTabLang(lang) {
 
 function changeNavLang(lang) {
   var nodes = $("#side-nav").find("."+lang);
-  for (i=0; i < nodes.length; i++) { // for each node in this language 
+  for (i=0; i < nodes.length; i++) { // for each node in this language
     var node = $(nodes[i]);
-    node.siblings().css("display","none"); // hide all siblings 
-    if (node.not(":empty").length != 0) { // if this languages node has a translation, show it 
+    node.siblings().css("display","none"); // hide all siblings
+    if (node.not(":empty").length != 0) { // if this languages node has a translation, show it
       node.css("display","inline");
-    } else { // otherwise, show English instead 
+    } else { // otherwise, show English instead
       node.css("display","none");
       node.siblings().filter(".en").css("display","inline");
     }
@@ -449,16 +593,22 @@ function getLangPref() {
 }
 
 
+/* Used to hide and reveal supplemental content, such as long code samples.
+   See the companion CSS in android-developer-docs.css */
 function toggleContent(obj) {
-  var button = $(obj);
-  var div = $(obj.parentNode);
+  var div = $(obj.parentNode.parentNode);
   var toggleMe = $(".toggle-content-toggleme",div);
-  if (button.hasClass("show")) {
+  if (div.hasClass("closed")) { // if it's closed, open it
     toggleMe.slideDown();
-    button.removeClass("show").addClass("hide");
-  } else {
-    toggleMe.slideUp();
-    button.removeClass("hide").addClass("show");
+    $(".toggle-content-text", obj).toggle();
+    div.removeClass("closed").addClass("open");
+    $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot + "assets/images/triangle-opened.png");
+  } else { // if it's open, close it
+    toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
+      $(".toggle-content-text", obj).toggle();
+      div.removeClass("open").addClass("closed");
+      $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot + "assets/images/triangle-closed.png");
+    });
   }
-  $("span", button).toggle();
+  return false;
 }

@@ -5,6 +5,7 @@ addLoadEvent(changeApiLevel);
 var API_LEVEL_ENABLED_COOKIE = "api_level_enabled";
 var API_LEVEL_COOKIE = "api_level";
 var minLevel = 1;
+var maxLevel = 1;
 
 function toggleApiLevelSelector(checkbox) {
   var date = new Date();
@@ -23,9 +24,9 @@ function toggleApiLevelSelector(checkbox) {
 }
 
 function buildApiLevelSelector() {
-  var maxLevel = SINCE_DATA.length;
+  maxLevel = SINCE_DATA.length;
   var userApiLevelEnabled = readCookie(API_LEVEL_ENABLED_COOKIE);
-  var userApiLevel = readCookie(API_LEVEL_COOKIE);
+  var userApiLevel = parseInt(readCookie(API_LEVEL_COOKIE));
   userApiLevel = userApiLevel == 0 ? maxLevel : userApiLevel; // If there's no cookie (zero), use the max by default
 
   if (userApiLevelEnabled == 0) {
@@ -34,41 +35,47 @@ function buildApiLevelSelector() {
     $("#apiLevelCheckbox").attr("checked","checked");
     $("#api-level-toggle label").removeClass("disabled");
   }
-  
-  minLevel = $("body").attr("class");
+
+  minLevel = parseInt($("body").attr("class"));
+  // Handle provisional api levels; the provisional level will always be the highest possible level
+  // Provisional api levels will also have a length; other stuff that's just missing a level won't,
+  // so leave those kinds of entities at the default level of 1 (for example, the R.styleable class)
+  if (isNaN(minLevel) && minLevel.length) {
+    minLevel = maxLevel;
+  }
   var select = $("#apiLevelSelector").html("").change(changeApiLevel);
   for (var i = maxLevel-1; i >= 0; i--) {
     var option = $("<option />").attr("value",""+SINCE_DATA[i]).append(""+SINCE_DATA[i]);
   //  if (SINCE_DATA[i] < minLevel) option.addClass("absent"); // always false for strings (codenames)
     select.append(option);
   }
-  
+
   // get the DOM element and use setAttribute cuz IE6 fails when using jquery .attr('selected',true)
   var selectedLevelItem = $("#apiLevelSelector option[value='"+userApiLevel+"']").get(0);
   selectedLevelItem.setAttribute('selected',true);
 }
 
 function changeApiLevel() {
-  var maxLevel = SINCE_DATA.length;
+  maxLevel = SINCE_DATA.length;
   var userApiLevelEnabled = readCookie(API_LEVEL_ENABLED_COOKIE);
   var selectedLevel = maxLevel;
-  
+
   if (userApiLevelEnabled == 0) {
     toggleVisisbleApis(selectedLevel, "body");
   } else {
-    selectedLevel = $("#apiLevelSelector option:selected").val();
+    selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
     toggleVisisbleApis(selectedLevel, "body");
-    
+
     var date = new Date();
     date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
     var expiration = date.toGMTString();
     writeCookie(API_LEVEL_COOKIE, selectedLevel, null, expiration);
   }
-  
+
   if (selectedLevel < minLevel) {
     var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
     $("#naMessage").show().html("<div><p><strong>This " + thing + " is not available with API Level " + selectedLevel + ".</strong></p>"
-                              + "<p>To use this " + thing + ", your application must specify API Level " + minLevel + " or higher in its manifest "
+                              + "<p>To use this " + thing + ", your application must specify API Level \"" + $("body").attr("class") + "\" or higher in its manifest "
                               + "and be compiled against a version of the Android library that supports an equal or higher API Level. To reveal this "
                               + "document, change the value of the API Level filter above.</p>"
                               + "<p><a href='" +toRoot+ "guide/appendix/api-levels.html'>What is the API Level?</a></p></div>");
@@ -86,7 +93,21 @@ function toggleVisisbleApis(selectedLevel, context) {
     var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
     apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
     var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
-    if (apiLevel > selectedLevel) obj.addClass("absent").attr("title","Requires API Level "+apiLevel+" or higher");
+    if (apiLevel.length == 0) { // for odd cases when the since data is actually missing, just bail
+      return;
+    }
+    apiLevel = parseInt(apiLevel);
+
+    // Handle provisional api levels; if this item's level is the provisional one, set it to the max
+    var selectedLevelNum = parseInt(selectedLevel)
+    var apiLevelNum = parseInt(apiLevel);
+    if (isNaN(apiLevelNum)) {
+        apiLevelNum = maxLevel;
+    }
+
+    // Grey things out that aren't available and give a tooltip title
+    if (apiLevelNum > selectedLevelNum) obj.addClass("absent").attr("title","Requires API Level \""
+            + apiLevel + "\" or higher");
     else obj.removeClass("absent").removeAttr("title");
   });
 }
@@ -184,7 +205,7 @@ function expand_node(me, node)
     }
     node.plus_img.src = me.toroot + "assets/images/triangle-opened-small.png";
     node.expanded = true;
-    
+
     // perform api level toggling because new nodes are new to the DOM
     var selectedLevel = $("#apiLevelSelector option:selected").val();
     toggleVisisbleApis(selectedLevel, "#side-nav");
