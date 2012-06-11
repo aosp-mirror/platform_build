@@ -1215,10 +1215,11 @@ BUILT_TESTS_ZIP_PACKAGE := $(intermediates)/$(name).zip
 $(BUILT_TESTS_ZIP_PACKAGE): intermediates := $(intermediates)
 $(BUILT_TESTS_ZIP_PACKAGE): zip_root := $(intermediates)/$(name)
 
-# Depending on the images guarantees that the underlying
-# directories are up-to-date.
+# Depending on the image dependency files, instead of the image files itself,
+# guarantees that the underlying directories are up-to-date,
+# but don't really build the image.
 $(BUILT_TESTS_ZIP_PACKAGE): \
-    $(INSTALLED_USERDATAIMAGE_TARGET) \
+    $(INTERNAL_USERDATAIMAGE_FILES) \
     | $(ACP)
 	@echo "Package test files: $@"
 	$(hide) rm -rf $@ $(zip_root)
