@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAGfH///zc\u003d",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2012-06-12T14:47:48Z",
+      "side": 1,
+      "message": "Note that in the next major release JSC won\u0027t be an option any more.",
+      "revId": "f70dec9281acd6f7601efd6e6294afbd28e03437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
