@@ -133,7 +133,7 @@ ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
 endif
 
 # Add in libcompiler-rt for all device builds
-ifndef LOCAL_IS_HOST_MODULE
+ifeq (,$(LOCAL_NDK_VERSION)$(LOCAL_IS_HOST_MODULE))
   LOCAL_STATIC_LIBRARIES += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 
