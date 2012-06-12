@@ -43,6 +43,7 @@ PRODUCT_PACKAGES := \
     UserDictionaryProvider \
     VpnDialogs \
     apache-xml \
+    atrace \
     bouncycastle \
     bu \
     cacerts \
@@ -121,6 +122,7 @@ PRODUCT_PACKAGES := \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
+    system/core/rootdir/init.trace.rc:root/init.trace.rc \
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
