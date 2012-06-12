@@ -174,6 +174,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	-nostdlib -Bdynamic \
 	-Wl,-dynamic-linker,/system/bin/linker \
+	-Wl,--copy-dt-needed-entries \
 	-Wl,-z,nocopyreloc \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \
