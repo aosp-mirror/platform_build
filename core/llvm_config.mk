@@ -71,3 +71,9 @@ ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -faddress-sanitizer
 ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS := -Wl,-u,__asan_preinit
 ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES := libdl libasan_preload
 ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES := libasan
+
+# This allows us to use the superset of functionality that compiler-rt
+# provides to Clang (for supporting features like -ftrapv).
+ifneq ($(TARGET_ARCH),mips)
+COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler-rt-extras
+endif
