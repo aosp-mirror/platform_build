@@ -27,4 +27,5 @@ PRODUCT_COPY_FILES := \
     development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml
 
 PRODUCT_PACKAGES := \
-    audio.primary.goldfish
+    audio.primary.goldfish \
+    libffi
