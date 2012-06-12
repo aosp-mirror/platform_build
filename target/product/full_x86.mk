@@ -22,15 +22,16 @@
 # If running on an emulator or some other device that has a LAN connection
 # that isn't a wifi connection. This will instruct init.rc to enable the
 # network connection so that you can use it with ADB
-ifdef NET_ETH0_STARTONBOOT
-  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
-endif
 
 PRODUCT_PACKAGES := \
     Camera
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
+
+ifdef NET_ETH0_STARTONBOOT
+  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
+endif
 
 # Ensure we package the BIOS files too.
 PRODUCT_PACKAGES += \
