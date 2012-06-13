@@ -104,7 +104,7 @@ TARGET_GLOBAL_CPPFLAGS += \
 # however, there have been reports that this is sometimes not the case. So make
 # them explicit here unless we have the time to carefully check it
 #
-TARGET_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse
+TARGET_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32
 
 # XXX: These flags should not be defined here anymore. Instead, the Android.mk
 # of the modules that depend on these features should instead check the
