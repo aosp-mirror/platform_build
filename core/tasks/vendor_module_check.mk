@@ -21,6 +21,7 @@ _vendor_owner_whitelist := \
 	broadcom \
 	csr \
         elan \
+        google \
 	imgtec \
 	invensense \
         nvidia \
@@ -28,6 +29,7 @@ _vendor_owner_whitelist := \
 	samsung \
 	samsung_arm \
 	ti \
+        trusted_logic \
 	widevine
 
 
