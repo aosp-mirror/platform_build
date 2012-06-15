@@ -15,6 +15,13 @@ LOCAL_MODULE_SUFFIX := .a
 endif
 LOCAL_UNINSTALLABLE_MODULE := true
 
+####################################################
+## Add profiling libraries if aprof is turned
+####################################################
+ifeq ($(strip $(LOCAL_ENABLE_APROF)),true)
+  LOCAL_WHOLE_STATIC_LIBRARIES += libaprof
+endif
+
 include $(BUILD_SYSTEM)/binary.mk
 
 ifeq ($(LOCAL_RAW_STATIC_LIBRARY),true)
