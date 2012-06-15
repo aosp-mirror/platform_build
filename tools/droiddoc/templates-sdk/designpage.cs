@@ -7,14 +7,19 @@
       Android Design<?cs if:page.title ?> - <?cs var:page.title ?><?cs /if ?>
     </title>
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic">
     <link rel="stylesheet" href="<?cs var:toroot ?>assets/yui-3.3.0-reset-min.css">
     <link rel="stylesheet" href="<?cs var:toroot ?>assets/design/default.css">
     <script src="<?cs var:toroot ?>assets/jquery-1.6.2.min.js"></script>
     <script>var SITE_ROOT = '<?cs var:toroot ?>design';</script>
     <script src="<?cs var:toroot ?>assets/design/default.js"></script>
   </head>
-  <body itemscope itemtype="http://schema.org/Article">
+  <body class="gc-documentation 
+    <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
+    elif:design ?>design<?cs
+    elif:distribute ?>distribute<?cs
+    /if ?>" itemscope itemtype="http://schema.org/Article">
+    <a name="top"></a>
 
     <div id="page-container">
 

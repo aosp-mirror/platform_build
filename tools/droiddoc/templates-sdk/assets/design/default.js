@@ -29,12 +29,12 @@ $(document).ready(function() {
   }
 
   // select current page in sidenav and set up prev/next links if they exist
-  var $selNavLink = $('#nav').find('a[href="' + pagePath + '"]');
+  var $selNavLink = $('.nav-y').find('a[href="' + pagePath + '"]');
   if ($selNavLink.length) {
     $selListItem = $selNavLink.closest('li');
 
     $selListItem.addClass('selected');
-    $selListItem.closest('li.nav-section').addClass('expanded');
+    $selListItem.closest('li>ul').addClass('expanded');
 
     // set up prev links
     var $prevLink = [];
@@ -85,13 +85,13 @@ $(document).ready(function() {
   }
 
   // Set up expand/collapse behavior
-  $('#nav li.nav-section').click(function() {
+  $('.nav-y li').has('ul').click(function() {
     if ($(this).hasClass('expanded')) {
       return;
     }
 
     // hide other
-    var $old = $('#nav li.nav-section.expanded');
+    var $old = $('.nav-y li.expanded');
     if ($old.length) {
       var $oldUl = $old.children('ul');
       $oldUl.css('height', $oldUl.height() + 'px');
@@ -119,7 +119,7 @@ $(document).ready(function() {
 
   // Stop expand/collapse behavior when clicking on nav section links (since we're navigating away
   // from the page)
-  $('.nav-section-header').find('a:eq(0)').click(function(evt) {
+  $('.nav-y li').has('ul').find('a:eq(0)').click(function(evt) {
     window.location.href = $(this).attr('href');
     return false;
   });

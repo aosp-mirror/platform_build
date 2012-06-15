@@ -7,34 +7,57 @@
 <title><?cs 
   if:page.title ?><?cs 
     var:page.title ?> | <?cs
-  /if ?>Android Developers</title><?cs 
-if:guide||sdk||resources ?>
-<link href="<?cs var:toroot ?>assets/android-developer-docs-devguide.css" rel="stylesheet" type="text/css" /><?cs 
-else ?>
-<link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" /><?cs 
-/if ?>
-<script src="<?cs var:toroot ?>assets/search_autocomplete.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>assets/jquery-resizable.min.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>assets/android-developer-docs.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>assets/prettify.js" type="text/javascript"></script>
+  /if ?>Android Developers</title>
+
+<!-- BASIC STYLESHEETS -->
+<link rel="stylesheet"
+href="//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic" title="roboto">
+<link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
+
+<?cs if:reference ?>
+<!-- alternative FULLSCREEN styles -->
+<link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" title="fullscreen"
+type="text/css" disabled="disabled">
+<?cs /if ?>
+
+<?cs if:carousel ?>
+<!-- homepage carousel -->
+<link href="<?cs var:toroot ?>assets/css/home.css" rel="stylesheet" type="text/css">
+<?cs /if ?>
+
+<!-- BASIC JAVASCRIPT -->
+<script src="<?cs var:toroot ?>assets/js/global-libraries-combined.js"
+        type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
+
+<?cs if:carousel ?>
+<!-- homepage carousel -->
+<script type="text/javascript" src="<?cs var:toroot ?>assets/js/carousel.js"></script>
+<?cs /if ?>
+
+<!-- search -->
+<script src="//www.google.com/jsapi" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/search_autocomplete.js" type="text/javascript"></script>
+
+<?cs if:tabbedList ?>
+<!-- tabbed lists -->
+<script src="<?cs var:toroot ?>assets/js/tabbedlist.js" type="text/javascript"></script>
+<?cs /if ?>
+
+<?cs if:reference ?>
+<script src="<?cs var:toroot ?>assets/js/droiddoc.js" type="text/javascript"></script>
+<?cs /if ?>
+<script src="<?cs var:toroot ?>navtree_data.js" type="text/javascript"></script>
 <script type="text/javascript">
   setToRoot("<?cs var:toroot ?>");
-</script><?cs 
-if:reference ?>
-<script src="<?cs var:toroot ?>assets/android-developer-reference.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>navtree_data.js" type="text/javascript"></script><?cs 
-/if ?><?cs 
-if:resources ?>
-<script src="<?cs var:toroot ?>resources/resources-data.js" type="text/javascript"></script><?cs 
-/if ?>
-<noscript>
-  <style type="text/css">
-    html,body{overflow:auto;}
-    #body-content{position:relative; top:0;}
-    #doc-content{overflow:visible;border-left:3px solid #666;}
-    #side-nav{padding:0;}
-    #side-nav .toggle-list ul {display:block;}
-    #resize-packages-nav{border-bottom:3px solid #666;}
-  </style>
-</noscript>
+  var basePath = getBaseUri(location.pathname);
+  var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
+</script>
+
+<script src="//www.google.com/js/gweb/analytics/autotrack.js"></script>
+<script>
+  new gweb.analytics.AutoTrack({
+    profile: 'UA-5831155-1'
+  });
+</script>
 </head>

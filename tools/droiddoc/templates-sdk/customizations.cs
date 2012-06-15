@@ -1,63 +1,217 @@
 <?cs 
+def:fullpage() ?>
+  <div id="body-content">
+<?cs /def ?>
+<?cs 
 def:sdk_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav"><?cs 
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+<?cs 
         include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
+
+
       </div>
     </div> <!-- end side-nav -->
 <?cs /def ?>
 <?cs 
 def:resources_tab_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav"><?cs 
+  <div class="wrap clearfix" id="body-content">
+    <a
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+<?cs 
         include:"../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
+
+
       </div>
     </div> <!-- end side-nav -->
     <script>
-      addLoadEvent(function() {
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+<?cs
+def:tools_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+<?cs 
+        include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
+        
+        
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+<?cs
+def:training_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+
+<?cs 
+        include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
+        
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
         scrollIntoView("devdoc-nav");
         });
     </script>
 <?cs /def ?>
 <?cs 
 def:guide_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav"><?cs 
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+
+<?cs 
         include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
+        
+
       </div>
     </div> <!-- end side-nav -->
     <script>
-      addLoadEvent(function() {
+      $(document).ready(function() {
         scrollIntoView("devdoc-nav");
         });
     </script>
 <?cs /def ?>
 <?cs
 def:design_nav() ?>
-  <?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
-<?cs /def ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
+
+<?cs
+        include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+       
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+<?cs
+def:distribute_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+<?cs
+        include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
+        
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+<?cs
+def:about_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+<?cs
+        include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
+        
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+<?cs
+def:dist_more_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+
+<?cs 
+        include:"../../../../frameworks/base/docs/html/distribute/more/more_toc.cs" ?>
+        
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
 <?cs # The default side navigation for the reference docs ?><?cs 
 def:default_left_nav() ?>
-  <div class="g-section g-tpl-240" id="body-content">
-    <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+      <div id="api-nav-header">
+        <div id="api-level-toggle">
+          <label for="apiLevelCheckbox" class="disabled">API level: </label>
+          <select id="apiLevelSelector">
+            <!-- option elements added by buildApiLevelSelector() -->
+          </select>
+        </div><!-- end toggle -->
+        <div id="api-nav-title">Android APIs</div>
+        </div><!-- end nav header -->
+      <script>
+        var SINCE_DATA = [ <?cs 
+          each:since = since ?>'<?cs 
+            var:since.name ?>'<?cs 
+            if:!last(since) ?>, <?cs /if ?><?cs
+          /each 
+        ?> ];
+        buildApiLevelSelector();
+      </script>
+                  
       <div id="swapper">
         <div id="nav-panels">
           <div id="resize-packages-nav">
-            <div id="packages-nav">
-              <div id="index-links"><nobr>
-                <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
-                <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
-              </div>
+            <div id="packages-nav" class="scroll-pane">
+
               <ul>
               	<?cs call:package_link_list(docs.packages) ?>
               </ul><br/>
-            </div> <!-- end packages -->
+
+            </div> <!-- end packages-nav -->
           </div> <!-- end resize-packages -->
-          <div id="classes-nav"><?cs 
+          <div id="classes-nav" class="scroll-pane">
+
+
+<?cs 
             if:subcount(class.package) ?>
             <ul>
               <?cs call:list("Interfaces", class.package.interfaces) ?>
@@ -75,48 +229,67 @@ def:default_left_nav() ?>
               <?cs call:class_link_list("Errors", package.errors) ?>
             </ul><?cs 
             else ?>
-              <script>
-                /*addLoadEvent(maxPackageHeight);*/
-              </script>
               <p style="padding:10px">Select a package to view its members</p><?cs 
             /if ?><br/>
+        
+
           </div><!-- end classes -->
         </div><!-- end nav-panels -->
-        <div id="nav-tree" style="display:none">
-          <div id="index-links"><nobr>
-            <a href="<?cs var:toroot ?>reference/packages.html" <?cs if:(page.title == "Package Index") ?>class="selected"<?cs /if ?> >Package Index</a> | 
-            <a href="<?cs var:toroot ?>reference/classes.html" <?cs if:(page.title == "Class Index") ?>class="selected"<?cs /if ?>>Class Index</a></nobr>
-          </div>
+        <div id="nav-tree" style="display:none" class="scroll-pane">
+          <div id="tree-list"></div>
         </div><!-- end nav-tree -->
       </div><!-- end swapper -->
+      <div id="nav-swap">
+      <a class="fullscreen disabled">fullscreen</a>
+      <a href='#' onclick='swapNav();return false;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>
+      </div>
+    </div> <!-- end devdoc-nav -->
     </div> <!-- end side-nav -->
-    <script>
-      if (!isMobile) {
-        $("<a href='#' id='nav-swap' onclick='swapNav();return false;' style='font-size:10px;line-height:9px;margin-left:1em;text-decoration:none;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>").appendTo("#side-nav");
+    <script type="text/javascript">
+      // init fullscreen based on user pref
+      if (readCookie("fullscreen") == "true") {
+        toggleFullscreen(true);
+      } else {
+        toggleFullscreen(false);
+      }
+      // init nav version for mobile
+      if (isMobile) {
+        swapNav(); // tree view should be used on mobile
+        $('#nav-swap').hide();
+      } else {
         chooseDefaultNav();
         if ($("#nav-tree").is(':visible')) {
           init_default_navtree("<?cs var:toroot ?>");
-        } else {
-          addLoadEvent(function() {
-            scrollIntoView("packages-nav");
-            scrollIntoView("classes-nav");
-          });
         }
-        $("#swapper").css({borderBottom:"2px solid #aaa"});
-      } else {
-        swapNav(); // tree view should be used on mobile
       }
+      // scroll the selected page into view
+      $(document).ready(function() {
+        scrollIntoView("packages-nav");
+        scrollIntoView("classes-nav");
+        });
     </script><?cs 
 /def ?>
 
 <?cs 
-def:custom_left_nav() ?><?cs 
-  if:guide ?><?cs 
+def:custom_left_nav() ?><?cs
+  if:fullpage ?><?cs 
+    call:fullpage() ?><?cs 
+  elif:guide ?><?cs 
     call:guide_nav() ?><?cs 
-  elif:resources ?><?cs 
-    call:resources_tab_nav() ?><?cs 
-  elif:sdk ?><?cs 
-    call:sdk_nav() ?><?cs 
+  elif:design ?><?cs
+    call:design_nav() ?><?cs 
+  elif:training ?><?cs 
+    call:training_nav() ?><?cs 
+  elif:tools ?><?cs 
+    call:tools_nav() ?><?cs
+  elif:google ?><?cs 
+    call:dist_google_nav() ?><?cs 
+  elif:more ?><?cs 
+    call:dist_more_nav() ?><?cs
+  elif:distribute ?><?cs 
+    call:distribute_nav() ?><?cs 
+  elif:about ?><?cs 
+    call:about_nav() ?><?cs 
   else ?><?cs 
     call:default_left_nav() ?><?cs 
   /if ?><?cs 
@@ -142,11 +315,9 @@ def:custom_copyright() ?>
 <?cs 
 def:custom_footerlinks() ?>
   <p>
-    <a href="http://www.google.com/intl/en/policies/" target="_blank">Privacy &amp; Terms</a> -
-    <a href="http://www.android.com/branding.html" target="_blank">Brand Guidelines</a> -
-    <a
-href="http://code.google.com/p/android/issues/entry?template=Developer%20Documentation"
-target="_blank">Report Document Issues</a>
+    <a href="<?cs var:toroot ?>about/index.html">About Android</a>&nbsp;&nbsp;|&nbsp;
+    <a href="<?cs var:toroot ?>legal.html">Legal</a>&nbsp;&nbsp;|&nbsp;
+    <a href="<?cs var:toroot ?>support.html">Support</a>
   </p><?cs 
 /def ?>
 

@@ -1,0 +1,60 @@
+.slideshow-home {
+  height: 500px;
+  width: 940px;
+  border-bottom: 1px solid #CCC;
+  position: relative;
+  margin: 0 10px 0 10px;
+}
+.slideshow-home .frame {
+  width: 940px;
+  height: 500px;
+}
+.slideshow-home .content-left {
+  float: left;
+  text-align: center;
+  vertical-align: center;
+  margin: 0;
+}
+.slideshow-home .content-right {
+  float: left;
+  margin: 100px 0 0 0;
+}
+.slideshow-home .content-right p {
+  margin-bottom: 30px;
+}
+.slideshow-home .item {
+  height: 500px;
+  width: 940px;
+}
+.home-sections {
+  padding: 40px 0 40px 0;
+  margin: 20px 10px;
+}
+.home-sections ul {
+  margin: 0;
+}
+.home-sections ul li {
+  float: left;
+  display: block;
+  list-style: none;
+  width: 178px;
+  height: 35px;
+  border: 1px solid #DCDCDC;
+  background-color: #f3f3f3;
+  margin-right: 10px;
+}
+.home-sections ul li a {
+  font-weight: bold;
+  margin-top: 8px;
+  line-height: 18px;
+  float: left;
+  width:100%;
+  text-align:center;
+}
+.home-sections ul li img {
+  float: left;
+  margin: -8px 0 0 10px;
+}
+.home-sections ul li.last {
+  margin-right: 0px;
+}
