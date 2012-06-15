@@ -358,6 +358,9 @@ video.with-shadow {
   height: 30px;
   margin:20px 0 25px;
   padding:0 0 10px;}
+.content-header.just-links {
+  margin-bottom:0;
+  padding-bottom:0;}
     
 .content-header h1 {
   color:#000;
@@ -516,10 +519,7 @@ h3:target {
     -webkit-animation-timing-function: ease-out;
     -moz-animation-timing-function: ease-out;
     animation-timing-function: ease-out; }
-    
-#landing-graphic-container {
-  margin-top:20px;
-}
+
 .design ol h4 {
   margin-bottom:0;
 }
