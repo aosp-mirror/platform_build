@@ -1551,18 +1551,28 @@ EndColorStr='#ececec');
 
 #tb,
 #qv {
-  width:278px;
-  border:1px solid gainsboro;
+  font-size:13px;
+  line-height:18px;
+  width:238px;
+  border:1px solid #ccc;
   float:right;
+}
+
+#tb {
+  width:278px;
 }
 
 #tb h2,
 #qv h2 {
-  font-size:inherit;
   margin:10px 15px;
   padding:0;
   text-transform:uppercase;
   border-bottom:1px solid gainsboro;
+}
+
+#tb *,
+#qv * {
+  font-size:inherit;
 }
 
 #tb .download-box {
@@ -1586,7 +1596,9 @@ EndColorStr='#ececec');
 }
 
 .sidebox {
-  width:266px;
+  width:226px;
+  font-size:13px;
+  line-height:18px;
   border-left:4px solid #99CC00;
   float:right;
   padding:0 0 0 10px;
@@ -1596,9 +1608,12 @@ EndColorStr='#ececec');
 .sidebox h3,
 .sidebox h4,
 .sidebox h5 {
-  font-size:inherit;
   font-weight:bold;
   margin:0 0 10px;
+}
+
+.sidebox * {
+  font-size:inherit;
 }
 
 #tb ol,
@@ -1610,6 +1625,8 @@ EndColorStr='#ececec');
 #qv ol {
   list-style:none;
   margin:0 15px 15px;
+  font-size:inherit;
+  line-height:inherit;
 }
 
 #tb ol ol,
@@ -1622,7 +1639,7 @@ EndColorStr='#ececec');
 }
 
 #qv ol ol {
-  margin:0 0 0 15px;
+  margin:3px 0 3px 15px;
 }
 
 .sidebox p,
