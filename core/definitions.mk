@@ -1058,11 +1058,13 @@ $(if $(2),$(hide) $(1) $(2))
 endef
 
 # Split long argument list into smaller groups and call the command repeatedly
+# Call the command at least once even if there are no arguments, as otherwise
+# the output file won't be created.
 #
 # $(1): the command without arguments
 # $(2): the arguments
 define split-long-arguments
-$(call _concat-if-arg2-not-empty,$(1),$(wordlist 1,500,$(2)))
+$(hide) $(1) $(wordlist 1,500,$(2))
 $(call _concat-if-arg2-not-empty,$(1),$(wordlist 501,1000,$(2)))
 $(call _concat-if-arg2-not-empty,$(1),$(wordlist 1001,1500,$(2)))
 $(call _concat-if-arg2-not-empty,$(1),$(wordlist 1501,2000,$(2)))
