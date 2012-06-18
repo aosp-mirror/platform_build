@@ -33,7 +33,7 @@ endif
 endif  # fusion
 endif  # pdk or fusion
 
-
+ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
 # additional items to add to platform.zip for platform-java build
 # For these dirs, add classes.jar and javalib.jar from the dir to platform.zip
 # all paths under out dir
@@ -50,9 +50,10 @@ PDK_PLATFORM_JAVA_ZIP_CONTENTS := \
 	target/common/obj/APPS/framework-res_intermediates/src/R.stamp
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
     $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
+endif # platform-java or FUSION build
 
 # check and override java support level
-ifeq ($(TARGET_BUILD_PDK),true)
+ifneq ($(TARGET_BUILD_PDK)$(PDK_FUSION_PLATFORM_ZIP),)
 ifneq ($(wildcard external/proguard),)
 TARGET_BUILD_JAVA_SUPPORT_LEVEL := sdk
 else # no proguard
@@ -136,7 +137,7 @@ ALL_PDK_FUSION_FILES := $(addprefix $(PRODUCT_OUT)/, $(_pdk_fusion_file_list))
 endif # PDK_FUSION_PLATFORM_ZIP
 
 ifeq ($(TARGET_BUILD_PDK),true)
-
+$(info PDK TARGET_BUILD_JAVA_SUPPORT_LEVEL $(TARGET_BUILD_JAVA_SUPPORT_LEVEL))
 ifeq ($(TARGET_BUILD_PDK_JAVA_PLATFORM),)
 
 # SDK used for Java build under PDK
