@@ -87,15 +87,6 @@ ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
 LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
 endif
 
-# Convert LOCAL_JNI_SHARED_LIBRARIES to LOCAL_REQUIRED_MODULES in full build,
-# for preloaded apks don't like embedded jni libraries.
-ifndef TARGET_BUILD_APPS
-ifdef LOCAL_JNI_SHARED_LIBRARIES
-LOCAL_REQUIRED_MODULES += $(LOCAL_JNI_SHARED_LIBRARIES)
-LOCAL_JNI_SHARED_LIBRARIES :=
-endif
-endif
-
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif
