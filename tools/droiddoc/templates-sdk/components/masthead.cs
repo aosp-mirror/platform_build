@@ -123,7 +123,8 @@ SDK</a></li></ul>
                         <li><a href="<?cs var:toroot ?>distribute/googleplay/publish/index.html">Publishing</a></li>
                         <li><a href="<?cs var:toroot ?>distribute/googleplay/promote/index.html">Promoting</a></li>
                         <!--<li><a href="<?cs var:toroot ?>distribute/googleplay/strategies/index.html">Strategies</a></li> -->
-                        <li><a href="<?cs var:toroot ?>distribute/googleplay/open-distribution.html">Open Distribution</a></li>  
+                        <li><a href="<?cs var:toroot ?>distribute/open.html">Open
+Distribution</a></li> 
                       </ul>
                     </li>
                 </ul>
