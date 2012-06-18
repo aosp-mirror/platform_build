@@ -67,7 +67,6 @@ GRANDFATHERED_USER_MODULES += \
 	cfassembler \
 	check_stack \
 	check_trace \
-	cmu2nuance \
 	com.android.phone.common \
 	com.android.vcard \
 	commons-compress-1.0 \
@@ -308,7 +307,6 @@ GRANDFATHERED_USER_MODULES += \
 	libSR_AcousticState \
 	libSR_AudioIn \
 	libSR_Core \
-	libsrec_jni \
 	libSR_EventLog \
 	libSR_G2P \
 	libSR_Grammar \
