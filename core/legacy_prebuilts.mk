@@ -28,39 +28,24 @@ GRANDFATHERED_ALL_PREBUILT := \
 	audio.conf \
 	auto_pairing.conf \
 	AVRCP.kl \
-	baseline11k.par \
-	baseline8k.par \
-	baseline.par \
-	basic.ok \
 	batch \
 	bitmap_size.txt \
 	blacklist.conf \
 	bmgr \
-	boolean.g2g \
 	bp.img \
 	brcm_guci_drv \
 	bypassfactory \
 	cdt.bin \
 	chat-ril \
-	cmu6plus.ok.zip \
 	content \
 	cpcap-key.kl \
 	data \
 	dbus.conf \
 	dev \
 	egl.cfg \
-	enroll.ok \
-	en-US-ttp.data \
 	firmware_error.565 \
 	firmware_install.565 \
 	ftmipcd \
-	generic11_f.swimdl \
-	generic11.lda \
-	generic11_m.swimdl \
-	generic8_f.swimdl \
-	generic8.lda \
-	generic8_m.swimdl \
-	generic.swiarb \
 	gps.conf \
 	gpsconfig.xml \
 	gps.stingray.so \
@@ -96,7 +81,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	mdm_panicd \
 	monkey \
 	network.conf \
-	phone_type_choice.g2g \
 	pm \
 	pppd-ril \
 	pppd-ril.options \
@@ -118,7 +102,6 @@ GRANDFATHERED_ALL_PREBUILT := \
 	ueventd.olympus.rc \
 	ueventd.rc \
 	ueventd.stingray.rc \
-	VoiceDialer.g2g \
 	vold.fstab \
 	wl1271.bin \
 	zoneinfo.dat \
