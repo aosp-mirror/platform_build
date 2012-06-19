@@ -157,7 +157,7 @@ body {
 }
 #body-content > .col-12 {
   width:77.9804965%;
-  margin:0 0 0 1.063829787234%;
+  margin:0 0 0 0.98%; /* this percentage chosen to make IE9 happy */
 }
 #side-nav {
   width: 19.9804965%;
@@ -177,7 +177,10 @@ body {
   margin:-2px 0 0 0;
 }
 
-
+#devdoc-nav.fixed,
+#devdoc-nav.fixed a.totop {
+  left:20px !important;
+}
 
 
 

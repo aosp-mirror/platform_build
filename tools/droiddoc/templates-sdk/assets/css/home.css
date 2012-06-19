@@ -3,7 +3,7 @@
   width: 940px;
   border-bottom: 1px solid #CCC;
   position: relative;
-  margin: 0 10px 0 10px;
+  margin: 0;
 }
 .slideshow-home .frame {
   width: 940px;
@@ -28,7 +28,7 @@
 }
 .home-sections {
   padding: 40px 0 40px 0;
-  margin: 20px 10px;
+  margin: 20px 0;
 }
 .home-sections ul {
   margin: 0;

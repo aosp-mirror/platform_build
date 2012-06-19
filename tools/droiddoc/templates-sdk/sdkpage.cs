@@ -23,7 +23,7 @@
 
 <div <?cs if:fullpage
 ?><?cs else
-?>class="col-13"<?cs /if ?> >
+?>class="col-13" id="doc-col"<?cs /if ?> >
 
 <?cs if:sdk.redirect ?>
 

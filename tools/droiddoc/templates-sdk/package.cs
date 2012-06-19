@@ -12,7 +12,7 @@
   <a name="top"></a>
 <?cs include:"header.cs" ?>
 
-<div class="col-12">
+<div class="col-12" id="doc-col">
 
 <div id="api-info-block">
 <div class="api-level">

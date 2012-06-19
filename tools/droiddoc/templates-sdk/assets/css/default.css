@@ -23,7 +23,8 @@ body {
   color: #444;
   font: 14px/21px Roboto, sans-serif;
   font-weight: 400;
-  letter-spacing:.1; }
+  letter-spacing:.1;
+  padding:0 10px; }
 
 #page-container {
   width: 940px;
@@ -83,6 +84,7 @@ body {
 }
 #devdoc-nav {
   outline:none;
+  width:auto;
   margin: 20px 0 0; }
   
 #devdoc-nav h2 {
@@ -91,6 +93,7 @@ body {
 
 #devdoc-nav.fixed {
   position: fixed;
+  margin:0;
   top: 20px; }
 
 #content {
@@ -1125,7 +1128,7 @@ a {
 }
 .wrap {
 	margin: 0 auto;
-	width: 960px;
+	width: 940px;
 	clear: both;
 }
 .cols {
@@ -1918,6 +1921,7 @@ a:visited,
 #side-nav, #devdoc-nav, #swapper,
 #nav-tree, #tree-list {
   overflow:hidden;
+  margin-left:0;
 }
 
 #nav-tree ul {
@@ -1980,6 +1984,9 @@ a:visited,
 
 
 /* Content */
+#doc-col {
+  margin-right:0;
+}
 #doc-content-container {
 	margin-left: 291px	
 }
@@ -2005,7 +2012,6 @@ a:visited,
 }
 #api-nav-header {
   height:19px; /* plus 16px padding = 35; same as #nav li */
-  width:inherit;
   font-size:14px;
   padding: 8px 0;
   margin: 0;
@@ -2015,6 +2021,7 @@ a:visited,
 }
 #api-nav-title {
   padding:0 5px;
+  white-space:nowrap;
 }
 
 #api-level-toggle {

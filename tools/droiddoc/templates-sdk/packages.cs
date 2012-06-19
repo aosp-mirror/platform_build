@@ -10,7 +10,7 @@
   <a name="top"></a>
 <?cs include:"header.cs" ?>
 
-<div class="col-12">
+<div class="col-12" id="doc-col">
 
 <div id="jd-header">
 <h1><?cs var:page.title ?></h1>

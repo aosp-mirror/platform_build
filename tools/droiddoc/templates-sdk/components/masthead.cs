@@ -1,5 +1,5 @@
 <?cs def:custom_masthead() ?>
-    <div style="position:absolute;width:100%">
+    <div style="position:absolute;">
       <div style="width:940px;margin:0 auto;">
        <div
 style="width:200px;float:right;font-size:12px;font-weight:500;background-color:#CC3300;color:#fff;

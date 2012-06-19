@@ -35,9 +35,6 @@ function updateSidenavFixedWidth() {
     'width' : $('#side-nav').css('width'),
     'margin' : $('#side-nav').css('margin')
   });
-  $('#api-nav-header').css({
-    'width' : $('#side-nav').css('width')
-  });
   $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
   
   initSidenavHeightResize();

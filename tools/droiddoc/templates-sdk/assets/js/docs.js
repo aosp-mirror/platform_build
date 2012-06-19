@@ -333,10 +333,9 @@ false; // navigate across topic boundaries only in design docs
       if (navBarShouldBeFixed) {
         // make it fixed
         var width = $('#devdoc-nav').width();
-        var margin = $('#devdoc-nav').parent().css('margin');
         $('#devdoc-nav')
             .addClass('fixed')
-            .css({'width':width+'px','margin':margin})
+            .css({'width':width+'px'})
             .prependTo('#body-content');
         // add neato "back to top" button
         $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
@@ -347,7 +346,7 @@ false; // navigate across topic boundaries only in design docs
         // make it static again
         $('#devdoc-nav')
             .removeClass('fixed')
-            .css({'width':'auto','margin':''})
+            .css({'width':''})
             .prependTo('#side-nav');
         $('#devdoc-nav a.totop').hide();
       }
@@ -464,8 +463,8 @@ function toggleFullscreen(enable) {
     enabled = false;
   }
   writeCookie("fullscreen", enabled, null, null);
-  setNavBarLeftPos();
   resizeNav(delay);
+  setNavBarLeftPos();updateSideNavPosition();
   setTimeout(initSidenavHeightResize,delay);
 }
 

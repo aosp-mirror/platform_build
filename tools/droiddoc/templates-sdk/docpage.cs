@@ -13,8 +13,8 @@
 
 <div <?cs if:fullpage
 ?><?cs elif:design||tools||about||sdk||distribute
-?>class="col-13"<?cs else 
-?>class="col-12"<?cs /if ?> >
+?>class="col-13" id="doc-col"<?cs else 
+?>class="col-12" id="doc-col"<?cs /if ?> >
 
 <?cs if:(design||training||walkthru) ?><?cs # header logic for docs that provide previous/next buttons ?>
   <?cs if:header.hide ?>
@@ -75,19 +75,21 @@
                     else ?>layout-content-row<?cs /if ?>" 
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="layout-content-col <?cs 
-                    if:fullpage ?>col-12<?cs 
+                    if:fullpage ?>col-16<?cs 
                     elif:training||guide ?>col-8<?cs 
                     else ?>col-9<?cs /if ?>" style="padding-top:4px">
-          <?cs if:!page.noplus ?>
+          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right;}</style><?cs /if ?>
             <div class="g-plusone" data-size="medium"></div>
           <?cs /if ?>
         </div>
+        <?cs if:!fullscreen ?>
         <div class="paging-links layout-content-col col-4">
           <?cs if:(design||training||guide||walkthru) && !page.landing && !footer.hide ?>
             <a href="#" class="prev-page-link hide">Previous</a>
             <a href="#" class="next-page-link hide">Next</a>
           <?cs /if ?>
         </div>
+        <?cs /if ?>
       </div>
       
       <?cs # for training classes, provide a different kind of link when the next page is a different class ?>
