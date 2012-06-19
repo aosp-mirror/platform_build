@@ -416,4 +416,14 @@ endif
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
 
+# Lint phony targets
+.PHONY: lint-$(LOCAL_PACKAGE_NAME)
+lint-$(LOCAL_PACKAGE_NAME): PRIVATE_PATH := $(LOCAL_PATH)
+lint-$(LOCAL_PACKAGE_NAME): PRIVATE_LINT_FLAGS := $(LOCAL_LINT_FLAGS)
+lint-$(LOCAL_PACKAGE_NAME) :
+	@echo lint $(PRIVATE_PATH)
+	$(LINT) $(PRIVATE_LINT_FLAGS) $(PRIVATE_PATH)
+
+lintall : lint-$(LOCAL_PACKAGE_NAME)
+
 endif # skip_definition

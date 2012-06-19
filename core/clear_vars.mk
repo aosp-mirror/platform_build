@@ -125,6 +125,7 @@ LOCAL_ADDRESS_SANITIZER:=
 # Whether to keep the generated R/Manifest classes when building static Java library
 # with Android resource. false(default), or true
 LOCAL_KEEP_R_CLASS_IN_STATIC_JAVA_LIBRARY:=
+LOCAL_LINT_FLAGS:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
