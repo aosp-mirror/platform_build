@@ -817,6 +817,8 @@ $(call dist-for-goals,sdk win_sdk, \
 )
 endif
 
+.PHONY: lintall
+
 .PHONY: samplecode
 sample_MODULES := $(sort $(call get-tagged-modules,samples))
 sample_APKS_DEST_PATH := $(TARGET_COMMON_OUT_ROOT)/samples
