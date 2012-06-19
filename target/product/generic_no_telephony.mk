@@ -38,11 +38,8 @@ PRODUCT_PACKAGES := \
     Phone \
     QuickSearchBox \
     Settings \
-    Sync \
     SystemUI \
-    Updater \
     CalendarProvider \
-    SyncProvider \
     bluetooth-health \
     hostapd \
     wpa_supplicant.conf
