@@ -919,7 +919,7 @@ dd p {
 }
 ul p,
 ol p {
-  margin:0 0 15px;
+  margin:10px 0 0;
 }
 pre strong, pre b, a strong, a b, a code {
     color: inherit;
