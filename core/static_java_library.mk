@@ -36,14 +36,18 @@ all_resources := $(strip \
     ))
 
 ifneq (,$(all_resources))
-# Those files will be excluded from the built jar.
-# The R/Manifest classes should be re-generated in the app Module instead.
-# Use '' and $ escape because they will be passed to bash.
-ifneq (true,$(LOCAL_KEEP_R_CLASS_IN_STATIC_JAVA_LIBRARY))
-LOCAL_JAR_EXCLUDE_FILES := 'R.class' 'R$$*.class' 'Manifest.class' 'Manifest$$*.class'
+# By default we should remove the R/Manifest classes from a static Java library,
+# because they will be regenerated in the app that uses it.
+# But if the static Java library will be used by a library, then we may need to
+# keep the generated classes with "LOCAL_JAR_EXCLUDE_FILES := none".
+ifndef LOCAL_JAR_EXCLUDE_FILES
+LOCAL_JAR_EXCLUDE_FILES := $(ANDROID_RESOURCE_GENERATED_CLASSES)
 endif
+ifeq (none,$(LOCAL_JAR_EXCLUDE_FILES))
+LOCAL_JAR_EXCLUDE_FILES :=
 endif
-endif
+endif  # all_resources
+endif  # LOCAL_RESOURCE_DIR
 
 include $(BUILD_SYSTEM)/java_library.mk
 
@@ -107,4 +111,3 @@ endif
 endif  # $(all_resources) not empty
 
 LOCAL_IS_STATIC_JAVA_LIBRARY :=
-LOCAL_JAR_EXCLUDE_FILES :=
