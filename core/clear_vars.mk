@@ -122,9 +122,7 @@ LOCAL_CTS_TEST_PACKAGE:=
 LOCAL_CTS_TEST_RUNNER:=
 LOCAL_CLANG:=
 LOCAL_ADDRESS_SANITIZER:=
-# Whether to keep the generated R/Manifest classes when building static Java library
-# with Android resource. false(default), or true
-LOCAL_KEEP_R_CLASS_IN_STATIC_JAVA_LIBRARY:=
+LOCAL_JAR_EXCLUDE_FILES:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
