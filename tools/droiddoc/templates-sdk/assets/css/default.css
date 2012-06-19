@@ -2044,6 +2044,16 @@ a:visited,
 }
 
 
+/* Toggle for revision notes and stuff */
+div.toggle-content.closed .toggle-content-toggleme {
+  display:none;
+}
+
+#jd-content img.toggle-content-img {
+  margin:0 5px 5px 0;
+}
+
+
 /* API LEVEL FILTERED MEMBERS */
 
 .absent,

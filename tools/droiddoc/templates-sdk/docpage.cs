@@ -78,7 +78,9 @@
                     if:fullpage ?>col-12<?cs 
                     elif:training||guide ?>col-8<?cs 
                     else ?>col-9<?cs /if ?>" style="padding-top:4px">
-          <div class="g-plusone" data-size="medium"></div>
+          <?cs if:!page.noplus ?>
+            <div class="g-plusone" data-size="medium"></div>
+          <?cs /if ?>
         </div>
         <div class="paging-links layout-content-col col-4">
           <?cs if:(design||training||guide||walkthru) && !page.landing && !footer.hide ?>
