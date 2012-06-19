@@ -3924,6 +3924,15 @@ a.download-sdk {
   margin:5px 0 0;
   line-height:15px;
 }
+.feed-container .feed-frame div.feed-image {
+  float: left;
+  border: 1px solid #999;
+  margin:0 20px 0 0;
+  width:122px;
+  height:92px;
+  background:url('../images/blog-default.png') no-repeat 0 0;
+  background-size:180px;
+}
 #jd-content .feed .feed-container .feed-frame li img {
   float: left;
   border: 1px solid #999;
