@@ -595,8 +595,6 @@ li.no-bullet *{
     background-image: url(../images/styles/ico_phone_tablet.png); }
   .design li.with-icon.web:before {
     background-image: url(../images/styles/ico_web.png); }
-  .design li.with-icon.checklist:before {
-    background-image: url(../images/styles/ico_checklist.png); }
   .design li.with-icon.action:before {
     background-image: url(../images/styles/ico_action.png); }
   .design li.with-icon.use:before {
@@ -996,16 +994,6 @@ color-stop(50%, #acbc00), color-stop(50%, #bdde00), color-stop(100%, #bdde00));
     position: relative;
     z-index: 11;
 }
-#android {
-	position: absolute;
-	z-index: 2;
-	top: -85px;
-	left: -25px;
-	width: 100px;	
-	height: 75px;
-	display: block;
-	background: url(../images/android.png) no-repeat 0 0;
-}
 #footer {
     font-size:11px;
     clear: both;
@@ -1112,14 +1100,6 @@ a {
 /* =============================================================================
    Columns
    ========================================================================== */
-.grid {
-  width:100%;
-  height:100%;
-  background:url(../images/grid.png) center repeat-y;
-  top:0px;
-  margin:auto;
-  position:absolute;
-}   
 
 @media screen, projection, print {
 .full {
@@ -1202,22 +1182,6 @@ a {
 /* --------------------------------------------------------------------------
 Header, Login, Nav-X, Search
 */
-#login {
-	padding: 0.25em 0;
-	text-align: right;
-	border-bottom: solid 1px #ebebeb;
-	background: #f7f7f7
-}
-#login a, #login a:active, #login a:visited {
-	margin-right: -12px;
-	padding-right: 25px;
-	color: #444;
-	background: url(../images/arrow-down.png) no-repeat right center;
-}
-#login a:hover, #login a:focus {
-	color: #33B5E5;
-	background: url(../images/arrow-down-hover.png) no-repeat right center;
-}
 #header {
 	padding: 2.2em 0 0.2em 0;
 }
@@ -2115,9 +2079,12 @@ body .ui-resizable-autohide .ui-resizable-handle { display: none; }*/
 .ui-resizable-s { cursor: s-resize; height: 10px; width: 100% !important; bottom: -11px; left: 0;
 border-bottom: solid 1px #ededed;
   background: #f7f7f7 url("../images/resizable-s2.png") no-repeat scroll center center; }
-.ui-resizable-e { cursor: e-resize; width: 10px; right: 0; top: 0; height: 100%; border-right: solid
-1px #ededed;
-  background: #f7f7f7 url("../images/resizable-e2.png") no-repeat scroll center center; }
+/*
+.ui-resizable-e { 
+cursor: e-resize; width: 10px; right: 0; top: 0; height: 100%; border-right: solid
+1px #ededed;background: #f7f7f7 url("../images/resizable-e2.png") no-repeat scroll center center; }
+*/
+
 /* --------------------------------------------------------------------------
 Lightbox
 */
@@ -2339,28 +2306,6 @@ div#naMessage strong {
 /* --------------------------------------------------------------------------
 Slideshow Controls & Next/Prev 
 */
-a.next, a.next:active, a.next:visited, a.prev, a.prev:active, a.prev:visited {
-	color: #444;
-	text-transform: uppercase;
-}
-a.next {
-	padding-right: 13px;
-	background: url(../images/arrow-small-right.png) no-repeat right 4px;	
-}
-a.prev {
-	margin-right: 40px;
-	padding-left: 13px;
-	background: url(../images/arrow-small-left.png) no-repeat left 4px;	
-}
-a.next:hover, a.next:focus, a.prev:hover, a.prev:focus {
-	color: #33B5E5;
-}
-a.next:hover, a.next:focus { 
-	background-position: right -11px;
-}
-a.prev:hover, a.prev:focus {
-	background-position: left -11px;
-}
 .slideshow-next, .slideshow-prev {	
 	width: 20px;
 	height: 36px;
@@ -3406,15 +3351,6 @@ EndColorStr='#ececec');
   top: 22px;
   left: 238px;
   background-color:#CCC;
-}
-
-.search .icon {
-	float: right;	
-	margin: 3px 8px 0;
-	position: relative;
-	width: 8px;
-	height: 18px;
-	background: url('/images/microphone.png') no-repeat 0 0
 }
 
 .search form {
