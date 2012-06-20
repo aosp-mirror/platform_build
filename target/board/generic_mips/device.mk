@@ -22,8 +22,8 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.gprsclass=10
 
 PRODUCT_COPY_FILES := \
-    development/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
-    development/data/etc/vold.conf:system/etc/vold.conf \
+    device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
+    device/generic/goldfish/data/etc/vold.conf:system/etc/vold.conf \
     development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml
 
 PRODUCT_PACKAGES := \
