@@ -285,7 +285,7 @@ false; // navigate across topic boundaries only in design docs
   /* Resize nav height when window height changes */
   $(window).resize(function() {
     if ($('#side-nav').length == 0) return;
-    var stylesheet = $('link[rel="stylesheet"][title="fullscreen"]');
+    var stylesheet = $('link[rel="stylesheet"][class="fullscreen"]');
     setNavBarLeftPos(); // do this even if sidenav isn't fixed because it could become fixed
     // make sidenav behave when resizing the window and side-scolling is a concern
     if (navBarIsFixed) {
@@ -446,8 +446,8 @@ false; // navigate across topic boundaries only in design docs
 
 function toggleFullscreen(enable) {
   var delay = 20;
-  var enabled = false;
-  var stylesheet = $('link[rel="stylesheet"][title="fullscreen"]');
+  var enabled = true;
+  var stylesheet = $('link[rel="stylesheet"][class="fullscreen"]');
   if (enable) {
     // Currently NOT USING fullscreen; enable fullscreen
     stylesheet.removeAttr('disabled');

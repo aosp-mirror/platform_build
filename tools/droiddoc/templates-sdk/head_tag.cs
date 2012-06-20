@@ -16,7 +16,7 @@ href="//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,medium
 
 <?cs if:reference ?>
 <!-- alternative FULLSCREEN styles -->
-<link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" title="fullscreen"
+<link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" class="fullscreen"
 type="text/css">
 <?cs /if ?>
 

@@ -242,17 +242,20 @@ def:default_left_nav() ?>
         </div><!-- end nav-tree -->
       </div><!-- end swapper -->
       <div id="nav-swap">
-      <a class="fullscreen disabled">fullscreen</a>
+      <a class="fullscreen">fullscreen</a>
       <a href='#' onclick='swapNav();return false;'><span id='tree-link'>Use Tree Navigation</span><span id='panel-link' style='display:none'>Use Panel Navigation</span></a>
       </div>
     </div> <!-- end devdoc-nav -->
     </div> <!-- end side-nav -->
     <script type="text/javascript">
       // init fullscreen based on user pref
-      if (readCookie("fullscreen") == "false") {
-        toggleFullscreen(false);
-      } else {
-        toggleFullscreen(true);
+      var fullscreen = readCookie("fullscreen");
+      if (fullscreen != 0) {
+        if (fullscreen == "false") {
+          toggleFullscreen(false);
+        } else {
+          toggleFullscreen(true);
+        }
       }
       // init nav version for mobile
       if (isMobile) {
