@@ -481,6 +481,7 @@ function hideResults() {
         var tabHeaders = $(".gsc-tabHeader");
         for (var i = 0; i < tabHeaders.length; i++) {
           $(tabHeaders[i]).attr("id",i).click(function() {
+          /*
             // make a copy of the page numbers for the search left pane
             setTimeout(function() {
               // remove any residual page numbers
@@ -492,6 +493,7 @@ function hideResults() {
               $('#searchResults .gsc-webResult .gsc-cursor-box.gs-bidi-start-align:visible')
                               .clone().appendTo('#searchResults .gsc-tabsArea');
               }, 200);
+           */
           });
         }
         setTimeout(function(){$(tabHeaders[0]).click()},200);

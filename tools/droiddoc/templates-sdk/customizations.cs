@@ -249,10 +249,10 @@ def:default_left_nav() ?>
     </div> <!-- end side-nav -->
     <script type="text/javascript">
       // init fullscreen based on user pref
-      if (readCookie("fullscreen") == "true") {
-        toggleFullscreen(true);
-      } else {
+      if (readCookie("fullscreen") == "false") {
         toggleFullscreen(false);
+      } else {
+        toggleFullscreen(true);
       }
       // init nav version for mobile
       if (isMobile) {
