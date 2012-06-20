@@ -147,14 +147,14 @@ Summary:
 
 <?cs if:subcount(class.subclasses.direct) && !class.subclasses.hidden ?>
 <table class="jd-sumtable jd-sumtable-subclasses"><tr><td colspan="12" style="border:none;margin:0;padding:0;">
-<?cs call:expando_trigger("subclasses-direct-trigger", "closed") ?>Known Direct Subclasses
+<?cs call:expando_trigger("subclasses-direct", "closed") ?>Known Direct Subclasses
 <?cs call:expandable_class_list("subclasses-direct", class.subclasses.direct, "list") ?>
 </td></tr></table>
 <?cs /if ?>
 
 <?cs if:subcount(class.subclasses.indirect) && !class.subclasses.hidden ?>
 <table class="jd-sumtable jd-sumtable-subclasses"><tr><td colspan="12" style="border:none;margin:0;padding:0;">
-<?cs call:expando_trigger("subclasses-indirect-trigger", "closed") ?>Known Indirect Subclasses
+<?cs call:expando_trigger("subclasses-indirect", "closed") ?>Known Indirect Subclasses
 <?cs call:expandable_class_list("subclasses-indirect", class.subclasses.indirect, "list") ?>
 </td></tr></table>
 <?cs /if ?>

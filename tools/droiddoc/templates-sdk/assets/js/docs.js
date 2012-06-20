@@ -346,7 +346,7 @@ false; // navigate across topic boundaries only in design docs
         // make it static again
         $('#devdoc-nav')
             .removeClass('fixed')
-            .css({'width':''})
+            .css({'width':'auto','margin':''})
             .prependTo('#side-nav');
         $('#devdoc-nav a.totop').hide();
       }
@@ -463,8 +463,9 @@ function toggleFullscreen(enable) {
     enabled = false;
   }
   writeCookie("fullscreen", enabled, null, null);
+  setNavBarLeftPos();
   resizeNav(delay);
-  setNavBarLeftPos();updateSideNavPosition();
+  updateSideNavPosition();
   setTimeout(initSidenavHeightResize,delay);
 }
 
