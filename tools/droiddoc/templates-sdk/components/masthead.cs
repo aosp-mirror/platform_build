@@ -1,13 +1,4 @@
 <?cs def:custom_masthead() ?>
-    <div style="position:absolute;">
-      <div style="width:940px;margin:0 auto;">
-       <div
-style="width:200px;float:right;font-size:12px;font-weight:500;background-color:#CC3300;color:#fff;
-padding:0 10px;">
-        Google Confidential&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:#fff"
-         href="https://docs.google.com/a/google.com/spreadsheet/viewform?formkey=dFlLWnpnUWtrQ3o3cVRraXZEUmdnSXc6MQ#gid=0">
-          File a bug</a>
-       </div></div></div>
     <!-- Header -->
     <div id="header">
         <div class="wrap" id="header-wrap">
