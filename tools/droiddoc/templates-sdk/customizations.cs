@@ -181,9 +181,11 @@ def:default_left_nav() ?>
       <div id="api-nav-header">
         <div id="api-level-toggle">
           <label for="apiLevelCheckbox" class="disabled">API level: </label>
-          <select id="apiLevelSelector">
-            <!-- option elements added by buildApiLevelSelector() -->
-          </select>
+          <div class="select-wrapper">
+            <select id="apiLevelSelector">
+              <!-- option elements added by buildApiLevelSelector() -->
+            </select>
+          </div>
         </div><!-- end toggle -->
         <div id="api-nav-title">Android APIs</div>
         </div><!-- end nav header -->

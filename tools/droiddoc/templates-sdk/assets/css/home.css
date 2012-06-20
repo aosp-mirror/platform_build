@@ -13,9 +13,10 @@
   float: left;
   text-align: center;
   vertical-align: center;
-  margin: 0;
+  margin: 0 0 0 25px;
 }
 .slideshow-home .content-right {
+  width: 290px;
   float: left;
   margin: 100px 0 0 0;
 }
@@ -27,8 +28,9 @@
   width: 940px;
 }
 .home-sections {
-  padding: 40px 0 40px 0;
+  padding: 30px 20px 20px;
   margin: 20px 0;
+  background: -webkit-linear-gradient(top, #F6F6F6,#F9F9F9);
 }
 .home-sections ul {
   margin: 0;
@@ -37,11 +39,32 @@
   float: left;
   display: block;
   list-style: none;
-  width: 178px;
+  width: 170px;
   height: 35px;
-  border: 1px solid #DCDCDC;
-  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  background: white;
   margin-right: 10px;
+  border-radius: 1px;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  box-shadow: 1px 1px 5px #EEE;
+  -webkit-box-shadow: 1px 1px 5px #EEE;
+  -moz-box-shadow: 1px 1px 5px #EEE;
+  background: white;
+}
+.home-sections ul li:hover {
+  background: #F9F9F9;
+  border: 1px solid #CCC;
+}
+.home-sections ul li a,
+.home-sections ul li a:hover {
+  font-weight: bold;
+  margin-top: 8px;
+  line-height: 18px;
+  float: left;
+  width: 100%;
+  text-align: center;
+  color: #09c !important;
 }
 .home-sections ul li a {
   font-weight: bold;
@@ -57,4 +80,7 @@
 }
 .home-sections ul li.last {
   margin-right: 0px;
+}
+#footer {
+  margin-top: -40px;
 }

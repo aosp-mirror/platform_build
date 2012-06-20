@@ -2032,19 +2032,28 @@ a:visited,
 #api-level-toggle label {
   margin:0;
   vertical-align:top;
+  line-height: 19px;
   font-size:13px;
+  height: 19px;
 }
 
+#api-level-toggle .select-wrapper {
+  width: 35px;
+  display: inline-block;
+  overflow: hidden;
+}
 #api-level-toggle select {
   border: 0;
+  appearance:none;
+  -moz-appearance:none;
   -webkit-appearance: none;
-  background: transparent url(../images/arrows-up-down.png) 23px 6px no-repeat;
+  background: transparent url(../images/arrows-up-down.png) 23px 5px no-repeat;
   color: #444;
-  line-height: normal;
-  height: 15px;
+  height: 19px;
+  line-height: 19px;
   padding: 0;
   margin:1px 0 0 0;
-  width:35px;
+  width:150%;
   font-size:13px;
   vertical-align:top;
   outline:0;
@@ -3806,7 +3815,6 @@ a.download-sdk {
   height: 300px;
   width: 940px;
   position: relative;
-  margin-left: 10px;
   overflow:hidden;
 }
 .slideshow-develop .frame {

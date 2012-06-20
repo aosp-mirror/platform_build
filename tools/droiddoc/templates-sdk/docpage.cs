@@ -78,7 +78,7 @@
                     if:fullpage ?>col-16<?cs 
                     elif:training||guide ?>col-8<?cs 
                     else ?>col-9<?cs /if ?>" style="padding-top:4px">
-          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right;}</style><?cs /if ?>
+          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
             <div class="g-plusone" data-size="medium"></div>
           <?cs /if ?>
         </div>
