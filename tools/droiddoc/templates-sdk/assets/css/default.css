@@ -1375,7 +1375,7 @@ Buttons
     background-image: -ms-linear-gradient(top, #2faddb, #09c);
     background-image: -o-linear-gradient(top, #2faddb, #09c);
     background-image: linear-gradient(top, #2faddb, #09c);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#2faddb', EndColorStr='#09c');
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#2faddb', EndColorStr='#0099cc',GradientType=0);
     border: 1px solid #3990ab;
     color: #fff;
 }
@@ -1414,7 +1414,7 @@ a.button, a.button:visited, a.button-secondary, a.button-secondary:visited {
     background-image: -o-linear-gradient(top, #5dbcd9, #4cadcb);
     background-image: linear-gradient(top, #5dbcd9, #4cadcb);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#5dbcd9',
-EndColorStr='#4cadcb');
+EndColorStr='#4cadcb',GradientType=0);
     color: #fff !important;
 }
 .button:active, a.button:active {
@@ -1475,8 +1475,6 @@ endColorstr='#ffffff',GradientType=0 ); /* IE6-8 */
 }
 .button.big {
   font-size:20px;
-  font-weight:bold;
-  line-height:50px;
   display:inline-block;
 }
 
