@@ -3493,8 +3493,9 @@ EndColorStr='#ececec');
   list-style:none;
 }
 
-.morehover ul li.active a {
-  color:#444;
+.morehover ul li.active a,
+.morehover ul li.active a:hover {
+  color:#444 !important;
 }
 
 .morehover ul li.active img {

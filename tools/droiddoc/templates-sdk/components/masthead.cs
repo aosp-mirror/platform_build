@@ -31,7 +31,7 @@
       <div class="header">Android Sites</div>
       <ul>
         <li><a href="http://www.android.com">Android.com</a></li>
-        <li class="active"><a href="http://developer.android.com">Android Developers</a></li>
+        <li class="active"><a>Android Developers</a></li>
         <li><a href="http://source.android.com">Android Open Source Project</a></li>
       </ul>
       <div class="header">Support</div>
