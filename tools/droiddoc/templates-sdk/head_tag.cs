@@ -11,7 +11,7 @@
 
 <!-- BASIC STYLESHEETS -->
 <link rel="stylesheet"
-href="//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic" title="roboto">
+href="//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold" title="roboto">
 <link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
 
 <?cs if:reference ?>
