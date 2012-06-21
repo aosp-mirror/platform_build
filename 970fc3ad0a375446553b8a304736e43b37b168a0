@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAG03///6Y\u003d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2012-06-21T18:36:50Z",
+      "side": 1,
+      "message": "Sorry, needs to be in the first line (short description), as that\u0027s the only one that gets reliably preserved around.",
+      "revId": "970fc3ad0a375446553b8a304736e43b37b168a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
