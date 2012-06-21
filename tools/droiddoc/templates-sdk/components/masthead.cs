@@ -100,7 +100,7 @@ onkeydown="return search_changed(event, true, '/')" onkeyup="return search_chang
                     <li class="develop">
                       <ul>
                         <li><a href="<?cs var:toroot ?>training/index.html">Android Training</a></li>
-                        <li><a href="<?cs var:toroot ?>guide/index.html">API Guides</a></li>
+                        <li><a href="<?cs var:toroot ?>guide/components/index.html">API Guides</a></li>
                         <li><a href="<?cs var:toroot ?>reference/packages.html">Reference</a></li>
                         <li><a href="<?cs var:toroot ?>tools/index.html">Tools</a>
                           <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the
