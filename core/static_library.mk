@@ -18,6 +18,13 @@ ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
 $(error $(LOCAL_PATH): Can not set module stem for a library)
 endif
 
+####################################################
+## Add profiling libraries if aprof is turned
+####################################################
+ifeq ($(strip $(LOCAL_ENABLE_APROF)),true)
+  LOCAL_WHOLE_STATIC_LIBRARIES += libaprof
+endif
+
 include $(BUILD_SYSTEM)/binary.mk
 
 ifeq ($(LOCAL_RAW_STATIC_LIBRARY),true)
