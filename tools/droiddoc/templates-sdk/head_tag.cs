@@ -54,10 +54,4 @@ type="text/css">
   var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
 </script>
 
-<script src="//www.google.com/js/gweb/analytics/autotrack.js"></script>
-<script>
-  new gweb.analytics.AutoTrack({
-    profile: 'UA-5831155-1'
-  });
-</script>
 </head>
