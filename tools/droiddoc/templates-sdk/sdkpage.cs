@@ -77,7 +77,7 @@
 ?>
 
 
-  <table class="download">
+  <table class="download" id="download-table">
     <tr>
       <th>Platform</th>
       <th>Package</th>
