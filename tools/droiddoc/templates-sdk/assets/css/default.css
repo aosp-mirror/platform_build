@@ -20,7 +20,7 @@ html, body {
   /* turned off ligatures due to bug 5945455 */ }
 
 body {
-  color: #000;
+  color: #222;
   font: 14px/19px Roboto, sans-serif;
   font-weight: 400;
   letter-spacing:.1;
@@ -948,7 +948,7 @@ a:focus, a:hover, a:active {
 }
 strong, b {
   font-weight:bold;
-  color: #444;
+  color: #222;
 }
 table {
   border-collapse: collapse;
@@ -1068,7 +1068,7 @@ color-stop(50%, #acbc00), color-stop(50%, #bdde00), color-stop(100%, #bdde00));
   -webkit-appearance: none;
   background: white url('../images/arrows-up-down.png') right center no-repeat;
   height: 30px;
-  color: #444;
+  color: #222;
   line-height: normal;
   padding: 5px;
   width: 230px;
@@ -1280,7 +1280,7 @@ Header, Login, Nav-X, Search
 	background-position: -8px 0
 }
 .search form input:focus {
-	color: #444;
+	color: #222;
 	font-weight: bold;
 	outline:0;
 }
@@ -1310,7 +1310,7 @@ Header, Login, Nav-X, Search
 	margin: 0 10px 10px 0
 }
 .search-dropdown h6 {
-	color: #444;
+	color: #222;
 	margin: 0;
 	line-height: normal
 }
@@ -1682,7 +1682,7 @@ ul ul {
     -webkit-appearance: none;
     background: #f3f3f3 url(../images/arrows-up-down.png) right center no-repeat;
     height: 30px;
-    color: #444;
+    color: #222;
     line-height: normal;
     padding: 5px;
     width: 130px;
@@ -1701,7 +1701,7 @@ ul ul {
 .article form input[type='text'], .article form textarea {
     border: 1px solid #ebebeb;
     border-top-color: #dcdcdc;
-    color: #444;
+    color: #222;
     line-height: normal;
     padding: 6px 10px;
     width: 300px;	
@@ -1828,7 +1828,7 @@ Three-Pane
 #packages-nav li a, #packages-nav li a:active, #packages-nav li a:visited,
 #classes-nav li li a, #classes-nav li li a:active, #classes-nav li li a:visited,
 #nav-tree li a, #nav-tree li a:active, #nav-tree li a:visited {
-	color: #444;
+	color: #222;
 	font-weight: normal;	
 }
 #packages-nav li a, #packages-nav li a:active, #packages-nav li a:visited,
@@ -1858,7 +1858,7 @@ a:visited,
 #nav-swap a {
   display:inline-block;
   height:100%;
-  color: #444;
+  color: #222;
   font-size: 12px;
   padding: 5px 0 5px 5px;
 }
@@ -1932,7 +1932,7 @@ a:visited,
 }
 
 #nav-tree a.nolink {
-  color: #444;
+  color: #222;
   text-decoration: none;
 }
 
@@ -1969,7 +1969,7 @@ a:visited,
 	font-weight: bold;
 }
 #api-info-block a, #api-info-block a:active, #api-info-block a:visited {
-	color: #444;
+	color: #222;
 }
 #api-info-block a:hover, #api-info-block a:focus {
 	color: #33B5E5;
@@ -2013,7 +2013,7 @@ a:visited,
   -moz-appearance:none;
   -webkit-appearance: none;
   background: transparent url(../images/arrows-up-down.png) 23px 5px no-repeat;
-  color: #444;
+  color: #222;
   height: 19px;
   line-height: 19px;
   padding: 0;
@@ -2412,7 +2412,7 @@ ul.tabs li a, ul.tabs li a:active, ul.tabs li a:visited {
 	line-height: 36px;
 	padding: 0 15px;
 	margin-right: 2px;
-	color: #444;
+	color: #222;
 	-moz-border-radius-topleft: 2px;
 	-moz-border-radius-topright: 2px;
 	-moz-border-radius-bottomright: px;
@@ -2592,7 +2592,7 @@ links to summary tables) */
   font-weight:bold;
   font-size:inherit;
   float:none;
-  color:#444;
+  color:#222;
   padding:0;
   margin:0;
 }
@@ -2854,7 +2854,7 @@ ul#search_filtered {
 
 #search_filtered li a {
   padding:0 5px;
-  color:#444 !important;
+  color:#222 !important;
 }
 
 #search_filtered .jd-selected {
@@ -3280,7 +3280,7 @@ EndColorStr='#ececec');
 }
 
 #quicknav ul li ul li a {
-  color:#444444;
+  color:#222;
 }
 
 #quicknav ul li li ul,
@@ -3401,7 +3401,7 @@ EndColorStr='#ececec');
 }
 
 .search form input:focus {
-	color: #444;
+	color: #222;
 	font-weight: bold
 }
 
@@ -3509,7 +3509,7 @@ EndColorStr='#ececec');
 
 .morehover ul li.active a,
 .morehover ul li.active a:hover {
-  color:#444 !important;
+  color:#222 !important;
 }
 
 .morehover ul li.active img {
