@@ -20,8 +20,8 @@ html, body {
   /* turned off ligatures due to bug 5945455 */ }
 
 body {
-  color: #444;
-  font: 14px/21px Roboto, sans-serif;
+  color: #000;
+  font: 14px/19px Roboto, sans-serif;
   font-weight: 400;
   letter-spacing:.1;
   padding:0 10px; }
