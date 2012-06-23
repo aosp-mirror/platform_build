@@ -2196,6 +2196,26 @@ p.warning {
   border-color: #ff4443;
 }
 
+div.note.design {
+  border-left: 4px solid #33B5E5;
+}
+
+div.note.develop {
+  border-left: 4px solid #F80;
+}
+
+div.note.distribute {
+  border-left: 4px solid #9C0;
+}
+
+.note p, .caution p, .warning p {
+  margin:0 0 5px;
+}
+
+.note p:last-child, .caution p:last-child, .warning p:last-child {
+  margin-bottom:0;
+}
+
 blockquote {
   display:block;
   float:right;
@@ -2205,12 +2225,6 @@ blockquote {
   line-height:24px;
   color:#33B5E5;
   margin:0 0 20px 30px;
-}
-
-div.design-announce {
-  margin: 1em;
-  padding: 0 0 0 10px;
-  border-left: 4px solid #258AAF;
 }
 
 div.design-announce p {
