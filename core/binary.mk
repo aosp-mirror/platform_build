@@ -132,8 +132,8 @@ ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   LOCAL_STATIC_LIBRARIES += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 
-# Add in libcompiler-rt for all device builds
-ifeq (,$(LOCAL_NDK_VERSION)$(LOCAL_IS_HOST_MODULE))
+# Add in libcompiler-rt for all regular device builds
+ifeq (,$(LOCAL_NDK_VERSION)$(LOCAL_IS_HOST_MODULE)$(BUILD_TINY_ANDROID))
   LOCAL_STATIC_LIBRARIES += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 
