@@ -4,6 +4,11 @@
 
 notice_file:=$(strip $(wildcard $(LOCAL_PATH)/NOTICE))
 
+ifeq ($(LOCAL_MODULE_CLASS),NONE)
+  # We ignore NOTICE files for modules of type NONE.
+  notice_file :=
+endif
+
 ifdef notice_file
 
 # This relies on the name of the directory in PRODUCT_OUT matching where
