@@ -2033,6 +2033,9 @@ div.toggle-content.closed .toggle-content-toggleme {
 #jd-content img.toggle-content-img {
   margin:0 5px 5px 0;
 }
+div.toggle-content > p {
+  padding:0 0 5px;
+}
 
 
 /* API LEVEL FILTERED MEMBERS */
@@ -2758,6 +2761,7 @@ h5.jd-tagtitle {
 .jd-tagtable {
   margin:0;
   background-color:transparent;
+  width:auto;
 }
 
 .jd-tagtable td,
