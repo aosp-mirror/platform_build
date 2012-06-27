@@ -179,7 +179,7 @@ body {
 
 #devdoc-nav.fixed,
 #devdoc-nav.fixed a.totop {
-  left:20px !important;
+  left:20px; /* !important ... for IE i think */
 }
 
 
