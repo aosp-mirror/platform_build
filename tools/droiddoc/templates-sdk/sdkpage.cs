@@ -210,11 +210,12 @@ var:sdk.linux_download
   }
 
   if (os) {
-    $('#download-button').text("Download the SDK for " + os).removeClass("disabled");
+    $('#not-supported').hide();
+    $('#download-button').show();
+    $('#download-button').text("Download the SDK for " + os);
     $('#download-button').click(function() {onDownload($link.get());}).attr('href', $link.attr('href'));
   } else {
     $('.pax').show();
-    $('#download-button').css({'font-size':'14px'});
   }
 
 </script>
