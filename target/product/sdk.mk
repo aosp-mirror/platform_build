@@ -20,7 +20,7 @@ PRODUCT_PROPERTY_OVERRIDES :=
 PRODUCT_PACKAGES := \
 	Calculator \
 	DeskClock \
-	Email \
+	Email2 \
 	Exchange2 \
 	Gallery \
 	Music \
