@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAHDH///0M\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1000701
+      },
+      "writtenOn": "2012-06-29T00:14:24Z",
+      "side": 1,
+      "message": "Should we restrict this even more, to a case where someone is asking to build an emulator?",
+      "revId": "478ba5e3f00bb1321cd022d744020231f2449287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
