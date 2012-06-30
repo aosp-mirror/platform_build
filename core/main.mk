@@ -157,6 +157,18 @@ $(info ************************************************************)
 $(error stop)
 endif
 
+ifeq (darwin,$(HOST_OS))
+GCC_REALPATH = $(realpath $(shell which gcc))
+ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
+  # Using LLVM GCC results in a non functional emulator due to it
+  # not honouring global register variables
+  $(warning ****************************************)
+  $(warning * gcc is linked to llvm-gcc which will *)
+  $(warning * not create a useable emulator.       *)
+  $(warning ****************************************)
+endif
+endif
+
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
         > $(OUT_DIR)/versions_checked.mk)
 endif
