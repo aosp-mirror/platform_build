@@ -497,7 +497,16 @@ class SignApk {
                 outputStream = outputFile = new FileOutputStream(args[argstart+3]);
             }
             outputJar = new JarOutputStream(outputStream);
-            outputJar.setLevel(9);
+
+            // For signing .apks, use the maximum compression to make
+            // them as small as possible (since they live forever on
+            // the system partition).  For OTA packages, use the
+            // default compression level, which is much much faster
+            // and produces output that is only a tiny bit larger
+            // (~0.1% on full OTA packages I tested).
+            if (!signWholeFile) {
+                outputJar.setLevel(9);
+            }
 
             JarEntry je;
 
