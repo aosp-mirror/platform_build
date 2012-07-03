@@ -66,8 +66,8 @@
       <form onsubmit="return submit_search()">
         <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
 onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
-onkeydown="return search_changed(event, true, '/')" onkeyup="return search_changed(event, false,
-'/')" />
+onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')" 
+onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
       </form>
       <div class="right"></div>
         <a class="close hide">close</a>

@@ -473,7 +473,7 @@ function hideResults() {
 
       // forcefully regain key-up event control (previously jacked by search api)
       $("#search_autocomplete").keyup(function(event) {
-        return search_changed(event, false, '/');
+        return search_changed(event, false, toRoot);
       });
 
       // add event listeners to each tab so we can track the browser history
