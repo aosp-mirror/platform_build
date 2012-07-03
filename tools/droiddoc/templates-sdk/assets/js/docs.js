@@ -5,9 +5,11 @@ var cookie_namespace = 'android_developer';
 var NAV_PREF_TREE = "tree";
 var NAV_PREF_PANELS = "panels";
 var nav_pref;
-var toRoot;
 var isMobile = false; // true if mobile, so we can adjust some layout
 
+var basePath = getBaseUri(location.pathname);
+var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
+  
 
 /******  ON LOAD SET UP STUFF *********/
 
@@ -30,7 +32,7 @@ $(document).ready(function() {
   
   // set search's onkeyup handler here so we can show suggestions 
   // even while search results are visible
-  $("#search_autocomplete").keyup(function() {return search_changed(event, false, '/')});
+  $("#search_autocomplete").keyup(function() {return search_changed(event, false, toRoot)});
 
   // set up the search close button
   $('.search .close').click(function() {
@@ -525,11 +527,6 @@ addLoadEvent( function() {
   $("pre:not(.no-pretty-print)").addClass("prettyprint");
   prettyPrint();
 } );
-
-function setToRoot(root) {
-  toRoot = root;
-  // note: toRoot also used by carousel.js
-}
 
 function init() {
   //resizeNav();

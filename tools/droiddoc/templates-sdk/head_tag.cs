@@ -11,7 +11,7 @@
 
 <!-- BASIC STYLESHEETS -->
 <link rel="stylesheet"
-href="//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold" title="roboto">
+href="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold" title="roboto">
 <link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
 
 <?cs if:reference ?>
@@ -28,6 +28,9 @@ type="text/css">
 <!-- BASIC JAVASCRIPT -->
 <script src="<?cs var:toroot ?>assets/js/global-libraries-combined.js"
         type="text/javascript"></script>
+<script type="text/javascript">
+  var toRoot = "<?cs var:toroot ?>";
+</script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
 
 <?cs if:carousel ?>
@@ -36,7 +39,7 @@ type="text/css">
 <?cs /if ?>
 
 <!-- search -->
-<script src="//www.google.com/jsapi" type="text/javascript"></script>
+<script src="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//www.google.com/jsapi" type="text/javascript"></script>
 <script src="<?cs var:toroot ?>assets/js/search_autocomplete.js" type="text/javascript"></script>
 
 <?cs if:tabbedList ?>
@@ -48,10 +51,5 @@ type="text/css">
 <script src="<?cs var:toroot ?>assets/js/droiddoc.js" type="text/javascript"></script>
 <?cs /if ?>
 <script src="<?cs var:toroot ?>navtree_data.js" type="text/javascript"></script>
-<script type="text/javascript">
-  setToRoot("<?cs var:toroot ?>");
-  var basePath = getBaseUri(location.pathname);
-  var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
-</script>
 
 </head>
