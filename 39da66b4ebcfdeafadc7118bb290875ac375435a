@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAHFn///jg\u003d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2012-07-03T15:11:59Z",
+      "side": 1,
+      "message": "After looking through the other properties, perhaps a better name for this property is:\n\n  ro.build.selinux\u003d1",
+      "revId": "39da66b4ebcfdeafadc7118bb290875ac375435a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
