@@ -41,7 +41,7 @@ ifeq "" "$(PLATFORM_VERSION)"
   # which is the version that we reveal to the end user.
   # Update this value when the platform version changes (rather
   # than overriding it somewhere else).  Can be an arbitrary string.
-  PLATFORM_VERSION := 4.1.1
+  PLATFORM_VERSION := 4.1.2
 endif
 
 ifeq "" "$(PLATFORM_SDK_VERSION)"
