@@ -22,7 +22,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.notification_sound=OnTheHunt.ogg \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
-# Core modules (will move elsewhere)
+# Core modules (will move elsewhere, previously user tagged)
 PRODUCT_PACKAGES := \
     20-dns.conf \
     95-configured \
@@ -36,6 +36,7 @@ PRODUCT_PACKAGES := \
     bmgr \
     bootanimation \
     bugreport \
+    content \
     dbus-daemon \
     debuggerd \
     dhcpcd \
@@ -51,7 +52,6 @@ PRODUCT_PACKAGES := \
     init \
     input \
     javax.obex \
-    keystore \
     libEGL \
     libETC1 \
     libFFTEm \
@@ -77,7 +77,6 @@ PRODUCT_PACKAGES := \
     libdrm1 \
     libdrm1_jni \
     libeffects \
-    libexif \
     libgui \
     libhardware \
     libhardware_legacy \
@@ -104,7 +103,6 @@ PRODUCT_PACKAGES := \
     libsonivox \
     libsoundpool \
     libsqlite \
-    libsrec_jni \
     libstagefright \
     libstagefright_amrnb_common \
     libstagefright_avc_common \
@@ -135,13 +133,11 @@ PRODUCT_PACKAGES := \
     ndc \
     netcfg \
     netd \
-    omx_tests \
     ping \
     platform.xml \
     pppd \
     pm \
     racoon \
-    rild \
     run-as \
     schedtest \
     screenshot \
@@ -149,7 +145,6 @@ PRODUCT_PACKAGES := \
     service \
     servicemanager \
     services \
-    simg2img \
     surfaceflinger \
     svc \
     system_server \

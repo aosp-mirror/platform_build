@@ -597,11 +597,12 @@ ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
   # by the appropriate product definition file, which was included
   # by product_config.make.
-  product_MODULES := $(call module-installed-files, \
-                       $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
+  product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  $(call expand-required-modules,product_MODULES,$(product_MODULES))
+  product_FILES := $(call module-installed-files, $(product_MODULES))
   ifeq (0,1)
-    $(info product_MODULES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-    $(foreach p,$(product_MODULES),$(info :   $(p)))
+    $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
+    $(foreach p,$(product_FILES),$(info :   $(p)))
     $(error done)
   endif
 else
@@ -609,7 +610,7 @@ else
   # a subset of the module makefiles.  Don't try to build any modules
   # requested by the product, because we probably won't have rules
   # to build them.
-  product_MODULES :=
+  product_FILES :=
 endif
 
 # When modules are tagged with debug eng or tests, they are installed
@@ -623,7 +624,7 @@ tests_MODULES := $(sort $(call get-tagged-modules,tests))
 # TODO: The shell is chosen by magic.  Do we still need this?
 modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
-    $(product_MODULES) \
+    $(product_FILES) \
     $(foreach tag,$(tags_to_install),$($(tag)_MODULES)) \
     $(call get-tagged-modules, shell_$(TARGET_SHELL)) \
     $(CUSTOM_MODULES) \
