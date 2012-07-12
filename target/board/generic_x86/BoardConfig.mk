@@ -18,9 +18,6 @@ BOARD_USES_GENERIC_AUDIO := true
 # no hardware camera
 USE_CAMERA_STUB := true
 
-# Set /system/bin/sh to ash, not mksh, to make sure we can switch back.
-TARGET_SHELL := ash
-
 # Enable dex-preoptimization to speed up the first boot sequence
 # of an SDK AVD. Note that this operation only works on Linux for now
 ifeq ($(HOST_OS),linux)
