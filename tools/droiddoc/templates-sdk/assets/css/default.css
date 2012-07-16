@@ -2033,8 +2033,11 @@ div.toggle-content.closed .toggle-content-toggleme {
 #jd-content img.toggle-content-img {
   margin:0 5px 5px 0;
 }
-div.toggle-content > p {
-  padding:0 0 5px;
+div.toggle-content p {
+  margin:10px 0 0;
+}
+div.toggle-content-toggleme {
+  padding:0 0 0 15px;
 }
 
 
