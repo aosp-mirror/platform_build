@@ -1,82 +1,12 @@
-/**
- * jQuery history event v0.1
- * Copyright (c) 2008 Tom Rodenberg <tarodenberg gmail com>
- * Licensed under the GPL (http://www.gnu.org/licenses/gpl.html) license.
+/*
+ * jQuery hashchange event - v1.3 - 7/21/2010
+ * http://benalman.com/projects/jquery-hashchange-plugin/
+ * 
+ * Copyright (c) 2010 "Cowboy" Ben Alman
+ * Dual licensed under the MIT and GPL licenses.
+ * http://benalman.com/about/license/
  */
-(function($) {
-    var currentHash, previousNav, timer, hashTrim = /^.*#/;
-
-    var msie = {
-        iframe: null,
-        getDoc: function() {
-            return msie.iframe.contentWindow.document;
-        },
-        getHash: function() {
-            return msie.getDoc().location.hash;
-        },
-        setHash: function(hash) {
-            var d = msie.getDoc();
-            d.open();
-            d.close();
-            d.location.hash = hash;
-        }
-    };
-
-    var historycheck = function() {
-        var hash = msie.iframe ? msie.getHash() : location.hash;
-        if (hash != currentHash) {
-            currentHash = hash;
-            if (msie.iframe) {
-                location.hash = currentHash;
-            }
-            var current = $.history.getCurrent();
-            $.event.trigger('history', [current, previousNav]);
-            previousNav = current;
-        }
-    };
-
-    $.history = {
-        add: function(hash) {
-            hash = '#' + hash.replace(hashTrim, '');
-            if (currentHash != hash) {
-                var previous = $.history.getCurrent();
-                location.hash = currentHash = hash;
-                if (msie.iframe) {
-                    msie.setHash(currentHash);
-                }
-                $.event.trigger('historyadd', [$.history.getCurrent(), previous]);
-            }
-            if (!timer) {
-                timer = setInterval(historycheck, 100);
-            }
-        },
-        getCurrent: function() {
-            if (currentHash) {
-              return currentHash.replace(hashTrim, '');
-            } else { 
-              return ""; 
-            }
-        }
-    };
-
-    $.fn.history = function(fn) {
-        $(this).bind('history', fn);
-    };
-
-    $.fn.historyadd = function(fn) {
-        $(this).bind('historyadd', fn);
-    };
-
-    $(function() {
-        currentHash = location.hash;
-        if ($.browser.msie) {
-            msie.iframe = $('<iframe style="display:none"src="javascript:false;"></iframe>')
-                            .prependTo('body')[0];
-            msie.setHash(currentHash);
-            currentHash = msie.getHash();
-        }
-    });
-})(jQuery);
+(function($,e,b){var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})()})(jQuery,this);
 
 
 
@@ -187,7 +117,14 @@ function search_changed(e, kd, toroot)
     if (e.keyCode == 13) {
         $('#search_filtered_div').addClass('no-display');
         if (!$('#search_filtered_div').hasClass('no-display') || (gSelectedIndex < 0)) {
-            return true;
+            if ($("#searchResults").is(":hidden")) {
+              // if results aren't showing, return true to allow search to execute
+              return true;
+            } else {
+              // otherwise, results are already showing, so allow ajax to auto refresh the results
+              // and ignore this Enter press to avoid the reload.
+              return false;
+            }
         } else if (kd && gSelectedIndex >= 0) {
             window.location = toroot + gMatches[gSelectedIndex].link;
             return false;
@@ -335,9 +272,8 @@ function search_focus_changed(obj, focused)
 function submit_search() {
   var query = document.getElementById('search_autocomplete').value;
   location.hash = 'q=' + query;
-  $.history.add('q=' + query);
   loadSearchResults();
-  $("#searchResults").slideDown();
+  $("#searchResults").slideDown('slow');
   return false;
 }
 
@@ -348,7 +284,10 @@ function hideResults() {
   location.hash = '';
   drawOptions.setInput(document.getElementById("searchResults"));
   
-  $("#search_autocomplete").blur();
+  $("#search_autocomplete").val("").blur();
+  
+  // reset the ajax search callback to nothing, so results don't appear unless ENTER
+  searchControl.setSearchStartingCallback(this, function(control, searcher, query) {});
   return false;
 }
 
@@ -367,18 +306,9 @@ function hideResults() {
 
             
       google.load('search', '1');
+      var searchControl;
 
       function loadSearchResults() {
-        if (location.hash.indexOf("q=") == -1) {
-          // if there's no query in the url, don't search and make sure results are hidden
-          $('#searchResults').hide();
-          return;
-        }
-        
-        var $results = $("#searchResults");
-        if ($results.is(":hidden")) {
-          $results.slideDown();
-        }
         
         document.getElementById("search_autocomplete").style.color = "#000";
 
@@ -430,7 +360,7 @@ function hideResults() {
         // configure result options
         searchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
         searchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);
-        searchControl.setTimeoutInterval(google.search.SearchControl.TIMEOUT_LONG);
+        searchControl.setTimeoutInterval(google.search.SearchControl.TIMEOUT_SHORT);
         searchControl.setNoResultsString(google.search.SearchControl.NO_RESULTS_DEFAULT_STRING);
 
         // upon ajax search, refresh the url and search title
@@ -438,7 +368,6 @@ function hideResults() {
           updateResultTitle(query);
           var query = document.getElementById('search_autocomplete').value;
           location.hash = 'q=' + query;
-          $.history.add('q=' + query);
         });
 
         // draw the search results box
@@ -453,16 +382,30 @@ function hideResults() {
       // End of loadSearchResults
 
 
-      google.setOnLoadCallback(loadSearchResults, true);
+      google.setOnLoadCallback(function(){
+        if (location.hash.indexOf("q=") == -1) {
+          // if there's no query in the url, don't search and make sure results are hidden
+          $('#searchResults').hide();
+          return;
+        } else {
+          // first time loading search results for this page
+          $('#searchResults').slideDown('slow');
+          $(".search .close").removeClass("hide");
+          loadSearchResults();
+        }
+      }, true);
 
-      // when an event on the browser history occurs (back, forward, load) perform a search
-      $(window).history(function(e, hash) {
-        var query = decodeURI(getQuery(hash));
+      // when an event on the browser history occurs (back, forward, load) requery hash and do search
+      $(window).hashchange( function(){
+        var query = decodeURI(getQuery(location.hash));
         if (query == "undefined") {
           hideResults(); 
           return; 
         }
         searchControl.execute(query);
+        $('#searchResults').slideDown('slow');
+        $("#search_autocomplete").focus();
+        $(".search .close").removeClass("hide");
 
         updateResultTitle(query);
       });
