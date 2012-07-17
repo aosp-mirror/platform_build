@@ -3597,6 +3597,10 @@ a.download-sdk {
   padding-top: 14px;
 }
 
+#nav-x .wrap {
+  min-height:34px;
+}
+
 #nav-x .wrap,
 #searchResults.wrap {
     max-width:940px;
