@@ -2901,10 +2901,6 @@ ul#search_filtered {
 
 /* SEARCH RESULTS */
 
-/* disable twiddle and size selectors for left column */
-#leftSearchControl div {
-  padding:0;
-}
 
 #leftSearchControl .gsc-twiddle {
   background-image : none;
@@ -3605,11 +3601,11 @@ a.download-sdk {
 #searchResults.wrap {
     max-width:940px;
     border-bottom:1px solid #CCC;
-    min-height:34px;
-    
 }
 
-
+#searchResults.wrap #leftSearchControl {
+  min-height:700px
+}
 .nav-x {
     margin-left:0;
     margin-bottom:0;
