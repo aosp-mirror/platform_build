@@ -205,3 +205,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackage5.mk)
+
+#----------------- For PDK ------------------------------
+PRODUCT_PACKAGES += \
+    TestingCamera
