@@ -3474,7 +3474,7 @@ EndColorStr='#ececec');
 
 .morehover:hover {
   opacity:1;
-  height:345px;
+  height:385px;
   width:268px;
   -webkit-transition-property:height,  -webkit-opacity;
 }
@@ -3488,7 +3488,7 @@ EndColorStr='#ececec');
 .morehover .mid {
   width:228px;
   background:url(../images/more_mid.png) repeat-y;
-  padding:10px 20px 10px 20px;
+  padding:10px 20px 0 20px;
 }
 
 .morehover .mid .header {
