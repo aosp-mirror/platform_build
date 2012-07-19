@@ -530,12 +530,12 @@ h3:target {
 }
 .design ol {
   counter-reset: item; }
-  .design ol li {
+  .design ol>li {
     font-size: 14px;
     line-height: 20px;
     list-style-type: none;
     position: relative; }
-    .design ol li:before {
+    .design ol>li:before {
       content: counter(item) ". ";
       counter-increment: item;
       position: absolute;
@@ -561,16 +561,18 @@ h3:target {
       content: "9. "; }
     .design ol li.value-10:before {
       content: "10. "; }
-.design .with-callouts ol li {
+.design .with-callouts ol>li {
   list-style-position: inside;
   margin-left: 0; }
-  .design .with-callouts ol li:before {
+  .design .with-callouts ol>li:before {
     display: inline;
     left: -20px;
     float: left;
     width: 17px;
     color: #33b5e5;
     font-weight: 500; }
+.design .with-callouts ul>li {
+  list-style-position: outside; }
 
 /* special list items */
 li.no-bullet {
