@@ -123,6 +123,7 @@ LOCAL_CTS_TEST_RUNNER:=
 LOCAL_CLANG:=
 LOCAL_ADDRESS_SANITIZER:=
 LOCAL_JAR_EXCLUDE_FILES:=
+LOCAL_SOURCE_FILES_ALL_GENERATED:= # '',true
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
