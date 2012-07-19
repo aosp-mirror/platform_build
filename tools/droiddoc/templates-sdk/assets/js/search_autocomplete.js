@@ -282,7 +282,6 @@ function hideResults() {
   $("#searchResults").slideUp();
   $(".search .close").addClass("hide");
   location.hash = '';
-  drawOptions.setInput(document.getElementById("searchResults"));
   
   $("#search_autocomplete").val("").blur();
   
@@ -309,7 +308,6 @@ function hideResults() {
       var searchControl;
 
       function loadSearchResults() {
-        
         document.getElementById("search_autocomplete").style.color = "#000";
 
         // create search control
@@ -397,11 +395,17 @@ function hideResults() {
 
       // when an event on the browser history occurs (back, forward, load) requery hash and do search
       $(window).hashchange( function(){
-        var query = decodeURI(getQuery(location.hash));
-        if (query == "undefined") {
-          hideResults(); 
-          return; 
+        // Exit if the hash isn't a search query or there's an error in the query
+        if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
+          // If the results pane is open, close it.
+          if (!$("#searchResults").is(":hidden")) {
+            hideResults();
+          }
+          return;
         }
+
+        // Otherwise, we have a search to do
+        var query = decodeURI(getQuery(location.hash));
         searchControl.execute(query);
         $('#searchResults').slideDown('slow');
         $("#search_autocomplete").focus();
