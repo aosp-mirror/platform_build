@@ -3767,7 +3767,8 @@ a.download-sdk {
   height: 300px;
 }
 .slideshow-develop img.play {
-  width:350px;
+  max-width:350px;
+  max-height:240px;
   margin:20px 0 0 90px;
   -webkit-transform: perspective(800px ) rotateY( 35deg );
   box-shadow: -16px 20px 40px rgba(0, 0, 0, 0.3);
@@ -3822,6 +3823,7 @@ a.download-sdk {
 .feed .feed-nav li {
   list-style: none;
   float: left;
+  height: 21px; /* +4px bottom border = 25px; same as .feed-nav */
   margin-right: 25px;
   cursor: pointer;
 }
