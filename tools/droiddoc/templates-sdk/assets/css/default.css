@@ -2185,6 +2185,12 @@ p.table-caption {
   color:#666;
 }
 
+div.note, 
+div.caution, 
+div.warning {
+  margin: 0 0 15px;
+}
+
 p.note, div.note, 
 p.caution, div.caution, 
 p.warning, div.warning {
