@@ -51,6 +51,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.notification_sound=OnTheHunt.ogg \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
+# Please keep this list sorted alphabetically
 PRODUCT_PACKAGES += \
     ApplicationsProvider \
     ContactsProvider \
@@ -64,6 +65,8 @@ PRODUCT_PACKAGES += \
     UserDictionaryProvider \
     abcc \
     apache-xml \
+    audio \
+    bluetoothd \
     bouncycastle \
     bu \
     cacerts \
@@ -81,6 +84,7 @@ PRODUCT_PACKAGES += \
     dx \
     ext \
     framework-res \
+    hciattach \
     hprof-conv \
     icu.dat \
     installd \
@@ -138,9 +142,13 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     libwilhelm \
     libz \
+    lint \
     mdnsd \
+    network \
+    pand \
     requestsync \
     screencap \
+    sdptool \
     sensorservice \
     lint \
     telephony-common \
@@ -211,6 +219,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.config.ringtone=Ring_Synth_04.ogg \
     ro.config.notification_sound=pixiedust.ogg
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackage5.mk)
