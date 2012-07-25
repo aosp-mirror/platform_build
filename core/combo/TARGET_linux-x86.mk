@@ -185,13 +185,14 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O))
 endef
 
-
+# Add -fuse-ld=bfd because ld.gold doesn't support "--copy-dt-needed-entries".
 define transform-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
 	$(TARGET_GLOBAL_LDFLAGS) \
 	-nostdlib -Bdynamic \
 	-Wl,-dynamic-linker,/system/bin/linker \
 	-Wl,--copy-dt-needed-entries \
+	-fuse-ld=bfd \
 	-Wl,-z,nocopyreloc \
 	-fPIE -pie \
 	-o $@ \
