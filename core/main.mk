@@ -84,7 +84,7 @@ include $(BUILD_SYSTEM)/config.mk
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
 
-VERSION_CHECK_SEQUENCE_NUMBER := 2
+VERSION_CHECK_SEQUENCE_NUMBER := 3
 -include $(OUT_DIR)/versions_checked.mk
 ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
 
@@ -162,12 +162,10 @@ GCC_REALPATH = $(realpath $(shell which gcc))
 ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
   # Using LLVM GCC results in a non functional emulator due to it
   # not honouring global register variables
-  ifneq ($(strip $(BUILD_EMULATOR)),)
-    $(warning ****************************************)
-    $(warning * gcc is linked to llvm-gcc which will *)
-    $(warning * not create a useable emulator.       *)
-    $(warning ****************************************)
-  endif
+  $(warning ****************************************)
+  $(warning * gcc is linked to llvm-gcc which will *)
+  $(warning * not create a useable emulator.       *)
+  $(warning ****************************************)
   BUILD_EMULATOR := false
 else
   BUILD_EMULATOR := true
@@ -193,6 +191,8 @@ endif
 
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
         > $(OUT_DIR)/versions_checked.mk)
+$(shell echo 'BUILD_EMULATOR := $(BUILD_EMULATOR)' \
+        >> $(OUT_DIR)/versions_checked.mk)
 endif
 
 # These are the modifier targets that don't do anything themselves, but
