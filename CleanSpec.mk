@@ -130,6 +130,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Now we switched to build against Mac OS X SDK 10.6
 $(call add-clean-step, rm -rf $(OUT_DIR)/host/darwin-x86/obj)
 
+$(call add-clean-step, rm -f $(OUT_DIR)/versions_checked.mk)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
