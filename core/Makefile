@@ -353,7 +353,7 @@ INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 ifeq ($(HAVE_SELINUX),true)
-SELINUX_DEPENDS := sepolicy file_contexts seapp_contexts
+SELINUX_DEPENDS := sepolicy file_contexts seapp_contexts property_contexts
 endif
 
 # We just build this directly to the install location.
