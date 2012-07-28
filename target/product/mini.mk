@@ -62,6 +62,7 @@ PRODUCT_PACKAGES += \
     SettingsProvider \
     TelephonyProvider \
     UserDictionaryProvider \
+    abcc \
     apache-xml \
     bouncycastle \
     bu \
@@ -94,6 +95,7 @@ PRODUCT_PACKAGES += \
     libOpenSLES \
     libaudiopreprocessing \
     libaudioutils \
+    libbcc \
     libcrypto \
     libdownmix \
     libdvm \
@@ -110,6 +112,7 @@ PRODUCT_PACKAGES += \
     libmdnssd \
     libnativehelper \
     libnfc_ndef \
+    libportable \
     libpowermanager \
     libspeexresampler \
     libsqlite_jni \
