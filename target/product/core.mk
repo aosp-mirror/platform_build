@@ -42,6 +42,7 @@ PRODUCT_PACKAGES := \
     TelephonyProvider \
     UserDictionaryProvider \
     VpnDialogs \
+    abcc \
     apache-xml \
     atrace \
     bouncycastle \
@@ -75,6 +76,7 @@ PRODUCT_PACKAGES := \
     libOpenSLES \
     libaudiopreprocessing \
     libaudioutils \
+    libbcc \
     libcrypto \
     libdownmix \
     libdvm \
@@ -91,6 +93,7 @@ PRODUCT_PACKAGES := \
     libmdnssd \
     libnativehelper \
     libnfc_ndef \
+    libportable \
     libpowermanager \
     libspeexresampler \
     libsqlite_jni \
