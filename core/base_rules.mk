@@ -513,7 +513,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE),true)
     ALL_HOST_INSTALLED_FILES += $(LOCAL_INSTALLED_MODULE)
   endif
   ifneq ($(filter debug eng tests, $(LOCAL_MODULE_TAGS)),)
-    $(error $(LOCAL_MODULE_MAKEFILE): Module "$(LOCAL_MODULE)" has useless module tags: $(filter debug eng tests, $(LOCAL_MODULE_TAGS)). It will be installed anyway.)
+    $(error $(LOCAL_MODULE_MAKEFILE): Host module "$(LOCAL_MODULE)" has useless module tags: $(filter debug eng tests, $(LOCAL_MODULE_TAGS)). It will be installed anyway.)
   endif
 endif
 
