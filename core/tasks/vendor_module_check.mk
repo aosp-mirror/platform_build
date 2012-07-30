@@ -24,8 +24,10 @@ _vendor_owner_whitelist := \
         google \
 	imgtec \
 	invensense \
+        lge \
         nvidia \
 	nxp \
+        qcom \
 	samsung \
 	samsung_arm \
 	ti \
