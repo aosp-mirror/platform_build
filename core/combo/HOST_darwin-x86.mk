@@ -30,18 +30,39 @@ HOST_GLOBAL_LDFLAGS += -m32
 endif # BUILD_HOST_64bit
 
 build_mac_version := $(shell sw_vers -productVersion)
-mac_sdk_version := 10.6
+
+ifneq ($(strip $(BUILD_MAC_SDK_EXPERIMENTAL)),)
+# SDK 10.7 and higher is not fully compatible with Android.
+mac_sdk_versions_supported :=  10.7 10.8
+else
+mac_sdk_versions_supported :=  10.6
+endif # BUILD_MAC_SDK_EXPERIMENTAL
+mac_sdk_versions_installed := $(shell xcodebuild -showsdks |grep macosx | sort | sed -e "s/.*macosx//g")
+mac_sdk_version := $(firstword $(filter $(mac_sdk_versions_installed), $(mac_sdk_versions_supported)))
+ifeq ($(mac_sdk_version),)
+mac_sdk_version := $(firstword $(mac_sdk_versions_supported))
+endif
+
+mac_sdk_path := $(shell xcode-select -print-path)
+ifeq ($(findstring /Applications,$(mac_sdk_path)),)
+# Legacy Xcode
 mac_sdk_root := /Developer/SDKs/MacOSX$(mac_sdk_version).sdk
+else
+#  Xcode 4.4(App Store) or higher
+# /Applications/Xcode*.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.?.sdk
+mac_sdk_root := $(mac_sdk_path)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(mac_sdk_version).sdk
+endif
+
 ifeq ($(wildcard $(mac_sdk_root)),)
-recent_xcode4_mac_sdk_root := /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(mac_sdk_version).sdk
-ifeq ($(wildcard $(recent_xcode4_mac_sdk_root)),)
 $(warning *****************************************************)
 $(warning * Can not find SDK $(mac_sdk_version) at $(mac_sdk_root))
-$(warning * or $(recent_xcode4_mac_sdk_root))
+ifeq ($(strip $(BUILD_MAC_SDK_EXPERIMENTAL)),)
+$(warning * If you wish to build using higher version of SDK, )
+$(warning * try setting BUILD_MAC_SDK_EXPERIMENTAL=1 before )
+$(warning * rerunning this command )
+endif
 $(warning *****************************************************)
 $(error Stop.)
-endif
-mac_sdk_root := $(recent_xcode4_mac_sdk_root)
 endif
 
 HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
