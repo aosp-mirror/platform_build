@@ -53,7 +53,7 @@
           <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
           <p itemprop="description"><?cs var:page.landing.intro ?></p>
           
-          <p><a href="<?cs var:page.landing.next ?>" class="next-page-link">LEARN MORE</a></p>
+          <p><a class="next-page-link topic-start-link"></a></p>
         </div>
       </div>
     <?cs else ?>
