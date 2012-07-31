@@ -195,11 +195,15 @@ false; // navigate across topic boundaries only in design docs
     
     if ($selListItem.hasClass('nav-section')) {
       // we're on an index page, jump to the first topic
-      $nextLink = $selListItem.find('ul').find('a:eq(0)');
+      $nextLink = $selListItem.find('ul:eq(0)').find('a:eq(0)');
 
       // if there aren't any children, go to the next section (required for About pages)
       if($nextLink.length == 0) {
         $nextLink = $selListItem.next('li').find('a');
+      } else if ($('.topic-start-link').length) {
+        // as long as there's a child link and there is a "topic start link" (we're on a landing)
+        // then set the landing page "start link" text to be the first doc title
+        $('.topic-start-link').text($nextLink.text().toUpperCase());
       }
       
       // Handle some Training specialties
