@@ -131,6 +131,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(OUT_DIR)/host/darwin-x86/obj)
 
 $(call add-clean-step, rm -f $(OUT_DIR)/versions_checked.mk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
