@@ -829,7 +829,8 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 	$(hide) rm -f $@
 	$(hide) cd $(dir $@) && zip -qry $(notdir $@) \
 		$(TARGET_COPY_OUT_SYSTEM) \
-		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES))
+		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES)) \
+		$(addprefix symbols/,$(PDK_SYMBOL_FILES_LIST))
 ifeq (true,$(PLATFORM_ZIP_ADD_JAVA))
 	$(hide) cd $(OUT_DIR) && zip -qry $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
 endif
