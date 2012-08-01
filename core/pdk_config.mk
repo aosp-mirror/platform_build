@@ -153,3 +153,16 @@ $(info PDK Build uses the current platform API)
 endif # PDK_JAVA
 
 endif # BUILD_PDK
+
+ifneq (,$(filter platform platform-java, $(MAKECMDGOALS))$(filter true,$(TARGET_BUILD_PDK)))
+# files under $(PRODUCT_OUT)/symbols to help debugging.
+# Source not included to PDK due to dependency issue, so provide symbols instead.
+PDK_SYMBOL_FILES_LIST := \
+	system/bin/app_process
+
+ifdef PDK_FUSION_PLATFORM_ZIP
+# symbols should be explicitly pulled for fusion build
+$(foreach f,$(PDK_SYMBOL_FILES_LIST),\
+  $(eval $(call add-dependency,$(PRODUCT_OUT)/$(f),$(PRODUCT_OUT)/symbols/$(f))))
+endif # PLATFORM_ZIP
+endif # platform.zip build or PDK
