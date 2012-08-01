@@ -2150,14 +2150,9 @@ table.blank th, table.blank td {
 
 .nolist {
   list-style:none;
-  padding:0;
-  margin:0 0 1em 1em;
+  margin-left:0;
 }
 
-.nolist li {
-  padding:0 0 2px;
-  margin:0;
-}
 
 pre.classic {
   background-color:transparent;
