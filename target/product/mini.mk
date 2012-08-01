@@ -140,7 +140,9 @@ PRODUCT_PACKAGES += \
     requestsync \
     screencap \
     sensorservice \
-    lint
+    lint \
+    telephony-common \
+    mms-common
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
