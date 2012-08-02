@@ -83,7 +83,7 @@ endif
 $(INSTALLED_FACTORY_RAMDISK_TARGET) : $(MKBOOTIMG) $(TARGET_RAMDISK_KERNEL) $(INSTALLED_FACTORY_RAMDISK_FS)
 	$(call pretty,"Target factory ram disk img format: $@")
 	$(MKBOOTIMG) --kernel $(TARGET_RAMDISK_KERNEL) --ramdisk $(INSTALLED_FACTORY_RAMDISK_FS) \
-            --base $(BOARD_KERNEL_BASE) $(RAMDISK_CMDLINE) --output $@
+            --base $(BOARD_KERNEL_BASE) $(BOARD_MKBOOTIMG_ARGS) $(RAMDISK_CMDLINE) --output $@
 
 endif
 
