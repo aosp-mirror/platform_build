@@ -5,9 +5,9 @@ pdk fusion: $(DEFAULT_GOAL)
 
 # What to build:
 # pdk fusion if:
-# 1) the platform.zip exists in the default location
+# 1) PDK_FUSION_PLATFORM_ZIP is passed in from the environment
 # or
-# 2) PDK_FUSION_PLATFORM_ZIP is passed in from the environment
+# 2) the platform.zip exists in the default location
 # or
 # 3) fusion is a command line build goal,
 #    PDK_FUSION_PLATFORM_ZIP is needed anyway, then do we need the 'fusion' goal?
@@ -16,13 +16,15 @@ pdk fusion: $(DEFAULT_GOAL)
 # or
 # 2) TARGET_BUILD_PDK is passed in from the environment
 
-# TODO: what's the best default location?
+# if PDK_FUSION_PLATFORM_ZIP is specified, do not override.
+ifndef PDK_FUSION_PLATFORM_ZIP
 _pdk_fusion_default_platform_zip := vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip
 ifneq (,$(wildcard $(_pdk_fusion_default_platform_zip)))
 $(info $(_pdk_fusion_default_platform_zip) found, do a PDK fusion build.)
 PDK_FUSION_PLATFORM_ZIP := $(_pdk_fusion_default_platform_zip)
 TARGET_BUILD_PDK := true
 endif
+endif # !PDK_FUSION_PLATFORM_ZIP
 
 ifneq (,$(filter pdk fusion, $(MAKECMDGOALS)))
 TARGET_BUILD_PDK := true
