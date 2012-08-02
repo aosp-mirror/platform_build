@@ -531,13 +531,15 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = common.GetBootableImage(
-      "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT")
+      "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT",
+      OPTIONS.source_info_dict)
   target_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.target_tmp, "BOOT")
   updating_boot = (source_boot.data != target_boot.data)
 
   source_recovery = common.GetBootableImage(
-      "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY")
+      "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY",
+      OPTIONS.source_info_dict)
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
   updating_recovery = (source_recovery.data != target_recovery.data)
