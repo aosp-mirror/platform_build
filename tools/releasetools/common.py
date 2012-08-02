@@ -196,7 +196,7 @@ def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     print "%-25s = (%s) %s" % (k, type(v).__name__, v)
 
-def BuildBootableImage(sourcedir, fs_config_file):
+def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
   """Take a kernel, cmdline, and ramdisk directory from the input (in
   'sourcedir'), and turn them into a boot image.  Return the image
   data, or None if sourcedir does not appear to contains files for
@@ -205,6 +205,9 @@ def BuildBootableImage(sourcedir, fs_config_file):
   if (not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK) or
       not os.access(os.path.join(sourcedir, "kernel"), os.F_OK)):
     return None
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
 
   ramdisk_img = tempfile.NamedTemporaryFile()
   img = tempfile.NamedTemporaryFile()
@@ -239,6 +242,10 @@ def BuildBootableImage(sourcedir, fs_config_file):
     cmd.append("--pagesize")
     cmd.append(open(fn).read().rstrip("\n"))
 
+  args = info_dict.get("mkbootimg_args", None)
+  if args and args.strip():
+    cmd.extend(args.split())
+
   cmd.extend(["--ramdisk", ramdisk_img.name,
               "--output", img.name])
 
@@ -256,7 +263,8 @@ def BuildBootableImage(sourcedir, fs_config_file):
   return data
 
 
-def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir):
+def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
+                     info_dict=None):
   """Return a File object (with name 'name') with the desired bootable
   image.  Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name
   'prebuilt_name', otherwise construct it from the source files in
@@ -270,7 +278,8 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir):
     print "building image from target_files %s..." % (tree_subdir,)
     fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
     return File(name, BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
-                                         os.path.join(unpack_dir, fs_config)))
+                                         os.path.join(unpack_dir, fs_config),
+                                         info_dict))
 
 
 def UnzipTemp(filename, pattern=None):
