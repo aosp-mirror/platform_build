@@ -29,6 +29,7 @@ PRODUCT_PACKAGES := \
     Email2 \
     Exchange2 \
     Gallery2 \
+    Imap2 \
     InputDevices \
     LatinIME \
     Launcher2 \
