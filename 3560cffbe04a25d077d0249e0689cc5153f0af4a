@@ -16,6 +16,24 @@
       "revId": "3560cffbe04a25d077d0249e0689cc5153f0af4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAIDH////Y\u003d",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1003296
+      },
+      "writtenOn": "2012-08-03T22:30:52Z",
+      "side": 1,
+      "message": "I will rebase this patch and submit once the patch from intel goes in.",
+      "parentUuid": "AAAICn////s\u003d",
+      "revId": "3560cffbe04a25d077d0249e0689cc5153f0af4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
