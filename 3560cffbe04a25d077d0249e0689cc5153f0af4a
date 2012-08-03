@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAICn////s\u003d",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-08-03T22:03:46Z",
+      "side": 1,
+      "message": "The logic has been changed  a little bit by the Intel folks:\nhttps://android-review.googlesource.com/#/c/39313/\nThough the change is not in yet.",
+      "revId": "3560cffbe04a25d077d0249e0689cc5153f0af4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
