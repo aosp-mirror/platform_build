@@ -315,7 +315,6 @@ GRANDFATHERED_USER_MODULES += \
 	libSR_Semproc \
 	libSR_Session \
 	libSR_Vocabulary \
-	libstagefright \
 	libstagefright_aacdec \
 	libstagefright_aacenc \
 	libstagefright_amrnb_common \
