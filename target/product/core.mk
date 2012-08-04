@@ -98,6 +98,8 @@ PRODUCT_PACKAGES := \
     libspeexresampler \
     libsqlite_jni \
     libssl \
+    libstagefright \
+    libstagefright_chromium_http \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
