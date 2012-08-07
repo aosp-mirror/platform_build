@@ -4026,20 +4026,23 @@ a.download-sdk {
 .landing-docs {
   margin:20px 0 0;
 }
-.landing-banner {
-  height:280px;
-}
 .landing-banner .col-6:first-child,
-.landing-docs .col-6:first-child {
+.landing-docs .col-6:first-child,
+.landing-docs .col-12 {
   margin-left:0;
+  min-height:280px;
 }
 .landing-banner .col-6:last-child,
-.landing-docs .col-6:last-child {
+.landing-docs .col-6:last-child,
+.landing-docs .col-12 {
   margin-right:0;
 }
 
 .landing-banner h1 {
   margin-top:0;
+}
+.landing-docs {
+  clear:left;
 }
 .landing-docs h3 {
   font-size:14px;
