@@ -44,17 +44,19 @@
   <?cs if:(!fullpage && !header.hide) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
+        <?cs if:page.landing.image ?><?cs # use two-column layout only if there's an image ?>
         <div class="col-6">
-          <?cs if:page.landing.image ?>
           <img src="<?cs var:toroot ?><?cs var:page.landing.image ?>" alt="" />
-          <?cs /if ?>
         </div>
         <div class="col-6">
+        <?cs /if ?>
           <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
           <p itemprop="description"><?cs var:page.landing.intro ?></p>
           
           <p><a class="next-page-link topic-start-link"></a></p>
+        <?cs if:page.landing.image ?>
         </div>
+        <?cs /if ?>
       </div>
     <?cs else ?>
       <h1 itemprop="name"><?cs var:page.title ?></h1>
