@@ -174,8 +174,6 @@ GRANDFATHERED_USER_MODULES += \
 	libandroid_runtime \
 	libandroid_servers \
 	libarity \
-	libastl \
-	libastl_host \
 	libaudio \
 	libaudioeffect_jni \
 	libaudioflinger \
