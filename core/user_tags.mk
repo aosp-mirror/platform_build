@@ -145,7 +145,6 @@ GRANDFATHERED_USER_MODULES += \
 	hierarchyviewerlib \
 	hist_trace \
 	hosttestlib \
-	icudata \
 	idegen \
 	ime \
 	init \
