@@ -651,7 +651,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/tmp
 	echo Copying baseline ramdisk...
 	cp -R $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
-	rm $(TARGET_RECOVERY_ROOT_OUT)/init*.rc
+	rm $(TARGET_RECOVERY_ROOT_OUT)/init.rc
 	echo Modifying ramdisk contents...
 	cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
 	cp -f $(recovery_binary) $(TARGET_RECOVERY_ROOT_OUT)/sbin/
