@@ -67,6 +67,7 @@ $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(AAPT)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
 	$(add-dex-to-package)
+	$(add-carried-java-resources)
 ifneq ($(extra_jar_args),)
 	$(add-java-resources-to-package)
 endif

@@ -376,6 +376,7 @@ endif
 ifneq ($(full_classes_jar),)
 	$(add-dex-to-package)
 endif
+	$(add-carried-java-resources)
 ifneq ($(extra_jar_args),)
 	$(add-java-resources-to-package)
 endif
