@@ -413,6 +413,10 @@ endif
 ifneq ($(full_classes_jar),)
 	$(add-dex-to-package)
 endif
+	$(add-carried-java-resources)
+ifneq ($(extra_jar_args),)
+	$(add-java-resources-to-package)
+endif
 	$(sign-package)
 	@# Alignment must happen after all other zip operations.
 	$(align-package)
