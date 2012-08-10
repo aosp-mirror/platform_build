@@ -23,6 +23,13 @@ else ifeq ($(TARGET_ARCH),x86)
         ABP:=$(ABP):$(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/x86/i686-linux-android-4.6/bin
     endif
 endif
+
+# Add the mips toolchain bin dir if it actually exists
+ifneq ($(wildcard $(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/mips/mipsel-linux-android-4.6/bin),)
+    # this should be copied to HOST_OUT_EXECUTABLES instead
+    ABP:=$(ABP):$(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/mips/mipsel-linux-android-4.6/bin
+endif
+
 ANDROID_BUILD_PATHS := $(ABP)
 ANDROID_PREBUILTS := prebuilt/$(HOST_PREBUILT_TAG)
 ANDROID_GCC_PREBUILTS := prebuilts/gcc/$(HOST_PREBUILT_TAG)

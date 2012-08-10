@@ -33,7 +33,7 @@ endif
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
-# compiles except for arm, so the HOST is whatever we are
+# compiles except for arm/mips, so the HOST is whatever we are
 # running on
 
 UNAME := $(shell uname -sm)
@@ -124,13 +124,10 @@ endif
 # Set up configuration for target machine.
 # The following must be set:
 # 		TARGET_OS = { linux }
-# 		TARGET_ARCH = { arm | x86 }
+# 		TARGET_ARCH = { arm | x86 | mips }
 
-
-ifeq ($(TARGET_ARCH),)
-TARGET_ARCH := arm
-endif
 TARGET_OS := linux
+# TARGET_ARCH should be set by BoardConfig.mk and will be checked later
 
 # the target build type defaults to release
 ifneq ($(TARGET_BUILD_TYPE),debug)
