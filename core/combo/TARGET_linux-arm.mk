@@ -138,6 +138,7 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
 			-Wl,-z,relro \
 			-Wl,-z,now \
+			-Wl,--warn-shared-textrel \
 			-Wl,--icf=safe \
 			$(arch_variant_ldflags)
 
