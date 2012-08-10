@@ -319,13 +319,6 @@ else
 COLUMN:= column
 endif
 
-dir := $(shell uname)
-ifeq ($(HOST_OS),windows)
-dir := $(HOST_OS)
-endif
-ifeq ($(HOST_OS),darwin)
-dir := $(HOST_OS)-$(HOST_ARCH)
-endif
 OLD_FLEX := prebuilts/misc/$(HOST_PREBUILT_TAG)/flex/flex-2.5.4a$(HOST_EXECUTABLE_SUFFIX)
 
 ifeq ($(HOST_OS),darwin)
@@ -437,8 +430,8 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
 TARGET_AVAILABLE_NDK_VERSIONS := $(call numerically_sort,\
-    $(patsubst $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r%,%, \
-    $(wildcard $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r*)))
+    $(patsubst $(HISTORICAL_NDK_VERSIONS_ROOT)/%/platforms,%, \
+    $(wildcard $(HISTORICAL_NDK_VERSIONS_ROOT)/*/platforms)))
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.txt
 
