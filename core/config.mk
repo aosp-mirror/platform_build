@@ -148,6 +148,9 @@ ifneq ($(words $(board_config_mk)),1)
   $(error Multiple board config files for TARGET_DEVICE $(TARGET_DEVICE): $(board_config_mk))
 endif
 include $(board_config_mk)
+ifeq ($(TARGET_ARCH),)
+  $(error TARGET_ARCH not defined by board config: $(board_config_mk))
+endif
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
