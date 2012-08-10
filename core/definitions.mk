@@ -924,15 +924,13 @@ $(hide) $(PRIVATE_CC) \
 	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
 	    $(PRIVATE_ARM_CFLAGS) \
 	 ) \
-	$(PRIVATE_CFLAGS) \
-	$(1) \
-	$(PRIVATE_DEBUG_CFLAGS) \
+	 $(1) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
 
 define transform-c-to-o-no-deps
 @echo "target $(PRIVATE_ARM_MODE) C: $(PRIVATE_MODULE) <= $<"
-$(call transform-c-or-s-to-o-no-deps, )
+$(call transform-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
 endef
 
 define transform-s-to-o-no-deps
@@ -958,7 +956,7 @@ endef
 
 define transform-m-to-o-no-deps
 @echo "target ObjC: $(PRIVATE_MODULE) <= $<"
-$(call transform-c-or-s-to-o-no-deps)
+$(call transform-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
 endef
 
 define transform-m-to-o
@@ -1013,15 +1011,13 @@ $(hide) $(PRIVATE_CC) \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(HOST_GLOBAL_CFLAGS) \
 	 ) \
-	$(PRIVATE_CFLAGS) \
 	$(1) \
-	$(PRIVATE_DEBUG_CFLAGS) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
 
 define transform-host-c-to-o-no-deps
 @echo "host C: $(PRIVATE_MODULE) <= $<"
-$(call transform-host-c-or-s-to-o-no-deps, )
+$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
 endef
 
 define transform-host-s-to-o-no-deps
@@ -1045,7 +1041,7 @@ endef
 
 define transform-host-m-to-o-no-deps
 @echo "host ObjC: $(PRIVATE_MODULE) <= $<"
-$(call transform-host-c-or-s-to-o-no-deps)
+$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
 endef
 
 define transform-host-m-to-o
