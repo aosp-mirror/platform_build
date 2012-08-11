@@ -28,6 +28,7 @@ PRODUCT_PACKAGES := \
     DrmProvider \
     Email2 \
     Exchange2 \
+    FusedLocation \
     Gallery2 \
     Imap2 \
     InputDevices \
