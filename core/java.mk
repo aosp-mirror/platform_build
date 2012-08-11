@@ -76,6 +76,21 @@ intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 # Emma source code coverage
+ifeq ($(EMMA_FULL_APP_INSTRUMENT),true)
+  # doing a full emma instrument here, i.e. all app packages instrumented
+  EMMA_INSTRUMENT := true
+  # do not instrument modules that are not app packages
+  ifneq ($(LOCAL_MODULE_CLASS),APPS)
+    LOCAL_NO_EMMA_INSTRUMENT := true
+    LOCAL_NO_EMMA_COMPILE := true
+  endif
+  # do not instrument modules that are marked tests
+  ifeq ($(LOCAL_MODULE_TAGS),tests)
+    LOCAL_NO_EMMA_INSTRUMENT := true
+    LOCAL_NO_EMMA_COMPILE := true
+  endif
+endif
+
 ifneq ($(EMMA_INSTRUMENT),true)
 LOCAL_NO_EMMA_INSTRUMENT := true
 LOCAL_NO_EMMA_COMPILE := true
