@@ -53,6 +53,8 @@ ifeq ($(TARGET_ARCH),x86)
     -mfpmath=sse \
     -mbionic
 endif
+#TODO: split out the asflags from CLANG_CONFIG_EXTRA_CFLAGS.
+CLANG_CONFIG_EXTRA_ASFLAGS := $(CLANG_CONFIG_EXTRA_CFLAGS)
 
 CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include $(TARGET_OUT_HEADERS)/clang
 

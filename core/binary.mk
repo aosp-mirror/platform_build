@@ -140,6 +140,7 @@ endif
 my_compiler_dependencies :=
 ifeq ($(strip $(LOCAL_CLANG)),true)
   LOCAL_CFLAGS += $(CLANG_CONFIG_EXTRA_CFLAGS)
+  LOCAL_ASFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
   LOCAL_LDFLAGS += $(CLANG_CONFIG_EXTRA_LDFLAGS)
   my_compiler_dependencies := $(CLANG) $(CLANG_CXX)
 endif
