@@ -148,3 +148,12 @@ ifeq ($(WITH_HOST_DALVIK),true)
         zoneinfo-host.idx \
         zoneinfo-host.version
 endif
+
+ifeq ($(HAVE_SELINUX),true)
+    PRODUCT_PACKAGES += \
+        sepolicy \
+        file_contexts \
+        seapp_contexts \
+        property_contexts \
+        mac_permissions.xml
+endif
