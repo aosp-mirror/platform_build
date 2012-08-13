@@ -352,13 +352,9 @@ INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
-ifeq ($(HAVE_SELINUX),true)
-SELINUX_DEPENDS := sepolicy file_contexts seapp_contexts property_contexts mac_permissions.xml
-endif
-
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
-$(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) $(SELINUX_DEPENDS) | $(MINIGZIP)
+$(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) | $(MINIGZIP)
 	$(call pretty,"Target ram disk: $@")
 	$(hide) $(MKBOOTFS) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $@
 
@@ -710,7 +706,7 @@ ifdef is_tests_build
 #    $(tests_MODULES))
 endif
 
-FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS) $(SELINUX_DEPENDS)
+FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
 # -----------------------------------------------------------------
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
@@ -1161,7 +1157,7 @@ INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS) $(SELINUX_DEPENDS)
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	@echo "Package OTA: $@"
 	$(hide) ./build/tools/releasetools/ota_from_target_files -v \
 	   -p $(HOST_OUT) \
@@ -1189,7 +1185,7 @@ else
 $(INTERNAL_UPDATE_PACKAGE_TARGET): extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
 endif
 
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS) $(SELINUX_DEPENDS)
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	@echo "Package: $@"
 	$(hide) ./build/tools/releasetools/img_from_target_files -v \
 	   -s $(extensions) \
