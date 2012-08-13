@@ -1480,7 +1480,6 @@ endef
 define transform-java-to-classes.jar
 @echo "target Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
 $(call compile-java,$(TARGET_JAVAC),$(PRIVATE_BOOTCLASSPATH))
-$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 endef
 
 # Override the above definitions if we want to do incremetal javac
@@ -1613,10 +1612,25 @@ cp $(PRIVATE_DEX_FILE) $$_adtp_classes_dex && \
 $(AAPT) add -k $@ $$_adtp_classes_dex && rm -f $$_adtp_classes_dex)
 endef
 
+# Add java resources added by the current module.
+#
 define add-java-resources-to-package
 $(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(dir $@)jar-arg-list)
 $(hide) jar uf $@ @$(dir $@)jar-arg-list
 @rm -f $(dir $@)jar-arg-list
+endef
+
+# Add java resources carried by static Java libraries.
+#
+define add-carried-java-resources
+$(hide) if [ -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) ] ; then \
+    java_res_jar_flags=$$(find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -type f -a -not -name "*.class" \
+        | sed -e "s?^$(PRIVATE_CLASS_INTERMEDIATES_DIR)/? -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ?"); \
+    if [ -n "$$java_res_jar_flags" ] ; then \
+        echo $$java_res_jar_flags >$(dir $@)java_res_jar_flags; \
+        jar uf $@ $$java_res_jar_flags; \
+    fi; \
+fi
 endef
 
 # Sign a package using the specified key/cert.
