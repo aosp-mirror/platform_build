@@ -53,7 +53,7 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
-  PLATFORM_SDK_VERSION := 15
+  PLATFORM_SDK_VERSION := 16
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
@@ -96,4 +96,3 @@ ifeq "" "$(BUILD_NUMBER)"
   # anyone trying to parse it as an integer will probably get "0".
   BUILD_NUMBER := eng.$(USER).$(shell date +%Y%m%d.%H%M%S)
 endif
-
