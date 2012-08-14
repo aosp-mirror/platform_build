@@ -433,10 +433,6 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
     $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
-TARGET_AVAILABLE_NDK_VERSIONS := $(call numerically_sort,\
-    $(patsubst $(HISTORICAL_NDK_VERSIONS_ROOT)/%/platforms,%, \
-    $(wildcard $(HISTORICAL_NDK_VERSIONS_ROOT)/*/platforms)))
-
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.txt
 
 # This is the standard way to name a directory containing prebuilt target
