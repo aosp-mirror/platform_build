@@ -506,12 +506,10 @@ $(installed_odex) : $(built_odex) | $(ACP)
 $(LOCAL_INSTALLED_MODULE) : $(installed_odex)
 endif
 
-# All host modules that are not tagged with optional are automatically installed.
+# All host modules are automatically installed.
 # Save the installed files in ALL_HOST_INSTALLED_FILES.
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
-  ifneq ($(filter optional,$(LOCAL_MODULE_TAGS)),optional)
-    ALL_HOST_INSTALLED_FILES += $(LOCAL_INSTALLED_MODULE)
-  endif
+  ALL_HOST_INSTALLED_FILES += $(LOCAL_INSTALLED_MODULE)
   ifneq ($(filter debug eng tests, $(LOCAL_MODULE_TAGS)),)
     $(error $(LOCAL_MODULE_MAKEFILE): Host module "$(LOCAL_MODULE)" has useless module tags: $(filter debug eng tests, $(LOCAL_MODULE_TAGS)). It will be installed anyway.)
   endif
