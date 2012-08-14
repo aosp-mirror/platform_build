@@ -7,6 +7,9 @@
 
 my_ndk_version_root :=
 ifdef LOCAL_SDK_VERSION
+  ifdef LOCAL_NDK_VERSION
+    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION is now retired.)
+  endif
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION can not be used in host module)
   endif
