@@ -46,7 +46,7 @@ my_target_fdo_lib := $(TARGET_FDO_LIB)
 my_target_libgcc := $(TARGET_LIBGCC)
 my_target_crtbegin_so_o := $(TARGET_CRTBEGIN_SO_O)
 my_target_crtend_so_o := $(TARGET_CRTEND_SO_O)
-ifdef LOCAL_NDK_VERSION
+ifdef LOCAL_SDK_VERSION
 # Make sure the prebuilt NDK paths are put ahead of the TARGET_GLOBAL_LD_DIRS,
 # so we don't have race condition when the system libraries (such as libc, libstdc++) are also built in the tree.
 my_target_global_ld_dirs := \
