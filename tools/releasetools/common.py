@@ -747,10 +747,11 @@ DIFF_PROGRAM_BY_EXT = {
     }
 
 class Difference(object):
-  def __init__(self, tf, sf):
+  def __init__(self, tf, sf, diff_program=None):
     self.tf = tf
     self.sf = sf
     self.patch = None
+    self.diff_program = diff_program
 
   def ComputePatch(self):
     """Compute the patch (as a string of data) needed to turn sf into
@@ -759,8 +760,11 @@ class Difference(object):
     tf = self.tf
     sf = self.sf
 
-    ext = os.path.splitext(tf.name)[1]
-    diff_program = DIFF_PROGRAM_BY_EXT.get(ext, "bsdiff")
+    if self.diff_program:
+      diff_program = self.diff_program
+    else:
+      ext = os.path.splitext(tf.name)[1]
+      diff_program = DIFF_PROGRAM_BY_EXT.get(ext, "bsdiff")
 
     ttemp = tf.WriteToTemp()
     stemp = sf.WriteToTemp()
