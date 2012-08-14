@@ -22,6 +22,7 @@ PRODUCT_PACKAGES := \
 	DeskClock \
 	Email2 \
 	Exchange2 \
+	FusedLocation \
 	Imap2 \
 	Gallery \
 	Music \
