@@ -5,30 +5,17 @@
 ## The list of object files is exported in $(all_objects).
 ###########################################################
 
-######################################
-## Sanity check for LOCAL_NDK_VERSION
-######################################
 my_ndk_version_root :=
-ifdef LOCAL_NDK_VERSION
+ifdef LOCAL_SDK_VERSION
   ifdef LOCAL_IS_HOST_MODULE
-    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can not be used in host module)
+    $(error $(LOCAL_PATH): LOCAL_SDK_VERSION can not be used in host module)
   endif
   ifneq ($(filter-out SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
-    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION can only be used to build target shared/static libraries, \
+    $(error $(LOCAL_PATH): NDK can only be used to build target shared/static libraries, \
           while your module is of class $(LOCAL_MODULE_CLASS))
   endif
-  ifeq ($(filter $(LOCAL_NDK_VERSION),$(TARGET_AVAILABLE_NDK_VERSIONS)),)
-    $(error $(LOCAL_PATH): Invalid LOCAL_NDK_VERSION '$(LOCAL_NDK_VERSION)' \
-           Choices are $(TARGET_AVAILABLE_NDK_VERSIONS))
-  endif
-  ifndef LOCAL_SDK_VERSION
-    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION must be defined with LOCAL_SDK_VERSION)
-  endif
-  my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
-  my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
-  ifeq ($(wildcard $(my_ndk_version_root)),)
-    $(error $(LOCAL_PATH): ndk version root does not exist: $(my_ndk_version_root))
-  endif
+  my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources
+  my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
 
   # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
   # See ndk/docs/CPLUSPLUS-SUPPORT.html
@@ -40,7 +27,7 @@ ifdef LOCAL_NDK_VERSION
     LOCAL_NDK_STL_VARIANT := system
   endif
   ifneq (1,$(words $(filter system stlport_static stlport_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
-    $(error $(LOCAL_PATH): Unkown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
+    $(error $(LOCAL_PATH): Unknown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
   endif
   ifeq (system,$(LOCAL_NDK_STL_VARIANT))
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/system/include
@@ -58,7 +45,7 @@ ifdef LOCAL_NDK_VERSION
     # LOCAL_NDK_STL_VARIANT is gnustl_static
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_CPU_ABI)/include \
                                $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/include
-    my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_CPU_ABI)/libstdc++.a
+    my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_CPU_ABI)/libgnustl_static.a
   endif
   endif
 endif
@@ -106,7 +93,7 @@ ifneq (,$(filter libcutils libutils,$(LOCAL_WHOLE_STATIC_LIBRARIES)))
   LOCAL_WHOLE_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_WHOLE_STATIC_LIBRARIES))
 endif
 
-ifdef LOCAL_NDK_VERSION
+ifdef LOCAL_SDK_VERSION
   # Get the list of INSTALLED libraries as module names.
   # We can not compute the full path of the LOCAL_SHARED_LIBRARIES for
   # they may cusomize their install path with LOCAL_MODULE_PATH
@@ -133,7 +120,7 @@ ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
 endif
 
 # Add in libcompiler-rt for all regular device builds
-ifeq (,$(LOCAL_NDK_VERSION)$(LOCAL_IS_HOST_MODULE)$(BUILD_TINY_ANDROID))
+ifeq (,$(LOCAL_SDK_VERSION)$(LOCAL_IS_HOST_MODULE)$(BUILD_TINY_ANDROID))
   LOCAL_STATIC_LIBRARIES += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 
@@ -177,7 +164,7 @@ else
 my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
 endif
 
-ifdef LOCAL_NDK_VERSION
+ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
 my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
 # TODO: more reliable way to remove platform stuff.
@@ -571,7 +558,7 @@ all_objects := \
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates)
 
-ifndef LOCAL_NDK_VERSION
+ifndef LOCAL_SDK_VERSION
   LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 endif
 
@@ -616,7 +603,7 @@ include $(BUILD_COPY_HEADERS)
 so_suffix := $($(my_prefix)SHLIB_SUFFIX)
 a_suffix := $($(my_prefix)STATIC_LIB_SUFFIX)
 
-ifdef LOCAL_NDK_VERSION
+ifdef LOCAL_SDK_VERSION
 built_shared_libraries := \
     $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
@@ -642,7 +629,7 @@ built_static_libraries := \
       $(call intermediates-dir-for, \
         STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE))/$(lib)$(a_suffix))
 
-ifdef LOCAL_NDK_VERSION
+ifdef LOCAL_SDK_VERSION
 built_static_libraries += $(my_ndk_stl_static_lib)
 endif
 
