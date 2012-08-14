@@ -312,7 +312,7 @@ $(error LOCAL_NDK_VERSION has to be defined together with LOCAL_NDK_STL_VARIANT,
     LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
 endif
 jni_shared_libraries += \
-    $(HISTORICAL_NDK_VERSIONS_ROOT)/android-ndk-r$(LOCAL_NDK_VERSION)/sources/cxx-stl/stlport/libs/$(TARGET_CPU_ABI)/libstlport_shared.so
+    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources/cxx-stl/stlport/libs/$(TARGET_CPU_ABI)/libstlport_shared.so
 endif
 
 # Set the abi directory used by the local JNI shared libraries.
