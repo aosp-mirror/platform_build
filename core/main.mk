@@ -780,10 +780,6 @@ droidcore: files \
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
-ifeq ($(EMMA_INSTRUMENT),true)
-  $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
-endif
-
 # Dist for droid if droid is among the cmd goals, or no cmd goal is given.
 ifneq ($(filter droid,$(MAKECMDGOALS))$(filter ||,|$(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))|),)
 
@@ -798,10 +794,15 @@ ifneq ($(TARGET_BUILD_APPS),)
     unbundled_build_modules := $(TARGET_BUILD_APPS)
   endif
 
+  apps_only_installed_files := $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED))
   # dist the unbundled app.
-  $(call dist-for-goals,apps_only, \
-    $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED)) \
-  )
+  $(call dist-for-goals,apps_only, $(apps_only_installed_files))
+
+  ifeq ($(EMMA_INSTRUMENT),true)
+    $(EMMA_META_ZIP) : $(apps_only_installed_files)
+
+    $(call dist-for-goals,apps_only, $(EMMA_META_ZIP))
+  endif
 
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
@@ -828,6 +829,12 @@ else # TARGET_BUILD_APPS
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
       $(PACKAGE_STATS_FILE) \
     )
+  endif
+
+  ifeq ($(EMMA_INSTRUMENT),true)
+    $(EMMA_META_ZIP) : $(INSTALLED_SYSTEMIMAGE)
+
+    $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
   endif
 
 # Building a full system-- the default is to build droidcore
