@@ -1287,11 +1287,15 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
 # A zip of emma code coverage meta files. Generated for fully emma
 # instrumented build.
 #
+ifeq (true,$(EMMA_INSTRUMENT))
 EMMA_META_ZIP := $(PRODUCT_OUT)/emma_meta.zip
-$(EMMA_META_ZIP): $(INSTALLED_SYSTEMIMAGE)
+# the dependency will be set up later in build/core/main.mk.
+$(EMMA_META_ZIP) :
 	@echo "Collecting Emma coverage meta files."
 	$(hide) find $(TARGET_COMMON_OUT_ROOT) -name "coverage.em" | \
 		zip -@ -q $@
+
+endif # EMMA_INSTRUMENT=true
 
 # -----------------------------------------------------------------
 # dalvik something
