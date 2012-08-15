@@ -153,6 +153,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     Bluetooth \
+    FusedLocation \
     InputDevices \
     LatinIME \
     Launcher2 \
@@ -200,7 +201,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PACKAGES += \
     drmserver \
     libdrmframework \
-    libdrmframework_jni
+    libdrmframework_jni \
+    WAPPushManager
 
 
 # Additional settings used in all AOSP builds
