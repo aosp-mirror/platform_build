@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAIbX///pw\u003d",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1130,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-08-15T21:12:07Z",
+      "side": 1,
+      "message": "I think you need to move them to the makefile, presumably bulid/core/config.mk, because envsetup.sh is not a musthave to do a build. For example, our buildbots actually don\u0027t run envsetup.sh.",
+      "revId": "9ff37c1b46375b3d1bcba86d87aece9c5b8f3b84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
