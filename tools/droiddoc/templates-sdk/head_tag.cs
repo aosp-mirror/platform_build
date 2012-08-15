@@ -20,11 +20,6 @@ href="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//fonts.googleapis.
 type="text/css">
 <?cs /if ?>
 
-<?cs if:carousel ?>
-<!-- homepage carousel -->
-<link href="<?cs var:toroot ?>assets/css/home.css" rel="stylesheet" type="text/css">
-<?cs /if ?>
-
 <!-- BASIC JAVASCRIPT -->
 <script src="<?cs var:toroot ?>assets/js/global-libraries-combined.js"
         type="text/javascript"></script>
