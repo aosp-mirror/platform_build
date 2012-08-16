@@ -161,31 +161,29 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ###########################################################
 ## Define PRIVATE_ variables from global vars
 ###########################################################
-ifeq ($(strip $(LOCAL_CLANG)),true)
-my_target_global_cflags := $(TARGET_GLOBAL_CLANG_FLAGS)
-else
-my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
-endif
-
 ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
 my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
-# TODO: more reliable way to remove platform stuff.
-my_target_global_cflags := $(filter-out -include -I system/%, $(my_target_global_cflags))
-my_target_global_cppflags := $(filter-out -include -I system/%, $(TARGET_GLOBAL_CPPFLAGS))
+
+# filter out including of AndroidConfig.h in system/core.
+TARGET_GLOBAL_CFLAGS_NO_ANDCONF ?= $(subst $(TARGET_ANDROID_CONFIG_CFLAGS),,\
+    $(TARGET_GLOBAL_CFLAGS))
+my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS_NO_ANDCONF)
 else
 my_target_project_includes := $(TARGET_PROJECT_INCLUDES)
 my_target_c_includes := $(TARGET_C_INCLUDES)
-my_target_global_cflags := $(my_target_global_cflags)
-my_target_global_cppflags := $(TARGET_GLOBAL_CPPFLAGS)
 ifeq ($(strip $(LOCAL_CLANG)),true)
-  my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
-endif
-endif
+my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
+my_target_global_cflags := $(TARGET_GLOBAL_CLANG_FLAGS)
+else
+my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
+endif # LOCAL_CLANG
+endif # LOCAL_SDK_VERSION
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(TARGET_GLOBAL_CPPFLAGS)
 
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types

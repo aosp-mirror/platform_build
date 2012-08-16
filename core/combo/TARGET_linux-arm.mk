@@ -60,7 +60,7 @@ ifneq ($(wildcard $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)),)
         TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@
     else
         TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@ && \
-	    $(TARGET_OBJCOPY) --add-gnu-debuglink=$< $@
+            $(TARGET_OBJCOPY) --add-gnu-debuglink=$< $@
     endif
 endif
 
@@ -98,9 +98,6 @@ ifeq ($(FORCE_ARM_DEBUGGING),true)
   TARGET_thumb_CFLAGS += -marm -fno-omit-frame-pointer
 endif
 
-android_config_h := $(call select-android-config-h,linux-arm)
-arch_include_dir := $(dir $(android_config_h))
-
 TARGET_GLOBAL_CFLAGS += \
 			-msoft-float -fpic -fPIE \
 			-ffunction-sections \
@@ -111,9 +108,11 @@ TARGET_GLOBAL_CFLAGS += \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=1 \
 			-fno-short-enums \
-			$(arch_variant_cflags) \
-			-include $(android_config_h) \
-			-I $(arch_include_dir)
+			$(arch_variant_cflags)
+
+android_config_h := $(call select-android-config-h,linux-arm)
+TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
+TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
 
 # This warning causes dalvik not to build with gcc 4.6.x and -Werror.
 # We cannot turn it off blindly since the option is not available
@@ -147,9 +146,9 @@ TARGET_GLOBAL_LDFLAGS += \
 # since sometimes thumb-interwork appears to be default), we
 # specifically disable when thumb support is unavailable.
 ifeq ($(ARCH_ARM_HAVE_THUMB_SUPPORT),true)
-TARGET_GLOBAL_CFLAGS +=	-mthumb-interwork
+TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 else
-TARGET_GLOBAL_CFLAGS +=	-mno-thumb-interwork
+TARGET_GLOBAL_CFLAGS += -mno-thumb-interwork
 endif
 
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
@@ -274,7 +273,7 @@ endef
 define transform-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
 	-Wl,-dynamic-linker,/system/bin/linker \
-    -Wl,--gc-sections \
+	-Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \
@@ -297,7 +296,7 @@ endef
 
 define transform-o-to-static-executable-inner
 $(hide) $(PRIVATE_CXX) -nostdlib -Bstatic \
-    -Wl,--gc-sections \
+	-Wl,--gc-sections \
 	-o $@ \
 	$(TARGET_GLOBAL_LD_DIRS) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(TARGET_CRTBEGIN_STATIC_O)) \
