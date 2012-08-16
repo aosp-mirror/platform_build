@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAIgn///0o\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 663,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-16T20:17:47Z",
+      "side": 1,
+      "message": "Instead of adding a ifndef in the middle of this recipe I think you should break out everything to this line into something like a BUILT_RECOVERYRAMDISK_TARGET (like BUILT_RAMDISK_TARGET) and then wrap the entire INSTALLED_RECOVERYIMAGE_TARGET in your ifndef.\n\nThat way the BOARD_CUSTOM_BOOTIMG_MK can define it\u0027s own rules for how to make INSTALLED_RECOVERYIMAGE_TARGET -- like you do for INSTALLED_BOOTIMAGE_TARGET.\n\nIf you do it like this it\u0027s harder to read and you will have a make rule that doesn\u0027t produce it\u0027s target file.",
+      "revId": "f0113099fd104ae7ed32962a81b25a43d7b8b73c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
