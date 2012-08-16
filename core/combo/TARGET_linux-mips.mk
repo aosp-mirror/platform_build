@@ -60,7 +60,7 @@ ifneq ($(wildcard $(TARGET_TOOLS_PREFIX)gcc$(HOST_EXECUTABLE_SUFFIX)),)
         TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@
     else
         TARGET_STRIP_COMMAND = $(TARGET_STRIP) --strip-all $< -o $@ && \
-	    $(TARGET_OBJCOPY) --add-gnu-debuglink=$< $@
+            $(TARGET_OBJCOPY) --add-gnu-debuglink=$< $@
     endif
 endif
 
@@ -78,9 +78,6 @@ ifeq ($(FORCE_MIPS_DEBUGGING),true)
   TARGET_mips_CFLAGS += -fno-omit-frame-pointer
 endif
 
-android_config_h := $(call select-android-config-h,linux-mips)
-arch_include_dir := $(dir $(android_config_h))
-
 TARGET_GLOBAL_CFLAGS += \
 			$(TARGET_mips_CFLAGS) \
 			-Ulinux -U__unix -U__unix__ -Umips \
@@ -89,9 +86,11 @@ TARGET_GLOBAL_CFLAGS += \
 			-fdata-sections \
 			-funwind-tables \
 			-Werror=format-security \
-			$(arch_variant_cflags) \
-			-include $(android_config_h) \
-			-I $(arch_include_dir)
+			$(arch_variant_cflags)
+
+android_config_h := $(call select-android-config-h,linux-mips)
+TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
+TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
 
 # This warning causes dalvik not to build with gcc 4.6.x and -Werror.
 # We cannot turn it off blindly since the option is not available
