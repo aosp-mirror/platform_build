@@ -103,7 +103,4 @@ GRANDFATHERED_ALL_PREBUILT := \
 	ueventd.rc \
 	ueventd.stingray.rc \
 	vold.fstab \
-	wl1271.bin \
-	zoneinfo.dat \
-	zoneinfo.idx \
-	zoneinfo.version
+	wl1271.bin
