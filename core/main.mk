@@ -224,13 +224,11 @@ include $(BUILD_SYSTEM)/definitions.mk
 # Bring in dex_preopt.mk
 include $(BUILD_SYSTEM)/dex_preopt.mk
 
-ifneq ($(filter eng user userdebug,$(MAKECMDGOALS)),)
+ifneq ($(filter user userdebug eng,$(MAKECMDGOALS)),)
 $(info ***************************************************************)
 $(info ***************************************************************)
-$(info Don't pass '$(filter eng user userdebug tests,$(MAKECMDGOALS))' on \
+$(info Do not pass '$(filter user userdebug eng tests,$(MAKECMDGOALS))' on \
 		the make command line.)
-# XXX The single quote on this line fixes gvim's syntax highlighting.
-# Without which, the rest of this file is impossible to read.
 $(info Set TARGET_BUILD_VARIANT in buildspec.mk, or use lunch or)
 $(info choosecombo.)
 $(info ***************************************************************)
@@ -279,13 +277,13 @@ endif # HAVE_SELINUX
 
 ## user/userdebug ##
 
-user_variant := $(filter userdebug user,$(TARGET_BUILD_VARIANT))
+user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 enable_target_debugging := true
+tags_to_install :=
 ifneq (,$(user_variant))
   # Target is secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
 
-  tags_to_install := user
   ifeq ($(user_variant),userdebug)
     # Pick up some extra useful tools
     tags_to_install += debug
@@ -333,7 +331,7 @@ endif # !enable_target_debugging
 ## eng ##
 
 ifeq ($(TARGET_BUILD_VARIANT),eng)
-tags_to_install := user debug eng
+tags_to_install := debug eng
 ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))),)
   # Don't require the setup wizard on eng builds
   ADDITIONAL_BUILD_PROPERTIES := $(filter-out ro.setupwizard.mode=%,\
@@ -345,7 +343,7 @@ endif
 ## tests ##
 
 ifeq ($(TARGET_BUILD_VARIANT),tests)
-tags_to_install := user debug eng tests
+tags_to_install := debug eng tests
 endif
 
 ## sdk ##
@@ -362,7 +360,7 @@ endif
 
 # TODO: this should be eng I think.  Since the sdk is built from the eng
 # variant.
-tags_to_install := user debug eng
+tags_to_install := debug eng
 ADDITIONAL_BUILD_PROPERTIES += xmpp.auto-presence=true
 ADDITIONAL_BUILD_PROPERTIES += ro.config.nocheckin=yes
 else # !sdk
@@ -591,51 +589,55 @@ add-required-deps :=
 
 # -------------------------------------------------------------------
 # Figure out our module sets.
-
+#
 # Of the modules defined by the component makefiles,
 # determine what we actually want to build.
-Default_MODULES := $(sort $(ALL_DEFAULT_INSTALLED_MODULES) \
-                          $(CUSTOM_MODULES))
-# TODO: Remove the 3 places in the tree that use
-# ALL_DEFAULT_INSTALLED_MODULES and get rid of it from this list.
 
 ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
   # by the appropriate product definition file, which was included
   # by product_config.make.
-  user_PACKAGES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
-  $(call expand-required-modules,user_PACKAGES,$(user_PACKAGES))
-  user_PACKAGES := $(call module-installed-files, $(user_PACKAGES))
+  product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  $(call expand-required-modules,product_MODULES,$(product_MODULES))
+  product_FILES := $(call module-installed-files, $(product_MODULES))
+  ifeq (0,1)
+    $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
+    $(foreach p,$(product_FILES),$(info :   $(p)))
+    $(error done)
+  endif
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
   # requested by the product, because we probably won't have rules
   # to build them.
-  user_PACKAGES :=
+  product_FILES :=
 endif
-# Use tags to get the non-APPS user modules.  Use the product
-# definition files to get the APPS user modules.
-user_MODULES := $(sort $(call get-tagged-modules,user shell_$(TARGET_SHELL)))
-user_MODULES := $(user_MODULES) $(user_PACKAGES)
 
-eng_MODULES := $(sort \
-        $(call get-tagged-modules,eng) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG)) \
-    )
+# When modules are tagged with debug eng or tests, they are installed
+# for those variants regardless of what the product spec says.
 debug_MODULES := $(sort \
         $(call get-tagged-modules,debug) \
         $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG)) \
+    )
+eng_MODULES := $(sort \
+        $(call get-tagged-modules,eng) \
+        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG)) \
     )
 tests_MODULES := $(sort \
         $(call get-tagged-modules,tests) \
         $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
     )
 
-ifeq ($(strip $(tags_to_install)),)
-$(error ASSERTION FAILED: tags_to_install should not be empty)
-endif
-modules_to_install := $(sort $(Default_MODULES) \
-          $(foreach tag,$(tags_to_install),$($(tag)_MODULES)))
+# TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
+# and get rid of it from this list.
+# TODO: The shell is chosen by magic.  Do we still need this?
+modules_to_install := $(sort \
+    $(ALL_DEFAULT_INSTALLED_MODULES) \
+    $(product_FILES) \
+    $(foreach tag,$(tags_to_install),$($(tag)_MODULES)) \
+    $(call get-tagged-modules, shell_$(TARGET_SHELL)) \
+    $(CUSTOM_MODULES) \
+  )
 
 # Some packages may override others using LOCAL_OVERRIDES_PACKAGES.
 # Filter out (do not install) any overridden packages.
@@ -666,19 +668,21 @@ ifdef is_sdk_build
   # Ensure every module listed in PRODUCT_PACKAGES* gets something installed
   # TODO: Should we do this for all builds and not just the sdk?
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
+# Install all of the host modules
+modules_to_install += $(sort $(modules_to_install) $(ALL_HOST_INSTALLED_FILES))
 
 # build/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
@@ -690,6 +694,7 @@ modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
 endif # dont_bother
+
 
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
@@ -903,3 +908,7 @@ modules:
 .PHONY: showcommands
 showcommands:
 	@echo >/dev/null
+
+.PHONY: nothing
+nothing:
+	@echo Successfully read the makefiles.
