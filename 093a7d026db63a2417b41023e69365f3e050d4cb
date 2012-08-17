@@ -50,6 +50,23 @@
       "revId": "093a7d026db63a2417b41023e69365f3e050d4cb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAIkn///Qg\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2012-08-17T23:06:42Z",
+      "side": 1,
+      "message": "\"recoery\"",
+      "revId": "093a7d026db63a2417b41023e69365f3e050d4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
