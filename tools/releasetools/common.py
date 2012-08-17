@@ -143,6 +143,22 @@ def LoadInfoDict(zip):
   makeint("boot_size")
 
   d["fstab"] = LoadRecoveryFSTab(zip)
+  d["build.prop"] = LoadBuildProp(zip)
+  return d
+
+def LoadBuildProp(zip):
+  try:
+    data = zip.read("SYSTEM/build.prop")
+  except KeyError:
+    print "Warning: could not find SYSTEM/build.prop in %s" % zip
+    data = ""
+
+  d = {}
+  for line in data.split("\n"):
+    line = line.strip()
+    if not line or line.startswith("#"): continue
+    name, value = line.split("=", 1)
+    d[name] = value
   return d
 
 def LoadRecoveryFSTab(zip):
