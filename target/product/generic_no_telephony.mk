@@ -45,6 +45,22 @@ PRODUCT_PACKAGES := \
     wpa_supplicant.conf
 
 PRODUCT_PACKAGES += \
+    audio \
+    bluetoothd \
+    brcm_patchram_plus \
+    dhcpcd.conf \
+    hciattach \
+    libbluedroid \
+    libbluetooth \
+    libbluetoothd \
+    libglib \
+    network \
+    pand \
+    pppd \
+    sdptool \
+    wpa_supplicant
+
+PRODUCT_PACKAGES += \
     icu.dat
 
 PRODUCT_PACKAGES += \
