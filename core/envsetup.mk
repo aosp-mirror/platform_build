@@ -114,10 +114,10 @@ TARGET_COPY_OUT_RECOVERY := recovery
 # variables that we need in order to locate the output files.
 include $(BUILD_SYSTEM)/product_config.mk
 
-build_variant := $(filter-out eng user userdebug tests,$(TARGET_BUILD_VARIANT))
+build_variant := $(filter-out user userdebug eng tests,$(TARGET_BUILD_VARIANT))
 ifneq ($(build_variant)-$(words $(TARGET_BUILD_VARIANT)),-1)
 $(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
-$(error must be empty or one of: eng user userdebug tests)
+$(error must be empty or one of: user userdebug eng tests)
 endif
 
 # ---------------------------------------------------------------
