@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAIkn///lE\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-17T18:32:07Z",
+      "side": 1,
+      "message": "Whitespace...",
+      "revId": "093a7d026db63a2417b41023e69365f3e050d4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAIkn///k0\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 663,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-17T18:32:07Z",
+      "side": 1,
+      "message": "Skip this and have the rule above produce the file system.",
+      "revId": "093a7d026db63a2417b41023e69365f3e050d4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAIkn///ko\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-17T18:32:07Z",
+      "side": 1,
+      "message": "Nice.",
+      "revId": "093a7d026db63a2417b41023e69365f3e050d4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

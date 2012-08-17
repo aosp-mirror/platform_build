@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAIkn///lk\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 633,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-17T18:32:07Z",
+      "side": 0,
+      "message": "Change this to\n\n$(recovery_ramdisk): ...\n\n\n$(MKBOOTIMG) is not used in this recipe, so don\u0027t list it as a prerequisite.",
+      "revId": "f2a618e1df126c6c48622cce948825e923b52dcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAIkn///lc\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-17T18:32:07Z",
+      "side": 0,
+      "message": "$(recovery_kernel) is not a prerequisite of the file system, drop it from the list.",
+      "revId": "f2a618e1df126c6c48622cce948825e923b52dcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAIkn///lQ\u003d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2012-08-17T18:32:07Z",
+      "side": 0,
+      "message": "Keep the $(MKBOOTFS) line, so that we actually output the file being defined as target for this recipe.\n\nYou can change $(recovery_ramdisk) to $@ to make it clearer that this is the output...",
+      "revId": "f2a618e1df126c6c48622cce948825e923b52dcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
