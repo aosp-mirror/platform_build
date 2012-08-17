@@ -659,7 +659,7 @@ ifdef is_sdk_build
   # Ensure every module listed in PRODUCT_PACKAGES gets something installed
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
       $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
+          $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
 endif
 
 # Install all of the host modules
