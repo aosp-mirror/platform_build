@@ -509,9 +509,7 @@ endif
 # All host modules that are not tagged with optional are automatically installed.
 # Save the installed files in ALL_HOST_INSTALLED_FILES.
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
-  ifneq ($(filter optional,$(LOCAL_MODULE_TAGS)),optional)
-    ALL_HOST_INSTALLED_FILES += $(LOCAL_INSTALLED_MODULE)
-  endif
+  ALL_HOST_INSTALLED_FILES += $(LOCAL_INSTALLED_MODULE)
   ifneq ($(filter debug eng tests, $(LOCAL_MODULE_TAGS)),)
     $(warning $(LOCAL_MODULE_MAKEFILE): Module "$(LOCAL_MODULE)" has useless module tags: $(filter debug eng tests, $(LOCAL_MODULE_TAGS)). It will be installed anyway.)
     LOCAL_MODULE_TAGS := $(filter-out debug eng tests, $(LOCAL_MODULE_TAGS))
