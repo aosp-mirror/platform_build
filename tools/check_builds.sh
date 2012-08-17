@@ -41,7 +41,7 @@ function do_builds
     do
         rm -rf $TEST_BUILD_DIR/$PREFIX-$1
         make PRODUCT-$(echo $1 | sed "s/-.*//" )-installclean
-        make -j6 PRODUCT-$1 dist DIST_DIR=$TEST_BUILD_DIR/$PREFIX-$1
+        make -j16 PRODUCT-$1 dist DIST_DIR=$TEST_BUILD_DIR/$PREFIX-$1
         if [ $? -ne 0 ] ; then
             echo FAILED
             return

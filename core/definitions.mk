@@ -55,6 +55,11 @@ ALL_MODULE_TAGS:=
 # its sub-variables.)
 ALL_MODULE_NAME_TAGS:=
 
+# All host modules are automatically installed (i.e. outside
+# of the product configuration scheme).  This is a list of the
+# install targets (LOCAL_INSTALLED_MODULE).
+ALL_HOST_INSTALLED_FILES:=
+
 # Full paths to all prebuilt files that will be copied
 # (used to make the dependency on acp)
 ALL_PREBUILT:=
@@ -2039,10 +2044,6 @@ endef
 # Rules and functions to help copy important files to DIST_DIR
 # when requested.
 include $(BUILD_SYSTEM)/distdir.mk
-
-# -----------------------------------------------------------------
-# The modules allowed to use a user tag
-include $(BUILD_SYSTEM)/user_tags.mk
 
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))

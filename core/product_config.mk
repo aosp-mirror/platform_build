@@ -199,6 +199,12 @@ $(dump-products)
 $(error done)
 endif
 
+ifeq (a,b)
+$(info PRODUCTS -----------)
+$(foreach product, $(PRODUCTS), $(info $(PRODUCTS.$(product).PRODUCT_NAME)))# $(product)))
+$(error stop)
+endif
+
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #

@@ -14,35 +14,127 @@
 # limitations under the License.
 #
 
-products_pdf := $(OUT_DIR)/products.pdf
-products_graph := $(products_pdf:%.pdf=%.dot)
+# the foreach and the if remove the single space entries that creep in because of the evals
+define gather-all-products
+$(sort $(foreach p, \
+	$(eval _all_products_visited := )
+  $(call all-products-inner, $(ALL_PRODUCTS)) \
+	, $(if $(strip $(p)),$(strip $(p)),)) \
+)
+endef
 
-$(products_graph):
-	@echo Product graph DOT: $@
+define all-products-inner
+	$(foreach p,$(1),\
+		$(if $(filter $(p),$(_all_products_visited)),, \
+			$(p) \
+			$(eval _all_products_visited += $(p)) \
+			$(call all-products-inner, $(PRODUCTS.$(strip $(p)).INHERITS_FROM))
+		) \
+	)
+endef
+
+
+this_makefile := build/core/tasks/product-graph.mk
+
+products_svg := $(OUT_DIR)/products.svg
+products_pdf := $(OUT_DIR)/products.pdf
+products_graph := $(OUT_DIR)/products.dot
+ifeq ($(strip $(ANDROID_PRODUCT_GRAPH)),)
+products_list := $(INTERNAL_PRODUCT)
+else
+ifeq ($(strip $(ANDROID_PRODUCT_GRAPH)),--all)
+products_list := --all
+else
+products_list := $(foreach prod,$(ANDROID_PRODUCT_GRAPH),$(call resolve-short-product-name,$(prod)))
+endif
+endif
+
+really_all_products := $(call gather-all-products)
+
+$(products_graph): PRIVATE_PRODUCTS := $(really_all_products)
+$(products_graph): PRIVATE_PRODUCTS_FILTER := $(products_list)
+
+$(products_graph): $(this_makefile)
+	@echo Product graph DOT: $@ for $(PRIVATE_PRODUCTS_FILTER)
 	$(hide) ( \
 		echo 'digraph {'; \
 		echo 'graph [ ratio=.5 ];'; \
-		$(foreach p,$(ALL_PRODUCTS), \
-			$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), \
-			echo \"$(d)\" -\> \"$(p)\";)) \
-		$(foreach prod, \
-			$(sort $(foreach p,$(ALL_PRODUCTS), \
-				$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), \
-					$(d))) \
-				$(foreach p,$(ALL_PRODUCTS),$(p))), \
-			echo \"$(prod)\" [ label=\"$(dir $(prod))\\n$(notdir $(prod))\"];) \
+		$(foreach p,$(PRIVATE_PRODUCTS), \
+			$(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), echo \"$(d)\" -\> \"$(p)\";)) \
+		$(foreach prod, $(PRIVATE_PRODUCTS), \
+			echo \"$(prod)\" [ \
+					label=\"$(dir $(prod))\\n$(notdir $(prod))\\n\\n$(PRODUCTS.$(strip $(prod)).PRODUCT_MODEL)\\n$(PRODUCTS.$(strip $(prod)).PRODUCT_DEVICE)\" \
+					$(if $(filter $(prod),$(PRIVATE_PRODUCTS_FILTER)), style=\"filled\" fillcolor=\"#FFFDB0\",) \
+					fontcolor=\"darkblue\" href=\"products/$(prod).html\" \
+				];) \
 		echo '}' \
-	) > $@
+	) \
+	| ./build/tools/filter-product-graph.py $(PRIVATE_PRODUCTS_FILTER) \
+	> $@
 
-# This rule doesn't include any nodes that don't inherit from
-# anything or don't have anything inherit from them, to make the
-# graph more readable.  To add that, add this line to the rule
-# below:
-#		$(foreach p,$(ALL_PRODUCTS), echo \"$(p)\";) \
+# Evaluates to the name of the product file
+# $(1) product file
+define product-debug-filename
+$(OUT_DIR)/products/$(strip $(1)).html
+endef
+
+# Makes a rule for the product debug info
+# $(1) product file
+define transform-product-debug
+$(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
+	@echo Product debug info file: $$@
+	$(hide) rm -f $$@
+	$(hide) mkdir -p $$(dir $$@)
+	$(hide) echo 'FILE=$(strip $(1))' >> $$@
+	$(hide) echo 'PRODUCT_NAME=$$(PRODUCTS.$(strip $(1)).PRODUCT_NAME)' >> $$@
+	$(hide) echo 'PRODUCT_MODEL=$$(PRODUCTS.$(strip $(1)).PRODUCT_MODEL)' >> $$@
+	$(hide) echo 'PRODUCT_LOCALES=$$(PRODUCTS.$(strip $(1)).PRODUCT_LOCALES)' >> $$@
+	$(hide) echo 'PRODUCT_AAPT_CONFIG=$$(PRODUCTS.$(strip $(1)).PRODUCT_AAPT_CONFIG)' >> $$@
+	$(hide) echo 'PRODUCT_AAPT_PREF_CONFIG=$$(PRODUCTS.$(strip $(1)).PRODUCT_AAPT_PREF_CONFIG)' >> $$@
+	$(hide) echo 'PRODUCT_PACKAGES=$$(PRODUCTS.$(strip $(1)).PRODUCT_PACKAGES)' >> $$@
+	$(hide) echo 'PRODUCT_DEVICE=$$(PRODUCTS.$(strip $(1)).PRODUCT_DEVICE)' >> $$@
+	$(hide) echo 'PRODUCT_MANUFACTURER=$$(PRODUCTS.$(strip $(1)).PRODUCT_MANUFACTURER)' >> $$@
+	$(hide) echo 'PRODUCT_PROPERTY_OVERRIDES=$$(PRODUCTS.$(strip $(1)).PRODUCT_PROPERTY_OVERRIDES)' >> $$@
+	$(hide) echo 'PRODUCT_DEFAULT_PROPERTY_OVERRIDES=$$(PRODUCTS.$(strip $(1)).PRODUCT_DEFAULT_PROPERTY_OVERRIDES)' >> $$@
+	$(hide) echo 'PRODUCT_CHARACTERISTICS=$$(PRODUCTS.$(strip $(1)).PRODUCT_CHARACTERISTICS)' >> $$@
+	$(hide) echo 'PRODUCT_COPY_FILES=$$(PRODUCTS.$(strip $(1)).PRODUCT_COPY_FILES)' >> $$@
+	$(hide) echo 'PRODUCT_OTA_PUBLIC_KEYS=$$(PRODUCTS.$(strip $(1)).PRODUCT_OTA_PUBLIC_KEYS)' >> $$@
+	$(hide) echo 'PRODUCT_EXTRA_RECOVERY_KEYS=$$(PRODUCTS.$(strip $(1)).PRODUCT_EXTRA_RECOVERY_KEYS)' >> $$@
+	$(hide) echo 'PRODUCT_PACKAGE_OVERLAYS=$$(PRODUCTS.$(strip $(1)).PRODUCT_PACKAGE_OVERLAYS)' >> $$@
+	$(hide) echo 'DEVICE_PACKAGE_OVERLAYS=$$(PRODUCTS.$(strip $(1)).DEVICE_PACKAGE_OVERLAYS)' >> $$@
+	$(hide) echo 'PRODUCT_TAGS=$$(PRODUCTS.$(strip $(1)).PRODUCT_TAGS)' >> $$@
+	$(hide) echo 'PRODUCT_SDK_ADDON_NAME=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_NAME)' >> $$@
+	$(hide) echo 'PRODUCT_SDK_ADDON_COPY_FILES=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_COPY_FILES)' >> $$@
+	$(hide) echo 'PRODUCT_SDK_ADDON_COPY_MODULES=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_COPY_MODULES)' >> $$@
+	$(hide) echo 'PRODUCT_SDK_ADDON_DOC_MODULES=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_DOC_MODULES)' >> $$@
+	$(hide) echo 'PRODUCT_DEFAULT_WIFI_CHANNELS=$$(PRODUCTS.$(strip $(1)).PRODUCT_DEFAULT_WIFI_CHANNELS)' >> $$@
+	$(hide) echo 'PRODUCT_DEFAULT_DEV_CERTIFICATE=$$(PRODUCTS.$(strip $(1)).PRODUCT_DEFAULT_DEV_CERTIFICATE)' >> $$@
+	$(hide) echo 'PRODUCT_RESTRICT_VENDOR_FILES=$$(PRODUCTS.$(strip $(1)).PRODUCT_RESTRICT_VENDOR_FILES)' >> $$@
+	$(hide) echo 'PRODUCT_FACTORY_RAMDISK_MODULES=$$(PRODUCTS.$(strip $(1)).PRODUCT_FACTORY_RAMDISK_MODULES)' >> $$@
+	$(hide) echo 'PRODUCT_VENDOR_KERNEL_HEADERS=$$(PRODUCTS.$(strip $(1)).PRODUCT_VENDOR_KERNEL_HEADERS)' >> $$@
+
+$(call product-debug-filename, $(p)): \
+			$(OUT_DIR)/products/$(strip $(1)).txt \
+			build/tools/product_debug.py \
+			$(this_makefile)
+	@echo Product debug html file: $$@
+	$(hide) mkdir -p $$(dir $$@)
+	$(hide) cat $$< | build/tools/product_debug.py > $$@
+endef
+
+product_debug_files:=
+$(foreach p,$(really_all_products), \
+			$(eval $(call transform-product-debug, $(p))) \
+			$(eval product_debug_files += $(call product-debug-filename, $(p))) \
+   )
 
 $(products_pdf): $(products_graph)
 	@echo Product graph PDF: $@
 	dot -Tpdf -Nshape=box -o $@ $<
 
-product-graph: $(products_pdf)
+$(products_svg): $(products_graph) $(product_debug_files)
+	@echo Product graph SVG: $@
+	dot -Tsvg -Nshape=box -o $@ $<
+
+product-graph: $(products_pdf) $(products_svg)
 
