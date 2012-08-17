@@ -666,17 +666,17 @@ ifdef is_sdk_build
   # Ensure every module listed in PRODUCT_PACKAGES* gets something installed
   # TODO: Should we do this for all builds and not just the sdk?
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_DEBUG has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_ENG has nothing to install!)))
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS), \
-      $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
-          $(error $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+      $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
 # Install all of the host modules
