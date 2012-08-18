@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAIu3///+k\u003d",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1000660
+      },
+      "writtenOn": "2012-08-18T16:23:12Z",
+      "side": 1,
+      "message": "Trailing space",
+      "revId": "4e4ae35d5a125231e6fee7a2c5ae3785fb56d24e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
