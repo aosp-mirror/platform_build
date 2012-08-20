@@ -39,6 +39,25 @@ ifeq ($(TARGET_ARCH),arm)
     -fno-align-jumps \
     -Wa,--noexecstack
 endif
+ifeq ($(TARGET_ARCH),mips)
+  CLANG_CONFIG_EXTRA_CFLAGS += \
+    -target mipsel-linux-android \
+    -nostdlibinc \
+    -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
+  CLANG_CONFIG_EXTRA_LDFLAGS += \
+    -target mipsel-linux-android \
+    -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
+  CLANG_CONFIG_UNKNOWN_CFLAGS += \
+    -EL \
+    -mips32r2 \
+    -mhard-float \
+    -fno-strict-volatile-bitfields \
+    -fgcse-after-reload \
+    -frerun-cse-after-loop \
+    -frename-registers \
+    -march=mips32r2 \
+    -mtune=mips32r2
+endif
 ifeq ($(TARGET_ARCH),x86)
   CLANG_CONFIG_EXTRA_CFLAGS += \
     -target i686-linux-android \
@@ -73,7 +92,6 @@ $(call clang-flags-subst,-march=armv5e,-march=armv5)
 $(call clang-flags-subst,-Wno-psabi,)
 $(call clang-flags-subst,-Wno-unused-but-set-variable,)
 
-
 ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -faddress-sanitizer
 ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS := -Wl,-u,__asan_preinit
 ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES := libdl libasan_preload
@@ -81,6 +99,4 @@ ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES := libasan
 
 # This allows us to use the superset of functionality that compiler-rt
 # provides to Clang (for supporting features like -ftrapv).
-ifneq ($(TARGET_ARCH),mips)
 COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler-rt-extras
-endif
