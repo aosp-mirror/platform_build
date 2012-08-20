@@ -586,6 +586,8 @@ recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/r
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
   $(recovery_resources_private) -type f)
 recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
+# Named '.dat' so we don't attempt to use imgdiff for patching it.
+RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
 
 ifeq ($(recovery_resources_private),)
   $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
@@ -663,12 +665,16 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE),raw)
 	@echo ----- Made recovery image: $@ --------
 
+$(RECOVERY_RESOURCE_ZIP): $(INSTALLED_RECOVERYIMAGE_TARGET)
+	$(hide) find $(TARGET_RECOVERY_ROOT_OUT)/res -type f | sort | zip -0qrj $@ -@
+
 else
 INSTALLED_RECOVERYIMAGE_TARGET :=
+RECOVERY_RESOURCE_ZIP :=
 endif
 
 .PHONY: recoveryimage
-recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET)
+recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET) $(RECOVERY_RESOURCE_ZIP)
 
 ifneq ($(BOARD_NAND_PAGE_SIZE),)
 mkyaffs2_extra_flags := -c $(BOARD_NAND_PAGE_SIZE)
@@ -695,8 +701,9 @@ INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
     $(ALL_PREBUILT) \
     $(ALL_COPIED_HEADERS) \
     $(ALL_GENERATED_SOURCES) \
-    $(ALL_DEFAULT_INSTALLED_MODULES)\
-    $(PDK_FUSION_SYSIMG_FILES))
+    $(ALL_DEFAULT_INSTALLED_MODULES) \
+    $(PDK_FUSION_SYSIMG_FILES) \
+    $(RECOVERY_RESOURCE_ZIP))
 
 ifdef is_tests_build
 # We don't want to install tests modules to the system partition
