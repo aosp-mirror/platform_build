@@ -25,7 +25,7 @@ CTS_TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts-tradefed.jar
 CTS_TF_EXEC_PATH := $(HOST_OUT_EXECUTABLES)/cts-tradefed
 CTS_TF_README_PATH := $(cts_tools_src_dir)/tradefed-host/README
 
-VMTESTSTF_INTERMEDIATES :=$(call intermediates-dir-for,EXECUTABLES,vm-tests-tf,1,)
+VMTESTSTF_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,vm-tests-tf,HOST)
 VMTESTSTF_JAR := $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar
 
 CTS_CORE_CASE_LIST := \
