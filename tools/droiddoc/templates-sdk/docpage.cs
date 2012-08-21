@@ -12,7 +12,7 @@
 <?cs include:"header.cs" ?>
 
 <div <?cs if:fullpage
-?><?cs elif:design||tools||about||sdk||distribute
+?>class="fullpage"<?cs elif:design||tools||about||sdk||distribute
 ?>class="col-13" id="doc-col"<?cs else 
 ?>class="col-12" id="doc-col"<?cs /if ?> >
 
