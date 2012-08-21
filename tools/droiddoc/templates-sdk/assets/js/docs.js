@@ -948,29 +948,9 @@ function swapNav() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* ############################################ */
 /* ##########     LOCALIZATION     ############ */
+/* ############################################ */
 
 function getBaseUri(uri) {
   var intlUrl = (uri.substring(0,6) == "/intl/");
@@ -1088,3 +1068,1176 @@ function toggleContent(obj) {
   }
   return false;
 }
+
+
+
+
+
+
+/*  	
+ *  Slideshow 1.0
+ *  Used on /index.html and /develop/index.html for carousel
+ *
+ *  Sample usage:
+ *  HTML -
+ *  <div class="slideshow-container">
+ *   <a href="" class="slideshow-prev">Prev</a>
+ *   <a href="" class="slideshow-next">Next</a>
+ *   <ul>
+ *       <li class="item"><img src="images/marquee1.jpg"></li>
+ *       <li class="item"><img src="images/marquee2.jpg"></li>
+ *       <li class="item"><img src="images/marquee3.jpg"></li>
+ *       <li class="item"><img src="images/marquee4.jpg"></li>
+ *   </ul>
+ *  </div>
+ *
+ *   <script type="text/javascript">
+ *   $('.slideshow-container').dacSlideshow({
+ *       auto: true,
+ *       btnPrev: '.slideshow-prev',
+ *       btnNext: '.slideshow-next'
+ *   });
+ *   </script>
+ *
+ *  Options:
+ *  btnPrev:    optional identifier for previous button
+ *  btnNext:    optional identifier for next button
+ *  auto:       whether or not to auto-proceed
+ *  speed:      animation speed
+ *  autoTime:   time between auto-rotation
+ *  easing:     easing function for transition
+ *  start:      item to select by default
+ *  scroll:     direction to scroll in
+ *  pagination: whether or not to include dotted pagination
+ *
+ */
+
+ (function($) {
+ $.fn.dacSlideshow = function(o) {
+     
+     //Options - see above
+     o = $.extend({
+         btnPrev:   null,
+         btnNext:   null,
+         auto:      true,
+         speed:     500,
+         autoTime:  12000,
+         easing:    null,
+         start:     0,
+         scroll:    1,
+         pagination: true
+
+     }, o || {});
+     
+     //Set up a carousel for each 
+     return this.each(function() {
+
+         var running = false;
+         var animCss = o.vertical ? "top" : "left";
+         var sizeCss = o.vertical ? "height" : "width";
+         var div = $(this);
+         var ul = $("ul", div);
+         var tLi = $("li", ul);
+         var tl = tLi.size(); 
+         var timer = null;
+
+         var li = $("li", ul);
+         var itemLength = li.size();
+         var curr = o.start;
+
+         li.css({float: o.vertical ? "none" : "left"});
+         ul.css({margin: "0", padding: "0", position: "relative", "list-style-type": "none", "z-index": "1"});
+         div.css({position: "relative", "z-index": "2", left: "0px"});
+
+         var liSize = o.vertical ? height(li) : width(li);
+         var ulSize = liSize * itemLength;
+         var divSize = liSize;
+
+         li.css({width: li.width(), height: li.height()});
+         ul.css(sizeCss, ulSize+"px").css(animCss, -(curr*liSize));
+
+         div.css(sizeCss, divSize+"px");
+         
+         //Pagination
+         if (o.pagination) {
+             var pagination = $("<div class='pagination'></div>");
+             var pag_ul = $("<ul></ul>");
+             if (tl > 1) {
+               for (var i=0;i<tl;i++) {
+                    var li = $("<li>"+i+"</li>");
+                    pag_ul.append(li);
+                    if (i==o.start) li.addClass('active');
+                        li.click(function() {
+                        go(parseInt($(this).text()));
+                    })
+                }
+                pagination.append(pag_ul);
+                div.append(pagination);
+             }
+         }
+         
+         //Previous button
+         if(o.btnPrev)
+             $(o.btnPrev).click(function(e) {
+                 e.preventDefault();
+                 return go(curr-o.scroll);
+             });
+
+         //Next button
+         if(o.btnNext)
+             $(o.btnNext).click(function(e) {
+                 e.preventDefault();
+                 return go(curr+o.scroll);
+             });
+         
+         //Auto rotation
+         if(o.auto) startRotateTimer();
+             
+         function startRotateTimer() {
+             clearInterval(timer);
+             timer = setInterval(function() {
+                  if (curr == tl-1) {
+                    go(0);
+                  } else {
+                    go(curr+o.scroll);  
+                  } 
+              }, o.autoTime);
+         }
+
+         //Go to an item
+         function go(to) {
+             if(!running) {
+
+                 if(to<0) {
+                    to = itemLength-1;
+                 } else if (to>itemLength-1) {
+                    to = 0;
+                 }
+                 curr = to;
+
+                 running = true;
+
+                 ul.animate(
+                     animCss == "left" ? { left: -(curr*liSize) } : { top: -(curr*liSize) } , o.speed, o.easing,
+                     function() {
+                         running = false;
+                     }
+                 );
+
+                 $(o.btnPrev + "," + o.btnNext).removeClass("disabled");
+                 $( (curr-o.scroll<0 && o.btnPrev)
+                     ||
+                    (curr+o.scroll > itemLength && o.btnNext)
+                     ||
+                    []
+                  ).addClass("disabled");
+
+                 
+                 var nav_items = $('li', pagination);
+                 nav_items.removeClass('active');
+                 nav_items.eq(to).addClass('active');
+                 
+
+             }
+             if(o.auto) startRotateTimer();
+             return false;
+         };
+     });
+ };
+
+ function css(el, prop) {
+     return parseInt($.css(el[0], prop)) || 0;
+ };
+ function width(el) {
+     return  el[0].offsetWidth + css(el, 'marginLeft') + css(el, 'marginRight');
+ };
+ function height(el) {
+     return el[0].offsetHeight + css(el, 'marginTop') + css(el, 'marginBottom');
+ };
+
+ })(jQuery);
+
+
+/*	
+ *  dacSlideshow 1.0
+ *  Used on develop/index.html for side-sliding tabs
+ *
+ *  Sample usage:
+ *  HTML -
+ *  <div class="slideshow-container">
+ *   <a href="" class="slideshow-prev">Prev</a>
+ *   <a href="" class="slideshow-next">Next</a>
+ *   <ul>
+ *       <li class="item"><img src="images/marquee1.jpg"></li>
+ *       <li class="item"><img src="images/marquee2.jpg"></li>
+ *       <li class="item"><img src="images/marquee3.jpg"></li>
+ *       <li class="item"><img src="images/marquee4.jpg"></li>
+ *   </ul>
+ *  </div>
+ *
+ *   <script type="text/javascript">
+ *   $('.slideshow-container').dacSlideshow({
+ *       auto: true,
+ *       btnPrev: '.slideshow-prev',
+ *       btnNext: '.slideshow-next'
+ *   });
+ *   </script>
+ *
+ *  Options:
+ *  btnPrev:    optional identifier for previous button
+ *  btnNext:    optional identifier for next button
+ *  auto:       whether or not to auto-proceed
+ *  speed:      animation speed
+ *  autoTime:   time between auto-rotation
+ *  easing:     easing function for transition
+ *  start:      item to select by default
+ *  scroll:     direction to scroll in
+ *  pagination: whether or not to include dotted pagination
+ *
+ */
+ (function($) {
+ $.fn.dacTabbedList = function(o) {
+     
+     //Options - see above
+     o = $.extend({
+         speed : 250,
+         easing: null,
+         nav_id: null,
+         frame_id: null
+     }, o || {});
+     
+     //Set up a carousel for each 
+     return this.each(function() {
+
+         var curr = 0;
+         var running = false;
+         var animCss = "margin-left";
+         var sizeCss = "width";
+         var div = $(this);
+         
+         var nav = $(o.nav_id, div);
+         var nav_li = $("li", nav);
+         var nav_size = nav_li.size(); 
+         var frame = div.find(o.frame_id);
+         var content_width = $(frame).find('ul').width();
+         //Buttons
+         $(nav_li).click(function(e) {
+           go($(nav_li).index($(this)));
+         })
+         
+         //Go to an item
+         function go(to) {
+             if(!running) {
+                 curr = to;
+                 running = true;
+
+                 frame.animate({ 'margin-left' : -(curr*content_width) }, o.speed, o.easing,
+                     function() {
+                         running = false;
+                     }
+                 );
+
+                 
+                 nav_li.removeClass('active');
+                 nav_li.eq(to).addClass('active');
+                 
+
+             }
+             return false;
+         };
+     });
+ };
+
+ function css(el, prop) {
+     return parseInt($.css(el[0], prop)) || 0;
+ };
+ function width(el) {
+     return  el[0].offsetWidth + css(el, 'marginLeft') + css(el, 'marginRight');
+ };
+ function height(el) {
+     return el[0].offsetHeight + css(el, 'marginTop') + css(el, 'marginBottom');
+ };
+
+ })(jQuery);
+
+
+
+
+
+/* ######################################################## */
+/* ################  SEARCH SUGGESTIONS  ################## */
+/* ######################################################## */
+
+
+var gSelectedIndex = -1;
+var gSelectedID = -1;
+var gMatches = new Array();
+var gLastText = "";
+var ROW_COUNT = 20;
+var gInitialized = false;
+
+function set_item_selected($li, selected)
+{
+    if (selected) {
+        $li.attr('class','jd-autocomplete jd-selected');
+    } else {
+        $li.attr('class','jd-autocomplete');
+    }
+}
+
+function set_item_values(toroot, $li, match)
+{
+    var $link = $('a',$li);
+    $link.html(match.__hilabel || match.label);
+    $link.attr('href',toroot + match.link);
+}
+
+function sync_selection_table(toroot)
+{
+    var $list = $("#search_filtered");
+    var $li; //list item jquery object
+    var i; //list item iterator
+    gSelectedID = -1;
+    
+    //initialize the table; draw it for the first time (but not visible).
+    if (!gInitialized) {
+        for (i=0; i<ROW_COUNT; i++) {
+            var $li = $("<li class='jd-autocomplete'></li>");
+            $list.append($li);
+            
+            $li.mousedown(function() {
+                window.location = this.firstChild.getAttribute("href");
+            });
+            $li.mouseover(function() {
+                $('#search_filtered li').removeClass('jd-selected');
+                $(this).addClass('jd-selected');
+                gSelectedIndex = $('#search_filtered li').index(this);
+            });
+            $li.append('<a></a>');
+        }
+        gInitialized = true;
+    }
+  
+    //if we have results, make the table visible and initialize result info
+    if (gMatches.length > 0) {
+        $('#search_filtered_div').removeClass('no-display');
+        var N = gMatches.length < ROW_COUNT ? gMatches.length : ROW_COUNT;
+        for (i=0; i<N; i++) {
+            $li = $('#search_filtered li:nth-child('+(i+1)+')');
+            $li.attr('class','show-item');
+            set_item_values(toroot, $li, gMatches[i]);
+            set_item_selected($li, i == gSelectedIndex);
+            if (i == gSelectedIndex) {
+                gSelectedID = gMatches[i].id;
+            }
+        }
+        //start hiding rows that are no longer matches
+        for (; i<ROW_COUNT; i++) {
+            $li = $('#search_filtered li:nth-child('+(i+1)+')');
+            $li.attr('class','no-display');
+        }
+        //if there are more results we're not showing, so say so.
+/*      if (gMatches.length > ROW_COUNT) {
+            li = list.rows[ROW_COUNT];
+            li.className = "show-item";
+            c1 = li.cells[0];
+            c1.innerHTML = "plus " + (gMatches.length-ROW_COUNT) + " more"; 
+        } else {
+            list.rows[ROW_COUNT].className = "hide-item";
+        }*/
+    //if we have no results, hide the table
+    } else {
+        $('#search_filtered_div').addClass('no-display');
+    }
+}
+
+function search_changed(e, kd, toroot)
+{
+    var search = document.getElementById("search_autocomplete");
+    var text = search.value.replace(/(^ +)|( +$)/g, '');
+    
+    // show/hide the close button
+    if (text != '') {
+        $(".search .close").removeClass("hide");
+    } else {
+        $(".search .close").addClass("hide");
+    }
+
+    // 13 = enter
+    if (e.keyCode == 13) {
+        $('#search_filtered_div').addClass('no-display');
+        if (!$('#search_filtered_div').hasClass('no-display') || (gSelectedIndex < 0)) {
+            if ($("#searchResults").is(":hidden")) {
+              // if results aren't showing, return true to allow search to execute
+              return true;
+            } else {
+              // otherwise, results are already showing, so allow ajax to auto refresh the results
+              // and ignore this Enter press to avoid the reload.
+              return false;
+            }
+        } else if (kd && gSelectedIndex >= 0) {
+            window.location = toroot + gMatches[gSelectedIndex].link;
+            return false;
+        }
+    }
+    // 38 -- arrow up
+    else if (kd && (e.keyCode == 38)) {
+        if (gSelectedIndex >= 0) {
+            $('#search_filtered li').removeClass('jd-selected');
+            gSelectedIndex--;
+            $('#search_filtered li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+        }
+        return false;
+    }
+    // 40 -- arrow down
+    else if (kd && (e.keyCode == 40)) {
+        if (gSelectedIndex < gMatches.length-1
+                        && gSelectedIndex < ROW_COUNT-1) {
+            $('#search_filtered li').removeClass('jd-selected');
+            gSelectedIndex++;
+            $('#search_filtered li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+        }
+        return false;
+    }
+    else if (!kd && (e.keyCode != 40) && (e.keyCode != 38)) {
+        gMatches = new Array();
+        matchedCount = 0;
+        gSelectedIndex = -1;
+        for (var i=0; i<DATA.length; i++) {
+            var s = DATA[i];
+            if (text.length != 0 &&
+                  s.label.toLowerCase().indexOf(text.toLowerCase()) != -1) {
+                gMatches[matchedCount] = s;
+                matchedCount++;
+            }
+        }
+        rank_autocomplete_results(text);
+        for (var i=0; i<gMatches.length; i++) {
+            var s = gMatches[i];
+            if (gSelectedID == s.id) {
+                gSelectedIndex = i;
+            }
+        }
+        highlight_autocomplete_result_labels(text);
+        sync_selection_table(toroot);
+        return true; // allow the event to bubble up to the search api
+    }
+}
+
+function rank_autocomplete_results(query) {
+    query = query || '';
+    if (!gMatches || !gMatches.length)
+      return;
+
+    // helper function that gets the last occurence index of the given regex
+    // in the given string, or -1 if not found
+    var _lastSearch = function(s, re) {
+      if (s == '')
+        return -1;
+      var l = -1;
+      var tmp;
+      while ((tmp = s.search(re)) >= 0) {
+        if (l < 0) l = 0;
+        l += tmp;
+        s = s.substr(tmp + 1);
+      }
+      return l;
+    };
+
+    // helper function that counts the occurrences of a given character in
+    // a given string
+    var _countChar = function(s, c) {
+      var n = 0;
+      for (var i=0; i<s.length; i++)
+        if (s.charAt(i) == c) ++n;
+      return n;
+    };
+
+    var queryLower = query.toLowerCase();
+    var queryAlnum = (queryLower.match(/\w+/) || [''])[0];
+    var partPrefixAlnumRE = new RegExp('\\b' + queryAlnum);
+    var partExactAlnumRE = new RegExp('\\b' + queryAlnum + '\\b');
+
+    var _resultScoreFn = function(result) {
+        // scores are calculated based on exact and prefix matches,
+        // and then number of path separators (dots) from the last
+        // match (i.e. favoring classes and deep package names)
+        var score = 1.0;
+        var labelLower = result.label.toLowerCase();
+        var t;
+        t = _lastSearch(labelLower, partExactAlnumRE);
+        if (t >= 0) {
+            // exact part match
+            var partsAfter = _countChar(labelLower.substr(t + 1), '.');
+            score *= 200 / (partsAfter + 1);
+        } else {
+            t = _lastSearch(labelLower, partPrefixAlnumRE);
+            if (t >= 0) {
+                // part prefix match
+                var partsAfter = _countChar(labelLower.substr(t + 1), '.');
+                score *= 20 / (partsAfter + 1);
+            }
+        }
+
+        return score;
+    };
+
+    for (var i=0; i<gMatches.length; i++) {
+        gMatches[i].__resultScore = _resultScoreFn(gMatches[i]);
+    }
+
+    gMatches.sort(function(a,b){
+        var n = b.__resultScore - a.__resultScore;
+        if (n == 0) // lexicographical sort if scores are the same
+            n = (a.label < b.label) ? -1 : 1;
+        return n;
+    });
+}
+
+function highlight_autocomplete_result_labels(query) {
+    query = query || '';
+    if (!gMatches || !gMatches.length)
+      return;
+
+    var queryLower = query.toLowerCase();
+    var queryAlnumDot = (queryLower.match(/[\w\.]+/) || [''])[0];
+    var queryRE = new RegExp(
+        '(' + queryAlnumDot.replace(/\./g, '\\.') + ')', 'ig');
+    for (var i=0; i<gMatches.length; i++) {
+        gMatches[i].__hilabel = gMatches[i].label.replace(
+            queryRE, '<b>$1</b>');
+    }
+}
+
+function search_focus_changed(obj, focused)
+{
+    if (!focused) {     
+        if(obj.value == ""){
+          $(".search .close").addClass("hide");
+        }
+        document.getElementById("search_filtered_div").className = "no-display";
+    }
+}
+
+function submit_search() {
+  var query = document.getElementById('search_autocomplete').value;
+  location.hash = 'q=' + query;
+  loadSearchResults();
+  $("#searchResults").slideDown('slow');
+  return false;
+}
+
+
+function hideResults() {
+  $("#searchResults").slideUp();
+  $(".search .close").addClass("hide");
+  location.hash = '';
+  
+  $("#search_autocomplete").val("").blur();
+  
+  // reset the ajax search callback to nothing, so results don't appear unless ENTER
+  searchControl.setSearchStartingCallback(this, function(control, searcher, query) {});
+  return false;
+}
+
+
+
+/* ########################################################## */
+/* ################  CUSTOM SEARCH ENGINE  ################## */
+/* ########################################################## */
+
+google.load('search', '1');
+var searchControl;
+
+function loadSearchResults() {
+  document.getElementById("search_autocomplete").style.color = "#000";
+
+  // create search control
+  searchControl = new google.search.SearchControl();
+
+  // use our existing search form and use tabs when multiple searchers are used
+  drawOptions = new google.search.DrawOptions();
+  drawOptions.setDrawMode(google.search.SearchControl.DRAW_MODE_TABBED);
+  drawOptions.setInput(document.getElementById("search_autocomplete"));
+
+  // configure search result options
+  searchOptions = new google.search.SearcherOptions();
+  searchOptions.setExpandMode(GSearchControl.EXPAND_MODE_OPEN);
+
+  // configure each of the searchers, for each tab
+  devSiteSearcher = new google.search.WebSearch();
+  devSiteSearcher.setUserDefinedLabel("All");
+  devSiteSearcher.setSiteRestriction("001482626316274216503:zu90b7s047u");
+
+  designSearcher = new google.search.WebSearch();
+  designSearcher.setUserDefinedLabel("Design");
+  designSearcher.setSiteRestriction("http://developer.android.com/design/");
+
+  trainingSearcher = new google.search.WebSearch();
+  trainingSearcher.setUserDefinedLabel("Training");
+  trainingSearcher.setSiteRestriction("http://developer.android.com/training/");
+
+  guidesSearcher = new google.search.WebSearch();
+  guidesSearcher.setUserDefinedLabel("Guides");
+  guidesSearcher.setSiteRestriction("http://developer.android.com/guide/");
+
+  referenceSearcher = new google.search.WebSearch();
+  referenceSearcher.setUserDefinedLabel("Reference");
+  referenceSearcher.setSiteRestriction("http://developer.android.com/reference/");
+
+  blogSearcher = new google.search.WebSearch();
+  blogSearcher.setUserDefinedLabel("Blog");
+  blogSearcher.setSiteRestriction("http://android-developers.blogspot.com");
+
+  // add each searcher to the search control
+  searchControl.addSearcher(devSiteSearcher, searchOptions);
+  searchControl.addSearcher(designSearcher, searchOptions);
+  searchControl.addSearcher(trainingSearcher, searchOptions);
+  searchControl.addSearcher(guidesSearcher, searchOptions);
+  searchControl.addSearcher(referenceSearcher, searchOptions);
+  searchControl.addSearcher(blogSearcher, searchOptions);
+
+  // configure result options
+  searchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+  searchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);
+  searchControl.setTimeoutInterval(google.search.SearchControl.TIMEOUT_SHORT);
+  searchControl.setNoResultsString(google.search.SearchControl.NO_RESULTS_DEFAULT_STRING);
+
+  // upon ajax search, refresh the url and search title
+  searchControl.setSearchStartingCallback(this, function(control, searcher, query) {
+    updateResultTitle(query);
+    var query = document.getElementById('search_autocomplete').value;
+    location.hash = 'q=' + query;
+  });
+
+  // draw the search results box
+  searchControl.draw(document.getElementById("leftSearchControl"), drawOptions);
+
+  // get query and execute the search
+  searchControl.execute(decodeURI(getQuery(location.hash)));
+
+  document.getElementById("search_autocomplete").focus();
+  addTabListeners();
+}
+// End of loadSearchResults
+
+
+google.setOnLoadCallback(function(){
+  if (location.hash.indexOf("q=") == -1) {
+    // if there's no query in the url, don't search and make sure results are hidden
+    $('#searchResults').hide();
+    return;
+  } else {
+    // first time loading search results for this page
+    $('#searchResults').slideDown('slow');
+    $(".search .close").removeClass("hide");
+    loadSearchResults();
+  }
+}, true);
+
+// when an event on the browser history occurs (back, forward, load) requery hash and do search
+$(window).hashchange( function(){
+  // Exit if the hash isn't a search query or there's an error in the query
+  if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
+    // If the results pane is open, close it.
+    if (!$("#searchResults").is(":hidden")) {
+      hideResults();
+    }
+    return;
+  }
+
+  // Otherwise, we have a search to do
+  var query = decodeURI(getQuery(location.hash));
+  searchControl.execute(query);
+  $('#searchResults').slideDown('slow');
+  $("#search_autocomplete").focus();
+  $(".search .close").removeClass("hide");
+
+  updateResultTitle(query);
+});
+
+function updateResultTitle(query) {
+  $("#searchTitle").html("Results for <em>" + escapeHTML(query) + "</em>");
+}
+
+// forcefully regain key-up event control (previously jacked by search api)
+$("#search_autocomplete").keyup(function(event) {
+  return search_changed(event, false, toRoot);
+});
+
+// add event listeners to each tab so we can track the browser history
+function addTabListeners() {
+  var tabHeaders = $(".gsc-tabHeader");
+  for (var i = 0; i < tabHeaders.length; i++) {
+    $(tabHeaders[i]).attr("id",i).click(function() {
+    /*
+      // make a copy of the page numbers for the search left pane
+      setTimeout(function() {
+        // remove any residual page numbers
+        $('#searchResults .gsc-tabsArea .gsc-cursor-box.gs-bidi-start-align').remove();
+        // move the page numbers to the left position; make a clone, 
+        // because the element is drawn to the DOM only once
+        // and because we're going to remove it (previous line), 
+        // we need it to be available to move again as the user navigates 
+        $('#searchResults .gsc-webResult .gsc-cursor-box.gs-bidi-start-align:visible')
+                        .clone().appendTo('#searchResults .gsc-tabsArea');
+        }, 200);
+      */
+    });
+  }
+  setTimeout(function(){$(tabHeaders[0]).click()},200);
+}
+
+
+function getQuery(hash) {
+  var queryParts = hash.split('=');
+  return queryParts[1];
+}
+
+/* returns the given string with all HTML brackets converted to entities
+    TODO: move this to the site's JS library */
+function escapeHTML(string) {
+  return string.replace(/</g,"&lt;")
+                .replace(/>/g,"&gt;");
+}
+
+
+
+
+
+
+
+/* ######################################################## */
+/* #################  JAVADOC REFERENCE ################### */
+/* ######################################################## */
+
+/* Initialize some droiddoc stuff */
+$(document).ready(function() {
+  
+  // init available apis based on user pref
+  changeApiLevel();
+  initSidenavHeightResize()
+});
+
+var API_LEVEL_COOKIE = "api_level";
+var minLevel = 1;
+var maxLevel = 1;
+
+/******* SIDENAV DIMENSIONS ************/
+  
+  function initSidenavHeightResize() {
+    // Change the drag bar size to nicely fit the scrollbar positions
+    var $dragBar = $(".ui-resizable-s");
+    $dragBar.css({'width': $dragBar.parent().width() - 5 + "px"});
+    
+    $( "#resize-packages-nav" ).resizable({ 
+      containment: "#nav-panels",
+      handles: "s",
+      alsoResize: "#packages-nav",
+      resize: function(event, ui) { resizeNav(); }, /* resize the nav while dragging */
+      stop: function(event, ui) { saveNavPanels(); } /* once stopped, save the sizes to cookie  */
+      });
+          
+  }
+  
+function updateSidenavFixedWidth() {
+  if (!navBarIsFixed) return;
+  $('#devdoc-nav').css({
+    'width' : $('#side-nav').css('width'),
+    'margin' : $('#side-nav').css('margin')
+  });
+  $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
+  
+  initSidenavHeightResize();
+}
+
+function updateSidenavFullscreenWidth() {
+  if (!navBarIsFixed) return;
+  $('#devdoc-nav').css({
+    'width' : $('#side-nav').css('width'),
+    'margin' : $('#side-nav').css('margin')
+  });
+  $('#devdoc-nav .totop').css({'left': 'inherit'});
+  
+  initSidenavHeightResize();
+}
+
+function buildApiLevelSelector() {
+  maxLevel = SINCE_DATA.length;
+  var userApiLevel = parseInt(readCookie(API_LEVEL_COOKIE));
+  userApiLevel = userApiLevel == 0 ? maxLevel : userApiLevel; // If there's no cookie (zero), use the max by default
+
+  minLevel = parseInt($("#doc-api-level").attr("class"));
+  // Handle provisional api levels; the provisional level will always be the highest possible level
+  // Provisional api levels will also have a length; other stuff that's just missing a level won't,
+  // so leave those kinds of entities at the default level of 1 (for example, the R.styleable class)
+  if (isNaN(minLevel) && minLevel.length) {
+    minLevel = maxLevel;
+  }
+  var select = $("#apiLevelSelector").html("").change(changeApiLevel);
+  for (var i = maxLevel-1; i >= 0; i--) {
+    var option = $("<option />").attr("value",""+SINCE_DATA[i]).append(""+SINCE_DATA[i]);
+  //  if (SINCE_DATA[i] < minLevel) option.addClass("absent"); // always false for strings (codenames)
+    select.append(option);
+  }
+
+  // get the DOM element and use setAttribute cuz IE6 fails when using jquery .attr('selected',true)
+  var selectedLevelItem = $("#apiLevelSelector option[value='"+userApiLevel+"']").get(0);
+  selectedLevelItem.setAttribute('selected',true);
+}
+
+function changeApiLevel() {
+  maxLevel = SINCE_DATA.length;
+  var selectedLevel = maxLevel;
+
+  selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
+  toggleVisisbleApis(selectedLevel, "body");
+
+  var date = new Date();
+  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
+  var expiration = date.toGMTString();
+  writeCookie(API_LEVEL_COOKIE, selectedLevel, null, expiration);
+
+  if (selectedLevel < minLevel) {
+    var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
+    $("#naMessage").show().html("<div><p><strong>This " + thing + " is not available with API level " + selectedLevel + ".</strong></p>"
+                              + "<p>To use this " + thing + ", you must develop your app using a build target "
+                              + "that supports API level " + $("#doc-api-level").attr("class") + " or higher. To read these "
+                              + "APIs, change the value of the API level filter above.</p>"
+                              + "<p><a href='" +toRoot+ "guide/appendix/api-levels.html'>What is the API level?</a></p></div>");
+  } else {
+    $("#naMessage").hide();
+  }
+}
+
+function toggleVisisbleApis(selectedLevel, context) {
+  var apis = $(".api",context);
+  apis.each(function(i) {
+    var obj = $(this);
+    var className = obj.attr("class");
+    var apiLevelIndex = className.lastIndexOf("-")+1;
+    var apiLevelEndIndex = className.indexOf(" ", apiLevelIndex);
+    apiLevelEndIndex = apiLevelEndIndex != -1 ? apiLevelEndIndex : className.length;
+    var apiLevel = className.substring(apiLevelIndex, apiLevelEndIndex);
+    if (apiLevel.length == 0) { // for odd cases when the since data is actually missing, just bail
+      return;
+    }
+    apiLevel = parseInt(apiLevel);
+
+    // Handle provisional api levels; if this item's level is the provisional one, set it to the max
+    var selectedLevelNum = parseInt(selectedLevel)
+    var apiLevelNum = parseInt(apiLevel);
+    if (isNaN(apiLevelNum)) {
+        apiLevelNum = maxLevel;
+    }
+
+    // Grey things out that aren't available and give a tooltip title
+    if (apiLevelNum > selectedLevelNum) {
+      obj.addClass("absent").attr("title","Requires API Level \""
+            + apiLevel + "\" or higher");
+    } 
+    else obj.removeClass("absent").removeAttr("title");
+  });
+}
+
+
+
+
+/* #################  SIDENAV TREE VIEW ################### */
+
+function new_node(me, mom, text, link, children_data, api_level)
+{
+  var node = new Object();
+  node.children = Array();
+  node.children_data = children_data;
+  node.depth = mom.depth + 1;
+
+  node.li = document.createElement("li");
+  mom.get_children_ul().appendChild(node.li);
+
+  node.label_div = document.createElement("div");
+  node.label_div.className = "label";
+  if (api_level != null) {
+    $(node.label_div).addClass("api");
+    $(node.label_div).addClass("api-level-"+api_level);
+  }
+  node.li.appendChild(node.label_div);
+
+  if (children_data != null) {
+    node.expand_toggle = document.createElement("a");
+    node.expand_toggle.href = "javascript:void(0)";
+    node.expand_toggle.onclick = function() {
+          if (node.expanded) {
+            $(node.get_children_ul()).slideUp("fast");
+            node.plus_img.src = me.toroot + "assets/images/triangle-closed-small.png";
+            node.expanded = false;
+          } else {
+            expand_node(me, node);
+          }
+       };
+    node.label_div.appendChild(node.expand_toggle);
+
+    node.plus_img = document.createElement("img");
+    node.plus_img.src = me.toroot + "assets/images/triangle-closed-small.png";
+    node.plus_img.className = "plus";
+    node.plus_img.width = "8";
+    node.plus_img.border = "0";
+    node.expand_toggle.appendChild(node.plus_img);
+
+    node.expanded = false;
+  }
+
+  var a = document.createElement("a");
+  node.label_div.appendChild(a);
+  node.label = document.createTextNode(text);
+  a.appendChild(node.label);
+  if (link) {
+    a.href = me.toroot + link;
+  } else {
+    if (children_data != null) {
+      a.className = "nolink";
+      a.href = "javascript:void(0)";
+      a.onclick = node.expand_toggle.onclick;
+      // This next line shouldn't be necessary.  I'll buy a beer for the first
+      // person who figures out how to remove this line and have the link
+      // toggle shut on the first try. --joeo@android.com
+      node.expanded = false;
+    }
+  }
+  
+
+  node.children_ul = null;
+  node.get_children_ul = function() {
+      if (!node.children_ul) {
+        node.children_ul = document.createElement("ul");
+        node.children_ul.className = "children_ul";
+        node.children_ul.style.display = "none";
+        node.li.appendChild(node.children_ul);
+      }
+      return node.children_ul;
+    };
+
+  return node;
+}
+
+function expand_node(me, node)
+{
+  if (node.children_data && !node.expanded) {
+    if (node.children_visited) {
+      $(node.get_children_ul()).slideDown("fast");
+    } else {
+      get_node(me, node);
+      if ($(node.label_div).hasClass("absent")) {
+        $(node.get_children_ul()).addClass("absent");
+      } 
+      $(node.get_children_ul()).slideDown("fast");
+    }
+    node.plus_img.src = me.toroot + "assets/images/triangle-opened-small.png";
+    node.expanded = true;
+
+    // perform api level toggling because new nodes are new to the DOM
+    var selectedLevel = $("#apiLevelSelector option:selected").val();
+    toggleVisisbleApis(selectedLevel, "#side-nav");
+  }
+}
+
+function get_node(me, mom)
+{
+  mom.children_visited = true;
+  for (var i in mom.children_data) {
+    var node_data = mom.children_data[i];
+    mom.children[i] = new_node(me, mom, node_data[0], node_data[1],
+        node_data[2], node_data[3]);
+  }
+}
+
+function this_page_relative(toroot)
+{
+  var full = document.location.pathname;
+  var file = "";
+  if (toroot.substr(0, 1) == "/") {
+    if (full.substr(0, toroot.length) == toroot) {
+      return full.substr(toroot.length);
+    } else {
+      // the file isn't under toroot.  Fail.
+      return null;
+    }
+  } else {
+    if (toroot != "./") {
+      toroot = "./" + toroot;
+    }
+    do {
+      if (toroot.substr(toroot.length-3, 3) == "../" || toroot == "./") {
+        var pos = full.lastIndexOf("/");
+        file = full.substr(pos) + file;
+        full = full.substr(0, pos);
+        toroot = toroot.substr(0, toroot.length-3);
+      }
+    } while (toroot != "" && toroot != "/");
+    return file.substr(1);
+  }
+}
+
+function find_page(url, data)
+{
+  var nodes = data;
+  var result = null;
+  for (var i in nodes) {
+    var d = nodes[i];
+    if (d[1] == url) {
+      return new Array(i);
+    }
+    else if (d[2] != null) {
+      result = find_page(url, d[2]);
+      if (result != null) {
+        return (new Array(i).concat(result));
+      }
+    }
+  }
+  return null;
+}
+
+function load_navtree_data(toroot) {
+  var navtreeData = document.createElement("script");
+  navtreeData.setAttribute("type","text/javascript");
+  navtreeData.setAttribute("src", toroot+"navtree_data.js");
+  $("head").append($(navtreeData));
+}
+
+function init_default_navtree(toroot) {
+  init_navtree("tree-list", toroot, NAVTREE_DATA);
+  
+  // perform api level toggling because because the whole tree is new to the DOM
+  var selectedLevel = $("#apiLevelSelector option:selected").val();
+  toggleVisisbleApis(selectedLevel, "#side-nav");
+}
+
+function init_navtree(navtree_id, toroot, root_nodes)
+{
+  var me = new Object();
+  me.toroot = toroot;
+  me.node = new Object();
+
+  me.node.li = document.getElementById(navtree_id);
+  me.node.children_data = root_nodes;
+  me.node.children = new Array();
+  me.node.children_ul = document.createElement("ul");
+  me.node.get_children_ul = function() { return me.node.children_ul; };
+  //me.node.children_ul.className = "children_ul";
+  me.node.li.appendChild(me.node.children_ul);
+  me.node.depth = 0;
+
+  get_node(me, me.node);
+
+  me.this_page = this_page_relative(toroot);
+  me.breadcrumbs = find_page(me.this_page, root_nodes);
+  if (me.breadcrumbs != null && me.breadcrumbs.length != 0) {
+    var mom = me.node;
+    for (var i in me.breadcrumbs) {
+      var j = me.breadcrumbs[i];
+      mom = mom.children[j];
+      expand_node(me, mom);
+    }
+    mom.label_div.className = mom.label_div.className + " selected";
+    addLoadEvent(function() {
+      scrollIntoView("nav-tree");
+      });
+  }
+}
+
+/* TOGGLE INHERITED MEMBERS */
+
+/* Toggle an inherited class (arrow toggle)
+ * @param linkObj  The link that was clicked.
+ * @param expand  'true' to ensure it's expanded. 'false' to ensure it's closed.
+ *                'null' to simply toggle.
+ */
+function toggleInherited(linkObj, expand) {
+    var base = linkObj.getAttribute("id");
+    var list = document.getElementById(base + "-list");
+    var summary = document.getElementById(base + "-summary");
+    var trigger = document.getElementById(base + "-trigger");
+    var a = $(linkObj);
+    if ( (expand == null && a.hasClass("closed")) || expand ) {
+        list.style.display = "none";
+        summary.style.display = "block";
+        trigger.src = toRoot + "assets/images/triangle-opened.png";
+        a.removeClass("closed");
+        a.addClass("opened");
+    } else if ( (expand == null && a.hasClass("opened")) || (expand == false) ) {
+        list.style.display = "block";
+        summary.style.display = "none";
+        trigger.src = toRoot + "assets/images/triangle-closed.png";
+        a.removeClass("opened");
+        a.addClass("closed");
+    }
+    return false;
+}
+
+/* Toggle all inherited classes in a single table (e.g. all inherited methods)
+ * @param linkObj  The link that was clicked.
+ * @param expand  'true' to ensure it's expanded. 'false' to ensure it's closed.
+ *                'null' to simply toggle.
+ */
+function toggleAllInherited(linkObj, expand) {
+  var a = $(linkObj);
+  var table = $(a.parent().parent().parent()); // ugly way to get table/tbody
+  var expandos = $(".jd-expando-trigger", table);
+  if ( (expand == null && a.text() == "[Expand]") || expand ) {
+    expandos.each(function(i) {
+      toggleInherited(this, true);
+    });
+    a.text("[Collapse]");
+  } else if ( (expand == null && a.text() == "[Collapse]") || (expand == false) ) {
+    expandos.each(function(i) {
+      toggleInherited(this, false);
+    });
+    a.text("[Expand]");
+  }
+  return false;
+}
+
+/* Toggle all inherited members in the class (link in the class title)
+ */
+function toggleAllClassInherited() {
+  var a = $("#toggleAllClassInherited"); // get toggle link from class title
+  var toggles = $(".toggle-all", $("#body-content"));
+  if (a.text() == "[Expand All]") {
+    toggles.each(function(i) {
+      toggleAllInherited(this, true);
+    });
+    a.text("[Collapse All]");
+  } else {
+    toggles.each(function(i) {
+      toggleAllInherited(this, false);
+    });
+    a.text("[Expand All]");
+  }
+  return false;
+}
+
+/* Expand all inherited members in the class. Used when initiating page search */
+function ensureAllInheritedExpanded() {
+  var toggles = $(".toggle-all", $("#body-content"));
+  toggles.each(function(i) {
+    toggleAllInherited(this, true);
+  });
+  $("#toggleAllClassInherited").text("[Collapse All]");
+}
+
+
+/* HANDLE KEY EVENTS
+ * - Listen for Ctrl+F (Cmd on Mac) and expand all inherited members (to aid page search)
+ */
+var agent = navigator['userAgent'].toLowerCase();
+var mac = agent.indexOf("macintosh") != -1;
+
+$(document).keydown( function(e) {
+var control = mac ? e.metaKey && !e.ctrlKey : e.ctrlKey; // get ctrl key
+  if (control && e.which == 70) {  // 70 is "F"
+    ensureAllInheritedExpanded();
+  }
+});
+
+
+
