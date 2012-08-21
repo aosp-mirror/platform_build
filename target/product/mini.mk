@@ -164,11 +164,8 @@ PRODUCT_PACKAGES += \
     FusedLocation \
     InputDevices \
     LatinIME \
-    Launcher2 \
     Phone \
     Provision \
-    Settings \
-    SystemUI \
     hostapd \
     wpa_supplicant.conf
 
@@ -226,4 +223,8 @@ $(call inherit-product-if-exists, frameworks/base/data/sounds/AudioPackage5.mk)
 
 #----------------- For PDK ------------------------------
 PRODUCT_PACKAGES += \
-    TestingCamera
+    TestingCamera \
+    Home \
+    DummySystemUI \
+    DummySettings
+
