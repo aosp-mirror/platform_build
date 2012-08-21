@@ -41,11 +41,11 @@ ifeq ($(TARGET_ARCH),arm)
 endif
 ifeq ($(TARGET_ARCH),mips)
   CLANG_CONFIG_EXTRA_CFLAGS += \
-    -target mipsel-linux-android \
+    -target mipsel-linux-androideabi \
     -nostdlibinc \
     -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
   CLANG_CONFIG_EXTRA_LDFLAGS += \
-    -target mipsel-linux-android \
+    -target mipsel-linux-androideabi \
     -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
   CLANG_CONFIG_UNKNOWN_CFLAGS += \
     -EL \
