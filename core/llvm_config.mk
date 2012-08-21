@@ -21,10 +21,12 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops
 
 ifeq ($(TARGET_ARCH),arm)
-  CLANG_CONFIG_EXTRA_CFLAGS += \
+  CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target arm-linux-androideabi \
     -nostdlibinc \
-    -B$(TARGET_TOOLCHAIN_ROOT)/arm-linux-androideabi/bin \
+    -B$(TARGET_TOOLCHAIN_ROOT)/arm-linux-androideabi/bin
+  CLANG_CONFIG_EXTRA_CFLAGS += \
+    $(CLANG_CONFIG_EXTRA_ASFLAGS) \
     -mllvm -arm-enable-ehabi
   CLANG_CONFIG_EXTRA_LDFLAGS += \
     -target arm-linux-androideabi \
@@ -40,10 +42,11 @@ ifeq ($(TARGET_ARCH),arm)
     -Wa,--noexecstack
 endif
 ifeq ($(TARGET_ARCH),mips)
-  CLANG_CONFIG_EXTRA_CFLAGS += \
+  CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target mipsel-linux-androideabi \
     -nostdlibinc \
     -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
+  CLANG_CONFIG_EXTRA_CFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
   CLANG_CONFIG_EXTRA_LDFLAGS += \
     -target mipsel-linux-androideabi \
     -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
@@ -59,10 +62,11 @@ ifeq ($(TARGET_ARCH),mips)
     -mtune=mips32r2
 endif
 ifeq ($(TARGET_ARCH),x86)
-  CLANG_CONFIG_EXTRA_CFLAGS += \
+  CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target i686-linux-android \
     -nostdlibinc \
     -B$(TARGET_TOOLCHAIN_ROOT)/i686-linux-android/bin
+  CLANG_CONFIG_EXTRA_CFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
   CLANG_CONFIG_EXTRA_LDFLAGS += \
     -target i686-linux-android \
     -B$(TARGET_TOOLCHAIN_ROOT)/i686-linux-android/bin
@@ -72,8 +76,6 @@ ifeq ($(TARGET_ARCH),x86)
     -mfpmath=sse \
     -mbionic
 endif
-#TODO: split out the asflags from CLANG_CONFIG_EXTRA_CFLAGS.
-CLANG_CONFIG_EXTRA_ASFLAGS := $(CLANG_CONFIG_EXTRA_CFLAGS)
 
 CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include $(TARGET_OUT_HEADERS)/clang
 
