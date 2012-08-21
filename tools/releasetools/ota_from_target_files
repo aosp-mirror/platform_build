@@ -308,7 +308,7 @@ def AppendAssertions(script, info_dict):
   script.AssertDevice(device)
 
 
-def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
+def MakeRecoveryPatch(input_tmp, output_zip, recovery_img, boot_img):
   """Generate a binary patch that creates the recovery image starting
   with the boot image.  (Most of the space in these images is just the
   kernel, which is identical for the two, so the resulting patch
@@ -324,7 +324,16 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   executable.
   """
 
-  d = common.Difference(recovery_img, boot_img)
+  diff_program = ["imgdiff"]
+  path = os.path.join(input_tmp, "SYSTEM", "etc", "recovery-resource.dat")
+  if os.path.exists(path):
+    diff_program.append("-b")
+    diff_program.append(path)
+    bonus_args = "-b /system/etc/recovery-resource.dat"
+  else:
+    bonus_args = ""
+
+  d = common.Difference(recovery_img, boot_img, diff_program=diff_program)
   _, _, patch = d.ComputePatch()
   common.ZipWriteStr(output_zip, "recovery/recovery-from-boot.p", patch)
   Item.Get("system/recovery-from-boot.p", dir=False)
@@ -335,7 +344,7 @@ def MakeRecoveryPatch(output_zip, recovery_img, boot_img):
   sh = """#!/system/bin/sh
 if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
   log -t recovery "Installing new recovery image"
-  applypatch %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
+  applypatch %(bonus_args)s %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p
 else
   log -t recovery "Recovery image already installed"
 fi
@@ -347,6 +356,7 @@ fi
         'boot_device': boot_device,
         'recovery_type': recovery_type,
         'recovery_device': recovery_device,
+        'bonus_args': bonus_args,
         }
   common.ZipWriteStr(output_zip, "recovery/etc/install-recovery.sh", sh)
   return Item.Get("system/etc/install-recovery.sh", dir=False)
@@ -403,7 +413,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
                                      OPTIONS.input_tmp, "BOOT")
   recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
                                          OPTIONS.input_tmp, "RECOVERY")
-  MakeRecoveryPatch(output_zip, recovery_img, boot_img)
+  MakeRecoveryPatch(OPTIONS.input_tmp, output_zip, recovery_img, boot_img)
 
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
@@ -642,18 +652,17 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     print "boot image unchanged; skipping."
 
   if updating_recovery:
-    # Is it better to generate recovery as a patch from the current
-    # boot image, or from the previous recovery image?  For large
-    # updates with significant kernel changes, probably the former.
-    # For small updates where the kernel hasn't changed, almost
-    # certainly the latter.  We pick the first option.  Future
-    # complicated schemes may let us effectively use both.
+    # Recovery is generated as a patch using both the boot image
+    # (which contains the same linux kernel as recovery) and the file
+    # /system/etc/recovery-resource.dat (which contains all the images
+    # used in the recovery UI) as sources.  This lets us minimize the
+    # size of the patch, which must be included in every OTA package.
     #
-    # A wacky possibility: as long as there is room in the boot
-    # partition, include the binaries and image files from recovery in
-    # the boot image (though not in the ramdisk) so they can be used
-    # as fodder for constructing the recovery image.
-    MakeRecoveryPatch(output_zip, target_recovery, target_boot)
+    # For older builds where recovery-resource.dat is not present, we
+    # use only the boot image as the source.
+
+    MakeRecoveryPatch(OPTIONS.target_tmp, output_zip,
+                      target_recovery, target_boot)
     script.DeleteFiles(["/system/recovery-from-boot.p",
                         "/system/etc/install-recovery.sh"])
     print "recovery image changed; including as patch from boot."
