@@ -170,6 +170,35 @@ ifeq (false,$(LOCAL_DEX_PREOPT))
 LOCAL_DEX_PREOPT :=
 endif
 
+ifeq (true,$(EMMA_INSTRUMENT))
+ifndef LOCAL_EMMA_INSTRUMENT
+# No emma for test apks.
+ifeq (,$(filer tests,$(LOCAL_MODULE_TAGS))$(LOCAL_INSTRUMENTATION_FOR))
+LOCAL_EMMA_INSTRUMENT := true
+endif # No test apk
+endif # LOCAL_EMMA_INSTRUMENT is not set
+else
+LOCAL_EMMA_INSTRUMENT := false
+endif # EMMA_INSTRUMENT is true
+
+ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
+ifeq (true,$(EMMA_INSTRUMENT_STATIC))
+LOCAL_STATIC_JAVA_LIBRARIES += emma
+else
+ifdef LOCAL_SDK_VERSION
+ifdef TARGET_BUILD_APPS
+# In unbundled build merge the emma library into the apk.
+LOCAL_STATIC_JAVA_LIBRARIES += emma
+else
+# If build against the SDK in full build, core.jar is not used,
+# we have to use prebiult emma.jar to make Proguard happy;
+# Otherwise emma classes are included in core.jar.
+LOCAL_PROGUARD_FLAGS += -libraryjars $(EMMA_JAR)
+endif # full build
+endif # LOCAL_SDK_VERSION
+endif # EMMA_INSTRUMENT_STATIC
+endif # LOCAL_EMMA_INSTRUMENT
+
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################

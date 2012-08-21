@@ -44,6 +44,16 @@ ifeq (false,$(LOCAL_DEX_PREOPT))
 LOCAL_DEX_PREOPT :=
 endif
 
+ifeq (true,$(EMMA_INSTRUMENT))
+ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
+ifeq (true,$(EMMA_INSTRUMENT_STATIC))
+LOCAL_STATIC_JAVA_LIBRARIES += emma
+endif # LOCAL_EMMA_INSTRUMENT
+endif # EMMA_INSTRUMENT_STATIC
+else
+LOCAL_EMMA_INSTRUMENT := false
+endif # EMMA_INSTRUMENT
+
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################

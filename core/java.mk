@@ -75,29 +75,8 @@ endif
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
-# Emma source code coverage
-ifeq ($(EMMA_FULL_APP_INSTRUMENT),true)
-  # doing a full emma instrument here, i.e. all app packages instrumented
-  EMMA_INSTRUMENT := true
-  # do not instrument modules that are not app packages
-  ifneq ($(LOCAL_MODULE_CLASS),APPS)
-    LOCAL_NO_EMMA_INSTRUMENT := true
-    LOCAL_NO_EMMA_COMPILE := true
-  endif
-  # do not instrument modules that are marked tests
-  ifeq ($(LOCAL_MODULE_TAGS),tests)
-    LOCAL_NO_EMMA_INSTRUMENT := true
-    LOCAL_NO_EMMA_COMPILE := true
-  endif
-endif
-
-ifneq ($(EMMA_INSTRUMENT),true)
-LOCAL_NO_EMMA_INSTRUMENT := true
-LOCAL_NO_EMMA_COMPILE := true
-endif
-
 # Choose leaf name for the compiled jar file.
-ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 full_classes_compiled_jar_leaf := classes-no-debug-var.jar
 built_dex_intermediate_leaf := classes-no-local.dex
 else
@@ -307,13 +286,7 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
 	$(hide) $(ACP) -fp $< $@
 endif
 
-ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-# Skip adding emma instrumentation to class files if this is a static library,
-# since it will be instrumented by the package that includes it
-LOCAL_NO_EMMA_INSTRUMENT:= true
-endif
-
-ifneq ($(LOCAL_NO_EMMA_INSTRUMENT),true)
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
 # module level coverage filter can be defined using LOCAL_EMMA_COVERAGE_FILTER
@@ -329,10 +302,7 @@ endif
 # $(full_classes_emma_jar)
 $(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
-$(PRIVATE_EMMA_COVERAGE_FILE): $(full_classes_emma_jar)
 
-# tell proguard to load emma jar
-LOCAL_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS) $(addprefix -libraryjars ,$(EMMA_JAR))
 else
 $(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
@@ -396,7 +366,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 # The workaround here is to build different dex file here based on emma switch
 # then later copy into classes.dex. When emma is on, dx is run with --no-locals
 # option to remove local variable information
-ifneq ($(LOCAL_NO_EMMA_COMPILE),true)
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
