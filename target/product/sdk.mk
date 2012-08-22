@@ -23,7 +23,6 @@ PRODUCT_PACKAGES := \
 	Email2 \
 	Exchange2 \
 	FusedLocation \
-	Imap2 \
 	Gallery \
 	Music \
 	Mms \

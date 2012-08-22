@@ -30,7 +30,6 @@ PRODUCT_PACKAGES := \
     Exchange2 \
     FusedLocation \
     Gallery2 \
-    Imap2 \
     InputDevices \
     LatinIME \
     Launcher2 \
