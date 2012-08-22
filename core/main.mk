@@ -218,6 +218,11 @@ ENABLE_INCREMENTALJAVAC := true
 MAKECMDGOALS := $(filter-out incrementaljavac, $(MAKECMDGOALS))
 endif
 
+# EMMA_INSTRUMENT_STATIC merges the static emma library to each emma-enabled module.
+ifeq (true,$(EMMA_INSTRUMENT_STATIC))
+EMMA_INSTRUMENT := true
+endif
+
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
