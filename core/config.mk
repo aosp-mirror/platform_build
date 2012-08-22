@@ -402,8 +402,6 @@ TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
 # define llvm tools and global flags
 include $(BUILD_SYSTEM)/llvm_config.mk
 
-PREBUILT_IS_PRESENT := $(if $(wildcard prebuilt/Android.mk),true)
-
 # ###############################################################
 # Collect a list of the SDK versions that we could compile against
 # For use with the LOCAL_SDK_VERSION variable for include $(BUILD_PACKAGE)
