@@ -30,7 +30,6 @@ PRODUCT_PACKAGES := \
     Email2 \
     Exchange2 \
     Gallery2 \
-    Imap2 \
     LatinIME \
     Launcher2 \
     Music \
