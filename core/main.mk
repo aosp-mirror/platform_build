@@ -593,6 +593,9 @@ ifdef FULL_BUILD
   # by the appropriate product definition file, which was included
   # by product_config.make.
   product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  # Filter out the overridden packages before doing expansion
+  product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
+      $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
   $(call expand-required-modules,product_MODULES,$(product_MODULES))
   product_FILES := $(call module-installed-files, $(product_MODULES))
   ifeq (0,1)
