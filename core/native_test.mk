@@ -3,7 +3,7 @@
 ## Common flags for native tests are added.
 ###########################################
 
-LOCAL_CFLAGS += -DGTEST_OS_LINUX -DGTEST_HAS_STD_STRING
+LOCAL_CFLAGS += -DGTEST_OS_LINUX_ANDROID -DGTEST_HAS_STD_STRING
 LOCAL_C_INCLUDES += bionic \
                     bionic/libstdc++/include \
                     external/gtest/include \
