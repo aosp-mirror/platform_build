@@ -322,6 +322,9 @@ proguard_flags := $(addprefix -libraryjars ,$(proguard_full_java_libs)) \
                   -include $(BUILD_SYSTEM)/proguard.flags \
                   -forceprocessing \
                   -printmapping $(proguard_dictionary)
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
+proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
+endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(strip $(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS))$(filter android.test.runner,$(LOCAL_JAVA_LIBRARIES))),)
 proguard_flags := $(proguard_flags) -include $(BUILD_SYSTEM)/proguard_tests.flags
