@@ -29,6 +29,7 @@ PRODUCT_PACKAGES += \
     Contacts \
     ContactsProvider \
     DefaultContainerService \
+    Dialer \
     DownloadProvider \
     DownloadProviderUi \
     HTMLViewer \
