@@ -53,14 +53,6 @@ $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE)
 endif
 LOCAL_MODULE := $(LOCAL_PACKAGE_NAME)
 
-# Android packages should use Android resources or assets.
-ifneq (,$(LOCAL_JAVA_RESOURCE_DIRS))
-$(error $(LOCAL_PATH): Package modules may not set LOCAL_JAVA_RESOURCE_DIRS)
-endif
-ifneq (,$(LOCAL_JAVA_RESOURCE_FILES))
-$(error $(LOCAL_PATH): Package modules may not set LOCAL_JAVA_RESOURCE_FILES)
-endif
-
 ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
 LOCAL_MANIFEST_FILE := AndroidManifest.xml
 endif
