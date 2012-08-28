@@ -36,12 +36,14 @@ PRODUCT_PACKAGES += \
     KeyChain \
     MediaProvider \
     PackageInstaller \
+    PhotoTable \
     PicoTts \
     SettingsProvider \
     SharedStorageBackup \
     TelephonyProvider \
     UserDictionaryProvider \
     VpnDialogs \
+    WebViewDream \
     abcc \
     apache-xml \
     atrace \
