@@ -35,6 +35,7 @@ PRODUCT_PACKAGES := \
     Launcher2 \
     Music \
     MusicFX \
+    OneTimeInitializer \
     Provision \
     Phone \
     QuickSearchBox \
