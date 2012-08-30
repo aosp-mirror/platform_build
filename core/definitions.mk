@@ -1437,8 +1437,8 @@ define unzip-jar-files
       exit 1; \
     fi; \
     unzip -qo $$f -d $(2); \
-    (cd $(2) && rm -rf META-INF); \
-  done
+  done \
+  $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,;rm -rf $(2)/META-INF)
 endef
 
 # Common definition to invoke javac on the host and target.

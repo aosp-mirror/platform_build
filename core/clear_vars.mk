@@ -125,6 +125,8 @@ LOCAL_ADDRESS_SANITIZER:=
 LOCAL_JAR_EXCLUDE_FILES:=
 LOCAL_LINT_FLAGS:=
 LOCAL_SOURCE_FILES_ALL_GENERATED:= # '',true
+# Don't delete the META_INF dir when merging static Java libraries.
+LOCAL_DONT_DELETE_JAR_META_INF:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
