@@ -226,5 +226,6 @@ PRODUCT_PACKAGES += \
     TestingCamera \
     Home \
     DummySystemUI \
-    DummySettings
+    DummySettings \
+    libsurfaceflinger_ddmconnection
 
