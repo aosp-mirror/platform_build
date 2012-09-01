@@ -106,6 +106,7 @@ PRODUCT_PACKAGES += \
     libstlport \
     libsurfaceflinger \
     libsurfaceflinger_client \
+    libsurfaceflinger_ddmconnection \
     libsystem_server \
     libsysutils \
     libthread_db \
