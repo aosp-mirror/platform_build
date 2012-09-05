@@ -55,11 +55,6 @@ ALL_MODULE_TAGS:=
 # its sub-variables.)
 ALL_MODULE_NAME_TAGS:=
 
-# All host modules are automatically installed (i.e. outside
-# of the product configuration scheme).  This is a list of the
-# install targets (LOCAL_INSTALLED_MODULE).
-ALL_HOST_INSTALLED_FILES:=
-
 # Full paths to all prebuilt files that will be copied
 # (used to make the dependency on acp)
 ALL_PREBUILT:=
