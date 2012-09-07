@@ -1811,13 +1811,14 @@ function escapeHTML(string) {
 /* #################  JAVADOC REFERENCE ################### */
 /* ######################################################## */
 
-/* Initialize some droiddoc stuff */
-$(document).ready(function() {
-  
-  // init available apis based on user pref
-  changeApiLevel();
-  initSidenavHeightResize()
-});
+/* Initialize some droiddoc stuff, but only if we're in the reference */
+if (location.pathname.indexOf("/reference") == 0) {
+  $(document).ready(function() {
+    // init available apis based on user pref
+    changeApiLevel();
+    initSidenavHeightResize()
+  });
+}
 
 var API_LEVEL_COOKIE = "api_level";
 var minLevel = 1;
