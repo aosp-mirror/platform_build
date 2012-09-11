@@ -95,6 +95,11 @@ body {
   position: fixed;
   margin:0;
   top: 20px; }
+  
+#devdoc-nav span.small {
+  font-size:12px;
+  font-weight:normal;
+}
 
 #content {
   width: 760px;
