@@ -761,12 +761,17 @@ endef
 ###########################################################
 ## Commands for munging the dependency files GCC generates
 ###########################################################
+# $(1): the input .d file
+# $(2): the output .P file
+define transform-d-to-p-args
+$(hide) cp $(1) $(2); \
+	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+		-e '/^$$/ d' -e 's/$$/ :/' < $(1) >> $(2); \
+	rm -f $(1)
+endef
 
 define transform-d-to-p
-$(hide) cp $(@:%.o=%.d) $(@:%.o=%.P); \
-	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-		-e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
-	rm -f $(@:%.o=%.d)
+$(call transform-d-to-p-args,$(@:%.o=%.d),$(@:%.o=%.P))
 endef
 
 ###########################################################
