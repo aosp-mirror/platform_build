@@ -468,6 +468,7 @@ subdirs := \
 	build/tools/acp \
 	external/gcc-demangle \
 	external/mksh \
+	external/openssl \
 	external/yaffs2 \
 	external/zlib
 else	# !BUILD_TINY_ANDROID
