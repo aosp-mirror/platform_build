@@ -94,6 +94,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-fstrict-aliasing \
 			-funswitch-loops \
 			-funwind-tables \
+			-fstack-protector \
 			-include $(call select-android-config-h,target_linux-x86)
 
 # XXX: Not sure this is still needed. Must check with our toolchains.
