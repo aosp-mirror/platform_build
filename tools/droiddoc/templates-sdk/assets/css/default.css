@@ -2279,7 +2279,7 @@ div.note.distribute {
   margin-bottom:0;
 }
 
-blockquote {
+body.about blockquote {
   display:block;
   float:right;
   width:280px;
