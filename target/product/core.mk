@@ -44,7 +44,6 @@ PRODUCT_PACKAGES += \
     TelephonyProvider \
     UserDictionaryProvider \
     VpnDialogs \
-    WebViewDream \
     abcc \
     apache-xml \
     atrace \
