@@ -21,6 +21,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := signapk
 LOCAL_SRC_FILES := SignApk.java
 LOCAL_JAR_MANIFEST := SignApk.mf
+LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle-host bouncycastle-bcpkix-host
 include $(BUILD_HOST_JAVA_LIBRARY)
 
 ifeq ($(TARGET_BUILD_APPS),)
