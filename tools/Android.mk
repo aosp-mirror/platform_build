@@ -14,7 +14,15 @@
 # limitations under the License.
 #
 
-ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
+ifeq (,$(TARGET_BUILD_APPS))
+
 LOCAL_PATH := $(call my-dir)
-include $(call first-makefiles-under,$(LOCAL_PATH))
+
+ifeq ($(TARGET_BUILD_PDK),true)
+include $(filter-out %/acp/Android.mk %/signapk/Android.mk %/zipalign/Android.mk,\
+  $(call all-makefiles-under,$(LOCAL_PATH)))
+else # !PDK
+include $(call all-makefiles-under,$(LOCAL_PATH))
+endif # PDK
+
 endif
