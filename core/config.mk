@@ -222,7 +222,7 @@ TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
 
 # $(1): os/arch
 define select-android-config-h
-system/core/include/arch/$(1)/AndroidConfig.h
+build/core/combo/include/arch/$(1)/AndroidConfig.h
 endef
 
 combo_target := HOST_
