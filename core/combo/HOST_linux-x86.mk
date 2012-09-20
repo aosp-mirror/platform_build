@@ -57,11 +57,8 @@ ifneq ($(strip $(BUILD_HOST_static)),)
 HOST_GLOBAL_LDFLAGS += -static
 endif # BUILD_HOST_static
 
-HOST_GLOBAL_CFLAGS += -fPIC
-ifeq (,$(TARGET_BUILD_APPS))
-HOST_GLOBAL_CFLAGS += \
-	-include $(call select-android-config-h,linux-x86)
-endif
+HOST_GLOBAL_CFLAGS += -fPIC \
+    -include $(call select-android-config-h,linux-x86)
 
 # Disable new longjmp in glibc 2.11 and later. See bug 2967937.
 HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
