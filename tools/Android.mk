@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-ifeq ($(TARGET_BUILD_APPS),)
+ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
 LOCAL_PATH := $(call my-dir)
 include $(call first-makefiles-under,$(LOCAL_PATH))
 endif
