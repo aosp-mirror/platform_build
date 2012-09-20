@@ -85,10 +85,9 @@ HOST_STRIP_COMMAND = $(HOST_STRIP) --strip-debug $< -o $@
 HOST_SHLIB_SUFFIX := .dylib
 HOST_JNILIB_SUFFIX := .jnilib
 
-ifeq (,$(TARGET_BUILD_APPS))
 HOST_GLOBAL_CFLAGS += \
     -include $(call select-android-config-h,darwin-x86)
-endif
+
 ifneq ($(filter 10.7 10.7.% 10.8 10.8.%, $(build_mac_version)),)
        HOST_RUN_RANLIB_AFTER_COPYING := false
 else

@@ -21,7 +21,7 @@
 # than ARMv5TE. Each value should correspond to a file named
 # $(BUILD_COMBOS)/arch/<name>.mk which must contain
 # makefile variable definitions similar to the preprocessor
-# defines in system/core/include/arch/<combo>/AndroidConfig.h. Their
+# defines in build/core/combo/include/arch/<combo>/AndroidConfig.h. Their
 # purpose is to allow module Android.mk files to selectively compile
 # different versions of code based upon the funtionality and
 # instructions available in a given architecture version.
