@@ -13,7 +13,7 @@ is_tests_build := $(filter tests,$(MAKECMDGOALS))
 
 # -----------------------------------------------------------------
 # Define rules to copy PRODUCT_COPY_FILES defined by the product.
-# PRODUCT_COPY_FILES contains words like <source file>:<dest file>.
+# PRODUCT_COPY_FILES contains words like <source file>:<dest file>[:<owner>].
 # <dest file> is relative to $(PRODUCT_OUT), so it should look like,
 # e.g., "system/etc/file.xml".
 # The filter part means "only eval the copy-one-file rule if this
