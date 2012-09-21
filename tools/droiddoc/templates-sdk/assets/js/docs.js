@@ -28,7 +28,7 @@ $(document).ready(function() {
   $('.scroll-pane').jScrollPane( {verticalGutter:0} );
   
   // add HRs below all H2s (except for a few other h2 variants)
-  $('h2').not('#qv h2').not('#tb h2').not('#devdoc-nav h2').css({marginBottom:0}).after('<hr/>');
+  $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').css({marginBottom:0}).after('<hr/>');
   
   // set search's onkeyup handler here so we can show suggestions 
   // even while search results are visible
