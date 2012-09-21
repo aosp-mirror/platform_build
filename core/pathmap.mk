@@ -27,9 +27,6 @@
 # A mapping from shorthand names to include directories.
 #
 pathmap_INCL := \
-    bluedroid:system/bluetooth/bluedroid/include \
-    bluez:external/bluetooth/bluez \
-    glib:external/bluetooth/glib \
     bootloader:bootable/bootloader/legacy/include \
     camera:system/media/camera/include \
     corecg:external/skia/include/core \
