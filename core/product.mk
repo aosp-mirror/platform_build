@@ -165,7 +165,7 @@ $(if ,, \
     $(eval pb := $(strip $(PRODUCTS.$(p).PRODUCT_BRAND))) \
     $(if $(pb),,$(error $(p): PRODUCT_BRAND must be defined.)) \
     $(foreach cf,$(strip $(PRODUCTS.$(p).PRODUCT_COPY_FILES)), \
-      $(if $(filter 2,$(words $(subst :,$(space),$(cf)))),, \
+      $(if $(filter 2 3,$(words $(subst :,$(space),$(cf)))),, \
         $(error $(p): malformed COPY_FILE "$(cf)") \
        ) \
      ) \
