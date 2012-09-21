@@ -17,22 +17,22 @@
 # Restrict the vendor module owners here.
 _vendor_owner_whitelist := \
         asus \
-	audience \
-	broadcom \
-	csr \
+        audience \
+        broadcom \
+        csr \
         elan \
         google \
-	imgtec \
-	invensense \
+        imgtec \
+        invensense \
         lge \
         nvidia \
-	nxp \
+        nxp \
         qcom \
-	samsung \
-	samsung_arm \
-	ti \
+        samsung \
+        samsung_arm \
+        ti \
         trusted_logic \
-	widevine
+        widevine
 
 
 ifneq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
@@ -47,10 +47,13 @@ ifneq (,$(filter vendor/%, $(PRODUCT_PACKAGE_OVERLAYS) $(DEVICE_PACKAGE_OVERLAYS
 $(error Error: Product "$(TARGET_PRODUCT)" can not have overlay in vendor tree: \
     $(filter vendor/%, $(PRODUCT_PACKAGE_OVERLAYS) $(DEVICE_PACKAGE_OVERLAYS)))
 endif
-ifneq (,$(filter vendor/%, $(PRODUCT_COPY_FILES)))
-$(error Error: Product "$(TARGET_PRODUCT)" can not have PRODUCT_COPY_FILES from vendor tree: \
-    $(filter vendor/%, $(PRODUCT_COPY_FILES)))
+_vendor_check_copy_files := $(filter vendor/%, $(PRODUCT_COPY_FILES))
+ifneq (,$(_vendor_check_copy_files))
+$(foreach c, $(_vendor_check_copy_files), \
+  $(if $(filter $(_vendor_owner_whitelist), $(call word-colon, 3, $(c))),,\
+    $(error Error: vendor PRODUCT_COPY_FILES file "$(c)" has unknown owner)))
 endif
+_vendor_check_copy_files :=
 
 $(foreach m, $(_vendor_check_modules), \
   $(if $(filter vendor/%, $(ALL_MODULES.$(m).PATH)),\
