@@ -67,6 +67,13 @@ PRODUCT_PACKAGES := \
 	rild \
 	LegacyCamera
 
+PRODUCT_PACKAGES += \
+    librs_jni \
+    libvideoeditor_jni \
+    libvideoeditor_core \
+    libvideoeditor_osal \
+    libvideoeditor_videofilters \
+    libvideoeditorplayer \
 
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk
