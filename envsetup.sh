@@ -937,7 +937,7 @@ function runhat()
         shift 2
     fi
     local adbOptions=${adbTarget}
-    echo adbOptions = ${adbOptions}
+    #echo adbOptions = ${adbOptions}
 
     # runhat options
     local targetPid=$1
@@ -954,8 +954,11 @@ function runhat()
     fi
 
     # issue "am" command to cause the hprof dump
-    local devFile=/sdcard/hprof-$targetPid
+    local sdcard=$(adb shell echo -n '$EXTERNAL_STORAGE')
+    local devFile=$sdcard/hprof-$targetPid
+    #local devFile=/data/local/hprof-$targetPid
     echo "Poking $targetPid and waiting for data..."
+    echo "Storing data at $devFile"
     adb ${adbOptions} shell am dumpheap $targetPid $devFile
     echo "Press enter when logcat shows \"hprof: heap dump completed\""
     echo -n "> "
