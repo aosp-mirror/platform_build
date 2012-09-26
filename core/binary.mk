@@ -13,10 +13,6 @@ ifdef LOCAL_SDK_VERSION
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION can not be used in host module)
   endif
-  ifneq ($(filter-out SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
-    $(error $(LOCAL_PATH): NDK can only be used to build target shared/static libraries, \
-          while your module is of class $(LOCAL_MODULE_CLASS))
-  endif
   my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources
   my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
 
