@@ -448,27 +448,101 @@ video.with-shadow {
     border:1px solid #DADADA;
     border-bottom:0;
   }
-      
+
   .training-nav-top a.next-page-link {
     border-left:0;
     width:123px;
   }
       
+  .paging-links a.disabled,
   .training-nav-top a.disabled,
   .content-footer a.disabled {
-    color:#999;
+    color:#bbb;
   }
       
+  .paging-links a.disabled:hover,
   .training-nav-top a.disabled:hover,
   .content-footer a.disabled:hover {
     cursor:default;
-    color:#999 !important;
+    color:#bbb !important;
   }
       
   .training-nav-top a.start-class-link,
   .training-nav-top a.start-course-link {
     width:262px;
   }
+  
+  /* list of classes on course landing page */
+  ol.class-list {
+    list-style:none;
+    margin-left:0;
+  }
+  ol.class-list>li {
+    margin:0 0 15px;
+    padding:5px 0 0;
+    overflow:hidden;
+    border-top:1px solid #ccc;
+  }
+  ol.class-list li a.title {
+    font-size:16px;
+    margin:0;
+    clear:left;
+    display:block;
+    height:32px;
+    padding:0 4px;
+  }
+  ol.class-list li a.title h2 {
+    color:inherit;
+    margin:0 0 10px;
+    display:block;
+    float:left;
+    width:675px;
+  }
+  ol.class-list li a.title span {
+    display:none;
+    float:left;
+    font-size:18px;
+    font-weight:bold;
+    background: transparent url(../images/styles/disclosure_right.png) no-repeat scroll 50% 50%;
+    width: 10px;
+    height: 32px;
+  }
+  ol.class-list li a.title:hover {
+    background:#ddd;
+    color:#258AAF !important;
+  }
+  ol.class-list li a.title:hover span {
+    display:block;
+  }
+  
+  #jd-content
+  ol.class-list li img {
+    float:left;
+    clear:left;
+    width:64px;
+    margin:0 20px 0 0;
+  }
+  ol.class-list li p.description {
+    float:left;
+    display:block;
+    width:250px;
+    margin:0;
+  }
+  ol.class-list li p.description.article {
+    width: 550px;
+  }
+  ol.class-list ol {
+    float:left;
+    width:320px;
+    margin:0 0 0 30px;
+    list-style:none;
+    margin:0 0 0 20px;
+  }
+  ol.class-list div.lessons li {
+    margin:0 0 6px;
+    line-height:16px;
+  }
+  
   
   .hide {
     display:none !important;
