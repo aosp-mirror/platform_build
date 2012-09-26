@@ -78,6 +78,10 @@ else
     $(info Clean step: $(INTERNAL_CLEAN_STEP.$(step))) \
     $(shell $(INTERNAL_CLEAN_STEP.$(step))) \
    )
+  # If we are running mm/mmm, we should copy over the other clean steps too.
+  ifneq ($(ONE_SHOT_MAKEFILE),)
+    INTERNAL_CLEAN_STEPS := $(strip $(CURRENT_CLEAN_STEPS) $(steps))
+  endif
   steps :=
 endif
 CURRENT_CLEAN_BUILD_VERSION :=
