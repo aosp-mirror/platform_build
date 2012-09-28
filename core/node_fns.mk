@@ -94,8 +94,6 @@ endef
 # - Replace "|||" with spaces, breaking haystack back into
 #   individual words.
 #
-empty :=
-space := $(empty) $(empty)
 define uniq-word
 $(strip \
   $(if $(filter-out 0 1,$(words $(filter $(2),$(1)))), \
