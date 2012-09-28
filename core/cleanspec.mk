@@ -63,7 +63,13 @@ INTERNAL_CLEAN_BUILD_VERSION := 6
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
 
+ifneq ($(ONE_SHOT_MAKEFILE),)
+cs_subdirs := $(dir $(ONE_SHOT_MAKEFILE))
+else
+cs_subdirs := .
+endif
 subdir_cleanspecs := \
-    $(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git . CleanSpec.mk)
+    $(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git $(cs_subdirs) CleanSpec.mk)
 include $(subdir_cleanspecs)
+cs_subdirs :=
 subdir_cleanspecs :=
