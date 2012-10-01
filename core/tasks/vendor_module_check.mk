@@ -44,7 +44,7 @@ $(call expand-required-modules,_vendor_check_modules,$(_vendor_check_modules))
 ifneq (,$(filter true owner all, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES)))
 
 ifneq (,$(filter vendor/%, $(PRODUCT_PACKAGE_OVERLAYS) $(DEVICE_PACKAGE_OVERLAYS)))
-$(error Error: Product "$(TARGET_PRODUCT)" can not have overlay in vendor tree: \
+$(error Error: Product "$(TARGET_PRODUCT)" cannot have overlay in vendor tree: \
     $(filter vendor/%, $(PRODUCT_PACKAGE_OVERLAYS) $(DEVICE_PACKAGE_OVERLAYS)))
 endif
 _vendor_check_copy_files := $(filter vendor/%, $(PRODUCT_COPY_FILES))
