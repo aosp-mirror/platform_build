@@ -16,6 +16,24 @@
       "revId": "f582827f534e75b4b86842265f316fd2d78308aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAJxn///hw\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 1006257
+      },
+      "writtenOn": "2012-10-02T21:35:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "AAAJxn///lQ\u003d",
+      "revId": "f582827f534e75b4b86842265f316fd2d78308aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
