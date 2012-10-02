@@ -297,7 +297,12 @@ def:custom_left_nav() ?><?cs
     call:about_nav() ?><?cs 
   else ?><?cs 
     call:default_left_nav() ?><?cs 
-  /if ?><?cs 
+  /if ?>
+    <script>
+      $(document).ready(function() {
+        changeDocLang(getLangPref());
+        });
+    </script><?cs 
 /def ?>
 
 <?cs # appears at the bottom of every page ?><?cs 
