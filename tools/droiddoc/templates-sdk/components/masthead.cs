@@ -8,16 +8,40 @@
           </a>
           <div class="btn-quicknav" id="btn-quicknav">
           	<a href="#" class="arrow-inactive">Quicknav</a>
-			<a href="#" class="arrow-active">Quicknav</a>
+			      <a href="#" class="arrow-active">Quicknav</a>
           </div>
           </div>
             <ul class="nav-x col-9">
                 <li class="design"><a href="<?cs var:toroot ?>design/index.html" <?cs
-                  if:design ?>class="selected"<?cs /if ?> >Design</a></li>
+                  if:design ?>class="selected"<?cs /if ?> >
+                    <span class="en">Design</span>
+                    <span class="zh-TW" style="display:none">設計</span>
+                    <span class="zh-CN" style="display:none">设计</span>
+                    <span class="ru" style="display:none">Проектирование</span>
+                    <span class="ko" style="display:none">디자인</span>
+                    <span class="ja" style="display:none">設計</span>
+                    <span class="es" style="display:none">Diseñar</span>
+                  </a></li>
                 <li class="develop"><a href="<?cs var:toroot ?>develop/index.html" <?cs
-                  if:training || guide || reference || tools || develop ?>class="selected"<?cs /if ?> >Develop</a></li>
+                  if:training || guide || reference || tools || develop ?>class="selected"<?cs /if ?> >
+                    <span class="en">Develop</span>
+                    <span class="zh-TW" style="display:none">開發</span>
+                    <span class="zh-CN" style="display:none">开发</span>
+                    <span class="ru" style="display:none">Разработка</span>
+                    <span class="ko" style="display:none">개발</span>
+                    <span class="ja" style="display:none">開発</span>
+                    <span class="es" style="display:none">Desarrollar</span>
+                  </a></li>
                 <li class="distribute last"><a href="<?cs var:toroot ?>distribute/index.html" <?cs
-                  if:distribute ?>class="selected"<?cs /if ?> >Distribute</a></li>
+                  if:distribute ?>class="selected"<?cs /if ?> >
+                    <span class="en">Distribute</span>
+                    <span class="zh-TW" style="display:none">發佈</span>
+                    <span class="zh-CN" style="display:none">分发</span>
+                    <span class="ru" style="display:none">Распространение</span>
+                    <span class="ko" style="display:none">배포</span>
+                    <span class="ja" style="display:none">配布</span>
+                    <span class="es" style="display:none">Distribuir</span>
+                  </a></li>
             </ul>
             
             <!-- New Search -->
@@ -52,9 +76,9 @@
               <option value="ja">日本語</option>
               <option value="ko">한국어</option>
               <option value="ru">Русский</option>
-              <option value="zh-CN">中文 (中国)
-      </option>
-          </select>	
+              <option value="zh-CN">中文 (中国)</option>
+              <option value="zh-TW">中文 (台灣)</option>
+          </select>
         </div>
       <script type="text/javascript">
         <!--  
@@ -105,10 +129,42 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                     </li>
                     <li class="develop">
                       <ul>
-                        <li><a href="<?cs var:toroot ?>training/index.html">Android Training</a></li>
-                        <li><a href="<?cs var:toroot ?>guide/components/index.html">API Guides</a></li>
-                        <li><a href="<?cs var:toroot ?>reference/packages.html">Reference</a></li>
-                        <li><a href="<?cs var:toroot ?>tools/index.html">Tools</a>
+                        <li><a href="<?cs var:toroot ?>training/index.html">
+                          <span class="en">Training</span>
+                          <span class="zh-TW" style="display:none">訓練課程</span>
+                          <span class="zh-CN" style="display:none">培训</span>
+                          <span class="ru" style="display:none">Курсы</span>
+                          <span class="ko" style="display:none">교육</span>
+                          <span class="ja" style="display:none">トレーニング</span>
+                          <span class="es" style="display:none">Capacitación</span>
+                        </a></li>
+                        <li><a href="<?cs var:toroot ?>guide/components/index.html">
+                          <span class="en">API Guides</span>
+                          <span class="zh-TW" style="display:none">API 指南</span>
+                          <span class="zh-CN" style="display:none">API 指南</span>
+                          <span class="ru" style="display:none">Руководства по API</span>
+                          <span class="ko" style="display:none">API 가이드</span>
+                          <span class="ja" style="display:none">API ガイド</span>
+                          <span class="es" style="display:none">Guías de la API</span>
+                        </a></li>
+                        <li><a href="<?cs var:toroot ?>reference/packages.html">
+                          <span class="en">Reference</span>
+                          <span class="zh-TW" style="display:none">參考資源</span>
+                          <span class="zh-CN" style="display:none">参考</span>
+                          <span class="ru" style="display:none">Справочник</span>
+                          <span class="ko" style="display:none">참조문서</span>
+                          <span class="ja" style="display:none">リファレンス</span>
+                          <span class="es" style="display:none">Referencia</span>
+                        </a></li>
+                        <li><a href="<?cs var:toroot ?>tools/index.html">
+                          <span class="en">Tools</span>
+                          <span class="zh-TW" style="display:none">相關工具</span>
+                          <span class="zh-CN" style="display:none">工具</span>
+                          <span class="ru" style="display:none">Инструменты</span>
+                          <span class="ko" style="display:none">도구</span>
+                          <span class="ja" style="display:none">ツール</span>
+                          <span class="es" style="display:none">Herramientas</span>
+                        </a>
                           <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the
 SDK</a></li></ul>
                         </li>
@@ -145,13 +201,45 @@ Distribution</a></li>
         <div class="wrap">
             <ul class="nav-x col-9 develop" style="width:75%">
                 <li><a href="<?cs var:toroot ?>training/index.html" <?cs
-                  if:training ?>class="selected"<?cs /if ?> >Android Training</a></li>
+                  if:training ?>class="selected"<?cs /if ?> >
+                  <span class="en">Training</span>
+                  <span class="zh-TW" style="display:none">訓練課程</span>
+                  <span class="zh-CN" style="display:none">培训</span>
+                  <span class="ru" style="display:none">Курсы</span>
+                  <span class="ko" style="display:none">교육</span>
+                  <span class="ja" style="display:none">トレーニング</span>
+                  <span class="es" style="display:none">Capacitación</span>
+                </a></li>
                   <li><a href="<?cs var:toroot ?>guide/components/index.html" <?cs
-                  if:guide ?>class="selected"<?cs /if ?> >API Guides</a></li>
+                  if:guide ?>class="selected"<?cs /if ?> >
+                  <span class="en">API Guides</span>
+                  <span class="zh-TW" style="display:none">API 指南</span>
+                  <span class="zh-CN" style="display:none">API 指南</span>
+                  <span class="ru" style="display:none">Руководства по API</span>
+                  <span class="ko" style="display:none">API 가이드</span>
+                  <span class="ja" style="display:none">API ガイド</span>
+                  <span class="es" style="display:none">Guías de la API</span>
+                </a></li>
                 <li><a href="<?cs var:toroot ?>reference/packages.html" <?cs
-                  if:reference ?>class="selected"<?cs /if ?> >Reference</a></li>
+                  if:reference ?>class="selected"<?cs /if ?> >
+                  <span class="en">Reference</span>
+                  <span class="zh-TW" style="display:none">參考資源</span>
+                  <span class="zh-CN" style="display:none">参考</span>
+                  <span class="ru" style="display:none">Справочник</span>
+                  <span class="ko" style="display:none">참조문서</span>
+                  <span class="ja" style="display:none">リファレンス</span>
+                  <span class="es" style="display:none">Referencia</span>
+                </a></li>
                 <li><a href="<?cs var:toroot ?>tools/index.html" <?cs
-                  if:tools ?>class="selected"<?cs /if ?> >Tools</a></li>
+                  if:tools ?>class="selected"<?cs /if ?> >
+                  <span class="en">Tools</span>
+                  <span class="zh-TW" style="display:none">相關工具</span>
+                  <span class="zh-CN" style="display:none">工具</span>
+                  <span class="ru" style="display:none">Инструменты</span>
+                  <span class="ko" style="display:none">도구</span>
+                  <span class="ja" style="display:none">ツール</span>
+                  <span class="es" style="display:none">Herramientas</span>
+                </a></li>
             </ul>
           <!--  <a class="button-secondary download-sdk">Download the SDK</a> -->
         </div>
