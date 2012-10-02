@@ -178,7 +178,7 @@ endef
 define all-java-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.java" -and -not -name ".*") \
+          find -L $(1) -name "*.java" -and -not -name ".*") \
  )
 endef
 
@@ -200,7 +200,7 @@ endef
 define all-c-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.c" -and -not -name ".*") \
+          find -L $(1) -name "*.c" -and -not -name ".*") \
  )
 endef
 
@@ -222,7 +222,7 @@ endef
 define all-Iaidl-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "I*.aidl" -and -not -name ".*") \
+          find -L $(1) -name "I*.aidl" -and -not -name ".*") \
  )
 endef
 
@@ -243,7 +243,7 @@ endef
 define all-logtags-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.logtags" -and -not -name ".*") \
+          find -L $(1) -name "*.logtags" -and -not -name ".*") \
   )
 endef
 
@@ -256,7 +256,7 @@ endef
 define all-proto-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.proto" -and -not -name ".*") \
+          find -L $(1) -name "*.proto" -and -not -name ".*") \
   )
 endef
 
@@ -269,7 +269,7 @@ endef
 define all-renderscript-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.rs" -and -not -name ".*") \
+          find -L $(1) -name "*.rs" -and -not -name ".*") \
   )
 endef
 
@@ -282,7 +282,7 @@ endef
 define all-html-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find $(1) -name "*.html" -and -not -name ".*") \
+          find -L $(1) -name "*.html" -and -not -name ".*") \
  )
 endef
 
@@ -301,7 +301,7 @@ endef
 ###########################################################
 
 define find-subdir-files
-$(patsubst ./%,%,$(shell cd $(LOCAL_PATH) ; find $(1)))
+$(patsubst ./%,%,$(shell cd $(LOCAL_PATH) ; find -L $(1)))
 endef
 
 ###########################################################
@@ -314,7 +314,7 @@ endef
 
 define find-subdir-subdir-files
 $(filter-out $(patsubst %,$(1)/%,$(3)),$(patsubst ./%,%,$(shell cd \
-            $(LOCAL_PATH) ; find $(1) -maxdepth 1 -name $(2))))
+            $(LOCAL_PATH) ; find -L $(1) -maxdepth 1 -name $(2))))
 endef
 
 ###########################################################
