@@ -1757,7 +1757,7 @@ endef
 # Copy a single file from one place to another,
 # preserving permissions and overwriting any existing
 # file.
-# We disable the "-t" option for acp can not handle
+# We disable the "-t" option for acp cannot handle
 # high resolution timestamp correctly on file systems like ext4.
 # Therefore copy-file-to-target is the same as copy-file-to-new-target.
 define copy-file-to-target

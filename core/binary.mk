@@ -11,7 +11,7 @@ ifdef LOCAL_SDK_VERSION
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION is now retired.)
   endif
   ifdef LOCAL_IS_HOST_MODULE
-    $(error $(LOCAL_PATH): LOCAL_SDK_VERSION can not be used in host module)
+    $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
   endif
   my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources
   my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_ARCH)
@@ -94,7 +94,7 @@ endif
 
 ifdef LOCAL_SDK_VERSION
   # Get the list of INSTALLED libraries as module names.
-  # We can not compute the full path of the LOCAL_SHARED_LIBRARIES for
+  # We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
   # they may cusomize their install path with LOCAL_MODULE_PATH
   installed_shared_library_module_names := \
       $(LOCAL_SHARED_LIBRARIES)
