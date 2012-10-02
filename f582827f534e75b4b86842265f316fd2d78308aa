@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAJxn///lQ\u003d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-10-02T21:00:17Z",
+      "side": 1,
+      "message": "I don\u0027t think this and the following cases are necessary: they are searching in the intermrdiate dirs that are created during the build process.",
+      "revId": "f582827f534e75b4b86842265f316fd2d78308aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
