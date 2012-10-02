@@ -980,7 +980,7 @@ function requestAppendHL(uri) {
 
 
 function changeTabLang(lang) {
-  var nodes = $("#header-tabs").find("."+lang);
+  var nodes = $("#header,#nav-x,.training-nav-top").find("."+lang);
   for (i=0; i < nodes.length; i++) { // for each node in this language
     var node = $(nodes[i]);
     node.siblings().css("display","none"); // hide all siblings
