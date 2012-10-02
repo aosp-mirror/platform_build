@@ -60,7 +60,7 @@ endif
 
 ifeq ($(wildcard $(mac_sdk_root)),)
 $(warning *****************************************************)
-$(warning * Can not find SDK $(mac_sdk_version) at $(mac_sdk_root))
+$(warning * Cannot find SDK $(mac_sdk_version) at $(mac_sdk_root))
 ifeq ($(strip $(BUILD_MAC_SDK_EXPERIMENTAL)),)
 $(warning * If you wish to build using higher version of SDK, )
 $(warning * try setting BUILD_MAC_SDK_EXPERIMENTAL=1 before )
