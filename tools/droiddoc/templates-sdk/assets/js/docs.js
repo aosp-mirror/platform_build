@@ -28,7 +28,7 @@ $(document).ready(function() {
   $('.scroll-pane').jScrollPane( {verticalGutter:0} );
   
   // add HRs below all H2s (except for a few other h2 variants)
-  $('h2').not('#qv h2').not('#tb h2').not('#devdoc-nav h2').css({marginBottom:0}).after('<hr/>');
+  $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').css({marginBottom:0}).after('<hr/>');
   
   // set search's onkeyup handler here so we can show suggestions 
   // even while search results are visible
@@ -1811,13 +1811,14 @@ function escapeHTML(string) {
 /* #################  JAVADOC REFERENCE ################### */
 /* ######################################################## */
 
-/* Initialize some droiddoc stuff */
-$(document).ready(function() {
-  
-  // init available apis based on user pref
-  changeApiLevel();
-  initSidenavHeightResize()
-});
+/* Initialize some droiddoc stuff, but only if we're in the reference */
+if (location.pathname.indexOf("/reference") == 0) {
+  $(document).ready(function() {
+    // init available apis based on user pref
+    changeApiLevel();
+    initSidenavHeightResize()
+  });
+}
 
 var API_LEVEL_COOKIE = "api_level";
 var minLevel = 1;
