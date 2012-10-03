@@ -220,7 +220,7 @@ $(call import-products, $(all_product_makefiles))
 else
 # Import just the current product.
 ifndef current_product_makefile
-$(error Cannot locate config makefile for product "$(TARGET_PRODUCT)")
+$(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
 endif
 ifneq (1,$(words $(current_product_makefile)))
 $(error Product "$(TARGET_PRODUCT)" ambiguous: matches $(current_product_makefile))
