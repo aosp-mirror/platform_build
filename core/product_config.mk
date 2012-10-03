@@ -181,17 +181,54 @@ include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
 ifneq ($(strip $(TARGET_BUILD_APPS)),)
-  # An unbundled app build needs only the core product makefiles.
-  $(call import-products,$(call get-product-makefiles,\
-      $(SRC_TARGET_DIR)/product/AndroidProducts.mk))
+# An unbundled app build needs only the core product makefiles.
+all_product_configs := $(call get-product-makefiles,\
+    $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
 else
-  # Read in all of the product definitions specified by the AndroidProducts.mk
-  # files in the tree.
-  #
-  #TODO: when we start allowing direct pointers to product files,
-  #    guarantee that they're in this list.
-  $(call import-products, $(get-all-product-makefiles))
-endif # TARGET_BUILD_APPS
+# Read in all of the product definitions specified by the AndroidProducts.mk
+# files in the tree.
+all_product_configs := $(get-all-product-makefiles)
+endif
+
+# Find the product config makefile for the current product.
+# all_product_configs consists items like:
+# <product_name>:<path_to_the_product_makefile>
+# or just <path_to_the_product_makefile> in case the product name is the
+# same as the base filename of the product config makefile.
+current_product_makefile :=
+all_product_makefiles :=
+$(foreach f, $(all_product_configs),\
+    $(eval _cpm_words := $(subst :,$(space),$(f)))\
+    $(eval _cpm_word1 := $(word 1,$(_cpm_words)))\
+    $(eval _cpm_word2 := $(word 2,$(_cpm_words)))\
+    $(if $(_cpm_word2),\
+        $(eval all_product_makefiles += $(_cpm_word2))\
+        $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
+            $(eval current_product_makefile += $(_cpm_word2)),),\
+        $(eval all_product_makefiles += $(f))\
+        $(if $(filter $(TARGET_PRODUCT),$(basename $(notdir $(f)))),\
+            $(eval current_product_makefile += $(f)),)))
+_cpm_words :=
+_cpm_word1 :=
+_cpm_word2 :=
+current_product_makefile := $(strip $(current_product_makefile))
+all_product_makefiles := $(strip $(all_product_makefiles))
+
+ifneq (,$(filter product-graph dump-products, $(MAKECMDGOALS)))
+# Import all product makefiles.
+$(call import-products, $(all_product_makefiles))
+else
+# Import just the current product.
+ifndef current_product_makefile
+$(error Can not locate config makefile for product "$(TARGET_PRODUCT)")
+endif
+ifneq (1,$(words $(current_product_makefile)))
+$(error Product "$(TARGET_PRODUCT)" ambiguous: matches $(current_product_makefile))
+endif
+$(call import-products, $(current_product_makefile))
+endif  # Import all or just the current product makefile
+
+# Sanity check
 $(check-all-products)
 
 ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
@@ -199,17 +236,16 @@ $(dump-products)
 $(error done)
 endif
 
-ifeq (a,b)
-$(info PRODUCTS -----------)
-$(foreach product, $(PRODUCTS), $(info $(PRODUCTS.$(product).PRODUCT_NAME)))# $(product)))
-$(error stop)
-endif
-
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
 INTERNAL_PRODUCT := $(call resolve-short-product-name, $(TARGET_PRODUCT))
-#$(error TARGET_PRODUCT $(TARGET_PRODUCT) --> $(INTERNAL_PRODUCT))
+ifneq ($(current_product_makefile),$(INTERNAL_PRODUCT))
+$(error PRODUCT_NAME inconsistent in $(current_product_makefile) and $(INTERNAL_PRODUCT))
+endif
+current_product_makefile :=
+all_product_makefiles :=
+all_product_configs :=
 
 # Find the device that this product maps to.
 TARGET_DEVICE := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
