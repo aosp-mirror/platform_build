@@ -406,9 +406,6 @@ video.with-shadow {
     color: #555555;
     text-decoration: none;
     text-transform: uppercase; }
-  .paging-links .prev-page-link,
-  .training-nav-top .prev-page-link {
-    left: -5px; }
     .paging-links .prev-page-link:before,
     .training-nav-top .prev-page-link:before {
       content: '';
@@ -417,11 +414,14 @@ video.with-shadow {
       height: 10px;
       display: inline-block;
       margin-right: 5px; }
-  .paging-links .next-page-link,
-  .training-nav-top .next-page-link,
+    .training-nav-top .next-page-link,
     .training-nav-top .start-class-link,
     .training-nav-top .start-course-link {
     right: 10px; }
+    .paging-links .prev-page-link {
+      left: -15px; }
+    .paging-links .next-page-link {
+      right: 0px; }
     .next-page-link:after,
     .start-class-link:after,
     .start-course-link:after,
@@ -464,7 +464,7 @@ video.with-shadow {
       
   .training-nav-top a.start-class-link,
   .training-nav-top a.start-course-link {
-    width:248px;
+    width:262px;
   }
   
   .hide {
