@@ -979,36 +979,18 @@ function requestAppendHL(uri) {
 }
 
 
-function changeTabLang(lang) {
-  var nodes = $("#header,#nav-x,.training-nav-top").find("."+lang);
-  for (i=0; i < nodes.length; i++) { // for each node in this language
-    var node = $(nodes[i]);
-    node.siblings().css("display","none"); // hide all siblings
-    if (node.not(":empty").length != 0) { //if this languages node has a translation, show it
-      node.css("display","inline");
-    } else { //otherwise, show English instead
-      node.css("display","none");
-      node.siblings().filter(".en").css("display","inline");
-    }
-  }
-}
-
 function changeNavLang(lang) {
-  var nodes = $("#devdoc-nav").find("."+lang);
-  for (i=0; i < nodes.length; i++) { // for each node in this language
-    var node = $(nodes[i]);
-    node.siblings().css("display","none"); // hide all siblings
-    if (node.not(":empty").length != 0) { // if this languages node has a translation, show it
-      node.css("display","inline");
-    } else { // otherwise, show English instead
-      node.css("display","none");
-      node.siblings().filter(".en").css("display","inline");
+  var $links = $("#devdoc-nav,#header,#nav-x,.training-nav-top,.content-footer").find("a["+lang+"-lang]");
+  $links.each(function(i){ // for each link with a translation
+    var $link = $(this);
+    if (lang != "en") { // No need to worry about English, because a language change invokes new request
+      // put the desired language from the attribute as the text
+      $link.text($link.attr(lang+"-lang"))
     }
-  }
+  });
 }
 
 function changeDocLang(lang) {
-  changeTabLang(lang);
   changeNavLang(lang);
 }
 
