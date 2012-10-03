@@ -27,63 +27,57 @@
     </div>
     <?cs if:training ?>
       <div class="training-nav-top layout-content-col span-5" itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <a href="#" class="prev-page-link hide">
-              <span class="en">Previous</span>
-              <span class="zh-TW" style="display:none">上一堂課</span>
-              <span class="zh-CN" style="display:none">上一课</span>
-              <span class="ru" style="display:none;font-size:85%">Предыдущий</span>
-              <span class="ko" style="display:none">이전</span>
-              <span class="ja" style="display:none">前へ</span>
-              <span class="es" style="display:none">Anterior</span>
-        </a>
-        <a href="#" class="next-page-link hide">
-              <span class="en">Next</span>
-              <span class="zh-TW" style="display:none">下一堂課</span>
-              <span class="zh-CN" style="display:none">下一课</span>
-              <span class="ru" style="display:none;font-size:85%">Следующий</span>
-              <span class="ko" style="display:none">다음</span>
-              <span class="ja" style="display:none">次へ</span>
-              <span class="es" style="display:none">Siguiente</span>
-        </a>
-        <a href="#" class="start-class-link hide">
-              <span class="en">Get started</span>
-              <span class="zh-TW" style="display:none">開始上課</span>
-              <span class="zh-CN" style="display:none">开始</span>
-              <span class="ru" style="display:none">Начало работы</span>
-              <span class="ko" style="display:none">시작하기</span>
-              <span class="ja" style="display:none">開始する</span>
-              <span class="es" style="display:none">Empezar</span>
-        </a>
-        <a href="#" class="start-course-link hide">
-              <span class="en">First class</span>
-              <span class="zh-TW" style="display:none">第一堂課</span>
-              <span class="zh-CN" style="display:none">第一课</span>
-              <span class="ru" style="display:none">Первый урок</span>
-              <span class="ko" style="display:none">첫 번째 강의</span>
-              <span class="ja" style="display:none">最初のクラス</span>
-              <span class="es" style="display:none">Primera clase</span>
-        </a>
+        <a href="#" class="prev-page-link hide"
+            zh-TW-lang="上一堂課"
+            zh-CN-lang="上一课"
+            ru-lang="Предыдущий"
+            ko-lang="이전"
+            ja-lang="前へ"
+            es-lang="Anterior"               
+            >Previous</a>
+        <a href="#" class="next-page-link hide"
+            zh-TW-lang="下一堂課"
+            zh-CN-lang="下一课"
+            ru-lang="Следующий"
+            ko-lang="다음"
+            ja-lang="次へ"
+            es-lang="Siguiente"               
+            >Next</a>
+        <a href="#" class="start-class-link hide"
+            zh-TW-lang="開始上課"
+            zh-CN-lang="开始"
+            ru-lang="Начало работы"
+            ko-lang="시작하기"
+            ja-lang="開始する"
+            es-lang="Empezar"               
+            >Get started</a>
+        <a href="#" class="start-course-link hide"
+            zh-TW-lang="第一堂課"
+            zh-CN-lang="第一课"
+            ru-lang="Первый урок"
+            ko-lang="첫 번째 강의"
+            ja-lang="最初のクラス"
+            es-lang="Primera clase"               
+            >First class</a>
       </div>
     <?cs else ?>
       <div class="paging-links layout-content-col span-4" itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <a href="#" class="prev-page-link hide">
-          <span class="en">Previous</span>
-          <span class="zh-TW" style="display:none">上一堂課</span>
-          <span class="zh-CN" style="display:none">上一课</span>
-          <span class="ru" style="display:none;font-size:85%">Предыдущий</span>
-          <span class="ko" style="display:none">이전</span>
-          <span class="ja" style="display:none">前へ</span>
-          <span class="es" style="display:none">Anterior</span>
-        </a>
-        <a href="#" class="next-page-link hide">
-          <span class="en">Next</span>
-          <span class="zh-TW" style="display:none">下一堂課</span>
-          <span class="zh-CN" style="display:none">下一课</span>
-          <span class="ru" style="display:none;font-size:85%">Следующий</span>
-          <span class="ko" style="display:none">다음</span>
-          <span class="ja" style="display:none">次へ</span>
-          <span class="es" style="display:none">Siguiente</span>
-        </a>
+        <a href="#" class="prev-page-link hide"
+            zh-TW-lang="上一堂課"
+            zh-CN-lang="上一课"
+            ru-lang="Предыдущий"
+            ko-lang="이전"
+            ja-lang="前へ"
+            es-lang="Anterior"               
+            >Previous</a>
+        <a href="#" class="next-page-link hide"
+            zh-TW-lang="下一堂課"
+            zh-CN-lang="下一课"
+            ru-lang="Следующий"
+            ko-lang="다음"
+            ja-lang="次へ"
+            es-lang="Siguiente"               
+            >Next</a>
       </div>
     <?cs /if ?><?cs # end if training ?>
   </div>
@@ -135,24 +129,22 @@
         <?cs if:!fullscreen ?>
         <div class="paging-links layout-content-col col-4">
           <?cs if:(design||training||guide||walkthru) && !page.landing && !footer.hide ?>
-            <a href="#" class="prev-page-link hide">
-              <span class="en">Previous</span>
-              <span class="zh-TW" style="display:none">上一堂課</span>
-              <span class="zh-CN" style="display:none">上一课</span>
-              <span class="ru" style="display:none;font-size:85%">Предыдущий</span>
-              <span class="ko" style="display:none">이전</span>
-              <span class="ja" style="display:none">前へ</span>
-              <span class="es" style="display:none">Anterior</span>
-            </a>
-            <a href="#" class="next-page-link hide">
-              <span class="en">Next</span>
-              <span class="zh-TW" style="display:none">下一堂課</span>
-              <span class="zh-CN" style="display:none">下一课</span>
-              <span class="ru" style="display:none;font-size:85%">Следующий</span>
-              <span class="ko" style="display:none">다음</span>
-              <span class="ja" style="display:none">次へ</span>
-              <span class="es" style="display:none">Siguiente</span>
-            </a>
+            <a href="#" class="prev-page-link hide"
+                zh-TW-lang="上一堂課"
+                zh-CN-lang="上一课"
+                ru-lang="Предыдущий"
+                ko-lang="이전"
+                ja-lang="前へ"
+                es-lang="Anterior"               
+                >Previous</a>
+            <a href="#" class="next-page-link hide"
+                zh-TW-lang="下一堂課"
+                zh-CN-lang="下一课"
+                ru-lang="Следующий"
+                ko-lang="다음"
+                ja-lang="次へ"
+                es-lang="Siguiente"               
+                >Next</a>
           <?cs /if ?>
         </div>
         <?cs /if ?>
