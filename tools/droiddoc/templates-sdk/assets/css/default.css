@@ -437,9 +437,9 @@ video.with-shadow {
   .training-nav-top a {
     display:block;
     float:left;
-    width:108px;
+    width:122px;
     height:28px;
-    padding: 8px 15px;
+    padding: 8px;
     line-height:28px;
     text-align:center;
     border:1px solid #DADADA;
@@ -448,7 +448,7 @@ video.with-shadow {
       
   .training-nav-top a.next-page-link {
     border-left:0;
-    width:109px;
+    width:123px;
   }
       
   .training-nav-top a.disabled,
