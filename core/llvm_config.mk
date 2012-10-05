@@ -52,6 +52,7 @@ ifeq ($(TARGET_ARCH),mips)
     -B$(TARGET_TOOLCHAIN_ROOT)/mipsel-linux-android/bin
   CLANG_CONFIG_UNKNOWN_CFLAGS += \
     -EL \
+    -mips32 \
     -mips32r2 \
     -mhard-float \
     -fno-strict-volatile-bitfields \
@@ -59,7 +60,9 @@ ifeq ($(TARGET_ARCH),mips)
     -frerun-cse-after-loop \
     -frename-registers \
     -march=mips32r2 \
-    -mtune=mips32r2
+    -mtune=mips32r2 \
+    -march=mips32 \
+    -mtune=mips32
 endif
 ifeq ($(TARGET_ARCH),x86)
   CLANG_CONFIG_EXTRA_ASFLAGS += \
