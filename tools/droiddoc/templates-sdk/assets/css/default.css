@@ -4055,6 +4055,7 @@ a.download-sdk {
 }
 .landing-docs {
   clear:left;
+  overflow:hidden;
 }
 .landing-docs h3 {
   font-size:14px;
