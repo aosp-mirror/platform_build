@@ -1,5 +1,5 @@
 <div id="footer">
-
+<!--
 <?cs if:reference||guide ?>
   <div id="copyright">
     <?cs call:custom_copyright() ?>
@@ -15,5 +15,5 @@
   <div id="footerlinks">
     <?cs call:custom_footerlinks() ?>
   </div>
-
+-->
 </div> <!-- end footer -->
