@@ -138,6 +138,7 @@ PRODUCT_PACKAGES += \
     service \
     servicemanager \
     services \
+    settings \
     surfaceflinger \
     svc \
     system_server \
