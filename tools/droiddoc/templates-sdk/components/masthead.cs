@@ -119,10 +119,12 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                 <ul>
                     <li class="design">
                       <ul>
+                        <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
                         <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
                         <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
                         <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
                         <li><a href="<?cs var:toroot ?>design/downloads/index.html">Downloads</a></li>
+                        <li><a href="<?cs var:toroot ?>design/videos/index.html">Videos</a></li>
                       </ul>
                     </li>
                     <li class="develop">
@@ -169,9 +171,9 @@ SDK</a></li></ul>
                         <li><a href="<?cs var:toroot ?>distribute/index.html">Google Play</a></li>
                         <li><a href="<?cs var:toroot ?>distribute/googleplay/publish/index.html">Publishing</a></li>
                         <li><a href="<?cs var:toroot ?>distribute/googleplay/promote/index.html">Promoting</a></li>
-                        <!--<li><a href="<?cs var:toroot ?>distribute/googleplay/strategies/index.html">Strategies</a></li> -->
-                        <li><a href="<?cs var:toroot ?>distribute/open.html">Open
-Distribution</a></li> 
+                        <li><a href="<?cs var:toroot ?>distribute/googleplay/quality/index.html">App Quality</a></li>
+                        <li><a href="<?cs var:toroot ?>distribute/googleplay/spotlight/index.html">Spotlight</a></li>
+                        <li><a href="<?cs var:toroot ?>distribute/open.html">Open Distribution</a></li>
                       </ul>
                     </li>
                 </ul>
