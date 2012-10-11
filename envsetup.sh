@@ -616,7 +616,7 @@ function findmakefile()
     local HERE=$PWD
     T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
-        T=$PWD
+        T=`PWD= /bin/pwd`
         if [ -f "$T/Android.mk" ]; then
             echo $T/Android.mk
             cd $HERE > /dev/null
