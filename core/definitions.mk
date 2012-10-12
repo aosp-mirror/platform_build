@@ -264,7 +264,7 @@ endef
 define all-renderscript-files-under
 $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.rs" -and -not -name ".*") \
+          find -L $(1) \( -name "*.rs" -or -name "*.fs" \) -and -not -name ".*") \
   )
 endef
 
