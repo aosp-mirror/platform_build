@@ -17,4 +17,3 @@ include $(BUILD_SYSTEM)/binary.mk
 
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 	$(transform-host-o-to-executable)
-	$(PRIVATE_POST_PROCESS_COMMAND)
