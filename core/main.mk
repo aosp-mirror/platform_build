@@ -270,11 +270,6 @@ ifneq ($(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
 
-## have selinux ##
-ifeq ($(HAVE_SELINUX),true)
-ADDITIONAL_BUILD_PROPERTIES += ro.build.selinux=1
-endif # HAVE_SELINUX
-
 ## user/userdebug ##
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
