@@ -83,6 +83,8 @@ import javax.crypto.spec.PBEKeySpec;
 class SignApk {
     private static final String CERT_SF_NAME = "META-INF/CERT.SF";
     private static final String CERT_RSA_NAME = "META-INF/CERT.RSA";
+    private static final String CERT_SF_MULTI_NAME = "META-INF/CERT%d.SF";
+    private static final String CERT_RSA_MULTI_NAME = "META-INF/CERT%d.RSA";
 
     private static final String OTACERT_NAME = "META-INF/com/android/otacert";
 
@@ -90,7 +92,8 @@ class SignApk {
 
     // Files matching this pattern are not copied to the output.
     private static Pattern stripPattern =
-            Pattern.compile("^META-INF/(.*)[.](SF|RSA|DSA)$");
+        Pattern.compile("^(META-INF/((.*)[.](SF|RSA|DSA)|com/android/otacert))|(" +
+                        Pattern.quote(JarFile.MANIFEST_NAME) + ")$");
 
     private static X509Certificate readPublicKey(File file)
             throws IOException, GeneralSecurityException {
@@ -208,11 +211,8 @@ class SignApk {
 
         for (JarEntry entry: byName.values()) {
             String name = entry.getName();
-            if (!entry.isDirectory() && !name.equals(JarFile.MANIFEST_NAME) &&
-                !name.equals(CERT_SF_NAME) && !name.equals(CERT_RSA_NAME) &&
-                !name.equals(OTACERT_NAME) &&
-                (stripPattern == null ||
-                 !stripPattern.matcher(name).matches())) {
+            if (!entry.isDirectory() &&
+                (stripPattern == null || !stripPattern.matcher(name).matches())) {
                 InputStream data = jar.getInputStream(entry);
                 while ((num = data.read(buffer)) > 0) {
                     md.update(buffer, 0, num);
@@ -499,13 +499,16 @@ class SignApk {
         }
     }
 
+    private static void usage() {
+        System.err.println("Usage: signapk [-w] " +
+                           "publickey.x509[.pem] privatekey.pk8 " +
+                           "[publickey2.x509[.pem] privatekey2.pk8 ...] " +
+                           "input.jar output.jar");
+        System.exit(2);
+    }
+
     public static void main(String[] args) {
-        if (args.length != 4 && args.length != 5) {
-            System.err.println("Usage: signapk [-w] " +
-                    "publickey.x509[.pem] privatekey.pk8 " +
-                    "input.jar output.jar");
-            System.exit(2);
-        }
+        if (args.length < 4) usage();
 
         sBouncyCastleProvider = new BouncyCastleProvider();
         Security.addProvider(sBouncyCastleProvider);
@@ -517,25 +520,46 @@ class SignApk {
             argstart = 1;
         }
 
+        if ((args.length - argstart) % 2 == 1) usage();
+        int numKeys = ((args.length - argstart) / 2) - 1;
+        if (signWholeFile && numKeys > 1) {
+            System.err.println("Only one key may be used with -w.");
+            System.exit(2);
+        }
+
+        String inputFilename = args[args.length-2];
+        String outputFilename = args[args.length-1];
+
         JarFile inputJar = null;
         JarOutputStream outputJar = null;
         FileOutputStream outputFile = null;
 
         try {
-            File publicKeyFile = new File(args[argstart+0]);
-            X509Certificate publicKey = readPublicKey(publicKeyFile);
+            File firstPublicKeyFile = new File(args[argstart+0]);
 
-            // Assume the certificate is valid for at least an hour.
-            long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
+            X509Certificate[] publicKey = new X509Certificate[numKeys];
+            for (int i = 0; i < numKeys; ++i) {
+                int argNum = argstart + i*2;
+                publicKey[i] = readPublicKey(new File(args[argNum]));
+            }
 
-            PrivateKey privateKey = readPrivateKey(new File(args[argstart+1]));
-            inputJar = new JarFile(new File(args[argstart+2]), false);  // Don't verify.
+            // Set the ZIP file timestamp to the starting valid time
+            // of the 0th certificate plus one hour (to match what
+            // we've historically done).
+            long timestamp = publicKey[0].getNotBefore().getTime() + 3600L * 1000;
+
+            PrivateKey[] privateKey = new PrivateKey[numKeys];
+            for (int i = 0; i < numKeys; ++i) {
+                int argNum = argstart + i*2 + 1;
+                privateKey[i] = readPrivateKey(new File(args[argNum]));
+            }
+            inputJar = new JarFile(new File(inputFilename), false);  // Don't verify.
 
             OutputStream outputStream = null;
             if (signWholeFile) {
                 outputStream = new ByteArrayOutputStream();
             } else {
-                outputStream = outputFile = new FileOutputStream(args[argstart+3]);
+                outputStream = outputFile = new FileOutputStream(outputFilename);
             }
             outputJar = new JarOutputStream(outputStream);
 
@@ -558,7 +582,7 @@ class SignApk {
 
             // otacert
             if (signWholeFile) {
-                addOtacert(outputJar, publicKeyFile, timestamp, manifest);
+                addOtacert(outputJar, firstPublicKeyFile, timestamp, manifest);
             }
 
             // MANIFEST.MF
@@ -567,30 +591,40 @@ class SignApk {
             outputJar.putNextEntry(je);
             manifest.write(outputJar);
 
-            // CERT.SF
-            je = new JarEntry(CERT_SF_NAME);
-            je.setTime(timestamp);
-            outputJar.putNextEntry(je);
+            // In the case of multiple keys, all the .SF files will be
+            // identical, but as far as I can tell the jarsigner docs
+            // don't allow there to be just one copy in the zipfile;
+            // there hase to be one per .RSA file.
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             writeSignatureFile(manifest, baos);
             byte[] signedData = baos.toByteArray();
-            outputJar.write(signedData);
 
-            // CERT.RSA
-            je = new JarEntry(CERT_RSA_NAME);
-            je.setTime(timestamp);
-            outputJar.putNextEntry(je);
-            writeSignatureBlock(new CMSProcessableByteArray(signedData),
-                                publicKey, privateKey, outputJar);
+            for (int k = 0; k < numKeys; ++k) {
+                // CERT.SF / CERT#.SF
+                je = new JarEntry(numKeys == 1 ? CERT_SF_NAME :
+                                  (String.format(CERT_SF_MULTI_NAME, k)));
+                je.setTime(timestamp);
+                outputJar.putNextEntry(je);
+                outputJar.write(signedData);
+
+                // CERT.RSA / CERT#.RSA
+                je = new JarEntry(numKeys == 1 ? CERT_RSA_NAME :
+                                  (String.format(CERT_RSA_MULTI_NAME, k)));
+                je.setTime(timestamp);
+                outputJar.putNextEntry(je);
+                writeSignatureBlock(new CMSProcessableByteArray(signedData),
+                                    publicKey[k], privateKey[k], outputJar);
+            }
 
             outputJar.close();
             outputJar = null;
             outputStream.flush();
 
             if (signWholeFile) {
-                outputFile = new FileOutputStream(args[argstart+3]);
+                outputFile = new FileOutputStream(outputFilename);
                 signWholeOutputFile(((ByteArrayOutputStream)outputStream).toByteArray(),
-                                    outputFile, publicKey, privateKey);
+                                    outputFile, publicKey[0], privateKey[0]);
             }
         } catch (Exception e) {
             e.printStackTrace();
