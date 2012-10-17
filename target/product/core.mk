@@ -135,6 +135,14 @@ PRODUCT_PACKAGES += \
     zoneinfo.idx \
     zoneinfo.version
 
+# SELinux packages
+PRODUCT_PACKAGES += \
+    sepolicy \
+    file_contexts \
+    seapp_contexts \
+    property_contexts \
+    mac_permissions.xml
+
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
     system/core/rootdir/init.trace.rc:root/init.trace.rc \
@@ -156,16 +164,6 @@ ifeq ($(WITH_HOST_DALVIK),true)
         zoneinfo-host.dat \
         zoneinfo-host.idx \
         zoneinfo-host.version
-endif
-
-
-ifeq ($(HAVE_SELINUX),true)
-    PRODUCT_PACKAGES += \
-        sepolicy \
-        file_contexts \
-        seapp_contexts \
-        property_contexts \
-        mac_permissions.xml
 endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
