@@ -130,6 +130,7 @@ PRODUCT_PACKAGES += \
     uiautomator \
     telephony-common \
     mms-common \
+    tzdata \
     zoneinfo.dat \
     zoneinfo.idx \
     zoneinfo.version
@@ -160,6 +161,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
         libssl \
         libz-host \
         dalvik \
+        tzdata-host \
         zoneinfo-host.dat \
         zoneinfo-host.idx \
         zoneinfo-host.version
