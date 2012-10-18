@@ -453,33 +453,12 @@ subdirs += build/tools/acp
 endif
 
 else	# !SDK_ONLY
-ifeq ($(BUILD_TINY_ANDROID), true)
-
-# TINY_ANDROID is a super-minimal build configuration, handy for board
-# bringup and very low level debugging
-
-subdirs := \
-	bionic \
-	system/core \
-	system/extras/ext4_utils \
-	system/extras/su \
-	build/libs \
-	build/target \
-	build/tools/acp \
-	external/gcc-demangle \
-	external/mksh \
-	external/openssl \
-	external/yaffs2 \
-	external/zlib
-else	# !BUILD_TINY_ANDROID
 #
 # Typical build; include any Android.mk files we can find.
 #
 subdirs := $(TOP)
 
 FULL_BUILD := true
-
-endif	# !BUILD_TINY_ANDROID
 
 endif	# !SDK_ONLY
 
@@ -776,10 +755,6 @@ cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
 
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
-
-ifeq ($(BUILD_TINY_ANDROID), true)
-INSTALLED_RECOVERYIMAGE_TARGET :=
-endif
 
 # Build files and then package it into the rom formats
 .PHONY: droidcore
