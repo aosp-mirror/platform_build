@@ -122,11 +122,7 @@ PRODUCT_PACKAGES += \
     lint \
     uiautomator \
     telephony-common \
-    mms-common \
-    tzdata \
-    zoneinfo.dat \
-    zoneinfo.idx \
-    zoneinfo.version
+    mms-common
 
 # SELinux packages
 PRODUCT_PACKAGES += \
@@ -153,11 +149,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
         libjavacore \
         libssl \
         libz-host \
-        dalvik \
-        tzdata-host \
-        zoneinfo-host.dat \
-        zoneinfo-host.idx \
-        zoneinfo-host.version
+        dalvik
 endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
