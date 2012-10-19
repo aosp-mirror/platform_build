@@ -141,6 +141,7 @@ TARGET_GLOBAL_LDFLAGS += -m32
 
 TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack
 TARGET_GLOBAL_LDFLAGS += -Wl,-z,relro -Wl,-z,now
+TARGET_GLOBAL_LDFLAGS += -Wl,--warn-shared-textrel
 TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
 
 TARGET_C_INCLUDES := \
