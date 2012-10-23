@@ -3854,10 +3854,6 @@ a.download-sdk {
 .slideshow-develop .content-right {
   float: left;
 }
-.slideshow-develop .content-right p.title-intro {
-  position:absolute;
-  margin:0;
-}
 .slideshow-develop .content-right h2 {
   padding:0;
   margin-bottom:10px;
@@ -3872,6 +3868,16 @@ a.download-sdk {
 }
 .slideshow-develop .pagination ul li.active:hover {
   background-color: #F80;
+}
+.slideshow-develop .item hr {
+  margin:5px 0 10px;
+}
+.slideshow-develop .item p {
+  margin:10px 0;
+}
+.slideshow-develop .item p.title-intro {
+  position:absolute;
+  margin:0;
 }
 
 /* Feeds */
