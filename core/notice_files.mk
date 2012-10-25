@@ -4,8 +4,8 @@
 
 notice_file:=$(strip $(wildcard $(LOCAL_PATH)/NOTICE))
 
-ifeq ($(LOCAL_MODULE_CLASS),NONE)
-  # We ignore NOTICE files for modules of type NONE.
+ifeq ($(LOCAL_MODULE_CLASS),GYP)
+  # We ignore NOTICE files for modules of type GYP.
   notice_file :=
 endif
 
