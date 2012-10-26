@@ -1,0 +1,77 @@
+#
+# Copyright (C) 2009 The Android Open Source Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# This is a build configuration for a very minimal build of the
+# Open-Source part of the tree.
+
+PRODUCT_PACKAGES += \
+    adb \
+    adbd \
+    bootanimation \
+    debuggerd \
+    dumpstate \
+    dumpsys \
+    gralloc.default \
+    gzip \
+    init \
+    input \
+    libEGL \
+    libETC1 \
+    libFFTEm \
+    libGLES_android \
+    libGLESv1_CM \
+    libGLESv2 \
+    libbinder \
+    libc \
+    libctest \
+    libcutils \
+    libdl \
+    libgui \
+    libhardware \
+    libhardware_legacy \
+    libjpeg \
+    liblog \
+    libm \
+    libpixelflinger \
+    libpower \
+    libstdc++ \
+    libstlport \
+    libsurfaceflinger \
+    libsurfaceflinger_client \
+    libsurfaceflinger_ddmconnection \
+    libsysutils \
+    libthread_db \
+    libui \
+    libutils \
+    linker \
+    logcat \
+    logwrapper \
+    service \
+    servicemanager \
+    surfaceflinger \
+    toolbox
+
+# SELinux packages
+PRODUCT_PACKAGES += \
+    sepolicy \
+    file_contexts \
+    seapp_contexts \
+    property_contexts \
+    mac_permissions.xml
+
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.usb.rc:root/init.usb.rc \
+    system/core/rootdir/init.trace.rc:root/init.trace.rc \
