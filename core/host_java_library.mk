@@ -43,6 +43,10 @@ endif # LOCAL_BUILD_HOST_DEX
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
+# The layers file allows you to enforce a layering between java packages.
+# Run build/tools/java-layers.py for more details.
+layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
+
 ifeq ($(LOCAL_BUILD_HOST_DEX),true)
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
@@ -51,6 +55,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
+$(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
@@ -91,6 +96,7 @@ endif
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(LOCAL_BUILT_MODULE): PRIVATE_JAR_EXCLUDE_FILES :=
+$(LOCAL_BUILT_MODULE): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(LOCAL_BUILT_MODULE): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
 		$(jar_manifest_file) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
