@@ -796,7 +796,7 @@ rm -f $(@:$1=$(YACC_HEADER_SUFFIX))
 endef
 
 ###########################################################
-## Commands to compile RenderScript
+## Commands to compile RenderScript to Java
 ###########################################################
 
 define transform-renderscripts-to-java-and-bc
@@ -815,6 +815,26 @@ $(hide) $(PRIVATE_RS_CC) \
   $(PRIVATE_RS_SOURCE_FILES)
 #$(hide) $(LLVM_RS_LINK) \
 #  $(PRIVATE_RS_OUTPUT_DIR)/res/raw/*.bc
+$(hide) mkdir -p $(dir $@)
+$(hide) touch $@
+endef
+
+###########################################################
+## Commands to compile RenderScript to C++
+###########################################################
+
+define transform-renderscripts-to-cpp-and-bc
+@echo "RenderScript: $(PRIVATE_MODULE) <= $(PRIVATE_RS_SOURCE_FILES)"
+$(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
+$(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/
+$(hide) $(PRIVATE_RS_CC) \
+  -o $(PRIVATE_RS_OUTPUT_DIR)/ \
+  -d $(PRIVATE_RS_OUTPUT_DIR) \
+  -a $@ -MD \
+  -reflect-c++ \
+  $(PRIVATE_RS_FLAGS) \
+  $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
+  $(PRIVATE_RS_SOURCE_FILES)
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
