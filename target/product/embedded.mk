@@ -50,7 +50,6 @@ PRODUCT_PACKAGES += \
     libstdc++ \
     libstlport \
     libsurfaceflinger \
-    libsurfaceflinger_client \
     libsurfaceflinger_ddmconnection \
     libsysutils \
     libthread_db \
