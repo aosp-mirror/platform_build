@@ -97,7 +97,9 @@ PRODUCT_PACKAGES += \
 	lib64GLES_V2_translator \
 	lib64EGL_translator \
 	hierarchyviewer2 \
-	emugen
+	emugen \
+	jobb \
+	fat32lib
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
