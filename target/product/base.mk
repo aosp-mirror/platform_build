@@ -79,7 +79,6 @@ PRODUCT_PACKAGES += \
     libutils \
     libvisualizer \
     libvorbisidec \
-    libwebcore \
     libwpa_client \
     mediaserver \
     monkey \
@@ -102,7 +101,7 @@ PRODUCT_PACKAGES += \
     system_server \
     tc \
     vdc \
-    vold
+    vold \
+    webview
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)
-
