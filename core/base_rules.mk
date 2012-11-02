@@ -34,11 +34,11 @@ ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
     $(error $(LOCAL_PATH): LOCAL_IS_HOST_MODULE must be "true" or empty, not "$(LOCAL_IS_HOST_MODULE)")
   endif
-  my_prefix:=HOST_
-  my_host:=host-
+  my_prefix := HOST_
+  my_host := host-
 else
-  my_prefix:=TARGET_
-  my_host:=
+  my_prefix := TARGET_
+  my_host :=
 endif
 
 ###########################################################
@@ -582,6 +582,6 @@ $(foreach tag,$(LOCAL_MODULE_TAGS),\
 ## NOTICE files
 ###########################################################
 
-include $(BUILD_SYSTEM)/notice_files.mk
+include $(BUILD_NOTICE_FILE)
 
 #:vi noexpandtab
