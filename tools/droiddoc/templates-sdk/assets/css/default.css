@@ -658,6 +658,17 @@ scroll top left;
     width: 512px;
     height: 286px; }
 
+
+.framed-galaxynexus-land-span-8{
+  background: transparent url(../images/styles/device_galaxynexus_blank_land_span8.png) no-repeat
+scroll top left;
+  padding: 26px 68px 38px 72px;
+  overflow: hidden; }
+  .framed-galaxynexus-land-span-8, .framed-galaxynexus-land-span-8 video,
+.framed-galaxynexus-land-span-8 img {
+    width: 320px;
+    height: 180px; }
+
 .framed-galaxynexus-port-span-9 {
   background: transparent url(../images/styles/device_galaxynexus_blank_port_span9.png) no-repeat
 scroll top left;
