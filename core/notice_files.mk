@@ -9,6 +9,16 @@ ifeq ($(LOCAL_MODULE_CLASS),GYP)
   notice_file :=
 endif
 
+ifeq ($(LOCAL_MODULE_CLASS),NOTICE_FILES)
+# If this is a NOTICE-only module, we don't include base_rule.mk,
+# so my_prefix is not set at this point.
+ifeq ($(LOCAL_IS_HOST_MODULE),true)
+  my_prefix := HOST_
+else
+  my_prefix := TARGET_
+endif
+endif
+
 ifdef notice_file
 
 # This relies on the name of the directory in PRODUCT_OUT matching where
