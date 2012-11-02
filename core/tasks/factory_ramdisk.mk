@@ -15,6 +15,7 @@
 #
 
 ifeq (,$(ONE_SHOT_MAKEFILE))
+ifneq ($(TARGET_BUILD_PDK),true)
 
 # PRODUCT_FACTORY_RAMDISK_MODULES consists of "<module_name>:<install_path>[:<install_path>...]" tuples.
 # <install_path> is relative to TARGET_FACTORY_RAMDISK_OUT.
@@ -87,4 +88,5 @@ $(INSTALLED_FACTORY_RAMDISK_TARGET) : $(MKBOOTIMG) $(TARGET_RAMDISK_KERNEL) $(IN
 
 endif
 
+endif # TARGET_BUILD_PDK
 endif # ONE_SHOT_MAKEFILE
