@@ -15,6 +15,7 @@
 #
 
 ifeq (,$(ONE_SHOT_MAKEFILE))
+ifneq ($(TARGET_BUILD_PDK),true)
 
 # PRODUCT_FACTORY_RAMDISK_MODULES consists of "<module_name>:<install_path>[:<install_path>...]" tuples.
 # <install_path> is relative to the staging directory for the bundle.
@@ -76,5 +77,6 @@ INSTALLED_FACTORY_BUNDLE_TARGET := $(tarball)
 
 endif
 
+endif # TARGET_BUILD_PDK
 endif # ONE_SHOT_MAKEFILE
 
