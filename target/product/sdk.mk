@@ -36,6 +36,7 @@ PRODUCT_PACKAGES := \
 	SystemUI \
 	Launcher2 \
 	Development \
+	DevelopmentSettings \
 	DrmProvider \
 	Fallback \
 	Settings \
