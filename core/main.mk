@@ -158,7 +158,7 @@ $(error stop)
 endif
 
 ifeq (darwin,$(HOST_OS))
-GCC_REALPATH = $(realpath $(shell which gcc))
+GCC_REALPATH = $(realpath $(shell which $(HOST_CC)))
 ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
   # Using LLVM GCC results in a non functional emulator due to it
   # not honouring global register variables
@@ -169,23 +169,6 @@ ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
   BUILD_EMULATOR := false
 else
   BUILD_EMULATOR := true
-endif
-# When building on Leopard or above, we need to use the 10.4 SDK
-# or the generated binary will not run on Tiger.
-darwin_version := $(strip $(shell sw_vers -productVersion))
-ifneq ($(filter 10.1 10.2 10.3 10.1.% 10.2.% 10.3.% 10.4 10.4.%,$(darwin_version)),)
-    $(error Building the Android emulator requires OS X 10.5 or above)
-endif
-ifneq ($(filter 10.5 10.5.% 10.6 10.6.%,$(darwin_version)),)
-    # We are on Leopard or Snow Leopard
-    MSDK=10.5
-else
-    # We are on Lion or beyond, and 10.6 SDK is the minimum in Xcode 4.x
-   MSDK=10.6
-endif
-MACOSX_SDK := /Developer/SDKs/MacOSX$(MSDK).sdk
-ifeq ($(strip $(wildcard $(MACOSX_SDK))),)
-  BUILD_EMULATOR := false
 endif
 else   # HOST_OS is not darwin
   BUILD_EMULATOR := true
