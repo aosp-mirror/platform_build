@@ -75,11 +75,11 @@ else
 endif
 
 HOST_TOOLCHAIN_ROOT := prebuilts/gcc/darwin-x86/host/i686-apple-darwin-4.2.1
-HOST_SDK_TOOLCHAIN_PREFIX := $(HOST_TOOLCHAIN_ROOT)/bin/i686-apple-darwin$(gcc_darwin_version)
+HOST_TOOLCHAIN_PREFIX := $(HOST_TOOLCHAIN_ROOT)/bin/i686-apple-darwin$(gcc_darwin_version)
 # Don't do anything if the toolchain is not there
-ifneq (,$(strip $(wildcard $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc)))
-HOST_CC  := $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc
-HOST_CXX := $(HOST_SDK_TOOLCHAIN_PREFIX)-g++
+ifneq (,$(strip $(wildcard $(HOST_TOOLCHAIN_PREFIX)-gcc)))
+HOST_CC  := $(HOST_TOOLCHAIN_PREFIX)-gcc
+HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)-g++
 ifeq ($(mac_sdk_version),10.8)
 # Mac SDK 10.8 no longer has stdarg.h, etc
 host_toolchain_header := $(HOST_TOOLCHAIN_ROOT)/lib/gcc/i686-apple-darwin$(gcc_darwin_version)/4.2.1/include
@@ -88,7 +88,7 @@ endif
 else
 HOST_CC := gcc
 HOST_CXX := g++
-endif # $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc exists
+endif # $(HOST_TOOLCHAIN_PREFIX)-gcc exists
 HOST_AR := $(AR)
 HOST_STRIP := $(STRIP)
 HOST_STRIP_COMMAND = $(HOST_STRIP) --strip-debug $< -o $@
