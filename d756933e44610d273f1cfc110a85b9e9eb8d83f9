@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAALc3///tw\u003d",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2012-11-12T18:28:53Z",
+      "side": 1,
+      "message": "By convention, the above 2 variable names should be:\nHOST_TOOLCHAIN_ROOT\nHOST_SDK_TOOLCHAIN_PREFIX",
+      "revId": "d756933e44610d273f1cfc110a85b9e9eb8d83f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
