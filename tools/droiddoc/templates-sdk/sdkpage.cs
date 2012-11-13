@@ -137,12 +137,17 @@
 <?cs ########  HERE IS THE JD DOC CONTENT FOR ONLINE ######### ?>
 <?cs call:tag_list(root.descr) ?>
 
-<div class="wrap">
-<div class="pax col-13 online" style="display:none">
 
 
 
+<h4><a href='' class="expandable"
+  onclick="toggleExpandable(this,'.pax');hideExpandable('.myide,.reqs');return false;"
+  >DOWNLOAD FOR OTHER PLATFORMS</a></h4>
+  
+  
+<div class="pax col-13 online" style="display:none;margin:0;">
 
+  
 <p class="table-caption"><strong>ADT Bundle</strong></p>
   <table class="download">
     <tr>
@@ -230,13 +235,21 @@ var:sdk.linux_download
   </tr>
   </table>
 
+</div><!-- end pax -->
 
 
+
+</div><!-- end col-13 for lower-half content -->
   
   
   
   
 <script>
+  if (location.hash == "#Requirements") {
+    $('.reqs').show();
+  } else if (location.hash == "#ExistingIDE") {
+	 $('.ide').show();
+  }
 
   var os;
   var $bundlelink;
@@ -322,8 +335,6 @@ var:sdk.linux_download
 
 </script>
 
-</div><!-- end pax -->
-</div><!-- end wrap -->
 
 
 </div><!-- end the wrapper used for relative/absolute positions  -->
