@@ -86,7 +86,7 @@
   <tr>
     <td>Windows</td>
     <td>
-  <a onClick="_gaq.push(['_trackEvent', 'Tools', 'Download NDK', 'Link <' + <?cs var:ndk.win_download ?> + '>']);"
+  <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.win_download ?>"><?cs var:ndk.win_download ?></a>
     </td>
     <td><?cs var:ndk.win_bytes ?> bytes</td>
@@ -95,7 +95,7 @@
   <tr class="alt-color">
     <td>Mac OS X (intel)</td>
     <td>
-  <a onClick="_gaq.push(['_trackEvent', 'Tools', 'Download NDK', 'Link <' + <?cs var:ndk.mac_download ?> + '>']);"
+  <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac_download ?>"><?cs var:ndk.mac_download ?></a>
     </td>
     <td><?cs var:ndk.mac_bytes ?> bytes</td>
@@ -104,7 +104,7 @@
   <tr>
     <td>Linux 32/64-bit (x86)</td>
     <td>
-  <a onClick="_gaq.push(['_trackEvent', 'Tools', 'Download NDK', 'Link <' + <?cs var:ndk.linux_download ?> + '>']);"
+  <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.linux_download ?>"><?cs var:ndk.linux_download ?></a>
     </td>
     <td><?cs var:ndk.linux_bytes ?> bytes</td>
@@ -114,6 +114,56 @@
   
   <?cs ########  HERE IS THE JD DOC CONTENT ######### ?>
   <?cs call:tag_list(root.descr) ?>
+
+
+  
+<script>
+  function onDownload(link) {
+
+    $("#downloadForRealz").html("Download " + $(link).text());
+    $("#downloadForRealz").attr('href',$(link).attr('href'));
+
+    $("#tos").fadeIn('slow');
+
+    location.hash = "download";
+    return false;
+  }
+
+
+  function onAgreeChecked() {
+    if ($("input#agree").is(":checked")) {
+      $("a#downloadForRealz").removeClass('disabled');
+    } else {
+      $("a#downloadForRealz").addClass('disabled');
+    }
+  }
+
+  function onDownloadNdkForRealz(link) {
+    if ($("input#agree").is(':checked')) {
+      $("#tos").fadeOut('slow');
+      
+      $('html, body').animate({
+          scrollTop: $("#Installing").offset().top
+        }, 800, function() {
+          $("#Installing").click();
+      });
+     
+      return true;
+    } else {
+      $("label#agreeLabel").parent().stop().animate({color: "#258AAF"}, 200,
+        function() {$("label#agreeLabel").parent().stop().animate({color: "#222"}, 200)}
+      );
+      return false;
+    }
+  }
+
+  $(window).hashchange( function(){
+    if (location.hash == "") {
+      location.reload();
+    }
+  });
+
+</script>
 
   <?cs else ?>
 <?cs # end if NDK ... 
@@ -160,7 +210,7 @@
     <td>Windows</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle"
-     href="http://dl.google.com/android/sdk/<?cs var:sdk.win_bundle_download ?>"><?cs var:sdk.win_bundle_download ?></a>
+     href="http://dl.google.com/android/<?cs var:sdk.win_bundle_download ?>"><?cs var:sdk.win_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win_bundle_checksum ?></td>
@@ -169,7 +219,7 @@
     <td>Mac OS X (intel)</td>
     <td>
   <a onClick="return onDownload(this)" id="mac-bundle"
-     href="http://dl.google.com/android/sdk/<?cs var:ndk.mac_bundle_download ?>"><?cs var:sdk.mac_bundle_download ?></a>
+     href="http://dl.google.com/android/<?cs var:sdk.mac_bundle_download ?>"><?cs var:sdk.mac_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.mac_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.mac_bundle_checksum ?></td>
@@ -178,7 +228,7 @@
     <td>Linux 32/64-bit (x86)</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle"
-     href="http://dl.google.com/android/sdk/<?cs var:sdk.linux_bundle_download ?>"><?cs var:sdk.linux_bundle_download ?></a>
+     href="http://dl.google.com/android/<?cs var:sdk.linux_bundle_download ?>"><?cs var:sdk.linux_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux_bundle_checksum ?></td>
