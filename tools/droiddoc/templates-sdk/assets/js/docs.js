@@ -1065,6 +1065,7 @@ function toggleExpandable(link,id) {
 
 function hideExpandable(ids) {
   $(ids).slideUp();
+  $(ids).prev('h4').find('a.expandable').removeClass('expanded');
 }
 
 
