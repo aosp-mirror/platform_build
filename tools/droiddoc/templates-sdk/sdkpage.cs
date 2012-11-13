@@ -327,7 +327,6 @@ var:sdk.linux_download
   }
 
   $(window).hashchange( function(){
-    console.log('hash: '+location.hash);
     if (location.hash == "") {
       location.reload();
     }
