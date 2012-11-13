@@ -376,6 +376,9 @@ $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE := $(certificate)
 PACKAGES.$(LOCAL_PACKAGE_NAME).PRIVATE_KEY := $(private_key)
 PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 
+$(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
+    $(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
+
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
 ifdef LOCAL_DEX_PREOPT
