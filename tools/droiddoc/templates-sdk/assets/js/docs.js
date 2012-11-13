@@ -28,7 +28,7 @@ $(document).ready(function() {
   $('.scroll-pane').jScrollPane( {verticalGutter:0} );
   
   // add HRs below all H2s (except for a few other h2 variants)
-  $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').css({marginBottom:0}).after('<hr/>');
+  $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').not('h2.norule').css({marginBottom:0}).after('<hr/>');
   
   // set search's onkeyup handler here so we can show suggestions 
   // even while search results are visible
@@ -384,11 +384,11 @@ false; // navigate across topic boundaries only in design docs
 
   // Set up tooltips
   var TOOLTIP_MARGIN = 10;
-  $('acronym').each(function() {
+  $('acronym,.tooltip-link').each(function() {
     var $target = $(this);
     var $tooltip = $('<div>')
         .addClass('tooltip-box')
-        .text($target.attr('title'))
+        .append($target.attr('title'))
         .hide()
         .appendTo('body');
     $target.removeAttr('title');
@@ -1051,6 +1051,21 @@ function toggleContent(obj) {
   return false;
 }
 
+
+/* New version of expandable content */
+function toggleExpandable(link,id) {
+  if($(id).is(':visible')) {
+    $(id).slideUp();
+    $(link).removeClass('expanded');
+  } else {
+    $(id).slideDown();
+    $(link).addClass('expanded');
+  }
+}
+
+function hideExpandable(ids) {
+  $(ids).slideUp();
+}
 
 
 
