@@ -486,6 +486,50 @@ video.with-shadow {
     float:right;
     text-transform:uppercase;
   }
+  
+  
+  
+  /* inner-doc tabs w/ title */
+  
+div#title-tabs-wrapper {
+  border-bottom:1px solid #ccc;
+  margin:20px 0 30px;
+}
+h1.with-title-tabs {
+  display:inline-block;
+  margin:0 0 -1px 0;
+  padding:0 60px 0 0;
+  border-bottom:1px solid #F9F9F9;
+}
+ul#title-tabs {
+  list-style:none;
+  padding:0;
+  height:29px;
+  margin:0;
+  font-size:16px;
+  line-height:26px;
+  display:inline-block;
+  vertical-align:bottom;
+}
+ul#title-tabs li {
+  display:block;
+  float:left;
+  margin-right:40px;
+  border-bottom: 3px solid transparent;
+}
+ul#title-tabs li.selected {
+  border-bottom: 3px solid #93C;
+}
+ul#title-tabs li a {
+  color:#333;
+}
+ul#title-tabs li a:hover,
+ul#title-tabs li a:visited,
+ul#title-tabs li a:active {
+  color:#93C !important;
+}
+
+
 
 /* content body */
 @-webkit-keyframes glowheader {
