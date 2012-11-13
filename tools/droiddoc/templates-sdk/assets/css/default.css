@@ -524,7 +524,6 @@ ul#title-tabs li a {
   color:#333;
 }
 ul#title-tabs li a:hover,
-ul#title-tabs li a:visited,
 ul#title-tabs li a:active {
   color:#93C !important;
 }
