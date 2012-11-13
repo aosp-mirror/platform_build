@@ -101,7 +101,7 @@
         <?cs /if ?>
       </div>
     <?cs else ?>
-      <?cs if:tab1 ?><div id="title-tabs-wrapper">
+      <?cs if:tab1 ?><div id="title-tabs-wrapper"><?cs /if ?>
         <h1 itemprop="name" <?cs if:tab1 ?>class="with-title-tabs"<?cs /if ?>><?cs var:page.title ?></h1><?cs
           if:tab1 ?><ul id="title-tabs">
               <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
@@ -110,8 +110,8 @@
               <?cs if:tab3 ?>
               <li><a href="<?cs var:tab3.link ?>"><?cs var:tab3 ?></a></li><?cs /if ?>
             </ul>
-          <?cs /if ?></div><!-- end tab-wrapper -->
-      <?cs /if ?>
+          <?cs /if ?>
+      <?cs if:tab1 ?></div><!-- end tab-wrapper --><?cs /if ?>
     <?cs /if ?>
   <?cs /if ?>
 <?cs /if ?><?cs # end if design ?>
