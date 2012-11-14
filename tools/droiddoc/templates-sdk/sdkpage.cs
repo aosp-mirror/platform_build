@@ -325,16 +325,38 @@ var:sdk.linux_download
     /* set up primary adt download button */
     $('#download-bundle-button').show();
     $('#download-bundle-button').append("Download the SDK <br/><span class='small'>ADT Bundle for " + os + "</span>");
-    $('#download-bundle-button').click(function() {return onDownload(this,true);}).attr('href', $bundlelink.attr('href'));
+    $('#download-bundle-button').click(function() {return onDownloadBouncer(this,true);}).attr('href', $bundlelink.attr('href'));
 
     /* set up sdk tools only button */
     $('#download-tools-button').show();
     $('#download-tools-button').append("Download the SDK Tools for " + os);
-    $('#download-tools-button').click(function() {return onDownload(this,true);}).attr('href', $toolslink.attr('href'));
+    $('#download-tools-button').click(function() {return onDownload(this,false);}).attr('href', $toolslink.attr('href'));
   } else {
     $('.pax').show();
   }
 
+
+  function onDownloadBouncer(link, button) {
+  
+    if (navigator.userAgent.indexOf("WOW64") != -1 || 
+        navigator.userAgent.indexOf("Win64") != -1 ) {
+
+        $("#naMessage").show();
+        $("#warningCancel").click(function() {
+          $('#naMessage').hide();
+          onDownload(link,button);
+        });
+        $("#warningOk").click(function() {
+          $('#naMessage').hide();
+          onDownload($("#download-tools-button").get(),false);
+        });
+        return false;
+      } else {
+        return onDownload(link,button);      
+      }
+  }
+  
+  
   function onDownload(link, button) {
 
     if (button) {
