@@ -7,7 +7,8 @@
   elif:about ?>about<?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
-  /if ?>" itemscope itemtype="http://schema.org/Article">
+  /if ?><?cs
+  if:page.trainingcourse ?> trainingcourse<?cs /if ?>" itemscope itemtype="http://schema.org/Article">
 <a name="top"></a>
 <?cs include:"header.cs" ?>
 
@@ -16,7 +17,7 @@
 ?>class="col-13" id="doc-col"<?cs else 
 ?>class="col-12" id="doc-col"<?cs /if ?> >
 
-<?cs if:(design||training||walkthru) ?><?cs # header logic for docs that provide previous/next buttons ?>
+<?cs if:(design||training||walkthru) && !page.trainingcourse ?><?cs # header logic for docs that provide previous/next buttons ?>
   <?cs if:header.hide ?>
   <?cs else ?>
   <div class="layout-content-row content-header <?cs if:header.justLinks ?>just-links<?cs /if ?>">
@@ -51,16 +52,8 @@
             ja-lang="開始する"
             es-lang="Empezar"               
             >Get started</a>
-        <a href="#" class="start-course-link hide"
-            zh-TW-lang="第一堂課"
-            zh-CN-lang="第一课"
-            ru-lang="Первый урок"
-            ko-lang="첫 번째 강의"
-            ja-lang="最初のクラス"
-            es-lang="Primera clase"               
-            >First class</a>
       </div>
-    <?cs else ?>
+    <?cs elif:!page.trainingcourse ?>
       <div class="paging-links layout-content-col span-4" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <a href="#" class="prev-page-link hide"
             zh-TW-lang="上一堂課"
@@ -138,7 +131,7 @@
         </div>
         <?cs if:!fullscreen ?>
         <div class="paging-links layout-content-col col-4">
-          <?cs if:(design||training||guide||walkthru) && !page.landing && !footer.hide ?>
+          <?cs if:(design||training||guide||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
             <a href="#" class="prev-page-link hide"
                 zh-TW-lang="上一堂課"
                 zh-CN-lang="上一课"
