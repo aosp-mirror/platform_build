@@ -1938,11 +1938,18 @@ function changeApiLevel() {
 
   if (selectedLevel < minLevel) {
     var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
-    $("#naMessage").show().html("<div><p><strong>This " + thing + " is not available with API level " + selectedLevel + ".</strong></p>"
-                              + "<p>To use this " + thing + ", you must develop your app using a build target "
-                              + "that supports API level " + $("#doc-api-level").attr("class") + " or higher. To read these "
-                              + "APIs, change the value of the API level filter above.</p>"
-                              + "<p><a href='" +toRoot+ "guide/appendix/api-levels.html'>What is the API level?</a></p></div>");
+    $("#naMessage").show().html("<div><p><strong>This " + thing
+              + " requires API level " + minLevel + " or higher.</strong></p>"
+              + "<p>This document is hidden because your selected API level for the documentation is "
+              + selectedLevel + ". You can change the documentation API level with the selector "
+              + "above the left navigation.</p>"
+              + "<p>For more information about specifying the API level your app requires, "
+              + "read <a href='" + toRoot + "training/basics/supporting-devices/platforms.html'"
+              + ">Supporting Different Platform Versions</a>.</p>"
+              + "<input type='button' value='OK, make this page visible' "
+              + "title='Change the API level to " + minLevel + "' "
+              + "onclick='$(\"#apiLevelSelector\").val(\"" + minLevel + "\");changeApiLevel();' />"
+              + "</div>");
   } else {
     $("#naMessage").hide();
   }
