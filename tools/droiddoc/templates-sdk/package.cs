@@ -8,7 +8,7 @@
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
   /if ?>">
-  <div id="doc-api-level" class="<?cs var:class.since ?>" style="display:none"></div>
+  <div id="doc-api-level" class="<?cs var:package.since ?>" style="display:none"></div>
   <a name="top"></a>
 <?cs include:"header.cs" ?>
 
