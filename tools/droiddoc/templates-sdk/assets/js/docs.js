@@ -135,6 +135,7 @@ $(document).ready(function() {
 
   // select current page in sidenav and set up prev/next links if they exist
   var $selNavLink = $('#nav').find('a[href="' + pagePath + '"]');
+  var $selListItem;
   if ($selNavLink.length) {
     $selListItem = $selNavLink.closest('li');
 
@@ -156,11 +157,9 @@ $(document).ready(function() {
 false; // navigate across topic boundaries only in design docs
     if ($prevListItem.length) {
       if ($prevListItem.hasClass('nav-section')) {
-        if (crossBoundaries) {
-          // jump to last topic of previous section
-          $prevLink = $prevListItem.find('a:last');
-        }
-      } else {
+        // jump to last topic of previous section
+        $prevLink = $prevListItem.find('a:last');
+      } else if (!$selListItem.hasClass('nav-section')) {
         // jump to previous topic in this section
         $prevLink = $prevListItem.find('a:eq(0)');
       }
@@ -177,18 +176,8 @@ false; // navigate across topic boundaries only in design docs
       }
     }
 
-    if ($prevLink.length) {
-      var prevHref = $prevLink.attr('href');
-      if (prevHref == SITE_ROOT + 'index.html') {
-        // Don't show Previous when it leads to the homepage
-      } else {
-        $('.prev-page-link').attr('href', $prevLink.attr('href')).removeClass("hide");
-      }
-    } 
-
     // set up next links
     var $nextLink = [];
-    var startCourse = false;
     var startClass = false;
     var training = $(".next-class-link").length; // decides whether to provide "next class" link
     var isCrossingBoundary = false;
@@ -206,53 +195,103 @@ false; // navigate across topic boundaries only in design docs
         $('.topic-start-link').text($nextLink.text().toUpperCase());
       }
       
-      // Handle some Training specialties
-      if ($selListItem.parent().is("#nav") && $(".start-course-link").length) {
-        // this means we're at the very top of the TOC hierarchy
-        startCourse = true;
-      } else if ($(".start-class-link").length) {
-        // this means this page has children but is not at the top (it's a class, not a course)
+      // If the selected page has a description, then it's a class or article homepage
+      if ($selListItem.find('a[description]').length) {
+        // this means we're on a class landing page
         startClass = true;
       }
     } else {
       // jump to the next topic in this section (if it exists)
       $nextLink = $selListItem.next('li').find('a:eq(0)');
       if (!$nextLink.length) {
-        if (crossBoundaries || training) {
-          // no more topics in this section, jump to the first topic in the next section
-          $nextLink = $selListItem.parents('li:eq(0)').next('li.nav-section').find('a:eq(0)');
-          isCrossingBoundary = true;
+        isCrossingBoundary = true;
+        // no more topics in this section, jump to the first topic in the next section
+        $nextLink = $selListItem.parents('li:eq(0)').next('li.nav-section').find('a:eq(0)');
+        if (!$nextLink.length) {  // Go up another layer to look for next page (lesson > class > course)
+          $nextLink = $selListItem.parents('li:eq(1)').next('li.nav-section').find('a:eq(0)');
         }
       }
     }
-    if ($nextLink.length) {
-      if (startCourse || startClass) {
-        if (startCourse) {
-          $('.start-course-link').attr('href', $nextLink.attr('href')).removeClass("hide");
-        } else {
-          $('.start-class-link').attr('href', $nextLink.attr('href')).removeClass("hide");
-        }
-        // if there's no training bar (below the start button), 
-        // then we need to add a bottom border to button
-        if (!$("#tb").length) {
-          $('.start-course-link').css({'border-bottom':'1px solid #DADADA'});
-          $('.start-class-link').css({'border-bottom':'1px solid #DADADA'});
-        }
-      } else if (training && isCrossingBoundary) {
-        $('.content-footer.next-class').show();
-        $('.next-page-link').attr('href','')
-                            .removeClass("hide").addClass("disabled")
-                            .click(function() { return false; });
-       
-        $('.next-class-link').attr('href',$nextLink.attr('href'))
-                            .removeClass("hide").append($nextLink.html());
-        $('.next-class-link').find('.new').empty();
-      } else {
-        $('.next-page-link').attr('href', $nextLink.attr('href')).removeClass("hide");
+
+    if (startClass) {
+      $('.start-class-link').attr('href', $nextLink.attr('href')).removeClass("hide");
+
+      // if there's no training bar (below the start button), 
+      // then we need to add a bottom border to button
+      if (!$("#tb").length) {
+        $('.start-class-link').css({'border-bottom':'1px solid #DADADA'});
       }
+    } else if (isCrossingBoundary && !$('body.design').length) {  // Design always crosses boundaries
+      $('.content-footer.next-class').show();
+      $('.next-page-link').attr('href','')
+                          .removeClass("hide").addClass("disabled")
+                          .click(function() { return false; });
+     
+      $('.next-class-link').attr('href',$nextLink.attr('href'))
+                          .removeClass("hide").append($nextLink.html());
+      $('.next-class-link').find('.new').empty();
+    } else {
+      $('.next-page-link').attr('href', $nextLink.attr('href')).removeClass("hide");
+    }
+
+    if (!startClass && $prevLink.length) {
+      var prevHref = $prevLink.attr('href');
+      if (prevHref == SITE_ROOT + 'index.html') {
+        // Don't show Previous when it leads to the homepage
+      } else {
+        $('.prev-page-link').attr('href', $prevLink.attr('href')).removeClass("hide");
+      }
+    } 
+
+    // If this is a training 'article', there should be no prev/next nav
+    // ... if the grandparent is the "nav" ... and it has no child list items...
+    if (training && $selListItem.parents('ul').eq(1).is('[id="nav"]') &&
+        !$selListItem.find('li').length) {
+      $('.next-page-link,.prev-page-link').attr('href','').addClass("disabled")
+                          .click(function() { return false; });
     }
     
   }
+  
+  
+  
+  // Set up the course landing pages for Training with class names and descriptions
+  if ($('body.trainingcourse').length) {
+    var $classLinks = $selListItem.find('ul li a').not('#nav .nav-section .nav-section ul a');
+    var $classDescriptions = $classLinks.attr('description');
+    
+    var $olClasses  = $('<ol class="class-list"></ol>');
+    var $liClass;
+    var $imgIcon;
+    var $h2Title;
+    var $pSummary;
+    var $olLessons;
+    var $liLesson;
+    $classLinks.each(function(index) {
+      $liClass  = $('<li></li>');
+      $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2>' + $(this).html()+'</h2><span></span></a>');
+      $pSummary = $('<p class="description">' + $(this).attr('description') + '</p>');
+      
+      $olLessons  = $('<ol class="lesson-list"></ol>');
+      
+      $lessons = $(this).closest('li').find('ul li a');
+      
+      if ($lessons.length) {
+        $imgIcon = $('<img src="'+toRoot+'assets/images/resource-tutorial.png" alt=""/>');
+        $lessons.each(function(index) {
+          $olLessons.append('<li><a href="'+$(this).attr('href')+'">' + $(this).html()+'</a></li>');
+        });
+      } else {
+        $imgIcon = $('<img src="'+toRoot+'assets/images/resource-article.png" alt=""/>');
+        $pSummary.addClass('article');
+      }
+
+      $liClass.append($h2Title).append($imgIcon).append($pSummary).append($olLessons);
+      $olClasses.append($liClass);
+    });
+    $('.jd-descr').append($olClasses);
+  }
+
 
 
 
