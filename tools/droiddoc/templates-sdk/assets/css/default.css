@@ -1995,7 +1995,7 @@ div#sdk-terms-form {
   padding:0 0 0 10px;
 }
 
-div#sdk-terms-form input#agree {
+div#sdk-terms-form input {
   display:inline;
   margin:4px 4px 4px 0;
 }
