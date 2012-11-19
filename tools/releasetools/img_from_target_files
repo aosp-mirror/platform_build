@@ -55,6 +55,12 @@ OPTIONS = common.OPTIONS
 def AddUserdata(output_zip):
   """Create an empty userdata image and store it in output_zip."""
 
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "data")
+  # If no userdata_size is provided, skip userdata.img.
+  if not image_props.get("userdata_size"):
+    return
+
   print "creating userdata.img..."
 
   # The name of the directory it is making an image out of matters to
@@ -65,8 +71,6 @@ def AddUserdata(output_zip):
   os.mkdir(user_dir)
   img = tempfile.NamedTemporaryFile()
 
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "data")
   fstab = OPTIONS.info_dict["fstab"]
   if fstab:
     image_props["fs_type" ] = fstab["/data"].fs_type
