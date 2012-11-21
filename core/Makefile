@@ -570,6 +570,9 @@ INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
 endif
 INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 
+SELINUX_FC := $(TARGET_ROOT_OUT)/file_contexts
+INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
+
 # $(1): the path of the output dictionary file
 define generate-userimage-prop-dictionary
 $(if $(INTERNAL_USERIMAGES_EXT_VARIANT),$(hide) echo "fs_type=$(INTERNAL_USERIMAGES_EXT_VARIANT)" >> $(1))
@@ -579,7 +582,7 @@ $(if $(BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "cache_fs_type=$(BOARD_CA
 $(if $(BOARD_CACHEIMAGE_PARTITION_SIZE),$(hide) echo "cache_size=$(BOARD_CACHEIMAGE_PARTITION_SIZE)" >> $(1))
 $(if $(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG),$(hide) echo "extfs_sparse_flag=$(INTERNAL_USERIMAGES_SPARSE_EXT_FLAG)" >> $(1))
 $(if $(mkyaffs2_extra_flags),$(hide) echo "mkyaffs2_extra_flags=$(mkyaffs2_extra_flags)" >> $(1))
-$(hide) echo "selinux_fc=$(TARGET_ROOT_OUT)/file_contexts" >> $(1)
+$(hide) echo "selinux_fc=$(SELINUX_FC)" >> $(1)
 endef
 
 # -----------------------------------------------------------------
