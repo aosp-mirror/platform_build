@@ -129,11 +129,14 @@ strong {
 em {
   font-style: italic; }
 
-acronym {
+acronym,
+.tooltip-link {
   border-bottom: 1px dotted #555555;
   cursor: help; }
 
-acronym:hover {
+acronym:hover,
+.tooltip-link:hover {
+  color: #7aa1b0;
   border-bottom-color: #7aa1b0; }
 
 img.with-shadow,
@@ -445,27 +448,101 @@ video.with-shadow {
     border:1px solid #DADADA;
     border-bottom:0;
   }
-      
+
   .training-nav-top a.next-page-link {
     border-left:0;
     width:123px;
   }
       
+  .paging-links a.disabled,
   .training-nav-top a.disabled,
   .content-footer a.disabled {
-    color:#999;
+    color:#bbb;
   }
       
+  .paging-links a.disabled:hover,
   .training-nav-top a.disabled:hover,
   .content-footer a.disabled:hover {
     cursor:default;
-    color:#999 !important;
+    color:#bbb !important;
   }
       
   .training-nav-top a.start-class-link,
   .training-nav-top a.start-course-link {
     width:262px;
   }
+  
+  /* list of classes on course landing page */
+  ol.class-list {
+    list-style:none;
+    margin-left:0;
+  }
+  ol.class-list>li {
+    margin:0 0 15px;
+    padding:5px 0 0;
+    overflow:hidden;
+    border-top:1px solid #ccc;
+  }
+  ol.class-list li a.title {
+    font-size:16px;
+    margin:0;
+    clear:left;
+    display:block;
+    height:32px;
+    padding:0 4px;
+  }
+  ol.class-list li a.title h2 {
+    color:inherit;
+    margin:0 0 10px;
+    display:block;
+    float:left;
+    width:675px;
+  }
+  ol.class-list li a.title span {
+    display:none;
+    float:left;
+    font-size:18px;
+    font-weight:bold;
+    background: transparent url(../images/styles/disclosure_right.png) no-repeat scroll 50% 50%;
+    width: 10px;
+    height: 32px;
+  }
+  ol.class-list li a.title:hover {
+    background:#ddd;
+    color:#258AAF !important;
+  }
+  ol.class-list li a.title:hover span {
+    display:block;
+  }
+  
+  #jd-content
+  ol.class-list li img {
+    float:left;
+    clear:left;
+    width:64px;
+    margin:0 20px 0 0;
+  }
+  ol.class-list li p.description {
+    float:left;
+    display:block;
+    width:250px;
+    margin:0;
+  }
+  ol.class-list li p.description.article {
+    width: 550px;
+  }
+  ol.class-list ol {
+    float:left;
+    width:320px;
+    margin:0 0 0 30px;
+    list-style:none;
+    margin:0 0 0 20px;
+  }
+  ol.class-list div.lessons li {
+    margin:0 0 6px;
+    line-height:16px;
+  }
+  
   
   .hide {
     display:none !important;
@@ -483,6 +560,49 @@ video.with-shadow {
     float:right;
     text-transform:uppercase;
   }
+  
+  
+  
+  /* inner-doc tabs w/ title */
+  
+div#title-tabs-wrapper {
+  border-bottom:1px solid #ccc;
+  margin:20px 0 30px;
+}
+h1.with-title-tabs {
+  display:inline-block;
+  margin:0 0 -1px 0;
+  padding:0 60px 0 0;
+  border-bottom:1px solid #F9F9F9;
+}
+ul#title-tabs {
+  list-style:none;
+  padding:0;
+  height:29px;
+  margin:0;
+  font-size:16px;
+  line-height:26px;
+  display:inline-block;
+  vertical-align:bottom;
+}
+ul#title-tabs li {
+  display:block;
+  float:left;
+  margin-right:40px;
+  border-bottom: 3px solid transparent;
+}
+ul#title-tabs li.selected {
+  border-bottom: 3px solid #93C;
+}
+ul#title-tabs li a {
+  color:#333;
+}
+ul#title-tabs li a:hover,
+ul#title-tabs li a:active {
+  color:#93C !important;
+}
+
+
 
 /* content body */
 @-webkit-keyframes glowheader {
@@ -938,9 +1058,12 @@ dd {
 dd p {
   margin:10px 0 0;
 }
-ul p,
-ol p {
-  margin:5px 0 0;
+li p,
+li pre,
+li ul,
+li ol {
+  margin-top:5px;
+  margin-bottom:5px;
 }
 pre strong, pre b, a strong, a b, a code {
     color: inherit;
@@ -1418,18 +1541,14 @@ Buttons
     color: #444;
 }
 a.button, a.button:visited, a.button-secondary, a.button-secondary:visited {
-    height: 28px;
-    line-height: 28px;
     margin-right: 16px;
-	font-weight: 400;
+	 font-weight: 400;
     min-width: 54px;
     outline: 0;
     padding: 8px 15px;
     text-align: center;
 }
 .button, .button-secondary {
-    height: 34px;
-    line-height: 34px;
     margin-right: 16px;
 	font-weight: 400;
     min-width: 54px;
@@ -1455,6 +1574,9 @@ EndColorStr='#4cadcb',GradientType=0);
     background-image: none;
     border-color: #30b7e6;
 }
+a.button.big.subtitle {
+  line-height:18px;
+}
 .button-secondary:hover, a.button-secondary:hover {
     border-color: #dbdbdb;
     background-color: #f3f3f3;
@@ -1469,7 +1591,7 @@ EndColorStr='#ececec');
     color: #33B5E5 !important;
 }
 .button-secondary:active, a.button-secondary:active {
-    border-color: #dadada;
+   border-color: #dadada;
 	background: #ebebeb; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
 	background:
@@ -1510,12 +1632,20 @@ endColorstr='#ffffff',GradientType=0 ); /* IE6-8 */
   font-size:20px;
   display:inline-block;
 }
+.button.big span.small {
+  font-size:14px;
+}
+.button-caption {
+  margin-top:10px;
+  font-size:12px;
+  font-style:italic;
+}
 
 .button.disabled,
 .button.disabled:hover,
 .button.disabled:active {
   background:#ebebeb;
-  color:#999;
+  color:#999 !important;
   border-color:#999;
   cursor:default;
 }
@@ -1832,15 +1962,54 @@ form .form-error input[type='text'], form .form-error textarea {
     border-color: #eff2f9;
 }
 */
+
+/* SDK TOS styles */
+
+div.sdk-terms {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 10px;
+  height: 370px;
+  width: 738px;
+  border: 1px solid #444;
+  background: transparent;
+  overflow:auto;
+  margin:0 0 10px;
+}
+
+div.sdk-terms.fullsize {
+  padding: 0;
+  height: auto;
+  width: auto;
+  border:none;
+}
+
+div.sdk-terms h3,
+div.sdk-terms h2 {
+  margin:0;
+}
+
+div#sdk-terms-form {
+  padding:0 0 0 10px;
+}
+
+div#sdk-terms-form input {
+  display:inline;
+  margin:4px 4px 4px 0;
+}
+
+
 /* --------------------------------------------------------------------------
 Code Style
 */
 pre {
-	margin:0 0 1em 0;
-	padding: 1em;
-	overflow: auto;
-	border: solid 1px #ddd;
-	background: #f7f7f7;	
+  margin:0 0 1em 0;
+  padding: 1em;
+  overflow: auto;
+  border: solid 1px #ddd;
+  background: #f7f7f7;	
 }
 .str { color: #080; }
 .kwd { color: #008; }
@@ -2331,6 +2500,29 @@ div.design-announce p {
   text-transform:uppercase;
   line-height:30px;
 }
+
+.expandable {
+  height:34px;
+  padding-left:20px;
+  position:relative;
+}
+.expandable:before {
+  content: '';
+  background-image: url(../images/styles/disclosure_down.png);
+  background-repeat:no-repeat;
+  background-position: -12px -9px;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0; }
+}
+.expandable.expanded:before {
+  background-image: url(../images/styles/disclosure_up.png);
+}
+
+
 
 /* -----------------------------------------------
 Dialog box for popup messages 

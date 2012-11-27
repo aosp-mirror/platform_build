@@ -76,7 +76,6 @@
 #
 ?>
 
-
   <table class="download" id="download-table">
     <tr>
       <th>Platform</th>
@@ -87,16 +86,16 @@
   <tr>
     <td>Windows</td>
     <td>
-  <a onClick="_gaq.push(['_trackEvent', 'Tools', 'Download NDK', 'Link <' + <?cs var:ndk.win_download ?> + '>']);"
+  <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.win_download ?>"><?cs var:ndk.win_download ?></a>
     </td>
     <td><?cs var:ndk.win_bytes ?> bytes</td>
     <td><?cs var:ndk.win_checksum ?></td>
   </tr>
-  <tr class="alt-color">
+  <tr>
     <td>Mac OS X (intel)</td>
     <td>
-  <a onClick="_gaq.push(['_trackEvent', 'Tools', 'Download NDK', 'Link <' + <?cs var:ndk.mac_download ?> + '>']);"
+  <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac_download ?>"><?cs var:ndk.mac_download ?></a>
     </td>
     <td><?cs var:ndk.mac_bytes ?> bytes</td>
@@ -105,7 +104,7 @@
   <tr>
     <td>Linux 32/64-bit (x86)</td>
     <td>
-  <a onClick="_gaq.push(['_trackEvent', 'Tools', 'Download NDK', 'Link <' + <?cs var:ndk.linux_download ?> + '>']);"
+  <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.linux_download ?>"><?cs var:ndk.linux_download ?></a>
     </td>
     <td><?cs var:ndk.linux_bytes ?> bytes</td>
@@ -115,6 +114,56 @@
   
   <?cs ########  HERE IS THE JD DOC CONTENT ######### ?>
   <?cs call:tag_list(root.descr) ?>
+
+
+  
+<script>
+  function onDownload(link) {
+
+    $("#downloadForRealz").html("Download " + $(link).text());
+    $("#downloadForRealz").attr('href',$(link).attr('href'));
+
+    $("#tos").fadeIn('slow');
+
+    location.hash = "download";
+    return false;
+  }
+
+
+  function onAgreeChecked() {
+    if ($("input#agree").is(":checked")) {
+      $("a#downloadForRealz").removeClass('disabled');
+    } else {
+      $("a#downloadForRealz").addClass('disabled');
+    }
+  }
+
+  function onDownloadNdkForRealz(link) {
+    if ($("input#agree").is(':checked')) {
+      $("#tos").fadeOut('slow');
+      
+      $('html, body').animate({
+          scrollTop: $("#Installing").offset().top
+        }, 800, function() {
+          $("#Installing").click();
+      });
+     
+      return true;
+    } else {
+      $("label#agreeLabel").parent().stop().animate({color: "#258AAF"}, 200,
+        function() {$("label#agreeLabel").parent().stop().animate({color: "#222"}, 200)}
+      );
+      return false;
+    }
+  }
+
+  $(window).hashchange( function(){
+    if (location.hash == "") {
+      location.reload();
+    }
+  });
+
+</script>
 
   <?cs else ?>
 <?cs # end if NDK ... 
@@ -138,8 +187,74 @@
 <?cs ########  HERE IS THE JD DOC CONTENT FOR ONLINE ######### ?>
 <?cs call:tag_list(root.descr) ?>
 
-<div class="wrap">
-<div class="pax col-13 online" style="display:none">
+
+
+
+<h4><a href='' class="expandable"
+  onclick="toggleExpandable(this,'.pax');hideExpandable('.myide,.reqs');return false;"
+  >DOWNLOAD FOR OTHER PLATFORMS</a></h4>
+  
+  
+<div class="pax col-13 online" style="display:none;margin:0;">
+
+  
+<p class="table-caption"><strong>ADT Bundle</strong></p>
+  <table class="download">
+    <tr>
+      <th>Platform</th>
+      <th>Package</th>
+      <th>Size</th>
+      <th>MD5 Checksum</th>
+  </tr>
+  <tr>
+    <td>Windows 32-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="win-bundle32"
+     href="http://dl.google.com/android/adt/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
+    </td>
+    <td><?cs var:sdk.win32_bundle_bytes ?> bytes</td>
+    <td><?cs var:sdk.win32_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Windows 64-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="win-bundle64"
+     href="http://dl.google.com/android/adt/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
+    </td>
+    <td><?cs var:sdk.win64_bundle_bytes ?> bytes</td>
+    <td><?cs var:sdk.win64_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td><nobr>Mac OS X 64-bit</nobr></td>
+    <td>
+  <a onClick="return onDownload(this)" id="mac-bundle64"
+     href="http://dl.google.com/android/adt/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
+    </td>
+    <td><?cs var:sdk.mac64_bundle_bytes ?> bytes</td>
+    <td><?cs var:sdk.mac64_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux 32-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="linux-bundle32"
+     href="http://dl.google.com/android/adt/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
+    </td>
+    <td><?cs var:sdk.linux32_bundle_bytes ?> bytes</td>
+    <td><?cs var:sdk.linux32_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux 64-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="linux-bundle64"
+     href="http://dl.google.com/android/adt/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
+    </td>
+    <td><?cs var:sdk.linux64_bundle_bytes ?> bytes</td>
+    <td><?cs var:sdk.linux64_bundle_checksum ?></td>
+  </tr>
+  </table>
+
+
+<p class="table-caption"><strong>SDK Tools Only</strong></p>
   <table class="download">
     <tr>
       <th>Platform</th>
@@ -150,7 +265,7 @@
   <tr>
     <td rowspan="2">Windows</td>
     <td>
-  <a onclick="onDownload(this,false)" href="http://dl.google.com/android/<?cs var:sdk.win_download
+  <a onclick="return onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
 ?>"><?cs var:sdk.win_download ?></a>
     </td>
     <td><?cs var:sdk.win_bytes ?> bytes</td>
@@ -159,17 +274,17 @@
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="onDownload(this,false)" id="win-sdk" href="http://dl.google.com/android/<?cs
+  <a onclick="return onDownload(this)" id="win-tools" href="http://dl.google.com/android/<?cs
 var:sdk.win_installer
 ?>"><?cs var:sdk.win_installer ?></a> (Recommended)
     </td>
     <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
     <td><?cs var:sdk.win_installer_checksum ?></td>
   </tr>
-  <tr class="alt-color">
-    <td>Mac OS X (intel)</td>
+  <tr>
+    <td>Mac OS X</td>
     <td>
-  <a onclick="onDownload(this,false)" id="mac-sdk" href="http://dl.google.com/android/<?cs
+  <a onclick="return onDownload(this)" id="mac-tools" href="http://dl.google.com/android/<?cs
 var:sdk.mac_download
 ?>"><?cs var:sdk.mac_download ?></a>
     </td>
@@ -177,9 +292,9 @@ var:sdk.mac_download
     <td><?cs var:sdk.mac_checksum ?></td>
   </tr>
   <tr>
-    <td>Linux (i386)</td>
+    <td>Linux</td>
     <td>
-  <a onclick="onDownload(this,false)" id="linux-sdk" href="http://dl.google.com/android/<?cs
+  <a onclick="return onDownload(this)" id="linux-tools" href="http://dl.google.com/android/<?cs
 var:sdk.linux_download
 ?>"><?cs var:sdk.linux_download ?></a>
     </td>
@@ -187,50 +302,144 @@ var:sdk.linux_download
     <td><?cs var:sdk.linux_checksum ?></td>
   </tr>
   </table>
+
+</div><!-- end pax -->
+
+
+
+</div><!-- end col-13 for lower-half content -->
+  
+  
   
   
 <script>
-  function onDownload(link,fromButton) {
-    $("#filename").text($(link).html());
-    $("#next-steps").fadeIn('slow');
-    $("#intro").fadeOut('slow');
-    $('.pax').slideUp();
-    $('.reqs').slideUp();
-    // Deliver Analytics event
-    if (fromButton) {
-      _gaq.push(['_trackEvent', 'Tools', 'Download SDK', 'Button <' + text($(link).html()) + '>']);
-    } else {
-      _gaq.push(['_trackEvent', 'Tools', 'Download SDK', 'Link <' + text($(link).html()) + '>']);
-    }
+  if (location.hash == "#Requirements") {
+    $('.reqs').show();
+  } else if (location.hash == "#ExistingIDE") {
+	 $('.ide').show();
   }
-  
-  
+
   var os;
-  var $link;
+  var bundlename;
+  var $toolslink;
+
   if (navigator.appVersion.indexOf("Win")!=-1) {
     os = "Windows";
-    $link = $('#win-sdk');
+    bundlename = '#win-bundle';
+    $toolslink = $('#win-tools');
   } else if (navigator.appVersion.indexOf("Mac")!=-1) {
     os = "Mac";
-    $link = $('#mac-sdk');
+    bundlename = '#mac-bundle';
+    $toolslink = $('#mac-tools');
   } else if (navigator.appVersion.indexOf("Linux")!=-1) {
     os = "Linux";
-    $link = $('#linux-sdk');
+    bundlename = '#linux-bundle';
+    $toolslink = $('#linux-tools');
   }
 
   if (os) {
     $('#not-supported').hide();
-    $('#download-button').show();
-    $('#download-button').text("Download the SDK for " + os);
-    $('#download-button').click(function() {onDownload($link.get());}).attr('href', $link.attr('href'),true);
+
+    /* set up primary adt download button */
+    $('#download-bundle-button').show();
+    $('#download-bundle-button').append("Download the SDK <br/><span class='small'>ADT Bundle for " + os + "</span>");
+    $('#download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
+
+    /* set up sdk tools only button */
+    $('#download-tools-button').show();
+    $('#download-tools-button').append("Download the SDK Tools for " + os);
+    $('#download-tools-button').click(function() {return onDownload(this,true);}).attr('href', $toolslink.attr('href'));
   } else {
     $('.pax').show();
   }
+  
+  
+  function onDownload(link, button, bundle) {
+  
+    /* set text for download button */
+    if (button) {
+      $("#downloadForRealz").html($(link).text());
+    } else {
+      $("#downloadForRealz").html("Download " + $(link).text());
+    }
+    
+    /* if it's a bundle, show the 32/64-bit picker */
+    if (bundle) {
+      $("#downloadForRealz").attr('bundle','true');
+      if ($("#downloadForRealz").text().indexOf("Mac") == -1) {
+        $("p#bitpicker").show();
+      } else {
+        /* mac is always 64 bit, so set it checked */
+        $("p#bitpicker input[value=64]").attr('checked', true);
+      }
+      /* save link name until the bit version is chosen */
+      $("#downloadForRealz").attr('name',$(link).attr('href'));
+    } else {
+      /* if not using bundle, set download button to ignore bitpicker and set url */
+      $("#downloadForRealz").attr('bundle','false');
+      $("#downloadForRealz").attr('href',$(link).attr('href'));
+      /* set picker checked as a fake default */
+      $("p#bitpicker input[value=64]").attr('checked', true);
+      $("a#next-link").html("Setting Up an Existing IDE").attr('href',toRoot + 'sdk/installing/index.html');
+    }
+
+    $("#tos").fadeIn('fast');
+    $("#landing").fadeOut('fast');
+
+    location.hash = "download";
+    return false;
+  }
+
+
+  function onAgreeChecked() {
+    /* verify that the TOS is agreed and a bit version is chosen */
+    if ($("input#agree").is(":checked") && $("#bitpicker input:checked").length) {
+      
+      /* if downloading the bundle */
+      if ($("#downloadForRealz").attr('bundle')) {
+        /* construct the name of the link we want based on the bit version */
+        linkId = $("a#downloadForRealz").attr("name") + $("#bitpicker input:checked").val();
+        /* set the real url for download */
+        $("a#downloadForRealz").attr("href", $(linkId).attr("href"));
+      }
+      
+      /* reveal the download button */
+      $("a#downloadForRealz").removeClass('disabled');
+    } else {
+      $("a#downloadForRealz").addClass('disabled');
+    }
+  }
+
+  function onDownloadForRealz(link) {
+    if ($("input#agree").is(':checked') && $("#bitpicker input:checked").length) {
+      $("div.sdk-terms").slideUp();
+      $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow');
+      $("#next-steps").fadeIn('slow');
+      $("h1#tos-header").text('Get Ready to Code!');
+      return true;
+    } else {
+      $("label#agreeLabel,#bitpicker input").parent().stop().animate({color: "#258AAF"}, 200,
+        function() {$("label#agreeLabel,#bitpicker input").parent().stop().animate({color: "#222"}, 200)}
+      );
+      return false;
+    }
+  }
+
+  $(window).hashchange( function(){
+    if (location.hash == "") {
+      location.reload();
+    }
+  });
 
 </script>
 
-</div><!-- end pax -->
-</div><!-- end wrap -->
+
+
+</div><!-- end the wrapper used for relative/absolute positions  -->
+<?cs # THIS DIV WAS OPENED IN INDEX.JD ?>
+
+
+
 
   <?cs else ?> <?cs # end if online ?>
 
