@@ -107,8 +107,8 @@ function setpaths()
     fi
     if [ -n "$ANDROID_PRE_BUILD_PATHS" ] ; then
         export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
-        # strip trailing ':', if any
-        export PATH=${PATH/%:/}
+        # strip leading ':', if any
+        export PATH=${PATH/:%/}
     fi
 
     # and in with the new
@@ -154,8 +154,8 @@ function setpaths()
     export ANDROID_TOOLCHAIN=$ANDROID_EABI_TOOLCHAIN
     export ANDROID_QTOOLS=$T/development/emulator/qtools
     export ANDROID_DEV_SCRIPTS=$T/development/scripts
-    export ANDROID_BUILD_PATHS=:$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN$ARM_EABI_TOOLCHAIN_PATH$CODE_REVIEWS:$ANDROID_DEV_SCRIPTS
-    export PATH=$PATH$ANDROID_BUILD_PATHS
+    export ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN$ARM_EABI_TOOLCHAIN_PATH$CODE_REVIEWS:$ANDROID_DEV_SCRIPTS:
+    export PATH=$ANDROID_BUILD_PATHS$PATH
 
     unset ANDROID_JAVA_TOOLCHAIN
     unset ANDROID_PRE_BUILD_PATHS
