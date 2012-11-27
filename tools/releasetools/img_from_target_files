@@ -58,7 +58,7 @@ def AddUserdata(output_zip):
   image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
                                                     "data")
   # If no userdata_size is provided, skip userdata.img.
-  if not image_props.get("userdata_size"):
+  if not image_props.get("partition_size"):
     return
 
   print "creating userdata.img..."
