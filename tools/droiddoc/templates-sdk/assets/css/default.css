@@ -320,7 +320,7 @@ video.with-shadow {
     background: transparent; }
   #nav li.expanded li ul {
   /* 3rd level ul */
-    padding:0 10px;
+    padding:0 0 0 10px;
   }
     #nav li.expanded > .nav-section-header:after {
       content: '';

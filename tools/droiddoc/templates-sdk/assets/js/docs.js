@@ -138,12 +138,13 @@ $(document).ready(function() {
   var $selListItem;
   if ($selNavLink.length) {
     $selListItem = $selNavLink.closest('li');
-
     $selListItem.addClass('selected');
-    $selListItem.closest('li.nav-section').addClass('expanded');
-    $selListItem.closest('li.nav-section').children('ul').show();
-    $selListItem.closest('li.nav-section').parent().closest('li.nav-section').addClass('expanded');
-    $selListItem.closest('li.nav-section').parent().closest('ul').show();
+    
+    // Traverse up the tree and expand all parent nav-sections
+    $selNavLink.parents('li.nav-section').each(function() {
+      $(this).addClass('expanded');
+      $(this).children('ul').show();
+    });
     
     
   //  $selListItem.closest('li.nav-section').closest('li.nav-section').addClass('expanded');
