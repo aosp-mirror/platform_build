@@ -133,6 +133,27 @@ def:distribute_nav() ?>
         });
     </script>
 <?cs /def ?>
+
+<?cs
+def:google_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+
+<?cs
+        include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
+        
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
 <?cs
 def:about_nav() ?>
   <div class="wrap clearfix" id="body-content">
@@ -288,7 +309,7 @@ def:custom_left_nav() ?><?cs
   elif:tools ?><?cs 
     call:tools_nav() ?><?cs
   elif:google ?><?cs 
-    call:dist_google_nav() ?><?cs 
+    call:google_nav() ?><?cs 
   elif:more ?><?cs 
     call:dist_more_nav() ?><?cs
   elif:distribute ?><?cs 
