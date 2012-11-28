@@ -112,6 +112,11 @@ acronym:hover {
 a:focus,
 a:active {
   color: #33b5e5 !important; }
+  
+a.external-link {
+  background:url('../images/styles/open_new_page.png') no-repeat 100% 50%;
+  padding-right:16px;
+}
 
 img {
   border: none; }
