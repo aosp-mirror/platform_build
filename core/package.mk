@@ -191,6 +191,8 @@ endif # LOCAL_SDK_VERSION
 endif # EMMA_INSTRUMENT_STATIC
 endif # LOCAL_EMMA_INSTRUMENT
 
+rs_compatibility_jni_libs :=
+
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################
@@ -323,6 +325,12 @@ jni_shared_libraries := \
     $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(LOCAL_JNI_SHARED_LIBRARIES)))
+
+# Include RS dynamically-generated libraries as well
+# Keep this ifneq, as the += otherwise adds spaces that need to be stripped.
+ifneq ($(rs_compatibility_jni_libs),)
+jni_shared_libraries += $(rs_compatibility_jni_libs)
+endif
 
 # App explicitly requires the prebuilt NDK libstlport_shared.so.
 # libstlport_shared.so should never go to the system image.
