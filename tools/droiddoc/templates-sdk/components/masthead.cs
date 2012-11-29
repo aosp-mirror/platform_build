@@ -23,7 +23,7 @@
                   es-lang="Diseñar"               
                   >Design</a></li>
                 <li class="develop"><a href="<?cs var:toroot ?>develop/index.html" <?cs
-                  if:training || guide || reference || tools || develop ?>class="selected"<?cs /if ?>
+                  if:training || guide || reference || tools || develop || google ?>class="selected"<?cs /if ?>
                   zh-TW-lang="開發"
                   zh-CN-lang="开发"
                   ru-lang="Разработка"
@@ -161,8 +161,9 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                           ja-lang="ツール"
                           es-lang="Herramientas"               
                           >Tools</a>
-                          <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the
-SDK</a></li></ul>
+                          <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
+                        </li>
+                        <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
                         </li>
                       </ul>
                     </li>
@@ -191,11 +192,11 @@ SDK</a></li></ul>
     
     
     
-<?cs if:training || guide || reference || tools || develop ?>
+<?cs if:training || guide || reference || tools || develop || google ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap">
-            <ul class="nav-x col-9 develop" style="width:75%">
+            <ul class="nav-x col-9 develop" style="width:100%">
                 <li><a href="<?cs var:toroot ?>training/index.html" <?cs
                   if:training ?>class="selected"<?cs /if ?>
                   zh-TW-lang="訓練課程"
@@ -230,8 +231,12 @@ SDK</a></li></ul>
                   ru-lang="Инструменты"
                   ko-lang="도구"
                   ja-lang="ツール"
-                  es-lang="Herramientas"               
+                  es-lang="Herramientas"
                   >Tools</a></li>
+                <li><a href="<?cs var:toroot ?>google/index.html" <?cs
+                  if:google ?>class="selected"<?cs /if ?>
+                  >Google Services</a>
+                </li>
             </ul>
         </div>
         

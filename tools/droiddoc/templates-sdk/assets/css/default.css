@@ -4282,9 +4282,14 @@ a.download-sdk {
 .landing-docs a {
   color:#333 !important;
 }
+
 .landing-docs a:hover,
 .landing-docs a:hover * {
   color:#7AA1B0 !important
+}
+
+.landing-docs .normal-links a {
+  color:#258aaf !important;
 }
 
 .plusone {
