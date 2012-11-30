@@ -146,6 +146,10 @@ def:google_nav() ?>
         
 
       </div>
+      <script type="text/javascript">
+       showGoogleRefTree();
+    
+      </script>
     </div> <!-- end side-nav -->
     <script>
       $(document).ready(function() {
@@ -192,12 +196,18 @@ def:dist_more_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
+:
+
 <?cs /def ?>
 <?cs # The default side navigation for the reference docs ?><?cs 
 def:default_left_nav() ?>
+<?cs if:reference.gcm || reference.gms ?>
+  <?cs call:google_nav() ?>
+<?cs else ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav">
+
 <a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
       <div id="api-nav-header">
         <div id="api-level-toggle">
@@ -293,7 +303,9 @@ def:default_left_nav() ?>
         scrollIntoView("packages-nav");
         scrollIntoView("classes-nav");
         });
-    </script><?cs 
+    </script>
+<?cs /if ?>
+    <?cs 
 /def ?>
 
 <?cs 
@@ -317,7 +329,7 @@ def:custom_left_nav() ?><?cs
   elif:about ?><?cs 
     call:about_nav() ?><?cs 
   else ?><?cs 
-    call:default_left_nav() ?><?cs 
+    call:default_left_nav() ?> <?cs 
   /if ?>
     <script>
       $(document).ready(function() {
