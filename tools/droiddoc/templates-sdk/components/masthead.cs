@@ -216,7 +216,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   es-lang="Guías de la API"               
                   >API Guides</a></li>
                 <li><a href="<?cs var:toroot ?>reference/packages.html" <?cs
-                  if:reference ?>class="selected"<?cs /if ?>
+                  if:reference && !(reference.gcm || reference.gms) ?>class="selected"<?cs /if ?>
                   zh-TW-lang="參考資源"
                   zh-CN-lang="参考"
                   ru-lang="Справочник"
@@ -234,7 +234,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   es-lang="Herramientas"
                   >Tools</a></li>
                 <li><a href="<?cs var:toroot ?>google/index.html" <?cs
-                  if:google ?>class="selected"<?cs /if ?>
+                  if:google || reference.gcm || reference.gms?>class="selected"<?cs /if ?>
                   >Google Services</a>
                 </li>
             </ul>
