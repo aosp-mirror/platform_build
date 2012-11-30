@@ -2396,6 +2396,9 @@ table.blank th, table.blank td {
   list-style:none;
   margin-left:0;
 }
+#tb .nolist {
+  margin-left:15px;
+}
 
 
 pre.classic {
