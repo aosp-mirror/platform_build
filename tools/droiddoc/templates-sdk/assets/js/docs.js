@@ -138,6 +138,8 @@ $(document).ready(function() {
   var $selListItem;
   if ($selNavLink.length) {
     $selListItem = $selNavLink.closest('li');
+
+    var depth = $selListItem.parents().length;
     $selListItem.addClass('selected');
     
     // Traverse up the tree and expand all parent nav-sections
@@ -145,7 +147,36 @@ $(document).ready(function() {
       $(this).addClass('expanded');
       $(this).children('ul').show();
     });
-    
+    //expand current item if user clicked on reference or package name
+    if(depth == 10 || depth == 12){
+      $selListItem.closest('li.nav-section').addClass('expanded');
+      $selListItem.closest('li.nav-section').children('ul').show();
+    //if the user clicked on a package name (which has a depth of 12), we know it has children, so expand them
+      if(depth == 12){
+        //expand all of the items under the titles "interfaces", "classes", and "exceptions".
+        $selListItem.children('ul').children('li').children('ul').addClass('expanded');
+        $selListItem.children('ul').children('li').children('ul').show();
+        //also expand all subclasses, subinterfaces, and subexceptions under a particular class, interface, or exception.
+        $selListItem.children('ul').children('li').children('ul').children('li').children('ul').addClass('expanded');
+        $selListItem.children('ul').children('li').children('ul').children('li').children('ul').show();
+      }
+    }
+    //else if the user clicked on a class, interface, or exception, which has a depth of 16 or 18 for a subclass
+    else if(depth == 16 || depth == 18){
+      //expand the classes in the package
+      $selListItem.closest('li.nav-section').parent().children('li').children('ul').children('li').children('ul').addClass('expanded');
+      $selListItem.closest('li.nav-section').parent().children('li').children('ul').children('li').children('ul').show();   
+      //expand the level immediately above the class or subclass. This expands all of the interfaces, classes, and exceptions within a package.
+      $selListItem.closest('li.nav-section').parent().parent().children('ul').children('li').children('ul').addClass('expanded');
+      $selListItem.closest('li.nav-section').parent().parent().children('ul').children('li').children('ul').show();
+
+      //if this is the lowest depth (subclass) or container of a subclass expand the uls above the previously expanded uls as well.
+      //this is true when the closest li nav-section has a parents() length of 16.
+      if($selListItem.closest('li.nav-section').parents().length == 16){
+        $selListItem.closest('li.nav-section').parent().parent().parent().children('li').children('ul').addClass('expanded');
+        $selListItem.closest('li.nav-section').parent().parent().parent().children('li').children('ul').show();
+      }
+    }
     
   //  $selListItem.closest('li.nav-section').closest('li.nav-section').addClass('expanded');
   //  $selListItem.closest('li.nav-section').closest('li.nav-section').children('ul').show();  
@@ -1112,7 +1143,7 @@ function hideExpandable(ids) {
 
 
 
-/*  	
+/*    
  *  Slideshow 1.0
  *  Used on /index.html and /develop/index.html for carousel
  *
@@ -1296,7 +1327,7 @@ function hideExpandable(ids) {
  })(jQuery);
 
 
-/*	
+/*  
  *  dacSlideshow 1.0
  *  Used on develop/index.html for side-sliding tabs
  *
@@ -1850,7 +1881,9 @@ function escapeHTML(string) {
 /* ######################################################## */
 
 /* Initialize some droiddoc stuff, but only if we're in the reference */
-if (location.pathname.indexOf("/reference") == 0) {
+if (location.pathname.indexOf("/reference" &&
+  !location.pathname.indexOf("/reference/google-packages.html") &&
+  !location.pathname.indexOf("/reference/com/google")) == 0) {
   $(document).ready(function() {
     // init available apis based on user pref
     changeApiLevel();
@@ -2066,6 +2099,9 @@ function new_node(me, mom, text, link, children_data, api_level)
   return node;
 }
 
+
+
+
 function expand_node(me, node)
 {
   if (node.children_data && !node.expanded) {
@@ -2146,7 +2182,9 @@ function find_page(url, data)
 function load_navtree_data(toroot) {
   var navtreeData = document.createElement("script");
   navtreeData.setAttribute("type","text/javascript");
-  navtreeData.setAttribute("src", toroot+"navtree_data.js");
+  navtreeData.setAttribute("src", toroot+"google_navtree_data.js");
+
+  console.log(navtreeData.src);
   $("head").append($(navtreeData));
 }
 
@@ -2189,6 +2227,105 @@ function init_navtree(navtree_id, toroot, root_nodes)
       scrollIntoView("nav-tree");
       });
   }
+}
+
+/* TODO: eliminate redundancy with non-google functions */
+function init_google_navtree(navtree_id, toroot, root_nodes)
+{
+  var me = new Object();
+  me.toroot = toroot;
+  me.node = new Object();
+
+  me.node.li = document.getElementById(navtree_id);
+  me.node.children_data = root_nodes;
+  me.node.children = new Array();
+  me.node.children_ul = document.createElement("ul");
+  me.node.get_children_ul = function() { return me.node.children_ul; };
+  //me.node.children_ul.className = "children_ul";
+  me.node.li.appendChild(me.node.children_ul);
+  me.node.depth = 0;
+
+  get_google_node(me, me.node);
+
+}
+
+function new_google_node(me, mom, text, link, children_data, api_level)
+{
+  var node = new Object();
+  var child;
+  node.children = Array();
+  node.children_data = children_data;
+  node.depth = mom.depth + 1;
+  node.get_children_ul = function() {
+      if (!node.children_ul) {
+        node.children_ul = document.createElement("ul");
+        node.li.appendChild(node.children_ul);
+      }
+      return node.children_ul;
+    };
+  node.li = document.createElement("li");
+
+  mom.get_children_ul().appendChild(node.li);
+  
+  
+  if(link) {
+    child = document.createElement("a");
+
+  }
+  else {
+    child = document.createElement("span");
+    child.setAttribute("style", "padding-left:10px; color:#555; text-transform:uppercase; font-size:12px");
+
+  }
+  if (children_data != null) {
+    node.li.className="nav-section";
+    node.label_div = document.createElement("div");
+    node.label_div.className = "nav-section-header-ref";  
+    node.li.appendChild(node.label_div);
+    get_google_node(me, node);
+    node.label_div.appendChild(child);
+  }
+  else {
+    node.li.appendChild(child);
+  }
+  if(link) {
+    child.href = me.toroot + link;
+  }
+  node.label = document.createTextNode(text);
+  child.appendChild(node.label);
+
+  node.children_ul = null;
+
+  return node;
+}
+
+function get_google_node(me, mom)
+{
+  mom.children_visited = true;
+  var linkText;
+  for (var i in mom.children_data) {
+    var node_data = mom.children_data[i];
+    linkText = node_data[0];
+
+    if(linkText.match("^"+"com.google.android")=="com.google.android"){
+      linkText = linkText.substr(19, linkText.length);
+    }
+      mom.children[i] = new_google_node(me, mom, linkText, node_data[1],
+          node_data[2], node_data[3]);
+  }
+}
+function showGoogleRefTree() {
+  init_default_google_navtree(toRoot);
+  init_default_gcm_navtree(toRoot);
+  resizeNav();
+}
+
+function init_default_google_navtree(toroot) {
+  init_google_navtree("gms-tree-list", toroot, GMS_NAVTREE_DATA);
+}
+
+function init_default_gcm_navtree(toroot) {
+  init_google_navtree("gcm-tree-list", toroot, GCM_NAVTREE_DATA);
 }
 
 /* TOGGLE INHERITED MEMBERS */
@@ -2284,6 +2421,3 @@ var control = mac ? e.metaKey && !e.ctrlKey : e.ctrlKey; // get ctrl key
     ensureAllInheritedExpanded();
   }
 });
-
-
-

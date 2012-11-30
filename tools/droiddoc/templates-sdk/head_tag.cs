@@ -14,7 +14,7 @@
 href="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold" title="roboto">
 <link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
 
-<?cs if:reference ?>
+<?cs if:reference && !(reference.gms || reference.gcm) ?>
 <!-- FULLSCREEN STYLESHEET -->
 <link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" class="fullscreen"
 type="text/css">
@@ -27,6 +27,10 @@ type="text/css">
   var toRoot = "<?cs var:toroot ?>";
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
+<?cs if:reference.gms || reference.gcm || google?>
+<script src="<?cs var:toroot ?>gms_navtree_data.js" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>gcm_navtree_data.js" type="text/javascript"></script>
+<?cs else ?>
 <script src="<?cs var:toroot ?>navtree_data.js" type="text/javascript"></script>
-
+<?cs /if ?>
 </head>
