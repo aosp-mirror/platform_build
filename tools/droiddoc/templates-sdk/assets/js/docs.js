@@ -139,7 +139,6 @@ $(document).ready(function() {
   if ($selNavLink.length) {
     $selListItem = $selNavLink.closest('li');
 
-    var depth = $selListItem.parents().length;
     $selListItem.addClass('selected');
     
     // Traverse up the tree and expand all parent nav-sections
@@ -147,39 +146,7 @@ $(document).ready(function() {
       $(this).addClass('expanded');
       $(this).children('ul').show();
     });
-    //expand current item if user clicked on reference or package name
-    if(depth == 10 || depth == 12){
-      $selListItem.closest('li.nav-section').addClass('expanded');
-      $selListItem.closest('li.nav-section').children('ul').show();
-    //if the user clicked on a package name (which has a depth of 12), we know it has children, so expand them
-      if(depth == 12){
-        //expand all of the items under the titles "interfaces", "classes", and "exceptions".
-        $selListItem.children('ul').children('li').children('ul').addClass('expanded');
-        $selListItem.children('ul').children('li').children('ul').show();
-        //also expand all subclasses, subinterfaces, and subexceptions under a particular class, interface, or exception.
-        $selListItem.children('ul').children('li').children('ul').children('li').children('ul').addClass('expanded');
-        $selListItem.children('ul').children('li').children('ul').children('li').children('ul').show();
-      }
-    }
-    //else if the user clicked on a class, interface, or exception, which has a depth of 16 or 18 for a subclass
-    else if(depth == 16 || depth == 18){
-      //expand the classes in the package
-      $selListItem.closest('li.nav-section').parent().children('li').children('ul').children('li').children('ul').addClass('expanded');
-      $selListItem.closest('li.nav-section').parent().children('li').children('ul').children('li').children('ul').show();   
-      //expand the level immediately above the class or subclass. This expands all of the interfaces, classes, and exceptions within a package.
-      $selListItem.closest('li.nav-section').parent().parent().children('ul').children('li').children('ul').addClass('expanded');
-      $selListItem.closest('li.nav-section').parent().parent().children('ul').children('li').children('ul').show();
-
-      //if this is the lowest depth (subclass) or container of a subclass expand the uls above the previously expanded uls as well.
-      //this is true when the closest li nav-section has a parents() length of 16.
-      if($selListItem.closest('li.nav-section').parents().length == 16){
-        $selListItem.closest('li.nav-section').parent().parent().parent().children('li').children('ul').addClass('expanded');
-        $selListItem.closest('li.nav-section').parent().parent().parent().children('li').children('ul').show();
-      }
-    }
     
-  //  $selListItem.closest('li.nav-section').closest('li.nav-section').addClass('expanded');
-  //  $selListItem.closest('li.nav-section').closest('li.nav-section').children('ul').show();  
 
     // set up prev links
     var $prevLink = [];
@@ -1881,8 +1848,9 @@ function escapeHTML(string) {
 /* ######################################################## */
 
 /* Initialize some droiddoc stuff, but only if we're in the reference */
-if (location.pathname.indexOf("/reference" &&
-  !location.pathname.indexOf("/reference/google-packages.html") &&
+if ((location.pathname.indexOf("/reference") &&
+  !location.pathname.indexOf("/reference-gms/packages.html") &&
+  !location.pathname.indexOf("/reference-gcm/packages.html") &&
   !location.pathname.indexOf("/reference/com/google")) == 0) {
   $(document).ready(function() {
     // init available apis based on user pref
@@ -2179,15 +2147,6 @@ function find_page(url, data)
   return null;
 }
 
-function load_navtree_data(toroot) {
-  var navtreeData = document.createElement("script");
-  navtreeData.setAttribute("type","text/javascript");
-  navtreeData.setAttribute("src", toroot+"google_navtree_data.js");
-
-  console.log(navtreeData.src);
-  $("head").append($(navtreeData));
-}
-
 function init_default_navtree(toroot) {
   init_navtree("tree-list", toroot, NAVTREE_DATA);
   
@@ -2258,7 +2217,8 @@ function new_google_node(me, mom, text, link, children_data, api_level)
   node.depth = mom.depth + 1;
   node.get_children_ul = function() {
       if (!node.children_ul) {
-        node.children_ul = document.createElement("ul");
+        node.children_ul = document.createElement("ul"); 
+        node.children_ul.className = "tree-list-children"; 
         node.li.appendChild(node.children_ul);
       }
       return node.children_ul;
@@ -2274,7 +2234,7 @@ function new_google_node(me, mom, text, link, children_data, api_level)
   }
   else {
     child = document.createElement("span");
-    child.setAttribute("style", "padding-left:10px; color:#555; text-transform:uppercase; font-size:12px");
+    child.className = "tree-list-subtitle";
 
   }
   if (children_data != null) {
