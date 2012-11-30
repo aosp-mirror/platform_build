@@ -271,11 +271,14 @@ video.with-shadow {
     line-height: 15px; }
   #nav a {
     color: #555555;
-    text-decoration: none; }
+    text-decoration: none;
+    word-wrap:break-word; }
   #nav .nav-section-header {
     position: relative;
     margin-bottom: 1px;
     padding: 0 30px 0 0; }
+  #nav .nav-section-header-ref {
+    padding: 10px 0; }
   #nav li.selected a, #nav li.selected > .nav-section-header > a {
     color: #09C;
   }
@@ -1529,6 +1532,7 @@ Buttons
     cursor: pointer;
 }
 .button, a.button {
+    display:inline-block;
     background-color: #09c;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#2faddb), to(#09c));
     background-image: -webkit-linear-gradient(top, #2faddb, #09c);
@@ -3016,6 +3020,15 @@ h4.jd-details-title {
   background-color: #E2E2E2;
   margin:1.5em 0 .6em;
   padding:3px 95px 3px 3px; /* room for api-level */
+}
+body.google h4.jd-details-title {
+  background-color: #FFF;
+  padding-top:5px;
+  border-top: 1px solid #ccc;
+}
+body.google table.jd-sumtable th {
+  background-color: #FFF;
+  color:#000;
 }
 
 h4.jd-tagtitle {
