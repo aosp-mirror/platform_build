@@ -365,7 +365,9 @@ def:custom_footerlinks() ?>
 /def ?>
 
 <?cs # appears on the right side of the blue bar at the bottom off every page ?><?cs 
-def:custom_buildinfo() ?>
-  Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> - <?cs var:page.now ?>
+def:custom_buildinfo() ?><?cs
+  if:!google ?>
+    Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> &mdash; <?cs
+  /if ?><?cs var:page.now ?>
 <?cs /def ?>
 
