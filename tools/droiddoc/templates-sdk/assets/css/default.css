@@ -4284,20 +4284,21 @@ a.download-sdk {
 }
 
 
+
 /************ DEVELOP TOPIC CONTAINERS ************/
 
 .landing-banner,
 .landing-docs {
   margin:20px 0 0;
 }
-.landing-banner .col-6:first-child,
-.landing-docs .col-6:first-child,
+.landing-banner div:first-child,
+.landing-docs div:first-child,
 .landing-docs .col-12 {
   margin-left:0;
   min-height:280px;
 }
-.landing-banner .col-6:last-child,
-.landing-docs .col-6:last-child,
+.landing-banner div:last-child,
+.landing-docs div:last-child,
 .landing-docs .col-12 {
   margin-right:0;
 }
