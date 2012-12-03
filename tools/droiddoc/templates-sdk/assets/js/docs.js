@@ -1848,15 +1848,16 @@ function escapeHTML(string) {
 /* ######################################################## */
 
 /* Initialize some droiddoc stuff, but only if we're in the reference */
-if ((location.pathname.indexOf("/reference") &&
-  !location.pathname.indexOf("/reference-gms/packages.html") &&
-  !location.pathname.indexOf("/reference-gcm/packages.html") &&
-  !location.pathname.indexOf("/reference/com/google")) == 0) {
-  $(document).ready(function() {
-    // init available apis based on user pref
-    changeApiLevel();
-    initSidenavHeightResize()
-  });
+if (location.pathname.indexOf("/reference")) {
+  if(!location.pathname.indexOf("/reference-gms/packages.html")
+    && !location.pathname.indexOf("/reference-gcm/packages.html")
+    && !location.pathname.indexOf("/reference/com/google") == 0) {
+    $(document).ready(function() {
+      // init available apis based on user pref
+      changeApiLevel();
+      initSidenavHeightResize()
+      });
+  }
 }
 
 var API_LEVEL_COOKIE = "api_level";
