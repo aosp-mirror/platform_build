@@ -2,7 +2,7 @@
 <?cs include:"macros.cs" ?>
 <html>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation 
+<body class="gc-documentation <?cs if:(reference.gms || reference.gcm) ?>google<?cs /if ?>
   <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
