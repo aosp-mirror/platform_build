@@ -1721,6 +1721,10 @@ function loadSearchResults() {
   referenceSearcher.setUserDefinedLabel("Reference");
   referenceSearcher.setSiteRestriction("http://developer.android.com/reference/");
 
+  googleSearcher = new google.search.WebSearch();
+  googleSearcher.setUserDefinedLabel("Google Services");
+  googleSearcher.setSiteRestriction("http://developer.android.com/google/");
+
   blogSearcher = new google.search.WebSearch();
   blogSearcher.setUserDefinedLabel("Blog");
   blogSearcher.setSiteRestriction("http://android-developers.blogspot.com");
@@ -1731,6 +1735,7 @@ function loadSearchResults() {
   searchControl.addSearcher(trainingSearcher, searchOptions);
   searchControl.addSearcher(guidesSearcher, searchOptions);
   searchControl.addSearcher(referenceSearcher, searchOptions);
+  searchControl.addSearcher(googleSearcher, searchOptions);
   searchControl.addSearcher(blogSearcher, searchOptions);
 
   // configure result options
