@@ -24,6 +24,10 @@ LOCAL_IS_HOST_MODULE := true
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
 ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+  LOCAL_JAVA_LIBRARIES := $(sort core-hostdex $(LOCAL_JAVA_LIBRARIES))
+endif
+
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
