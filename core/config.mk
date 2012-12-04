@@ -44,7 +44,7 @@ SRC_HOST_HEADERS:=$(TOPDIR)tools/include
 SRC_LIBRARIES:= $(TOPDIR)libs
 SRC_SERVERS:= $(TOPDIR)servers
 SRC_TARGET_DIR := $(TOPDIR)build/target
-SRC_API_DIR := $(TOPDIR)frameworks/base/api
+SRC_API_DIR := $(TOPDIR)prebuilts/sdk/api
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/tools/droiddoc

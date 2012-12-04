@@ -54,7 +54,7 @@ $(eval $(call check-api, \
 # SDK version.
 $(eval $(call check-api, \
     checkapi-current, \
-    $(SRC_API_DIR)/current.txt, \
+    frameworks/base/api/current.txt, \
     $(INTERNAL_PLATFORM_API_FILE), \
     -error 2 -error 3 -error 4 -error 5 -error 6 \
     -error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
@@ -68,6 +68,6 @@ $(eval $(call check-api, \
 .PHONY: update-api
 update-api: $(INTERNAL_PLATFORM_API_FILE) | $(ACP)
 	@echo Copying current.txt
-	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) $(SRC_API_DIR)/current.txt
+	$(hide) $(ACP) $(INTERNAL_PLATFORM_API_FILE) frameworks/base/api/current.txt
 
 endif
