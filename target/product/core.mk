@@ -38,7 +38,6 @@ PRODUCT_PACKAGES += \
     KeyChain \
     MediaProvider \
     PackageInstaller \
-    PhotoTable \
     PicoTts \
     SettingsProvider \
     SharedStorageBackup \

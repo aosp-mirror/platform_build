@@ -37,7 +37,8 @@ PRODUCT_PACKAGES += \
     MagicSmokeWallpapers \
     NoiseField \
     PhaseBeam \
-    VisualizationWallpapers
+    VisualizationWallpapers \
+    PhotoTable
 
 include $(SRC_TARGET_DIR)/product/emulator.mk
 
