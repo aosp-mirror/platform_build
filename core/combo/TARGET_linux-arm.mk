@@ -34,6 +34,10 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := armv5te
 endif
 
+ifeq ($(strip $(TARGET_GCC_VERSION)),)
+TARGET_GCC_VERSION := 4.6
+endif
+
 TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
 ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
 $(error Unknown ARM architecture version: $(TARGET_ARCH_VARIANT))
