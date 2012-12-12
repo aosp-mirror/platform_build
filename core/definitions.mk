@@ -819,6 +819,16 @@ $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
 
+define transform-bc-to-so
+@echo "Renderscript compatibility"
+$(hide) mkdir -p $(dir $@)
+$(hide) $(BCC_COMPAT) -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
+	-rt-path $(TARGET_OUT_SHARED_LIBRARIES)/libclcore.bc $<
+$(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) \
+	$(dir $@)/$(notdir $(<:.bc=.o)) -o $@ -L prebuilts/gcc/ \
+	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) -lRSSupport -lm
+endef
+
 ###########################################################
 ## Commands to compile RenderScript to C++
 ###########################################################
