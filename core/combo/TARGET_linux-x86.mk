@@ -22,8 +22,10 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := x86
 endif
 
-ifeq ($(strip $(TARGET_GCC_VERSION)),)
+ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
 TARGET_GCC_VERSION := 4.6
+else
+TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
 endif
 
 # Include the arch-variant-specific configuration file.
