@@ -2110,6 +2110,30 @@ $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) 
 $(6): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
 endef
 
+## Whether to build from source if prebuilt alternative exists
+###########################################################
+# $(1): module name
+# $(2): LOCAL_PATH
+# Expands to empty string if not from source.
+ifeq (true,$(ANDROID_BUILD_FROM_SOURCE))
+define if-build-from-source
+true
+endef
+else
+define if-build-from-source
+$(if $(filter $(ANDROID_NO_PREBUILT_MODULES),$(1))$(filter \
+    $(addsuffix %,$(ANDROID_NO_PREBUILT_PATHS)),$(2)),true)
+endef
+endif
+
+# Include makefile $(1) if build from source for module $(2)
+# $(1): the makefile to include
+# $(2): module name
+# $(3): LOCAL_PATH
+define include-if-build-from-source
+$(if $(call if-build-from-source,$(2),$(3)),$(eval include $(1)))
+endef
+
 ###########################################################
 ## Other includes
 ###########################################################

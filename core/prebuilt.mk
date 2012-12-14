@@ -16,6 +16,12 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
+ifdef LOCAL_PREBUILT_MODULE_FILE
+my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
+else
+my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+endif
+
 ifdef LOCAL_IS_HOST_MODULE
   my_prefix := HOST_
 else
@@ -73,7 +79,7 @@ else
 endif
 
 $(LOCAL_BUILT_MODULE) : | $(intermediates)/export_includes
-endif
+endif  # prebuilt_module_is_a_library
 endif
 
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
@@ -95,7 +101,7 @@ ifeq ($(LOCAL_CERTIFICATE),)
   ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
     # It is now a build error to add a prebuilt .apk without
     # specifying a key for it.
-    $(error No LOCAL_CERTIFICATE specified for prebuilt "$(LOCAL_SRC_FILES)")
+    $(error No LOCAL_CERTIFICATE specified for prebuilt "$(my_prebuilt_src_file)")
   endif
 else ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
   # The magic string "PRESIGNED" means this package is already checked
@@ -123,21 +129,21 @@ endif
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
 # Ensure that presigned .apks have been aligned.
-$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ZIPALIGN)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN)
 	$(transform-prebuilt-to-target-with-zipalign)
 else
 # Sign and align non-presigned .apks.
-$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
+$(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(sign-package)
 	$(align-package)
 endif
 else
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+$(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target-strip-comments)
 else
-$(built_module) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
+$(built_module) : $(my_prebuilt_src_file) | $(ACP)
 	$(transform-prebuilt-to-target)
 ifneq ($(prebuilt_module_is_a_library),)
   ifneq ($(LOCAL_IS_HOST_MODULE),)
@@ -157,7 +163,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 common_classes_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(LOCAL_MODULE),,COMMON)/classes.jar
 common_javalib_jar := $(dir $(common_classes_jar))javalib.jar
 
-$(common_classes_jar) : $(LOCAL_PATH)/$(LOCAL_SRC_FILES) | $(ACP)
+$(common_classes_jar) : $(my_prebuilt_src_file) | $(ACP)
 	$(transform-prebuilt-to-target)
 
 $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
