@@ -824,7 +824,7 @@ define transform-bc-to-so
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
 	-rt-path $(TARGET_OUT_SHARED_LIBRARIES)/libclcore.bc $<
-$(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) \
+$(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	$(dir $@)/$(notdir $(<:.bc=.o)) -o $@ -L prebuilts/gcc/ \
 	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) -lRSSupport -lm
 endef
