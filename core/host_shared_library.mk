@@ -22,6 +22,18 @@ ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
 $(error $(LOCAL_PATH): Cannot set module stem for a library)
 endif
 
+$(call host-shared-library-hook)
+
+skip_build_from_source :=
+ifdef LOCAL_PREBUILT_MODULE_FILE
+ifeq (,$(call if-build-from-source,$(LOCAL_MODULE),$(LOCAL_PATH)))
+include $(BUILD_PREBUILT)
+skip_build_from_source := true
+endif
+endif
+
+ifndef skip_build_from_source
+
 # Put the built modules of all shared libraries in a common directory
 # to simplify the link line.
 OVERRIDE_BUILT_MODULE_PATH := $(HOST_OUT_INTERMEDIATE_LIBRARIES)
@@ -30,3 +42,5 @@ include $(BUILD_SYSTEM)/binary.mk
 
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-o-to-shared-lib)
+
+endif  # skip_build_from_source
