@@ -822,9 +822,10 @@ endef
 define transform-bc-to-so
 @echo "Renderscript compatibility"
 $(hide) mkdir -p $(dir $@)
-$(hide) $(BCC_COMPAT) -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
-	-rt-path $(TARGET_OUT_SHARED_LIBRARIES)/libclcore.bc $<
+$(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
+	-rt-path $(PRIVATE_LIBCLCORE) $<
 $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
+	-Wl,-rpath,\$$ORIGIN/../lib \
 	$(dir $@)/$(notdir $(<:.bc=.o)) -o $@ -L prebuilts/gcc/ \
 	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) -lRSSupport -lm
 endef
