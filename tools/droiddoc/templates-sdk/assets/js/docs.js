@@ -358,7 +358,13 @@ false; // navigate across topic boundaries only in design docs
     var searchResultHeight = $('#searchResults').is(":visible") ? 
                              $('#searchResults').outerHeight() : 0;
     var totalHeaderHeight = headerHeight + subheaderHeight + searchResultHeight;
+    // we set the navbar fixed when the scroll position is beyond the height of the site header...
     var navBarShouldBeFixed = scrollTop > totalHeaderHeight;
+    // ... except if the document content is shorter than the sidenav height.
+    // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
+    if ($("#doc-col").height() < $("#side-nav").height()) {
+      navBarShouldBeFixed = false;
+    }
    
     var scrollLeft = $(window).scrollLeft();
     // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
