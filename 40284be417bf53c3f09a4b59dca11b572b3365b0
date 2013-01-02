@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "NgGKT1lk",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1005480
+      },
+      "writtenOn": "2013-01-02T23:23:25Z",
+      "side": 1,
+      "message": "Don\u0027t test and tweak commands in this function.\nHave something like\n\n      gdbwrapper -x \"$OUT...\"\n      ...\n   }\n   function gdbwrapper() {\n       $ANDROID_TOOLCHAIN/$GDB \"$@\"\n   }\n\nThis will allow people to setup the env, and override the gdbwrapper at will for any gdb-style wrappers.\n\n   . build/envsetup.sh\n   function gdbwrapper() { ddd --debugger $ANDROID_TOOLCHAIN/$GDB \"$@\" ; }",
+      "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
