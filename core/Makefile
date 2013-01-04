@@ -156,7 +156,14 @@ $(if $(product_property_overrides_locale_region),,$(word 2, $(call default-local
 endef
 
 BUILDINFO_SH := build/tools/buildinfo.sh
-$(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+
+ifdef TARGET_SYSTEM_PROP
+system_prop_file := $(TARGET_SYSTEM_PROP)
+else
+system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
+endif
+
+$(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
@@ -183,8 +190,8 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 			TARGET_CPU_ABI2="$(TARGET_CPU_ABI2)" \
 			TARGET_AAPT_CHARACTERISTICS="$(TARGET_AAPT_CHARACTERISTICS)" \
 	        bash $(BUILDINFO_SH) > $@
-	$(hide) if [ -f $(TARGET_DEVICE_DIR)/system.prop ]; then \
-	          cat $(TARGET_DEVICE_DIR)/system.prop >> $@; \
+	$(hide) if [ -f "$(system_prop_file)" ]; then \
+	          cat $(system_prop_file) >> $@; \
 	        fi
 	$(if $(ADDITIONAL_BUILD_PROPERTIES), \
 		$(hide) echo >> $@; \
@@ -602,7 +609,11 @@ recovery_resources_common := $(call include-path-for, recovery)/res
 recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
   $(recovery_resources_private) -type f)
+ifdef TARGET_RECOVERY_FSTAB
+recovery_fstab := $(TARGET_RECOVERY_FSTAB)
+else
 recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
+endif
 # Named '.dat' so we don't attempt to use imgdiff for patching it.
 RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
 
