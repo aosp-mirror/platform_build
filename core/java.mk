@@ -355,9 +355,10 @@ proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
 # Proguard doesn't like a class in both library and the jar to be processed.
 proguard_full_java_libs := $(filter-out $(full_static_java_libs),$(full_java_libs))
 proguard_flags := $(addprefix -libraryjars ,$(proguard_full_java_libs)) \
-                  -include $(BUILD_SYSTEM)/proguard.flags \
                   -forceprocessing \
                   -printmapping $(proguard_dictionary)
+ifneq ($(LOCAL_PROGUARD_ENABLED),nosystem)
+proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
 endif
@@ -365,23 +366,13 @@ endif
 ifneq ($(strip $(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS))$(filter android.test.runner,$(LOCAL_JAVA_LIBRARIES))),)
 proguard_flags := $(proguard_flags) -include $(BUILD_SYSTEM)/proguard_tests.flags
 endif # test package
+endif # LOCAL_PROGUARD_ENABLED is not nosystem
 
 ifneq ($(LOCAL_PROGUARD_ENABLED),)
-ifeq ($(LOCAL_PROGUARD_ENABLED),full)
-    # full
-else
-ifeq ($(LOCAL_PROGUARD_ENABLED),optonly)
-    # optonly
-    proguard_flags += -dontobfuscate
-else
-ifeq ($(LOCAL_PROGUARD_ENABLED),custom)
-    # custom
-else
+ifeq ($(filter full custom nosystem, $(LOCAL_PROGUARD_ENABLED)),)
     $(warning while processing: $(LOCAL_MODULE))
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
-endif # custom
-endif # optonly
-endif # full
+endif # not a legal value
 endif # LOCAL_PROGUARD_ENABLED
 
 proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
