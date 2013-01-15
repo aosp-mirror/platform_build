@@ -1138,6 +1138,9 @@ td {
   background-color:inherit;
   border:solid 1px #DDD;
 }
+td *:last-child {
+  margin-bottom:0;
+}
 th {
   background-color: #999;
   color: #fff;
