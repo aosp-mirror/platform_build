@@ -29,7 +29,8 @@ window.gOverride = {
 <script type="text/javascript">
 $('.slideshow-container').dacSlideshow({
     btnPrev: '.slideshow-prev',
-    btnNext: '.slideshow-next'
+    btnNext: '.slideshow-next',
+    btnPause: '#pauseButton'
 });
 </script>
 <?cs /if ?>
