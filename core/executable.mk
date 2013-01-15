@@ -12,6 +12,17 @@ ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 LOCAL_MODULE_SUFFIX := $(TARGET_EXECUTABLE_SUFFIX)
 endif
 
+$(call target-executable-hook)
+
+skip_build_from_source :=
+ifdef LOCAL_PREBUILT_MODULE_FILE
+ifeq (,$(call if-build-from-source,$(LOCAL_MODULE),$(LOCAL_PATH)))
+include $(BUILD_PREBUILT)
+skip_build_from_source := true
+endif
+endif
+
+ifndef skip_build_from_source
 ####################################################
 ## Add profiling libraries if aprof is turned
 ####################################################
@@ -61,3 +72,5 @@ else
 $(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o)
 	$(transform-o-to-executable)
 endif
+
+endif  # skip_build_from_source

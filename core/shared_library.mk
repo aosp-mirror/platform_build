@@ -20,6 +20,17 @@ ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
 $(error $(LOCAL_PATH): Cannot set module stem for a library)
 endif
 
+$(call target-shared-library-hook)
+
+skip_build_from_source :=
+ifdef LOCAL_PREBUILT_MODULE_FILE
+ifeq (,$(call if-build-from-source,$(LOCAL_MODULE),$(LOCAL_PATH)))
+include $(BUILD_PREBUILT)
+skip_build_from_source := true
+endif
+endif
+
+ifndef skip_build_from_source
 ####################################################
 ## Add profiling libraries if aprof is turned
 ####################################################
@@ -68,3 +79,5 @@ $(linked_module): $(all_objects) $(all_libraries) \
                   $(LOCAL_ADDITIONAL_DEPENDENCIES) \
                   $(my_target_crtbegin_so_o) $(my_target_crtend_so_o)
 	$(transform-o-to-shared-lib)
+
+endif  # skip_build_from_source
