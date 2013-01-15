@@ -1144,6 +1144,7 @@ function hideExpandable(ids) {
  *  Options:
  *  btnPrev:    optional identifier for previous button
  *  btnNext:    optional identifier for next button
+ *  btnPause:   optional identifier for pause button
  *  auto:       whether or not to auto-proceed
  *  speed:      animation speed
  *  autoTime:   time between auto-rotation
@@ -1161,6 +1162,7 @@ function hideExpandable(ids) {
      o = $.extend({
          btnPrev:   null,
          btnNext:   null,
+         btnPause:  null,
          auto:      true,
          speed:     500,
          autoTime:  12000,
@@ -1231,6 +1233,17 @@ function hideExpandable(ids) {
                  e.preventDefault();
                  return go(curr+o.scroll);
              });
+
+         //Pause button
+         if(o.btnPause)
+             $(o.btnPause).click(function(e) {
+                 e.preventDefault();
+                 if ($(this).hasClass('paused')) {
+                     startRotateTimer();
+                 } else {
+                     pauseRotateTimer();
+                 }
+             });
          
          //Auto rotation
          if(o.auto) startRotateTimer();
@@ -1244,6 +1257,12 @@ function hideExpandable(ids) {
                     go(curr+o.scroll);  
                   } 
               }, o.autoTime);
+             $(o.btnPause).removeClass('paused');
+         }
+
+         function pauseRotateTimer() {
+             clearInterval(timer);
+             $(o.btnPause).addClass('paused');
          }
 
          //Go to an item
