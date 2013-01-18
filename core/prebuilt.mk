@@ -59,10 +59,18 @@ else
   built_module := $(LOCAL_BUILT_MODULE)
 
 ifdef prebuilt_module_is_a_library
-# Create a dummy export_includes.
-$(intermediates)/export_includes:
+export_includes := $(intermediates)/export_includes
+$(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE)
+	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
+ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
+	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
+	        echo "-I $$d" >> $@; \
+	        done
+else
 	$(hide) touch $@
+endif
 
 $(LOCAL_BUILT_MODULE) : | $(intermediates)/export_includes
 endif
