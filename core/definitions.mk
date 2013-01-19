@@ -826,7 +826,9 @@ $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
 	-rt-path $(PRIVATE_LIBCLCORE) $<
 $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	-Wl,-rpath,\$$ORIGIN/../lib \
-	$(dir $@)/$(notdir $(<:.bc=.o)) -o $@ -L prebuilts/gcc/ \
+	$(dir $@)/$(notdir $(<:.bc=.o)) \
+	$(PRIVATE_COMPILER_RT) \
+	-o $@ -L prebuilts/gcc/ \
 	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) -lRSSupport -lm
 endef
 
