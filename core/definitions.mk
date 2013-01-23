@@ -829,8 +829,7 @@ $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	$(dir $@)/$(notdir $(<:.bc=.o)) \
 	$(PRIVATE_COMPILER_RT) \
 	-o $@ -L prebuilts/gcc/ \
-	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) $(PRIVATE_LIBPATH) \
-	-lRSSupport -lm
+	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) -lRSSupport -lm
 endef
 
 ###########################################################
