@@ -73,7 +73,7 @@ $(LOCAL_BUILT_MODULE): $(common_javalib.jar)
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(common_javalib.jar): PRIVATE_DEX_FILE := $(built_dex)
-$(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(AAPT)
+$(common_javalib.jar) : $(built_dex) $(java_resource_sources)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
 	$(add-dex-to-package)
@@ -106,7 +106,7 @@ $(built_odex) : $(common_javalib.jar) | $(DEXPREOPT) $(DEXOPT)
 	@mkdir -p $(dir $@)
 	$(call dexpreopt-one-file,$<,$@)
 
-$(LOCAL_BUILT_MODULE) : $(common_javalib.jar) | $(ACP) $(AAPT)
+$(LOCAL_BUILT_MODULE) : $(common_javalib.jar) | $(ACP)
 	$(call copy-file-to-target)
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
