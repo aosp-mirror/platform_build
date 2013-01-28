@@ -129,6 +129,7 @@ PRODUCT_PACKAGES += \
     lint \
     uiautomator \
     telephony-common \
+    voip-common \
     mms-common
 
 # SELinux packages

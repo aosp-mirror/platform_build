@@ -47,6 +47,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
 	target/common/obj/JAVA_LIBRARIES/framework_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
 	target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
+	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/mms-common_intermediates
 # not java libraries
 PDK_PLATFORM_JAVA_ZIP_CONTENTS := \
