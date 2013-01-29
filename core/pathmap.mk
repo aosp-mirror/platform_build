@@ -97,7 +97,6 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    wifi \
 	    keystore \
 	    icu4j \
-	    voip \
 	 )
 
 #

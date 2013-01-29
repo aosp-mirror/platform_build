@@ -151,6 +151,7 @@ PRODUCT_PACKAGES += \
     sensorservice \
     lint \
     telephony-common \
+    voip-common \
     mms-common
 
 PRODUCT_COPY_FILES += \
