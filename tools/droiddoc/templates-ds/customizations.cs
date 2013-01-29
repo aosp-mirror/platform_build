@@ -330,12 +330,7 @@ def:custom_left_nav() ?><?cs
     call:about_nav() ?><?cs 
   else ?><?cs 
     call:default_left_nav() ?> <?cs 
-  /if ?>
-    <script>
-      $(document).ready(function() {
-        changeNavLang(getLangPref());
-        });
-    </script><?cs 
+  /if ?><?cs 
 /def ?>
 
 <?cs # appears at the bottom of every page ?><?cs 
