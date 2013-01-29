@@ -18,7 +18,7 @@ window.gOverride = {
 		pEnabled:false
 	}
 </script>
-	
+
 <link href="<?cs var:toroot ?>assets/js/grid/960.gridder.css" rel="stylesheet" type="text/css">
 <script src="<?cs var:toroot ?>assets/js/grid/960.gridder.js" type="text/javascript"></script>
 -->
@@ -42,7 +42,4 @@ $(".feed").dacTabbedList({
 });
 </script>
 <?cs /if ?>
-<script type="text/javascript">
-init(); /* initialize android-developer-docs.js */
-</script>
 

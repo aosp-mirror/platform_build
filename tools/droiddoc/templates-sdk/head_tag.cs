@@ -22,7 +22,12 @@ type="text/css">
 
 <!-- JAVASCRIPT -->
 <script src="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//www.google.com/jsapi" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>assets/js/global-libraries-combined.js" type="text/javascript"></script>
+<?cs
+if:devsite
+  ?><script src="//android-dot-devsite.googleplex.com/_static/js/android_3p-bundle.js" type="text/javascript"></script><?cs
+else
+  ?><script src="<?cs var:toroot ?>assets/js/android_3p-bundle.js" type="text/javascript"></script><?cs
+/if ?>
 <script type="text/javascript">
   var toRoot = "<?cs var:toroot ?>";
   <?cs if:devsite ?>

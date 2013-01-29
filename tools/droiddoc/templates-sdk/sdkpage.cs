@@ -1,6 +1,6 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
-<html>
+<html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs if:sdk.redirect ?>
   <head>
     <title>Redirecting...</title>
