@@ -176,13 +176,6 @@
 #define HAVE_BACKTRACE 1
 
 /*
- * Defined if we have the dladdr() call for retrieving the symbol associated
- * with a memory address.  If not defined, stack crawls will not have symbolic
- * information.
- */
-#define HAVE_DLADDR 1
-
-/*
  * Defined if we have the cxxabi.h header for demangling C++ symbols.  If
  * not defined, stack crawls will be displayed with raw mangled symbols
  */
