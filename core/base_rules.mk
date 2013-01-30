@@ -593,6 +593,36 @@ $(foreach tag,$(LOCAL_MODULE_TAGS),\
     $(eval ALL_MODULE_NAME_TAGS.$(tag) += $(LOCAL_MODULE)))
 
 ###########################################################
+## umbrella targets used to verify builds
+###########################################################
+check_build_target := $(LOCAL_CHECKED_MODULE)
+j_or_n :=
+ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)))
+j_or_n := native
+else
+ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
+j_or_n := java
+# We don't want to verify the jni code when you just want to check the Java code.
+# See LOCAL_CHECKED_MODULE in build/core/java.mk
+ifneq (,$(strip $(all_java_sources)$(full_static_java_libs))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
+check_build_target := $(full_classes_compiled_jar)
+endif
+endif
+endif
+ifdef LOCAL_IS_HOST_MODULE
+h_or_t := host
+else
+h_or_t := target
+endif
+
+ifdef j_or_n
+$(j_or_n) $(j_or_n)-$(h_or_t) : $(check_build_target)
+ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
+$(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(check_build_target)
+endif
+endif
+
+###########################################################
 ## NOTICE files
 ###########################################################
 
