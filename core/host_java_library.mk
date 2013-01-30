@@ -43,9 +43,14 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(built_dex)
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
+# See comment in java.mk
+java_alternative_checked_module := $(full_classes_compiled_jar)
+
 endif # LOCAL_BUILD_HOST_DEX
 
 include $(BUILD_SYSTEM)/base_rules.mk
+
+java_alternative_checked_module :=
 
 # The layers file allows you to enforce a layering between java packages.
 # Run build/tools/java-layers.py for more details.

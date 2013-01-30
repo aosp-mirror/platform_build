@@ -234,6 +234,12 @@ LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
 LOCAL_RESOURCE_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript/res $(LOCAL_RESOURCE_DIR)
 endif
 
+# All of the rules after full_classes_compiled_jar are very unlikely
+# to fail except for bugs in their respective tools.  If you would
+# like to run these rules, add the "all" modifier goal to the make
+# command line.
+java_alternative_checked_module := $(full_classes_compiled_jar)
+
 # TODO: It looks like the only thing we need from base_rules is
 # all_java_sources.  See if we can get that by adding a
 # common_java.mk, and moving the include of base_rules.mk to
@@ -242,6 +248,8 @@ endif
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+
+java_alternative_checked_module :=
 
 # We use intermediates.COMMON because the classes.jar/.dex files will be
 # common even if LOCAL_BUILT_MODULE isn't.
@@ -259,7 +267,8 @@ $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 # If the module includes java code (i.e., it's not framework-res), compile it.
 full_classes_jar :=
 built_dex :=
-ifneq (,$(strip $(all_java_sources)$(full_static_java_libs))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
+# need_compile_java is set in base_rules.mk
+ifeq ($(need_compile_java),true)
 
 # If LOCAL_BUILT_MODULE_STEM wasn't overridden by our caller,
 # full_classes_jar will be the same module as LOCAL_BUILT_MODULE.
@@ -300,15 +309,6 @@ $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_ja
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
-
-# All of the rules after full_classes_compiled_jar are very unlikely
-# to fail except for bugs in their respective tools.  If you would
-# like to run these rules, add the "all" modifier goal to the make
-# command line.
-# This overwrites the value defined in base_rules.mk.  That's a little
-# dirty.  It's preferable to set LOCAL_CHECKED_MODULE, but this has to
-# be done after the inclusion of base_rules.mk.
-ALL_MODULES.$(LOCAL_MODULE).CHECKED := $(full_classes_compiled_jar)
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 
