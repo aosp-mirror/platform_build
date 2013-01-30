@@ -523,12 +523,9 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 ###########################################################
 
 # If nobody has defined a more specific module for the
-# checked modules, use LOCAL_BUILT_MODULE.  This was old
-# behavior, so it should be a safe default.
+# checked modules, use LOCAL_BUILT_MODULE.
 ifndef LOCAL_CHECKED_MODULE
-  ifndef LOCAL_SDK_VERSION
-    LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
-  endif
+  LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
 endif
 
 need_compile_java :=
