@@ -259,8 +259,7 @@ $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 # If the module includes java code (i.e., it's not framework-res), compile it.
 full_classes_jar :=
 built_dex :=
-# need_compile_java is set in base_rules.mk
-ifeq ($(need_compile_java),true)
+ifneq (,$(strip $(all_java_sources)$(full_static_java_libs))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
 
 # If LOCAL_BUILT_MODULE_STEM wasn't overridden by our caller,
 # full_classes_jar will be the same module as LOCAL_BUILT_MODULE.
@@ -301,6 +300,15 @@ $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_ja
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
+
+# All of the rules after full_classes_compiled_jar are very unlikely
+# to fail except for bugs in their respective tools.  If you would
+# like to run these rules, add the "all" modifier goal to the make
+# command line.
+# This overwrites the value defined in base_rules.mk.  That's a little
+# dirty.  It's preferable to set LOCAL_CHECKED_MODULE, but this has to
+# be done after the inclusion of base_rules.mk.
+ALL_MODULES.$(LOCAL_MODULE).CHECKED := $(full_classes_compiled_jar)
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 

@@ -823,7 +823,7 @@ $(call dist-for-goals,sdk win_sdk, \
 endif
 
 # umbrella targets to assit engineers in verifying builds
-.PHONY: java native target host java-host java-target native-host native-target \
+.PHONY: java native java-host java-target native-host native-target \
         java-host-tests java-target-tests native-host-tests native-target-tests \
         java-tests native-tests host-tests target-tests
 # some synonyms
