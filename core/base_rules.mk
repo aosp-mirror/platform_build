@@ -526,9 +526,19 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 # checked modules, use LOCAL_BUILT_MODULE.  This was old
 # behavior, so it should be a safe default.
 ifndef LOCAL_CHECKED_MODULE
-  ifndef LOCAL_SDK_VERSION
-    LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
-  endif
+  LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
+endif
+
+# All of the rules after full_classes_compiled_jar are very unlikely
+# to fail except for bugs in their respective tools.  If you would
+# like to run these rules, add the "all" modifier goal to the make
+# command line.
+need_compile_java :=
+ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
+ifneq (,$(strip $(all_java_sources)$(full_static_java_libs))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
+  need_compile_java := true
+  LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+endif
 endif
 
 # If they request that this module not be checked, then don't.
@@ -585,8 +595,8 @@ ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(LOCAL_MODULE_TAGS))
 # it will default to recursive expansion.
 $(foreach tag,$(LOCAL_MODULE_TAGS),\
     $(eval ALL_MODULE_TAGS.$(tag) := \
-	    $(ALL_MODULE_TAGS.$(tag)) \
-	    $(LOCAL_INSTALLED_MODULE)))
+        $(ALL_MODULE_TAGS.$(tag)) \
+        $(LOCAL_INSTALLED_MODULE)))
 
 # Add this module name to the tag list of each specified tag.
 $(foreach tag,$(LOCAL_MODULE_TAGS),\
@@ -595,18 +605,12 @@ $(foreach tag,$(LOCAL_MODULE_TAGS),\
 ###########################################################
 ## umbrella targets used to verify builds
 ###########################################################
-check_build_target := $(LOCAL_CHECKED_MODULE)
 j_or_n :=
 ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)))
 j_or_n := native
 else
 ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
 j_or_n := java
-# We don't want to verify the jni code when you just want to check the Java code.
-# See LOCAL_CHECKED_MODULE in build/core/java.mk
-ifneq (,$(strip $(all_java_sources)$(full_static_java_libs))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
-check_build_target := $(full_classes_compiled_jar)
-endif
 endif
 endif
 ifdef LOCAL_IS_HOST_MODULE
@@ -616,9 +620,9 @@ h_or_t := target
 endif
 
 ifdef j_or_n
-$(j_or_n) $(j_or_n)-$(h_or_t) : $(check_build_target)
+$(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(LOCAL_CHECKED_MODULE)
 ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
-$(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(check_build_target)
+$(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(LOCAL_CHECKED_MODULE)
 endif
 endif
 
