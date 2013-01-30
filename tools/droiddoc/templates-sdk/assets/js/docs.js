@@ -1063,7 +1063,6 @@ function changeLangPref(lang, submit) {
     }
   } else {
     // Switch language when on legacy GAE server
-    changeDocLang(lang);
     if (submit) {
       window.location = getBaseUri(location.pathname);
     }
