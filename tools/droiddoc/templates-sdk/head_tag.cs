@@ -25,6 +25,11 @@ type="text/css">
 <script src="<?cs var:toroot ?>assets/js/global-libraries-combined.js" type="text/javascript"></script>
 <script type="text/javascript">
   var toRoot = "<?cs var:toroot ?>";
+  <?cs if:devsite ?>
+  var devsite = true;
+  <?cs else ?>
+  var devsite = false;
+  <?cs /if ?>
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
 <?cs if:reference.gms || reference.gcm || google?>
