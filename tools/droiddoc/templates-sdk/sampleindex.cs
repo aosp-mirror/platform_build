@@ -1,7 +1,7 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
 <?cs set:resources="true" ?>
-<html>
+<html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 <?cs include:"header.cs" ?>
 <body class="gc-documentation">
