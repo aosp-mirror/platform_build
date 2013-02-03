@@ -110,6 +110,7 @@ $(_pdk_fusion_files) : $(_pdk_fusion_stamp)
 # Copy with the last-modified time preserved, never follow symbolic links.
 $(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/% $(_pdk_fusion_stamp)
 	@mkdir -p $(dir $@)
+	$(hide) rm -rf $@
 	$(hide) cp -fpPR $< $@
 
 ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
