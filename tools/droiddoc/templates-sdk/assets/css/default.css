@@ -1104,6 +1104,7 @@ pre, code {
 }
 code {
     font-weight:bold;
+    font: 14px/14px 'courier new', courier, monospace;
 }
 
 legend {
