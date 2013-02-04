@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "PTNy5JRg",
+        "filename": "tools/releasetools/img_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-02-04T17:35:43Z",
+      "side": 0,
+      "message": "It\u0027s silly to continue reading the whole file into memory just to call CheckSize(), which uses nothing but the length.  You should change CheckSize so that the first argument can either be a string (for backwards compatibility) or a number (in which case it\u0027s just used as the length), and then stat() the file here to get its size instead of reading it all in.",
+      "revId": "b796ce353d114328cc16a1f2ad2b1059b03a0c52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
