@@ -1,6 +1,6 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
-<html>
+<html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 <body class="gc-documentation 
   <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
