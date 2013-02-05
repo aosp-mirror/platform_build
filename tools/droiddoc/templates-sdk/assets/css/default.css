@@ -3785,7 +3785,8 @@ EndColorStr='#ececec');
   -transition-timing-function:ease;
 }
 
-.morehover:hover {
+.morehover:hover,
+.morehover.hover {
   opacity:1;
   height:385px;
   width:268px;

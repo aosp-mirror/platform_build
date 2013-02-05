@@ -62,27 +62,33 @@
         <li class="active"><a>Android Developers</a></li>
         <li><a href="http://source.android.com">Android Open Source Project</a></li>
       </ul>
-      <!-- <div class="header">Support</div>
-      <ul>
-        <li><a href="<?cs var:toroot ?>support.html">Developer Support</a></li>
-      </ul> -->
-      <div class="header">Languages</div>
-        <div id="language" class="locales">
-          <select name="language" onChange="changeLangPref(this.value, true)">
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="ja">日本語</option>
-              <option value="ko">한국어</option>
-              <option value="ru">Русский</option>
-              <option value="zh-CN">中文 (中国)</option>
-              <option value="zh-TW">中文 (台灣)</option>
-          </select>
-        </div>
-      <script type="text/javascript">
-        <!--  
-        loadLangPref();  
-          //-->
-      </script>
+      
+<?cs ############ TODO: Remove when we're happy with Devsite ############# ?>
+      <?cs # Use differenc lang switcher for devsite and gae server ?>
+      <?cs if:devsite ?>
+      <div class="header">Language</div>
+      <?cs elif:android.whichdoc == "online" ?>
+        <div class="header">Language</div>
+          <div id="language" class="locales">
+            <select name="language" onChange="changeLangPref(this.value, true)">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="ru">Русский</option>
+                <option value="zh-CN">中文 (中国)</option>
+                <option value="zh-TW">中文 (台灣)</option>
+            </select>
+          </div>
+        <script type="text/javascript">
+          <!--
+          loadLangPref();
+            //-->
+        </script>
+      <?cs /if ?>
+      <?cs # End of devsite vs. gae version of lang switcher ?>
+
+
       <br class="clearfix" />
     </div>
     <div class="bottom"></div>
