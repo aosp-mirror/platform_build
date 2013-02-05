@@ -7,7 +7,6 @@
     <meta http-equiv="refresh" content="0;url=<?cs var:toroot ?>sdk/<?cs
       if:sdk.redirect.path ?><?cs var:sdk.redirect.path ?><?cs
       else ?>index.html<?cs /if ?>">
-    <link href="<?cs var:toroot ?>assets/android-developer-docs.css" rel="stylesheet" type="text/css" />
   </head>
 <?cs else ?>
   <?cs include:"head_tag.cs" ?>
