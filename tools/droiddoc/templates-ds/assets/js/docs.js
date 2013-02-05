@@ -15,8 +15,10 @@ var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
 
 var navBarIsFixed = false;
 $(document).ready(function() {
-  // move the lang selector into the overflow menu
-  $("#moremenu .mid div.header:last").after($("#language").detach());
+  if (devsite) {
+    // move the lang selector into the overflow menu
+    $("#moremenu .mid div.header:last").after($("#language").detach());
+  }
 
   // init the fullscreen toggle click event
   $('#nav-swap .fullscreen').click(function(){
@@ -1051,8 +1053,20 @@ function changeLangPref(lang, submit) {
   // keep this for 50 years
   //alert("expires: " + expires)
   writeCookie("pref_lang", lang, null, expires);
-  if (submit) {
-    $("#setlang").submit();
+
+  //  #######  TODO:  Remove this condition once we're stable on devsite #######
+  //  This condition is only needed if we still need to support legacy GAE server
+  if (devsite) {
+    // Switch language when on Devsite server
+    if (submit) {
+      $("#setlang").submit();
+    }
+  } else {
+    // Switch language when on legacy GAE server
+    changeDocLang(lang);
+    if (submit) {
+      window.location = getBaseUri(location.pathname);
+    }
   }
 }
 
