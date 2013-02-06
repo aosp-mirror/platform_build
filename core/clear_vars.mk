@@ -131,6 +131,7 @@ LOCAL_SOURCE_FILES_ALL_GENERATED:= # '',true
 LOCAL_DONT_DELETE_JAR_META_INF:=
 LOCAL_ADDITIONAL_CERTIFICATES:=
 LOCAL_PREBUILT_MODULE_FILE:=
+LOCAL_POST_INSTALL_CMD:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
