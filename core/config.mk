@@ -38,7 +38,6 @@ SRC_HEADERS := \
 	$(TOPDIR)frameworks/native/opengl/include \
 	$(TOPDIR)frameworks/av/include \
 	$(TOPDIR)frameworks/base/include \
-	$(TOPDIR)frameworks/base/opengl/include \
 	$(TOPDIR)external/skia/include
 SRC_HOST_HEADERS:=$(TOPDIR)tools/include
 SRC_LIBRARIES:= $(TOPDIR)libs
