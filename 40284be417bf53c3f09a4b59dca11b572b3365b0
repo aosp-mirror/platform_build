@@ -16,6 +16,24 @@
       "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "PhESY4h8",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1005146
+      },
+      "writtenOn": "2013-02-06T16:45:00Z",
+      "side": 1,
+      "message": "Is your preference is that \u0027ddd\u0027 support isn\u0027t built-in, and instead needs to be defined by the user after sourcing the build environment?  Or do you only object to the way that I accomplished building it in?",
+      "parentUuid": "NgGKT1lk",
+      "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
