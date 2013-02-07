@@ -139,6 +139,7 @@ renderscript_sources := $(filter %.rs %.fs,$(LOCAL_SRC_FILES))
 # Because names of the java files from RenderScript are unknown until the
 # .rs file(s) are compiled, we have to depend on a timestamp file.
 RenderScript_file_stamp :=
+rs_compatibility_jni_libs :=
 ifneq ($(renderscript_sources),)
 renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sources))
 RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
@@ -258,6 +259,29 @@ include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
 java_alternative_checked_module :=
+
+# Install the RS compatibility libraries to /system/lib/ if necessary
+ifdef rs_compatibility_jni_libs
+installed_rs_compatibility_jni_libs := $(addprefix $(TARGET_OUT_SHARED_LIBRARIES)/,\
+    $(notdir $(rs_compatibility_jni_libs)))
+# Provide a way to skip sources included in multiple projects.
+ifdef LOCAL_RENDERSCRIPT_SKIP_INSTALL
+skip_install_rs_libs := $(patsubst %.rs,%.so, \
+    $(addprefix $(TARGET_OUT_SHARED_LIBRARIES)/lib, \
+    $(notdir $(LOCAL_RENDERSCRIPT_SKIP_INSTALL))))
+installed_rs_compatibility_jni_libs := \
+    $(filter-out $(skip_install_rs_libs),$(installed_rs_compatibility_jni_libs))
+endif
+ifneq (,$(strip $(installed_rs_compatibility_jni_libs)))
+$(installed_rs_compatibility_jni_libs) : $(TARGET_OUT_SHARED_LIBRARIES)/lib%.so : \
+    $(renderscript_intermediate)/lib%.so
+	@echo "Install RS compatibility library: $@"
+	$(hide) mkdir -p $(dir $@) && cp -f $< $@
+
+# Install them only if the current module is installed.
+$(LOCAL_INSTALLED_MODULE) : $(installed_rs_compatibility_jni_libs)
+endif
+endif
 
 # We use intermediates.COMMON because the classes.jar/.dex files will be
 # common even if LOCAL_BUILT_MODULE isn't.
