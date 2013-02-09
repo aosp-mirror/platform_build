@@ -725,6 +725,20 @@ cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
+# phony target that include any targets in $(ALL_MODULES)
+.PHONY: all_modules
+ifndef BUILD_MODULES_IN_PATHS
+all_modules: $(ALL_MODULES)
+else
+# BUILD_MODULES_IN_PATHS is a list of paths relative to the top of the tree
+module_path_patterns := $(foreach p, $(BUILD_MODULES_IN_PATHS),\
+    $(if $(filter %/,$(p)),$(p)%,$(p)/%))
+my_all_modules := $(sort $(foreach m, $(ALL_MODULES),$(if $(filter\
+    $(module_path_patterns), $(addsuffix /,$(ALL_MODULES.$(m).PATH))),$(m))))
+all_modules: $(my_all_modules)
+endif
+
+
 # Build files and then package it into the rom formats
 .PHONY: droidcore
 droidcore: files \
@@ -801,12 +815,7 @@ droid: droidcore dist_files
 endif # TARGET_BUILD_APPS
 endif # droid in $(MAKECMDGOALS)
 
-
 .PHONY: droid
-
-# phony target that include any targets in $(ALL_MODULES)
-.PHONY: all_modules
-all_modules: $(ALL_MODULES)
 
 .PHONY: docs
 docs: $(ALL_DOCS)
