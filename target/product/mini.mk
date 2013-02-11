@@ -61,6 +61,7 @@ PRODUCT_PACKAGES += \
     MediaProvider \
     PackageInstaller \
     SettingsProvider \
+    Shell \
     TelephonyProvider \
     UserDictionaryProvider \
     abcc \
