@@ -219,7 +219,7 @@ endif # TARGET_BUILD_APPS
 rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
 rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
 rs_compiler_rt_so := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libcompiler_rt.so
-LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
+LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni libcompiler_rt
 
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT) $(rs_built_clcore)
