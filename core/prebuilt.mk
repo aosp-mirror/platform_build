@@ -33,13 +33,14 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   OVERRIDE_BUILT_MODULE_PATH := $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
 endif
 
-# Deal with the OSX library timestamp issue when installing
-# a prebuilt simulator library.
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
   prebuilt_module_is_a_library := true
 else
   prebuilt_module_is_a_library :=
 endif
+
+# Install the shared libraries if necessary
+LOCAL_REQUIRED_MODULES += $(LOCAL_SHARED_LIBRARIES)
 
 # Don't install static libraries by default.
 ifndef LOCAL_UNINSTALLABLE_MODULE
