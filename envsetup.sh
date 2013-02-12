@@ -5,8 +5,10 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5] [eng|userdebug|user]
 - croot:   Changes directory to the top of the tree.
 - m:       Makes from the top of the tree.
-- mm:      Builds all of the modules in the current directory.
-- mmm:     Builds all of the modules in the supplied directories.
+- mm:      Builds all of the modules in the current directory, but not their dependencies.
+- mmm:     Builds all of the modules in the supplied directories, but not their dependencies.
+- mma:     Builds all of the modules in the current directory, and their dependencies.
+- mmma:    Builds all of the modules in the supplied directories, and their dependencies.
 - cgrep:   Greps on all local C/C++ files.
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
@@ -694,6 +696,55 @@ function mmm()
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi
+}
+
+function mma()
+{
+  if [ -f build/core/envsetup.mk -a -f Makefile ]; then
+    make $@
+  else
+    T=$(gettop)
+    if [ ! "$T" ]; then
+      echo "Couldn't locate the top of the tree.  Try setting TOP."
+    fi
+    local MY_PWD=`PWD= /bin/pwd|sed 's:'$T'/::'`
+    make -C $T -f build/core/main.mk $@ all_modules BUILD_MODULES_IN_PATHS="$MY_PWD"
+  fi
+}
+
+function mmma()
+{
+  T=$(gettop)
+  if [ "$T" ]; then
+    local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
+    local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
+    local MY_PWD=`PWD= /bin/pwd`
+    if [ "$MY_PWD" = "$T" ]; then
+      MY_PWD=
+    else
+      MY_PWD=`echo $MY_PWD|sed 's:'$T'/::'`
+    fi
+    local DIR=
+    local MODULE_PATHS=
+    local ARGS=
+    for DIR in $DIRS ; do
+      if [ -d $DIR ]; then
+        if [ "$MY_PWD" = "" ]; then
+          MODULE_PATHS="$MODULE_PATHS $DIR"
+        else
+          MODULE_PATHS="$MODULE_PATHS $MY_PWD/$DIR"
+        fi
+      else
+        case $DIR in
+          showcommands | snod | dist | incrementaljavac) ARGS="$ARGS $DIR";;
+          *) echo "Couldn't find directory $DIR"; return 1;;
+        esac
+      fi
+    done
+    make -C $T -f build/core/main.mk $DASH_ARGS $ARGS all_modules BUILD_MODULES_IN_PATHS="$MODULE_PATHS"
+  else
+    echo "Couldn't locate the top of the tree.  Try setting TOP."
+  fi
 }
 
 function croot()
