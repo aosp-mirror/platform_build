@@ -13,8 +13,7 @@
           </div>
             <ul class="nav-x col-9">
                 <li class="design">
-                  <a href="<?cs var:toroot ?>design/index.html" <?cs
-                  if:design ?>class="selected"<?cs /if ?>
+                  <a href="<?cs var:toroot ?>design/index.html"
                   zh-TW-lang="設計"
                   zh-CN-lang="设计"
                   ru-lang="Проектирование"
@@ -22,8 +21,7 @@
                   ja-lang="設計"
                   es-lang="Diseñar"               
                   >Design</a></li>
-                <li class="develop"><a href="<?cs var:toroot ?>develop/index.html" <?cs
-                  if:training || guide || reference || tools || develop || google ?>class="selected"<?cs /if ?>
+                <li class="develop"><a href="<?cs var:toroot ?>develop/index.html"
                   zh-TW-lang="開發"
                   zh-CN-lang="开发"
                   ru-lang="Разработка"
@@ -31,8 +29,7 @@
                   ja-lang="開発"
                   es-lang="Desarrollar"               
                   >Develop</a></li>
-                <li class="distribute last"><a href="<?cs var:toroot ?>distribute/index.html" <?cs
-                  if:distribute ?>class="selected"<?cs /if ?>
+                <li class="distribute last"><a href="<?cs var:toroot ?>distribute/index.html"
                   zh-TW-lang="發佈"
                   zh-CN-lang="分发"
                   ru-lang="Распространение"
@@ -203,8 +200,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
     <div id="nav-x">
         <div class="wrap">
             <ul class="nav-x col-9 develop" style="width:100%">
-                <li><a href="<?cs var:toroot ?>training/index.html" <?cs
-                  if:training ?>class="selected"<?cs /if ?>
+                <li class="training"><a href="<?cs var:toroot ?>training/index.html"
                   zh-TW-lang="訓練課程"
                   zh-CN-lang="培训"
                   ru-lang="Курсы"
@@ -212,8 +208,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ja-lang="トレーニング"
                   es-lang="Capacitación"               
                   >Training</a></li>
-                <li><a href="<?cs var:toroot ?>guide/components/index.html" <?cs
-                  if:guide ?>class="selected"<?cs /if ?>
+                <li class="guide"><a href="<?cs var:toroot ?>guide/components/index.html"
                   zh-TW-lang="API 指南"
                   zh-CN-lang="API 指南"
                   ru-lang="Руководства по API"
@@ -221,8 +216,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ja-lang="API ガイド"
                   es-lang="Guías de la API"               
                   >API Guides</a></li>
-                <li><a href="<?cs var:toroot ?>reference/packages.html" <?cs
-                  if:reference && !(reference.gcm || reference.gms) ?>class="selected"<?cs /if ?>
+                <li class="reference"><a href="<?cs var:toroot ?>reference/packages.html"
                   zh-TW-lang="參考資源"
                   zh-CN-lang="参考"
                   ru-lang="Справочник"
@@ -230,8 +224,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ja-lang="リファレンス"
                   es-lang="Referencia"               
                   >Reference</a></li>
-                <li><a href="<?cs var:toroot ?>tools/index.html" <?cs
-                  if:tools ?>class="selected"<?cs /if ?>
+                <li class="tools"><a href="<?cs var:toroot ?>tools/index.html"
                   zh-TW-lang="相關工具"
                   zh-CN-lang="工具"
                   ru-lang="Инструменты"
@@ -239,8 +232,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ja-lang="ツール"
                   es-lang="Herramientas"
                   >Tools</a></li>
-                <li><a href="<?cs var:toroot ?>google/index.html" <?cs
-                  if:google || reference.gcm || reference.gms?>class="selected"<?cs /if ?>
+                <li class="google"><a href="<?cs var:toroot ?>google/index.html"
                   >Google Services</a>
                 </li>
             </ul>
