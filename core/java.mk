@@ -218,13 +218,11 @@ rs_compiler_rt := prebuilts/sdk/renderscript/lib/libcompiler_rt.a
 endif # TARGET_BUILD_APPS
 rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
 rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
-rs_compiler_rt_so := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libcompiler_rt.so
 LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni libcompiler_rt
 
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT) $(rs_built_clcore)
 $(rs_compatibility_jni_libs): $(rs_support_lib) $(rs_jni_lib) $(rs_compiler_rt)
-$(rs_compatibility_jni_libs): $(rs_compiler_rt_so)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
 $(rs_compatibility_jni_libs): PRIVATE_LIBCLCORE := $(rs_built_clcore)
 $(rs_compatibility_jni_libs): PRIVATE_COMPILER_RT := $(rs_compiler_rt)
