@@ -40,6 +40,7 @@ PRODUCT_PACKAGES += \
     PicoTts \
     SettingsProvider \
     SharedStorageBackup \
+    Shell \
     TelephonyProvider \
     UserDictionaryProvider \
     VpnDialogs \
