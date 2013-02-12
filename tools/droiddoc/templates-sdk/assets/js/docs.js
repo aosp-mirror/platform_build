@@ -112,7 +112,7 @@ $(document).ready(function() {
   if (pagePath.indexOf("/intl/") == 0) {
     pagePath = pagePath.substr(pagePath.indexOf("/",6)); // start after intl/ to get last /
   }
-  
+
   if (pagePath.indexOf(SITE_ROOT) == 0) {
     if (pagePath == '' || pagePath.charAt(pagePath.length - 1) == '/') {
       pagePath += 'index.html';
@@ -138,12 +138,47 @@ $(document).ready(function() {
     // Otherwise the page path is already an absolute URL
   }
 
-  // select current page in sidenav and set up prev/next links if they exist
+  // Highlight the header tabs...
+  // highlight Design tab
+  if ($("body").hasClass("design")) {
+    $("#header li.design a").addClass("selected");
+
+  // highlight Develop tab
+  } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
+    $("#header li.develop a").addClass("selected");
+
+    // In Develop docs, also highlight appropriate sub-tab
+    var rootDir = pagePath.substring(1,pagePath.indexOf('/', 1));
+    if (rootDir == "training") {
+      $("#nav-x li.training a").addClass("selected");
+    } else if (rootDir == "guide") {
+      $("#nav-x li.guide a").addClass("selected");
+    } else if (rootDir == "reference") {
+      // If the root is reference, but page is also part of Google Services, select Google
+      if ($("body").hasClass("google")) {
+        $("#nav-x li.google a").addClass("selected");
+      } else {
+        $("#nav-x li.reference a").addClass("selected");
+      }
+    } else if ((rootDir == "tools") || (rootDir == "sdk")) {
+      $("#nav-x li.tools a").addClass("selected");
+    } else if ($("body").hasClass("google")) {
+      $("#nav-x li.google a").addClass("selected");
+    }
+
+  // highlight Distribute tab
+  } else if ($("body").hasClass("distribute")) {
+    $("#header li.distribute a").addClass("selected");
+  }
+
+
+  // select current page in sidenav and header, and set up prev/next links if they exist
   var $selNavLink = $('#nav').find('a[href="' + pagePath + '"]');
   var $selListItem;
   if ($selNavLink.length) {
-    $selListItem = $selNavLink.closest('li');
 
+    // Find this page's <li> in sidenav and set selected
+    $selListItem = $selNavLink.closest('li');
     $selListItem.addClass('selected');
     
     // Traverse up the tree and expand all parent nav-sections
@@ -151,7 +186,6 @@ $(document).ready(function() {
       $(this).addClass('expanded');
       $(this).children('ul').show();
     });
-    
 
     // set up prev links
     var $prevLink = [];
