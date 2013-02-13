@@ -218,7 +218,7 @@ rs_compiler_rt := prebuilts/sdk/renderscript/lib/libcompiler_rt.a
 endif # TARGET_BUILD_APPS
 rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
 rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
-LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni libcompiler_rt
+LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
 
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT) $(rs_built_clcore)
