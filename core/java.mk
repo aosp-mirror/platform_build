@@ -196,6 +196,10 @@ $(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
 $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
 	$(transform-renderscripts-to-java-and-bc)
 
+# Now LOCAL_RENDERSCRIPT_COMPATIBILITY only supports arm
+ifneq ($(TARGET_ARCH),arm)
+LOCAL_RENDERSCRIPT_COMPATIBILITY :=
+endif
 ifneq ($(LOCAL_RENDERSCRIPT_COMPATIBILITY),)
 bc_files := $(patsubst %.fs,%.bc, $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources))))
 rs_generated_bc := $(addprefix \
