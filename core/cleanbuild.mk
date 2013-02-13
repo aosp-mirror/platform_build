@@ -88,7 +88,8 @@ CURRENT_CLEAN_BUILD_VERSION :=
 CURRENT_CLEAN_STEPS :=
 
 # Write the new state to the file.
-#
+# Don't write the file if we are running mm/mmm but without a preexisting clean_steps_file.
+ifneq (,$(wildcard $(clean_steps_file))$(filter ||,|$(ONE_SHOT_MAKEFILE)|))
 $(shell \
   mkdir -p $(dir $(clean_steps_file)) && \
   echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
@@ -96,6 +97,7 @@ $(shell \
   echo "CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)" >> \
       $(clean_steps_file) \
  )
+endif
 
 clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
