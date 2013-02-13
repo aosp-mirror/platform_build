@@ -42,6 +42,9 @@ HOST_AR  := $(HOST_SDK_TOOLCHAIN_PREFIX)-ar
 endif # $(HOST_SDK_TOOLCHAIN_PREFIX)-gcc exists
 endif # TARGET_PRODUCT == sdk
 
+# Does the build machine have the expected gcc version?
+IS_EXPECTED_HOST_GCC := $(filter 4.4.%, $(shell $(HOST_CC) --version))
+
 # We build everything in 32-bit, because some host tools are
 # 32-bit-only anyway (emulator, acc), and because it gives us
 # more consistency between the host tools and the target.
