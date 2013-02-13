@@ -582,6 +582,13 @@ ifeq ($(strip $(LOCAL_RTTI_FLAG)),)
 LOCAL_RTTI_FLAG := -fno-rtti
 endif
 
+# filter out -Werror if the host gcc doesn't have the expected version
+ifdef LOCAL_IS_HOST_MODULE
+ifndef IS_EXPECTED_HOST_GCC
+LOCAL_CFLAGS := $(filter-out -Werror, $(LOCAL_CFLAGS))
+endif
+endif
+
 ###########################################################
 # Rule-specific variable definitions
 ###########################################################
