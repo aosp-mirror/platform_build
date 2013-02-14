@@ -1,10 +1,6 @@
 # Configuration for Linux on ARM.
 # Generating binaries for the ARMv5TE architecture and higher
 #
-ARCH_ARM_HAVE_THUMB_SUPPORT     := true
-ARCH_ARM_HAVE_FAST_INTERWORKING := true
-ARCH_ARM_HAVE_64BIT_DATA        := true
-ARCH_ARM_HAVE_HALFWORD_MULTIPLY := true
 
 # Note: Hard coding the 'tune' value here is probably not ideal,
 # and a better solution should be found in the future.
