@@ -16,6 +16,24 @@
       "revId": "ac91018c57776c75506e71b2fc9c88fa5cc83f77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "P3UhgP-Y",
+        "filename": "core/combo/arch/arm/armv4t.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-02-14T00:08:08Z",
+      "side": 1,
+      "message": "SGTM",
+      "parentUuid": "P3.NOcpE",
+      "revId": "ac91018c57776c75506e71b2fc9c88fa5cc83f77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
