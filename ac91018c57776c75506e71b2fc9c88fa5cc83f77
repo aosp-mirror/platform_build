@@ -34,6 +34,24 @@
       "revId": "ac91018c57776c75506e71b2fc9c88fa5cc83f77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "P34myPQE",
+        "filename": "core/combo/arch/arm/armv4t.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-02-14T00:42:36Z",
+      "side": 1,
+      "message": "i\u0027m assuming the lack of +2 is because you want me to remove this file in this change. ps2 coming up...",
+      "parentUuid": "P3UhgP-Y",
+      "revId": "ac91018c57776c75506e71b2fc9c88fa5cc83f77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
