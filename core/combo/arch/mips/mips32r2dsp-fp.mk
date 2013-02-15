@@ -11,7 +11,8 @@ arch_variant_cflags := \
     -mtune=mips32r2 \
     -mips32r2 \
     -mhard-float \
-    -mdsp
+    -mdsp \
+    -msynci
 
 arch_variant_ldflags := \
     -EL
