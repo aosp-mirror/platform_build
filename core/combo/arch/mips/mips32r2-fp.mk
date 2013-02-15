@@ -8,7 +8,8 @@ arch_variant_cflags := \
     -march=mips32r2 \
     -mtune=mips32r2 \
     -mips32r2 \
-    -mhard-float
+    -mhard-float \
+    -msynci
 
 arch_variant_ldflags := \
     -EL
