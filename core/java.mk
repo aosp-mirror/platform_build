@@ -206,7 +206,7 @@ rs_generated_bc := $(addprefix \
     $(renderscript_intermediate)/res/raw/, $(bc_files))
 
 rs_compatibility_jni_libs := $(addprefix \
-    $(renderscript_intermediate)/lib, \
+    $(renderscript_intermediate)/librs., \
     $(patsubst %.bc,%.so, $(bc_files)))
 
 $(rs_generated_bc) : $(RenderScript_file_stamp)
@@ -231,7 +231,7 @@ $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
 $(rs_compatibility_jni_libs): PRIVATE_LIBCLCORE := $(rs_built_clcore)
 $(rs_compatibility_jni_libs): PRIVATE_COMPILER_RT := $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): PRIVATE_LIBPATH := $(rs_extra_libpath)
-$(rs_compatibility_jni_libs): $(renderscript_intermediate)/lib%.so: \
+$(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate)/res/raw/%.bc
 	$(transform-bc-to-so)
 
