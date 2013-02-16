@@ -102,6 +102,10 @@ PRODUCT_PACKAGES += \
     tc \
     vdc \
     vold \
-    webview
+    webview \
+    wm
+
+PRODUCT_COPY_FILES += \
+    frameworks/base/cmds/wm/wm:system/bin/wm \
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)
