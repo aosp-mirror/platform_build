@@ -271,7 +271,7 @@ installed_rs_compatibility_jni_libs := $(addprefix $(TARGET_OUT_SHARED_LIBRARIES
 # Provide a way to skip sources included in multiple projects.
 ifdef LOCAL_RENDERSCRIPT_SKIP_INSTALL
 skip_install_rs_libs := $(patsubst %.rs,%.so, \
-    $(addprefix $(TARGET_OUT_SHARED_LIBRARIES)/lib, \
+    $(addprefix $(TARGET_OUT_SHARED_LIBRARIES)/librs., \
     $(notdir $(LOCAL_RENDERSCRIPT_SKIP_INSTALL))))
 installed_rs_compatibility_jni_libs := \
     $(filter-out $(skip_install_rs_libs),$(installed_rs_compatibility_jni_libs))
