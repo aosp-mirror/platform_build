@@ -224,9 +224,9 @@ rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
 rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
 LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
 
-$(rs_compatibility_jni_libs): $(RenderScript_file_stamp)
-$(rs_compatibility_jni_libs): $(BCC_COMPAT) $(rs_built_clcore)
-$(rs_compatibility_jni_libs): $(rs_support_lib) $(rs_jni_lib) $(rs_compiler_rt)
+$(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(rs_built_clcore) \
+    $(rs_support_lib) $(rs_jni_lib) $(rs_compiler_rt)
+$(rs_compatibility_jni_libs): | $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
 $(rs_compatibility_jni_libs): PRIVATE_LIBCLCORE := $(rs_built_clcore)
 $(rs_compatibility_jni_libs): PRIVATE_COMPILER_RT := $(rs_compiler_rt)
