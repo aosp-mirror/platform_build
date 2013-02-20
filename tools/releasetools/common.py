@@ -117,6 +117,9 @@ def LoadInfoDict(zip):
       # ok if extensions don't exist
       pass
 
+  if "fstab_version" not in d:
+    d["fstab_version"] = "1"
+
   try:
     data = zip.read("META/imagesizes.txt")
     for line in data.split("\n"):
@@ -141,8 +144,9 @@ def LoadInfoDict(zip):
   makeint("cache_size")
   makeint("recovery_size")
   makeint("boot_size")
+  makeint("fstab_version")
 
-  d["fstab"] = LoadRecoveryFSTab(zip)
+  d["fstab"] = LoadRecoveryFSTab(zip, d["fstab_version"])
   d["build.prop"] = LoadBuildProp(zip)
   return d
 
@@ -161,7 +165,7 @@ def LoadBuildProp(zip):
     d[name] = value
   return d
 
-def LoadRecoveryFSTab(zip):
+def LoadRecoveryFSTab(zip, fstab_version):
   class Partition(object):
     pass
 
@@ -171,40 +175,76 @@ def LoadRecoveryFSTab(zip):
     print "Warning: could not find RECOVERY/RAMDISK/etc/recovery.fstab in %s." % zip
     data = ""
 
-  d = {}
-  for line in data.split("\n"):
-    line = line.strip()
-    if not line or line.startswith("#"): continue
-    pieces = line.split()
-    if not (3 <= len(pieces) <= 4):
-      raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
+  if fstab_version == 1:
+    d = {}
+    for line in data.split("\n"):
+      line = line.strip()
+      if not line or line.startswith("#"): continue
+      pieces = line.split()
+      if not (3 <= len(pieces) <= 4):
+        raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
 
-    p = Partition()
-    p.mount_point = pieces[0]
-    p.fs_type = pieces[1]
-    p.device = pieces[2]
-    p.length = 0
-    options = None
-    if len(pieces) >= 4:
-      if pieces[3].startswith("/"):
-        p.device2 = pieces[3]
-        if len(pieces) >= 5:
-          options = pieces[4]
+      p = Partition()
+      p.mount_point = pieces[0]
+      p.fs_type = pieces[1]
+      p.device = pieces[2]
+      p.length = 0
+      options = None
+      if len(pieces) >= 4:
+        if pieces[3].startswith("/"):
+          p.device2 = pieces[3]
+          if len(pieces) >= 5:
+            options = pieces[4]
+        else:
+          p.device2 = None
+          options = pieces[3]
       else:
         p.device2 = None
-        options = pieces[3]
-    else:
-      p.device2 = None
 
-    if options:
+      if options:
+        options = options.split(",")
+        for i in options:
+          if i.startswith("length="):
+            p.length = int(i[7:])
+          else:
+              print "%s: unknown option \"%s\"" % (p.mount_point, i)
+
+      d[p.mount_point] = p
+
+  elif fstab_version == 2:
+    d = {}
+    for line in data.split("\n"):
+      line = line.strip()
+      if not line or line.startswith("#"): continue
+      pieces = line.split()
+      if len(pieces) != 5:
+        raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
+
+      # Ignore entries that are managed by vold
+      options = pieces[4]
+      if "voldmanaged=" in options: continue
+
+      # It's a good line, parse it
+      p = Partition()
+      p.device = pieces[0]
+      p.mount_point = pieces[1]
+      p.fs_type = pieces[2]
+      p.device2 = None
+      p.length = 0
+
       options = options.split(",")
       for i in options:
         if i.startswith("length="):
           p.length = int(i[7:])
         else:
-          print "%s: unknown option \"%s\"" % (p.mount_point, i)
+          # Ignore all unknown options in the unified fstab
+          continue
 
-    d[p.mount_point] = p
+      d[p.mount_point] = p
+
+  else:
+    raise ValueError("Unknown fstab_version: \"%d\"" % (fstab_version,))
+
   return d
 
 
