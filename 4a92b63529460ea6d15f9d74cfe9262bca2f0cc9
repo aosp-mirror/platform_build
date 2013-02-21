@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "P3WMsB68",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1196,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-02-21T00:03:25Z",
+      "side": 1,
+      "message": "I don\u0027t know if such \"target-specific variable export \" exists..\nBut it seems to me we don\u0027t need it: you should pass it as a environmental variable from the build recipe directly.",
+      "revId": "4a92b63529460ea6d15f9d74cfe9262bca2f0cc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "P3QMcM3w",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1202,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-02-21T00:03:25Z",
+      "side": 1,
+      "message": "$(hide) MKBOOTIMG\u003d$(BOARD_CUSTOM_MKBOOTIMG) ./build/tools/releasetools/ota_from_target_files ...",
+      "revId": "4a92b63529460ea6d15f9d74cfe9262bca2f0cc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
