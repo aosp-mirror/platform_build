@@ -33,6 +33,40 @@
       "revId": "4a92b63529460ea6d15f9d74cfe9262bca2f0cc9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "P.82JvSs",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-02-21T17:49:57Z",
+      "side": 1,
+      "message": "\"of\" -\u003e \"or\"",
+      "revId": "4a92b63529460ea6d15f9d74cfe9262bca2f0cc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "P.22bcWw",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-02-21T17:49:57Z",
+      "side": 1,
+      "message": "do you want to support anything like \n\n   MKBOOTIMG\u003d\"mkbootimg --somearg\"\n\n?  If so you need to split mkbootimg into a list and join it to cmd",
+      "revId": "4a92b63529460ea6d15f9d74cfe9262bca2f0cc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
