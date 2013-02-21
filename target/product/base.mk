@@ -86,7 +86,6 @@ PRODUCT_PACKAGES += \
     ndc \
     netcfg \
     netd \
-    ping \
     platform.xml \
     pppd \
     pm \
