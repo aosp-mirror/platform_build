@@ -2443,12 +2443,26 @@ p.img-caption {
   color:#666;
 }
 
-div.figure {
+div.figure,
+div.figure-right {
   float:right;
   clear:right;
   margin:10px 0 0 0;
   padding:0 0 0 20px;
   /* width must be defined w/ an inline style matching the image width */
+}
+
+div.figure-left {
+  float:left;
+  clear:left;
+  margin:10px 0 0 0;
+  padding:0 0 0 20px;
+  /* width must be defined w/ an inline style matching the image width */
+}
+
+img.frame {
+  border:1px solid #DDD;
+  padding:4px;
 }
 
 p.table-caption {
