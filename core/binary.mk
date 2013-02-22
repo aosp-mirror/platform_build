@@ -102,13 +102,19 @@ else
   installed_shared_library_module_names := \
       $(LOCAL_SYSTEM_SHARED_LIBRARIES) $(LOCAL_SHARED_LIBRARIES)
 endif
-# The real dependency will be added after all Android.mks are loaded and the install paths
-# of the shared libraries are determined.
-LOCAL_REQUIRED_MODULES += $(installed_shared_library_module_names)
+installed_shared_library_module_names := $(sort $(installed_shared_library_module_names))
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+
+# The real dependency will be added after all Android.mks are loaded and the install paths
+# of the shared libraries are determined.
+ifdef LOCAL_INSTALLED_MODULE
+ifdef installed_shared_library_module_names
+$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
+endif
+endif
 
 ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   LOCAL_CLANG := true

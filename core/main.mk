@@ -533,7 +533,7 @@ CUSTOM_MODULES := \
 # BUG: the system image won't know to depend on modules that are
 # brought in as requirements of other modules.
 define add-required-deps
-$(1): $(2)
+$(1): | $(2)
 endef
 $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
@@ -542,9 +542,22 @@ $(foreach m,$(ALL_MODULES), \
     $(eval $(call add-required-deps,$(ALL_MODULES.$(m).INSTALLED),$(r))) \
    ) \
  )
+
+# Resolve the dependencies on shared libraries.
+$(foreach m,$(TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES), \
+  $(eval p := $(subst :,$(space),$(m))) \
+  $(eval r := $(filter $(TARGET_OUT_ROOT)/%,$(call module-installed-files,\
+    $(subst $(comma),$(space),$(lastword $(p)))))) \
+  $(eval $(call add-required-deps,$(firstword $(p)),$(r))))
+$(foreach m,$(HOST_DEPENDENCIES_ON_SHARED_LIBRARIES), \
+  $(eval p := $(subst :,$(space),$(m))) \
+  $(eval r := $(filter $(HOST_OUT_ROOT)/%,$(call module-installed-files,\
+    $(subst $(comma),$(space),$(lastword $(p)))))) \
+  $(eval $(call add-required-deps,$(firstword $(p)),$(r))))
+
 m :=
 r :=
-i :=
+p :=
 add-required-deps :=
 
 # -------------------------------------------------------------------
