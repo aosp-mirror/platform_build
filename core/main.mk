@@ -201,7 +201,7 @@ endif
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
-INTERNAL_MODIFIER_TARGETS := showcommands checkbuild all incrementaljavac
+INTERNAL_MODIFIER_TARGETS := showcommands all incrementaljavac
 
 .PHONY: incrementaljavac
 incrementaljavac: ;
@@ -398,7 +398,7 @@ endef
 endif
 
 
-# If they only used the modifier goals (showcommands, checkbuild), we'll actually
+# If they only used the modifier goals (showcommands, etc), we'll actually
 # build the default target.
 ifeq ($(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS)),)
 .PHONY: $(INTERNAL_MODIFIER_TARGETS)
@@ -693,6 +693,12 @@ files: prebuilt \
 
 .PHONY: checkbuild
 checkbuild: $(modules_to_check)
+ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT)$(filter $(MAKECMDGOALS),checkbuild))
+droid: checkbuild
+else
+# ANDROID_BUILD_EVERYTHING_BY_DEFAULT not set, or checkbuild is one of the cmd goals.
+checkbuild: droid
+endif
 
 .PHONY: ramdisk
 ramdisk: $(INSTALLED_RAMDISK_TARGET)
