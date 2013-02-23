@@ -62,7 +62,8 @@ int main(int argc, char** argv) {
     }
 
     unsigned uid = 0, gid = 0, mode = 0;
-    fs_config(buffer, is_dir, &uid, &gid, &mode);
+    uint64_t capabilities;
+    fs_config(buffer, is_dir, &uid, &gid, &mode, &capabilities);
     printf("%s %d %d %o\n", buffer, uid, gid, mode);
   }
   return 0;
