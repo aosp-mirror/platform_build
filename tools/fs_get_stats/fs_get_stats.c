@@ -57,7 +57,8 @@ main(int argc, const char *argv[])
 	if (!strcmp(argv[2], "1"))
 		is_dir = 1;
 
-	fs_config(argv[3], is_dir, &uid, &gid, &perms);
+	uint64_t capabilities;
+	fs_config(argv[3], is_dir, &uid, &gid, &perms, &capabilities);
 	fprintf(stdout, "%d %d 0%o\n", uid, gid, perms);
 
 	return 0;
