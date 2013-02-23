@@ -63,32 +63,7 @@ INTERNAL_CLEAN_BUILD_VERSION := 6
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
 
-# Get the path of the top of the tree.
-# for example:
-# /home/bob/master/framework/base => /home/bob/master
-# See function gettop in build/envsetup.sh.
-define get-top-dir
-$(if $(1),$(if $(wildcard $(1)/build/core/envsetup.mk),$(1),$(strip \
-  $(call get-top-dir,$(patsubst %/,%,$(dir $(1)))))))
-endef
-
-ifneq ($(ONE_SHOT_MAKEFILE),)
-cs_subdirs := $(patsubst %/,%,$(dir $(ONE_SHOT_MAKEFILE)))
-abs_cs_subdirs := $(filter /%,$(cs_subdirs))
-ifneq ($(abs_cs_subdirs),)
-# Convert absolute path to relative path, e.g. when using mm.
-abs_top_path := $(call get-top-dir,$(word 1,$(abs_cs_subdirs)))
-cs_subdirs := $(filter-out /%,$(cs_subdirs)) \
-  $(patsubst $(abs_top_path)/%,%,$(abs_cs_subdirs))
-
-abs_top_path :=
-abs_cs_subdirs :=
-endif
-else
-cs_subdirs := .
-endif
 subdir_cleanspecs := \
-    $(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git $(cs_subdirs) CleanSpec.mk)
+    $(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git . CleanSpec.mk)
 include $(subdir_cleanspecs)
-cs_subdirs :=
 subdir_cleanspecs :=

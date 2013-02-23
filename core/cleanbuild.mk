@@ -13,6 +13,9 @@
 # limitations under the License.
 #
 
+# Don't bother with the cleanspecs if you are running mm/mmm
+ifndef ONE_SHOT_MAKEFILE
+
 INTERNAL_CLEAN_STEPS :=
 
 # Builds up a list of clean steps.  Creates a unique
@@ -78,18 +81,13 @@ else
     $(info Clean step: $(INTERNAL_CLEAN_STEP.$(step))) \
     $(shell $(INTERNAL_CLEAN_STEP.$(step))) \
    )
-  # If we are running mm/mmm, we should copy over the other clean steps too.
-  ifneq ($(ONE_SHOT_MAKEFILE),)
-    INTERNAL_CLEAN_STEPS := $(strip $(CURRENT_CLEAN_STEPS) $(steps))
-  endif
   steps :=
 endif
 CURRENT_CLEAN_BUILD_VERSION :=
 CURRENT_CLEAN_STEPS :=
 
 # Write the new state to the file.
-# Don't write the file if we are running mm/mmm but without a preexisting clean_steps_file.
-ifneq (,$(wildcard $(clean_steps_file))$(filter ||,|$(ONE_SHOT_MAKEFILE)|))
+#
 $(shell \
   mkdir -p $(dir $(clean_steps_file)) && \
   echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
@@ -97,12 +95,12 @@ $(shell \
   echo "CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)" >> \
       $(clean_steps_file) \
  )
-endif
 
 clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
 
+endif  # ifndef ONE_SHOT_MAKEFILE
 
 # Since products and build variants (unfortunately) share the same
 # PRODUCT_OUT staging directory, things can get out of sync if different
