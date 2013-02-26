@@ -39,9 +39,6 @@ else
   prebuilt_module_is_a_library :=
 endif
 
-# Install the shared libraries if necessary
-LOCAL_REQUIRED_MODULES += $(LOCAL_SHARED_LIBRARIES)
-
 # Don't install static libraries by default.
 ifndef LOCAL_UNINSTALLABLE_MODULE
 ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
@@ -61,7 +58,7 @@ ifeq ($(LOCAL_STRIP_MODULE),true)
   endif
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
-else
+else  # LOCAL_STRIP_MODULE not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
 
@@ -81,7 +78,16 @@ endif
 
 $(LOCAL_BUILT_MODULE) : | $(intermediates)/export_includes
 endif  # prebuilt_module_is_a_library
+
+# The real dependency will be added after all Android.mks are loaded and the install paths
+# of the shared libraries are determined.
+ifdef LOCAL_INSTALLED_MODULE
+ifdef LOCAL_SHARED_LIBRARIES
+$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
 endif
+endif
+
+endif  # LOCAL_STRIP_MODULE not true
 
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
