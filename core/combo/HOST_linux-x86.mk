@@ -40,7 +40,8 @@ ifneq ($(strip $(BUILD_HOST_64bit)),)
 HOST_GLOBAL_CFLAGS += -m64
 HOST_GLOBAL_LDFLAGS += -m64
 else
-HOST_GLOBAL_CFLAGS += -m32
+# We expect SSE3 floating point math.
+HOST_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32
 HOST_GLOBAL_LDFLAGS += -m32
 endif # BUILD_HOST_64bit
 
