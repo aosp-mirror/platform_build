@@ -9,12 +9,35 @@ var isMobile = false; // true if mobile, so we can adjust some layout
 
 var basePath = getBaseUri(location.pathname);
 var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
+var GOOGLE_DATA; // combined data for google service apis, used for search suggest
   
 
 /******  ON LOAD SET UP STUFF *********/
 
 var navBarIsFixed = false;
 $(document).ready(function() {
+
+  // load json file for Android API search suggestions
+  $.getScript(toRoot + 'reference/lists.js');
+  // load json files for Google services API suggestions
+  $.getScript(toRoot + 'reference/gcm-lists.js', function(data, textStatus, jqxhr) {
+      // once the GCM json (GCM_DATA) is loaded, load the GMS json (GMS_DATA) and merge the data
+      if(jqxhr.status === 200) {
+          $.getScript(toRoot + 'reference/gms-lists.js', function(data, textStatus, jqxhr) {
+              if(jqxhr.status === 200) {
+                  // combine GCM and GMS data
+                  GOOGLE_DATA = GMS_DATA;
+                  var start = GOOGLE_DATA.length;
+                  for (var i=0; i<GCM_DATA.length; i++) {
+                      GOOGLE_DATA.push({id:start+i, label:GCM_DATA[i].label,
+                              link:GCM_DATA[i].link, type:GCM_DATA[i].type});
+                  }
+              }
+          });
+      }
+  });
+
+  // layout hosted on devsite is special
   if (devsite) {
     // move the lang selector into the overflow menu
     $("#moremenu .mid div.header:last").after($("#language").detach());
@@ -50,7 +73,7 @@ $(document).ready(function() {
     hideResults();  // see search_autocomplete.js
   });
   $('.search').click(function() {
-    if (!$('#search_autocomplete').is(":focused")) {
+    if (!$('#search_autocomplete').is(":focus")) {
         $('#search_autocomplete').focus();
     }
   });
@@ -560,6 +583,7 @@ false; // navigate across topic boundaries only in design docs
   }
 
 });
+// END of the onload event
 
 
 
@@ -628,16 +652,6 @@ if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod
     (agent.indexOf("mini") != -1)) {        // opera mini browsers
   isMobile = true;
 }
-
-
-/* loads the lists.js file to the page.
-Loading this in the head was slowing page load time */
-addLoadEvent( function() {
-  var lists = document.createElement("script");
-  lists.setAttribute("type","text/javascript");
-  lists.setAttribute("src", toRoot+"reference/lists.js");
-  document.getElementsByTagName("head")[0].appendChild(lists);
-} );
 
 
 addLoadEvent( function() {
@@ -1482,12 +1496,18 @@ function hideExpandable(ids) {
 /* ######################################################## */
 
 
+
 var gSelectedIndex = -1;
-var gSelectedID = -1;
 var gMatches = new Array();
 var gLastText = "";
-var ROW_COUNT = 20;
 var gInitialized = false;
+var ROW_COUNT_FRAMEWORK = 20;       // max number of results in list
+var gListLength = 0;
+
+
+var gGoogleMatches = new Array();
+var ROW_COUNT_GOOGLE = 15;          // max number of results in list
+var gGoogleListLength = 0;
 
 function set_item_selected($li, selected)
 {
@@ -1505,59 +1525,66 @@ function set_item_values(toroot, $li, match)
     $link.attr('href',toroot + match.link);
 }
 
+function new_suggestion() {
+    var $list = $("#search_filtered");
+    var $li = $("<li class='jd-autocomplete'></li>");
+    $list.append($li);
+
+    $li.mousedown(function() {
+        window.location = this.firstChild.getAttribute("href");
+    });
+    $li.mouseover(function() {
+        $('#search_filtered li').removeClass('jd-selected');
+        $(this).addClass('jd-selected');
+        gSelectedIndex = $('#search_filtered li').index(this);
+    });
+    $li.append('<a></a>');
+    $li.attr('class','show-item');
+    return $li;
+}
+
 function sync_selection_table(toroot)
 {
     var $list = $("#search_filtered");
     var $li; //list item jquery object
     var i; //list item iterator
-    gSelectedID = -1;
-    
-    //initialize the table; draw it for the first time (but not visible).
-    if (!gInitialized) {
-        for (i=0; i<ROW_COUNT; i++) {
-            var $li = $("<li class='jd-autocomplete'></li>");
-            $list.append($li);
-            
-            $li.mousedown(function() {
-                window.location = this.firstChild.getAttribute("href");
-            });
-            $li.mouseover(function() {
-                $('#search_filtered li').removeClass('jd-selected');
-                $(this).addClass('jd-selected');
-                gSelectedIndex = $('#search_filtered li').index(this);
-            });
-            $li.append('<a></a>');
-        }
-        gInitialized = true;
-    }
   
+    // reset the list
+    $("li",$list).remove();
+
     //if we have results, make the table visible and initialize result info
-    if (gMatches.length > 0) {
+    if ((gMatches.length > 0) || (gGoogleMatches.length > 0)) {
+        // reveal suggestion list
         $('#search_filtered_div').removeClass('no-display');
-        var N = gMatches.length < ROW_COUNT ? gMatches.length : ROW_COUNT;
-        for (i=0; i<N; i++) {
-            $li = $('#search_filtered li:nth-child('+(i+1)+')');
-            $li.attr('class','show-item');
-            set_item_values(toroot, $li, gMatches[i]);
-            set_item_selected($li, i == gSelectedIndex);
-            if (i == gSelectedIndex) {
-                gSelectedID = gMatches[i].id;
+        var listIndex = 0; // list index position
+
+        // ########### ANDROID RESULTS #############
+        if (gMatches.length > 0) {
+
+            // determine android results to show
+            gListLength = gMatches.length < ROW_COUNT_FRAMEWORK ?
+                          gMatches.length : ROW_COUNT_FRAMEWORK;
+            for (i=0; i<gListLength; i++) {
+                var $li = new_suggestion();
+                set_item_values(toroot, $li, gMatches[i]);
+                set_item_selected($li, i == gSelectedIndex);
             }
         }
-        //start hiding rows that are no longer matches
-        for (; i<ROW_COUNT; i++) {
-            $li = $('#search_filtered li:nth-child('+(i+1)+')');
-            $li.attr('class','no-display');
+
+        // ########### GOOGLE RESULTS #############
+        if (gGoogleMatches.length > 0) {
+            // show header for list
+            $list.append("<li class='header'>in Google Services:</li>");
+
+            // determine google results to show
+            gGoogleListLength = gGoogleMatches.length < ROW_COUNT_GOOGLE ? gGoogleMatches.length : ROW_COUNT_GOOGLE;
+            for (i=0; i<gGoogleListLength; i++) {
+                var $li = new_suggestion();
+                set_item_values(toroot, $li, gGoogleMatches[i]);
+                set_item_selected($li, i == gSelectedIndex);
+            }
         }
-        //if there are more results we're not showing, so say so.
-/*      if (gMatches.length > ROW_COUNT) {
-            li = list.rows[ROW_COUNT];
-            li.className = "show-item";
-            c1 = li.cells[0];
-            c1.innerHTML = "plus " + (gMatches.length-ROW_COUNT) + " more"; 
-        } else {
-            list.rows[ROW_COUNT].className = "hide-item";
-        }*/
+
     //if we have no results, hide the table
     } else {
         $('#search_filtered_div').addClass('no-display');
@@ -1580,8 +1607,8 @@ function search_changed(e, kd, toroot)
     if (e.keyCode == 13) {
         $('#search_filtered_div').addClass('no-display');
         if (!$('#search_filtered_div').hasClass('no-display') || (gSelectedIndex < 0)) {
-            if ($("#searchResults").is(":hidden")) {
-              // if results aren't showing, return true to allow search to execute
+            if ($("#searchResults").is(":hidden") && (search.value != "")) {
+              // if results aren't showing (and text not empty), return true to allow search to execute
               return true;
             } else {
               // otherwise, results are already showing, so allow ajax to auto refresh the results
@@ -1589,33 +1616,49 @@ function search_changed(e, kd, toroot)
               return false;
             }
         } else if (kd && gSelectedIndex >= 0) {
-            window.location = toroot + gMatches[gSelectedIndex].link;
+            window.location = $("a",$('#search_filtered li')[gSelectedIndex]).attr("href");
             return false;
         }
     }
     // 38 -- arrow up
     else if (kd && (e.keyCode == 38)) {
-        if (gSelectedIndex >= 0) {
-            $('#search_filtered li').removeClass('jd-selected');
+        if ($($("#search_filtered li")[gSelectedIndex-1]).hasClass("header")) {
+            $('#search_filtered_div li').removeClass('jd-selected');
             gSelectedIndex--;
-            $('#search_filtered li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+        }
+        if (gSelectedIndex >= 0) {
+            $('#search_filtered_div li').removeClass('jd-selected');
+            gSelectedIndex--;
+            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
         }
         return false;
     }
     // 40 -- arrow down
     else if (kd && (e.keyCode == 40)) {
-        if (gSelectedIndex < gMatches.length-1
-                        && gSelectedIndex < ROW_COUNT-1) {
-            $('#search_filtered li').removeClass('jd-selected');
+        if ($($("#search_filtered li")[gSelectedIndex+1]).hasClass("header")) {
+            $('#search_filtered_div li').removeClass('jd-selected');
             gSelectedIndex++;
-            $('#search_filtered li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+        }
+        if ((gSelectedIndex < $("ul#search_filtered li").length-1) ||
+                        ($($("#search_filtered li")[gSelectedIndex+1]).hasClass("header"))) {
+            $('#search_filtered_div li').removeClass('jd-selected');
+            gSelectedIndex++;
+            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
         }
         return false;
     }
+    // if key-up event and not arrow down/up,
+    // read the search query and add suggestsions to gMatches
     else if (!kd && (e.keyCode != 40) && (e.keyCode != 38)) {
         gMatches = new Array();
         matchedCount = 0;
+        gGoogleMatches = new Array();
+        matchedCountGoogle = 0;
         gSelectedIndex = -1;
+
+        // Search for Android matches
         for (var i=0; i<DATA.length; i++) {
             var s = DATA[i];
             if (text.length != 0 &&
@@ -1624,22 +1667,38 @@ function search_changed(e, kd, toroot)
                 matchedCount++;
             }
         }
-        rank_autocomplete_results(text);
+        rank_autocomplete_results(text, gMatches);
         for (var i=0; i<gMatches.length; i++) {
             var s = gMatches[i];
-            if (gSelectedID == s.id) {
-                gSelectedIndex = i;
+        }
+
+
+        // Search for Google matches
+        for (var i=0; i<GOOGLE_DATA.length; i++) {
+            var s = GOOGLE_DATA[i];
+            if (text.length != 0 &&
+                  s.label.toLowerCase().indexOf(text.toLowerCase()) != -1) {
+                gGoogleMatches[matchedCountGoogle] = s;
+                matchedCountGoogle++;
             }
         }
+        rank_autocomplete_results(text, gGoogleMatches);
+        for (var i=0; i<gGoogleMatches.length; i++) {
+            var s = gGoogleMatches[i];
+        }
+
         highlight_autocomplete_result_labels(text);
         sync_selection_table(toroot);
+
+
         return true; // allow the event to bubble up to the search api
     }
 }
 
-function rank_autocomplete_results(query) {
+/* Order the result list based on match quality */
+function rank_autocomplete_results(query, matches) {
     query = query || '';
-    if (!gMatches || !gMatches.length)
+    if (!matches || !matches.length)
       return;
 
     // helper function that gets the last occurence index of the given regex
@@ -1695,11 +1754,11 @@ function rank_autocomplete_results(query) {
         return score;
     };
 
-    for (var i=0; i<gMatches.length; i++) {
-        gMatches[i].__resultScore = _resultScoreFn(gMatches[i]);
+    for (var i=0; i<matches.length; i++) {
+        matches[i].__resultScore = _resultScoreFn(matches[i]);
     }
 
-    gMatches.sort(function(a,b){
+    matches.sort(function(a,b){
         var n = b.__resultScore - a.__resultScore;
         if (n == 0) // lexicographical sort if scores are the same
             n = (a.label < b.label) ? -1 : 1;
@@ -1707,9 +1766,10 @@ function rank_autocomplete_results(query) {
     });
 }
 
+/* Add emphasis to part of string that matches query */
 function highlight_autocomplete_result_labels(query) {
     query = query || '';
-    if (!gMatches || !gMatches.length)
+    if ((!gMatches || !gMatches.length) && (!gGoogleMatches || !gGoogleMatches.length))
       return;
 
     var queryLower = query.toLowerCase();
@@ -1718,6 +1778,10 @@ function highlight_autocomplete_result_labels(query) {
         '(' + queryAlnumDot.replace(/\./g, '\\.') + ')', 'ig');
     for (var i=0; i<gMatches.length; i++) {
         gMatches[i].__hilabel = gMatches[i].label.replace(
+            queryRE, '<b>$1</b>');
+    }
+    for (var i=0; i<gGoogleMatches.length; i++) {
+        gGoogleMatches[i].__hilabel = gGoogleMatches[i].label.replace(
             queryRE, '<b>$1</b>');
     }
 }
