@@ -20,10 +20,10 @@ $(document).ready(function() {
   // load json file for Android API search suggestions
   $.getScript(toRoot + 'reference/lists.js');
   // load json files for Google services API suggestions
-  $.getScript(toRoot + 'reference/gcm-lists.js', function(data, textStatus, jqxhr) {
+  $.getScript(toRoot + 'reference/gcm_lists.js', function(data, textStatus, jqxhr) {
       // once the GCM json (GCM_DATA) is loaded, load the GMS json (GMS_DATA) and merge the data
       if(jqxhr.status === 200) {
-          $.getScript(toRoot + 'reference/gms-lists.js', function(data, textStatus, jqxhr) {
+          $.getScript(toRoot + 'reference/gms_lists.js', function(data, textStatus, jqxhr) {
               if(jqxhr.status === 200) {
                   // combine GCM and GMS data
                   GOOGLE_DATA = GMS_DATA;
