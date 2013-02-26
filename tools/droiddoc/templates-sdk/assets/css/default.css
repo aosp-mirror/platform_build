@@ -3184,18 +3184,6 @@ ul#search_filtered {
   padding: 0;
 }
 
-
-#search_filtered li{
-  line-height:1.5em;
-  margin: 0 0 2px;
-  padding: 0;
-}
-
-#search_filtered li a {
-  padding:0 5px;
-  color:#222 !important;
-}
-
 #search_filtered .jd-selected {
   background-color: #33B5E5;
   cursor:pointer;
@@ -3209,15 +3197,31 @@ ul#search_filtered {
   display: none;
 }
 
-.jd-autocomplete {
-  padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 1px;
-  padding-bottom: 1px;
+#search_filtered li.jd-autocomplete {
   font-size: 0.81em;
   border: none;
-  margin: 0;
-  line-height: 1.05em;
+  margin: 0 0 2px;
+  padding: 0;
+  line-height:1.5em;
+}
+
+#search_filtered li a {
+  padding:0 5px;
+  color:#222 !important;
+}
+
+#search_filtered li.header {
+  color:#aaa;
+  font-weight:bold;
+  font-size: 0.81em;
+  border: none;
+  margin: 8px 0 2px;
+  padding:1px 5px;
+  line-height:1.5em;
+}
+
+#search_filtered li.header:first-child {
+  margin: 0 0 2px;
 }
 
 .show-item {
