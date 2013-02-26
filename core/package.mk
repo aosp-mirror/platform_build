@@ -410,15 +410,17 @@ ifneq ($(extra_jar_args),)
 	$(add-java-resources-to-package)
 endif
 	$(sign-package)
-	@# Alignment must happen after all other zip operations.
-	$(align-package)
 ifdef LOCAL_DEX_PREOPT
 	$(hide) rm -f $(patsubst %.apk,%.odex,$@)
 	$(call dexpreopt-one-file,$@,$(patsubst %.apk,%.odex,$@))
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
+endif
+	@# Alignment must happen after all other zip operations.
+	$(align-package)
 
+ifdef LOCAL_DEX_PREOPT
 built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
 $(built_odex): $(LOCAL_BUILT_MODULE)
 endif
