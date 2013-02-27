@@ -538,7 +538,7 @@ endef
 # $(1): library name
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-full-dep
-$(call _java-lib-dir,$(1),$(2))/$(if $(2) javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX)
+$(call _java-lib-dir,$(1),$(2))/$(if $(2),javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX)
 endef
 
 # $(1): library name list
