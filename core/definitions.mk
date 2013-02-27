@@ -823,7 +823,7 @@ $(hide) touch $@
 endef
 
 define transform-bc-to-so
-@echo "Renderscript compatibility"
+@echo "Renderscript compatibility: $(notdir $@) <= $(notdir $<)"
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
 	-rt-path $(PRIVATE_LIBCLCORE) $<
