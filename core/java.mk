@@ -280,7 +280,6 @@ endif
 ifneq (,$(strip $(installed_rs_compatibility_jni_libs)))
 $(installed_rs_compatibility_jni_libs) : $(TARGET_OUT_SHARED_LIBRARIES)/lib%.so : \
     $(renderscript_intermediate)/lib%.so
-	@echo "Install RS compatibility library: $@"
 	$(hide) mkdir -p $(dir $@) && cp -f $< $@
 
 # Install them only if the current module is installed.
