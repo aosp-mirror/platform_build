@@ -146,15 +146,12 @@ def:google_nav() ?>
         
 
       </div>
-      <script type="text/javascript">
-       showGoogleRefTree();
-    
-      </script>
     </div> <!-- end side-nav -->
-    <script>
+    <script type="text/javascript">
       $(document).ready(function() {
+        showGoogleRefTree();
         scrollIntoView("devdoc-nav");
-        });
+      });
     </script>
 <?cs /def ?>
 
