@@ -31,6 +31,7 @@ PRODUCT_PACKAGES := \
     FusedLocation \
     Gallery2 \
     InputDevices \
+    Keyguard \
     LatinIME \
     Launcher2 \
     Music \
