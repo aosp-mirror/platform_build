@@ -84,6 +84,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
+	device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
 	device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
 	system/core/rootdir/etc/vold.fstab:system/etc/vold.fstab \
 	frameworks/base/data/sounds/effects/camera_click.ogg:system/media/audio/ui/camera_click.ogg \
