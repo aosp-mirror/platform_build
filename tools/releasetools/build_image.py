@@ -77,7 +77,7 @@ def BuildImage(in_dir, prop_dict, out_file):
   if exit_code != 0:
     return False
 
-  if run_fsck:
+  if run_fsck and prop_dict.get("skip_fsck") != "true":
     # Inflate the sparse image
     unsparse_image = os.path.join(
         os.path.dirname(out_file), "unsparse_" + os.path.basename(out_file))
@@ -113,6 +113,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "extfs_sparse_flag",
       "mkyaffs2_extra_flags",
       "selinux_fc",
+      "skip_fsck",
       )
   for p in common_props:
     copy_prop(p, p)
