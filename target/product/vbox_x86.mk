@@ -25,6 +25,12 @@ endif
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/vbox_x86/device.mk)
 
+PRODUCT_PACKAGES += \
+       camera.vbox_x86 \
+       lights.vbox_x86 \
+       gps.vbox_x86 \
+       sensors.vbox_x86
+
 PRODUCT_NAME := vbox_x86
 PRODUCT_DEVICE := vbox_x86
 PRODUCT_MODEL := Full Android on x86 VirtualBox
