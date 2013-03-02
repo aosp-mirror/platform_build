@@ -779,9 +779,6 @@ droidcore: files \
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
-# Dist for droid if droid is among the cmd goals, or no cmd goal is given.
-ifneq ($(filter droid,$(MAKECMDGOALS))$(filter ||,|$(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))|),)
-
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
 
@@ -840,9 +837,6 @@ else # TARGET_BUILD_APPS
 droid: droidcore dist_files
 
 endif # TARGET_BUILD_APPS
-endif # droid in $(MAKECMDGOALS)
-
-.PHONY: droid
 
 .PHONY: docs
 docs: $(ALL_DOCS)
@@ -850,13 +844,11 @@ docs: $(ALL_DOCS)
 .PHONY: sdk
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
-ifneq ($(filter sdk win_sdk,$(MAKECMDGOALS)),)
 $(call dist-for-goals,sdk win_sdk, \
     $(ALL_SDK_TARGETS) \
     $(SYMBOLS_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
-endif
 
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
