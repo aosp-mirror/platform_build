@@ -826,13 +826,13 @@ define transform-bc-to-so
 @echo "Renderscript compatibility: $(notdir $@) <= $(notdir $<)"
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
-	-rt-path $(PRIVATE_LIBCLCORE) $<
+	-rt-path $(RS_PREBUILT_CLCORE) -mtriple $(RS_TRIPLE) $<
 $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	$(dir $@)/$(notdir $(<:.bc=.o)) \
-	$(PRIVATE_COMPILER_RT) \
+	$(RS_PREBUILT_COMPILER_RT) \
 	-o $@ -L prebuilts/gcc/ \
-	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) $(PRIVATE_LIBPATH) \
+	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) $(RS_PREBUILT_LIBPATH) \
 	-lRSSupport -lm
 endef
 

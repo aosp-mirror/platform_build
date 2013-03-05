@@ -20,6 +20,7 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops
 
 ifeq ($(TARGET_ARCH),arm)
+  RS_TRIPLE := armv7-unknown-linux
   CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target arm-linux-androideabi \
     -nostdlibinc \
@@ -41,6 +42,7 @@ ifeq ($(TARGET_ARCH),arm)
     -Wa,--noexecstack
 endif
 ifeq ($(TARGET_ARCH),mips)
+  RS_TRIPLE := mips-unknown-linux
   CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target mipsel-linux-androideabi \
     -nostdlibinc \
@@ -65,6 +67,7 @@ ifeq ($(TARGET_ARCH),mips)
     -msynci
 endif
 ifeq ($(TARGET_ARCH),x86)
+  RS_TRIPLE := i686-unknown-linux
   CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target i686-linux-android \
     -nostdlibinc \

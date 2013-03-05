@@ -196,10 +196,6 @@ $(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
 $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
 	$(transform-renderscripts-to-java-and-bc)
 
-# Now LOCAL_RENDERSCRIPT_COMPATIBILITY only supports arm
-ifneq ($(TARGET_ARCH),arm)
-LOCAL_RENDERSCRIPT_COMPATIBILITY :=
-endif
 ifneq ($(LOCAL_RENDERSCRIPT_COMPATIBILITY),)
 bc_files := $(patsubst %.fs,%.bc, $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources))))
 rs_generated_bc := $(addprefix \
@@ -212,26 +208,14 @@ rs_compatibility_jni_libs := $(addprefix \
 
 $(rs_generated_bc) : $(RenderScript_file_stamp)
 
-ifeq (,$(TARGET_BUILD_APPS))
-rs_built_clcore := $(PRODUCT_OUT)/obj/SHARED_LIBRARIES/libclcore.bc_intermediates/libclcore.bc
-rs_extra_libpath :=
-rs_compiler_rt := $(call intermediates-dir-for,STATIC_LIBRARIES,libcompiler_rt)/libcompiler_rt.a
-else
-rs_built_clcore := prebuilts/sdk/renderscript/lib/libclcore.bc
-rs_extra_libpath := -L prebuilts/ndk/8/platforms/android-9/arch-arm/usr/lib
-rs_compiler_rt := prebuilts/sdk/renderscript/lib/libcompiler_rt.a
-endif # TARGET_BUILD_APPS
 rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
 rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
 LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
 
-$(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(rs_built_clcore) \
+$(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): | $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
-$(rs_compatibility_jni_libs): PRIVATE_LIBCLCORE := $(rs_built_clcore)
-$(rs_compatibility_jni_libs): PRIVATE_COMPILER_RT := $(rs_compiler_rt)
-$(rs_compatibility_jni_libs): PRIVATE_LIBPATH := $(rs_extra_libpath)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate.COMMON)/res/raw/%.bc
 	$(transform-bc-to-so)
