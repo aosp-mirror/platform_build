@@ -36,4 +36,8 @@ PRODUCT_PACKAGES += \
 	lib64EGL_translator
 
 PRODUCT_COPY_FILES += \
-    device/generic/goldfish/fstab.goldfish:root/fstab.goldfish
+    device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
+    device/generic/goldfish/init.goldfish.rc:root/init.goldfish.rc \
+    device/generic/goldfish/init.goldfish.sh:system/etc/init.goldfish.sh \
+    device/generic/goldfish/ueventd.goldfish.rc:root/ueventd.goldfish.rc
+
