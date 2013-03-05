@@ -22,6 +22,8 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_mips/device.mk)
 
+include $(SRC_TARGET_DIR)/product/emulator.mk
+
 # Overrides
 PRODUCT_NAME := full_mips
 PRODUCT_DEVICE := generic_mips
