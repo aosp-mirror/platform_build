@@ -500,6 +500,12 @@ endif
 gen_asm_objects := $(gen_S_objects) $(gen_s_objects)
 
 ###########################################################
+## o: Include generated .o files in output.
+###########################################################
+
+gen_o_objects := $(filter %.o,$(LOCAL_GENERATED_SOURCES))
+
+###########################################################
 ## C: Compile .c files to .o.
 ###########################################################
 
@@ -624,7 +630,8 @@ all_objects := \
     $(yacc_objects) \
     $(lex_objects) \
     $(proto_generated_objects) \
-    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
+    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES)) \
+    $(gen_o_objects)
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates)
 
@@ -632,7 +639,9 @@ ifndef LOCAL_SDK_VERSION
   LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 endif
 
-$(all_objects) : | $(LOCAL_GENERATED_SOURCES) $(import_includes)
+# .o files need to be filtered out of LOCAL_GENERATED_SOURCES
+# to avoid creating circular dependencies.
+$(all_objects) : | $(filter-out %.o,$(LOCAL_GENERATED_SOURCES)) $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 ###########################################################
