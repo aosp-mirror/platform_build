@@ -34,3 +34,6 @@ PRODUCT_PACKAGES += \
 	lib64GLES_CM_translator \
 	lib64GLES_V2_translator \
 	lib64EGL_translator
+
+PRODUCT_COPY_FILES += \
+    device/generic/goldfish/fstab.goldfish:root/fstab.goldfish
