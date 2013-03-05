@@ -68,8 +68,6 @@ PRODUCT_PACKAGES := \
 	rild \
 	LegacyCamera
 
-include $(SRC_TARGET_DIR)/product/emulator.mk
-
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk
 -include development/build/product_sdk.mk
@@ -83,7 +81,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
-	device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
 	device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
 	system/core/rootdir/etc/vold.fstab:system/etc/vold.fstab \
 	frameworks/base/data/sounds/effects/camera_click.ogg:system/media/audio/ui/camera_click.ogg \
@@ -95,6 +92,8 @@ PRODUCT_COPY_FILES := \
 	frameworks/native/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml \
 	frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf \
 	hardware/libhardware_legacy/audio/audio_policy.conf:system/etc/audio_policy.conf
+
+include $(SRC_TARGET_DIR)/product/emulator.mk
 
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
