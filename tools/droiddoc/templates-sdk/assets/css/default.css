@@ -1089,13 +1089,18 @@ li {
 dd {
   margin:0 0 10px 30px;
 }
-dd p {
+dd p,
+dd pre,
+dd ul,
+dd ol,
+dd dl {
   margin:10px 0 0;
 }
 li p,
 li pre,
 li ul,
-li ol {
+li ol,
+li dl {
   margin-top:5px;
   margin-bottom:5px;
 }
@@ -1104,11 +1109,11 @@ pre strong, pre b, a strong, a b, a code {
 }
 pre, code {
     color: #060;
-    font: 14px/1.5 'courier new', courier, monospace;
+    font: 13px/1.5 monospace;
 }
 code {
     font-weight:bold;
-    font: 14px/14px 'courier new', courier, monospace;
+    font: 13px/14px monospace;
 }
 
 legend {
@@ -2473,7 +2478,7 @@ p.table-caption {
 
 p.code-caption {
   margin: 0 0 4px 0;
-  font: 13px/1.5 'courier new', courier, monospace;
+  font: 12px/1.5 monospace;
   color:#666;
 }
 
