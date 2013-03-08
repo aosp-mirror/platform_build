@@ -34,6 +34,24 @@
       "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "RRDLzGC4",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1005480
+      },
+      "writtenOn": "2013-03-08T18:28:38Z",
+      "side": 1,
+      "message": "Assume that there are 2000 different clients: your method fails to scale, and is unusable for the 1998 more obscure clients.\n\nThe solution I\u0027m suggesting allows the 1998 other clients to benefit from only changing one function in their env after envsetup.sh.",
+      "parentUuid": "PhESY4h8",
+      "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
