@@ -34,3 +34,25 @@ PRODUCT_PACKAGES += \
 	lib64GLES_CM_translator \
 	lib64GLES_V2_translator \
 	lib64EGL_translator
+
+PRODUCT_PACKAGES += \
+    egl.cfg \
+    gles_emul.cfg \
+    libGLESv1_CM_emul \
+    libGLESv2_emul \
+    libEGL_emul \
+    libut_rendercontrol_enc \
+    gralloc.goldfish \
+    libGLESv1_CM_emulation \
+    lib_renderControl_enc \
+    libEGL_emulation \
+    libGLESv2_enc \
+    libOpenglSystemCommon \
+    libGLESv2_emulation \
+    libGLESv1_enc \
+    qemu-props \
+    qemud \
+    camera.goldfish \
+    lights.goldfish \
+    gps.goldfish \
+    sensors.goldfish
