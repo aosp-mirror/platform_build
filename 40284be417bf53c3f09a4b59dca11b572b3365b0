@@ -52,6 +52,24 @@
       "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "RTHYPUKk",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1005146
+      },
+      "writtenOn": "2013-03-08T19:07:00Z",
+      "side": 1,
+      "message": "Understood and agreed.  The patch set 2 that I pushed this morning solves the scaling issue, but leaves in shortcuts for the most common debuggers (gdb and ddd).  I\u0027m not sure it will work with the command line interfaces of the more obscure tools, so I\u0027ll try a few and tweak the patch if necessary.",
+      "parentUuid": "RRDLzGC4",
+      "revId": "40284be417bf53c3f09a4b59dca11b572b3365b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
