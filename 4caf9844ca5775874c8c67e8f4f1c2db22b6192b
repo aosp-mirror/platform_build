@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "RTJYFzIg",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1005146
+      },
+      "writtenOn": "2013-03-08T19:17:44Z",
+      "side": 1,
+      "message": "Wish I could leave a shortcut in, but will conform.",
+      "parentUuid": "RRNKdlKk",
+      "revId": "4caf9844ca5775874c8c67e8f4f1c2db22b6192b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "RWkgW-1c",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2013-03-08T18:57:01Z",
       "side": 1,
       "message": "GDB_WRAPPER is a bit generic. Prefix...\n\n  $ANDROID_GDB_WRAPPER -x ...",
+      "revId": "4caf9844ca5775874c8c67e8f4f1c2db22b6192b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "RTLYIyJ4",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 809,
+      "author": {
+        "id": 1005146
+      },
+      "writtenOn": "2013-03-08T19:17:44Z",
+      "side": 1,
+      "message": "Agreed.",
+      "parentUuid": "RWsghT60",
       "revId": "4caf9844ca5775874c8c67e8f4f1c2db22b6192b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
