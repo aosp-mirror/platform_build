@@ -1236,6 +1236,19 @@ function set_java_home() {
     fi
 }
 
+# Print colored exit condition
+function pez {
+	$@
+        retval=$?
+	if [ $retval -ne 0 ]
+	then
+		echo -e "\e[0;31mFAILURE\e[00m"
+	else
+		echo -e "\e[0;32mSUCCESS\e[00m"
+	fi
+        return $retval
+}
+
 if [ "x$SHELL" != "x/bin/bash" ]; then
     case `ps -o command -p $$` in
         *bash*)
