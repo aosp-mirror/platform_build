@@ -37,11 +37,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     egl.cfg \
-    gles_emul.cfg \
-    libGLESv1_CM_emul \
-    libGLESv2_emul \
-    libEGL_emul \
-    libut_rendercontrol_enc \
     gralloc.goldfish \
     libGLESv1_CM_emulation \
     lib_renderControl_enc \
