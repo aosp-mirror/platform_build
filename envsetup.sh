@@ -737,7 +737,40 @@ function pid()
 # to the usual ANR traces file
 function systemstack()
 {
-    adb shell echo '""' '>>' /data/anr/traces.txt && adb shell chmod 776 /data/anr/traces.txt && adb shell kill -3 $(pid system_server)
+    stacks system_server
+}
+
+function stacks()
+{
+    if [[ $1 =~ ^[0-9]+$ ]] ; then
+        local PID="$1"
+    elif [ "$1" ] ; then
+        local PID=$(pid $1)
+    else
+        echo "usage: stacks [pid|process name]"
+    fi
+
+    if [ "$PID" ] ; then
+        local TRACES=/data/anr/traces.txt
+        local ORIG=/data/anr/traces.orig
+        local TMP=/data/anr/traces.tmp
+
+        # Keep original traces to avoid clobbering
+        adb shell mv $TRACES $ORIG
+
+        # Make sure we have a usable file
+        adb shell touch $TRACES
+        adb shell chmod 666 $TRACES
+
+        # Dump stacks and wait for dump to finish
+        adb shell kill -3 $PID
+        adb shell notify $TRACES
+
+        # Restore original stacks, and show current output
+        adb shell mv $TRACES $TMP
+        adb shell mv $ORIG $TRACES
+        adb shell cat $TMP | less -S
+    fi
 }
 
 function gdbclient()
@@ -837,6 +870,11 @@ function cgrep()
 function resgrep()
 {
     for dir in `find . -name .repo -prune -o -name .git -prune -o -name res -type d`; do find $dir -type f -name '*\.xml' -print0 | xargs -0 grep --color -n "$@"; done;
+}
+
+function mangrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'AndroidManifest.xml' -print0 | xargs -0 grep --color -n "$@"
 }
 
 case `uname -s` in
