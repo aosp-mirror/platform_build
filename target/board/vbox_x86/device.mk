@@ -29,8 +29,8 @@ LOCAL_KERNEL := prebuilts/qemu-kernel/x86/kernel-vbox
 PRODUCT_COPY_FILES := \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
     device/generic/goldfish/data/etc/vold.conf:system/etc/vold.conf \
-    development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml \
-    development/tools/emulator/system/camera/media_codecs.xml:system/etc/media_codecs.xml \
+    device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
+    device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml \
     system/core/rootdir/init.rc:root/init.rc \
     build/target/board/vbox_x86/init.vbox_x86.rc:root/init.vbox_x86.rc \
     $(LOCAL_KERNEL):kernel
