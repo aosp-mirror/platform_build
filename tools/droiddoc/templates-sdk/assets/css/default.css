@@ -3969,7 +3969,7 @@ a.download-sdk {
 .jspPane {
   position: absolute;
   overflow: hidden;
-  width:auto !important; /* to avoid cut-off api names in reference in horiz scroll */
+  width:100% !important; /* to avoid cut-off api names in reference in horiz scroll */
 }
 
 .jspVerticalBar {
