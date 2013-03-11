@@ -773,6 +773,11 @@ function stacks()
     fi
 }
 
+function gdbwrapper()
+{
+    $ANDROID_TOOLCHAIN/$GDB -x "$@"
+}
+
 function gdbclient()
 {
    local OUT_ROOT=$(get_abs_build_var PRODUCT_OUT)
@@ -829,7 +834,7 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       $ANDROID_TOOLCHAIN/$GDB -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       gdbwrapper "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
