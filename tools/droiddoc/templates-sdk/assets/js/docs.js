@@ -22,6 +22,8 @@ $.ajaxSetup({
 var navBarIsFixed = false;
 $(document).ready(function() {
 
+  // load json file for JD doc search suggestions
+  $.getScript(toRoot + 'reference/jd_lists.js');
   // load json file for Android API search suggestions
   $.getScript(toRoot + 'reference/lists.js');
   // load json files for Google services API suggestions
@@ -42,11 +44,12 @@ $(document).ready(function() {
       }
   });
 
-  // layout hosted on devsite is special
-  if (devsite) {
-    // move the lang selector into the overflow menu
-    $("#moremenu .mid div.header:last").after($("#language").detach());
-  }
+  // setup keyboard listener for search shortcut
+  $('body').keyup(function(event) {
+    if (event.which == 191) {
+      $('#search_autocomplete').focus();
+    }
+  });
 
   // init the fullscreen toggle click event
   $('#nav-swap .fullscreen').click(function(){
@@ -62,10 +65,6 @@ $(document).ready(function() {
   
   // add HRs below all H2s (except for a few other h2 variants)
   $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').not('h2.norule').css({marginBottom:0}).after('<hr/>');
-  
-  // set search's onkeyup handler here so we can show suggestions 
-  // even while search results are visible
-  $("#search_autocomplete").keyup(function() {return search_changed(event, false, toRoot)});
 
   // set up the search close button
   $('.search .close').click(function() {
@@ -74,13 +73,8 @@ $(document).ready(function() {
     $(this).addClass("hide");
     $("#search-container").removeClass('active');
     $("#search_autocomplete").blur();
-    search_focus_changed($searchInput.get(), false);  // see search_autocomplete.js
-    hideResults();  // see search_autocomplete.js
-  });
-  $('.search').click(function() {
-    if (!$('#search_autocomplete').is(":focus")) {
-        $('#search_autocomplete').focus();
-    }
+    search_focus_changed($searchInput.get(), false);
+    hideResults();
   });
 
   // Set up quicknav
@@ -1517,7 +1511,9 @@ function hideExpandable(ids) {
 
 
 
-var gSelectedIndex = -1;
+var gSelectedIndex = -1;  // the index position of currently highlighted suggestion
+var gSelectedColumn = -1;  // which column of suggestion lists is currently focused
+
 var gMatches = new Array();
 var gLastText = "";
 var gInitialized = false;
@@ -1528,6 +1524,10 @@ var gListLength = 0;
 var gGoogleMatches = new Array();
 var ROW_COUNT_GOOGLE = 15;          // max number of results in list
 var gGoogleListLength = 0;
+
+var gDocsMatches = new Array();
+var ROW_COUNT_DOCS = 100;          // max number of results in list
+var gDocsListLength = 0;
 
 function onSuggestionClick(link) {
   // When user clicks a suggested document, track it
@@ -1551,8 +1551,7 @@ function set_item_values(toroot, $li, match)
     $link.attr('href',toroot + match.link);
 }
 
-function new_suggestion() {
-    var $list = $("#search_filtered");
+function new_suggestion($list) {
     var $li = $("<li class='jd-autocomplete'></li>");
     $list.append($li);
 
@@ -1560,9 +1559,10 @@ function new_suggestion() {
         window.location = this.firstChild.getAttribute("href");
     });
     $li.mouseover(function() {
-        $('#search_filtered li').removeClass('jd-selected');
+        $('.search_filtered_wrapper li').removeClass('jd-selected');
         $(this).addClass('jd-selected');
-        gSelectedIndex = $('#search_filtered li').index(this);
+        gSelectedColumn = $(".search_filtered:visible").index($(this).closest('.search_filtered'));
+        gSelectedIndex = $("li", $(".search_filtered:visible")[gSelectedColumn]).index(this);
     });
     $li.append("<a onclick='onSuggestionClick(this)'></a>");
     $li.attr('class','show-item');
@@ -1571,68 +1571,151 @@ function new_suggestion() {
 
 function sync_selection_table(toroot)
 {
-    var $list = $("#search_filtered");
     var $li; //list item jquery object
     var i; //list item iterator
-  
-    // reset the list
-    $("li",$list).remove();
 
-    //if we have results, make the table visible and initialize result info
+    // if there are NO results at all, hide all columns
+    if (!(gMatches.length > 0) && !(gGoogleMatches.length > 0) && !(gDocsMatches.length > 0)) {
+        $('.suggest-card').hide(300);
+        return;
+    }
+
+    // if there are api results
     if ((gMatches.length > 0) || (gGoogleMatches.length > 0)) {
-        // reveal suggestion list
-        $('#search_filtered_div').removeClass('no-display');
-        var listIndex = 0; // list index position
+      // reveal suggestion list
+      $('.suggest-card.dummy').show();
+      $('.suggest-card.reference').show();
+      var listIndex = 0; // list index position
 
-        // ########### ANDROID RESULTS #############
-        if (gMatches.length > 0) {
+      // reset the lists
+      $(".search_filtered_wrapper.reference li").remove();
 
-            // determine android results to show
-            gListLength = gMatches.length < ROW_COUNT_FRAMEWORK ?
-                          gMatches.length : ROW_COUNT_FRAMEWORK;
-            for (i=0; i<gListLength; i++) {
-                var $li = new_suggestion();
-                set_item_values(toroot, $li, gMatches[i]);
-                set_item_selected($li, i == gSelectedIndex);
-            }
-        }
+      // ########### ANDROID RESULTS #############
+      if (gMatches.length > 0) {
 
-        // ########### GOOGLE RESULTS #############
-        if (gGoogleMatches.length > 0) {
-            // show header for list
-            $list.append("<li class='header'>in Google Services:</li>");
+          // determine android results to show
+          gListLength = gMatches.length < ROW_COUNT_FRAMEWORK ?
+                        gMatches.length : ROW_COUNT_FRAMEWORK;
+          for (i=0; i<gListLength; i++) {
+              var $li = new_suggestion($(".suggest-card.reference ul"));
+              set_item_values(toroot, $li, gMatches[i]);
+              set_item_selected($li, i == gSelectedIndex);
+          }
+      }
 
-            // determine google results to show
-            gGoogleListLength = gGoogleMatches.length < ROW_COUNT_GOOGLE ? gGoogleMatches.length : ROW_COUNT_GOOGLE;
-            for (i=0; i<gGoogleListLength; i++) {
-                var $li = new_suggestion();
-                set_item_values(toroot, $li, gGoogleMatches[i]);
-                set_item_selected($li, i == gSelectedIndex);
-            }
-        }
+      // ########### GOOGLE RESULTS #############
+      if (gGoogleMatches.length > 0) {
+          // show header for list
+          $(".suggest-card.reference ul").append("<li class='header'>in Google Services:</li>");
 
-    //if we have no results, hide the table
+          // determine google results to show
+          gGoogleListLength = gGoogleMatches.length < ROW_COUNT_GOOGLE ? gGoogleMatches.length : ROW_COUNT_GOOGLE;
+          for (i=0; i<gGoogleListLength; i++) {
+              var $li = new_suggestion($(".suggest-card.reference ul"));
+              set_item_values(toroot, $li, gGoogleMatches[i]);
+              set_item_selected($li, i == gSelectedIndex);
+          }
+      }
     } else {
-        $('#search_filtered_div').addClass('no-display');
+      $('.suggest-card.reference').hide();
+      $('.suggest-card.dummy').hide();
+    }
+
+    // ########### JD DOC RESULTS #############
+    if (gDocsMatches.length > 0) {
+        // reset the lists
+        $(".search_filtered_wrapper.docs li").remove();
+
+        // determine google results to show
+        gDocsListLength = gDocsMatches.length < ROW_COUNT_DOCS ? gDocsMatches.length : ROW_COUNT_DOCS;
+        for (i=0; i<gDocsListLength; i++) {
+            var sugg = gDocsMatches[i];
+            var $li;
+            if (sugg.type == "design") {
+                $li = new_suggestion($(".suggest-card.design ul"));
+            } else
+            if (sugg.type == "distribute") {
+                $li = new_suggestion($(".suggest-card.distribute ul"));
+            } else
+            if (sugg.type == "training") {
+                $li = new_suggestion($(".suggest-card.develop .child-card.training"));
+            } else
+            if (sugg.type == "guide"||"google") {
+                $li = new_suggestion($(".suggest-card.develop .child-card.guides"));
+            } else {
+              continue;
+            }
+
+            set_item_values(toroot, $li, sugg);
+            set_item_selected($li, i == gSelectedIndex);
+        }
+
+        // add heading and show or hide card
+        if ($(".suggest-card.design li").length > 0) {
+          $(".suggest-card.design ul").prepend("<li class='header'>Design:</li>");
+          $(".suggest-card.design").show(300);
+        } else {
+          $('.suggest-card.design').hide(300);
+        }
+        if ($(".suggest-card.distribute li").length > 0) {
+          $(".suggest-card.distribute ul").prepend("<li class='header'>Distribute:</li>");
+          $(".suggest-card.distribute").show(300);
+        } else {
+          $('.suggest-card.distribute').hide(300);
+        }
+        if ($(".child-card.guides li").length > 0) {
+          $(".child-card.guides").prepend("<li class='header'>Guides:</li>");
+          $(".child-card.guides li").appendTo(".suggest-card.develop ul");
+        }
+        if ($(".child-card.training li").length > 0) {
+          $(".child-card.training").prepend("<li class='header'>Training:</li>");
+          $(".child-card.training li").appendTo(".suggest-card.develop ul");
+        }
+
+        if ($(".suggest-card.develop li").length > 0) {
+          $(".suggest-card.develop").show(300);
+        } else {
+          $('.suggest-card.develop').hide(300);
+        }
+
+    } else {
+      $('.search_filtered_wrapper.docs .suggest-card:not(.dummy)').hide(300);
     }
 }
 
+/** Called by the search input's onkeydown and onkeyup events.
+  * Handles navigation with keyboard arrows, Enter key to invoke search,
+  * otherwise invokes search suggestions on key-up event.
+  * @param e       The JS event
+  * @param kd      True if the event is key-down
+  * @param toroot  A string for the site's root path 
+  * @returns       True if the event should bubble up
+  */
 function search_changed(e, kd, toroot)
 {
     var search = document.getElementById("search_autocomplete");
     var text = search.value.replace(/(^ +)|( +$)/g, '');
-    
+    // get the ul hosting the currently selected item
+    gSelectedColumn = gSelectedColumn >= 0 ? gSelectedColumn :  0;
+    var $columns = $(".search_filtered_wrapper").find(".search_filtered:visible");
+    var $selectedUl = $columns[gSelectedColumn];
+
     // show/hide the close button
     if (text != '') {
         $(".search .close").removeClass("hide");
     } else {
         $(".search .close").addClass("hide");
     }
-
+    // 27 = esc
+    if (e.keyCode == 27) {
+        // close all search results
+        if (kd) $('.search .close').trigger('click');
+        return true;
+    }
     // 13 = enter
-    if (e.keyCode == 13) {
-        $('#search_filtered_div').addClass('no-display');
-        if (!$('#search_filtered_div').hasClass('no-display') || (gSelectedIndex < 0)) {
+    else if (e.keyCode == 13) {
+        if (gSelectedIndex < 0) {
+            $('.suggest-card').hide();
             if ($("#searchResults").is(":hidden") && (search.value != "")) {
               // if results aren't showing (and text not empty), return true to allow search to execute
               return true;
@@ -1642,47 +1725,100 @@ function search_changed(e, kd, toroot)
               return false;
             }
         } else if (kd && gSelectedIndex >= 0) {
-            window.location = $("a",$('#search_filtered li')[gSelectedIndex]).attr("href");
+            // click the link corresponding to selected item
+            $("a",$("li",$selectedUl)[gSelectedIndex]).get()[0].click();
             return false;
         }
     }
-    // 38 -- arrow up
+    // Stop here if Google results are showing
+    else if ($("#searchResults").is(":visible")) {
+        return true;
+    }
+    // 38 UP ARROW
     else if (kd && (e.keyCode == 38)) {
-        if ($($("#search_filtered li")[gSelectedIndex-1]).hasClass("header")) {
-            $('#search_filtered_div li').removeClass('jd-selected');
+        // if the next item is a header, skip it
+        if ($($("li", $selectedUl)[gSelectedIndex-1]).hasClass("header")) {
             gSelectedIndex--;
-            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
         }
         if (gSelectedIndex >= 0) {
-            $('#search_filtered_div li').removeClass('jd-selected');
+            $('li', $selectedUl).removeClass('jd-selected');
             gSelectedIndex--;
-            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+            $('li:nth-child('+(gSelectedIndex+1)+')', $selectedUl).addClass('jd-selected');
+            // If user reaches top, reset selected column
+            if (gSelectedIndex < 0) {
+              gSelectedColumn = -1;
+            }
         }
         return false;
     }
-    // 40 -- arrow down
+    // 40 DOWN ARROW
     else if (kd && (e.keyCode == 40)) {
-        if ($($("#search_filtered li")[gSelectedIndex+1]).hasClass("header")) {
-            $('#search_filtered_div li').removeClass('jd-selected');
+        // if the next item is a header, skip it
+        if ($($("li", $selectedUl)[gSelectedIndex+1]).hasClass("header")) {
             gSelectedIndex++;
-            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
         }
-        if ((gSelectedIndex < $("ul#search_filtered li").length-1) ||
-                        ($($("#search_filtered li")[gSelectedIndex+1]).hasClass("header"))) {
-            $('#search_filtered_div li').removeClass('jd-selected');
+        if ((gSelectedIndex < $("li", $selectedUl).length-1) ||
+                        ($($("li", $selectedUl)[gSelectedIndex+1]).hasClass("header"))) {
+            $('li', $selectedUl).removeClass('jd-selected');
             gSelectedIndex++;
-            $('#search_filtered_div li:nth-child('+(gSelectedIndex+1)+')').addClass('jd-selected');
+            $('li:nth-child('+(gSelectedIndex+1)+')', $selectedUl).addClass('jd-selected');
         }
         return false;
     }
+    // Consider left/right arrow navigation
+    // NOTE: Order of suggest columns are reverse order (index position 0 is on right)
+    else if (kd && $columns.length > 1 && gSelectedColumn >= 0) {
+      // 37 LEFT ARROW
+      // go left only if current column is not left-most column (last column)
+      if (e.keyCode == 37 && gSelectedColumn < $columns.length - 1) {
+        $('li', $selectedUl).removeClass('jd-selected');
+        gSelectedColumn++;
+        $selectedUl = $columns[gSelectedColumn];
+        // keep or reset the selected item to last item as appropriate
+        gSelectedIndex = gSelectedIndex >
+                $("li", $selectedUl).length-1 ?
+                $("li", $selectedUl).length-1 : gSelectedIndex;
+        // if the corresponding item is a header, move down
+        if ($($("li", $selectedUl)[gSelectedIndex]).hasClass("header")) {
+          gSelectedIndex++;
+        }
+        // set item selected       
+        $('li:nth-child('+(gSelectedIndex+1)+')', $selectedUl).addClass('jd-selected');
+        return false;
+      }
+      // 39 RIGHT ARROW
+      // go right only if current column is not the right-most column (first column)
+      else if (e.keyCode == 39 && gSelectedColumn > 0) {
+        $('li', $selectedUl).removeClass('jd-selected');
+        gSelectedColumn--;
+        $selectedUl = $columns[gSelectedColumn];
+        // keep or reset the selected item to last item as appropriate
+        gSelectedIndex = gSelectedIndex >
+                $("li", $selectedUl).length-1 ?
+                $("li", $selectedUl).length-1 : gSelectedIndex;
+        // if the corresponding item is a header, move down
+        if ($($("li", $selectedUl)[gSelectedIndex]).hasClass("header")) {
+          gSelectedIndex++;
+        }
+        // set item selected       
+        $('li:nth-child('+(gSelectedIndex+1)+')', $selectedUl).addClass('jd-selected');
+        return false;
+      }
+    }
+
     // if key-up event and not arrow down/up,
     // read the search query and add suggestsions to gMatches
-    else if (!kd && (e.keyCode != 40) && (e.keyCode != 38)) {
+    else if (!kd && (e.keyCode != 40)
+                 && (e.keyCode != 38)
+                 && (e.keyCode != 37)
+                 && (e.keyCode != 39)) {
+        gSelectedIndex = -1;
         gMatches = new Array();
         matchedCount = 0;
         gGoogleMatches = new Array();
         matchedCountGoogle = 0;
-        gSelectedIndex = -1;
+        gDocsMatches = new Array();
+        matchedCountDocs = 0;
 
         // Search for Android matches
         for (var i=0; i<DATA.length; i++) {
@@ -1693,7 +1829,7 @@ function search_changed(e, kd, toroot)
                 matchedCount++;
             }
         }
-        rank_autocomplete_results(text, gMatches);
+        rank_autocomplete_api_results(text, gMatches);
         for (var i=0; i<gMatches.length; i++) {
             var s = gMatches[i];
         }
@@ -1708,21 +1844,97 @@ function search_changed(e, kd, toroot)
                 matchedCountGoogle++;
             }
         }
-        rank_autocomplete_results(text, gGoogleMatches);
+        rank_autocomplete_api_results(text, gGoogleMatches);
         for (var i=0; i<gGoogleMatches.length; i++) {
             var s = gGoogleMatches[i];
         }
 
         highlight_autocomplete_result_labels(text);
+
+
+
+        // Search for JD docs
+        if (text.length >= 3) {
+          for (var i=0; i<JD_DATA.length; i++) {
+            // Regex to match only the beginning of a word
+            var textRegex = new RegExp("\\b" + text.toLowerCase(), "g");
+            // current search comparison, with counters for tag and title,
+            // used later to improve ranking
+            var s = JD_DATA[i];
+            s.matched_tag = 0;
+            s.matched_title = 0;
+            var matched = false;
+
+            // Check if query matches any tags; work backwards toward 1 to assist ranking
+            for (var j = s.tags.length - 1; j >= 0; j--) {
+              // it matches a tag
+              if (s.tags[j].toLowerCase().match(textRegex)) {
+                matched = true;
+                s.matched_tag = j + 1; // add 1 to index position
+              }
+            }
+            // Don't consider doc title for lessons (only for class landing pages)
+            // ...it is not a training lesson (or is but has matched a tag)
+            if (!(s.type == "training" && s.link.indexOf("index.html") == -1) || matched) {
+              // it matches the doc title
+              if (s.label.toLowerCase().match(textRegex)) {
+                matched = true;
+                s.matched_title = 1;
+              }
+            }
+            if (matched) {
+              gDocsMatches[matchedCountDocs] = s;
+              matchedCountDocs++;
+            }
+          }
+          rank_autocomplete_doc_results(text, gDocsMatches);
+        }
+
+        // draw the suggestions
         sync_selection_table(toroot);
-
-
         return true; // allow the event to bubble up to the search api
     }
 }
 
+/* Order the jd doc result list based on match quality */
+function rank_autocomplete_doc_results(query, matches) {
+    query = query || '';
+    if (!matches || !matches.length)
+      return;
+
+    var _resultScoreFn = function(match) {
+        var score = 1.0;
+
+        // if the query matched a tag
+        if (match.matched_tag > 0) {
+          // multiply score by factor relative to position in tags list (max of 3)
+          score *= 3 / match.matched_tag;
+
+          // if it also matched the title
+          if (match.matched_title > 0) {
+            score *= 2;
+          }
+        } else if (match.matched_title > 0) {
+          score *= 3;
+        }
+
+        return score;
+    };
+
+    for (var i=0; i<matches.length; i++) {
+        matches[i].__resultScore = _resultScoreFn(matches[i]);
+    }
+
+    matches.sort(function(a,b){
+        var n = b.__resultScore - a.__resultScore;
+        if (n == 0) // lexicographical sort if scores are the same
+            n = (a.label < b.label) ? -1 : 1;
+        return n;
+    });
+}
+
 /* Order the result list based on match quality */
-function rank_autocomplete_results(query, matches) {
+function rank_autocomplete_api_results(query, matches) {
     query = query || '';
     if (!matches || !matches.length)
       return;
@@ -1781,7 +1993,12 @@ function rank_autocomplete_results(query, matches) {
     };
 
     for (var i=0; i<matches.length; i++) {
-        matches[i].__resultScore = _resultScoreFn(matches[i]);
+        // if the API is deprecated, default score is 0; otherwise, perform scoring
+        if (matches[i].deprecated == "true") {
+          matches[i].__resultScore = 0;
+        } else {
+          matches[i].__resultScore = _resultScoreFn(matches[i]);
+        }
     }
 
     matches.sort(function(a,b){
@@ -1818,7 +2035,7 @@ function search_focus_changed(obj, focused)
         if(obj.value == ""){
           $(".search .close").addClass("hide");
         }
-        document.getElementById("search_filtered_div").className = "no-display";
+        $(".suggest-card").hide();
     }
 }
 
@@ -1840,6 +2057,12 @@ function hideResults() {
   
   // reset the ajax search callback to nothing, so results don't appear unless ENTER
   searchControl.setSearchStartingCallback(this, function(control, searcher, query) {});
+
+  // forcefully regain key-up event control (previously jacked by search api)
+  $("#search_autocomplete").keyup(function(event) {
+    return search_changed(event, false, toRoot);
+  });
+
   return false;
 }
 
@@ -1849,13 +2072,14 @@ function hideResults() {
 /* ################  CUSTOM SEARCH ENGINE  ################## */
 /* ########################################################## */
 
-google.load('search', '1');
 var searchControl;
+google.load('search', '1', {"callback" : function() {
+            searchControl = new google.search.SearchControl();
+          } });
 
 function loadSearchResults() {
   document.getElementById("search_autocomplete").style.color = "#000";
 
-  // create search control
   searchControl = new google.search.SearchControl();
 
   // use our existing search form and use tabs when multiple searchers are used
