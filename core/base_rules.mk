@@ -398,6 +398,20 @@ endif # !LOCAL_IS_HOST_MODULE
 full_java_libs += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_lib_deps += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
+# This is set by packages that are linking to other packages that export
+# shared libraries, allowing them to make use of the code in the linked apk.
+LOCAL_APK_LIBRARIES := $(strip $(LOCAL_APK_LIBRARIES))
+ifdef LOCAL_APK_LIBRARIES
+  link_apk_libraries := \
+      $(foreach lib,$(LOCAL_APK_LIBRARIES), \
+        $(call intermediates-dir-for, \
+              APPS,$(lib),,COMMON)/classes.jar)
+
+  # link against the jar with full original names (before proguard processing).
+  full_java_libs += $(link_apk_libraries)
+  full_java_lib_deps += $(link_apk_libraries)
+endif
+
 # This is set by packages that contain instrumentation, allowing them to
 # link against the package they are instrumenting.  Currently only one such
 # package is allowed.
