@@ -35,8 +35,10 @@ ifneq (true,$(WITH_DEXPREOPT))
 LOCAL_DEX_PREOPT :=
 else
 ifeq (,$(TARGET_BUILD_APPS))
+ifeq (,$(LOCAL_APK_LIBRARIES))
 ifndef LOCAL_DEX_PREOPT
 LOCAL_DEX_PREOPT := true
+endif
 endif
 endif
 endif
