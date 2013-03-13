@@ -20,7 +20,7 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops
 
 ifeq ($(TARGET_ARCH),arm)
-  RS_TRIPLE := armv7-unknown-linux
+  RS_TRIPLE := armv7-none-linux-gnueabi
   CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target arm-linux-androideabi \
     -nostdlibinc \
