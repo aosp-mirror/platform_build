@@ -142,7 +142,6 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     libwilhelm \
     libz \
-    lint \
     mdnsd \
     network \
     pand \

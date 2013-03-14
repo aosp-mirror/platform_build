@@ -70,7 +70,6 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_vpxenc \
     libvariablespeed \
     libwebrtc_audio_preprocessing \
-    lint \
     mdnsd \
     mms-common \
     requestsync \
