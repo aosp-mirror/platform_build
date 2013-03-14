@@ -54,11 +54,6 @@ PRODUCT_PACKAGES := \
 	CubeLiveWallpapers \
 	QuickSearchBox \
 	WidgetPreview \
-	monkeyrunner \
-	guavalib \
-	jsr305lib \
-	jython \
-	jsilver \
 	librs_jni \
 	ConnectivityTest \
 	GpsLocationTest \
