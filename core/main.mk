@@ -430,8 +430,8 @@ SDK_ONLY := true
 endif
 
 ifeq ($(SDK_ONLY),true)
-include $(TOPDIR)sdk/build/sdk_only_whitelist.mk
-include $(TOPDIR)development/build/sdk_only_whitelist.mk
+include $(TOPDIR)sdk/build/windows_sdk_whitelist.mk
+include $(TOPDIR)development/build/windows_sdk_whitelist.mk
 
 # Exclude tools/acp when cross-compiling windows under linux
 ifeq ($(findstring Linux,$(UNAME)),)
