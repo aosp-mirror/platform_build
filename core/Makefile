@@ -931,7 +931,7 @@ INTERNAL_USERDATAIMAGE_FILES += \
     $(filter $(TARGET_OUT_DATA)/%,$(tests_MODULES))
 endif
 
-ifneq (true,$(BOARD_DONT_BUILD_USERDATA_IMG))
+ifdef BOARD_USERDATAIMAGE_PARTITION_SIZE
 userdataimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,userdata)
 BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
@@ -957,7 +957,7 @@ $(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) \
 userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-userdataimage-target)
 
-endif # no BOARD_DONT_BUILD_USERDATA_IMG
+endif # BOARD_USERDATAIMAGE_PARTITION_SIZE is set
 
 #######
 ## data partition tarball
