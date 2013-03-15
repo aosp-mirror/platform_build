@@ -931,7 +931,15 @@ INTERNAL_USERDATAIMAGE_FILES += \
     $(filter $(TARGET_OUT_DATA)/%,$(tests_MODULES))
 endif
 
-ifdef BOARD_USERDATAIMAGE_PARTITION_SIZE
+# Don't build userdata.img if it's extfs but no partition size
+skip_userdata.img :=
+ifdef INTERNAL_USERIMAGES_EXT_VARIANT
+ifndef BOARD_USERDATAIMAGE_PARTITION_SIZE
+skip_userdata.img := true
+endif
+endif
+
+ifneq ($(skip_userdata.img),true)
 userdataimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,userdata)
 BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
@@ -957,7 +965,8 @@ $(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) \
 userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-userdataimage-target)
 
-endif # BOARD_USERDATAIMAGE_PARTITION_SIZE is set
+endif # not skip_userdata.img
+skip_userdata.img :=
 
 #######
 ## data partition tarball
