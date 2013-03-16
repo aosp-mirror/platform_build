@@ -48,6 +48,7 @@ PRODUCT_PACKAGES := \
 
 PRODUCT_PACKAGES += \
     audio \
+    clatd \
     dhcpcd.conf \
     network \
     pand \
