@@ -2,8 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	CopyFile.c \
-	pseudolocalize.cpp
+	CopyFile.c
 
 ifeq ($(HOST_OS),cygwin)
 LOCAL_CFLAGS += -DWIN32_EXE
