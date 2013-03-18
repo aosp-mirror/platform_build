@@ -208,7 +208,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   try:
     keylist = input_tf_zip.read("META/otakeys.txt").split()
   except KeyError:
-    raise ExternalError("can't read META/otakeys.txt from input")
+    raise common.ExternalError("can't read META/otakeys.txt from input")
 
   extra_recovery_keys = misc_info.get("extra_recovery_keys", None)
   if extra_recovery_keys:
@@ -223,7 +223,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   for k in keylist:
     m = re.match(r"^(.*)\.x509\.pem$", k)
     if not m:
-      raise ExternalError("can't parse \"%s\" from META/otakeys.txt" % (k,))
+      raise common.ExternalError("can't parse \"%s\" from META/otakeys.txt" % (k,))
     k = m.group(1)
     mapped_keys.append(OPTIONS.key_map.get(k, k) + ".x509.pem")
 
@@ -247,7 +247,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
                  stdout=subprocess.PIPE)
   data, _ = p.communicate()
   if p.returncode != 0:
-    raise ExternalError("failed to run dumpkeys")
+    raise common.ExternalError("failed to run dumpkeys")
   common.ZipWriteStr(output_tf_zip, "RECOVERY/RAMDISK/res/keys", data)
 
   # SystemUpdateActivity uses the x509.pem version of the keys, but

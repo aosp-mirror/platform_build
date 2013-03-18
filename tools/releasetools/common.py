@@ -20,6 +20,7 @@ import imp
 import os
 import platform
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -40,6 +41,11 @@ if not hasattr(os, "SEEK_SET"):
 class Options(object): pass
 OPTIONS = Options()
 OPTIONS.search_path = "out/host/linux-x86"
+OPTIONS.signapk_path = "framework/signapk.jar"  # Relative to search_path
+OPTIONS.extra_signapk_args = []
+OPTIONS.java_path = "java"  # Use the one on the path by default.
+OPTIONS.public_key_suffix = ".x509.pem"
+OPTIONS.private_key_suffix = ".pk8"
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
@@ -379,6 +385,7 @@ def GetKeyPasswords(keylist):
 
   no_passwords = []
   need_passwords = []
+  key_passwords = {}
   devnull = open("/dev/null", "w+b")
   for k in sorted(keylist):
     # We don't need a password for things that aren't really keys.
@@ -386,19 +393,36 @@ def GetKeyPasswords(keylist):
       no_passwords.append(k)
       continue
 
-    p = Run(["openssl", "pkcs8", "-in", k+".pk8",
+    p = Run(["openssl", "pkcs8", "-in", k+OPTIONS.private_key_suffix,
              "-inform", "DER", "-nocrypt"],
             stdin=devnull.fileno(),
             stdout=devnull.fileno(),
             stderr=subprocess.STDOUT)
     p.communicate()
     if p.returncode == 0:
+      # Definitely an unencrypted key.
       no_passwords.append(k)
     else:
-      need_passwords.append(k)
+      p = Run(["openssl", "pkcs8", "-in", k+OPTIONS.private_key_suffix,
+               "-inform", "DER", "-passin", "pass:"],
+              stdin=devnull.fileno(),
+              stdout=devnull.fileno(),
+              stderr=subprocess.PIPE)
+      stdout, stderr = p.communicate()
+      if p.returncode == 0:
+        # Encrypted key with empty string as password.
+        key_passwords[k] = ''
+      elif stderr.startswith('Error decrypting key'):
+        # Definitely encrypted key.
+        # It would have said "Error reading key" if it didn't parse correctly.
+        need_passwords.append(k)
+      else:
+        # Potentially, a type of key that openssl doesn't understand.
+        # We'll let the routines in signapk.jar handle it.
+        no_passwords.append(k)
   devnull.close()
 
-  key_passwords = PasswordManager().GetPasswords(need_passwords)
+  key_passwords.update(PasswordManager().GetPasswords(need_passwords))
   key_passwords.update(dict.fromkeys(no_passwords, None))
   return key_passwords
 
@@ -426,11 +450,13 @@ def SignFile(input_name, output_name, key, password, align=None,
   else:
     sign_name = output_name
 
-  cmd = ["java", "-Xmx2048m", "-jar",
-           os.path.join(OPTIONS.search_path, "framework", "signapk.jar")]
+  cmd = [OPTIONS.java_path, "-Xmx2048m", "-jar",
+         os.path.join(OPTIONS.search_path, OPTIONS.signapk_path)]
+  cmd.extend(OPTIONS.extra_signapk_args)
   if whole_file:
     cmd.append("-w")
-  cmd.extend([key + ".x509.pem", key + ".pk8",
+  cmd.extend([key + OPTIONS.public_key_suffix,
+              key + OPTIONS.private_key_suffix,
               input_name, sign_name])
 
   p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -494,12 +520,14 @@ def ReadApkCerts(tf_zip):
                  r'private_key="(.*)"$', line)
     if m:
       name, cert, privkey = m.groups()
+      public_key_suffix_len = len(OPTIONS.public_key_suffix)
+      private_key_suffix_len = len(OPTIONS.private_key_suffix)
       if cert in SPECIAL_CERT_STRINGS and not privkey:
         certmap[name] = cert
-      elif (cert.endswith(".x509.pem") and
-            privkey.endswith(".pk8") and
-            cert[:-9] == privkey[:-4]):
-        certmap[name] = cert[:-9]
+      elif (cert.endswith(OPTIONS.public_key_suffix) and
+            privkey.endswith(OPTIONS.private_key_suffix) and
+            cert[:-public_key_suffix_len] == privkey[:-private_key_suffix_len]):
+        certmap[name] = cert[:-public_key_suffix_len]
       else:
         raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
   return certmap
@@ -543,8 +571,10 @@ def ParseOptions(argv,
   try:
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
-        ["help", "verbose", "path=", "device_specific=", "extra="] +
-          list(extra_long_opts))
+        ["help", "verbose", "path=", "signapk_path=", "extra_signapk_args=",
+         "java_path=", "public_key_suffix=", "private_key_suffix=",
+         "device_specific=", "extra="] +
+        list(extra_long_opts))
   except getopt.GetoptError, err:
     Usage(docstring)
     print "**", str(err), "**"
@@ -560,6 +590,16 @@ def ParseOptions(argv,
       OPTIONS.verbose = True
     elif o in ("-p", "--path"):
       OPTIONS.search_path = a
+    elif o in ("--signapk_path",):
+      OPTIONS.signapk_path = a
+    elif o in ("--extra_signapk_args",):
+      OPTIONS.extra_signapk_args = shlex.split(a)
+    elif o in ("--java_path",):
+      OPTIONS.java_path = a
+    elif o in ("--public_key_suffix",):
+      OPTIONS.public_key_suffix = a
+    elif o in ("--private_key_suffix",):
+      OPTIONS.private_key_suffix = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
