@@ -1,4 +1,6 @@
 <?cs def:custom_masthead() ?>
+<a name="top"></a>
+<?cs if:!devsite ?><?cs # leave out the global header for devsite; it's in devsite template ?>
     <!-- Header -->
     <div id="header">
         <div class="wrap" id="header-wrap">
@@ -60,11 +62,8 @@
         <li><a href="http://source.android.com">Android Open Source Project</a></li>
       </ul>
       
-<?cs ############ TODO: Remove when we're happy with Devsite ############# ?>
-      <?cs # Use differenc lang switcher for devsite and gae server ?>
-      <?cs if:devsite ?>
-      <div class="header">Language</div>
-      <?cs elif:android.whichdoc == "online" ?>
+      <?cs # Include language switcher only in online docs ?>
+      <?cs if:android.whichdoc == "online" ?>
         <div class="header">Language</div>
           <div id="language" class="locales">
             <select name="language" onChange="changeLangPref(this.value, true)">
@@ -83,7 +82,7 @@
             //-->
         </script>
       <?cs /if ?>
-      <?cs # End of devsite vs. gae version of lang switcher ?>
+      <?cs # End of lang switcher ?>
 
 
       <br class="clearfix" />
@@ -194,8 +193,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
   </div>
     
     
-    
-<?cs if:training || guide || reference || tools || develop || google ?>
+  <?cs if:training || guide || reference || tools || develop || google ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap">
@@ -240,6 +238,10 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
         
     </div>
     <!-- /Sendondary x-nav -->
+  <?cs /if ?>
+
 <?cs /if ?>
+<?cs # end if/else !devsite ?>
+
   <?cs 
 /def ?>

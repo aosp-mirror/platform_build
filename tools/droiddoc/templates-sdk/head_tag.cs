@@ -1,4 +1,18 @@
 <head>
+<?cs ####### If building devsite, add some meta data needed for when generating the top nav ######### ?>
+<?cs
+  if:devsite ?><?cs
+    if:guide||develop||training||reference||tools||sdk||google
+      ?><meta name="top_category" value="develop" /><?cs
+    elif:google
+      ?><meta name="top_category" value="google" /><?cs
+    elif:reference && !(reference.gms || reference.gcm)
+      ?><meta name="top_category" value="css-fullscreen" /><?cs
+    /if ?>
+  <?cs
+  /if
+?><?cs # END if/else devsite ?>
+
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <?cs if:page.metaDescription ?>
 <meta name="Description" content="<?cs var:page.metaDescription ?>">
@@ -30,11 +44,7 @@ else
 /if ?>
 <script type="text/javascript">
   var toRoot = "<?cs var:toroot ?>";
-  <?cs if:devsite ?>
-  var devsite = true;
-  <?cs else ?>
-  var devsite = false;
-  <?cs /if ?>
+  var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
 <?cs if:reference.gms || reference.gcm || google?>

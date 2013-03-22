@@ -142,6 +142,9 @@ $(document).ready(function() {
     }
   }
 
+  // Need a copy of the pagePath before it gets changed in the next block;
+  // it's needed to perform proper tab highlighting in offline docs (see rootDir below)
+  var pagePathOriginal = pagePath;
   if (SITE_ROOT.match(/\.\.\//) || SITE_ROOT == '') {
     // If running locally, SITE_ROOT will be a relative path, so account for that by
     // finding the relative URL to this page. This will allow us to find links on the page
@@ -169,9 +172,8 @@ $(document).ready(function() {
   // highlight Develop tab
   } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
     $("#header li.develop a").addClass("selected");
-
     // In Develop docs, also highlight appropriate sub-tab
-    var rootDir = pagePath.substring(1,pagePath.indexOf('/', 1));
+    var rootDir = pagePathOriginal.substring(1,pagePathOriginal.indexOf('/', 1));
     if (rootDir == "training") {
       $("#nav-x li.training a").addClass("selected");
     } else if (rootDir == "guide") {
