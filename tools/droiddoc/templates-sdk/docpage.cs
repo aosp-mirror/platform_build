@@ -9,7 +9,6 @@
   elif:distribute ?>distribute<?cs
   /if ?><?cs
   if:page.trainingcourse ?> trainingcourse<?cs /if ?>" itemscope itemtype="http://schema.org/Article">
-<a name="top"></a>
 <?cs include:"header.cs" ?>
 
 <div <?cs if:fullpage
