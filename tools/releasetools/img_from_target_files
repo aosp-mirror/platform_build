@@ -52,6 +52,85 @@ import common
 
 OPTIONS = common.OPTIONS
 
+
+def AddSystem(output_zip):
+  """Turn the contents of SYSTEM into a system image and store it in
+  output_zip."""
+
+  print "creating system.img..."
+
+  img = tempfile.NamedTemporaryFile()
+
+  # The name of the directory it is making an image out of matters to
+  # mkyaffs2image.  It wants "system" but we have a directory named
+  # "SYSTEM", so create a symlink.
+  try:
+    os.symlink(os.path.join(OPTIONS.input_tmp, "SYSTEM"),
+               os.path.join(OPTIONS.input_tmp, "system"))
+  except OSError, e:
+      # bogus error on my mac version?
+      #   File "./build/tools/releasetools/img_from_target_files", line 86, in AddSystem
+      #     os.path.join(OPTIONS.input_tmp, "system"))
+      # OSError: [Errno 17] File exists
+    if (e.errno == errno.EEXIST):
+      pass
+
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "system")
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    image_props["fs_type" ] = fstab["/system"].fs_type
+  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "system"),
+                                image_props, img.name)
+  assert succ, "build system.img image failed"
+
+  img.seek(os.SEEK_SET, 0)
+  data = img.read()
+  img.close()
+
+  common.CheckSize(data, "system.img", OPTIONS.info_dict)
+  common.ZipWriteStr(output_zip, "system.img", data)
+
+
+def AddVendor(output_zip):
+  """Turn the contents of VENDOR into vendor.img and store it in
+  output_zip."""
+
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
+                                                    "vendor")
+  # The build system has to explicitly request for vendor.img.
+  if "fs_type" not in image_props:
+    return
+
+  print "creating vendor.img..."
+
+  img = tempfile.NamedTemporaryFile()
+
+  # The name of the directory it is making an image out of matters to
+  # mkyaffs2image.  It wants "vendor" but we have a directory named
+  # "VENDOR", so create a symlink or an empty directory if VENDOR does not
+  # exist.
+  if not os.path.exists(os.path.join(OPTIONS.input_tmp, "vendor")):
+    if os.path.exists(os.path.join(OPTIONS.input_tmp, "VENDOR")):
+      os.symlink(os.path.join(OPTIONS.input_tmp, "VENDOR"),
+                 os.path.join(OPTIONS.input_tmp, "vendor"))
+    else:
+      os.mkdir(os.path.join(OPTIONS.input_tmp, "vendor"))
+
+  img = tempfile.NamedTemporaryFile()
+
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    image_props["fs_type" ] = fstab["/vendor"].fs_type
+  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "vendor"),
+                                image_props, img.name)
+  assert succ, "build vendor.img image failed"
+
+  common.CheckSize(img.name, "vendor.img", OPTIONS.info_dict)
+  output_zip.write(img.name, "vendor.img")
+  img.close()
+
+
 def AddUserdata(output_zip):
   """Create an empty userdata image and store it in output_zip."""
 
@@ -117,45 +196,6 @@ def AddCache(output_zip):
   os.rmdir(temp_dir)
 
 
-def AddSystem(output_zip):
-  """Turn the contents of SYSTEM into a system image and store it in
-  output_zip."""
-
-  print "creating system.img..."
-
-  img = tempfile.NamedTemporaryFile()
-
-  # The name of the directory it is making an image out of matters to
-  # mkyaffs2image.  It wants "system" but we have a directory named
-  # "SYSTEM", so create a symlink.
-  try:
-    os.symlink(os.path.join(OPTIONS.input_tmp, "SYSTEM"),
-               os.path.join(OPTIONS.input_tmp, "system"))
-  except OSError, e:
-      # bogus error on my mac version?
-      #   File "./build/tools/releasetools/img_from_target_files", line 86, in AddSystem
-      #     os.path.join(OPTIONS.input_tmp, "system"))
-      # OSError: [Errno 17] File exists
-    if (e.errno == errno.EEXIST):
-      pass
-
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "system")
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type" ] = fstab["/system"].fs_type
-  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "system"),
-                                image_props, img.name)
-  assert succ, "build system.img image failed"
-
-  img.seek(os.SEEK_SET, 0)
-  data = img.read()
-  img.close()
-
-  common.CheckSize(data, "system.img", OPTIONS.info_dict)
-  common.ZipWriteStr(output_zip, "system.img", data)
-
-
 def CopyInfo(output_zip):
   """Copy the android-info.txt file from the input to the output."""
   output_zip.write(os.path.join(OPTIONS.input_tmp, "OTA", "android-info.txt"),
@@ -199,6 +239,7 @@ def main(argv):
 
   if not bootable_only:
     AddSystem(output_zip)
+    AddVendor(output_zip)
     AddUserdata(output_zip)
     AddCache(output_zip)
     CopyInfo(output_zip)
