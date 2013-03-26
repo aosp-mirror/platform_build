@@ -426,10 +426,10 @@ function add_lunch_combo()
 }
 
 # add the default one here
-add_lunch_combo full-eng
-add_lunch_combo full_x86-eng
+add_lunch_combo aosp_arm-eng
+add_lunch_combo aosp_x86-eng
+add_lunch_combo aosp_mips-eng
 add_lunch_combo vbox_x86-eng
-add_lunch_combo full_mips-eng
 
 function print_lunch_menu()
 {
@@ -458,7 +458,7 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo -n "Which would you like? [full-eng] "
+        echo -n "Which would you like? [aosp_arm-eng] "
         read answer
     fi
 
@@ -466,7 +466,7 @@ function lunch()
 
     if [ -z "$answer" ]
     then
-        selection=full-eng
+        selection=aosp_arm-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
         if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
