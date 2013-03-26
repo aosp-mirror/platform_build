@@ -1511,6 +1511,12 @@ var gGoogleMatches = new Array();
 var ROW_COUNT_GOOGLE = 15;          // max number of results in list
 var gGoogleListLength = 0;
 
+function onSuggestionClick(link) {
+  // When user clicks a suggested document, track it
+  _gaq.push(['_trackEvent', 'Suggestion Click', 'clicked: ' + $(link).text(),
+            'from: ' + $("#search_autocomplete").val()]);
+}
+
 function set_item_selected($li, selected)
 {
     if (selected) {
@@ -1540,7 +1546,7 @@ function new_suggestion() {
         $(this).addClass('jd-selected');
         gSelectedIndex = $('#search_filtered li').index(this);
     });
-    $li.append('<a></a>');
+    $li.append("<a onclick='onSuggestionClick(this)'></a>");
     $li.attr('class','show-item');
     return $li;
 }
@@ -1894,6 +1900,11 @@ function loadSearchResults() {
     location.hash = 'q=' + query;
   });
 
+  // once search results load, set up click listeners
+  searchControl.setSearchCompleteCallback(this, function(control, searcher, query) {
+    addResultClickListeners();
+  });
+
   // draw the search results box
   searchControl.draw(document.getElementById("leftSearchControl"), drawOptions);
 
@@ -1970,6 +1981,17 @@ function addTabListeners() {
     });
   }
   setTimeout(function(){$(tabHeaders[0]).click()},200);
+}
+
+// add analytics tracking events to each result link
+function addResultClickListeners() {
+  $("#searchResults a.gs-title").each(function(index, link) {
+    // When user clicks enter for Google search results, track it
+    $(link).click(function() {
+      _gaq.push(['_trackEvent', 'Google Click', 'clicked: ' + $(this).text(),
+                'from: ' + $("#search_autocomplete").val()]);
+    });
+  });
 }
 
 
