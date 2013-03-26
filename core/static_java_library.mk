@@ -21,6 +21,7 @@
 
 LOCAL_UNINSTALLABLE_MODULE := true
 LOCAL_IS_STATIC_JAVA_LIBRARY := true
+LOCAL_MODULE_CLASS := JAVA_LIBRARIES
 
 # Hack to build static Java library with Android resource
 # See bug 5714516
@@ -46,6 +47,15 @@ endif
 ifeq (none,$(LOCAL_JAR_EXCLUDE_FILES))
 LOCAL_JAR_EXCLUDE_FILES :=
 endif
+
+proguard_options_file :=
+
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
+  proguard_options_file := $(intermediates.COMMON)/proguard_options
+endif
+LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
+
 endif  # all_resources
 endif  # LOCAL_RESOURCE_DIR
 
@@ -55,9 +65,13 @@ ifneq (,$(all_resources))
 R_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.stamp
 
 ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
-LOCAL_MANIFEST_FILE := AndroidManifest.xml
+  LOCAL_MANIFEST_FILE := AndroidManifest.xml
 endif
-full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
+ifdef LOCAL_FULL_MANIFEST_FILE
+  full_android_manifest := $(LOCAL_FULL_MANIFEST_FILE)
+else
+  full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
+endif
 
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
@@ -94,7 +108,7 @@ else
 $(R_file_stamp): PRIVATE_DEFAULT_APP_TARGET_SDK := $(DEFAULT_APP_TARGET_SDK)
 endif
 $(R_file_stamp): PRIVATE_ASSET_DIR :=
-$(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE :=
+$(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(R_file_stamp): PRIVATE_MANIFEST_PACKAGE_NAME :=
 $(R_file_stamp): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 
