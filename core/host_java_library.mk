@@ -47,6 +47,8 @@ endif # LOCAL_BUILD_HOST_DEX
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
+$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
+
 # The layers file allows you to enforce a layering between java packages.
 # Run build/tools/java-layers.py for more details.
 layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
