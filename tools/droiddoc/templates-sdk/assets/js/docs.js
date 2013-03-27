@@ -11,6 +11,10 @@ var basePath = getBaseUri(location.pathname);
 var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
 var GOOGLE_DATA; // combined data for google service apis, used for search suggest
   
+// Ensure that all ajax getScript() requests allow caching
+$.ajaxSetup({
+  cache: true
+});
 
 /******  ON LOAD SET UP STUFF *********/
 
@@ -2319,7 +2323,13 @@ function find_page(url, data)
 }
 
 function init_default_navtree(toroot) {
-  init_navtree("tree-list", toroot, NAVTREE_DATA);
+  // load json file for navtree data
+  $.getScript(toRoot + 'navtree_data.js', function(data, textStatus, jqxhr) {
+      // when the file is loaded, initialize the tree
+      if(jqxhr.status === 200) {
+          init_navtree("tree-list", toroot, NAVTREE_DATA);
+      }
+  });
   
   // perform api level toggling because because the whole tree is new to the DOM
   var selectedLevel = $("#apiLevelSelector option:selected").val();
