@@ -50,8 +50,6 @@ else
 <?cs if:reference.gms || reference.gcm || google?>
 <script src="<?cs var:toroot ?>gms_navtree_data.js" async type="text/javascript"></script>
 <script src="<?cs var:toroot ?>gcm_navtree_data.js" async type="text/javascript"></script>
-<?cs elif:reference ?>
-<script src="<?cs var:toroot ?>navtree_data.js" async type="text/javascript"></script>
 <?cs /if ?>
 
 <script type="text/javascript">
