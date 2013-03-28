@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "SwUGdsqU",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1001401
+      },
+      "writtenOn": "2013-03-28T23:24:15Z",
+      "side": 1,
+      "message": "Change the Change-Id to the same as in the other change:\n\n  Change-Id: I7429015b3c5f7f38b7be01eb2d4927f7a9999c80\n\nThis allows gerrit to know the two changes are dependent upon each other.",
+      "revId": "bd0e4d901dd00a686b1423ccdece92909ed30149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
