@@ -50,6 +50,8 @@ endif # LOCAL_BUILD_HOST_DEX
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
+$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
+
 java_alternative_checked_module :=
 
 # The layers file allows you to enforce a layering between java packages.
