@@ -214,7 +214,7 @@ LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
 
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_jni_lib) $(rs_compiler_rt)
-$(rs_compatibility_jni_libs): | $(BCC_COMPAT)
+$(rs_compatibility_jni_libs): $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate.COMMON)/res/raw/%.bc

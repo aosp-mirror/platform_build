@@ -833,7 +833,7 @@ $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	$(RS_PREBUILT_COMPILER_RT) \
 	-o $@ -L prebuilts/gcc/ \
 	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) $(RS_PREBUILT_LIBPATH) \
-	-lRSSupport -lm
+	-lRSSupport -lm -lc
 endef
 
 ###########################################################
