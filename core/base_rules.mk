@@ -257,7 +257,11 @@ $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_DIR := $(proto_java_
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javamicro_out
 else
+  ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javanano_out
+  else
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
+  endif
 endif
 $(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
 $(proto_java_sources_file_stamp) : $(proto_sources_fullpath) $(PROTOC)
