@@ -58,6 +58,7 @@ PRODUCT_PACKAGES += \
     linker \
     logcat \
     logwrapper \
+    reboot \
     service \
     servicemanager \
     surfaceflinger \
