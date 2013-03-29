@@ -83,8 +83,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
 
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
-$(call inherit-product-if-exists, external/cibu-fonts/fonts.mk)
-$(call inherit-product-if-exists, external/lohit-fonts/fonts.mk)
+$(call inherit-product-if-exists, external/noto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/naver-fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
