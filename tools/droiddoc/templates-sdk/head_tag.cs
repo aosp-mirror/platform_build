@@ -47,10 +47,6 @@ else
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
-<?cs if:reference.gms || reference.gcm || google?>
-<script src="<?cs var:toroot ?>gms_navtree_data.js" async type="text/javascript"></script>
-<script src="<?cs var:toroot ?>gcm_navtree_data.js" async type="text/javascript"></script>
-<?cs /if ?>
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
