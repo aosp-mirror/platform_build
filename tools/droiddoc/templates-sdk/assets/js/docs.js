@@ -6,6 +6,7 @@ var NAV_PREF_TREE = "tree";
 var NAV_PREF_PANELS = "panels";
 var nav_pref;
 var isMobile = false; // true if mobile, so we can adjust some layout
+var mPagePath; // initialized in ready() function
 
 var basePath = getBaseUri(location.pathname);
 var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
@@ -200,21 +201,16 @@ $(document).ready(function() {
     $("#header li.distribute a").addClass("selected");
   }
 
+  // set global variable so we can highlight the sidenav a bit later (such as for google reference)
+  // and highlight the sidenav
+  mPagePath = pagePath;
+  highlightSidenav();
 
-  // select current page in sidenav and header, and set up prev/next links if they exist
+  // set up prev/next links if they exist
   var $selNavLink = $('#nav').find('a[href="' + pagePath + '"]');
   var $selListItem;
   if ($selNavLink.length) {
-
-    // Find this page's <li> in sidenav and set selected
     $selListItem = $selNavLink.closest('li');
-    $selListItem.addClass('selected');
-    
-    // Traverse up the tree and expand all parent nav-sections
-    $selNavLink.parents('li.nav-section').each(function() {
-      $(this).addClass('expanded');
-      $(this).children('ul').show();
-    });
 
     // set up prev links
     var $prevLink = [];
@@ -591,6 +587,24 @@ false; // navigate across topic boundaries only in design docs
 });
 // END of the onload event
 
+
+function highlightSidenav() {
+  // select current page in sidenav and header, and set up prev/next links if they exist
+  var $selNavLink = $('#nav').find('a[href="' + mPagePath + '"]');
+  var $selListItem;
+  if ($selNavLink.length) {
+
+    // Find this page's <li> in sidenav and set selected
+    $selListItem = $selNavLink.closest('li');
+    $selListItem.addClass('selected');
+    
+    // Traverse up the tree and expand all parent nav-sections
+    $selNavLink.parents('li.nav-section').each(function() {
+      $(this).addClass('expanded');
+      $(this).children('ul').show();
+    });
+  }
+}
 
 
 function toggleFullscreen(enable) {
@@ -2386,7 +2400,6 @@ function init_google_navtree(navtree_id, toroot, root_nodes)
   me.node.depth = 0;
 
   get_google_node(me, me.node);
-
 }
 
 function new_google_node(me, mom, text, link, children_data, api_level)
@@ -2458,15 +2471,30 @@ function get_google_node(me, mom)
 function showGoogleRefTree() {
   init_default_google_navtree(toRoot);
   init_default_gcm_navtree(toRoot);
-  resizeNav();
 }
 
 function init_default_google_navtree(toroot) {
-  init_google_navtree("gms-tree-list", toroot, GMS_NAVTREE_DATA);
+  // load json file for navtree data
+  $.getScript(toRoot + 'gms_navtree_data.js', function(data, textStatus, jqxhr) {
+      // when the file is loaded, initialize the tree
+      if(jqxhr.status === 200) {
+          init_google_navtree("gms-tree-list", toroot, GMS_NAVTREE_DATA);
+          highlightSidenav();
+          resizeNav();
+      }
+  });
 }
 
 function init_default_gcm_navtree(toroot) {
-  init_google_navtree("gcm-tree-list", toroot, GCM_NAVTREE_DATA);
+  // load json file for navtree data
+  $.getScript(toRoot + 'gcm_navtree_data.js', function(data, textStatus, jqxhr) {
+      // when the file is loaded, initialize the tree
+      if(jqxhr.status === 200) {
+          init_google_navtree("gcm-tree-list", toroot, GCM_NAVTREE_DATA);
+          highlightSidenav();
+          resizeNav();
+      }
+  });
 }
 
 /* TOGGLE INHERITED MEMBERS */
