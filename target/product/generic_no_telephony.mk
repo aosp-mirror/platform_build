@@ -36,6 +36,7 @@ PRODUCT_PACKAGES := \
     Music \
     MusicFX \
     OneTimeInitializer \
+    PrintSpooler \
     Provision \
     Phone \
     QuickSearchBox \

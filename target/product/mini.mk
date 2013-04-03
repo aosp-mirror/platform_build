@@ -222,6 +222,7 @@ PRODUCT_PACKAGES += \
     TestingCamera \
     Home \
     Keyguard \
+    PrintSpooler \
     SystemUI \
     Settings \
     libsurfaceflinger_ddmconnection

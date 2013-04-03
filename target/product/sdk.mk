@@ -28,6 +28,7 @@ PRODUCT_PACKAGES := \
 	Music \
 	Mms \
 	OpenWnn \
+	PrintSpooler \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
