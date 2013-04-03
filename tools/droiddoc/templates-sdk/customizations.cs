@@ -361,7 +361,7 @@ def:custom_footerlinks() ?>
 
 <?cs # appears on the right side of the blue bar at the bottom off every page ?><?cs 
 def:custom_buildinfo() ?><?cs
-  if:!google ?>
+  if:!google && !reference.gcm && !reference.gms ?>
     Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> &mdash; <?cs
   /if ?>
 <script src="<?cs var:toroot ?>timestamp.js" type="text/javascript"></script>
