@@ -144,6 +144,7 @@ PRODUCT_PACKAGES += \
     libz \
     mdnsd \
     network \
+    okhttp \
     pand \
     requestsync \
     screencap \
