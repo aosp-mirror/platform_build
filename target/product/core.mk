@@ -72,6 +72,7 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     mdnsd \
     mms-common \
+    okhttp \
     requestsync \
     telephony-common \
     voip-common
@@ -82,6 +83,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
         apache-xml-hostdex \
         bouncycastle-hostdex \
         core-hostdex \
+        okhttp-hostdex \
         libcrypto \
         libexpat \
         libicui18n \
