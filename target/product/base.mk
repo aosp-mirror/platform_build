@@ -80,6 +80,8 @@ PRODUCT_PACKAGES += \
     libvisualizer \
     libvorbisidec \
     libwpa_client \
+    media \
+    media_cmd \
     mediaserver \
     monkey \
     mtpd \
