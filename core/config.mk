@@ -281,7 +281,7 @@ LEX := flex
 # To run bison from elsewhere you need to set up enviromental variable
 # BISON_PKGDATADIR.
 BISON_PKGDATADIR := $(PWD)/external/bison/data
-BISON := prebuilts/misc/$(HOST_PREBUILT_TAG)/bison/bison
+BISON := prebuilts/misc/$(BUILD_OS)-$(BUILD_ARCH)/bison/bison
 YACC := $(BISON) -d
 
 DOXYGEN:= doxygen
