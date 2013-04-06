@@ -275,8 +275,15 @@ endif
 # ---------------------------------------------------------------
 # Generic tools.
 
-LEX:= flex
-YACC:= bison -d
+LEX := flex
+# The default PKGDATADIR built in the prebuilt bison is a relative path
+# external/bison/data.
+# To run bison from elsewhere you need to set up enviromental variable
+# BISON_PKGDATADIR.
+BISON_PKGDATADIR := $(PWD)/external/bison/data
+BISON := prebuilts/misc/$(HOST_PREBUILT_TAG)/bison/bison
+YACC := $(BISON) -d
+
 DOXYGEN:= doxygen
 AAPT := $(HOST_OUT_EXECUTABLES)/aapt$(HOST_EXECUTABLE_SUFFIX)
 AIDL := $(HOST_OUT_EXECUTABLES)/aidl$(HOST_EXECUTABLE_SUFFIX)
