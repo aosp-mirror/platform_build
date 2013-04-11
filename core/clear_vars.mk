@@ -135,6 +135,7 @@ LOCAL_DONT_DELETE_JAR_META_INF:=
 LOCAL_ADDITIONAL_CERTIFICATES:=
 LOCAL_PREBUILT_MODULE_FILE:=
 LOCAL_POST_INSTALL_CMD:=
+LOCAL_DIST_BUNDLED_BINARIES:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
