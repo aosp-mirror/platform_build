@@ -66,32 +66,6 @@ else
   endif
 endif
 
-# Logging used to be part of libcutils (target) and libutils (sim);
-# hack modules that use those other libs to also include liblog.
-# All of this complexity is to make sure that liblog only appears
-# once, and appears just before libcutils or libutils on the link
-# line.
-# TODO: remove this hack and change all modules to use liblog
-# when necessary.
-define insert-liblog
-  $(if $(filter liblog,$(1)),$(1), \
-    $(if $(filter libcutils,$(1)), \
-      $(patsubst libcutils,liblog libcutils,$(1)) \
-     , \
-      $(patsubst libutils,liblog libutils,$(1)) \
-     ) \
-   )
-endef
-ifneq (,$(filter libcutils libutils,$(LOCAL_SHARED_LIBRARIES)))
-  LOCAL_SHARED_LIBRARIES := $(call insert-liblog,$(LOCAL_SHARED_LIBRARIES))
-endif
-ifneq (,$(filter libcutils libutils,$(LOCAL_STATIC_LIBRARIES)))
-  LOCAL_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_STATIC_LIBRARIES))
-endif
-ifneq (,$(filter libcutils libutils,$(LOCAL_WHOLE_STATIC_LIBRARIES)))
-  LOCAL_WHOLE_STATIC_LIBRARIES := $(call insert-liblog,$(LOCAL_WHOLE_STATIC_LIBRARIES))
-endif
-
 ifdef LOCAL_SDK_VERSION
   # Get the list of INSTALLED libraries as module names.
   # We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
