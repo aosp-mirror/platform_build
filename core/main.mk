@@ -183,6 +183,7 @@ $(info ************************************************************)
 $(error stop)
 endif
 
+ifndef BUILD_EMULATOR
 ifeq (darwin,$(HOST_OS))
 GCC_REALPATH = $(realpath $(shell which $(HOST_CC)))
 ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
@@ -199,10 +200,11 @@ endif
 else   # HOST_OS is not darwin
   BUILD_EMULATOR := true
 endif  # HOST_OS is darwin
+endif
 
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
         > $(OUT_DIR)/versions_checked.mk)
-$(shell echo 'BUILD_EMULATOR := $(BUILD_EMULATOR)' \
+$(shell echo 'BUILD_EMULATOR ?= $(BUILD_EMULATOR)' \
         >> $(OUT_DIR)/versions_checked.mk)
 endif
 
