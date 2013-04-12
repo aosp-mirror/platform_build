@@ -24,7 +24,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
 
 PRODUCT_COPY_FILES := \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
-    device/generic/goldfish/data/etc/vold.conf:system/etc/vold.conf \
     device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
     device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml \
     hardware/libhardware_legacy/audio/audio_policy.conf:system/etc/audio_policy.conf
