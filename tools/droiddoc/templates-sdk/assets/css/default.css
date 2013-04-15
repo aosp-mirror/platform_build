@@ -2583,7 +2583,44 @@ div.design-announce p {
   background-image: url(../images/styles/disclosure_up.png);
 }
 
+/* -----------------------------------------------
+good/bad example containers 
+*/
 
+div.example-block {
+  background-repeat: no-repeat;
+  background-position:10px 8px; 
+  background-color:#ccc;
+  padding:4px;
+  margin:.8em auto 1.5em 2em;
+  width:260px;
+  float:right;
+}
+/* red container */
+.example-block.bad {
+  background-image: url(/images/example-bad.png);
+  background-color:#f4cccc;
+}
+/* green container */
+.example-block.good {
+  background-image: url(/images/example-good.png);
+  background-color:#d9ead3;
+}
+/* container heading div */
+#jd-content .example-block .heading {
+  font-weight:bold;
+  margin:6px 0 9px 36px;
+  padding:6px auto;
+}
+/* container image (if any) */
+#jd-content .example-block img {
+  margin:0;
+  padding:0px;
+}
+
+.example-block table {
+  margin:0;
+}
 
 /* -----------------------------------------------
 Dialog box for popup messages 
