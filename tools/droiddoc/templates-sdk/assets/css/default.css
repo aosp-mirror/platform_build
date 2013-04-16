@@ -1857,6 +1857,31 @@ EndColorStr='#ececec');
   margin: 0 0 10px;
 }
 
+/* related resources blocks in checklists */
+
+.rel-resources {
+  margin:10px 0px;
+  border:1px solid #ccc;
+  background-color:rgba(0, 0, 0, 0.027451);
+  border:1px solid #ccc;
+  font-size:13px;
+  color:#6f6f6f;
+}
+
+.rel-resources ul {
+padding: .5em 1em 0 1em;
+}
+
+.rel-resources a {
+font-weight:500;
+}
+
+.rel-resources h3 {
+  margin:4px 15px 0px 15px;
+  font-size:13px;
+  font-weight:600;
+  text-transform:uppercase;
+}
 
 /* --------------------------------------------------------------------------
 Form
