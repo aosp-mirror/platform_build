@@ -86,7 +86,7 @@ include $(BUILD_SYSTEM)/base_rules.mk
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE
 ifdef installed_shared_library_module_names
-$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
+$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
 endif
 endif
 
