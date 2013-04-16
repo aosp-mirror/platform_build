@@ -83,7 +83,7 @@ endif  # prebuilt_module_is_a_library
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE
 ifdef LOCAL_SHARED_LIBRARIES
-$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
+$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
 endif
 endif
 

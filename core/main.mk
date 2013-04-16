@@ -556,12 +556,12 @@ $(foreach m,$(TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES), \
   $(eval p := $(subst :,$(space),$(m))) \
   $(eval r := $(filter $(TARGET_OUT_ROOT)/%,$(call module-installed-files,\
     $(subst $(comma),$(space),$(lastword $(p)))))) \
-  $(eval $(call add-required-deps,$(firstword $(p)),$(r))))
+  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
 $(foreach m,$(HOST_DEPENDENCIES_ON_SHARED_LIBRARIES), \
   $(eval p := $(subst :,$(space),$(m))) \
   $(eval r := $(filter $(HOST_OUT_ROOT)/%,$(call module-installed-files,\
     $(subst $(comma),$(space),$(lastword $(p)))))) \
-  $(eval $(call add-required-deps,$(firstword $(p)),$(r))))
+  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
 
 m :=
 r :=
