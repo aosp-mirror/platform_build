@@ -82,7 +82,7 @@ ALL_FINDBUGS_FILES:=
 ALL_GPL_MODULE_LICENSE_FILES:=
 
 # Target and host installed module's dependencies on shared libraries.
-# They are list of "<installed_file>:lib1,lib2...".
+# They are list of "<module_name>:<installed_file>:lib1,lib2...".
 TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES :=
 HOST_DEPENDENCIES_ON_SHARED_LIBRARIES :=
 
