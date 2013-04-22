@@ -168,6 +168,19 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 
+# So...  funny story.  Recall when I mentioned above the
+# "JB MR2" thing?  I didn't mean that.  In fact, while I was
+# writing JB MR, my head was thinking 4.2, and things got
+# cross-wired as they are wont to do, and we ended up with
+# JB MR2, which didn't actually exist.
+#
+# Well, didn't exist then.
+#
+# Now it does.  Say hi, JB MR2!
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
