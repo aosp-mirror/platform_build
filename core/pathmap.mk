@@ -30,7 +30,6 @@ pathmap_INCL := \
     bootloader:bootable/bootloader/legacy/include \
     camera:system/media/camera/include \
     corecg:external/skia/include/core \
-    dbus:external/dbus \
     frameworks-base:frameworks/base/include \
     frameworks-native:frameworks/native/include \
     graphics:external/skia/include/core \

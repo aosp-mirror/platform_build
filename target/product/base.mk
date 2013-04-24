@@ -26,7 +26,6 @@ PRODUCT_PACKAGES += \
     bmgr \
     bugreport \
     content \
-    dbus-daemon \
     dhcpcd \
     dhcpcd-run-hooks \
     dnsmasq \
@@ -44,7 +43,6 @@ PRODUCT_PACKAGES += \
     libcamera_client \
     libcameraservice \
     libchromium_net \
-    libdbus \
     libdl \
     libdrm1 \
     libdrm1_jni \
