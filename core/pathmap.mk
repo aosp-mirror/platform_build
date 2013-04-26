@@ -112,7 +112,10 @@ FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 #
 FRAMEWORKS_SUPPORT_SUBDIRS := \
 	v4 \
-	v13 \
+	v7/gridlayout \
+	v7/appcompat \
+	v7/mediarouter \
+	v13
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
@@ -120,3 +123,10 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
 #
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS))
+
+#
+# A list of support library modules.
+#
+FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
+    $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir)))
+
