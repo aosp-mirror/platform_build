@@ -322,12 +322,7 @@ ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign$(HOST_EXECUTABLE_SUFFIX)
 FINDBUGS := prebuilt/common/findbugs/bin/findbugs
 EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
 
-# Deal with archaic version of bison on Mac OS X.
-ifeq ($(filter 1.28,$(shell $(YACC) -V)),)
 YACC_HEADER_SUFFIX:= .hpp
-else
-YACC_HEADER_SUFFIX:= .cpp.h
-endif
 
 # Don't use column under Windows, cygwin or not
 ifeq ($(HOST_OS),windows)
