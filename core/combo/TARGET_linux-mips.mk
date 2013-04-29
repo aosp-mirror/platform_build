@@ -93,7 +93,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-funwind-tables \
 			-Wa,--noexecstack \
 			-Werror=format-security \
-			-D_FORTIFY_SOURCE=1 \
+			-D_FORTIFY_SOURCE=2 \
 			$(arch_variant_cflags)
 
 android_config_h := $(call select-android-config-h,linux-mips)
