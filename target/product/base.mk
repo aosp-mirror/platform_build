@@ -44,8 +44,6 @@ PRODUCT_PACKAGES += \
     libcameraservice \
     libchromium_net \
     libdl \
-    libdrm1 \
-    libdrm1_jni \
     libeffects \
     libiprouteutil \
     libjni_latinime \
