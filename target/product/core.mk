@@ -82,6 +82,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
     PRODUCT_PACKAGES += \
         apache-xml-hostdex \
         bouncycastle-hostdex \
+        conscrypt-hostdex \
         core-hostdex \
         okhttp-hostdex \
         libcrypto \
