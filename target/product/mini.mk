@@ -71,6 +71,7 @@ PRODUCT_PACKAGES += \
     cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
+    conscrypt \
     core \
     core-junit \
     dalvikvm \
