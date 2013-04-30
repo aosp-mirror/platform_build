@@ -39,7 +39,6 @@ PRODUCT_PACKAGES := \
 	Launcher2 \
 	Development \
 	DevelopmentSettings \
-	DrmProvider \
 	Fallback \
 	Settings \
 	SdkSetup \

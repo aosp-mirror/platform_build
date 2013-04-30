@@ -25,7 +25,6 @@ PRODUCT_PACKAGES := \
     Calculator \
     Calendar \
     CertInstaller \
-    DrmProvider \
     Email \
     Exchange2 \
     FusedLocation \
