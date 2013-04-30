@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
+    conscrypt \
     core \
     core-junit \
     dalvikvm \
@@ -142,6 +143,7 @@ ifeq ($(WITH_HOST_DALVIK),true)
     PRODUCT_PACKAGES += \
         apache-xml-hostdex \
         bouncycastle-hostdex \
+        conscrypt-hostdex \
         core-hostdex \
         okhttp-hostdex \
         libcrypto \
