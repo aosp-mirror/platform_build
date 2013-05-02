@@ -105,13 +105,34 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
         <div class="right"></div>
     </div>
   </div>
-  <div id="search_filtered_wrapper">
-    <div id="search_filtered_div" class="no-display">
-        <ul id="search_filtered">
-        </ul>
+
+  <div class="search_filtered_wrapper reference">
+    <div class="suggest-card reference no-display">
+      <ul class="search_filtered">
+      </ul>
     </div>
   </div>
-  
+
+  <div class="search_filtered_wrapper docs">
+    <div class="suggest-card dummy no-display">&nbsp;</div>
+    <div class="suggest-card develop no-display">
+      <ul class="search_filtered">
+      </ul>
+      <div class="child-card guides no-display">
+      </div>
+      <div class="child-card training no-display">
+      </div>
+    </div>
+    <div class="suggest-card design no-display">
+      <ul class="search_filtered">
+      </ul>
+    </div>
+    <div class="suggest-card distribute no-display">
+      <ul class="search_filtered">
+      </ul>
+    </div>
+  </div>
+
   </div>
   <!-- /New Search>
           
