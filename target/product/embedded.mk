@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += \
     dumpsys \
     gralloc.default \
     gzip \
+    healthd \
     init \
     init.environ.rc \
     init.rc \
