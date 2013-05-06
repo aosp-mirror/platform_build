@@ -882,6 +882,11 @@ function mangrep()
     find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'AndroidManifest.xml' -print0 | xargs -0 grep --color -n "$@"
 }
 
+function sepgrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -name sepolicy -type d -print0 | xargs -0 grep --color -n -r --exclude-dir=\.git "$@"
+}
+
 case `uname -s` in
     Darwin)
         function mgrep()
