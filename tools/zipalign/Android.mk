@@ -15,6 +15,7 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES += external/zlib
 
 LOCAL_STATIC_LIBRARIES := \
+	libandroidfw \
 	libutils \
 	libcutils \
 	liblog
