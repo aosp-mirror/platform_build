@@ -10,7 +10,7 @@ var isMobile = false; // true if mobile, so we can adjust some layout
 var basePath = getBaseUri(location.pathname);
 var SITE_ROOT = toRoot + basePath.substring(1,basePath.indexOf("/",1));
 var GOOGLE_DATA; // combined data for google service apis, used for search suggest
-  
+
 
 /******  ON LOAD SET UP STUFF *********/
 
@@ -51,14 +51,14 @@ $(document).ready(function() {
       toggleFullscreen(false);
     }
   });
-  
+
   // initialize the divs with custom scrollbars
   $('.scroll-pane').jScrollPane( {verticalGutter:0} );
-  
+
   // add HRs below all H2s (except for a few other h2 variants)
   $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').not('h2.norule').css({marginBottom:0}).after('<hr/>');
-  
-  // set search's onkeyup handler here so we can show suggestions 
+
+  // set search's onkeyup handler here so we can show suggestions
   // even while search results are visible
   $("#search_autocomplete").keyup(function() {return search_changed(event, false, toRoot)});
 
@@ -79,7 +79,7 @@ $(document).ready(function() {
   });
 
   // Set up quicknav
-  var quicknav_open = false;  
+  var quicknav_open = false;
   $("#btn-quicknav").click(function() {
     if (quicknav_open) {
       $(this).removeClass('active');
@@ -91,20 +91,20 @@ $(document).ready(function() {
       expand();
     }
   })
-  
+
   var expand = function() {
    $('#header-wrap').addClass('quicknav');
    $('#quicknav').stop().show().animate({opacity:'1'});
   }
-  
+
   var collapse = function() {
     $('#quicknav').stop().animate({opacity:'0'}, 100, function() {
       $(this).hide();
       $('#header-wrap').removeClass('quicknav');
     });
   }
-  
-  
+
+
   //Set up search
   $("#search_autocomplete").focus(function() {
     $("#search-container").addClass('active');
@@ -128,7 +128,7 @@ $(document).ready(function() {
     }
   })
 
-    
+
   // prep nav expandos
   var pagePath = document.location.pathname;
   // account for intl docs by removing the intl/*/ path
@@ -203,7 +203,7 @@ $(document).ready(function() {
     // Find this page's <li> in sidenav and set selected
     $selListItem = $selNavLink.closest('li');
     $selListItem.addClass('selected');
-    
+
     // Traverse up the tree and expand all parent nav-sections
     $selNavLink.parents('li.nav-section').each(function() {
       $(this).addClass('expanded');
@@ -213,7 +213,7 @@ $(document).ready(function() {
     // set up prev links
     var $prevLink = [];
     var $prevListItem = $selListItem.prev('li');
-    
+
     var crossBoundaries = ($("body.design").length > 0) || ($("body.guide").length > 0) ? true :
 false; // navigate across topic boundaries only in design docs
     if ($prevListItem.length) {
@@ -228,10 +228,10 @@ false; // navigate across topic boundaries only in design docs
       // jump to this section's index page (if it exists)
       var $parentListItem = $selListItem.parents('li');
       $prevLink = $selListItem.parents('li').find('a');
-      
+
       // except if cross boundaries aren't allowed, and we're at the top of a section already
       // (and there's another parent)
-      if (!crossBoundaries && $parentListItem.hasClass('nav-section') 
+      if (!crossBoundaries && $parentListItem.hasClass('nav-section')
                            && $selListItem.hasClass('nav-section')) {
         $prevLink = [];
       }
@@ -242,7 +242,7 @@ false; // navigate across topic boundaries only in design docs
     var startClass = false;
     var training = $(".next-class-link").length; // decides whether to provide "next class" link
     var isCrossingBoundary = false;
-    
+
     if ($selListItem.hasClass('nav-section')) {
       // we're on an index page, jump to the first topic
       $nextLink = $selListItem.find('ul:eq(0)').find('a:eq(0)');
@@ -255,7 +255,7 @@ false; // navigate across topic boundaries only in design docs
         // then set the landing page "start link" text to be the first doc title
         $('.topic-start-link').text($nextLink.text().toUpperCase());
       }
-      
+
       // If the selected page has a description, then it's a class or article homepage
       if ($selListItem.find('a[description]').length) {
         // this means we're on a class landing page
@@ -277,7 +277,7 @@ false; // navigate across topic boundaries only in design docs
     if (startClass) {
       $('.start-class-link').attr('href', $nextLink.attr('href')).removeClass("hide");
 
-      // if there's no training bar (below the start button), 
+      // if there's no training bar (below the start button),
       // then we need to add a bottom border to button
       if (!$("#tb").length) {
         $('.start-class-link').css({'border-bottom':'1px solid #DADADA'});
@@ -287,7 +287,7 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link').attr('href','')
                           .removeClass("hide").addClass("disabled")
                           .click(function() { return false; });
-     
+
       $('.next-class-link').attr('href',$nextLink.attr('href'))
                           .removeClass("hide").append($nextLink.html());
       $('.next-class-link').find('.new').empty();
@@ -302,7 +302,7 @@ false; // navigate across topic boundaries only in design docs
       } else {
         $('.prev-page-link').attr('href', $prevLink.attr('href')).removeClass("hide");
       }
-    } 
+    }
 
     // If this is a training 'article', there should be no prev/next nav
     // ... if the grandparent is the "nav" ... and it has no child list items...
@@ -311,7 +311,7 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link,.prev-page-link').attr('href','').addClass("disabled")
                           .click(function() { return false; });
     }
-    
+
   }
 //If auto-toc div is present, generate the automated TOC
 if ($("#auto-toc").is('*')) {
@@ -323,7 +323,7 @@ if ($("#auto-toc").is('*')) {
         toc+="<ol>";
       }
       else if(current.is("h2") && previous.is("h3")){ //close up the nested ol
-        toc+="</ol>"; 
+        toc+="</ol>";
       }
         toc+="<li><a href='#" + current[0].id + "'>" +
           current.html() + "</a></li>";
@@ -332,12 +332,12 @@ if ($("#auto-toc").is('*')) {
   });
   $("#auto-toc").append(toc);  //append to the div
 }
-  
+
   // Set up the course landing pages for Training with class names and descriptions
   if ($('body.trainingcourse').length) {
     var $classLinks = $selListItem.find('ul li a').not('#nav .nav-section .nav-section ul a');
     var $classDescriptions = $classLinks.attr('description');
-    
+
     var $olClasses  = $('<ol class="class-list"></ol>');
     var $liClass;
     var $imgIcon;
@@ -349,11 +349,11 @@ if ($("#auto-toc").is('*')) {
       $liClass  = $('<li></li>');
       $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2>' + $(this).html()+'</h2><span></span></a>');
       $pSummary = $('<p class="description">' + $(this).attr('description') + '</p>');
-      
+
       $olLessons  = $('<ol class="lesson-list"></ol>');
-      
+
       $lessons = $(this).closest('li').find('ul li a');
-      
+
       if ($lessons.length) {
         $imgIcon = $('<img src="'+toRoot+'assets/images/resource-tutorial.png" alt=""/>');
         $lessons.each(function(index) {
@@ -391,7 +391,7 @@ if ($("#auto-toc").is('*')) {
       // first hide all other siblings
       var $others = $('li.nav-section.expanded', $(this).closest('ul'));
       $others.removeClass('expanded').children('ul').slideUp(250);
-      
+
       // now expand me
       section.closest('li').addClass('expanded');
       section.children('ul').slideDown(250, function() {
@@ -399,7 +399,7 @@ if ($("#auto-toc").is('*')) {
       });
     }
   });
-  
+
   $(".scroll-pane").scroll(function(event) {
       event.preventDefault();
       return false;
@@ -431,10 +431,10 @@ if ($("#auto-toc").is('*')) {
       // from a scrollable div and so there's no need to make adjustments to our layout
       return;
     }
-    var scrollTop = $(window).scrollTop();    
+    var scrollTop = $(window).scrollTop();
     var headerHeight = $('#header').outerHeight();
     var subheaderHeight = $('#nav-x').outerHeight();
-    var searchResultHeight = $('#searchResults').is(":visible") ? 
+    var searchResultHeight = $('#searchResults').is(":visible") ?
                              $('#searchResults').outerHeight() : 0;
     var totalHeaderHeight = headerHeight + subheaderHeight + searchResultHeight;
     // we set the navbar fixed when the scroll position is beyond the height of the site header...
@@ -444,20 +444,20 @@ if ($("#auto-toc").is('*')) {
     if ($("#doc-col").height() < $("#side-nav").height()) {
       navBarShouldBeFixed = false;
     }
-   
+
     var scrollLeft = $(window).scrollLeft();
     // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
     if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
       updateSideNavPosition();
       prevScrollLeft = scrollLeft;
     }
-    
-    // Don't continue if the header is sufficently far away 
+
+    // Don't continue if the header is sufficently far away
     // (to avoid intensive resizing that slows scrolling)
     if (navBarIsFixed && navBarShouldBeFixed) {
       return;
     }
-    
+
     if (navBarIsFixed != navBarShouldBeFixed) {
       if (navBarShouldBeFixed) {
         // make it fixed
@@ -468,7 +468,7 @@ if ($("#auto-toc").is('*')) {
             .prependTo('#body-content');
         // add neato "back to top" button
         $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
-        
+
         // update the sidenaav position for side scrolling
         updateSideNavPosition();
       } else {
@@ -480,12 +480,12 @@ if ($("#auto-toc").is('*')) {
         $('#devdoc-nav a.totop').hide();
       }
       navBarIsFixed = navBarShouldBeFixed;
-    } 
-    
+    }
+
     resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
   });
 
-  
+
   var navBarLeftPos;
   if ($('#devdoc-nav').length) {
     setNavBarLeftPos();
@@ -548,16 +548,16 @@ if ($("#auto-toc").is('*')) {
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 
 
-  // Revise the sidenav widths to make room for the scrollbar 
+  // Revise the sidenav widths to make room for the scrollbar
   // which avoids the visible width from changing each time the bar appears
   var $sidenav = $("#side-nav");
   var sidenav_width = parseInt($sidenav.innerWidth());
-    
+
   $("#devdoc-nav  #nav").css("width", sidenav_width - 4 + "px"); // 4px is scrollbar width
 
 
   $(".scroll-pane").removeAttr("tabindex"); // get rid of tabindex added by jscroller
-  
+
   if ($(".scroll-pane").length > 1) {
     // Check if there's a user preference for the panel heights
     var cookieHeight = readCookie("reference_height");
@@ -565,7 +565,7 @@ if ($("#auto-toc").is('*')) {
       restoreHeight(cookieHeight);
     }
   }
-  
+
   resizeNav();
 
   /* init the language selector based on user cookie for lang */
@@ -640,7 +640,7 @@ function updateSideNavPosition() {
   $('#devdoc-nav').css({left: -newLeft});
   $('#devdoc-nav .totop').css({left: -(newLeft - parseInt($('#side-nav').css('margin-left')))});
 }
-  
+
 
 
 
@@ -685,7 +685,7 @@ function resizeNav(delay) {
   var $nav = $("#devdoc-nav");
   var $window = $(window);
   var navHeight;
-  
+
   // Get the height of entire window and the total header height.
   // Then figure out based on scroll position whether the header is visible
   var windowHeight = $window.height();
@@ -693,12 +693,12 @@ function resizeNav(delay) {
   var headerHeight = $('#header').outerHeight();
   var subheaderHeight = $('#nav-x').outerHeight();
   var headerVisible = (scrollTop < (headerHeight + subheaderHeight));
-  
-  // get the height of space between nav and top of window. 
+
+  // get the height of space between nav and top of window.
   // Could be either margin or top position, depending on whether the nav is fixed.
-  var topMargin = (parseInt($nav.css('margin-top')) || parseInt($nav.css('top'))) + 1; 
+  var topMargin = (parseInt($nav.css('margin-top')) || parseInt($nav.css('top'))) + 1;
   // add 1 for the #side-nav bottom margin
-  
+
   // Depending on whether the header is visible, set the side nav's height.
   if (headerVisible) {
     // The sidenav height grows as the header goes off screen
@@ -707,44 +707,44 @@ function resizeNav(delay) {
     // Once header is off screen, the nav height is almost full window height
     navHeight = windowHeight - topMargin;
   }
-  
-  
-  
+
+
+
   $scrollPanes = $(".scroll-pane");
   if ($scrollPanes.length > 1) {
     // subtract the height of the api level widget and nav swapper from the available nav height
     navHeight -= ($('#api-nav-header').outerHeight(true) + $('#nav-swap').outerHeight(true));
-    
+
     $("#swapper").css({height:navHeight + "px"});
     if ($("#nav-tree").is(":visible")) {
       $("#nav-tree").css({height:navHeight});
     }
-    
-    var classesHeight = navHeight - parseInt($("#resize-packages-nav").css("height")) - 10 + "px"; 
+
+    var classesHeight = navHeight - parseInt($("#resize-packages-nav").css("height")) - 10 + "px";
     //subtract 10px to account for drag bar
-    
-    // if the window becomes small enough to make the class panel height 0, 
+
+    // if the window becomes small enough to make the class panel height 0,
     // then the package panel should begin to shrink
     if (parseInt(classesHeight) <= 0) {
       $("#resize-packages-nav").css({height:navHeight - 10}); //subtract 10px for drag bar
       $("#packages-nav").css({height:navHeight - 10});
     }
-    
+
     $("#classes-nav").css({'height':classesHeight, 'margin-top':'10px'});
     $("#classes-nav .jspContainer").css({height:classesHeight});
-    
-    
+
+
   } else {
     $nav.height(navHeight);
   }
-  
+
   if (delay) {
     updateFromResize = true;
     delayedReInitScrollbars(delay);
   } else {
     reInitScrollbars();
   }
-  
+
 }
 
 var updateScrollbars = false;
@@ -763,7 +763,7 @@ function delayedReInitScrollbars(delay) {
     updateFromResize = false;
     return;
   }
-  
+
   // We're scheduled for an update and the update request came from this method's setTimeout
   if (updateScrollbars && !updateFromResize) {
     reInitScrollbars();
@@ -781,7 +781,7 @@ function reInitScrollbars() {
     var api = $(this).data('jsp');
     if (!api) { setTimeout(reInitScrollbars,300); return;}
     api.reinitialise( {verticalGutter:0} );
-  });  
+  });
   $(".scroll-pane").removeAttr("tabindex"); // get rid of tabindex added by jscroller
 }
 
@@ -812,7 +812,7 @@ function restoreHeight(packageHeight) {
 
 
 
-/** Scroll the jScrollPane to make the currently selected item visible 
+/** Scroll the jScrollPane to make the currently selected item visible
     This is called when the page finished loading. */
 function scrollIntoView(nav) {
   var $nav = $("#"+nav);
@@ -822,9 +822,9 @@ function scrollIntoView(nav) {
   if ($nav.is(':visible')) {
     var $selected = $(".selected", $nav);
     if ($selected.length == 0) return;
-    
+
     var selectedOffset = $selected.position().top;
-    if (selectedOffset + 90 > $nav.height()) {  // add 90 so that we scroll up even 
+    if (selectedOffset + 90 > $nav.height()) {  // add 90 so that we scroll up even
                                                 // if the current item is close to the bottom
       api.scrollTo(0, selectedOffset - ($nav.height() / 4), false); // scroll the item into view
                                                               // to be 1/4 of the way from the top
@@ -876,7 +876,7 @@ function writeCookie(cookie, val, section, expiration) {
     date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
     expiration = date.toGMTString();
   }
-  var cookieValue = cookie_namespace + section + cookie + "=" + val 
+  var cookieValue = cookie_namespace + section + cookie + "=" + val
                     + "; expires=" + expiration+"; path=/";
   document.cookie = cookieValue;
 }
@@ -1051,7 +1051,7 @@ function swapNav() {
   $("#panel-link").toggle();
   $("#nav-tree").toggle();
   $("#tree-link").toggle();
-  
+
   resizeNav();
 
   // Gross nasty hack to make tree view show up upon first swap by setting height manually
@@ -1059,7 +1059,7 @@ function swapNav() {
       .css({'height':$("#nav-tree .jspContainer .jspPane").height() +'px'});
   // Another nasty hack to make the scrollbar appear now that we have height
   resizeNav();
-  
+
   if ($("#nav-tree").is(':visible')) {
     scrollIntoView("nav-tree");
   } else {
@@ -1114,7 +1114,7 @@ function changeNavLang(lang) {
 
 function changeLangPref(lang, submit) {
   var date = new Date();
-  expires = date.toGMTString(date.setTime(date.getTime()+(10*365*24*60*60*1000))); 
+  expires = date.toGMTString(date.setTime(date.getTime()+(10*365*24*60*60*1000)));
   // keep this for 50 years
   //alert("expires: " + expires)
   writeCookie("pref_lang", lang, null, expires);
@@ -1165,13 +1165,13 @@ function toggleContent(obj) {
     toggleMe.slideDown();
     $(".toggle-content-text", obj).toggle();
     div.removeClass("closed").addClass("open");
-    $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot 
+    $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot
                   + "assets/images/triangle-opened.png");
   } else { // if it's open, close it
     toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
       $(".toggle-content-text", obj).toggle();
       div.removeClass("open").addClass("closed");
-      $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot 
+      $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot
                   + "assets/images/triangle-closed.png");
     });
   }
@@ -1199,7 +1199,7 @@ function hideExpandable(ids) {
 
 
 
-/*    
+/*
  *  Slideshow 1.0
  *  Used on /index.html and /develop/index.html for carousel
  *
@@ -1240,7 +1240,7 @@ function hideExpandable(ids) {
 
  (function($) {
  $.fn.dacSlideshow = function(o) {
-     
+
      //Options - see above
      o = $.extend({
          btnPrev:   null,
@@ -1255,8 +1255,8 @@ function hideExpandable(ids) {
          pagination: true
 
      }, o || {});
-     
-     //Set up a carousel for each 
+
+     //Set up a carousel for each
      return this.each(function() {
 
          var running = false;
@@ -1265,7 +1265,7 @@ function hideExpandable(ids) {
          var div = $(this);
          var ul = $("ul", div);
          var tLi = $("li", ul);
-         var tl = tLi.size(); 
+         var tl = tLi.size();
          var timer = null;
 
          var li = $("li", ul);
@@ -1284,7 +1284,7 @@ function hideExpandable(ids) {
          ul.css(sizeCss, ulSize+"px").css(animCss, -(curr*liSize));
 
          div.css(sizeCss, divSize+"px");
-         
+
          //Pagination
          if (o.pagination) {
              var pagination = $("<div class='pagination'></div>");
@@ -1302,7 +1302,7 @@ function hideExpandable(ids) {
                 div.append(pagination);
              }
          }
-         
+
          //Previous button
          if(o.btnPrev)
              $(o.btnPrev).click(function(e) {
@@ -1327,18 +1327,18 @@ function hideExpandable(ids) {
                      pauseRotateTimer();
                  }
              });
-         
+
          //Auto rotation
          if(o.auto) startRotateTimer();
-             
+
          function startRotateTimer() {
              clearInterval(timer);
              timer = setInterval(function() {
                   if (curr == tl-1) {
                     go(0);
                   } else {
-                    go(curr+o.scroll);  
-                  } 
+                    go(curr+o.scroll);
+                  }
               }, o.autoTime);
              $(o.btnPause).removeClass('paused');
          }
@@ -1376,11 +1376,11 @@ function hideExpandable(ids) {
                     []
                   ).addClass("disabled");
 
-                 
+
                  var nav_items = $('li', pagination);
                  nav_items.removeClass('active');
                  nav_items.eq(to).addClass('active');
-                 
+
 
              }
              if(o.auto) startRotateTimer();
@@ -1402,7 +1402,7 @@ function hideExpandable(ids) {
  })(jQuery);
 
 
-/*  
+/*
  *  dacSlideshow 1.0
  *  Used on develop/index.html for side-sliding tabs
  *
@@ -1441,7 +1441,7 @@ function hideExpandable(ids) {
  */
  (function($) {
  $.fn.dacTabbedList = function(o) {
-     
+
      //Options - see above
      o = $.extend({
          speed : 250,
@@ -1449,8 +1449,8 @@ function hideExpandable(ids) {
          nav_id: null,
          frame_id: null
      }, o || {});
-     
-     //Set up a carousel for each 
+
+     //Set up a carousel for each
      return this.each(function() {
 
          var curr = 0;
@@ -1458,17 +1458,17 @@ function hideExpandable(ids) {
          var animCss = "margin-left";
          var sizeCss = "width";
          var div = $(this);
-         
+
          var nav = $(o.nav_id, div);
          var nav_li = $("li", nav);
-         var nav_size = nav_li.size(); 
+         var nav_size = nav_li.size();
          var frame = div.find(o.frame_id);
          var content_width = $(frame).find('ul').width();
          //Buttons
          $(nav_li).click(function(e) {
            go($(nav_li).index($(this)));
          })
-         
+
          //Go to an item
          function go(to) {
              if(!running) {
@@ -1481,10 +1481,10 @@ function hideExpandable(ids) {
                      }
                  );
 
-                 
+
                  nav_li.removeClass('active');
                  nav_li.eq(to).addClass('active');
-                 
+
 
              }
              return false;
@@ -1565,7 +1565,7 @@ function sync_selection_table(toroot)
     var $list = $("#search_filtered");
     var $li; //list item jquery object
     var i; //list item iterator
-  
+
     // reset the list
     $("li",$list).remove();
 
@@ -1612,7 +1612,7 @@ function search_changed(e, kd, toroot)
 {
     var search = document.getElementById("search_autocomplete");
     var text = search.value.replace(/(^ +)|( +$)/g, '');
-    
+
     // show/hide the close button
     if (text != '') {
         $(".search .close").removeClass("hide");
@@ -1805,7 +1805,7 @@ function highlight_autocomplete_result_labels(query) {
 
 function search_focus_changed(obj, focused)
 {
-    if (!focused) {     
+    if (!focused) {
         if(obj.value == ""){
           $(".search .close").addClass("hide");
         }
@@ -1826,9 +1826,9 @@ function hideResults() {
   $("#searchResults").slideUp();
   $(".search .close").addClass("hide");
   location.hash = '';
-  
+
   $("#search_autocomplete").val("").blur();
-  
+
   // reset the ajax search callback to nothing, so results don't appear unless ENTER
   searchControl.setSearchStartingCallback(this, function(control, searcher, query) {});
   return false;
@@ -1858,74 +1858,33 @@ function loadSearchResults() {
   searchOptions = new google.search.SearcherOptions();
   searchOptions.setExpandMode(GSearchControl.EXPAND_MODE_OPEN);
 
-  if(window.location.host=="source.android.com"){
-    // Configure s.a.c searchers
-    sacSiteSearcher = new google.search.WebSearch();
-    sacSiteSearcher.setUserDefinedLabel("All");
-    sacSiteSearcher.setSiteRestriction("http://source.android.com/");
+  // Configure s.a.c searchers
+  sacSiteSearcher = new google.search.WebSearch();
+  sacSiteSearcher.setUserDefinedLabel("All");
+  sacSiteSearcher.setSiteRestriction("http://source.android.com/");
 
-    sourceSearcher = new google.search.WebSearch();
-    sourceSearcher.setUserDefinedLabel("Source");
-    sourceSearcher.setSiteRestriction("http://source.android.com/source/");
+  sourceSearcher = new google.search.WebSearch();
+  sourceSearcher.setUserDefinedLabel("Source");
+  sourceSearcher.setSiteRestriction("http://source.android.com/source/");
 
-    devicesSearcher = new google.search.WebSearch();
-    devicesSearcher.setUserDefinedLabel("Devices");
-    devicesSearcher.setSiteRestriction("http://source.android.com/devices/");
+  devicesSearcher = new google.search.WebSearch();
+  devicesSearcher.setUserDefinedLabel("Devices");
+  devicesSearcher.setSiteRestriction("http://source.android.com/devices/");
 
-    accessoriesSearcher = new google.search.WebSearch();
-    accessoriesSearcher.setUserDefinedLabel("Accessories");
-    accessoriesSearcher.setSiteRestriction("http://source.android.com/accessories/");
+  accessoriesSearcher = new google.search.WebSearch();
+  accessoriesSearcher.setUserDefinedLabel("Accessories");
+  accessoriesSearcher.setSiteRestriction("http://source.android.com/accessories/");
 
-    compatibilitySearcher = new google.search.WebSearch();
-    compatibilitySearcher.setUserDefinedLabel("Compatibility");
-    compatibilitySearcher.setSiteRestriction("http://source.android.com/compatibility/");
+  compatibilitySearcher = new google.search.WebSearch();
+  compatibilitySearcher.setUserDefinedLabel("Compatibility");
+  compatibilitySearcher.setSiteRestriction("http://source.android.com/compatibility/");
 
-    // add each searcher to the search control
-    searchControl.addSearcher(sacSiteSearcher, searchOptions);
-    searchControl.addSearcher(sourceSearcher, searchOptions);
-    searchControl.addSearcher(devicesSearcher, searchOptions);
-    searchControl.addSearcher(accessoriesSearcher, searchOptions);
-    searchControl.addSearcher(compatibilitySearcher, searchOptions);
-  }
-  else{
-    // configure each of the searchers, for each tab
-    devSiteSearcher = new google.search.WebSearch();
-    devSiteSearcher.setUserDefinedLabel("All");
-    devSiteSearcher.setSiteRestriction("001482626316274216503:zu90b7s047u");
-
-    designSearcher = new google.search.WebSearch();
-    designSearcher.setUserDefinedLabel("Design");
-    designSearcher.setSiteRestriction("http://developer.android.com/design/");
-
-    trainingSearcher = new google.search.WebSearch();
-    trainingSearcher.setUserDefinedLabel("Training");
-    trainingSearcher.setSiteRestriction("http://developer.android.com/training/");
-
-    guidesSearcher = new google.search.WebSearch();
-    guidesSearcher.setUserDefinedLabel("Guides");
-    guidesSearcher.setSiteRestriction("http://developer.android.com/guide/");
-
-    referenceSearcher = new google.search.WebSearch();
-    referenceSearcher.setUserDefinedLabel("Reference");
-    referenceSearcher.setSiteRestriction("http://developer.android.com/reference/");
-
-    googleSearcher = new google.search.WebSearch();
-    googleSearcher.setUserDefinedLabel("Google Services");
-    googleSearcher.setSiteRestriction("http://developer.android.com/google/");
-
-    blogSearcher = new google.search.WebSearch();
-    blogSearcher.setUserDefinedLabel("Blog");
-    blogSearcher.setSiteRestriction("http://android-developers.blogspot.com");
-
-    // add each searcher to the search control
-    searchControl.addSearcher(devSiteSearcher, searchOptions);
-    searchControl.addSearcher(designSearcher, searchOptions);
-    searchControl.addSearcher(trainingSearcher, searchOptions);
-    searchControl.addSearcher(guidesSearcher, searchOptions);
-    searchControl.addSearcher(referenceSearcher, searchOptions);
-    searchControl.addSearcher(googleSearcher, searchOptions);
-    searchControl.addSearcher(blogSearcher, searchOptions);
-  }
+  // add each searcher to the search control
+  searchControl.addSearcher(sacSiteSearcher, searchOptions);
+  searchControl.addSearcher(sourceSearcher, searchOptions);
+  searchControl.addSearcher(devicesSearcher, searchOptions);
+  searchControl.addSearcher(accessoriesSearcher, searchOptions);
+  searchControl.addSearcher(compatibilitySearcher, searchOptions);
 
 
   // configure result options
@@ -2005,10 +1964,10 @@ function addTabListeners() {
       setTimeout(function() {
         // remove any residual page numbers
         $('#searchResults .gsc-tabsArea .gsc-cursor-box.gs-bidi-start-align').remove();
-        // move the page numbers to the left position; make a clone, 
+        // move the page numbers to the left position; make a clone,
         // because the element is drawn to the DOM only once
-        // and because we're going to remove it (previous line), 
-        // we need it to be available to move again as the user navigates 
+        // and because we're going to remove it (previous line),
+        // we need it to be available to move again as the user navigates
         $('#searchResults .gsc-webResult .gsc-cursor-box.gs-bidi-start-align:visible')
                         .clone().appendTo('#searchResults .gsc-tabsArea');
         }, 200);
@@ -2059,22 +2018,22 @@ var minLevel = 1;
 var maxLevel = 1;
 
 /******* SIDENAV DIMENSIONS ************/
-  
+
   function initSidenavHeightResize() {
     // Change the drag bar size to nicely fit the scrollbar positions
     var $dragBar = $(".ui-resizable-s");
     $dragBar.css({'width': $dragBar.parent().width() - 5 + "px"});
-    
-    $( "#resize-packages-nav" ).resizable({ 
+
+    $( "#resize-packages-nav" ).resizable({
       containment: "#nav-panels",
       handles: "s",
       alsoResize: "#packages-nav",
       resize: function(event, ui) { resizeNav(); }, /* resize the nav while dragging */
       stop: function(event, ui) { saveNavPanels(); } /* once stopped, save the sizes to cookie  */
       });
-          
+
   }
-  
+
 function updateSidenavFixedWidth() {
   if (!navBarIsFixed) return;
   $('#devdoc-nav').css({
@@ -2082,7 +2041,7 @@ function updateSidenavFixedWidth() {
     'margin' : $('#side-nav').css('margin')
   });
   $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
-  
+
   initSidenavHeightResize();
 }
 
@@ -2093,7 +2052,7 @@ function updateSidenavFullscreenWidth() {
     'margin' : $('#side-nav').css('margin')
   });
   $('#devdoc-nav .totop').css({'left': 'inherit'});
-  
+
   initSidenavHeightResize();
 }
 
@@ -2177,7 +2136,7 @@ function toggleVisisbleApis(selectedLevel, context) {
     if (apiLevelNum > selectedLevelNum) {
       obj.addClass("absent").attr("title","Requires API Level \""
             + apiLevel + "\" or higher");
-    } 
+    }
     else obj.removeClass("absent").removeAttr("title");
   });
 }
@@ -2246,7 +2205,7 @@ function new_node(me, mom, text, link, children_data, api_level)
       node.expanded = false;
     }
   }
-  
+
 
   node.children_ul = null;
   node.get_children_ul = function() {
@@ -2274,7 +2233,7 @@ function expand_node(me, node)
       get_node(me, node);
       if ($(node.label_div).hasClass("absent")) {
         $(node.get_children_ul()).addClass("absent");
-      } 
+      }
       $(node.get_children_ul()).slideDown("fast");
     }
     node.plus_img.src = me.toroot + "assets/images/triangle-opened-small.png";
@@ -2344,7 +2303,7 @@ function find_page(url, data)
 
 function init_default_navtree(toroot) {
   init_navtree("tree-list", toroot, NAVTREE_DATA);
-  
+
   // perform api level toggling because because the whole tree is new to the DOM
   var selectedLevel = $("#apiLevelSelector option:selected").val();
   toggleVisisbleApis(selectedLevel, "#side-nav");
@@ -2412,8 +2371,8 @@ function new_google_node(me, mom, text, link, children_data, api_level)
   node.depth = mom.depth + 1;
   node.get_children_ul = function() {
       if (!node.children_ul) {
-        node.children_ul = document.createElement("ul"); 
-        node.children_ul.className = "tree-list-children"; 
+        node.children_ul = document.createElement("ul");
+        node.children_ul.className = "tree-list-children";
         node.li.appendChild(node.children_ul);
       }
       return node.children_ul;
@@ -2421,8 +2380,8 @@ function new_google_node(me, mom, text, link, children_data, api_level)
   node.li = document.createElement("li");
 
   mom.get_children_ul().appendChild(node.li);
-  
-  
+
+
   if(link) {
     child = document.createElement("a");
 
@@ -2435,7 +2394,7 @@ function new_google_node(me, mom, text, link, children_data, api_level)
   if (children_data != null) {
     node.li.className="nav-section";
     node.label_div = document.createElement("div");
-    node.label_div.className = "nav-section-header-ref";  
+    node.label_div.className = "nav-section-header-ref";
     node.li.appendChild(node.label_div);
     get_google_node(me, node);
     node.label_div.appendChild(child);
