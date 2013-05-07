@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "UVbA51kY",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 885,
+      "author": {
+        "id": 1006166
+      },
+      "writtenOn": "2013-05-07T17:12:02Z",
+      "side": 1,
+      "message": "maybe something shorter like sepgrep?",
+      "revId": "a7199dc3b6f322585fb2eea608cd806bc2b46912",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
