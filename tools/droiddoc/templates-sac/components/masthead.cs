@@ -19,7 +19,7 @@
                   ru-lang="Проектирование"
                   ko-lang="디자인"
                   ja-lang="設計"
-                  es-lang="Diseñar"               
+                  es-lang="Diseñar"
                   >Design</a></li>
                 <li class="develop"><a href="<?cs var:toroot ?>develop/index.html"
                   zh-TW-lang="開發"
@@ -27,7 +27,7 @@
                   ru-lang="Разработка"
                   ko-lang="개발"
                   ja-lang="開発"
-                  es-lang="Desarrollar"               
+                  es-lang="Desarrollar"
                   >Develop</a></li>
                 <li class="distribute last"><a href="<?cs var:toroot ?>distribute/index.html"
                   zh-TW-lang="發佈"
@@ -35,10 +35,10 @@
                   ru-lang="Распространение"
                   ko-lang="배포"
                   ja-lang="配布"
-                  es-lang="Distribuir"               
+                  es-lang="Distribuir"
                   >Distribute</a></li>
             </ul>
-            
+
             <!-- New Search -->
             <div class="menu-container">
             <div class="moremenu">
@@ -59,7 +59,7 @@
         <li class="active"><a>Android Developers</a></li>
         <li><a href="http://source.android.com">Android Open Source Project</a></li>
       </ul>
-      
+
 <?cs ############ TODO: Remove when we're happy with Devsite ############# ?>
       <?cs # Use differenc lang switcher for devsite and gae server ?>
       <?cs if:devsite ?>
@@ -97,7 +97,7 @@
       <form onsubmit="return submit_search()">
         <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
 onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
-onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')" 
+onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')"
 onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
       </form>
       <div class="right"></div>
@@ -112,11 +112,11 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
         </ul>
     </div>
   </div>
-  
+
   </div>
   <!-- /New Search>
-          
-          
+
+
           <!-- Expanded quicknav -->
            <div id="quicknav" class="col-9">
                 <ul>
@@ -138,7 +138,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                           ru-lang="Курсы"
                           ko-lang="교육"
                           ja-lang="トレーニング"
-                          es-lang="Capacitación"               
+                          es-lang="Capacitación"
                           >Training</a></li>
                         <li><a href="<?cs var:toroot ?>guide/components/index.html"
                           zh-TW-lang="API 指南"
@@ -146,7 +146,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                           ru-lang="Руководства по API"
                           ko-lang="API 가이드"
                           ja-lang="API ガイド"
-                          es-lang="Guías de la API"               
+                          es-lang="Guías de la API"
                           >API Guides</a></li>
                         <li><a href="<?cs var:toroot ?>reference/packages.html"
                           zh-TW-lang="參考資源"
@@ -154,7 +154,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                           ru-lang="Справочник"
                           ko-lang="참조문서"
                           ja-lang="リファレンス"
-                          es-lang="Referencia"               
+                          es-lang="Referencia"
                           >Reference</a></li>
                         <li><a href="<?cs var:toroot ?>tools/index.html"
                           zh-TW-lang="相關工具"
@@ -162,7 +162,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                           ru-lang="Инструменты"
                           ko-lang="도구"
                           ja-lang="ツール"
-                          es-lang="Herramientas"               
+                          es-lang="Herramientas"
                           >Tools</a>
                           <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
                         </li>
@@ -186,15 +186,15 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
         </div>
     </div>
     <!-- /Header -->
-    
-    
+
+
   <div id="searchResults" class="wrap" style="display:none;">
           <h2 id="searchTitle">Results</h2>
           <div id="leftSearchControl" class="search-control">Loading...</div>
   </div>
-    
-    
-    
+
+
+
 <?cs if:training || guide || reference || tools || develop || google ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
@@ -206,7 +206,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ru-lang="Курсы"
                   ko-lang="교육"
                   ja-lang="トレーニング"
-                  es-lang="Capacitación"               
+                  es-lang="Capacitación"
                   >Training</a></li>
                 <li class="guide"><a href="<?cs var:toroot ?>guide/components/index.html"
                   zh-TW-lang="API 指南"
@@ -214,7 +214,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ru-lang="Руководства по API"
                   ko-lang="API 가이드"
                   ja-lang="API ガイド"
-                  es-lang="Guías de la API"               
+                  es-lang="Guías de la API"
                   >API Guides</a></li>
                 <li class="reference"><a href="<?cs var:toroot ?>reference/packages.html"
                   zh-TW-lang="參考資源"
@@ -222,7 +222,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ru-lang="Справочник"
                   ko-lang="참조문서"
                   ja-lang="リファレンス"
-                  es-lang="Referencia"               
+                  es-lang="Referencia"
                   >Reference</a></li>
                 <li class="tools"><a href="<?cs var:toroot ?>tools/index.html"
                   zh-TW-lang="相關工具"
@@ -237,11 +237,11 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                 </li>
             </ul>
         </div>
-        
+
     </div>
     <!-- /Sendondary x-nav -->
 <?cs /if ?>
-  <?cs 
+  <?cs
 /def ?>
 
 
@@ -279,17 +279,11 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
   <div class="morehover" id="moremenu">
     <div class="top"></div>
     <div class="mid">
-      <div class="header">Links</div>
-      <ul><!--
-        <li><a href="https://play.google.com/apps/publish/">Google Play Developer Console</a></li>
-        <li><a href="http://android-developers.blogspot.com/">Android Developers Blog</a></li>
-        <li><a href="<?cs var:toroot ?>about/index.html">About Android</a></li>-->
-      </ul>
       <div class="header">Android Sites</div>
       <ul>
+        <li class="active"><a>Android Open Source Project</a></li>
         <li><a href="http://www.android.com">Android.com</a></li>
-        <li><a>Android Developers</a></li>
-        <li class="active"><a href="http://source.android.com">Android Open Source Project</a></li>
+        <li><a href="http://developer.android.com">Android Developers</a></li>
       </ul>
       <!-- <div class="header">Support</div>
       <ul>
