@@ -170,6 +170,10 @@ ifeq ($(WITH_HOST_DALVIK),)
 endif
 endif
 
+ifeq ($(WITH_ART),)
+  WITH_ART := false
+endif
+
 # ---------------------------------------------------------------
 # Include the product definitions.
 # We need to do this to translate TARGET_PRODUCT into its

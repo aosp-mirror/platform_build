@@ -104,6 +104,11 @@ ifndef ENABLE_SVG
 #ENABLE_SVG:=false
 endif
 
+# To enable ART define WITH_ART:=true
+ifndef WITH_ART
+#WITH_ART:=true
+endif
+
 # when the build system changes such that this file must be updated, this
 # variable will be changed.  After you have modified this file with the new
 # changes (see buildspec.mk.default), update this to the new value from
