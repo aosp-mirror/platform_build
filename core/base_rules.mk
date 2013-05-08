@@ -98,23 +98,27 @@ ifneq ($(words $(LOCAL_MODULE_CLASS)),1)
 endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-ifdef LOCAL_IS_HOST_MODULE
-  partition_tag :=
-else
-ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
-  partition_tag := _VENDOR
-else
-  # The definition of should-install-to-system will be different depending
-  # on which goal (e.g., sdk or just droid) is being built.
-  partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
-endif
-endif
-
 LOCAL_MODULE_PATH := $(strip $(LOCAL_MODULE_PATH))
 ifeq ($(LOCAL_MODULE_PATH),)
-  LOCAL_MODULE_PATH := $($(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS))
+  ifdef LOCAL_IS_HOST_MODULE
+    partition_tag :=
+  else
+  ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
+    partition_tag := _VENDOR
+  else
+    # The definition of should-install-to-system will be different depending
+    # on which goal (e.g., sdk or just droid) is being built.
+    partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
+  endif
+  endif
+  install_path_var := $(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
+  ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
+    install_path_var := $(install_path_var)_PRIVILEGED
+  endif
+
+  LOCAL_MODULE_PATH := $($(install_path_var))
   ifeq ($(strip $(LOCAL_MODULE_PATH)),)
-    $(error $(LOCAL_PATH): unhandled LOCAL_MODULE_CLASS "$(LOCAL_MODULE_CLASS)")
+    $(error $(LOCAL_PATH): unhandled install path "$(install_path_var)")
   endif
 endif
 endif # not LOCAL_UNINSTALLABLE_MODULE
