@@ -206,6 +206,11 @@ rs_generated_bc := $(addprefix \
     $(renderscript_intermediate.COMMON)/res/raw/, $(bc_files))
 
 renderscript_intermediate := $(intermediates)/renderscript
+
+# We don't need the .so files in bundled branches
+# Prevent these from showing up on the device
+ifneq (,$(TARGET_BUILD_APPS))
+
 rs_compatibility_jni_libs := $(addprefix \
     $(renderscript_intermediate)/librs., \
     $(patsubst %.bc,%.so, $(bc_files)))
@@ -216,6 +221,8 @@ rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
 rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
 LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
 
+
+
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
@@ -223,6 +230,8 @@ $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate.COMMON)/res/raw/%.bc
 	$(transform-bc-to-so)
+
+endif
 
 endif
 
