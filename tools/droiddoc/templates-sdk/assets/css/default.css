@@ -2614,6 +2614,33 @@ div.design-announce p {
   background-image: url(../images/styles/disclosure_up.png);
 }
 
+/* notice sidebox link used in Design docs */
+a.notice-developers {
+  float:right;
+  width:240px;
+  min-height:50px;
+  margin:0 0 20px 20px;
+  border:1px solid #ddd;
+}
+a.notice-developers div {
+  background:url('../images/styles/notice-developers.png') no-repeat 10px 14px;
+  padding:10px 10px 10px 70px;
+}
+a.notice-developers:hover {
+  background:#eee;
+}
+a.notice-developers h3 {
+  font-size:14px;
+  font-weight:normal;
+  text-transform:uppercase;
+  color:#000 !important;
+  margin:0;
+}
+a.notice-developers p {
+  margin:0;
+}
+
+
 /* -----------------------------------------------
 good/bad example containers 
 */
