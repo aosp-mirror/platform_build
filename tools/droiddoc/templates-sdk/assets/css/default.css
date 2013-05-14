@@ -2623,8 +2623,9 @@ a.notice-developers {
   border:1px solid #ddd;
 }
 a.notice-developers div {
-  background:url('../images/styles/notice-developers.png') no-repeat 10px 14px;
-  padding:10px 10px 10px 70px;
+  min-height:40px;
+  background:url('../images/styles/notice-developers.png') no-repeat 10px 10px;
+  padding:10px 10px 10px 60px;
 }
 a.notice-developers:hover {
   background:#eee;
@@ -2638,6 +2639,11 @@ a.notice-developers h3 {
 }
 a.notice-developers p {
   margin:0;
+  line-height:16px;
+}
+a.notice-developers.left {
+  margin-left:0;
+  float:left;
 }
 
 
