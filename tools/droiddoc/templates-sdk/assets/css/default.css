@@ -4463,6 +4463,19 @@ a.download-sdk {
   margin-right: 0px;
 }
 
+.distribute-features .distribute-link li a {
+  color:red !important;
+}
+
+.distribute-features .distribute-link li a,
+.distribute-features .distribute-link li a:active {
+  color:#555 !important;
+}
+
+.distribute-features .distribute-link li a:hover,
+.distribute-features .distribute-link li a:hover * {
+  color:#7AA1B0 !important;
+}
 
 
 /************ DEVELOP TOPIC CONTAINERS ************/
