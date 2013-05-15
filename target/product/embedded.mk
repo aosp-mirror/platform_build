@@ -72,5 +72,8 @@ PRODUCT_PACKAGES += \
     mac_permissions.xml
 
 PRODUCT_COPY_FILES += \
+    external/sepolicy/sepolicy.version:root/sepolicy.version
+
+PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
     system/core/rootdir/init.trace.rc:root/init.trace.rc \
