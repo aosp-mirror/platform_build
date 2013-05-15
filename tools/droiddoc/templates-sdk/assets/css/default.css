@@ -462,7 +462,8 @@ video.with-shadow {
     .next-page-link:after,
     .start-class-link:after,
     .start-course-link:after,
-    .next-class-link:after {
+    .next-class-link:after,
+    .go-link:after {
       content: '';
       background: transparent url(../images/styles/disclosure_right.png) no-repeat scroll 50% 50%;
       width: 10px;
