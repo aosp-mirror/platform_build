@@ -1,0 +1,55 @@
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# For native methods, see http://proguard.sourceforge.net/manual/examples.html#native
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# class$ methods are inserted by some compilers to implement .class construct,
+# see http://proguard.sourceforge.net/manual/examples.html#library
+-keepclassmembernames class * {
+    java.lang.Class class$(java.lang.String);
+    java.lang.Class class$(java.lang.String, boolean);
+}
+
+# Keep classes and methods that have the guava @VisibleForTesting annotation
+-keep @com.google.common.annotations.VisibleForTesting class *
+-keepclassmembers class * {
+@com.google.common.annotations.VisibleForTesting *;
+}
+
+# Keep serializable classes and necessary members for serializable classes
+# Copied from the ProGuard manual at http://proguard.sourceforge.net.
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# Please specify classes to be kept explicitly in your package's configuration.
+# -keep class * extends android.app.Activity
+# -keep class * extends android.view.View
+# -keep class * extends android.app.Service
+# -keep class * extends android.content.BroadcastReceiver
+# -keep class * extends android.content.ContentProvider
+# -keep class * extends android.preference.Preference
+# -keep class * extends android.app.BackupAgent
+
+#-keep class * implements android.os.Parcelable {
+#  public static final android.os.Parcelable$Creator *;
+#}
+
+# The support library contains references to newer platform versions.
+# Don't warn about those in case this app is linking against an older
+# platform version.  We know about them, and they are safe.
+# See proguard-android.txt in the SDK package.
+-dontwarn android.support.**

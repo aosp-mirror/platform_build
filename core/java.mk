@@ -401,6 +401,8 @@ endif
 ifneq ($(strip $(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS))$(filter android.test.runner,$(LOCAL_JAVA_LIBRARIES))),)
 proguard_flags := $(proguard_flags) -include $(BUILD_SYSTEM)/proguard_tests.flags
 endif # test package
+else  # LOCAL_PROGUARD_ENABLED is nosystem
+proguard_flags += -include $(BUILD_SYSTEM)/proguard_basic_keeps.flags
 endif # LOCAL_PROGUARD_ENABLED is not nosystem
 
 ifneq ($(LOCAL_PROGUARD_ENABLED),)
