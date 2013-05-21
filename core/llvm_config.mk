@@ -60,7 +60,8 @@ ifeq ($(TARGET_ARCH),mips)
     -mtune=mips32r2 \
     -march=mips32 \
     -mtune=mips32 \
-    -msynci
+    -msynci \
+    -mno-fused-madd
 endif
 ifeq ($(TARGET_ARCH),x86)
   CLANG_CONFIG_EXTRA_CFLAGS += \
