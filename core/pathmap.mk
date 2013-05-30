@@ -110,11 +110,12 @@ FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 # A list of all source roots under frameworks/support.
 #
 FRAMEWORKS_SUPPORT_SUBDIRS := \
-	v4 \
-	v7/gridlayout \
-	v7/appcompat \
-	v7/mediarouter \
-	v13
+        v4 \
+        v7/gridlayout \
+        v7/appcompat \
+        v7/mediarouter \
+        v8/renderscript \
+        v13
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
