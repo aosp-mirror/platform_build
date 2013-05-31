@@ -1,11 +1,3 @@
-# see http://sourceforge.net/tracker/?func=detail&aid=2787465&group_id=54750&atid=474707
--optimizations !code/simplification/arithmetic
--optimizations !code/simplification/cast
--allowaccessmodification
-
-# To prevent name conflict in incremental obfuscation.
--useuniqueclassmembernames
-
 # dex does not like code run through proguard optimize and preverify steps.
 -dontoptimize
 -dontpreverify
@@ -16,8 +8,10 @@
 # Add this flag in your package's own configuration if it's needed.
 #-flattenpackagehierarchy
 
-# Some classes in the libraries extend package private classes to chare common functionality
-# that isn't explicitly part of the API
--dontskipnonpubliclibraryclasses -dontskipnonpubliclibraryclassmembers
+# Keep classes and methods that have the guava @VisibleForTesting annotation
+-keep @com.google.common.annotations.VisibleForTesting class *
+-keepclassmembers class * {
+@com.google.common.annotations.VisibleForTesting *;
+}
 
 -include proguard_basic_keeps.flags
