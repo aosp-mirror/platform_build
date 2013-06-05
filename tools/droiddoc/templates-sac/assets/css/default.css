@@ -1160,6 +1160,53 @@ th {
 tr:first-of-type th:first-of-type:empty {
     visibility: hidden;
 }
+
+/* opcodes table */
+
+table.instruc td:first-child {
+    width: 12%;
+}
+
+table.instruc td:first-child + td {
+    width: 23%;
+}
+
+table.instruc td:first-child + td + td {
+    width: 28%;
+}
+
+table.instruc td:first-child + td + td + td {
+    width: 37%;
+}
+
+/* supplemental opcode format table */
+
+table.supplement td:first-child {
+    width: 20%;
+}
+
+table.supplement td:first-child + td {
+    width: 20%;
+}
+
+table.supplement td:first-child + td + td {
+    width: 60%;
+}
+
+/* math details table */
+
+table.math td:first-child {
+    width: 10%;
+}
+
+table.math td:first-child + td {
+    width: 30%;
+}
+
+table.math td:first-child + td + td {
+    width: 60%;
+}
+
 /* --------------------------------------------------------------------------
 Footer
 */
