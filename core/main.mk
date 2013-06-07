@@ -547,9 +547,19 @@ $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
     $(eval r := $(call module-installed-files,$(r))) \
-    $(eval $(call add-required-deps,$(ALL_MODULES.$(m).INSTALLED),$(r))) \
+    $(eval t_m := $(filter $(TARGET_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval h_m := $(filter $(HOST_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
+    $(eval h_r := $(filter $(HOST_OUT_ROOT)/%, $(r))) \
+    $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
+    $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
    ) \
  )
+
+t_m :=
+h_m :=
+t_r :=
+h_r :=
 
 # Resolve the dependencies on shared libraries.
 $(foreach m,$(TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES), \
