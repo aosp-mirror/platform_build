@@ -794,9 +794,14 @@ ifneq ($(TARGET_BUILD_APPS),)
     unbundled_build_modules := $(TARGET_BUILD_APPS)
   endif
 
+  # Dist the installed files if they exist.
   apps_only_installed_files := $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED))
-  # dist the unbundled app.
   $(call dist-for-goals,apps_only, $(apps_only_installed_files))
+  # For uninstallable modules such as static Java library, we have to dist the built file,
+  # as <module_name>.<suffix>
+  apps_only_dist_built_files := $(foreach m,$(unbundled_build_modules),$(if $(ALL_MODULES.$(m).INSTALLED),,\
+      $(ALL_MODULES.$(m).BUILT):$(m)$(suffix $(ALL_MODULES.$(m).BUILT))))
+  $(call dist-for-goals,apps_only, $(apps_only_dist_built_files))
 
   ifeq ($(EMMA_INSTRUMENT),true)
     $(EMMA_META_ZIP) : $(apps_only_installed_files)
