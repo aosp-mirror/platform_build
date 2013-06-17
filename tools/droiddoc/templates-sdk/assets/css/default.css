@@ -2648,6 +2648,22 @@ a.notice-developers.left {
 }
 
 
+/* hide nested list items; companion to hideNestedLists() */
+.hide-nested li ol,
+.hide-nested li ul {
+  display:none;
+}
+
+a.header-toggle {
+  display:block;
+  float:right;
+  text-transform:uppercase;
+  font-size:.8em !important;
+  font-weight:normal;
+  margin-top:2px;
+}
+
+
 /* -----------------------------------------------
 good/bad example containers 
 */
