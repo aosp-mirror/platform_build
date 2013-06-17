@@ -898,52 +898,7 @@ function writeCookie(cookie, val, section, expiration) {
 
 
 
-
-
-
-
-
-
-/*
-
-REMEMBER THE PREVIOUS PAGE FOR EACH TAB
-
-function loadLast(cookiePath) {
-  var location = window.location.href;
-  if (location.indexOf("/"+cookiePath+"/") != -1) {
-    return true;
-  }
-  var lastPage = readCookie(cookiePath + "_lastpage");
-  if (lastPage) {
-    window.location = lastPage;
-    return false;
-  }
-  return true;
-}
-
-
-
-$(window).unload(function(){
-  var path = getBaseUri(location.pathname);
-  if (path.indexOf("/reference/") != -1) {
-    writeCookie("lastpage", path, "reference", null);
-  } else if (path.indexOf("/guide/") != -1) {
-    writeCookie("lastpage", path, "guide", null);
-  } else if ((path.indexOf("/resources/") != -1) || (path.indexOf("/training/") != -1)) {
-    writeCookie("lastpage", path, "resources", null);
-  }
-});
-
-*/
-
-
-
-
-
-
-
-
-
+/*      MISC LIBRARY FUNCTIONS     */
 
 
 
@@ -970,9 +925,6 @@ function toggle(obj, slide) {
 }
 
 
-
-
-
 function buildToggleLists() {
   $(".toggle-list").each(
     function(i) {
@@ -983,7 +935,19 @@ function buildToggleLists() {
 
 
 
-
+function hideNestedItems(list, toggle) {
+  $list = $(list);
+  // hide nested lists
+  if($list.hasClass('showing')) {
+    $("li ol", $list).hide('fast');
+    $list.removeClass('showing');
+  // show nested lists
+  } else {
+    $("li ol", $list).show('fast');
+    $list.addClass('showing');
+  }
+  $(".more,.less",$(toggle)).toggle();
+}
 
 
 
