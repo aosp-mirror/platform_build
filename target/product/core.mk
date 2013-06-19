@@ -71,27 +71,8 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     mdnsd \
     mms-common \
-    okhttp \
     requestsync \
     telephony-common \
     voip-common
-
-# host-only dependencies
-ifeq ($(WITH_HOST_DALVIK),true)
-    PRODUCT_PACKAGES += \
-        apache-xml-hostdex \
-        bouncycastle-hostdex \
-        conscrypt-hostdex \
-        core-hostdex \
-        okhttp-hostdex \
-        libcrypto \
-        libexpat \
-        libicui18n \
-        libicuuc \
-        libjavacore \
-        libssl \
-        libz-host \
-        dalvik
-endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
