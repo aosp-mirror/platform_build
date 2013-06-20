@@ -32,27 +32,11 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     SettingsProvider \
     Shell \
-    apache-xml \
-    bouncycastle \
     bu \
-    cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
-    conscrypt \
-    core \
-    core-junit \
-    dalvikvm \
-    dexdeps \
-    dexdump \
-    dexlist \
-    dexopt \
-    dmtracedump \
     drmserver \
-    dx \
-    ext \
     framework-res \
-    hprof-conv \
-    icu.dat \
     installd \
     ip \
     ip-up-vpn \
@@ -62,24 +46,16 @@ PRODUCT_PACKAGES += \
     keystore.default \
     libOpenMAXAL \
     libOpenSLES \
-    libcrypto \
     libdownmix \
-    libdvm \
     libdrmframework \
     libdrmframework_jni \
-    libexpat \
     libfilterfw \
-    libicui18n \
-    libicuuc \
-    libjavacore \
-    libnativehelper \
     libsqlite_jni \
-    libssl \
     libwilhelm \
-    libz \
     make_ext4fs \
     screencap \
     sensorservice \
     uiautomator
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/dalvikvm.mk)
