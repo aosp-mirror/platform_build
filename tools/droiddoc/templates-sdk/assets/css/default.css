@@ -2615,36 +2615,49 @@ div.design-announce p {
   background-image: url(../images/styles/disclosure_up.png);
 }
 
-/* notice sidebox link used in Design docs */
-a.notice-developers {
+/* notice box for cross links between Design/Develop docs */
+a.notice-developers,
+a.notice-designers {
   float:right;
-  width:240px;
+  width:238px;
   min-height:50px;
   margin:0 0 20px 20px;
   border:1px solid #ddd;
 }
-a.notice-developers div {
+a.notice-developers div,
+a.notice-designers div {
   min-height:40px;
   background:url('../images/styles/notice-developers.png') no-repeat 10px 10px;
   padding:10px 10px 10px 60px;
 }
-a.notice-developers:hover {
+a.notice-designers div {
+  background:url('../images/styles/notice-designers.png') no-repeat 10px 10px;
+}
+a.notice-developers:hover,
+a.notice-designers:hover {
   background:#eee;
 }
-a.notice-developers h3 {
+a.notice-developers h3,
+a.notice-designers h3 {
   font-size:14px;
   font-weight:normal;
   text-transform:uppercase;
   color:#000 !important;
   margin:0;
 }
-a.notice-developers p {
+a.notice-developers p,
+a.notice-designers p {
   margin:0;
   line-height:16px;
 }
-a.notice-developers.left {
+a.notice-developers.left,
+a.notice-designers.left {
   margin-left:0;
   float:left;
+}
+a.notice-developers.top,
+a.notice-designers.top {
+  margin-bottom:40px; /* extra margin to offset TOC negative margin */
 }
 
 
