@@ -1754,8 +1754,12 @@ EndColorStr='#ececec');
 #qv-wrapper {
   float:right;
   clear:right;
-  margin:-27px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
+  margin:0 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
   padding:0 0 20px;
+}
+
+#tb-wrapper {
+  margin:-27px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
 }
 
 #tb,
@@ -2656,10 +2660,6 @@ a.notice-developers.left,
 a.notice-designers.left {
   margin-left:0;
   float:left;
-}
-a.notice-developers.top,
-a.notice-designers.top {
-  margin-bottom:40px; /* extra margin to offset TOC negative margin */
 }
 
 
