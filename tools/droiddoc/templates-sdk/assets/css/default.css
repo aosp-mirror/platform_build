@@ -2627,11 +2627,13 @@ a.notice-designers {
 a.notice-developers div,
 a.notice-designers div {
   min-height:40px;
-  background:url('../images/styles/notice-developers.png') no-repeat 10px 10px;
+  background:url('../images/styles/notice-developers@2x.png') no-repeat 10px 10px;
+  background-size:40px 40px;
   padding:10px 10px 10px 60px;
 }
 a.notice-designers div {
-  background:url('../images/styles/notice-designers.png') no-repeat 10px 10px;
+  background:url('../images/styles/notice-designers@2x.png') no-repeat 10px 10px;
+  background-size:40px 40px;
 }
 a.notice-developers:hover,
 a.notice-designers:hover {
