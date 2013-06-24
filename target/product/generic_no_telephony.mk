@@ -33,7 +33,7 @@ PRODUCT_PACKAGES := \
     Keyguard \
     LatinIME \
     Launcher2 \
-    Music \
+    Music2 \
     MusicFX \
     OneTimeInitializer \
     Provision \
