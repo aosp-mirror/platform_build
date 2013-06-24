@@ -18,10 +18,12 @@
 
 ifeq ($(WITH_ART),false)
     PRODUCT_PACKAGES += \
+        core \
         libdvm \
         dexopt
 else
     PRODUCT_PACKAGES += \
+        core-libart \
         libart \
         dex2oat
     PRODUCT_PROPERTY_OVERRIDES += \
@@ -33,7 +35,6 @@ PRODUCT_PACKAGES += \
     bouncycastle \
     cacerts \
     conscrypt \
-    core \
     core-junit \
     dalvikvm \
     dexdeps \
@@ -56,11 +57,17 @@ PRODUCT_PACKAGES += \
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
+    ifeq ($(WITH_ART),false)
+        PRODUCT_PACKAGES += \
+            core-hostdex
+    else
+        PRODUCT_PACKAGES += \
+            core-libart-hostdex
+    endif
     PRODUCT_PACKAGES += \
         apache-xml-hostdex \
         bouncycastle-hostdex \
         conscrypt-hostdex \
-        core-hostdex \
         dalvik \
         libcrypto-host \
         libexpat-host \
