@@ -14,21 +14,7 @@
 # limitations under the License.
 #
 
-# Provides a functioning dalvikvm without Android frameworks
-
-ifeq ($(WITH_ART),false)
-    PRODUCT_PACKAGES += \
-        core \
-        libdvm \
-        dexopt
-else
-    PRODUCT_PACKAGES += \
-        core-libart \
-        libart \
-        dex2oat
-    PRODUCT_PROPERTY_OVERRIDES += \
-        dalvik.vm.lib=libart.so
-endif
+# Common runtime modules for both Dalvik and ART
 
 PRODUCT_PACKAGES += \
     apache-xml \
@@ -57,13 +43,6 @@ PRODUCT_PACKAGES += \
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
-    ifeq ($(WITH_ART),false)
-        PRODUCT_PACKAGES += \
-            core-hostdex
-    else
-        PRODUCT_PACKAGES += \
-            core-libart-hostdex
-    endif
     PRODUCT_PACKAGES += \
         apache-xml-hostdex \
         bouncycastle-hostdex \

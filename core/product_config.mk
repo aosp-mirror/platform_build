@@ -170,10 +170,6 @@ ifeq ($(WITH_HOST_DALVIK),)
 endif
 endif
 
-ifeq ($(WITH_ART),)
-  WITH_ART := false
-endif
-
 # ---------------------------------------------------------------
 # Include the product definitions.
 # We need to do this to translate TARGET_PRODUCT into its
@@ -356,11 +352,6 @@ PRODUCT_TAGS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_TAGS))
 PRODUCT_VENDOR_KERNEL_HEADERS := \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_KERNEL_HEADERS)
 
-# Add the product-defined properties to the build properties.
-ADDITIONAL_BUILD_PROPERTIES := \
-    $(ADDITIONAL_BUILD_PROPERTIES) \
-    $(PRODUCT_PROPERTY_OVERRIDES)
-
 # The OTA key(s) specified by the product config, if any.  The names
 # of these keys are stored in the target-files zip so that post-build
 # signing tools can substitute them for the test key embedded by
@@ -370,3 +361,29 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort \
 
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_EXTRA_RECOVERY_KEYS))
+
+# Set PRODUCT_RUNTIME, allowing buildspec to override using OVERRIDE_RUNTIMES
+PRODUCT_RUNTIMES := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RUNTIMES))
+ifneq ($(OVERRIDE_RUNTIMES),)
+    $(info Overriding PRODUCT_RUNTIMES=$(PRODUCT_RUNTIMES) with $(OVERRIDE_RUNTIMES))
+    PRODUCT_RUNTIMES := $(OVERRIDE_RUNTIMES)
+endif
+$(foreach runtime, $(PRODUCT_RUNTIMES), $(eval include $(SRC_TARGET_DIR)/product/$(runtime).mk))
+PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES += $(PRODUCT_PACKAGES)
+PRODUCT_PACKAGES :=
+
+# Add the product-defined properties to the build properties.
+#
+# Note that PRODUCT_PROPERTY_OVERRIDES can be extended by processing
+# the PRODUCT_PACKAGES which is why this is below that.
+#
+ADDITIONAL_BUILD_PROPERTIES := \
+    $(ADDITIONAL_BUILD_PROPERTIES) \
+    $(PRODUCT_PROPERTY_OVERRIDES)
+
+# ************************************************************************ 
+# ADD NEW PRODUCT_* VARIABLES ABOVE PRODUCT_RUNTIMES
+#
+# This is because including the PRODUCT_RUNTIMES can add to other
+# PRODUCT_* variables.
+# ************************************************************************ 

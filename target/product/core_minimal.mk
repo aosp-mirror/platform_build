@@ -57,5 +57,6 @@ PRODUCT_PACKAGES += \
     sensorservice \
     uiautomator
 
+PRODUCT_RUNTIMES := runtime_libdvm_default
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/dalvikvm.mk)
