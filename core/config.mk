@@ -123,7 +123,7 @@ TARGET_SHELL := mksh
 
 # ---------------------------------------------------------------
 # Try to include buildspec.mk, which will try to set stuff up.
-# If this file doesn't exist, the environemnt variables will
+# If this file doesn't exist, the environment variables will
 # be used, and if that doesn't work, then the default is an
 # arm build
 ifndef ANDROID_BUILDSPEC

@@ -104,9 +104,15 @@ ifndef ENABLE_SVG
 #ENABLE_SVG:=false
 endif
 
-# To enable ART define WITH_ART:=true
-ifndef WITH_ART
-#WITH_ART:=true
+# OVERRIDE_RUNTIMES allows you to locally override PRODUCT_RUNTIMES.
+#
+# To only build ART, use "runtime_libart_default"
+# To use Dalvik but also include ART, use "runtime_libdvm_default runtime_libart"
+# To use ART but also include Dalvik, use "runtime_libart_default runtime_libdvm"
+ifndef OVERRIDE_RUNTIMES
+#OVERRIDE_RUNTIMES:=runtime_libart_default
+#OVERRIDE_RUNTIMES:=runtime_libdvm_default runtime_libart
+#OVERRIDE_RUNTIMES:=runtime_libart_default runtime_libdvm
 endif
 
 # when the build system changes such that this file must be updated, this
