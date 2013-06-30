@@ -20,8 +20,6 @@ PRODUCT_PACKAGES += \
         core-libart \
         libart \
         dex2oat
-PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.lib=libart.so
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)

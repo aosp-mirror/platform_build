@@ -17,6 +17,6 @@
 # Set ART as the default runtime environment
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.lib=libart.so
+    persist.sys.dalvik.vm.lib=libart.so
 
 include $(SRC_TARGET_DIR)/product/runtime_libart.mk

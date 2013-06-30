@@ -17,6 +17,6 @@
 # Set Dalvik as the default runtime environment
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.lib=libdvm.so
+    persist.sys.dalvik.vm.lib=libdvm.so
 
 include $(SRC_TARGET_DIR)/product/runtime_libdvm.mk
