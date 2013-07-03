@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87cedc49_4ceaff9d",
+        "filename": "target/product/generic_no_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1017042
+      },
+      "writtenOn": "2013-07-03T13:13:26Z",
+      "side": 1,
+      "message": "This may be removed.\nBut I should make sure why \"Phone\" is also in this list.",
+      "revId": "674767d498d3c89855e1249ef437bb70d70c7bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87cedc49_6cefbbac",
+        "filename": "target/product/generic_no_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1017042
+      },
+      "writtenOn": "2013-07-03T13:13:26Z",
+      "side": 1,
+      "message": "do wee need Phone here?",
+      "revId": "674767d498d3c89855e1249ef437bb70d70c7bb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
