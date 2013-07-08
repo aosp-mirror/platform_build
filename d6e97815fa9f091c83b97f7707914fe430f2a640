@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2771b0c7_cc8a0b5c",
+        "filename": "target/product/core.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-07-08T17:34:28Z",
+      "side": 1,
+      "message": "I guess it\u0027s a newly-added module? I couldn\u0027t find it in the source tree.\nIf so you should add it to build/target/product/embedded.mk, just next to sepolicy, I think.",
+      "revId": "d6e97815fa9f091c83b97f7707914fe430f2a640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
