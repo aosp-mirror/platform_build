@@ -2393,6 +2393,30 @@ Lightbox
 }
 
 /* --------------------------------------------------------------------------
+Butterbar
+*/
+#butterbar-wrapper {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+}
+#butterbar {
+  width:940px;
+  margin:0 auto;
+}
+#butterbar-message {
+  background-color:#f80;
+  float:right;
+  font-size:12px;
+  font-weight:bold;
+  padding:0 10px;
+  border-radius: 0 0 5px 5px;
+}
+#butterbar-message a {color:#fff !important}
+#butterbar-message a:hover {text-decoration:underline;}
+
+/* --------------------------------------------------------------------------
 Misc
 */
 
