@@ -16,6 +16,24 @@
       "revId": "d6e97815fa9f091c83b97f7707914fe430f2a640",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e7df98f0_af903940",
+        "filename": "target/product/core.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2013-07-08T17:42:32Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/#/c/58384/\n\nIsn\u0027t this next to sepolicy?\n\nI think we\u0027re waiting on the library for this, and perhaps a way to auto increment the version number. Haiqing Jiang to write the library, he started some work here:\n\nhttps://bitbucket.org/hqjiang/external-libselinux/pull-requests\n\nbut it never made it past my review.",
+      "parentUuid": "2771b0c7_cc8a0b5c",
+      "revId": "d6e97815fa9f091c83b97f7707914fe430f2a640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
