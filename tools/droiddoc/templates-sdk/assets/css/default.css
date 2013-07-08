@@ -1784,11 +1784,13 @@ EndColorStr='#ececec');
   font-size:inherit;
 }
 
-#tb .download-box {
+#tb .download-box,
+#qv .download-box {
   padding:0 0 0 15px;
 }
 
-#tb .download-box .filename {
+#tb .download-box .filename,
+#qv .download-box .filename {
   font-size:11px;
   margin:4px 4px 10px;
   color:#666;
