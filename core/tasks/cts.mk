@@ -104,28 +104,45 @@ $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(CTS_CORE_XMLS): $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik,\
 		cts/tests/core/libcore/dalvik/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,dalvik,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com,\
 		cts/tests/core/libcore/com/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,com,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun,\
 		cts/tests/core/libcore/sun/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,sun,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests,\
 		cts/tests/core/libcore/tests/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,tests,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org,\
 		cts/tests/core/libcore/org/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore,\
 		cts/tests/core/libcore/libcore/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,libcore,\
