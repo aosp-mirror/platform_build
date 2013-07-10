@@ -59,7 +59,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_RUNTIMES := runtime_libdvm_default
 ifneq (,$(filter userdebug eng, $(TARGET_BUILD_VARIANT)))
-    PRODUCT_RUNTIMES += runtime_libart
+    ifneq ($(HOST_OS),darwin)
+        PRODUCT_RUNTIMES += runtime_libart
+    endif
 endif
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
