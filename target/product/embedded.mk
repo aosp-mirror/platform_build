@@ -59,6 +59,7 @@ PRODUCT_PACKAGES += \
     libui \
     libutils \
     linker \
+    lmkd \
     logcat \
     logwrapper \
     mkshrc \
