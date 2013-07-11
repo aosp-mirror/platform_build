@@ -246,6 +246,28 @@ current_product_makefile :=
 all_product_makefiles :=
 all_product_configs :=
 
+
+#############################################################################
+# TODO: Remove this hack once only 1 runtime is left.
+# Include the runtime product makefile based on the product's PRODUCT_RUNTIMES
+$(call clear-var-list, $(_product_var_list))
+
+# Set PRODUCT_RUNTIMES, allowing buildspec to override using OVERRIDE_RUNTIMES
+product_runtimes := $(sort $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RUNTIMES))
+ifneq ($(OVERRIDE_RUNTIMES),)
+  $(info Overriding PRODUCT_RUNTIMES=$(product_runtimes) with $(OVERRIDE_RUNTIMES))
+  product_runtimes := $(OVERRIDE_RUNTIMES)
+endif
+$(foreach runtime, $(product_runtimes), $(eval include $(SRC_TARGET_DIR)/product/$(runtime).mk))
+$(foreach v, $(_product_var_list), $(if $($(v)),\
+    $(eval PRODUCTS.$(INTERNAL_PRODUCT).$(v) += $(sort $($(v))))))
+
+$(call clear-var-list, $(_product_var_list))
+# Now we can assign to PRODUCT_RUNTIMES
+PRODUCT_RUNTIMES := $(product_runtimes)
+product_runtimes :=
+#############################################################################
+
 # Find the device that this product maps to.
 TARGET_DEVICE := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
 
@@ -352,6 +374,11 @@ PRODUCT_TAGS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_TAGS))
 PRODUCT_VENDOR_KERNEL_HEADERS := \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_KERNEL_HEADERS)
 
+# Add the product-defined properties to the build properties.
+ADDITIONAL_BUILD_PROPERTIES := \
+    $(ADDITIONAL_BUILD_PROPERTIES) \
+    $(PRODUCT_PROPERTY_OVERRIDES)
+
 # The OTA key(s) specified by the product config, if any.  The names
 # of these keys are stored in the target-files zip so that post-build
 # signing tools can substitute them for the test key embedded by
@@ -361,29 +388,3 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort \
 
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_EXTRA_RECOVERY_KEYS))
-
-# Set PRODUCT_RUNTIME, allowing buildspec to override using OVERRIDE_RUNTIMES
-PRODUCT_RUNTIMES := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RUNTIMES))
-ifneq ($(OVERRIDE_RUNTIMES),)
-    $(info Overriding PRODUCT_RUNTIMES=$(PRODUCT_RUNTIMES) with $(OVERRIDE_RUNTIMES))
-    PRODUCT_RUNTIMES := $(OVERRIDE_RUNTIMES)
-endif
-$(foreach runtime, $(PRODUCT_RUNTIMES), $(eval include $(SRC_TARGET_DIR)/product/$(runtime).mk))
-PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES += $(PRODUCT_PACKAGES)
-PRODUCT_PACKAGES :=
-
-# Add the product-defined properties to the build properties.
-#
-# Note that PRODUCT_PROPERTY_OVERRIDES can be extended by processing
-# the PRODUCT_PACKAGES which is why this is below that.
-#
-ADDITIONAL_BUILD_PROPERTIES := \
-    $(ADDITIONAL_BUILD_PROPERTIES) \
-    $(PRODUCT_PROPERTY_OVERRIDES)
-
-# ************************************************************************ 
-# ADD NEW PRODUCT_* VARIABLES ABOVE PRODUCT_RUNTIMES
-#
-# This is because including the PRODUCT_RUNTIMES can add to other
-# PRODUCT_* variables.
-# ************************************************************************ 
