@@ -84,6 +84,14 @@ endif  # prebuilt_module_is_a_library
 ifdef LOCAL_INSTALLED_MODULE
 ifdef LOCAL_SHARED_LIBRARIES
 $(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
+
+# We also need the LOCAL_BUILT_MODULE dependency,
+# since we use -rpath-link which points to the built module's path.
+built_shared_libraries := \
+    $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
+    $(addsuffix $(so_suffix), \
+        $(LOCAL_SHARED_LIBRARIES)))
+$(LOCAL_BUILT_MODULE) : $(built_shared_libraries)
 endif
 endif
 
