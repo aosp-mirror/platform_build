@@ -2661,6 +2661,7 @@ div.design-announce p {
 a.notice-developers,
 a.notice-designers {
   float:right;
+  clear:right;
   width:238px;
   min-height:50px;
   margin:0 0 20px 20px;
