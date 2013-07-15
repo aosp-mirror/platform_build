@@ -73,7 +73,6 @@ PRODUCT_PACKAGES += \
     libstagefright_foundation \
     libstagefright_omx \
     libstagefright_yuv \
-    libsystem_server \
     libusbhost \
     libutils \
     libvisualizer \
@@ -100,7 +99,6 @@ PRODUCT_PACKAGES += \
     services \
     settings \
     svc \
-    system_server \
     tc \
     vdc \
     vold \
