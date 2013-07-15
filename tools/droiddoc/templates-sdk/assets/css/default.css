@@ -844,6 +844,18 @@ scroll top left;
     width: 216px;
     height: 384px; }
 
+.framed-nexus4-port-216 {
+  background: transparent url(../images/styles/device_nexus4_blank_port_432.png) no-repeat
+scroll top left;
+  background-size:240px 465px;
+  padding: 52px 12px 52px 12px;
+  overflow: hidden; }
+  .framed-nexus4-port-216, .framed-nexus4-port-216 video,
+  .framed-nexus4-port-216 img {
+    width: 216px;
+    height: 360px; }
+
+
 /* landing page disclosures */
 .landing-page-link {
   text-decoration: none;
@@ -2649,6 +2661,7 @@ div.design-announce p {
 a.notice-developers,
 a.notice-designers {
   float:right;
+  clear:right;
   width:238px;
   min-height:50px;
   margin:0 0 20px 20px;
