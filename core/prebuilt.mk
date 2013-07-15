@@ -89,7 +89,7 @@ $(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLE
 # since we use -rpath-link which points to the built module's path.
 built_shared_libraries := \
     $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
-    $(addsuffix $(so_suffix), \
+    $(addsuffix $($(my_prefix)SHLIB_SUFFIX), \
         $(LOCAL_SHARED_LIBRARIES)))
 $(LOCAL_BUILT_MODULE) : $(built_shared_libraries)
 endif
