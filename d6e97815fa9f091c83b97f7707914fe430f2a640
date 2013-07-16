@@ -34,6 +34,24 @@
       "revId": "d6e97815fa9f091c83b97f7707914fe430f2a640",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c777f47c_7957a380",
+        "filename": "target/product/core.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-07-16T17:24:35Z",
+      "side": 1,
+      "message": "Oh they are also included in embedded.mk.\nIt seems we duplicate them in core.mk and should be removed.",
+      "parentUuid": "e7df98f0_af903940",
+      "revId": "d6e97815fa9f091c83b97f7707914fe430f2a640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
