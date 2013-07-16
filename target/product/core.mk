@@ -34,6 +34,7 @@ PRODUCT_PACKAGES += \
     Home \
     KeyChain \
     PicoTts \
+    ProxyHandler \
     SharedStorageBackup \
     TelephonyProvider \
     UserDictionaryProvider \
