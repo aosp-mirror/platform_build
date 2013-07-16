@@ -29,6 +29,8 @@ PRODUCT_PACKAGES += \
     Contacts \
     ContactsProvider \
     DefaultContainerService \
+    DocumentsUI \
+    ExternalStorageProvider \
     Home \
     KeyChain \
     PicoTts \
