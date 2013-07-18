@@ -217,14 +217,14 @@ class EdifyGenerator(object):
       else:
         raise ValueError("don't know how to write \"%s\" partitions" % (p.fs_type,))
 
-  def SetPermissions(self, fn, uid, gid, mode):
+  def SetPermissions(self, fn, uid, gid, mode, secontext):
     """Set file ownership and permissions."""
-    self.script.append('set_perm(%d, %d, 0%o, "%s");' % (uid, gid, mode, fn))
+    self.script.append('set_perm2(%d, %d, 0%o, "%s", "%s");' % (uid, gid, mode, secontext, fn))
 
-  def SetPermissionsRecursive(self, fn, uid, gid, dmode, fmode):
+  def SetPermissionsRecursive(self, fn, uid, gid, dmode, fmode, secontext):
     """Recursively set path ownership and permissions."""
-    self.script.append('set_perm_recursive(%d, %d, 0%o, 0%o, "%s");'
-                       % (uid, gid, dmode, fmode, fn))
+    self.script.append('set_perm2_recursive(%d, %d, 0%o, 0%o, "%s", "%s");'
+                       % (uid, gid, dmode, fmode, secontext, fn))
 
   def MakeSymlinks(self, symlink_list):
     """Create symlinks, given a list of (dest, link) pairs."""
