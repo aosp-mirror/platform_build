@@ -43,7 +43,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 else
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    LOCAL_JAVA_LIBRARIES := core core-junit ext framework $(LOCAL_JAVA_LIBRARIES)
+    LOCAL_JAVA_LIBRARIES := core core-junit ext framework framework2 $(LOCAL_JAVA_LIBRARIES)
   endif
 endif
 
@@ -337,6 +337,7 @@ $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE
 # via deps on the target that generates the sources.
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
+$(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
