@@ -181,6 +181,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 # Clean up around the /system/app -> /system/priv-app migration
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 
+# Clean up old location of generated Java files from aidl
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
