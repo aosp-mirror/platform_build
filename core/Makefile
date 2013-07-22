@@ -875,6 +875,11 @@ endif
 #######
 ## platform.zip: system, plus other files to be used in PDK fusion build,
 ## in a zip file
+##
+## PDK_PLATFORM_ZIP_PRODUCT_BINARIES is used to store specified files to platform.zip.
+## The variable will be typically set from BoardConfig.mk.
+## Files under out dir will be rejected to prevent possible conflicts with other rules.
+PDK_PLATFORM_ZIP_PRODUCT_BINARIES := $(filter-out $(OUT_DIR)/%,$(PDK_PLATFORM_ZIP_PRODUCT_BINARIES))
 INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
@@ -886,7 +891,9 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 ifeq (true,$(PLATFORM_ZIP_ADD_JAVA))
 	$(hide) cd $(OUT_DIR) && zip -qry $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
 endif
-
+ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
+	$(hide) zip -qry $@ $(PDK_PLATFORM_ZIP_PRODUCT_BINARIES)
+endif
 
 .PHONY: platform
 platform: $(INSTALLED_PLATFORM_ZIP)
