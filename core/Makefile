@@ -96,10 +96,11 @@ endif
 # Both of these tags will be removed and replaced with "release-keys"
 # when the target-files is signed in a post-build step.
 ifeq ($(DEFAULT_SYSTEM_DEV_CERTIFICATE),build/target/product/security/testkey)
-BUILD_VERSION_TAGS += test-keys
+BUILD_KEYS := test-keys
 else
-BUILD_VERSION_TAGS += dev-keys
+BUILD_KEYS := dev-keys
 endif
+BUILD_VERSION_TAGS += $(BUILD_KEYS)
 BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
 
 # A human-readable string that descibes this build in detail.
@@ -121,9 +122,9 @@ ifeq ($(TARGET_BUILD_VARIANT),user)
 
   # Dev. branches should have DISPLAY_BUILD_NUMBER set
   ifeq "true" "$(DISPLAY_BUILD_NUMBER)"
-    BUILD_DISPLAY_ID := $(BUILD_ID).$(BUILD_NUMBER)
+    BUILD_DISPLAY_ID := $(BUILD_ID).$(BUILD_NUMBER) $(BUILD_KEYS)
   else
-    BUILD_DISPLAY_ID := $(BUILD_ID)
+    BUILD_DISPLAY_ID := $(BUILD_ID) $(BUILD_KEYS)
   endif
 else
   # Non-user builds should show detailed build information
