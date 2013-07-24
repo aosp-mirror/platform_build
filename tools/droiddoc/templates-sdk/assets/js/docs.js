@@ -183,6 +183,7 @@ $(document).ready(function() {
         $("#nav-x li.google a").addClass("selected");
       } else {
         $("#nav-x li.reference a").addClass("selected");
+        changeApiLevel();  // turn things grey
       }
     } else if ((rootDir == "tools") || (rootDir == "sdk")) {
       $("#nav-x li.tools a").addClass("selected");
