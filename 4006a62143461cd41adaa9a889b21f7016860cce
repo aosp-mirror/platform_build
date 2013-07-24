@@ -16,6 +16,24 @@
       "revId": "4006a62143461cd41adaa9a889b21f7016860cce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "934d4312_cfdf4d51",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 1020814
+      },
+      "writtenOn": "2013-07-24T23:18:19Z",
+      "side": 1,
+      "message": "In your link it says that proto_path is completely overridden by cpp_out. See the second bullet point. So proto_path does not affect the output of .pb.* files.\n\n--proto_path is equivalent to -I in gcc: it specifies the include directories to be search for relative includes. This is used when resolving the absolute path of an \"import ...\" statement in a proto file.",
+      "parentUuid": "934d4312_cf918d9e",
+      "revId": "4006a62143461cd41adaa9a889b21f7016860cce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
