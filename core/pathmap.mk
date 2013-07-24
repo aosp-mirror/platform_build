@@ -109,7 +109,6 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/gridlayout \
         v7/appcompat \
         v7/mediarouter \
-        v8/renderscript \
         v13
 
 #
