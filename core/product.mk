@@ -96,7 +96,8 @@ _product_var_list := \
     PRODUCT_VENDOR_KERNEL_HEADERS \
     PRODUCT_FACTORY_RAMDISK_MODULES \
     PRODUCT_FACTORY_BUNDLE_MODULES \
-    PRODUCT_RUNTIMES
+    PRODUCT_RUNTIMES \
+    PRODUCT_BOOT_JARS
 
 
 define dump-product
@@ -208,6 +209,7 @@ endef
 
 
 _product_stash_var_list := $(_product_var_list) \
+	PRODUCT_BOOTCLASSPATH \
 	TARGET_ARCH \
 	TARGET_ARCH_VARIANT \
 	TARGET_CPU_VARIANT \
