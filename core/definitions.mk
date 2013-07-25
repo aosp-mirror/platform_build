@@ -889,13 +889,11 @@ define transform-proto-to-java
 @echo "Protoc: $@ <= $(PRIVATE_PROTO_SRC_FILES)"
 @rm -rf $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
 @mkdir -p $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
-$(hide) for f in $(PRIVATE_PROTO_SRC_FILES); do \
-        $(PROTOC) \
-        $(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
-        $(PRIVATE_PROTO_JAVA_OUTPUT_OPTION)=$(PRIVATE_PROTO_JAVA_OUTPUT_DIR) \
+$(hide) $(PROTOC) \
+        $(PRIVATE_PROTO_JAVA_OUTPUT_OPTION)="$(PRIVATE_PROTO_JAVA_OUTPUT_PARAMS):$(PRIVATE_PROTO_JAVA_OUTPUT_DIR)" \
         $(PRIVATE_PROTOC_FLAGS) \
-        $$f || exit 33; \
-        done
+        $(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
+        $(PRIVATE_PROTO_SRC_FILES)
 $(hide) touch $@
 endef
 
