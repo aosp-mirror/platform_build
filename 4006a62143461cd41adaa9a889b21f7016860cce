@@ -34,6 +34,24 @@
       "revId": "4006a62143461cd41adaa9a889b21f7016860cce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "934d4312_2f97d13f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-07-25T00:30:04Z",
+      "side": 1,
+      "message": "Yeah, but you can specify multiple --proto_path to protoc, protoc searches all the proto_paths to find the source files and construct the output path by replacing the proto_path with the --cpp_out path. That\u0027s too complex for makefile.\nI have discussed this before with Wink. I can forward you the previous discussion.",
+      "parentUuid": "934d4312_cfdf4d51",
+      "revId": "4006a62143461cd41adaa9a889b21f7016860cce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
