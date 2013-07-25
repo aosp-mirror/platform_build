@@ -52,6 +52,24 @@
       "revId": "4006a62143461cd41adaa9a889b21f7016860cce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "934d4312_0f11b5d6",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 1020814
+      },
+      "writtenOn": "2013-07-25T01:03:15Z",
+      "side": 1,
+      "message": "Reverted the cpp_out here.",
+      "parentUuid": "934d4312_2f97d13f",
+      "revId": "4006a62143461cd41adaa9a889b21f7016860cce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
