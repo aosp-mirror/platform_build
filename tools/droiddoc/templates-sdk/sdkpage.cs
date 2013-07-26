@@ -94,7 +94,7 @@
   <tr>
     <td>
   <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.win32.legacy_download ?>"><?cs var:ndk.win32_download ?></a>
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.win32.legacy_download ?>"><?cs var:ndk.win32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.win32.legacy_bytes ?></td>
     <td><?cs var:ndk.win32.legacy_checksum ?></td>
@@ -111,7 +111,7 @@
   <tr>
     <td>
   <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.win64.legacy_download ?>"><?cs var:ndk.win64_download ?></a>
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.win64.legacy_download ?>"><?cs var:ndk.win64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.win64.legacy_bytes ?></td>
     <td><?cs var:ndk.win64.legacy_checksum ?></td>
@@ -128,7 +128,7 @@
   <tr>
     <td>
   <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32_download ?></a>
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.mac32.legacy_bytes ?></td>
     <td><?cs var:ndk.mac32.legacy_checksum ?></td>
@@ -145,7 +145,7 @@
   <tr>
     <td>
   <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.mac64.legacy_download ?>"><?cs var:ndk.mac64_download ?></a>
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.mac64.legacy_download ?>"><?cs var:ndk.mac64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.mac64.legacy_bytes ?></td>
     <td><?cs var:ndk.mac64.legacy_checksum ?></td>
@@ -163,7 +163,7 @@
   <tr>
     <td>
   <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.linux32.legacy_download ?>"><?cs var:ndk.linux32_download ?></a>
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.linux32.legacy_download ?>"><?cs var:ndk.linux32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.linux32.legacy_bytes ?></td>
     <td><?cs var:ndk.linux32.legacy_checksum ?></td>
@@ -180,7 +180,7 @@
   <tr>
     <td>
   <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.linux64.legacy_download ?>"><?cs var:ndk.linux64_download ?></a>
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.linux64.legacy_download ?>"><?cs var:ndk.linux64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.linux64.legacy_bytes ?></td>
     <td><?cs var:ndk.linux64.legacy_checksum ?></td>
