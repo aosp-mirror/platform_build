@@ -118,14 +118,14 @@ $(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/% $(_pdk_fusion_stamp)
 
 ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
 
-define JAVA_dependency_template
+PDK_FUSION_OUT_DIR := $(OUT_DIR)
 ifeq (debug,$(TARGET_BUILD_TYPE))
 PDK_FUSION_OUT_DIR := $(DEBUG_OUT_DIR)
-else
-PDK_FUSION_OUT_DIR := $(OUT_DIR)
 endif
+
+define JAVA_dependency_template
 $(PDK_FUSION_OUT_DIR)/$(strip $(1)): $(_pdk_fusion_intermediates)/$(strip $(1)) \
- $(PDK_FUSION_OUT_DIR)/$(strip $(2)) $(_pdk_fusion_stamp)
+  $(PDK_FUSION_OUT_DIR)/$(strip $(2)) $(_pdk_fusion_stamp)
 	@mkdir -p $$(dir $$@)
 	$(hide) cp -fpPR $$< $$@
 endef
