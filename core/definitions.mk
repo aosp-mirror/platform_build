@@ -1999,6 +1999,7 @@ endef
 ###########################################################
 ## Define device-specific radio files
 ###########################################################
+INSTALLED_RADIOIMAGE_TARGET :=
 
 # Copy a radio image file to the output location, and add it to
 # INSTALLED_RADIOIMAGE_TARGET.
