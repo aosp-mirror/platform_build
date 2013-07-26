@@ -93,17 +93,6 @@ ifndef NO_FALLBACK_FONT
 #NO_FALLBACK_FONT:=true
 endif
 
-# To enable instrumentation in webcore based apps like gmail and
-# the browser, define WEBCORE_INSTRUMENTATION:=true
-ifndef WEBCORE_INSTRUMENTATION
-#WEBCORE_INSTRUMENTATION:=true
-endif
-
-# To disable SVG in webcore define ENABLE_SVG:=false
-ifndef ENABLE_SVG
-#ENABLE_SVG:=false
-endif
-
 # OVERRIDE_RUNTIMES allows you to locally override PRODUCT_RUNTIMES.
 #
 # To only build ART, use "runtime_libart_default"
