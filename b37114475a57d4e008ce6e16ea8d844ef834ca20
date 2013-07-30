@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "138a339d_7f530f72",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1850,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-07-30T01:17:16Z",
+      "side": 1,
+      "message": "What\u0027s the use case? Why those predefined macros?\nMaybe we should allow the module to define its own macors with  private variable like PRIVATE_M4_OPTIONS?",
+      "revId": "b37114475a57d4e008ce6e16ea8d844ef834ca20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
