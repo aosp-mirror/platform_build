@@ -819,13 +819,18 @@ function scrollIntoView(nav) {
 
   if ($nav.is(':visible')) {
     var $selected = $(".selected", $nav);
-    if ($selected.length == 0) return;
-    
-    var selectedOffset = $selected.position().top;
-    if (selectedOffset + 90 > $nav.height()) {  // add 90 so that we scroll up even 
-                                                // if the current item is close to the bottom
-      api.scrollTo(0, selectedOffset - ($nav.height() / 4), false); // scroll the item into view
-                                                              // to be 1/4 of the way from the top
+    if ($selected.length == 0) {
+      // If no selected item found, exit
+      return;
+    }
+
+    var selectedOffset = $selected.offset().top; // measure offset from top, relative to entire page
+    if (selectedOffset > $nav.height() * .8) { // multiply nav height by .8 so we move up any
+                                               // items more than 80% down the nav
+      // scroll the item up by an amount 125px less than the window height (account for site header)
+      // and then multiply nav height by .8 to match the 80% threshold used above
+      api.scrollTo(0, selectedOffset - 125 - ($nav.height() * .8), false);
+
     }
   }
 }
