@@ -85,7 +85,6 @@ PRODUCT_PACKAGES += \
     ext \
     framework-res \
     hprof-conv \
-    icu.dat \
     installd \
     ip \
     ip-up-vpn \
@@ -169,10 +168,6 @@ PRODUCT_PACKAGES += \
     Provision \
     hostapd \
     wpa_supplicant.conf
-
-
-PRODUCT_PACKAGES += \
-    icu.dat
 
 PRODUCT_PACKAGES += \
     librs_jni \
