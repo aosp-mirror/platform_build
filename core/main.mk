@@ -481,7 +481,7 @@ else # ONE_SHOT_MAKEFILE
 subdir_makefiles := \
 	$(shell build/tools/findleaves.py --prune=$(OUT_DIR) --prune=.repo --prune=.git $(subdirs) Android.mk)
 
-include $(subdir_makefiles)
+$(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
 
 endif # ONE_SHOT_MAKEFILE
 
