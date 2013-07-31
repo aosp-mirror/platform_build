@@ -2664,6 +2664,10 @@ a.notice-designers {
   margin:0 0 20px 20px;
   border:1px solid #ddd;
 }
+a.notice-developers.wide,
+a.notice-designers.wide {
+  width:278px;
+}
 a.notice-developers div,
 a.notice-designers div {
   min-height:40px;
