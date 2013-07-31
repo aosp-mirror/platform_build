@@ -30,7 +30,6 @@ PRODUCT_PACKAGES += \
     dx \
     ext \
     hprof-conv \
-    icu.dat \
     libcrypto \
     libexpat \
     libicui18n \
