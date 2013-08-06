@@ -89,6 +89,7 @@ PRODUCT_COPY_FILES := \
 
 include $(SRC_TARGET_DIR)/product/emulator.mk
 
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
