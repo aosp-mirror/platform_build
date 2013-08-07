@@ -1,4 +1,4 @@
-#
+
 # Copyright (C) 2008 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,4 +18,6 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-export BUILD_ID=KRS38B
+BUILD_ID := KLP
+
+DISPLAY_BUILD_NUMBER := true
