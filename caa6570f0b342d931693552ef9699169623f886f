@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d872781f_e500d615",
+        "filename": "tools/releasetools/sign_target_files_apks",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-08-08T22:39:09Z",
+      "side": 1,
+      "message": "You should put a \"\\b\" at the beginning and end of the old_cert16 regex so only an entire signature attribute is matched.  \n\nYou should pass flags\u003dre.IGNORECASE to subn() so that if the input mac file happens to be written in uppercase base-16 it will still get replaced.",
+      "revId": "caa6570f0b342d931693552ef9699169623f886f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d872781f_2514ae57",
+        "filename": "tools/releasetools/sign_target_files_apks",
+        "patchSetId": 1
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-08-08T22:39:09Z",
+      "side": 1,
+      "message": "We don\u0027t print tabs anywhere else.  Indent with spaces please.",
+      "revId": "caa6570f0b342d931693552ef9699169623f886f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d872781f_e59c56b3",
+        "filename": "tools/releasetools/sign_target_files_apks",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-08-08T22:39:09Z",
+      "side": 1,
+      "message": "I don\u0027t think you need to print errno \u003d\u003d ENOENT errors at all, -k options may well be passed that aren\u0027t used in a particular build.  (Maybe print them if verbose output is requested.)  Conversely, I think you want to print non-ENOENT errors even for devkeys (like, if the file is there but can\u0027t be opened, that\u0027s something unusual we\u0027d want to see).  So I don\u0027t think you need to special-case devkeys at all.",
+      "revId": "caa6570f0b342d931693552ef9699169623f886f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d872781f_45652adc",
+        "filename": "tools/releasetools/sign_target_files_apks",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-08-08T22:39:09Z",
+      "side": 1,
+      "message": "No tabs.",
+      "revId": "caa6570f0b342d931693552ef9699169623f886f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
