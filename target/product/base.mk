@@ -57,6 +57,7 @@ PRODUCT_PACKAGES += \
     libmtp \
     libnetlink \
     libnetutils \
+    libpac \
     libreference-ril \
     libreverbwrapper \
     libril \
@@ -86,6 +87,7 @@ PRODUCT_PACKAGES += \
     ndc \
     netcfg \
     netd \
+    pacserver \
     ping \
     ping6 \
     platform.xml \

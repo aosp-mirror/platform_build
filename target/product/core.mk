@@ -27,6 +27,7 @@ PRODUCT_PACKAGES += \
     ExternalStorageProvider \
     KeyChain \
     PicoTts \
+    ProxyHandler \
     SharedStorageBackup \
     VpnDialogs
 
