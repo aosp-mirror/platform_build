@@ -237,6 +237,8 @@ def RewriteProps(data):
         value = value.split()
         if len(value) == 2 and value[1].endswith("-keys"):
           value = value[0]
+        else:
+          value = " ".join(value)
       line = key + "=" + value
     if line != original_line:
       print "  replace: ", original_line
