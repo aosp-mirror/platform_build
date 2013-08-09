@@ -71,6 +71,22 @@ $(DEFAULT_GOAL):
 .PHONY: FORCE
 FORCE:
 
+# These goals don't need to collect and include Android.mks/CleanSpec.mks
+# in the source tree.
+dont_bother_goals := clean clobber dataclean installclean \
+    help out \
+    snod systemimage-nodeps \
+    stnod systemtarball-nodeps \
+    userdataimage-nodeps userdatatarball-nodeps \
+    cacheimage-nodeps \
+    vendorimage-nodeps \
+    ramdisk-nodeps \
+    bootimage-nodeps
+
+ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
+dont_bother := true
+endif
+
 # Targets that provide quick help on the build system.
 include $(BUILD_SYSTEM)/help.mk
 
@@ -83,21 +99,6 @@ include $(BUILD_SYSTEM)/config.mk
 # file does the rm -rf inline so the deps which are all done below will
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
-
-# These targets are going to delete stuff, don't bother including
-# the whole directory tree if that's all we're going to do
-ifeq ($(MAKECMDGOALS),clean)
-dont_bother := true
-endif
-ifeq ($(MAKECMDGOALS),clobber)
-dont_bother := true
-endif
-ifeq ($(MAKECMDGOALS),dataclean)
-dont_bother := true
-endif
-ifeq ($(MAKECMDGOALS),installclean)
-dont_bother := true
-endif
 
 # Include the google-specific config
 -include vendor/google/build/config.mk
@@ -675,6 +676,8 @@ ifdef is_sdk_build
       $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
+endif # dont_bother
+
 # build/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
 # contains everything that's built during the current make, but it also further
@@ -683,8 +686,6 @@ ALL_DEFAULT_INSTALLED_MODULES := $(modules_to_install)
 include $(BUILD_SYSTEM)/Makefile
 modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
-
-endif # dont_bother
 
 
 # These are additional goals that we build, in order to make sure that there
