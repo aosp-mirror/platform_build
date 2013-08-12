@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1807b0cc_17c654e2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-08-12T16:41:32Z",
+      "side": 1,
+      "message": "Please address Doug\u0027s question about MKBOOTIMG as a command plus some args.",
+      "revId": "612e2cd0e8c79bc6ab46d13cd96c01d1be382139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
