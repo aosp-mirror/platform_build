@@ -90,6 +90,15 @@ $(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLE
 endif
 endif
 
+# Add static HAL libraries
+ifdef LOCAL_HAL_STATIC_LIBRARIES
+$(foreach lib, $(LOCAL_HAL_STATIC_LIBRARIES), \
+    $(eval b_lib := $(filter $(lib).%,$(BOARD_HAL_STATIC_LIBRARIES)))\
+    $(if $(b_lib), $(eval LOCAL_STATIC_LIBRARIES += $(b_lib)),\
+                   $(eval LOCAL_STATIC_LIBRARIES += $(lib).default)))
+b_lib :=
+endif
+
 ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   LOCAL_CLANG := true
   LOCAL_CFLAGS += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
