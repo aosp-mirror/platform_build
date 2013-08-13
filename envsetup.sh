@@ -205,6 +205,8 @@ function set_stuff_for_environment()
     set_sequence_number
 
     export ANDROID_BUILD_TOP=$(gettop)
+    # With this environment variable new GCC can apply colors to warnings/errors
+    export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 }
 
 function set_sequence_number()
