@@ -38,10 +38,10 @@ PRODUCT_PACKAGES := \
     OneTimeInitializer \
     PrintSpooler \
     Provision \
-    Phone \
     QuickSearchBox \
     Settings \
     SystemUI \
+    TeleService \
     Terminal \
     CalendarProvider \
     bluetooth-health \
