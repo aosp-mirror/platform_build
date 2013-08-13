@@ -97,9 +97,11 @@ TARGET_thumb_CLANG_CFLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(TARGE
 $(call clang-flags-subst,-march=armv5te,-march=armv5t)
 $(call clang-flags-subst,-march=armv5e,-march=armv5)
 
-# clang does not support -Wno-psabi and -Wno-unused-but-set-variable
+# clang does not support -Wno-psabi, -Wno-unused-but-set-variable, and
+# -Wno-unused-but-set-parameter
 $(call clang-flags-subst,-Wno-psabi,)
 $(call clang-flags-subst,-Wno-unused-but-set-variable,)
+$(call clang-flags-subst,-Wno-unused-but-set-parameter,)
 
 # clang does not support -mcpu=cortex-a15 yet - fall back to armv7-a for now
 $(call clang-flags-subst,-mcpu=cortex-a15,-march=armv7-a)
