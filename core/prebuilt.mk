@@ -187,3 +187,5 @@ $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
+
+$(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
