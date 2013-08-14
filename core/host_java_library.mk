@@ -69,6 +69,8 @@ $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
+$(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
+$(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS :=
 $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
         $(jar_manifest_file) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
@@ -105,9 +107,11 @@ ifneq ($(extra_jar_args),)
 endif
 
 else
+$(LOCAL_BUILT_MODULE): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(LOCAL_BUILT_MODULE): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(LOCAL_BUILT_MODULE): PRIVATE_JAR_EXCLUDE_FILES :=
-$(LOCAL_BUILT_MODULE): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
+$(LOCAL_BUILT_MODULE): PRIVATE_JAR_PACKAGES :=
+$(LOCAL_BUILT_MODULE): PRIVATE_RMTYPEDEFS :=
 $(LOCAL_BUILT_MODULE): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
 		$(jar_manifest_file) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
