@@ -183,7 +183,6 @@ $(document).ready(function() {
         $("#nav-x li.google a").addClass("selected");
       } else {
         $("#nav-x li.reference a").addClass("selected");
-        changeApiLevel();  // turn things grey
       }
     } else if ((rootDir == "tools") || (rootDir == "sdk")) {
       $("#nav-x li.tools a").addClass("selected");
@@ -825,14 +824,13 @@ function scrollIntoView(nav) {
       // If no selected item found, exit
       return;
     }
-
-    var selectedOffset = $selected.offset().top; // measure offset from top, relative to entire page
-    if (selectedOffset > $nav.height() * .8) { // multiply nav height by .8 so we move up any
-                                               // items more than 80% down the nav
-      // scroll the item up by an amount 125px less than the window height (account for site header)
-      // and then multiply nav height by .8 to match the 80% threshold used above
-      api.scrollTo(0, selectedOffset - 125 - ($nav.height() * .8), false);
-
+    // get the selected item's offset from its container nav by measuring the item's offset
+    // relative to the document then subtract the container nav's offset relative to the document
+    var selectedOffset = $selected.offset().top - $nav.offset().top;
+    if (selectedOffset > $nav.height() * .8) { // multiply nav height by .8 so we move up the item
+                                               // if it's more than 80% down the nav
+      // scroll the item up by an amount equal to 80% the container nav's height
+      api.scrollTo(0, selectedOffset - ($nav.height() * .8), false);
     }
   }
 }
@@ -2232,10 +2230,10 @@ function escapeHTML(string) {
 /* ######################################################## */
 
 /* Initialize some droiddoc stuff, but only if we're in the reference */
-if (location.pathname.indexOf("/reference")) {
-  if(!location.pathname.indexOf("/reference-gms/packages.html")
-    && !location.pathname.indexOf("/reference-gcm/packages.html")
-    && !location.pathname.indexOf("/reference/com/google") == 0) {
+if (location.pathname.indexOf("/reference") == 0) {
+  if(!(location.pathname.indexOf("/reference-gms/packages.html") == 0)
+    && !(location.pathname.indexOf("/reference-gcm/packages.html") == 0)
+    && !(location.pathname.indexOf("/reference/com/google") == 0)) {
     $(document).ready(function() {
       // init available apis based on user pref
       changeApiLevel();
