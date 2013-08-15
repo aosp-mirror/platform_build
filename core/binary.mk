@@ -141,21 +141,17 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
 my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
-
-# filter out including of AndroidConfig.h in system/core.
-TARGET_GLOBAL_CFLAGS_NO_ANDCONF ?= $(subst $(TARGET_ANDROID_CONFIG_CFLAGS),,\
-    $(TARGET_GLOBAL_CFLAGS))
-my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS_NO_ANDCONF)
 else
 my_target_project_includes := $(TARGET_PROJECT_INCLUDES)
 my_target_c_includes := $(TARGET_C_INCLUDES)
-ifeq ($(strip $(LOCAL_CLANG)),true)
-my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
+endif # LOCAL_SDK_VERSION
+
+ifeq ($(LOCAL_CLANG),true)
 my_target_global_cflags := $(TARGET_GLOBAL_CLANG_FLAGS)
+my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
 else
 my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
 endif # LOCAL_CLANG
-endif # LOCAL_SDK_VERSION
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_includes)
