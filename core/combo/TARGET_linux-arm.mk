@@ -93,6 +93,8 @@ ifeq ($(FORCE_ARM_DEBUGGING),true)
   TARGET_thumb_CFLAGS += -marm -fno-omit-frame-pointer
 endif
 
+android_config_h := $(call select-android-config-h,linux-arm)
+
 TARGET_GLOBAL_CFLAGS += \
 			-msoft-float -fpic -fPIE \
 			-ffunction-sections \
@@ -103,11 +105,9 @@ TARGET_GLOBAL_CFLAGS += \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=1 \
 			-fno-short-enums \
-			$(arch_variant_cflags)
-
-android_config_h := $(call select-android-config-h,linux-arm)
-TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
-TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
+			$(arch_variant_cflags) \
+			-include $(android_config_h) \
+			-I $(dir $(android_config_h))
 
 # This warning causes dalvik not to build with gcc 4.6+ and -Werror.
 # We cannot turn it off blindly since the option is not available
