@@ -638,6 +638,9 @@ function mm()
         # Find the closest Android.mk file.
         T=$(gettop)
         local M=$(findmakefile)
+        local MODULES=
+        local GET_INSTALL_PATH=
+        local ARGS=
         # Remove the path to top as the makefilepath needs to be relative
         local M=`echo $M|sed 's:'$T'/::'`
         if [ ! "$T" ]; then
@@ -645,7 +648,19 @@ function mm()
         elif [ ! "$M" ]; then
             echo "Couldn't locate a makefile from the current directory."
         else
-            ONE_SHOT_MAKEFILE=$M make -C $T -f build/core/main.mk all_modules $@
+            for ARG in $@; do
+                case $ARG in
+                  GET-INSTALL-PATH) GET_INSTALL_PATH=$ARG;;
+                esac
+            done
+            if [ -n "$GET_INSTALL_PATH" ]; then
+              MODULES=
+              ARGS=GET-INSTALL-PATH
+            else
+              MODULES=all_modules
+              ARGS=$@
+            fi
+            ONE_SHOT_MAKEFILE=$M make -C $T -f build/core/main.mk $MODULES $ARGS
         fi
     fi
 }
@@ -658,6 +673,7 @@ function mmm()
         local MODULES=
         local ARGS=
         local DIR TO_CHOP
+        local GET_INSTALL_PATH=
         local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
         local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
         for DIR in $DIRS ; do
@@ -667,10 +683,10 @@ function mmm()
             fi
             DIR=`echo $DIR | sed -e 's/:.*//' -e 's:/$::'`
             if [ -f $DIR/Android.mk ]; then
-                TO_CHOP=`(\cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
-                TO_CHOP=`expr $TO_CHOP + 1`
-                START=`PWD= /bin/pwd`
-                MFILE=`echo $START | cut -c${TO_CHOP}-`
+                local TO_CHOP=`(\cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
+                local TO_CHOP=`expr $TO_CHOP + 1`
+                local START=`PWD= /bin/pwd`
+                local MFILE=`echo $START | cut -c${TO_CHOP}-`
                 if [ "$MFILE" = "" ] ; then
                     MFILE=$DIR/Android.mk
                 else
@@ -678,20 +694,17 @@ function mmm()
                 fi
                 MAKEFILE="$MAKEFILE $MFILE"
             else
-                if [ "$DIR" = snod ]; then
-                    ARGS="$ARGS snod"
-                elif [ "$DIR" = showcommands ]; then
-                    ARGS="$ARGS showcommands"
-                elif [ "$DIR" = dist ]; then
-                    ARGS="$ARGS dist"
-                elif [ "$DIR" = incrementaljavac ]; then
-                    ARGS="$ARGS incrementaljavac"
-                else
-                    echo "No Android.mk in $DIR."
-                    return 1
-                fi
+                case $DIR in
+                  showcommands | snod | dist | incrementaljavac) ARGS="$ARGS $DIR";;
+                  GET-INSTALL-PATH) GET_INSTALL_PATH=$DIR;;
+                  *) echo "No Android.mk in $DIR."; return 1;;
+                esac
             fi
         done
+        if [ -n "$GET_INSTALL_PATH" ]; then
+          ARGS=$GET_INSTALL_PATH
+          MODULES=
+        fi
         ONE_SHOT_MAKEFILE="$MAKEFILE" make -C $T -f build/core/main.mk $DASH_ARGS $MODULES $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."

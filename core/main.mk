@@ -471,6 +471,12 @@ FULL_BUILD :=
 NOTICE-HOST-%: ;
 NOTICE-TARGET-%: ;
 
+# A helper goal printing out install paths
+.PHONY: GET-INSTALL-PATH
+GET-INSTALL-PATH:
+	@$(foreach m, $(ALL_MODULES), $(if $(ALL_MODULES.$(m).INSTALLED), \
+		echo 'INSTALL-PATH: $(m) $(ALL_MODULES.$(m).INSTALLED)';))
+
 else # ONE_SHOT_MAKEFILE
 
 #
