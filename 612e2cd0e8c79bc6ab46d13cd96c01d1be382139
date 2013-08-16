@@ -16,6 +16,24 @@
       "revId": "612e2cd0e8c79bc6ab46d13cd96c01d1be382139",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f83c9ca4_cea1c3a2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 291,
+      "author": {
+        "id": 1011077
+      },
+      "writtenOn": "2013-08-16T07:51:58Z",
+      "side": 1,
+      "message": "mkbootimg_args is appended to the command below, this comes from BOARD_MKBOOTIMG_ARGS, which allows you to specify board specific arguments to your custom mkbootimg\n\nTherefore I do feel that it\u0027s okay not to extend the functionality. Ok?\nOr do you feel I need to do some sanity checking here as well, to hinder the developers from using this in the wrong way?",
+      "parentUuid": "1807b0cc_17c654e2",
+      "revId": "612e2cd0e8c79bc6ab46d13cd96c01d1be382139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
