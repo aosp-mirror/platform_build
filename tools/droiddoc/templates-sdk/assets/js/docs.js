@@ -188,6 +188,8 @@ $(document).ready(function() {
       $("#nav-x li.tools a").addClass("selected");
     } else if ($("body").hasClass("google")) {
       $("#nav-x li.google a").addClass("selected");
+    } else if ($("body").hasClass("samples")) {
+      $("#nav-x li.samples a").addClass("selected");
     }
 
   // highlight Distribute tab
@@ -639,13 +641,6 @@ function updateSideNavPosition() {
   $('#devdoc-nav').css({left: -newLeft});
   $('#devdoc-nav .totop').css({left: -(newLeft - parseInt($('#side-nav').css('margin-left')))});
 }
-
-
-
-
-
-
-
 
 // TODO: use $(document).ready instead
 function addLoadEvent(newfun) {
@@ -2577,6 +2572,13 @@ function init_navtree(navtree_id, toroot, root_nodes)
   }
 }
 
+
+
+
+
+
+
+
 /* TODO: eliminate redundancy with non-google functions */
 function init_google_navtree(navtree_id, toroot, root_nodes)
 {
@@ -2685,6 +2687,22 @@ function init_default_gcm_navtree(toroot) {
       // when the file is loaded, initialize the tree
       if(jqxhr.status === 200) {
           init_google_navtree("gcm-tree-list", toroot, GCM_NAVTREE_DATA);
+          highlightSidenav();
+          resizeNav();
+      }
+  });
+}
+
+function showSamplesRefTree() {
+  init_default_samples_navtree(toRoot);
+}
+
+function init_default_samples_navtree(toroot) {
+  // load json file for navtree data
+  $.getScript(toRoot + 'samples_navtree_data.js', function(data, textStatus, jqxhr) {
+      // when the file is loaded, initialize the tree
+      if(jqxhr.status === 200) {
+          init_google_navtree("samples-tree-list", toroot, SAMPLES_NAVTREE_DATA);
           highlightSidenav();
           resizeNav();
       }
