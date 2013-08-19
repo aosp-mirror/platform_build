@@ -338,8 +338,7 @@ video.with-shadow {
       width: 34px;
       height: 34px; }
   #nav li.expanded li ul.tree-list-children {
-    display:block; /*dd temporary for debug */
-    padding: 0 0 0 10px;
+    padding: 0;
   }
   #nav li.expanded li ul.tree-list-children .tree-list-children {
     padding:0 0 0 10px;
@@ -958,7 +957,7 @@ scroll top left;
     background-image: url(../images/styles/ico_wrong.png); }
   .do-dont-label.good {
     background-image: url(../images/styles/ico_good.png); }
-    
+
 
 
 
@@ -2359,9 +2358,7 @@ div.toggle-content.closed .toggle-content-toggleme {
 #jd-content img.toggle-content-img {
   margin:0 5px 5px 0;
 }
-div.toggle-content p {
-  margin:10px 0 0;
-}
+
 div.toggle-content-toggleme {
   padding:0 0 0 15px;
 }
@@ -2447,29 +2444,6 @@ Lightbox
   background-position: -10px 0;
 }
 
-
-/* Styles for toggleable divs */
-.toggleable {
-  padding: .25em 1em 0em 1em;
-  margin-bottom: 0;
-}
-.toggleme {
-  padding: 1em 1em 0 2em;
-  line-height:1em;
-}
-.toggleable a {
-  text-decoration:none;
-}
-.toggleme a {
-  text-decoration:underline;
-}
-
-.toggleable.closed .toggleme {
-  display:none;
-}
-#jd-content .toggle-img {
-  margin:0;
-}
 
 /* --------------------------------------------------------------------------
 Styles for samples project trees and code browsing in resources tab 
@@ -2631,7 +2605,7 @@ table.blank th, table.blank td {
 .caption {
   margin: 0.5em 0 2em 0;
   color: #000;
-  font-size: 11.5px;  
+  font-size: 11.5px; 
 }
 
 .nolist {
