@@ -94,7 +94,7 @@
       </div>
     <?cs else ?>
       <?cs if:tab1 ?><div id="title-tabs-wrapper"><?cs /if ?>
-        <h1 itemprop="name" <?cs if:tab1 ?>class="with-title-tabs"<?cs /if ?>><?cs var:projectTitle ?></h1><?cs
+        <h1 itemprop="name" <?cs if:tab1 ?>class="with-title-tabs"<?cs /if ?>>"<?cs var:page.title ?>"</h1><?cs
           if:tab1 ?><ul id="title-tabs">
               <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
               <?cs if:tab2 ?>
@@ -115,85 +115,26 @@
 
 <?cs # If this is the online docs, build the src code navigation links ?>
 
-<?cs if:page.title == "Project Structure" ?>
-
-<script type="text/javascript"> 
-function toggleDiv(link) {
-  var toggleable = $(link).parent();
-  if (toggleable.hasClass("closed")) {
-    $(".toggleme", toggleable).slideDown("fast");
-    toggleable.removeClass("closed");
-    toggleable.addClass("open");
-    $(".toggle-img", toggleable).attr("title", "hide").attr("src", (toRoot + "assets/images/triangle-opened.png"));
-  } else {
-    $(".toggleme", toggleable).slideUp("fast");
-    toggleable.removeClass("open");
-    toggleable.addClass("closed");
-    $(".toggle-img", toggleable).attr("title", "show").attr("src", (toRoot + "assets/images/triangle-closed.png"));
-  }
-  return false;
-}
-</script>
-
-
-<?cs def:display_files(files) ?>
-
-    <?cs each:file = files ?>
-        <?cs if:file.Type != "dir" ?>
-            <div class="structure-<?cs var:file.Type ?>"><a href="<?cs var:toroot ?><?cs var:file.Href ?>"><?cs var:file.Name ?></a></div>
-        <?cs else ?>
-            <div class="toggleable opened structure-dir"> 
-               <a href="#" onclick="return toggleDiv(this)"> 
-               <img src="<?cs var:toroot ?>assets/images/triangle-opened.png" class="toggle-img structure-toggle-img" height="9px" width="9px" />
-               <?cs var:file.Name ?></a><?cs if:file.SummaryFlag == "true" ?><span class="dirInfo">[&nbsp;<a href="file.SummaryHref">Info</a>&nbsp;]</a></span><?cs /if ?>
-
-               <div class="toggleme structure-toggleme"> 
-
-        <?cs if:file.Sub.0.Name ?>
-                 <?cs call:display_files(file.Sub) ?>
-        <?cs /if ?>
-               </div> <?cs # /toggleme ?>
-            </div> <?cs # /toggleable ?>
-         <?cs /if ?>
-    <?cs /each ?>
-<?cs /def ?>
-
-<?cs call:display_files(Files) ?>
-
-<?cs else ?> <?cs # else not project structure doc ?>
 
 <?cs var:summary ?>
 
-<h2>Project Structure</h2>
+<p>The file containing the source code shown below is located in the corresponding directory in <code>&lt;sdk&gt;/samples/android-&lt;version&gt;/...</code></p>
 
-<p>Decide what to do with this ...</p>
+<!-- begin file contents -->
+<div class="sampleEmbed">
+  <code class="prettyprint">
+    <ol class="lineNumbers">
+      <?cs var:fileContents ?>
+    </ol>
+  </code>
+</div>
 
 
-<?cs def:display_files(files) ?>
+<!-- end file contents -->
 
-    <?cs each:file = files ?>
-        <?cs if:file.Type != "dir" ?>
-            <div class="structure-<?cs var:file.Type ?>"><a href="<?cs var:toroot ?><?cs var:file.Href ?>"><?cs var:file.Name ?></a></div>
-        <?cs else ?>
-            <div class="toggleable opened structure-dir"> 
-               <a href="#" onclick="return toggleDiv(this)"> 
-               <img src="<?cs var:toroot ?>assets/images/triangle-opened.png" class="toggle-img structure-toggle-img" height="9px" width="9px" />
-               <?cs var:file.Name ?></a><?cs if:file.SummaryFlag == "true" ?><span class="dirInfo">[&nbsp;<a href="file.SummaryHref">Info</a>&nbsp;]</a></span><?cs /if ?>
 
-               <div class="toggleme structure-toggleme"> 
 
-        <?cs if:file.Sub.0.Name ?>
-                 <?cs call:display_files(file.Sub) ?>
-        <?cs /if ?>
-               </div> <?cs # /toggleme ?>
-            </div> <?cs # /toggleable ?>
-         <?cs /if ?>
-    <?cs /each ?>
-<?cs /def ?>
 
-<?cs call:display_files(Files) ?>
-
-<?cs /if ?> <?cs # end if project structure ?>
 
 <?cs else ?><?cs
   # else, this means it's offline docs,
@@ -215,5 +156,10 @@ function toggleDiv(link) {
 
 </body>
 </html>
+
+
+
+
+
 
 
