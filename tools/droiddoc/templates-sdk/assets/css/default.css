@@ -305,6 +305,8 @@ video.with-shadow {
       position: absolute;
       top: 0;
       right: 0; }
+    #nav .nav-section-header.empty {
+      padding:0; }
     #nav .nav-section-header.empty:after {
       display: none; }
     /* nested nav headers */
