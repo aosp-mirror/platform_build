@@ -87,7 +87,6 @@ PRODUCT_PACKAGES += \
     ndc \
     netcfg \
     netd \
-    pacserver \
     ping \
     ping6 \
     platform.xml \
