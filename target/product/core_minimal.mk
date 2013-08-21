@@ -23,7 +23,6 @@ PRODUCT_DEVICE := generic
 PRODUCT_NAME := core
 
 PRODUCT_PACKAGES += \
-    ApplicationsProvider \
     BackupRestoreConfirmation \
     DownloadProvider \
     DownloadProviderUi \
