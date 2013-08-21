@@ -94,7 +94,7 @@
       </div>
     <?cs else ?>
       <?cs if:tab1 ?><div id="title-tabs-wrapper"><?cs /if ?>
-        <h1 itemprop="name" <?cs if:tab1 ?>class="with-title-tabs"<?cs /if ?>>"<?cs var:page.title ?>"</h1><?cs
+        <h1 itemprop="name" <?cs if:tab1 ?>class="with-title-tabs"<?cs /if ?>><?cs var:page.title ?></h1><?cs
           if:tab1 ?><ul id="title-tabs">
               <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
               <?cs if:tab2 ?>
@@ -118,20 +118,15 @@
 
 <?cs var:summary ?>
 
-<p>The file containing the source code shown below is located in the corresponding directory in <code>&lt;sdk&gt;/samples/android-&lt;version&gt;/...</code></p>
-
 <!-- begin file contents -->
-<div class="sampleEmbed">
-  <code class="prettyprint">
-    <ol class="lineNumbers">
-      <?cs var:fileContents ?>
-    </ol>
-  </code>
+<div id="codesample-wrapper">
+<pre id="codesample-line-numbers" class="no-pretty-print hidden"></pre>
+<pre id="codesample-block"><?cs var:fileContents ?></pre>
 </div>
-
-
 <!-- end file contents -->
-
+<script type="text/javascript">
+  initCodeLineNumbers();
+</script>
 
 
 

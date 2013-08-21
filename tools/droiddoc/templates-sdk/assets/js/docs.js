@@ -663,10 +663,10 @@ if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod
 }
 
 
-addLoadEvent( function() {
+$(document).ready(function() {
   $("pre:not(.no-pretty-print)").addClass("prettyprint");
   prettyPrint();
-} );
+});
 
 
 
@@ -2861,3 +2861,62 @@ var control = mac ? e.metaKey && !e.ctrlKey : e.ctrlKey; // get ctrl key
     ensureAllInheritedExpanded();
   }
 });
+
+
+
+
+
+
+/* On-demand functions */
+
+/** Move sample code line numbers out of PRE block and into non-copyable column */
+function initCodeLineNumbers() {
+  var numbers = $("#codesample-block a.number");
+  if (numbers.length) {
+    $("#codesample-line-numbers").removeClass("hidden").append(numbers);
+  }
+
+  $(document).ready(function() {
+    // select entire line when clicked
+    $("span.code-line").click(function() {
+      if (!shifted) {
+        selectText(this);
+      }
+    });
+    // invoke line link on double click
+    $(".code-line").dblclick(function() {
+      document.location.hash = $(this).attr('id');
+    });
+    // highlight the line when hovering on the number
+    $("#codesample-line-numbers a.number").mouseover(function() {
+      var id = $(this).attr('href');
+      $(id).css('background','#e7e7e7');
+    });
+    $("#codesample-line-numbers a.number").mouseout(function() {
+      var id = $(this).attr('href');
+      $(id).css('background','none');
+    });
+  });
+}
+
+// create SHIFT key binder to avoid the selectText method when selecting multiple lines
+var shifted = false;
+$(document).bind('keyup keydown', function(e){shifted = e.shiftKey; return true;} );
+
+// courtesy of jasonedelman.com
+function selectText(element) {
+    var doc = document
+        , range, selection
+    ;
+    if (doc.body.createTextRange) { //ms
+        range = doc.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) { //all others
+        selection = window.getSelection();        
+        range = doc.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
