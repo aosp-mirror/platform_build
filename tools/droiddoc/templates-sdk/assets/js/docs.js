@@ -353,35 +353,9 @@ false; // navigate across topic boundaries only in design docs
     $('.jd-descr').append($olClasses);
   }
 
-
-
-
   // Set up expand/collapse behavior
-  $('#nav li.nav-section .nav-section-header').click(function() {
-    var section = $(this).closest('li.nav-section');
-    if (section.hasClass('expanded')) {
-    /* hide me */
-    //  if (section.hasClass('selected') || section.find('li').hasClass('selected')) {
-   //   /* but not if myself or my descendents are selected */
-   //     return;
-    //  }
-      section.children('ul').slideUp(250, function() {
-        section.closest('li').removeClass('expanded');
-        resizeNav();
-      });
-    } else {
-    /* show me */
-      // first hide all other siblings
-      var $others = $('li.nav-section.expanded', $(this).closest('ul'));
-      $others.removeClass('expanded').children('ul').slideUp(250);
+  initExpandableNavItems("#nav");
 
-      // now expand me
-      section.closest('li').addClass('expanded');
-      section.children('ul').slideDown(250, function() {
-        resizeNav();
-      });
-    }
-  });
 
   $(".scroll-pane").scroll(function(event) {
       event.preventDefault();
@@ -585,6 +559,30 @@ false; // navigate across topic boundaries only in design docs
 });
 // END of the onload event
 
+
+function initExpandableNavItems(rootTag) {
+  $(rootTag + ' li.nav-section .nav-section-header').click(function() {
+    var section = $(this).closest('li.nav-section');
+    if (section.hasClass('expanded')) {
+    /* hide me */
+      section.children('ul').slideUp(250, function() {
+        section.closest('li').removeClass('expanded');
+        resizeNav();
+      });
+    } else {
+    /* show me */
+      // first hide all other siblings
+      var $others = $('li.nav-section.expanded', $(this).closest('ul'));
+      $others.removeClass('expanded').children('ul').slideUp(250);
+
+      // now expand me
+      section.closest('li').addClass('expanded');
+      section.children('ul').slideDown(250, function() {
+        resizeNav();
+      });
+    }
+  });
+}
 
 function highlightSidenav() {
   // select current page in sidenav and header, and set up prev/next links if they exist
@@ -2664,6 +2662,67 @@ function get_google_node(me, mom)
           node_data[2], node_data[3]);
   }
 }
+
+
+
+
+
+
+/****** NEW version of script to build google and sample navs dynamically ******/
+// TODO: update Google reference docs to tolerate this new implementation
+
+function init_google_navtree2(navtree_id, data)
+{
+  var $containerUl = $("#"+navtree_id);
+  var linkText;
+  for (var i in data) {
+    var node_data = data[i];
+    $containerUl.append(new_google_node2(node_data));
+  }
+
+  initExpandableNavItems("#"+navtree_id);
+}
+
+function new_google_node2(node_data)
+{
+  var linkText = node_data[0];
+  if(linkText.match("^"+"com.google.android")=="com.google.android"){
+    linkText = linkText.substr(19, linkText.length);
+  }
+  var $li = $('<li>');
+  var $a;
+  if (node_data[1] != null) {
+    $a = $('<a href="' + toRoot + node_data[1] + '">' + linkText + '</a>');
+  } else {
+    $a = $('<a href="#" onclick="return false;">' + linkText + '/</a>');
+  }
+  var $childUl = $('<ul>');
+  if (node_data[2] != null) {
+    $li.addClass("nav-section");
+    $a = $('<div class="nav-section-header">').append($a);
+    if (node_data[1] == null) $a.addClass('empty');
+
+    for (var i in node_data[2]) {
+      var child_node_data = node_data[2][i];
+      $childUl.append(new_google_node2(child_node_data));
+    }
+    $li.append($childUl);
+  }
+  $li.prepend($a);
+
+  return $li;
+}
+
+
+
+
+
+
+
+
+
+
+
 function showGoogleRefTree() {
   init_default_google_navtree(toRoot);
   init_default_gcm_navtree(toRoot);
@@ -2702,7 +2761,7 @@ function init_default_samples_navtree(toroot) {
   $.getScript(toRoot + 'samples_navtree_data.js', function(data, textStatus, jqxhr) {
       // when the file is loaded, initialize the tree
       if(jqxhr.status === 200) {
-          init_google_navtree("samples-tree-list", toroot, SAMPLES_NAVTREE_DATA);
+          init_google_navtree2("nav.samples-nav", SAMPLES_NAVTREE_DATA);
           highlightSidenav();
           resizeNav();
       }
