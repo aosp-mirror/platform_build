@@ -184,6 +184,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 # Clean up old location of generated Java files from aidl
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES/framework_intermediates/src)
 
+# Clean up ApplicationsProvider which is being removed.
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/ApplicationsProvider_intermediates)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/ApplicationsProvider.apk)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
