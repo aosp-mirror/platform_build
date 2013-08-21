@@ -847,31 +847,45 @@ function stacks()
     if [[ $1 =~ ^[0-9]+$ ]] ; then
         local PID="$1"
     elif [ "$1" ] ; then
-        local PID=$(pid $1)
+        local PIDLIST="$(pid $1)"
+        if [[ $PIDLIST =~ ^[0-9]+$ ]] ; then
+            local PID="$PIDLIST"
+        elif [ "$PIDLIST" ] ; then
+            echo "more than one process: $1"
+        else
+            echo "no such process: $1"
+        fi
     else
         echo "usage: stacks [pid|process name]"
     fi
 
     if [ "$PID" ] ; then
-        local TRACES=/data/anr/traces.txt
-        local ORIG=/data/anr/traces.orig
-        local TMP=/data/anr/traces.tmp
+        # Determine whether the process is native
+        if adb shell ls -l /proc/$PID/exe | grep -q /system/bin/app_process ; then
+            # Dump stacks of Dalvik process
+            local TRACES=/data/anr/traces.txt
+            local ORIG=/data/anr/traces.orig
+            local TMP=/data/anr/traces.tmp
 
-        # Keep original traces to avoid clobbering
-        adb shell mv $TRACES $ORIG
+            # Keep original traces to avoid clobbering
+            adb shell mv $TRACES $ORIG
 
-        # Make sure we have a usable file
-        adb shell touch $TRACES
-        adb shell chmod 666 $TRACES
+            # Make sure we have a usable file
+            adb shell touch $TRACES
+            adb shell chmod 666 $TRACES
 
-        # Dump stacks and wait for dump to finish
-        adb shell kill -3 $PID
-        adb shell notify $TRACES
+            # Dump stacks and wait for dump to finish
+            adb shell kill -3 $PID
+            adb shell notify $TRACES >/dev/null
 
-        # Restore original stacks, and show current output
-        adb shell mv $TRACES $TMP
-        adb shell mv $ORIG $TRACES
-        adb shell cat $TMP | less -S
+            # Restore original stacks, and show current output
+            adb shell mv $TRACES $TMP
+            adb shell mv $ORIG $TRACES
+            adb shell cat $TMP
+        else
+            # Dump stacks of native process
+            adb shell debuggerd -b $PID
+        fi
     fi
 }
 
