@@ -259,7 +259,8 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   >Google Services</a>
                 </li>
                 <?cs if:android.hasSamples ?>
-                  <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
+                  <li class="samples"><a href="<?cs var:toroot ?>samples/index.html"
+                    >Samples</a>
                   </li>
                 <?cs /if ?>
             </ul>
