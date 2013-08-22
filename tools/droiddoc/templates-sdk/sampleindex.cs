@@ -40,24 +40,22 @@
 <?cs /def ?>
 
 <?cs if:android.whichdoc == "online" ?>
+  <?cs # If this is the online docs, build the src code navigation links ?>
 
-<?cs # If this is the online docs, build the src code navigation links ?>
+  <?cs if:page.title == "Project Structure" ?>
 
-<?cs if:page.title == "Project Structure" ?>
+    <?cs call:display_files(Files) ?>
 
-<?cs call:display_files(Files) ?>
+  <?cs else ?> <?cs # else not project structure doc ?>
 
-<?cs else ?> <?cs # else not project structure doc ?>
+    <?cs var:summary ?>
 
-<?cs var:summary ?>
+    <?cs # Remove project structure from landing pages for now
+         # <h2>Project Structure</h2>
+         # <p>Decide what to do with this ...</p>
+         # <?cs call:display_files(Files) ?>
 
-<h2>Project Structure</h2>
-
-<p>Decide what to do with this ...</p>
-
-<?cs call:display_files(Files) ?>
-
-<?cs /if ?> <?cs # end if project structure ?>
+  <?cs /if ?> <?cs # end if project structure ?>
 
 <?cs else ?><?cs
   # else, this means it's offline docs,
