@@ -1119,18 +1119,20 @@ function getLangPref() {
 /* Used to hide and reveal supplemental content, such as long code samples.
    See the companion CSS in android-developer-docs.css */
 function toggleContent(obj) {
-  var div = $(obj.parentNode.parentNode);
-  var toggleMe = $(".toggle-content-toggleme",div);
+  var div = $(obj).closest(".toggle-content");
+  var toggleMe = $(".toggle-content-toggleme:eq(0)",div);
   if (div.hasClass("closed")) { // if it's closed, open it
     toggleMe.slideDown();
-    $(".toggle-content-text", obj).toggle();
+    $(".toggle-content-text:eq(0)", obj).toggle();
     div.removeClass("closed").addClass("open");
-    $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot
+    $(".toggle-content-img:eq(0)", div).attr("title", "hide").attr("src", toRoot
                   + "assets/images/triangle-opened.png");
   } else { // if it's open, close it
     toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
-      $(".toggle-content-text", obj).toggle();
+      $(".toggle-content-text:eq(0)", obj).toggle();
       div.removeClass("open").addClass("closed");
+      div.find(".toggle-content").removeClass("open").addClass("closed")
+              .find(".toggle-content-toggleme").hide();
       $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot
                   + "assets/images/triangle-closed.png");
     });
