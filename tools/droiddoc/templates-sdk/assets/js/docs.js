@@ -449,13 +449,6 @@ false; // navigate across topic boundaries only in design docs
   }
 
 
-  // Stop expand/collapse behavior when clicking on nav section links (since we're navigating away
-  // from the page)
-  $('.nav-section-header').find('a:eq(0)').click(function(evt) {
-    window.location.href = $(this).attr('href');
-    return false;
-  });
-
   // Set up play-on-hover <video> tags.
   $('video.play-on-hover').bind('click', function(){
     $(this).get(0).load(); // in case the video isn't seekable
@@ -564,9 +557,11 @@ function initExpandableNavItems(rootTag) {
   $(rootTag + ' li.nav-section .nav-section-header').click(function() {
     var section = $(this).closest('li.nav-section');
     if (section.hasClass('expanded')) {
-    /* hide me */
-      section.children('ul').slideUp(250, function() {
+    /* hide me and descendants */
+      section.find('ul').slideUp(250, function() {
+        // remove 'expanded' class from my section and any children
         section.closest('li').removeClass('expanded');
+        $('li.nav-section', section).removeClass('expanded');
         resizeNav();
       });
     } else {
@@ -581,6 +576,14 @@ function initExpandableNavItems(rootTag) {
         resizeNav();
       });
     }
+  });
+
+  // Stop expand/collapse behavior when clicking on nav section links
+  // (since we're navigating away from the page)
+  // This selector captures the first instance of <a>, but not those with "#" as the href.
+  $('.nav-section-header').find('a:eq(0)').not('a[href="#"]').click(function(evt) {
+    window.location.href = $(this).attr('href');
+    return false;
   });
 }
 
