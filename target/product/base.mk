@@ -32,7 +32,6 @@ PRODUCT_PACKAGES += \
     framework \
     fsck_msdos \
     ime \
-    inputflinger \
     javax.obex \
     libSR_AudioIn \
     libandroid \
@@ -47,7 +46,6 @@ PRODUCT_PACKAGES += \
     libdl \
     libeffects \
     libinput \
-    libinputflinger \
     libiprouteutil \
     libjni_latinime \
     libjnigraphics \
