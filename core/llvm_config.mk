@@ -72,11 +72,11 @@ ifeq ($(TARGET_ARCH),x86)
   CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target i686-linux-android \
     -nostdlibinc \
-    -B$(TARGET_TOOLCHAIN_ROOT)/i686-linux-android/bin
+    -B$(TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
   CLANG_CONFIG_EXTRA_CFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
   CLANG_CONFIG_EXTRA_LDFLAGS += \
     -target i686-linux-android \
-    -B$(TARGET_TOOLCHAIN_ROOT)/i686-linux-android/bin
+    -B$(TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
   CLANG_CONFIG_UNKNOWN_CFLAGS += \
     -finline-limit=300 \
     -fno-inline-functions-called-once \
