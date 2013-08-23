@@ -109,7 +109,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/gridlayout \
         v7/appcompat \
         v7/mediarouter \
-        v13
+        v13 \
+        multidex
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
