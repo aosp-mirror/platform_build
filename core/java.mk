@@ -88,7 +88,6 @@ full_classes_compiled_jar_leaf := classes-full-debug.jar
 built_dex_intermediate_leaf := classes-with-local.dex
 endif
 
-LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
@@ -386,42 +385,75 @@ $(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
 	$(hide) $(ACP) -fp $< $@
 
 # Run proguard if necessary, otherwise just copy the file.
+ifdef LOCAL_PROGUARD_ENABLED
+ifneq ($(filter-out full custom nosystem obfuscation optimization,$(LOCAL_PROGUARD_ENABLED)),)
+    $(warning while processing: $(LOCAL_MODULE))
+    $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
+endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
-# Proguard doesn't like a class in both library and the jar to be processed.
-proguard_full_java_libs := $(filter-out $(full_static_java_libs),$(full_java_libs))
-proguard_flags := $(addprefix -libraryjars ,$(proguard_full_java_libs)) \
+proguard_flags := $(addprefix -libraryjars ,$(full_shared_java_libs)) \
                   -forceprocessing \
                   -printmapping $(proguard_dictionary)
-ifneq ($(LOCAL_PROGUARD_ENABLED),nosystem)
+
+ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
 proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
 endif
 # If this is a test package, add proguard keep flags for tests.
-ifneq ($(strip $(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS))$(filter android.test.runner,$(LOCAL_JAVA_LIBRARIES))),)
-proguard_flags := $(proguard_flags) -include $(BUILD_SYSTEM)/proguard_tests.flags
+ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
+proguard_flags += -include $(BUILD_SYSTEM)/proguard_tests.flags
 endif # test package
-else  # LOCAL_PROGUARD_ENABLED is nosystem
-proguard_flags += -include $(BUILD_SYSTEM)/proguard_basic_keeps.flags
-endif # LOCAL_PROGUARD_ENABLED is not nosystem
+ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
+# By default no obfuscation
+proguard_flags += -dontobfuscate
+endif  # No obfuscation
+ifeq ($(filter optimization,$(LOCAL_PROGUARD_ENABLED)),)
+# By default no optimization
+proguard_flags += -dontoptimize
+endif  # No optimization
 
-ifneq ($(LOCAL_PROGUARD_ENABLED),)
-ifeq ($(filter full custom nosystem, $(LOCAL_PROGUARD_ENABLED)),)
-    $(warning while processing: $(LOCAL_MODULE))
-    $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
-endif # not a legal value
-endif # LOCAL_PROGUARD_ENABLED
+ifdef LOCAL_INSTRUMENTATION_FOR
+ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
+# If no obfuscation, link in the instrmented package's classes.jar as a library.
+# link_instr_classes_jar is defined in base_rule.mk
+proguard_flags += -libraryjars $(link_instr_classes_jar)
+else # obfuscation
+# If obfuscation is enabled, the main app must be obfuscated too.
+# We need to run obfuscation using the main app's dictionary,
+# and treat the main app's class.jar as injars instead of libraryjars.
+proguard_flags := -injars  $(link_instr_classes_jar) \
+    -outjars $(intermediates.COMMON)/proguard.$(LOCAL_INSTRUMENTATION_FOR).jar \
+    -include $(link_instr_intermediates_dir.COMMON)/proguard_options \
+    -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
+    -verbose \
+    $(proguard_flags)
+
+# Sometimes (test + main app) uses different keep rules from the main app -
+# apply the main app's dictionary anyway.
+proguard_flags += -ignorewarnings
+
+# Make sure we run Proguard on the main app first
+$(full_classes_proguard_jar) : $(link_instr_intermediates_dir.COMMON)/proguard.classes.jar
+
+endif # no obfuscation
+endif # LOCAL_INSTRUMENTATION_FOR
+endif  # LOCAL_PROGUARD_ENABLED is not nosystem
 
 proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
 LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
 
-$(full_classes_proguard_jar): PRIVATE_PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(full_classes_proguard_jar): PRIVATE_INSTRUMENTATION_FOR:=$(strip $(LOCAL_INSTRUMENTATION_FOR))
 $(full_classes_proguard_jar) : $(full_classes_jar) $(proguard_flag_files) | $(ACP) $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
-ALL_MODULES.$(LOCAL_MODULE).PROGUARD_ENABLED:=$(LOCAL_PROGUARD_ENABLED)
+else  # LOCAL_PROGUARD_ENABLED not defined
+$(full_classes_proguard_jar) : $(full_classes_jar)
+	@echo Copying: $@
+	$(hide) $(ACP) -fp $< $@
+
+endif # LOCAL_PROGUARD_ENABLED defined
+
 
 # Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
 # will work even when intermediates != intermediates.COMMON.
