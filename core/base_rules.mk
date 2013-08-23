@@ -392,19 +392,20 @@ ifdef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_BUILD_HOST_DEX),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-hostdex,$(LOCAL_IS_HOST_MODULE))
 
-full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 
-full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,$(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
-full_java_lib_deps := $(full_java_libs)
+full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
+    $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
+full_java_lib_deps := $(full_shared_java_libs)
 endif # LOCAL_BUILD_HOST_DEX
 else
-full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 endif # !LOCAL_IS_HOST_MODULE
-full_java_libs += $(full_static_java_libs) $(LOCAL_CLASSPATH)
+full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_lib_deps += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
 # This is set by packages that are linking to other packages that export
@@ -431,14 +432,12 @@ ifdef LOCAL_INSTRUMENTATION_FOR
         $(LOCAL_PATH): Multiple LOCAL_INSTRUMENTATION_FOR members defined)
   endif
 
-  link_instr_intermediates_dir := $(call intermediates-dir-for, \
-      APPS,$(LOCAL_INSTRUMENTATION_FOR))
   link_instr_intermediates_dir.COMMON := $(call intermediates-dir-for, \
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
-
   # link against the jar with full original names (before proguard processing).
-  full_java_libs += $(link_instr_intermediates_dir.COMMON)/classes.jar
-  full_java_lib_deps += $(link_instr_intermediates_dir.COMMON)/classes.jar
+  link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
+  full_java_libs += $(link_instr_classes_jar)
+  full_java_lib_deps += $(link_instr_classes_jar)
 endif
 
 jar_manifest_file :=
@@ -449,7 +448,7 @@ else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif
 
-endif
+endif  # PRIVATE java vars
 
 
 ###########################################################
