@@ -414,6 +414,7 @@ ifdef LOCAL_APK_LIBRARIES
               APPS,$(lib),,COMMON)/classes.jar)
 
   # link against the jar with full original names (before proguard processing).
+  full_shared_java_libs += $(link_apk_libraries)
   full_java_libs += $(link_apk_libraries)
   full_java_lib_deps += $(link_apk_libraries)
 endif
