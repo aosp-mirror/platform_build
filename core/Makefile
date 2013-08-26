@@ -1422,6 +1422,24 @@ $(EMMA_META_ZIP) :
 
 endif # EMMA_INSTRUMENT=true
 
+#------------------------------------------------------------------
+# A zip of Proguard obfuscation dictionary files.
+# Only for apps_only build.
+#
+ifdef TARGET_BUILD_APPS
+PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/proguard-dict-$(FILE_NAME_TAG).zip
+# the dependency will be set up later in build/core/main.mk.
+$(PROGUARD_DICT_ZIP) :
+	@echo "Packaging Proguard obfuscation dictionary files."
+	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary`; \
+		if [ -n "$$dict_files" ]; then \
+		  zip -q $@ $$dict_files; \
+		else \
+		  touch $@; \
+		fi
+
+endif # TARGET_BUILD_APPS
+
 # -----------------------------------------------------------------
 # dalvik something
 .PHONY: dalvikfiles
