@@ -10,6 +10,21 @@
 ?>class="col-13" id="doc-col"<?cs else 
 ?>class="col-12" id="doc-col"<?cs /if ?> >
 
+<!-- start breadcrumb block -->
+<div id="api-info-block">
+<div class="sum-details-links">
+
+<!-- related links -->
+<a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/index.html">Overview</a>
+&#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
+&#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
+
+</div><!-- end sum-details-links -->
+<div class="api-level">
+  Other info</a>
+</div>
+</div><!-- end breadcurmb block -->
+
 <h1 itemprop="name"><?cs var:page.title ?></h1>
 
 <?cs # THIS IS THE MAIN DOC CONTENT ?>
@@ -27,6 +42,12 @@
 <pre id="codesample-line-numbers" class="no-pretty-print hidden"></pre>
 <pre id="codesample-block"><?cs var:fileContents ?></pre>
 </div>
+
+<h3 id="file-location" style="clear:left">Source file location</h3>
+<p>The file containing the source code shown below is located in the corresponding directory in 
+<code>&lt;sdk&gt;/samples/android-&lt;version&gt;/...</code></p>
+
+
 <!-- end file contents -->
 <script type="text/javascript">
   initCodeLineNumbers();
