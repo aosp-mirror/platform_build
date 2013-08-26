@@ -10,7 +10,25 @@
 ?>class="col-13" id="doc-col"<?cs else 
 ?>class="col-12" id="doc-col"<?cs /if ?> >
 
-<h1 itemprop="name"><?cs var:projectTitle ?></h1>
+<!-- start breadcrumb block -->
+<div id="api-info-block">
+<div class="sum-details-links">
+
+<!-- related links -->
+<?cs if:projectStructure ?>
+<a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/index.html">Overview</a>
+&#124; Project<?cs else ?>Overview
+&#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
+<?cs /if ?>
+&#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
+
+</div><!-- end sum-details-links -->
+<div class="api-level">
+  Other info</a>
+</div>
+</div><!-- end breadcurmb block -->
+
+<h1 itemprop="name"><?cs var:projectDir ?></h1>
   
 <div id="jd-content">
 <?cs def:display_files(files) ?>
@@ -42,7 +60,7 @@
 <?cs if:android.whichdoc == "online" ?>
   <?cs # If this is the online docs, build the src code navigation links ?>
 
-  <?cs if:page.title == "Project Structure" ?>
+  <?cs if:projectStructure ?>
 
     <?cs call:display_files(Files) ?>
 
@@ -55,7 +73,7 @@
          # <p>Decide what to do with this ...</p>
          # <?cs call:display_files(Files) ?>
 
-  <?cs /if ?> <?cs # end if project structure ?>
+  <?cs /if ?> <?cs # end if projectStructure ?>
 
 <?cs else ?><?cs
   # else, this means it's offline docs,
