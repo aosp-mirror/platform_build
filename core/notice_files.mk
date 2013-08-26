@@ -73,6 +73,19 @@ ifdef LOCAL_INSTALLED_MODULE
 $(LOCAL_INSTALLED_MODULE): | $(installed_notice_file)
 endif
 
+# To facilitate collecting NOTICE files for apps_only build,
+# we install the NOTICE file even if a module gets built but not installed,
+# because shared jni libraries won't be installed to the system image.
+ifdef TARGET_BUILD_APPS
+# for static Java libraries, we don't need to even build LOCAL_BUILT_MODULE,
+# but just javalib.jar in the common intermediate dir.
+ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+$(intermediates.COMMON)/javalib.jar : | $(installed_notice_file)
+else
+$(LOCAL_BUILT_MODULE): | $(installed_notice_file)
+endif  # JAVA_LIBRARIES
+endif  # TARGET_BUILD_APPS
+
 else
 # NOTICE file does not exist
 installed_notice_file :=
