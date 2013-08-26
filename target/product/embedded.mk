@@ -73,8 +73,7 @@ PRODUCT_PACKAGES += \
     file_contexts \
     seapp_contexts \
     property_contexts \
-    mac_permissions.xml \
-    sepolicy_revision
+    mac_permissions.xml
 
 
 PRODUCT_COPY_FILES += \
