@@ -836,6 +836,15 @@ apps_only: $(unbundled_build_modules)
 
 droid: apps_only
 
+# Combine the NOTICE files for a apps_only build
+$(eval $(call combine-notice-files, \
+    $(target_notice_file_txt), \
+    $(target_notice_file_html), \
+    "Notices for files for apps:", \
+    $(TARGET_OUT_NOTICE_FILES), \
+    $(apps_only_installed_files)))
+
+
 else # TARGET_BUILD_APPS
   $(call dist-for-goals, droidcore, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
