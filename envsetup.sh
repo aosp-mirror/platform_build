@@ -805,7 +805,7 @@ function qpid() {
 
     local EXE="$1"
     if [ "$EXE" ] ; then
-		qpid | grep "$prepend$EXE$append"
+		qpid | \grep "$prepend$EXE$append"
 	else
 		adb shell ps \
 			| tr -d '\r' \
@@ -826,7 +826,7 @@ function pid()
     if [ "$EXE" ] ; then
         local PID=`adb shell ps \
             | tr -d '\r' \
-            | grep "$prepend$EXE$append" \
+            | \grep "$prepend$EXE$append" \
             | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'`
         echo "$PID"
     else
@@ -932,7 +932,7 @@ function gdbclient()
                if [[ ! "$PID" =~ ^[0-9]+$ ]] ; then
                    # that likely didn't work because of returning multiple processes
                    # try again, filtering by root processes (don't contain colon)
-                   PID=`adb shell ps | grep $3 | grep -v ":" | awk '{print $2}'`
+                   PID=`adb shell ps | \grep $3 | \grep -v ":" | awk '{print $2}'`
                    if [[ ! "$PID" =~ ^[0-9]+$ ]]
                    then
                        echo "Couldn't resolve '$3' to single PID"
