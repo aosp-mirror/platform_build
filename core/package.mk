@@ -480,3 +480,6 @@ lint-$(LOCAL_PACKAGE_NAME) :
 lintall : lint-$(LOCAL_PACKAGE_NAME)
 
 endif # skip_definition
+
+# Reset internal variables.
+all_res_assets :=
