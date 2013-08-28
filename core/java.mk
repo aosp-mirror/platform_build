@@ -12,16 +12,6 @@ endif
 endif # !PDK_JAVA
 endif #PDK
 
-
-# Make sure there's something to build.
-# It's possible to build a package that doesn't contain any classes.
-# LOCAL_SOURCE_FILES_ALL_GENERATED is set only if the module does not have static source files,
-# but generated source files in its LOCAL_INTERMEDIATE_SOURCE_DIR.
-# You have to set up the dependency in some other way.
-ifeq (,$(strip $(LOCAL_SRC_FILES)$(all_res_assets)$(LOCAL_STATIC_JAVA_LIBRARIES))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
-$(error $(LOCAL_PATH): Target java module does not define any source or resource files)
-endif
-
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 
@@ -117,9 +107,14 @@ full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 
-# full_classes_jar and built_dex are cleared below, and re-set if we really need them.
+ifeq ($(LOCAL_EXPORT_PACKAGE_RESOURCES),true)
+# This is framework-res, we don't need to compile any Java code.
+full_classes_jar :=
+built_dex :=
+else
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 built_dex := $(intermediates.COMMON)/$(built_dex_leaf)
+endif
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
@@ -248,7 +243,11 @@ endif
 # to fail except for bugs in their respective tools.  If you would
 # like to run these rules, add the "all" modifier goal to the make
 # command line.
+ifdef full_classes_jar
 java_alternative_checked_module := $(full_classes_compiled_jar)
+else
+java_alternative_checked_module :=
+endif
 
 # TODO: It looks like the only thing we need from base_rules is
 # all_java_sources.  See if we can get that by adding a
@@ -260,6 +259,13 @@ include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
 java_alternative_checked_module :=
+
+# Make sure there's something to build.
+ifdef full_classes_jar
+ifndef need_compile_java
+$(error $(LOCAL_PATH): Target java module does not define any source or resource files)
+endif
+endif
 
 # Install the RS compatibility libraries to /system/lib/ if necessary
 ifdef rs_compatibility_jni_libs
@@ -296,11 +302,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 # properly.
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
-# If the module includes java code (i.e., it's not framework-res), compile it.
-full_classes_jar :=
-built_dex :=
-# need_compile_java is set in base_rules.mk
-ifeq ($(need_compile_java),true)
+ifdef full_classes_jar
 
 # If LOCAL_BUILT_MODULE_STEM wasn't overridden by our caller,
 # full_classes_jar will be the same module as LOCAL_BUILT_MODULE.
@@ -505,4 +507,4 @@ $(findbugs_html) : $(findbugs_xml)
 
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
-endif
+endif  # full_classes_jar is defined

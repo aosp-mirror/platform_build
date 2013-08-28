@@ -353,8 +353,11 @@ else
 endif # java_resource_file_groups
 
 ## PRIVATE java vars ######################################
-
-ifneq ($(strip $(all_java_sources)$(all_res_assets))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)),)
+# LOCAL_SOURCE_FILES_ALL_GENERATED is set only if the module does not have static source files,
+# but generated source files in its LOCAL_INTERMEDIATE_SOURCE_DIR.
+# You have to set up the dependency in some other way.
+need_compile_java := $(strip $(all_java_sources)$(all_res_assets))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
+ifdef need_compile_java
 
 full_static_java_libs := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
@@ -449,7 +452,7 @@ else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif
 
-endif  # PRIVATE java vars
+endif  # need_compile_java
 
 
 ###########################################################
@@ -547,18 +550,14 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 ## CHECK_BUILD goals
 ###########################################################
 
+ifdef java_alternative_checked_module
+  LOCAL_CHECKED_MODULE := $(java_alternative_checked_module)
+endif
+
 # If nobody has defined a more specific module for the
 # checked modules, use LOCAL_BUILT_MODULE.
 ifndef LOCAL_CHECKED_MODULE
   LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
-endif
-
-need_compile_java :=
-ifdef java_alternative_checked_module
-ifneq (,$(strip $(all_java_sources)$(full_static_java_libs))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
-  need_compile_java := true
-  LOCAL_CHECKED_MODULE := $(java_alternative_checked_module)
-endif
 endif
 
 # If they request that this module not be checked, then don't.

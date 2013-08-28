@@ -126,4 +126,6 @@ endif
 
 endif  # $(all_resources) not empty
 
+# Reset internal variables.
+all_res_assets :=
 LOCAL_IS_STATIC_JAVA_LIBRARY :=
