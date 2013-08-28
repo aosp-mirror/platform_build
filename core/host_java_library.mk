@@ -23,6 +23,9 @@ LOCAL_MODULE_SUFFIX := $(COMMON_JAVA_PACKAGE_SUFFIX)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
+# base_rules.mk looks at this
+all_res_assets :=
+
 ifeq ($(LOCAL_BUILD_HOST_DEX),true)
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
   LOCAL_JAVA_LIBRARIES := $(sort core-hostdex $(LOCAL_JAVA_LIBRARIES))

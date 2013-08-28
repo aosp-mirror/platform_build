@@ -19,7 +19,7 @@ endif #PDK
 # but generated source files in its LOCAL_INTERMEDIATE_SOURCE_DIR.
 # You have to set up the dependency in some other way.
 ifeq (,$(strip $(LOCAL_SRC_FILES)$(all_res_assets)$(LOCAL_STATIC_JAVA_LIBRARIES))$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)))
-$(warning $(LOCAL_PATH): Target java module does not define any source or resource files)
+$(error $(LOCAL_PATH): Target java module does not define any source or resource files)
 endif
 
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
