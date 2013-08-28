@@ -354,7 +354,7 @@ endif # java_resource_file_groups
 
 ## PRIVATE java vars ######################################
 
-ifneq ($(strip $(all_java_sources)$(all_res_assets))$(LOCAL_STATIC_JAVA_LIBRARIES),)
+ifneq ($(strip $(all_java_sources)$(all_res_assets))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED)),)
 
 full_static_java_libs := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
