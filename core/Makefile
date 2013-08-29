@@ -1401,7 +1401,7 @@ endif # EMMA_INSTRUMENT=true
 # Only for apps_only build.
 #
 ifdef TARGET_BUILD_APPS
-PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/proguard-dict-$(FILE_NAME_TAG).zip
+PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-$(FILE_NAME_TAG).zip
 # the dependency will be set up later in build/core/main.mk.
 $(PROGUARD_DICT_ZIP) :
 	@echo "Packaging Proguard obfuscation dictionary files."
@@ -1409,7 +1409,10 @@ $(PROGUARD_DICT_ZIP) :
 		if [ -n "$$dict_files" ]; then \
 		  zip -q $@ $$dict_files; \
 		else \
-		  touch $@; \
+		  touch $(dir $@)/dummy; \
+		  (cd $(dir $@) && zip -q $(notdir $@) dummy); \
+		  zip -qd $@ dummy; \
+		  rm $(dir $@)/dummy; \
 		fi
 
 endif # TARGET_BUILD_APPS
