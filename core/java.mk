@@ -107,8 +107,8 @@ full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 
-ifeq ($(LOCAL_EXPORT_PACKAGE_RESOURCES),true)
-# This is framework-res, we don't need to compile any Java code.
+ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
+# If this is an apk without any Java code (e.g. framework-res), we should skip compiling Java.
 full_classes_jar :=
 built_dex :=
 else
