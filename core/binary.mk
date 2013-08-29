@@ -602,7 +602,7 @@ endif
 
 # some rules depend on asm_objects being first.  If your code depends on
 # being first, it's reasonable to require it to be assembly
-all_objects := \
+normal_objects := \
     $(asm_objects) \
     $(cpp_objects) \
     $(gen_cpp_objects) \
@@ -613,8 +613,9 @@ all_objects := \
     $(yacc_objects) \
     $(lex_objects) \
     $(proto_generated_objects) \
-    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES)) \
-    $(gen_o_objects)
+    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
+
+all_objects := $(normal_objects) $(gen_o_objects)
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates)
 
@@ -622,9 +623,12 @@ ifndef LOCAL_SDK_VERSION
   LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 endif
 
-# .o files need to be filtered out of LOCAL_GENERATED_SOURCES
-# to avoid creating circular dependencies.
-$(all_objects) : | $(filter-out %.o,$(LOCAL_GENERATED_SOURCES)) $(import_includes)
+# all_objects includes gen_o_objects which were part of LOCAL_GENERATED_SOURCES;
+# use normal_objects here to avoid creating circular dependencies. This assumes
+# that custom build rules which generate .o files don't consume other generated
+# sources as input (or if they do they take care of that dependency themselves).
+$(normal_objects) : | $(LOCAL_GENERATED_SOURCES)
+$(all_objects) : | $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 ###########################################################
