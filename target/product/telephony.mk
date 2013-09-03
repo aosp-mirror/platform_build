@@ -18,7 +18,6 @@
 # to products that have telephony hardware.
 
 PRODUCT_PACKAGES := \
-    InCallUI \
     Dialer \
     Mms \
     rild
