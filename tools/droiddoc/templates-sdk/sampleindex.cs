@@ -24,7 +24,7 @@
 
 </div><!-- end sum-details-links -->
 <div class="api-level">
-  Other info</a>
+  Other info
 </div>
 </div><!-- end breadcurmb block -->
 
