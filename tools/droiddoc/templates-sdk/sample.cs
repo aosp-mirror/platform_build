@@ -12,20 +12,25 @@
 
 <!-- start breadcrumb block -->
 <div id="api-info-block">
-<div class="sum-details-links">
+  <div class="sum-details-links">
 
-<!-- related links -->
-<a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/index.html">Overview</a>
-&#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
-&#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
+  <!-- related links -->
+  <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/index.html">Overview</a>
+  &#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
+  &#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
 
-</div><!-- end sum-details-links -->
-<div class="api-level">
-  Other info</a>
+  </div><!-- end sum-details-links -->
+  <div class="api-level">
+  Other info
+  </div>
+</div> <!-- end api-info-block -->
+
+<div id="jd-header" style="border:0;">
+  <?cs var:relative ?>
+  <h1 itemprop="name"><?cs var:page.title ?></h1>
 </div>
-</div><!-- end breadcurmb block -->
+<!-- end breadcrumb block -->
 
-<h1 itemprop="name"><?cs var:page.title ?></h1>
 
 <?cs # THIS IS THE MAIN DOC CONTENT ?>
 <div id="jd-content">
