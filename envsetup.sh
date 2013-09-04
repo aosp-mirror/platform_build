@@ -110,7 +110,7 @@ function setpaths()
     if [ -n "$ANDROID_PRE_BUILD_PATHS" ] ; then
         export PATH=${PATH/$ANDROID_PRE_BUILD_PATHS/}
         # strip leading ':', if any
-        export PATH=${PATH/:%/}
+        export PATH=${PATH/%:/}
     fi
 
     # and in with the new
