@@ -2587,6 +2587,12 @@ padding: 2px 2px 2px 6px;
 background: #efefef;
 }
 
+.samples-nav li a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* --------------------------------------------------------------------------
 Styles for raw formatted line numbers (not used with listformatted version)
 div.sampleLine div.lineNumber {
