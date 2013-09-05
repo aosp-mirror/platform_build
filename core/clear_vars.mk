@@ -140,6 +140,7 @@ LOCAL_PREBUILT_MODULE_FILE:=
 LOCAL_POST_INSTALL_CMD:=
 LOCAL_DIST_BUNDLED_BINARIES:=
 LOCAL_HAL_STATIC_LIBRARIES:=
+LOCAL_NO_SYNTAX_CHECK:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.

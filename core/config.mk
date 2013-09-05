@@ -267,6 +267,15 @@ TARGET_TOOLCHAIN_ROOT := $(patsubst %/, %, $(dir $(TARGET_TOOLCHAIN_ROOT)))
 TARGET_TOOLCHAIN_ROOT := $(wildcard $(TARGET_TOOLCHAIN_ROOT))
 endif
 
+# Disable WITH_SYNTAX_CHECK if tool can't be found
+SYNTAX_TOOLS_PREFIX := prebuilts/clang/$(HOST_PREBUILT_TAG)/host/3.3/bin
+ifneq ($(strip $(WITH_SYNTAX_CHECK)),)
+  ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-syntax),)
+    $(warning *** Disable WITH_SYNTAX_CHECK because $(SYNTAX_TOOLS_PREFIX)/ccc-syntax does not exist)
+    WITH_SYNTAX_CHECK :=
+  endif
+endif
+
 # Pick a Java compiler.
 include $(BUILD_SYSTEM)/combo/javac.mk
 
