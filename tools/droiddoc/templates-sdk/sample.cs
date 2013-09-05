@@ -26,7 +26,16 @@
 </div> <!-- end api-info-block -->
 
 <div id="jd-header" style="border:0;">
-  <?cs var:relative ?>
+
+<div id="pathCrumb">
+<?cs each:item = parentdirs ?>
+  <?cs if:pathCrumbLinks
+    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> / 
+  <?cs else
+    ?><?cs var:item.Name ?> / <?cs /if ?>
+<?cs /each ?>
+</div>
+
   <h1 itemprop="name"><?cs var:page.title ?></h1>
 </div>
 <!-- end breadcrumb block -->
