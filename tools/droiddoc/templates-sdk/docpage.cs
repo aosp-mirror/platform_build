@@ -130,7 +130,7 @@
         </div>
         <?cs if:!fullscreen ?>
         <div class="paging-links layout-content-col col-4">
-          <?cs if:(design||training||guide||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
+          <?cs if:(design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
             <a href="#" class="prev-page-link hide"
                 zh-tw-lang="上一堂課"
                 zh-cn-lang="上一课"
