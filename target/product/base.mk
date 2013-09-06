@@ -44,6 +44,7 @@ PRODUCT_PACKAGES += \
     libcameraservice \
     libchromium_net \
     libdl \
+    libeffectproxy \
     libeffects \
     libinput \
     libiprouteutil \
