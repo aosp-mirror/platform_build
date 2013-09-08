@@ -17,6 +17,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := fs_config.c
 LOCAL_MODULE := fs_config
+LOCAL_STATIC_LIBRARIES := libselinux
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 
 include $(BUILD_HOST_EXECUTABLE)
