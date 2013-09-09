@@ -417,8 +417,6 @@ $(INTERNAL_MODIFIER_TARGETS): $(DEFAULT_GOAL)
 endif
 
 # Bring in all modules that need to be built.
-ifneq ($(dont_bother),true)
-
 ifeq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
 SDK_ONLY := true
 $(info Building the SDK under darwin-ppc is actually obsolete and unsupported.)
@@ -479,6 +477,7 @@ GET-INSTALL-PATH:
 
 else # ONE_SHOT_MAKEFILE
 
+ifneq ($(dont_bother),true)
 #
 # Include all of the makefiles in the system
 #
@@ -489,6 +488,8 @@ subdir_makefiles := \
 	$(shell build/tools/findleaves.py --prune=$(OUT_DIR) --prune=.repo --prune=.git $(subdirs) Android.mk)
 
 $(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
+
+endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
 
@@ -671,8 +672,6 @@ ifdef is_sdk_build
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
       $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
-
-endif # dont_bother
 
 # build/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
