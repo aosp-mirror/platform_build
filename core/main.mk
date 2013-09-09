@@ -519,16 +519,6 @@ endif
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
 
-# -------------------------------------------------------------------
-# Include any makefiles that must happen after the module makefiles
-# have been included.
-# TODO: have these files register themselves via a global var rather
-# than hard-coding the list here.
-ifdef FULL_BUILD
-  # Only include this during a full build, otherwise we can't be
-  # guaranteed that any policies were included.
-  -include frameworks/policies/base/PolicyConfig.mk
-endif
 
 # -------------------------------------------------------------------
 # Fix up CUSTOM_MODULES to refer to installed files rather than
