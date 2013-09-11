@@ -267,11 +267,33 @@ TARGET_TOOLCHAIN_ROOT := $(patsubst %/, %, $(dir $(TARGET_TOOLCHAIN_ROOT)))
 TARGET_TOOLCHAIN_ROOT := $(wildcard $(TARGET_TOOLCHAIN_ROOT))
 endif
 
-# Disable WITH_SYNTAX_CHECK if tool can't be found
+# Normalize WITH_STATIC_ANALYZER and WITH_SYNTAX_CHECK
+ifeq ($(strip $(WITH_STATIC_ANALYZER)),0)
+  WITH_STATIC_ANALYZER :=
+endif
+ifeq ($(strip $(WITH_SYNTAX_CHECK)),0)
+  WITH_SYNTAX_CHECK :=
+endif
+
+# Disable WITH_STATIC_ANALYZER and WITH_SYNTAX_CHECK if tool can't be found
 SYNTAX_TOOLS_PREFIX := prebuilts/clang/$(HOST_PREBUILT_TAG)/host/3.3/bin
+ifneq ($(strip $(WITH_STATIC_ANALYZER)),)
+  ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer),)
+    $(warning *** Disable WITH_STATIC_ANALYZER because $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer does not exist)
+    WITH_STATIC_ANALYZER :=
+  endif
+endif
 ifneq ($(strip $(WITH_SYNTAX_CHECK)),)
   ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-syntax),)
     $(warning *** Disable WITH_SYNTAX_CHECK because $(SYNTAX_TOOLS_PREFIX)/ccc-syntax does not exist)
+    WITH_SYNTAX_CHECK :=
+  endif
+endif
+
+# WITH_STATIC_ANALYZER trumps WITH_SYNTAX_CHECK
+ifneq ($(strip $(WITH_STATIC_ANALYZER)),)
+  ifneq ($(strip $(WITH_SYNTAX_CHECK)),)
+    $(warning *** Disable WITH_SYNTAX_CHECK in the presence of static analyzer WITH_STATIC_ANALYZER)
     WITH_SYNTAX_CHECK :=
   endif
 endif
