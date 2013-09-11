@@ -141,6 +141,7 @@ LOCAL_POST_INSTALL_CMD:=
 LOCAL_DIST_BUNDLED_BINARIES:=
 LOCAL_HAL_STATIC_LIBRARIES:=
 LOCAL_NO_SYNTAX_CHECK:=
+LOCAL_NO_STATIC_ANALYZER:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
