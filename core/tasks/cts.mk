@@ -31,6 +31,7 @@ VMTESTSTF_JAR := $(VMTESTSTF_INTERMEDIATES)/android.core.vm-tests-tf.jar
 CTS_CORE_CASE_LIST := \
 	android.core.tests.libcore.package.dalvik \
 	android.core.tests.libcore.package.com \
+	android.core.tests.libcore.package.conscrypt \
 	android.core.tests.libcore.package.sun \
 	android.core.tests.libcore.package.tests \
 	android.core.tests.libcore.package.org \
@@ -88,12 +89,14 @@ OKHTTP_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,okhttp,,COMMO
 SQLITEJDBC_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,sqlite-jdbc,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 CORETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+CONSCRYPTTESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,conscrypt-tests,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar
 
 CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.conscrypt.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml \
@@ -105,7 +108,7 @@ $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(CTS_CORE_XMLS): $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+$(CTS_CORE_XMLS): $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar | $(ACP)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik,\
 		cts/tests/core/libcore/dalvik/AndroidManifest.xml,\
@@ -114,6 +117,10 @@ $(CTS_CORE_XMLS): $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOS
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com,\
 		cts/tests/core/libcore/com/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,com,\
+		libcore/expectations)
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.conscrypt,\
+		cts/tests/core/libcore/conscrypt/AndroidManifest.xml,\
+		$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar,,\
 		libcore/expectations)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun,\
 		cts/tests/core/libcore/sun/AndroidManifest.xml,\
