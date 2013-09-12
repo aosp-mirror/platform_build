@@ -43,7 +43,6 @@ PRODUCT_PACKAGES += \
     libbundlewrapper \
     libcamera_client \
     libcameraservice \
-    libchromium_net \
     libdl \
     libeffectproxy \
     libeffects \
