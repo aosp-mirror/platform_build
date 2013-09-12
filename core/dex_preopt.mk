@@ -56,7 +56,9 @@ $(_dbj_odex) : $(_dbj_src_jar) | $(ACP) $(DEXPREOPT) $(DEXOPT)
 
 $(_dbj_jar_no_dex) : $(_dbj_src_jar) | $(ACP) $(AAPT)
 	$$(call copy-file-to-target)
+ifneq ($(DEX_PREOPT_DEFAULT),nostripping)
 	$$(call dexpreopt-remove-classes.dex,$$@)
+endif
 
 $(eval _dbj_jar :=)
 $(eval _dbj_odex :=)
