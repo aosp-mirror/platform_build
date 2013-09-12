@@ -110,7 +110,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/appcompat \
         v7/mediarouter \
         v13 \
-        multidex
+        multidex \
+        multidex/instrumentation
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
