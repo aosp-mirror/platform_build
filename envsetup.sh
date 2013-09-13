@@ -611,7 +611,7 @@ function getdriver()
     if [ -n "$WITH_STATIC_ANALYZER" ]; then
         echo "\
 $T/prebuilts/clang/linux-x86/host/3.3/tools/scan-build/scan-build \
---use-analyzer $T/prebuilts/clang/linux-x86/host/3.3/bin/clang \
+--use-analyzer $T/prebuilts/clang/linux-x86/host/3.3/bin/analyzer \
 --status-bugs \
 --top=$T"
     fi
