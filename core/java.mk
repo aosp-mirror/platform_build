@@ -82,18 +82,10 @@ ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
 
-# By giving different file name, files can be updated correctly when switching
-# between builds with and without Proguard enabled.
-# Note that ANY intermediate targets between the proguard and
-# the final built_dex should be differently named!
 ifdef LOCAL_PROGUARD_ENABLED
 proguard_jar_leaf := proguard.classes.jar
-built_dex_intermediate_leaf := proguard.$(built_dex_intermediate_leaf)
-built_dex_leaf := proguard.classes.dex
 else
 proguard_jar_leaf := noproguard.classes.jar
-built_dex_intermediate_leaf := noproguard.$(built_dex_intermediate_leaf)
-built_dex_leaf := noproguard.classes.dex
 endif
 
 full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
@@ -113,7 +105,7 @@ full_classes_jar :=
 built_dex :=
 else
 full_classes_jar := $(intermediates.COMMON)/classes.jar
-built_dex := $(intermediates.COMMON)/$(built_dex_leaf)/classes.dex
+built_dex := $(intermediates.COMMON)/classes.dex
 endif
 
 LOCAL_INTERMEDIATE_TARGETS += \
@@ -303,14 +295,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
 ifdef full_classes_jar
-
-# If LOCAL_BUILT_MODULE_STEM wasn't overridden by our caller,
-# full_classes_jar will be the same module as LOCAL_BUILT_MODULE.
-# Otherwise, the caller will define it as a prerequisite of
-# LOCAL_BUILT_MODULE, so it will inherit the necessary PRIVATE_*
-# variable definitions.
-full_classes_jar := $(intermediates.COMMON)/classes.jar
-built_dex := $(intermediates.COMMON)/$(built_dex_leaf)
 
 # Droiddoc isn't currently able to generate stubs for modules, so we're just
 # allowing it to use the classes.jar as the "stubs" that would be use to link
