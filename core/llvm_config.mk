@@ -1,3 +1,5 @@
+# Remove the following line when the prebuilts are ready.
+FORCE_BUILD_LLVM_COMPONENTS := true
 ifeq (true,$(FORCE_BUILD_LLVM_COMPONENTS))
 LLVM_PREBUILTS_PATH := $(HOST_OUT_EXECUTABLES)
 LLVM_PREBUILTS_HEADER_PATH := external/clang/lib/include
