@@ -587,12 +587,22 @@ function initExpandableNavItems(rootTag) {
   });
 }
 
+/** Highlight the current page in sidenav, expanding children as appropriate */
 function highlightSidenav() {
-  // select current page in sidenav and header, and set up prev/next links if they exist
-  var $selNavLink = $('#nav').find('a[href="' + mPagePath + '"]');
+  // if something is already highlighted, undo it. This is for dynamic navigation (Samples index)
+  if ($("ul#nav li.selected").length) {
+    unHighlightSidenav();
+  }
+  // look for URL in sidenav, including the hash
+  var $selNavLink = $('#nav').find('a[href="' + mPagePath + location.hash + '"]');
+
+  // If the selNavLink is still empty, look for it without the hash
+  if ($selNavLink.length == 0) {
+    $selNavLink = $('#nav').find('a[href="' + mPagePath + '"]');
+  }
+
   var $selListItem;
   if ($selNavLink.length) {
-
     // Find this page's <li> in sidenav and set selected
     $selListItem = $selNavLink.closest('li');
     $selListItem.addClass('selected');
@@ -605,6 +615,10 @@ function highlightSidenav() {
   }
 }
 
+function unHighlightSidenav() {
+  $("ul#nav li.selected").removeClass("selected");
+  $('ul#nav li.nav-section.expanded').removeClass('expanded').children('ul').hide();
+}
 
 function toggleFullscreen(enable) {
   var delay = 20;
@@ -2142,6 +2156,12 @@ google.setOnLoadCallback(function(){
 
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
+  // Handle hash changes in the samples browser
+  if ($("body").hasClass("samples") && location.href.indexOf("/samples/index.html") != -1) {
+    showSamples();
+    highlightSidenav();
+    resizeNav();
+  }
   // Exit if the hash isn't a search query or there's an error in the query
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
     // If the results pane is open, close it.
@@ -2676,10 +2696,15 @@ function get_google_node(me, mom)
 /****** NEW version of script to build google and sample navs dynamically ******/
 // TODO: update Google reference docs to tolerate this new implementation
 
+var NODE_NAME = 0;
+var NODE_HREF = 1;
+var NODE_GROUP = 2;
+var NODE_TAGS = 3;
+var NODE_CHILDREN = 4;
+
 function init_google_navtree2(navtree_id, data)
 {
   var $containerUl = $("#"+navtree_id);
-  var linkText;
   for (var i in data) {
     var node_data = data[i];
     $containerUl.append(new_google_node2(node_data));
@@ -2690,25 +2715,25 @@ function init_google_navtree2(navtree_id, data)
 
 function new_google_node2(node_data)
 {
-  var linkText = node_data[0];
+  var linkText = node_data[NODE_NAME];
   if(linkText.match("^"+"com.google.android")=="com.google.android"){
     linkText = linkText.substr(19, linkText.length);
   }
   var $li = $('<li>');
   var $a;
-  if (node_data[1] != null) {
-    $a = $('<a href="' + toRoot + node_data[1] + '">' + linkText + '</a>');
+  if (node_data[NODE_HREF] != null) {
+    $a = $('<a href="' + toRoot + node_data[NODE_HREF] + '">' + linkText + '</a>');
   } else {
     $a = $('<a href="#" onclick="return false;">' + linkText + '/</a>');
   }
   var $childUl = $('<ul>');
-  if (node_data[2] != null) {
+  if (node_data[NODE_CHILDREN] != null) {
     $li.addClass("nav-section");
     $a = $('<div class="nav-section-header">').append($a);
-    if (node_data[1] == null) $a.addClass('empty');
+    if (node_data[NODE_HREF] == null) $a.addClass('empty');
 
-    for (var i in node_data[2]) {
-      var child_node_data = node_data[2][i];
+    for (var i in node_data[NODE_CHILDREN]) {
+      var child_node_data = node_data[NODE_CHILDREN][i];
       $childUl.append(new_google_node2(child_node_data));
     }
     $li.append($childUl);
