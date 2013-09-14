@@ -1,7 +1,9 @@
 ifeq (true,$(FORCE_BUILD_LLVM_COMPONENTS))
 LLVM_PREBUILTS_PATH := $(HOST_OUT_EXECUTABLES)
+LLVM_PREBUILTS_HEADER_PATH := external/clang/lib/include
 else
 LLVM_PREBUILTS_PATH := prebuilts/clang/$(HOST_OS)-x86/host/3.3/bin
+LLVM_PREBUILTS_HEADER_PATH := prebuilts/clang/$(HOST_OS)-x86/host/3.3/lib/clang/3.3/include/
 endif
 
 CLANG := $(LLVM_PREBUILTS_PATH)/clang$(HOST_EXECUTABLE_SUFFIX)
@@ -92,7 +94,7 @@ ifeq ($(TARGET_ARCH),x86)
     -mbionic
 endif
 
-CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include $(TARGET_OUT_HEADERS)/clang
+CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := $(LLVM_PREBUILTS_HEADER_PATH) $(TARGET_OUT_HEADERS)/clang
 
 # remove unknown flags to define CLANG_FLAGS
 TARGET_GLOBAL_CLANG_FLAGS += $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(TARGET_GLOBAL_CFLAGS))
