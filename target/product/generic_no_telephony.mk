@@ -46,7 +46,8 @@ PRODUCT_PACKAGES := \
     CalendarProvider \
     bluetooth-health \
     hostapd \
-    wpa_supplicant.conf
+    wpa_supplicant.conf \
+    WallpaperCropper
 
 PRODUCT_PACKAGES += \
     audio \
