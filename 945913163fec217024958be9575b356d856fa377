@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "a79845f6_9c6d45c5",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-09-16T06:38:55Z",
+      "side": 1,
+      "message": "-m32 is removed here. It\u0027s required for multilib toolchain, see https://android-review.googlesource.com/#/c/64184/ for details.. Either should be restored here or in arch makefiles.",
+      "revId": "945913163fec217024958be9575b356d856fa377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a7aa05ea_f3e3df19",
         "filename": "core/combo/arch/x86/haswell.mk",
         "patchSetId": 1
@@ -13,6 +30,23 @@
       "writtenOn": "2013-09-16T01:17:33Z",
       "side": 1,
       "message": "This line is commented in the other new variant files.",
+      "revId": "945913163fec217024958be9575b356d856fa377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a79845f6_7ca239ed",
+        "filename": "core/combo/arch/x86/sandybridge.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-09-16T06:38:55Z",
+      "side": 1,
+      "message": "corei7-avx is better for sandybridge",
       "revId": "945913163fec217024958be9575b356d856fa377",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
