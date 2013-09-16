@@ -43,7 +43,6 @@ PRODUCT_PACKAGES := \
     Settings \
     SystemUI \
     TeleService \
-    Terminal \
     CalendarProvider \
     bluetooth-health \
     hostapd \
