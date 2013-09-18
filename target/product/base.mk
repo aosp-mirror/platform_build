@@ -49,6 +49,7 @@ PRODUCT_PACKAGES += \
     libiprouteutil \
     libjni_latinime \
     libjnigraphics \
+    libldnhncr \
     libmedia \
     libmedia_jni \
     libmediaplayerservice \
