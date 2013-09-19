@@ -34,6 +34,24 @@
       "revId": "14d4310803ee2b9811a7adb381a2ca54b96aefe2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "645e4b2d_0a527be6",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-09-19T10:10:06Z",
+      "side": 0,
+      "message": "Yes. You are right. We have it hardcoded.",
+      "parentUuid": "448867e2_c1f242c6",
+      "revId": "14d4310803ee2b9811a7adb381a2ca54b96aefe2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
