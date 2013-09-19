@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "645e4b2d_4ac2b377",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-09-19T09:28:49Z",
+      "side": 0,
+      "message": "I\u0027m not sure if -mstackrealign here is still required. Unless anybody checked this I would keep it.\nOther flags -msse3 -mfpmath\u003dsse are compiler default indeed.",
+      "revId": "14d4310803ee2b9811a7adb381a2ca54b96aefe2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
