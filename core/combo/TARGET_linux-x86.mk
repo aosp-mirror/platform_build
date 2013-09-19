@@ -134,6 +134,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-funswitch-loops \
 			-funwind-tables \
 			-fstack-protector \
+			-m32 \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
@@ -141,23 +142,37 @@ TARGET_GLOBAL_CFLAGS += \
 TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
-# XXX: Our toolchain is normally configured to always set these flags by default
-# however, there have been reports that this is sometimes not the case. So make
-# them explicit here unless we have the time to carefully check it
-#
-TARGET_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32
+TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
 
-# XXX: These flags should not be defined here anymore. Instead, the Android.mk
-# of the modules that depend on these features should instead check the
-# corresponding macros (e.g. ARCH_X86_HAVE_SSE2 and ARCH_X86_HAVE_SSSE3)
-# Keep them here until this is all cleared up.
-#
-ifeq ($(ARCH_X86_HAVE_SSE2),true)
-TARGET_GLOBAL_CFLAGS += -DUSE_SSE2
+ifeq ($(ARCH_X86_HAVE_MMX),true)
+    TARGET_GLOBAL_CFLAGS += -DUSE_MMX -mmmx
 endif
-
+ifeq ($(ARCH_X86_HAVE_SSE),true)
+    TARGET_GLOBAL_CFLAGS += -DUSE_SSE -msse
+endif
+ifeq ($(ARCH_X86_HAVE_SSE2),true)
+    TARGET_GLOBAL_CFLAGS += -DUSE_SSE2 -msse2
+endif
+ifeq ($(ARCH_X86_HAVE_SSE3),true)
+    TARGET_GLOBAL_CFLAGS += -DUSE_SSE3 -msse3
+endif
 ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
-TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3
+    TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3 -mssse3
+endif
+ifeq ($(ARCH_X86_HAVE_SSE4),true)
+    TARGET_GLOBAL_CFLAGS += -msse4
+endif
+ifeq ($(ARCH_X86_HAVE_SSE4_1),true)
+    TARGET_GLOBAL_CFLAGS += -msse4.1
+endif
+ifeq ($(ARCH_X86_HAVE_SSE4_2),true)
+    TARGET_GLOBAL_CFLAGS += -msse4.2
+endif
+ifeq ($(ARCH_X86_HAVE_AVX),true)
+    TARGET_GLOBAL_CFLAGS += -mavx
+endif
+ifeq ($(ARCH_X86_HAVE_AES_NI),true)
+    TARGET_GLOBAL_CFLAGS += -maes
 endif
 
 # XXX: This flag is probably redundant. I believe our toolchain always sets
