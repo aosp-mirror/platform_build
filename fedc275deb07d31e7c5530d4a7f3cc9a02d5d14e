@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c42537aa_793af2f4",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-09-19T22:59:10Z",
+      "side": 1,
+      "message": "\"Must specify an RSA or DSA key because -minsdk \" + sMinSdkVersion + \" is less than \" + JELLY_BEAN_MR2",
+      "revId": "fedc275deb07d31e7c5530d4a7f3cc9a02d5d14e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
