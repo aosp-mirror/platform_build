@@ -32,4 +32,6 @@ ARCH_X86_HAVE_POPCNT := false
 # not always work as intended, so keep it unless we have the time to check
 # everything properly.
 
-TARGET_GLOBAL_CFLAGS += -march=i686
+arch_variant_cflags := \
+    -march=i686 \
+

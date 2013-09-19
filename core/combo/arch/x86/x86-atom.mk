@@ -8,11 +8,13 @@ ARCH_X86_HAVE_MMX   := true
 ARCH_X86_HAVE_SSE   := true
 ARCH_X86_HAVE_SSE2  := true
 ARCH_X86_HAVE_SSE3  := true
-
 ARCH_X86_HAVE_SSSE3 := true
 ARCH_X86_HAVE_MOVBE := true
 ARCH_X86_HAVE_POPCNT := false   # popcnt is not supported by current Atom CPUs
 
-# This flag is used to enabled Atom-specific optimizations with our toolchain
-#
-TARGET_GLOBAL_CFLAGS += -march=atom
+# CFLAGS for this arch
+arch_variant_cflags := \
+	-march=atom \
+	-mstackrealign \
+	-mfpmath=sse \
+
