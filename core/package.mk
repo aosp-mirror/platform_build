@@ -153,7 +153,7 @@ ifeq (,$(TARGET_BUILD_APPS))
 ifeq (,$(LOCAL_APK_LIBRARIES))
 ifneq (,$(LOCAL_SRC_FILES))
 ifndef LOCAL_DEX_PREOPT
-LOCAL_DEX_PREOPT := true
+LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
 endif
 endif
 endif
