@@ -1,5 +1,6 @@
 <head>
-<?cs ####### If building devsite, add some meta data needed for when generating the top nav ######### ?>
+<?cs
+  ####### If building devsite, add some meta data needed for when generating the top nav ######### ?>
 <?cs
   if:devsite ?><?cs
     if:guide||develop||training||reference||tools||sdk||google||samples
@@ -11,13 +12,17 @@
     /if ?>
   <?cs
   /if
-?><?cs # END if/else devsite ?>
-
+?><?cs
+  # END if/else devsite ?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width" />
-<?cs if:page.metaDescription ?>
-<meta name="Description" content="<?cs var:page.metaDescription ?>">
-<?cs /if ?>
+<?cs
+  if:page.metaDescription ?>
+<meta name="Description" content="<?cs var:page.metaDescription ?>"><?cs
+  /if ?><?cs
+  if:page.customHeadTag ?>
+<?cs var:page.customHeadTag ?><?cs
+  /if ?>
 <link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>favicon.ico" />
 <title><?cs 
   if:page.title ?><?cs 
