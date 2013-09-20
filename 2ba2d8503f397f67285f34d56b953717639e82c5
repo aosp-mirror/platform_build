@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84a41f88_63ad8230",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2013-09-20T21:20:57Z",
+      "side": 1,
+      "message": "whoops, messed this up in my merge.",
+      "revId": "2ba2d8503f397f67285f34d56b953717639e82c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
