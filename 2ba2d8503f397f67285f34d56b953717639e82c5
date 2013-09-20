@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "c4aa9752_a5f4de42",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-09-20T21:48:33Z",
+      "side": 1,
+      "message": "Uh, is this true?  Hasn\u0027t JB-MR2 already been released?",
+      "revId": "2ba2d8503f397f67285f34d56b953717639e82c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a76389_0753781c",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-09-20T21:48:33Z",
+      "side": 1,
+      "message": "Is the choice of signature algorithm not orthogonal to choice of hash?  There\u0027s no \"SHA1withDSA\", for instance?",
+      "revId": "2ba2d8503f397f67285f34d56b953717639e82c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84a41f88_63ad8230",
         "filename": "tools/signapk/SignApk.java",
         "patchSetId": 4
