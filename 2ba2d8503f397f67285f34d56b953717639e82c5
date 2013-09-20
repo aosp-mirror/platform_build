@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "84a41f88_6674b090",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2013-09-20T21:59:09Z",
+      "side": 1,
+      "message": "Yes, I fixed it in AOSP on Oct 12, 2012, and it got into JB-MR2. See https://code.google.com/p/android/issues/detail?id\u003d38321",
+      "parentUuid": "c4aa9752_a5f4de42",
+      "revId": "2ba2d8503f397f67285f34d56b953717639e82c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4a76389_0753781c",
         "filename": "tools/signapk/SignApk.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2013-09-20T21:48:33Z",
       "side": 1,
       "message": "Is the choice of signature algorithm not orthogonal to choice of hash?  There\u0027s no \"SHA1withDSA\", for instance?",
+      "revId": "2ba2d8503f397f67285f34d56b953717639e82c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84a41f88_66d91072",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2013-09-20T21:59:09Z",
+      "side": 1,
+      "message": "It is, but SignApk didn\u0027t support DSA before, so I\u0027d rather force people to use at least a stronger hash at least.\n\nHaving support for DSA probably isn\u0027t wise in total. Maybe I should just remove the support for DSA.",
+      "parentUuid": "a4a76389_0753781c",
       "revId": "2ba2d8503f397f67285f34d56b953717639e82c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
