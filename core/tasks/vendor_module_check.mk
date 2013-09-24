@@ -85,10 +85,11 @@ ifneq (,$(filter path all, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDO
 
 $(foreach m, $(_vendor_check_modules), \
   $(if $(filter vendor/%, $(ALL_MODULES.$(m).PATH)),\
-    $(if $(filter $(TARGET_OUT_VENDOR)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
-      $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) \
-        in product "$(TARGET_PRODUCT)" being installed to \
-        $(ALL_MODULES.$(m).INSTALLED) which is not in the vendor tree))))
+    $(if $(filter-out FAKE, $(ALL_MODULES.$(m).CLASS)),\
+      $(if $(filter $(TARGET_OUT_VENDOR)/%, $(ALL_MODULES.$(m).INSTALLED)),,\
+        $(error Error: vendor module "$(m)" in $(ALL_MODULES.$(m).PATH) \
+          in product "$(TARGET_PRODUCT)" being installed to \
+          $(ALL_MODULES.$(m).INSTALLED) which is not in the vendor tree)))))
 
 endif
 
