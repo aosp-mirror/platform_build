@@ -48,6 +48,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 import java.security.DigestOutputStream;
 import java.security.GeneralSecurityException;
 import java.security.Key;
@@ -723,8 +724,61 @@ class SignApk {
         }
     }
 
+    /**
+     * Tries to load a JSE Provider by class name. This is for custom PrivateKey
+     * types that might be stored in PKCS#11-like storage.
+     */
+    private static void loadProviderIfNecessary(String providerClassName) {
+        if (providerClassName == null) {
+            return;
+        }
+
+        final Class<?> klass;
+        try {
+            final ClassLoader sysLoader = ClassLoader.getSystemClassLoader();
+            if (sysLoader != null) {
+                klass = sysLoader.loadClass(providerClassName);
+            } else {
+                klass = Class.forName(providerClassName);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+            return;
+        }
+
+        Constructor<?> constructor = null;
+        for (Constructor<?> c : klass.getConstructors()) {
+            if (c.getParameterTypes().length == 0) {
+                constructor = c;
+                break;
+            }
+        }
+        if (constructor == null) {
+            System.err.println("No zero-arg constructor found for " + providerClassName);
+            System.exit(1);
+            return;
+        }
+
+        final Object o;
+        try {
+            o = constructor.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+            return;
+        }
+        if (!(o instanceof Provider)) {
+            System.err.println("Not a Provider class: " + providerClassName);
+            System.exit(1);
+        }
+
+        Security.insertProviderAt((Provider) o, 1);
+    }
+
     private static void usage() {
         System.err.println("Usage: signapk [-w] " +
+                           "[-providerClass <className>] " +
                            "publickey.x509[.pem] privatekey.pk8 " +
                            "[publickey2.x509[.pem] privatekey2.pk8 ...] " +
                            "input.jar output.jar");
@@ -738,10 +792,23 @@ class SignApk {
         Security.addProvider(sBouncyCastleProvider);
 
         boolean signWholeFile = false;
+        String providerClass = null;
+        String providerArg = null;
+
         int argstart = 0;
-        if (args[0].equals("-w")) {
-            signWholeFile = true;
-            argstart = 1;
+        while (argstart < args.length && args[argstart].startsWith("-")) {
+            if ("-w".equals(args[argstart])) {
+                signWholeFile = true;
+                ++argstart;
+            } else if ("-providerClass".equals(args[argstart])) {
+                if (argstart + 1 >= args.length) {
+                    usage();
+                }
+                providerClass = args[++argstart];
+                ++argstart;
+            } else {
+                usage();
+            }
         }
 
         if ((args.length - argstart) % 2 == 1) usage();
@@ -750,6 +817,8 @@ class SignApk {
             System.err.println("Only one key may be used with -w.");
             System.exit(2);
         }
+
+        loadProviderIfNecessary(providerClass);
 
         String inputFilename = args[args.length-2];
         String outputFilename = args[args.length-1];
