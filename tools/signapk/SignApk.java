@@ -20,6 +20,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROutputStream;
 import org.bouncycastle.asn1.cms.CMSObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -35,7 +36,7 @@ import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.io.BufferedReader;
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
@@ -52,16 +53,13 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Provider;
-import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -184,7 +182,7 @@ class SignApk {
     }
 
     /**
-     * Decrypt an encrypted PKCS 8 format private key.
+     * Decrypt an encrypted PKCS#8 format private key.
      *
      * Based on ghstark's post on Aug 6, 2006 at
      * http://forums.sun.com/thread.jspa?threadID=758133&messageID=4330949
@@ -192,7 +190,7 @@ class SignApk {
      * @param encryptedPrivateKey The raw data of the private key
      * @param keyFile The file containing the private key
      */
-    private static KeySpec decryptPrivateKey(byte[] encryptedPrivateKey, File keyFile)
+    private static PKCS8EncodedKeySpec decryptPrivateKey(byte[] encryptedPrivateKey, File keyFile)
         throws GeneralSecurityException {
         EncryptedPrivateKeyInfo epkInfo;
         try {
@@ -218,7 +216,7 @@ class SignApk {
         }
     }
 
-    /** Read a PKCS 8 format private key. */
+    /** Read a PKCS#8 format private key. */
     private static PrivateKey readPrivateKey(File file)
         throws IOException, GeneralSecurityException {
         DataInputStream input = new DataInputStream(new FileInputStream(file));
@@ -226,34 +224,23 @@ class SignApk {
             byte[] bytes = new byte[(int) file.length()];
             input.read(bytes);
 
-            KeySpec spec = decryptPrivateKey(bytes, file);
+            /* Check to see if this is in an EncryptedPrivateKeyInfo structure. */
+            PKCS8EncodedKeySpec spec = decryptPrivateKey(bytes, file);
             if (spec == null) {
                 spec = new PKCS8EncodedKeySpec(bytes);
             }
 
-            PrivateKey key;
-            key = decodeAsKeyType(spec, "RSA");
-            if (key != null) {
-                return key;
-            }
+            /*
+             * Now it's in a PKCS#8 PrivateKeyInfo structure. Read its Algorithm
+             * OID and use that to construct a KeyFactory.
+             */
+            ASN1InputStream bIn = new ASN1InputStream(new ByteArrayInputStream(spec.getEncoded()));
+            PrivateKeyInfo pki = PrivateKeyInfo.getInstance(bIn.readObject());
+            String algOid = pki.getPrivateKeyAlgorithm().getAlgorithm().getId();
 
-            key = decodeAsKeyType(spec, "EC");
-            if (key != null) {
-                return key;
-            }
-
-            throw new NoSuchAlgorithmException("Must be an EC or RSA key");
+            return KeyFactory.getInstance(algOid).generatePrivate(spec);
         } finally {
             input.close();
-        }
-    }
-
-    private static PrivateKey decodeAsKeyType(KeySpec spec, String keyType)
-            throws GeneralSecurityException {
-        try {
-            return KeyFactory.getInstance(keyType).generatePrivate(spec);
-        } catch (InvalidKeySpecException e) {
-            return null;
         }
     }
 
@@ -725,9 +712,10 @@ class SignApk {
             outputJar.write(signedData);
 
             // CERT.{EC,RSA} / CERT#.{EC,RSA}
+            final String keyType = publicKey[k].getPublicKey().getAlgorithm();
             je = new JarEntry(numKeys == 1 ?
-                              (String.format(CERT_SIG_NAME, privateKey[k].getAlgorithm())) :
-                              (String.format(CERT_SIG_MULTI_NAME, k, privateKey[k].getAlgorithm())));
+                              (String.format(CERT_SIG_NAME, keyType)) :
+                              (String.format(CERT_SIG_MULTI_NAME, k, keyType)));
             je.setTime(timestamp);
             outputJar.putNextEntry(je);
             writeSignatureBlock(new CMSProcessableByteArray(signedData),
