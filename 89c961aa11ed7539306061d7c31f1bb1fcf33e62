@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24a373b4_5953571b",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-09-25T18:50:12Z",
+      "side": 1,
+      "message": "returns after System.exit are weird. you didn\u0027t fancy a die(String) and die(Throwable)? or just letting the exceptions propagate?",
+      "revId": "89c961aa11ed7539306061d7c31f1bb1fcf33e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24a373b4_79581b35",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-09-25T18:50:12Z",
+      "side": 1,
+      "message": "don\u0027t want this to be a Provider?",
+      "revId": "89c961aa11ed7539306061d7c31f1bb1fcf33e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24a373b4_994cdf77",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-09-25T18:50:12Z",
+      "side": 1,
+      "message": "oh, i see. just propagating would have your life easier :-)",
+      "revId": "89c961aa11ed7539306061d7c31f1bb1fcf33e62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
