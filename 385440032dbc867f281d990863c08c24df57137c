@@ -16,6 +16,23 @@
       "revId": "385440032dbc867f281d990863c08c24df57137c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "641c8bfb_bdbb2b05",
+        "filename": "core/combo/arch/x86_64/haswell.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-09-27T17:30:17Z",
+      "side": 1,
+      "message": "we can probably lift -mstackrealign and -mfpmath\u003dsse up too, and remove the duplication.",
+      "revId": "385440032dbc867f281d990863c08c24df57137c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
