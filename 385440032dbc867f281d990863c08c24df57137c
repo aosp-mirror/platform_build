@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c47c57a6_fe7fd565",
+        "filename": "core/combo/arch/x32/x32.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-09-27T17:27:56Z",
+      "side": 1,
+      "message": "i think we should delete this legacy cruft. if your target device doesn\u0027t support this, it doesn\u0027t support Android, so you\u0027re on your own.\n\nwe removed the equivalent ARM cruft a couple of releases ago.",
+      "revId": "385440032dbc867f281d990863c08c24df57137c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
