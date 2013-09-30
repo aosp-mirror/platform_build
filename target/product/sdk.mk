@@ -32,7 +32,7 @@ PRODUCT_PACKAGES := \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
-	Phone \
+	TeleService \
 	PinyinIME \
 	Protips \
 	SoftKeyboard \
