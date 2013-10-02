@@ -25,7 +25,6 @@ PRODUCT_NAME := core
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
     DownloadProvider \
-    DownloadProviderUi \
     HTMLViewer \
     MediaProvider \
     PackageInstaller \
