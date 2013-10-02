@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c1c1a91a_0d30710e",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-02T16:15:51Z",
+      "side": 1,
+      "message": "Missed that. Thanks.",
+      "parentUuid": "819df127_1ea96986",
+      "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21660513_9b84afcf",
         "filename": "target/board/generic_x86_64/README.txt",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "c1c1a91a_2d352dff",
+        "filename": "target/board/generic_x86_64/README.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-02T16:15:51Z",
+      "side": 1,
+      "message": "Yep.",
+      "parentUuid": "21660513_9b84afcf",
+      "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "819df127_fe8fdd2a",
         "filename": "target/product/AndroidProducts.mk",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2013-10-02T16:06:50Z",
       "side": 1,
       "message": "these don\u0027t exist any more, right?",
+      "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1c4ed29_ee763f41",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-02T16:15:51Z",
+      "side": 1,
+      "message": "Yes. Missed on splitting.",
+      "parentUuid": "819df127_fe8fdd2a",
       "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
