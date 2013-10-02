@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 
-# Configuration for Linux on x86 as a target.
+# Configuration for Linux on x86_64 as a target.
 # Included by combo/select.mk
 
 # Provide a default variant.
 ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
-TARGET_ARCH_VARIANT := x86
+TARGET_ARCH_VARIANT := x86_64
 endif
 
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
@@ -62,7 +62,7 @@ endif
 
 ifneq ($(wildcard $(TARGET_CC)),)
 TARGET_LIBGCC := \
-	$(shell $(TARGET_CC) -m32 -print-file-name=libgcc.a)
+	$(shell $(TARGET_CC) -m64 -print-file-name=libgcc.a)
 target_libgcov := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 	-print-file-name=libgcov.a)
 endif
@@ -115,8 +115,6 @@ else
 endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
-android_config_h := $(call select-android-config-h,target_linux-x86)
-
 TARGET_GLOBAL_CFLAGS += \
 			-O2 \
 			-Ulinux \
@@ -134,28 +132,25 @@ TARGET_GLOBAL_CFLAGS += \
 			-funswitch-loops \
 			-funwind-tables \
 			-fstack-protector \
-			-m32 \
-			-include $(android_config_h) \
-			-I $(dir $(android_config_h))
+			-m64
+
+android_config_h := $(call select-android-config-h,target_linux-x86)
+TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
+TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
 
 # XXX: Not sure this is still needed. Must check with our toolchains.
 TARGET_GLOBAL_CPPFLAGS += \
 			-fno-use-cxa-atexit
 
-TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
+TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags) \
+			-mstackrealign \
+			-mfpmath=sse
 
-ifeq ($(ARCH_X86_HAVE_MMX),true)
-    TARGET_GLOBAL_CFLAGS += -DUSE_MMX -mmmx
-endif
-ifeq ($(ARCH_X86_HAVE_SSE),true)
-    TARGET_GLOBAL_CFLAGS += -DUSE_SSE -msse
-endif
-ifeq ($(ARCH_X86_HAVE_SSE2),true)
-    TARGET_GLOBAL_CFLAGS += -DUSE_SSE2 -msse2
-endif
-ifeq ($(ARCH_X86_HAVE_SSE3),true)
-    TARGET_GLOBAL_CFLAGS += -DUSE_SSE3 -msse3
-endif
+ARCH_X86_HAVE_MMX  := true
+ARCH_X86_HAVE_SSE  := true
+ARCH_X86_HAVE_SSE2 := true
+ARCH_X86_HAVE_SSE3 := true
+
 ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
     TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3 -mssse3
 endif
@@ -188,7 +183,7 @@ TARGET_GLOBAL_CFLAGS += -mbionic
 #
 TARGET_GLOBAL_CFLAGS += -D__ANDROID__
 
-TARGET_GLOBAL_LDFLAGS += -m32
+TARGET_GLOBAL_LDFLAGS += -m64
 
 TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack
 TARGET_GLOBAL_LDFLAGS += -Wl,-z,relro -Wl,-z,now
@@ -196,12 +191,12 @@ TARGET_GLOBAL_LDFLAGS += -Wl,--warn-shared-textrel
 TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
 
 TARGET_C_INCLUDES := \
-	$(libc_root)/arch-x86/include \
+	$(libc_root)/arch-x86_64/include \
 	$(libc_root)/include \
 	$(libstdc++_root)/include \
 	$(KERNEL_HEADERS) \
 	$(libm_root)/include \
-	$(libm_root)/include/i387 \
+	$(libm_root)/include/amd64 \
 	$(libthread_db_root)/include
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
@@ -285,21 +280,3 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
 endef
-
-# Special check for x86 NDK ABI compatibility.
-# The TARGET_CPU_ABI variable should be defined in BoardConfig.mk to 'x86'
-# *only* if the platform image is compatible with the NDK x86 ABI.
-#
-# We perform a small check here to ensure that nothing bad can happen.
-#
-ifeq ($(TARGET_CPU_ABI),x86)
-  ifneq (true-true-true-true,$(ARCH_X86_HAVE_MMX)-$(ARCH_X86_HAVE_SSE)-$(ARCH_X86_HAVE_SSE2)-$(ARCH_X86_HAVE_SSE3))
-    $(info ERROR: Your x86 platform image is not compatible with the NDK x86 ABI)
-    $(info As such, you should *not* define TARGET_CPU_ABI to 'x86' in your BoardConfig.mk)
-    $(info to ensure that your device will not be mistakenly listed as compatible by
-    $(info the Android Market. Also, it is likely that the image will fail the CTS tests)
-    $(info Please undefine TARGET_CPU_ABI in your BoardConfig.mk, or select the value 'none')
-    $(info The corresponding image will still be able to run Dalvik-based Android applications)
-    $(error Aborting build! Please fix your BoardConfig.mk)
-  endif
-endif
