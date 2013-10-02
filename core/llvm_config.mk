@@ -83,6 +83,23 @@ ifeq ($(TARGET_ARCH),x86)
     -mfpmath=sse \
     -mbionic
 endif
+ifeq ($(TARGET_ARCH),x86_64)
+  RS_TRIPLE := x86_64-unknown-linux
+  CLANG_CONFIG_EXTRA_ASFLAGS += \
+    -target x86_64-linux-android \
+    -nostdlibinc \
+    -B$(TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
+  CLANG_CONFIG_EXTRA_CFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
+  CLANG_CONFIG_EXTRA_LDFLAGS += \
+    -target x86_64-linux-android \
+    -B$(TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
+  CLANG_CONFIG_UNKNOWN_CFLAGS += \
+    -finline-limit=300 \
+    -fno-inline-functions-called-once \
+    -mfpmath=sse \
+    -mbionic
+endif
+
 
 CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include $(TARGET_OUT_HEADERS)/clang
 
