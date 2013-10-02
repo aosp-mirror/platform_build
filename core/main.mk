@@ -852,12 +852,14 @@ else # TARGET_BUILD_APPS
   $(foreach f,$(INSTALLED_RADIOIMAGE_TARGET), \
     $(call dist-for-goals, droidcore, $(f)))
 
+  ifneq ($(ANDROID_BUILD_EMBEDDED),true)
   ifneq ($(TARGET_BUILD_PDK),true)
     $(call dist-for-goals, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
       $(PACKAGE_STATS_FILE) \
     )
+  endif
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
