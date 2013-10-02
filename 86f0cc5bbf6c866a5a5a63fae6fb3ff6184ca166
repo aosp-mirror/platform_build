@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "819df127_1ea96986",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-02T16:06:50Z",
+      "side": 1,
+      "message": "can\u0027t we just take out the useless options and hard-code MMX, SSE, SSE2, and SSE3 on?\n\nespecially because we already have -mfpmath\u003dsse unconditionally set :-)",
+      "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21660513_9b84afcf",
+        "filename": "target/board/generic_x86_64/README.txt",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-02T16:06:50Z",
+      "side": 1,
+      "message": "i think you want to grep all these files for x86 (as opposed to x86_64).",
+      "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "819df127_fe8fdd2a",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-02T16:06:50Z",
+      "side": 1,
+      "message": "these don\u0027t exist any more, right?",
+      "revId": "86f0cc5bbf6c866a5a5a63fae6fb3ff6184ca166",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
