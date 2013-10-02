@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "413a19c6_85d2d2a4",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-02T00:38:55Z",
+      "side": 1,
+      "message": "i changed this to i387 because i\u0027m using the \"i387\" header which seems to support both x86 and x86_64.",
+      "revId": "385440032dbc867f281d990863c08c24df57137c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c47c57a6_fe7fd565",
         "filename": "core/combo/arch/x32/x32.mk",
         "patchSetId": 1
