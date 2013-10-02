@@ -16,6 +16,24 @@
       "revId": "147f66c1e8714e266c4c9d97f4bd2dea22d48697",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21660513_61224c6e",
+        "filename": "core/llvm_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2013-10-02T19:42:24Z",
+      "side": 1,
+      "message": "They are experimenting with this and can\u0027t make progress without this fix.",
+      "parentUuid": "819df127_64358059",
+      "revId": "147f66c1e8714e266c4c9d97f4bd2dea22d48697",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
