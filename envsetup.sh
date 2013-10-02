@@ -128,6 +128,8 @@ function setpaths()
     case $ARCH in
         x86) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
             ;;
+        x86_64) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
+            ;;
         arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
             ;;
         mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
@@ -431,6 +433,7 @@ function add_lunch_combo()
 add_lunch_combo aosp_arm-eng
 add_lunch_combo aosp_x86-eng
 add_lunch_combo aosp_mips-eng
+add_lunch_combo aosp_x86_64-eng
 add_lunch_combo vbox_x86-eng
 
 function print_lunch_menu()
