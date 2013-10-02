@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a1a0355b_1c5415ff",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-02T01:02:28Z",
+      "side": 1,
+      "message": "...and i\u0027ve changed it back again. i was having trouble getting the freebsd x86_64 fenv to build, so i\u0027ll go with openbsd for now. we should probably revisit this though, and make a conscious decision about which bsd to go with (especially because we haven\u0027t been using openbsd\u0027s libm in the past).",
+      "parentUuid": "413a19c6_85d2d2a4",
+      "revId": "385440032dbc867f281d990863c08c24df57137c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c47c57a6_fe7fd565",
         "filename": "core/combo/arch/x32/x32.mk",
         "patchSetId": 1
