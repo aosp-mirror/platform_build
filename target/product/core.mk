@@ -24,6 +24,7 @@ PRODUCT_PACKAGES += \
     Browser \
     Contacts \
     DocumentsUI \
+    DownloadProviderUi \
     ExternalStorageProvider \
     KeyChain \
     PicoTts \
