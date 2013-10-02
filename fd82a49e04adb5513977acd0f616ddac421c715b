@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "819df127_0a4b6361",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-02T21:39:23Z",
+      "side": 1,
+      "message": "we should go through the codebase and remove the need for these (since they\u0027re always true for x86 too), and then come back and remove them from x86 and x86_64.\n\nbut this looks fine for now.",
+      "revId": "fd82a49e04adb5513977acd0f616ddac421c715b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
