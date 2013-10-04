@@ -250,6 +250,7 @@ def:default_left_nav() ?>
 <?cs 
             if:subcount(class.package) ?>
             <ul>
+              <?cs call:list("Annotations", class.package.annotations) ?>
               <?cs call:list("Interfaces", class.package.interfaces) ?>
               <?cs call:list("Classes", class.package.classes) ?>
               <?cs call:list("Enums", class.package.enums) ?>
@@ -258,6 +259,7 @@ def:default_left_nav() ?>
             </ul><?cs 
             elif:subcount(package) ?>
             <ul>
+              <?cs call:class_link_list("Annotations", package.annotations) ?>
               <?cs call:class_link_list("Interfaces", package.interfaces) ?>
               <?cs call:class_link_list("Classes", package.classes) ?>
               <?cs call:class_link_list("Enums", package.enums) ?>
