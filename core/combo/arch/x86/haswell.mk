@@ -1,10 +1,6 @@
 # Configuration for Linux on x86.
 # Generating binaries for Haswell processors.
 #
-ARCH_X86_HAVE_MMX    := true
-ARCH_X86_HAVE_SSE    := true
-ARCH_X86_HAVE_SSE2   := true
-ARCH_X86_HAVE_SSE3   := true
 ARCH_X86_HAVE_SSSE3  := true
 ARCH_X86_HAVE_SSE4   := true
 ARCH_X86_HAVE_SSE4_1 := true
