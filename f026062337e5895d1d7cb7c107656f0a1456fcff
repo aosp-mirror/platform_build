@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c168c904_3585d060",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "I think yes.",
+      "parentUuid": "c13fe9e6_a0dd142c",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "81625122_73cc800b",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-10-04T07:30:25Z",
       "side": 1,
       "message": "-D referenced by zlib, which explicitly has #undef USE_SSE. remove?",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21528551_9895f58b",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "81625122_73cc800b",
       "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "2107e553_9018148b",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "I think yes.",
+      "parentUuid": "c13fe9e6_00eb28c4",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e1422d7c_213aa84a",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2013-10-04T07:30:25Z",
       "side": 1,
       "message": "-D not used anywhere in codebase. remove?",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c168c904_158a5470",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "I think yes.",
+      "parentUuid": "e1422d7c_213aa84a",
       "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "c168c904_758f4880",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "Atom supports SSSE3, so it can be used for differentiation. We can have it internally.",
+      "parentUuid": "e1422d7c_813f3c39",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c13fe9e6_40b410e6",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 1
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "2107e553_d0129c66",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "For new platforms up to Silvermont/Haswell.",
+      "parentUuid": "c13fe9e6_40b410e6",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c13fe9e6_80ae1896",
         "filename": "core/combo/arch/x86/x86-atom.mk",
         "patchSetId": 1
@@ -115,6 +223,24 @@
       "writtenOn": "2013-10-04T07:45:57Z",
       "side": 1,
       "message": "It doesn\u0027t appear that either the MOVBE or POPCNT definition is used by any Makefile.\n\nIs it used by the upcoming x86_64 bit code somewhere?",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21528551_b898b9c3",
+        "filename": "core/combo/arch/x86/x86-atom.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-04T08:14:50Z",
+      "side": 1,
+      "message": "movbe is atom specific. popcnt is core specific.\nIt\u0027s applicable to both x86_64 and x86.\nNot sure how widely it is used in projects though, but it can be used for differentiation.",
+      "parentUuid": "c13fe9e6_80ae1896",
       "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
