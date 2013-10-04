@@ -101,6 +101,23 @@
       "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c13fe9e6_80ae1896",
+        "filename": "core/combo/arch/x86/x86-atom.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2013-10-04T07:45:57Z",
+      "side": 1,
+      "message": "It doesn\u0027t appear that either the MOVBE or POPCNT definition is used by any Makefile.\n\nIs it used by the upcoming x86_64 bit code somewhere?",
+      "revId": "f026062337e5895d1d7cb7c107656f0a1456fcff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
