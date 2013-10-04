@@ -146,11 +146,6 @@ TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags) \
 			-mstackrealign \
 			-mfpmath=sse
 
-ARCH_X86_HAVE_MMX  := true
-ARCH_X86_HAVE_SSE  := true
-ARCH_X86_HAVE_SSE2 := true
-ARCH_X86_HAVE_SSE3 := true
-
 ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
     TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3 -mssse3
 endif
