@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "21a365b4_b695308b",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2013-10-07T20:56:21Z",
+      "side": 1,
+      "message": "yuk :( follow the current convention then for now. We should file a bug to move all of these to device/generic.",
+      "parentUuid": "a1967556_8f92d950",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "419e996d_f4589691",
         "filename": "target/board/generic_aarch64/BoardConfig.mk",
         "patchSetId": 2
