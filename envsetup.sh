@@ -132,6 +132,8 @@ function setpaths()
             ;;
         arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
             ;;
+        aarch64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin
+            ;;
         mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
             ;;
         *)
