@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a1967556_8f92d950",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-07T20:48:06Z",
+      "side": 1,
+      "message": "This is following the convention of existing generic devices:\n\ngeneric\ngeneric_armv5\ngeneric_x86    \ngeneric_mips\ngeneric_x86_64\n\nPerhaps we can use a future CL to upgrade all of them?",
+      "parentUuid": "21a365b4_13cd2e81",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "419e996d_f4589691",
         "filename": "target/board/generic_aarch64/BoardConfig.mk",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a1967556_4f80f1f5",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-07T20:48:06Z",
+      "side": 1,
+      "message": "Probably not. This is inherited from generic, and I saw this in x86_64 too.",
+      "parentUuid": "419e996d_f4589691",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "419e996d_1400ba56",
         "filename": "target/board/generic_aarch64/BoardConfig.mk",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2013-10-07T20:10:39Z",
       "side": 1,
       "message": "What about this? I think the audio hal takes care of this stuff.",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21a365b4_9342fe6a",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-07T20:48:06Z",
+      "side": 1,
+      "message": "Same as above. I think we can remove this and add later if we understand how it is being used.",
+      "parentUuid": "419e996d_1400ba56",
       "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
