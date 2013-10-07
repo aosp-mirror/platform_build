@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a1967556_4c68ff22",
+        "filename": "target/product/full_aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-10-07T19:36:42Z",
+      "side": 1,
+      "message": "Let\u0027s remove full_aarch64 and just keep the aosp_aarch64.\n(full_* is the historical name for the aosp products).",
+      "revId": "7c36c6519b8fd4f03977882f540a9997a7e1e10f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
