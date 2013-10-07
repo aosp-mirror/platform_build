@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "419e996d_3705c067",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-10-07T21:01:25Z",
+      "side": 1,
+      "message": "I remember we already have a bug for this but I couldn\u0027t find it.",
+      "parentUuid": "21a365b4_b695308b",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "419e996d_f4589691",
         "filename": "target/board/generic_aarch64/BoardConfig.mk",
         "patchSetId": 2
@@ -84,6 +102,24 @@
       "side": 1,
       "message": "Probably not. This is inherited from generic, and I saw this in x86_64 too.",
       "parentUuid": "419e996d_f4589691",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "419e996d_97a4ac9d",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-10-07T21:01:25Z",
+      "side": 1,
+      "message": "Yes, I\u0027ll clean up these 2 variables in a new CL.",
+      "parentUuid": "a1967556_4f80f1f5",
       "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
