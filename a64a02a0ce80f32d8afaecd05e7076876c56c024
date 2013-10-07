@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21a365b4_13cd2e81",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2013-10-07T20:10:39Z",
+      "side": 1,
+      "message": "I think we should move all these files into device/generic/ somewhere. This target/board location is obsolete.",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "419e996d_f4589691",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2013-10-07T20:10:39Z",
+      "side": 1,
+      "message": "do we need this? I hope not.",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "419e996d_1400ba56",
+        "filename": "target/board/generic_aarch64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1000413
+      },
+      "writtenOn": "2013-10-07T20:10:39Z",
+      "side": 1,
+      "message": "What about this? I think the audio hal takes care of this stuff.",
+      "revId": "a64a02a0ce80f32d8afaecd05e7076876c56c024",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
