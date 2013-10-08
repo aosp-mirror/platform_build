@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1d30d45_bc034992",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-08T16:16:35Z",
+      "side": 1,
+      "message": "(read the later comments first...) and what about this?",
+      "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "61c0fd68_ee0c6755",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-08T16:16:35Z",
+      "side": 1,
+      "message": "in another patch, can we remove this...",
+      "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e1d30d45_dc0e05bc",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-08T16:16:35Z",
+      "side": 1,
+      "message": "...and this for both of the x86es?",
+      "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
