@@ -188,7 +188,7 @@ endef
 
 define transform-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
-	-Wl,-dynamic-linker,/system/bin/linker \
+	-Wl,-dynamic-linker,/system/bin/linker64 \
 	-Wl,-z,nocopyreloc \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
