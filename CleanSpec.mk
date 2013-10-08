@@ -200,6 +200,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/DMService.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/SprintDM.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/omadm)
 
+# KLP I mean KitKat now API 19.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
