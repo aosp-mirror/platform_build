@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "21644599_282e0b9b",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-09T07:35:49Z",
+      "side": 1,
+      "message": "I think yes.",
+      "parentUuid": "e1d30d45_bc034992",
+      "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "61c0fd68_ee0c6755",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "e174ed43_0e48eb61",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-09T07:35:49Z",
+      "side": 1,
+      "message": "Yes. These are from old toolchain dates...",
+      "parentUuid": "61c0fd68_ee0c6755",
+      "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e1d30d45_dc0e05bc",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2013-10-08T16:16:35Z",
       "side": 1,
       "message": "...and this for both of the x86es?",
+      "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "01690174_a741ca4a",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-09T07:35:49Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "e1d30d45_dc0e05bc",
       "revId": "fde3c164208a4e4aebc10bb56e56580f1219114f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
