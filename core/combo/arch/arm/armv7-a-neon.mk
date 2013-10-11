@@ -6,7 +6,7 @@ ARCH_ARM_HAVE_VFP               := true
 ARCH_ARM_HAVE_VFP_D32           := true
 ARCH_ARM_HAVE_NEON              := true
 
-ifeq ($(strip $(TARGET_CPU_VARIANT)), cortex-a15)
+ifeq ($(TARGET_CPU_VARIANT),$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))
 	arch_variant_cflags := -mcpu=cortex-a15
 else
 ifeq ($(strip $(TARGET_CPU_VARIANT)),cortex-a7)
