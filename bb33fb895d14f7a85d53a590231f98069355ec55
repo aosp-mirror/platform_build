@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be4e9480_eec973a0",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2013-10-11T23:21:21Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be better to rewrite this as:\n\nifeq ($(TARGET_CPU_VARIANT),$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))\n\nand combine into one. If they separate in the future, we can split them out again.",
+      "revId": "bb33fb895d14f7a85d53a590231f98069355ec55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
