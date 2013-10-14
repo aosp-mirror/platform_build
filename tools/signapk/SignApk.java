@@ -858,10 +858,6 @@ class SignApk {
 
 
             if (signWholeFile) {
-                if (!"RSA".equalsIgnoreCase(privateKey[0].getAlgorithm())) {
-                    System.err.println("Cannot sign OTA packages with non-RSA keys");
-                    System.exit(1);
-                }
                 SignApk.signWholeFile(inputJar, firstPublicKeyFile,
                                       publicKey[0], privateKey[0], outputFile);
             } else {
