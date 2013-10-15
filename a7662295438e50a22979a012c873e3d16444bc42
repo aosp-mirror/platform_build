@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "de51881f_29054997",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2013-10-15T09:16:09Z",
+      "side": 0,
+      "message": "GCC toolchain is supposed to have -msse3 hardcoded for x86. Probably clang is missing the same hardcode.",
+      "parentUuid": "7e76dcc6_626d68c3",
+      "revId": "a7662295438e50a22979a012c873e3d16444bc42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "414e9957_112a0ca2",
         "filename": "core/combo/TARGET_linux-x86_64.mk",
         "patchSetId": 1
