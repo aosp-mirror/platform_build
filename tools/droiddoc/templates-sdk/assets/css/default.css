@@ -472,6 +472,10 @@ video.with-shadow {
       height: 10px;
       display: inline-block;
       margin-left: 5px; }
+    .prev-page-link.inline:before {
+      content: none; }
+    .next-page-link.inline:after {
+      content: none; }
 
 
   .training-nav-top a {
@@ -2656,7 +2660,7 @@ table.blank th, table.blank td {
   font-size: 11.5px; 
 }
 
-.nolist {
+.nolist, .nolist ul, .nolist ol {
   list-style:none;
   margin-left:0;
 }
