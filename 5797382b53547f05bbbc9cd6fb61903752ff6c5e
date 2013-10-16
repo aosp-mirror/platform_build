@@ -88,6 +88,24 @@
       "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e346406_e7f29653",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-16T21:58:57Z",
+      "side": 1,
+      "message": "how about existing userspace code that includes \u003clinux/foo.h\u003e?",
+      "parentUuid": "3e346406_47870212",
+      "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
