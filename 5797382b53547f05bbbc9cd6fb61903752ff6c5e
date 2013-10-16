@@ -16,6 +16,24 @@
       "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e396001_2028ea49",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-16T20:05:37Z",
+      "side": 1,
+      "message": "The processed headers either include \u003clinux/blah.h\u003e or \u003casm/blah.h\u003e, so the uapi path is explicitly listed here.",
+      "parentUuid": "3e346406_04521889",
+      "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
