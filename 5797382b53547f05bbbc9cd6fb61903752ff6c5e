@@ -52,6 +52,24 @@
       "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5e2f58b5_a83e9fe7",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-16T21:20:49Z",
+      "side": 1,
+      "message": "If I understand this correctly this is what Linus intended. For a given kernel header foo.h, it typically lives in 4 places:\n\n1) include/linux/foo.h\n#include \u003cuapi/linux/foo.h\u003e\n\n2) include/uapi/linux/foo.h\n#include \u003casm/foo.h\u003e\n\n3) include/asm/foo.h\n#include \u003cuapi/asm/foo.h\u003e\n\n4) include/uapi/asm/foo.h\n\nwhere 1) includes 2), 2) includes 3) and 3) includes 4).\n\nIn the new uapi world we put 2) and 4) into external/kernel-headers and then bionic. Since the actual include path inside the file doesn\u0027t contain uapi, and the regular user-space problem just includes \u003clinux/foo.h\u003e as opposed to \u003cuapi/linux/foo.h\u003e, we have to direct the -I path to levels below uapi.",
+      "parentUuid": "3e346406_e7d0d641",
+      "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
