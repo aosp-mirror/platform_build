@@ -34,6 +34,24 @@
       "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e346406_e7d0d641",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-16T21:05:40Z",
+      "side": 1,
+      "message": "but is that what we want (and what linus intended), or just us carrying over old stupidity into 64-bit?",
+      "parentUuid": "1e396001_2028ea49",
+      "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
