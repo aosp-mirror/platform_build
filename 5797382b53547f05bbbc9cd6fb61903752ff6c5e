@@ -70,6 +70,24 @@
       "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e346406_47870212",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-16T21:32:25Z",
+      "side": 1,
+      "message": "but that\u0027s what i\u0027m saying --- this seems like a bug. don\u0027t we want to keep \u0027uapi\u0027 in the path, not put any kernel header files on the default include path (which has caused a lot of problems in the old world), and #include uapi/... in the header files we write?",
+      "parentUuid": "5e2f58b5_a83e9fe7",
+      "revId": "5797382b53547f05bbbc9cd6fb61903752ff6c5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
