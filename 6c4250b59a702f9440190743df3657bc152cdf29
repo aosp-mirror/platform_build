@@ -52,6 +52,24 @@
       "revId": "6c4250b59a702f9440190743df3657bc152cdf29",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bedbf437_5d033b23",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1022430
+      },
+      "writtenOn": "2013-10-17T19:49:41Z",
+      "side": 1,
+      "message": "Sort doesn\u0027t seem like the best choice for this after a bit of testing, I apologize. The following is being used in the new patchset:\nifneq (1,$(strip $(shell expr $(MAKE_VERSION) \\\u003e\u003d 3.81)))\n\nThis seems like the best solution for future make versions as well.",
+      "parentUuid": "def0a8a0_f1e9a2ca",
+      "revId": "6c4250b59a702f9440190743df3657bc152cdf29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
