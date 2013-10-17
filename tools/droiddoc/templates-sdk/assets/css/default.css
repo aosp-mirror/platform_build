@@ -4364,7 +4364,6 @@ a.download-sdk {
 
 .jspPane {
   position: absolute;
-  overflow: hidden;
   width:100% !important; /* to avoid cut-off api names in reference in horiz scroll */
 }
 
