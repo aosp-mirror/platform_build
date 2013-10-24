@@ -15,7 +15,9 @@ endif
 $(foreach header,$(LOCAL_COPY_HEADERS), \
   $(eval _chFrom := $(LOCAL_PATH)/$(header)) \
   $(eval _chTo := \
-      $($(my_prefix)OUT_HEADERS)/$(LOCAL_COPY_HEADERS_TO)/$(notdir $(header))) \
+      $(if $(LOCAL_COPY_HEADERS_TO),\
+        $($(my_prefix)OUT_HEADERS)/$(LOCAL_COPY_HEADERS_TO)/$(notdir $(header)),\
+        $($(my_prefix)OUT_HEADERS)/$(notdir $(header)))) \
   $(eval $(call copy-one-header,$(_chFrom),$(_chTo))) \
   $(eval all_copied_headers: $(_chTo)) \
  )
