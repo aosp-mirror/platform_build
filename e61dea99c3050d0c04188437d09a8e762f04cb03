@@ -16,6 +16,24 @@
       "revId": "e61dea99c3050d0c04188437d09a8e762f04cb03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e5ec0fd_5852dd8a",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-25T16:42:33Z",
+      "side": 1,
+      "message": "No the existing make files all have the proper flags. I removed it when playing with Linaro toolchain to use glibc but forgot to add it back.",
+      "parentUuid": "fe62ccbe_579c6c63",
+      "revId": "e61dea99c3050d0c04188437d09a8e762f04cb03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
