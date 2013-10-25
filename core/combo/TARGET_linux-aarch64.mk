@@ -135,7 +135,7 @@ ifneq ($(CUSTOM_KERNEL_HEADERS),)
     KERNEL_HEADERS_ARCH   := $(CUSTOM_KERNEL_HEADERS)
 else
     KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
-    KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/arch-$(TARGET_ARCH)
+    KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
 endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
@@ -211,7 +211,7 @@ $(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
 endef
 
 define transform-o-to-static-executable-inner
-$(hide) $(PRIVATE_CXX) -Bstatic \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bstatic \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_STATIC_O)) \
