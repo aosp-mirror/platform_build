@@ -860,7 +860,20 @@ scroll top left;
   .framed-nexus4-port-216 img {
     width: 216px;
     height: 360px; }
+    
+.framed-nexus5-port-span-5 {
+  background: transparent url(../images/styles/device_nexus5_blank_port_span5.png) no-repeat
+  scroll top left;
+  padding: 52px 33px 69px 31px;
+  overflow: hidden;
+}
 
+.framed-nexus5-port-span-5,
+.framed-nexus5-port-span-5 video,
+.framed-nexus5-port-span-5 img {
+  width: 216px;
+  height: 384px;
+}
 
 /* landing page disclosures */
 .landing-page-link {
