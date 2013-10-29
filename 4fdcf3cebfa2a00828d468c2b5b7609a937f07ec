@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5e49184c_8f0ecaf3",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-29T19:26:34Z",
+      "side": 1,
+      "message": "In build/core/config.h it defines ANDROID:\n\nCOMMON_GLOBAL_CFLAGS:\u003d -DANDROID -fmessage-length\u003d0 -W -Wall -Wno-unused -Winit-self -Wpointer-arith\n\nDo you need to use __ANDROID__ instead of ANDROID? (yes it looks like a mess and we need to revisit this to unify them)",
+      "parentUuid": "7ec09cbf_b783105d",
+      "revId": "4fdcf3cebfa2a00828d468c2b5b7609a937f07ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e5ec0fd_1eeafb22",
         "filename": "core/combo/TARGET_linux-aarch64.mk",
         "patchSetId": 3
