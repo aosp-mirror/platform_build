@@ -34,6 +34,23 @@
       "revId": "4fdcf3cebfa2a00828d468c2b5b7609a937f07ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e5ec0fd_1eeafb22",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2013-10-29T19:09:22Z",
+      "side": 1,
+      "message": "Did you rebase your tree? This should already be defined after this:\n\ncommit 71c36eb4513f2b02eb0d26e199a2303b43f82382\nAuthor: Ben Cheng \u003cbccheng@google.com\u003e\nDate:   Mon Oct 28 10:27:58 2013 -0700\n\n    Add the search path for libgcc.a and crt*.o.\n    \n    Change-Id: I727f5630f7667b98770d779d43be6a7901471c55",
+      "revId": "4fdcf3cebfa2a00828d468c2b5b7609a937f07ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
