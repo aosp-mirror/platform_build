@@ -241,7 +241,7 @@ false; // navigate across topic boundaries only in design docs
     var training = $(".next-class-link").length; // decides whether to provide "next class" link
     var isCrossingBoundary = false;
 
-    if ($selListItem.hasClass('nav-section')) {
+    if ($selListItem.hasClass('nav-section') && $selListItem.children('div.empty').length == 0) {
       // we're on an index page, jump to the first topic
       $nextLink = $selListItem.find('ul:eq(0)').find('a:eq(0)');
 
@@ -262,12 +262,17 @@ false; // navigate across topic boundaries only in design docs
     } else {
       // jump to the next topic in this section (if it exists)
       $nextLink = $selListItem.next('li').find('a:eq(0)');
-      if (!$nextLink.length) {
+      if ($nextLink.length == 0) {
         isCrossingBoundary = true;
         // no more topics in this section, jump to the first topic in the next section
         $nextLink = $selListItem.parents('li:eq(0)').next('li.nav-section').find('a:eq(0)');
         if (!$nextLink.length) {  // Go up another layer to look for next page (lesson > class > course)
           $nextLink = $selListItem.parents('li:eq(1)').next('li.nav-section').find('a:eq(0)');
+          if ($nextLink.length == 0) {
+            // if that doesn't work, we're at the end of the list, so disable NEXT link
+            $('.next-page-link').attr('href','').addClass("disabled")
+                                .click(function() { return false; });
+          }
         }
       }
     }
@@ -285,10 +290,11 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link').attr('href','')
                           .removeClass("hide").addClass("disabled")
                           .click(function() { return false; });
-
-      $('.next-class-link').attr('href',$nextLink.attr('href'))
-                          .removeClass("hide").append($nextLink.html());
-      $('.next-class-link').find('.new').empty();
+      if ($nextLink.length) {
+        $('.next-class-link').attr('href',$nextLink.attr('href'))
+                             .removeClass("hide").append($nextLink.html());
+        $('.next-class-link').find('.new').empty();
+      }
     } else {
       $('.next-page-link').attr('href', $nextLink.attr('href')).removeClass("hide");
     }
