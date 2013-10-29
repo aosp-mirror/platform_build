@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e5ec0fd_1322f41c",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-10-29T18:48:39Z",
+      "side": 1,
+      "message": "the other architectures have a comment saying \"This flag is probably redundant. The macro should be defined by our toolchain binaries automatically (as a compiler built-in).\"\n\nwe should either make that so for 64-bit or remove the comments in the other files.",
+      "revId": "4fdcf3cebfa2a00828d468c2b5b7609a937f07ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
