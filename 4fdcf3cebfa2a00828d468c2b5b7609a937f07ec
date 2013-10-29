@@ -16,6 +16,24 @@
       "revId": "4fdcf3cebfa2a00828d468c2b5b7609a937f07ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ec09cbf_b783105d",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1030338
+      },
+      "writtenOn": "2013-10-29T18:57:37Z",
+      "side": 1,
+      "message": "The AArch64 Android toolchain does not define this flag yet. For the other architectures this flag is redundant.",
+      "parentUuid": "1e5ec0fd_1322f41c",
+      "revId": "4fdcf3cebfa2a00828d468c2b5b7609a937f07ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
