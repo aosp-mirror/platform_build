@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ec09cbf_f2a756b1",
+        "filename": "core/combo/TARGET_linux-aarch64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1030338
+      },
+      "writtenOn": "2013-10-30T16:20:22Z",
+      "side": 1,
+      "message": "We believe that these have been fixed in a newer version of the linker. There are new features for AArch64 in newer versions of the linker, we will need to move to binutils 2.24 when it is released.",
+      "revId": "74a8faf23381eabffd4dc9b5c37caa8d2213756b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
