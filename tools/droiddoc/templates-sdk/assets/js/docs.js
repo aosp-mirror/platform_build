@@ -2802,6 +2802,12 @@ function init_default_samples_navtree(toroot) {
   $.getScript(toRoot + 'samples_navtree_data.js', function(data, textStatus, jqxhr) {
       // when the file is loaded, initialize the tree
       if(jqxhr.status === 200) {
+          // hack to remove the "about the samples" link then put it back in
+          // after we nuke the list to remove the dummy static list of samples
+          var $firstLi = $("#nav.samples-nav > li:first-child").clone();
+          $("#nav.samples-nav").empty();
+          $("#nav.samples-nav").append($firstLi);
+
           init_google_navtree2("nav.samples-nav", SAMPLES_NAVTREE_DATA);
           highlightSidenav();
           resizeNav();
