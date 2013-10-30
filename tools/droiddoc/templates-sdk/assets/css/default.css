@@ -2507,6 +2507,9 @@ pre#codesample-block {
   background:transparent;
   border:none;
 }
+pre#codesample-block a.number {
+  display:none;
+}
 pre#codesample-block .code-line:hover {
   background:#e7e7e7;
 }
