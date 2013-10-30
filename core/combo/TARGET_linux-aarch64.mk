@@ -45,6 +45,9 @@ ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
 $(error Unknown ARM architecture version: $(TARGET_ARCH_VARIANT))
 endif
 
+# TODO: Enable Clang when aarch64 prebuilt is added
+WITHOUT_CLANG := true
+
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
@@ -101,10 +104,10 @@ TARGET_GLOBAL_CFLAGS += -fno-strict-volatile-bitfields
 #
 TARGET_GLOBAL_CFLAGS += -Wno-psabi
 
+# TODO - temporarily remove "-Wl,-z,relro -Wl,-z,now" as they cause segmentation fault on the
+# v8 foundation model.
 TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
-			-Wl,-z,relro \
-			-Wl,-z,now \
 			-Wl,--warn-shared-textrel \
 			-Wl,--fatal-warnings \
 			$(arch_variant_ldflags)
@@ -135,11 +138,13 @@ TARGET_LIBGCC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 ifneq ($(CUSTOM_KERNEL_HEADERS),)
     KERNEL_HEADERS_COMMON := $(CUSTOM_KERNEL_HEADERS)
     KERNEL_HEADERS_ARCH   := $(CUSTOM_KERNEL_HEADERS)
+    KERNEL_HEADERS_AUX    := $(CUSTOM_KERNEL_HEADERS)
 else
     KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
     KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
+    KERNEL_HEADERS_AUX    := $(libc_root)/kernel/common
 endif
-KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
+KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH) $(KERNEL_HEADERS_AUX)
 
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-aarch64/include \
