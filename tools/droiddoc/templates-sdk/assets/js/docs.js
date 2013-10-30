@@ -573,7 +573,7 @@ function initExpandableNavItems(rootTag) {
     } else {
     /* show me */
       // first hide all other siblings
-      var $others = $('li.nav-section.expanded', $(this).closest('ul'));
+      var $others = $('li.nav-section.expanded', $(this).closest('ul')).not('.sticky');
       $others.removeClass('expanded').children('ul').slideUp(250);
 
       // now expand me
@@ -2716,6 +2716,9 @@ function init_google_navtree2(navtree_id, data)
     $containerUl.append(new_google_node2(node_data));
   }
 
+  // Make all third-generation list items 'sticky' to prevent them from collapsing
+  $containerUl.find('li li li.nav-section').addClass('sticky');
+
   initExpandableNavItems("#"+navtree_id);
 }
 
@@ -2728,9 +2731,11 @@ function new_google_node2(node_data)
   var $li = $('<li>');
   var $a;
   if (node_data[NODE_HREF] != null) {
-    $a = $('<a href="' + toRoot + node_data[NODE_HREF] + '">' + linkText + '</a>');
+    $a = $('<a href="' + toRoot + node_data[NODE_HREF] + '" title="' + linkText + '" >'
+        + linkText + '</a>');
   } else {
-    $a = $('<a href="#" onclick="return false;">' + linkText + '/</a>');
+    $a = $('<a href="#" onclick="return false;" title="' + linkText + '" >'
+        + linkText + '/</a>');
   }
   var $childUl = $('<ul>');
   if (node_data[NODE_CHILDREN] != null) {
@@ -2949,7 +2954,7 @@ function selectText(element) {
         range.moveToElementText(element);
         range.select();
     } else if (window.getSelection) { //all others
-        selection = window.getSelection();        
+        selection = window.getSelection();
         range = doc.createRange();
         range.selectNodeContents(element);
         selection.removeAllRanges();
