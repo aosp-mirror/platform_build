@@ -393,6 +393,17 @@ video.with-shadow {
   #nav li ul.tree-list-children ul {
     display:block; }
 
+#nav.samples-nav li li li {
+  font-size:13px;
+}
+#nav.samples-nav li li li a {
+  padding-top:3px;
+  padding-bottom:3px;
+}
+#nav.samples-nav li li ul > li:last-child {
+  padding-bottom:3px;
+}
+
 .new,
 .new-child {
   font-size: .78em;
@@ -2138,16 +2149,15 @@ pre {
   border: solid 1px #ddd;
   background: #f7f7f7;
 }
-.str { color: #080; }
+.str { color: #800; } /* Code string */
 .kwd { color: #008; }
-.com { color: #800; }
 .typ { color: #606; }
 .lit { color: #066; }
 .pun { color: #660; }
 .pln { color: #000; }
 .tag { color: #008; }
 .atn { color: #828; }
-.atv { color: #080; }
+.atv { color: #800; } /* XML string */
 .dec { color: #606; }
 
 /* --------------------------------------------------------------------------
@@ -2483,13 +2493,12 @@ Lightbox
   background-position: -10px 0;
 }
 
-
 /* --------------------------------------------------------------------------
 Styles for samples project trees and code browsing in resources tab 
 */
 
 #codesample-wrapper {
-  width:1000px;
+  width:100000px; /* super wide to contain floats, but doesn't cause scroll */
   overflow:visible;
 }
 pre#codesample-block {
