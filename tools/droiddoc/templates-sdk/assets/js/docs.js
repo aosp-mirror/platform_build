@@ -2162,12 +2162,6 @@ google.setOnLoadCallback(function(){
 
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
-  // Handle hash changes in the samples browser
-  if ($("body").hasClass("samples") && location.href.indexOf("/samples/index.html") != -1) {
-    showSamples();
-    highlightSidenav();
-    resizeNav();
-  }
   // Exit if the hash isn't a search query or there's an error in the query
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
     // If the results pane is open, close it.
@@ -2811,6 +2805,9 @@ function init_default_samples_navtree(toroot) {
           init_google_navtree2("nav.samples-nav", SAMPLES_NAVTREE_DATA);
           highlightSidenav();
           resizeNav();
+          if ($("#jd-content #samples").length) {
+            showSamples();
+          }
       }
   });
 }
@@ -2966,4 +2963,25 @@ function selectText(element) {
         selection.removeAllRanges();
         selection.addRange(range);
     }
+}
+
+
+
+
+/** Display links and other information about samples that match the
+    group specified by the URL */
+function showSamples() {
+  var group = $("#samples").attr('class');
+  $("#samples").html("<p>Here are some samples for <b>" + group + "</b> apps:</p>");
+
+  var $ul = $("<ul>");
+  $selectedLi = $("#nav li.selected");
+
+  $selectedLi.children("ul").children("li").each(function() {
+      var $li = $("<li>").append($(this).find("a").first().clone());
+      $ul.append($li);
+  });
+
+  $("#samples").append($ul);
+
 }
