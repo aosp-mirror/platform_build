@@ -2382,7 +2382,8 @@ function toggleVisisbleApis(selectedLevel, context) {
     // Grey things out that aren't available and give a tooltip title
     if (apiLevelNum > selectedLevelNum) {
       obj.addClass("absent").attr("title","Requires API Level \""
-            + apiLevel + "\" or higher");
+            + apiLevel + "\" or higher. To reveal, change the target API level "
+              + "above the left navigation.");
     }
     else obj.removeClass("absent").removeAttr("title");
   });
