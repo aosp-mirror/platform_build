@@ -34,6 +34,24 @@
       "revId": "ae5c0ab2726ed4b9ca7b08f9b29e3393aa0a5d40",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e2c007a_65fe21e2",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2013-11-04T19:32:21Z",
+      "side": 1,
+      "message": "ah, that\u0027s okay then. thanks!",
+      "parentUuid": "1e2c007a_922279c5",
+      "revId": "ae5c0ab2726ed4b9ca7b08f9b29e3393aa0a5d40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
