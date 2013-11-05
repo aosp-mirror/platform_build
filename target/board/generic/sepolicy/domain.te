@@ -1,0 +1,2 @@
+# For /sys/qemu_trace files in the emulator.
+allow domain sysfs_writable:file rw_file_perms;
