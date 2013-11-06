@@ -52,12 +52,7 @@ LOCAL_DROIDDOC_CUSTOM_ASSET_DIR := assets
 endif
 
 
-$(full_target): PRIVATE_BOOTCLASSPATH :=
-ifeq ($(BUILD_OS),linux)
-# You have to set bootclasspath for javadoc manually on linux since Java 6.
-host_jdk_rt_jar := $(dir $(HOST_JDK_TOOLS_JAR))../jre/lib/rt.jar
-$(full_target): PRIVATE_BOOTCLASSPATH := $(host_jdk_rt_jar)
-endif
+$(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, core)
 
 ifneq ($(LOCAL_IS_HOST_MODULE),true)
 
@@ -200,6 +195,7 @@ $(full_target): $(full_src_files) $(full_java_lib_deps)
                 -J-Xmx1024m \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
+                $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
                 -d $(PRIVATE_OUT_DIR) \
                 -quiet \
