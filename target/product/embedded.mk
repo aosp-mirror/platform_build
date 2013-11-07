@@ -62,9 +62,11 @@ PRODUCT_PACKAGES += \
     lmkd \
     logcat \
     logwrapper \
+    mkshrc \
     reboot \
     service \
     servicemanager \
+    sh \
     surfaceflinger \
     toolbox
 

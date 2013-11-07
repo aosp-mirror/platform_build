@@ -645,12 +645,10 @@ tests_MODULES := $(sort \
 
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
 # and get rid of it from this list.
-# TODO: The shell is chosen by magic.  Do we still need this?
 modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(product_FILES) \
     $(foreach tag,$(tags_to_install),$($(tag)_MODULES)) \
-    $(call get-tagged-modules, shell_$(TARGET_SHELL)) \
     $(CUSTOM_MODULES) \
   )
 
