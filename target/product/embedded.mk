@@ -61,9 +61,11 @@ PRODUCT_PACKAGES += \
     linker \
     logcat \
     logwrapper \
+    mkshrc \
     reboot \
     service \
     servicemanager \
+    sh \
     surfaceflinger \
     toolbox
 
