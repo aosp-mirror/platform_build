@@ -33,6 +33,8 @@ PRODUCT_PACKAGES += \
     bu \
     com.android.location.provider \
     com.android.location.provider.xml \
+    com.android.media.remotedisplay \
+    com.android.media.remotedisplay.xml \
     drmserver \
     framework-res \
     installd \
