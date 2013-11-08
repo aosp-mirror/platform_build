@@ -184,6 +184,11 @@ class EdifyGenerator(object):
     cmd = "delete(" + ",\0".join(['"%s"' % (i,) for i in file_list]) + ");"
     self.script.append(self._WordWrap(cmd))
 
+  def RenameFile(self, srcfile, tgtfile):
+    """Moves a file from one location to another."""
+    if self.info.get("update_rename_support", False):
+      self.script.append('rename("%s", "%s");' % (srcfile, tgtfile))
+
   def ApplyPatch(self, srcfile, tgtfile, tgtsize, tgtsha1, *patchpairs):
     """Apply binary patches (in *patchpairs) to the given srcfile to
     produce tgtfile (which may be "-" to indicate overwriting the
