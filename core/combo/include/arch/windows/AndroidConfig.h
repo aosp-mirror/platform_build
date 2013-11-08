@@ -15,7 +15,7 @@
  */
 
 /*
- * Android config -- "CYGWIN_NT-5.1".  
+ * Android config -- "CYGWIN_NT-5.1".
  *
  * Cygwin has pthreads, but GDB seems to get confused if you use it to
  * create threads.  By "confused", I mean it freezes up the first time the
@@ -36,6 +36,24 @@
  * Any C++ stuff must be wrapped with "#ifdef __cplusplus".  Do not use "//"
  * comments.
  */
+
+/* MingW doesn't define __BEGIN_DECLS / __END_DECLS. */
+
+#ifndef __BEGIN_DECLS
+#  ifdef __cplusplus
+#    define __BEGIN_DECLS extern "C" {
+#  else
+#    define __BEGIN_DECLS
+#  endif
+#endif
+
+#ifndef __END_DECLS
+#  ifdef __cplusplus
+#    define __END_DECLS }
+#  else
+#    define __END_DECLS
+#  endif
+#endif
 
 /*
  * Threading model.  Choose one:
