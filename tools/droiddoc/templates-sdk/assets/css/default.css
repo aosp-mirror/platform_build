@@ -1167,6 +1167,9 @@ li dl {
   margin-top:5px;
   margin-bottom:5px;
 }
+dl dd dl:first-child {
+  margin-top:0;
+}
 pre strong, pre b, a strong, a b, a code {
     color: inherit;
 }
@@ -2868,7 +2871,9 @@ div.design-announce p {
 }
 
 /* notice box for cross links between Design/Develop docs */
+a.notice-developers-video,
 a.notice-developers,
+a.notice-designers-video,
 a.notice-designers {
   float:right;
   clear:right;
@@ -2877,11 +2882,15 @@ a.notice-designers {
   margin:0 0 20px 20px;
   border:1px solid #ddd;
 }
+a.notice-developers-video.wide,
 a.notice-developers.wide,
+a.notice-designers-video.wide,
 a.notice-designers.wide {
   width:278px;
 }
+a.notice-developers-video div,
 a.notice-developers div,
+a.notice-designers-video div,
 a.notice-designers div {
   min-height:40px;
   background:url('../images/styles/notice-developers@2x.png') no-repeat 10px 10px;
@@ -2892,11 +2901,23 @@ a.notice-designers div {
   background:url('../images/styles/notice-designers@2x.png') no-repeat 10px 10px;
   background-size:40px 40px;
 }
+a.notice-designers-video div {
+  background:url('../images/styles/notice-designers-video@2x.png') no-repeat 10px 10px;
+  background-size:40px 40px;
+}
+a.notice-developers-video div {
+  background:url('../images/styles/notice-developers-video@2x.png') no-repeat 10px 10px;
+  background-size:40px 40px;
+}
+a.notice-developers-video:hover,
 a.notice-developers:hover,
+a.notice-designers-video:hover,
 a.notice-designers:hover {
   background:#eee;
 }
+a.notice-developers-video h3,
 a.notice-developers h3,
+a.notice-designers-video h3,
 a.notice-designers h3 {
   font-size:14px;
   font-weight:normal;
@@ -2904,12 +2925,16 @@ a.notice-designers h3 {
   color:#000 !important;
   margin:0;
 }
+a.notice-developers-video p,
 a.notice-developers p,
+a.notice-designers-video p,
 a.notice-designers p {
   margin:0;
   line-height:16px;
 }
+a.notice-developers-video.left,
 a.notice-developers.left,
+a.notice-designers-video.left,
 a.notice-designers.left {
   margin-left:0;
   float:left;
