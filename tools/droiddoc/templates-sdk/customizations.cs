@@ -214,7 +214,8 @@ def:default_left_nav() ?>
 <a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
       <div id="api-nav-header">
         <div id="api-level-toggle">
-          <label for="apiLevelCheckbox" class="disabled">API level: </label>
+          <label for="apiLevelCheckbox" class="disabled"
+            title="Select your target API level to dim unavailable APIs">API level: </label>
           <div class="select-wrapper">
             <select id="apiLevelSelector">
               <!-- option elements added by buildApiLevelSelector() -->
@@ -239,7 +240,7 @@ def:default_left_nav() ?>
             <div id="packages-nav" class="scroll-pane">
 
               <ul>
-              	<?cs call:package_link_list(docs.packages) ?>
+                <?cs call:package_link_list(docs.packages) ?>
               </ul><br/>
 
             </div> <!-- end packages-nav -->
