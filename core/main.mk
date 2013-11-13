@@ -140,19 +140,22 @@ $(warning ************************************************************)
 $(error Directory names containing spaces not supported)
 endif
 
+java_version_str := $(shell java -version 2>&1)
+javac_version_str := $(shell javac -version 2>&1)
+
 # Check for the current jdk
 ifneq ($(EXPERIMENTAL_USE_JAVA7_OPENJDK),)
 # The user asked for java7 openjdk, so check that the host
 # java version is really openjdk
-ifeq ($(shell java -version 2>&1 | grep -i openjdk),)
+ifeq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
 $(info ************************************************************)
 $(info You asked for an OpenJDK 7 build but your version is)
-$(info $(shell java -version 2>&1 | head -n 2).)
+$(info $(java_version_str).)
 $(info ************************************************************)
 $(error stop)
 endif # java version is not OpenJdk
 else # if EXPERIMENTAL_USE_JAVA7_OPENJDK
-ifneq ($(shell java -version 2>&1 | grep -i openjdk),)
+ifneq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
 $(info ************************************************************)
 $(info You are attempting to build with an unsupported JDK.)
 $(info $(space))
@@ -169,13 +172,13 @@ endif # if EXPERIMENTAL_USE_JAVA7_OPENJDK
 ifneq ($(EXPERIMENTAL_USE_JAVA7_OPENJDK),)
 required_version := "OpenJDK 1.7"
 required_javac_version := "1.7"
-java_version := $(shell java -version 2>&1 | head -n 1 | grep '^java .*[ "]1\.7[\. "$$]')
-javac_version := $(shell javac -version 2>&1 | head -n 1 | grep '[ "]1\.7[\. "$$]')
+java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.7[\. "$$]')
+javac_version := $(shell echo '$(javac_version_str)' | grep '[ "]1\.7[\. "$$]')
 else # if EXPERIMENTAL_USE_JAVA7_OPENJDK
 required_version := "JavaSE 1.6"
 required_javac_version := "1.6"
-java_version := $(shell java -version 2>&1 | head -n 1 | grep '^java .*[ "]1\.6[\. "$$]')
-javac_version := $(shell javac -version 2>&1 | head -n 1 | grep '[ "]1\.6[\. "$$]')
+java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.6[\. "$$]')
+javac_version := $(shell echo '$(javac_version_str)' | head -n 1 | grep '[ "]1\.6[\. "$$]')
 endif # if EXPERIMENTAL_USE_JAVA7_OPENJDK
 
 ifeq ($(strip $(java_version)),)
@@ -183,7 +186,7 @@ $(info ************************************************************)
 $(info You are attempting to build with the incorrect version)
 $(info of java.)
 $(info $(space))
-$(info Your version is: $(shell java -version 2>&1 | head -n 1).)
+$(info Your version is: $(java_version_str).)
 $(info The required version is: $(required_version))
 $(info $(space))
 $(info Please follow the machine setup instructions at)
@@ -198,7 +201,7 @@ $(info ************************************************************)
 $(info You are attempting to build with the incorrect version)
 $(info of javac.)
 $(info $(space))
-$(info Your version is: $(shell javac -version 2>&1 | head -n 1).)
+$(info Your version is: $(javac_version_str).)
 $(info The required version is: $(required_javac_version))
 $(info $(space))
 $(info Please follow the machine setup instructions at)
@@ -206,6 +209,7 @@ $(info $(space)$(space)$(space)$(space)https://source.android.com/source/downloa
 $(info ************************************************************)
 $(error stop)
 endif
+
 
 ifndef BUILD_EMULATOR
 ifeq (darwin,$(HOST_OS))
