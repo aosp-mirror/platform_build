@@ -135,28 +135,13 @@ class CertDB(object):
 
     for i in to_load:
       f = open(i)
-      cert = ParseCertificate(f.read())
+      cert = common.ParseCertificate(f.read())
       f.close()
       name, _ = os.path.splitext(i)
       name, _ = os.path.splitext(name)
       self.Add(cert, name)
 
 ALL_CERTS = CertDB()
-
-
-def ParseCertificate(data):
-  """Parse a PEM-format certificate."""
-  cert = []
-  save = False
-  for line in data.split("\n"):
-    if "--END CERTIFICATE--" in line:
-      break
-    if save:
-      cert.append(line)
-    if "--BEGIN CERTIFICATE--" in line:
-      save = True
-  cert = "".join(cert).decode('base64')
-  return cert
 
 
 def CertFromPKCS7(data, filename):
@@ -175,7 +160,7 @@ def CertFromPKCS7(data, filename):
       AddProblem("error reading cert:\n" + err)
       return None
 
-    cert = ParseCertificate(out)
+    cert = common.ParseCertificate(out)
     if not cert:
       AddProblem("error parsing cert output")
       return None

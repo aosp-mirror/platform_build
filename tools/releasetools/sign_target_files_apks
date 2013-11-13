@@ -71,8 +71,10 @@ if sys.hexversion < 0x02040000:
   print >> sys.stderr, "Python 2.4 or newer is required."
   sys.exit(1)
 
+import base64
 import cStringIO
 import copy
+import errno
 import os
 import re
 import subprocess
@@ -161,9 +163,43 @@ def SignApks(input_tf_zip, output_tf_zip, apk_key_map, key_passwords):
       print "rewriting %s:" % (info.filename,)
       new_data = RewriteProps(data)
       output_tf_zip.writestr(out_info, new_data)
+    elif info.filename.endswith("mac_permissions.xml"):
+      print "rewriting %s with new keys." % (info.filename,)
+      new_data = ReplaceCerts(data)
+      output_tf_zip.writestr(out_info, new_data)
     else:
       # a non-APK file; copy it verbatim
       output_tf_zip.writestr(out_info, data)
+
+
+def ReplaceCerts(data):
+  """Given a string of data, replace all occurences of a set
+  of X509 certs with a newer set of X509 certs and return
+  the updated data string."""
+  for old, new in OPTIONS.key_map.iteritems():
+    try:
+      if OPTIONS.verbose:
+        print "    Replacing %s.x509.pem with %s.x509.pem" % (old, new)
+      f = open(old + ".x509.pem")
+      old_cert16 = base64.b16encode(common.ParseCertificate(f.read())).lower()
+      f.close()
+      f = open(new + ".x509.pem")
+      new_cert16 = base64.b16encode(common.ParseCertificate(f.read())).lower()
+      f.close()
+      # Only match entire certs.
+      pattern = "\\b"+old_cert16+"\\b"
+      (data, num) = re.subn(pattern, new_cert16, data, flags=re.IGNORECASE)
+      if OPTIONS.verbose:
+        print "    Replaced %d occurence(s) of %s.x509.pem with " \
+            "%s.x509.pem" % (num, old, new)
+    except IOError, e:
+      if (e.errno == errno.ENOENT and not OPTIONS.verbose):
+        continue
+
+      print "    Error accessing %s. %s. Skip replacing %s.x509.pem " \
+          "with %s.x509.pem." % (e.filename, e.strerror, old, new)
+
+  return data
 
 
 def EditTags(tags):
