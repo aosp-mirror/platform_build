@@ -71,6 +71,7 @@ ifeq ($(TARGET_ARCH),x86)
   RS_TRIPLE := i686-unknown-linux
   CLANG_CONFIG_EXTRA_ASFLAGS += \
     -target i686-linux-android \
+    -msse3 \
     -nostdlibinc \
     -B$(TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
   CLANG_CONFIG_EXTRA_CFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
