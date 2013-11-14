@@ -48,7 +48,7 @@ else
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-5831155-1']);
+  _gaq.push(['_setAccount', 'UA-45455297-1']);
   _gaq.push(['_trackPageview']);
 
   (function() {
