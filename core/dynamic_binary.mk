@@ -12,16 +12,6 @@ ifdef LOCAL_IS_HOST_MODULE
 $(error This file should not be used to build host binaries.  Included by (or near) $(lastword $(filter-out config/%,$(MAKEFILE_LIST))))
 endif
 
-LOCAL_UNSTRIPPED_PATH := $(strip $(LOCAL_UNSTRIPPED_PATH))
-ifeq ($(LOCAL_UNSTRIPPED_PATH),)
-  ifeq ($(LOCAL_MODULE_PATH),)
-    LOCAL_UNSTRIPPED_PATH := $(TARGET_OUT_$(LOCAL_MODULE_CLASS)_UNSTRIPPED)
-  else
-    # We have to figure out the corresponding unstripped path if LOCAL_MODULE_PATH is customized.
-    LOCAL_UNSTRIPPED_PATH := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_MODULE_PATH))
-  endif
-endif
-
 # The name of the target file, without any path prepended.
 # TODO: This duplicates logic from base_rules.mk because we need to
 #       know its results before base_rules.mk is included.
@@ -94,6 +84,9 @@ endif
 ###########################################################
 ## Store a copy with symbols for symbolic debugging
 ###########################################################
+ifeq ($(LOCAL_UNSTRIPPED_PATH),)
+LOCAL_UNSTRIPPED_PATH := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_MODULE_PATH))
+endif
 symbolic_input := $(compress_output)
 symbolic_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_INSTALLED_MODULE_STEM)
 $(symbolic_output) : $(symbolic_input) | $(ACP)
