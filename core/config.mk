@@ -77,6 +77,7 @@ BUILD_HOST_JAVA_LIBRARY:= $(BUILD_SYSTEM)/host_java_library.mk
 BUILD_DROIDDOC:= $(BUILD_SYSTEM)/droiddoc.mk
 BUILD_COPY_HEADERS := $(BUILD_SYSTEM)/copy_headers.mk
 BUILD_NATIVE_TEST := $(BUILD_SYSTEM)/native_test.mk
+BUILD_NATIVE_BENCHMARK := $(BUILD_SYSTEM)/native_benchmark.mk
 BUILD_HOST_NATIVE_TEST := $(BUILD_SYSTEM)/host_native_test.mk
 BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
 
