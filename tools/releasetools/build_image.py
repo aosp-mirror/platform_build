@@ -256,7 +256,7 @@ def BuildImage(in_dir, prop_dict, out_file):
       return False
 
   if run_fsck and prop_dict.get("skip_fsck") != "true":
-    success, unsparse_image_path = UnsparseImage(out_file)
+    success, unsparse_image = UnsparseImage(out_file)
     if not success:
       return False
 
