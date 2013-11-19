@@ -50,6 +50,7 @@ else
 /if ?>
 <script type="text/javascript">
   var toRoot = "<?cs var:toroot ?>";
+  var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
