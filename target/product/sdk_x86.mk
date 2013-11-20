@@ -19,7 +19,7 @@
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-include $(SRC_TARGET_DIR)/product/sdk.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk.mk)
 
 # Overrides
 PRODUCT_BRAND := generic_x86

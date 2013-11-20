@@ -17,51 +17,35 @@
 PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
-	Calculator \
-	DeskClock \
-	Email \
-	Exchange2 \
-	FusedLocation \
-	Gallery \
-	Keyguard \
-	Music \
-	Mms \
-	OpenWnn \
-	PrintSpooler \
-	libWnnEngDic \
-	libWnnJpnDic \
-	libwnndict \
-	TeleService \
-	PinyinIME \
-	Protips \
-	SoftKeyboard \
-	SystemUI \
-	Launcher2 \
+	ApiDemos \
+	ConnectivityTest \
+	CubeLiveWallpapers \
+	CustomLocale \
 	Development \
 	DevelopmentSettings \
 	Fallback \
-	Settings \
-	SdkSetup \
-	CustomLocale \
-	sqlite3 \
-	InputDevices \
-	LatinIME \
-	CertInstaller \
-	LiveWallpapersPicker \
-	ApiDemos \
+	Gallery \
 	GestureBuilder \
-	CubeLiveWallpapers \
-	QuickSearchBox \
-	WidgetPreview \
-	librs_jni \
-	ConnectivityTest \
 	GpsLocationTest \
-	CalendarProvider \
-	Calendar \
+	LegacyCamera \
+	librs_jni \
+	libwnndict \
+	libWnnEngDic \
+	libWnnJpnDic \
+	LiveWallpapersPicker \
+	Mms \
+	Music \
+	OpenWnn \
+	PinyinIME \
+	Protips \
+	rild \
+	SdkSetup \
 	SmokeTest \
 	SmokeTestApp \
-	rild \
-	LegacyCamera
+	SoftKeyboard \
+	sqlite3 \
+	SystemUI \
+	WidgetPreview
 
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk
@@ -95,14 +79,17 @@ $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
-# Overrides
-PRODUCT_BRAND := generic
-PRODUCT_NAME := sdk
-PRODUCT_DEVICE := generic
+# include available languages for TTS in the system image
+-include external/svox/pico/lang/PicoLangDeDeInSystem.mk
+-include external/svox/pico/lang/PicoLangEnGBInSystem.mk
+-include external/svox/pico/lang/PicoLangEnUsInSystem.mk
+-include external/svox/pico/lang/PicoLangEsEsInSystem.mk
+-include external/svox/pico/lang/PicoLangFrFrInSystem.mk
+-include external/svox/pico/lang/PicoLangItItInSystem.mk
 
 # locale + densities. en_US is both first and in alphabetical order to
 # ensure this is the default locale.
-PRODUCT_LOCALES = \
+PRODUCT_LOCALES := \
 	en_US \
 	ldpi \
 	hdpi \
@@ -166,10 +153,7 @@ PRODUCT_LOCALES = \
 	zh_CN \
 	zh_TW
 
-# include available languages for TTS in the system image
--include external/svox/pico/lang/PicoLangDeDeInSystem.mk
--include external/svox/pico/lang/PicoLangEnGBInSystem.mk
--include external/svox/pico/lang/PicoLangEnUsInSystem.mk
--include external/svox/pico/lang/PicoLangEsEsInSystem.mk
--include external/svox/pico/lang/PicoLangFrFrInSystem.mk
--include external/svox/pico/lang/PicoLangItItInSystem.mk
+# Overrides
+PRODUCT_BRAND := generic
+PRODUCT_NAME := sdk
+PRODUCT_DEVICE := generic
