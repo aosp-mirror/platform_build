@@ -491,6 +491,7 @@ var:sdk.linux_download
       $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow');
       $("#next-steps").fadeIn('slow');
       $("h1#tos-header").text('Get Ready to Code!');
+      _gaq.push(['_trackEvent', 'SDK', 'ADT and Tools', $("#downloadForRealz").html()]);
       return true;
     } else {
       $("label#agreeLabel,#bitpicker input").parent().stop().animate({color: "#258AAF"}, 200,
