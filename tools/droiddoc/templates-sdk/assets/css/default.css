@@ -2497,7 +2497,7 @@ Lightbox
 }
 
 /* --------------------------------------------------------------------------
-Styles for samples project trees and code browsing in resources tab 
+Styles for samples browser
 */
 
 #codesample-wrapper {
@@ -2543,6 +2543,30 @@ pre#codesample-block span.code-line {
   display:inline-block;
 }
 
+/*
+Styles for displaying image or video resources in samples browser.
+Resources are marked as no-display if they exceed the size limit.
+*/
+div#codesample-resource img, div#codesample-resource video {
+  border: 1px solid #ececec;
+}
+
+div#codesample-resource.noDisplay div {
+  border: 1px solid #ececec;
+  width:120px;
+  margin-bottom:4px;
+  padding:20px;
+}
+
+div#codesample-resource .noDisplay-message:after {
+  font-style:italic;
+  font-size:12px;
+  content: 'This resource is not available for browsing. To view it, please download the project.';
+}
+
+/*
+Styles for project structure (treeview) page
+*/
 .structure-dir {
 background-image:url(../../assets/images/folder.png);
 background-repeat:no-repeat;

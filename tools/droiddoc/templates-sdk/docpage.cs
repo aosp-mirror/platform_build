@@ -74,11 +74,20 @@
     <?cs /if ?><?cs # end if training ?>
   </div>
   <?cs /if ?>
+<?cs elif:samplesProjectIndex ?>
+  <div id="api-info-block">
+  <div class="sum-details-links">
+  Overview
+  &#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
+  &#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
+  </div><!-- end sum-details-links -->
+  </div><!-- end breadcurmb block -->
+  <h1 itemprop="name"><?cs var:projectDir ?></h1>
 <?cs else ?>
   <?cs if:(!fullpage && !header.hide) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
-        <?cs if:page.landing.image ?><?cs # use two-column layout only if there's an image ?>
+        <?cs if:page.landing.image ?><?cs # use two-column layout only if there is an image ?>
         <div class="col-6">
           <img src="<?cs var:toroot ?><?cs var:page.landing.image ?>" alt="" />
         </div>
