@@ -17,8 +17,6 @@
 # This is a generic phone product that isn't specialized for a specific device.
 # It includes the base Android platform.
 
-PRODUCT_POLICY := android.policy_phone
-
 PRODUCT_PACKAGES := \
     DeskClock \
     Bluetooth \

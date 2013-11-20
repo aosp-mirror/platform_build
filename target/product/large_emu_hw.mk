@@ -17,8 +17,6 @@
 # This is a generic product for devices with large display but not specialized
 # for a specific device. It includes the base Android platform.
 
-PRODUCT_POLICY := android.policy_mid
-
 PRODUCT_PACKAGES := \
     CarHome \
     DeskClock \
