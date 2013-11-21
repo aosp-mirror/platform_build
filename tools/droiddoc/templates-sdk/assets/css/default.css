@@ -2263,10 +2263,14 @@ a:visited,
 
 
 /* nav tree */
-#side-nav, #devdoc-nav, #swapper,
+#side-nav, #swapper,
 #nav-tree, #tree-list {
   overflow:hidden;
   margin-left:0;
+}
+
+#devdoc-nav {
+  overflow:visible !important; /* To keep the "to top" button visible */
 }
 
 #nav-tree ul {
