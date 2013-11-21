@@ -81,11 +81,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 MINIMAL_FONT_FOOTPRINT := true
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 
 # Overrides
 PRODUCT_BRAND := tiny
 PRODUCT_DEVICE := tiny
 PRODUCT_NAME := core_tiny
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)

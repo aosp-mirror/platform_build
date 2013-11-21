@@ -18,30 +18,14 @@
 # It includes the base Android platform.
 
 PRODUCT_PACKAGES := \
-    DeskClock \
     Bluetooth \
-    Calculator \
-    Calendar \
     Camera2 \
-    CertInstaller \
-    Email \
-    Exchange2 \
-    FusedLocation \
     Gallery2 \
-    InputDevices \
-    Keyguard \
-    LatinIME \
-    Launcher2 \
     Music \
     MusicFX \
     OneTimeInitializer \
-    PrintSpooler \
     Provision \
-    QuickSearchBox \
-    Settings \
     SystemUI \
-    TeleService \
-    CalendarProvider \
     bluetooth-health \
     hostapd \
     wpa_supplicant.conf \
