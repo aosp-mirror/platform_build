@@ -1897,6 +1897,10 @@ EndColorStr='#ececec');
   font-size:inherit;
 }
 
+.sidebox > *:last-child {
+  margin-bottom:0;
+}
+
 #tb ol,
 #tb ul,
 #qv ul {
@@ -4791,25 +4795,32 @@ a.download-sdk {
 
 .landing-banner,
 .landing-docs {
-  margin:20px 0 0;
+  margin:20px 0;
 }
-.landing-banner div:first-child,
-.landing-docs div:first-child,
-.landing-docs .col-12 {
+.landing-banner > div:first-child,
+.landing-docs > div:first-child,
+.landing-docs > .col-12 {
   margin-left:0;
   min-height:280px;
 }
-.landing-banner div:last-child,
-.landing-docs div:last-child,
-.landing-docs .col-12 {
+.landing-banner.short > div {
+  min-height:50px;
+}
+.landing-banner > div:last-child,
+.landing-docs > div:last-child,
+.landing-docs > .col-12 {
   margin-right:0;
 }
 
+.landing-banner > div > *:last-child {
+  margin-bottom:0;
+}
 .landing-banner h1 {
   margin-top:0;
 }
-.landing-docs {
-  clear:left;
+.landing-docs,
+.landing-banner {
+  clear:both;
   overflow:hidden;
 }
 .landing-docs h3 {
@@ -4835,6 +4846,32 @@ a.download-sdk {
 
 .plusone {
   float:right;
+}
+
+
+
+.next-docs {
+  border-top:1px solid #ccc;
+  margin:40px 0 0;
+  padding:5px 0 0;
+  clear:left;
+  overflow:hidden;
+}
+.next-docs div:first-child {
+  margin-left:0;
+}
+.next-docs div:last-child {
+  margin-right:0;
+}
+
+.next-docs h2 {
+  font-size:14px;
+  line-height:21px;
+  color:#555;
+  text-transform:uppercase;
+  border-bottom:none;
+  margin:0;
+  padding:5px 0 0;
 }
 
 
