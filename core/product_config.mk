@@ -306,8 +306,10 @@ PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCT_AAPT_PREF_CONFIG))
 # Everyone gets nodpi assets which are density-independent.
 PRODUCT_AAPT_CONFIG += nodpi
 
+# Keep a copy of the space-separated config
+PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
+
 # Convert spaces to commas.
-comma := ,
 PRODUCT_AAPT_CONFIG := \
     $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
 PRODUCT_AAPT_PREF_CONFIG := \
