@@ -147,7 +147,7 @@ endef
 # $(1): directory to search under
 # Ignores $(1)/Android.mk
 define first-makefiles-under
-$(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git \
+$(shell build/tools/findleaves.py --prune=$(OUT_DIR) --prune=.repo --prune=.git \
         --mindepth=2 $(1) Android.mk)
 endef
 
@@ -1511,6 +1511,10 @@ $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DI
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
     $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
     | xargs rm -rf)
+$(if $(PRIVATE_JAR_PACKAGES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -mindepth 1 -type d \
+    $(foreach pkg, $(PRIVATE_JAR_PACKAGES), \
+        -not -path $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))) \
+    | xargs rm -rf)
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
 endef
@@ -1557,6 +1561,10 @@ $(hide) rm -f $@
 $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
     $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
+    | xargs rm -rf)
+$(if $(PRIVATE_JAR_PACKAGES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -mindepth 1 -type d \
+    $(foreach pkg, $(PRIVATE_JAR_PACKAGES), \
+        -not -path $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))) \
     | xargs rm -rf)
 $(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
     $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
@@ -1716,35 +1724,6 @@ $(if $(PRIVATE_EXTRA_JAR_ARGS), $(call add-java-resources-to-package))
 endef
 
 ###########################################################
-## Obfuscate a jar file
-###########################################################
-
-# PRIVATE_KEEP_FILE is a file containing a list of classes
-# PRIVATE_INTERMEDIATES_DIR is a directory we can use for temporary files
-# The module using this must depend on
-#        $(HOST_OUT_JAVA_LIBRARIES)/proguard-4.0.1.jar
-define obfuscate-jar
-@echo "Obfuscate jar: $(notdir $@) ($@)"
-@mkdir -p $(dir $@)
-@rm -f $@
-@mkdir -p $(PRIVATE_INTERMEDIATES_DIR)
-$(hide) sed -e 's/^/-keep class /' < $(PRIVATE_KEEP_FILE) > \
-		$(PRIVATE_INTERMEDIATES_DIR)/keep.pro
-$(hide) java -Xmx512M -jar $(HOST_OUT_JAVA_LIBRARIES)/proguard-4.0.1.jar \
-		-injars $< \
-		-outjars $@ \
-		-target 1.5 \
-		-dontnote -dontwarn \
-		-printmapping $(PRIVATE_INTERMEDIATES_DIR)/out.map \
-		-forceprocessing \
-		-renamesourcefileattribute SourceFile \
-		-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod \
-		-repackageclasses \
-		-keepclassmembers "class * { public protected *; }" \
-		@$(PRIVATE_INTERMEDIATES_DIR)/keep.pro
-endef
-
-###########################################################
 ## Commands for copying files
 ###########################################################
 
@@ -1887,33 +1866,10 @@ endif
 ###########################################################
 ## Commands to call Proguard
 ###########################################################
-
-# Command to copy the file with acp, if proguard is disabled.
-define proguard-disabled-commands
-@echo Copying: $@
-$(hide) $(ACP) -fp $< $@
-endef
-
-# Command to call Proguard
-# $(1): extra flags for instrumentation.
-define proguard-enabled-commands
-@echo Proguard: $@
-$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS) $(1)
-endef
-
-# Figure out the proguard dictionary file of the module that is instrumentationed for.
-define get-instrumentation-proguard-flags
-$(if $(PRIVATE_INSTRUMENTATION_FOR),$(if $(ALL_MODULES.$(PRIVATE_INSTRUMENTATION_FOR).PROGUARD_ENABLED),-applymapping $(call intermediates-dir-for,APPS,$(PRIVATE_INSTRUMENTATION_FOR),,COMMON)/proguard_dictionary))
-endef
-
 define transform-jar-to-proguard
-$(eval _instrumentation_proguard_flags:=$(call get-instrumentation-proguard-flags))
-$(eval _enable_proguard:=$(PRIVATE_PROGUARD_ENABLED)$(_instrumentation_proguard_flags))
-$(if $(_enable_proguard),$(call proguard-enabled-commands,$(_instrumentation_proguard_flags)),$(call proguard-disabled-commands))
-$(eval _instrumentation_proguard_flags:=)
-$(eval _enable_proguard:=)
+@echo Proguard: $@
+$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS)
 endef
-
 
 ###########################################################
 ## Stuff source generated from one-off tools

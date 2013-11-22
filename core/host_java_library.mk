@@ -23,13 +23,31 @@ LOCAL_MODULE_SUFFIX := $(COMMON_JAVA_PACKAGE_SUFFIX)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
-ifeq ($(LOCAL_BUILD_HOST_DEX),true)
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  LOCAL_JAVA_LIBRARIES := $(sort core-hostdex $(LOCAL_JAVA_LIBRARIES))
+# base_rules.mk looks at this
+all_res_assets :=
+
+proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
+ifneq ($(proto_sources),)
+ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
+    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-2.3.0-micro
+else
+  ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
+    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-2.3.0-nano
+  else
+    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-2.3.0-lite
+  endif
+endif
 endif
 
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+
+LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
+
+ifeq ($(LOCAL_BUILD_HOST_DEX),true)
+ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+  LOCAL_JAVA_LIBRARIES +=  core-hostdex
+endif
 
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
@@ -42,13 +60,15 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_jar) \
     $(built_dex)
 
-LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 # See comment in java.mk
 java_alternative_checked_module := $(full_classes_compiled_jar)
-
 endif # LOCAL_BUILD_HOST_DEX
 
+LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
+
+#######################################
 include $(BUILD_SYSTEM)/base_rules.mk
+#######################################
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 
@@ -70,13 +90,13 @@ $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
-        $(jar_manifest_file) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+        $(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(JARJAR)
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
@@ -109,6 +129,6 @@ $(LOCAL_BUILT_MODULE): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(LOCAL_BUILT_MODULE): PRIVATE_JAR_EXCLUDE_FILES :=
 $(LOCAL_BUILT_MODULE): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(LOCAL_BUILT_MODULE): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
-		$(jar_manifest_file) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+		$(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
 endif  # LOCAL_BUILD_HOST_DEX

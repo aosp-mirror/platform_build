@@ -1,5 +1,9 @@
 # Keep everything for tests
--dontshrink -dontobfuscate
+-dontshrink
+
+# But we may want to obfuscate if the main app gets obfuscated.
+# This flag has been moved to the makefiles.
+#-dontobfuscate
 
 #-keep class * extends junit.framework.TestCase {
 #  public void test*();

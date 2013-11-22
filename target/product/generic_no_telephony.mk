@@ -24,27 +24,30 @@ PRODUCT_PACKAGES := \
     Bluetooth \
     Calculator \
     Calendar \
+    Camera2 \
     CertInstaller \
-    DrmProvider \
     Email \
     Exchange2 \
     FusedLocation \
     Gallery2 \
     InputDevices \
+    Keyguard \
     LatinIME \
     Launcher2 \
     Music \
     MusicFX \
     OneTimeInitializer \
+    PrintSpooler \
     Provision \
-    Phone \
     QuickSearchBox \
     Settings \
     SystemUI \
+    TeleService \
     CalendarProvider \
     bluetooth-health \
     hostapd \
-    wpa_supplicant.conf
+    wpa_supplicant.conf \
+    WallpaperCropper
 
 PRODUCT_PACKAGES += \
     audio \

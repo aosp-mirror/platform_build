@@ -16,6 +16,9 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
+# Not much sense to check build prebuilts
+LOCAL_DONT_CHECK_MODULE := true
+
 ifdef LOCAL_PREBUILT_MODULE_FILE
 my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
 else

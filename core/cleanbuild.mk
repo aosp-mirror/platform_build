@@ -14,7 +14,7 @@
 #
 
 # Don't bother with the cleanspecs if you are running mm/mmm
-ifndef ONE_SHOT_MAKEFILE
+ifeq ($(ONE_SHOT_MAKEFILE)$(dont_bother),)
 
 INTERNAL_CLEAN_STEPS :=
 
@@ -100,7 +100,7 @@ clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
 
-endif  # ifndef ONE_SHOT_MAKEFILE
+endif  # if not ONE_SHOT_MAKEFILE dont_bother
 
 # Since products and build variants (unfortunately) share the same
 # PRODUCT_OUT staging directory, things can get out of sync if different
@@ -182,6 +182,7 @@ installclean_files := \
 	$(PRODUCT_OUT)/*.txt \
 	$(PRODUCT_OUT)/*.xlb \
 	$(PRODUCT_OUT)/*.zip \
+	$(PRODUCT_OUT)/kernel \
 	$(PRODUCT_OUT)/data \
 	$(PRODUCT_OUT)/obj/APPS \
 	$(PRODUCT_OUT)/obj/NOTICE_FILES \

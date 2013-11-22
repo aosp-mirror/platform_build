@@ -90,6 +90,15 @@ $(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLE
 endif
 endif
 
+# Add static HAL libraries
+ifdef LOCAL_HAL_STATIC_LIBRARIES
+$(foreach lib, $(LOCAL_HAL_STATIC_LIBRARIES), \
+    $(eval b_lib := $(filter $(lib).%,$(BOARD_HAL_STATIC_LIBRARIES)))\
+    $(if $(b_lib), $(eval LOCAL_STATIC_LIBRARIES += $(b_lib)),\
+                   $(eval LOCAL_STATIC_LIBRARIES += $(lib).default)))
+b_lib :=
+endif
+
 ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   LOCAL_CLANG := true
   LOCAL_CFLAGS += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
@@ -147,21 +156,17 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
 my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
-
-# filter out including of AndroidConfig.h in system/core.
-TARGET_GLOBAL_CFLAGS_NO_ANDCONF ?= $(subst $(TARGET_ANDROID_CONFIG_CFLAGS),,\
-    $(TARGET_GLOBAL_CFLAGS))
-my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS_NO_ANDCONF)
 else
 my_target_project_includes := $(TARGET_PROJECT_INCLUDES)
 my_target_c_includes := $(TARGET_C_INCLUDES)
-ifeq ($(strip $(LOCAL_CLANG)),true)
-my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
+endif # LOCAL_SDK_VERSION
+
+ifeq ($(LOCAL_CLANG),true)
 my_target_global_cflags := $(TARGET_GLOBAL_CLANG_FLAGS)
+my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
 else
 my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
 endif # LOCAL_CLANG
-endif # LOCAL_SDK_VERSION
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_includes)
@@ -627,7 +632,7 @@ endif
 
 # some rules depend on asm_objects being first.  If your code depends on
 # being first, it's reasonable to require it to be assembly
-all_objects := \
+normal_objects := \
     $(asm_objects) \
     $(cpp_objects) \
     $(gen_cpp_objects) \
@@ -638,8 +643,9 @@ all_objects := \
     $(yacc_objects) \
     $(lex_objects) \
     $(proto_generated_objects) \
-    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES)) \
-    $(gen_o_objects)
+    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
+
+all_objects := $(normal_objects) $(gen_o_objects)
 
 LOCAL_C_INCLUDES += $(TOPDIR)$(LOCAL_PATH) $(intermediates)
 
@@ -647,9 +653,12 @@ ifndef LOCAL_SDK_VERSION
   LOCAL_C_INCLUDES += $(JNI_H_INCLUDE)
 endif
 
-# .o files need to be filtered out of LOCAL_GENERATED_SOURCES
-# to avoid creating circular dependencies.
-$(all_objects) : | $(filter-out %.o,$(LOCAL_GENERATED_SOURCES)) $(import_includes)
+# all_objects includes gen_o_objects which were part of LOCAL_GENERATED_SOURCES;
+# use normal_objects here to avoid creating circular dependencies. This assumes
+# that custom build rules which generate .o files don't consume other generated
+# sources as input (or if they do they take care of that dependency themselves).
+$(normal_objects) : | $(LOCAL_GENERATED_SOURCES)
+$(all_objects) : | $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 ###########################################################

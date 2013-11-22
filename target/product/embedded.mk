@@ -26,7 +26,10 @@ PRODUCT_PACKAGES += \
     dumpsys \
     gralloc.default \
     gzip \
+    healthd \
     init \
+    init.environ.rc \
+    init.rc \
     input \
     libEGL \
     libETC1 \
@@ -59,6 +62,7 @@ PRODUCT_PACKAGES += \
     logcat \
     logwrapper \
     mkshrc \
+    reboot \
     service \
     servicemanager \
     sh \
@@ -73,6 +77,9 @@ PRODUCT_PACKAGES += \
     property_contexts \
     mac_permissions.xml
 
+
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
     system/core/rootdir/init.trace.rc:root/init.trace.rc \
+    system/core/rootdir/ueventd.rc:root/ueventd.rc \
+    system/core/rootdir/etc/hosts:system/etc/hosts

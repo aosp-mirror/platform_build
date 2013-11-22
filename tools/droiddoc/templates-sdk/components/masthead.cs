@@ -188,6 +188,10 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                         </li>
                         <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
                         </li>
+                        <?cs if:android.hasSamples ?>
+                          <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
+                          </li>
+                        <?cs /if ?>
                       </ul>
                     </li>
                     <li class="distribute last">
@@ -214,7 +218,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
   </div>
     
     
-  <?cs if:training || guide || reference || tools || develop || google ?>
+  <?cs if:training || guide || reference || tools || develop || google || samples ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap">
@@ -254,6 +258,11 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                 <li class="google"><a href="<?cs var:toroot ?>google/index.html"
                   >Google Services</a>
                 </li>
+                <?cs if:android.hasSamples ?>
+                  <li class="samples"><a href="<?cs var:toroot ?>samples/index.html"
+                    >Samples</a>
+                  </li>
+                <?cs /if ?>
             </ul>
         </div>
         

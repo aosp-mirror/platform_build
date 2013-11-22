@@ -183,12 +183,13 @@ $(document).ready(function() {
         $("#nav-x li.google a").addClass("selected");
       } else {
         $("#nav-x li.reference a").addClass("selected");
-        changeApiLevel();  // turn things grey
       }
     } else if ((rootDir == "tools") || (rootDir == "sdk")) {
       $("#nav-x li.tools a").addClass("selected");
     } else if ($("body").hasClass("google")) {
       $("#nav-x li.google a").addClass("selected");
+    } else if ($("body").hasClass("samples")) {
+      $("#nav-x li.samples a").addClass("selected");
     }
 
   // highlight Distribute tab
@@ -352,35 +353,9 @@ false; // navigate across topic boundaries only in design docs
     $('.jd-descr').append($olClasses);
   }
 
-
-
-
   // Set up expand/collapse behavior
-  $('#nav li.nav-section .nav-section-header').click(function() {
-    var section = $(this).closest('li.nav-section');
-    if (section.hasClass('expanded')) {
-    /* hide me */
-    //  if (section.hasClass('selected') || section.find('li').hasClass('selected')) {
-   //   /* but not if myself or my descendents are selected */
-   //     return;
-    //  }
-      section.children('ul').slideUp(250, function() {
-        section.closest('li').removeClass('expanded');
-        resizeNav();
-      });
-    } else {
-    /* show me */
-      // first hide all other siblings
-      var $others = $('li.nav-section.expanded', $(this).closest('ul'));
-      $others.removeClass('expanded').children('ul').slideUp(250);
+  initExpandableNavItems("#nav");
 
-      // now expand me
-      section.closest('li').addClass('expanded');
-      section.children('ul').slideDown(250, function() {
-        resizeNav();
-      });
-    }
-  });
 
   $(".scroll-pane").scroll(function(event) {
       event.preventDefault();
@@ -473,13 +448,6 @@ false; // navigate across topic boundaries only in design docs
     setNavBarLeftPos();
   }
 
-
-  // Stop expand/collapse behavior when clicking on nav section links (since we're navigating away
-  // from the page)
-  $('.nav-section-header').find('a:eq(0)').click(function(evt) {
-    window.location.href = $(this).attr('href');
-    return false;
-  });
 
   // Set up play-on-hover <video> tags.
   $('video.play-on-hover').bind('click', function(){
@@ -585,12 +553,56 @@ false; // navigate across topic boundaries only in design docs
 // END of the onload event
 
 
+function initExpandableNavItems(rootTag) {
+  $(rootTag + ' li.nav-section .nav-section-header').click(function() {
+    var section = $(this).closest('li.nav-section');
+    if (section.hasClass('expanded')) {
+    /* hide me and descendants */
+      section.find('ul').slideUp(250, function() {
+        // remove 'expanded' class from my section and any children
+        section.closest('li').removeClass('expanded');
+        $('li.nav-section', section).removeClass('expanded');
+        resizeNav();
+      });
+    } else {
+    /* show me */
+      // first hide all other siblings
+      var $others = $('li.nav-section.expanded', $(this).closest('ul'));
+      $others.removeClass('expanded').children('ul').slideUp(250);
+
+      // now expand me
+      section.closest('li').addClass('expanded');
+      section.children('ul').slideDown(250, function() {
+        resizeNav();
+      });
+    }
+  });
+
+  // Stop expand/collapse behavior when clicking on nav section links
+  // (since we're navigating away from the page)
+  // This selector captures the first instance of <a>, but not those with "#" as the href.
+  $('.nav-section-header').find('a:eq(0)').not('a[href="#"]').click(function(evt) {
+    window.location.href = $(this).attr('href');
+    return false;
+  });
+}
+
+/** Highlight the current page in sidenav, expanding children as appropriate */
 function highlightSidenav() {
-  // select current page in sidenav and header, and set up prev/next links if they exist
-  var $selNavLink = $('#nav').find('a[href="' + mPagePath + '"]');
+  // if something is already highlighted, undo it. This is for dynamic navigation (Samples index)
+  if ($("ul#nav li.selected").length) {
+    unHighlightSidenav();
+  }
+  // look for URL in sidenav, including the hash
+  var $selNavLink = $('#nav').find('a[href="' + mPagePath + location.hash + '"]');
+
+  // If the selNavLink is still empty, look for it without the hash
+  if ($selNavLink.length == 0) {
+    $selNavLink = $('#nav').find('a[href="' + mPagePath + '"]');
+  }
+
   var $selListItem;
   if ($selNavLink.length) {
-
     // Find this page's <li> in sidenav and set selected
     $selListItem = $selNavLink.closest('li');
     $selListItem.addClass('selected');
@@ -603,6 +615,10 @@ function highlightSidenav() {
   }
 }
 
+function unHighlightSidenav() {
+  $("ul#nav li.selected").removeClass("selected");
+  $('ul#nav li.nav-section.expanded').removeClass('expanded').children('ul').hide();
+}
 
 function toggleFullscreen(enable) {
   var delay = 20;
@@ -641,13 +657,6 @@ function updateSideNavPosition() {
   $('#devdoc-nav .totop').css({left: -(newLeft - parseInt($('#side-nav').css('margin-left')))});
 }
 
-
-
-
-
-
-
-
 // TODO: use $(document).ready instead
 function addLoadEvent(newfun) {
   var current = window.onload;
@@ -671,10 +680,10 @@ if ((agent.indexOf("mobile") != -1) ||      // android, iphone, ipod
 }
 
 
-addLoadEvent( function() {
+$(document).ready(function() {
   $("pre:not(.no-pretty-print)").addClass("prettyprint");
   prettyPrint();
-} );
+});
 
 
 
@@ -825,14 +834,13 @@ function scrollIntoView(nav) {
       // If no selected item found, exit
       return;
     }
-
-    var selectedOffset = $selected.offset().top; // measure offset from top, relative to entire page
-    if (selectedOffset > $nav.height() * .8) { // multiply nav height by .8 so we move up any
-                                               // items more than 80% down the nav
-      // scroll the item up by an amount 125px less than the window height (account for site header)
-      // and then multiply nav height by .8 to match the 80% threshold used above
-      api.scrollTo(0, selectedOffset - 125 - ($nav.height() * .8), false);
-
+    // get the selected item's offset from its container nav by measuring the item's offset
+    // relative to the document then subtract the container nav's offset relative to the document
+    var selectedOffset = $selected.offset().top - $nav.offset().top;
+    if (selectedOffset > $nav.height() * .8) { // multiply nav height by .8 so we move up the item
+                                               // if it's more than 80% down the nav
+      // scroll the item up by an amount equal to 80% the container nav's height
+      api.scrollTo(0, selectedOffset - ($nav.height() * .8), false);
     }
   }
 }
@@ -1128,18 +1136,20 @@ function getLangPref() {
 /* Used to hide and reveal supplemental content, such as long code samples.
    See the companion CSS in android-developer-docs.css */
 function toggleContent(obj) {
-  var div = $(obj.parentNode.parentNode);
-  var toggleMe = $(".toggle-content-toggleme",div);
+  var div = $(obj).closest(".toggle-content");
+  var toggleMe = $(".toggle-content-toggleme:eq(0)",div);
   if (div.hasClass("closed")) { // if it's closed, open it
     toggleMe.slideDown();
-    $(".toggle-content-text", obj).toggle();
+    $(".toggle-content-text:eq(0)", obj).toggle();
     div.removeClass("closed").addClass("open");
-    $(".toggle-content-img", div).attr("title", "hide").attr("src", toRoot
+    $(".toggle-content-img:eq(0)", div).attr("title", "hide").attr("src", toRoot
                   + "assets/images/triangle-opened.png");
   } else { // if it's open, close it
     toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
-      $(".toggle-content-text", obj).toggle();
+      $(".toggle-content-text:eq(0)", obj).toggle();
       div.removeClass("open").addClass("closed");
+      div.find(".toggle-content").removeClass("open").addClass("closed")
+              .find(".toggle-content-toggleme").hide();
       $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot
                   + "assets/images/triangle-closed.png");
     });
@@ -2146,6 +2156,12 @@ google.setOnLoadCallback(function(){
 
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
+  // Handle hash changes in the samples browser
+  if ($("body").hasClass("samples") && location.href.indexOf("/samples/index.html") != -1) {
+    showSamples();
+    highlightSidenav();
+    resizeNav();
+  }
   // Exit if the hash isn't a search query or there's an error in the query
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
     // If the results pane is open, close it.
@@ -2232,10 +2248,10 @@ function escapeHTML(string) {
 /* ######################################################## */
 
 /* Initialize some droiddoc stuff, but only if we're in the reference */
-if (location.pathname.indexOf("/reference")) {
-  if(!location.pathname.indexOf("/reference-gms/packages.html")
-    && !location.pathname.indexOf("/reference-gcm/packages.html")
-    && !location.pathname.indexOf("/reference/com/google") == 0) {
+if (location.pathname.indexOf("/reference") == 0) {
+  if(!(location.pathname.indexOf("/reference-gms/packages.html") == 0)
+    && !(location.pathname.indexOf("/reference-gcm/packages.html") == 0)
+    && !(location.pathname.indexOf("/reference/com/google") == 0)) {
     $(document).ready(function() {
       // init available apis based on user pref
       changeApiLevel();
@@ -2579,6 +2595,13 @@ function init_navtree(navtree_id, toroot, root_nodes)
   }
 }
 
+
+
+
+
+
+
+
 /* TODO: eliminate redundancy with non-google functions */
 function init_google_navtree(navtree_id, toroot, root_nodes)
 {
@@ -2664,6 +2687,72 @@ function get_google_node(me, mom)
           node_data[2], node_data[3]);
   }
 }
+
+
+
+
+
+
+/****** NEW version of script to build google and sample navs dynamically ******/
+// TODO: update Google reference docs to tolerate this new implementation
+
+var NODE_NAME = 0;
+var NODE_HREF = 1;
+var NODE_GROUP = 2;
+var NODE_TAGS = 3;
+var NODE_CHILDREN = 4;
+
+function init_google_navtree2(navtree_id, data)
+{
+  var $containerUl = $("#"+navtree_id);
+  for (var i in data) {
+    var node_data = data[i];
+    $containerUl.append(new_google_node2(node_data));
+  }
+
+  initExpandableNavItems("#"+navtree_id);
+}
+
+function new_google_node2(node_data)
+{
+  var linkText = node_data[NODE_NAME];
+  if(linkText.match("^"+"com.google.android")=="com.google.android"){
+    linkText = linkText.substr(19, linkText.length);
+  }
+  var $li = $('<li>');
+  var $a;
+  if (node_data[NODE_HREF] != null) {
+    $a = $('<a href="' + toRoot + node_data[NODE_HREF] + '">' + linkText + '</a>');
+  } else {
+    $a = $('<a href="#" onclick="return false;">' + linkText + '/</a>');
+  }
+  var $childUl = $('<ul>');
+  if (node_data[NODE_CHILDREN] != null) {
+    $li.addClass("nav-section");
+    $a = $('<div class="nav-section-header">').append($a);
+    if (node_data[NODE_HREF] == null) $a.addClass('empty');
+
+    for (var i in node_data[NODE_CHILDREN]) {
+      var child_node_data = node_data[NODE_CHILDREN][i];
+      $childUl.append(new_google_node2(child_node_data));
+    }
+    $li.append($childUl);
+  }
+  $li.prepend($a);
+
+  return $li;
+}
+
+
+
+
+
+
+
+
+
+
+
 function showGoogleRefTree() {
   init_default_google_navtree(toRoot);
   init_default_gcm_navtree(toRoot);
@@ -2687,6 +2776,22 @@ function init_default_gcm_navtree(toroot) {
       // when the file is loaded, initialize the tree
       if(jqxhr.status === 200) {
           init_google_navtree("gcm-tree-list", toroot, GCM_NAVTREE_DATA);
+          highlightSidenav();
+          resizeNav();
+      }
+  });
+}
+
+function showSamplesRefTree() {
+  init_default_samples_navtree(toRoot);
+}
+
+function init_default_samples_navtree(toroot) {
+  // load json file for navtree data
+  $.getScript(toRoot + 'samples_navtree_data.js', function(data, textStatus, jqxhr) {
+      // when the file is loaded, initialize the tree
+      if(jqxhr.status === 200) {
+          init_google_navtree2("nav.samples-nav", SAMPLES_NAVTREE_DATA);
           highlightSidenav();
           resizeNav();
       }
@@ -2786,3 +2891,62 @@ var control = mac ? e.metaKey && !e.ctrlKey : e.ctrlKey; // get ctrl key
     ensureAllInheritedExpanded();
   }
 });
+
+
+
+
+
+
+/* On-demand functions */
+
+/** Move sample code line numbers out of PRE block and into non-copyable column */
+function initCodeLineNumbers() {
+  var numbers = $("#codesample-block a.number");
+  if (numbers.length) {
+    $("#codesample-line-numbers").removeClass("hidden").append(numbers);
+  }
+
+  $(document).ready(function() {
+    // select entire line when clicked
+    $("span.code-line").click(function() {
+      if (!shifted) {
+        selectText(this);
+      }
+    });
+    // invoke line link on double click
+    $(".code-line").dblclick(function() {
+      document.location.hash = $(this).attr('id');
+    });
+    // highlight the line when hovering on the number
+    $("#codesample-line-numbers a.number").mouseover(function() {
+      var id = $(this).attr('href');
+      $(id).css('background','#e7e7e7');
+    });
+    $("#codesample-line-numbers a.number").mouseout(function() {
+      var id = $(this).attr('href');
+      $(id).css('background','none');
+    });
+  });
+}
+
+// create SHIFT key binder to avoid the selectText method when selecting multiple lines
+var shifted = false;
+$(document).bind('keyup keydown', function(e){shifted = e.shiftKey; return true;} );
+
+// courtesy of jasonedelman.com
+function selectText(element) {
+    var doc = document
+        , range, selection
+    ;
+    if (doc.body.createTextRange) { //ms
+        range = doc.body.createTextRange();
+        range.moveToElementText(element);
+        range.select();
+    } else if (window.getSelection) { //all others
+        selection = window.getSelection();        
+        range = doc.createRange();
+        range.selectNodeContents(element);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}

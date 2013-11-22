@@ -305,6 +305,8 @@ video.with-shadow {
       position: absolute;
       top: 0;
       right: 0; }
+    #nav .nav-section-header.empty {
+      padding:0; }
     #nav .nav-section-header.empty:after {
       display: none; }
     /* nested nav headers */
@@ -338,7 +340,7 @@ video.with-shadow {
       width: 34px;
       height: 34px; }
   #nav li.expanded li ul.tree-list-children {
-    padding:0;
+    padding: 0;
   }
   #nav li.expanded li ul.tree-list-children .tree-list-children {
     padding:0 0 0 10px;
@@ -470,6 +472,10 @@ video.with-shadow {
       height: 10px;
       display: inline-block;
       margin-left: 5px; }
+    .prev-page-link.inline:before {
+      content: none; }
+    .next-page-link.inline:after {
+      content: none; }
 
 
   .training-nav-top a {
@@ -2358,6 +2364,7 @@ div.toggle-content.closed .toggle-content-toggleme {
 #jd-content img.toggle-content-img {
   margin:0 5px 5px 0;
 }
+
 div.toggle-content-toggleme {
   padding:0 0 0 15px;
 }
@@ -2443,6 +2450,167 @@ Lightbox
   background-position: -10px 0;
 }
 
+
+/* --------------------------------------------------------------------------
+Styles for samples project trees and code browsing in resources tab 
+*/
+
+#codesample-wrapper {
+  width:1000px;
+  overflow:visible;
+}
+pre#codesample-block {
+  float:left;
+  overflow:visible;
+  background:transparent;
+  border:none;
+}
+pre#codesample-block .code-line:hover {
+  background:#e7e7e7;
+}
+pre#codesample-line-numbers {
+  float:left;
+  width:2em;
+  background:transparent;
+  border:none;
+  border-right:1px solid #ccc;
+  padding-left:0;
+  font-family:monospace;
+  text-align:right;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+}
+pre#codesample-line-numbers a {
+  color:#999;
+}
+pre#codesample-line-numbers.hidden {
+  display:none;
+}
+pre#codesample-block span.code-line {
+  width:100%;
+  display:inline-block;
+}
+
+.structure-dir {
+background-image:url(../../assets/images/folder.png);
+background-repeat:no-repeat;
+background-position:16px 2px;
+  margin:.25em 0 0 0;
+  padding:0 0 0 0;
+}
+
+.structure-toggleme {
+  margin:0 0 0 3em;
+  padding:0 0 0 0;
+  text-decoration:none;
+}
+
+.structure-java{
+background-image:url(../../assets/images/file-java.png);
+background-repeat:no-repeat;
+background-position:0px 2px;
+  margin:.3em 0 0 0;
+  padding:.3em 0 .3em 22px;
+}
+
+.structure-file {
+background-image:url(../../assets/images/file-generic.png);
+background-repeat:no-repeat;
+background-position:0px 2px;
+  margin:.3em 0 0 0;
+  padding:.3em 0 .3em 22px;
+}
+
+.structure-xml {
+background-image:url(../../assets/images/file-xml.png);
+background-repeat:no-repeat;
+background-position:0px 2px;
+  margin:.3em 0 0 0;
+  padding:.3em 0 .25em 22px;
+}
+
+.structure-img {
+background-image:url(../../assets/images/file-image.png);
+background-repeat:no-repeat;
+background-position:0px 2px;
+  margin:.3em 0 0 0;
+  padding:.3em 0 .25em 22px;
+}
+
+.structure-manifest {
+background-image:url(../../assets/images/file-manifest.png);
+background-repeat:no-repeat;
+  margin:.0 0 0 1.25em;
+  padding:0 0 0 22px;
+  text-decoration:none;
+}
+
+#jd-content .structure-toggle-img {
+  margin:.5em 0 0 0;
+padding-right:2.1em;
+}
+
+.dirInfo {
+  margin-left:2em;
+}
+
+.structure-dir a {
+  text-decoration:none;
+}
+
+.structure-manifest a {
+  text-decoration: none;
+}
+.structure-file a {
+  text-decoration: none;
+}
+
+.sampleEmbed {
+  background-color:rgb(249, 249, 249);
+}
+
+.sampleEmbed ol.lineNumbers {
+  list-style-type: decimal;
+  padding-left:1em;
+}
+
+.sampleEmbed ol.lineNumbers li {
+border-left:1px solid #ddd;
+border-right:1px solid #ddd;
+color:gray;
+background-color:#f7f7f7;
+margin:0 0 0 24px;
+padding: 2px 2px 2px 6px;
+}
+
+.sampleEmbed ol.lineNumbers li:hover {
+background: #efefef;
+}
+
+.samples-nav li a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+Styles for raw formatted line numbers (not used with listformatted version)
+div.sampleLine div.lineNumber {
+  display: inline;
+}
+div.sampleLine div.lineCode {
+  display: inline;
+  padding-left:6px;
+}
+div.sampleLine {
+  padding:0;
+  margin:0;
+}*/
+
 /* --------------------------------------------------------------------------
 Butterbar
 */
@@ -2489,10 +2657,10 @@ table.blank th, table.blank td {
 .caption {
   margin: 0.5em 0 2em 0;
   color: #000;
-  font-size: 11.5px;
+  font-size: 11.5px; 
 }
 
-.nolist {
+.nolist, .nolist ul, .nolist ol {
   list-style:none;
   margin-left:0;
 }
@@ -4196,7 +4364,6 @@ a.download-sdk {
 
 .jspPane {
   position: absolute;
-  overflow: hidden;
   width:100% !important; /* to avoid cut-off api names in reference in horiz scroll */
 }
 

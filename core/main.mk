@@ -71,6 +71,22 @@ $(DEFAULT_GOAL):
 .PHONY: FORCE
 FORCE:
 
+# These goals don't need to collect and include Android.mks/CleanSpec.mks
+# in the source tree.
+dont_bother_goals := clean clobber dataclean installclean \
+    help out \
+    snod systemimage-nodeps \
+    stnod systemtarball-nodeps \
+    userdataimage-nodeps userdatatarball-nodeps \
+    cacheimage-nodeps \
+    vendorimage-nodeps \
+    ramdisk-nodeps \
+    bootimage-nodeps
+
+ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
+dont_bother := true
+endif
+
 # Targets that provide quick help on the build system.
 include $(BUILD_SYSTEM)/help.mk
 
@@ -83,21 +99,6 @@ include $(BUILD_SYSTEM)/config.mk
 # file does the rm -rf inline so the deps which are all done below will
 # be generated correctly
 include $(BUILD_SYSTEM)/cleanbuild.mk
-
-# These targets are going to delete stuff, don't bother including
-# the whole directory tree if that's all we're going to do
-ifeq ($(MAKECMDGOALS),clean)
-dont_bother := true
-endif
-ifeq ($(MAKECMDGOALS),clobber)
-dont_bother := true
-endif
-ifeq ($(MAKECMDGOALS),dataclean)
-dont_bother := true
-endif
-ifeq ($(MAKECMDGOALS),installclean)
-dont_bother := true
-endif
 
 # Include the google-specific config
 -include vendor/google/build/config.mk
@@ -183,6 +184,7 @@ $(info ************************************************************)
 $(error stop)
 endif
 
+ifndef BUILD_EMULATOR
 ifeq (darwin,$(HOST_OS))
 GCC_REALPATH = $(realpath $(shell which $(HOST_CC)))
 ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
@@ -199,10 +201,11 @@ endif
 else   # HOST_OS is not darwin
   BUILD_EMULATOR := true
 endif  # HOST_OS is darwin
+endif
 
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
         > $(OUT_DIR)/versions_checked.mk)
-$(shell echo 'BUILD_EMULATOR := $(BUILD_EMULATOR)' \
+$(shell echo 'BUILD_EMULATOR ?= $(BUILD_EMULATOR)' \
         >> $(OUT_DIR)/versions_checked.mk)
 endif
 
@@ -357,7 +360,7 @@ ifdef is_sdk_build
 sdk_repo_goal := $(strip $(filter sdk_repo,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out sdk_repo,$(MAKECMDGOALS)))
 
-ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))),1)
+ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild,$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
 
@@ -414,8 +417,6 @@ $(INTERNAL_MODIFIER_TARGETS): $(DEFAULT_GOAL)
 endif
 
 # Bring in all modules that need to be built.
-ifneq ($(dont_bother),true)
-
 ifeq ($(HOST_OS)-$(HOST_ARCH),darwin-ppc)
 SDK_ONLY := true
 $(info Building the SDK under darwin-ppc is actually obsolete and unsupported.)
@@ -468,8 +469,15 @@ FULL_BUILD :=
 NOTICE-HOST-%: ;
 NOTICE-TARGET-%: ;
 
+# A helper goal printing out install paths
+.PHONY: GET-INSTALL-PATH
+GET-INSTALL-PATH:
+	@$(foreach m, $(ALL_MODULES), $(if $(ALL_MODULES.$(m).INSTALLED), \
+		echo 'INSTALL-PATH: $(m) $(ALL_MODULES.$(m).INSTALLED)';))
+
 else # ONE_SHOT_MAKEFILE
 
+ifneq ($(dont_bother),true)
 #
 # Include all of the makefiles in the system
 #
@@ -477,9 +485,11 @@ else # ONE_SHOT_MAKEFILE
 # Can't use first-makefiles-under here because
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles := \
-	$(shell build/tools/findleaves.py --prune=out --prune=.repo --prune=.git $(subdirs) Android.mk)
+	$(shell build/tools/findleaves.py --prune=$(OUT_DIR) --prune=.repo --prune=.git $(subdirs) Android.mk)
 
-include $(subdir_makefiles)
+$(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
+
+endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
 
@@ -510,16 +520,6 @@ endif
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
 
-# -------------------------------------------------------------------
-# Include any makefiles that must happen after the module makefiles
-# have been included.
-# TODO: have these files register themselves via a global var rather
-# than hard-coding the list here.
-ifdef FULL_BUILD
-  # Only include this during a full build, otherwise we can't be
-  # guaranteed that any policies were included.
-  -include frameworks/policies/base/PolicyConfig.mk
-endif
 
 # -------------------------------------------------------------------
 # Fix up CUSTOM_MODULES to refer to installed files rather than
@@ -680,8 +680,6 @@ include $(BUILD_SYSTEM)/Makefile
 modules_to_install := $(sort $(ALL_DEFAULT_INSTALLED_MODULES))
 ALL_DEFAULT_INSTALLED_MODULES :=
 
-endif # dont_bother
-
 
 # These are additional goals that we build, in order to make sure that there
 # is as little code as possible in the tree that doesn't build.
@@ -808,7 +806,7 @@ ifneq ($(TARGET_BUILD_APPS),)
   # For uninstallable modules such as static Java library, we have to dist the built file,
   # as <module_name>.<suffix>
   apps_only_dist_built_files := $(foreach m,$(unbundled_build_modules),$(if $(ALL_MODULES.$(m).INSTALLED),,\
-      $(ALL_MODULES.$(m).BUILT):$(m)$(suffix $(ALL_MODULES.$(m).BUILT))))
+      $(if $(ALL_MODULES.$(m).BUILT),$(ALL_MODULES.$(m).BUILT):$(m)$(suffix $(ALL_MODULES.$(m).BUILT)))))
   $(call dist-for-goals,apps_only, $(apps_only_dist_built_files))
 
   ifeq ($(EMMA_INSTRUMENT),true)
@@ -817,10 +815,22 @@ ifneq ($(TARGET_BUILD_APPS),)
     $(call dist-for-goals,apps_only, $(EMMA_META_ZIP))
   endif
 
+  $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
+  $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP))
+
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
 droid: apps_only
+
+# Combine the NOTICE files for a apps_only build
+$(eval $(call combine-notice-files, \
+    $(target_notice_file_txt), \
+    $(target_notice_file_html), \
+    "Notices for files for apps:", \
+    $(TARGET_OUT_NOTICE_FILES), \
+    $(apps_only_installed_files)))
+
 
 else # TARGET_BUILD_APPS
   $(call dist-for-goals, droidcore, \

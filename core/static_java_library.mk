@@ -59,6 +59,8 @@ LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_
 endif  # all_resources
 endif  # LOCAL_RESOURCE_DIR
 
+all_res_assets := $(all_resources)
+
 include $(BUILD_SYSTEM)/java_library.mk
 
 ifneq (,$(all_resources))
@@ -124,4 +126,6 @@ endif
 
 endif  # $(all_resources) not empty
 
+# Reset internal variables.
+all_res_assets :=
 LOCAL_IS_STATIC_JAVA_LIBRARY :=

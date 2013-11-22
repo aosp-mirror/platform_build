@@ -3,7 +3,7 @@
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 <body class="gc-documentation <?cs if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?>
-  <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs if:guide ?> guide<?cs /if ?><?cs
+  <?cs if:(guide||develop||training||reference||tools||sdk||samples) ?>develop<?cs if:guide ?> guide<?cs /if ?><?cs if:samples ?> samples<?cs /if ?><?cs
   elif:about ?>about<?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
@@ -130,7 +130,7 @@
         </div>
         <?cs if:!fullscreen ?>
         <div class="paging-links layout-content-col col-4">
-          <?cs if:(design||training||guide||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
+          <?cs if:(design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
             <a href="#" class="prev-page-link hide"
                 zh-tw-lang="上一堂課"
                 zh-cn-lang="上一课"

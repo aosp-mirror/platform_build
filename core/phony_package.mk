@@ -7,7 +7,7 @@ LOCAL_MODULE_SUFFIX := -timestamp
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
-$(LOCAL_BUILT_MODULE):
+$(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(hide) echo "Fake: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@

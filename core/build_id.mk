@@ -13,20 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-#
-# Defines branch-specific values.
-#
-
 # BUILD_ID is usually used to specify the branch name
 # (like "MAIN") or a branch name and a release candidate
-# (like "TC1-RC5").  It must be a single word, and is
+# (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
-#
-BUILD_ID := OPENMASTER
 
-# DISPLAY_BUILD_NUMBER should only be set for development branches,
-# If set, the BUILD_NUMBER (cl) is appended to the BUILD_ID for
-# a more descriptive BUILD_ID_DISPLAY, otherwise BUILD_ID_DISPLAY
-# is the same as BUILD_ID
+BUILD_ID := KK
+
 DISPLAY_BUILD_NUMBER := true

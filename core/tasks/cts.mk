@@ -46,10 +46,9 @@ CTS_CORE_CASES := $(foreach pkg,$(CTS_CORE_CASE_LIST),$(call intermediates-dir-f
 CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
 
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
-
+CTS_TEST_CASE_LIST_FILES := $(foreach c, $(CTS_TEST_CASE_LIST), $(call intermediates-dir-for,APPS,$(c))/package.apk)
 $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
-
-$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST_FILES) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
 # Make necessary directory for CTS
 	$(hide) rm -rf $(PRIVATE_CTS_DIR)
 	$(hide) mkdir -p $(TMP_DIR)
@@ -108,32 +107,52 @@ $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-$(CTS_CORE_XMLS): $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik,\
 		cts/tests/core/libcore/dalvik/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,dalvik,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com,\
 		cts/tests/core/libcore/com/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,com,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.conscrypt.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.conscrypt,\
 		cts/tests/core/libcore/conscrypt/AndroidManifest.xml,\
 		$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar,,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun,\
 		cts/tests/core/libcore/sun/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,sun,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests,\
 		cts/tests/core/libcore/tests/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,tests,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org,\
 		cts/tests/core/libcore/org/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org,\
 		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore,\
 		cts/tests/core/libcore/libcore/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,libcore,\
@@ -166,6 +185,7 @@ $(DEFAULT_TEST_PLAN): $(cts_dir)/all_cts_files_stamp $(cts_tools_src_dir)/utils/
 	$(hide) $(ACP) -fp $(CTS_CORE_XMLS) $(CTS_TEST_XMLS) $(CORE_VM_TEST_TF_DESC) $(PRIVATE_DIR)/repository/testcases
 	$(hide) $(cts_tools_src_dir)/utils/buildCts.py cts/tests/tests/ $(PRIVATE_DIR) $(TMP_DIR) \
 		$(TOP) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar
+	$(hide) mkdir -p $(dir $@) && touch $@
 
 # Package CTS and clean up.
 #

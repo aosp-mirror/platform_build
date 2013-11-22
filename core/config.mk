@@ -120,7 +120,7 @@ TARGET_COMPRESS_MODULE_SYMBOLS := false
 
 # ---------------------------------------------------------------
 # Try to include buildspec.mk, which will try to set stuff up.
-# If this file doesn't exist, the environemnt variables will
+# If this file doesn't exist, the environment variables will
 # be used, and if that doesn't work, then the default is an
 # arm build
 ifndef ANDROID_BUILDSPEC
@@ -155,6 +155,26 @@ ifeq ($(TARGET_ARCH),)
 endif
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
+
+# Perhaps we should move this block to build/core/Makefile,
+# once we don't have TARGET_NO_KERNEL reference in AndroidBoard.mk/Android.mk.
+ifneq ($(strip $(TARGET_NO_BOOTLOADER)),true)
+  INSTALLED_BOOTLOADER_MODULE := $(PRODUCT_OUT)/bootloader
+  ifeq ($(strip $(TARGET_BOOTLOADER_IS_2ND)),true)
+    INSTALLED_2NDBOOTLOADER_TARGET := $(PRODUCT_OUT)/2ndbootloader
+  else
+    INSTALLED_2NDBOOTLOADER_TARGET :=
+  endif
+else
+  INSTALLED_BOOTLOADER_MODULE :=
+  INSTALLED_2NDBOOTLOADER_TARGET :=
+endif # TARGET_NO_BOOTLOADER
+ifneq ($(strip $(TARGET_NO_KERNEL)),true)
+  INSTALLED_KERNEL_TARGET := $(PRODUCT_OUT)/kernel
+else
+  INSTALLED_KERNEL_TARGET :=
+endif
+
 
 # The build system exposes several variables for where to find the kernel
 # headers:
@@ -439,6 +459,11 @@ HOST_GLOBAL_CPPFLAGS += $(HOST_RELEASE_CPPFLAGS)
 
 TARGET_GLOBAL_CFLAGS += $(TARGET_RELEASE_CFLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
+
+# allow overriding default Java libraries on a per-target basis
+ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
+  TARGET_DEFAULT_JAVA_LIBRARIES := core core-junit ext framework framework2
+endif
 
 # define llvm tools and global flags
 include $(BUILD_SYSTEM)/llvm_config.mk

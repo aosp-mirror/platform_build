@@ -24,13 +24,15 @@ PRODUCT_PACKAGES := \
 	Exchange2 \
 	FusedLocation \
 	Gallery \
+	Keyguard \
 	Music \
 	Mms \
 	OpenWnn \
+	PrintSpooler \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
-	Phone \
+	TeleService \
 	PinyinIME \
 	Protips \
 	SoftKeyboard \
@@ -38,7 +40,6 @@ PRODUCT_PACKAGES := \
 	Launcher2 \
 	Development \
 	DevelopmentSettings \
-	DrmProvider \
 	Fallback \
 	Settings \
 	SdkSetup \

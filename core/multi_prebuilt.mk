@@ -14,6 +14,11 @@
 # limitations under the License.
 #
 
+ifneq ($(LOCAL_MODULE)$(LOCAL_MODULE_CLASS),)
+$(error $(LOCAL_PATH): LOCAL_MODULE or LOCAL_MODULE_CLASS not needed by \
+  BUILD_MULTI_PREBUILT, use BUILD_PREBUILT instead!)
+endif
+
 # Save these before they get cleared by CLEAR_VARS.
 prebuilt_static_libs := $(filter %.a,$(LOCAL_PREBUILT_LIBS))
 prebuilt_shared_libs := $(filter-out %.a,$(LOCAL_PREBUILT_LIBS))

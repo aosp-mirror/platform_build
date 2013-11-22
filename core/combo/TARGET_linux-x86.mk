@@ -116,6 +116,8 @@ else
 endif
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH) $(KERNEL_HEADERS_AUX)
 
+android_config_h := $(call select-android-config-h,target_linux-x86)
+
 TARGET_GLOBAL_CFLAGS += \
 			-O2 \
 			-Ulinux \
@@ -133,11 +135,9 @@ TARGET_GLOBAL_CFLAGS += \
 			-funswitch-loops \
 			-funwind-tables \
 			-fstack-protector \
-			-m32
-
-android_config_h := $(call select-android-config-h,target_linux-x86)
-TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
-TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
+			-m32 \
+			-include $(android_config_h) \
+			-I $(dir $(android_config_h))
 
 TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
 
