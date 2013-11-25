@@ -52,6 +52,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -a  (--aslr_mode)  <on|off>
       Specify whether to turn on ASLR for the package (on by default).
 
+  -2  (--two_step)
+      Generate a 'two-step' OTA package, where recovery is updated
+      first, so that any changes made to the system partition are done
+      using the new recovery (new kernel, etc.).
+
 """
 
 import sys
@@ -88,6 +93,7 @@ OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
+OPTIONS.two_step = False
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -404,6 +410,46 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   AppendAssertions(script, OPTIONS.info_dict)
   device_specific.FullOTA_Assertions()
+
+  # Two-step package strategy (in chronological order, which is *not*
+  # the order in which the generated script has things):
+  #
+  # if stage is not "2/3" or "3/3":
+  #    write recovery image to boot partition
+  #    set stage to "2/3"
+  #    reboot to boot partition and restart recovery
+  # else if stage is "2/3":
+  #    write recovery image to recovery partition
+  #    set stage to "3/3"
+  #    reboot to recovery partition and restart recovery
+  # else:
+  #    (stage must be "3/3")
+  #    set stage to ""
+  #    do normal full package installation:
+  #       wipe and install system, boot image, etc.
+  #       set up system to update recovery partition on first boot
+  #    complete script normally (allow recovery to mark itself finished and reboot)
+
+  recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
+                                         OPTIONS.input_tmp, "RECOVERY")
+  if OPTIONS.two_step:
+    if not OPTIONS.info_dict.get("multistage_support", None):
+      assert False, "two-step packages not supported by this build"
+    fs = OPTIONS.info_dict["fstab"]["/misc"]
+    assert fs.fs_type.upper() == "EMMC", \
+        "two-step packages only supported on devices with EMMC /misc partitions"
+    bcb_dev = {"bcb_dev": fs.device}
+    common.ZipWriteStr(output_zip, "recovery.img", recovery_img.data)
+    script.AppendExtra("""
+if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+""" % bcb_dev)
+    script.WriteRawImage("/recovery", "recovery.img")
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "3/3");
+reboot_now("%(bcb_dev)s", "recovery");
+else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
+""" % bcb_dev)
+
   device_specific.FullOTA_InstallBegin()
 
   script.ShowProgress(0.5, 0)
@@ -424,8 +470,6 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   boot_img = common.GetBootableImage("boot.img", "boot.img",
                                      OPTIONS.input_tmp, "BOOT")
-  recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
-                                         OPTIONS.input_tmp, "RECOVERY")
   MakeRecoveryPatch(OPTIONS.input_tmp, output_zip, recovery_img, boot_img)
 
   Item.GetMetadata(input_zip)
@@ -445,6 +489,19 @@ def WriteFullOTAPackage(input_zip, output_zip):
     script.AppendExtra(OPTIONS.extra_script)
 
   script.UnmountAll()
+
+  if OPTIONS.two_step:
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "");
+""" % bcb_dev)
+    script.AppendExtra("else\n")
+    script.WriteRawImage("/boot", "recovery.img")
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "2/3");
+reboot_now("%(bcb_dev)s", "");
+endif;
+endif;
+""" % bcb_dev)
   script.AddToZip(input_zip, output_zip)
   WriteMetadata(metadata, output_zip)
 
@@ -560,7 +617,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       OPTIONS.source_info_dict)
   target_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.target_tmp, "BOOT")
-  updating_boot = (source_boot.data != target_boot.data)
+  updating_boot = (not OPTIONS.two_step and
+                   (source_boot.data != target_boot.data))
 
   source_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.source_tmp, "RECOVERY",
@@ -577,6 +635,46 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   AppendAssertions(script, OPTIONS.target_info_dict)
   device_specific.IncrementalOTA_Assertions()
+
+  # Two-step incremental package strategy (in chronological order,
+  # which is *not* the order in which the generated script has
+  # things):
+  #
+  # if stage is not "2/3" or "3/3":
+  #    do verification on current system
+  #    write recovery image to boot partition
+  #    set stage to "2/3"
+  #    reboot to boot partition and restart recovery
+  # else if stage is "2/3":
+  #    write recovery image to recovery partition
+  #    set stage to "3/3"
+  #    reboot to recovery partition and restart recovery
+  # else:
+  #    (stage must be "3/3")
+  #    perform update:
+  #       patch system files, etc.
+  #       force full install of new boot image
+  #       set up system to update recovery partition on first boot
+  #    complete script normally (allow recovery to mark itself finished and reboot)
+
+  if OPTIONS.two_step:
+    if not OPTIONS.info_dict.get("multistage_support", None):
+      assert False, "two-step packages not supported by this build"
+    fs = OPTIONS.info_dict["fstab"]["/misc"]
+    assert fs.fs_type.upper() == "EMMC", \
+        "two-step packages only supported on devices with EMMC /misc partitions"
+    bcb_dev = {"bcb_dev": fs.device}
+    common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
+    script.AppendExtra("""
+if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+""" % bcb_dev)
+    script.AppendExtra("sleep(20);\n");
+    script.WriteRawImage("/recovery", "recovery.img")
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "3/3");
+reboot_now("%(bcb_dev)s", "recovery");
+else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
+""" % bcb_dev)
 
   script.Print("Verifying current system...")
 
@@ -615,9 +713,22 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   device_specific.IncrementalOTA_VerifyEnd()
 
+  if OPTIONS.two_step:
+    script.WriteRawImage("/boot", "recovery.img")
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "2/3");
+reboot_now("%(bcb_dev)s", "");
+else
+""" % bcb_dev)
+
   script.Comment("---- start making changes here ----")
 
   device_specific.IncrementalOTA_InstallBegin()
+
+  if OPTIONS.two_step:
+    common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
+    script.WriteRawImage("/boot", "boot.img")
+    print "writing full boot image (forced by two-step mode)"
 
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
@@ -646,23 +757,24 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     so_far += tf.size
     script.SetProgress(so_far / total_patch_size)
 
-  if updating_boot:
-    # Produce the boot image by applying a patch to the current
-    # contents of the boot partition, and write it back to the
-    # partition.
-    script.Print("Patching boot image...")
-    script.ApplyPatch("%s:%s:%d:%s:%d:%s"
-                      % (boot_type, boot_device,
-                         source_boot.size, source_boot.sha1,
-                         target_boot.size, target_boot.sha1),
-                      "-",
-                      target_boot.size, target_boot.sha1,
-                      source_boot.sha1, "patch/boot.img.p")
-    so_far += target_boot.size
-    script.SetProgress(so_far / total_patch_size)
-    print "boot image changed; including."
-  else:
-    print "boot image unchanged; skipping."
+  if not OPTIONS.two_step:
+    if updating_boot:
+      # Produce the boot image by applying a patch to the current
+      # contents of the boot partition, and write it back to the
+      # partition.
+      script.Print("Patching boot image...")
+      script.ApplyPatch("%s:%s:%d:%s:%d:%s"
+                        % (boot_type, boot_device,
+                           source_boot.size, source_boot.sha1,
+                           target_boot.size, target_boot.sha1),
+                        "-",
+                        target_boot.size, target_boot.sha1,
+                        source_boot.sha1, "patch/boot.img.p")
+      so_far += target_boot.size
+      script.SetProgress(so_far / total_patch_size)
+      print "boot image changed; including."
+    else:
+      print "boot image unchanged; skipping."
 
   if updating_recovery:
     # Recovery is generated as a patch using both the boot image
@@ -747,6 +859,13 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
   script.SetPermissions("/system/build.prop", 0, 0, 0644, None, None)
 
+  if OPTIONS.two_step:
+    script.AppendExtra("""
+set_stage("%(bcb_dev)s", "");
+endif;
+endif;
+""" % bcb_dev)
+
   script.AddToZip(target_zip, output_zip)
   WriteMetadata(metadata, output_zip)
 
@@ -773,12 +892,14 @@ def main(argv):
         OPTIONS.aslr_mode = False
     elif o in ("--worker_threads"):
       OPTIONS.worker_threads = int(a)
+    elif o in ("-2", "--two_step"):
+      OPTIONS.two_step = True
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:a:",
+                             extra_opts="b:k:i:d:wne:a:2",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
@@ -787,6 +908,7 @@ def main(argv):
                                               "extra_script=",
                                               "worker_threads=",
                                               "aslr_mode=",
+                                              "two_step",
                                               ],
                              extra_option_handler=option_handler)
 
