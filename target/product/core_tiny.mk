@@ -21,9 +21,7 @@ PRODUCT_PACKAGES := \
     CertInstaller \
     FusedLocation \
     InputDevices \
-    bluetooth-health \
-    hostapd \
-    wpa_supplicant.conf
+    bluetooth-health
 
 PRODUCT_PACKAGES += \
     audio \
@@ -33,8 +31,7 @@ PRODUCT_PACKAGES += \
     network \
     pand \
     pppd \
-    sdptool \
-    wpa_supplicant
+    sdptool
 
 PRODUCT_PACKAGES += \
     audio.primary.default \
