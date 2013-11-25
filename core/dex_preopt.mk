@@ -82,3 +82,8 @@ $(call _build-dexpreopt-boot-jar-dependency-pair,$(DEXPREOPT_BOOT_JARS_MODULES))
 endef
 
 $(eval $(call _build-dexpreopt-boot-jar-dependency))
+
+DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
+ifeq ($(TARGET_CPU_VARIANT),$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))
+DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
+endif
