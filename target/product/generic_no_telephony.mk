@@ -27,8 +27,6 @@ PRODUCT_PACKAGES := \
     Provision \
     SystemUI \
     bluetooth-health \
-    hostapd \
-    wpa_supplicant.conf \
     WallpaperCropper
 
 PRODUCT_PACKAGES += \
@@ -39,8 +37,7 @@ PRODUCT_PACKAGES += \
     network \
     pand \
     pppd \
-    sdptool \
-    wpa_supplicant
+    sdptool
 
 PRODUCT_PACKAGES += \
     librs_jni \
