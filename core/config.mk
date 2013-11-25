@@ -79,6 +79,9 @@ BUILD_COPY_HEADERS := $(BUILD_SYSTEM)/copy_headers.mk
 BUILD_NATIVE_TEST := $(BUILD_SYSTEM)/native_test.mk
 BUILD_HOST_NATIVE_TEST := $(BUILD_SYSTEM)/host_native_test.mk
 BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
+BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
+BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
+
 
 -include cts/build/config.mk
 
