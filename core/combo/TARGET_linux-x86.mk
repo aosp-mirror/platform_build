@@ -112,9 +112,8 @@ ifneq ($(CUSTOM_KERNEL_HEADERS),)
 else
     KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
     KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
-    KERNEL_HEADERS_AUX    := $(libc_root)/kernel/common
 endif
-KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH) $(KERNEL_HEADERS_AUX)
+KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
 android_config_h := $(call select-android-config-h,target_linux-x86)
 
