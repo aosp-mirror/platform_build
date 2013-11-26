@@ -1454,7 +1454,8 @@ $(PROGUARD_DICT_ZIP) :
 	@echo "Packaging Proguard obfuscation dictionary files."
 	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary`; \
 		if [ -n "$$dict_files" ]; then \
-		  zip -q $@ $$dict_files; \
+		  unobfuscated_jars=$${dict_files//proguard_dictionary/classes.jar}; \
+		  zip -q $@ $$dict_files $$unobfuscated_jars; \
 		else \
 		  touch $(dir $@)/dummy; \
 		  (cd $(dir $@) && zip -q $(notdir $@) dummy); \
