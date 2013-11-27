@@ -195,7 +195,7 @@ renderscript_intermediate := $(intermediates)/renderscript
 
 # We don't need the .so files in bundled branches
 # Prevent these from showing up on the device
-ifneq (,$(TARGET_BUILD_APPS))
+ifneq (,$(TARGET_BUILD_APPS)$(FORCE_BUILD_RS_COMPAT))
 
 rs_compatibility_jni_libs := $(addprefix \
     $(renderscript_intermediate)/librs., \
