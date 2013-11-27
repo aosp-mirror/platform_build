@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3bafe99_b064207d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-11-27T20:14:05Z",
+      "side": 1,
+      "message": "Why not just use makefile include for the combination of board configs? and use the product inheritance to combine products? I don\u0027t see why they do not scale well..",
+      "revId": "80cdaa8a36b5548dd4251d58345a49eed07aa453",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a3bafe99_10a2cc4d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-11-27T20:14:05Z",
+      "side": 1,
+      "message": "In general I don\u0027t like the idea of relying on analyzing the directory structure when loading product config - it slows down every make command you run.",
+      "revId": "80cdaa8a36b5548dd4251d58345a49eed07aa453",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3a45289_69b6c10e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-11-27T20:14:05Z",
+      "side": 1,
+      "message": "This can already be done with inherit-product in a more straightforward way.",
+      "revId": "80cdaa8a36b5548dd4251d58345a49eed07aa453",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a3bafe99_30f5903e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-11-27T20:14:05Z",
+      "side": 1,
+      "message": "No, you can\u0027t change the board config on product\u0027s base, based on the current build system design. Currently all products of the same board config share the same out/target/product/\u003cdevice ( board config) name\u003e/ tree. This design makes all the native code (static libraries, shared libraries, executables) are reused if you do incremental build.",
+      "revId": "80cdaa8a36b5548dd4251d58345a49eed07aa453",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03abca57_08d7078d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-11-27T20:14:05Z",
+      "side": 1,
+      "message": "AndroidBoard.mk is deprecated now - it\u0027s really has no difference than a regular Android.mk.",
+      "revId": "80cdaa8a36b5548dd4251d58345a49eed07aa453",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a3bafe99_d0a7543a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-11-27T20:14:05Z",
+      "side": 1,
+      "message": "This is NOT weird - it\u0027s so by design. Previously (in ics and earlier) the build system loaded all the product config files it could find in the source tree, even if you just select one product by running lunch. Even now if your run \"make dump-products\" or \"make product-graph\" the build system still needs to load all the product config. You can\u0027t load all the product config by a simple makefile \"incldue\", which just overrides all the PRODUCT_* variables.",
+      "revId": "80cdaa8a36b5548dd4251d58345a49eed07aa453",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
