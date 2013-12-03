@@ -144,12 +144,8 @@ def:samples_nav() ?>
 <?cs
         include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
 
-
       </div>
-      <script type="text/javascript">
-       showSamplesRefTree();
 
-      </script>
     </div> <!-- end side-nav -->
     <script>
       $(document).ready(function() {
