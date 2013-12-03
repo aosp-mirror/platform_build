@@ -27,7 +27,7 @@
 
 <div id="pathCrumb">
 <?cs each:item = parentdirs ?>
-  <?cs if:pathCrumbLinks
+  <?cs if:LinkifyPathCrumb
     ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> / 
   <?cs else
     ?><?cs var:item.Name ?> / <?cs /if ?>
