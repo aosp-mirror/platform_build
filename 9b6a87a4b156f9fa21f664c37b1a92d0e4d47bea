@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63a3a6b3_44860eb8",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-04T18:49:54Z",
+      "side": 1,
+      "message": "I guess this doesn\u0027t work, for auto-prebuilt-boilerplate only accepts 8 parameters.",
+      "revId": "9b6a87a4b156f9fa21f664c37b1a92d0e4d47bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
