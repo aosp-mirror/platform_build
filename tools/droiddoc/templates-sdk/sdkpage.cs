@@ -561,6 +561,16 @@ var:sdk.linux_download
 
 <?cs include:"trailer.cs" ?>
 
+<!-- Start of Tag -->
+<script type="text/javascript">
+var axel = Math.random() + "";
+var a = axel * 10000000000000;
+document.write('<iframe src="https://2507573.fls.doubleclick.net/activityi;src=2507573;type=other026;cat=googl348;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+</script>
+<noscript>
+<iframe src="https://2507573.fls.doubleclick.net/activityi;src=2507573;type=other026;cat=googl348;ord=1?" width="1" height="1" frameborder="0" style="display:none"></iframe>
+</noscript>
+<!-- End of Tag -->
 </body>
 </html>
 
