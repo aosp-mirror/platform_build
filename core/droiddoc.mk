@@ -227,6 +227,8 @@ $(out_zip): $(full_target)
 	@mkdir -p $(dir $@)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_DOCS_DIR) && zip -rq $$F * )
 
+$(LOCAL_MODULE)-docs.zip : $(out_zip)
+
 $(call dist-for-goals,docs,$(out_zip))
 
 endif
