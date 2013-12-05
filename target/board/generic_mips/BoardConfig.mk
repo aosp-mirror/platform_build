@@ -42,6 +42,8 @@ ifeq ($(HOST_OS),linux)
   endif
 endif
 
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+
 # Build OpenGLES emulation guest and host libraries
 BUILD_EMULATOR_OPENGL := true
 
