@@ -162,7 +162,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                           ja-lang="トレーニング"
                           es-lang="Capacitación"               
                           >Training</a></li>
-                        <li><a href="<?cs var:toroot ?>guide/components/index.html"
+                        <li><a href="<?cs var:toroot ?>guide/index.html"
                           zh-tw-lang="API 指南"
                           zh-cn-lang="API 指南"
                           ru-lang="Руководства по API"
@@ -233,7 +233,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ja-lang="トレーニング"
                   es-lang="Capacitación"               
                   >Training</a></li>
-                <li class="guide"><a href="<?cs var:toroot ?>guide/components/index.html"
+                <li class="guide"><a href="<?cs var:toroot ?>guide/index.html"
                   zh-tw-lang="API 指南"
                   zh-cn-lang="API 指南"
                   ru-lang="Руководства по API"
