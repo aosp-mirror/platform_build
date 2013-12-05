@@ -393,6 +393,17 @@ video.with-shadow {
   #nav li ul.tree-list-children ul {
     display:block; }
 
+#nav.samples-nav li li li {
+  font-size:13px;
+}
+#nav.samples-nav li li li a {
+  padding-top:3px;
+  padding-bottom:3px;
+}
+#nav.samples-nav li li ul > li:last-child {
+  padding-bottom:3px;
+}
+
 .new,
 .new-child {
   font-size: .78em;
@@ -860,7 +871,40 @@ scroll top left;
   .framed-nexus4-port-216 img {
     width: 216px;
     height: 360px; }
+    
+.framed-nexus5-port-span-5 {
+  background: transparent url(../images/styles/device_nexus5_blank_port_span5.png) no-repeat
+  scroll top left;
+  padding: 52px 33px 69px 31px;
+  overflow: hidden;
+}
 
+.framed-nexus5-port-span-5,
+.framed-nexus5-port-span-5 video,
+.framed-nexus5-port-span-5 img {
+  width: 216px;
+  height: 384px;
+}
+
+.framed-nexus5-land-span-13 {
+  background: transparent url(../images/styles/device_nexus5_blank_land_span13.png) no-repeat scroll top left;
+  padding: 36px 119px 54px 108px;
+  overflow: hidden;
+}
+
+.framed-nexus5-land-span-13,
+.framed-nexus5-land-span-13 video,
+.framed-nexus5-land-span-13 img {
+  width: 533px;
+  height: 300px;
+}
+
+.framed-nexus5-port-span-5,
+.framed-nexus5-port-span-5 video,
+.framed-nexus5-port-span-5 img {
+  width: 216px;
+  height: 384px;
+}
 
 /* landing page disclosures */
 .landing-page-link {
@@ -1122,6 +1166,9 @@ li ol,
 li dl {
   margin-top:5px;
   margin-bottom:5px;
+}
+dl dd dl:first-child {
+  margin-top:0;
 }
 pre strong, pre b, a strong, a b, a code {
     color: inherit;
@@ -2105,16 +2152,15 @@ pre {
   border: solid 1px #ddd;
   background: #f7f7f7;
 }
-.str { color: #080; }
+.str { color: #800; } /* Code string */
 .kwd { color: #008; }
-.com { color: #800; }
 .typ { color: #606; }
 .lit { color: #066; }
 .pun { color: #660; }
 .pln { color: #000; }
 .tag { color: #008; }
 .atn { color: #828; }
-.atv { color: #080; }
+.atv { color: #800; } /* XML string */
 .dec { color: #606; }
 
 /* --------------------------------------------------------------------------
@@ -2450,13 +2496,12 @@ Lightbox
   background-position: -10px 0;
 }
 
-
 /* --------------------------------------------------------------------------
 Styles for samples project trees and code browsing in resources tab 
 */
 
 #codesample-wrapper {
-  width:1000px;
+  width:100000px; /* super wide to contain floats, but doesn't cause scroll */
   overflow:visible;
 }
 pre#codesample-block {
@@ -2464,6 +2509,9 @@ pre#codesample-block {
   overflow:visible;
   background:transparent;
   border:none;
+}
+pre#codesample-block a.number {
+  display:none;
 }
 pre#codesample-block .code-line:hover {
   background:#e7e7e7;
@@ -2823,7 +2871,9 @@ div.design-announce p {
 }
 
 /* notice box for cross links between Design/Develop docs */
+a.notice-developers-video,
 a.notice-developers,
+a.notice-designers-video,
 a.notice-designers {
   float:right;
   clear:right;
@@ -2832,11 +2882,15 @@ a.notice-designers {
   margin:0 0 20px 20px;
   border:1px solid #ddd;
 }
+a.notice-developers-video.wide,
 a.notice-developers.wide,
+a.notice-designers-video.wide,
 a.notice-designers.wide {
   width:278px;
 }
+a.notice-developers-video div,
 a.notice-developers div,
+a.notice-designers-video div,
 a.notice-designers div {
   min-height:40px;
   background:url('../images/styles/notice-developers@2x.png') no-repeat 10px 10px;
@@ -2847,24 +2901,41 @@ a.notice-designers div {
   background:url('../images/styles/notice-designers@2x.png') no-repeat 10px 10px;
   background-size:40px 40px;
 }
+a.notice-designers-video div {
+  background:url('../images/styles/notice-designers-video@2x.png') no-repeat 10px 10px;
+  background-size:40px 40px;
+}
+a.notice-developers-video div {
+  background:url('../images/styles/notice-developers-video@2x.png') no-repeat 10px 10px;
+  background-size:40px 40px;
+}
+a.notice-developers-video:hover,
 a.notice-developers:hover,
+a.notice-designers-video:hover,
 a.notice-designers:hover {
   background:#eee;
 }
+a.notice-developers-video h3,
 a.notice-developers h3,
+a.notice-designers-video h3,
 a.notice-designers h3 {
-  font-size:14px;
-  font-weight:normal;
+  font-size:13px;
+  line-height:18px;
+  font-weight:bold;
   text-transform:uppercase;
   color:#000 !important;
-  margin:0;
+  margin:0 0 1px;
 }
+a.notice-developers-video p,
 a.notice-developers p,
+a.notice-designers-video p,
 a.notice-designers p {
   margin:0;
-  line-height:16px;
+  line-height:14px;
 }
+a.notice-developers-video.left,
 a.notice-developers.left,
+a.notice-designers-video.left,
 a.notice-designers.left {
   margin-left:0;
   float:left;

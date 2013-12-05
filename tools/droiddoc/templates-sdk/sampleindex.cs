@@ -23,9 +23,7 @@
 &#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
 
 </div><!-- end sum-details-links -->
-<div class="api-level">
-  Other info
-</div>
+
 </div><!-- end breadcurmb block -->
 
 <h1 itemprop="name"><?cs var:projectDir ?></h1>
@@ -78,11 +76,6 @@
 <?cs else ?><?cs
   # else, this means it's offline docs,
           so don't show src links (we dont have the pages!) ?>
-
-<p>You can find the source code for this sample in your SDK at:</p>
-<p style="margin-left:2em">
-<code><em>&lt;sdk&gt;</em>/samples/android-<em>&lt;version&gt;</em>/</code>
-</p>
 
 <?cs /if ?><?cs # end if/else online docs ?>
 

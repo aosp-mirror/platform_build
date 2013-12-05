@@ -241,7 +241,7 @@ false; // navigate across topic boundaries only in design docs
     var training = $(".next-class-link").length; // decides whether to provide "next class" link
     var isCrossingBoundary = false;
 
-    if ($selListItem.hasClass('nav-section')) {
+    if ($selListItem.hasClass('nav-section') && $selListItem.children('div.empty').length == 0) {
       // we're on an index page, jump to the first topic
       $nextLink = $selListItem.find('ul:eq(0)').find('a:eq(0)');
 
@@ -262,12 +262,17 @@ false; // navigate across topic boundaries only in design docs
     } else {
       // jump to the next topic in this section (if it exists)
       $nextLink = $selListItem.next('li').find('a:eq(0)');
-      if (!$nextLink.length) {
+      if ($nextLink.length == 0) {
         isCrossingBoundary = true;
         // no more topics in this section, jump to the first topic in the next section
         $nextLink = $selListItem.parents('li:eq(0)').next('li.nav-section').find('a:eq(0)');
         if (!$nextLink.length) {  // Go up another layer to look for next page (lesson > class > course)
           $nextLink = $selListItem.parents('li:eq(1)').next('li.nav-section').find('a:eq(0)');
+          if ($nextLink.length == 0) {
+            // if that doesn't work, we're at the end of the list, so disable NEXT link
+            $('.next-page-link').attr('href','').addClass("disabled")
+                                .click(function() { return false; });
+          }
         }
       }
     }
@@ -285,10 +290,11 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link').attr('href','')
                           .removeClass("hide").addClass("disabled")
                           .click(function() { return false; });
-
-      $('.next-class-link').attr('href',$nextLink.attr('href'))
-                          .removeClass("hide").append($nextLink.html());
-      $('.next-class-link').find('.new').empty();
+      if ($nextLink.length) {
+        $('.next-class-link').attr('href',$nextLink.attr('href'))
+                             .removeClass("hide").append($nextLink.html());
+        $('.next-class-link').find('.new').empty();
+      }
     } else {
       $('.next-page-link').attr('href', $nextLink.attr('href')).removeClass("hide");
     }
@@ -567,7 +573,7 @@ function initExpandableNavItems(rootTag) {
     } else {
     /* show me */
       // first hide all other siblings
-      var $others = $('li.nav-section.expanded', $(this).closest('ul'));
+      var $others = $('li.nav-section.expanded', $(this).closest('ul')).not('.sticky');
       $others.removeClass('expanded').children('ul').slideUp(250);
 
       // now expand me
@@ -2156,12 +2162,6 @@ google.setOnLoadCallback(function(){
 
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
-  // Handle hash changes in the samples browser
-  if ($("body").hasClass("samples") && location.href.indexOf("/samples/index.html") != -1) {
-    showSamples();
-    highlightSidenav();
-    resizeNav();
-  }
   // Exit if the hash isn't a search query or there's an error in the query
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
     // If the results pane is open, close it.
@@ -2382,7 +2382,8 @@ function toggleVisisbleApis(selectedLevel, context) {
     // Grey things out that aren't available and give a tooltip title
     if (apiLevelNum > selectedLevelNum) {
       obj.addClass("absent").attr("title","Requires API Level \""
-            + apiLevel + "\" or higher");
+            + apiLevel + "\" or higher. To reveal, change the target API level "
+              + "above the left navigation.");
     }
     else obj.removeClass("absent").removeAttr("title");
   });
@@ -2710,6 +2711,9 @@ function init_google_navtree2(navtree_id, data)
     $containerUl.append(new_google_node2(node_data));
   }
 
+  // Make all third-generation list items 'sticky' to prevent them from collapsing
+  $containerUl.find('li li li.nav-section').addClass('sticky');
+
   initExpandableNavItems("#"+navtree_id);
 }
 
@@ -2722,9 +2726,11 @@ function new_google_node2(node_data)
   var $li = $('<li>');
   var $a;
   if (node_data[NODE_HREF] != null) {
-    $a = $('<a href="' + toRoot + node_data[NODE_HREF] + '">' + linkText + '</a>');
+    $a = $('<a href="' + toRoot + node_data[NODE_HREF] + '" title="' + linkText + '" >'
+        + linkText + '</a>');
   } else {
-    $a = $('<a href="#" onclick="return false;">' + linkText + '/</a>');
+    $a = $('<a href="#" onclick="return false;" title="' + linkText + '" >'
+        + linkText + '/</a>');
   }
   var $childUl = $('<ul>');
   if (node_data[NODE_CHILDREN] != null) {
@@ -2791,9 +2797,18 @@ function init_default_samples_navtree(toroot) {
   $.getScript(toRoot + 'samples_navtree_data.js', function(data, textStatus, jqxhr) {
       // when the file is loaded, initialize the tree
       if(jqxhr.status === 200) {
+          // hack to remove the "about the samples" link then put it back in
+          // after we nuke the list to remove the dummy static list of samples
+          var $firstLi = $("#nav.samples-nav > li:first-child").clone();
+          $("#nav.samples-nav").empty();
+          $("#nav.samples-nav").append($firstLi);
+
           init_google_navtree2("nav.samples-nav", SAMPLES_NAVTREE_DATA);
           highlightSidenav();
           resizeNav();
+          if ($("#jd-content #samples").length) {
+            showSamples();
+          }
       }
   });
 }
@@ -2943,10 +2958,31 @@ function selectText(element) {
         range.moveToElementText(element);
         range.select();
     } else if (window.getSelection) { //all others
-        selection = window.getSelection();        
+        selection = window.getSelection();
         range = doc.createRange();
         range.selectNodeContents(element);
         selection.removeAllRanges();
         selection.addRange(range);
     }
+}
+
+
+
+
+/** Display links and other information about samples that match the
+    group specified by the URL */
+function showSamples() {
+  var group = $("#samples").attr('class');
+  $("#samples").html("<p>Here are some samples for <b>" + group + "</b> apps:</p>");
+
+  var $ul = $("<ul>");
+  $selectedLi = $("#nav li.selected");
+
+  $selectedLi.children("ul").children("li").each(function() {
+      var $li = $("<li>").append($(this).find("a").first().clone());
+      $ul.append($li);
+  });
+
+  $("#samples").append($ul);
+
 }
