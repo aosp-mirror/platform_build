@@ -232,8 +232,9 @@ def BuildImage(in_dir, prop_dict, out_file):
       run_fsck = True
     build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
-    if "partition_size" in prop_dict:
-      build_command.append(prop_dict["partition_size"])
+    build_command.append(prop_dict["partition_size"])
+    if "timestamp" in prop_dict:
+      build_command.extend(["-T", str(prop_dict["timestamp"])])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   else:
@@ -276,7 +277,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     glob_dict: the global dictionary from the build system.
     mount_point: such as "system", "data" etc.
   """
-  d = {}
+  d = {"timestamp": glob_dict["build.prop"].get("ro.build.date.utc", -1)}
 
   def copy_prop(src_p, dest_p):
     if src_p in glob_dict:
