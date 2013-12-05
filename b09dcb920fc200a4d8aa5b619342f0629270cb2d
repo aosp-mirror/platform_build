@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "430dc2ba_07df9626",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2013-12-05T18:55:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3ca9290_96d50ad4",
+      "revId": "b09dcb920fc200a4d8aa5b619342f0629270cb2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c3ca9290_b6d006e4",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-12-05T17:53:23Z",
       "side": 1,
       "message": "whitespace",
+      "revId": "b09dcb920fc200a4d8aa5b619342f0629270cb2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83133adb_c9e871d7",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2013-12-05T18:55:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3ca9290_b6d006e4",
       "revId": "b09dcb920fc200a4d8aa5b619342f0629270cb2d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
