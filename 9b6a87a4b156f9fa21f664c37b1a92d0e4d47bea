@@ -16,6 +16,24 @@
       "revId": "9b6a87a4b156f9fa21f664c37b1a92d0e4d47bea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3e2361a_cce2cf46",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1002563
+      },
+      "writtenOn": "2013-12-05T01:46:12Z",
+      "side": 1,
+      "message": "Ah, I forgot I have another patch (from Intel) that extends auto-prebuilt-boilerplate to accept 10 parameters in my codebase. The 9th is LOCAL_MODULE_PATH.",
+      "parentUuid": "63a3a6b3_44860eb8",
+      "revId": "9b6a87a4b156f9fa21f664c37b1a92d0e4d47bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
