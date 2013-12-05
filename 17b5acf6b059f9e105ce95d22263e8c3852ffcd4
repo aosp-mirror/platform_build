@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c3ca9290_f9066f36",
+        "filename": "core/compilerchecks.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1019048
+      },
+      "writtenOn": "2013-12-05T23:27:39Z",
+      "side": 1,
+      "message": "gcc version should not be hardcoded.",
+      "revId": "17b5acf6b059f9e105ce95d22263e8c3852ffcd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
