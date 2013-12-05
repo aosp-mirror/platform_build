@@ -342,6 +342,22 @@ define find-other-html-files
 endef
 
 ###########################################################
+# Use utility find to find given files in the given subdirs.
+# This function uses $(1), instead of LOCAL_PATH as the base.
+# $(1): the base dir, relative to the root of the source tree.
+# $(2): the file name pattern to be passed to find as "-name".
+# $(3): a list of subdirs of the base dir.
+# Returns: a list of paths relative to the base dir.
+###########################################################
+
+define find-files-in-subdirs
+$(patsubst ./%,%, \
+  $(shell cd $(1) ; \
+          find -L $(3) -name $(2) -and -not -name ".*") \
+ )
+endef
+
+###########################################################
 ## Scan through each directory of $(1) looking for files
 ## that match $(2) using $(wildcard).  Useful for seeing if
 ## a given directory or one of its parents contains
