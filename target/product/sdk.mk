@@ -23,6 +23,7 @@ PRODUCT_PACKAGES := \
 	CustomLocale \
 	Development \
 	DevelopmentSettings \
+	Dialer \
 	Fallback \
 	Gallery \
 	GestureBuilder \
