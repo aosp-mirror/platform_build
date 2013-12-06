@@ -83,7 +83,7 @@
       <th>MD5 Checksum</th>
   </tr>
   <tr>
-    <td rowspan="2" style="white-space:nowrap">Windows 32-bit</td>
+    <td>Windows 32-bit</td>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.win32_download ?>"><?cs var:ndk.win32_download ?></a>
@@ -91,33 +91,33 @@
     <td><?cs var:ndk.win32_bytes ?></td>
     <td><?cs var:ndk.win32_checksum ?></td>
   </tr>
-  <tr>
-    <td>
+ <!-- <tr>
+   <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.win32.legacy_download ?>"><?cs var:ndk.win32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.win32.legacy_bytes ?></td>
     <td><?cs var:ndk.win32.legacy_checksum ?></td>
-  </tr>
+  </tr> -->
   <tr>
-    <td rowspan="2" style="white-space:nowrap">Windows 64-bit</td>
+    <td>Windows 64-bit</td>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.win64_download ?>"><?cs var:ndk.win64_download ?></a>
     </td>
     <td><?cs var:ndk.win64_bytes ?></td>
     <td><?cs var:ndk.win64_checksum ?></td>
-  </tr>
-  <tr>
+  </tr> 
+ <!--  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.win64.legacy_download ?>"><?cs var:ndk.win64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.win64.legacy_bytes ?></td>
     <td><?cs var:ndk.win64.legacy_checksum ?></td>
-  </tr>
+  </tr> -->
   <tr>
-    <td rowspan="2" style="white-space:nowrap">Mac OS X 32-bit</td>
+    <td>Mac OS X 32-bit</td>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac32_download ?>"><?cs var:ndk.mac32_download ?></a>
@@ -125,16 +125,15 @@
     <td><?cs var:ndk.mac32_bytes ?></td>
     <td><?cs var:ndk.mac32_checksum ?></td>
   </tr>
-  <tr>
+ <!--  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.mac32.legacy_bytes ?></td>
     <td><?cs var:ndk.mac32.legacy_checksum ?></td>
-  </tr>
-  <tr>
-    <td rowspan="2"  style="white-space:nowrap">Mac OS X 64-bit</td>
+  </tr> -->
+    <td>Mac OS X 64-bit</td>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac64_download ?>"><?cs var:ndk.mac64_download ?></a>
@@ -142,17 +141,16 @@
     <td><?cs var:ndk.mac64_bytes ?></td>
     <td><?cs var:ndk.mac64_checksum ?></td>
   </tr>
-  <tr>
+ <!--  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac64.legacy_download ?>"><?cs var:ndk.mac64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.mac64.legacy_bytes ?></td>
     <td><?cs var:ndk.mac64.legacy_checksum ?></td>
-  </tr>
-
+  </tr> -->
   <tr>
-    <td rowspan="2" style="white-space:nowrap">Linux 32-bit (x86)</td>
+    <td>Linux 32-bit (x86)</td>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.linux32_download ?>"><?cs var:ndk.linux32_download ?></a>
@@ -160,16 +158,16 @@
     <td><?cs var:ndk.linux32_bytes ?></td>
     <td><?cs var:ndk.linux32_checksum ?></td>
   </tr>
-  <tr>
+ <!--  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.linux32.legacy_download ?>"><?cs var:ndk.linux32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.linux32.legacy_bytes ?></td>
     <td><?cs var:ndk.linux32.legacy_checksum ?></td>
-  </tr>
+  </tr> -->
   <tr>
-    <td rowspan="2" style="white-space:nowrap">Linux 64-bit (x86)</td>
+    <td>Linux 64-bit (x86)</td>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.linux64_download ?>"><?cs var:ndk.linux64_download ?></a>
@@ -177,13 +175,28 @@
     <td><?cs var:ndk.linux64_bytes ?></td>
     <td><?cs var:ndk.linux64_checksum ?></td>
   </tr>
-  <tr>
+  <!--  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.linux64.legacy_download ?>"><?cs var:ndk.linux64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.linux64.legacy_bytes ?></td>
     <td><?cs var:ndk.linux64.legacy_checksum ?></td>
+  </tr> -->
+    <tr>
+      <th>Additional Download</th>
+      <th>Package</th>
+      <th style="white-space:nowrap">Size (Bytes)</th>
+      <th>MD5 Checksum</th>
+  </tr>
+  <tr>
+    <td>STL debug info</td>
+    <td>
+  <a onClick="return onDownload(this)"
+     href="http://dl.google.com/android/ndk/<?cs var:ndk.debug_info_download ?>"><?cs var:ndk.debug_info_download ?></a>
+    </td>
+    <td><?cs var:ndk.debug_info_bytes ?></td>
+    <td><?cs var:ndk.debug_info_checksum ?></td>
   </tr>
   </table>
   
