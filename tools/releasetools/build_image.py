@@ -130,12 +130,15 @@ def BuildVerifiedImage(data_image_path, verity_image_path, verity_metadata_path)
     return False
   return True
 
-def UnsparseImage(sparse_image_path):
+def UnsparseImage(sparse_image_path, replace=True):
   img_dir = os.path.dirname(sparse_image_path)
   unsparse_image_path = "unsparse_" + os.path.basename(sparse_image_path)
   unsparse_image_path = os.path.join(img_dir, unsparse_image_path)
   if os.path.exists(unsparse_image_path):
-    return True, unsparse_image_path
+    if replace:
+      os.unlink(unsparse_image_path)
+    else:
+      return True, unsparse_image_path
   inflate_command = ["simg2img", sparse_image_path, unsparse_image_path]
   exit_code = RunCommand(inflate_command)
   if exit_code != 0:
@@ -256,7 +259,7 @@ def BuildImage(in_dir, prop_dict, out_file):
       return False
 
   if run_fsck and prop_dict.get("skip_fsck") != "true":
-    success, unsparse_image = UnsparseImage(out_file)
+    success, unsparse_image = UnsparseImage(out_file, replace=False)
     if not success:
       return False
 
