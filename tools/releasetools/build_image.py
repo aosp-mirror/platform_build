@@ -280,7 +280,11 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     glob_dict: the global dictionary from the build system.
     mount_point: such as "system", "data" etc.
   """
-  d = {"timestamp": glob_dict["build.prop"].get("ro.build.date.utc", -1)}
+  d = {}
+  if "build.prop" in glob_dict:
+    bp = glob_dict["build.prop"]
+    if "ro.build.date.utc" in bp:
+      d["timestamp"] = bp["ro.build.date.utc"]
 
   def copy_prop(src_p, dest_p):
     if src_p in glob_dict:
