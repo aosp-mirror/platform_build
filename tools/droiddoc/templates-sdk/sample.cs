@@ -7,7 +7,7 @@
 
 <div <?cs if:fullpage
 ?>class="fullpage"<?cs elif:design||tools||about||sdk||distribute
-?>class="col-13" id="doc-col"<?cs else 
+?>class="col-13" id="doc-col"<?cs else
 ?>class="col-12" id="doc-col"<?cs /if ?> >
 
 <!-- start breadcrumb block -->
@@ -17,7 +17,9 @@
   <!-- related links -->
   <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/index.html">Overview</a>
   &#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
-  &#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip">Download</a>
+  &#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip"
+    onclick="_gaq.push(['_trackEvent', 'Samples', 'Download', <?cs var:projectDir ?>]);"
+    >Download</a>
 
 </div><!-- end sum-details-links -->
 
@@ -28,7 +30,7 @@
 <div id="pathCrumb">
 <?cs each:item = parentdirs ?>
   <?cs if:pathCrumbLinks
-    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> / 
+    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> /
   <?cs else
     ?><?cs var:item.Name ?> / <?cs /if ?>
 <?cs /each ?>
