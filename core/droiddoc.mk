@@ -157,6 +157,7 @@ $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_f
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
 	$(hide) ( \
 		javadoc \
+                -encoding UTF-8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1280m \
                 $(PRIVATE_PROFILING_OPTIONS) \
@@ -190,6 +191,7 @@ $(full_target): $(full_src_files) $(full_java_lib_deps)
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
 	$(hide) ( \
 		javadoc \
+                -encoding UTF-8 \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1024m \
