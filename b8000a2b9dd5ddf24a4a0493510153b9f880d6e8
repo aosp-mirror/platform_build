@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8101b3f_9a248dde",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2013-12-11T18:46:57Z",
+      "side": 1,
+      "message": "Perhaps we should document what these arguments are ?",
+      "revId": "b8000a2b9dd5ddf24a4a0493510153b9f880d6e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e31f9643_07a578ca",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2013-12-11T18:46:57Z",
+      "side": 1,
+      "message": "Why did you choose to leave the leading \"/\" out of DEXPREOPT_BOOR_JAR_DIR ? Do you want to enforce the absolute pathiness of DEX_PREOPT_IMAGE ?",
+      "revId": "b8000a2b9dd5ddf24a4a0493510153b9f880d6e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
