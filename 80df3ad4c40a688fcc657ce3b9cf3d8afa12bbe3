@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c31c5254_439846a6",
+        "filename": "tools/releasetools/sign_target_files_apks",
+        "patchSetId": 1
+      },
+      "lineNbr": 240,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-12-11T21:14:12Z",
+      "side": 1,
+      "message": "maybe value.pop() or del value[-1]?",
+      "revId": "80df3ad4c40a688fcc657ce3b9cf3d8afa12bbe3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8e73b93_621a3654",
+        "filename": "tools/releasetools/sign_target_files_apks",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2013-12-11T21:14:12Z",
+      "side": 1,
+      "message": "Why not \" \".join(value), rather than importing the string module?",
+      "revId": "80df3ad4c40a688fcc657ce3b9cf3d8afa12bbe3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
