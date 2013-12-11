@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8337bac2_d2895a0d",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-11T19:11:08Z",
+      "side": 1,
+      "message": "yeah, the ones they delegate to are doc\u0027d, but I added doc here too",
+      "parentUuid": "a8101b3f_9a248dde",
+      "revId": "b8000a2b9dd5ddf24a4a0493510153b9f880d6e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e31f9643_07a578ca",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2013-12-11T18:46:57Z",
       "side": 1,
       "message": "Why did you choose to leave the leading \"/\" out of DEXPREOPT_BOOR_JAR_DIR ? Do you want to enforce the absolute pathiness of DEX_PREOPT_IMAGE ?",
+      "revId": "b8000a2b9dd5ddf24a4a0493510153b9f880d6e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a332fed0_b36dca8e",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-11T19:11:08Z",
+      "side": 1,
+      "message": "I didn\u0027t, this variable predates my change.",
+      "parentUuid": "e31f9643_07a578ca",
       "revId": "b8000a2b9dd5ddf24a4a0493510153b9f880d6e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
