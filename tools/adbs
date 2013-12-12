@@ -20,9 +20,9 @@ import string
 import sys
 
 ###############################################################################
-# match "#00  pc 0003f52e  /system/lib/libdvm.so" for example
+# match "#00 pc 0003f52e  /system/lib/libdvm.so" for example
 ###############################################################################
-trace_line = re.compile("(.*)(\#[0-9]+)  (..) ([0-9a-f]{8})  ([^\r\n \t]*)")
+trace_line = re.compile("(.*)(\#[0-9]+) {1,2}(..) ([0-9a-f]{8})  ([^\r\n \t]*)")
 
 # returns a list containing the function name and the file/lineno
 def CallAddr2Line(lib, addr):
