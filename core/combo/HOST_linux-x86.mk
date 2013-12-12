@@ -39,12 +39,12 @@ ifneq ($(strip $(BUILD_HOST_64bit)),)
 # more consistency between the host tools and the target.
 # BUILD_HOST_64bit=1 overrides it for tool like emulator
 # which can benefit from 64-bit host arch.
-HOST_GLOBAL_CFLAGS += -m64
-HOST_GLOBAL_LDFLAGS += -m64
+HOST_GLOBAL_CFLAGS += -m64 -Wa,--noexecstack
+HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack
 else
 # We expect SSE3 floating point math.
-HOST_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32
-HOST_GLOBAL_LDFLAGS += -m32
+HOST_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32 -Wa,--noexecstack
+HOST_GLOBAL_LDFLAGS += -m32 -Wl,-z,noexecstack
 endif # BUILD_HOST_64bit
 
 ifneq ($(strip $(BUILD_HOST_static)),)
