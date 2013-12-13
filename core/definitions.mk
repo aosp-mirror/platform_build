@@ -1368,6 +1368,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_LDFLAGS) \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(HOST_GLOBAL_LDFLAGS) \
+		-fPIE -pie \
 	) \
 	-o $@ \
 	$(PRIVATE_LDLIBS)
