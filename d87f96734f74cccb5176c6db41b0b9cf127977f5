@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "88d6f7d9_b740904d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-13T00:17:16Z",
+      "side": 1,
+      "message": "Why the 64-bit QEMU executable build will be broken? the flag will be guarded by  $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS) here.",
+      "parentUuid": "68db8306_93755ee2",
+      "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28aeeb65_5a686510",
         "filename": "core/definitions.mk",
         "patchSetId": 1
