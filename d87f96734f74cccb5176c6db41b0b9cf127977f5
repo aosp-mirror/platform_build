@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "68db8306_d6f0b40b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1037474
+      },
+      "writtenOn": "2013-12-13T01:11:55Z",
+      "side": 1,
+      "message": "Note that qemu seems to explicitly use -fno-PIC in several places, which would preclude using PIE. I assumed this was for a good reason and decided not to try to change that.",
+      "parentUuid": "28c50b24_546044e7",
+      "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28aeeb65_5a686510",
         "filename": "core/definitions.mk",
         "patchSetId": 1
