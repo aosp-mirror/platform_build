@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "c8762fc5_96756ae2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-13T01:33:40Z",
+      "side": 1,
+      "message": "That error appears only if -fPIE is applied to the emulator executables. You can run \"make -j64 showcommands host-native\"  and examine the compiler commands.\nI guess you still have some extra local change?\nI\u0027ll upload a new patch-set.",
+      "parentUuid": "28c50b24_546044e7",
+      "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28aeeb65_5a686510",
         "filename": "core/definitions.mk",
         "patchSetId": 1
