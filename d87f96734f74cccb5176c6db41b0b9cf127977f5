@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "28c50b24_546044e7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1037474
+      },
+      "writtenOn": "2013-12-13T01:08:23Z",
+      "side": 1,
+      "message": "The build error without using the -no-pie variant follows:\n\nhost Executable (PIE): emulator64-arm (out/host/linux-x86/obj/EXECUTABLES/emulator64-arm_intermediates/emulator64-arm)\n/android/source/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.7-4.6/bin/../lib/gcc/x86_64-linux/4.6.x-google/../../../../x86_64-linux/bin/ld: out/host/linux-x86/obj/EXECUTABLES/emulator64-arm_intermediates/audio/audio.o: relocation R_X86_64_32S against `.rodata\u0027 can not be used when making a shared object; recompile with -fPIC\nout/host/linux-x86/obj/EXECUTABLES/emulator64-arm_intermediates/audio/audio.o: could not read symbols: Bad value\ncollect2: ld returned 1 exit status\nmake: *** [out/host/linux-x86/obj/EXECUTABLES/emulator64-arm_intermediates/emulator64-arm] Error 1",
+      "parentUuid": "88d6f7d9_b740904d",
+      "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28aeeb65_5a686510",
         "filename": "core/definitions.mk",
         "patchSetId": 1
