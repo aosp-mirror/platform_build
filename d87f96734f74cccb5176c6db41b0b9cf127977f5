@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "68db8306_93755ee2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1037474
+      },
+      "writtenOn": "2013-12-13T00:09:38Z",
+      "side": 1,
+      "message": "Adding the flag here works except QEMU will no longer build. Hence the change to add the -no-pie variant of transform-host-o-to-executable-inner and the change to QEMU to use it.",
+      "parentUuid": "88d6f7d9_5704c42f",
+      "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28aeeb65_5a686510",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "OK, I didn\u0027t know that PIE can\u0027t be applied to shared library.",
       "parentUuid": "68db8306_3325923d",
+      "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28c50b24_91755ee2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1394,
+      "author": {
+        "id": 1037474
+      },
+      "writtenOn": "2013-12-13T00:09:38Z",
+      "side": 1,
+      "message": "The error in liblog is pretty strange. I don\u0027t understand what\u0027s going on there :(",
+      "parentUuid": "e8ce934a_efa71d3a",
       "revId": "d87f96734f74cccb5176c6db41b0b9cf127977f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
