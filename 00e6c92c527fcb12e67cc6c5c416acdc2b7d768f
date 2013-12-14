@@ -87,6 +87,40 @@
     },
     {
       "key": {
+        "uuid": "a8973b5d_c8abe3a2",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:45:34Z",
+      "side": 1,
+      "message": "Why do need $(installed_odex) even if LOCAL_DEX_PREOPT is unset?",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_29d00938",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:45:34Z",
+      "side": 1,
+      "message": "Since you add $(installed_odex) to ALL_MODULES.$$(LOCAL_MODULE).INSTALLED, I don\u0027t think we still need this dependency.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_814a5c70",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 5
