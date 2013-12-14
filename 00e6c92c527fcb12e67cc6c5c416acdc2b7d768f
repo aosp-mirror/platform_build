@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c86c6f4a_c62764e1",
+        "filename": "c86c6f4a_c62764e1",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "Let\u0027s move this to a separate makfile and include it where we call this function. \"include \u003cmakefile\u003e\" is preferable over \"$(eval )\" for 2 reasons:\n1) you don\u0027t need to escape $ in the included makefile so it\u0027s much more readable.\n2) \"include\" is much faster than \"$(eval)\".\n\n\nThe same for lots of functions defined then called with $(eval) in the art/ project.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_e3f7f2fd",
+        "filename": "c86c6f4a_e3f7f2fd",
+        "patchSetId": 5
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "$(patsubst core, core-libart,$(TARGET_BOOT_JARS))\nNo $(foreach) is needed.\n\nAlso please add a comment why we need to replace core with core-libart here.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28c8ab74_366f788a",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "Let\u0027s define a global (all-capital) variable in target/product/runtime_libart_default.mk and target/product/runtime_libdvm_default.mk, instead of grepping out here.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_9e54fd13",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "I think we should rename it to _dexpreopt-boot-jar-remove-classes.dex now.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_c5086cbd",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "In build/core/main, we only enable WITH_DEXPREOPT for user builds. It seems we don\u0027t need this judgement here again.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_814a5c70",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "It\u0027s good to catch this!",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_06533c57",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "How about the boot jars? where is the rule to install the .odex files for them when libdvm.so is used?",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8be2fc6_9375bc14",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "Where is PRODUCT_DEX_PREOPT_IMAGE_IN_DATA defined?",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_c3faf6e8",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "We already have DEXPREOPT_BOOT_JARS_MODULES in dex_preopt.mk",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_42fc528c",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "I don\u0027t see the definition of PARALLEL_ART_COMPILE_JOBS .",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_a3bdfa9b",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "Please move the above block back to the art project - module definition shouldn\u0027t be in the core build system.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_61d8703e",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "Let\u0027s move it down to here.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_85d26495",
+        "filename": "core/java_library.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "Please use PRIVATE_DEX_LOCATION",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_c9113569",
+        "filename": "core/package.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-14T00:31:50Z",
+      "side": 1,
+      "message": "The convention is to use PRIVATE_DEX_LOCATION .",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
