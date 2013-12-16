@@ -457,6 +457,24 @@
     },
     {
       "key": {
+        "uuid": "08a847a1_c091803d",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T23:45:47Z",
+      "side": 1,
+      "message": "ok, well maybe this is a different problem them. or a problem rarely encountered before.\n\nmy worry is someone can\u0027t just rebuild in libcore or frameworks/base now, they need to rebuild in art too. I guess I\u0027ve seen some warning about needing to do top level builds for dexopt, I don\u0027t see that anymore.\n\nthis would be an issue before as well, if you change core.jar, you need to regenerate frameworks.odex",
+      "parentUuid": "a8973b5d_9723b6c0",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_61d8703e",
         "filename": "core/java.mk",
         "patchSetId": 5
