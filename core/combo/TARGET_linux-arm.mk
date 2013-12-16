@@ -203,10 +203,11 @@ ifneq ($(CUSTOM_KERNEL_HEADERS),)
     KERNEL_HEADERS_COMMON := $(CUSTOM_KERNEL_HEADERS)
     KERNEL_HEADERS_ARCH   := $(CUSTOM_KERNEL_HEADERS)
 else
-    KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
-    KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
+    KERNEL_HEADERS_COMMON := $(libc_root)/kernel/common
+    KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/arch-$(TARGET_ARCH)
+    KERNEL_HEADERS_AUX    := $(libc_root)/kernel/uapi # for kexec.h
 endif
-KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
+KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH) $(KERNEL_HEADERS_AUX)
 
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-arm/include \
