@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "08a847a1_20c6e481",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T22:56:02Z",
+      "side": 1,
+      "message": "because like with dexopt (and dx), we\u0027ve wanted to have a order only dependency on the tool. you don\u0027t need to rerunt he compiler for everything just because the LIBART_COMPILER or any of its dependencies changes. \n\nhowever, if the file formats change, we need to force a rebuild. I\u0027d checked this in before but it got lost when I was first pulling this over to aosp, so I ran into this issue when someone changed a file format when I rebased things.",
+      "parentUuid": "c86c6f4a_6c204a2e",
+      "range": {
+        "startLine": 19,
+        "startChar": 73,
+        "endLine": 19,
+        "endChar": 79
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8973b5d_3764ea7b",
         "filename": "core/java_library.mk",
         "patchSetId": 8
@@ -36,6 +60,30 @@
       "writtenOn": "2013-12-16T21:56:45Z",
       "side": 1,
       "message": "Perhaps it\u0027s more efficient and more readable with:\n$(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))",
+      "range": {
+        "startLine": 96,
+        "startChar": 39,
+        "endLine": 96,
+        "endChar": 42
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "68baa3ef_9b540f14",
+        "filename": "core/java_library.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T22:56:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a8973b5d_3764ea7b",
       "range": {
         "startLine": 96,
         "startChar": 39,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "08a847a1_80a6d8d6",
+        "filename": "core/java_library.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T22:56:02Z",
+      "side": 1,
+      "message": "actually, there is a dependency already on LOCAL_DEX_PREOPT_IMAGE, but you are right the tools dependency is missing (though implicit through the LOCAL_DEX_PREOPT_IMAGE. I\u0027ll make it explicit, and conditional on DALVIK_VM_LIB value since we don\u0027t want to depend on DEXOPT and DEXPREOPT for libart",
+      "parentUuid": "28ab4b9f_8d7ccdcf",
+      "range": {
+        "startLine": 97,
+        "startChar": 67,
+        "endLine": 97,
+        "endChar": 68
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c86c6f4a_cc593ec3",
         "filename": "core/package.mk",
         "patchSetId": 8
@@ -82,6 +154,30 @@
       "writtenOn": "2013-12-16T21:56:45Z",
       "side": 1,
       "message": "If LOCAL_UNINSTALLABLE_MODULE is true, we can reset LOCAL_DEX_PREOPT to empty in dex_preopt_odex_install.mk, and use \"ifdef LOCAL_DEX_PREOPT\" as is consistent with the call to $(dexpreopt-one-file).",
+      "range": {
+        "startLine": 393,
+        "startChar": 0,
+        "endLine": 393,
+        "endChar": 33
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08a847a1_805018ef",
+        "filename": "core/package.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T22:56:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c86c6f4a_cc593ec3",
       "range": {
         "startLine": 393,
         "startChar": 0,
