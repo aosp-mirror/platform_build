@@ -71,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "a8973b5d_f1345262",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:01Z",
+      "side": 1,
+      "message": "Yeah, looks better.",
+      "parentUuid": "28ab4b9f_07041c2e",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_9e54fd13",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 5
@@ -415,6 +433,24 @@
       "side": 1,
       "message": "hmm, to me this is similar to the libdvm case where rules to make odex for the boot jars are visible globally as well. if someone rebuilds a boot jar, they need to regenerate this as well.\n\nI\u0027m sure you are right that putting this here isn\u0027t 100% right, but I think there needs to be something. perhaps in the includes that go for package.mk? but then I don\u0027t know why that doesn\u0027t apply to the libdvm case too. (it probably should but I\u0027d like to talk more before redoing this to make sure I\u0027m using the right approach)",
       "parentUuid": "c86c6f4a_a3bdfa9b",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_9723b6c0",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:01Z",
+      "side": 1,
+      "message": "In the libdvm case, we have DEXPREOPT_BOOT_ODEXS, which points to the built .odex files of the boot jars. Then in package.mk and java_library.mk we have \"$(LOCAL_BUILT_MODULE): $(DEXPREOPT_BOOT_ODEXS)\" and \"$(built_odex) : $(DEXPREOPT_BOOT_ODEXS)\". This makes sure if any boot jars gets rebuilt, all .odex will be re-generated.",
+      "parentUuid": "28ab4b9f_87182c90",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
