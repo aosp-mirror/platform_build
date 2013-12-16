@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c86c6f4a_6c204a2e",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T21:56:45Z",
+      "side": 1,
+      "message": "Why we need the above 2 lines? the dependency should be established in an implicit way:\n.cc \u003c- $(DEX2OAT) $(LIBART_COMPILER) \u003c- .oat and .art",
+      "range": {
+        "startLine": 19,
+        "startChar": 73,
+        "endLine": 19,
+        "endChar": 79
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_3764ea7b",
+        "filename": "core/java_library.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T21:56:45Z",
+      "side": 1,
+      "message": "Perhaps it\u0027s more efficient and more readable with:\n$(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))",
+      "range": {
+        "startLine": 96,
+        "startChar": 39,
+        "endLine": 96,
+        "endChar": 42
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_8d7ccdcf",
+        "filename": "core/java_library.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T21:56:45Z",
+      "side": 1,
+      "message": "We are missing dependencies here:\nWe don\u0027t have dependency on $(LOCAL_DEX_PREOPT_IMAGE), as well as $(DEX2OAT_DEPENDENCY)",
+      "range": {
+        "startLine": 97,
+        "startChar": 67,
+        "endLine": 97,
+        "endChar": 68
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_cc593ec3",
+        "filename": "core/package.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T21:56:45Z",
+      "side": 1,
+      "message": "If LOCAL_UNINSTALLABLE_MODULE is true, we can reset LOCAL_DEX_PREOPT to empty in dex_preopt_odex_install.mk, and use \"ifdef LOCAL_DEX_PREOPT\" as is consistent with the call to $(dexpreopt-one-file).",
+      "range": {
+        "startLine": 393,
+        "startChar": 0,
+        "endLine": 393,
+        "endChar": 33
+      },
+      "revId": "60319fac66fa0d8881d3f40c399c1db803d34ebf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
