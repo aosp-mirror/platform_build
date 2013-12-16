@@ -53,6 +53,24 @@
     },
     {
       "key": {
+        "uuid": "28ab4b9f_07041c2e",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "done, called DALVIK_VM_LIB\n\nI also then removed the adding in each runtime_lib*_default.mk to PRODUCT_PROPERTY_OVERRIDES and just did it in one place in product_config.mk like this:\n\nPRODUCT_PROPERTY_OVERRIDES +\u003d persist.sys.dalvik.vm.lib\u003d$(DALVIK_VM_LIB)\n\nthat seems better right?",
+      "parentUuid": "28c8ab74_366f788a",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_9e54fd13",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 5
@@ -64,6 +82,24 @@
       "writtenOn": "2013-12-14T00:31:50Z",
       "side": 1,
       "message": "I think we should rename it to _dexpreopt-boot-jar-remove-classes.dex now.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_f7b16873",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28ab4b9f_9e54fd13",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -87,6 +123,24 @@
     },
     {
       "key": {
+        "uuid": "28ab4b9f_e7081046",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a8973b5d_c5086cbd",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8973b5d_c8abe3a2",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 5
@@ -98,6 +152,24 @@
       "writtenOn": "2013-12-14T00:45:34Z",
       "side": 1,
       "message": "Why do need $(installed_odex) even if LOCAL_DEX_PREOPT is unset?",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_17de04a8",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "we don\u0027t here (yet). In dalvik-dev, we always did dexopt. if LOCAL_DEX_PREOPT was set, it would go to /system as before. If not set, it would go to /data/dalvik-cache which would could be sent via \"adb sync\". I\u0027ll remove this for now as unneeded (as well as the dalvik-cache-* declarations)",
+      "parentUuid": "a8973b5d_c8abe3a2",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "c86c6f4a_37e30075",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c86c6f4a_29d00938",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_814a5c70",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 5
@@ -132,6 +222,24 @@
       "writtenOn": "2013-12-14T00:31:50Z",
       "side": 1,
       "message": "It\u0027s good to catch this!",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_57d87cb8",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "yeah, but the comment is out of date if I\u0027m removing the installed_odex from /data/dalvik-cache, so I\u0027ve updated it slightly.",
+      "parentUuid": "28ab4b9f_814a5c70",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -155,6 +263,24 @@
     },
     {
       "key": {
+        "uuid": "28ab4b9f_c7fd14de",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "should be in dex_preopt_libdvm.mk, I tried to move dvm specific stuff there so it can be more easily removed later.",
+      "parentUuid": "c86c6f4a_06533c57",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c8be2fc6_9375bc14",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 5
@@ -166,6 +292,24 @@
       "writtenOn": "2013-12-14T00:31:50Z",
       "side": 1,
       "message": "Where is PRODUCT_DEX_PREOPT_IMAGE_IN_DATA defined?",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_f6b68808",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "removed now.\n\nIn dalvik-dev we used this for trygon where the boot.art/boot.oat didn\u0027t fit in /system. I can remove it now (along with a bunch of the dalvik-cache stuff above)",
+      "parentUuid": "c8be2fc6_9375bc14",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -189,6 +333,24 @@
     },
     {
       "key": {
+        "uuid": "c86c6f4a_77dd78a7",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "ah, true. This was all written long before that was added.",
+      "parentUuid": "c86c6f4a_c3faf6e8",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8973b5d_42fc528c",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 5
@@ -200,6 +362,24 @@
       "writtenOn": "2013-12-14T00:31:50Z",
       "side": 1,
       "message": "I don\u0027t see the definition of PARALLEL_ART_COMPILE_JOBS .",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_a7020820",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "good catch. this was still in art/build. However, we only use it to throttle the backend for the llvm based backend which we aren\u0027t using by default so I\u0027ve removed it everywhere.",
+      "parentUuid": "a8973b5d_42fc528c",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -223,6 +403,24 @@
     },
     {
       "key": {
+        "uuid": "28ab4b9f_87182c90",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "hmm, to me this is similar to the libdvm case where rules to make odex for the boot jars are visible globally as well. if someone rebuilds a boot jar, they need to regenerate this as well.\n\nI\u0027m sure you are right that putting this here isn\u0027t 100% right, but I think there needs to be something. perhaps in the includes that go for package.mk? but then I don\u0027t know why that doesn\u0027t apply to the libdvm case too. (it probably should but I\u0027d like to talk more before redoing this to make sure I\u0027m using the right approach)",
+      "parentUuid": "c86c6f4a_a3bdfa9b",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_61d8703e",
         "filename": "core/java.mk",
         "patchSetId": 5
@@ -234,6 +432,24 @@
       "writtenOn": "2013-12-14T00:31:50Z",
       "side": 1,
       "message": "Let\u0027s move it down to here.",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_67152054",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "the dexpreopt-odex-install line above? done.",
+      "parentUuid": "28ab4b9f_61d8703e",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -257,6 +473,24 @@
     },
     {
       "key": {
+        "uuid": "28ab4b9f_4712246e",
+        "filename": "core/java_library.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "done here and elsewhere. I seem to have figured that out later, this must have been one of the first I added.",
+      "parentUuid": "a8973b5d_85d26495",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c86c6f4a_c9113569",
         "filename": "core/package.mk",
         "patchSetId": 5
@@ -268,6 +502,24 @@
       "writtenOn": "2013-12-14T00:31:50Z",
       "side": 1,
       "message": "The convention is to use PRIVATE_DEX_LOCATION .",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_d6ab84a2",
+        "filename": "core/package.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-16T07:16:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c86c6f4a_c9113569",
       "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
