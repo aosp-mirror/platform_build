@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28ab4b9f_8d23adc0",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:42Z",
+      "side": 1,
+      "message": "extra trailing space",
+      "range": {
+        "startLine": 45,
+        "startChar": 80,
+        "endLine": 45,
+        "endChar": 81
+      },
+      "revId": "6e2ea2588c695c7732f63dc02a1d2af800650a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_7892c538",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:42Z",
+      "side": 1,
+      "message": "I think it\u0027s slightly more efficient to use $(patsubst)\n$(patsubst $(PRODUCT_OUT)%,%,$(TARGET_BOOT_OAT_OUT))",
+      "range": {
+        "startLine": 51,
+        "startChar": 64,
+        "endLine": 51,
+        "endChar": 66
+      },
+      "revId": "6e2ea2588c695c7732f63dc02a1d2af800650a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_3c00515c",
+        "filename": "core/dex_preopt_libdvm.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:42Z",
+      "side": 1,
+      "message": "I think we need to run \"mkdir -p $(dir $$@)\" here.",
+      "range": {
+        "startLine": 44,
+        "startChar": 28,
+        "endLine": 44,
+        "endChar": 32
+      },
+      "revId": "6e2ea2588c695c7732f63dc02a1d2af800650a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_5c51d546",
+        "filename": "core/product_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:42Z",
+      "side": 1,
+      "message": "Should be:\nPRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES +\u003d persist.sys.dalvik.vm.lib\u003d$(DALVIK_VM_LIB)",
+      "range": {
+        "startLine": 270,
+        "startChar": 71,
+        "endLine": 270,
+        "endChar": 72
+      },
+      "revId": "6e2ea2588c695c7732f63dc02a1d2af800650a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_0d3c3da9",
+        "filename": "target/product/runtime_libart_default.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-16T20:29:42Z",
+      "side": 1,
+      "message": "Or just use:\nPRODUCT_PROPERTY_OVERRIDES +\u003d \\\n    persist.sys.dalvik.vm.lib\u003d$(DALVIK_VM_LIB)\nThis makes the product_config.mk a little bit cleaner.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 0
+      },
+      "revId": "6e2ea2588c695c7732f63dc02a1d2af800650a8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
