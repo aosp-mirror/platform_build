@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c86c6f4a_f1c88b90",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-17T19:57:22Z",
+      "side": 1,
+      "message": "I see you are moving this to have a separate built location vs install location, but don\u0027t forget I\u0027d reverted this and moved it back to art based on your earlier comments and my confusion, so make sure to remove it from art as well.\n\nas far as the error, the problem is \n\n--host-prefix\u003d$(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)\n\nI think. That is what it uses to know what part of out/... path to strip off to know what the target path will be. \n\nI think you need to pass\n\nout/target/product/generic/dex_bootjars\n\ninstead of\n\nout/target/product/generic/dex_bootjars/system/framework\n\nthough I\u0027m not sure that explains everything.",
+      "parentUuid": "08ff67b9_c8d86f0c",
+      "revId": "0c92d8f64bce62d7e79400139f5d5141bc036222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c86c6f4a_9bc0563a",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 12
@@ -30,6 +48,24 @@
       "writtenOn": "2013-12-17T09:04:07Z",
       "side": 1,
       "message": "Is it possible that LOCAL_DEX_PREOPT_IMAGE is set to any other value in an Android.mk?",
+      "revId": "0c92d8f64bce62d7e79400139f5d5141bc036222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_d8572a8e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2013-12-17T19:57:22Z",
+      "side": 1,
+      "message": "yes, in art/test we use a smaller core.art for unit testing, since we can\u0027t build the frameworks stuff for the host.",
+      "parentUuid": "c86c6f4a_9bc0563a",
       "revId": "0c92d8f64bce62d7e79400139f5d5141bc036222",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
