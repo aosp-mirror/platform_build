@@ -475,6 +475,24 @@
     },
     {
       "key": {
+        "uuid": "28ab4b9f_73e5e2c1",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:20:34Z",
+      "side": 1,
+      "message": "Yeah, in that case, the user must do a top-level build, then all .odex files will be rebuilt due to the dependency on $(DEXPREOPT_BOOT_ODEXS)",
+      "parentUuid": "08a847a1_c091803d",
+      "revId": "00e6c92c527fcb12e67cc6c5c416acdc2b7d768f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "28ab4b9f_61d8703e",
         "filename": "core/java.mk",
         "patchSetId": 5
