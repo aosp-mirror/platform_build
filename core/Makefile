@@ -623,11 +623,6 @@ endef
 # -----------------------------------------------------------------
 # Recovery image
 
-# Recovery is disabled in PDK builds
-ifeq ($(TARGET_BUILD_PDK),true)
-TARGET_NO_RECOVERY := true
-endif
-
 # If neither TARGET_NO_KERNEL nor TARGET_NO_RECOVERY are true
 ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
 

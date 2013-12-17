@@ -41,7 +41,7 @@ ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
 # additional items to add to platform.zip for platform-java build
 # For these dirs, add classes.jar and javalib.jar from the dir to platform.zip
 # all paths under out dir
-PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
+PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR := \
 	target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
 	target/common/obj/JAVA_LIBRARIES/core_intermediates \
 	target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
@@ -53,6 +53,11 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
 	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/mms-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates
+PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR := \
+	host/common/obj/JAVA_LIBRARIES/bouncycastle-host_intermediates
+PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
+	$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR) \
+	$(PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR)
 # not java libraries
 PDK_PLATFORM_JAVA_ZIP_CONTENTS := \
 	target/common/obj/APPS/framework-res_intermediates/package-export.apk \
@@ -137,12 +142,17 @@ target/common/obj/APPS/framework-res_intermediates/src/R.stamp,\
 target/common/obj/APPS/framework-res_intermediates/package-export.apk))
 
 # javalib.jar should pull classes.jar as classes.jar is not explicitly pulled.
-$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
+$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
 $(eval $(call JAVA_dependency_template,$(lib_dir)/javalib.jar,\
 $(lib_dir)/classes.jar)))
 
-# implicit rules for all others
+# implicit rules for all other target files
 $(TARGET_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/target/common/% $(_pdk_fusion_stamp)
+	@mkdir -p $(dir $@)
+	$(hide) cp -fpPR $< $@
+
+# implicit rules for all other host files
+$(HOST_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/host/common/% $(_pdk_fusion_stamp)
 	@mkdir -p $(dir $@)
 	$(hide) cp -fpPR $< $@
 endif
