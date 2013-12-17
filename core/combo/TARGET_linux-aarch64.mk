@@ -73,6 +73,9 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
+TARGET_GLOBAL_CFLAGS += \
+    -fno-strict-aliasing \
+
 android_config_h := $(call select-android-config-h,linux-aarch64)
 
 TARGET_GLOBAL_CFLAGS += \
