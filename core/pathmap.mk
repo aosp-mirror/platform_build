@@ -90,6 +90,7 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    telephony \
 	    wifi \
 	    keystore \
+	    rs \
 	 )
 
 #
