@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08ff67b9_c8d86f0c",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T09:04:07Z",
+      "side": 1,
+      "message": "Now boot.art is built to the staging directory $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH), which is out/target/product/generic/dex_bootjars for aosp_arm. That .art is then passed to dex2oatd as --boot-image\u003dout/target/product/generic/dex_bootjars/system/framework/boot.art when we run dex_preopt on other apks and jars. However I got this kind of errors:\ndex2oatd F  8657  8657 art/runtime/gc/space/image_space.cc:146] Failed to load image \u0027out/target/product/generic/dex_bootjars/system/framework/boot.art\u0027: Failed to open oat file \u0027out/target/product/generic/system/framework/boot.oat\u0027 referenced from image out/target/product/generic/dex_bootjars/system/framework/boot.art:\n\nIt seems somehow \u0027out/target/product/generic/system/framework/boot.oat\u0027  got hard-coded into out/target/product/generic/dex_bootjars/system/framework/boot.art. I don\u0027t know why, for in my change we didn\u0027t pass this path to the above build command any longer.\nAlso It seems to me we shouldn\u0027t embed the build out  path into a file that would be installed to the device.\nAny idea?",
+      "revId": "0c92d8f64bce62d7e79400139f5d5141bc036222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_9bc0563a",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T09:04:07Z",
+      "side": 1,
+      "message": "Is it possible that LOCAL_DEX_PREOPT_IMAGE is set to any other value in an Android.mk?",
+      "revId": "0c92d8f64bce62d7e79400139f5d5141bc036222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
