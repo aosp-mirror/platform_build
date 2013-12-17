@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28ab4b9f_b30c8a06",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "Move the line 28 to be enclosed here.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 22
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_f319f25e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "I think if the module doesn\u0027t contain java code, we should reset LOCAL_DEX_PREOPT, just like what if LOCAL_UNINSTALLABLE_MODULE is true. Then later we use whehter LOCAL_DEX_PREOPT is set (and no other condition) to determine if we need further action.",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 105
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_73be0298",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "So $(installed_odex) rule is excluded for boot jars. I still don\u0027t see how the .odex files of the boot jars get installed. As I said in the other comment, previously the boot jars\u0027 odex files get installed by \"$(LOCAL_INSTALLED_MODULE): $(installed_odex)\" in base_rules.mk. Now you don\u0027t have them covered that way or by ALL_MODULES.$(LOCAL_MODULE).INSTALLED.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 23
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28ab4b9f_332aba93",
+        "filename": "core/java_library.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "No leading \"/\" now: the result of $(patsubst) will have a leading /.",
+      "range": {
+        "startLine": 96,
+        "startChar": 39,
+        "endLine": 96,
+        "endChar": 95
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c86c6f4a_e280c3df",
+        "filename": "core/java_library.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "This makes me think more about how the boot.art should get installed. With this dependency, boot.art gets installed whenever a module is being dex-preopted. That\u0027s not good - building a module shouldn\u0027t get anything installed to out/target/product/*/system. boot.art should be installed at the installation stage.\nPreviously, .odex files of the boot jars are generated to a staging directory $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH) and all $(built_odex) have dependency on those files. .odex files of the boot jars are installed only by the rule \"$(LOCAL_INSTALLED_MODULE): $(installed_odex)\".\nSo for boot.art, I think we should have some dependency like \"out/target/product/*/system/framework/core.jar: out/target/product/*/system/framework/boot.art\".",
+      "range": {
+        "startLine": 101,
+        "startChar": 62,
+        "endLine": 101,
+        "endChar": 63
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_ac50acee",
+        "filename": "core/package.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "I think we should move this up to be enclosed by \"ifdef LOCAL_DEX_PREOPT\"",
+      "range": {
+        "startLine": 394,
+        "startChar": 0,
+        "endLine": 396,
+        "endChar": 76
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8973b5d_4ccc8071",
+        "filename": "core/package.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-17T00:23:59Z",
+      "side": 1,
+      "message": "This makes the $(LOCAL_DEX_PREOPT_IMAGE) (i.e. $(DEFAULT_DEX_PREOPT_IMAGE)) be built even if LOCAL_DEX_PREOPT is not set. So it should be enclosed by the \"ifdef LOCAL_DEX_PREOPT\" too.\nAlso, if the product is configured as libdvm-only, we shouldn\u0027t install boot.art, right?",
+      "range": {
+        "startLine": 397,
+        "startChar": 89,
+        "endLine": 397,
+        "endChar": 115
+      },
+      "revId": "01b6612d44787b0ca866e870b7d455239f726584",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
