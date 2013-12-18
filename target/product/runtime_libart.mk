@@ -28,7 +28,4 @@ ifeq ($(WITH_HOST_DALVIK),true)
         core-libart-hostdex
 endif
 
-# We currently don't suport DEX_PREOPT for art
-DEX_PREOPT_DEFAULT := nostripping
-
 include $(SRC_TARGET_DIR)/product/runtime_common.mk
