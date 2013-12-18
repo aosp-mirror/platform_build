@@ -145,18 +145,37 @@ else
 endif
 
 ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
-ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
-# Ensure that presigned .apks have been aligned.
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN)
-	$(transform-prebuilt-to-target-with-zipalign)
-else
+
+# Disable dex-preopt of prebuilts to save space
+LOCAL_DEX_PREOPT := false
+
+#######################################
+# defines built_odex along with rule to install odex
+include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+#######################################
+ifdef LOCAL_DEX_PREOPT
+$(built_module): PRIVATE_DEX_PREOPT_IMAGE := $(LOCAL_DEX_PREOPT_IMAGE)
+$(built_module): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+$(built_module): PRIVATE_BUILT_ODEX := $(built_odex)
+# Make sure the boot jars get dexpreopt-ed first
+$(built_module) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT)
+$(built_module) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS)
+(built_module) : $(LOCAL_DEX_PREOPT_IMAGE)
+# built_odex is byproduct of LOCAL_BUILT_MODULE without its own build recipe.
+$(built_odex) : $(LOCAL_BUILT_MODULE)
+endif # LOCAL_DEX_PREOPT
 # Sign and align non-presigned .apks.
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
+ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	$(sign-package)
-	$(align-package)
 endif
-else
+ifdef LOCAL_DEX_PREOPT
+	$(call dexpreopt-one-file,$(PRIVATE_DEX_PREOPT_IMAGE),$@,$(PRIVATE_DEX_LOCATION),$(PRIVATE_BUILT_ODEX))
+endif
+	$(align-package)
+
+else # LOCAL_MODULE_CLASS != APPS
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target-strip-comments)
@@ -171,7 +190,7 @@ ifneq ($(prebuilt_module_is_a_library),)
   endif
 endif
 endif
-endif
+endif # LOCAL_MODULE_CLASS != APPS
 
 ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
@@ -192,3 +211,5 @@ $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
 
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
+
+my_prebuilt_src_file :=
