@@ -252,6 +252,11 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 java_alternative_checked_module :=
 
+#######################################
+# defines built_odex along with rule to install odex
+include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+#######################################
+
 # Make sure there's something to build.
 ifdef full_classes_jar
 ifndef need_compile_java
