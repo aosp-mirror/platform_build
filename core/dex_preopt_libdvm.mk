@@ -50,7 +50,7 @@ _dbj_src_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javali
 $$(_dbj_odex): PRIVATE_DBJ_JAR := $$(_dbj_jar)
 $$(_dbj_odex) : $$(_dbj_src_jar) | $(ACP) $(DEXPREOPT) $(DEXOPT)
 	@echo "Dexpreopt Boot Jar: $$@"
-	$(hide) $(ACP) -fp $$< $$(PRIVATE_DBJ_JAR)
+	$(hide) mkdir -p $$(dir $$(PRIVATE_DBJ_JAR)) && $(ACP) -fp $$< $$(PRIVATE_DBJ_JAR)
 	$$(call dexopt-one-file,$$(PRIVATE_DBJ_JAR),$$@)
 
 _dbj_jar :=
