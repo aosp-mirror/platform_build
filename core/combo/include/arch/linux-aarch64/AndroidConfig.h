@@ -166,7 +166,7 @@
 #define HAVE_LITTLE_ENDIAN
 
 #define _FILE_OFFSET_BITS 64
-#define _LARGEFILE_SOURCE 1
+/* #define _LARGEFILE_SOURCE 1 */
 
 /*
  * Define if platform has off64_t (and lseek64 and other xxx64 functions)
