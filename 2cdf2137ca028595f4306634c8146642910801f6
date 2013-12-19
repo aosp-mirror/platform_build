@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48631fc4_e0e69859",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-19T21:44:27Z",
+      "side": 1,
+      "message": "ANDROID_BUILD_PATHS is already absolute path, see build/core/dumpvar.mk",
+      "range": {
+        "startLine": 167,
+        "startChar": 51,
+        "endLine": 167,
+        "endChar": 70
+      },
+      "revId": "2cdf2137ca028595f4306634c8146642910801f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
