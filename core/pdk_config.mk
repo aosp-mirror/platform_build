@@ -37,11 +37,16 @@ endif
 endif  # fusion
 endif  # pdk or fusion
 
+PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR :=
+PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR := \
+	host/common/obj/JAVA_LIBRARIES/bouncycastle-host_intermediates
+PDK_PLATFORM_JAVA_ZIP_CONTENTS :=
+
 ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
 # additional items to add to platform.zip for platform-java build
 # For these dirs, add classes.jar and javalib.jar from the dir to platform.zip
 # all paths under out dir
-PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR := \
+PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
 	target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
 	target/common/obj/JAVA_LIBRARIES/core_intermediates \
 	target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
@@ -53,18 +58,18 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR := \
 	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/mms-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates
-PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR := \
-	host/common/obj/JAVA_LIBRARIES/bouncycastle-host_intermediates
+# not java libraries
+PDK_PLATFORM_JAVA_ZIP_CONTENTS += \
+	target/common/obj/APPS/framework-res_intermediates/package-export.apk \
+	target/common/obj/APPS/framework-res_intermediates/src/R.stamp
+endif # platform-java or FUSION build
+
 PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
 	$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR) \
 	$(PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR)
-# not java libraries
-PDK_PLATFORM_JAVA_ZIP_CONTENTS := \
-	target/common/obj/APPS/framework-res_intermediates/package-export.apk \
-	target/common/obj/APPS/framework-res_intermediates/src/R.stamp
+
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
     $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
-endif # platform-java or FUSION build
 
 # check and override java support level
 ifneq ($(TARGET_BUILD_PDK)$(PDK_FUSION_PLATFORM_ZIP),)
@@ -122,6 +127,11 @@ $(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/% $(_pdk_fusion_stamp)
 	$(hide) rm -rf $@
 	$(hide) cp -fpPR $< $@
 
+# implicit rules for host java files
+$(HOST_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/host/common/% $(_pdk_fusion_stamp)
+	@mkdir -p $(dir $@)
+	$(hide) cp -fpPR $< $@
+
 ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
 
 PDK_FUSION_OUT_DIR := $(OUT_DIR)
@@ -148,11 +158,6 @@ $(lib_dir)/classes.jar)))
 
 # implicit rules for all other target files
 $(TARGET_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/target/common/% $(_pdk_fusion_stamp)
-	@mkdir -p $(dir $@)
-	$(hide) cp -fpPR $< $@
-
-# implicit rules for all other host files
-$(HOST_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/host/common/% $(_pdk_fusion_stamp)
 	@mkdir -p $(dir $@)
 	$(hide) cp -fpPR $< $@
 endif
