@@ -22,6 +22,7 @@ _vendor_owner_whitelist := \
         csr \
         elan \
         google \
+        htc \
         imgtec \
         invensense \
         lge \
