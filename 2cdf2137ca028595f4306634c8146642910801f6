@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "48631fc4_8064fc7d",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-19T22:18:06Z",
+      "side": 1,
+      "message": "cd $TOP here.",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 37,
+        "endChar": 12
+      },
+      "revId": "2cdf2137ca028595f4306634c8146642910801f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48631fc4_a02f4010",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-19T22:18:06Z",
+      "side": 1,
+      "message": "We should do the same here.",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 49,
+        "endChar": 74
+      },
+      "revId": "2cdf2137ca028595f4306634c8146642910801f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "48631fc4_e0e69859",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -37,6 +83,30 @@
       "side": 1,
       "message": "Yes, but it\u0027s not computed correctly, it relies on $(PWD). By running get_abs_build_var, it forces it to CD to $TOP before running the Make command.\n\nJust try this, in a fresh terminal in the Android tree:\n\n $ . build/envsetup.sh\n $ cd system/core\n $ $ get_build_var ANDROID_BUILD_PATHS\n /home/apboie/Documents/repo-aosp/system/core/out/host/linux-x86/bin\n\nSee how out/host/linux-x86/bin has system/core prepended to it, and none of the toolchains get set?\n\nIf I run get_abs_build_var it is correct:\n\n $ get_abs_build_var ANDROID_BUILD_PATHS\n /home/apboie/Documents/repo-aosp/out/host/linux-x86/bin:/home/apboie/Documents/repo-aosp/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.8/bin:/home/apboie/Documents/repo-aosp/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin:/home/apboie/Documents/repo-aosp/prebuilts/gcc/linux-x86/mips/mipsel-linux-android-4.8/bin",
       "parentUuid": "48631fc4_e0e69859",
+      "range": {
+        "startLine": 167,
+        "startChar": 51,
+        "endLine": 167,
+        "endChar": 70
+      },
+      "revId": "2cdf2137ca028595f4306634c8146642910801f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48631fc4_80115cd9",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2013-12-19T22:18:06Z",
+      "side": 1,
+      "message": "Ah, I know why there is such difference.\nLook at the definition of the 2 shell functions get_abs_build_var() and get_build_var(): we run \"cd $TOP\" before running make in get_abs_build_var, whereas we don\u0027t do that for get_build_var. Since we the build system relies on the shell variable $PWD to calculate the absolute path, we definitely should do \"cd $TOP\" for both.\n\nBtw, I didn\u0027t expect a user to run lunch from a dir other than the top dir.",
+      "parentUuid": "e871338d_ba6e898a",
       "range": {
         "startLine": 167,
         "startChar": 51,
