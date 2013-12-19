@@ -428,6 +428,10 @@ video.with-shadow {
   border-bottom:0;
   padding:0;
 }
+.content-header > div:first-child {
+  height:55px; /* set fixed height for the header div to ensure the
+                  next/prev links align with toc on training classes */
+}
 
 .content-footer {
   border-top: 1px solid #ccc;
@@ -1824,7 +1828,7 @@ EndColorStr='#ececec');
 }
 
 #tb-wrapper {
-  margin:-27px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
+  margin:-29px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
 }
 
 #tb,
