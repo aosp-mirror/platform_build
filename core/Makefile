@@ -886,11 +886,6 @@ systemtarball-nodeps: $(FS_GET_STATS) \
 .PHONY: stnod
 stnod: systemtarball-nodeps
 
-# For platform-java goal, add platform as well
-ifneq (,$(filter platform-java, $(MAKECMDGOALS)))
-PLATFORM_ZIP_ADD_JAVA := true
-endif
-
 #######
 ## platform.zip: system, plus other files to be used in PDK fusion build,
 ## in a zip file
@@ -907,7 +902,7 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 		$(TARGET_COPY_OUT_SYSTEM) \
 		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES)) \
 		$(addprefix symbols/,$(PDK_SYMBOL_FILES_LIST))
-ifeq (true,$(PLATFORM_ZIP_ADD_JAVA))
+ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
 	$(hide) cd $(OUT_DIR) && zip -qry $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
 endif
 ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
