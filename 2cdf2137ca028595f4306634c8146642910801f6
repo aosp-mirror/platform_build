@@ -22,6 +22,30 @@
       "revId": "2cdf2137ca028595f4306634c8146642910801f6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e871338d_ba6e898a",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1011333
+      },
+      "writtenOn": "2013-12-19T21:51:38Z",
+      "side": 1,
+      "message": "Yes, but it\u0027s not computed correctly, it relies on $(PWD). By running get_abs_build_var, it forces it to CD to $TOP before running the Make command.\n\nJust try this, in a fresh terminal in the Android tree:\n\n $ . build/envsetup.sh\n $ cd system/core\n $ $ get_build_var ANDROID_BUILD_PATHS\n /home/apboie/Documents/repo-aosp/system/core/out/host/linux-x86/bin\n\nSee how out/host/linux-x86/bin has system/core prepended to it, and none of the toolchains get set?\n\nIf I run get_abs_build_var it is correct:\n\n $ get_abs_build_var ANDROID_BUILD_PATHS\n /home/apboie/Documents/repo-aosp/out/host/linux-x86/bin:/home/apboie/Documents/repo-aosp/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.8/bin:/home/apboie/Documents/repo-aosp/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin:/home/apboie/Documents/repo-aosp/prebuilts/gcc/linux-x86/mips/mipsel-linux-android-4.8/bin",
+      "parentUuid": "48631fc4_e0e69859",
+      "range": {
+        "startLine": 167,
+        "startChar": 51,
+        "endLine": 167,
+        "endChar": 70
+      },
+      "revId": "2cdf2137ca028595f4306634c8146642910801f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
