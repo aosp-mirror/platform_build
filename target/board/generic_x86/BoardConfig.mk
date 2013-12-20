@@ -41,3 +41,11 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+
+BOARD_SEPOLICY_DIRS += build/target/board/generic_x86/sepolicy
+BOARD_SEPOLICY_UNION += \
+        domain.te \
+        healthd.te \
+        installd.te \
+        system_server.te \
+        zygote.te
