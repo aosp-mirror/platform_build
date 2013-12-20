@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "088cc7b8_c982a4ec",
+        "filename": "target/board/generic_x86/sepolicy/healthd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2013-12-20T20:25:01Z",
+      "side": 1,
+      "message": "this is odd...",
+      "revId": "737f9a167a9fc43d9ef6dc8bdc9b44d831f4713a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
