@@ -114,6 +114,31 @@ def IsRegular(info):
   symlink."""
   return (info.external_attr >> 28) == 010
 
+def ClosestFileMatch(src, tgtfiles, existing):
+  """Returns the closest file match between a source file and list
+     of potential matches.  The exact filename match is preferred,
+     then the sha1 is searched for, and finally a file with the same
+     basename is evaluated.  Rename support in the updater-binary is
+     required for the latter checks to be used."""
+
+  result = tgtfiles.get("path:" + src.name)
+  if result is not None:
+    return result
+
+  if not OPTIONS.target_info_dict.get("update_rename_support", False):
+    return None
+
+  if src.size < 1000:
+    return None
+
+  result = tgtfiles.get("sha1:" + src.sha1)
+  if result is not None and existing.get(result.name) is None:
+    return result
+  result = tgtfiles.get("file:" + src.name.split("/")[-1])
+  if result is not None and existing.get(result.name) is None:
+    return result
+  return None
+
 class Item:
   """Items represent the metadata (user, group, mode) of files and
   directories in the system image."""
@@ -536,6 +561,16 @@ def GetBuildProp(prop, info_dict):
   except KeyError:
     raise common.ExternalError("couldn't find %s in build.prop" % (property,))
 
+def AddToKnownPaths(filename, known_paths):
+  if filename[-1] == "/":
+    return
+  dirs = filename.split("/")[:-1]
+  while len(dirs) > 0:
+    path = "/".join(dirs)
+    if path in known_paths:
+      break;
+    known_paths.add(path)
+    dirs.pop()
 
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = OPTIONS.source_info_dict["recovery_api_version"]
@@ -571,11 +606,29 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   verbatim_targets = []
   patch_list = []
   diffs = []
+  renames = {}
+  known_paths = set()
   largest_source_size = 0
+
+  matching_file_cache = {}
+  for fn, sf in source_data.items():
+    assert fn == sf.name
+    matching_file_cache["path:" + fn] = sf
+    if fn in target_data.keys():
+      AddToKnownPaths(fn, known_paths)
+    # Only allow eligibility for filename/sha matching
+    # if there isn't a perfect path match.
+    if target_data.get(sf.name) is None:
+      matching_file_cache["file:" + fn.split("/")[-1]] = sf
+      matching_file_cache["sha:" + sf.sha1] = sf
+
   for fn in sorted(target_data.keys()):
     tf = target_data[fn]
     assert fn == tf.name
-    sf = source_data.get(fn, None)
+    sf = ClosestFileMatch(tf, matching_file_cache, renames)
+    if sf is not None and sf.name != tf.name:
+      print "File has moved from " + sf.name + " to " + tf.name
+      renames[sf.name] = tf
 
     if sf is None or fn in OPTIONS.require_verbatim:
       # This file should be included verbatim
@@ -584,24 +637,33 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       print "send", fn, "verbatim"
       tf.AddToZip(output_zip)
       verbatim_targets.append((fn, tf.size))
+      if fn in target_data.keys():
+        AddToKnownPaths(fn, known_paths)
     elif tf.sha1 != sf.sha1:
       # File is different; consider sending as a patch
       diffs.append(common.Difference(tf, sf))
     else:
-      # Target file identical to source.
+      # Target file data identical to source (may still be renamed)
       pass
 
   common.ComputeDifferences(diffs)
 
   for diff in diffs:
     tf, sf, d = diff.GetPatch()
-    if d is None or len(d) > tf.size * OPTIONS.patch_threshold:
+    path = "/".join(tf.name.split("/")[:-1])
+    if d is None or len(d) > tf.size * OPTIONS.patch_threshold or \
+        path not in known_paths:
       # patch is almost as big as the file; don't bother patching
+      # or a patch + rename cannot take place due to the target 
+      # directory not existing
       tf.AddToZip(output_zip)
       verbatim_targets.append((tf.name, tf.size))
+      if sf.name in renames:
+        del renames[sf.name]
+      AddToKnownPaths(tf.name, known_paths)
     else:
-      common.ZipWriteStr(output_zip, "patch/" + tf.name + ".p", d)
-      patch_list.append((tf.name, tf, sf, tf.size, common.sha1(d).hexdigest()))
+      common.ZipWriteStr(output_zip, "patch/" + sf.name + ".p", d)
+      patch_list.append((tf, sf, tf.size, common.sha1(d).hexdigest()))
       largest_source_size = max(largest_source_size, sf.size)
 
   source_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.source_info_dict)
@@ -681,13 +743,15 @@ else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
   device_specific.IncrementalOTA_VerifyBegin()
 
   script.ShowProgress(0.1, 0)
-  total_verify_size = float(sum([i[2].size for i in patch_list]) + 1)
+  total_verify_size = float(sum([i[1].size for i in patch_list]) + 1)
   if updating_boot:
     total_verify_size += source_boot.size
   so_far = 0
 
-  for fn, tf, sf, size, patch_sha in patch_list:
-    script.PatchCheck("/"+fn, tf.sha1, sf.sha1)
+  for tf, sf, size, patch_sha in patch_list:
+    if tf.name != sf.name:
+      script.SkipNextActionIfTargetExists(tf.name, tf.sha1)
+    script.PatchCheck("/"+sf.name, tf.sha1, sf.sha1)
     so_far += sf.size
     script.SetProgress(so_far / total_verify_size)
 
@@ -737,7 +801,8 @@ else
   script.Print("Removing unneeded files...")
   script.DeleteFiles(["/"+i[0] for i in verbatim_targets] +
                      ["/"+i for i in sorted(source_data)
-                            if i not in target_data] +
+                            if i not in target_data and
+                            i not in renames] +
                      ["/system/recovery.img"])
 
   script.ShowProgress(0.8, 0)
@@ -749,11 +814,13 @@ else
   script.Print("Patching system files...")
   deferred_patch_list = []
   for item in patch_list:
-    fn, tf, sf, size, _ = item
+    tf, sf, size, _ = item
     if tf.name == "system/build.prop":
       deferred_patch_list.append(item)
       continue
-    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
+    if (sf.name != tf.name):
+      script.SkipNextActionIfTargetExists(tf.name, tf.sha1)
+    script.ApplyPatch("/"+sf.name, "-", tf.size, tf.sha1, sf.sha1, "patch/"+sf.name+".p")
     so_far += tf.size
     script.SetProgress(so_far / total_patch_size)
 
@@ -825,6 +892,13 @@ else
     script.Print("Unpacking new recovery...")
     script.UnpackPackageDir("recovery", "/system")
 
+  if len(renames) > 0:
+    script.Print("Renaming files...")
+
+  for src in renames:
+    print "Renaming " + src + " to " + renames[src].name
+    script.RenameFile(src, renames[src].name)
+
   script.Print("Symlinks and permissions...")
 
   # Create all the symlinks that don't already exist, or point to
@@ -855,8 +929,8 @@ else
   # get set the OTA package again to retry.
   script.Print("Patching remaining system files...")
   for item in deferred_patch_list:
-    fn, tf, sf, size, _ = item
-    script.ApplyPatch("/"+fn, "-", tf.size, tf.sha1, sf.sha1, "patch/"+fn+".p")
+    tf, sf, size, _ = item
+    script.ApplyPatch("/"+sf.name, "-", tf.size, tf.sha1, sf.sha1, "patch/"+sf.name+".p")
   script.SetPermissions("/system/build.prop", 0, 0, 0644, None, None)
 
   if OPTIONS.two_step:
