@@ -1430,7 +1430,7 @@ EMMA_META_ZIP := $(PRODUCT_OUT)/emma_meta.zip
 # the dependency will be set up later in build/core/main.mk.
 $(EMMA_META_ZIP) :
 	@echo "Collecting Emma coverage meta files."
-	$(hide) find $(TARGET_COMMON_OUT_ROOT) -name "coverage.em" | \
+	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "coverage.em" | \
 		zip -@ -q $@
 
 endif # EMMA_INSTRUMENT=true
