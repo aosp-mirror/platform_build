@@ -53,7 +53,8 @@ PRODUCT_PACKAGES += \
     camera.goldfish.jpeg \
     lights.goldfish \
     gps.goldfish \
-    sensors.goldfish
+    sensors.goldfish \
+    e2fsck
 
 
 PRODUCT_COPY_FILES += \
