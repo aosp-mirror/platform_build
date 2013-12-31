@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2878ab6e_2a8f87d2",
+        "filename": "core/llvm_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1032077
+      },
+      "writtenOn": "2013-12-31T10:02:27Z",
+      "side": 1,
+      "message": "I will add a short comment above this line.  Besides, all of the usage of this macro will be moved here (just a few lines after).",
+      "parentUuid": "6df1d54f_8361c0ee",
+      "revId": "7b6ebb740cba1db80532fb2bc3aa37e22db17b60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8649bc8_2bd863b8",
         "filename": "core/shared_library.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2013-12-30T18:45:43Z",
       "side": 1,
       "message": "Could we move the function call to llvm_config.mk? so that the global variables will be evaluated only once.",
+      "revId": "7b6ebb740cba1db80532fb2bc3aa37e22db17b60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c81c6f54_cc05436b",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1032077
+      },
+      "writtenOn": "2013-12-31T10:02:27Z",
+      "side": 1,
+      "message": "Done.  Now, they are changed to CLANG_{HOST,TARGET}_GLOBAL_{CFLAGS,CPPFLAGS,LDFLAGS}.",
+      "parentUuid": "a8649bc8_2bd863b8",
       "revId": "7b6ebb740cba1db80532fb2bc3aa37e22db17b60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
