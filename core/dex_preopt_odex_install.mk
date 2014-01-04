@@ -8,15 +8,13 @@ ifneq (true,$(WITH_DEXPREOPT))
   LOCAL_DEX_PREOPT :=
 else # WITH_DEXPREOPT=true
   ifeq (,$(TARGET_BUILD_APPS)) # TARGET_BUILD_APPS empty
-    ifneq (,$(LOCAL_SRC_FILES)) # LOCAL_SRC_FILES not empty
-      ifndef LOCAL_DEX_PREOPT # LOCAL_DEX_PREOPT undefined
-        ifeq (,$(LOCAL_APK_LIBRARIES)) # LOCAL_APK_LIBRARIES empty
-          LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
-        else # LOCAL_APK_LIBRARIES not empty
-          LOCAL_DEX_PREOPT := nostripping
-        endif # LOCAL_APK_LIBRARIES not empty
-      endif # LOCAL_DEX_PREOPT undefined
-    endif # LOCAL_SRC_FILES not empty
+    ifndef LOCAL_DEX_PREOPT # LOCAL_DEX_PREOPT undefined
+      ifeq (,$(LOCAL_APK_LIBRARIES)) # LOCAL_APK_LIBRARIES empty
+        LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
+      else # LOCAL_APK_LIBRARIES not empty
+        LOCAL_DEX_PREOPT := nostripping
+      endif # LOCAL_APK_LIBRARIES not empty
+    endif # LOCAL_DEX_PREOPT undefined
   endif # TARGET_BUILD_APPS empty
 endif # WITH_DEXPREOPT=true
 ifeq (false,$(LOCAL_DEX_PREOPT))
