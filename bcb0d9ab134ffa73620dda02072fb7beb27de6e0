@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "2d80bdc3_a544e863",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-06T20:20:25Z",
+      "side": 1,
+      "message": "We don\u0027t need the PRIVATE_HOST_* variables for target modules; and no PRIVATE_TARGET_* for the host modules. I think we can use \"ifdef LOCAL_IS_HOST_MODULE\" to conditionally include the above 2 blocks.",
+      "revId": "bcb0d9ab134ffa73620dda02072fb7beb27de6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d7db99f_6980ed74",
         "filename": "core/executable.mk",
         "patchSetId": 3
