@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d7db99f_6980ed74",
+        "filename": "core/executable.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-06T20:18:05Z",
+      "side": 1,
+      "message": "the same here.",
+      "revId": "bcb0d9ab134ffa73620dda02072fb7beb27de6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d80bdc3_a512a86b",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-06T20:18:05Z",
+      "side": 1,
+      "message": "It seems unnecessary to me: you already set it to $(CLANG_TARGET_GLOBAL_LDFLAGS) in the above lines.",
+      "revId": "bcb0d9ab134ffa73620dda02072fb7beb27de6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
