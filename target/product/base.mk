@@ -35,7 +35,6 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     ime \
     javax.obex \
-    libSR_AudioIn \
     libandroid \
     libandroid_runtime \
     libandroid_servers \
