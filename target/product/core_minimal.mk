@@ -70,7 +70,8 @@ PRODUCT_BOOT_JARS := \
     android.policy \
     services \
     apache-xml \
-    webviewchromium
+    webviewchromium \
+    wifi-service
 
 PRODUCT_RUNTIMES := runtime_libdvm_default
 PRODUCT_RUNTIMES += runtime_libart

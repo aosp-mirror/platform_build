@@ -80,6 +80,7 @@ PRODUCT_PACKAGES += \
     libutils \
     libvisualizer \
     libvorbisidec \
+    libwifi-service \
     media \
     media_cmd \
     mediaserver \
