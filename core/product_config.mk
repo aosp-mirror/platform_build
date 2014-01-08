@@ -280,7 +280,7 @@ endif
 #############################################################################
 
 # A list of module names of BOOTCLASSPATH (jar files)
-PRODUCT_BOOT_JARS := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS)
+PRODUCT_BOOT_JARS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS))
 
 # Find the device that this product maps to.
 TARGET_DEVICE := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
