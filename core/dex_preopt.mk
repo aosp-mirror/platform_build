@@ -8,8 +8,8 @@ $(error No value for DALVIK_VM_LIB)
 endif
 
 # list of boot classpath jars for dexpreopt
-DEXPREOPT_BOOT_JARS := $(PRODUCT_BOOT_JARS)
-DEXPREOPT_BOOT_JARS_MODULES := $(subst :, ,$(DEXPREOPT_BOOT_JARS))
+DEXPREOPT_BOOT_JARS := $(subst $(space),:,$(PRODUCT_BOOT_JARS))
+DEXPREOPT_BOOT_JARS_MODULES := $(PRODUCT_BOOT_JARS)
 PRODUCT_BOOTCLASSPATH := $(subst $(space),:,$(foreach m,$(DEXPREOPT_BOOT_JARS_MODULES),/system/framework/$(m).jar))
 
 DEXPREOPT_BUILD_DIR := $(OUT_DIR)
