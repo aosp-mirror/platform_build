@@ -36,7 +36,6 @@ PRODUCT_PACKAGES += \
     ime \
     inputflinger \
     javax.obex \
-    libSR_AudioIn \
     libandroid \
     libandroid_runtime \
     libandroid_servers \
