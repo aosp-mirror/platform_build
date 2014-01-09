@@ -118,9 +118,6 @@ endif
 
 my_compiler_dependencies :=
 ifeq ($(strip $(LOCAL_CLANG)),true)
-  LOCAL_CFLAGS += $(CLANG_CONFIG_EXTRA_CFLAGS)
-  LOCAL_ASFLAGS += $(CLANG_CONFIG_EXTRA_ASFLAGS)
-  LOCAL_LDFLAGS += $(CLANG_CONFIG_EXTRA_LDFLAGS)
   my_compiler_dependencies := $(CLANG) $(CLANG_CXX)
 endif
 
@@ -162,16 +159,40 @@ my_target_c_includes := $(TARGET_C_INCLUDES)
 endif # LOCAL_SDK_VERSION
 
 ifeq ($(LOCAL_CLANG),true)
-my_target_global_cflags := $(TARGET_GLOBAL_CLANG_FLAGS)
+my_target_global_cflags := $(CLANG_TARGET_GLOBAL_CFLAGS)
+my_target_global_cppflags := $(CLANG_TARGET_GLOBAL_CPPFLAGS)
+my_target_global_ldflags := $(CLANG_TARGET_GLOBAL_LDFLAGS)
 my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
 else
 my_target_global_cflags := $(TARGET_GLOBAL_CFLAGS)
+my_target_global_cppflags := $(TARGET_GLOBAL_CPPFLAGS)
+my_target_global_ldflags := $(TARGET_GLOBAL_LDFLAGS)
 endif # LOCAL_CLANG
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(TARGET_GLOBAL_CPPFLAGS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
+
+ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
+ifeq ($(LOCAL_CLANG),true)
+my_host_global_cflags := $(CLANG_HOST_GLOBAL_CFLAGS)
+my_host_global_cppflags := $(CLANG_HOST_GLOBAL_CPPFLAGS)
+my_host_global_ldflags := $(CLANG_HOST_GLOBAL_LDFLAGS)
+my_host_c_includes := $(HOST_C_INCLUDES) $(CLANG_CONFIG_EXTRA_HOST_C_INCLUDES)
+else
+my_host_global_cflags := $(HOST_GLOBAL_CFLAGS)
+my_host_global_cppflags := $(HOST_GLOBAL_CPPFLAGS)
+my_host_global_ldflags := $(HOST_GLOBAL_LDFLAGS)
+my_host_c_includes := $(HOST_C_INCLUDES)
+endif # LOCAL_CLANG
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_C_INCLUDES := $(my_host_c_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CFLAGS := $(my_host_global_cflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CPPFLAGS := $(my_host_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_LDFLAGS := $(my_host_global_ldflags)
+endif # LOCAL_IS_HOST_MODULE
 
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types
@@ -257,12 +278,11 @@ normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 # Read the values from something like TARGET_arm_CFLAGS or
 # TARGET_thumb_CFLAGS.  HOST_(arm|thumb)_CFLAGS values aren't
 # actually used (although they are usually empty).
-ifeq ($(strip $(LOCAL_CLANG)),true)
-arm_objects_cflags := $($(my_prefix)$(arm_objects_mode)_CLANG_CFLAGS)
-normal_objects_cflags := $($(my_prefix)$(normal_objects_mode)_CLANG_CFLAGS)
-else
 arm_objects_cflags := $($(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(my_prefix)$(normal_objects_mode)_CFLAGS)
+ifeq ($(strip $(LOCAL_CLANG)),true)
+arm_objects_cflags := $(call convert-to-$(my_host)clang-flags,$(arm_objects_cflags))
+normal_objects_cflags := $(call convert-to-$(my_host)clang-flags,$(normal_objects_cflags))
 endif
 
 else
@@ -751,6 +771,14 @@ endif
 ###########################################################
 # Rule-specific variable definitions
 ###########################################################
+
+ifeq ($(LOCAL_CLANG),true)
+LOCAL_CFLAGS := $(call convert-to-$(my_host)clang-flags,$(LOCAL_CFLAGS))
+LOCAL_CPPFLAGS := $(call convert-to-$(my_host)clang-flags,$(LOCAL_CPPFLAGS))
+LOCAL_ASFLAGS := $(call convert-to-$(my_host)clang-flags,$(LOCAL_ASFLAGS))
+LOCAL_LDFLAGS := $(call convert-to-$(my_host)clang-flags,$(LOCAL_LDFLAGS))
+endif
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASFLAGS := $(LOCAL_ASFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CONLYFLAGS := $(LOCAL_CONLYFLAGS)
