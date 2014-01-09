@@ -139,8 +139,8 @@ CLANG_CONFIG_x86_64_TARGET_TRIPLE := x86_64-linux-android
 include $(BUILD_SYSTEM)/llvm_config_define_clang_flags.mk
 
 # Clang compiler-specific libc headers
-CLANG_CONFIG_EXTRA_HOST_C_INCLUDES := external/clang/lib/include
-CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := external/clang/lib/include $(TARGET_OUT_HEADERS)/clang
+CLANG_CONFIG_EXTRA_HOST_C_INCLUDES := $(LLVM_PREBUILTS_HEADER_PATH)
+CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES := $(LLVM_PREBUILTS_HEADER_PATH) $(TARGET_OUT_HEADERS)/clang
 
 # Address sanitizer clang config
 ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -fsanitize=address
