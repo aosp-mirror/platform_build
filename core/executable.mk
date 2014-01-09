@@ -39,7 +39,11 @@ include $(BUILD_SYSTEM)/dynamic_binary.mk
 
 # Define PRIVATE_ variables from global vars
 my_target_global_ld_dirs := $(TARGET_GLOBAL_LD_DIRS)
+ifeq ($(LOCAL_CLANG),true)
+my_target_global_ldflags := $(CLANG_TARGET_GLOBAL_LDFLAGS)
+else
 my_target_global_ldflags := $(TARGET_GLOBAL_LDFLAGS)
+endif
 my_target_fdo_lib := $(TARGET_FDO_LIB)
 my_target_libgcc := $(TARGET_LIBGCC)
 my_target_crtbegin_dynamic_o := $(TARGET_CRTBEGIN_DYNAMIC_O)
