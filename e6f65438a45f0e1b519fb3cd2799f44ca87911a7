@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad33cd7d_2215aec4",
+        "filename": "core/llvm_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2014-01-10T15:43:36Z",
+      "side": 1,
+      "message": "\\ shouldn\u0027t be here\nFix is here: https://android-review.googlesource.com/78642",
+      "range": {
+        "startLine": 109,
+        "startChar": 37,
+        "endLine": 109,
+        "endChar": 38
+      },
+      "revId": "e6f65438a45f0e1b519fb3cd2799f44ca87911a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0dd6993f_10cb4a5b",
+        "filename": "core/llvm_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1010578
+      },
+      "writtenOn": "2014-01-10T15:43:36Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 111,
+        "startChar": 37,
+        "endLine": 111,
+        "endChar": 38
+      },
+      "revId": "e6f65438a45f0e1b519fb3cd2799f44ca87911a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
