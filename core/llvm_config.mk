@@ -116,9 +116,9 @@ include $(BUILD_SYSTEM)/llvm_config_define_clang_flags.mk
 
 # X86_64
 llvm_arch := x86_64
-CLANG_CONFIG_x86_64_EXTRA_ASFLAGS := \
+CLANG_CONFIG_x86_64_EXTRA_ASFLAGS :=
 CLANG_CONFIG_x86_64_EXTRA_CFLAGS :=
-CLANG_CONFIG_x86_64_EXTRA_LDFLAGS := \
+CLANG_CONFIG_x86_64_EXTRA_LDFLAGS :=
 CLANG_CONFIG_x86_64_UNKNOWN_CFLAGS := \
   -finline-limit=300 \
   -fno-inline-functions-called-once \
