@@ -150,6 +150,7 @@ LOCAL_ASFLAGS += -D__ASSEMBLY__
 ###########################################################
 ## Define PRIVATE_ variables from global vars
 ###########################################################
+ifndef LOCAL_IS_HOST_MODULE
 ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
 my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
@@ -175,7 +176,8 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_globa
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
 
-ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
+else # LOCAL_IS_HOST_MODULE
+
 ifeq ($(LOCAL_CLANG),true)
 my_host_global_cflags := $(CLANG_HOST_GLOBAL_CFLAGS)
 my_host_global_cppflags := $(CLANG_HOST_GLOBAL_CPPFLAGS)
