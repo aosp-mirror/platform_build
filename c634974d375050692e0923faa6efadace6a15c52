@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ed294520_34cbb05b",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2014-01-14T00:29:36Z",
+      "side": 1,
+      "message": "Do we want to introduce a new flag or simply relying on pattern match?",
+      "revId": "c634974d375050692e0923faa6efadace6a15c52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
