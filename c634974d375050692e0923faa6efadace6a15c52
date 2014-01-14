@@ -34,6 +34,24 @@
       "revId": "c634974d375050692e0923faa6efadace6a15c52",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d30bd7d_fc7c419a",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-14T00:39:53Z",
+      "side": 1,
+      "message": "TARGET_IS_64BIT is defined in the toolchain configuration file core/combo/TARGET_linux-aarch64.mk, which is not loaded at this point yet. I can\u0027t move that file, because it depends on the variables defined in this file.\nI think pattern filtering on TARGET_ARCH is fine - we only have a handful of them.",
+      "parentUuid": "2d30bd7d_3c29599d",
+      "revId": "c634974d375050692e0923faa6efadace6a15c52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
