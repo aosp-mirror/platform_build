@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d0d29ec_bc478de4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1767,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-15T18:08:13Z",
+      "side": 1,
+      "message": "The comment says it evaluates to the list of the dst files.",
+      "revId": "ed22f7ee2596cca9a8ad2f548b4fa735a52fe821",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
