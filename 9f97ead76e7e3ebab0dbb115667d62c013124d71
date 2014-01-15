@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdf9e1ff_bb04a731",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-15T01:06:31Z",
+      "side": 1,
+      "message": "+Conley\nI don\u0027t know why MODULE_LICENSE_LGPL was previously excluded.",
+      "revId": "9f97ead76e7e3ebab0dbb115667d62c013124d71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
