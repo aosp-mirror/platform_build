@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdf9e1ff_7b133f72",
+        "filename": "core/tasks/collect_gpl_sources.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-15T01:08:35Z",
+      "side": 1,
+      "message": "PHONY means the target isn\u0027t a file. But that\u0027s not the case here. To force rebuild, we use \"$(gpl_source_tgz) : FORCE\"\nFORCE is a PHONY target defined in build/core/main.mk.",
+      "revId": "abd34436bc23ae94c97ff393618291f3b3d10565",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
