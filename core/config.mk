@@ -208,13 +208,22 @@ build/core/combo/include/arch/$(1)/AndroidConfig.h
 endef
 
 combo_target := HOST_
+combo_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/combo/select.mk
 
 # on windows, the tools have .exe at the end, and we depend on the
 # host config stuff being done first
 
 combo_target := TARGET_
+combo_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/combo/select.mk
+
+# Load the 2nd target arch if it's needed.
+ifdef TARGET_2ND_ARCH
+combo_target := TARGET_
+combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/combo/select.mk
+endif
 
 # Compute TARGET_TOOLCHAIN_ROOT from TARGET_TOOLS_PREFIX
 # if only TARGET_TOOLS_PREFIX is passed to the make command.
@@ -422,6 +431,19 @@ HOST_GLOBAL_CPPFLAGS += $(HOST_RELEASE_CPPFLAGS)
 
 TARGET_GLOBAL_CFLAGS += $(TARGET_RELEASE_CFLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
+
+ifdef TARGET_2ND_ARCH
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $(COMMON_GLOBAL_CFLAGS)
+$(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS += $(COMMON_RELEASE_CFLAGS)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += $(COMMON_GLOBAL_CPPFLAGS)
+$(combo_2nd_arch_prefix)TARGET_RELEASE_CPPFLAGS += $(COMMON_RELEASE_CPPFLAGS)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_LD_DIRS += -L$($(combo_2nd_arch_prefix)TARGET_OUT_INTERMEDIATE_LIBRARIES)
+$(combo_2nd_arch_prefix)TARGET_PROJECT_INCLUDES := $(TARGET_PROJECT_INCLUDES)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $(TARGET_ERROR_FLAGS)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += $(TARGET_ERROR_FLAGS)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $($(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS)
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += $($(combo_2nd_arch_prefix)TARGET_RELEASE_CPPFLAGS)
+endif
 
 # allow overriding default Java libraries on a per-target basis
 ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)

@@ -18,43 +18,51 @@
 #
 # Inputs:
 #	combo_target -- prefix for final variables (HOST_ or TARGET_)
+#	combo_2nd_arch_prefix -- it's defined if this is loaded for TARGET_2ND_ARCH.
 #
 
 # Build a target string like "linux-arm" or "darwin-x86".
+ifdef combo_2nd_arch_prefix
+combo_os_arch := $($(combo_target)OS)-$(TARGET_2ND_ARCH)
+else
 combo_os_arch := $($(combo_target)OS)-$($(combo_target)ARCH)
+endif
+
+combo_var_prefix := $(combo_2nd_arch_prefix)$(combo_target)
 
 # Set reasonable defaults for the various variables
 
-$(combo_target)CC := $(CC)
-$(combo_target)CXX := $(CXX)
-$(combo_target)AR := $(AR)
-$(combo_target)STRIP := $(STRIP)
+$(combo_var_prefix)CC := $(CC)
+$(combo_var_prefix)CXX := $(CXX)
+$(combo_var_prefix)AR := $(AR)
+$(combo_var_prefix)STRIP := $(STRIP)
 
-$(combo_target)BINDER_MINI := 0
+$(combo_var_prefix)BINDER_MINI := 0
 
-$(combo_target)HAVE_EXCEPTIONS := 0
-$(combo_target)HAVE_UNIX_FILE_PATH := 1
-$(combo_target)HAVE_WINDOWS_FILE_PATH := 0
-$(combo_target)HAVE_RTTI := 1
-$(combo_target)HAVE_CALL_STACKS := 1
-$(combo_target)HAVE_64BIT_IO := 1
-$(combo_target)HAVE_CLOCK_TIMERS := 1
-$(combo_target)HAVE_PTHREAD_RWLOCK := 1
-$(combo_target)HAVE_STRNLEN := 1
-$(combo_target)HAVE_STRERROR_R_STRRET := 1
-$(combo_target)HAVE_STRLCPY := 0
-$(combo_target)HAVE_STRLCAT := 0
-$(combo_target)HAVE_KERNEL_MODULES := 0
+$(combo_var_prefix)HAVE_EXCEPTIONS := 0
+$(combo_var_prefix)HAVE_UNIX_FILE_PATH := 1
+$(combo_var_prefix)HAVE_WINDOWS_FILE_PATH := 0
+$(combo_var_prefix)HAVE_RTTI := 1
+$(combo_var_prefix)HAVE_CALL_STACKS := 1
+$(combo_var_prefix)HAVE_64BIT_IO := 1
+$(combo_var_prefix)HAVE_CLOCK_TIMERS := 1
+$(combo_var_prefix)HAVE_PTHREAD_RWLOCK := 1
+$(combo_var_prefix)HAVE_STRNLEN := 1
+$(combo_var_prefix)HAVE_STRERROR_R_STRRET := 1
+$(combo_var_prefix)HAVE_STRLCPY := 0
+$(combo_var_prefix)HAVE_STRLCAT := 0
+$(combo_var_prefix)HAVE_KERNEL_MODULES := 0
 
-$(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
-$(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
-$(combo_target)GLOBAL_LDFLAGS :=
-$(combo_target)GLOBAL_ARFLAGS := crsPD
+$(combo_var_prefix)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
+$(combo_var_prefix)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
+$(combo_var_prefix)GLOBAL_CPPFLAGS :=
+$(combo_var_prefix)GLOBAL_LDFLAGS :=
+$(combo_var_prefix)GLOBAL_ARFLAGS := crsPD
 
-$(combo_target)EXECUTABLE_SUFFIX :=
-$(combo_target)SHLIB_SUFFIX := .so
-$(combo_target)JNILIB_SUFFIX := $($(combo_target)SHLIB_SUFFIX)
-$(combo_target)STATIC_LIB_SUFFIX := .a
+$(combo_var_prefix)EXECUTABLE_SUFFIX :=
+$(combo_var_prefix)SHLIB_SUFFIX := .so
+$(combo_var_prefix)JNILIB_SUFFIX := $($(combo_var_prefix)SHLIB_SUFFIX)
+$(combo_var_prefix)STATIC_LIB_SUFFIX := .a
 
 # Now include the combo for this specific target.
 include $(BUILD_COMBOS)/$(combo_target)$(combo_os_arch).mk
@@ -88,11 +96,11 @@ ifneq ($(USE_CCACHE),)
   ccache := $(strip $(wildcard $(ccache)))
   ifdef ccache
     # prepend ccache if necessary
-    ifneq ($(ccache),$(firstword $($(combo_target)CC)))
-      $(combo_target)CC := $(ccache) $($(combo_target)CC)
+    ifneq ($(ccache),$(firstword $($(combo_var_prefix)CC)))
+      $(combo_var_prefix)CC := $(ccache) $($(combo_var_prefix)CC)
     endif
-    ifneq ($(ccache),$(firstword $($(combo_target)CXX)))
-      $(combo_target)CXX := $(ccache) $($(combo_target)CXX)
+    ifneq ($(ccache),$(firstword $($(combo_var_prefix)CXX)))
+      $(combo_var_prefix)CXX := $(ccache) $($(combo_var_prefix)CXX)
     endif
     ccache =
   endif
