@@ -58,6 +58,7 @@ $(combo_var_prefix)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
 $(combo_var_prefix)GLOBAL_CPPFLAGS :=
 $(combo_var_prefix)GLOBAL_LDFLAGS :=
 $(combo_var_prefix)GLOBAL_ARFLAGS := crsPD
+$(combo_var_prefix)GLOBAL_LD_DIRS :=
 
 $(combo_var_prefix)EXECUTABLE_SUFFIX :=
 $(combo_var_prefix)SHLIB_SUFFIX := .so
