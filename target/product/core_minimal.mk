@@ -55,7 +55,8 @@ PRODUCT_PACKAGES += \
     make_ext4fs \
     screencap \
     sensorservice \
-    uiautomator
+    uiautomator \
+    uncrypt
 
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
