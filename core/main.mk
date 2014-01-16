@@ -603,6 +603,14 @@ $(foreach m,$(HOST_DEPENDENCIES_ON_SHARED_LIBRARIES), \
   $(eval r := $(filter $(HOST_OUT_ROOT)/%,$(call module-installed-files,\
     $(subst $(comma),$(space),$(lastword $(p)))))) \
   $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
+ifdef TARGET_2ND_ARCH
+$(foreach m,$($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES), \
+  $(eval p := $(subst :,$(space),$(m))) \
+  $(eval r := $(filter $(TARGET_OUT_ROOT)/%,$(call module-installed-files,\
+    $(addsuffix $(TARGET_2ND_ARCH_MODULE_SUFFIX), \
+      $(subst $(comma),$(space),$(lastword $(p))))))) \
+  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
+endif
 
 m :=
 r :=
