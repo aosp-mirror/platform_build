@@ -180,7 +180,7 @@ ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
 else
   # If BUILD_FDO_INSTRUMENT is turned off, then consider doing the FDO optimizations.
   # Set TARGET_FDO_PROFILE_PATH to set a custom profile directory for your build.
-  ifeq ($(strip $(TARGET_FDO_PROFILE_PATH)),)
+  ifeq ($(strip $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH)),)
     $(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH := fdo/profiles/$(TARGET_$(combo_2nd_arch_prefix)ARCH)/$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT)
   else
     ifeq ($(strip $(wildcard $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH))),)
