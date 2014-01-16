@@ -123,6 +123,7 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,relro \
 			-Wl,-z,now \
 			-Wl,--warn-shared-textrel \
+			-Wl,--fatal-warnings \
 			$(arch_variant_ldflags)
 
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
