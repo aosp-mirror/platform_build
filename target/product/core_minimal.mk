@@ -74,7 +74,7 @@ PRODUCT_BOOT_JARS := \
     webviewchromium \
     wifi-service
 
-PRODUCT_RUNTIMES := runtime_libdvm_default
-PRODUCT_RUNTIMES += runtime_libart
+PRODUCT_RUNTIMES := runtime_libart_default
+PRODUCT_RUNTIMES += runtime_libdvm
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
