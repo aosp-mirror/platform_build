@@ -496,7 +496,7 @@ endif
 ## C++: Compile generated .cpp files to .o.
 ###########################################################
 
-gen_cpp_sources := $(filter %$(LOCAL_CPP_EXTENSION),$(LOCAL_GENERATED_SOURCES))
+gen_cpp_sources := $(filter %$(LOCAL_CPP_EXTENSION),$(my_generated_sources))
 gen_cpp_objects := $(gen_cpp_sources:%$(LOCAL_CPP_EXTENSION)=%.o)
 
 ifneq ($(strip $(gen_cpp_objects)),)
@@ -517,7 +517,7 @@ endif
 ## S: Compile generated .S and .s files to .o.
 ###########################################################
 
-gen_S_sources := $(filter %.S,$(LOCAL_GENERATED_SOURCES))
+gen_S_sources := $(filter %.S,$(my_generated_sources))
 gen_S_objects := $(gen_S_sources:%.S=%.o)
 
 ifneq ($(strip $(gen_S_sources)),)
@@ -528,7 +528,7 @@ $(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S \
 -include $(gen_S_objects:%.o=%.P)
 endif
 
-gen_s_sources := $(filter %.s,$(LOCAL_GENERATED_SOURCES))
+gen_s_sources := $(filter %.s,$(my_generated_sources))
 gen_s_objects := $(gen_s_sources:%.s=%.o)
 
 ifneq ($(strip $(gen_s_objects)),)
@@ -545,7 +545,7 @@ gen_asm_objects := $(gen_S_objects) $(gen_s_objects)
 ## o: Include generated .o files in output.
 ###########################################################
 
-gen_o_objects := $(filter %.o,$(LOCAL_GENERATED_SOURCES))
+gen_o_objects := $(filter %.o,$(my_generated_sources))
 
 ###########################################################
 ## C: Compile .c files to .o.
@@ -576,7 +576,7 @@ endif
 ## C: Compile generated .c files to .o.
 ###########################################################
 
-gen_c_sources := $(filter %.c,$(LOCAL_GENERATED_SOURCES))
+gen_c_sources := $(filter %.c,$(my_generated_sources))
 gen_c_objects := $(gen_c_sources:%.c=%.o)
 
 ifneq ($(strip $(gen_c_objects)),)
@@ -686,7 +686,7 @@ endif
 # use normal_objects here to avoid creating circular dependencies. This assumes
 # that custom build rules which generate .o files don't consume other generated
 # sources as input (or if they do they take care of that dependency themselves).
-$(normal_objects) : | $(LOCAL_GENERATED_SOURCES)
+$(normal_objects) : | $(my_generated_sources)
 $(all_objects) : | $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
