@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "32249ea3_b6ae4810",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1329,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-01-17T18:33:08Z",
+      "side": 1,
+      "message": "Yes, that\u0027s my workflow as well. I am optimising here for the *average* engineer, who doesn\u0027t really care about or need to switch between multiple java versions. I expect most people will be using only java 7 once we ramp down on klp branches.",
+      "parentUuid": "cd43a132_ff0c67ce",
+      "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d23f98e_19195b92",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "32249ea3_96ab4c00",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-01-17T18:33:08Z",
+      "side": 1,
+      "message": "Yes, I\u0027ve detailed this in the instructions. The email I\u0027m going to send to android-eng is\n\nhttps://goto.google.com/android-java7-transition",
+      "parentUuid": "0d23f98e_19195b92",
+      "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d37e9c2_b28786b3",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2014-01-17T18:25:00Z",
       "side": 1,
       "message": "This path is very different from mine:\t/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home",
+      "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32249ea3_d6a1c421",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-01-17T18:33:08Z",
+      "side": 1,
+      "message": "I\u0027ll see if I can do better for Mac OS. Looks like different OS versions use slightly different paths. Perhaps there\u0027s a symlink somewhere that I can use.",
+      "parentUuid": "8d37e9c2_b28786b3",
       "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
