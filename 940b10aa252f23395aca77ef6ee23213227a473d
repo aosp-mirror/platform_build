@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd43a132_ff0c67ce",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1329,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-17T18:25:00Z",
+      "side": 1,
+      "message": "Yeah, maybe we should let the users set up JAVA_HOME outside the envsetup.sh/lunch command.\nI have the following snippet in my ~/.bashrc (.bash_profile on Mac):\n\nfunction setup_jdk() {\n  # Remove the current JDK from PATH\n  if [ -n \"$JAVA_HOME\" ] ; then\n    PATH\u003d${PATH/$JAVA_HOME\\/bin:/}\n  fi\n  export JAVA_HOME\u003d$1\n  export PATH\u003d$JAVA_HOME/bin:$PATH\n}\nfunction use_java5() {\n  setup_jdk /usr/lib/jvm/java-1.5.0-sun\n}\n\nfunction use_openjdk6() {\n  setup_jdk /usr/lib/jvm/java-6-openjdk\n}\n\nfunction use_java6() {\n  setup_jdk /usr/lib/jvm/java-6-sun\n}\n\nfunction use_java7() {\n  setup_jdk /usr/lib/jvm/java-7-openjdk-amd64\n}\n\nI run the use_* function before running make when Java version needs to change. So far it works well for me.",
+      "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d23f98e_19195b92",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1341,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-17T18:25:00Z",
+      "side": 1,
+      "message": "Hmm, this means you have to export EXPERIMENTAL_USE_JAVA7 as environmental variable before running lunch. I usually use it as a make command line variable instead (make -j48 showcommands EXPERIMENTAL_USE_JAVA7\u003dtrue).",
+      "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d37e9c2_b28786b3",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-17T18:25:00Z",
+      "side": 1,
+      "message": "This path is very different from mine:\t/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home",
+      "revId": "940b10aa252f23395aca77ef6ee23213227a473d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
