@@ -1323,7 +1323,7 @@ endif
 define transform-o-to-executable
 @mkdir -p $(dir $@)
 @echo "target Executable: $(PRIVATE_MODULE) ($@)"
-$(transform-o-to-executable-inner)
+$($(PRIVATE_2ND_ARCH_VAR_PREFIX)transform-o-to-executable-inner)
 endef
 
 
@@ -1342,7 +1342,7 @@ endif
 define transform-o-to-static-executable
 @mkdir -p $(dir $@)
 @echo "target StaticExecutable: $(PRIVATE_MODULE) ($@)"
-$(transform-o-to-static-executable-inner)
+$($(PRIVATE_2ND_ARCH_VAR_PREFIX)transform-o-to-static-executable-inner)
 endef
 
 
