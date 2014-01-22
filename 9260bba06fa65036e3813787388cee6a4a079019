@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5292f212_a23dc0d0",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1353,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-01-22T10:44:29Z",
+      "side": 1,
+      "message": "PS2 fixes this path as per Ying\u0027s comment and also verified on two corp Mac laptops.\n\n(The previous path was from my personal Macbook, and it\u0027s quite possible that I screwed around with java locations etc. on that)",
+      "revId": "9260bba06fa65036e3813787388cee6a4a079019",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
