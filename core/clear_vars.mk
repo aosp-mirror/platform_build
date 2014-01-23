@@ -146,6 +146,20 @@ LOCAL_NO_STATIC_ANALYZER:=
 LOCAL_32BIT_ONLY:= # '',true
 LOCAL_NO_2ND_ARCH:= # '',true
 
+# arch specific variables
+LOCAL_SRC_FILES_$(TARGET_ARCH):=
+LOCAL_CFLAGS_$(TARGET_ARCH):=
+LOCAL_ASFLAGS_$(TARGET_ARCH):=
+LOCAL_NO_CRT_$(TARGET_ARCH):=
+LOCAL_LDFLAGS_$(TARGET_ARCH):=
+ifdef TARGET_2ND_ARCH
+LOCAL_SRC_FILES_$(TARGET_2ND_ARCH):=
+LOCAL_CFLAGS_$(TARGET_2ND_ARCH):=
+LOCAL_ASFLAGS_$(TARGET_2ND_ARCH):=
+LOCAL_NO_CRT_$(TARGET_2ND_ARCH):=
+LOCAL_LDFLAGS_$(TARGET_2ND_ARCH):=
+endif
+
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
 # Leave the current makefile to make sure we don't break anything
