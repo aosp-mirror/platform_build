@@ -65,4 +65,7 @@ endif
 
 # Add the installed_odex to the list of installed files for this module.
 ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(installed_odex)
+# Make sure to install the .odex when you run "make <module_name>"
+$(my_register_name): $(installed_odex)
+
 endif # LOCAL_DEX_PREOPT
