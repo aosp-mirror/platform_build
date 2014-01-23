@@ -85,12 +85,13 @@ include $(BUILD_SYSTEM)/base_rules.mk
 # The following LOCAL_ variables will be modified in this file.
 # Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
 # we can't modify them in place.
+my_src_files := $(LOCAL_SRC_FILES) $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 my_static_libraries := $(LOCAL_STATIC_LIBRARIES)
 my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
-my_cflags := $(LOCAL_CFLAGS)
+my_cflags := $(LOCAL_CFLAGS) $(LOCAL_CFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 my_cppflags := $(LOCAL_CPPFLAGS)
-my_ldflags := $(LOCAL_LDFLAGS)
-my_asflags := $(LOCAL_ASFLAGS)
+my_ldflags := $(LOCAL_LDFLAGS) $(LOCAL_LDFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+my_asflags := $(LOCAL_ASFLAGS) $(LOCAL_ASFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 my_cc := $(LOCAL_CC)
 my_cxx := $(LOCAL_CXX)
 my_c_includes := $(LOCAL_C_INCLUDES)
@@ -318,7 +319,7 @@ endif
 ## Compile RenderScript with reflected C++
 ####################################################
 
-renderscript_sources := $(filter %.rs %.fs,$(LOCAL_SRC_FILES))
+renderscript_sources := $(filter %.rs %.fs,$(my_src_files))
 
 ifneq (,$(renderscript_sources))
 
@@ -382,7 +383,7 @@ ALL_GENERATED_SOURCES += $(my_generated_sources)
 ###########################################################
 ## Compile the .proto files to .cc and then to .o
 ###########################################################
-proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
+proto_sources := $(filter %.proto,$(my_src_files))
 proto_generated_objects :=
 proto_generated_headers :=
 ifneq ($(proto_sources),)
@@ -421,7 +422,7 @@ endif
 ## YACC: Compile .y files to .cpp and the to .o.
 ###########################################################
 
-yacc_sources := $(filter %.y,$(LOCAL_SRC_FILES))
+yacc_sources := $(filter %.y,$(my_src_files))
 yacc_cpps := $(addprefix \
     $(intermediates)/,$(yacc_sources:.y=$(LOCAL_CPP_EXTENSION)))
 yacc_headers := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.h)
@@ -444,7 +445,7 @@ endif
 ## LEX: Compile .l files to .cpp and then to .o.
 ###########################################################
 
-lex_sources := $(filter %.l,$(LOCAL_SRC_FILES))
+lex_sources := $(filter %.l,$(my_src_files))
 lex_cpps := $(addprefix \
     $(intermediates)/,$(lex_sources:.l=$(LOCAL_CPP_EXTENSION)))
 lex_objects := $(lex_cpps:$(LOCAL_CPP_EXTENSION)=.o)
@@ -469,10 +470,10 @@ endif
 
 # we also do this on host modules, even though
 # it's not really arm, because there are files that are shared.
-cpp_arm_sources    := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(LOCAL_SRC_FILES)))
+cpp_arm_sources    := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)))
 cpp_arm_objects    := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))
 
-cpp_normal_sources := $(filter %$(LOCAL_CPP_EXTENSION),$(LOCAL_SRC_FILES))
+cpp_normal_sources := $(filter %$(LOCAL_CPP_EXTENSION),$(my_src_files))
 cpp_normal_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
 
 $(cpp_arm_objects):    PRIVATE_ARM_MODE := $(arm_objects_mode)
@@ -551,10 +552,10 @@ gen_o_objects := $(filter %.o,$(my_generated_sources))
 ## C: Compile .c files to .o.
 ###########################################################
 
-c_arm_sources    := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(LOCAL_SRC_FILES)))
+c_arm_sources    := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(my_src_files)))
 c_arm_objects    := $(addprefix $(intermediates)/,$(c_arm_sources:.c=.o))
 
-c_normal_sources := $(filter %.c,$(LOCAL_SRC_FILES))
+c_normal_sources := $(filter %.c,$(my_src_files))
 c_normal_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
 
 $(c_arm_objects):    PRIVATE_ARM_MODE := $(arm_objects_mode)
@@ -595,7 +596,7 @@ endif
 ## ObjC: Compile .m files to .o
 ###########################################################
 
-objc_sources := $(filter %.m,$(LOCAL_SRC_FILES))
+objc_sources := $(filter %.m,$(my_src_files))
 objc_objects := $(addprefix $(intermediates)/,$(objc_sources:.m=.o))
 
 ifneq ($(strip $(objc_objects)),)
@@ -610,7 +611,7 @@ endif
 ## AS: Compile .S files to .o.
 ###########################################################
 
-asm_sources_S := $(filter %.S,$(LOCAL_SRC_FILES))
+asm_sources_S := $(filter %.S,$(my_src_files))
 asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
 
 ifneq ($(strip $(asm_objects_S)),)
@@ -621,7 +622,7 @@ $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
 -include $(asm_objects_S:%.o=%.P)
 endif
 
-asm_sources_s := $(filter %.s,$(LOCAL_SRC_FILES))
+asm_sources_s := $(filter %.s,$(my_src_files))
 asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
 
 ifneq ($(strip $(asm_objects_s)),)
@@ -801,7 +802,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_C_INCLUDES := $(my_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_IMPORT_INCLUDES := $(import_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDFLAGS := $(my_ldflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDLIBS := $(LOCAL_LDLIBS)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_CRT := $(LOCAL_NO_CRT)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_CRT := $(strip $(LOCAL_NO_CRT) $(LOCAL_NO_CRT_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 
 # this is really the way to get the files onto the command line instead
 # of using $^, because then LOCAL_ADDITIONAL_DEPENDENCIES doesn't work
