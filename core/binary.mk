@@ -280,7 +280,7 @@ endif
 ## Define arm-vs-thumb-mode flags.
 ###########################################################
 LOCAL_ARM_MODE := $(strip $(LOCAL_ARM_MODE))
-ifeq ($(TARGET_ARCH),arm)
+ifeq ($(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),arm)
 arm_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)
 normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 
