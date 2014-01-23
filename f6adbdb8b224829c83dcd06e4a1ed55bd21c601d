@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72b456b0_ce9017f6",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 7
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-01-23T17:34:18Z",
+      "side": 1,
+      "message": "If you\u0027re not signing it, you don\u0027t need to bother with the temp file; you can just open args[1] as output_zip rather than copy it at the end.",
+      "range": {
+        "startLine": 876,
+        "startChar": 45,
+        "endLine": 876,
+        "endChar": 47
+      },
+      "revId": "f6adbdb8b224829c83dcd06e4a1ed55bd21c601d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
