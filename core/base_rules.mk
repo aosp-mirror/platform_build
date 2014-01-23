@@ -118,7 +118,7 @@ ifeq ($(LOCAL_MODULE_PATH),)
 
   LOCAL_MODULE_PATH := $($(install_path_var))
   ifeq ($(strip $(LOCAL_MODULE_PATH)),)
-    $(error $(LOCAL_PATH): unhandled install path "$(install_path_var)")
+    $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
   endif
 endif
 endif # not LOCAL_UNINSTALLABLE_MODULE
