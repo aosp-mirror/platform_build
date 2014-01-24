@@ -106,6 +106,8 @@ endif
 
 ifeq ($(LOCAL_STRIP_MODULE),true)
 # Strip the binary
+$(strip_output): PRIVATE_STRIP := $(TARGET_STRIP)
+$(strip_output): PRIVATE_OBJCOPY := $(TARGET_OBJCOPY)
 $(strip_output): $(strip_input) | $(TARGET_STRIP)
 	$(transform-to-stripped)
 else
