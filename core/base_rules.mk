@@ -98,8 +98,8 @@ ifneq ($(words $(LOCAL_MODULE_CLASS)),1)
 endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-LOCAL_MODULE_PATH := $(strip $(LOCAL_MODULE_PATH))
-ifeq ($(LOCAL_MODULE_PATH),)
+my_module_path := $(strip $(LOCAL_MODULE_PATH))
+ifeq ($(my_module_path),)
   ifdef LOCAL_IS_HOST_MODULE
     partition_tag :=
   else
@@ -116,9 +116,9 @@ ifeq ($(LOCAL_MODULE_PATH),)
     install_path_var := $(install_path_var)_PRIVILEGED
   endif
 
-  LOCAL_MODULE_PATH := $($(install_path_var))
-  ifeq ($(strip $(LOCAL_MODULE_PATH)),)
-    $(error $(LOCAL_PATH): unhandled install path "$(install_path_var)")
+   my_module_path := $($(install_path_var))
+  ifeq ($(strip $(my_module_path)),)
+    $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
   endif
 endif
 endif # not LOCAL_UNINSTALLABLE_MODULE
@@ -172,7 +172,7 @@ LOCAL_BUILT_MODULE := $(built_module_path)/$(LOCAL_BUILT_MODULE_STEM)
 built_module_path :=
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-  LOCAL_INSTALLED_MODULE := $(LOCAL_MODULE_PATH)/$(LOCAL_INSTALLED_MODULE_STEM)
+  LOCAL_INSTALLED_MODULE := $(my_module_path)/$(LOCAL_INSTALLED_MODULE_STEM)
 endif
 
 # Assemble the list of targets to create PRIVATE_ variables for.
