@@ -1280,13 +1280,7 @@ endif
 define transform-o-to-shared-lib
 @mkdir -p $(dir $@)
 @echo "target SharedLib: $(PRIVATE_MODULE) ($@)"
-$(transform-o-to-shared-lib-inner)
-endef
-
-define transform-o-to-package
-@mkdir -p $(dir $@)
-@echo "target Package: $(PRIVATE_MODULE) ($@)"
-$(transform-o-to-shared-lib-inner)
+$($(PRIVATE_2ND_ARCH_VAR_PREFIX)transform-o-to-shared-lib-inner)
 endef
 
 
@@ -1297,7 +1291,7 @@ endef
 define transform-to-stripped
 @mkdir -p $(dir $@)
 @echo "target Strip: $(PRIVATE_MODULE) ($@)"
-$(hide) $(TARGET_STRIP_COMMAND)
+$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_COMMAND)
 endef
 
 
