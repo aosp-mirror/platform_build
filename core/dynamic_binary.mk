@@ -87,10 +87,12 @@ endif
 ## Store a copy with symbols for symbolic debugging
 ###########################################################
 ifeq ($(LOCAL_UNSTRIPPED_PATH),)
-LOCAL_UNSTRIPPED_PATH := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_MODULE_PATH))
+my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+else
+my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
 symbolic_input := $(compress_output)
-symbolic_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_INSTALLED_MODULE_STEM)
+symbolic_output := $(my_unstripped_path)/$(LOCAL_INSTALLED_MODULE_STEM)
 $(symbolic_output) : $(symbolic_input) | $(ACP)
 	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
@@ -108,9 +110,9 @@ endif
 
 ifeq ($(LOCAL_STRIP_MODULE),true)
 # Strip the binary
-$(strip_output): PRIVATE_STRIP := $(TARGET_STRIP)
-$(strip_output): PRIVATE_OBJCOPY := $(TARGET_OBJCOPY)
-$(strip_output): $(strip_input) | $(TARGET_STRIP)
+$(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+$(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
+$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 	$(transform-to-stripped)
 else
 # Don't strip the binary, just copy it.  We can't skip this step
