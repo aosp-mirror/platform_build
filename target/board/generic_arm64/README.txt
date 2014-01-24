@@ -1,4 +1,4 @@
-The "generic_aarch64" product defines a non-hardware-specific aarch64 target
+The "generic_arm64" product defines a non-hardware-specific arm64 target
 without a kernel or bootloader.
 
 It is not a product "base class"; no other products inherit
