@@ -76,7 +76,7 @@ TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 TARGET_GLOBAL_CFLAGS += \
     -fno-strict-aliasing \
 
-android_config_h := $(call select-android-config-h,linux-aarch64)
+android_config_h := $(call select-android-config-h,linux-arm64)
 
 TARGET_GLOBAL_CFLAGS += \
 			-fpic -fPIE \
@@ -138,12 +138,12 @@ KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
 TARGET_C_INCLUDES := \
-	$(libc_root)/arch-aarch64/include \
+	$(libc_root)/arch-arm64/include \
 	$(libc_root)/include \
 	$(libstdc++_root)/include \
 	$(KERNEL_HEADERS) \
 	$(libm_root)/include \
-	$(libm_root)/include/aarch64 \
+	$(libm_root)/include/arm64 \
 	$(libthread_db_root)/include
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
