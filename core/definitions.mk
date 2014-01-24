@@ -423,11 +423,13 @@ $(strip \
     $(if $(_idfName),, \
         $(error $(LOCAL_PATH): Name not defined in call to intermediates-dir-for)) \
     $(eval _idfPrefix := $(if $(strip $(3)),HOST,TARGET)) \
-    $(eval _idf2ndArchPrefix := $(if $(strip $(5)),$(TARGET_2ND_ARCH_VAR_PREFIX))) \
+    $(eval _idf2ndArchPrefix := $(if $(call directory_is_64_bit_blacklisted,$(LOCAL_PATH))$(strip $(5)),$(TARGET_2ND_ARCH_VAR_PREFIX))) \
     $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_INTERMEDIATES)) \
-      , \
-        $(eval _idfIntBase := $($(_idf2ndArchPrefix)$(_idfPrefix)_OUT_INTERMEDIATES)) \
+      ,$(if $(filter $(_idfPrefix)-$(_idfClass),TARGET-SHARED_LIBRARIES TARGET-STATIC_LIBRARIES TARGET-EXECUTABLES),\
+          $(eval _idfIntBase := $($(_idf2ndArchPrefix)$(_idfPrefix)_OUT_INTERMEDIATES)) \
+       ,$(eval _idfIntBase := $($(_idfPrefix)_OUT_INTERMEDIATES)) \
+       ) \
      ) \
     $(_idfIntBase)/$(_idfClass)/$(_idfName)_intermediates \
 )

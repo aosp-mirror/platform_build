@@ -22,6 +22,8 @@ my_module_arch_supported := true
 ifeq ($(LOCAL_2ND_ARCH_VAR_PREFIX),)
 ifeq ($(TARGET_IS_64_BIT)|$(LOCAL_32_BIT_ONLY),true|true)
 my_module_arch_supported := false
+else ifeq ($(call directory_is_64_bit_blacklisted,$(LOCAL_PATH)),true)
+my_module_arch_supported := false
 endif
 else # LOCAL_2ND_ARCH_VAR_PREFIX
 ifeq ($(LOCAL_NO_2ND_ARCH),true)
