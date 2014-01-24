@@ -31,7 +31,7 @@ endif
 # base_rules.make defines $(intermediates), but we need its value
 # before we include base_rules.  Make a guess, and verify that
 # it's correct once the real value is defined.
-guessed_intermediates := $(call local-intermediates-dir)
+guessed_intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
 
 # Define the target that is the unmodified output of the linker.
 # The basename of this target must be the same as the final output
@@ -51,6 +51,8 @@ LOCAL_INTERMEDIATE_TARGETS := $(linked_module)
 ###################################
 include $(BUILD_SYSTEM)/binary.mk
 ###################################
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_2ND_ARCH_VAR_PREFIX := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 
 # Make sure that our guess at the value of intermediates was correct.
 ifneq ($(intermediates),$(guessed_intermediates))
