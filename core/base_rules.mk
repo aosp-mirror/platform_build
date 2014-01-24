@@ -116,7 +116,7 @@ ifeq ($(my_module_path),)
     install_path_var := $(install_path_var)_PRIVILEGED
   endif
 
-   my_module_path := $($(install_path_var))
+  my_module_path := $($(install_path_var))
   ifeq ($(strip $(my_module_path)),)
     $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
   endif
