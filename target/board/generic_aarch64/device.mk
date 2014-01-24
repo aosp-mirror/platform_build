@@ -28,4 +28,5 @@ PRODUCT_COPY_FILES := \
     device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml
 
 PRODUCT_PACKAGES := \
-    audio.primary.goldfish
+    audio.primary.goldfish \
+    vibrator.goldfish
