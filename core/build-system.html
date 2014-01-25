@@ -383,7 +383,7 @@ the rest of them easier to read, and you can always refer back to the templates
 if you need them again later.</p>
 <p>By default, on the target these are built into /system/bin, and on the
 host, they're built into <combo>/host/bin.  These can be overridden by setting
-<code>LOCAL_MODULE_PATH</code>.  See
+<code>LOCAL_MODULE_PATH</code> or <code>LOCAL_MODULE_RELATIVE_PATH</code>.  See
 <a href="#moving-targets">Putting targets elsewhere</a>
 for more.</p>
 
@@ -533,16 +533,27 @@ endif
 
 <h3><a name="moving-modules"/>Putting modules elsewhere</h3>
 <p>If you have modules that normally go somewhere, and you need to have them
-build somewhere else, read this.  One use of this is putting files on
-the root filesystem instead of where they normally go in /system. Add these
-lines to your Android.mk:</p>
+build somewhere else, read this.</p>
+<p>If you have modules that need to go in a subdirectory of their normal
+location, for example HAL modules that need to go in /system/lib/hw or
+/vendor/lib/hw, set LOCAL_MODULE_RELATIVE_PATH in your Android.mk, for
+example:</p>
+<pre>
+LOCAL_MODULE_RELATIVE_PATH := hw
+</pre>
+<p>If you have modules that need to go in an entirely different location, for
+example the root filesystem instead of in /system, add these lines to your
+Android.mk:</p>
 <pre>
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
 LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
 </pre>
-<p>For executables and libraries, you need to also specify a
-<code>LOCAL_UNSTRIPPED_PATH</code> location, because on target builds, we keep
-the unstripped executables so GDB can find the symbols.</code>
+<p>For executables and libraries, you need to specify a
+<code>LOCAL_UNSTRIPPED_PATH</code> location if you specified a
+<code>LOCAL_MODULE_PATH</code>, because on target builds, we keep
+the unstripped executables so GDB can find the symbols.
+<code>LOCAL_UNSTRIPPED_PATH</code> is not necessary if you only specified
+<code>LOCAL_MODULE_RELATIVE_PATH</code>.</p>
 <p>Look in <code>config/envsetup.make</code> for all of the variables defining
 places to build things.</p>
 <p>FYI: If you're installing an executable to /sbin, you probably also want to
@@ -816,6 +827,13 @@ normal for its type.  If you override this, make sure you also set
 <code>LOCAL_UNSTRIPPED_PATH</code> if it's an executable or a shared library
 so the unstripped binary has somewhere to go.  An error will occur if you forget
 to.</p>
+<p>See <a href="#moving-modules">Putting modules elsewhere</a> for more.</p>
+
+<h4>LOCAL_MODULE_RELATIVE_PATH</h4>
+<p>Instructs the build system to put the module in a subdirectory under the
+directory that is normal for its type.  If you set this you do not need to
+set <code>LOCAL_UNSTRIPPED_PATH</code>, the unstripped binaries will also use
+the relative path.</p>
 <p>See <a href="#moving-modules">Putting modules elsewhere</a> for more.</p>
 
 <h4>LOCAL_UNSTRIPPED_PATH</h4>

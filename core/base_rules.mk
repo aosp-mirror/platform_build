@@ -99,6 +99,7 @@ endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 my_module_path := $(strip $(LOCAL_MODULE_PATH))
+my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifeq ($(my_module_path),)
   ifdef LOCAL_IS_HOST_MODULE
     partition_tag :=
@@ -120,6 +121,9 @@ ifeq ($(my_module_path),)
   ifeq ($(strip $(my_module_path)),)
     $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
   endif
+endif
+ifneq ($(my_module_relative_path),)
+  my_module_path := $(my_module_path)/$(my_module_relative_path)
 endif
 endif # not LOCAL_UNINSTALLABLE_MODULE
 
