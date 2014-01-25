@@ -409,8 +409,8 @@ a couple of examples.  <code>$@</code> is the make built-in variable for
 need to change.</p>
 
 <p>You need to put this after you have declared <code>LOCAL_PATH</code> and
-<code>LOCAL_MODULE</code>, because the <code>$(local-intermediates-dir)</code>
-and <code>$(local-host-intermediates-dir)</code> macros use these variables
+<code>LOCAL_MODULE</code>, because the <code>$(local-generated-sources-dir)</code>
+and <code>$(local-host-generated-sources-dir)</code> macros use these variables
 to determine where to put the files.
 
 <h5>Example 1</h5>
@@ -419,7 +419,7 @@ chartables.c, which doesn't depend on anything.  And is built by the tool
 built to $(HOST_OUT_EXECUTABLES)/dftables.  Note on the second to last line
 that a dependency is created on the tool.</p>
 <pre>
-intermediates:= $(local-intermediates-dir)
+intermediates:= $(local-generated-sources-dir)
 GEN := $(intermediates)/<font color=red>chartables.c</font>
 $(GEN): PRIVATE_CUSTOM_TOOL = <font color=red>$(HOST_OUT_EXECUTABLES)/dftables $@</font>
 $(GEN): <font color=red>$(HOST_OUT_EXECUTABLES)/dftables</font>
@@ -433,7 +433,7 @@ a file.  Pretend that it does something useful.  Note how we use a
 target-specific variable called PRIVATE_INPUT_FILE to store the name of the
 input file.</p>
 <pre>
-intermediates:= $(local-intermediates-dir)
+intermediates:= $(local-generated-sources-dir)
 GEN := $(intermediates)/<font color=red>file.c</font>
 $(GEN): PRIVATE_INPUT_FILE := $(LOCAL_PATH)/<font color=red>input.file</font>
 $(GEN): PRIVATE_CUSTOM_TOOL = <font color=red>cat $(PRIVATE_INPUT_FILE) &gt; $@</font>
@@ -447,7 +447,7 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 name, and use the same tool, you can combine them.  (here the *.lut.h files are
 the generated ones, and the *.cpp files are the input files)</p>
 <pre>
-intermediates:= $(local-intermediates-dir)
+intermediates:= $(local-generated-sources-dir)
 GEN := $(addprefix $(intermediates)<font color=red>/kjs/, \
             array_object.lut.h \
             bool_object.lut.h \</font>
