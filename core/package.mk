@@ -25,6 +25,11 @@
 ## be set for you.
 ###########################################################
 
+ifeq ($(TARGET_IS_64_BIT)|$(LOCAL_32BIT_ONLY),true|true)
+LOCAL_2ND_ARCH_VAR_PREFIX := $(TARGET_2ND_ARCH_VAR_PREFIX)
+else
+LOCAL_2ND_ARCH_VAR_PREFIX :=
+endif
 
 # If this makefile is being read from within an inheritance,
 # use the new values.
@@ -306,7 +311,7 @@ endif # full_classes_jar
 so_suffix := $($(my_prefix)SHLIB_SUFFIX)
 
 jni_shared_libraries := \
-    $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
+    $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(LOCAL_JNI_SHARED_LIBRARIES)))
 
@@ -325,7 +330,7 @@ $(error LOCAL_SDK_VERSION has to be defined together with LOCAL_NDK_STL_VARIANT,
     LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
 endif
 jni_shared_libraries += \
-    $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources/cxx-stl/stlport/libs/$(TARGET_CPU_ABI)/libstlport_shared.so
+    $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources/cxx-stl/stlport/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libstlport_shared.so
 endif
 
 # Set the abi directory used by the local JNI shared libraries.
@@ -333,7 +338,7 @@ endif
 # sets where they are stored in the apk.)
 
 ifeq ($(LOCAL_JNI_SHARED_LIBRARIES_ABI),)
-    jni_shared_libraries_abi := $(TARGET_CPU_ABI)
+    jni_shared_libraries_abi := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
 else
     jni_shared_libraries_abi := $(LOCAL_JNI_SHARED_LIBRARIES_ABI)
 endif
@@ -468,3 +473,5 @@ endif # skip_definition
 
 # Reset internal variables.
 all_res_assets :=
+
+LOCAL_2ND_ARCH_VAR_PREFIX :=

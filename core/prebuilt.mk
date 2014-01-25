@@ -16,6 +16,15 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
+ifneq ($(TARGET_IS_64_BIT)|$(LOCAL_32BIT_ONLY),true|true)
+# Build for TARGET_ARCH
+LOCAL_2ND_ARCH_VAR_PREFIX :=
+else
+# Build for TARGET_2ND_ARCH
+LOCAL_2ND_ARCH_VAR_PREFIX := $(TARGET_2ND_ARCH_VAR_PREFIX)
+endif
+
+
 # Not much sense to check build prebuilts
 LOCAL_DONT_CHECK_MODULE := true
 
@@ -33,7 +42,7 @@ endif
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # Put the built targets of all shared libraries in a common directory
   # to simplify the link line.
-  OVERRIDE_BUILT_MODULE_PATH := $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
+  OVERRIDE_BUILT_MODULE_PATH := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
 endif
 
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
@@ -213,3 +222,5 @@ endif # TARGET JAVA_LIBRARIES
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=
+
+LOCAL_2ND_ARCH_VAR_PREFIX :=
