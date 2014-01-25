@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b22faeb4_a8bdffe9",
+        "filename": "core/prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-25T00:42:02Z",
+      "side": 1,
+      "message": "reset LOCAL_2ND_ARCH_VAR_PREFIX here, just like what you did in the package.mk.",
+      "revId": "3350f477d814e23dd0ac4c029aa5e3c70eaa6372",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
