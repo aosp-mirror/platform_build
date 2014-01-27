@@ -1011,11 +1011,23 @@ def main(argv):
     print "--- target info ---"
     common.DumpInfoDict(OPTIONS.info_dict)
 
+  # If the caller explicitly specified the device-specific extensions
+  # path via -s/--device_specific, use that.  Otherwise, use
+  # META/releasetools.py if it is present in the target target_files.
+  # Otherwise, take the path of the file from 'tool_extensions' in the
+  # info dict and look for that in the local filesystem, relative to
+  # the current directory.
+
   if OPTIONS.device_specific is None:
-    OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions", None)
+    from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
+    if os.path.exists(from_input):
+      print "(using device-specific extensions from target_files)"
+      OPTIONS.device_specific = from_input
+    else:
+      OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions", None)
+
   if OPTIONS.device_specific is not None:
-    OPTIONS.device_specific = os.path.normpath(OPTIONS.device_specific)
-    print "using device-specific extensions in", OPTIONS.device_specific
+    OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
 
   temp_zip_file = tempfile.NamedTemporaryFile()
   output_zip = zipfile.ZipFile(temp_zip_file, "w",

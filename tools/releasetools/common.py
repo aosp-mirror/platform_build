@@ -756,6 +756,7 @@ class DeviceSpecificParams(object):
           if x == ".py":
             f = b
           info = imp.find_module(f, [d])
+        print "loaded device-specific extensions from", path
         self.module = imp.load_module("device_specific", *info)
       except ImportError:
         print "unable to load device-specific module; assuming none"
