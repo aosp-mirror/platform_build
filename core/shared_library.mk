@@ -1,3 +1,15 @@
+ifneq ($(LOCAL_MODULE_PATH),)
+ifneq ($(TARGET_2ND_ARCH),)
+$(warning $(LOCAL_MODULE): LOCAL_MODULE_PATH for shared libraries is unsupported in multiarch builds, use LOCAL_MODULE_RELATIVE_PATH instead)
+endif
+endif
+
+ifneq ($(LOCAL_UNSTRIPPED_PATH),)
+ifneq ($(TARGET_2ND_ARCH),)
+$(warning $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsupported in multiarch builds)
+endif
+endif
+
 ifneq ($(TARGET_IS_64_BIT)|$(LOCAL_32BIT_ONLY),true|true)
 # Build for TARGET_ARCH
 LOCAL_2ND_ARCH_VAR_PREFIX :=
