@@ -101,6 +101,7 @@ endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 my_module_path := $(strip $(LOCAL_MODULE_PATH))
+my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifeq ($(my_module_path),)
   ifdef LOCAL_IS_HOST_MODULE
     partition_tag :=
@@ -123,6 +124,9 @@ ifeq ($(my_module_path),)
     $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
   endif
 endif
+ifneq ($(my_module_relative_path),)
+  my_module_path := $(my_module_path)/$(my_module_relative_path)
+endif
 endif # not LOCAL_UNINSTALLABLE_MODULE
 
 ifneq ($(strip $(LOCAL_BUILT_MODULE)$(LOCAL_INSTALLED_MODULE)),)
@@ -143,6 +147,7 @@ $(module_id) := $(LOCAL_PATH)
 
 intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+generated_sources_dir := $(call local-generated-sources-dir)
 
 ###########################################################
 # Pick a name for the intermediate and final targets
