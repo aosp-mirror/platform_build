@@ -462,6 +462,51 @@ $(strip \
 endef
 
 ###########################################################
+## The generated sources directory.  Placing generated
+## source files directly in the intermediates directory
+## causes problems for multiarch builds, where there are
+## two intermediates directories for a single target. Put
+## them in a separate directory, and they will be copied to
+## each intermediates directory automatically.
+###########################################################
+
+# $(1): target class, like "APPS"
+# $(2): target name, like "NotePad"
+# $(3): if non-empty, this is a HOST target.
+# $(4): if non-empty, force the generated sources to be COMMON
+define generated-sources-dir-for
+$(strip \
+    $(eval _idfClass := $(strip $(1))) \
+    $(if $(_idfClass),, \
+        $(error $(LOCAL_PATH): Class not defined in call to generated-sources-dir-for)) \
+    $(eval _idfName := $(strip $(2))) \
+    $(if $(_idfName),, \
+        $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
+    $(eval _idfPrefix := $(if $(strip $(3)),HOST,TARGET)) \
+    $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
+        $(eval _idfIntBase := $($(_idfPrefix)_OUT_GEN_COMMON)) \
+      , \
+        $(eval _idfIntBase := $($(_idfPrefix)_OUT_GEN)) \
+     ) \
+    $(_idfIntBase)/$(_idfClass)/$(_idfName)_intermediates \
+)
+endef
+
+# Uses LOCAL_MODULE_CLASS, LOCAL_MODULE, and LOCAL_IS_HOST_MODULE
+# to determine the generated sources directory.
+#
+# $(1): if non-empty, force the intermediates to be COMMON
+define local-generated-sources-dir
+$(strip \
+    $(if $(strip $(LOCAL_MODULE_CLASS)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
+    $(if $(strip $(LOCAL_MODULE)),, \
+        $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
+    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(LOCAL_IS_HOST_MODULE),$(1)) \
+)
+endef
+
+###########################################################
 ## Convert "path/to/libXXX.so" to "-lXXX".
 ## Any "path/to/libXXX.a" elements pass through unchanged.
 ###########################################################
