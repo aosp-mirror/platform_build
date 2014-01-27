@@ -94,6 +94,7 @@ OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
 OPTIONS.two_step = False
+OPTIONS.no_signing = False
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -968,6 +969,8 @@ def main(argv):
       OPTIONS.worker_threads = int(a)
     elif o in ("-2", "--two_step"):
       OPTIONS.two_step = True
+    elif o in ("--no_signing"):
+      OPTIONS.no_signing = True
     else:
       return False
     return True
@@ -983,6 +986,7 @@ def main(argv):
                                               "worker_threads=",
                                               "aslr_mode=",
                                               "two_step",
+                                              "no_signing",
                                               ],
                              extra_option_handler=option_handler)
 
@@ -1017,9 +1021,12 @@ def main(argv):
     OPTIONS.device_specific = os.path.normpath(OPTIONS.device_specific)
     print "using device-specific extensions in", OPTIONS.device_specific
 
-  temp_zip_file = tempfile.NamedTemporaryFile()
-  output_zip = zipfile.ZipFile(temp_zip_file, "w",
-                               compression=zipfile.ZIP_DEFLATED)
+  if OPTIONS.no_signing:
+    output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
+  else:
+    temp_zip_file = tempfile.NamedTemporaryFile()
+    output_zip = zipfile.ZipFile(temp_zip_file, "w",
+                                 compression=zipfile.ZIP_DEFLATED)
 
   if OPTIONS.incremental_source is None:
     WriteFullOTAPackage(input_zip, output_zip)
@@ -1043,8 +1050,9 @@ def main(argv):
 
   output_zip.close()
 
-  SignOutput(temp_zip_file.name, args[1])
-  temp_zip_file.close()
+  if not OPTIONS.no_signing:
+    SignOutput(temp_zip_file.name, args[1])
+    temp_zip_file.close()
 
   common.Cleanup()
 
