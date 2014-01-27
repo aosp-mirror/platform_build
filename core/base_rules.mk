@@ -41,6 +41,8 @@ else
   my_host :=
 endif
 
+my_module_tags := $(LOCAL_MODULE_TAGS)
+
 ###########################################################
 ## Validate and define fallbacks for input LOCAL_* variables.
 ###########################################################
@@ -50,17 +52,17 @@ endif
 #$(shell rm -f tag-list.csv)
 #tag-list-first-time := false
 #endif
-#$(shell echo $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))),$(LOCAL_MODULE),$(strip $(LOCAL_MODULE_CLASS)),$(subst $(space),$(comma),$(sort $(LOCAL_MODULE_TAGS))) >> tag-list.csv)
+#$(shell echo $(lastword $(filter-out config/% out/%,$(MAKEFILE_LIST))),$(LOCAL_MODULE),$(strip $(LOCAL_MODULE_CLASS)),$(subst $(space),$(comma),$(sort $(my_module_tags))) >> tag-list.csv)
 
 LOCAL_UNINSTALLABLE_MODULE := $(strip $(LOCAL_UNINSTALLABLE_MODULE))
-LOCAL_MODULE_TAGS := $(sort $(LOCAL_MODULE_TAGS))
-ifeq (,$(LOCAL_MODULE_TAGS))
-  LOCAL_MODULE_TAGS := optional
+my_module_tags := $(sort $(my_module_tags))
+ifeq (,$(my_module_tags))
+  my_module_tags := optional
 endif
 
 # User tags are not allowed anymore.  Fail early because it will not be installed
 # like it used to be.
-ifneq ($(filter $(LOCAL_MODULE_TAGS),user),)
+ifneq ($(filter $(my_module_tags),user),)
   $(warning *** Module name: $(LOCAL_MODULE))
   $(warning *** Makefile location: $(LOCAL_MODULE_MAKEFILE))
   $(warning * )
@@ -75,8 +77,8 @@ endif
 # Only the tags mentioned in this test are expected to be set by module
 # makefiles. Anything else is either a typo or a source of unexpected
 # behaviors.
-ifneq ($(filter-out debug eng tests optional samples,$(LOCAL_MODULE_TAGS)),)
-$(warning unusual tags $(LOCAL_MODULE_TAGS) on $(LOCAL_MODULE) at $(LOCAL_PATH))
+ifneq ($(filter-out debug eng tests optional samples,$(my_module_tags)),)
+$(warning unusual tags $(my_module_tags) on $(LOCAL_MODULE) at $(LOCAL_PATH))
 endif
 
 # Add implicit tags.
@@ -88,7 +90,7 @@ endif
 #
 gpl_license_file := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*_GPL* MODULE_LICENSE*_MPL*)
 ifneq ($(gpl_license_file),)
-  LOCAL_MODULE_TAGS += gnu
+  my_module_tags += gnu
   ALL_GPL_MODULE_LICENSE_FILES := $(sort $(ALL_GPL_MODULE_LICENSE_FILES) $(gpl_license_file))
 endif
 
@@ -108,7 +110,7 @@ ifeq ($(my_module_path),)
   else
     # The definition of should-install-to-system will be different depending
     # on which goal (e.g., sdk or just droid) is being built.
-    partition_tag := $(if $(call should-install-to-system,$(LOCAL_MODULE_TAGS)),,_DATA)
+    partition_tag := $(if $(call should-install-to-system,$(my_module_tags)),,_DATA)
   endif
   endif
   install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
@@ -580,7 +582,7 @@ ALL_MODULES.$(my_register_name).CLASS := \
 ALL_MODULES.$(my_register_name).PATH := \
     $(ALL_MODULES.$(my_register_name).PATH) $(LOCAL_PATH)
 ALL_MODULES.$(my_register_name).TAGS := \
-    $(ALL_MODULES.$(my_register_name).TAGS) $(LOCAL_MODULE_TAGS)
+    $(ALL_MODULES.$(my_register_name).TAGS) $(my_module_tags)
 ALL_MODULES.$(my_register_name).CHECKED := \
     $(ALL_MODULES.$(my_register_name).CHECKED) $(LOCAL_CHECKED_MODULE)
 ALL_MODULES.$(my_register_name).BUILT := \
@@ -603,22 +605,22 @@ endif
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 
 ###########################################################
-## Take care of LOCAL_MODULE_TAGS
+## Take care of my_module_tags
 ###########################################################
 
 # Keep track of all the tags we've seen.
-ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(LOCAL_MODULE_TAGS))
+ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(my_module_tags))
 
 # Add this module to the tag list of each specified tag.
 # Don't use "+=". If the variable hasn't been set with ":=",
 # it will default to recursive expansion.
-$(foreach tag,$(LOCAL_MODULE_TAGS),\
+$(foreach tag,$(my_module_tags),\
     $(eval ALL_MODULE_TAGS.$(tag) := \
         $(ALL_MODULE_TAGS.$(tag)) \
         $(LOCAL_INSTALLED_MODULE)))
 
 # Add this module name to the tag list of each specified tag.
-$(foreach tag,$(LOCAL_MODULE_TAGS),\
+$(foreach tag,$(my_module_tags),\
     $(eval ALL_MODULE_NAME_TAGS.$(tag) += $(my_register_name)))
 
 ###########################################################
@@ -640,7 +642,7 @@ endif
 
 ifdef j_or_n
 $(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(LOCAL_CHECKED_MODULE)
-ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
+ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(LOCAL_CHECKED_MODULE)
 endif
 endif
