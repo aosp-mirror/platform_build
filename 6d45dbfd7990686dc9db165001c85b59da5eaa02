@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b226cef6_0db9b5f7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 481,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-27T22:02:50Z",
+      "side": 1,
+      "message": "intermediates-dir-for -\u003e __generated-sources-dir-for",
+      "revId": "6d45dbfd7990686dc9db165001c85b59da5eaa02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b226cef6_ada7c9cd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-27T22:02:50Z",
+      "side": 1,
+      "message": "intermediates-dir-for -\u003e __generated-sources-dir-for",
+      "revId": "6d45dbfd7990686dc9db165001c85b59da5eaa02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
