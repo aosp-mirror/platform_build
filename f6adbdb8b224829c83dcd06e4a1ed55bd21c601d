@@ -22,6 +22,24 @@
       "revId": "f6adbdb8b224829c83dcd06e4a1ed55bd21c601d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92d0ea10_41d7d2df",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 7
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 1015668
+      },
+      "writtenOn": "2014-01-27T05:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72b456b0_ce9017f6",
+      "revId": "f6adbdb8b224829c83dcd06e4a1ed55bd21c601d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
