@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7220d6de_d17f3635",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-28T18:51:02Z",
+      "side": 1,
+      "message": "Sorry, endif should be here.",
+      "revId": "4e605dbee0b81ae47bb2a0b8eeb74b4b68516bdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
