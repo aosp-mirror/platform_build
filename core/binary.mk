@@ -97,6 +97,7 @@ my_cxx := $(LOCAL_CXX)
 my_c_includes := $(LOCAL_C_INCLUDES) $(LOCAL_C_INCLUDES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 
+my_cflags := $(filter-out $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_UNSUPPORTED_CFLAGS),$(my_cflags))
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
