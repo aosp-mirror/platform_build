@@ -91,6 +91,9 @@ TARGET_GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
+# HACK: globally disable -fstack-protector until the toolchain supports it
+TARGET_GLOBAL_UNSUPPORTED_CFLAGS := -fstack-protector
+
 # TODO - remove __ANDROID__ after the next aarch64 toolchain refresh
 TARGET_GLOBAL_CFLAGS += -D__ANDROID__=1
 
