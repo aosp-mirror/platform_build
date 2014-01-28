@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "922b8ac2_8f9759bb",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-28T18:26:13Z",
+      "side": 1,
+      "message": "Remove the extra #",
+      "revId": "75b07c0c7361ae357e9eac0a9be42754b1de8c83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7220d6de_b1fba294",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-28T18:26:13Z",
+      "side": 1,
+      "message": "I think it\u0027s fine to just leave it empty.",
+      "revId": "75b07c0c7361ae357e9eac0a9be42754b1de8c83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
