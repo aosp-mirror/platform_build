@@ -187,7 +187,7 @@ endif
 
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
-KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
+KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-mips # mips covers both mips and mips64.
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
 TARGET_C_INCLUDES := \
