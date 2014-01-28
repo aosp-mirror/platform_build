@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b226cef6_6d367118",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-28T02:08:48Z",
+      "side": 1,
+      "message": "It should be $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_UNSUPPORTED_CFLAGS). In my original change, the name space was simply prepended to the global variables, except for the board config variables TARGET_2ND_ARCH, TARGET_2ND_ARCH_VARIANT etc.",
+      "revId": "214aaba4fdf46081ec1e85efa1c9c5e3fa15698c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
