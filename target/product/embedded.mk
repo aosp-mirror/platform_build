@@ -55,7 +55,6 @@ PRODUCT_PACKAGES += \
     libsurfaceflinger \
     libsurfaceflinger_ddmconnection \
     libsysutils \
-    libthread_db \
     libui \
     libutils \
     linker \
