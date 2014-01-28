@@ -26,12 +26,16 @@ PRELOADED_CLASSES := frameworks/base/preloaded-classes
 LIBART_BOOT_IMAGE := /$(DEXPREOPT_BOOT_JAR_DIR)/boot.art
 
 DEFAULT_DEX_PREOPT_BUILT_IMAGE := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.art
+
+DEFAULT_DEX_PREOPT_INSTALLED_IMAGE :=
+ifneq ($(PRODUCT_DEX_PREOPT_IMAGE_IN_DATA),true)
 DEFAULT_DEX_PREOPT_INSTALLED_IMAGE := $(PRODUCT_OUT)$(LIBART_BOOT_IMAGE)
 
 # The rule to install boot.art and boot.oat
 $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $(DEFAULT_DEX_PREOPT_BUILT_IMAGE) | $(ACP)
 	$(call copy-file-to-target)
 	$(hide) $(ACP) -fp $(patsubst %.art,%.oat,$<) $(patsubst %.art,%.oat,$@)
+endif
 
 DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
 ifeq ($(TARGET_CPU_VARIANT),$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))
