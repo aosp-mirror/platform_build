@@ -74,7 +74,6 @@ TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 libc_root := bionic/libc
 libm_root := bionic/libm
 libstdc++_root := bionic/libstdc++
-libthread_db_root := bionic/libthread_db
 
 # Define FDO (Feedback Directed Optimization) options.
 
@@ -166,7 +165,6 @@ TARGET_C_INCLUDES := \
 	$(KERNEL_HEADERS) \
 	$(libm_root)/include \
 	$(libm_root)/include/amd64 \
-	$(libthread_db_root)/include
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o

@@ -42,7 +42,6 @@ pathmap_INCL := \
     libpagemap:system/extras/libpagemap/include \
     libril:hardware/ril/include \
     libstdc++:bionic/libstdc++/include \
-    libthread_db:bionic/libthread_db/include \
     mkbootimg:system/core/mkbootimg \
     opengl-tests-includes:frameworks/native/opengl/tests/include \
     recovery:bootable/recovery \
