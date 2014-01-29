@@ -58,4 +58,8 @@ HOST_GLOBAL_CFLAGS += -fPIC \
 # Disable new longjmp in glibc 2.11 and later. See bug 2967937.
 HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
 
+# Workaround differences in inttypes.h between host and target.
+# See bug 12708004.
+HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS
+
 HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
