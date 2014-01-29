@@ -10,4 +10,6 @@ LOCAL_C_INCLUDES +=  \
 LOCAL_STATIC_LIBRARIES += libgtest_host libgtest_main_host
 LOCAL_SHARED_LIBRARIES +=
 
+LOCAL_LDFLAGS += -lpthread
+
 include $(BUILD_HOST_EXECUTABLE)
