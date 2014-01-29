@@ -13,7 +13,7 @@
 
 <div <?cs if:fullpage
 ?>class="fullpage"<?cs elif:design||tools||about||sdk||distribute
-?>class="col-13" id="doc-col"<?cs else 
+?>class="col-13" id="doc-col"<?cs else
 ?>class="col-12" id="doc-col"<?cs /if ?> >
 
 <?cs if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs # header logic for docs that provide previous/next buttons ?>
@@ -33,7 +33,7 @@
             ru-lang="Предыдущий"
             ko-lang="이전"
             ja-lang="前へ"
-            es-lang="Anterior"               
+            es-lang="Anterior"
             >Previous</a>
         <a href="#" class="next-page-link hide"
             zh-tw-lang="下一堂課"
@@ -41,7 +41,7 @@
             ru-lang="Следующий"
             ko-lang="다음"
             ja-lang="次へ"
-            es-lang="Siguiente"               
+            es-lang="Siguiente"
             >Next</a>
         <a href="#" class="start-class-link hide"
             zh-tw-lang="開始上課"
@@ -49,7 +49,7 @@
             ru-lang="Начало работы"
             ko-lang="시작하기"
             ja-lang="開始する"
-            es-lang="Empezar"               
+            es-lang="Empezar"
             >Get started</a>
       </div>
     <?cs elif:!page.trainingcourse ?>
@@ -60,7 +60,7 @@
             ru-lang="Предыдущий"
             ko-lang="이전"
             ja-lang="前へ"
-            es-lang="Anterior"               
+            es-lang="Anterior"
             >Previous</a>
         <a href="#" class="next-page-link hide"
             zh-tw-lang="下一堂課"
@@ -68,7 +68,7 @@
             ru-lang="Следующий"
             ko-lang="다음"
             ja-lang="次へ"
-            es-lang="Siguiente"               
+            es-lang="Siguiente"
             >Next</a>
       </div>
     <?cs /if ?><?cs # end if training ?>
@@ -95,7 +95,7 @@
         <?cs /if ?>
           <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
           <p itemprop="description"><?cs var:page.landing.intro ?></p>
-          
+
           <p><a class="next-page-link topic-start-link"></a></p>
         <?cs if:page.landing.image ?>
         </div>
@@ -124,14 +124,14 @@
     <div class="jd-descr" itemprop="articleBody">
     <?cs call:tag_list(root.descr) ?>
     </div>
-      
-      <div class="content-footer <?cs 
+
+      <div class="content-footer <?cs
                     if:fullpage ?>wrap<?cs
-                    else ?>layout-content-row<?cs /if ?>" 
+                    else ?>layout-content-row<?cs /if ?>"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <div class="layout-content-col <?cs 
-                    if:fullpage ?>col-16<?cs 
-                    elif:training||guide ?>col-8<?cs 
+        <div class="layout-content-col <?cs
+                    if:fullpage ?>col-16<?cs
+                    elif:training||guide ?>col-8<?cs
                     else ?>col-9<?cs /if ?>" style="padding-top:4px">
           <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
             <div class="g-plusone" data-size="medium"></div>
@@ -146,7 +146,7 @@
                 ru-lang="Предыдущий"
                 ko-lang="이전"
                 ja-lang="前へ"
-                es-lang="Anterior"               
+                es-lang="Anterior"
                 >Previous</a>
             <a href="#" class="next-page-link hide"
                 zh-tw-lang="下一堂課"
@@ -154,13 +154,21 @@
                 ru-lang="Следующий"
                 ko-lang="다음"
                 ja-lang="次へ"
-                es-lang="Siguiente"               
+                es-lang="Siguiente"
                 >Next</a>
+            <a href="#" class="start-class-link hide"
+                zh-tw-lang="開始上課"
+                zh-cn-lang="开始"
+                ru-lang="Начало работы"
+                ko-lang="시작하기"
+                ja-lang="開始する"
+                es-lang="Empezar"
+                >Get started</a>
           <?cs /if ?>
         </div>
         <?cs /if ?>
       </div>
-      
+
       <?cs # for training classes, provide a different kind of link when the next page is a different class ?>
       <?cs if:training && !page.article ?>
       <div class="layout-content-row content-footer next-class" style="display:none" itemscope itemtype="http://schema.org/SiteNavigationElement">
