@@ -528,6 +528,11 @@ video.with-shadow {
     width:262px;
   }
 
+  .paging-links a.start-class-link {
+    width:100%;
+    text-align:right;
+  }
+
   /* list of classes on course landing page */
   ol.class-list {
     list-style:none;
@@ -4902,7 +4907,7 @@ a.download-sdk {
   color:#555;
   text-transform:uppercase;
   border-bottom:none;
-  margin:0;
+  margin:0 0 1em;
   padding:5px 0 0;
 }
 
