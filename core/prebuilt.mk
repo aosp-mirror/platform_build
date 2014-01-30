@@ -16,7 +16,7 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
-ifneq ($(TARGET_IS_64_BIT)|$(LOCAL_32BIT_ONLY),true|true)
+ifneq ($(TARGET_IS_64_BIT)|$(LOCAL_32_BIT_ONLY),true|true)
 # Build for TARGET_ARCH
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 else

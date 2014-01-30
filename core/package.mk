@@ -25,7 +25,7 @@
 ## be set for you.
 ###########################################################
 
-ifeq ($(TARGET_IS_64_BIT)|$(LOCAL_32BIT_ONLY),true|true)
+ifeq ($(TARGET_IS_64_BIT)|$(LOCAL_32_BIT_ONLY),true|true)
 LOCAL_2ND_ARCH_VAR_PREFIX := $(TARGET_2ND_ARCH_VAR_PREFIX)
 else
 LOCAL_2ND_ARCH_VAR_PREFIX :=
