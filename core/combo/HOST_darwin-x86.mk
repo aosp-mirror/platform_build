@@ -34,6 +34,10 @@ ifneq ($(strip $(BUILD_HOST_static)),)
 HOST_GLOBAL_LDFLAGS += -static
 endif # BUILD_HOST_static
 
+# Workaround differences in inttypes.h between host and target.
+# See bug 12708004.
+HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS
+
 build_mac_version := $(shell sw_vers -productVersion)
 
 mac_sdk_versions_supported :=  10.6 10.7 10.8
