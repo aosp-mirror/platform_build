@@ -267,7 +267,7 @@ $(call clear-var-list, $(_product_var_list))
 PRODUCT_RUNTIMES := $(product_runtimes)
 product_runtimes :=
 
-PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES += persist.sys.dalvik.vm.lib=$(DALVIK_VM_LIB)
+PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES += persist.sys.dalvik.vm.lib.1=$(DALVIK_VM_LIB)
 
 ifeq ($(words $(PRODUCT_RUNTIMES)),1)
   # If we only have one runtime, we can strip classes.dex by default during dex_preopt
