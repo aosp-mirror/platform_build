@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b297ae5d_c55e2c63",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-30T02:19:37Z",
+      "side": 1,
+      "message": "Maybe it\u0027s better to factor out the call of $(if).",
+      "revId": "7f0a7a98d843f6fa59d8cefaed2d727d800da765",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
