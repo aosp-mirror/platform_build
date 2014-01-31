@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b20eceb3_508e64d7",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-01-31T23:13:46Z",
+      "side": 1,
+      "message": "This doesn\u0027t work if you switch build target between 32-bit and 64-bit: the host modules are shared by all products. Ian talked to me and we agreed that we\u0027ll eventually move to by-default-64-bit host builds. If this is just a temporary workaround, that\u0027s fine.",
+      "revId": "736c902a95f22215dd4593e3dd4b24db4444f39d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
