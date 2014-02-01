@@ -16,6 +16,24 @@
       "revId": "736c902a95f22215dd4593e3dd4b24db4444f39d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9238ea5d_21f92ef3",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1037505
+      },
+      "writtenOn": "2014-02-01T15:21:28Z",
+      "side": 1,
+      "message": "Yes, the host builds are shared among all products, which means that this patch will confuse the build system when successively building 32-bit and 64-bit products in the same master. I should have pointed this out in my earlier comment.\n\nThis patch - however - is only meant to be used for early 64-bit development and it is not meant to be merged. Anyone, using this and the other two patches should be careful and make sure to clean all the host builds before switching from 32-bit to 64-bit builds and viceversa.",
+      "parentUuid": "b20eceb3_508e64d7",
+      "revId": "736c902a95f22215dd4593e3dd4b24db4444f39d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
