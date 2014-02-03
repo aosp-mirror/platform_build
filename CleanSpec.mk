@@ -1,4 +1,4 @@
-# Copyright (C) 2007 The Android Open Source Project
+
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -215,6 +215,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # 4.4.2
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
+# Make libart the default runtime
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # ************************************************
