@@ -136,7 +136,7 @@ function setpaths()
             ;;
         mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
             ;;
-        mips64) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
+        mips64) toolchaindir=mips/mips64el-linux-android-$targetgccversion/bin
             ;;
         *)
             echo "Can't find toolchain for unknown architecture: $ARCH"
@@ -437,6 +437,7 @@ function add_lunch_combo()
 add_lunch_combo aosp_arm-eng
 add_lunch_combo aosp_arm64-eng
 add_lunch_combo aosp_mips-eng
+add_lunch_combo aosp_mips64-eng
 add_lunch_combo aosp_x86-eng
 add_lunch_combo aosp_x86_64-eng
 add_lunch_combo vbox_x86-eng
