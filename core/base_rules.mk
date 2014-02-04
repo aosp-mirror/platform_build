@@ -135,7 +135,9 @@ endif
 
 my_register_name := $(LOCAL_MODULE)
 ifdef LOCAL_2ND_ARCH_VAR_PREFIX
+ifndef LOCAL_NO_2ND_ARCH_MODULE_SUFFIX
 my_register_name := $(LOCAL_MODULE)$(TARGET_2ND_ARCH_MODULE_SUFFIX)
+endif
 endif
 # Make sure that this IS_HOST/CLASS/MODULE combination is unique.
 module_id := MODULE.$(if \
