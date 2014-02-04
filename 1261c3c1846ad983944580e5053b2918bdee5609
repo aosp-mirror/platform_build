@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "521bd206_3af39dbb",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-04T04:22:53Z",
+      "side": 1,
+      "message": "why both? only art will be 64-bit.",
+      "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
