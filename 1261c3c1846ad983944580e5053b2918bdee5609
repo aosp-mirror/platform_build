@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d25422b3_89a61d5b",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-02-04T22:59:15Z",
+      "side": 1,
+      "message": "This applies to the build rules, which will be parsed even if dalvik is disabled.",
+      "parentUuid": "521bd206_3af39dbb",
+      "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "521bd206_faa20591",
         "filename": "core/64_bit_blacklist.mk",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "72e9b62a_6398bc1a",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-02-04T22:59:15Z",
+      "side": 1,
+      "message": "OK",
+      "parentUuid": "521bd206_faa20591",
+      "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9221ca33_fc24453e",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2014-02-04T04:54:48Z",
       "side": 1,
       "message": "Why do we need this?\nIf LOCAL_PATH matches directory_is_64_bit_blacklisted, we\u0027ll build for only 32-bit and static_library.mk/shared_library.mk/executable.mk will set \"LOCAL_2ND_ARCH_VAR_PREFIX :\u003d $(TARGET_2ND_ARCH_VAR_PREFIX)\", which in turn will call local-intermediates-dir with $(2) set.",
+      "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d25422b3_6975e10d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-02-04T22:59:15Z",
+      "side": 1,
+      "message": "local-intermediates-dir is used to set up the generated source list, so it is called before  static_library.mk/shared_library.mk/executable.mk are included.  Also, a bunch of modules manually call intermediates-dir-for directly on another module and need to be forced to the 32-bit one for now.",
+      "parentUuid": "9221ca33_fc24453e",
       "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
