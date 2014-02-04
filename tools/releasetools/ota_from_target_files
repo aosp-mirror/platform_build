@@ -80,6 +80,7 @@ except ImportError:
   from sha import sha as sha1
 
 import common
+import img_from_target_files
 import edify_generator
 
 OPTIONS = common.OPTIONS
@@ -434,22 +435,29 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
 
   device_specific.FullOTA_InstallBegin()
 
-  script.ShowProgress(0.5, 0)
+  system_progress = 0.75
 
   if OPTIONS.wipe_user_data:
+    system_progress -= 0.1
+    script.ShowProgress(0.1, 10)
     script.FormatPartition("/data")
 
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
-  script.FormatPartition("/system")
-  script.Mount("/system")
-  if not has_recovery_patch:
-    script.UnpackPackageDir("recovery", "/system")
-  script.UnpackPackageDir("system", "/system")
+  script.ShowProgress(system_progress, 30)
+  if has_recovery_patch:
+    img_from_target_files.AddSystem(output_zip, sparse=False)
+    script.WriteRawImage("/system", "system.img")
+  else:
+    script.FormatPartition("/system")
+    script.Mount("/system")
+    if not has_recovery_patch:
+      script.UnpackPackageDir("recovery", "/system")
+      script.UnpackPackageDir("system", "/system")
 
-  symlinks = CopySystemFiles(input_zip, output_zip)
-  script.MakeSymlinks(symlinks)
+    symlinks = CopySystemFiles(input_zip, output_zip)
+    script.MakeSymlinks(symlinks)
 
   boot_img = common.GetBootableImage("boot.img", "boot.img",
                                      OPTIONS.input_tmp, "BOOT")
@@ -462,17 +470,16 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink,
                              recovery_img, boot_img)
 
-  Item.GetMetadata(input_zip)
-  Item.Get("system").SetPermissions(script)
+    Item.GetMetadata(input_zip)
+    Item.Get("system").SetPermissions(script)
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
-  script.ShowProgress(0.2, 0)
 
-  script.ShowProgress(0.2, 10)
+  script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
 
-  script.ShowProgress(0.1, 0)
+  script.ShowProgress(0.2, 10)
   device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
