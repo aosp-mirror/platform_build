@@ -86,8 +86,9 @@ include $(BUILD_SYSTEM)/base_rules.mk
 # Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
 # we can't modify them in place.
 my_src_files := $(LOCAL_SRC_FILES) $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-my_static_libraries := $(LOCAL_STATIC_LIBRARIES)
-my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
+my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES)
+my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+my_shared_libraries := $(LOCAL_SHARED_LIBRARIES) $(LOCAL_SHARED_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_IS_64_BIT),64,32)
 my_cflags := $(LOCAL_CFLAGS) $(LOCAL_CFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CFLAGS_$(my_32_64_bit_suffix))
 my_cppflags := $(LOCAL_CPPFLAGS)
@@ -96,7 +97,7 @@ my_asflags := $(LOCAL_ASFLAGS) $(LOCAL_ASFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PRE
 my_cc := $(LOCAL_CC)
 my_cxx := $(LOCAL_CXX)
 my_c_includes := $(LOCAL_C_INCLUDES) $(LOCAL_C_INCLUDES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_C_INCLUDES_$(my_32_64_bit_suffix))
-my_generated_sources := $(LOCAL_GENERATED_SOURCES)
+my_generated_sources := $(LOCAL_GENERATED_SOURCES) $(LOCAL_GENERATED_SOURCES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 
 my_cflags := $(filter-out $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_UNSUPPORTED_CFLAGS),$(my_cflags))
 
@@ -652,7 +653,7 @@ import_includes := $(intermediates)/import_includes
 import_includes_deps := $(strip \
     $(foreach l, $(installed_shared_library_module_names), \
       $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/export_includes) \
-    $(foreach l, $(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
+    $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
       $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/export_includes))
 $(import_includes) : $(import_includes_deps)
 	@echo Import includes file: $@
@@ -771,7 +772,7 @@ built_static_libraries += $(my_ndk_stl_static_lib)
 endif
 
 built_whole_libraries := \
-    $(foreach lib,$(LOCAL_WHOLE_STATIC_LIBRARIES), \
+    $(foreach lib,$(my_whole_static_libraries), \
       $(call intermediates-dir-for, \
         STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/$(lib)$(a_suffix))
 
@@ -781,7 +782,7 @@ built_whole_libraries := \
 # libraries that we use. (see notice_files.mk)
 
 installed_static_library_notice_file_targets := \
-    $(foreach lib,$(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
+    $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
 
 # Default is -fno-rtti.
