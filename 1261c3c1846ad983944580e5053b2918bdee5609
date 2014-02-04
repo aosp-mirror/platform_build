@@ -16,6 +16,40 @@
       "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "521bd206_faa20591",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-04T04:54:48Z",
+      "side": 1,
+      "message": "It would be more efficient and clean to use $(filter), I think:\n_64_bit_directory_blacklist_pattern :\u003d $(addsuffix /%, $(64_bit_directory_blacklist))\ndefine directory_is_64_bit_blacklisted\n$(if $(filter $(_64_bit_directory_blacklist_pattern), $(1)),true)\nendef",
+      "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9221ca33_fc24453e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 447,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-04T04:54:48Z",
+      "side": 1,
+      "message": "Why do we need this?\nIf LOCAL_PATH matches directory_is_64_bit_blacklisted, we\u0027ll build for only 32-bit and static_library.mk/shared_library.mk/executable.mk will set \"LOCAL_2ND_ARCH_VAR_PREFIX :\u003d $(TARGET_2ND_ARCH_VAR_PREFIX)\", which in turn will call local-intermediates-dir with $(2) set.",
+      "revId": "1261c3c1846ad983944580e5053b2918bdee5609",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
