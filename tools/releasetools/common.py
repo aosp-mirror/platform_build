@@ -84,13 +84,25 @@ def CloseInheritedPipes():
       pass
 
 
-def LoadInfoDict(zip):
+def LoadInfoDict(input):
   """Read and parse the META/misc_info.txt key/value pairs from the
   input target files and return a dict."""
 
+  def read_helper(fn):
+    if isinstance(input, zipfile.ZipFile):
+      return input.read(fn)
+    else:
+      path = os.path.join(input, *fn.split("/"))
+      try:
+        with open(path) as f:
+          return f.read()
+      except IOError, e:
+        if e.errno == errno.ENOENT:
+          raise KeyError(fn)
+
   d = {}
   try:
-    for line in zip.read("META/misc_info.txt").split("\n"):
+    for line in read_helper("META/misc_info.txt").split("\n"):
       line = line.strip()
       if not line or line.startswith("#"): continue
       k, v = line.split("=", 1)
@@ -105,20 +117,20 @@ def LoadInfoDict(zip):
 
   if "mkyaffs2_extra_flags" not in d:
     try:
-      d["mkyaffs2_extra_flags"] = zip.read("META/mkyaffs2-extra-flags.txt").strip()
+      d["mkyaffs2_extra_flags"] = read_helper("META/mkyaffs2-extra-flags.txt").strip()
     except KeyError:
       # ok if flags don't exist
       pass
 
   if "recovery_api_version" not in d:
     try:
-      d["recovery_api_version"] = zip.read("META/recovery-api-version.txt").strip()
+      d["recovery_api_version"] = read_helper("META/recovery-api-version.txt").strip()
     except KeyError:
       raise ValueError("can't find recovery API version in input target-files")
 
   if "tool_extensions" not in d:
     try:
-      d["tool_extensions"] = zip.read("META/tool-extensions.txt").strip()
+      d["tool_extensions"] = read_helper("META/tool-extensions.txt").strip()
     except KeyError:
       # ok if extensions don't exist
       pass
@@ -127,7 +139,7 @@ def LoadInfoDict(zip):
     d["fstab_version"] = "1"
 
   try:
-    data = zip.read("META/imagesizes.txt")
+    data = read_helper("META/imagesizes.txt")
     for line in data.split("\n"):
       if not line: continue
       name, value = line.split(" ", 1)
@@ -152,13 +164,13 @@ def LoadInfoDict(zip):
   makeint("boot_size")
   makeint("fstab_version")
 
-  d["fstab"] = LoadRecoveryFSTab(zip, d["fstab_version"])
-  d["build.prop"] = LoadBuildProp(zip)
+  d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"])
+  d["build.prop"] = LoadBuildProp(read_helper)
   return d
 
-def LoadBuildProp(zip):
+def LoadBuildProp(read_helper):
   try:
-    data = zip.read("SYSTEM/build.prop")
+    data = read_helper("SYSTEM/build.prop")
   except KeyError:
     print "Warning: could not find SYSTEM/build.prop in %s" % zip
     data = ""
@@ -171,14 +183,14 @@ def LoadBuildProp(zip):
     d[name] = value
   return d
 
-def LoadRecoveryFSTab(zip, fstab_version):
+def LoadRecoveryFSTab(read_helper, fstab_version):
   class Partition(object):
     pass
 
   try:
-    data = zip.read("RECOVERY/RAMDISK/etc/recovery.fstab")
+    data = read_helper("RECOVERY/RAMDISK/etc/recovery.fstab")
   except KeyError:
-    print "Warning: could not find RECOVERY/RAMDISK/etc/recovery.fstab in %s." % zip
+    print "Warning: could not find RECOVERY/RAMDISK/etc/recovery.fstab"
     data = ""
 
   if fstab_version == 1:
@@ -973,3 +985,67 @@ def ParseCertificate(data):
       save = True
   cert = "".join(cert).decode('base64')
   return cert
+
+
+def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img):
+  """Generate a binary patch that creates the recovery image starting
+  with the boot image.  (Most of the space in these images is just the
+  kernel, which is identical for the two, so the resulting patch
+  should be efficient.)  Add it to the output zip, along with a shell
+  script that is run from init.rc on first boot to actually do the
+  patching and install the new recovery image.
+
+  recovery_img and boot_img should be File objects for the
+  corresponding images.  info should be the dictionary returned by
+  common.LoadInfoDict() on the input target_files.
+  """
+
+  diff_program = ["imgdiff"]
+  path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+  if os.path.exists(path):
+    diff_program.append("-b")
+    diff_program.append(path)
+    bonus_args = "-b /system/etc/recovery-resource.dat"
+  else:
+    bonus_args = ""
+
+  d = Difference(recovery_img, boot_img, diff_program=diff_program)
+  _, _, patch = d.ComputePatch()
+  output_sink("recovery-from-boot.p", patch)
+
+  boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
+  recovery_type, recovery_device = GetTypeAndDevice("/recovery", OPTIONS.info_dict)
+
+  sh = """#!/system/bin/sh
+if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
+  applypatch %(bonus_args)s %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p && log -t recovery "Installing new recovery image: succeeded" || log -t recovery "Installing new recovery image: failed"
+else
+  log -t recovery "Recovery image already installed"
+fi
+""" % { 'boot_size': boot_img.size,
+        'boot_sha1': boot_img.sha1,
+        'recovery_size': recovery_img.size,
+        'recovery_sha1': recovery_img.sha1,
+        'boot_type': boot_type,
+        'boot_device': boot_device,
+        'recovery_type': recovery_type,
+        'recovery_device': recovery_device,
+        'bonus_args': bonus_args,
+        }
+
+  # The install script location moved from /system/etc to /system/bin
+  # in the L release.  Parse the init.rc file to find out where the
+  # target-files expects it to be, and put it there.
+  sh_location = "etc/install-recovery.sh"
+  try:
+    with open(os.path.join(input_dir, "BOOT", "RAMDISK", "init.rc")) as f:
+      for line in f:
+        m = re.match("^service flash_recovery /system/(\S+)\s*$", line)
+        if m:
+          sh_location = m.group(1)
+          print "putting script in", sh_location
+          break
+  except (OSError, IOError), e:
+    print "failed to read init.rc: %s" % (e,)
+
+  output_sink(sh_location, sh)
