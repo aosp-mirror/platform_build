@@ -100,8 +100,14 @@ package_resource_overlays := $(strip \
 
 LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
 
-all_assets := $(call find-subdir-assets,$(LOCAL_ASSET_DIR))
-all_assets := $(addprefix $(LOCAL_ASSET_DIR)/,$(patsubst assets/%,%,$(all_assets)))
+all_assets := $(strip \
+    $(foreach dir, $(LOCAL_ASSET_DIR), \
+      $(addprefix $(dir)/, \
+        $(patsubst assets/%,%, \
+          $(call find-subdir-assets, $(dir)) \
+         ) \
+       ) \
+     ))
 
 all_resources := $(strip \
     $(foreach dir, $(LOCAL_RESOURCE_DIR), \
