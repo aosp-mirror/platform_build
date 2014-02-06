@@ -1,0 +1,6 @@
+#
+# system.prop for generic mips64 sdk
+#
+
+rild.libpath=/system/lib/libreference-ril.so
+rild.libargs=-d /dev/ttyS0
