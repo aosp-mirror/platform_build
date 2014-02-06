@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b2d6ce80_b04e8001",
+        "filename": "core/llvm_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-06T05:44:52Z",
+      "side": 1,
+      "message": "We shouldn\u0027t include the above arch-specific configs twice.\nI\u0027ll upload a new change.",
+      "revId": "19f358885b86732a408c0ef39aab3def13f4b93a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
