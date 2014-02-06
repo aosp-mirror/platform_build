@@ -78,6 +78,11 @@ TARGET_GLOBAL_CFLAGS += \
 
 android_config_h := $(call select-android-config-h,linux-arm64)
 
+# HACK: globally disable -fstack-protector until the toolchain supports it
+TARGET_GLOBAL_UNSUPPORTED_CFLAGS := \
+    -fstack-protector \
+    -fstack-protector-all \
+
 TARGET_GLOBAL_CFLAGS += \
 			-fpic -fPIE \
 			-ffunction-sections \
@@ -91,8 +96,10 @@ TARGET_GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
-# HACK: globally disable -fstack-protector until the toolchain supports it
-TARGET_GLOBAL_UNSUPPORTED_CFLAGS := -fstack-protector
+# Help catch common 32/64-bit errors.
+TARGET_GLOBAL_CFLAGS += \
+    -Werror=pointer-to-int-cast \
+    -Werror=int-to-pointer-cast \
 
 # TODO - remove __ANDROID__ after the next aarch64 toolchain refresh
 TARGET_GLOBAL_CFLAGS += -D__ANDROID__=1

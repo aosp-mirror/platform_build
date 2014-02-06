@@ -126,6 +126,11 @@ TARGET_GLOBAL_CFLAGS += \
 			-fstack-protector \
 			-m64
 
+# Help catch common 32/64-bit errors.
+TARGET_GLOBAL_CFLAGS += \
+    -Werror=pointer-to-int-cast \
+    -Werror=int-to-pointer-cast \
+
 android_config_h := $(call select-android-config-h,target_linux-x86)
 TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
 TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
