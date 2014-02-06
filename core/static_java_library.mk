@@ -66,14 +66,7 @@ include $(BUILD_SYSTEM)/java_library.mk
 ifneq (,$(all_resources))
 R_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.stamp
 
-ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
-  LOCAL_MANIFEST_FILE := AndroidManifest.xml
-endif
-ifdef LOCAL_FULL_MANIFEST_FILE
-  full_android_manifest := $(LOCAL_FULL_MANIFEST_FILE)
-else
-  full_android_manifest := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
-endif
+include $(BUILD_SYSTEM)/android_manifest.mk
 
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
