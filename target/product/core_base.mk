@@ -39,7 +39,6 @@ PRODUCT_PACKAGES += \
     libportable \
     libpowermanager \
     libspeexresampler \
-    libstagefright_chromium_http \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
