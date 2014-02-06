@@ -58,16 +58,6 @@ $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE)
 endif
 LOCAL_MODULE := $(LOCAL_PACKAGE_NAME)
 
-ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
-LOCAL_MANIFEST_FILE := AndroidManifest.xml
-endif
-
-# If you need to put the MANIFEST_FILE outside of LOCAL_PATH
-# you can use FULL_MANIFEST_FILE
-ifeq ($(strip $(LOCAL_FULL_MANIFEST_FILE)),)
-LOCAL_FULL_MANIFEST_FILE := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
-endif
-
 ifneq ($(strip $(LOCAL_MODULE_CLASS)),)
 $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
@@ -197,7 +187,8 @@ ifeq ($(LOCAL_SDK_RES_VERSION),)
   LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
 endif
 
-full_android_manifest := $(LOCAL_FULL_MANIFEST_FILE)
+include $(BUILD_SYSTEM)/android_manifest.mk
+
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
