@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "722c567b_68a9a36f",
+        "filename": "core/clang/TARGET_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-07T17:10:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "123a3aa9_adb8fdf4",
+      "revId": "1e5a27105a4f5021739a7b908ec79bc7fe1cccdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "123a3aa9_0da8319e",
         "filename": "core/clang/config.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-02-07T06:35:50Z",
       "side": 1,
       "message": "I think we should be pulling these from the prebuilts/ directory, rather than external/clang these days.\n\nprebuilts/clang/linux-x86/host/3.3/lib/clang/3.3/include (substituting proper OS) would be the relevant place today, although I am also ok with it as a separate change.",
+      "revId": "1e5a27105a4f5021739a7b908ec79bc7fe1cccdc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "523112d0_27243a90",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-07T17:10:55Z",
+      "side": 1,
+      "message": "It seems we just need to cherry-pick a CL from internal master.\nI\u0027ll do it.",
+      "parentUuid": "123a3aa9_0da8319e",
       "revId": "1e5a27105a4f5021739a7b908ec79bc7fe1cccdc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
