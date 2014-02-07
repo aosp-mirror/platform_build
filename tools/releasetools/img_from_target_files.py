@@ -56,7 +56,11 @@ OPTIONS = common.OPTIONS
 def AddSystem(output_zip, sparse=True):
   """Turn the contents of SYSTEM into a system image and store it in
   output_zip."""
+  data = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse)
+  common.ZipWriteStr(output_zip, "system.img", data)
 
+
+def BuildSystem(input_dir, info_dict, sparse=True):
   print "creating system.img..."
 
   img = tempfile.NamedTemporaryFile()
@@ -65,8 +69,8 @@ def AddSystem(output_zip, sparse=True):
   # mkyaffs2image.  It wants "system" but we have a directory named
   # "SYSTEM", so create a symlink.
   try:
-    os.symlink(os.path.join(OPTIONS.input_tmp, "SYSTEM"),
-               os.path.join(OPTIONS.input_tmp, "system"))
+    os.symlink(os.path.join(input_dir, "SYSTEM"),
+               os.path.join(input_dir, "system"))
   except OSError, e:
       # bogus error on my mac version?
       #   File "./build/tools/releasetools/img_from_target_files", line 86, in AddSystem
@@ -75,12 +79,11 @@ def AddSystem(output_zip, sparse=True):
     if (e.errno == errno.EEXIST):
       pass
 
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "system")
-  fstab = OPTIONS.info_dict["fstab"]
+  image_props = build_image.ImagePropFromGlobalDict(info_dict, "system")
+  fstab = info_dict["fstab"]
   if fstab:
     image_props["fs_type" ] = fstab["/system"].fs_type
-  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "system"),
+  succ = build_image.BuildImage(os.path.join(input_dir, "system"),
                                 image_props, img.name)
   assert succ, "build system.img image failed"
 
@@ -98,7 +101,7 @@ def AddSystem(output_zip, sparse=True):
     finally:
       os.unlink(name)
 
-  common.ZipWriteStr(output_zip, "system.img", data)
+  return data
 
 
 def AddVendor(output_zip):
