@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "722c567b_c82fef07",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-07T19:44:30Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s a good place to put such check in the makefile, because it will be run every time you run make.\nI think you can add it to build/tools/post_process_props.py.",
+      "revId": "0b84bf39d3d28356c9fea377c3b3bb302ee6e1a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
