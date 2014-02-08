@@ -1929,7 +1929,8 @@ endif
 ###########################################################
 define transform-jar-to-proguard
 @echo Proguard: $@
-$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS)
+$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS) \
+    $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR))
 endef
 
 ###########################################################
