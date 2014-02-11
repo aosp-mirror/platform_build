@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8fbfe18b_d2251a90",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-11T20:00:39Z",
+      "side": 1,
+      "message": "Unnecessary",
+      "revId": "ea184f92ea87e15ead6ff70cbb3b6c1c34f7432a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0fc2111e_1c32e10b",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-11T20:00:39Z",
+      "side": 1,
+      "message": "Unnecessary",
+      "revId": "ea184f92ea87e15ead6ff70cbb3b6c1c34f7432a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fbfe18b_72178e31",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-11T20:00:39Z",
+      "side": 1,
+      "message": "Move this to __init__ and build the dict as a member?",
+      "revId": "ea184f92ea87e15ead6ff70cbb3b6c1c34f7432a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8fbfe18b_121c1251",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-11T20:00:39Z",
+      "side": 1,
+      "message": "if not line.strip() or line.startswith(\"#\"):\n  continue",
+      "revId": "ea184f92ea87e15ead6ff70cbb3b6c1c34f7432a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
