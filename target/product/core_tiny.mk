@@ -89,8 +89,6 @@ PRODUCT_RUNTIMES := runtime_libdvm_default
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
 
-MINIMAL_FONT_FOOTPRINT := true
-
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 
