@@ -3,7 +3,7 @@ include $(BUILD_SYSTEM)/clang/x86.mk
 
 CLANG_CONFIG_x86_TARGET_TRIPLE := i686-linux-android
 CLANG_CONFIG_x86_TARGET_TOOLCHAIN_PREFIX := \
-  $(TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
+  $($(clang_2nd_arch_prefix)TARGET_TOOLCHAIN_ROOT)/x86_64-linux-android/bin
 
 CLANG_CONFIG_x86_TARGET_EXTRA_ASFLAGS := \
   $(CLANG_CONFIG_EXTRA_ASFLAGS) \
