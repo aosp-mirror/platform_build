@@ -597,7 +597,8 @@ ALL_MODULES.$(my_register_name).BUILT := \
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) $(LOCAL_INSTALLED_MODULE))
 ALL_MODULES.$(my_register_name).REQUIRED := \
-    $(ALL_MODULES.$(my_register_name).REQUIRED) $(LOCAL_REQUIRED_MODULES) $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+    $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(LOCAL_REQUIRED_MODULES) \
+      $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
@@ -607,6 +608,9 @@ ALL_MODULES.$(my_register_name).MAKEFILE := \
 ifdef LOCAL_MODULE_OWNER
 ALL_MODULES.$(my_register_name).OWNER := \
     $(sort $(ALL_MODULES.$(my_register_name).OWNER) $(LOCAL_MODULE_OWNER))
+endif
+ifdef LOCAL_2ND_ARCH_VAR_PREFIX
+ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
 endif
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
