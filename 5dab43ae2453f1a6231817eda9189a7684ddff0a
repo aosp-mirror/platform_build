@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4f0c0978_0f3c0546",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-02-12T20:24:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af2665f6_aabdef99",
+      "revId": "5dab43ae2453f1a6231817eda9189a7684ddff0a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cff71998_2b6d798a",
         "filename": "core/module_arch_supported.mk",
         "patchSetId": 3
