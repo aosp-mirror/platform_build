@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf62b923_99133b78",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "define global constant for PROP_VALUE_MAX, instead of sprinkling \"91\"s around?",
+      "range": {
+        "startLine": 57,
+        "startChar": 20,
+        "endLine": 57,
+        "endChar": 22
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f028140_f710786c",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "\"symbols\" is a strange term here.  Wouldn\u0027t \u0027bytes\u0027 be more typical (and accurate)?",
+      "range": {
+        "startLine": 61,
+        "startChar": 58,
+        "endLine": 61,
+        "endChar": 65
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2f6c3514_fc486149",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "our python style is to have spaces around \u003d.",
+      "range": {
+        "startLine": 67,
+        "startChar": 19,
+        "endLine": 67,
+        "endChar": 24
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f028140_7732c80c",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "Almost certainly the s[:-1] is intended to strip off a trailing newline.  What happens if a line doesn\u0027t have one? (the last line in the file might not).  You\u0027ll cut off a character.  s.strip() would be safer (or .rstrip() if you want to preserve left-side whitespace, but I don\u0027t think you should).",
+      "range": {
+        "startLine": 76,
+        "startChar": 25,
+        "endLine": 76,
+        "endChar": 28
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf62b923_f9106f6c",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "no need to strip twice: \"if not line or ...\"",
+      "range": {
+        "startLine": 82,
+        "startChar": 18,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf62b923_d90db350",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "key, value \u003d line.split(\"\u003d\", 1)\n\nwould be more pythonic (and raises an appropriate exception on a line without an \u0027\u003d\u0027, which this code does not).",
+      "range": {
+        "startLine": 86,
+        "startChar": 19,
+        "endLine": 86,
+        "endChar": 24
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf62b923_39282799",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-02-12T16:22:20Z",
+      "side": 1,
+      "message": "space around \u003d",
+      "range": {
+        "startLine": 87,
+        "startChar": 17,
+        "endLine": 87,
+        "endChar": 22
+      },
+      "revId": "c9f3f9ed448a42263ae23a54c53b91a293dee8f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
