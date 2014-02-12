@@ -1558,6 +1558,12 @@ sdk_atree_files := \
 	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree \
 	$(sdk_tools_atree_files)
 
+ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ATREE_FILES),)
+sdk_atree_files += $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ATREE_FILES)
+else
+sdk_atree_files += $(atree_dir)/sdk.atree
+endif
+
 # development/build/sdk-android-<abi>.atree is used to differentiate
 # between architecture models (e.g. ARMv5TE versus ARMv7) when copying
 # files like the kernel image. We use TARGET_CPU_ABI because we don't
