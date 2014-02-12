@@ -44,18 +44,12 @@ PRODUCT_PACKAGES := \
     SystemUI \
     TeleService \
     CalendarProvider \
-    bluetooth-health \
     WallpaperCropper
 
 PRODUCT_PACKAGES += \
-    audio \
     clatd \
     clatd.conf \
-    dhcpcd.conf \
-    network \
-    pand \
-    pppd \
-    sdptool
+    pppd
 
 PRODUCT_PACKAGES += \
     librs_jni \
