@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af2665f6_aabdef99",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-12T19:43:11Z",
+      "side": 1,
+      "message": "You need to put all of the 4 here.",
+      "revId": "5dab43ae2453f1a6231817eda9189a7684ddff0a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cff71998_2b6d798a",
+        "filename": "core/module_arch_supported.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-12T19:43:11Z",
+      "side": 1,
+      "message": "LOCAL_MODULE is not defined at this point if it\u0027s for $(BUILD_PACKAGE). It\u0027s LOCAL_PACKAGE_NAME. But we wouldn\u0027t use LOCAL_MODULE_TARGET_ARCH_WARN for app, I guess.",
+      "revId": "5dab43ae2453f1a6231817eda9189a7684ddff0a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
