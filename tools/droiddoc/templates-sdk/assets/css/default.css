@@ -1900,6 +1900,7 @@ EndColorStr='#ececec');
 .sidebox h5 {
   font-weight:bold;
   margin:0 0 10px;
+  line-height: 16px;
 }
 
 .sidebox * {
