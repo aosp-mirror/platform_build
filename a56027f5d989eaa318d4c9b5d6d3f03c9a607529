@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef65bd2a_37e032ea",
+        "filename": "core/definitions.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-12T18:45:54Z",
+      "side": 1,
+      "message": "The above line is duplicate.",
+      "revId": "a56027f5d989eaa318d4c9b5d6d3f03c9a607529",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
