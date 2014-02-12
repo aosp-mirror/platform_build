@@ -275,6 +275,19 @@ $(patsubst ./%,%, \
 endef
 
 ###########################################################
+## Find all of the S files under the named directories.
+## Meant to be used like:
+##    SRC_FILES := $(call all-c-files-under,src tests)
+###########################################################
+
+define all-S-files-under
+$(patsubst ./%,%, \
+  $(shell cd $(LOCAL_PATH) ; \
+          find -L $(1) -name "*.S" -and -not -name ".*") \
+ )
+endef
+
+###########################################################
 ## Find all of the html files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-html-files-under,src tests)
