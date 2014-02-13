@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fae2d95_38ba09ec",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-13T17:05:19Z",
+      "side": 1,
+      "message": "Why the host module set those flags? I guess because the module doesn\u0027t include $(CLEAR_VARS)?\nThose variables may be useful when we switch to 64-bit host binaries.",
+      "revId": "3596c854d83c6674e9b7068de014a255bf952985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
