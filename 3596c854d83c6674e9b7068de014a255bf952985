@@ -34,6 +34,24 @@
       "revId": "3596c854d83c6674e9b7068de014a255bf952985",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f9e016b_d77c74cc",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-13T19:31:18Z",
+      "side": 1,
+      "message": "Fair enough.\nHow about making it cleaner by:\n\u003cset up all my_* variables for both target and host\u003e\nifndef LOCAL_IS_HOST_MODULE\n\u003cadd the target-only flags\u003e\nendif",
+      "parentUuid": "afcbc564_f10ef2bb",
+      "revId": "3596c854d83c6674e9b7068de014a255bf952985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
