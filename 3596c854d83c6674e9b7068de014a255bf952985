@@ -16,6 +16,24 @@
       "revId": "3596c854d83c6674e9b7068de014a255bf952985",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "afcbc564_f10ef2bb",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-02-13T17:41:10Z",
+      "side": 1,
+      "message": "It\u0027s usually because there is a common.mk that is included by lots of different build rules that defines LOCAL_SRC_FILES and LOCAL_SRC_FILES_arm, LOCAL_SRC_FILES_x86.  If they are building for the host, they usually want to use the LOCAL_SRC_FILES_$(TARGET_ARCH), not LOCAL_SRC_FILES_$(HOST_OS), for example for external/v8/Android.mksnapshot.mk.\n\nSee https://android-review.googlesource.com/#/c/82083/ for where this was causing me problems.",
+      "parentUuid": "6fae2d95_38ba09ec",
+      "revId": "3596c854d83c6674e9b7068de014a255bf952985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
