@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4fb329fa_d7747ca5",
+        "filename": "core/clang/TARGET_x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-13T17:01:58Z",
+      "side": 1,
+      "message": "I think this is intentional: we don\u0027t have prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.8/i686-linux-android but only prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.8/x86_64-linux-android.",
+      "revId": "08425c9b450db411189f4e9e8d0d04ae775e1391",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
