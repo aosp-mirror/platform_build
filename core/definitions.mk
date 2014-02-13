@@ -399,36 +399,6 @@ $(1): $(2)
 endef
 
 ###########################################################
-## Set up the dependencies for a prebuilt target
-##  $(call add-prebuilt-file, srcfile, [targetclass])
-###########################################################
-
-define add-prebuilt-file
-    $(eval $(include-prebuilt))
-endef
-
-define include-prebuilt
-    include $$(CLEAR_VARS)
-    LOCAL_SRC_FILES := $(1)
-    LOCAL_BUILT_MODULE_STEM := $(1)
-    LOCAL_MODULE_SUFFIX := $$(suffix $(1))
-    LOCAL_MODULE := $$(basename $(1))
-    LOCAL_MODULE_CLASS := $(2)
-    include $$(BUILD_PREBUILT)
-endef
-
-###########################################################
-## do multiple prebuilts
-##  $(call target class, files ...)
-###########################################################
-
-define add-prebuilt-files
-    $(foreach f,$(2),$(call add-prebuilt-file,$f,$(1)))
-endef
-
-
-
-###########################################################
 ## The intermediates directory.  Where object files go for
 ## a given target.  We could technically get away without
 ## the "_intermediates" suffix on the directory, but it's
