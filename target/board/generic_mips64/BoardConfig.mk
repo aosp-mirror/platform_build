@@ -28,6 +28,12 @@ TARGET_ARCH_VARIANT := mips64r2
 endif
 TARGET_CPU_ABI  := mips64
 
+TARGET_2ND_ARCH := mips
+ifeq (,$(TARGET_2ND_ARCH_VARIANT))
+TARGET_2ND_ARCH_VARIANT :=  mips32r2-fp
+endif
+TARGET_CPU_ABI  := mips
+
 # The emulator (qemu) uses the Goldfish devices
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
