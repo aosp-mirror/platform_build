@@ -703,7 +703,7 @@ normal_objects := \
 
 all_objects := $(normal_objects) $(gen_o_objects)
 
-my_c_includes += $(TOPDIR)$(LOCAL_PATH) $(intermediates)
+my_c_includes += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(generated_sources_dir)
 
 ifndef LOCAL_SDK_VERSION
   my_c_includes += $(JNI_H_INCLUDE)
