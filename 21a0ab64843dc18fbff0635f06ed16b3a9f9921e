@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4fb329fa_7a8d556a",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-02-13T23:01:23Z",
+      "side": 1,
+      "message": "Unfortunately that variable is not available yet when this file gets loaded.",
+      "revId": "21a0ab64843dc18fbff0635f06ed16b3a9f9921e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
