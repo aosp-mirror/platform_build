@@ -14,7 +14,6 @@ _64_bit_directory_blacklist += \
 	external/chromium-libpac \
 	external/chromium_org \
 	external/skia \
-	external/v8 \
 	frameworks/webview \
 
 # misc build errors
@@ -28,13 +27,14 @@ _64_bit_directory_blacklist += \
 	frameworks/ml \
 	frameworks/opt \
 	frameworks/wilhelm \
+	frameworks/native/cmds/idmap \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
 
 # depends on libnl_2
 _64_bit_directory_blacklist += \
 	external/android-clat \
-	external/wpa_suplicant_8
+	external/wpa_supplicant_8 \
 
 # depends on frameworks/av
 _64_bit_directory_blacklist += \
