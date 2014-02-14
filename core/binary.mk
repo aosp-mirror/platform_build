@@ -85,21 +85,37 @@ include $(BUILD_SYSTEM)/base_rules.mk
 # The following LOCAL_ variables will be modified in this file.
 # Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
 # we can't modify them in place.
-my_src_files := $(LOCAL_SRC_FILES) $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES)
-my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-my_shared_libraries := $(LOCAL_SHARED_LIBRARIES) $(LOCAL_SHARED_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_IS_64_BIT),64,32)
-my_cflags := $(LOCAL_CFLAGS) $(LOCAL_CFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CFLAGS_$(my_32_64_bit_suffix))
+my_src_files := $(LOCAL_SRC_FILES)
+my_static_libraries := $(LOCAL_STATIC_LIBRARIES)
+my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES)
+my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
+my_cflags := $(LOCAL_CFLAGS)
 my_cppflags := $(LOCAL_CPPFLAGS)
-my_ldflags := $(LOCAL_LDFLAGS) $(LOCAL_LDFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_LDFLAGS_$(my_32_64_bit_suffix))
-my_asflags := $(LOCAL_ASFLAGS) $(LOCAL_ASFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_ASFLAGS_$(my_32_64_bit_suffix))
+my_ldflags := $(LOCAL_LDFLAGS)
+my_asflags := $(LOCAL_ASFLAGS)
 my_cc := $(LOCAL_CC)
 my_cxx := $(LOCAL_CXX)
-my_c_includes := $(LOCAL_C_INCLUDES) $(LOCAL_C_INCLUDES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_C_INCLUDES_$(my_32_64_bit_suffix))
-my_generated_sources := $(LOCAL_GENERATED_SOURCES) $(LOCAL_GENERATED_SOURCES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+my_c_includes := $(LOCAL_C_INCLUDES)
+my_generated_sources := $(LOCAL_GENERATED_SOURCES)
+
+ifndef LOCAL_IS_HOST_MODULE
+my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_IS_64_BIT),64,32)
+
+my_src_files += $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
+my_shared_libraries += $(LOCAL_SHARED_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SHARED_LIBRARIES_$(my_32_64_bit_suffix))
+my_cflags += $(LOCAL_CFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CFLAGS_$(my_32_64_bit_suffix))
+my_cppflags += $(LOCAL_CPPFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CPPFLAGS_$(my_32_64_bit_suffix))
+my_ldflags += $(LOCAL_LDFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_LDFLAGS_$(my_32_64_bit_suffix))
+my_asflags += $(LOCAL_ASFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_ASFLAGS_$(my_32_64_bit_suffix))
+my_c_includes += $(LOCAL_C_INCLUDES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_C_INCLUDES_$(my_32_64_bit_suffix))
+my_generated_sources += $(LOCAL_GENERATED_SOURCES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_GENERATED_SOURCES_$(my_32_64_bit_suffix))
+
+# arch-specific static libraries go first so that generic ones can depend on them
+my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_static_libraries)
+my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
 
 my_cflags := $(filter-out $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_UNSUPPORTED_CFLAGS),$(my_cflags))
+endif
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
