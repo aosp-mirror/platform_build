@@ -528,9 +528,9 @@ video.with-shadow {
     width:262px;
   }
 
-  .paging-links a.start-class-link {
-    width:100%;
-    text-align:right;
+  .paging-links a.start-class-link {   
+    width:100%;   
+    text-align:right;   
   }
 
   /* list of classes on course landing page */
@@ -1491,7 +1491,8 @@ color-stop(50%, #acbc00), color-stop(50%, #bdde00), color-stop(100%, #bdde00));
 Header, Login, Nav-X, Search
 */
 #header {
-  padding: 2.2em 0 0.2em 0;
+  margin: 0;
+  padding: 0;
 }
 #header:before, #header:after {
   content: "";
@@ -1515,11 +1516,10 @@ Header, Login, Nav-X, Search
 .develop a.selected {
     color: #F80;
 }
+
 .distribute a.selected {
     color: #9C0;
 }
-
-
 
 .nav-x li {
     display: inline;
@@ -1631,6 +1631,170 @@ Header, Login, Nav-X, Search
 .search-dropdown li a:hover h6, .search-dropdown li a:hover .desc {
   color: #33b5e5
 }
+
+/************ STICKY NAV BAR ******************/
+
+#header-wrapper {
+  background: #f9f9f9;
+  margin: 0 -10px 0 -10px;
+  padding: 31px 10px 0px 10px;
+  position: relative;
+}
+#header-wrapper #nav-x div.wrap {
+  max-width: 940px;
+  height: 38px;
+}
+#header-wrapper #nav-x ul.nav-x li {
+  margin-right: 36px !important;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  height: 30px;
+}
+#header-wrapper #nav-x > div.wrap ul.nav-x li.active  {
+  color: #669900;
+  border-bottom: 3px solid #669900;
+}
+#header-wrapper #nav-x > div.wrap ul.nav-x li.active a {
+  color: #669900;
+}
+#header-wrapper #nav-x > div.wrap ul.nav-x a {
+  font-size: 14.5px;
+}
+#header-wrapper .developer-console-btn {
+  float: right;
+  background: #fefefe;
+  border-radius: 4px;
+  padding: 8px 14px;
+  box-shadow: 1px 1px 0px #7a7a7a;
+  font-size: 14px;
+  margin-top: -6px;
+  cursor: pointer;
+  color: #464646;
+  margin-right: 20px;
+}
+/* not currently used */
+#header-wrapper .shadow {
+  width: 1034px;
+  height: 4px;
+  position: absolute;
+  left: 50%;
+  margin-left: -517px;
+  bottom: -4px;
+  background-image: url(../images/header-shadow.png);
+}
+
+#context {
+  clear: both;
+  padding-top: 14px;
+}
+#context .breadcrumb {
+  float: left;
+  margin-bottom: 10px;
+}
+#context .util {
+  float: right;
+  margin-right: 20px;
+}
+
+.breadcrumb {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.breadcrumb li {
+  float: left;
+  padding: 0 20px 0 0;
+  color: #000;
+}
+.breadcrumb li a {
+  color: #000;
+}
+.breadcrumb li:after {
+  content: url(../images/breadcrumb.png);
+  position: relative;
+  top: 1px;
+  left: 10px;
+  width: 5px;
+  height: 10px;
+}
+.breadcrumb li.current {
+  font-weight: 700;
+}
+.breadcrumb li.current:after {
+  display: none;
+}
+
+/* Sticky Nav overrides */
+.sticky-menu {
+  position: fixed;
+  width: 940px;
+  height: 0px;
+  z-index: 51;
+  top: 12px;
+}
+#sticky-header {
+  display: none;
+  padding: 0 10px;
+  position: fixed;
+  background: #f9f9f9;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 45px;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #a5c43a;
+  z-index: 50;
+  opacity: 0;
+  -webkit-transition: opacity 0.25s;
+  -moz-transition: opacity 0.25s;
+  -o-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+}
+#sticky-header.design {
+  border-bottom: 1px solid #33b5e5;
+}
+#sticky-header.develop {
+  border-bottom: 1px solid #F80;
+}
+#sticky-header.distribute {
+  border-bottom: 1px solid #9C0;
+}
+#sticky-header > div {
+  overflow: hidden;
+  *zoom: 1;
+  width: 940px;
+  margin: 0 auto;
+  clear: both;
+  padding-top: 9px;
+}
+#sticky-header > div .logo {
+  float: left;
+  width: 26px;
+  height: 25px;
+  background: url(../images/dac_logo.png);
+  z-index: 52;
+  position: relative;
+}
+#sticky-header > div .top {
+  float: left;
+  width: 38px;
+  height: 38px;
+  position: relative;
+  background: url(../images/styles/gototop.png);
+  z-index: 52;
+}
+#sticky-header > div .breadcrumb {
+  float: left;
+  padding: 0 0 0 10px;
+  border-left: 1px solid #d2d2d2;
+  line-height: 24px;
+  font-size: 14px;
+  position: relative;
+  top: 0px;
+  z-index: 52;
+}
+
 /* --------------------------------------------------------------------------
 Buttons
 */
@@ -1828,8 +1992,8 @@ EndColorStr='#ececec');
 #qv-wrapper {
   float:right;
   clear:right;
-  margin:0 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
-  padding:0 0 20px;
+  margin:0 0 0 30px; /* negative top-margin to counter the content-header bottom margin */
+  padding:0 0 30px;
 }
 
 #tb-wrapper {
@@ -1900,7 +2064,6 @@ EndColorStr='#ececec');
 .sidebox h5 {
   font-weight:bold;
   margin:0 0 10px;
-  line-height: 16px;
 }
 
 .sidebox * {
@@ -4782,53 +4945,6 @@ a.download-sdk {
 
 
 
-/************ DISTRIBUTE HOMEPAGE ***************/
-
-.marquee {
-  width: 760px;
-}
-.marquee .main-img {
-  float: left;
-  margin-top: 20px;
-  width: 490px;
-}
-.marquee .copy {
-  width: 270px;
-  float: left;
-  margin-top: 30px;
-}
-.distribute-features {
-  margin: 0;
-}
-.distribute-features ul {
-  margin: 0;
-}
-.distribute-features ul li {
-  list-style: none;
-  float: left;
-  border-top: 1px solid #9C0;
-  width: 220px;
-  margin-right: 50px;
-}
-.distribute-features ul li.last {
-  margin-right: 0px;
-}
-
-.distribute-features .distribute-link li a {
-  color:red !important;
-}
-
-.distribute-features .distribute-link li a,
-.distribute-features .distribute-link li a:active {
-  color:#555 !important;
-}
-
-.distribute-features .distribute-link li a:hover,
-.distribute-features .distribute-link li a:hover * {
-  color:#7AA1B0 !important;
-}
-
-
 /************ DEVELOP TOPIC CONTAINERS ************/
 
 .landing-banner,
@@ -4872,22 +4988,16 @@ a.download-sdk {
 .landing-docs a {
   color:#333 !important;
 }
-
 .landing-docs a:hover,
 .landing-docs a:hover * {
   color:#7AA1B0 !important
 }
-
 .landing-docs .normal-links a {
   color:#258aaf !important;
 }
-
 .plusone {
   float:right;
 }
-
-
-
 .next-docs {
   border-top:1px solid #ccc;
   margin:40px 0 0;
@@ -4901,14 +5011,13 @@ a.download-sdk {
 .next-docs div:last-child {
   margin-right:0;
 }
-
 .next-docs h2 {
   font-size:14px;
   line-height:21px;
   color:#555;
   text-transform:uppercase;
   border-bottom:none;
-  margin:0 0 1em;
+  margin:0;
   padding:5px 0 0;
 }
 
@@ -5005,4 +5114,1181 @@ a.download-sdk {
 }
 .fullpage #footer {
   margin-top: -40px;
+}
+
+/************ DISTRIBUTE PAGES ******************/
+
+/* Article page header line fix */
+.headerLine {
+  overflow: hidden;
+}
+.headerLine h1 {
+  float: left;
+  padding-right: 20px;
+  margin-bottom: 0px;
+  font-size: 20px;
+  color: #363636;
+}
+.headerLine hr {
+  overflow: hidden;
+  margin: 42px 0 0 0;
+}
+
+.article-detail #body-content {
+  padding-top: 10px;
+}
+
+/* A container for grid sets with uppercase h3 and rule */
+.dynamic-grid h3 {
+  font-size:14px;
+  line-height:21px;
+  color:#555;
+  text-transform:uppercase;
+  border-bottom:1px solid #CCC;
+  padding:8px 0 0 1px;
+  margin-bottom:10px;
+  clear:both;
+}
+
+.top-right-float {
+  float: right;
+}
+
+.clearfloat {
+  float: none;
+  clear: both;
+}
+
+.border-img {
+  border: 1px solid #CCC;
+}
+
+.center-img {
+  margin: auto;
+  text-align: center;
+}
+.center-img img {
+  margin-bottom: 15px;
+}
+
+.figure img, .border-img {
+  margin-bottom: 15px;
+}
+
+/************ RESOURCE CARDS ******************/
+
+/* Resource cards, 12, 13, 16-col */
+
+/* Basic card-styling with shadow */
+.resource-card {
+  border-radius: 1px;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
+  background: #fefefe;
+}
+
+/* Styling for background image including tinting and section icons in stacks */
+.card-bg {
+  display: block;
+  position: absolute;
+  vertical-align: top;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(../images/resource-card-default-android.jpg);
+}
+.card-bg:after {
+  content: "";
+  display: block;
+  height: 100%;
+  width: 100%;
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.4);
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+.card-bg .card-section-icon {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -35px;
+  text-align: center;
+  padding-top: 65px;
+  z-index: 100;
+}
+.card-bg .card-section-icon .icon {
+  position: absolute;
+  left: 50%;
+  margin-left: -28px;
+  top: 0px;
+  width: 56px;
+  height: 56px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-image: url(../images/stack-icon.png);
+}
+.card-bg .card-section-icon .section {
+  text-transform: uppercase;
+  color: white;
+  font-size: 14px;
+}
+
+.card-info {
+  position: absolute;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  background: #fefefe;
+  padding: 4px 12px 6px 12px;
+}
+.card-info .section {
+  text-transform: uppercase;
+  color: #898989;
+  font-size: 12px;
+  margin-bottom: 1px;
+}
+.card-info .title {
+  color: #363636;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-bottom: 4px;
+  margin-bottom: -2px;
+  font-size: 16px;
+}
+.card-info .description {
+  position: relative;
+  overflow: hidden;
+}
+.card-info .description .text {
+  color: #464646;
+  font: 13px/15px Roboto Condensed;
+  overflow: hidden;
+  padding-right: 70px;
+  height: 30px;
+}
+.card-info .description .util {
+  position: absolute;
+  right: 0px;
+  bottom: -3px;
+  opacity: 0;
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+.card-info.empty-desc .title {
+  white-space: normal;
+  overflow: visible;
+}
+.card-info.empty-desc .description {
+  display: none;
+}
+
+/* Flow Layout */
+.resource-flow-layout {
+  display: inline-block;
+}
+.resource-flow-layout .resource-card, .resource-flow-layout .resource-card-stack {
+  float: left;
+  position: relative;
+}
+.resource-flow-layout .resource-card-stack > .resource-card {
+  margin-right: 0px !important;
+}
+.resource-flow-layout:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.resource-card:hover {
+  cursor: pointer;
+}
+.resource-card:hover .card-bg:after {
+  opacity: 0;
+}
+.resource-card:hover .card-info .description .text {
+  padding-right: 70px;
+}
+.resource-card:hover .card-info .description .util {
+  opacity: 1;
+}
+
+/* Carousel Layout */
+/* Carousel styles for landing page */
+.resource-carousel-layout {
+  margin: 20px 0 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+.resource-carousel-layout .slideshow-prev, .resource-carousel-layout .slideshow-next {
+  display: none;
+}
+.resource-carousel-layout .pagination {
+  bottom: 0px;
+}
+.resource-carousel-layout .frame li {
+  position: relative;
+}
+.resource-carousel-layout .frame li .card-bg {
+  height: 300px;
+}
+.resource-carousel-layout .frame li .card-info {
+  padding: 7px 15px 0px 15px;
+  top: 300px;
+}
+.resource-carousel-layout .frame li .card-info .section {
+  font-size: 13px;
+  margin-bottom: 7px;
+}
+.resource-carousel-layout .frame li .card-info .title {
+  font-size: 25px;
+  margin-bottom: 2px;
+}
+.resource-carousel-layout .frame li .card-info .description {
+  font-family: 15px/16px Roboto Condensed, sans-serif;
+}
+.resource-carousel-layout .frame li .card-info .description .text {
+  height: 40px;
+}
+
+/* Stack Layout */
+.resource-stack-layout {
+  display: inline-block;
+}
+.resource-stack-layout .resource-card-stack {
+  float: left;
+  position: relative;
+}
+.resource-stack-layout .resource-card {
+  margin-bottom: 20px;
+  display: block;
+  position: relative;
+}
+.resource-stack-layout .section-card-menu > .card-info .section, .resource-stack-layout .section-card > .card-info .title {
+  /*text-transform: uppercase;*/
+  color: #898989;
+  font-size: 17px;
+  line-height: 24px;
+  margin-bottom: 6px;
+}
+.resource-stack-layout .section-card {
+  height: 284px;
+}
+.resource-stack-layout .section-card > .card-bg {
+  height: 192px;
+}
+.resource-stack-layout .section-card > .card-info {
+  padding: 4px 12px 6px 12px;
+  top: 192px;
+}
+.resource-stack-layout .section-card > .card-info .section {
+  display: none;
+}
+.resource-stack-layout .section-card > .card-info .title {
+  font-size: 17px;
+  border-bottom: 1px solid #959595;
+  padding-bottom: 0px;
+}
+.resource-stack-layout .section-card > .card-info .description {
+  font-size: 13px;
+  line-height: 15px;
+}
+.resource-stack-layout .section-card > .card-info .description .text {
+  height: 30px;
+}
+.resource-stack-layout .related-card {
+  height: 90px;
+}
+.resource-stack-layout .related-card > .card-bg {
+  left: 0;
+  top: 0;
+  width: 90px;
+  height: 100%;
+  position: absolute;
+  display: block;
+}
+.resource-stack-layout .related-card > .card-info {
+  left: 90px;
+  padding: 4px 12px 4px 12px;
+}
+.resource-stack-layout .related-card > .card-info .section {
+  font-size: 12px;
+  margin-bottom: 1px;
+  display: none;
+}
+.resource-stack-layout .related-card > .card-info .title {
+  font-size: 16px;
+  margin-bottom: -2px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: ellipsis;
+}
+.resource-stack-layout .related-card > .card-info .title:after {
+  content: url(../images/link-out.png);
+  display: block;
+}
+.resource-stack-layout .related-card > .card-info .description {
+  display: none;
+}
+.resource-stack-layout .section-card-menu {
+  /* Flexible height */
+  display: block;
+  height: auto;
+  width: auto;
+}
+.resource-stack-layout .section-card-menu .card-bg {
+  height: 155px;
+  /* Flexible height */
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+.resource-stack-layout .section-card-menu .card-info {
+  padding: 4px 12px 0px 12px;
+  /* Flexible height */
+  position: relative;
+  left: auto;
+  top: auto;
+  right: auto;
+  bottom: auto;
+}
+.resource-stack-layout .section-card-menu .card-info ul {
+  list-style: none;
+  margin: 0;
+}
+.resource-stack-layout .section-card-menu .card-info ul li {
+  list-style: none;
+  margin: 0;
+  padding: 15px 0;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: #959595;
+}
+.resource-stack-layout .section-card-menu .card-info ul li a, .resource-stack-layout .section-card-menu .card-info ul li a:focus, .resource-stack-layout .section-card-menu .card-info ul li a:link, .resource-stack-layout .section-card-menu .card-info ul li a:visited, .resource-stack-layout .section-card-menu .card-info ul li a:active, .resource-stack-layout .section-card-menu .card-info ul li a:hover {
+  color: #363636 !important;
+}
+.resource-stack-layout .section-card-menu .card-info ul li:first-child {
+  border-top: none;
+}
+.resource-stack-layout .section-card-menu .card-info ul li:hover .title:after {
+  opacity: 1;
+  -webkit-transition: opacity 0.5s;
+  -moz-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+.resource-stack-layout .section-card-menu .card-info ul li:hover .description {
+  max-height: 30px;
+  opacity: 1;
+  -webkit-transition: max-height 0.5s, opacity 1s;
+  -moz-transition: max-height 0.5s, opacity 1s;
+  -o-transition: max-height 0.5s, opacity 1s;
+  transition: max-height 0.5s, opacity 1s;
+}
+.resource-stack-layout .section-card-menu .card-info .title {
+  font-size: 16px;
+  margin-bottom: -2px;
+  position: relative;
+}
+.resource-stack-layout .section-card-menu .card-info .title:after {
+  background: url(../images/stack-arrow-right.png);
+  content: '';
+  opacity: 0;
+  -webkit-transition: opacity 0.25s;
+  -moz-transition: opacity 0.25s;
+  -o-transition: opacity 0.25s;
+  transition: opacity 0.25s;
+  position: absolute;
+  right: 0px;
+  top: 3px;
+  width: 10px;
+  height: 15px;
+}
+.resource-stack-layout .section-card-menu .card-info .title.more {
+  text-transform: uppercase;
+  color: #898989;
+  display: inline-block;
+}
+.resource-stack-layout .section-card-menu .card-info .title.more:after {
+  background: url(../images/stack-arrow-right.png);
+  content: '';
+  display: block;
+  position: absolute;
+  right: -20px;
+  top: 3px;
+  width: 10px;
+  height: 15px;
+}
+.resource-stack-layout .section-card-menu .card-info .description {
+  max-height: 0px;
+  opacity: 0;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 15px;
+  /* Hover off */
+  -webkit-transition: max-height 0.5s, opacity 0.5s;
+  -moz-transition: max-height 0.5s, opacity 0.5s;
+  -o-transition: max-height 0.5s, opacity 0.5s;
+  transition: max-height 0.5s, opacity 0.5s;
+}
+.resource-stack-layout .section-card-menu .card-info .description .text {
+  height: 30px;
+}
+.resource-stack-layout:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+/* Generate the flow layout styles for a 3-column 16-col span */
+.resource-flow-layout.col-16 {
+  margin: 0 -14px 0 0;
+  width: 954px;
+}
+.resource-flow-layout.col-16 .resource-card, .resource-flow-layout.col-16 .resource-card-stack {
+  margin: 0 14px 20px 0;
+}
+.resource-flow-layout.col-16 .resource-card-row-stack-last {
+  margin-bottom: 0px !important;
+}
+.resource-flow-layout.col-16 .resource-card-col-stack-last {
+  margin-bottom: 0px !important;
+}
+.resource-flow-layout.col-16 .resource-card-3x6 {
+  width: 145px;
+  height: 284px;
+}
+.resource-flow-layout.col-16 .resource-card-3x12 {
+  width: 145px;
+  height: 588px;
+}
+.resource-flow-layout.col-16 .resource-card-3x18 {
+  width: 145px;
+  height: 892px;
+}
+.resource-flow-layout.col-16 .resource-card-6x6 {
+  width: 304px;
+  height: 284px;
+}
+.resource-flow-layout.col-16 .resource-card-6x12 {
+  width: 304px;
+  height: 588px;
+}
+.resource-flow-layout.col-16 .resource-card-6x18 {
+  width: 304px;
+  height: 892px;
+}
+.resource-flow-layout.col-16 .resource-card-9x6 {
+  width: 463px;
+  height: 284px;
+}
+.resource-flow-layout.col-16 .resource-card-9x12 {
+  width: 463px;
+  height: 588px;
+}
+.resource-flow-layout.col-16 .resource-card-9x18 {
+  width: 463px;
+  height: 892px;
+}
+.resource-flow-layout.col-16 .resource-card-12x6 {
+  width: 622px;
+  height: 284px;
+}
+.resource-flow-layout.col-16 .resource-card-12x12 {
+  width: 622px;
+  height: 588px;
+}
+.resource-flow-layout.col-16 .resource-card-12x18 {
+  width: 622px;
+  height: 892px;
+}
+.resource-flow-layout.col-16 .resource-card-15x6 {
+  width: 781px;
+  height: 284px;
+}
+.resource-flow-layout.col-16 .resource-card-15x12 {
+  width: 781px;
+  height: 588px;
+}
+.resource-flow-layout.col-16 .resource-card-15x18 {
+  width: 781px;
+  height: 892px;
+}
+.resource-flow-layout.col-16 .resource-card-18x6 {
+  width: 940px;
+  height: 284px;
+}
+.resource-flow-layout.col-16 .resource-card-18x12 {
+  width: 940px;
+  height: 420px;
+}
+.resource-flow-layout.col-16 .resource-card-18x18 {
+  width: 940px;
+  height: 892px;
+}
+.resource-flow-layout.col-16 .resource-card-3x2 {
+  width: 145px;
+  height: 95px;
+}
+.resource-flow-layout.col-16 .resource-card-3x2x3 {
+  width: 145px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-16 .resource-card-3x3 {
+  width: 145px;
+  height: 142px;
+}
+.resource-flow-layout.col-16 .resource-card-3x3x2 {
+  width: 145px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-16 .resource-card-6x2 {
+  width: 304px;
+  height: 95px;
+}
+.resource-flow-layout.col-16 .resource-card-6x2x3 {
+  width: 304px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-16 .resource-card-6x3 {
+  width: 304px;
+  height: 142px;
+}
+.resource-flow-layout.col-16 .resource-card-6x3x2 {
+  width: 304px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-16 .resource-card-9x2 {
+  width: 463px;
+  height: 95px;
+}
+.resource-flow-layout.col-16 .resource-card-9x2x3 {
+  width: 463px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-16 .resource-card-9x3 {
+  width: 463px;
+  height: 142px;
+}
+.resource-flow-layout.col-16 .resource-card-9x3x2 {
+  width: 463px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-16 .resource-card-12x2 {
+  width: 622px;
+  height: 95px;
+}
+.resource-flow-layout.col-16 .resource-card-12x2x3 {
+  width: 622px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-16 .resource-card-12x3 {
+  width: 622px;
+  height: 142px;
+}
+.resource-flow-layout.col-16 .resource-card-12x3x2 {
+  width: 622px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-16 .resource-card-15x2 {
+  width: 781px;
+  height: 95px;
+}
+.resource-flow-layout.col-16 .resource-card-15x2x3 {
+  width: 781px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-16 .resource-card-15x3 {
+  width: 781px;
+  height: 142px;
+}
+.resource-flow-layout.col-16 .resource-card-15x3x2 {
+  width: 781px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-16 .resource-card-18x2 {
+  width: 940px;
+  height: 95px;
+}
+.resource-flow-layout.col-16 .resource-card-18x2x3 {
+  width: 940px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-16 .resource-card-18x3 {
+  width: 940px;
+  height: 142px;
+}
+.resource-flow-layout.col-16 .resource-card-18x3x2 {
+  width: 940px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+
+/* Generate the flow layout styles for a 3-column 16-col span */
+.resource-flow-layout.col-12 {
+  margin: 0 -14px 0 0;
+  width: 714px;
+}
+
+.resource-flow-layout.col-12 .resource-card, .resource-flow-layout.col-12 .resource-card-stack {
+  margin: 0 14px 20px 0;
+}
+.resource-flow-layout.col-12 .resource-card-row-stack-last {
+  margin-bottom: 0px !important;
+}
+.resource-flow-layout.col-12 .resource-card-col-stack-last {
+  margin-bottom: 0px !important;
+}
+.resource-flow-layout.col-12 .resource-card-3x6 {
+  width: 105px;
+  height: 284px;
+}
+.resource-flow-layout.col-12 .resource-card-3x12 {
+  width: 105px;
+  height: 588px;
+}
+.resource-flow-layout.col-12 .resource-card-3x18 {
+  width: 105px;
+  height: 892px;
+}
+.resource-flow-layout.col-12 .resource-card-6x6 {
+  width: 224px;
+  height: 284px;
+}
+.resource-flow-layout.col-12 .resource-card-6x12 {
+  width: 224px;
+  height: 588px;
+}
+.resource-flow-layout.col-12 .resource-card-6x18 {
+  width: 224px;
+  height: 892px;
+}
+.resource-flow-layout.col-12 .resource-card-9x6 {
+  width: 343px;
+  height: 284px;
+}
+.resource-flow-layout.col-12 .resource-card-9x12 {
+  width: 343px;
+  height: 588px;
+}
+.resource-flow-layout.col-12 .resource-card-9x18 {
+  width: 343px;
+  height: 892px;
+}
+.resource-flow-layout.col-12 .resource-card-12x6 {
+  width: 462px;
+  height: 284px;
+}
+.resource-flow-layout.col-12 .resource-card-12x12 {
+  width: 462px;
+  height: 588px;
+}
+.resource-flow-layout.col-12 .resource-card-12x18 {
+  width: 462px;
+  height: 892px;
+}
+.resource-flow-layout.col-12 .resource-card-15x6 {
+  width: 581px;
+  height: 284px;
+}
+.resource-flow-layout.col-12 .resource-card-15x12 {
+  width: 581px;
+  height: 588px;
+}
+.resource-flow-layout.col-12 .resource-card-15x18 {
+  width: 581px;
+  height: 892px;
+}
+.resource-flow-layout.col-12 .resource-card-18x6 {
+  width: 700px;
+  height: 284px;
+}
+.resource-flow-layout.col-12 .resource-card-18x12 {
+  width: 700px;
+  height: 420px;
+}
+.resource-flow-layout.col-12 .resource-card-18x18 {
+  width: 700px;
+  height: 892px;
+}
+.resource-flow-layout.col-12 .resource-card-3x2 {
+  width: 105px;
+  height: 95px;
+}
+.resource-flow-layout.col-12 .resource-card-3x2x3 {
+  width: 105px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-12 .resource-card-3x3 {
+  width: 105px;
+  height: 142px;
+}
+.resource-flow-layout.col-12 .resource-card-3x3x2 {
+  width: 105px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-12 .resource-card-6x2 {
+  width: 224px;
+  height: 95px;
+}
+.resource-flow-layout.col-12 .resource-card-6x2x3 {
+  width: 224px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-12 .resource-card-6x3 {
+  width: 224px;
+  height: 142px;
+}
+.resource-flow-layout.col-12 .resource-card-6x3x2 {
+  width: 224px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-12 .resource-card-9x2 {
+  width: 343px;
+  height: 95px;
+}
+.resource-flow-layout.col-12 .resource-card-9x2x3 {
+  width: 343px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-12 .resource-card-9x3 {
+  width: 343px;
+  height: 142px;
+}
+.resource-flow-layout.col-12 .resource-card-9x3x2 {
+  width: 343px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-12 .resource-card-12x2 {
+  width: 462px;
+  height: 95px;
+}
+.resource-flow-layout.col-12 .resource-card-12x2x3 {
+  width: 462px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-12 .resource-card-12x3 {
+  width: 462px;
+  height: 142px;
+}
+.resource-flow-layout.col-12 .resource-card-12x3x2 {
+  width: 462px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-12 .resource-card-15x2 {
+  width: 581px;
+  height: 95px;
+}
+.resource-flow-layout.col-12 .resource-card-15x2x3 {
+  width: 581px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-12 .resource-card-15x3 {
+  width: 581px;
+  height: 142px;
+}
+.resource-flow-layout.col-12 .resource-card-15x3x2 {
+  width: 581px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-12 .resource-card-18x2 {
+  width: 700px;
+  height: 95px;
+}
+.resource-flow-layout.col-12 .resource-card-18x2x3 {
+  width: 700px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-12 .resource-card-18x3 {
+  width: 700px;
+  height: 142px;
+}
+.resource-flow-layout.col-12 .resource-card-18x3x2 {
+  width: 700px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+
+/* Generate the flow layout styles for a 3-column 13-col span */
+
+.resource-flow-layout.col-13 {
+  margin: 0 -14px 0 0;
+  width: 774px;
+}
+.resource-flow-layout.col-13 .resource-card, .resource-flow-layout.col-13 .resource-card-stack {
+  margin: 0 14px 20px 0;
+}
+.resource-flow-layout.col-13 .resource-card-row-stack-last {
+  margin-bottom: 0px !important;
+}
+.resource-flow-layout.col-13 .resource-card-col-stack-last {
+  margin-bottom: 0px !important;
+}
+.resource-flow-layout.col-13 .resource-card-3x6 {
+  width: 115px;
+  height: 284px;
+}
+.resource-flow-layout.col-13 .resource-card-3x12 {
+  width: 115px;
+  height: 588px;
+}
+.resource-flow-layout.col-13 .resource-card-3x18 {
+  width: 115px;
+  height: 892px;
+}
+.resource-flow-layout.col-13 .resource-card-6x6 {
+  width: 244px;
+  height: 284px;
+}
+.resource-flow-layout.col-13 .resource-card-6x12 {
+  width: 244px;
+  height: 588px;
+}
+.resource-flow-layout.col-13 .resource-card-6x18 {
+  width: 244px;
+  height: 892px;
+}
+.resource-flow-layout.col-13 .resource-card-9x6 {
+  width: 373px;
+  height: 284px;
+}
+.resource-flow-layout.col-13 .resource-card-9x12 {
+  width: 373px;
+  height: 588px;
+}
+.resource-flow-layout.col-13 .resource-card-9x18 {
+  width: 373px;
+  height: 892px;
+}
+.resource-flow-layout.col-13 .resource-card-12x6 {
+  width: 502px;
+  height: 284px;
+}
+.resource-flow-layout.col-13 .resource-card-12x12 {
+  width: 502px;
+  height: 588px;
+}
+.resource-flow-layout.col-13 .resource-card-12x18 {
+  width: 502px;
+  height: 892px;
+}
+.resource-flow-layout.col-13 .resource-card-15x6 {
+  width: 631px;
+  height: 284px;
+}
+.resource-flow-layout.col-13 .resource-card-15x12 {
+  width: 631px;
+  height: 588px;
+}
+.resource-flow-layout.col-13 .resource-card-15x18 {
+  width: 631px;
+  height: 892px;
+}
+.resource-flow-layout.col-13 .resource-card-18x6 {
+  width: 760px;
+  height: 284px;
+}
+.resource-flow-layout.col-13 .resource-card-18x12 {
+  width: 760px;
+  height: 420px;
+}
+.resource-flow-layout.col-13 .resource-card-18x18 {
+  width: 760px;
+  height: 892px;
+}
+.resource-flow-layout.col-13 .resource-card-3x2 {
+  width: 115px;
+  height: 95px;
+}
+.resource-flow-layout.col-13 .resource-card-3x2x3 {
+  width: 115px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-13 .resource-card-3x3 {
+  width: 115px;
+  height: 142px;
+}
+.resource-flow-layout.col-13 .resource-card-3x3x2 {
+  width: 115px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-13 .resource-card-6x2 {
+  width: 244px;
+  height: 95px;
+}
+.resource-flow-layout.col-13 .resource-card-6x2x3 {
+  width: 244px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-13 .resource-card-6x3 {
+  width: 244px;
+  height: 142px;
+}
+.resource-flow-layout.col-13 .resource-card-6x3x2 {
+  width: 244px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-13 .resource-card-9x2 {
+  width: 373px;
+  height: 95px;
+}
+.resource-flow-layout.col-13 .resource-card-9x2x3 {
+  width: 373px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-13 .resource-card-9x3 {
+  width: 373px;
+  height: 142px;
+}
+.resource-flow-layout.col-13 .resource-card-9x3x2 {
+  width: 373px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-13 .resource-card-12x2 {
+  width: 502px;
+  height: 95px;
+}
+.resource-flow-layout.col-13 .resource-card-12x2x3 {
+  width: 502px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-13 .resource-card-12x3 {
+  width: 502px;
+  height: 142px;
+}
+.resource-flow-layout.col-13 .resource-card-12x3x2 {
+  width: 502px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-13 .resource-card-15x2 {
+  width: 631px;
+  height: 95px;
+}
+.resource-flow-layout.col-13 .resource-card-15x2x3 {
+  width: 631px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-13 .resource-card-15x3 {
+  width: 631px;
+  height: 142px;
+}
+.resource-flow-layout.col-13 .resource-card-15x3x2 {
+  width: 631px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+.resource-flow-layout.col-13 .resource-card-18x2 {
+  width: 760px;
+  height: 95px;
+}
+.resource-flow-layout.col-13 .resource-card-18x2x3 {
+  width: 760px;
+  height: 90px;
+  margin-bottom: 7px;
+}
+.resource-flow-layout.col-13 .resource-card-18x3 {
+  width: 760px;
+  height: 142px;
+}
+.resource-flow-layout.col-13 .resource-card-18x3x2 {
+  width: 760px;
+  height: 138px;
+  margin-bottom: 8px;
+}
+
+/*
+  The following are styles for cards in the flowlayout above, styled by the number of rows they span
+*/
+/* Single row items, might be simpler to just apply a class */
+.resource-card-3x6 > .card-bg, .resource-card-6x6 > .card-bg, .resource-card-9x6 > .card-bg, .resource-card-12x6 > .card-bg, .resource-card-15x6 > .card-bg, .resource-card-18x6 > .card-bg {
+  height: 192px;
+}
+.resource-card-3x6 > .card-info, .resource-card-6x6 > .card-info, .resource-card-9x6 > .card-info, .resource-card-12x6 > .card-info, .resource-card-15x6 > .card-info, .resource-card-18x6 > .card-info {
+  padding: 4px 12px 6px 12px;
+  top: 192px;
+}
+.resource-card-3x6 > .card-info .section, .resource-card-6x6 > .card-info .section, .resource-card-9x6 > .card-info .section, .resource-card-12x6 > .card-info .section, .resource-card-15x6 > .card-info .section, .resource-card-18x6 > .card-info .section {
+  font-size: 12px;
+  margin-bottom: 1px;
+}
+.resource-card-3x6 > .card-info .title, .resource-card-6x6 > .card-info .title, .resource-card-9x6 > .card-info .title, .resource-card-12x6 > .card-info .title, .resource-card-15x6 > .card-info .title, .resource-card-18x6 > .card-info .title {
+  font-size: 16px;
+  margin-bottom: -2px;
+}
+.resource-card-3x6 > .card-info .description, .resource-card-6x6 > .card-info .description, .resource-card-9x6 > .card-info .description, .resource-card-12x6 > .card-info .description, .resource-card-15x6 > .card-info .description, .resource-card-18x6 > .card-info .description {
+  font-size: 13px;
+  line-height: 15px;
+}
+.resource-card-3x6 > .card-info .description .text, .resource-card-6x6 > .card-info .description .text, .resource-card-9x6 > .card-info .description .text, .resource-card-12x6 > .card-info .description .text, .resource-card-15x6 > .card-info .description .text, .resource-card-18x6 > .card-info .description .text {
+  height: 30px;
+}
+
+/* Double row items */
+.resource-card-3x12 > .card-bg, .resource-card-6x12 > .card-bg, .resource-card-9x12 > .card-bg, .resource-card-12x12 > .card-bg, .resource-card-15x12 > .card-bg, .resource-card-18x12 > .card-bg {
+  height: 320px;
+}
+.resource-card-3x12 > .card-info, .resource-card-6x12 > .card-info, .resource-card-9x12 > .card-info, .resource-card-12x12 > .card-info, .resource-card-15x12 > .card-info, .resource-card-18x12 > .card-info {
+  padding: 4px 12px 6px 12px;
+  top: 320px;
+}
+.resource-card-3x12 > .card-info .section, .resource-card-6x12 > .card-info .section, .resource-card-9x12 > .card-info .section, .resource-card-12x12 > .card-info .section, .resource-card-15x12 > .card-info .section, .resource-card-18x12 > .card-info .section {
+  font-size: 12px;
+  margin-bottom: 1px;
+}
+.resource-card-3x12 > .card-info .title, .resource-card-6x12 > .card-info .title, .resource-card-9x12 > .card-info .title, .resource-card-12x12 > .card-info .title, .resource-card-15x12 > .card-info .title, .resource-card-18x12 > .card-info .title {
+  font-size: 16px;
+  margin-bottom: -2px;
+  white-space: normal;
+}
+.resource-card-3x12 > .card-info .description, .resource-card-6x12 > .card-info .description, .resource-card-9x12 > .card-info .description, .resource-card-12x12 > .card-info .description, .resource-card-15x12 > .card-info .description, .resource-card-18x12 > .card-info .description {
+  font-size: 13px;
+  line-height: 15px;
+}
+
+/* 1/3 row items */
+.resource-card-3x2 > .card-bg, .resource-card-6x2 > .card-bg, .resource-card-9x2 > .card-bg, .resource-card-12x2 > .card-bg, .resource-card-15x2 > .card-bg, .resource-card-18x2 > .card-bg {
+  left: 0;
+  top: 0;
+  width: 90px;
+  height: 100%;
+  position: absolute;
+  display: block;
+}
+.resource-card-3x2 > .card-info, .resource-card-6x2 > .card-info, .resource-card-9x2 > .card-info, .resource-card-12x2 > .card-info, .resource-card-15x2 > .card-info, .resource-card-18x2 > .card-info {
+  left: 90px;
+  padding: 4px 12px 4px 12px;
+  height: 80px;
+  overflow: hidden;
+}
+.resource-card-3x2 > .card-info .section, .resource-card-6x2 > .card-info .section, .resource-card-9x2 > .card-info .section, .resource-card-12x2 > .card-info .section, .resource-card-15x2 > .card-info .section, .resource-card-18x2 > .card-info .section {
+  font-size: 12px;
+  margin-bottom: 1px;
+  /* display: none; */
+}
+.resource-card-3x2 > .card-info .title, .resource-card-6x2 > .card-info .title, .resource-card-9x2 > .card-info .title, .resource-card-12x2 > .card-info .title, .resource-card-15x2 > .card-info .title, .resource-card-18x2 > .card-info .title {
+  font-size: 16px;
+  margin-bottom: -2px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: ellipsis;
+}
+.resource-card-3x2 > .card-info .title:after, .resource-card-6x2 > .card-info .title:after, .resource-card-9x2 > .card-info .title:after, .resource-card-12x2 > .card-info .title:after, .resource-card-15x2 > .card-info .title:after, .resource-card-18x2 > .card-info .title:after {
+  /* content: url(../images/link-out.png); */
+  display: block;
+}
+.resource-card-3x2 > .card-info .description, .resource-card-6x2 > .card-info .description, .resource-card-9x2 > .card-info .description, .resource-card-12x2 > .card-info .description, .resource-card-15x2 > .card-info .description, .resource-card-18x2 > .card-info .description {
+  display: none;
+}
+
+/* 1/2 row items */
+.resource-card-3x3 > .card-bg, .resource-card-6x3 > .card-bg, .resource-card-9x3 > .card-bg, .resource-card-12x3 > .card-bg, .resource-card-15x3 > .card-bg, .resource-card-18x3 > .card-bg {
+  left: 0;
+  top: 0;
+  width: 90px;
+  height: 100%;
+  position: absolute;
+  display: block;
+}
+.resource-card-3x3 > .card-info, .resource-card-6x3 > .card-info, .resource-card-9x3 > .card-info, .resource-card-12x3 > .card-info, .resource-card-15x3 > .card-info, .resource-card-18x3 > .card-info {
+  left: 90px;
+  padding: 4px 12px 0px 12px;
+}
+.resource-card-3x3 > .card-info .section, .resource-card-6x3 > .card-info .section, .resource-card-9x3 > .card-info .section, .resource-card-12x3 > .card-info .section, .resource-card-15x3 > .card-info .section, .resource-card-18x3 > .card-info .section {
+  font-size: 12px;
+  margin-bottom: 1px;
+  display: none;
+}
+.resource-card-3x3 > .card-info .title, .resource-card-6x3 > .card-info .title, .resource-card-9x3 > .card-info .title, .resource-card-12x3 > .card-info .title, .resource-card-15x3 > .card-info .title, .resource-card-18x3 > .card-info .title {
+  font-size: 16px;
+  margin-bottom: -2px;
+  white-space: normal;
+  overflow: visible;
+}
+.resource-card-3x3 > .card-info .description .text, .resource-card-6x3 > .card-info .description .text, .resource-card-9x3 > .card-info .description .text, .resource-card-12x3 > .card-info .description .text, .resource-card-15x3 > .card-info .description .text, .resource-card-18x3 > .card-info .description .text {
+  font-size: 12px;
+  line-height: 15px;
+  padding-right: 0px !important;
+  height: 80px;
+}
+.resource-card-3x3 > .card-info .description .util, .resource-card-6x3 > .card-info .description .util, .resource-card-9x3 > .card-info .description .util, .resource-card-12x3 > .card-info .description .util, .resource-card-15x3 > .card-info .description .util, .resource-card-18x3 > .card-info .description .util {
+  display: none;
+}
+
+/*
+  Generate a resource stack layout for a 3 column widget spanning 16 grid cols
+*/
+.resource-stack-layout.col-16 {
+  margin: 0 -14px 0 0;
+  width: 954px;
+}
+.resource-stack-layout.col-16 .resource-card-stack {
+  margin: 0 14px 0 0;
+  width: 304px;
+}
+
+/* Example of card menu tinting */
+.resource-widget[data-section=distribute\/tools] .section-card-menu
+.card-bg:after {
+  background: rgba(126, 55, 148, 0.4) !important;
+}
+.resource-widget[data-section=distribute\/tools] .section-card-menu
+.card-section-icon .icon {
+  background-color: #7e3794 !important;
+}
+.resource-widget[data-section=distribute\/tools] .section-card-menu
+.card-info ul li {
+  border-top-color: #7e3794 !important;
+}
+
+/* tinting for stacks */
+
+div.jd-descr > .resource-widget[data-section=distribute\/tools]
+.section-card-menu .card-info ul li {
+  border-top-color: #7e3794 !important;
 }

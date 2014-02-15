@@ -2,19 +2,36 @@
 <?cs include:"macros.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation <?cs if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?>
-  <?cs if:(guide||develop||training||reference||tools||sdk||samples) ?>develop<?cs if:guide ?> guide<?cs /if ?><?cs if:samples ?> samples<?cs /if ?><?cs
+<body class="gc-documentation 
+
+<?cs
+if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
+  if:(guide||develop||training||reference||tools||sdk||samples) ?>develop<?cs
+    if:guide ?> guide<?cs /if ?><?cs
+    if:samples ?> samples<?cs /if ?><?cs
+  elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories)
+    ?>distribute<?cs
+    if:googleplay ?> googleplay<?cs /if ?><?cs
+    if:essentials ?> essentials<?cs /if ?><?cs
+    if:users ?> users<?cs /if ?><?cs
+    if:engage ?> engage<?cs /if ?><?cs
+    if:monetize ?> monetize<?cs /if ?><?cs
+    if:disttools ?> disttools<?cs /if ?><?cs
+    if:stories ?> stories<?cs /if ?><?cs
   elif:about ?>about<?cs
   elif:design ?>design<?cs
-  elif:distribute ?>distribute<?cs
-  /if ?><?cs
-  if:page.trainingcourse ?> trainingcourse<?cs /if ?>" itemscope itemtype="http://schema.org/Article">
-<?cs include:"header.cs" ?>
+/if ?><?cs
+if:page.trainingcourse ?> trainingcourse<?cs
+/if ?>" itemscope itemtype="http://schema.org/Article"><?cs
+include:"header.cs" ?>
 
-<div <?cs if:fullpage
-?>class="fullpage"<?cs elif:design||tools||about||sdk||distribute
-?>class="col-13" id="doc-col"<?cs else
-?>class="col-12" id="doc-col"<?cs /if ?> >
+<div <?cs
+  if:fullpage
+    ?>class="fullpage"<?cs
+  elif:design||tools||about||sdk||googleplay||essentials||users||monetize||disttools && !nonavpage
+    ?>class="col-13" id="doc-col"<?cs
+  elif:!nonavpage
+    ?>class="col-12" id="doc-col"<?cs /if ?> >
 
 <?cs if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs # header logic for docs that provide previous/next buttons ?>
   <?cs if:header.hide ?>
@@ -74,6 +91,7 @@
     <?cs /if ?><?cs # end if training ?>
   </div>
   <?cs /if ?>
+
 <?cs elif:samplesProjectIndex ?>
   <div id="api-info-block">
   <div class="sum-details-links">
@@ -83,7 +101,10 @@
   </div><!-- end sum-details-links -->
   </div><!-- end breadcurmb block -->
   <h1 itemprop="name"><?cs var:projectDir ?></h1>
+
 <?cs else ?>
+
+
   <?cs if:(!fullpage && !header.hide) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
@@ -181,8 +202,6 @@
 <?cs include:"footer.cs" ?>
 </div><!-- end doc-content -->
 
-<?cs include:"trailer.cs" ?>
-
 <!-- Start of Tag -->
 <script type="text/javascript">
 var axel = Math.random() + "";
@@ -193,6 +212,16 @@ document.write('<iframe src="https://2507573.fls.doubleclick.net/activityi;src=2
 <iframe src="https://2507573.fls.doubleclick.net/activityi;src=2507573;type=other026;cat=googl348;ord=1?" width="1" height="1" frameborder="0" style="display:none"></iframe>
 </noscript>
 <!-- End of Tag -->
+
+
+<?cs include:"trailer.cs" ?>
+  <script src="http://androiddevdocs-exp.appspot.com/ytblogger_lists_unified.js" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_lists_unified.js" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_articles.js" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_collections.js" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_site_map.js" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_tag_helpers.js" type="text/javascript"></script>
+
 </body>
 </html>
 
