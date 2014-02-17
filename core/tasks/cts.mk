@@ -36,6 +36,7 @@ CTS_CORE_CASE_LIST := \
 	android.core.tests.libcore.package.tests \
 	android.core.tests.libcore.package.org \
 	android.core.tests.libcore.package.libcore \
+	android.core.tests.libcore.package.jsr166 \
 	android.core.tests.runner
 
 # Depend on the full package paths rather than the phony targets to avoid
@@ -88,9 +89,10 @@ OKHTTP_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,okhttp,,COMMO
 SQLITEJDBC_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,sqlite-jdbc,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 CORETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
+JSR166TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,jsr166-tests,,COMMON)
 CONSCRYPTTESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,conscrypt-tests,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(JSR166TESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar
 
 CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml \
@@ -99,7 +101,9 @@ CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml \
-	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.jsr166.xml
+
 
 $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Why does this depend on javalib.jar instead of classes.jar?  Because
@@ -107,7 +111,7 @@ $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar | $(ACP)
+CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(JSR166TESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar | $(ACP)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
@@ -156,6 +160,13 @@ $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml: $(CTS_CORE_
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore,\
 		cts/tests/core/libcore/libcore/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,libcore,\
+		libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.jsr166.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.jsr166,\
+		cts/tests/core/libcore/jsr166/AndroidManifest.xml,\
+		$(JSR166TESTS_INTERMEDIATES)/javalib.jar,jsr166,\
 		libcore/expectations)
 
 # ----- Generate the test descriptions for the vm-tests-tf -----
