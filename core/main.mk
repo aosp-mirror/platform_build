@@ -103,7 +103,7 @@ include $(BUILD_SYSTEM)/cleanbuild.mk
 # Include the google-specific config
 -include vendor/google/build/config.mk
 
-VERSION_CHECK_SEQUENCE_NUMBER := 3
+VERSION_CHECK_SEQUENCE_NUMBER := 4
 -include $(OUT_DIR)/versions_checked.mk
 ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
 
@@ -191,6 +191,17 @@ required_javac_version := "1.6"
 java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.6[\. "$$]')
 javac_version := $(shell echo '$(javac_version_str)' | head -n 1 | grep '[ "]1\.6[\. "$$]')
 endif # if EXPERIMENTAL_USE_JAVA7
+
+ifeq ($(required_javac_version), "1.6")
+$(info ************************************************************)
+$(info You are attempting to build with java 1.6.)
+$(info Java6 support for master builds will be dropped shortly,)
+$(info please upgrade to Java7 as soon as possible.)
+$(info $(space))
+$(info Visit go/android-java7-transition for details. )
+$(info $(space))
+$(info ************************************************************)
+endif
 
 ifeq ($(strip $(java_version)),)
 $(info ************************************************************)
