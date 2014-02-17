@@ -200,91 +200,91 @@ $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_annotation.xml: 
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_annotation,\
 		cts/tests/core/libcore/harmony_annotation/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.annotation,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.annotation,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_archive.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_archive,\
 		cts/tests/core/libcore/harmony_archive/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.archive,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.archive,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_beans.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_beans,\
 		cts/tests/core/libcore/harmony_beans/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.beans,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.beans,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_logging.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_logging,\
 		cts/tests/core/libcore/harmony_logging/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.logging,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.logging,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_luni.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_luni,\
 		cts/tests/core/libcore/harmony_luni/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.luni,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.luni,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_math.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_math,\
 		cts/tests/core/libcore/harmony_math/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.math,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.math,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_nio.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_nio,\
 		cts/tests/core/libcore/harmony_nio/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.nio,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.nio,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_nio_char.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_nio_char,\
 		cts/tests/core/libcore/harmony_nio_char/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.nio_char,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.nio_char,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_prefs.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_prefs,\
 		cts/tests/core/libcore/harmony_prefs/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.prefs,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.prefs,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_regex.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_regex,\
 		cts/tests/core/libcore/harmony_regex/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.regex,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.regex,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql,\
 		cts/tests/core/libcore/harmony_sql/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.sql,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.sql,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_support.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_support,\
 		cts/tests/core/libcore/harmony_support/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.support,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.support,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_text.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_text,\
 		cts/tests/core/libcore/harmony_text/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,org.apache.harmony.text,\
+		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.text,\
 		libcore/expectations external/apache-harmony/Android.mk)
 
 # ----- Generate the test descriptions for the vm-tests-tf -----
