@@ -31,8 +31,8 @@ Usage:  img_from_target_files [flags] input_target_files output_image_zip
 
 import sys
 
-if sys.hexversion < 0x02040000:
-  print >> sys.stderr, "Python 2.4 or newer is required."
+if sys.hexversion < 0x02070000:
+  print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
 import errno
