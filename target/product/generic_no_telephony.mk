@@ -47,6 +47,7 @@ PRODUCT_PACKAGES := \
     WallpaperCropper
 
 PRODUCT_PACKAGES += \
+    bcc \
     clatd \
     clatd.conf \
     pppd
