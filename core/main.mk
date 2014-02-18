@@ -764,7 +764,7 @@ ifdef is_sdk_build
     dangling_modules := $(filter-out %64,$(dangling_modules))
   endif
   ifneq ($(dangling_modules),)
-    $(error Module names '$(dangling_modules)' in PRODUCT_PACKAGES has nothing to install!)
+    $(warning: Modules '$(dangling_modules)' in PRODUCT_PACKAGES have nothing to install!)
   endif
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
