@@ -125,6 +125,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-funwind-tables \
 			-fstack-protector \
 			-m32 \
+			-msse2 \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
