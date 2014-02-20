@@ -34,6 +34,24 @@
       "revId": "9b6a87a4b156f9fa21f664c37b1a92d0e4d47bea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f193130_04baa052",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1012623
+      },
+      "writtenOn": "2014-02-20T15:41:20Z",
+      "side": 1,
+      "message": "Are you planning to upstream the other patch ? or you want me to upload it ?",
+      "parentUuid": "e3e2361a_cce2cf46",
+      "revId": "9b6a87a4b156f9fa21f664c37b1a92d0e4d47bea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
