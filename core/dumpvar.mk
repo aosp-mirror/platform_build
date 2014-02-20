@@ -9,31 +9,6 @@ else
 ABP:=$(PWD)/$(HOST_OUT_EXECUTABLES)
 endif
 
-# Add the ARM toolchain bin dir if it actually exists
-ifeq ($(TARGET_ARCH),arm)
-    ifneq ($(wildcard $(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_GCC_VERSION)/bin),)
-        # this should be copied to HOST_OUT_EXECUTABLES instead
-        ABP:=$(ABP):$(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-$(TARGET_GCC_VERSION)/bin
-    endif
-    ifneq ($(wildcard $(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_GCC_VERSION)/bin),)
-        # this should be copied to HOST_OUT_EXECUTABLES instead
-        ABP:=$(ABP):$(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-$(TARGET_GCC_VERSION)/bin
-    endif
-else ifeq ($(TARGET_ARCH),x86)
-
-# Add the x86 toolchain bin dir if it actually exists
-    ifneq ($(wildcard $(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/x86/x86_64-linux-android-$(TARGET_GCC_VERSION)/bin),)
-        # this should be copied to HOST_OUT_EXECUTABLES instead
-        ABP:=$(ABP):$(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/x86/x86_64-linux-android-$(TARGET_GCC_VERSION)/bin
-    endif
-endif
-
-# Add the mips toolchain bin dir if it actually exists
-ifneq ($(wildcard $(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/mips/mipsel-linux-android-$(TARGET_GCC_VERSION)/bin),)
-    # this should be copied to HOST_OUT_EXECUTABLES instead
-    ABP:=$(ABP):$(PWD)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/mips/mipsel-linux-android-$(TARGET_GCC_VERSION)/bin
-endif
-
 ANDROID_BUILD_PATHS := $(ABP)
 ANDROID_PREBUILTS := prebuilt/$(HOST_PREBUILT_TAG)
 ANDROID_GCC_PREBUILTS := prebuilts/gcc/$(HOST_PREBUILT_TAG)
