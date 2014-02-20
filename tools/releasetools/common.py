@@ -990,7 +990,8 @@ def ParseCertificate(data):
   return cert
 
 
-def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img):
+def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
+                      info_dict=None):
   """Generate a binary patch that creates the recovery image starting
   with the boot image.  (Most of the space in these images is just the
   kernel, which is identical for the two, so the resulting patch
@@ -1002,6 +1003,9 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img):
   corresponding images.  info should be the dictionary returned by
   common.LoadInfoDict() on the input target_files.
   """
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
 
   diff_program = ["imgdiff"]
   path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
@@ -1016,8 +1020,8 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img):
   _, _, patch = d.ComputePatch()
   output_sink("recovery-from-boot.p", patch)
 
-  boot_type, boot_device = GetTypeAndDevice("/boot", OPTIONS.info_dict)
-  recovery_type, recovery_device = GetTypeAndDevice("/recovery", OPTIONS.info_dict)
+  boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
+  recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict)
 
   sh = """#!/system/bin/sh
 if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
