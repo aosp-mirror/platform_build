@@ -25,3 +25,8 @@ include $(BUILD_SYSTEM)/binary.mk
 $(LOCAL_BUILT_MODULE): $(built_whole_libraries)
 $(LOCAL_BUILT_MODULE): $(all_objects)
 	$(transform-host-o-to-static-lib)
+
+###########################################################
+## Copy headers to the install tree
+###########################################################
+include $(BUILD_COPY_HEADERS)
