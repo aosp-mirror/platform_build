@@ -740,11 +740,14 @@ class PasswordManager(object):
     return result
 
 
-def ZipWriteStr(zip, filename, data, perms=0644):
+def ZipWriteStr(zip, filename, data, perms=0644, compression=None):
   # use a fixed timestamp so the output is repeatable.
   zinfo = zipfile.ZipInfo(filename=filename,
                           date_time=(2009, 1, 1, 0, 0, 0))
-  zinfo.compress_type = zip.compression
+  if compression is None:
+    zinfo.compress_type = zip.compression
+  else:
+    zinfo.compress_type = compression
   zinfo.external_attr = perms << 16
   zip.writestr(zinfo, data)
 
@@ -850,8 +853,8 @@ class File(object):
     t.flush()
     return t
 
-  def AddToZip(self, z):
-    ZipWriteStr(z, self.name, self.data)
+  def AddToZip(self, z, compression=None):
+    ZipWriteStr(z, self.name, self.data, compression=compression)
 
 DIFF_PROGRAM_BY_EXT = {
     ".gz" : "imgdiff",
@@ -989,6 +992,30 @@ def ParseCertificate(data):
   cert = "".join(cert).decode('base64')
   return cert
 
+def XDelta3(source_path, target_path, output_path):
+  diff_program = ["xdelta3", "-0", "-B", str(64<<20), "-e", "-f", "-s"]
+  diff_program.append(source_path)
+  diff_program.append(target_path)
+  diff_program.append(output_path)
+  p = Run(diff_program, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+  p.communicate()
+  assert p.returncode == 0, "Couldn't produce patch"
+
+def XZ(path):
+  compress_program = ["xz", "-zk", "-9", "--check=crc32"]
+  compress_program.append(path)
+  p = Run(compress_program, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+  p.communicate()
+  assert p.returncode == 0, "Couldn't compress patch"
+
+def MakeSystemPatch(source_file, target_file):
+  with tempfile.NamedTemporaryFile() as output_file:
+    XDelta3(source_file.name, target_file.name, output_file.name)
+    XZ(output_file.name)
+    with open(output_file.name + ".xz") as patch_file:
+      patch_data = patch_file.read()
+      os.unlink(patch_file.name)
+      return File("system.img.p", patch_data)
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):

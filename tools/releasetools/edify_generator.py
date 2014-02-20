@@ -81,6 +81,18 @@ class EdifyGenerator(object):
            ) % (" or ".join(fp),)
     self.script.append(cmd)
 
+  def AssertRecoveryFingerprint(self, *fp):
+    """Assert that the current recovery build fingerprint is one of *fp."""
+    if not fp:
+      raise ValueError("must specify some fingerprints")
+    cmd = (
+           ' ||\n    '.join([('getprop("ro.build.fingerprint") == "%s"')
+                        % i for i in fp]) +
+           ' ||\n    abort("Package expects build fingerprint of %s; this '
+           'device has " + getprop("ro.build.fingerprint") + ".");'
+           ) % (" or ".join(fp),)
+    self.script.append(cmd)
+
   def AssertOlderBuild(self, timestamp, timestamp_text):
     """Assert that the build on the device is older (or the same as)
     the given timestamp."""
@@ -296,3 +308,8 @@ class EdifyGenerator(object):
       data = open(os.path.join(input_path, "updater")).read()
     common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-binary",
                        data, perms=0755)
+
+  def Syspatch(self, filename, size, target_sha, source_sha, patchfile):
+    """Applies a compressed binary patch to a block device."""
+    call = 'syspatch("%s", "%s", "%s", "%s", "%s");'
+    self.script.append(call % (filename, size, target_sha, source_sha, patchfile))
