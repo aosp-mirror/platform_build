@@ -44,3 +44,8 @@ $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries) $(LOCAL_ADDITIONAL_DEPEND
 	$(transform-host-o-to-shared-lib)
 
 endif  # skip_build_from_source
+
+###########################################################
+## Copy headers to the install tree
+###########################################################
+include $(BUILD_COPY_HEADERS)
