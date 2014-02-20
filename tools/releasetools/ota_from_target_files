@@ -57,6 +57,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       first, so that any changes made to the system partition are done
       using the new recovery (new kernel, etc.).
 
+  --block
+      Generate a block-based OTA if possible.  Will fall back to a
+      file-based OTA if the target_files is older and doesn't support
+      block-based OTAs.
+
 """
 
 import sys
@@ -97,6 +102,7 @@ OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
 OPTIONS.two_step = False
 OPTIONS.no_signing = False
+OPTIONS.block_based = False
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -386,6 +392,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
       info_dict=OPTIONS.info_dict)
 
   has_recovery_patch = HasRecoveryPatch(input_zip)
+  block_based = OPTIONS.block_based and has_recovery_patch
 
   if not OPTIONS.omit_prereq:
     ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
@@ -447,7 +454,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
   script.ShowProgress(system_progress, 30)
-  if has_recovery_patch:
+  if block_based:
     img_from_target_files.AddSystem(output_zip, sparse=False)
     script.WriteRawImage("/system", "system.img")
   else:
@@ -455,7 +462,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     script.Mount("/system")
     if not has_recovery_patch:
       script.UnpackPackageDir("recovery", "/system")
-      script.UnpackPackageDir("system", "/system")
+    script.UnpackPackageDir("system", "/system")
 
     symlinks = CopySystemFiles(input_zip, output_zip)
     script.MakeSymlinks(symlinks)
@@ -666,7 +673,6 @@ else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
   script.AssertRecoveryFingerprint(source_fp, target_fp)
 
   if updating_boot:
-    total_verify_size += OPTIONS.info_dict["boot_size"]
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
     print "boot      target: %d  source: %d  diff: %d" % (
@@ -749,7 +755,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_has_recovery_patch = HasRecoveryPatch(target_zip)
   source_has_recovery_patch = HasRecoveryPatch(source_zip)
 
-  if target_has_recovery_patch and source_has_recovery_patch:
+  if (OPTIONS.block_based and
+      target_has_recovery_patch and
+      source_has_recovery_patch):
     return WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip)
 
   source_version = OPTIONS.source_info_dict["recovery_api_version"]
@@ -922,9 +930,6 @@ else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
   device_specific.IncrementalOTA_VerifyBegin()
 
   script.ShowProgress(0.1, 0)
-  total_verify_size = float(sum([i[1].size for i in patch_list]) + 1)
-  if updating_boot:
-    total_verify_size += source_boot.size
   so_far = 0
 
   for tf, sf, size, patch_sha in patch_list:
@@ -932,7 +937,6 @@ else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
       script.SkipNextActionIfTargetExists(tf.name, tf.sha1)
     script.PatchCheck("/"+sf.name, tf.sha1, sf.sha1)
     so_far += sf.size
-    script.SetProgress(so_far / total_verify_size)
 
   if updating_boot:
     d = common.Difference(target_boot, source_boot)
@@ -949,7 +953,6 @@ else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
                        source_boot.size, source_boot.sha1,
                        target_boot.size, target_boot.sha1))
     so_far += source_boot.size
-    script.SetProgress(so_far / total_verify_size)
 
   if patch_list or updating_recovery or updating_boot:
     script.CacheFreeSpaceCheck(largest_source_size)
@@ -1152,8 +1155,10 @@ def main(argv):
       OPTIONS.worker_threads = int(a)
     elif o in ("-2", "--two_step"):
       OPTIONS.two_step = True
-    elif o in ("--no_signing"):
+    elif o == "--no_signing":
       OPTIONS.no_signing = True
+    elif o == "--block":
+      OPTIONS.block_based = True
     else:
       return False
     return True
@@ -1170,6 +1175,7 @@ def main(argv):
                                               "aslr_mode=",
                                               "two_step",
                                               "no_signing",
+                                              "block",
                                               ],
                              extra_option_handler=option_handler)
 
