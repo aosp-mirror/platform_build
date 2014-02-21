@@ -22,6 +22,8 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_mips64/device.mk)
 
+PRODUCT_RUNTIMES := runtime_libart_default
+
 include $(SRC_TARGET_DIR)/product/emulator.mk
 
 # Overrides
