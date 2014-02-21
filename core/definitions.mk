@@ -2129,17 +2129,19 @@ endef
 #    $(1)  target
 #    $(2)  stable api file
 #    $(3)  api file to be tested
-#    $(4)  arguments for apicheck
-#    $(5)  command to run if apicheck failed
-#    $(6)  target dependent on this api check
-#    $(7)  additional dependencies
+#    $(4)  removed stable api file
+#    $(5)  removed api file to be tested
+#    $(6)  arguments for apicheck
+#    $(7)  command to run if apicheck failed
+#    $(8)  target dependent on this api check
+#    $(9)  additional dependencies
 define check-api
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(APICHECK) $(7)
+$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(5) $(APICHECK) $(9)
 	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK_COMMAND) $(4) $(2) $(3) || ( $(5) ; exit 38 ) )
+	$(hide) ( $(APICHECK_COMMAND) $(6) $(2) $(3) $(4) $(5) || ( $(7) ; exit 38 ) )
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) touch $$@
-$(6): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
+$(8): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
 endef
 
 ## Whether to build from source if prebuilt alternative exists
