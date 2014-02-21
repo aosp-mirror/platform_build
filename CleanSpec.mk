@@ -224,6 +224,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Rename persist.sys.dalvik.vm.lib to allow new default
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# KKWT development
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
