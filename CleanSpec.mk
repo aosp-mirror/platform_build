@@ -217,6 +217,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # 4.4.2
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# "L" and beyond.
 # Make libart the default runtime
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
