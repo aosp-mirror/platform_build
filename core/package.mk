@@ -31,6 +31,8 @@ else
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 endif
 
+LOCAL_NO_2ND_ARCH_MODULE_SUFFIX := true
+
 # If this makefile is being read from within an inheritance,
 # use the new values.
 skip_definition:=
@@ -470,5 +472,7 @@ endif # skip_definition
 
 # Reset internal variables.
 all_res_assets :=
+
+LOCAL_NO_2ND_ARCH_MODULE_SUFFIX :=
 
 LOCAL_2ND_ARCH_VAR_PREFIX :=
