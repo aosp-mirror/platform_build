@@ -23,6 +23,7 @@ PRODUCT_PACKAGES += \
     atrace \
     bootanimation \
     debuggerd \
+    debuggerd64 \
     dumpstate \
     dumpsys \
     gralloc.default \
@@ -59,6 +60,7 @@ PRODUCT_PACKAGES += \
     libui \
     libutils \
     linker \
+    linker64 \
     lmkd \
     logcat \
     logwrapper \

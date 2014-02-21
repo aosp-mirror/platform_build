@@ -10,7 +10,6 @@ endif
 endif
 
 LOCAL_NO_2ND_ARCH_MODULE_SUFFIX := true
-
 # check if primary arch is supported
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
