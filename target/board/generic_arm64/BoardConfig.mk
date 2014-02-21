@@ -59,3 +59,5 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 # Temporarily disable linking against compiler_rt until there is an arm64
 # version
 WITHOUT_LIBCOMPILER_RT := true
+
+BUILD_EMULATOR := false
