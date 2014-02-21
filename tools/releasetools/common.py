@@ -356,7 +356,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
     data = BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
                               os.path.join(unpack_dir, fs_config),
-                              info_dict))
+                              info_dict)
     if data:
       return File(name, data)
     return None
