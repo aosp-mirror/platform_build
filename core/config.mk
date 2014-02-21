@@ -459,8 +459,8 @@ ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
   TARGET_DEFAULT_JAVA_LIBRARIES := core core-junit ext framework framework2
 endif
 
-# define llvm tools and global flags
-include $(BUILD_SYSTEM)/llvm_config.mk
+# define clang/llvm tools and global flags
+include $(BUILD_SYSTEM)/clang/config.mk
 
 # ###############################################################
 # Collect a list of the SDK versions that we could compile against

@@ -29,7 +29,7 @@ include $(BUILD_SYSTEM)/dynamic_binary.mk
 # Define PRIVATE_ variables from global vars
 my_target_global_ld_dirs := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LD_DIRS)
 ifeq ($(LOCAL_CLANG),true)
-my_target_global_ldflags := $(CLANG_TARGET_GLOBAL_LDFLAGS)
+my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_LDFLAGS)
 else
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
 endif
