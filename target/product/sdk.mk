@@ -18,16 +18,15 @@ PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
 	ApiDemos \
-	ConnectivityTest \
 	CubeLiveWallpapers \
 	CustomLocale \
 	Development \
 	DevelopmentSettings \
 	Dialer \
+	EmulatorSmokeTests \
 	Fallback \
 	Gallery \
 	GestureBuilder \
-	GpsLocationTest \
 	LegacyCamera \
 	librs_jni \
 	libwnndict \
@@ -43,7 +42,6 @@ PRODUCT_PACKAGES := \
 	SdkSetup \
 	SmokeTest \
 	SmokeTestApp \
-	SmsTest \
 	SoftKeyboard \
 	sqlite3 \
 	SystemUI \
