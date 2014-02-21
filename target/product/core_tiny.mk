@@ -20,18 +20,12 @@ PRODUCT_PACKAGES := \
     Bluetooth \
     CertInstaller \
     FusedLocation \
-    InputDevices \
-    bluetooth-health
+    InputDevices
 
 PRODUCT_PACKAGES += \
-    audio \
     clatd \
     clatd.conf \
-    dhcpcd.conf \
-    network \
-    pand \
-    pppd \
-    sdptool
+    pppd
 
 PRODUCT_PACKAGES += \
     audio.primary.default \
