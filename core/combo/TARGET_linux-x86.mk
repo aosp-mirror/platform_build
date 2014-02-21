@@ -54,9 +54,9 @@ $(combo_2nd_arch_prefix)TARGET_LD := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREF
 $(combo_2nd_arch_prefix)TARGET_STRIP := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)strip$(HOST_EXECUTABLE_SUFFIX)
 
 ifeq ($(TARGET_BUILD_VARIANT),user)
-$(combo_2nd_arch_prefix)TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-debug $< -o $@
+$(combo_2nd_arch_prefix)TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-all $< -o $@
 else
-$(combo_2nd_arch_prefix)TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-debug $< -o $@ && \
+$(combo_2nd_arch_prefix)TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-all $< -o $@ && \
     $(PRIVATE_OBJCOPY) --add-gnu-debuglink=$< $@
 endif
 

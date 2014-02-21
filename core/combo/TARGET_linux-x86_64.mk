@@ -56,9 +56,9 @@ TARGET_LD := $(TARGET_TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
 TARGET_STRIP := $(TARGET_TOOLS_PREFIX)strip$(HOST_EXECUTABLE_SUFFIX)
 
 ifeq ($(TARGET_BUILD_VARIANT),user)
-TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-debug $< -o $@
+TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-all $< -o $@
 else
-TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-debug $< -o $@ && \
+TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-all $< -o $@ && \
 	$(PRIVATE_OBJCOPY) --add-gnu-debuglink=$< $@
 endif
 

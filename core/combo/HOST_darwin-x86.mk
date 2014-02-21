@@ -95,7 +95,7 @@ HOST_CXX := g++
 endif # $(HOST_TOOLCHAIN_PREFIX)-gcc exists
 HOST_AR := $(AR)
 HOST_STRIP := $(STRIP)
-HOST_STRIP_COMMAND = $(HOST_STRIP) --strip-debug $< -o $@
+HOST_STRIP_COMMAND = $(HOST_STRIP) --strip-all $< -o $@
 
 HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version) -DMACOSX_DEPLOYMENT_TARGET=$(mac_sdk_version)
 HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -Wl,-syslibroot,$(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
