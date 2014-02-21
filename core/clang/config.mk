@@ -2,8 +2,8 @@ ifeq (true,$(FORCE_BUILD_LLVM_COMPONENTS))
 LLVM_PREBUILTS_PATH := $(BUILD_OUT_EXECUTABLES)
 LLVM_PREBUILTS_HEADER_PATH := external/clang/lib/include
 else
-LLVM_PREBUILTS_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/3.3/bin
-LLVM_PREBUILTS_HEADER_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/3.3/lib/clang/3.3/include/
+LLVM_PREBUILTS_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/3.4/bin
+LLVM_PREBUILTS_HEADER_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/3.4/lib/clang/3.4/include/
 endif
 
 CLANG := $(LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
