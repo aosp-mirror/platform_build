@@ -587,6 +587,8 @@ $(foreach m,$(ALL_MODULES), \
     $(eval h_m := $(filter $(HOST_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
     $(eval h_r := $(filter $(HOST_OUT_ROOT)/%, $(r))) \
+    $(eval t_m := $(filter-out $(t_r), $(t_m))) \
+    $(eval h_m := $(filter-out $(h_r), $(h_m))) \
     $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
     $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
    ) \
