@@ -10,6 +10,7 @@ TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
 TARGET_PRELINK_MODULE := false
+TARGET_USES_64_BIT_BINDER := true
 
 # The IA emulator (qemu) uses the Goldfish devices
 HAVE_HTC_AUDIO_DRIVER := true
