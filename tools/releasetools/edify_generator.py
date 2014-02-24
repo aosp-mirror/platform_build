@@ -190,6 +190,16 @@ class EdifyGenerator(object):
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
                           p.device, p.length, p.mount_point))
 
+  def WipeBlockDevice(self, partition):
+    if partition != "/system":
+      raise ValueError(("WipeBlockDevice currently only works "
+                        "on /system, not %s\n") % (partition,))
+    fstab = self.info.get("fstab", None)
+    size = self.info.get("system_size", None)
+    device = fstab[partition].device
+
+    self.script.append('wipe_block_device("%s", %s);' % (device, size))
+
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""
     if not file_list: return
@@ -224,7 +234,7 @@ class EdifyGenerator(object):
     cmd = "".join(cmd)
     self.script.append(self._WordWrap(cmd))
 
-  def WriteRawImage(self, mount_point, fn):
+  def WriteRawImage(self, mount_point, fn, mapfn=None):
     """Write the given package file into the partition for the given
     mount point."""
 
@@ -238,8 +248,13 @@ class EdifyGenerator(object):
             'write_raw_image(package_extract_file("%(fn)s"), "%(device)s");'
             % args)
       elif partition_type == "EMMC":
-        self.script.append(
-            'package_extract_file("%(fn)s", "%(device)s");' % args)
+        if mapfn:
+          args["map"] = mapfn
+          self.script.append(
+              'package_extract_file("%(fn)s", "%(device)s", "%(map)s");' % args)
+        else:
+          self.script.append(
+              'package_extract_file("%(fn)s", "%(device)s");' % args)
       else:
         raise ValueError("don't know how to write \"%s\" partitions" % (p.fs_type,))
 
@@ -309,7 +324,9 @@ class EdifyGenerator(object):
     common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-binary",
                        data, perms=0755)
 
-  def Syspatch(self, filename, size, target_sha, source_sha, patchfile):
+  def Syspatch(self, filename, target_mapfile, target_sha,
+               source_mapfile, source_sha, patchfile):
     """Applies a compressed binary patch to a block device."""
-    call = 'syspatch("%s", "%s", "%s", "%s", "%s");'
-    self.script.append(call % (filename, size, target_sha, source_sha, patchfile))
+    call = 'syspatch("%s", "%s", "%s", "%s", "%s", "%s");'
+    self.script.append(call % (filename, target_mapfile, target_sha,
+                               source_mapfile, source_sha, patchfile))
