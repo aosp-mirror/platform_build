@@ -1,0 +1,1 @@
+type qemud_socket, file_type;
