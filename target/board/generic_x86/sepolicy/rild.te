@@ -1,0 +1,2 @@
+allow rild qemu_device:chr_file rw_file_perms;
+unix_socket_connect(rild, qemud, qemud)
