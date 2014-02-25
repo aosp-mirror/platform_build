@@ -1,0 +1,4 @@
+/dev/qemu_.*		u:object_r:qemu_device:s0
+/dev/socket/qemud	u:object_r:qemud_socket:s0
+/system/bin/qemud	u:object_r:qemud_exec:s0
+/sys/qemu_trace(/.*)?	--	u:object_r:sysfs_writable:s0

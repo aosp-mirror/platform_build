@@ -45,8 +45,15 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 BOARD_SEPOLICY_DIRS += build/target/board/generic_x86/sepolicy
 BOARD_SEPOLICY_UNION += \
+        adbd.te \
+        device.te \
         domain.te \
+        file.te \
+        file_contexts \
         healthd.te \
         installd.te \
+        mediaserver.te \
+        qemud.te \
+        rild.te \
         system_server.te \
         zygote.te
