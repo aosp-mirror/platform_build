@@ -5,7 +5,6 @@ _64_bit_directory_blacklist += \
 	external/conscrypt \
 	external/neven \
 	external/svox \
-	libcore \
 	packages \
 
 # Chromium/V8: needs 64-bit support
