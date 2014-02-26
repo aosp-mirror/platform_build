@@ -7,6 +7,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - m:       Makes from the top of the tree.
 - mm:      Builds all of the modules in the current directory, but not their dependencies.
 - mmm:     Builds all of the modules in the supplied directories, but not their dependencies.
+           To limit the modules being built use the syntax: mmm dir/:target1,target2.
 - mma:     Builds all of the modules in the current directory, and their dependencies.
 - mmma:    Builds all of the modules in the supplied directories, and their dependencies.
 - cgrep:   Greps on all local C/C++ files.
