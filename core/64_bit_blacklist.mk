@@ -18,6 +18,7 @@ _64_bit_directory_blacklist += \
 # misc build errors
 _64_bit_directory_blacklist += \
 	external/bluetooth/bluedroid \
+	external/oprofile/daemon \
 	external/oprofile/opcontrol \
 	external/tcpdump \
 	frameworks/av \
