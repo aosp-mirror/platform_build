@@ -56,3 +56,17 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+
+BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
+BOARD_SEPOLICY_UNION += \
+        adbd.te \
+        bootanim.te \
+        device.te \
+        domain.te \
+        file.te \
+        file_contexts \
+        mediaserver.te \
+        qemud.te \
+        rild.te \
+        surfaceflinger.te \
+        system_server.te
