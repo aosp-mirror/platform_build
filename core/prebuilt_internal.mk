@@ -86,12 +86,13 @@ endif  # prebuilt_module_is_a_library
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE
 ifdef LOCAL_SHARED_LIBRARIES
-$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
+$(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
+  $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
 
 # We also need the LOCAL_BUILT_MODULE dependency,
 # since we use -rpath-link which points to the built module's path.
 built_shared_libraries := \
-    $(addprefix $($(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
+    $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
     $(addsuffix $($(my_prefix)SHLIB_SUFFIX), \
         $(LOCAL_SHARED_LIBRARIES)))
 $(LOCAL_BUILT_MODULE) : $(built_shared_libraries)
@@ -213,5 +214,3 @@ endif # TARGET JAVA_LIBRARIES
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=
-
-LOCAL_2ND_ARCH_VAR_PREFIX :=
