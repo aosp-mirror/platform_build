@@ -30,11 +30,6 @@ _64_bit_directory_blacklist += \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
 
-# depends on libnl_2
-_64_bit_directory_blacklist += \
-	external/android-clat \
-	external/wpa_supplicant_8 \
-
 # depends on frameworks/av
 _64_bit_directory_blacklist += \
 	external/srec \
