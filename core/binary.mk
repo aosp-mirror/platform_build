@@ -414,23 +414,30 @@ proto_generated_objects :=
 proto_generated_headers :=
 ifneq ($(proto_sources),)
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
-proto_generated_cc_sources_dir := $(intermediates)/proto
+proto_generated_cc_sources_dir := $(generated_sources_dir)/proto
 proto_generated_cc_sources := $(addprefix $(proto_generated_cc_sources_dir)/, \
     $(patsubst %.proto,%.pb.cc,$(proto_sources_fullpath)))
-proto_generated_objects := $(patsubst %.cc,%.o, $(proto_generated_cc_sources))
+proto_generated_headers := $(patsubst %.pb.cc,%.pb.h, $(proto_generated_cc_sources))
+proto_generated_obj_dir := $(intermediates)/proto
+proto_generated_objects := $(addprefix $(proto_generated_obj_dir)/, \
+    $(patsubst %.proto,%.pb.o,$(proto_sources_fullpath)))
 
+# Ensure the transform-proto-to-cc rule is only defined once in multilib build.
+ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
 $(proto_generated_cc_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
 $(proto_generated_cc_sources): PRIVATE_PROTO_CC_OUTPUT_DIR := $(proto_generated_cc_sources_dir)
 $(proto_generated_cc_sources): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
 $(proto_generated_cc_sources): $(proto_generated_cc_sources_dir)/%.pb.cc: %.proto $(PROTOC)
 	$(transform-proto-to-cc)
 
-proto_generated_headers := $(patsubst %.pb.cc,%.pb.h, $(proto_generated_cc_sources))
 $(proto_generated_headers): $(proto_generated_cc_sources_dir)/%.pb.h: $(proto_generated_cc_sources_dir)/%.pb.cc
+
+$(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined := true
+endif  # transform-proto-to-cc rule included only once
 
 $(proto_generated_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(proto_generated_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(proto_generated_objects): $(proto_generated_cc_sources_dir)/%.o: $(proto_generated_cc_sources_dir)/%.cc $(proto_generated_headers)
+$(proto_generated_objects): $(proto_generated_obj_dir)/%.o: $(proto_generated_cc_sources_dir)/%.cc $(proto_generated_headers)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(proto_generated_objects:%.o=%.P)
 
@@ -441,7 +448,7 @@ my_static_libraries += libprotobuf-cpp-2.3.0-full
 else
 my_static_libraries += libprotobuf-cpp-2.3.0-lite
 endif
-endif
+endif  # $(proto_sources) non-empty
 
 
 ###########################################################
