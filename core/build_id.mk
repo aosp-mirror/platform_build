@@ -18,6 +18,6 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-BUILD_ID := KK
+BUILD_ID := KTU58
 
 DISPLAY_BUILD_NUMBER := true
