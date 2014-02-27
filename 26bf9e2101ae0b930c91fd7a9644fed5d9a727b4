@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c58ad41_e89853ec",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-27T23:44:07Z",
+      "side": 1,
+      "message": "this seems... weird. time to rename?",
+      "revId": "26bf9e2101ae0b930c91fd7a9644fed5d9a727b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c26d1b5_2ab086d4",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-27T23:44:07Z",
+      "side": 1,
+      "message": "shouldn\u0027t this have a toolchaindir2 line too?",
+      "revId": "26bf9e2101ae0b930c91fd7a9644fed5d9a727b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c5da930_67d9329a",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-27T23:44:07Z",
+      "side": 1,
+      "message": "i\u0027m very confused at this point.",
+      "revId": "26bf9e2101ae0b930c91fd7a9644fed5d9a727b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c5da930_a7f60aff",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 976,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-27T23:44:07Z",
+      "side": 1,
+      "message": "shouldn\u0027t this have GDB and GDB64 too?",
+      "revId": "26bf9e2101ae0b930c91fd7a9644fed5d9a727b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c5da930_27fa1ae2",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1035,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-27T23:44:07Z",
+      "side": 1,
+      "message": "just set a which_gdb variable here and factor out the duplicated call to after the \"fi\"?",
+      "revId": "26bf9e2101ae0b930c91fd7a9644fed5d9a727b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
