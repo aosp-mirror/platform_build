@@ -123,7 +123,8 @@ function setpaths()
     export TARGET_GCC_VERSION=$targetgccversion
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
-    export ANDROID_EABI_TOOLCHAIN=
+    export ANDROID_TOOLCHAIN=
+    export ANDROID_TOOLCHAIN_2ND_ARCH=
     local ARCH=$(get_build_var TARGET_ARCH)
     case $ARCH in
         x86) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
@@ -132,7 +133,8 @@ function setpaths()
             ;;
         arm) toolchaindir=arm/arm-linux-androideabi-$targetgccversion/bin
             ;;
-        arm64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin
+        arm64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin;
+               toolchaindir2=arm/arm-linux-androideabi-$targetgccversion/bin
             ;;
         mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
             ;;
@@ -144,16 +146,21 @@ function setpaths()
             ;;
     esac
     if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
-        export ANDROID_EABI_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
+        export ANDROID_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
     fi
 
-    unset ARM_EABI_TOOLCHAIN ARM_EABI_TOOLCHAIN_PATH
+    if [ -d "$gccprebuiltdir/$toolchaindir2" ]; then
+        export ANDROID_TOOLCHAIN_2ND_ARCH=$gccprebuiltdir/$toolchaindir2
+    fi
+
+    unset ANDROID_KERNEL_TOOLCHAIN_PATH
     case $ARCH in
         arm)
+            # Legacy toolchain configuration used for ARM kernel compilation
             toolchaindir=arm/arm-eabi-$targetgccversion/bin
             if [ -d "$gccprebuiltdir/$toolchaindir" ]; then
-                 export ARM_EABI_TOOLCHAIN="$gccprebuiltdir/$toolchaindir"
-                 ARM_EABI_TOOLCHAIN_PATH=":$gccprebuiltdir/$toolchaindir"
+                 ANDROID_KERNEL_TOOLCHAIN_PATH="$gccprebuiltdir/$toolchaindir"
+                 export ARM_EABI_TOOLCHAIN=$ANDROID_KERNEL_TOOLCHAIN_PATH
             fi
             ;;
         mips) toolchaindir=mips/mips-eabi-4.4.3/bin
@@ -163,10 +170,9 @@ function setpaths()
             ;;
     esac
 
-    export ANDROID_TOOLCHAIN=$ANDROID_EABI_TOOLCHAIN
     export ANDROID_QTOOLS=$T/development/emulator/qtools
     export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
-    export ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN$ARM_EABI_TOOLCHAIN_PATH$CODE_REVIEWS:$ANDROID_DEV_SCRIPTS:
+    export ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN:$ANDROID_KERNEL_TOOLCHAIN_PATH$CODE_REVIEWS:$ANDROID_DEV_SCRIPTS:
     export PATH=$ANDROID_BUILD_PATHS$PATH
 
     unset ANDROID_JAVA_TOOLCHAIN
@@ -919,9 +925,39 @@ function stacks()
 
 function gdbwrapper()
 {
-    $ANDROID_TOOLCHAIN/$GDB -x "$@"
+    local GDB_CMD="$1"
+    shift 1
+    $GDB_CMD -x "$@"
 }
 
+# process the symbolic link of /proc/$PID/exe and use the host file tool to
+# determine whether it is a 32-bit or 64-bit executable. It returns "" or "64"
+# which can be conveniently used as suffix.
+function is64bit()
+{
+    local PID="$1"
+    if [ "$PID" ] ; then
+        local EXE=`adb shell ls -l /proc/$PID/exe \
+                   | tr -d '\r' \
+                   | cut -d'>' -f2 \
+                   | tr -d ' ' \
+                   | cut -d'/' -f4`
+
+        local OUT_EXE_SYMBOLS=$(get_abs_build_var TARGET_OUT_EXECUTABLES_UNSTRIPPED)
+        local IS64BIT=`file $OUT_EXE_SYMBOLS/$EXE | grep "64-bit"`
+        if [ "$IS64BIT" != "" ]; then
+            echo "64"
+        else
+            echo ""
+        fi
+    else
+        echo ""
+    fi
+}
+
+# gdbclient now determines whether the user wants to debug a 32-bit or 64-bit
+# executable, set up the approriate gdbserver, then invokes the proper host
+# gdb.
 function gdbclient()
 {
    local OUT_ROOT=$(get_abs_build_var PRODUCT_OUT)
@@ -933,7 +969,7 @@ function gdbclient()
    local GDB
    case "$ARCH" in
        arm) GDB=arm-linux-androideabi-gdb;;
-       arm64) GDB=aarch64-linux-android-gdb;;
+       arm64) GDB=arm-linux-androideabi-gdb; GDB64=aarch64-linux-android-gdb;;
        mips) GDB=mipsel-linux-android-gdb;;
        mips64) GDB=mipsel-linux-android-gdb;;
        x86) GDB=x86_64-linux-android-gdb;;
@@ -976,7 +1012,8 @@ function gdbclient()
                fi
            fi
            adb forward "tcp$PORT" "tcp$PORT"
-           adb shell gdbserver $PORT --attach $PID &
+           local USE64BIT="$(is64bit $PID)"
+           adb shell gdbserver$USE64BIT $PORT --attach $PID &
            sleep 2
        else
                echo ""
@@ -988,12 +1025,23 @@ function gdbclient()
        fi
 
        echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
-       echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
+       echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS$USE64BIT:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
        echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       gdbwrapper "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       local WHICH_GDB=
+       # 64-bit exe found
+       if [ "$USE64BIT" != "" ] ; then
+           WHICH_GDB=$ANDROID_TOOLCHAIN/$GDB64
+       # 32-bit exe / 32-bit platform
+       elif [ "$(get_build_var TARGET_2ND_ARCH)" = "" ]; then
+           WHICH_GDB=$ANDROID_TOOLCHAIN/$GDB
+       # 32-bit exe / 64-bit platform
+       else
+           WHICH_GDB=$ANDROID_TOOLCHAIN_2ND_ARCH/$GDB
+       fi
+       gdbwrapper $WHICH_GDB "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
