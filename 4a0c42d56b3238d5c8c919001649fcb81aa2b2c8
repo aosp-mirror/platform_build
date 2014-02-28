@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "dc0199f4_358580ad",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-02-28T16:35:19Z",
+      "side": 1,
+      "message": "Yeah... The comment misled me. What is it supposed to mean ?",
+      "parentUuid": "3c52b523_893c3dd1",
+      "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c58ad41_3c38e9ff",
         "filename": "core/64_bit_blacklist.mk",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2014-02-28T16:29:26Z",
       "side": 1,
       "message": "weren\u0027t we going to remove this?",
+      "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dc0199f4_f576f818",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-02-28T16:35:19Z",
+      "side": 1,
+      "message": "Yeah, I\u0027ll get rid of it in a follow up.\n\nActually, it builds for 64 bit now, so i\u0027ll get rid of it from the blacklist anyway.",
+      "parentUuid": "7c58ad41_3c38e9ff",
       "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
