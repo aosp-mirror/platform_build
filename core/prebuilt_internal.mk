@@ -20,9 +20,13 @@ endif
 LOCAL_DONT_CHECK_MODULE := true
 
 ifdef LOCAL_PREBUILT_MODULE_FILE
-my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
+  my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
 else
-my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+  ifdef LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+    my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+  else
+    my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+  endif
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
