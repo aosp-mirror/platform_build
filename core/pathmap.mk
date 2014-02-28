@@ -29,10 +29,8 @@
 pathmap_INCL := \
     bootloader:bootable/bootloader/legacy/include \
     camera:system/media/camera/include \
-    corecg:external/skia/include/core \
     frameworks-base:frameworks/base/include \
     frameworks-native:frameworks/native/include \
-    graphics:external/skia/include/core \
     libc:bionic/libc/include \
     libhardware:hardware/libhardware/include \
     libhardware_legacy:hardware/libhardware_legacy/include \
