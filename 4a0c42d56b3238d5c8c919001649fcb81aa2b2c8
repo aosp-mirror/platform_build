@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c52b523_c942355b",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-28T16:29:26Z",
+      "side": 1,
+      "message": "btw, this comment misled maco the other day. he thought it meant that any code that implements native methods can\u0027t be built for 64-bit :-(",
+      "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c52b523_893c3dd1",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-28T16:29:26Z",
+      "side": 1,
+      "message": "if it builds, why are you adding it to the blacklist? has ccross\u0027 comment confused you too?",
+      "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c58ad41_3c38e9ff",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-02-28T16:29:26Z",
+      "side": 1,
+      "message": "weren\u0027t we going to remove this?",
+      "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
