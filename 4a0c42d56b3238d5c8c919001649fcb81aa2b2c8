@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "bc5ea529_f3fde287",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-01T18:06:28Z",
+      "side": 1,
+      "message": "I think what I meant was that these directories link against libnativehelper, which wasn\u0027t available for 64-bit at the time, but that may have been fixed even before I submitted this file.  Anything that builds, regardless of the ability to run and test, should be removed from the blacklist.",
+      "parentUuid": "dc0199f4_d5fe5c19",
+      "revId": "4a0c42d56b3238d5c8c919001649fcb81aa2b2c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c58ad41_3c38e9ff",
         "filename": "core/64_bit_blacklist.mk",
         "patchSetId": 1
