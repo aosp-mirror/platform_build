@@ -118,15 +118,14 @@ endef
 
 ###########################################################
 ## Retrieve the directory of the current makefile
-## Must be called before including any other makefile!!
 ###########################################################
 
 # Figure out where we are.
 define my-dir
 $(strip \
   $(eval LOCAL_MODULE_MAKEFILE := $$(lastword $$(MAKEFILE_LIST))) \
-  $(if $(filter $(BUILD_SYSTEM)/% $(OUT_DIR)/%,$(LOCAL_MODULE_MAKEFILE)), \
-    $(error my-dir must be called before including any other makefile.) \
+  $(if $(filter $(CLEAR_VARS),$(LOCAL_MODULE_MAKEFILE)), \
+    $(error LOCAL_PATH must be set before including $$(CLEAR_VARS)) \
    , \
     $(patsubst %/,%,$(dir $(LOCAL_MODULE_MAKEFILE))) \
    ) \
@@ -155,7 +154,6 @@ endef
 
 ###########################################################
 ## Retrieve a list of all makefiles immediately below your directory
-## Must be called before including any other makefile!!
 ###########################################################
 
 define all-subdir-makefiles
@@ -165,7 +163,6 @@ endef
 ###########################################################
 ## Look in the named list of directories for makefiles,
 ## relative to the current directory.
-## Must be called before including any other makefile!!
 ###########################################################
 
 # $(1): List of directories to look for under this directory
