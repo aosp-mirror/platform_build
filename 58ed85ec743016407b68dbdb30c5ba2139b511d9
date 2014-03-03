@@ -34,6 +34,24 @@
       "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c0a6d15_7f8ac099",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1354,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-03T18:05:15Z",
+      "side": 1,
+      "message": "Another good catch. I don\u0027t see it either, but i assume my install is messed up because it seems to have an infinite symlink cycle.\n\nAarggh, fuuuuuuuuuuuu mac OS.",
+      "parentUuid": "3c52b523_3c3a1ee1",
+      "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
