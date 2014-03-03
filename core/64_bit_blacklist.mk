@@ -20,7 +20,6 @@ _64_bit_directory_blacklist += \
 	external/oprofile/opcontrol \
 	frameworks/av \
 	frameworks/base \
-	frameworks/native/cmds/idmap \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
 
