@@ -16,6 +16,24 @@
       "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c52b523_3c3a1ee1",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1354,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-03T17:59:31Z",
+      "side": 1,
+      "message": "Good catch.\nI don\u0027t see $JAVA_HOME/release in the JDK 6 on my Mac.",
+      "parentUuid": "7c0a6d15_6d5c5d6a",
+      "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
