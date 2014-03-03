@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c0a6d15_6d5c5d6a",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1354,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-03T11:56:36Z",
+      "side": 1,
+      "message": "This grep statement is incorrect. It should be \"JAVA_VERSION.*1\\.6\", and \"1\\.7\" below. Otherwise, it will produce spurious matches with the SOURCE sha line in the versions file.",
+      "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
