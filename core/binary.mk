@@ -454,22 +454,38 @@ endif  # $(proto_sources) non-empty
 
 
 ###########################################################
-## YACC: Compile .y files to .cpp and the to .o.
+## YACC: Compile .y and .yy files to .cpp and the to .o.
 ###########################################################
 
-yacc_sources := $(filter %.y,$(my_src_files))
-yacc_cpps := $(addprefix \
-    $(intermediates)/,$(yacc_sources:.y=$(LOCAL_CPP_EXTENSION)))
+y_yacc_sources := $(filter %.y,$(my_src_files))
+y_yacc_cpps := $(addprefix \
+    $(intermediates)/,$(y_yacc_sources:.y=$(LOCAL_CPP_EXTENSION)))
+
+yy_yacc_sources := $(filter %.yy,$(my_src_files))
+yy_yacc_cpps := $(addprefix \
+    $(intermediates)/,$(yy_yacc_sources:.yy=$(LOCAL_CPP_EXTENSION)))
+
+yacc_cpps := $(y_yacc_cpps) $(yy_yacc_cpps)
 yacc_headers := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.h)
 yacc_objects := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.o)
 
-ifneq ($(strip $(yacc_cpps)),)
-$(yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
+ifneq ($(strip $(y_yacc_cpps)),)
+$(y_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.y \
     $(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
 $(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
+endif
 
+ifneq ($(strip $(yy_yacc_cpps)),)
+$(yy_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
+    $(TOPDIR)$(LOCAL_PATH)/%.yy \
+    $(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
+$(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
+endif
+
+ifneq ($(strip $(yacc_cpps)),)
 $(yacc_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(yacc_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(yacc_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
@@ -477,19 +493,33 @@ $(yacc_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 endif
 
 ###########################################################
-## LEX: Compile .l files to .cpp and then to .o.
+## LEX: Compile .l and .ll files to .cpp and then to .o.
 ###########################################################
 
-lex_sources := $(filter %.l,$(my_src_files))
-lex_cpps := $(addprefix \
-    $(intermediates)/,$(lex_sources:.l=$(LOCAL_CPP_EXTENSION)))
+l_lex_sources := $(filter %.l,$(my_src_files))
+l_lex_cpps := $(addprefix \
+    $(intermediates)/,$(l_lex_sources:.l=$(LOCAL_CPP_EXTENSION)))
+
+ll_lex_sources := $(filter %.ll,$(my_src_files))
+ll_lex_cpps := $(addprefix \
+    $(intermediates)/,$(ll_lex_sources:.ll=$(LOCAL_CPP_EXTENSION)))
+
+lex_cpps := $(l_lex_cpps) $(ll_lex_cpps)
 lex_objects := $(lex_cpps:$(LOCAL_CPP_EXTENSION)=.o)
 
-ifneq ($(strip $(lex_cpps)),)
-$(lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
+ifneq ($(strip $(l_lex_cpps)),)
+$(l_lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.l
 	$(transform-l-to-cpp)
+endif
 
+ifneq ($(strip $(ll_lex_cpps)),)
+$(ll_lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
+    $(TOPDIR)$(LOCAL_PATH)/%.ll
+	$(transform-l-to-cpp)
+endif
+
+ifneq ($(strip $(lex_cpps)),)
 $(lex_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(lex_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(lex_objects): $(intermediates)/%.o: \
