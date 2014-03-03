@@ -1,5 +1,9 @@
 # Put some miscellaneous rules here
 
+# HACK: clear LOCAL_PATH from including last build target before calling
+# intermedites-dir-for
+LOCAL_PATH := $(BUILD_SYSTEM)
+
 # Pick a reasonable string to use to identify files.
 ifneq "" "$(filter eng.%,$(BUILD_NUMBER))"
   # BUILD_NUMBER has a timestamp in it, which means that
@@ -649,10 +653,6 @@ endef
 ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
 
 INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
-
-# HACK: clear LOCAL_PATH from including last build target before calling
-# intermedites-dir-for
-LOCAL_PATH := $(call my-dir)
 
 recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
 recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
