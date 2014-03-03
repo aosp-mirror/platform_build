@@ -21,7 +21,7 @@ a full OTA is produced.
 
 Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
-  -b  (--board_config)  <file>
+  --board_config  <file>
       Deprecated.
 
   -k (--package_key) <key> Key to use to sign the package (default is
@@ -61,6 +61,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate a block-based OTA if possible.  Will fall back to a
       file-based OTA if the target_files is older and doesn't support
       block-based OTAs.
+
+  -b  (--binary)  <file>
+      Use the given binary as the update-binary in the output package,
+      instead of the binary in the build's target_files.  Use for
+      development only.
 
 """
 
@@ -103,6 +108,7 @@ OPTIONS.worker_threads = 3
 OPTIONS.two_step = False
 OPTIONS.no_signing = False
 OPTIONS.block_based = False
+OPTIONS.updater_binary = None
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -507,7 +513,7 @@ reboot_now("%(bcb_dev)s", "");
 endif;
 endif;
 """ % bcb_dev)
-  script.AddToZip(input_zip, output_zip)
+  script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
 def WritePolicyConfig(file_context, output_zip):
@@ -748,7 +754,7 @@ endif;
 """ % bcb_dev)
 
   script.SetProgress(1)
-  script.AddToZip(target_zip, output_zip)
+  script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
@@ -1127,14 +1133,14 @@ endif;
 endif;
 """ % bcb_dev)
 
-  script.AddToZip(target_zip, output_zip)
+  script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
 
 def main(argv):
 
   def option_handler(o, a):
-    if o in ("-b", "--board_config"):
+    if o == "--board_config":
       pass   # deprecated
     elif o in ("-k", "--package_key"):
       OPTIONS.package_key = a
@@ -1159,6 +1165,8 @@ def main(argv):
       OPTIONS.no_signing = True
     elif o == "--block":
       OPTIONS.block_based = True
+    elif o in ("-b", "--binary"):
+      OPTIONS.updater_binary = a
     else:
       return False
     return True
@@ -1176,6 +1184,7 @@ def main(argv):
                                               "two_step",
                                               "no_signing",
                                               "block",
+                                              "binary=",
                                               ],
                              extra_option_handler=option_handler)
 
