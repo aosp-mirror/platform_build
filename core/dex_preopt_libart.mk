@@ -74,7 +74,7 @@ $(DEFAULT_DEX_PREOPT_BUILT_IMAGE): $(LIBART_TARGET_BOOT_DEX_FILES) $(DEX2OAT_DEP
 		--oat-location=$(patsubst %.art,%.oat,$(LIBART_BOOT_IMAGE)) \
 		--image=$@ --base=$(LIBART_IMG_TARGET_BASE_ADDRESS) \
 		--instruction-set=$(TARGET_ARCH) --instruction-set-features=$(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
-		--host-prefix=$(DEXPREOPT_PRODUCT_DIR_FULL_PATH) --android-root=$(PRODUCT_OUT)/system
+		--android-root=$(PRODUCT_OUT)/system
 
 
 ########################################################################
@@ -93,7 +93,6 @@ $(hide) $(DEX2OAT) \
 	--dex-file=$(2) \
 	--dex-location=$(3) \
 	--oat-file=$(4) \
-	--host-prefix=$(DEXPREOPT_PRODUCT_DIR_FULL_PATH) \
 	--android-root=$(PRODUCT_OUT)/system \
 	--instruction-set=$(TARGET_ARCH) \
 	--instruction-set-features=$(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
