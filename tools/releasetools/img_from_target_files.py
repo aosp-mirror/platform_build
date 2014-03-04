@@ -60,7 +60,7 @@ def AddSystem(output_zip, sparse=True):
   common.ZipWriteStr(output_zip, "system.img", data)
 
 
-def BuildSystem(input_dir, info_dict, sparse=True):
+def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
   print "creating system.img..."
 
   img = tempfile.NamedTemporaryFile()
@@ -87,6 +87,8 @@ def BuildSystem(input_dir, info_dict, sparse=True):
                                 image_props, img.name)
   assert succ, "build system.img image failed"
 
+  mapdata = None
+
   if sparse:
     img.seek(os.SEEK_SET, 0)
     data = img.read()
@@ -95,13 +97,30 @@ def BuildSystem(input_dir, info_dict, sparse=True):
     success, name = build_image.UnsparseImage(img.name, replace=False)
     if not success:
       assert False, "unsparsing system.img failed"
+
+    if map_file:
+      mmap = tempfile.NamedTemporaryFile()
+      mimg = tempfile.NamedTemporaryFile(delete=False)
+      success = build_image.MappedUnsparseImage(
+          img.name, name, mmap.name, mimg.name)
+      if not success:
+        assert False, "creating sparse map failed"
+      os.unlink(name)
+      name = mimg.name
+
+      with open(mmap.name) as f:
+        mapdata = f.read()
+
     try:
       with open(name) as f:
         data = f.read()
     finally:
       os.unlink(name)
 
-  return data
+  if mapdata is None:
+    return data
+  else:
+    return mapdata, data
 
 
 def AddVendor(output_zip):

@@ -1015,7 +1015,7 @@ def MakeSystemPatch(source_file, target_file):
     with open(output_file.name + ".xz") as patch_file:
       patch_data = patch_file.read()
       os.unlink(patch_file.name)
-      return File("system.img.p", patch_data)
+      return File("system.muimg.p", patch_data)
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):

@@ -27,6 +27,8 @@ import sys
 import commands
 import shutil
 
+import simg_map
+
 def RunCommand(cmd):
   """ Echo and run the given command
 
@@ -145,6 +147,13 @@ def UnsparseImage(sparse_image_path, replace=True):
     os.remove(unsparse_image_path)
     return False, None
   return True, unsparse_image_path
+
+def MappedUnsparseImage(sparse_image_path, unsparse_image_path,
+                        map_path, mapped_unsparse_image_path):
+  if simg_map.ComputeMap(sparse_image_path, unsparse_image_path,
+                         map_path, mapped_unsparse_image_path):
+    return False
+  return True
 
 def MakeVerityEnabledImage(out_file, prop_dict):
   """Creates an image that is verifiable using dm-verity.
