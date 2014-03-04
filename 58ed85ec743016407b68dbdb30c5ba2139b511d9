@@ -52,6 +52,24 @@
       "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dc76f9c4_7c698dce",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1354,
+      "author": {
+        "id": 1022430
+      },
+      "writtenOn": "2014-03-04T05:01:41Z",
+      "side": 1,
+      "message": "Interesting issue, and nice catch re: grep pattern. Thank you. Do either of you remember which jdk package you initially installed with (oracle\u0027s or apple\u0027s)?\n\nEither way, I think the less graceful solution I mention in comments above might be best for differing configurations, with an additional dependency that readlink can resolve the output if it\u0027s a symlink.\n\nNarayan and Ying, does that seem like an okay change to avoid a bad path if another user has infinite symlinks that can\u0027t be resolved by readlink?\n\nJust when I think this is a trivial change due to /usr/libexec/java_home dependency...",
+      "parentUuid": "7c0a6d15_7f8ac099",
+      "revId": "58ed85ec743016407b68dbdb30c5ba2139b511d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
