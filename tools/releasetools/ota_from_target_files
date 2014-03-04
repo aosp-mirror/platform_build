@@ -453,8 +453,6 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
 
   if OPTIONS.wipe_user_data:
     system_progress -= 0.1
-    script.ShowProgress(0.1, 10)
-    script.FormatPartition("/data")
 
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
@@ -507,6 +505,10 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
 
   script.UnmountAll()
 
+  if OPTIONS.wipe_user_data:
+    script.ShowProgress(0.1, 10)
+    script.FormatPartition("/data")
+    
   if OPTIONS.two_step:
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "");
@@ -720,10 +722,6 @@ else
 
   device_specific.IncrementalOTA_InstallBegin()
 
-  if OPTIONS.wipe_user_data:
-    script.Print("Erasing user data...")
-    script.FormatPartition("/data")
-
   script.Print("Patching system image...")
   script.Syspatch(system_device,
                   tgt_mapfilename, tgt_sys_sha1,
@@ -757,6 +755,10 @@ else
 
   if OPTIONS.extra_script is not None:
     script.AppendExtra(OPTIONS.extra_script)
+
+  if OPTIONS.wipe_user_data:
+    script.Print("Erasing user data...")
+    script.FormatPartition("/data")
 
   if OPTIONS.two_step:
     script.AppendExtra("""
@@ -994,10 +996,6 @@ else
     script.WriteRawImage("/boot", "boot.img")
     print "writing full boot image (forced by two-step mode)"
 
-  if OPTIONS.wipe_user_data:
-    script.Print("Erasing user data...")
-    script.FormatPartition("/data")
-
   script.Print("Removing unneeded files...")
   script.DeleteFiles(["/"+i[0] for i in verbatim_targets] +
                      ["/"+i for i in sorted(source_data)
@@ -1137,6 +1135,10 @@ else
     tf, sf, size, _ = item
     script.ApplyPatch("/"+sf.name, "-", tf.size, tf.sha1, sf.sha1, "patch/"+sf.name+".p")
   script.SetPermissions("/system/build.prop", 0, 0, 0644, None, None)
+
+  if OPTIONS.wipe_user_data:
+    script.Print("Erasing user data...")
+    script.FormatPartition("/data")
 
   if OPTIONS.two_step:
     script.AppendExtra("""
