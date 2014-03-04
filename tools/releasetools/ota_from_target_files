@@ -621,7 +621,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       src_sys_sha1 = sha1(src_data).hexdigest()
       print "source system sha1:", src_sys_sha1
       src_file.write(src_data)
-      src_data = None
 
       print "building target system image..."
       tgt_file = tempfile.NamedTemporaryFile()
@@ -632,10 +631,14 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       print "target system sha1:", tgt_sys_sha1
       tgt_sys_len = len(tgt_data)
       tgt_file.write(tgt_data)
-      tgt_data = None
 
       system_type, system_device = common.GetTypeAndDevice("/system", OPTIONS.info_dict)
       system_patch = common.MakeSystemPatch(src_file, tgt_file)
+
+      TestBlockPatch(src_data, src_mapdata, system_patch.data, tgt_mapdata, tgt_sys_sha1)
+      src_data = None
+      tgt_data = None
+
       system_patch.AddToZip(output_zip, compression=zipfile.ZIP_STORED)
       src_mapfilename = system_patch.name + ".src.map"
       common.ZipWriteStr(output_zip, src_mapfilename, src_mapdata)
@@ -769,6 +772,66 @@ endif;
   script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
+def ParseMap(map_str):
+  x = map_str.split()
+  assert int(x[0]) == 4096
+  assert int(x[1]) == len(x)-2
+  return int(x[0]), [int(i) for i in x[2:]]
+
+def TestBlockPatch(src_muimg, src_map, patch_data, tgt_map, tgt_sha1):
+  src_blksize, src_regions = ParseMap(src_map)
+  tgt_blksize, tgt_regions = ParseMap(tgt_map)
+
+  with tempfile.NamedTemporaryFile() as src_file,\
+       tempfile.NamedTemporaryFile() as patch_file,\
+       tempfile.NamedTemporaryFile() as tgt_file,\
+       tempfile.NamedTemporaryFile() as src_map_file,\
+       tempfile.NamedTemporaryFile() as tgt_map_file:
+
+    src_total = sum(src_regions) * src_blksize
+    src_file.truncate(src_total)
+    p = 0
+    for i in range(0, len(src_regions), 2):
+      c, dc = src_regions[i:i+2]
+      src_file.write(src_muimg[p:(p+c*src_blksize)])
+      p += c*src_blksize
+      src_file.seek(dc*src_blksize, 1)
+    assert src_file.tell() == src_total
+
+    patch_file.write(patch_data)
+
+    tgt_total = sum(tgt_regions) * tgt_blksize
+    tgt_file.truncate(tgt_total)
+
+    src_map_file.write(src_map)
+    tgt_map_file.write(tgt_map)
+
+    src_file.flush()
+    src_map_file.flush()
+    patch_file.flush()
+    tgt_file.flush()
+    tgt_map_file.flush()
+
+    p = common.Run(["syspatch_host", src_file.name, src_map_file.name,
+                    patch_file.name, tgt_file.name, tgt_map_file.name],
+                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdoutdata, _ = p.communicate()
+    if p.returncode != 0:
+      print stdoutdata
+      raise ValueError("failed to reconstruct target system image from patch")
+
+    h = sha1()
+    for i in range(0, len(tgt_regions), 2):
+      c, dc = tgt_regions[i:i+2]
+      h.update(tgt_file.read(c*tgt_blksize))
+      tgt_file.seek(dc*tgt_blksize, 1)
+
+    if h.hexdigest() != tgt_sha1:
+      raise ValueError("patch reconstructed incorrect target system image")
+
+  print "test of system image patch succeeded"
+
+
 def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_has_recovery_patch = HasRecoveryPatch(target_zip)
   source_has_recovery_patch = HasRecoveryPatch(source_zip)
@@ -859,7 +922,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     if d is None or len(d) > tf.size * OPTIONS.patch_threshold or \
         path not in known_paths:
       # patch is almost as big as the file; don't bother patching
-      # or a patch + rename cannot take place due to the target 
+      # or a patch + rename cannot take place due to the target
       # directory not existing
       tf.AddToZip(output_zip)
       verbatim_targets.append((tf.name, tf.size))
