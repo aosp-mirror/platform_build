@@ -163,6 +163,15 @@ LOCAL_NO_CRT_$(TARGET_2ND_ARCH):=
 LOCAL_LDFLAGS_$(TARGET_2ND_ARCH):=
 endif
 
+LOCAL_CFLAGS_32:=
+LOCAL_CFLAGS_64:=
+LOCAL_LDFLAGS_32:=
+LOCAL_LDFLAGS_64:=
+LOCAL_ASFLAGS_32:=
+LOCAL_ASFLAGS_64:=
+LOCAL_C_INCLUDES_32:=
+LOCAL_C_INCLUDES_64:=
+
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
 # Leave the current makefile to make sure we don't break anything
