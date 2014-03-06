@@ -10,7 +10,7 @@ $(warning $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsuppo
 endif
 endif
 
-ifneq ($(TARGET_IS_64_BIT)|$(LOCAL_32BIT_ONLY),true|true)
+ifneq ($(TARGET_IS_64_BIT)|$(LOCAL_32_BIT_ONLY),true|true)
 # Build for TARGET_ARCH
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 include $(BUILD_SYSTEM)/shared_library_internal.mk
