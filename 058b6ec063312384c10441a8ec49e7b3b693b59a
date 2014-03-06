@@ -16,6 +16,24 @@
       "revId": "058b6ec063312384c10441a8ec49e7b3b693b59a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fca73d88_47873001",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1000234
+      },
+      "writtenOn": "2014-03-06T01:00:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fca73d88_07edb8e2",
+      "revId": "058b6ec063312384c10441a8ec49e7b3b693b59a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
