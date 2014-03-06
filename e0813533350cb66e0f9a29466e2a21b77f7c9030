@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cab3158_6be6b599",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-06T18:52:03Z",
+      "side": 1,
+      "message": "You\u0027ll need to move this up to before the new conditional include.",
+      "revId": "e0813533350cb66e0f9a29466e2a21b77f7c9030",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
