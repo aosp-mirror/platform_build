@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fca73d88_07edb8e2",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-03-06T00:56:32Z",
+      "side": 1,
+      "message": "remove this too? :-)",
+      "revId": "058b6ec063312384c10441a8ec49e7b3b693b59a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
