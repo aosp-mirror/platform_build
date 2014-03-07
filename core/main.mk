@@ -571,9 +571,49 @@ CUSTOM_MODULES := \
 # APPS:Quake or HOST:SHARED_LIBRARIES:libutils.
 # BUG: the system image won't know to depend on modules that are
 # brought in as requirements of other modules.
+#
+# Resolve the required module name to 32-bit or 64-bit variant.
+ifeq ($(TARGET_IS_64_BIT),true)
+# Get a list of corresponding 32-bit module names, if one exists.
+define get-32-bit-modules
+$(strip $(foreach m,$(1),\
+  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX))))
+endef
+# Get a list of corresponding 32-bit module names, if one exists;
+# otherwise return the original module name
+define get-32-bit-modules-if-we-can
+$(strip $(foreach m,$(1),\
+  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX),
+    $(m))))
+endef
+
+# If a module is built for 32-bit, the required modules must be 32-bit too;
+# Otherwise if the module is an exectuable or shared library,
+#   the required modules must be 64-bit;
+#   otherwise we require both 64-bit and 32-bit variant, if one exists.
+$(foreach m,$(ALL_MODULES),\
+  $(eval r := $(ALL_MODULES.$(m).REQUIRED))\
+  $(if $(r),\
+    $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),\
+      $(eval r_r := $(call get-32-bit-modules-if-we-can,$(r))),\
+      $(if $(filter EXECUTABLES SHARED_LIBRARIES,$(ALL_MODULES.$(m).CLASS)),\
+        $(eval r_r := $(r)),\
+        $(eval r_r := $(r) $(call get-32-bit-modules,$(r)))\
+       )\
+     )\
+     $(eval ALL_MODULES.$(m).REQUIRED := $(r_r))\
+  )\
+)
+r_r :=
+endif
+
+
 define add-required-deps
 $(1): | $(2)
 endef
+
 $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
@@ -628,11 +668,26 @@ add-required-deps :=
 ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
   # by the appropriate product definition file, which was included
-  # by product_config.make.
+  # by product_config.mk.
   product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
   # Filter out the overridden packages before doing expansion
   product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
       $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
+
+  # Resolve the :32 :64 module name
+  modules_32 := $(patsubst %:32,%,$(filter %:32, $(product_MODULES)))
+  modules_64 := $(patsubst %:64,%,$(filter %:64, $(product_MODULES)))
+  modules_rest := $(filter-out %:32 %:64,$(product_MODULES))
+  ifeq ($(TARGET_IS_64_BIT),true)
+    product_MODULES := $(addsuffix $(TARGET_2ND_ARCH_MODULE_SUFFIX),$(modules_32))
+    product_MODULES += $(modules_64)
+    # For the rest we add both
+    product_MODULES += $(call get-32-bit-modules, $(modules_rest))
+    product_MODULES += $(modules_rest)
+  else
+    product_MODULES := $(modules_32) $(modules_64) $(modules_rest)
+  endif
+
   $(call expand-required-modules,product_MODULES,$(product_MODULES))
   product_FILES := $(call module-installed-files, $(product_MODULES))
   ifeq (0,1)
