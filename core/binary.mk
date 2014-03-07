@@ -717,12 +717,6 @@ $(normal_objects) : | $(my_generated_sources)
 $(all_objects) : | $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
-###########################################################
-## Copy headers to the install tree
-###########################################################
-ifndef LOCAL_2ND_ARCH_VAR_PREFIX
-include $(BUILD_COPY_HEADERS)
-endif
 
 ###########################################################
 # Standard library handling.

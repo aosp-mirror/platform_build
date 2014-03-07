@@ -33,3 +33,10 @@ LOCAL_2ND_ARCH_VAR_PREFIX :=
 
 endif # LOCAL_NO_2ND_ARCH
 endif # TARGET_2ND_ARCH
+
+my_module_arch_supported :=
+
+###########################################################
+## Copy headers to the install tree
+###########################################################
+include $(BUILD_COPY_HEADERS)
