@@ -16,8 +16,6 @@ _64_bit_directory_blacklist += \
 
 # misc build errors
 _64_bit_directory_blacklist += \
-	external/oprofile/daemon \
-	external/oprofile/opcontrol \
 	frameworks/av \
 	frameworks/base \
 	device/generic/goldfish/opengl \
