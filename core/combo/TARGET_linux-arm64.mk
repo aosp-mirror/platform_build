@@ -101,9 +101,6 @@ TARGET_GLOBAL_CFLAGS += \
     -Werror=pointer-to-int-cast \
     -Werror=int-to-pointer-cast \
 
-# TODO - remove __ANDROID__ after the next aarch64 toolchain refresh
-TARGET_GLOBAL_CFLAGS += -D__ANDROID__=1
-
 TARGET_GLOBAL_CFLAGS += -fno-strict-volatile-bitfields
 
 # This is to avoid the dreaded warning compiler message:
