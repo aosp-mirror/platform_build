@@ -757,6 +757,10 @@ ifdef is_sdk_build
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
       $(eval dangling_modules += $(m))))
+  ifneq ($(TARGET_IS_64_BIT),true)
+    # We know those 64-bit modules don't exist in the 32-bit SDK build.
+    dangling_modules := $(filter-out %64,$(dangling_modules))
+  endif
   ifneq ($(dangling_modules),)
     $(error Module names '$(dangling_modules)' in PRODUCT_PACKAGES has nothing to install!)
   endif
