@@ -7,7 +7,7 @@
 ###########################################################
 
 ifdef LOCAL_IS_HOST_MODULE
-include $(BUILD_SYSTEM)/module_arch_supported.mk
+include $(BUILD_SYSTEM)/prebuilt_internal.mk
 else #!LOCAL_IS_HOST_MODULE
 # check if primary arch is supported
 include $(BUILD_SYSTEM)/module_arch_supported.mk
