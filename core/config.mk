@@ -375,7 +375,7 @@ endif
 
 ifneq ($(HOST_JDK_TOOLS_JAR),)
 ifeq ($(wildcard $(HOST_JDK_TOOLS_JAR)),)
-$(error Error: could not find jdk tools.jar, please install JDK6)
+$(error Error: could not find jdk tools.jar, please check if your JDK was installed correctly)
 endif
 endif
 
