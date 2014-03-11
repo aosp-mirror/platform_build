@@ -97,7 +97,6 @@ PRODUCT_PACKAGES += \
     racoon \
     run-as \
     schedtest \
-    screenshot \
     sdcard \
     services \
     settings \
