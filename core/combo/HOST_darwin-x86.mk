@@ -36,7 +36,7 @@ endif # BUILD_HOST_static
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
-HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS
+HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
 
 build_mac_version := $(shell sw_vers -productVersion)
 
