@@ -848,7 +848,6 @@ echo '#ifndef '$(@F:$1=_h) > $(@:$1=.h)
 echo '#define '$(@F:$1=_h) >> $(@:$1=.h)
 cat $(@:$1=$(YACC_HEADER_SUFFIX)) >> $(@:$1=.h)
 echo '#endif' >> $(@:$1=.h)
-rm -f $(@:$1=$(YACC_HEADER_SUFFIX))
 endef
 
 ###########################################################
