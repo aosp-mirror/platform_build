@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c2ba1c2_66e1677f",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-03-11T01:59:38Z",
+      "side": 1,
+      "message": "From\n\n\u003ccommand-line\u003e: error: \"__STDC_CONSTANT_MACROS\" redefined\n\u003ccommand-line\u003e: error: this is the location of the previous definition\n\non windows-x86 builds, I\u0027m guessing this is a problem.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 69
+      },
+      "revId": "aa54033b469739b31e8c48eaa26f0dc7ef531738",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
