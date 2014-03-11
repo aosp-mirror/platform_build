@@ -22,6 +22,30 @@
       "revId": "aa54033b469739b31e8c48eaa26f0dc7ef531738",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fce81dcd_df79ffd9",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-03-11T02:03:32Z",
+      "side": 1,
+      "message": "could this be due to\n\nexternal/llvm/llvm-device-build.mk:6:\t-D__STDC_CONSTANT_MACROS\t\\\nexternal/llvm/llvm-host-build.mk:4:\t-D__STDC_CONSTANT_MACROS\t\\\n\n(I also see\n\nndk/tests/device/test-libc++-static-full/jni/Android.mk:19:LOCAL_CPPFLAGS +\u003d -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS\nndk/tests/device/test-libc++-shared-full/jni/Android.mk:19:LOCAL_CPPFLAGS +\u003d -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS\nndk/tests/build/stdint-c++/jni/Android.mk:13:#     defined if __STDC_CONSTANT_MACROS is already defined.\nbuild/core/combo/HOST_windows-x86.mk:45:HOST_GLOBAL_CFLAGS +\u003d -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS\nbuild/core/combo/HOST_linux-x86.mk:63:HOST_GLOBAL_CFLAGS +\u003d -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS\nbuild/core/combo/HOST_darwin-x86.mk:39:HOST_GLOBAL_CFLAGS +\u003d -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS\nexternal/sfntly/Android.mk:121:\t\u0027-D__STDC_CONSTANT_MACROS\u0027 \\\nexternal/sfntly/Android.mk:202:\t\u0027-D__STDC_CONSTANT_MACROS\u0027 \\\nexternal/llvm/utils/FileCheck/Android.mk:17:LOCAL_CFLAGS +\u003d -D __STDC_LIMIT_MACROS -D __STDC_CONSTANT_MACROS\n\n)",
+      "parentUuid": "9c2ba1c2_66e1677f",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 69
+      },
+      "revId": "aa54033b469739b31e8c48eaa26f0dc7ef531738",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
