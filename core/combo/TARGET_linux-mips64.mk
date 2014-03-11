@@ -48,7 +48,7 @@ $(error Unknown MIPS architecture variant: $(TARGET_ARCH_VARIANT))
 endif
 
 # TODO: Enable Clang when its mips64 prebuilt is added
-WITHOUT_CLANG := true
+WITHOUT_TARGET_CLANG := true
 
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 
