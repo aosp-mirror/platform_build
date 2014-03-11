@@ -22,6 +22,24 @@
       "revId": "c37501264e010ad84a79247647f3c3fee084983e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dc10b997_66a9702e",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-11T02:02:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9c2ba1c2_86ae1b35",
+      "revId": "c37501264e010ad84a79247647f3c3fee084983e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
