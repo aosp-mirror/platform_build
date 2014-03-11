@@ -1002,6 +1002,7 @@ target-native-tests : native-target-tests
 
 .PHONY: lintall
 
+ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
 .PHONY: samplecode
 sample_MODULES := $(sort $(call get-tagged-modules,samples))
 sample_APKS_DEST_PATH := $(TARGET_COMMON_OUT_ROOT)/samples
@@ -1015,6 +1016,7 @@ samplecode: $(sample_APKS_COLLECTION)
 	@echo "Collect sample code apks: $^"
 	# remove apks that are not intended to be installed.
 	rm -f $(sample_ADDITIONAL_INSTALLED)
+endif  # samplecode in $(MAKECMDGOALS)
 
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
