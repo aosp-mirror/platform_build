@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c20adde_1757fe1e",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-12T03:27:30Z",
+      "side": 1,
+      "message": "I don\u0027t want to make this list longer. There were a couple of proposals to add other variables.\nYou can always write a small makefiile template that include $(BUILD_PREBUILT) and then include the template multiple times.",
+      "revId": "9c0bdfdd321a5273b4337c416033732beba21168",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
