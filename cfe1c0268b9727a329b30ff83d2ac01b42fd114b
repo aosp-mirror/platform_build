@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fce81dcd_b1eb785e",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1004395
+      },
+      "writtenOn": "2014-03-12T18:35:05Z",
+      "side": 1,
+      "message": "Eric - this addresses your comment about libeffects.\nEventually, we need to add the 32-bit only rule to all\nthe sub-directories of libeffects instead.",
+      "revId": "cfe1c0268b9727a329b30ff83d2ac01b42fd114b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
