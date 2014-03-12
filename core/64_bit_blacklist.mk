@@ -16,7 +16,7 @@ _64_bit_directory_blacklist += \
 
 # misc build errors
 _64_bit_directory_blacklist += \
-	frameworks/av \
+	frameworks/av/media/libstagefright/codecs \
 	frameworks/base \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
@@ -24,11 +24,12 @@ _64_bit_directory_blacklist += \
 # depends on frameworks/av
 _64_bit_directory_blacklist += \
 	external/srec \
-	hardware/libhardware_legacy/audio \
-	hardware/libhardware/modules/audio_remote_submix \
-	frameworks/wilhelm \
 	frameworks/opt \
 	frameworks/ex \
+
+# not needed yet, and too many directories to blacklist individually
+_64_bit_directory_blacklist += \
+	frameworks/av/media/libeffects \
 
 _64_bit_directory_blacklist_pattern := $(addsuffix %,$(_64_bit_directory_blacklist))
 
