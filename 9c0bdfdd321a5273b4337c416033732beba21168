@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "bcb4e5de_1dfb7760",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1012623
+      },
+      "writtenOn": "2014-03-12T14:36:12Z",
+      "side": 1,
+      "message": "I should remove LOCAL_ here as it seem to be removed on the others.",
+      "revId": "9c0bdfdd321a5273b4337c416033732beba21168",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c20adde_1757fe1e",
         "filename": "core/multi_prebuilt.mk",
         "patchSetId": 2
