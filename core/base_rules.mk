@@ -120,6 +120,8 @@ ifeq ($(my_module_path),)
   else
   ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
     partition_tag := _VENDOR
+  else ifeq (true,$(LOCAL_OEM_MODULE))
+    partition_tag := _OEM
   else
     # The definition of should-install-to-system will be different depending
     # on which goal (e.g., sdk or just droid) is being built.
