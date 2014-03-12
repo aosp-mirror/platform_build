@@ -16,6 +16,24 @@
       "revId": "9c0bdfdd321a5273b4337c416033732beba21168",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c1ab5b4_eff6d1ff",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1012623
+      },
+      "writtenOn": "2014-03-12T07:32:00Z",
+      "side": 1,
+      "message": "In fact today there is no way to add a dependency on a prebuilt. REQUIRED_MODULES is a must to have to handle properly package dependencies in makefiles.",
+      "parentUuid": "7c20adde_1757fe1e",
+      "revId": "9c0bdfdd321a5273b4337c416033732beba21168",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
