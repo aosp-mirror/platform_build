@@ -2118,14 +2118,14 @@ endef
 #    $(1)  target
 #    $(2)  stable api file
 #    $(3)  api file to be tested
-#    $(4)  removed stable api file
+#    $(4)  stable removed api file
 #    $(5)  removed api file to be tested
 #    $(6)  arguments for apicheck
 #    $(7)  command to run if apicheck failed
 #    $(8)  target dependent on this api check
 #    $(9)  additional dependencies
 define check-api
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(5) $(APICHECK) $(9)
+$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(APICHECK) $(9)
 	@echo "Checking API:" $(1)
 	$(hide) ( $(APICHECK_COMMAND) $(6) $(2) $(3) $(4) $(5) || ( $(7) ; exit 38 ) )
 	$(hide) mkdir -p $$(dir $$@)
