@@ -490,6 +490,7 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.txt
+INTERNAL_PLATFORM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/removed.txt
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
