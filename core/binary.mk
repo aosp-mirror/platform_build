@@ -143,7 +143,7 @@ ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 
-ifeq ($(strip $($(LOCAL_2ND_ARCH_VAR_PREFIX)WITHOUT_CLANG)),true)
+ifeq ($(strip $($(LOCAL_2ND_ARCH_VAR_PREFIX)WITHOUT_$(my_prefix)CLANG)),true)
   LOCAL_CLANG :=
 endif
 

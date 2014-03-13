@@ -1,3 +1,11 @@
+## Clang configurations.
+
+# WITHOUT_CLANG covers both HOST and TARGET
+ifeq ($(WITHOUT_CLANG),true)
+WITHOUT_TARGET_CLANG := true
+WITHOUT_HOST_CLANG := true
+endif
+
 ifeq (true,$(FORCE_BUILD_LLVM_COMPONENTS))
 LLVM_PREBUILTS_PATH := $(BUILD_OUT_EXECUTABLES)
 LLVM_PREBUILTS_HEADER_PATH := external/clang/lib/include
