@@ -42,7 +42,7 @@ $(eval $(call check-api, \
     checkapi-last, \
     $(SRC_API_DIR)/$(last_released_sdk_version).txt, \
     $(INTERNAL_PLATFORM_API_FILE), \
-    $(SRC_API_DIR)/removed.txt, \
+    frameworks/base/api/removed.txt, \
     $(INTERNAL_PLATFORM_REMOVED_API_FILE), \
     -hide 2 -hide 3 -hide 4 -hide 5 -hide 6 -hide 24 -hide 25 -hide 26 -hide 27 \
     -error 7 -error 8 -error 9 -error 10 -error 11 -error 12 -error 13 -error 14 -error 15 \
