@@ -191,10 +191,6 @@ function setpaths()
     unset ANDROID_HOST_OUT
     export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
 
-    # needed for processing samples collected by perf counters
-    unset OPROFILE_EVENTS_DIR
-    export OPROFILE_EVENTS_DIR=$T/external/oprofile/events
-
     # needed for building linux on MacOS
     # TODO: fix the path
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
