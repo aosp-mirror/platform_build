@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5cb3e9f9_cce06bb1",
+        "filename": "core/flags_deps.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-14T00:21:35Z",
+      "side": 1,
+      "message": "This means $(2) will be regenerated whenever you run make.",
+      "revId": "fdb66e6bc1602b11f07289d5cde31c02aa972975",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
