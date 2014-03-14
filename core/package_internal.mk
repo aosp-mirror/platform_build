@@ -286,9 +286,19 @@ framework_res_package_export := \
 framework_res_package_export_deps := \
     $(dir $(framework_res_package_export))src/R.stamp
 endif # LOCAL_SDK_RES_VERSION
-$(R_file_stamp): $(framework_res_package_export_deps)
+all_library_res_package_exports := \
+    $(framework_res_package_export) \
+    $(foreach lib,$(LOCAL_APK_LIBRARIES),\
+        $(call intermediates-dir-for,APPS,$(lib),,COMMON)/package-export.apk)
+
+all_library_res_package_export_deps := \
+    $(framework_res_package_export_deps) \
+    $(foreach lib,$(LOCAL_APK_LIBRARIES),\
+        $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
+
+$(R_file_stamp): $(all_library_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
-    PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
+    PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 endif # LOCAL_NO_STANDARD_LIBRARIES
 
 ifneq ($(full_classes_jar),)
