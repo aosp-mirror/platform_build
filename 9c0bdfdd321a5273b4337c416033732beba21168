@@ -51,6 +51,24 @@
       "revId": "9c0bdfdd321a5273b4337c416033732beba21168",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cb3e9f9_200bab3f",
+        "filename": "core/multi_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-14T00:54:07Z",
+      "side": 1,
+      "message": "LOCAL_REQUIRED_MODULES works with $(BUILD_PREBUILT), but not $(BUILD_MULTI_PREBUILT)",
+      "parentUuid": "3c1ab5b4_eff6d1ff",
+      "revId": "9c0bdfdd321a5273b4337c416033732beba21168",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
