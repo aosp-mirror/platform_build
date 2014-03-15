@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dcb1990e_3af4c8f5",
+        "filename": "core/clang/TARGET_arm64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T20:53:25Z",
+      "side": 1,
+      "message": "can you remove this warning now?",
+      "revId": "b5f333bbefafcac188a8b7dd0bef9a733064567e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cbf69de_a048bbed",
+        "filename": "core/combo/TARGET_linux-arm64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T20:53:25Z",
+      "side": 1,
+      "message": "you can delete this",
+      "revId": "b5f333bbefafcac188a8b7dd0bef9a733064567e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
