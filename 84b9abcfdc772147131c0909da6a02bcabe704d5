@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dcb1990e_67cd1da2",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "already has LOCAL_32_BIT_ONLY",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcb1990e_a7c32578",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "builds fine",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fcb49dfd_63f751fd",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "nothing builds out of this directory",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcb1990e_c7dd1155",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "builds fine",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cbf69de_20002b1f",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "no Android.mk here",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cbf69de_80ea5717",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "builds fine",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcb1990e_27cf15a3",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "builds fine",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcb1990e_6772bdb6",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "builds fine",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cbf69de_00de4782",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-15T01:46:38Z",
+      "side": 1,
+      "message": "builds fine",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
