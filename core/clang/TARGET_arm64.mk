@@ -1,7 +1,7 @@
 
 include $(BUILD_SYSTEM)/clang/arm64.mk
 
-CLANG_CONFIG_arm64_TARGET_TRIPLE := aarch64-linux-androideabi
+CLANG_CONFIG_arm64_TARGET_TRIPLE := aarch64-linux-android
 CLANG_CONFIG_arm64_TARGET_TOOLCHAIN_PREFIX := \
   $(TARGET_TOOLCHAIN_ROOT)/$(CLANG_CONFIG_arm64_TARGET_TRIPLE)/bin
 
@@ -51,4 +51,4 @@ CLANG_TARGET_GLOBAL_LDFLAGS := \
   $(CLANG_CONFIG_arm64_TARGET_EXTRA_LDFLAGS)
 
 $(warning Incorrect arm64 RS_TRIPLE, fix me!)
-RS_TRIPLE := armv7-none-linux-gnueabi
+RS_TRIPLE := aarch64-linux-android
