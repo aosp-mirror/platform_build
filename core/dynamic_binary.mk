@@ -104,11 +104,12 @@ $(symbolic_output) : $(symbolic_input) | $(ACP)
 strip_input := $(symbolic_output)
 strip_output := $(LOCAL_BUILT_MODULE)
 
-ifeq ($(strip $(LOCAL_STRIP_MODULE)),)
-  LOCAL_STRIP_MODULE := $(strip $(TARGET_STRIP_MODULE))
+my_strip_module := $(LOCAL_STRIP_MODULE)
+ifeq ($(my_strip_module),)
+  my_strip_module := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_MODULE)
 endif
 
-ifeq ($(LOCAL_STRIP_MODULE),true)
+ifeq ($(my_strip_module),true)
 # Strip the binary
 $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 $(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
@@ -129,7 +130,7 @@ $(strip_output): $(strip_input)
 	@echo "target Unstripped: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target-with-cp)
 endif
-endif # LOCAL_STRIP_MODULE
+endif # my_strip_module
 
 
 $(cleantarget): PRIVATE_CLEAN_FILES += \
