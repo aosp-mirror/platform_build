@@ -152,6 +152,24 @@
       "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dcdfd954_5149d44e",
+        "filename": "core/64_bit_blacklist.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1004395
+      },
+      "writtenOn": "2014-03-17T17:50:38Z",
+      "side": 1,
+      "message": "Colin - thanks for your notes.  I simply did an \"echo libstagefright/*/\" and then removed libstagefright_foundation;  your approach was more precise!  I\u0027ll update with new patch set here.",
+      "parentUuid": "5cbf69de_00de4782",
+      "revId": "84b9abcfdc772147131c0909da6a02bcabe704d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
