@@ -54,5 +54,6 @@ BOARD_SEPOLICY_UNION += \
         mediaserver.te \
         qemud.te \
         rild.te \
+        shell.te \
         system_server.te \
         zygote.te
