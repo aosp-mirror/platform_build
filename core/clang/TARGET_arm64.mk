@@ -50,5 +50,4 @@ CLANG_TARGET_GLOBAL_LDFLAGS := \
   $(call convert-to-clang-flags,$(TARGET_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_arm64_TARGET_EXTRA_LDFLAGS)
 
-$(warning Incorrect arm64 RS_TRIPLE, fix me!)
 RS_TRIPLE := aarch64-linux-android
