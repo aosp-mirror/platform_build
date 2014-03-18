@@ -22,10 +22,12 @@ ifdef LOCAL_SDK_VERSION
   my_ndk_stl_shared_lib_fullpath :=
   my_ndk_stl_shared_lib :=
   my_ndk_stl_static_lib :=
+  my_ndk_stl_cppflags :=
+  LOCAL_NDK_STL_VARIANT := $(strip $(LOCAL_NDK_STL_VARIANT))
   ifeq (,$(LOCAL_NDK_STL_VARIANT))
     LOCAL_NDK_STL_VARIANT := system
   endif
-  ifneq (1,$(words $(filter system stlport_static stlport_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
+  ifneq (1,$(words $(filter system stlport_static stlport_shared c++_static c++_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
     $(error $(LOCAL_PATH): Unknown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
   endif
   ifeq (system,$(LOCAL_NDK_STL_VARIANT))
@@ -40,11 +42,24 @@ ifdef LOCAL_SDK_VERSION
       my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libstlport_shared.so
       my_ndk_stl_shared_lib := -lstlport_shared
     endif
+  else # LOCAL_NDK_STL_VARIANT is not stlport_* either
+  ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
+    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include \
+                               $(my_ndk_source_root)/cxx-stl/llvm-libc++/gabi++/include \
+                               $(my_ndk_source_root)/android/support/include
+    ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
+      my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libc++_static.a
+    else
+      my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libc++_shared.so
+      my_ndk_stl_shared_lib := -lc++_shared
+    endif
+    my_ndk_stl_cppflags := -std=c++11
   else
     # LOCAL_NDK_STL_VARIANT is gnustl_static
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/include \
                                $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/include
     my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libgnustl_static.a
+  endif
   endif
   endif
 endif
@@ -181,19 +196,21 @@ ifndef LOCAL_IS_HOST_MODULE
 ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
 my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
+my_target_global_cppflags := $(my_ndk_stl_cppflags)
 else
 my_target_project_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_INCLUDES)
 my_target_c_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_C_INCLUDES)
+my_target_global_cppflags :=
 endif # LOCAL_SDK_VERSION
 
 ifeq ($(LOCAL_CLANG),true)
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CFLAGS)
-my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CPPFLAGS)
+my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CPPFLAGS)
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_LDFLAGS)
 my_target_c_includes += $(CLANG_CONFIG_EXTRA_TARGET_C_INCLUDES)
 else
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS)
-my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAGS)
+my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAGS)
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
 endif # LOCAL_CLANG
 
