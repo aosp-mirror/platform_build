@@ -358,6 +358,19 @@ video.with-shadow {
   #nav li span.tree-list-subtitle:after {
     content: '—';
   }
+  #nav li span.tree-list-subtitle.package {
+    padding-top:15px;
+    cursor:default;
+  }
+  #nav li span.tree-list-subtitle.package:before {
+    content: '';
+  }
+  #nav li span.tree-list-subtitle.package:after {
+    content: '';
+  }
+  #nav li ul.tree-list-children.classes {
+    padding-left:10px;
+  }
   #nav li ul {
     display:none;
     overflow: hidden;
@@ -4011,6 +4024,15 @@ EndColorStr='#ececec');
   margin-bottom:0px;
   width: 160px;
   padding-right:10px;
+}
+
+
+#header .logo-wear {
+  width:220px;
+  margin:0;
+}
+#header .logo-wear img {
+  padding:0 0 0 10px;
 }
 
 .search {
