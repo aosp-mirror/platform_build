@@ -318,13 +318,20 @@ endif
 # App explicitly requires the prebuilt NDK libstlport_shared.so.
 # libstlport_shared.so should never go to the system image.
 # Instead it should be packaged into the apk.
-ifeq (stlport_shared,$(LOCAL_NDK_STL_VARIANT))
+ifneq ($(filter $(LOCAL_NDK_STL_VARIANT), stlport_shared c++_shared),)
 ifndef LOCAL_SDK_VERSION
 $(error LOCAL_SDK_VERSION has to be defined together with LOCAL_NDK_STL_VARIANT, \
     LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
 endif
+endif
+ifeq (stlport_shared,$(LOCAL_NDK_STL_VARIANT))
 jni_shared_libraries += \
     $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources/cxx-stl/stlport/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libstlport_shared.so
+else
+ifeq (c++_shared,$(LOCAL_NDK_STL_VARIANT))
+jni_shared_libraries += \
+    $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources/cxx-stl/llvm-libc++/libs/$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)/libc++_shared.so
+endif
 endif
 
 # Set the abi directory used by the local JNI shared libraries.
