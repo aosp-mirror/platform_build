@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c02b58d_86c38a49",
+        "filename": "target/board/generic_mips/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2014-03-18T22:27:40Z",
+      "side": 1,
+      "message": "Note that MIPS inherits files from the generic policy, so we don\u0027t need a shell.te file in the MIPS directory.",
+      "revId": "b20966f803e18c4cfbeb46af784fc2a553dd21b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
