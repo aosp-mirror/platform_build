@@ -8,7 +8,6 @@ _64_bit_directory_blacklist += \
 
 # Chromium/V8: needs 64-bit support
 _64_bit_directory_blacklist += \
-	external/chromium \
 	external/chromium-libpac \
 	external/chromium_org \
 	external/v8 \
@@ -16,8 +15,6 @@ _64_bit_directory_blacklist += \
 
 # misc build errors
 _64_bit_directory_blacklist += \
-	frameworks/av/media/libstagefright/codecs \
-	frameworks/base \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
 
