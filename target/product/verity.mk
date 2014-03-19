@@ -25,4 +25,5 @@ PRODUCT_PACKAGES += \
         verity_signer \
         build_verity_tree.py \
         build_verity_metadata.py \
-        append2simg
+        append2simg \
+        verity_key
