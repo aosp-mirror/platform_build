@@ -167,10 +167,17 @@ system_prop_file := $(TARGET_SYSTEM_PROP)
 else
 system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
 endif
-
 $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
+	$(hide) echo > $@
+ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES),)
+	$(hide) echo "#" >> $@; \
+	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
+	        echo "#" >> $@; )
+	$(hide) $(foreach prop,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES), \
+		echo "import /oem/oem.prop $(prop)" >> $@;)
+endif
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 			TARGET_DEVICE="$(TARGET_DEVICE)" \
 			PRODUCT_NAME="$(TARGET_PRODUCT)" \
@@ -194,7 +201,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 			TARGET_CPU_ABI="$(TARGET_CPU_ABI)" \
 			TARGET_CPU_ABI2="$(TARGET_CPU_ABI2)" \
 			TARGET_AAPT_CHARACTERISTICS="$(TARGET_AAPT_CHARACTERISTICS)" \
-	        bash $(BUILDINFO_SH) > $@
+	        bash $(BUILDINFO_SH) >> $@
 	$(hide) $(foreach file,$(system_prop_file), \
 		if [ -f "$(file)" ]; then \
 			echo "#" >> $@; \
@@ -210,7 +217,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 		        echo "#" >> $@; )
 	$(hide) $(foreach line,$(ADDITIONAL_BUILD_PROPERTIES), \
 		echo "$(line)" >> $@;)
-	$(hide) build/tools/post_process_props.py $@
+	$(hide) build/tools/post_process_props.py $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_PROPERTY_BLACKLIST)
 
 build_desc :=
 
