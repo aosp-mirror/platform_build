@@ -51,14 +51,9 @@ $(combo_2nd_arch_prefix)TARGET_CXX := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PRE
 $(combo_2nd_arch_prefix)TARGET_AR := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)ar$(HOST_EXECUTABLE_SUFFIX)
 $(combo_2nd_arch_prefix)TARGET_OBJCOPY := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)objcopy$(HOST_EXECUTABLE_SUFFIX)
 $(combo_2nd_arch_prefix)TARGET_LD := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)ld$(HOST_EXECUTABLE_SUFFIX)
+$(combo_2nd_arch_prefix)TARGET_READELF := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)readelf$(HOST_EXECUTABLE_SUFFIX)
 $(combo_2nd_arch_prefix)TARGET_STRIP := $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)strip$(HOST_EXECUTABLE_SUFFIX)
-
-ifeq ($(TARGET_BUILD_VARIANT),user)
-$(combo_2nd_arch_prefix)TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-all $< -o $@
-else
-$(combo_2nd_arch_prefix)TARGET_STRIP_COMMAND = $(PRIVATE_STRIP) --strip-all $< -o $@ && \
-    $(PRIVATE_OBJCOPY) --add-gnu-debuglink=$< $@
-endif
+include $(BUILD_SYSTEM)/strip.mk
 
 ifneq ($(wildcard $($(combo_2nd_arch_prefix)TARGET_CC)),)
 $(combo_2nd_arch_prefix)TARGET_LIBGCC := \
