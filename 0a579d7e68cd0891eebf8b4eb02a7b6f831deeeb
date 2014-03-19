@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fcfbbdcb_8d1f2944",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 806,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-19T17:56:51Z",
+      "side": 1,
+      "message": "Then you can set up the dependency here:\n# Comments here.\n$(SEPOLICY_BUILT_MAC_PERMISSIONS_XML) : $(filter $(TARGET_OUT_APPS_PRIVILEGED)/%.apk, $(modules_to_install))",
+      "revId": "0a579d7e68cd0891eebf8b4eb02a7b6f831deeeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
