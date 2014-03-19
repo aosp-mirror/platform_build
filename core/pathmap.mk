@@ -110,7 +110,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/mediarouter \
         v7/recyclerview \
         v8/renderscript \
-        v13
+        v13 \
+        v17/leanback
 
 #
 # A list of all source roots under frameworks/support.
