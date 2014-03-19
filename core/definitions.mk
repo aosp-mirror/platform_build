@@ -1327,6 +1327,12 @@ define transform-to-stripped
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_COMMAND)
 endef
 
+define transform-to-stripped-keep-symbols
+@mkdir -p $(dir $@)
+@echo "target Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
+$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_KEEP_SYMBOLS_COMMAND)
+endef
+
 
 ###########################################################
 ## Commands for running gcc to link an executable
