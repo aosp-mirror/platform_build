@@ -348,7 +348,7 @@ ifneq (,$(user_variant))
   # Turn on Dalvik preoptimization for user builds, but only if not
   # explicitly disabled and the build is running on Linux (since host
   # Dalvik isn't built for non-Linux hosts).
-  ifneq (true,$(DISABLE_DEXPREOPT))
+  ifeq (,$(WITH_DEXPREOPT))
     ifeq ($(user_variant),user)
       ifeq ($(HOST_OS),linux)
         WITH_DEXPREOPT := true
