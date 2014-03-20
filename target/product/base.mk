@@ -34,6 +34,7 @@ PRODUCT_PACKAGES += \
     framework2 \
     fsck_msdos \
     ime \
+    input \
     inputflinger \
     javax.obex \
     libandroid \
