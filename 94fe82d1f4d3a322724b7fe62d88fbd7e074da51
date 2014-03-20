@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5cee8935_ff4bbf79",
+        "filename": "core/clang/HOST_x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-20T23:53:11Z",
+      "side": 1,
+      "message": "I guess this won\u0027t work for Mac OS, since its path is prebuilts/gcc/darwin-x86/host/i686-apple-darwin-4.2.1/.\nWhat about windows (the mingw sdk build)?\nMaybe we can set up some variables in build/core/combo/HOST_\u003ccombo\u003e.mks and use them here?",
+      "revId": "94fe82d1f4d3a322724b7fe62d88fbd7e074da51",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
