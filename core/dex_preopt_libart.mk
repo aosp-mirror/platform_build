@@ -37,11 +37,6 @@ $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $(DEFAULT_DEX_PREOPT_BUILT_IMAGE) | $(AC
 	$(hide) $(ACP) -fp $(patsubst %.art,%.oat,$<) $(patsubst %.art,%.oat,$@)
 endif
 
-DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
-ifeq ($(TARGET_CPU_VARIANT),$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))
-DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
-endif
-
 # start of image reserved address space
 LIBART_IMG_HOST_BASE_ADDRESS   := 0x60000000
 

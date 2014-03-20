@@ -458,6 +458,11 @@ ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
   TARGET_DEFAULT_JAVA_LIBRARIES := core core-junit ext framework framework2
 endif
 
+DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
+ifneq (,$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))
+DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
+endif
+
 # define clang/llvm tools and global flags
 include $(BUILD_SYSTEM)/clang/config.mk
 
