@@ -71,5 +71,4 @@ endif
 else
 $(warning No DALVIK_VM_LIB, disable dexpreopt.)
 WITH_DEXPREOPT := false
-DISABLE_DEXPREOPT := true
 endif  # DALVIK_VM_LIB is defined.
