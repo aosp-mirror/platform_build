@@ -3,9 +3,7 @@
 #
 ####################################
 
-ifeq ($(DALVIK_VM_LIB),)
-$(error No value for DALVIK_VM_LIB)
-endif
+ifneq ($(DALVIK_VM_LIB),)
 
 # list of boot classpath jars for dexpreopt
 DEXPREOPT_BOOT_JARS := $(subst $(space),:,$(PRODUCT_BOOT_JARS))
@@ -70,3 +68,8 @@ endef
 DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS := $(DEX2OAT_DEPENDENCY)
 DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $(DEFAULT_DEX_PREOPT_BUILT_IMAGE)
 endif
+else
+$(warning No DALVIK_VM_LIB, disable dexpreopt.)
+WITH_DEXPREOPT := false
+DISABLE_DEXPREOPT := true
+endif  # DALVIK_VM_LIB is defined.
