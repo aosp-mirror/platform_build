@@ -2,9 +2,7 @@ ifneq ($(TARGET_2ND_ARCH),)
 
 # JNI - needs 64-bit VM
 _64_bit_directory_blacklist += \
-        external/svox/ \
         packages/
-
 
 # Chromium/V8: needs 64-bit support
 _64_bit_directory_blacklist += \
@@ -17,12 +15,6 @@ _64_bit_directory_blacklist += \
 _64_bit_directory_blacklist += \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
-
-# depends on frameworks/av
-_64_bit_directory_blacklist += \
-	external/srec \
-	frameworks/opt \
-	frameworks/ex \
 
 # not needed yet, and too many directories to blacklist individually
 _64_bit_directory_blacklist += \
