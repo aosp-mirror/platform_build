@@ -29,6 +29,9 @@ LOCAL_KERNEL := prebuilts/qemu-kernel/x86/kernel-vbox
 PRODUCT_COPY_FILES := \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
     device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
+    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
     device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml \
     build/target/board/vbox_x86/init.vbox_x86.rc:root/init.vbox_x86.rc \
     $(LOCAL_KERNEL):kernel
