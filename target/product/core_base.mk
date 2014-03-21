@@ -30,7 +30,6 @@ PRODUCT_PACKAGES += \
     libandroidfw \
     libaudiopreprocessing \
     libaudioutils \
-    libbcc \
     libfilterpack_imageproc \
     libgabi++ \
     libkeystore \
