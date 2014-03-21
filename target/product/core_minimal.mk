@@ -45,6 +45,7 @@ PRODUCT_PACKAGES += \
     iptables \
     keystore \
     keystore.default \
+    libbcc \
     libOpenMAXAL \
     libOpenSLES \
     libdownmix \
