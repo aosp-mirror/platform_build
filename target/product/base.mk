@@ -103,7 +103,6 @@ PRODUCT_PACKAGES += \
     tc \
     vdc \
     vold \
-    webview \
     wm
 
 
