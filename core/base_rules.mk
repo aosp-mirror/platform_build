@@ -167,17 +167,7 @@ generated_sources_dir := $(call local-generated-sources-dir)
 ###########################################################
 # Pick a name for the intermediate and final targets
 ###########################################################
-ifndef LOCAL_MODULE_STEM
-  LOCAL_MODULE_STEM := $(LOCAL_MODULE)
-endif
-
-ifndef LOCAL_BUILT_MODULE_STEM
-  LOCAL_BUILT_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
-endif
-
-ifndef LOCAL_INSTALLED_MODULE_STEM
-  LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
-endif
+include $(BUILD_SYSTEM)/configure_module_stem.mk
 
 # OVERRIDE_BUILT_MODULE_PATH is only allowed to be used by the
 # internal SHARED_LIBRARIES build files.
