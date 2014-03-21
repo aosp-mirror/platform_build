@@ -10,6 +10,13 @@ $(warning $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsuppo
 endif
 endif
 
+include $(BUILD_SYSTEM)/multilib.mk
+
+ifndef my_module_multilib
+# libraries default to building for both architecturess
+my_module_multilib := both
+endif
+
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 
