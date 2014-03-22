@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5cee8935_be72d067",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-03-22T00:15:24Z",
+      "side": 1,
+      "message": "agreed, I was wondering why this was happening. I\u0027ll fix that in the next revision.",
+      "parentUuid": "3c5e35d0_a6ec5be7",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bcdf857e_9f5c2cde",
         "filename": "core/combo/HOST_linux-x86.mk",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5cee8935_3e78804d",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-03-22T00:15:24Z",
+      "side": 1,
+      "message": "does it make sense to move it even though the toolchain location depends entirely on the OS in use?",
+      "parentUuid": "bcdf857e_9f5c2cde",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3c5e35d0_469807a8",
         "filename": "core/combo/HOST_linux-x86.mk",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2014-03-22T00:07:48Z",
       "side": 1,
       "message": "The lines below I think still belong to build/core/clang/HOST_x86.mk.",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c5e35d0_e609f3fd",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-03-22T00:15:24Z",
+      "side": 1,
+      "message": "the problem with HOST_x86.mk is that Linux x86 and x86_64 share the same set of libs, and Darwin has an entirely different set of libs. I can move it in anyway if you want.",
+      "parentUuid": "3c5e35d0_469807a8",
       "revId": "7ba99603a83124d87316763de6079faee6573a4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
