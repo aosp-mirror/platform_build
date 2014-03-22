@@ -60,6 +60,7 @@ PRODUCT_PACKAGES += \
     sensorservice \
     uiautomator \
     uncrypt
+    webview
 
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
