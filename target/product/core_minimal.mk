@@ -59,7 +59,7 @@ PRODUCT_PACKAGES += \
     screencap \
     sensorservice \
     uiautomator \
-    uncrypt
+    uncrypt \
     webview
 
 # The order of PRODUCT_BOOT_JARS matters.
