@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c5e35d0_a6ec5be7",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-22T00:07:48Z",
+      "side": 1,
+      "message": "If BUILD_HOST_64bit is set, we should include $(BUILD_SYSTEM)/clang/HOST_x86_64.mk, even though  $(HOST_ARCH) is still x86.\nEventually when we switch to 64-bit host builds, we\u0027ll keep only HOST_x86_64.mk and perhaps change $(HOST_ARCH) to x86_64.",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcdf857e_9f5c2cde",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-22T00:07:48Z",
+      "side": 1,
+      "message": "Move HOST_ARCH_DESCRIPTOR_FOR_CLANG to build/core/clang/HOST_\u003carch\u003e.mk\nI think we should only define the gcc path and perhaps version here.",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c5e35d0_469807a8",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-22T00:07:48Z",
+      "side": 1,
+      "message": "The lines below I think still belong to build/core/clang/HOST_x86.mk.",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
