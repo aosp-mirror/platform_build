@@ -104,6 +104,24 @@
       "revId": "7ba99603a83124d87316763de6079faee6573a4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcdf857e_3ff2404e",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-22T00:21:57Z",
+      "side": 1,
+      "message": "Yeah, you can create a common file in build/core/clang/ that will be included by both HOST_x86.mk and HOST_x86_64.mk, if you want.",
+      "parentUuid": "3c5e35d0_e609f3fd",
+      "revId": "7ba99603a83124d87316763de6079faee6573a4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
