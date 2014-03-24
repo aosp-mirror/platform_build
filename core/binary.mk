@@ -1,9 +1,13 @@
 ###########################################################
 ## Standard rules for building binary object files from
-## asm/c/cpp/yacc/lex source files.
+## asm/c/cpp/yacc/lex/etc source files.
 ##
 ## The list of object files is exported in $(all_objects).
 ###########################################################
+
+#######################################
+include $(BUILD_SYSTEM)/base_rules.mk
+#######################################
 
 my_ndk_version_root :=
 ifdef LOCAL_SDK_VERSION
@@ -73,29 +77,17 @@ endif
 # supply that, for example, when building libc itself.
 ifdef LOCAL_IS_HOST_MODULE
   ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-      LOCAL_SYSTEM_SHARED_LIBRARIES :=
+      my_system_shared_libraries :=
+  else
+      my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
   endif
 else
   ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-      LOCAL_SYSTEM_SHARED_LIBRARIES := $(TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES)
+      my_system_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES)
+  else
+      my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
   endif
 endif
-
-ifdef LOCAL_SDK_VERSION
-  # Get the list of INSTALLED libraries as module names.
-  # We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
-  # they may cusomize their install path with LOCAL_MODULE_PATH
-  installed_shared_library_module_names := \
-      $(LOCAL_SHARED_LIBRARIES)
-else
-  installed_shared_library_module_names := \
-      $(LOCAL_SYSTEM_SHARED_LIBRARIES) $(LOCAL_SHARED_LIBRARIES)
-endif
-installed_shared_library_module_names := $(sort $(installed_shared_library_module_names))
-
-#######################################
-include $(BUILD_SYSTEM)/base_rules.mk
-#######################################
 
 # The following LOCAL_ variables will be modified in this file.
 # Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
@@ -130,15 +122,6 @@ my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PR
 my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
 
 my_cflags := $(filter-out $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_UNSUPPORTED_CFLAGS),$(my_cflags))
-endif
-
-# The real dependency will be added after all Android.mks are loaded and the install paths
-# of the shared libraries are determined.
-ifdef LOCAL_INSTALLED_MODULE
-ifdef installed_shared_library_module_names
-$(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
-    $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
-endif
 endif
 
 # Add static HAL libraries
@@ -188,6 +171,31 @@ endif
 ## assembly source
 ###########################################################
 my_asflags += -D__ASSEMBLY__
+
+
+##########################################################
+## Set up installed module dependency
+## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
+## they may cusomize their install path with LOCAL_MODULE_PATH
+##########################################################
+# Get the list of INSTALLED libraries as module names.
+ifdef LOCAL_SDK_VERSION
+  installed_shared_library_module_names := \
+      $(my_shared_libraries)
+else
+  installed_shared_library_module_names := \
+      $(my_system_shared_libraries) $(my_shared_libraries)
+endif
+installed_shared_library_module_names := $(sort $(installed_shared_library_module_names))
+
+# The real dependency will be added after all Android.mks are loaded and the install paths
+# of the shared libraries are determined.
+ifdef LOCAL_INSTALLED_MODULE
+ifdef installed_shared_library_module_names
+$(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
+    $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
+endif
+endif
 
 ###########################################################
 ## Define PRIVATE_ variables from global vars
@@ -813,19 +821,18 @@ built_shared_libraries := \
       $(addsuffix $(so_suffix), \
         $(my_shared_libraries)))
 
+# Add the NDK libraries to the built module dependency
 my_system_shared_libraries_fullpath := \
     $(my_ndk_stl_shared_lib_fullpath) \
     $(addprefix $(my_ndk_version_root)/usr/lib/, \
-        $(addsuffix $(so_suffix), $(LOCAL_SYSTEM_SHARED_LIBRARIES)))
+        $(addsuffix $(so_suffix), $(my_system_shared_libraries)))
 
 built_shared_libraries += $(my_system_shared_libraries_fullpath)
-my_shared_libraries += $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 else
-my_shared_libraries += $(LOCAL_SYSTEM_SHARED_LIBRARIES)
 built_shared_libraries := \
     $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
-        $(my_shared_libraries)))
+        $(installed_shared_library_module_names)))
 endif
 
 built_static_libraries := \
