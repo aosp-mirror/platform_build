@@ -106,8 +106,6 @@ my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 
 ifndef LOCAL_IS_HOST_MODULE
-my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_IS_64_BIT),64,32)
-
 my_src_files += $(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
 my_shared_libraries += $(LOCAL_SHARED_LIBRARIES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SHARED_LIBRARIES_$(my_32_64_bit_suffix))
 my_cflags += $(LOCAL_CFLAGS_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CFLAGS_$(my_32_64_bit_suffix))

@@ -199,6 +199,10 @@ LOCAL_ASFLAGS_32:=
 LOCAL_ASFLAGS_64:=
 LOCAL_C_INCLUDES_32:=
 LOCAL_C_INCLUDES_64:=
+LOCAL_MODULE_PATH_32:=
+LOCAL_MODULE_PATH_64:=
+LOCAL_MODULE_STEM_32:=
+LOCAL_MODULE_STEM_64:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
