@@ -41,10 +41,14 @@ ifneq ($(strip $(BUILD_HOST_64bit)),)
 # which can benefit from 64-bit host arch.
 HOST_GLOBAL_CFLAGS += -m64 -Wa,--noexecstack
 HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack
+# gcc location for clang; to be updated when clang is updated
+HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.7-4.6/
 else
 # We expect SSE3 floating point math.
 HOST_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32 -Wa,--noexecstack
 HOST_GLOBAL_LDFLAGS += -m32 -Wl,-z,noexecstack
+# gcc location for clang; to be updated when clang is updated
+HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/i686-linux-glibc2.7-4.6/
 endif # BUILD_HOST_64bit
 
 ifneq ($(strip $(BUILD_HOST_static)),)
