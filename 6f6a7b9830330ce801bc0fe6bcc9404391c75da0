@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bcd6a580_6ddef1f6",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T01:40:43Z",
+      "side": 1,
+      "message": "Why do we need this?\nEven clang is built from source, we still need the dependency: you have to build clang before the build system can run clang to compile source files.",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
