@@ -233,6 +233,7 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 
 $(proguard_options_file): $(R_file_stamp)
 
+resource_export_package :=
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 # Put this module's resources into a PRODUCT-agnositc package that
 # other packages can use to build their own PRODUCT-agnostic R.java (etc.)
@@ -296,7 +297,7 @@ all_library_res_package_export_deps := \
     $(foreach lib,$(LOCAL_APK_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
 
-$(R_file_stamp): $(all_library_res_package_export_deps)
+$(resource_export_package) $(R_file_stamp): $(all_library_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 endif # LOCAL_NO_STANDARD_LIBRARIES
