@@ -16,6 +16,24 @@
       "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcd6a580_30461071",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-03-25T02:36:05Z",
+      "side": 1,
+      "message": "this was to break the circular dependency you mentioned in the other changes. the idea is that we have two different settings that are not intended to be used at the same time:\n\n1. FORCE_BUILD_LLVM_COMPONENTS: this will build the self-hosted clang/LLVM using prebuilts/clang and place the output in out/host.\n2. USE_BUILT_LLVM_COMPONENTS: don\u0027t rebuild LLVM/clang, but use whatever clang is present in out/host.\n\ndefinitely open to other suggestions.",
+      "parentUuid": "bcd6a580_6ddef1f6",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
