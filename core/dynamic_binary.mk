@@ -13,20 +13,9 @@ $(error This file should not be used to build host binaries.  Included by (or ne
 endif
 
 # The name of the target file, without any path prepended.
-# TODO: This duplicates logic from base_rules.mk because we need to
-#       know its results before base_rules.mk is included.
-#       Consolidate the duplicates.
-ifndef LOCAL_MODULE_STEM
-  LOCAL_MODULE_STEM := $(LOCAL_MODULE)
-endif
-
-ifndef LOCAL_BUILT_MODULE_STEM
-  LOCAL_BUILT_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
-endif
-
-ifndef LOCAL_INSTALLED_MODULE_STEM
-  LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
-endif
+# This duplicates logic from base_rules.mk because we need to
+# know its results before base_rules.mk is included.
+include $(BUILD_SYSTEM)/configure_module_stem.mk
 
 # base_rules.make defines $(intermediates), but we need its value
 # before we include base_rules.  Make a guess, and verify that
