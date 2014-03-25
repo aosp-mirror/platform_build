@@ -16,10 +16,6 @@ _64_bit_directory_blacklist += \
 	device/generic/goldfish/opengl \
 	device/generic/goldfish/camera \
 
-# not needed yet, and too many directories to blacklist individually
-_64_bit_directory_blacklist += \
-	frameworks/av/media/libeffects \
-
 _64_bit_directory_blacklist_pattern := $(addsuffix %,$(_64_bit_directory_blacklist))
 
 define directory_is_64_bit_blacklisted
