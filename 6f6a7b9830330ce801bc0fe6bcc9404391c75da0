@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3c8f15af_3e48a9a3",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-25T15:31:27Z",
+      "side": 1,
+      "message": "Is there some way we can get rid of (or overwrite, or version) the existing build output from out/host/linux-86/bin if FORCE_BUILD_LLVM_COMPONENTS is true ? I spent 15-20 minutes hunting down an issue that turned out to be a stale tblgen binary in out/host/linux-x86/bin/tblgen (built sometime in January).",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bcd6a580_6ddef1f6",
         "filename": "core/binary.mk",
         "patchSetId": 1
