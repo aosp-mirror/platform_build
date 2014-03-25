@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c78f56e_16991cef",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T17:52:04Z",
+      "side": 1,
+      "message": "Please update the comment.\nAlso, I guess there are couple of branches using the master build system, please keep an eye on the build server after you submit the change. You may need to update the manifests when you receive breakage email.",
+      "revId": "7d78079c5b343deb1fc8fba9556d92e5ad8be331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
