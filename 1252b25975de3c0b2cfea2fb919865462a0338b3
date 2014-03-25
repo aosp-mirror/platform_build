@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc1f3d43_2a2f9bb9",
+        "filename": "core/executable.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T23:20:06Z",
+      "side": 1,
+      "message": "LOCAL_BUILD_MULTILIB_EXEC?\nLOCAL_BUILD_MULTILIB, LOCAL_32_BIT_ONLY and LOCAL_NO_2ND_ARCH serve similar purpose. I think it\u0027s a little confusing for the users. Maybe we can unify them with just one variable LOCAL_BUILD_MULTILIB with value not limited to true or false.",
+      "revId": "1252b25975de3c0b2cfea2fb919865462a0338b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
