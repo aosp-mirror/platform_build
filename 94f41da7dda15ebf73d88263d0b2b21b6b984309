@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc1c3954_034c8e5f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T20:28:12Z",
+      "side": 1,
+      "message": "You\u0027ll need to move the definition of my_32_64_bit_suffix from binary.mk to base_rules.mk now.",
+      "revId": "94f41da7dda15ebf73d88263d0b2b21b6b984309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
