@@ -99,8 +99,21 @@ ifneq ($(words $(LOCAL_MODULE_CLASS)),1)
   $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS must contain exactly one word, not "$(LOCAL_MODULE_CLASS)")
 endif
 
+ifndef LOCAL_IS_HOST_MODULE
+my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_IS_64_BIT),64,32)
+endif
+
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+ifndef LOCAL_IS_HOST_MODULE
+my_multilib_module_path := $(strip $(LOCAL_MODULE_PATH_$(my_32_64_bit_suffix)))
+else
+my_multilib_module_path :=
+endif
+ifdef my_multilib_module_path
+my_module_path := $(my_multilib_module_path)
+else
 my_module_path := $(strip $(LOCAL_MODULE_PATH))
+endif
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifeq ($(my_module_path),)
   ifdef LOCAL_IS_HOST_MODULE
@@ -154,17 +167,7 @@ generated_sources_dir := $(call local-generated-sources-dir)
 ###########################################################
 # Pick a name for the intermediate and final targets
 ###########################################################
-ifndef LOCAL_MODULE_STEM
-  LOCAL_MODULE_STEM := $(LOCAL_MODULE)
-endif
-
-ifndef LOCAL_BUILT_MODULE_STEM
-  LOCAL_BUILT_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
-endif
-
-ifndef LOCAL_INSTALLED_MODULE_STEM
-  LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE_STEM)$(LOCAL_MODULE_SUFFIX)
-endif
+include $(BUILD_SYSTEM)/configure_module_stem.mk
 
 # OVERRIDE_BUILT_MODULE_PATH is only allowed to be used by the
 # internal SHARED_LIBRARIES build files.
