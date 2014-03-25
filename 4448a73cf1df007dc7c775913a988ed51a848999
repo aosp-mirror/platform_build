@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc1f3d43_0ded9930",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T23:20:13Z",
+      "side": 1,
+      "message": "Is $(LOCAL_MODULE) in the path intentional? that will result in full path like /data/nativetest/mytest/mytest.",
+      "revId": "4448a73cf1df007dc7c775913a988ed51a848999",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
