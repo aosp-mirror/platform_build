@@ -16,6 +16,24 @@
       "revId": "1252b25975de3c0b2cfea2fb919865462a0338b3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59f69b4a_7fb40fd7",
+        "filename": "core/executable.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-25T23:59:13Z",
+      "side": 1,
+      "message": "Unfortunately, LOCAL_32_BIT_ONLY is spread all over the code already.\n\nI could support LOCAL_BUILD_MULTILIB :\u003d 32 as a synonym for LOCAL_32_BIT_ONLY :\u003d true, LOCAL_BUILD_MULTILIB :\u003d both for this case, and LOCAL_BUILD_MULTILIB :\u003d primary for LOCAL_NO_2ND_ARCH (which is barely used, especially after this stack converts most of them to LOCAL_BUILD_MULTILIB).  That still seems confusing, because they are all for slightly different purposes.  LOCAL_32_BIT_ONLY is for selecting by architecture, while LOCAL_NO_2ND_ARCH explicitly selects the primary architecture.",
+      "parentUuid": "fc1f3d43_2a2f9bb9",
+      "revId": "1252b25975de3c0b2cfea2fb919865462a0338b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
