@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bcd6a580_4d684d4e",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T01:52:57Z",
+      "side": 1,
+      "message": "But HOST_TOOLCHAIN_FOR_CLANG will be changed later when it includes the HOST_x86*.mk file.",
+      "revId": "aeef245d71e1e43948aeba7026662a84a582e89f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9cdba1ac_2cc99b69",
+        "filename": "core/clang/x86_shared.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T01:52:57Z",
+      "side": 1,
+      "message": "I think it\u0027s better to rename this file to HOST_x86_common.mk",
+      "revId": "aeef245d71e1e43948aeba7026662a84a582e89f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcd6a580_ad9e2909",
+        "filename": "core/clang/x86_shared.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-25T01:52:57Z",
+      "side": 1,
+      "message": "Hmm, it\u0027s already set to the same in build/core/combo/HOST_darwin-x86.mk.",
+      "revId": "aeef245d71e1e43948aeba7026662a84a582e89f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
