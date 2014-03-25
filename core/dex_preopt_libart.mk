@@ -9,10 +9,6 @@ DEX2OATD := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 LIBART_COMPILER := $(HOST_OUT_SHARED_LIBRARIES)/libart-compiler$(HOST_SHLIB_SUFFIX)
 LIBARTD_COMPILER := $(HOST_OUT_SHARED_LIBRARIES)/libartd-compiler$(HOST_SHLIB_SUFFIX)
 
-# TODO: for now, override with debug version for better error reporting
-DEX2OAT := $(DEX2OATD)
-LIBART_COMPILER := $(LIBARTD_COMPILER)
-
 # By default, do not run rerun dex2oat if the tool changes.
 # Comment out the | to force dex2oat to rerun on after all changes.
 DEX2OAT_DEPENDENCY := art/runtime/oat.cc # dependency on oat version number
@@ -20,6 +16,10 @@ DEX2OAT_DEPENDENCY += art/runtime/image.cc # dependency on image version number
 DEX2OAT_DEPENDENCY += |
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
 DEX2OAT_DEPENDENCY += $(LIBART_COMPILER)
+
+DEX2OATD_DEPENDENCY := $(DEX2OAT_DEPENDENCY)
+DEX2OATD_DEPENDENCY += $(DEX2OATD)
+DEX2OATD_DEPENDENCY += $(LIBARTD_COMPILER)
 
 PRELOADED_CLASSES := frameworks/base/preloaded-classes
 
@@ -57,11 +57,12 @@ LIBART_TARGET_BOOT_DEX_FILES := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),$(call 
 # The .oat with symbols
 LIBART_TARGET_BOOT_OAT_UNSTRIPPED := $(TARGET_OUT_UNSTRIPPED)$(patsubst %.art,%.oat,$(LIBART_BOOT_IMAGE))
 
-$(DEFAULT_DEX_PREOPT_BUILT_IMAGE): $(LIBART_TARGET_BOOT_DEX_FILES) $(DEX2OAT_DEPENDENCY)
+# Use dex2oat debug version for better error reporting
+$(DEFAULT_DEX_PREOPT_BUILT_IMAGE): $(LIBART_TARGET_BOOT_DEX_FILES) $(DEX2OATD_DEPENDENCY)
 	@echo "target dex2oat: $@ ($?)"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $(LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
-	$(hide) $(DEX2OAT) --runtime-arg -Xms256m --runtime-arg -Xmx256m --image-classes=$(PRELOADED_CLASSES) \
+	$(hide) $(DEX2OATD) --runtime-arg -Xms256m --runtime-arg -Xmx256m --image-classes=$(PRELOADED_CLASSES) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
 		$(addprefix --dex-location=,$(LIBART_TARGET_BOOT_DEX_LOCATIONS)) \
 		--oat-symbols=$(LIBART_TARGET_BOOT_OAT_UNSTRIPPED) \
@@ -82,7 +83,7 @@ $(DEFAULT_DEX_PREOPT_BUILT_IMAGE): $(LIBART_TARGET_BOOT_DEX_FILES) $(DEX2OAT_DEP
 define dex2oat-one-file
 $(hide) rm -f $(4)
 $(hide) mkdir -p $(dir $(4))
-$(hide) $(DEX2OAT) \
+$(hide) $(DEX2OATD) \
 	--runtime-arg -Xms64m --runtime-arg -Xmx64m \
 	--boot-image=$(1) \
 	--dex-file=$(2) \
