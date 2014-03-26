@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "590f7b24_5a0ef194",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:40:01Z",
+      "side": 1,
+      "message": "I slightly prefer LOCAL_MULTILIB. But LOCAL_BUILD_MULTILIB seems fine too.",
+      "parentUuid": "1c23318f_048c8b70",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "590f7b24_5a8cb1da",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -42,6 +60,75 @@
         "endLine": 15,
         "endChar": 34
       },
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "392487a3_99137fb4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:40:01Z",
+      "side": 1,
+      "message": "To be consistent with the makefile variables used in the build system, I prefer \"first\".",
+      "parentUuid": "590f7b24_5a8cb1da",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "392487a3_59e04763",
+        "filename": "core/multilib.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:40:01Z",
+      "side": 1,
+      "message": "endif  # ifdef TARGET_2ND_ARCH",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "392487a3_19dacfb3",
+        "filename": "core/multilib.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:40:01Z",
+      "side": 1,
+      "message": "endif \t# ifeq ($(LOCAL_32_BIT_ONLY)|$(LOCAL_NO_2ND_ARCH),true|true)",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c23318f_e41befff",
+        "filename": "core/multilib.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:40:01Z",
+      "side": 1,
+      "message": "else # ifndef my_module_build_multlib",
       "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -77,6 +164,24 @@
       "side": 1,
       "message": "This is in the else from the top ifndef my_module_build_mulitlib, so it only applies if they specify something.",
       "parentUuid": "590f7b24_3ab1fd0c",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "590f7b24_5a5b9171",
+        "filename": "core/multilib.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:40:01Z",
+      "side": 1,
+      "message": "Got it. Comments at the end of \"else\" and \"endif\" lines would make it clearer.",
+      "parentUuid": "1c23318f_a451f72b",
       "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
