@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "f904af03_1c951524",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-26T12:21:48Z",
+      "side": 1,
+      "message": "I see, that\u0027s fine. I expect most users will start with a make clobber anyway, because dependencies aren\u0027t set up correctly. i.e, when using USE_BUILT_LLVM_COMPONENTS the build system *can\u0027t* know that the compiler hasn\u0027t changed (from prebuilts/ to out/).\n\nI just wasn\u0027t sure if this was going to be used on the continuous build (or similar.)",
+      "parentUuid": "1c23318f_b4b92ed0",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bcd6a580_6ddef1f6",
         "filename": "core/binary.mk",
         "patchSetId": 1
