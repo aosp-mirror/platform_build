@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99ec937b_84ce68a3",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-26T18:02:14Z",
+      "side": 1,
+      "message": "NOTE: With some bash trickery, we can guarantee that we don\u0027t leave any \"gaps\" in the ABIs ({arm64-v8a, armeabi-v7a, armeabi} instead of {arm64-v8a, \"\", armeabi-v7a, armeabi} but is it worth it ?",
+      "revId": "ed011441836afcc76dbfd648467a99d208a7eac3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
