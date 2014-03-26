@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "1c23318f_048c8b70",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-26T18:23:35Z",
+      "side": 1,
+      "message": "what do you think of the variable name?  This is going to get spread throughout a lot of Android.mk files, so we should figure out any naming issues now.  LOCAL_MULTILIB?",
+      "range": {
+        "startLine": 7,
+        "startChar": 16,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "590f7b24_5a8cb1da",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-26T18:23:35Z",
+      "side": 1,
+      "message": "I\u0027m a little worried about the naming of \"primary\", because we have talked to vendors about 64-bit devices with \"64-bit primary\" or \"32-bit primary\", where \"32-bit primary\" means a 64-bit build with TARGET_PREFER_32_BIT set.  Maybe \"first\" or \"main\"?\n\nMaybe \"primary\" is ok, since I don\u0027t expect this to get used much at all.",
+      "range": {
+        "startLine": 15,
+        "startChar": 27,
+        "endLine": 15,
+        "endChar": 34
+      },
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "590f7b24_3ab1fd0c",
         "filename": "core/multilib.mk",
         "patchSetId": 3
@@ -19,6 +65,24 @@
     },
     {
       "key": {
+        "uuid": "1c23318f_a451f72b",
+        "filename": "core/multilib.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-26T18:23:35Z",
+      "side": 1,
+      "message": "This is in the else from the top ifndef my_module_build_mulitlib, so it only applies if they specify something.",
+      "parentUuid": "590f7b24_3ab1fd0c",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "392487a3_19d08fe2",
         "filename": "core/prebuilt.mk",
         "patchSetId": 3
@@ -30,6 +94,24 @@
       "writtenOn": "2014-03-26T18:15:51Z",
       "side": 1,
       "message": "Hmm, this (and the commit message) is a little misleading: actually it meant \"either\" and let module_arch_supported.mk choose to build for the 1st or 2nd arch.\n\"both\" for $(BUILD_PACKAGE) also means \"either\".\n\"both\" for libraries and exectuables really means \"both\" :)",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "590f7b24_fa4825ed",
+        "filename": "core/prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-03-26T18:23:35Z",
+      "side": 1,
+      "message": "will fix.",
+      "parentUuid": "392487a3_19d08fe2",
       "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
