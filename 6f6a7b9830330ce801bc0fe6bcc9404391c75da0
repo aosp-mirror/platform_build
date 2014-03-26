@@ -105,6 +105,24 @@
       "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dc1c3954_3dba7f9f",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-03-26T05:49:09Z",
+      "side": 1,
+      "message": "USE_BUILT is more about ability to test rebases and cherry-picks without having to do prebuilt changes every time for testing. it will probably only be used by me, srhines, and others like us.",
+      "parentUuid": "fc1f3d43_78c4092d",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
