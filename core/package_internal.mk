@@ -289,12 +289,12 @@ framework_res_package_export_deps := \
 endif # LOCAL_SDK_RES_VERSION
 all_library_res_package_exports := \
     $(framework_res_package_export) \
-    $(foreach lib,$(LOCAL_APK_LIBRARIES),\
+    $(foreach lib,$(LOCAL_RES_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/package-export.apk)
 
 all_library_res_package_export_deps := \
     $(framework_res_package_export_deps) \
-    $(foreach lib,$(LOCAL_APK_LIBRARIES),\
+    $(foreach lib,$(LOCAL_RES_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
 
 $(resource_export_package) $(R_file_stamp): $(all_library_res_package_export_deps)
