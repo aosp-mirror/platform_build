@@ -430,10 +430,10 @@ full_java_lib_deps += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
 # This is set by packages that are linking to other packages that export
 # shared libraries, allowing them to make use of the code in the linked apk.
-LOCAL_APK_LIBRARIES := $(strip $(LOCAL_APK_LIBRARIES))
-ifdef LOCAL_APK_LIBRARIES
+apk_libraries := $(sort $(LOCAL_APK_LIBRARIES) $(LOCAL_RES_LIBRARIES))
+ifneq ($(apk_libraries),)
   link_apk_libraries := \
-      $(foreach lib,$(LOCAL_APK_LIBRARIES), \
+      $(foreach lib,$(apk_libraries), \
         $(call intermediates-dir-for, \
               APPS,$(lib),,COMMON)/classes.jar)
 
