@@ -104,6 +104,7 @@ FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 # A list of all source roots under frameworks/support.
 #
 FRAMEWORKS_SUPPORT_SUBDIRS := \
+        annotations \
         v4 \
         v7/gridlayout \
         v7/appcompat \
