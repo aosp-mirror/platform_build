@@ -34,6 +34,24 @@
       "revId": "4448a73cf1df007dc7c775913a988ed51a848999",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dc1c3954_97fa745a",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T00:48:18Z",
+      "side": 1,
+      "message": "Ah, I missed that.",
+      "parentUuid": "b9e79793_a2595eec",
+      "revId": "4448a73cf1df007dc7c775913a988ed51a848999",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
