@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "590f7b24_3ab1fd0c",
+        "filename": "core/multilib.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:15:51Z",
+      "side": 1,
+      "message": "It seems most $(BUILD_EXECUTABLE)s and $(BUILD_PACKAGES)s will fail here, because they don\u0027t have none of the variables set.",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "392487a3_19d08fe2",
+        "filename": "core/prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T18:15:51Z",
+      "side": 1,
+      "message": "Hmm, this (and the commit message) is a little misleading: actually it meant \"either\" and let module_arch_supported.mk choose to build for the 1st or 2nd arch.\n\"both\" for $(BUILD_PACKAGE) also means \"either\".\n\"both\" for libraries and exectuables really means \"both\" :)",
+      "revId": "e36a776b6b03da9e09c038f190aa86690a0ae4b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
