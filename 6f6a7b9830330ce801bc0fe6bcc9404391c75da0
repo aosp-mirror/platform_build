@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "1c23318f_b4b92ed0",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T01:46:39Z",
+      "side": 1,
+      "message": "Unfortunately you are on your own when you switch the value of these environmental variable. Such variables are rarely used and the users should know what files need to clean when the flag is enabled.",
+      "parentUuid": "bc64e5c8_7a2959b1",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bcd6a580_6ddef1f6",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "this was to break the circular dependency you mentioned in the other changes. the idea is that we have two different settings that are not intended to be used at the same time:\n\n1. FORCE_BUILD_LLVM_COMPONENTS: this will build the self-hosted clang/LLVM using prebuilts/clang and place the output in out/host.\n2. USE_BUILT_LLVM_COMPONENTS: don\u0027t rebuild LLVM/clang, but use whatever clang is present in out/host.\n\ndefinitely open to other suggestions.",
       "parentUuid": "bcd6a580_6ddef1f6",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc1f3d43_78c4092d",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-26T01:46:39Z",
+      "side": 1,
+      "message": "Hmmm, the second case is interesting: you may use the buggy clang to build the clang source you\u0027ve just made a fix. It\u0027s intriguing but seems unnecessary to me: we should just use the prebuilt clang to build clang itself in that case.\nLet me think more about how to break the circurlar dependency tomorrow.",
+      "parentUuid": "bcd6a580_30461071",
       "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
