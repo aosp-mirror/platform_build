@@ -141,6 +141,24 @@
       "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "993ad3c3_5174b455",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-27T22:45:41Z",
+      "side": 1,
+      "message": "I don\u0027t think it\u0027s a good idea to use the built clang without setting up the dependency. Aside from the uncertainty I mentioned, there will also be race condition: while the build system is compiling clang itself (e.g. it\u0027s just writing out out/host/linux-x86/bin/clang), clang is called to compile other files. You even don\u0027t know if a file is compiled by the old clang or the newly built clang.\nTo break the inherent circular dependency, you have to copy the newly built clang to the prebuilt directory and do the test.\n\nAlso, it\u0027s really confusing to have both FORCE_BUILD_LLVM_COMPONENTS and USE_BUILT_LLVM_COMPONENTS. \nWith that approach, I don\u0027t see the necessity to keep either of them. The build system just points clang to the prebuilt, and it always builds clang from source in the source tree, but the newly built clang isn\u0027t used in the same build process.",
+      "parentUuid": "dc1c3954_3dba7f9f",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
