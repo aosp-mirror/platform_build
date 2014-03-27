@@ -9,10 +9,19 @@
 ifdef LOCAL_IS_HOST_MODULE
 include $(BUILD_SYSTEM)/prebuilt_internal.mk
 else #!LOCAL_IS_HOST_MODULE
-# check if primary arch is supported
+
+include $(BUILD_SYSTEM)/multilib.mk
+
+ifndef my_module_multilib
+# prebuilts default to building for either architecture,
+# the first if its supported, otherwise the second.
+my_module_multilib := both
+endif
+
+# check if first arch is supported
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
-# primary arch is supported
+# first arch is supported
 include $(BUILD_SYSTEM)/prebuilt_internal.mk
 else ifneq (,$(TARGET_2ND_ARCH))
 # check if secondary arch is supported
