@@ -182,6 +182,24 @@
       "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f94bcf71_6a09f38a",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-28T21:34:32Z",
+      "side": 1,
+      "message": "Yeah, let\u0027s always use the prebuilt and remove the use of USE_BUILT_LLVM_COMPONENTS.",
+      "parentUuid": "194fc37f_c85c6fb7",
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
