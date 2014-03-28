@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f91d8f5d_e59bd912",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-28T17:08:49Z",
+      "side": 1,
+      "message": "Could you move it up here?\nI think it just amends the board config, so want to make sure it\u0027s done right after the BoardConfig.mk is loaded.",
+      "revId": "622121219a0e23adf5534c0e63f249c6052096a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
