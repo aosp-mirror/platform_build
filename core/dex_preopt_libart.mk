@@ -43,7 +43,7 @@ LIBART_IMG_HOST_BASE_ADDRESS   := 0x60000000
 ifeq ($(TARGET_ARCH),mips)
 LIBART_IMG_TARGET_BASE_ADDRESS := 0x30000000
 else
-LIBART_IMG_TARGET_BASE_ADDRESS := 0x60000000
+LIBART_IMG_TARGET_BASE_ADDRESS := 0x70000000
 endif
 
 ########################################################################
