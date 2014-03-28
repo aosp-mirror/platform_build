@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7958bf41_eb484ded",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-28T17:17:16Z",
+      "side": 1,
+      "message": "embedded.mk is supposed to be without a vm.\nThe highest level of product with a vm I think is target/product/core_minimal.mk.",
+      "revId": "7ea20d5ea04a1a8e45b015cf2bead6db1d45bc45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
