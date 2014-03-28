@@ -159,6 +159,29 @@
       "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "194fc37f_c85c6fb7",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-03-28T19:24:56Z",
+      "side": 1,
+      "message": "if we\u0027re going to keep FORCE_BUILD_LLVM_COMPONENTS as a way to build LLVM/Clang and require that built files have to be copied to the prebuilt directory before they can be used, should we always keep LLVM_PREBUILTS_PATH set to prebuilts/clang? that would make the rest of my changes simpler or entirely unnecessary.",
+      "range": {
+        "startLine": 9,
+        "startChar": 13,
+        "endLine": 9,
+        "endChar": 38
+      },
+      "revId": "6f6a7b9830330ce801bc0fe6bcc9404391c75da0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
