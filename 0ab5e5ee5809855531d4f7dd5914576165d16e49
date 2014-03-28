@@ -16,6 +16,24 @@
       "revId": "0ab5e5ee5809855531d4f7dd5914576165d16e49",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19f8a337_e6e89420",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-03-28T09:38:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "993ad3c3_34391e04",
+      "revId": "0ab5e5ee5809855531d4f7dd5914576165d16e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
