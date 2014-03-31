@@ -33,6 +33,24 @@
       "revId": "fd180922b340c6ce6ce3f5552cf168538219f0d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79db5f06_f3e86a20",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-03-31T21:06:29Z",
+      "side": 1,
+      "message": "this is just preserving the old behavior without the gross (I wrote it)\n\nDEX2OAT :\u003d $(DEX2OATD)\n\nbut yes, if there are more places to fix it, then they should be fixed.",
+      "parentUuid": "197d03a0_58538133",
+      "revId": "fd180922b340c6ce6ce3f5552cf168538219f0d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
