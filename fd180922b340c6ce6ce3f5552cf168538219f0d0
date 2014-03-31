@@ -51,6 +51,24 @@
       "revId": "fd180922b340c6ce6ce3f5552cf168538219f0d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9d157e4_952d4678",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-31T21:13:19Z",
+      "side": 1,
+      "message": "Oh, I misread the commit message as \"Use dex2oatd only for boot.art, but not other .odex files\".\nYes, then change build/core/dex_preopt.mk to reference DEX2OATD_DEPENDENCY please.",
+      "parentUuid": "79db5f06_f3e86a20",
+      "revId": "fd180922b340c6ce6ce3f5552cf168538219f0d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
