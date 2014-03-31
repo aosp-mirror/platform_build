@@ -1321,16 +1321,23 @@ endef
 ## Commands for filtering a target executable or library
 ###########################################################
 
+ifneq ($(TARGET_BUILD_VARIANT),user)
+  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY) --add-gnu-debuglink=$< $@
+  TARGET_STRIP_KEEP_SYMBOLS_EXTRA = --add-gnu-debuglink=$<
+endif
+
 define transform-to-stripped
 @mkdir -p $(dir $@)
 @echo "target Strip: $(PRIVATE_MODULE) ($@)"
-$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_COMMAND)
+$(hide) $(PRIVATE_STRIP) --strip-all $< -o $@ $(TARGET_STRIP_EXTRA)
 endef
 
 define transform-to-stripped-keep-symbols
 @mkdir -p $(dir $@)
 @echo "target Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
-$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_KEEP_SYMBOLS_COMMAND)
+$(hide) $(PRIVATE_OBJCOPY) \
+    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "-R " $$2}' | xargs` \
+    $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
 endef
 
 
