@@ -180,12 +180,12 @@ endif # if requires_openjdk
 # EXPERIMENTAL_USE_JAVA7 is set, 1.6 otherwise.
 ifneq ($(EXPERIMENTAL_USE_JAVA7),)
 required_version := "1.7.x"
-java_version := $(shell java -version 2>&1 | head -n 1 | grep '^java .*[ "]1\.7[\. "$$]')
-javac_version := $(shell javac -version 2>&1 | head -n 1 | grep '[ "]1\.7[\. "$$]')
+java_version := $(shell java -version 2>&1 | grep '^java .*[ "]1\.7[\. "$$]' | head -n 1)
+javac_version := $(shell javac -version 2>&1 | grep '[ "]1\.7[\. "$$]' | head -n 1 )
 else # if EXPERIMENTAL_USE_JAVA7
 required_version := "1.6.x"
-java_version := $(shell java -version 2>&1 | head -n 1 | grep '^java .*[ "]1\.6[\. "$$]')
-javac_version := $(shell javac -version 2>&1 | head -n 1 | grep '[ "]1\.6[\. "$$]')
+java_version := $(shell java -version 2>&1 | grep '^java .*[ "]1\.6[\. "$$]' | head -n 1)
+javac_version := $(shell javac -version 2>&1 | grep '[ "]1\.6[\. "$$]' | head -n 1)
 endif # if EXPERIMENTAL_USE_JAVA7
 
 ifeq ($(strip $(java_version)),)
@@ -193,7 +193,7 @@ $(info ************************************************************)
 $(info You are attempting to build with the incorrect version)
 $(info of java.)
 $(info $(space))
-$(info Your version is: $(shell java -version 2>&1 | head -n 1).)
+$(info Your version is: $(shell java -version 2>&1 | grep '^java' | head -n 1).)
 $(info The required version is: $(required_version))
 $(info $(space))
 $(info Please follow the machine setup instructions at)
@@ -208,7 +208,7 @@ $(info ************************************************************)
 $(info You are attempting to build with the incorrect version)
 $(info of javac.)
 $(info $(space))
-$(info Your version is: $(shell javac -version 2>&1 | head -n 1).)
+$(info Your version is: $(shell javac -version 2>&1 | grep '^javac' | head -n 1).)
 $(info The required version is: $(required_java_version))
 $(info $(space))
 $(info Please follow the machine setup instructions at)
