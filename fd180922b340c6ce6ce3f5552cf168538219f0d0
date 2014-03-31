@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9d157e4_f2eaa886",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-31T20:43:01Z",
+      "side": 1,
+      "message": "Use \":\u003d\" for the above line.",
+      "revId": "fd180922b340c6ce6ce3f5552cf168538219f0d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "197d03a0_58538133",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-31T20:43:01Z",
+      "side": 1,
+      "message": "Why do you need to change this? this rule is used for all the apks and jars during the build process. If you change this, you\u0027ll need to update the DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS in build/core/dex_preopt.mk to use DEX2OATD_DEPENDENCY as well.",
+      "revId": "fd180922b340c6ce6ce3f5552cf168538219f0d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
