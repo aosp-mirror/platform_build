@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39ae4766_8f99bdad",
+        "filename": "core/combo/select.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-03-31T23:44:58Z",
+      "side": 1,
+      "message": "The idea sounds good to me.\nBut I think we should move the definition of CCACHE_BIN to build/core/config.mk, where other utility variables are set up.",
+      "revId": "1bfa4ab51c49365d50c583cd329ad2e255c6e57a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
