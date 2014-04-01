@@ -183,13 +183,13 @@ endif # if requires_openjdk
 ifneq ($(EXPERIMENTAL_USE_JAVA7),)
 required_version := "1.7.x"
 required_javac_version := "1.7"
-java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.7[\. "$$]')
-javac_version := $(shell echo '$(javac_version_str)' | grep '[ "]1\.7[\. "$$]')
+java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.7[\. "$$]' | head -n 1)
+javac_version := $(shell echo '$(javac_version_str)' | grep '[ "]1\.7[\. "$$]' | head -n 1)
 else # if EXPERIMENTAL_USE_JAVA7
 required_version := "1.6.x"
 required_javac_version := "1.6"
-java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.6[\. "$$]')
-javac_version := $(shell echo '$(javac_version_str)' | head -n 1 | grep '[ "]1\.6[\. "$$]')
+java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.6[\. "$$]' | head -n 1)
+javac_version := $(shell echo '$(javac_version_str)' | head -n 1 | grep '[ "]1\.6[\. "$$]' | head -n 1)
 endif # if EXPERIMENTAL_USE_JAVA7
 
 ifeq ($(required_javac_version), "1.6")
