@@ -24,6 +24,7 @@ _vendor_owner_whitelist := \
         google \
         imgtec \
         invensense \
+        intel \
         lge \
         nvidia \
         nxp \
