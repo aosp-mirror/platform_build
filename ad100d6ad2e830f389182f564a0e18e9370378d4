@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19ab4358_2b8bdd5a",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1018664
+      },
+      "writtenOn": "2014-04-01T03:40:44Z",
+      "side": 1,
+      "message": "HOST_TOOLCHAIN_PREFIX :\u003d prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.6/bin/x86_64-linux-\n\nIt will be better to use \":\u003d\" for assignment in the Makefile.",
+      "revId": "ad100d6ad2e830f389182f564a0e18e9370378d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
