@@ -25,6 +25,7 @@ _vendor_owner_whitelist := \
         htc \
         imgtec \
         invensense \
+        intel \
         lge \
         nvidia \
         nxp \
