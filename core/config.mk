@@ -456,7 +456,7 @@ ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
 endif
 
 DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
-ifneq (,$(filter $(TARGET_CPU_VARIANT),cortex-a15 krait))
+ifneq (,$(filter $(TARGET_CPU_VARIANT),cortex-a7 cortex-a15 krait))
 DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
 endif
 
