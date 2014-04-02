@@ -1,7 +1,7 @@
 <?cs def:custom_masthead() ?>
 <a name="top"></a>
-<?cs if:!devsite ?><?cs # leave out the global header for devsite; it's in devsite template ?>
-    <!-- Header -->
+<?cs if:!devsite ?><?cs # leave out the global header for devsite; it is in devsite template ?>
+    <!-- Header --><div id="header-wrapper">
     <div id="header">
         <div class="wrap" id="header-wrap">
           <div class="col-3 logo">
@@ -31,7 +31,8 @@
                   ja-lang="開発"
                   es-lang="Desarrollar"               
                   >Develop</a></li>
-                <li class="distribute last"><a href="<?cs var:toroot ?>distribute/index.html"
+                <li class="distribute last"><a href="<?cs var:toroot ?>distribute/<?cs
+                  if:android.whichdoc == "offline" ?>googleplay/<?cs /if ?>index.html"
                   zh-tw-lang="發佈"
                   zh-cn-lang="分发"
                   ru-lang="Распространение"
@@ -51,7 +52,7 @@
     <div class="mid">
       <div class="header">Links</div>
       <ul>
-        <li><a href="https://play.google.com/apps/publish/">Google Play Developer Console</a></li>
+        <li><a href="https://play.google.com/apps/publish/" target="_googleplay">Google Play Developer Console</a></li>
         <li><a href="http://android-developers.blogspot.com/">Android Developers Blog</a></li>
         <li><a href="<?cs var:toroot ?>about/index.html">About Android</a></li>
       </ul>
@@ -139,87 +140,79 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
   <!-- /New Search>
           
           
-          <!-- Expanded quicknav -->
-           <div id="quicknav" class="col-9">
-                <ul>
-                    <li class="design">
-                      <ul>
-                        <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
-                        <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
-                        <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
-                        <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
-                        <li><a href="<?cs var:toroot ?>design/downloads/index.html">Downloads</a></li>
-                        <li><a href="<?cs var:toroot ?>design/videos/index.html">Videos</a></li>
-                      </ul>
-                    </li>
-                    <li class="develop">
-                      <ul>
-                        <li><a href="<?cs var:toroot ?>training/index.html"
-                          zh-tw-lang="訓練課程"
-                          zh-cn-lang="培训"
-                          ru-lang="Курсы"
-                          ko-lang="교육"
-                          ja-lang="トレーニング"
-                          es-lang="Capacitación"               
-                          >Training</a></li>
-                        <li><a href="<?cs var:toroot ?>guide/index.html"
-                          zh-tw-lang="API 指南"
-                          zh-cn-lang="API 指南"
-                          ru-lang="Руководства по API"
-                          ko-lang="API 가이드"
-                          ja-lang="API ガイド"
-                          es-lang="Guías de la API"               
-                          >API Guides</a></li>
-                        <li><a href="<?cs var:toroot ?>reference/packages.html"
-                          zh-tw-lang="參考資源"
-                          zh-cn-lang="参考"
-                          ru-lang="Справочник"
-                          ko-lang="참조문서"
-                          ja-lang="リファレンス"
-                          es-lang="Referencia"               
-                          >Reference</a></li>
-                        <li><a href="<?cs var:toroot ?>tools/index.html"
-                          zh-tw-lang="相關工具"
-                          zh-cn-lang="工具"
-                          ru-lang="Инструменты"
-                          ko-lang="도구"
-                          ja-lang="ツール"
-                          es-lang="Herramientas"               
-                          >Tools</a>
-                          <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
-                        </li>
-                        <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
-                        </li>
-                        <?cs if:android.hasSamples ?>
-                          <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
-                          </li>
-                        <?cs /if ?>
-                      </ul>
-                    </li>
-                    <li class="distribute last">
-                      <ul>
-                        <li><a href="<?cs var:toroot ?>distribute/index.html">Google Play</a></li>
-                        <li><a href="<?cs var:toroot ?>distribute/googleplay/publish/index.html">Publishing</a></li>
-                        <li><a href="<?cs var:toroot ?>distribute/googleplay/promote/index.html">Promoting</a></li>
-                        <li><a href="<?cs var:toroot ?>distribute/googleplay/quality/index.html">App Quality</a></li>
-                        <li><a href="<?cs var:toroot ?>distribute/googleplay/spotlight/index.html">Spotlight</a></li>
-                        <li><a href="<?cs var:toroot ?>distribute/open.html">Open Distribution</a></li>
-                      </ul>
-                    </li>
-                </ul>
-          </div>
-          <!-- /Expanded quicknav -->
+     <!-- Expanded quicknav -->
+     <div id="quicknav" class="col-9">
+      <ul>
+          <li class="design">
+            <ul>
+              <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
+              <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
+              <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
+              <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
+              <li><a href="<?cs var:toroot ?>design/downloads/index.html">Downloads</a></li>
+              <li><a href="<?cs var:toroot ?>design/videos/index.html">Videos</a></li>
+            </ul>
+          </li>
+          <li class="develop">
+            <ul>
+              <li><a href="<?cs var:toroot ?>training/index.html"
+                zh-tw-lang="訓練課程"
+                zh-cn-lang="培训"
+                ru-lang="Курсы"
+                ko-lang="교육"
+                ja-lang="トレーニング"
+                es-lang="Capacitación"
+                >Training</a></li>
+              <li><a href="<?cs var:toroot ?>guide/index.html"
+                zh-tw-lang="API 指南"
+                zh-cn-lang="API 指南"
+                ru-lang="Руководства по API"
+                ko-lang="API 가이드"
+                ja-lang="API ガイド"
+                es-lang="Guías de la API"
+                >API Guides</a></li>
+              <li><a href="<?cs var:toroot ?>reference/packages.html"
+                zh-tw-lang="參考資源"
+                zh-cn-lang="参考"
+                ru-lang="Справочник"
+                ko-lang="참조문서"
+                ja-lang="リファレンス"
+                es-lang="Referencia"
+                >Reference</a></li>
+              <li><a href="<?cs var:toroot ?>tools/index.html"
+                zh-tw-lang="相關工具"
+                zh-cn-lang="工具"
+                ru-lang="Инструменты"
+                ko-lang="도구"
+                ja-lang="ツール"
+                es-lang="Herramientas"
+                >Tools</a>
+                <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
+              </li>
+              <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
+              </li>
+              <?cs if:android.hasSamples ?>
+                <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
+                </li>
+              <?cs /if ?>
+            </ul>
+          </li>
+          <li class="distribute last">
+            <ul>
+              <li><a href="<?cs var:toroot ?>distribute/googleplay/index.html">Google Play</a></li>
+              <li><a href="<?cs var:toroot ?>distribute/essentials/index.html">Essentials</a></li>
+              <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
+              <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
+              <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
+              <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
+            </ul>
+          </li>
+      </ul>
+    </div><!-- /Expanded quicknav -->
+
         </div>
-    </div>
-    <!-- /Header -->
-    
-    
-  <div id="searchResults" class="wrap" style="display:none;">
-          <h2 id="searchTitle">Results</h2>
-          <div id="leftSearchControl" class="search-control">Loading...</div>
-  </div>
-    
-    
+    </div><!-- /Header -->
+
   <?cs if:training || guide || reference || tools || develop || google || samples ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
@@ -270,10 +263,71 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
         
     </div>
     <!-- /Sendondary x-nav -->
+
+  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || disttools || stories ?>
+    <!-- Secondary distribute x-nav -->
+    <div id="nav-x">
+        <div class="wrap">
+            <ul class="nav-x distribute">
+                <li class="googleplay"><a href="<?cs var:toroot ?>distribute/googleplay/index.html"
+                  >Google Play</a></li>
+                <li class="essentials"><a href="<?cs var:toroot ?>distribute/essentials/index.html"
+                  >Essentials</a></li>
+                <li class="users"><a href="<?cs var:toroot ?>distribute/users/index.html"
+                  >Get Users</a></li>
+                <li class="engage"><a href="<?cs var:toroot ?>distribute/engage/index.html"
+                  >Engage &amp; Retain</a></li>
+                <li class="monetize"><a href="<?cs var:toroot ?>distribute/monetize/index.html"
+                  >Monetize</a>
+                </li>
+                <li class="disttools"><a href="<?cs var:toroot ?>distribute/tools/index.html"
+                  >Tools</a>
+                </li>
+                <li class="stories"><a href="<?cs var:toroot ?>distribute/stories/index.html"
+                  >Stories</a>
+                </li>
+            </ul>
+            <a href="https://play.google.com/apps/publish/" class="developer-console-btn">Developer Console</a>
+        </div> <!-- /Secondary distribute x-nav -->
+    </div>
+
   <?cs /if ?>
+</div> <!--end headerwrap -->
 
-<?cs /if ?>
-<?cs # end if/else !devsite ?>
+<div id="sticky-header">
+  <div>
+    <a class="logo" href="/index.html"></a>
+    <a class="top" href="#top"></a>
+    <ul class="breadcrumb">
+      <?cs
+if:design ?><li class="design"><a href="<?cs var:toroot ?>design/index.html">Design</a></li><?cs
+elif:(develop || training || guide || reference || tools || sdk || google || samples) ?><li class="develop"><a href="<?cs var:toroot ?>develop/index.html">Develop</a></li><?cs
+elif:distribute ?><li class="distribute"><a href="<?cs var:toroot ?>distribute/index.html">Distribute</a></li><?cs
+elif:about ?><li class="about"><a href="<?cs var:toroot ?>about/index.html">About Android</a></li><?cs
+/if ?><?cs
+if:training ?><li><a href="<?cs var:toroot ?>training/index.html">Training</a></li><?cs
+elif:guide ?><li><a href="<?cs var:toroot ?>guide/index.html">API Guides</a></li><?cs
+elif:reference ?><li><a href="<?cs var:toroot ?>reference/index.html">Reference</a></li><?cs
+elif:tools ?><li><a href="<?cs var:toroot ?>tools/index.html">Tools</a></li><?cs
+elif:google ?><li><a href="<?cs var:toroot ?>google/index.html">Google Services</a></li><?cs
+elif:samples ?><li><a href="<?cs var:toroot ?>samples/index.html">Samples</a></li><?cs
+elif:googleplay ?><li><a href="<?cs var:toroot ?>distribute/googleplay/index.html">Google Play</a></li><?cs
+elif:essentials ?><li><a href="<?cs var:toroot ?>distribute/essentials/index.html">Essentials</a></li><?cs
+elif:users ?><li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li><?cs
+elif:engage ?><li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li><?cs
+elif:monetize ?><li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize Your Apps</a></li><?cs
+elif:disttools ?><li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp Reference</a></li><?cs
+elif:stories ?><li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li><?cs
+/if ?> <?cs
+if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
+/if ?></ul>
+  </div>
+</div>
 
-  <?cs 
+<div id="searchResults" class="wrap" style="display:none;">
+  <h2 id="searchTitle">Results</h2>
+  <div id="leftSearchControl" class="search-control">Loading...</div>
+</div>
+
+<?cs /if ?><?cs # end if/else !devsite ?><?cs
 /def ?>
