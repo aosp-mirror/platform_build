@@ -152,6 +152,8 @@ endif
 endif
 
 ifeq ($(requires_openjdk), true)
+# The user asked for java7 openjdk, so check that the host
+# java version is really openjdk
 ifeq ($(shell java -version 2>&1 | grep -i openjdk),)
 $(info ************************************************************)
 $(info You are attempting to build with an unsupported JDK.)
@@ -180,10 +182,12 @@ endif # if requires_openjdk
 # EXPERIMENTAL_USE_JAVA7 is set, 1.6 otherwise.
 ifneq ($(EXPERIMENTAL_USE_JAVA7),)
 required_version := "1.7.x"
+required_javac_version := "1.7"
 java_version := $(shell java -version 2>&1 | grep '^java .*[ "]1\.7[\. "$$]' | head -n 1)
 javac_version := $(shell javac -version 2>&1 | grep '[ "]1\.7[\. "$$]' | head -n 1 )
 else # if EXPERIMENTAL_USE_JAVA7
 required_version := "1.6.x"
+required_javac_version := "1.6"
 java_version := $(shell java -version 2>&1 | grep '^java .*[ "]1\.6[\. "$$]' | head -n 1)
 javac_version := $(shell javac -version 2>&1 | grep '[ "]1\.6[\. "$$]' | head -n 1)
 endif # if EXPERIMENTAL_USE_JAVA7
@@ -209,7 +213,7 @@ $(info You are attempting to build with the incorrect version)
 $(info of javac.)
 $(info $(space))
 $(info Your version is: $(shell javac -version 2>&1 | grep '^javac' | head -n 1).)
-$(info The required version is: $(required_java_version))
+$(info The required version is: $(required_javac_version))
 $(info $(space))
 $(info Please follow the machine setup instructions at)
 $(info $(space)$(space)$(space)$(space)https://source.android.com/source/download.html)
