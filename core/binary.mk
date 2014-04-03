@@ -149,9 +149,6 @@ ifeq (,$(LOCAL_SDK_VERSION)$(LOCAL_IS_HOST_MODULE)$(WITHOUT_LIBCOMPILER_RT))
 endif
 
 my_compiler_dependencies :=
-ifeq ($(strip $(LOCAL_CLANG)),true)
-  my_compiler_dependencies := $(CLANG) $(CLANG_CXX)
-endif
 
 ####################################################
 ## Add FDO flags if FDO is turned on and supported
