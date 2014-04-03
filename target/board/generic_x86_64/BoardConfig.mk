@@ -33,8 +33,8 @@ ifeq ($(HOST_OS),linux)
 WITH_DEXPREOPT ?= true
 endif
 
-# disable the emulator
-BUILD_EMULATOR := false
+# Build OpenGLES emulation host and guest libraries
+BUILD_EMULATOR_OPENGL := true
 
 # Build and enable the OpenGL ES View renderer. When running on the emulator,
 # the GLES renderer disables itself if host GL acceleration isn't available.
