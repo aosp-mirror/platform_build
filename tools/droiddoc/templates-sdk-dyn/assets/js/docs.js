@@ -221,6 +221,7 @@ $(document).ready(function() {
   // and highlight the sidenav
   mPagePath = pagePath;
   highlightSidenav();
+  buildBreadcrumbs();
 
   // set up prev/next links if they exist
   var $selNavLink = $('#nav').find('a[href="' + pagePath + '"]');
@@ -405,70 +406,6 @@ false; // navigate across topic boundaries only in design docs
   });
 
 
-  // Set up fixed navbar
-  var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
-  $(window).scroll(function(event) {
-    if ($('#side-nav').length == 0) return;
-    if (event.target.nodeName == "DIV") {
-      // Dump scroll event if the target is a DIV, because that means the event is coming
-      // from a scrollable div and so there's no need to make adjustments to our layout
-      return;
-    }
-    var scrollTop = $(window).scrollTop();
-    var headerHeight = $('#header').outerHeight();
-    var subheaderHeight = $('#nav-x').outerHeight();
-    var searchResultHeight = $('#searchResults').is(":visible") ?
-                             $('#searchResults').outerHeight() : 0;
-    var totalHeaderHeight = headerHeight + subheaderHeight + searchResultHeight;
-    // we set the navbar fixed when the scroll position is beyond the height of the site header...
-    var navBarShouldBeFixed = scrollTop > totalHeaderHeight;
-    // ... except if the document content is shorter than the sidenav height.
-    // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
-    if ($("#doc-col").height() < $("#side-nav").height()) {
-      navBarShouldBeFixed = false;
-    }
-
-    var scrollLeft = $(window).scrollLeft();
-    // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
-    if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
-      updateSideNavPosition();
-      prevScrollLeft = scrollLeft;
-    }
-
-    // Don't continue if the header is sufficently far away
-    // (to avoid intensive resizing that slows scrolling)
-    if (navBarIsFixed && navBarShouldBeFixed) {
-      return;
-    }
-
-    if (navBarIsFixed != navBarShouldBeFixed) {
-      if (navBarShouldBeFixed) {
-        // make it fixed
-        var width = $('#devdoc-nav').width();
-        $('#devdoc-nav')
-            .addClass('fixed')
-            .css({'width':width+'px'})
-            .prependTo('#body-content');
-        // add neato "back to top" button
-        $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
-
-        // update the sidenaav position for side scrolling
-        updateSideNavPosition();
-      } else {
-        // make it static again
-        $('#devdoc-nav')
-            .removeClass('fixed')
-            .css({'width':'auto','margin':''})
-            .prependTo('#side-nav');
-        $('#devdoc-nav a.totop').hide();
-      }
-      navBarIsFixed = navBarShouldBeFixed;
-    }
-
-    resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
-  });
-
-
   var navBarLeftPos;
   if ($('#devdoc-nav').length) {
     setNavBarLeftPos();
@@ -613,6 +550,22 @@ function initExpandableNavItems(rootTag) {
   });
 }
 
+
+/** Create the list of breadcrumb links in the sticky header */
+function buildBreadcrumbs() {
+  var $breadcrumbUl =  $("#sticky-header ul.breadcrumb");
+  // Add the secondary horizontal nav item, if provided
+  var $selectedSecondNav = $("div#nav-x ul.nav-x a.selected").clone().removeClass("selected");
+  if ($selectedSecondNav.length) {
+    $breadcrumbUl.prepend($("<li>").append($selectedSecondNav))
+  }
+  // Add the primary horizontal nav
+  var $selectedFirstNav = $("div#header-wrap ul.nav-x a.selected").clone().removeClass("selected");
+  $breadcrumbUl.prepend($("<li>").append($selectedFirstNav));
+}
+
+
+
 /** Highlight the current page in sidenav, expanding children as appropriate */
 function highlightSidenav() {
   // if something is already highlighted, undo it. This is for dynamic navigation (Samples index)
@@ -725,9 +678,8 @@ function resizeNav(delay) {
   // Then figure out based on scroll position whether the header is visible
   var windowHeight = $window.height();
   var scrollTop = $window.scrollTop();
-  var headerHeight = $('#header').outerHeight();
-  var subheaderHeight = $('#nav-x').outerHeight();
-  var headerVisible = (scrollTop < (headerHeight + subheaderHeight));
+  var headerHeight = $('#header-wrapper').outerHeight();
+  var headerVisible = scrollTop < stickyTop;
 
   // get the height of space between nav and top of window.
   // Could be either margin or top position, depending on whether the nav is fixed.
@@ -737,7 +689,7 @@ function resizeNav(delay) {
   // Depending on whether the header is visible, set the side nav's height.
   if (headerVisible) {
     // The sidenav height grows as the header goes off screen
-    navHeight = windowHeight - (headerHeight + subheaderHeight - scrollTop) - topMargin;
+    navHeight = windowHeight - (headerHeight - scrollTop) - topMargin;
   } else {
     // Once header is off screen, the nav height is almost full window height
     navHeight = windowHeight - topMargin;
@@ -929,12 +881,12 @@ function writeCookie(cookie, val, section, expiration) {
 /* 
  * Displays sticky nav bar on pages when dac header scrolls out of view 
  */
-
+var stickyTop;
 (function() {
   $(document).ready(function() {
 
     // Sticky nav position
-    var stickyTop = $('#header-wrapper').outerHeight();
+    stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
     var sticky = false;
     var hiding = false;
     var $stickyEl = $('#sticky-header');
@@ -943,26 +895,62 @@ function writeCookie(cookie, val, section, expiration) {
     var lastScroll = 0;
     var autoScrolling = false;
 
-    $(window).scroll(function() {
-      var top = $(window).scrollTop();
+    var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
 
-      if (sticky && top < stickyTop) {
+    $(window).scroll(function() {
+      // Exit if there's no sidenav
+      if ($('#side-nav').length == 0) return;
+      // Exit if the mouse target is a DIV, because that means the event is coming
+      // from a scrollable div and so there's no need to make adjustments to our layout
+      if (event.target.nodeName == "DIV") {
+        return;
+      }
+
+
+      var top = $(window).scrollTop();
+      // we set the navbar fixed when the scroll position is beyond the height of the site header...
+      var shouldBeSticky = top >= stickyTop;
+      // ... except if the document content is shorter than the sidenav height.
+      // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
+      if ($("#doc-col").height() < $("#side-nav").height()) {
+        shouldBeSticky = false;
+      }
+
+      // Don't continue if the header is sufficently far away
+      // (to avoid intensive resizing that slows scrolling)
+      if (sticky && shouldBeSticky) {
+        return;
+      }
+
+      // Account for horizontal scroll
+      var scrollLeft = $(window).scrollLeft();
+      // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
+      if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
+        updateSideNavPosition();
+        prevScrollLeft = scrollLeft;
+      }
+
+      // If sticky header visible and position is now near top, hide sticky
+      if (sticky && !shouldBeSticky) {
         sticky = false;
         hiding = true;
-        $stickyEl.css({'opacity': 0});
-        setTimeout(function() {
-          $menuEl.removeClass('sticky-menu');
-          $stickyEl.hide();
-          hiding = false;
-        }, 250);
-      } else if (!sticky && top >= stickyTop) {
+        // make the sidenav static again
+        $('#devdoc-nav')
+            .removeClass('fixed')
+            .css({'width':'auto','margin':''})
+            .prependTo('#side-nav');
+        // delay hide the sticky
+        $menuEl.removeClass('sticky-menu');
+        $stickyEl.fadeOut(250);
+        hiding = false;
+
+        // update the sidenaav position for side scrolling
+        updateSideNavPosition();
+      } else if (!sticky && shouldBeSticky) {
         sticky = true;
-        $stickyEl.show();
+        $stickyEl.fadeIn(10);
         $menuEl.addClass('sticky-menu');
 
-        setTimeout(function() {
-          $stickyEl.css({'opacity': 1});
-        }, 10);
 
         // If its a jump then make sure to modify the scroll because of the
         // sticky nav
@@ -970,6 +958,17 @@ function writeCookie(cookie, val, section, expiration) {
           autoScrolling = true;
           $('body,html').animate({scrollTop:(top = top - 60)}, '250', 'swing', function() { autoScrolling = false; });
         }
+
+        // make the sidenav fixed
+        var width = $('#devdoc-nav').width();
+        $('#devdoc-nav')
+            .addClass('fixed')
+            .css({'width':width+'px'})
+            .prependTo('#body-content');
+
+        // update the sidenaav position for side scrolling
+        updateSideNavPosition();
+
       } else if (hiding && top < 15) {
         $menuEl.removeClass('sticky-menu');
         $stickyEl.hide();
@@ -977,6 +976,7 @@ function writeCookie(cookie, val, section, expiration) {
       }
 
       lastScroll = top;
+      resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
     });
 
     // Stack hover states
@@ -988,21 +988,7 @@ function writeCookie(cookie, val, section, expiration) {
       $cardInfo.css({position: 'absolute', bottom:'0px', left:'0px', right:'0px', overflow:'visible'});
     });
 
-    // Auto scroll anchors and account for sticky nav
-    $('a[href^=#]').click(function(e){
-      e.preventDefault();
-      var tmp = $.attr(this, 'href').substr(1);
-      var el = document.getElementById(tmp) ||
-        ((tmp = document.getElementsByName(tmp)).length ?
-          tmp[0] : null);
-
-      if (el) {
-        var top = $(el).offset().top - 60;
-        autoScrolling = true;
-        $('body,html').animate({scrollTop:top}, '500', 'swing', function() { autoScrolling = false; });
-      }
-    });
-
+    resizeNav();  // must resize once loading is finished
   });
 
 })();
@@ -3599,7 +3585,7 @@ function showSamples() {
           resources = urls.map(function(url){ return ALL_RESOURCES_BY_URL[url]; });
           break;
       }
-      //console.log(firstClause.attr + ':' + firstClause.value);
+      // console.log(firstClause.attr + ':' + firstClause.value);
       resources = resources || [];
 
       // use additional clauses to filter corpus
@@ -3615,7 +3601,7 @@ function showSamples() {
 
       // add to list of already added indices
       for (var j = 0; j < resources.length; j++) {
-        console.log(resources[j].title);
+        // console.log(resources[j].title);
         addedResourceIndices[resources[j].index] = 1;
       }
 
