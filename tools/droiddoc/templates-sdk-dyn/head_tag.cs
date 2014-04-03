@@ -31,9 +31,15 @@
 
 <!-- STYLESHEETS -->
 <link rel="stylesheet"
-href="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold" title="roboto">
-<link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
+href="<?cs
+if:android.whichdoc != 'online' ?>http:<?cs
+/if ?>//fonts.googleapis.com/css?family=Roboto+Condensed">
+<link rel="stylesheet" href="<?cs
+if:android.whichdoc != 'online' ?>http:<?cs
+/if ?>//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold"
+  title="roboto">
 
+<link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
 <?cs if:reference && !(reference.gms || reference.gcm) ?>
 <!-- FULLSCREEN STYLESHEET -->
 <link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" class="fullscreen"
