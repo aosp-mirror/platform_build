@@ -55,14 +55,14 @@ PRODUCT_PACKAGES := \
 	QuickSearchBox \
 	WidgetPreview \
 	librs_jni \
-	ConnectivityTest \
-	GpsLocationTest \
 	CalendarProvider \
 	Calendar \
 	SmokeTest \
 	SmokeTestApp \
+	EmulatorSmokeTests \
 	rild \
 	LegacyCamera
+
 
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk
