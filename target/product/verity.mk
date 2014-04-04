@@ -17,7 +17,7 @@
 # Provides dependencies necessary for verified boot
 
 PRODUCT_SUPPORTS_VERITY := true
-PRODUCT_VERITY_SIGNING_KEY := verity.key
+PRODUCT_VERITY_SIGNING_KEY := build/target/product/security/verity_private_dev_key
 
 PRODUCT_PACKAGES += \
         generate_verity_key \
