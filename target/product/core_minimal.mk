@@ -58,6 +58,9 @@ PRODUCT_PACKAGES += \
     uiautomator \
     webview
 
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.software.webview.xml:system/etc/permissions/android.software.webview.xml
+
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
     core \
