@@ -662,6 +662,23 @@ recovery_build_prop := $(INSTALLED_BUILD_PROP_TARGET)
 recovery_binary := $(call intermediates-dir-for,EXECUTABLES,recovery)/recovery
 recovery_resources_common := $(call include-path-for, recovery)/res
 
+ifneq (,$(filter xxxhdpi,$(PRODUCT_AAPT_CONFIG_SP)))
+recovery_resources_common := $(recovery_resources_common)-xxxhdpi
+else ifneq (,$(filter xxhdpi,$(PRODUCT_AAPT_CONFIG_SP)))
+recovery_resources_common := $(recovery_resources_common)-xxhdpi
+else ifneq (,$(filter xhdpi,$(PRODUCT_AAPT_CONFIG_SP)))
+recovery_resources_common := $(recovery_resources_common)-xhdpi
+else ifneq (,$(filter hdpi,$(PRODUCT_AAPT_CONFIG_SP)))
+recovery_resources_common := $(recovery_resources_common)-hdpi
+else ifneq (,$(filter mdpi,$(PRODUCT_AAPT_CONFIG_SP)))
+recovery_resources_common := $(recovery_resources_common)-mdpi
+else
+# xhdpi is closest in size to the single set of resources we had
+# before, so make that the default if PRODUCT_AAPT_CONFIG doesn't
+# specify a dpi we have.
+recovery_resources_common := $(recovery_resources_common)-xhdpi
+endif
+
 # Select the 18x32 font on high-density devices; and the 12x22 font on
 # other devices.  Note that the font selected here can be overridden
 # for a particular device by putting a font.png in its private
@@ -746,7 +763,9 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	$(hide) cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
 	$(hide) -cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/
 	$(hide) cp -f $(recovery_binary) $(TARGET_RECOVERY_ROOT_OUT)/sbin/
-	$(hide) cp -rf $(recovery_resources_common) $(TARGET_RECOVERY_ROOT_OUT)/
+	$(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
+	$(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
+	$(hide) cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
 	$(hide) cp -f $(recovery_font) $(TARGET_RECOVERY_ROOT_OUT)/res/images/font.png
 	$(hide) $(foreach item,$(recovery_resources_private), \
 	  cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/)
