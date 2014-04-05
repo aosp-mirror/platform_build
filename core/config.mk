@@ -362,7 +362,7 @@ endif
 OLD_FLEX := prebuilts/misc/$(HOST_PREBUILT_TAG)/flex/flex-2.5.4a$(HOST_EXECUTABLE_SUFFIX)
 
 ifeq ($(HOST_OS),darwin)
-ifneq ($(EXPERIMENTAL_USE_JAVA7),)
+ifeq ($(LEGACY_USE_JAVA6),)
 HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
 else
 # Deliberately set to blank for Java 6 installations on MacOS. These
