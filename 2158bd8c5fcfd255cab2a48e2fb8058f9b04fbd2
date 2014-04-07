@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59a69bd4_f314582b",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-07T20:02:34Z",
+      "side": 1,
+      "message": "It can be simplified a little bit:\nTARGET_CPU_ABI_LIST :\u003d $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2) $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)",
+      "revId": "2158bd8c5fcfd255cab2a48e2fb8058f9b04fbd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19734325_b11c5bc7",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-07T20:02:34Z",
+      "side": 1,
+      "message": "Then here:\nTARGET_CPU_ABI_LIST :\u003d $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))\nSame for _32_BIT and _64_BIT.",
+      "revId": "2158bd8c5fcfd255cab2a48e2fb8058f9b04fbd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
