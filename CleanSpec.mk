@@ -214,6 +214,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Rename persist.sys.dalvik.vm.lib to allow new default
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# Add ro.product.cpu.abilist{32,64} to build.prop.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
