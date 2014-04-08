@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "19d6e33f_4d1499cd",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-04-08T13:02:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59a69bd4_f314582b",
+      "revId": "2158bd8c5fcfd255cab2a48e2fb8058f9b04fbd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19734325_b11c5bc7",
         "filename": "core/config.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-04-07T20:02:34Z",
       "side": 1,
       "message": "Then here:\nTARGET_CPU_ABI_LIST :\u003d $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))\nSame for _32_BIT and _64_BIT.",
+      "revId": "2158bd8c5fcfd255cab2a48e2fb8058f9b04fbd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9e2ef19_ec08eb89",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-04-08T13:02:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19734325_b11c5bc7",
       "revId": "2158bd8c5fcfd255cab2a48e2fb8058f9b04fbd2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
