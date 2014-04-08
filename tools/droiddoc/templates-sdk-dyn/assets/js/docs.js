@@ -3847,7 +3847,7 @@ function showSamples() {
         var defaults = {
             'row' : 1, // show rows
             'onlyFullWords': true, // set to true to avoid cutting the text in the middle of a word
-            'char' : '...', // ellipsis
+            'char' : '\u2026', // ellipsis
             'callback': function() {},
             'position': 'tail' // middle, tail
         };
