@@ -5205,7 +5205,7 @@ a.download-sdk {
   height: 100%;
   width: 100%;
   opacity: 1;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.24);
   -webkit-transition: opacity 0.5s;
   -moz-transition: opacity 0.5s;
   -o-transition: opacity 0.5s;
@@ -6206,7 +6206,7 @@ a.download-sdk {
   height: 80px;
   overflow: hidden;
 }
-.resource-card-3x2 > .card-info .section, .resource-card-6x2 > .card-info .section, .resource-card-9x2 > .card-info .section, .resource-card-12x2 > .card-info .section, .resource-card-15x2 > .card-info .section, .resource-card-18x2 > .card-info .section {
+.resource-card-3x2 > .card-info .section, .resource-card-6x2 > .card-info .section, .resource-card-6x3 > .card-info .section, .resource-card-9x2 > .card-info .section, .resource-card-12x2 > .card-info .section, .resource-card-15x2 > .card-info .section, .resource-card-18x2 > .card-info .section {
   font-size: 12px;
   margin-bottom: 1px;
   /* display: none; */
@@ -6258,6 +6258,30 @@ a.download-sdk {
 }
 .resource-card-3x3 > .card-info .description .util, .resource-card-6x3 > .card-info .description .util, .resource-card-9x3 > .card-info .description .util, .resource-card-12x3 > .card-info .description .util, .resource-card-15x3 > .card-info .description .util, .resource-card-18x3 > .card-info .description .util {
   display: none;
+}
+
+/* Overrides for col-16 6x6 cards linking to local content on landing pages.
+   Suppresses "section" and puts the title above a hairline rule. */
+.landing .card-info .section, .resource-flow-layout.col-16.landing .resource-card-9x6 .card-info .section {
+  display:none;
+}
+.landing  .card-info .title {
+  color: #898989;
+  font-size: 17px;
+  line-height: 24px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #959595;
+  padding-bottom: 0px;
+}
+
+.landing .card-info .description {
+  font-size: 13px;
+  line-height: 15px;
+}
+
+.landing .card-info .description .text {
+height:30px;
+width:auto;
 }
 
 /*
