@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39d4872d_dcd5e5d6",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-08T16:39:45Z",
+      "side": 1,
+      "message": "To be consistent with other use of TARGET_IS_64_BIT, I prefer \nifeq (true,$(TARGET_IS_64_BIT))",
+      "revId": "24af54f7cf019d6afdc863de882dc9f14a42b8b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19d1833f_1bfb6329",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-08T16:39:45Z",
+      "side": 1,
+      "message": "ifneq (true,$(TARGET_IS_64_BIT))",
+      "revId": "24af54f7cf019d6afdc863de882dc9f14a42b8b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19d1833f_5bf1db48",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-08T16:39:45Z",
+      "side": 1,
+      "message": "I think it\u0027s TARGET_2ND_CPU_ABI2 not TARGET_2ND_CPU_ABI3.",
+      "revId": "24af54f7cf019d6afdc863de882dc9f14a42b8b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
