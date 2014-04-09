@@ -30,6 +30,8 @@ if [ -n "$TARGET_CPU_ABI2" ] ; then
   echo "ro.product.cpu.abi2=$TARGET_CPU_ABI2"
 fi
 echo "ro.product.cpu.abilist=$TARGET_CPU_ABI_LIST"
+echo "ro.product.cpu.abilist32=$TARGET_CPU_ABI_LIST_32_BIT"
+echo "ro.product.cpu.abilist64=$TARGET_CPU_ABI_LIST_64_BIT"
 
 echo "ro.product.manufacturer=$PRODUCT_MANUFACTURER"
 if [ -n "$PRODUCT_DEFAULT_LANGUAGE" ] ; then

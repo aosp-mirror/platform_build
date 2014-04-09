@@ -143,28 +143,6 @@ endif
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
-# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
-# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
-# is specified by the board configuration, we use that. If not, we
-# build a list out of the TARGET_CPU_ABIs specified by the config.
-ifeq (,$(TARGET_CPU_ABI_LIST))
-  TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI)
-  ifneq (,$(TARGET_CPU_ABI2))
-    TARGET_CPU_ABI_LIST += ,$(TARGET_CPU_ABI2)
-  endif
-  ifneq (,$(TARGET_2ND_CPU_ABI))
-    TARGET_CPU_ABI_LIST += ,$(TARGET_2ND_CPU_ABI)
-  endif
-  ifneq (,$(TARGET_2ND_CPU_ABI2))
-    TARGET_CPU_ABI_LIST += ,$(TARGET_2ND_CPU_ABI2)
-  endif
-
-  # Strip whitespace from the ABI list string.
-  empty :=
-  space := $(empty) $(empty)
-  TARGET_CPU_ABI_LIST := $(subst $(space),,$(TARGET_CPU_ABI_LIST))
-endif
-
 # ---------------------------------------------------------------
 # Set up configuration for target machine.
 # The following must be set:
