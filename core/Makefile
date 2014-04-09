@@ -111,12 +111,21 @@ BUILD_VERSION_TAGS := $(subst $(space),$(comma),$(sort $(BUILD_VERSION_TAGS)))
 build_desc := $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT) $(PLATFORM_VERSION) $(BUILD_ID) $(BUILD_NUMBER) $(BUILD_VERSION_TAGS)
 $(INSTALLED_BUILD_PROP_TARGET): PRIVATE_BUILD_DESC := $(build_desc)
 
-# The string used to uniquely identify this build;  used by the OTA server.
+# The string used to uniquely identify the combined build and product; used by the OTA server.
 ifeq (,$(strip $(BUILD_FINGERPRINT)))
   BUILD_FINGERPRINT := $(PRODUCT_BRAND)/$(TARGET_PRODUCT)/$(TARGET_DEVICE):$(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
 endif
 ifneq ($(words $(BUILD_FINGERPRINT)),1)
   $(error BUILD_FINGERPRINT cannot contain spaces: "$(BUILD_FINGERPRINT)")
+endif
+
+# The string used to uniquely identify the system build; used by the OTA server.
+# This purposefully excludes any product-specific variables.
+ifeq (,$(strip $(BUILD_THUMBPRINT)))
+  BUILD_THUMBPRINT := $(PLATFORM_VERSION)/$(BUILD_ID)/$(BUILD_NUMBER):$(TARGET_BUILD_VARIANT)/$(BUILD_VERSION_TAGS)
+endif
+ifneq ($(words $(BUILD_THUMBPRINT)),1)
+  $(error BUILD_THUMBPRINT cannot contain spaces: "$(BUILD_THUMBPRINT)")
 endif
 
 # Display parameters shown under Settings -> About Phone
@@ -174,7 +183,7 @@ $(INSTALLED_BUILD_PROP_TARGET): $(BUILDINFO_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(
 ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES),)
 	$(hide) echo "#" >> $@; \
 	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
-	        echo "#" >> $@; )
+	        echo "#" >> $@;
 	$(hide) $(foreach prop,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES), \
 		echo "import /oem/oem.prop $(prop)" >> $@;)
 endif
@@ -197,6 +206,7 @@ endif
 			BUILD_VERSION_TAGS="$(BUILD_VERSION_TAGS)" \
 			TARGET_BOOTLOADER_BOARD_NAME="$(TARGET_BOOTLOADER_BOARD_NAME)" \
 			BUILD_FINGERPRINT="$(BUILD_FINGERPRINT)" \
+			BUILD_THUMBPRINT="$(BUILD_THUMBPRINT)" \
 			TARGET_BOARD_PLATFORM="$(TARGET_BOARD_PLATFORM)" \
 			TARGET_CPU_ABI_LIST="$(TARGET_CPU_ABI_LIST)" \
 			TARGET_CPU_ABI_LIST_32_BIT="$(TARGET_CPU_ABI_LIST_32_BIT)" \
@@ -1322,6 +1332,10 @@ endif
 	$(hide) echo "use_set_metadata=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "multistage_support=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "update_rename_support=1" >> $(zip_root)/META/misc_info.txt
+ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES),)
+	# OTA scripts are only interested in fingerprint related properties
+	$(hide) echo "oem_fingerprint_properties=$(filter ro.product.brand ro.product.name ro.product.device, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES))" >> $(zip_root)/META/misc_info.txt
+endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
 	$(hide) ./build/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
 	@# Zip everything up, preserving symlinks

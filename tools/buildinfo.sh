@@ -46,9 +46,10 @@ echo "ro.board.platform=$TARGET_BOARD_PLATFORM"
 echo "# ro.build.product is obsolete; use ro.product.device"
 echo "ro.build.product=$TARGET_DEVICE"
 
-echo "# Do not try to parse ro.build.description or .fingerprint"
+echo "# Do not try to parse description, fingerprint, or thumbprint"
 echo "ro.build.description=$PRIVATE_BUILD_DESC"
 echo "ro.build.fingerprint=$BUILD_FINGERPRINT"
+echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
 echo "ro.build.characteristics=$TARGET_AAPT_CHARACTERISTICS"
 
 echo "# end build properties"
