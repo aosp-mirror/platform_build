@@ -239,6 +239,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 
+# Add ro.product.cpu.abilist{32,64} to build.prop.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
