@@ -27,7 +27,7 @@ ifeq ($(BUILD_OS), windows)
     COMMON_JAVAC := development/host/windows/prebuilt/javawrap.exe -J-Xmx256m \
         $(common_flags)
 else
-    COMMON_JAVAC := $(JAVACC) -J-Xmx768M $(common_flags)
+    COMMON_JAVAC := $(JAVACC) -J-Xmx1024M $(common_flags)
 endif
 
 # Eclipse.
