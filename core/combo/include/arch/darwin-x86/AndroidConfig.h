@@ -132,12 +132,6 @@
 /* #define HAVE_POSIX_CLOCKS */
 
 /*
- * Define this if we have pthread_cond_timedwait_monotonic() and
- * clock_gettime(CLOCK_MONOTONIC).
- */
-/* #define HAVE_TIMEDWAIT_MONOTONIC */
-
-/*
  * Endianness of the target machine.  Choose one:
  *
  * HAVE_ENDIAN_H -- have endian.h header we can include.
