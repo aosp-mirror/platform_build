@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d9128b0d_d35a34bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-10T22:09:25Z",
+      "side": 1,
+      "message": "On existing devices neither will be set.  For devices with zygote64+zygote32 we\u0027ll set both (undecided exactly how yet).  For some test builds we might set TARGET_SUPPORTS_64_BIT_APPS but not TARGET_SUPPORT_32_BIT_APPS so the runtime team can test pure 64-bit builds.",
+      "parentUuid": "f97e6f24_7315cf59",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "996f3376_5ecf71f4",
         "filename": "core/package.mk",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f97e6f24_299cba0a",
+        "filename": "core/package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-10T22:09:25Z",
+      "side": 1,
+      "message": "I took out my_module_multilib :\u003d both, nothing below depends on it and it was misleading.\n\nIf both of these are set, my_module_multilib will stay blank (or what it was set to by the module), and it will follow TARGET_PREFER_32_BIT.\n\nIf neither is set, it will end up in the last else clause and always build for 32 bit, which is what we want for existing devices.",
+      "parentUuid": "996f3376_5ecf71f4",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f97e6f24_f66e8d87",
         "filename": "core/package.mk",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2014-04-10T21:19:14Z",
       "side": 1,
       "message": "\"first\" shouldn\u0027t be here.",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9128b0d_d321942f",
+        "filename": "core/package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-10T22:09:25Z",
+      "side": 1,
+      "message": "oops, you\u0027re right.",
+      "parentUuid": "f97e6f24_f66e8d87",
       "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
