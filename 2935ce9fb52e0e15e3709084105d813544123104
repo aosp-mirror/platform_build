@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "996f3376_32b0b16c",
+        "filename": "core/executable.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-10T20:52:59Z",
+      "side": 1,
+      "message": "\"first arch\" -\u003e \"preferred arch\"?\nIf $(TARGET_PREFER_32_BIT) is true, this is actually the 2nd arch.",
+      "revId": "2935ce9fb52e0e15e3709084105d813544123104",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79027fbc_cc3e0fee",
+        "filename": "core/executable.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-10T20:52:59Z",
+      "side": 1,
+      "message": "Hmm \"second arch\" -\u003e \"secondly preferred arch\"?\nMaybe we should switch to 32-bit TARGET_ARCH and 64-bit TARGET_2ND_ARCH for TARGET_PREFER_32_BIT? sure the build system doesn\u0027t work for that currently for we have assumed the 2nd arch to be 32-bit only.",
+      "revId": "2935ce9fb52e0e15e3709084105d813544123104",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
