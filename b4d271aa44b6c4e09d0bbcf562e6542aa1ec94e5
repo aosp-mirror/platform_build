@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f97e6f24_7315cf59",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-10T21:19:14Z",
+      "side": 1,
+      "message": "So currently the default is actually that both are set. Are you going to change the default behavior? or expect most 64-bit devices to set both?",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "996f3376_5ecf71f4",
+        "filename": "core/package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-10T21:19:14Z",
+      "side": 1,
+      "message": "This comment seems to conflict with the commit message.\nDefault should be case that none of the variables are set, right? or you want to default these 2 variables to true somewhere?\nAlso you left out \"my_module_mulitlib :\u003d both\" here.",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f97e6f24_f66e8d87",
+        "filename": "core/package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-10T21:19:14Z",
+      "side": 1,
+      "message": "\"first\" shouldn\u0027t be here.",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f97e6f24_96e2a9b7",
+        "filename": "core/package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-10T21:19:14Z",
+      "side": 1,
+      "message": "\"first\" should be here.",
+      "revId": "b4d271aa44b6c4e09d0bbcf562e6542aa1ec94e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
