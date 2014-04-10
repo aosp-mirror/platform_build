@@ -35,7 +35,7 @@ TARGET_ARCH_VARIANT := armv8
 endif
 
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
-TARGET_GCC_VERSION := 4.9
+TARGET_GCC_VERSION := 4.8
 else
 TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
 endif
@@ -70,9 +70,13 @@ TARGET_GLOBAL_CFLAGS += \
 
 android_config_h := $(call select-android-config-h,linux-arm64)
 
+# HACK: globally disable -fstack-protector until the toolchain supports it
+TARGET_GLOBAL_UNSUPPORTED_CFLAGS := \
+    -fstack-protector \
+    -fstack-protector-all \
+
 TARGET_GLOBAL_CFLAGS += \
 			-fpic -fPIE \
-			-fstack-protector \
 			-ffunction-sections \
 			-fdata-sections \
 			-funwind-tables \
@@ -155,7 +159,6 @@ TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) \
-	-Wl,--gc-sections \
 	-Wl,-shared,-Bsymbolic \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_SO_O)) \
@@ -179,7 +182,6 @@ endef
 define transform-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
 	-Wl,-dynamic-linker,/system/bin/linker64 \
-	-Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES) \
@@ -203,7 +205,6 @@ endef
 
 define transform-o-to-static-executable-inner
 $(hide) $(PRIVATE_CXX) -nostdlib -Bstatic \
-	-Wl,--gc-sections \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_STATIC_O)) \
