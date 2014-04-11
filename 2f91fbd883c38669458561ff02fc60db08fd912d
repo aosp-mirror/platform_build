@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59bcdb31_0f7645aa",
+        "filename": "core/package.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T02:57:39Z",
+      "side": 1,
+      "message": "If $(my_module_multilib) is blank, it falls to this category. The logic is correct, but the comment isn\u0027t exact. It took me a minute to realize that.",
+      "revId": "2f91fbd883c38669458561ff02fc60db08fd912d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59bcdb31_8fd23545",
+        "filename": "core/package.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T02:57:39Z",
+      "side": 1,
+      "message": "Comment isn\u0027t exact here either. Actually it falls to this category only if my_module_mulitliib was 64 or none.",
+      "revId": "2f91fbd883c38669458561ff02fc60db08fd912d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
