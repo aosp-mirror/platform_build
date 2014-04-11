@@ -122,6 +122,24 @@
       "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9544bb3_49602569",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-11T01:50:58Z",
+      "side": 1,
+      "message": "Most of them were blacklisted too, until we started fixing them recently.  That\u0027s why I started this series.",
+      "parentUuid": "99b2d35a_94b6ca6c",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
