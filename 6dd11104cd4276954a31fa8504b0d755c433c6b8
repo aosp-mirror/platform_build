@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79b7df4c_5370f6ab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T01:32:31Z",
+      "side": 1,
+      "message": "Something I am not clear: For unbundled apps, we use those flags to determine the abi of the embedded shared libraries; but for apps bundled in the system image,  the libraries are installed separately to /system/lib (in Android.mk we use LOCAL_REQUIRED_MODULES instead of LOCAL_JNI_SHARED_LIBRARIES) - how the apk (or runtime) knows whether to load the 32-bit libs or the 64-bit libs?\nWith LOCAL_REQUIRED_MODULES the dependency will be established only after all the Android.mks are loaded, so this change seems not enough. We need to change how required module names are explained in build/core/main.mk too.\n(The framework team was talking about bundling apks with embedded JNI libraries in system.img and release the libs when the apk is run the first time. That would make things simpler.)",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99b2d35a_d40972fa",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T01:32:31Z",
+      "side": 1,
+      "message": "This doesn\u0027t work for 32-bit build if \"LOCAL_MULTILIB :\u003d first\".\nWe only want to convert \"first\" to \"none\" if it\u0027s TARGET_2ND_ARCH is set.",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b7df4c_3315725b",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T01:32:31Z",
+      "side": 1,
+      "message": "The default behavior (neither is set) changed here: previously it defaults to 64-bit. From your commit message it seems to be intended.",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
