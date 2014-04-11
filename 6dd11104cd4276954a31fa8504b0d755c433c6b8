@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d9544bb3_290e09be",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-11T01:37:49Z",
+      "side": 1,
+      "message": "I\u0027ve thought about this, but I\u0027m not an expert on the runtime so I\u0027m not sure what the solution is.  I would guess that we should remove LOCAL_REQUIRED_MODULES from apps, and have the build system use LOCAL_JNI_SHARED_LIBRARIES to choose what to install in /system/lib[64], and used the architecture of the package to choose 32-bit or 64-bit library dependencies.  The architecture of the package will also need to end up in the apk somewhere so activitymanager knows which zygote to use to launch the app.",
+      "parentUuid": "79b7df4c_5370f6ab",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99b2d35a_d40972fa",
         "filename": "core/package.mk",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "b9df977e_a869ffd0",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-11T01:37:49Z",
+      "side": 1,
+      "message": "You\u0027re right, it worked above because TARGET_SUPPORTS_64_BIT_APPS should only be set if TARGET_2ND_ARCH is set, but it needs more logic here.",
+      "parentUuid": "99b2d35a_d40972fa",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79b7df4c_3315725b",
         "filename": "core/package.mk",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2014-04-11T01:32:31Z",
       "side": 1,
       "message": "The default behavior (neither is set) changed here: previously it defaults to 64-bit. From your commit message it seems to be intended.",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9544bb3_a921992f",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-04-11T01:37:49Z",
+      "side": 1,
+      "message": "Previously it defaulted to 64-bit, but the blacklist was forcing everything back to 32-bit.  This is to maintain the current behavior once the blacklist is removed, at which point individual devices can opt-in to 64-bit apps.  I hope the opting-in is combined into whatever they end up needing to do to install the 64-bit zygote.",
+      "parentUuid": "79b7df4c_3315725b",
       "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
