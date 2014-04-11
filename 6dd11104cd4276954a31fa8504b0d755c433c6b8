@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "59ee9b35_8284dcf7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-04-11T08:48:05Z",
+      "side": 1,
+      "message": "The current frameworks code assumes that all system apps (the ones that have their libraries as LOCAL_REQUIRED_MODULES, and not LOCAL_JNI_SHARED_LIBRARIES) will be built with the most preferred ABI (i.e, the first ABI in ro.product.cpu.abilist).\n\nI think that\u0027s a reasonable assumption in general, though there might be exceptions to that rule (for example, an app that hasn\u0027t ported its code over to 64 bit, or found that the port is less performant).\n\nFor these apps, I don\u0027t think we can avoid including the arch info the APK (or elsewhere, given that this is a special case). Ying - can you loop me into the bug where the framework team wants to unpack the APKs in the first run ? That would solve this problem.\n\nFor apps that use LOCAL_JNI_SHARED_LIBRARIES, the framework code will iterate over all the shared libraries in the APK and choose the most preferred ABI from that list, so no additional information is required. The architecture does *not* need to be explicitly encoded in the APK.",
+      "parentUuid": "996f3376_fc0ae8ef",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99b2d35a_d40972fa",
         "filename": "core/package.mk",
         "patchSetId": 3
