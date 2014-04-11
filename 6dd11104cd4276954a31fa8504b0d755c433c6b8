@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "996f3376_fc0ae8ef",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T04:29:04Z",
+      "side": 1,
+      "message": "I would prefer to not have the arch info built into the apk, if there is no other reason. Otherwise we would end up with 2 copies of an apks in the source tree with just the 32-bit v.s. 64-bit difference. (Currently we have only 1 copy of GmsCore.apk checked in that serves arm, x86 and mips. That\u0027s really good.)",
+      "parentUuid": "d9544bb3_290e09be",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "99b2d35a_d40972fa",
         "filename": "core/package.mk",
         "patchSetId": 3
