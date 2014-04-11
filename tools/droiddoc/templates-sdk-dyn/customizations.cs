@@ -7,7 +7,6 @@ def:sdk_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs 
         include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
@@ -25,7 +24,6 @@ def:tools_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs 
         include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
         
@@ -43,7 +41,6 @@ def:training_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 
 <?cs 
@@ -63,7 +60,6 @@ def:googleplay_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -78,7 +74,6 @@ def:essentials_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -93,7 +88,6 @@ def:users_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -108,7 +102,6 @@ def:engage_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -123,7 +116,6 @@ def:monetize_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -138,7 +130,6 @@ def:disttools_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -153,7 +144,6 @@ def:stories_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
@@ -168,8 +158,6 @@ def:guide_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
-
 
 <?cs 
         include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
@@ -188,7 +176,6 @@ def:design_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 
 <?cs
@@ -208,7 +195,6 @@ def:distribute_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
@@ -228,7 +214,6 @@ def:samples_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
@@ -248,7 +233,6 @@ def:google_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
@@ -272,7 +256,6 @@ def:about_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
@@ -295,8 +278,6 @@ def:default_left_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav">
-
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
       <div id="api-nav-header">
         <div id="api-level-toggle">
           <label for="apiLevelCheckbox" class="disabled"
