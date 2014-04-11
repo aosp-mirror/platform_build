@@ -20,7 +20,7 @@ else ifeq ($(LOCAL_NO_2ND_ARCH),true)
 my_module_multilib := first
 endif
 else # my_module_multilib defined
-ifeq (,$(filter 32 first both none,$(my_module_multilib)))
+ifeq (,$(filter 32 64 first both none,$(my_module_multilib)))
 $(error $(LOCAL_PATH): Invalid LOCAL_MULTILIB specified for module $(LOCAL_MODULE))
 endif
 endif # my_module_multilib defined
