@@ -296,31 +296,13 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
 
 <div id="sticky-header">
   <div>
-    <a class="logo" href="/index.html"></a>
+    <a class="logo" href="#top"></a>
     <a class="top" href="#top"></a>
     <ul class="breadcrumb">
-      <?cs
-if:design ?><li class="design"><a href="<?cs var:toroot ?>design/index.html">Design</a></li><?cs
-elif:(develop || training || guide || reference || tools || sdk || google || samples) ?><li class="develop"><a href="<?cs var:toroot ?>develop/index.html">Develop</a></li><?cs
-elif:distribute ?><li class="distribute"><a href="<?cs var:toroot ?>distribute/index.html">Distribute</a></li><?cs
-elif:about ?><li class="about"><a href="<?cs var:toroot ?>about/index.html">About Android</a></li><?cs
-/if ?><?cs
-if:training ?><li><a href="<?cs var:toroot ?>training/index.html">Training</a></li><?cs
-elif:guide ?><li><a href="<?cs var:toroot ?>guide/index.html">API Guides</a></li><?cs
-elif:reference ?><li><a href="<?cs var:toroot ?>reference/index.html">Reference</a></li><?cs
-elif:tools ?><li><a href="<?cs var:toroot ?>tools/index.html">Tools</a></li><?cs
-elif:google ?><li><a href="<?cs var:toroot ?>google/index.html">Google Services</a></li><?cs
-elif:samples ?><li><a href="<?cs var:toroot ?>samples/index.html">Samples</a></li><?cs
-elif:googleplay ?><li><a href="<?cs var:toroot ?>distribute/googleplay/index.html">Google Play</a></li><?cs
-elif:essentials ?><li><a href="<?cs var:toroot ?>distribute/essentials/index.html">Essentials</a></li><?cs
-elif:users ?><li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li><?cs
-elif:engage ?><li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li><?cs
-elif:monetize ?><li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize Your Apps</a></li><?cs
-elif:disttools ?><li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp Reference</a></li><?cs
-elif:stories ?><li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li><?cs
-/if ?> <?cs
-if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
-/if ?></ul>
+      <?cs # More <li> elements added here with javascript ?>
+      <?cs if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
+      /if ?>
+    </ul>
   </div>
 </div>
 

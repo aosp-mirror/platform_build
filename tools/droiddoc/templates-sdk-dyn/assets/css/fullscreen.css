@@ -15,16 +15,16 @@
 
 @media screen, projection, print {
 .full {
-	padding: 2.5em 0;
-	border-top: solid 1px #ddd;
-	border-bottom: solid 1px #ddd;
-	background: #f7f7f7;	
+  padding: 2.5em 0;
+  border-top: solid 1px #ddd;
+  border-bottom: solid 1px #ddd;
+  background: #f7f7f7;  
 }
 .wrap {
-	margin: 0 auto;
-	width: 100%;
-	min-width:600px;
-	clear: both;
+  margin: 0 auto;
+  width: 100%;
+  min-width:600px;
+  clear: both;
 }
 .cols {
     height: 1%;
@@ -170,7 +170,7 @@ body {
   max-width: 100%;
 }
 
-#nav-x .wrap,
+#header-wrapper #nav-x div.wrap,
 #searchResults.wrap {
     max-width:100%;
 }
@@ -184,7 +184,18 @@ body {
   left:20px; /* !important ... for IE i think */
 }
 
+#sticky-header {
+  padding: 0 20px;
+}
 
+#sticky-header > div {
+  width: 100%;
+}
+
+.sticky-menu {
+  width:100%;
+  left:-20px;
+}
 
 
 }
