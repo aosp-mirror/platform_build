@@ -98,7 +98,8 @@ body {
 #devdoc-nav.fixed {
   position: fixed;
   margin:0;
-  top: 20px; }
+  top: 65px; /* sticky-header height + 20px gutter */
+}
 
 #devdoc-nav span.small {
   font-size:12px;
@@ -1365,8 +1366,7 @@ color-stop(50%, #acbc00), color-stop(50%, #bdde00), color-stop(100%, #bdde00));
   .training-nav-top, .training-nav-bottom,
   #doc-col .content-footer,
   .nav-x, .nav-y,
-  .paging-links,
-  a.totop {
+  .paging-links {
       display: none !important;
   }
 
@@ -1632,168 +1632,6 @@ Header, Login, Nav-X, Search
   color: #33b5e5
 }
 
-/************ STICKY NAV BAR ******************/
-
-#header-wrapper {
-  background: #f9f9f9;
-  margin: 0 -10px 0 -10px;
-  padding: 31px 10px 0px 10px;
-  position: relative;
-}
-#header-wrapper #nav-x div.wrap {
-  max-width: 940px;
-  height: 38px;
-}
-#header-wrapper #nav-x ul.nav-x li {
-  margin-right: 36px !important;
-  margin-top: 5px;
-  margin-bottom: 0px;
-  height: 30px;
-}
-#header-wrapper #nav-x > div.wrap ul.nav-x li.active  {
-  color: #669900;
-  border-bottom: 3px solid #669900;
-}
-#header-wrapper #nav-x > div.wrap ul.nav-x li.active a {
-  color: #669900;
-}
-#header-wrapper #nav-x > div.wrap ul.nav-x a {
-  font-size: 14.5px;
-}
-#header-wrapper .developer-console-btn {
-  float: right;
-  background: #fefefe;
-  border-radius: 4px;
-  padding: 8px 14px;
-  box-shadow: 1px 1px 0px #7a7a7a;
-  font-size: 14px;
-  margin-top: -6px;
-  cursor: pointer;
-  color: #464646;
-  margin-right: 20px;
-}
-/* not currently used */
-#header-wrapper .shadow {
-  width: 1034px;
-  height: 4px;
-  position: absolute;
-  left: 50%;
-  margin-left: -517px;
-  bottom: -4px;
-  background-image: url(../images/header-shadow.png);
-}
-
-#context {
-  clear: both;
-  padding-top: 14px;
-}
-#context .breadcrumb {
-  float: left;
-  margin-bottom: 10px;
-}
-#context .util {
-  float: right;
-  margin-right: 20px;
-}
-
-.breadcrumb {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-}
-.breadcrumb li {
-  float: left;
-  padding: 0 20px 0 0;
-  color: #000;
-}
-.breadcrumb li a {
-  color: #000;
-}
-.breadcrumb li:after {
-  content: url(../images/breadcrumb.png);
-  position: relative;
-  top: 1px;
-  left: 10px;
-  width: 5px;
-  height: 10px;
-}
-.breadcrumb li.current {
-  font-weight: 700;
-}
-.breadcrumb li.current:after {
-  display: none;
-}
-
-/* Sticky Nav overrides */
-.sticky-menu {
-  position: fixed;
-  width: 940px;
-  height: 0px;
-  z-index: 51;
-  top: 12px;
-}
-#sticky-header {
-  display: none;
-  padding: 0 10px;
-  position: fixed;
-  background: #f9f9f9;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  height: 45px;
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #a5c43a;
-  z-index: 50;
-  opacity: 0;
-  -webkit-transition: opacity 0.25s;
-  -moz-transition: opacity 0.25s;
-  -o-transition: opacity 0.25s;
-  transition: opacity 0.25s;
-}
-#sticky-header.design {
-  border-bottom: 1px solid #33b5e5;
-}
-#sticky-header.develop {
-  border-bottom: 1px solid #F80;
-}
-#sticky-header.distribute {
-  border-bottom: 1px solid #9C0;
-}
-#sticky-header > div {
-  overflow: hidden;
-  *zoom: 1;
-  width: 940px;
-  margin: 0 auto;
-  clear: both;
-  padding-top: 9px;
-}
-#sticky-header > div .logo {
-  float: left;
-  width: 26px;
-  height: 25px;
-  background: url(../images/dac_logo.png);
-  z-index: 52;
-  position: relative;
-}
-#sticky-header > div .top {
-  float: left;
-  width: 38px;
-  height: 38px;
-  position: relative;
-  background: url(../images/styles/gototop.png);
-  z-index: 52;
-}
-#sticky-header > div .breadcrumb {
-  float: left;
-  padding: 0 0 0 10px;
-  border-left: 1px solid #d2d2d2;
-  line-height: 24px;
-  font-size: 14px;
-  position: relative;
-  top: 0px;
-  z-index: 52;
-}
 
 /* --------------------------------------------------------------------------
 Buttons
@@ -3034,26 +2872,6 @@ div.design-announce p {
   margin:0 0 10px;
 }
 
-#devdoc-nav a.totop {
-  display:block;
-  top:0;
-  width:inherit;
-  background: transparent url(../images/styles/gototop.png) no-repeat scroll 50% 50%;
-  text-indent:-9999em;
-}
-#devdoc-nav a.totop {
-  position:fixed;
-  display:none;
-}
-#devdoc-nav a.totop:hover {
-  background-color:#33B5E5;
-}
-
-.content-footer a.totop {
-  text-transform:uppercase;
-  line-height:30px;
-}
-
 .expandable {
   height:34px;
   padding-left:20px;
@@ -4118,13 +3936,171 @@ EndColorStr='#ececec');
   z-index:100;
 }
 
+
+
+
+
+/************ STICKY NAV BAR ******************/
+
+#header-wrapper {
+  background: #f9f9f9;
+  margin: 0 -10px 0 -10px;
+  padding: 31px 10px 0px 10px;
+  position: relative;
+}
+#header-wrapper #nav-x div.wrap {
+  max-width: 940px;
+  height: 38px;
+}
+#header-wrapper #nav-x ul.nav-x li {
+  margin-right: 36px !important;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  height: 30px;
+}
+#header-wrapper #nav-x > div.wrap ul.nav-x li.active  {
+  color: #669900;
+  border-bottom: 3px solid #669900;
+}
+#header-wrapper #nav-x > div.wrap ul.nav-x li.active a {
+  color: #669900;
+}
+#header-wrapper #nav-x > div.wrap ul.nav-x a {
+  font-size: 14.5px;
+}
+#header-wrapper .developer-console-btn {
+  float: right;
+  background: #fefefe;
+  border-radius: 4px;
+  padding: 8px 14px;
+  box-shadow: 1px 1px 0px #7a7a7a;
+  font-size: 14px;
+  margin-top: -6px;
+  cursor: pointer;
+  color: #464646;
+  margin-right: 20px;
+}
+/* not currently used */
+#header-wrapper .shadow {
+  width: 1034px;
+  height: 4px;
+  position: absolute;
+  left: 50%;
+  margin-left: -517px;
+  bottom: -4px;
+  background-image: url(../images/header-shadow.png);
+}
+
+#context {
+  clear: both;
+  padding-top: 14px;
+}
+#context .breadcrumb {
+  float: left;
+  margin-bottom: 10px;
+}
+#context .util {
+  float: right;
+  margin-right: 20px;
+}
+
+.breadcrumb {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.breadcrumb li {
+  float: left;
+  padding: 0 20px 0 0;
+  color: #000;
+  white-space: nowrap;
+}
+.breadcrumb li a {
+  color: #000;
+}
+.breadcrumb li:after {
+  content: url(../images/breadcrumb.png);
+  position: relative;
+  top: 1px;
+  left: 10px;
+  width: 5px;
+  height: 10px;
+}
+.breadcrumb li.current {
+  font-weight: 700;
+}
+.breadcrumb li.current:after {
+  display: none;
+}
+
+/* Sticky Nav overrides */
+.sticky-menu {
+  position: fixed;
+  width: 940px;
+  height: 0px;
+  z-index: 51;
+  top: 12px;
+}
+#sticky-header {
+  display: none;
+  padding: 0 10px;
+  position: fixed;
+  background: #f9f9f9;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 45px;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #a5c43a;
+  z-index: 50;
+}
+#sticky-header.design {
+  border-bottom: 1px solid #33b5e5;
+}
+#sticky-header.develop {
+  border-bottom: 1px solid #F80;
+}
+#sticky-header.distribute {
+  border-bottom: 1px solid #9C0;
+}
+#sticky-header > div {
+  overflow: hidden;
+  *zoom: 1;
+  width: 940px;
+  margin: 0 auto;
+  clear: both;
+  padding-top: 9px;
+}
+#sticky-header > div .logo {
+  float: left;
+  width: 26px;
+  height: 25px;
+  background: url(../images/dac_logo.png);
+  z-index: 52;
+  position: relative;
+}
+#sticky-header > div .top {
+  float: left;
+  width: 38px;
+  height: 38px;
+  position: relative;
+  background: url(../images/styles/gototop.png);
+  z-index: 52;
+}
+#sticky-header > div .breadcrumb {
+  float: left;
+  padding: 0 0 0 10px;
+  border-left: 1px solid #d2d2d2;
+  line-height: 24px;
+  font-size: 14px;
+  position: relative;
+  top: 0px;
+  z-index: 52;
 }
 
 
-
-
-
-
+}
 
 
 
