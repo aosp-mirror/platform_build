@@ -22,6 +22,9 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := x86_64
 endif
 
+# Decouple NDK library selection with platform compiler version
+TARGET_NDK_GCC_VERSION := 4.8
+
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
 TARGET_GCC_VERSION := 4.8
 else
