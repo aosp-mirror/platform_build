@@ -104,6 +104,24 @@
       "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99b2d35a_94b6ca6c",
+        "filename": "core/package.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-11T01:47:45Z",
+      "side": 1,
+      "message": "Ah, I forgot the fact you blacklisted the whole packages/ subtree. But there are apps defined elsewhere, such as in frameworks/base, vendor/unbundled_google/, etc.",
+      "parentUuid": "d9544bb3_a921992f",
+      "revId": "6dd11104cd4276954a31fa8504b0d755c433c6b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
