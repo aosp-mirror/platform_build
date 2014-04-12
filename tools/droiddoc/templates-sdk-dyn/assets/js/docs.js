@@ -877,16 +877,21 @@ function writeCookie(cookie, val, section, expiration) {
 
 
 
+var stickyTop;
+/* Sets the vertical scoll position at which the sticky bar should appear.
+   This method is called to reset the position when search results appear or hide */
+function setStickyTop() {
+  stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
+}
+
 
 /* 
  * Displays sticky nav bar on pages when dac header scrolls out of view 
  */
-var stickyTop;
 (function() {
   $(document).ready(function() {
 
-    // Sticky nav position
-    stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
+    setStickyTop();
     var sticky = false;
     var hiding = false;
     var $stickyEl = $('#sticky-header');
@@ -2365,13 +2370,13 @@ function submit_search() {
   var query = document.getElementById('search_autocomplete').value;
   location.hash = 'q=' + query;
   loadSearchResults();
-  $("#searchResults").slideDown('slow');
+  $("#searchResults").slideDown('slow', setStickyTop);
   return false;
 }
 
 
 function hideResults() {
-  $("#searchResults").slideUp();
+  $("#searchResults").slideUp('fast', setStickyTop);
   $(".search .close").addClass("hide");
   location.hash = '';
 
@@ -2488,7 +2493,7 @@ google.setOnLoadCallback(function(){
     return;
   } else {
     // first time loading search results for this page
-    $('#searchResults').slideDown('slow');
+    $('#searchResults').slideDown('slow', setStickyTop);
     $(".search .close").removeClass("hide");
     loadSearchResults();
   }
@@ -2508,7 +2513,7 @@ $(window).hashchange( function(){
   // Otherwise, we have a search to do
   var query = decodeURI(getQuery(location.hash));
   searchControl.execute(query);
-  $('#searchResults').slideDown('slow');
+  $('#searchResults').slideDown('slow', setStickyTop);
   $("#search_autocomplete").focus();
   $(".search .close").removeClass("hide");
 

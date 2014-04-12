@@ -292,6 +292,13 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
     </div>
 
   <?cs /if ?>
+
+
+  <div id="searchResults" class="wrap" style="display:none;">
+    <h2 id="searchTitle">Results</h2>
+    <div id="leftSearchControl" class="search-control">Loading...</div>
+  </div>
+
 </div> <!--end headerwrap -->
 
 <div id="sticky-header">
@@ -304,11 +311,6 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
       /if ?>
     </ul>
   </div>
-</div>
-
-<div id="searchResults" class="wrap" style="display:none;">
-  <h2 id="searchTitle">Results</h2>
-  <div id="leftSearchControl" class="search-control">Loading...</div>
 </div>
 
 <?cs /if ?><?cs # end if/else !devsite ?><?cs
