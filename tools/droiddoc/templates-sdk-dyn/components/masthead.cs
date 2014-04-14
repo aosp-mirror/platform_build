@@ -204,6 +204,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
               <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
               <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
               <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
+              <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
               <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
             </ul>
           </li>
