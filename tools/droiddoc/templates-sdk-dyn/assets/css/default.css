@@ -4064,6 +4064,9 @@ EndColorStr='#ececec');
 #sticky-header.distribute {
   border-bottom: 1px solid #9C0;
 }
+#sticky-header.about {
+  border-bottom: 1px solid #9933CC;
+}
 #sticky-header > div {
   overflow: hidden;
   *zoom: 1;
@@ -4575,11 +4578,11 @@ a.download-sdk {
 }
 
 #nav-x {
-  padding-top: 14px;
+  padding-top: 13px;
 }
 
 #nav-x .wrap {
-  min-height:34px;
+  min-height:32px;
 }
 
 #nav-x .wrap,
@@ -5158,7 +5161,7 @@ a.download-sdk {
 /* Basic card-styling with shadow */
 .resource-card {
   border-radius: 1px;
-  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.14);
   background: #fefefe;
 }
 
@@ -5181,7 +5184,7 @@ a.download-sdk {
   height: 100%;
   width: 100%;
   opacity: 1;
-  background: rgba(0, 0, 0, 0.24);
+  background: rgba(0, 0, 0, 0.2);
   -webkit-transition: opacity 0.5s;
   -moz-transition: opacity 0.5s;
   -o-transition: opacity 0.5s;
@@ -5237,25 +5240,23 @@ a.download-sdk {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-bottom: 4px;
+  padding-bottom: 5px;
   margin-bottom: -2px;
   font-size: 16px;
 }
 .card-info .description {
-  position: relative;
   overflow: hidden;
 }
 .card-info .description .text {
   color: #464646;
   font: 13px/15px Roboto Condensed;
   overflow: hidden;
-  padding-right: 70px;
-  height: 30px;
+  width:100%;
 }
 .card-info .description .util {
   position: absolute;
-  right: 0px;
-  bottom: -3px;
+  right: 5px;
+  bottom: 70px; /*-2px;*/
   opacity: 0;
   -webkit-transition: opacity 0.5s;
   -moz-transition: opacity 0.5s;
@@ -5268,6 +5269,56 @@ a.download-sdk {
 }
 .card-info.empty-desc .description {
   display: none;
+}
+/* Truncate card summaries at bounding box and
+ * and apply ellipsis at lower right */
+.ellipsis {
+  overflow: hidden;
+  float:right;
+  line-height: 15px;
+  width:100%;
+}
+.resource-card-6x6 .card-info .description .teddddddxt {
+ float:left;
+  position:relative;
+  margin-left:0;
+}
+.ellipsis:before {
+  content:"";
+  float: left;
+  width: 5px;
+  height:100%;
+}
+.ellipsis > *:first-child.text {
+  float: right;
+  width: 100%  !important;
+  margin-left: -5px;
+}
+.ellipsis:after {
+  content: "\02026";
+  height:17px;
+  padding-bottom:4px;
+
+  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+
+  float: right; position: relative;
+  top: -16px; left: 100%;
+  width: 4em; margin-left: -4em;
+  padding-right: 5px;
+
+  background: -webkit-gradient(linear, left top, right top,
+    from(rgba(255, 255, 255, 0)), to(white), color-stop(65%, white));
+  background: -moz-linear-gradient(to right, rgba(255, 255, 255, 0), white 65%, white);
+  background: -o-linear-gradient(to right, rgba(255, 255, 255, 0), white 65%, white);
+  background: -ms-linear-gradient(to right, rgba(255, 255, 255, 0), white 65%, white);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), white 65%, white);
+}
+.ellipsis:after {
+  font-style: normal; color: #aaa;
+  font-size:13px;
+  text-align: right;
 }
 
 /* Flow Layout */
@@ -5295,9 +5346,11 @@ a.download-sdk {
 .resource-card:hover .card-bg:after {
   opacity: 0;
 }
+/* disabled to make way for fade/ellipsis truncation,
+   and the plusone moves up. 
 .resource-card:hover .card-info .description .text {
   padding-right: 70px;
-}
+} */
 .resource-card:hover .card-info .description .util {
   opacity: 1;
 }
@@ -5338,6 +5391,10 @@ a.download-sdk {
 }
 .resource-carousel-layout .frame li .card-info .description .text {
   height: 40px;
+}
+.resource-carousel-layout .frame li .card-info .description .util {
+  bottom:97px;
+  right:4px;
 }
 
 /* Stack Layout */
@@ -6235,7 +6292,13 @@ a.download-sdk {
 .resource-card-3x3 > .card-info .description .util, .resource-card-6x3 > .card-info .description .util, .resource-card-9x3 > .card-info .description .util, .resource-card-12x3 > .card-info .description .util, .resource-card-15x3 > .card-info .description .util, .resource-card-18x3 > .card-info .description .util {
   display: none;
 }
-
+/* placement of plusone */
+.resource-card-6x12 > .card-info .description .util, .resource-card-9x12 > .card-info .description .util, .resource-card-12x12 > .card-info .description .util, .resource-card-15x12 > .card-info .description .util {
+  bottom:2px;
+}
+.resource-card-18x12 > .card-info .description .util {
+  bottom:2px;
+}
 /* Overrides for col-16 6x6 cards linking to local content on landing pages.
    Suppresses "section" and puts the title above a hairline rule. */
 .landing .card-info .section, .resource-flow-layout.col-16.landing .resource-card-9x6 .card-info .section {
@@ -6249,17 +6312,16 @@ a.download-sdk {
   border-bottom: 1px solid #959595;
   padding-bottom: 0px;
 }
-
 .landing .card-info .description {
   font-size: 13px;
   line-height: 15px;
 }
-
 .landing .card-info .description .text {
 height:30px;
-width:auto;
 }
-
+.landing .resource-card-6x6 > .card-info .description .util, .landing .resource-card-9x6 > .card-info .description .util {
+  bottom:2px;
+}
 /*
   Generate a resource stack layout for a 3 column widget spanning 16 grid cols
 */
