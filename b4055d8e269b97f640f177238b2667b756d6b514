@@ -16,6 +16,24 @@
       "revId": "b4055d8e269b97f640f177238b2667b756d6b514",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9544bb3_58bc6999",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2014-04-14T13:22:25Z",
+      "side": 1,
+      "message": "Samsung devices use sepolicy_version, not sure if that is better or not.  sepolicy_build might be clearer?",
+      "parentUuid": "b97b175f_42fcb288",
+      "revId": "b4055d8e269b97f640f177238b2667b756d6b514",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
