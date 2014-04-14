@@ -216,7 +216,10 @@ $(document).ready(function() {
     } else if (secondFrag == "googleplay") {
       $("#nav-x li.googleplay a").addClass("selected");
     }
-  }
+  } else if ($("body").hasClass("about")) {
+    $("#sticky-header").addClass("about");
+  } 
+
   // set global variable so we can highlight the sidenav a bit later (such as for google reference)
   // and highlight the sidenav
   mPagePath = pagePath;
@@ -3339,15 +3342,20 @@ function showSamples() {
       initResourceWidget(this);
     });
 
-    // Might remove this, but adds ellipsis to card descriptions rather
-    // than just cutting them off, not sure if it performs well
-    $('.card-info .text').ellipsis();
+    /* Pass the line height to ellipsisfade() to adjust the height of the
+    text container to show the max number of lines possible, without
+    showing lines that are cut off. This works with the css ellipsis
+    classes to fade last text line and apply an ellipsis char. */
+
+    //card text currently uses 15px line height. 
+    var lineHeight = 15;
+    $('.card-info .text').ellipsisfade(lineHeight);
   });
 
   /*
     Three types of resource layouts:
     Flow - Uses a fixed row-height flow using float left style.
-    Carousel - Single card slideshow all same dimension absoute.
+    Carousel - Single card slideshow all same dimension absolute.
     Stack - Uses fixed columns and flexible element height.
   */
   function initResourceWidget(widget) {
@@ -3391,6 +3399,7 @@ function showSamples() {
   /* Initializes a Resource Carousel Widget */
   function drawResourcesCarouselWidget($widget, opts, resources) {
     $widget.empty();
+    var plusone = true; //always show plusone on carousel
 
     $widget.addClass('resource-card slideshow-container')
       .append($('<a>').addClass('slideshow-prev').text('Prev'))
@@ -3406,7 +3415,7 @@ function showSamples() {
       var urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
       var $card = $('<a>')
         .attr('href', urlPrefix + resources[i].url)
-        .decorateResourceCard(resources[i]);
+        .decorateResourceCard(resources[i],plusone);
 
       $('<li>').css(css)
           .append($card)
@@ -3428,7 +3437,7 @@ function showSamples() {
   function drawResourcesStackWidget($widget, opts, resources, sections) {
     // Don't empty widget, grab all items inside since they will be the first
     // items stacked, followed by the resource query
-
+    var plusone = true; //by default show plusone on section cards
     var cards = $widget.find('.resource-card').detach().toArray();
     var numStacks = opts.numStacks || 1;
     var $stacks = [];
@@ -3452,14 +3461,14 @@ function showSamples() {
           $('<a>')
             .addClass('resource-card section-card')
             .attr('href', urlPrefix + sections[i].resource.url)
-            .decorateResourceCard(sections[i].resource)[0]
+            .decorateResourceCard(sections[i].resource,plusone)[0]
         );
 
       } else {
         cards.push(
           $('<div>')
             .addClass('resource-card section-card-menu')
-            .decorateResourceSection(sections[i])[0]
+            .decorateResourceSection(sections[i],plusone)[0]
         );
       }
     }
@@ -3472,7 +3481,7 @@ function showSamples() {
       var $card = $('<a>')
           .addClass('resource-card related-card')
           .attr('href', urlPrefix + resources[i].url)
-          .decorateResourceCard(resources[i]);
+          .decorateResourceCard(resources[i],plusone);
 
       cards.push($card[0]);
     }
@@ -3501,10 +3510,17 @@ function showSamples() {
     $widget.empty();
     var cardSizes = opts.cardSizes || ['6x6'];
     var i = 0, j = 0;
+    var plusone = true; // by default show plusone on resource cards
 
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
+      console.log("cardsize is " + cardSize);
+      // Some card sizes do not get a plusone button, such as where space is constrained
+      // or for cards commonly embedded in docs (to improve overall page speed).
+      plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
+                  (cardSize == "9x2") || (cardSize == "9x3") ||
+                  (cardSize == "12x2") || (cardSize == "12x3"));
 
       // A stack has a third dimension which is the number of stacked items
       var isStack = cardSize.match(/(\d+)x(\d+)x(\d+)/);
@@ -3537,7 +3553,7 @@ function showSamples() {
           stackCount = 0;
         }
 
-        $card.decorateResourceCard(resource)
+        $card.decorateResourceCard(resource,plusone)
           .appendTo($stackDiv || $widget);
 
       } while (++i < resources.length && stackCount > 0);
@@ -3726,7 +3742,7 @@ function showSamples() {
 
 (function($) {
   /* Simple jquery function to create dom for a standard resource card */
-  $.fn.decorateResourceCard = function(resource) {
+  $.fn.decorateResourceCard = function(resource,plusone) {
     var section = resource.group || resource.type;
     var imgUrl;
     if (resource.image) {
@@ -3734,29 +3750,38 @@ function showSamples() {
       var urlPrefix = resource.image.indexOf("//") > -1 ? "" : toRoot;
       imgUrl = urlPrefix + resource.image;
     }
-
+    //add linkout logic here. check url or type, assign a class, map to css :after
     $('<div>')
         .addClass('card-bg')
         .css('background-image', 'url(' + (imgUrl || toRoot + 'assets/images/resource-card-default-android.jpg') + ')')
       .appendTo(this);
-
-    $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
+    if (!plusone) {
+      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
         .append($('<div>').addClass('section').text(section))
         .append($('<div>').addClass('title').html(resource.title))
-        .append($('<div>').addClass('description')
-          .append($('<div>').addClass('text').html(resource.summary))
+        .append($('<div>').addClass('description ellipsis')
+            .append($('<div>').addClass('text').html(resource.summary))
+          .append($('<div>').addClass('util')))
+          .appendTo(this);
+    } else {
+      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
+        .append($('<div>').addClass('section').text(section))
+        .append($('<div>').addClass('title').html(resource.title))
+        .append($('<div>').addClass('description ellipsis')
+            .append($('<div>').addClass('text').html(resource.summary))
           .append($('<div>').addClass('util')
             .append($('<div>').addClass('g-plusone')
               .attr('data-size', 'small')
               .attr('data-align', 'right')
               .attr('data-href', resource.url))))
-      .appendTo(this);
+            .appendTo(this);
+    }
 
     return this;
   };
 
   /* Simple jquery function to create dom for a resource section card (menu) */
-  $.fn.decorateResourceSection = function(section) {
+  $.fn.decorateResourceSection = function(section,plusone) {
     var resource = section.resource;
     //keep url clean for matching and offline mode handling
     var urlPrefix = resource.image.indexOf("//") > -1 ? "" : toRoot;
@@ -3795,17 +3820,27 @@ function showSamples() {
       for (var i = 0; i < max; ++i) {
 
         var subResource = section.sections[i];
-        $('<li>')
-          .append($('<a>').attr('href', subResource.url)
-            .append($('<div>').addClass('title').html(subResource.title))
-            .append($('<div>').addClass('description')
-              .append($('<div>').addClass('text').html(subResource.summary))
-              .append($('<div>').addClass('util')
-                .append($('<div>').addClass('g-plusone')
-                  .attr('data-size', 'small')
-                  .attr('data-align', 'right')
-                  .attr('data-href', resource.url)))))
-        .appendTo($ul);
+        if (!plusone) {
+          $('<li>')
+            .append($('<a>').attr('href', subResource.url)
+              .append($('<div>').addClass('title').html(subResource.title))
+              .append($('<div>').addClass('description ellipsis')
+                .append($('<div>').addClass('text').html(subResource.summary))
+                .append($('<div>').addClass('util'))))
+          .appendTo($ul);
+        } else {
+          $('<li>')
+            .append($('<a>').attr('href', subResource.url)
+              .append($('<div>').addClass('title').html(subResource.title))
+              .append($('<div>').addClass('description ellipsis')
+                .append($('<div>').addClass('text').html(subResource.summary))
+                .append($('<div>').addClass('util')
+                  .append($('<div>').addClass('g-plusone')
+                    .attr('data-size', 'small')
+                    .attr('data-align', 'right')
+                    .attr('data-href', resource.url)))))
+          .appendTo($ul);
+        }
       }
 
       // Add a more row
@@ -3824,97 +3859,22 @@ function showSamples() {
     return this;
   };
 })(jQuery);
-
-
+/* Calculate the vertical area remaining */
 (function($) {
-    $.fn.ellipsis = function(options) {
-
-        // default option
-        var defaults = {
-            'row' : 1, // show rows
-            'onlyFullWords': true, // set to true to avoid cutting the text in the middle of a word
-            'char' : '\u2026', // ellipsis
-            'callback': function() {},
-            'position': 'tail' // middle, tail
-        };
-
-        options = $.extend(defaults, options);
-
+    $.fn.ellipsisfade= function(lineHeight) {
         this.each(function() {
             // get element text
             var $this = $(this);
+            var remainingHeight = $this.parent().parent().height();
+            $this.parent().siblings().each(function ()
+            {
+              var h = $(this).height();
+              remainingHeight = remainingHeight - h;
+            });
 
-            var targetHeight = $this.height();
-            $this.css({'height': 'auto'});
-            var text = $this.text();
-            var origText = text;
-            var origLength = origText.length;
-            var origHeight = $this.height();
-
-            if (origHeight <= targetHeight) {
-                $this.text(text);
-                options.callback.call(this);
-                return;
-            }
-
-            var start = 1, length = 0;
-            var end = text.length;
-
-            if(options.position === 'tail') {
-                while (start < end) { // Binary search for max length
-                    length = Math.ceil((start + end) / 2);
-
-                    $this.text(text.slice(0, length) + options['char']);
-
-                    if ($this.height() <= targetHeight) {
-                        start = length;
-                    } else {
-                        end = length - 1;
-                    }
-                }
-
-                text = text.slice(0, start);
-
-                if (options.onlyFullWords) {
-                    // remove fragment of the last word together with possible soft-hyphen chars
-                    text = text.replace(/[\u00AD\w\uac00-\ud7af]+$/, '');
-                }
-                text += options['char'];
-
-            }else if(options.position === 'middle') {
-
-                var sliceLength = 0;
-                while (start < end) { // Binary search for max length
-                    length = Math.ceil((start + end) / 2);
-                    sliceLength = Math.max(origLength - length, 0);
-
-                    $this.text(
-                        origText.slice(0, Math.floor((origLength - sliceLength) / 2)) +
-                               options['char'] +
-                               origText.slice(Math.floor((origLength + sliceLength) / 2), origLength)
-                    );
-
-                    if ($this.height() <= targetHeight) {
-                        start = length;
-                    } else {
-                        end = length - 1;
-                    }
-                }
-
-                sliceLength = Math.max(origLength - start, 0);
-                var head = origText.slice(0, Math.floor((origLength - sliceLength) / 2));
-                var tail = origText.slice(Math.floor((origLength + sliceLength) / 2), origLength);
-
-                if (options.onlyFullWords) {
-                    // remove fragment of the last or first word together with possible soft-hyphen characters
-                    head = head.replace(/[\u00AD\w\uac00-\ud7af]+$/, '');
-                }
-
-                text = head + options['char'] + tail;
-            }
-
-            $this.text(text);
-            options.callback.call(this);
+            adjustedRemainingHeight = ((remainingHeight)/lineHeight>>0)*lineHeight
+            $this.parent().css({'height': adjustedRemainingHeight});
+            $this.css({'height': "auto"});
         });
 
         return this;
