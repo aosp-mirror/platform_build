@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     libGLESv1_CM_emulation \
     lib_renderControl_enc \
     libEGL_emulation \
+    libGLES_android \
     libGLESv2_enc \
     libOpenglSystemCommon \
     libGLESv2_emulation \
