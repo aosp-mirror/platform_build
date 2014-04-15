@@ -52,6 +52,24 @@
       "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3978076f_367618ab",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-15T23:31:01Z",
+      "side": 1,
+      "message": "Hmm, it seems a little bit strange to me that the symbol introduced by NDK\u0027s stlport_static isn\u0027t defined in the platform\u0027s libstlport_static.",
+      "parentUuid": "795efffe_58b01d6d",
+      "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
