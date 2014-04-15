@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9980137b_8f7b34d0",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-15T22:49:12Z",
+      "side": 1,
+      "message": "Ben, can you try adding the following line here:\nLOCAL_STATIC_LIBRARIES +\u003d libstlport_static",
+      "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
