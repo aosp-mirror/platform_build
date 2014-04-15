@@ -50,7 +50,8 @@ PRODUCT_PACKAGES += \
     bcc \
     clatd \
     clatd.conf \
-    pppd
+    pppd \
+    screenrecord
 
 PRODUCT_PACKAGES += \
     librs_jni \
