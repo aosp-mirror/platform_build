@@ -899,9 +899,6 @@ function setStickyTop() {
     var hiding = false;
     var $stickyEl = $('#sticky-header');
     var $menuEl = $('.menu-container');
-    //var scrollThrottle = -1;
-    var lastScroll = 0;
-    var autoScrolling = false;
 
     var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
 
@@ -959,14 +956,6 @@ function setStickyTop() {
         $stickyEl.fadeIn(10);
         $menuEl.addClass('sticky-menu');
 
-
-        // If its a jump then make sure to modify the scroll because of the
-        // sticky nav
-        if (!autoScrolling && Math.abs(top - lastScroll > 100)) {
-          autoScrolling = true;
-          $('body,html').animate({scrollTop:(top = top - 60)}, '250', 'swing', function() { autoScrolling = false; });
-        }
-
         // make the sidenav fixed
         var width = $('#devdoc-nav').width();
         $('#devdoc-nav')
@@ -983,7 +972,6 @@ function setStickyTop() {
         hiding = false;
       }
 
-      lastScroll = top;
       resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
     });
 
@@ -1818,7 +1806,7 @@ function search_changed(e, kd, toroot)
             $('.suggest-card').hide();
             if ($("#searchResults").is(":hidden") && (search.value != "")) {
               // if results aren't showing (and text not empty), return true to allow search to execute
-              $('body,html').animate({scrollTop:0}, '500', 'swing', function() { autoScrolling = false; });
+              $('body,html').animate({scrollTop:0}, '500', 'swing');
               return true;
             } else {
               // otherwise, results are already showing, so allow ajax to auto refresh the results
@@ -2504,12 +2492,15 @@ google.setOnLoadCallback(function(){
 
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
-  // Exit if the hash isn't a search query or there's an error in the query
+  // If the hash isn't a search query or there's an error in the query,
+  // then adjust the scroll position to account for sticky header, then exit.
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
     // If the results pane is open, close it.
     if (!$("#searchResults").is(":hidden")) {
       hideResults();
     }
+    // Adjust the scroll position to account for sticky header
+    $(window).scrollTop($(window).scrollTop() - 60);
     return;
   }
 
