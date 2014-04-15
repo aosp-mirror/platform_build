@@ -85,8 +85,9 @@ class PropFile:
     for line in self.lines:
       if not line or line.startswith("#"):
         continue
-      key, value = line.split("=", 1)
-      props[key] = value
+      if "=" in line:
+        key, value = line.split("=", 1)
+        props[key] = value
     return props
 
   def get(self, name):
