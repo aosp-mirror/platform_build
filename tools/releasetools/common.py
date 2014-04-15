@@ -179,8 +179,9 @@ def LoadBuildProp(read_helper):
   for line in data.split("\n"):
     line = line.strip()
     if not line or line.startswith("#"): continue
-    name, value = line.split("=", 1)
-    d[name] = value
+    if "=" in line:
+      name, value = line.split("=", 1)
+      d[name] = value
   return d
 
 def LoadRecoveryFSTab(read_helper, fstab_version):
