@@ -403,7 +403,7 @@ ifdef is_sdk_build
 sdk_repo_goal := $(strip $(filter sdk_repo,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out sdk_repo,$(MAKECMDGOALS)))
 
-ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild,$(MAKECMDGOALS))),1)
+ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild target-files-package,$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
 
