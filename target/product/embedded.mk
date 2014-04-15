@@ -34,7 +34,6 @@ PRODUCT_PACKAGES += \
     libEGL \
     libETC1 \
     libFFTEm \
-    libGLES_android \
     libGLESv1_CM \
     libGLESv2 \
     libbinder \
