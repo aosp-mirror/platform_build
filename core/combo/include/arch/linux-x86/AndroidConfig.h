@@ -128,11 +128,8 @@
 
 /*
  * Define this if have clock_gettime() and friends
- *
- * Desktop Linux has this in librt, but it's broken in goobuntu, yielding
- * mildly or wildly inaccurate results.
  */
-/*#define HAVE_POSIX_CLOCKS*/
+#define HAVE_POSIX_CLOCKS
 
 /*
  * Define this if we have linux style epoll()
