@@ -16,6 +16,24 @@
       "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "795efffe_b80f79fe",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-15T22:51:32Z",
+      "side": 1,
+      "message": "If it doesn\u0027t work, use libstdc++ instead:\nLOCAL_STATIC_LIBRARIES +\u003d libstdc++",
+      "parentUuid": "9980137b_8f7b34d0",
+      "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
