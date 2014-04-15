@@ -105,6 +105,7 @@ endif
 
 endif  # LOCAL_STRIP_MODULE not true
 
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
 ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
@@ -121,11 +122,9 @@ ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 ifeq ($(LOCAL_CERTIFICATE),)
-  ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
-    # It is now a build error to add a prebuilt .apk without
-    # specifying a key for it.
-    $(error No LOCAL_CERTIFICATE specified for prebuilt "$(my_prebuilt_src_file)")
-  endif
+  # It is now a build error to add a prebuilt .apk without
+  # specifying a key for it.
+  $(error No LOCAL_CERTIFICATE specified for prebuilt "$(my_prebuilt_src_file)")
 else ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
   # The magic string "PRESIGNED" means this package is already checked
   # signed with its release key.
@@ -148,8 +147,6 @@ else
   $(built_module) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
-
-ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
 
 # Disable dex-preopt of prebuilts to save space
 LOCAL_DEX_PREOPT := false
