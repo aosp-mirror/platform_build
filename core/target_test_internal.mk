@@ -12,6 +12,7 @@ LOCAL_C_INCLUDES += bionic \
                     bionic/libstdc++/include \
                     external/stlport/stlport
 LOCAL_SHARED_LIBRARIES += libstlport
+LOCAL_STATIC_LIBRARIES += libstdc++
 endif
 
 ifndef LOCAL_MODULE_PATH
