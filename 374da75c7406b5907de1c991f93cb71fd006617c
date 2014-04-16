@@ -70,6 +70,24 @@
       "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19750377_f509f8f9",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-04-16T00:05:02Z",
+      "side": 1,
+      "message": "libstlport in NDK use gabi++ as run-time, which isn\u0027t close to complete (lack tons of cxa_* functions including cxa_pure_virtual).  The libstdc++.a in platform build isn\u0027t close to complete either, but it get cxa_pure_virtual() from bionic/libstdc++/src/pure_virtual.cpp.  Will replace gabi++ with lib++abi which is more complete, but will take a while for that to happen",
+      "parentUuid": "3978076f_367618ab",
+      "revId": "374da75c7406b5907de1c991f93cb71fd006617c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
