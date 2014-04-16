@@ -141,7 +141,6 @@ $(full_target): PRIVATE_DROIDDOC_HTML_DIR :=
 endif
 ifneq ($(strip $(LOCAL_ADDITIONAL_HTML_DIR)),)
 $(full_target): PRIVATE_ADDITIONAL_HTML_DIR := -htmldir2 $(LOCAL_PATH)/$(LOCAL_ADDITIONAL_HTML_DIR)
-html_dir_files += $(shell find $(LOCAL_PATH)/$(LOCAL_ADDITIONAL_HTML_DIR) -type f)
 else
 $(full_target): PRIVATE_ADDITIONAL_HTML_DIR :=
 endif
