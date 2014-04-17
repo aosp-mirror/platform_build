@@ -18,15 +18,11 @@
 #
 # Inputs:
 #	combo_target -- prefix for final variables (HOST_ or TARGET_)
-#	combo_2nd_arch_prefix -- it's defined if this is loaded for TARGET_2ND_ARCH.
+#	combo_2nd_arch_prefix -- it's defined if this is loaded for the 2nd arch.
 #
 
 # Build a target string like "linux-arm" or "darwin-x86".
-ifdef combo_2nd_arch_prefix
-combo_os_arch := $($(combo_target)OS)-$(TARGET_2ND_ARCH)
-else
-combo_os_arch := $($(combo_target)OS)-$($(combo_target)ARCH)
-endif
+combo_os_arch := $($(combo_target)OS)-$($(combo_target)$(combo_2nd_arch_prefix)ARCH)
 
 combo_var_prefix := $(combo_2nd_arch_prefix)$(combo_target)
 
@@ -90,7 +86,7 @@ ifneq ($(USE_CCACHE),)
   # If we are cross-compiling Windows binaries on Linux
   # then use the linux ccache binary instead.
   ifeq ($(HOST_OS)-$(BUILD_OS),windows-linux)
-    CCACHE_HOST_TAG := linux-$(BUILD_ARCH)
+    CCACHE_HOST_TAG := linux-$(HOST_PREBUILT_ARCH)
   endif
   ccache := prebuilts/misc/$(CCACHE_HOST_TAG)/ccache/ccache
   # Check that the executable is here.

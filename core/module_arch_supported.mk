@@ -2,14 +2,15 @@
 ## Determine if a module can be built for an arch
 ##
 ## Inputs from module makefile:
+## my_prefix   TARGET_ or HOST_
 ## my_module_multilib
-## LOCAL_MODULE_TARGET_ARCH
-## LOCAL_MODULE_TARGET_ARCH_WARN
-## LOCAL_MODULE_UNSUPPORTED_TARGET_ARCH
-## LOCAL_MODULE_UNSUPPORTED_TARGET_ARCH_WARN
+## LOCAL_MODULE_$(my_prefix)ARCH
+## LOCAL_MODULE_$(my_prefix)ARCH_WARN
+## LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH
+## LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH_WARN
 ##
 ## Inputs from build system:
-## TARGET_IS_64_BIT
+## $(my_prefix)IS_64_BIT
 ## LOCAL_2ND_ARCH_VAR_PREFIX
 ##
 ## Outputs:
@@ -23,9 +24,9 @@ my_module_arch_supported := false
 endif
 
 ifeq ($(LOCAL_2ND_ARCH_VAR_PREFIX),)
-ifeq ($(TARGET_IS_64_BIT)|$(my_module_multilib),true|32)
+ifeq ($($(my_prefix)IS_64_BIT)|$(my_module_multilib),true|32)
 my_module_arch_supported := false
-else ifeq ($(TARGET_IS_64_BIT)|$(my_module_multilib),|64)
+else ifeq ($($(my_prefix)IS_64_BIT)|$(my_module_multilib),|64)
 my_module_arch_supported := false
 else ifeq ($(call directory_is_64_bit_blacklisted,$(LOCAL_PATH)),true)
 my_module_arch_supported := false
@@ -38,24 +39,24 @@ my_module_arch_supported := false
 endif
 endif # LOCAL_2ND_ARCH_VAR_PREFIX
 
-ifneq (,$(LOCAL_MODULE_TARGET_ARCH))
-ifeq (,$(filter $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_TARGET_ARCH)))
+ifneq (,$(LOCAL_MODULE_$(my_prefix)ARCH))
+ifeq (,$(filter $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_$(my_prefix)ARCH)))
 my_module_arch_supported := false
 endif
 endif
 
-ifneq (,$(LOCAL_MODULE_TARGET_ARCH_WARN))
-ifeq (,$(filter $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_TARGET_ARCH_WARN)))
+ifneq (,$(LOCAL_MODULE_$(my_prefix)ARCH_WARN))
+ifeq (,$(filter $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_$(my_prefix)ARCH_WARN)))
 my_module_arch_supported := false
-$(warning $(LOCAL_MODULE): architecture $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) not supported)
+$(warning $(LOCAL_MODULE): architecture $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) not supported)
 endif
 endif
 
-ifneq (,$(filter $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_UNSUPPORTED_TARGET_ARCH)))
+ifneq (,$(filter $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH)))
 my_module_arch_supported := false
 endif
 
-ifneq (,$(filter $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_UNSUPPORTED_TARGET_ARCH_WARN)))
+ifneq (,$(filter $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH_WARN)))
 my_module_arch_supported := false
-$(warning $(LOCAL_MODULE): architecture $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) unsupported)
+$(warning $(LOCAL_MODULE): architecture $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) unsupported)
 endif
