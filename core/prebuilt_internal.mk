@@ -108,6 +108,9 @@ endif  # LOCAL_STRIP_MODULE not true
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+rs_compatibility_jni_libs :=
+include $(BUILD_SYSTEM)/install_jni_libs.mk
+
 ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   # The magic string "EXTERNAL" means this package will be signed with
   # the default dev key throughout the build process, but we expect
