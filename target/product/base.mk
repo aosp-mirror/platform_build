@@ -71,6 +71,8 @@ PRODUCT_PACKAGES += \
     libskia \
     libsonivox \
     libsoundpool \
+    libsoundtrigger \
+    libsoundtriggerservice \
     libsqlite \
     libstagefright \
     libstagefright_amrnb_common \
