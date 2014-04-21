@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25e0dbae_ef53a199",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-21T22:24:18Z",
+      "side": 0,
+      "message": "it\u0027s defined here.",
+      "revId": "488b23d96dc796e457d8df4d7775cefcf68320af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "658813e3_4354edfd",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-21T22:24:18Z",
+      "side": 0,
+      "message": "Why do you remove this line?",
+      "revId": "488b23d96dc796e457d8df4d7775cefcf68320af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
