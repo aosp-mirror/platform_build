@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "658813e3_432f0dae",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-21T22:22:35Z",
+      "side": 1,
+      "message": "ws",
+      "revId": "405f8186ead990d359c6b9993e9a6cfe22aa07ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "658813e3_0387c54f",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-21T22:22:35Z",
+      "side": 1,
+      "message": "It should replace the above $(HOST_GLOBAL_LDFLAGS) instead.",
+      "revId": "405f8186ead990d359c6b9993e9a6cfe22aa07ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65d653dd_f7b7f8c1",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-21T22:22:35Z",
+      "side": 1,
+      "message": "ditto.",
+      "revId": "405f8186ead990d359c6b9993e9a6cfe22aa07ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
