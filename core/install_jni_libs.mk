@@ -5,9 +5,11 @@
 #   rs_compatibility_jni_libs (from java.mk)
 #   my_module_path (from base_rules.mk)
 #   partition_tag (from base_rules.mk)
+#   my_prebuilt_src_file (from prebuilt_internal.mk)
 #
 # Output variables:
-#   jni_shared_libraries, jni_shared_libraries_abi, if we are going to embed the libraries into the apk.
+#   jni_shared_libraries, jni_shared_libraries_abi, if we are going to embed the libraries into the apk;
+#   my_extracted_jni_libs, if we extract jni libs from prebuilt apk.
 #
 
 jni_shared_libraries := \
@@ -32,6 +34,10 @@ ifeq ($(filter $(TARGET_OUT)/% $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_OEM)/%, $(my_
 # If this app isn't to be installed to system partitions.
 my_embed_jni := true
 endif
+
+# App-specific lib path.
+my_app_lib_path :=  $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET$(partition_tag)_OUT_SHARED_LIBRARIES)/$(basename $(LOCAL_INSTALLED_MODULE_STEM))
+my_extracted_jni_libs :=
 
 ifdef my_embed_jni
 # App explicitly requires the prebuilt NDK stl shared libraies.
@@ -74,12 +80,42 @@ my_leading_separator := ;
 else
 my_leading_separator :=
 endif
-my_app_lib_path :=  $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET$(partition_tag)_OUT_SHARED_LIBRARIES)/$(basename $(LOCAL_INSTALLED_MODULE_STEM))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD += \
   $(my_leading_separator)mkdir -p $(my_app_lib_path) \
   $(foreach lib, $(my_jni_filenames), ;ln -sf ../$(lib) $(my_app_lib_path)/$(lib))
 
 # Clear jni_shared_libraries to not embed it into the apk.
 jni_shared_libraries :=
-endif # $(jni_shared_libraries) not empty
+endif  # $(jni_shared_libraries) not empty
 endif  # my_embed_jni
+
+ifdef LOCAL_PREBUILT_JNI_LIBS
+# Install prebuilt JNI libs to the app specific lib path.
+# Files like @path/to/libfoo.so (path inside the apk) are JNI libs extracted from the prebuilt apk;
+# Files like path/to/libfoo.so (path relative to LOCAL_PATH) are prebuilts in the source tree.
+my_extracted_jni_libs := $(patsubst @%,%, \
+    $(filter @%, $(LOCAL_PREBUILT_JNI_LIBS)))
+ifdef my_extracted_jni_libs
+ifndef my_prebuilt_src_file
+$(error No prebuilt apk to extract prebuilt jni libraries $(my_extracted_jni_libs))
+endif
+# We use the first jni lib file as dependency.
+my_installed_prebuilt_jni := $(my_app_lib_path)/$(notdir $(firstword $(my_extracted_jni_libs)))
+$(my_installed_prebuilt_jni): PRIVATE_JNI_LIBS := $(my_extracted_jni_libs)
+$(my_installed_prebuilt_jni): $(my_prebuilt_src_file)
+	@echo "Extract JNI libs ($@ <- $<)"
+	@mkdir -p $(dir $@)
+	$(hide) unzip -j -o -d $(dir $@) $< $(PRIVATE_JNI_LIBS) && touch $@
+
+$(LOCAL_INSTALLED_MODULE) : | $(my_installed_prebuilt_jni)
+endif
+
+my_prebulit_jni_libs := $(addprefix $(LOCAL_PATH)/, \
+    $(filter-out @%, $(LOCAL_PREBUILT_JNI_LIBS)))
+ifdef my_prebulit_jni_libs
+$(foreach lib, $(my_prebulit_jni_libs), \
+    $(eval $(call copy-one-file, $(lib), $(my_app_lib_path)/$(notdir $(lib)))))
+
+$(LOCAL_INSTALLED_MODULE) : | $(addprefix $(my_app_lib_path)/, $(notdir $(my_prebulit_jni_libs)))
+endif
+endif  # LOCAL_PREBULT_JNI_LIBS
