@@ -25,7 +25,8 @@ PRODUCT_PROPERTY_OVERRIDES := \
 PRODUCT_COPY_FILES := \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
     device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
-    device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml
+    device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml \
+    system/core/rootdir/init.zygote64.rc:root/init.zygote64.rc
 
 PRODUCT_PACKAGES := \
     audio.primary.goldfish \
