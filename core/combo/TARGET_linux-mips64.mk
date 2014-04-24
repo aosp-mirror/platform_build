@@ -87,7 +87,7 @@ android_config_h := $(call select-android-config-h,linux-mips64)
 
 TARGET_GLOBAL_CFLAGS += \
 			$(TARGET_mips_CFLAGS) \
-			-Ulinux -U__unix -U__unix__ -Umips \
+			-U__unix -U__unix__ -Umips \
 			-fpic -fPIE\
 			-ffunction-sections \
 			-fdata-sections \
