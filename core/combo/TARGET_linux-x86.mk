@@ -106,7 +106,6 @@ android_config_h := $(call select-android-config-h,target_linux-x86)
 
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-O2 \
-			-Ulinux \
 			-Wa,--noexecstack \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=2 \
