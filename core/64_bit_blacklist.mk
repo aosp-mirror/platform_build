@@ -1,11 +1,9 @@
 ifneq ($(TARGET_2ND_ARCH),)
 
-# Chromium/V8: needs 64-bit support
+# chromium-libpac needs porting to the chromium_org V8 instead of legacy V8.
 _64_bit_directory_blacklist += \
 	external/chromium-libpac \
-	external/chromium_org \
 	external/v8 \
-	frameworks/webview \
 
 # misc build errors
 _64_bit_directory_blacklist += \
