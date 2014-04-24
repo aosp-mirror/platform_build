@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "659e536e_317790e9",
+        "filename": "core/clang/x86_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-04-24T19:41:14Z",
+      "side": 1,
+      "message": "This actually breaks the build.",
+      "parentUuid": "659e536e_919e7cdc",
+      "revId": "d90e418655c80b779979f22ec53418be138047eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a5be8bc4_b368f832",
         "filename": "core/combo/HOST_linux-x86.mk",
         "patchSetId": 1
