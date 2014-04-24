@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85b427df_ae3def4e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-04-24T19:28:31Z",
+      "side": 0,
+      "message": "this is deleted because we\u0027re always compiling from prebuilts",
+      "revId": "847fd0311f6c82b8ac90d970cfc68aafd9913471",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5e8dfcd_f0db48f9",
+        "filename": "core/clang/arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-04-24T19:28:31Z",
+      "side": 0,
+      "message": "this is now on by default in clang/LLVM 3.5",
+      "revId": "847fd0311f6c82b8ac90d970cfc68aafd9913471",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
