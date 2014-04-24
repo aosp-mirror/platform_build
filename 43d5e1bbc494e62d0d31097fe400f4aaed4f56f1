@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6587332a_8911f975",
+        "filename": "core/clang/TARGET_arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-24T23:32:31Z",
+      "side": 1,
+      "message": "Why don\u0027t we need to do the same for TARGET_x86.mk etc?",
+      "revId": "43d5e1bbc494e62d0d31097fe400f4aaed4f56f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
