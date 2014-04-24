@@ -22,10 +22,8 @@ define get-file-size
 stat --format "%s" "$(1)" | tr -d '\n'
 endef
 
-# Previously the prebiult host toolchain is used only for the sdk build,
-# that's why we have "sdk" in the path name.
 ifeq ($(strip $(HOST_TOOLCHAIN_PREFIX)),)
-HOST_TOOLCHAIN_PREFIX := prebuilts/tools/gcc-sdk/
+HOST_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.6/bin/x86_64-linux-
 endif
 # Don't do anything if the toolchain is not there
 ifneq (,$(strip $(wildcard $(HOST_TOOLCHAIN_PREFIX)gcc)))
@@ -34,6 +32,7 @@ HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)g++
 HOST_AR  := $(HOST_TOOLCHAIN_PREFIX)ar
 endif # $(HOST_TOOLCHAIN_PREFIX)gcc exists
 
+HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.6/
 ifneq ($(strip $(BUILD_HOST_64bit)),)
 # By default we build everything in 32-bit, because it gives us
 # more consistency between the host tools and the target.
@@ -41,14 +40,10 @@ ifneq ($(strip $(BUILD_HOST_64bit)),)
 # which can benefit from 64-bit host arch.
 HOST_GLOBAL_CFLAGS += -m64 -Wa,--noexecstack
 HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack
-# gcc location for clang; to be updated when clang is updated
-HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.7-4.6/
 else
 # We expect SSE3 floating point math.
 HOST_GLOBAL_CFLAGS += -mstackrealign -msse3 -mfpmath=sse -m32 -Wa,--noexecstack
 HOST_GLOBAL_LDFLAGS += -m32 -Wl,-z,noexecstack
-# gcc location for clang; to be updated when clang is updated
-HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/i686-linux-glibc2.7-4.6/
 endif # BUILD_HOST_64bit
 
 ifneq ($(strip $(BUILD_HOST_static)),)
