@@ -60,6 +60,11 @@ ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
   PLATFORM_VERSION_CODENAME := L
+
+  # This is all of the development codenames that are active.  Should be either
+  # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
+  # codenames after PLATFORM_VERSION_CODENAME.
+  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME),KKWT
 endif
 
 ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
