@@ -29,6 +29,7 @@ PRODUCT_PACKAGES += \
     KeyChain \
     PicoTts \
     PacProcessor \
+    libpac \
     ProxyHandler \
     SharedStorageBackup \
     VpnDialogs

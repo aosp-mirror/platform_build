@@ -48,7 +48,6 @@ PRODUCT_PACKAGES += \
     libeffects \
     libinput \
     libiprouteutil \
-    libjni_latinime \
     libjnigraphics \
     libldnhncr \
     libmedia \
@@ -57,7 +56,6 @@ PRODUCT_PACKAGES += \
     libmtp \
     libnetlink \
     libnetutils \
-    libpac \
     libreference-ril \
     libreverbwrapper \
     libril \
