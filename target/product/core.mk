@@ -42,6 +42,7 @@ PRODUCT_PACKAGES += \
     ManagedProvisioning \
     PicoTts \
     PacProcessor \
+    libpac \
     PrintSpooler \
     ProxyHandler \
     QuickSearchBox \
