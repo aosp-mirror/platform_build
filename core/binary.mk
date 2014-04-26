@@ -9,7 +9,9 @@
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
-my_ndk_version_root :=
+my_ndk_sysroot :=
+my_ndk_sysroot_include :=
+my_ndk_sysroot_lib :=
 ifdef LOCAL_SDK_VERSION
   ifdef LOCAL_NDK_VERSION
     $(error $(LOCAL_PATH): LOCAL_NDK_VERSION is now retired.)
@@ -18,7 +20,13 @@ ifdef LOCAL_SDK_VERSION
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
   endif
   my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources
-  my_ndk_version_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  my_ndk_sysroot := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  my_ndk_sysroot_include := $(my_ndk_sysroot)/usr/include
+  ifeq (x86_64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+    my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib64
+  else
+    my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib
+  endif
 
   # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
   # See ndk/docs/CPLUSPLUS-SUPPORT.html
@@ -198,7 +206,7 @@ endif
 ifndef LOCAL_IS_HOST_MODULE
 ifdef LOCAL_SDK_VERSION
 my_target_project_includes :=
-my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_version_root)/usr/include
+my_target_c_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
 my_target_global_cppflags := $(my_ndk_stl_cppflags)
 else
 my_target_project_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_INCLUDES)
@@ -817,7 +825,7 @@ built_shared_libraries := \
 # Add the NDK libraries to the built module dependency
 my_system_shared_libraries_fullpath := \
     $(my_ndk_stl_shared_lib_fullpath) \
-    $(addprefix $(my_ndk_version_root)/usr/lib/, \
+    $(addprefix $(my_ndk_sysroot_lib)/, \
         $(addsuffix $(so_suffix), $(my_system_shared_libraries)))
 
 built_shared_libraries += $(my_system_shared_libraries_fullpath)
