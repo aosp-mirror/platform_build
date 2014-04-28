@@ -1401,7 +1401,7 @@ function set_java_home() {
       else
         case `uname -s` in
             Darwin)
-                export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home
+                export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
                 ;;
             *)
                 export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
