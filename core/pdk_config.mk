@@ -18,9 +18,14 @@ pdk fusion: $(DEFAULT_GOAL)
 
 # if PDK_FUSION_PLATFORM_ZIP is specified, do not override.
 ifndef PDK_FUSION_PLATFORM_ZIP
+# Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
+# but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
+# with vendor/pdk/TARGET_PRODUCT.
 _pdk_fusion_default_platform_zip = $(wildcard \
 vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip \
-vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip)
+vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip \
+vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip \
+vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip)
 ifneq (,$(_pdk_fusion_default_platform_zip))
 PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
 TARGET_BUILD_PDK := true
