@@ -325,6 +325,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "vendor":
     copy_prop("vendor_fs_type", "fs_type")
     copy_prop("vendor_size", "partition_size")
+  elif mount_point == "oem":
+    copy_prop("fs_type", "fs_type")
+    copy_prop("oem_size", "partition_size")
 
   return d
 
@@ -363,6 +366,8 @@ def main(argv):
     mount_point = "cache"
   elif image_filename == "vendor.img":
     mount_point = "vendor"
+  elif image_filename == "oem.img":
+    mount_point = "oem"
   else:
     print >> sys.stderr, "error: unknown image file name ", image_filename
     exit(1)
