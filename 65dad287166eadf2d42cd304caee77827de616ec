@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2507fbcc_5720ccb6",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-04-28T22:09:30Z",
+      "side": 1,
+      "message": "Where is this from? is it added by you another pending change?",
+      "revId": "65dad287166eadf2d42cd304caee77827de616ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
