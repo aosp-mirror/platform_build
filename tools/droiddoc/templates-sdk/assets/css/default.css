@@ -358,6 +358,19 @@ video.with-shadow {
   #nav li span.tree-list-subtitle:after {
     content: '—';
   }
+  #nav li span.tree-list-subtitle.package {
+    padding-top:15px;
+    cursor:default;
+  }
+  #nav li span.tree-list-subtitle.package:before {
+    content: '';
+  }
+  #nav li span.tree-list-subtitle.package:after {
+    content: '';
+  }
+  #nav li ul.tree-list-children.classes {
+    padding-left:10px;
+  }
   #nav li ul {
     display:none;
     overflow: hidden;
@@ -427,6 +440,10 @@ video.with-shadow {
   margin:0;
   border-bottom:0;
   padding:0;
+}
+.content-header > div:first-child {
+  height:55px; /* set fixed height for the header div to ensure the
+                  next/prev links align with toc on training classes */
 }
 
 .content-footer {
@@ -522,6 +539,11 @@ video.with-shadow {
   .training-nav-top a.start-class-link,
   .training-nav-top a.start-course-link {
     width:262px;
+  }
+
+  .paging-links a.start-class-link {
+    width:100%;
+    text-align:right;
   }
 
   /* list of classes on course landing page */
@@ -1824,7 +1846,7 @@ EndColorStr='#ececec');
 }
 
 #tb-wrapper {
-  margin:-27px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
+  margin:-29px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
 }
 
 #tb,
@@ -1891,10 +1913,15 @@ EndColorStr='#ececec');
 .sidebox h5 {
   font-weight:bold;
   margin:0 0 10px;
+  line-height: 16px;
 }
 
 .sidebox * {
   font-size:inherit;
+}
+
+.sidebox > *:last-child {
+  margin-bottom:0;
 }
 
 #tb ol,
@@ -2259,10 +2286,14 @@ a:visited,
 
 
 /* nav tree */
-#side-nav, #devdoc-nav, #swapper,
+#side-nav, #swapper,
 #nav-tree, #tree-list {
   overflow:hidden;
   margin-left:0;
+}
+
+#devdoc-nav {
+  overflow:visible !important; /* To keep the "to top" button visible */
 }
 
 #nav-tree ul {
@@ -2497,7 +2528,7 @@ Lightbox
 }
 
 /* --------------------------------------------------------------------------
-Styles for samples project trees and code browsing in resources tab 
+Styles for samples browser
 */
 
 #codesample-wrapper {
@@ -2543,6 +2574,30 @@ pre#codesample-block span.code-line {
   display:inline-block;
 }
 
+/*
+Styles for displaying image or video resources in samples browser.
+Resources are marked as no-display if they exceed the size limit.
+*/
+div#codesample-resource img, div#codesample-resource video {
+  border: 1px solid #ececec;
+}
+
+div#codesample-resource.noDisplay div {
+  border: 1px solid #ececec;
+  width:120px;
+  margin-bottom:4px;
+  padding:20px;
+}
+
+div#codesample-resource .noDisplay-message:after {
+  font-style:italic;
+  font-size:12px;
+  content: 'This resource is not available for browsing. To view it, please download the project.';
+}
+
+/*
+Styles for project structure (treeview) page
+*/
 .structure-dir {
 background-image:url(../../assets/images/folder.png);
 background-repeat:no-repeat;
@@ -3971,6 +4026,15 @@ EndColorStr='#ececec');
   padding-right:10px;
 }
 
+
+#header .logo-wear {
+  width:220px;
+  margin:0;
+}
+#header .logo-wear img {
+  padding:0 0 0 10px;
+}
+
 .search {
   height:25px;
   margin-top: -3px;
@@ -4791,25 +4855,32 @@ a.download-sdk {
 
 .landing-banner,
 .landing-docs {
-  margin:20px 0 0;
+  margin:20px 0;
 }
-.landing-banner div:first-child,
-.landing-docs div:first-child,
-.landing-docs .col-12 {
+.landing-banner > div:first-child,
+.landing-docs > div:first-child,
+.landing-docs > .col-12 {
   margin-left:0;
   min-height:280px;
 }
-.landing-banner div:last-child,
-.landing-docs div:last-child,
-.landing-docs .col-12 {
+.landing-banner.short > div {
+  min-height:50px;
+}
+.landing-banner > div:last-child,
+.landing-docs > div:last-child,
+.landing-docs > .col-12 {
   margin-right:0;
 }
 
+.landing-banner > div > *:last-child {
+  margin-bottom:0;
+}
 .landing-banner h1 {
   margin-top:0;
 }
-.landing-docs {
-  clear:left;
+.landing-docs,
+.landing-banner {
+  clear:both;
   overflow:hidden;
 }
 .landing-docs h3 {
@@ -4835,6 +4906,32 @@ a.download-sdk {
 
 .plusone {
   float:right;
+}
+
+
+
+.next-docs {
+  border-top:1px solid #ccc;
+  margin:40px 0 0;
+  padding:5px 0 0;
+  clear:left;
+  overflow:hidden;
+}
+.next-docs div:first-child {
+  margin-left:0;
+}
+.next-docs div:last-child {
+  margin-right:0;
+}
+
+.next-docs h2 {
+  font-size:14px;
+  line-height:21px;
+  color:#555;
+  text-transform:uppercase;
+  border-bottom:none;
+  margin:0 0 1em;
+  padding:5px 0 0;
 }
 
 

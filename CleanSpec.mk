@@ -208,7 +208,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 # 4.4.1
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
-# Make libart the default runtime
+# 4.4.2
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # Rename persist.sys.dalvik.vm.lib to allow new default
