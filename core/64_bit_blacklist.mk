@@ -1,10 +1,5 @@
 ifneq ($(TARGET_2ND_ARCH),)
 
-# chromium-libpac needs porting to the chromium_org V8 instead of legacy V8.
-_64_bit_directory_blacklist += \
-	external/chromium-libpac \
-	external/v8 \
-
 # misc build errors
 _64_bit_directory_blacklist += \
 	device/generic/goldfish/opengl \
