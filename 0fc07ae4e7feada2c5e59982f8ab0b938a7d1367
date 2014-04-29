@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45d06f88_8e299fac",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1006257
+      },
+      "writtenOn": "2014-04-29T17:09:30Z",
+      "side": 1,
+      "message": "Are these supposed to be tabs?  (I\u0027m not sure if gerrit normally shows tabs on lines that aren\u0027t added.)",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 1
+      },
+      "revId": "0fc07ae4e7feada2c5e59982f8ab0b938a7d1367",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
