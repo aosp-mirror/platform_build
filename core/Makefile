@@ -410,8 +410,6 @@ else
   INSTALLED_KERNEL_TARGET :=
 endif
 
-VERITY_SIGNER_CMD := $(HOST_OUT_EXECUTABLES)/verity_signer
-
 # -----------------------------------------------------------------
 # the ramdisk
 INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
@@ -644,8 +642,8 @@ INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
 endif
 INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 
-ifeq (true, $(PRODUCT_SUPPORTS_VERITY))
-INTERNAL_USERIMAGES_DEPS += $(HOST_OUT_EXECUTABLES)/verity_signer
+ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY))
+INTERNAL_USERIMAGES_DEPS += $(APPEND2SIMG) $(VERITY_SIGNER)
 endif
 
 SELINUX_FC := $(TARGET_ROOT_OUT)/file_contexts
@@ -881,7 +879,7 @@ define build-systemimage-target
       verity=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY) \
       verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_PARTITION) \
       verity_key=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY) \
-      verity_signer_cmd=$(VERITY_SIGNER_CMD))
+      verity_signer_cmd=$(VERITY_SIGNER))
   $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
       ./build/tools/releasetools/build_image.py \
       $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1)
