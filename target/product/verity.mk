@@ -20,10 +20,4 @@ PRODUCT_SUPPORTS_VERITY := true
 PRODUCT_VERITY_SIGNING_KEY := build/target/product/security/verity_private_dev_key
 
 PRODUCT_PACKAGES += \
-        generate_verity_key \
-        VeritySigner \
-        verity_signer \
-        build_verity_tree.py \
-        build_verity_metadata.py \
-        append2simg \
         verity_key
