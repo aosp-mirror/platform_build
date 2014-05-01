@@ -231,6 +231,11 @@ combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
+ifdef TARGET_PREFER_32_BIT
+TARGET_PREFER_32_BIT_APPS := true
+TARGET_PREFER_32_BIT_EXECUTABLES := true
+endif
+
 # "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
 # of preference) that the target supports. If a TARGET_CPU_ABI_LIST
 # is specified by the board configuration, we use that. If not, we
