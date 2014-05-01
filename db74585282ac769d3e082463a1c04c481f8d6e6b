@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a292485_b78f4a64",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-01T01:48:38Z",
+      "side": 1,
+      "message": "Are you going to add a new variable TARGET_PREFER_32_BIT_APPS? in addition to TARGET_SUPPORTS_32_BIT_APPS? With TARGET_PREFER_32_BIT_APPS can we remove TARGET_SUPPORTS_32_BIT_APPS and TARGET_SUPPORTS_64_BIT_APPS?",
+      "revId": "db74585282ac769d3e082463a1c04c481f8d6e6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
