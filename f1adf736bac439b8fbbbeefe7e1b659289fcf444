@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "ea205093_6a52fb25",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-05-01T17:55:14Z",
+      "side": 1,
+      "message": "Yes, TARGET_IS_64_BIT is whether the primary arch is 64 bit\n2ND_TARGET_IS_64_BIT would be whether the secondary arch is 64 bit, but we don\u0027t support it.",
+      "parentUuid": "ea25b0a9_0da851a9",
+      "revId": "f1adf736bac439b8fbbbeefe7e1b659289fcf444",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ea25b0a9_9009fa48",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2014-05-01T16:19:30Z",
       "side": 1,
       "message": "This looks asymmetric, do you want to look at TARGET_SUPPORTS_64_BIT_APPS here ? Is that even possible.",
+      "revId": "f1adf736bac439b8fbbbeefe7e1b659289fcf444",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a587c41_48ae3fbb",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-05-01T17:55:14Z",
+      "side": 1,
+      "message": "It has to look at TARGET_IS_64_BIT to know to put the primary arch abis in the 32-bit abi list.  It could technically look at TARGET_SUPPORTS_32_BIT_APPS to filter them out, but that will never change on a 32-bit only build so I left it out to reduce the chance of breaking existing 32-bit builds.",
+      "parentUuid": "ea25b0a9_9009fa48",
       "revId": "f1adf736bac439b8fbbbeefe7e1b659289fcf444",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
