@@ -33,6 +33,24 @@
       "revId": "f5d3118be7caf3a39f76cd2905969283efd01699",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca32acf0_ac0263d3",
+        "filename": "target/product/core_64_bit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-05-01T01:22:00Z",
+      "side": 1,
+      "message": "These would stay in the final version.  I considered renaming them to PRODUCT_* and using PRODUCT.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_64_BIT_APPS, but that seemed unnecessary since we don\u0027t need any inheritance overriding these variables.  I can do it that way if you prefer.",
+      "parentUuid": "4a3f9cb5_b396426a",
+      "revId": "f5d3118be7caf3a39f76cd2905969283efd01699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
