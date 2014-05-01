@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea205093_d8dfb1e6",
+        "filename": "target/product/core_64_bit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-05-01T00:52:26Z",
+      "side": 1,
+      "message": "oops, this isn\u0027t going to work for mips64 and x86_64",
+      "revId": "f5d3118be7caf3a39f76cd2905969283efd01699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
