@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa1ad864_33ca4881",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-05-01T16:19:30Z",
+      "side": 1,
+      "message": "nit: absence",
+      "revId": "f1adf736bac439b8fbbbeefe7e1b659289fcf444",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea25b0a9_0da851a9",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-05-01T16:19:30Z",
+      "side": 1,
+      "message": "Hmmm. The semantics of TARGET_IS_64_BIT are confusing. Is it trying to tell us that TARGET_CPU_ABI , TARGET_CPU_ABI2 are 64 bit ABIs ?.",
+      "revId": "f1adf736bac439b8fbbbeefe7e1b659289fcf444",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea25b0a9_9009fa48",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-05-01T16:19:30Z",
+      "side": 1,
+      "message": "This looks asymmetric, do you want to look at TARGET_SUPPORTS_64_BIT_APPS here ? Is that even possible.",
+      "revId": "f1adf736bac439b8fbbbeefe7e1b659289fcf444",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
