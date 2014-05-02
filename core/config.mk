@@ -377,6 +377,7 @@ LINT := prebuilts/sdk/tools/lint
 RMTYPEDEFS := $(HOST_OUT_EXECUTABLES)/rmtypedefs
 APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
+BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
 
 # ACP is always for the build OS, not for the host OS
 ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)

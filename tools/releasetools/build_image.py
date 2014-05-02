@@ -43,7 +43,7 @@ def RunCommand(cmd):
   return p.returncode
 
 def GetVerityTreeSize(partition_size):
-  cmd = "system/extras/verity/build_verity_tree.py -s %d"
+  cmd = "build_verity_tree -s %d"
   cmd %= partition_size
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -77,9 +77,8 @@ def AdjustPartitionSizeForVerity(partition_size):
     return 0
   return partition_size - verity_tree_size - verity_metadata_size
 
-def BuildVerityTree(unsparse_image_path, verity_image_path, partition_size, prop_dict):
-  cmd = ("system/extras/verity/build_verity_tree.py %s %s %d" %
-            (unsparse_image_path, verity_image_path, partition_size))
+def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
+  cmd = ("build_verity_tree %s %s" % (sparse_image_path, verity_image_path))
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -166,7 +165,6 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   """
   # get properties
   image_size = prop_dict["partition_size"]
-  part_size = int(prop_dict["original_partition_size"])
   block_dev = prop_dict["verity_block_device"]
   signer_key = prop_dict["verity_key"]
   signer_path = prop_dict["verity_signer_cmd"]
@@ -180,13 +178,9 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   # get partial image paths
   verity_image_path = os.path.join(tempdir_name, "verity.img")
   verity_metadata_path = os.path.join(tempdir_name, "verity_metadata.img")
-  success, unsparse_image_path = UnsparseImage(out_file)
-  if not success:
-    shutil.rmtree(tempdir_name)
-    return False
 
   # build the verity tree and get the root hash and salt
-  if not BuildVerityTree(unsparse_image_path, verity_image_path, part_size, prop_dict):
+  if not BuildVerityTree(out_file, verity_image_path, prop_dict):
     shutil.rmtree(tempdir_name)
     return False
 
