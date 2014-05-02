@@ -359,6 +359,19 @@ video.with-shadow {
   #nav li span.tree-list-subtitle:after {
     content: '—';
   }
+  #nav li span.tree-list-subtitle.package {
+    padding-top:15px;
+    cursor:default;
+  }
+  #nav li span.tree-list-subtitle.package:before {
+    content: '';
+  }
+  #nav li span.tree-list-subtitle.package:after {
+    content: '';
+  }
+  #nav li ul.tree-list-children.classes {
+    padding-left:10px;
+  }
   #nav li ul {
     display:none;
     overflow: hidden;
@@ -529,9 +542,9 @@ video.with-shadow {
     width:262px;
   }
 
-  .paging-links a.start-class-link {   
-    width:100%;   
-    text-align:right;   
+  .paging-links a.start-class-link {
+    width:100%;
+    text-align:right;
   }
 
   /* list of classes on course landing page */
@@ -1516,10 +1529,11 @@ Header, Login, Nav-X, Search
 .develop a.selected {
     color: #F80;
 }
-
 .distribute a.selected {
     color: #9C0;
 }
+
+
 
 .nav-x li {
     display: inline;
@@ -1631,8 +1645,6 @@ Header, Login, Nav-X, Search
 .search-dropdown li a:hover h6, .search-dropdown li a:hover .desc {
   color: #33b5e5
 }
-
-
 /* --------------------------------------------------------------------------
 Buttons
 */
@@ -1902,6 +1914,7 @@ EndColorStr='#ececec');
 .sidebox h5 {
   font-weight:bold;
   margin:0 0 10px;
+  line-height: 16px;
 }
 
 .sidebox * {
@@ -4155,6 +4168,16 @@ EndColorStr='#ececec');
   padding-right:10px;
 }
 
+
+#header-wrap .logo-wear {
+  width:220px;
+  margin:0;
+  margin-bottom:22px;
+}
+#header-wrap .logo-wear img {
+  padding:0 0 0 10px;
+}
+
 .search {
   height:25px;
   margin-top: -3px;
@@ -4967,16 +4990,22 @@ a.download-sdk {
 .landing-docs a {
   color:#333 !important;
 }
+
 .landing-docs a:hover,
 .landing-docs a:hover * {
   color:#7AA1B0 !important
 }
+
 .landing-docs .normal-links a {
   color:#258aaf !important;
 }
+
 .plusone {
   float:right;
 }
+
+
+
 .next-docs {
   border-top:1px solid #ccc;
   margin:40px 0 0;
@@ -4990,13 +5019,14 @@ a.download-sdk {
 .next-docs div:last-child {
   margin-right:0;
 }
+
 .next-docs h2 {
   font-size:14px;
   line-height:21px;
   color:#555;
   text-transform:uppercase;
   border-bottom:none;
-  margin:0;
+  margin:0 0 1em;
   padding:5px 0 0;
 }
 
