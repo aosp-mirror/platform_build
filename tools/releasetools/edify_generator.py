@@ -68,6 +68,19 @@ class EdifyGenerator(object):
     with temporary=True) to this one."""
     self.script.extend(other.script)
 
+  def AssertOemProperty(self, name, value):
+    """Assert that a property on the OEM paritition matches a value."""
+    if not name:
+      raise ValueError("must specify an OEM property")
+    if not value:
+      raise ValueError("must specify the OEM value")
+    cmd = ('file_getprop("/oem/oem.prop", "%s") == "%s" || '
+           'abort("This package expects the value \\"%s\\"  for '
+           '\\"%s\\" on the OEM partition; '
+           'this has value \\"" + file_getprop("/oem/oem.prop") + "\\".");'
+           ) % (name, value, name, value)
+    self.script.append(cmd)
+
   def AssertSomeFingerprint(self, *fp):
     """Assert that the current system build fingerprint is one of *fp."""
     if not fp:
@@ -81,15 +94,16 @@ class EdifyGenerator(object):
            ) % (" or ".join(fp),)
     self.script.append(cmd)
 
-  def AssertRecoveryFingerprint(self, *fp):
-    """Assert that the current recovery build fingerprint is one of *fp."""
+  def AssertSomeThumbprint(self, *fp):
+    """Assert that the current system build thumbprint is one of *fp."""
     if not fp:
-      raise ValueError("must specify some fingerprints")
+      raise ValueError("must specify some thumbprints")
     cmd = (
-           ' ||\n    '.join([('getprop("ro.build.fingerprint") == "%s"')
+           ' ||\n    '.join([('file_getprop("/system/build.prop", '
+                         '"ro.build.thumbprint") == "%s"')
                         % i for i in fp]) +
-           ' ||\n    abort("Package expects build fingerprint of %s; this '
-           'device has " + getprop("ro.build.fingerprint") + ".");'
+           ' ||\n    abort("Package expects build thumbprint of %s; this '
+           'device has " + getprop("ro.build.thumbprint") + ".");'
            ) % (" or ".join(fp),)
     self.script.append(cmd)
 

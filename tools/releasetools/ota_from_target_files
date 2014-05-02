@@ -37,6 +37,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate an incremental OTA using the given target-files zip as
       the starting build.
 
+  -o  (--oem_settings)  <file>
+      Use the file to specify the expected OEM-specific properties
+      on the OEM partition of the intended device.
+
   -w  (--wipe_user_data)
       Generate an OTA package that will wipe the user data partition
       when installed.
@@ -109,6 +113,7 @@ OPTIONS.two_step = False
 OPTIONS.no_signing = False
 OPTIONS.block_based = False
 OPTIONS.updater_binary = None
+OPTIONS.oem_source = None
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -361,9 +366,18 @@ def SignOutput(temp_zip_name, output_zip_name):
                   whole_file=True)
 
 
-def AppendAssertions(script, info_dict):
-  device = GetBuildProp("ro.product.device", info_dict)
-  script.AssertDevice(device)
+def AppendAssertions(script, info_dict, oem_dict):
+  oem_props = info_dict.get("oem_fingerprint_properties")
+  if oem_props is None:
+    device = GetBuildProp("ro.product.device", info_dict)
+    script.AssertDevice(device)
+  else:
+    if oem_dict is None:
+      raise common.ExternalError("No OEM file provided to answer expected assertions")
+    for prop in oem_props.split():
+      if oem_dict.get(prop) is None:
+        raise common.ExternalError("The OEM file is missing the property %s" % prop)
+      script.AssertOemProperty(prop, oem_dict.get(prop))
 
 
 def HasRecoveryPatch(target_files_zip):
@@ -373,6 +387,20 @@ def HasRecoveryPatch(target_files_zip):
   except KeyError:
     return False
 
+def GetOemProperty(name, oem_props, oem_dict, info_dict):
+  if oem_props is not None and name in oem_props:
+    return oem_dict[name]
+  return GetBuildProp(name, info_dict)
+
+
+def CalculateFingerprint(oem_props, oem_dict, info_dict):
+  if oem_props is None:
+    return GetBuildProp("ro.build.fingerprint", info_dict)
+  return "%s/%s/%s:%s" % (
+    GetOemProperty("ro.product.brand", oem_props, oem_dict, info_dict),
+    GetOemProperty("ro.product.name", oem_props, oem_dict, info_dict),
+    GetOemProperty("ro.product.device", oem_props, oem_dict, info_dict),
+    GetBuildProp("ro.build.thumbprint", info_dict))
 
 def WriteFullOTAPackage(input_zip, output_zip):
   # TODO: how to determine this?  We don't know what version it will
@@ -380,9 +408,17 @@ def WriteFullOTAPackage(input_zip, output_zip):
   # change very often.
   script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
 
-  metadata = {"post-build": GetBuildProp("ro.build.fingerprint",
-                                         OPTIONS.info_dict),
-              "pre-device": GetBuildProp("ro.product.device",
+  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  oem_dict = None
+  if oem_props is not None:
+    if OPTIONS.oem_source is None:
+      raise common.ExternalError("OEM source required for this build")
+    script.Mount("/oem")
+    oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
+
+  metadata = {"post-build": CalculateFingerprint(
+                               oem_props, oem_dict, OPTIONS.info_dict),
+              "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
                                          OPTIONS.info_dict),
               "post-timestamp": GetBuildProp("ro.build.date.utc",
                                              OPTIONS.info_dict),
@@ -405,7 +441,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
     ts_text = GetBuildProp("ro.build.date", OPTIONS.info_dict)
     script.AssertOlderBuild(ts, ts_text)
 
-  AppendAssertions(script, OPTIONS.info_dict)
+  AppendAssertions(script, OPTIONS.info_dict, oem_dict)
   device_specific.FullOTA_Assertions()
 
   # Two-step package strategy (in chronological order, which is *not*
@@ -852,7 +888,15 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script = edify_generator.EdifyGenerator(source_version,
                                           OPTIONS.target_info_dict)
 
-  metadata = {"pre-device": GetBuildProp("ro.product.device",
+  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  oem_dict = None
+  if oem_props is not None:
+    if OPTIONS.oem_source is None:
+      raise common.ExternalError("OEM source required for this build")
+    script.Mount("/oem")
+    oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
+
+  metadata = {"pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
                                          OPTIONS.source_info_dict),
               "post-timestamp": GetBuildProp("ro.build.date.utc",
                                              OPTIONS.target_info_dict),
@@ -936,13 +980,20 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       patch_list.append((tf, sf, tf.size, common.sha1(d).hexdigest()))
       largest_source_size = max(largest_source_size, sf.size)
 
-  source_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.source_info_dict)
-  target_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.target_info_dict)
+  script.Mount("/system")
+
+  target_fp = CalculateFingerprint(oem_props, oem_dict, OPTIONS.target_info_dict)
+  source_fp = CalculateFingerprint(oem_props, oem_dict, OPTIONS.source_info_dict)
+
+  if oem_props is None:
+    script.AssertSomeFingerprint(source_fp, target_fp)
+  else:
+    script.AssertSomeThumbprint(
+        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
+        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
-
-  script.Mount("/system")
-  script.AssertSomeFingerprint(source_fp, target_fp)
 
   source_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT",
@@ -965,7 +1016,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   #  0.1 for unpacking verbatim files, symlinking, and doing the
   #      device-specific commands.
 
-  AppendAssertions(script, OPTIONS.target_info_dict)
+  AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
   device_specific.IncrementalOTA_Assertions()
 
   # Two-step incremental package strategy (in chronological order,
@@ -1227,6 +1278,8 @@ def main(argv):
       OPTIONS.wipe_user_data = True
     elif o in ("-n", "--no_prereq"):
       OPTIONS.omit_prereq = True
+    elif o in ("-o", "--oem_settings"):
+      OPTIONS.oem_source = a
     elif o in ("-e", "--extra_script"):
       OPTIONS.extra_script = a
     elif o in ("-a", "--aslr_mode"):
@@ -1249,7 +1302,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:a:2",
+                             extra_opts="b:k:i:d:wne:a:2o:",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
@@ -1262,6 +1315,7 @@ def main(argv):
                                               "no_signing",
                                               "block",
                                               "binary=",
+                                              "oem_settings=",
                                               ],
                              extra_option_handler=option_handler)
 

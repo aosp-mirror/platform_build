@@ -99,14 +99,9 @@ def LoadInfoDict(input):
       except IOError, e:
         if e.errno == errno.ENOENT:
           raise KeyError(fn)
-
   d = {}
   try:
-    for line in read_helper("META/misc_info.txt").split("\n"):
-      line = line.strip()
-      if not line or line.startswith("#"): continue
-      k, v = line.split("=", 1)
-      d[k] = v
+    d = LoadDictionaryFromLines(read_helper("META/misc_info.txt").split("\n"))
   except KeyError:
     # ok if misc_info.txt doesn't exist
     pass
@@ -174,9 +169,11 @@ def LoadBuildProp(read_helper):
   except KeyError:
     print "Warning: could not find SYSTEM/build.prop in %s" % zip
     data = ""
+  return LoadDictionaryFromLines(data.split("\n"))
 
+def LoadDictionaryFromLines(lines):
   d = {}
-  for line in data.split("\n"):
+  for line in lines:
     line = line.strip()
     if not line or line.startswith("#"): continue
     if "=" in line:
