@@ -189,6 +189,24 @@ function setpaths()
     unset ANDROID_HOST_OUT
     export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
 
+    # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
+    # to ensure that the corresponding 'emulator' binaries are used.
+    case $(uname -s) in
+        Darwin)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/darwin-x86_64
+            ;;
+        Linux)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/linux-x86_64
+            ;;
+        *)
+            ANDROID_EMULATOR_PREBUILTS=
+            ;;
+    esac
+    if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
+        PATH=$ANDROID_EMULATOR_PREBUILTS:$PATH
+        export ANDROID_EMULATOR_PREBUILTS
+    fi
+
     # needed for building linux on MacOS
     # TODO: fix the path
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
