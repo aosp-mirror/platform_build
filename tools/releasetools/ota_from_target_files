@@ -366,7 +366,7 @@ def SignOutput(temp_zip_name, output_zip_name):
                   whole_file=True)
 
 
-def AppendAssertions(script, info_dict, oem_dict):
+def AppendAssertions(script, info_dict, oem_dict = None):
   oem_props = info_dict.get("oem_fingerprint_properties")
   if oem_props is None:
     device = GetBuildProp("ro.product.device", info_dict)
@@ -683,7 +683,15 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       tgt_mapfilename = system_patch.name + ".tgt.map"
       common.ZipWriteStr(output_zip, tgt_mapfilename, tgt_mapdata)
 
-  AppendAssertions(script, OPTIONS.target_info_dict)
+  oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
+  oem_dict = None
+  if oem_props is not None:
+    if OPTIONS.oem_source is None:
+      raise common.ExternalError("OEM source required for this build")
+    script.Mount("/oem")
+    oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
+
+  AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
   device_specific.IncrementalOTA_Assertions()
 
   # Two-step incremental package strategy (in chronological order,
@@ -730,7 +738,12 @@ else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
 
   device_specific.IncrementalOTA_VerifyBegin()
 
-  script.AssertRecoveryFingerprint(source_fp, target_fp)
+  if oem_props is None:
+    script.AssertSomeFingerprint(source_fp, target_fp)
+  else:
+    script.AssertSomeThumbprint(
+        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
+        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
 
   if updating_boot:
     d = common.Difference(target_boot, source_boot)
