@@ -231,12 +231,13 @@ combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
-# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
-# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
-# is specified by the board configuration, we use that. If not, we
-# build a list out of the TARGET_CPU_ABIs specified by the config.
-ifeq (,$(TARGET_CPU_ABI_LIST))
-  TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2) $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
+ifdef TARGET_PREFER_32_BIT
+TARGET_PREFER_32_BIT_APPS := true
+TARGET_PREFER_32_BIT_EXECUTABLES := true
+endif
+
+ifeq (,$(TARGET_SUPPORTS_32_BIT_APPS)$(TARGET_SUPPORTS_64_BIT_APPS))
+  TARGET_SUPPORTS_32_BIT_APPS := true
 endif
 
 # "ro.product.cpu.abilist32" and "ro.product.cpu.abilist64" are
@@ -249,7 +250,7 @@ endif
 # is always 32 bits. If this isn't the case, these variables should
 # be overriden in the boarc configuration.
 ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
-  ifeq (true,$(TARGET_IS_64_BIT))
+  ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
     TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
   endif
 endif
@@ -258,9 +259,23 @@ ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
   ifneq (true,$(TARGET_IS_64_BIT))
     TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
   else
-    # For a 64 bit target, assume that the 2ND_CPU_ABI
-    # is a 32 bit ABI.
-    TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
+    ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
+      # For a 64 bit target, assume that the 2ND_CPU_ABI
+      # is a 32 bit ABI.
+      TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
+    endif
+  endif
+endif
+
+# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
+# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
+# is specified by the board configuration, we use that. If not, we
+# build a list out of the TARGET_CPU_ABIs specified by the config.
+ifeq (,$(TARGET_CPU_ABI_LIST))
+  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
+  else
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
   endif
 endif
 
