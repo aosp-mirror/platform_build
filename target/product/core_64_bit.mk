@@ -35,6 +35,5 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32_64
 # STOPSHIP: Revert this to allow products to select it themselves
 TARGET_PREFER_32_BIT_APPS := true
 
-# Temporarily leave these unset to keep all apps with JNI building as 32-bit
-# TARGET_SUPPORTS_32_BIT_APPS := true
-# TARGET_SUPPORTS_64_BIT_APPS := true
+TARGET_SUPPORTS_32_BIT_APPS := true
+TARGET_SUPPORTS_64_BIT_APPS := true
