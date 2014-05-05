@@ -18,6 +18,7 @@
 
 PRODUCT_PACKAGES := \
     Bluetooth \
+    ContactsProvider \
     CertInstaller \
     FusedLocation \
     InputDevices
