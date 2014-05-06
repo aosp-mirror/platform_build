@@ -452,6 +452,9 @@ proto_generated_obj_dir := $(intermediates)/proto
 proto_generated_objects := $(addprefix $(proto_generated_obj_dir)/, \
     $(patsubst %.proto,%.pb.o,$(proto_sources_fullpath)))
 
+# Auto-export the generated proto source dir.
+LOCAL_EXPORT_C_INCLUDE_DIRS += $(proto_generated_cc_sources_dir)
+
 # Ensure the transform-proto-to-cc rule is only defined once in multilib build.
 ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
 $(proto_generated_cc_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
@@ -918,7 +921,8 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 ###########################################################
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE)
+# Make sure .pb.h are already generated before any dependent source files get compiled.
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE) $(proto_generated_headers)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
