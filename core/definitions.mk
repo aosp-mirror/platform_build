@@ -964,6 +964,17 @@ $(hide) $(PROTOC) \
 	--cpp_out=$(PRIVATE_PROTO_CC_OUTPUT_DIR) $<
 endef
 
+######################################################################
+## Commands for running protoc to compile .proto into nano protobuf .pb.c and .pb.h
+######################################################################
+define transform-nanopb_c-to-c
+@mkdir -p $(dir $@)
+@echo "Protoc: $@ <= $<"
+$(hide) $(PROTOC) \
+	$(addprefix --proto_path=, $(PRIVATE_NANOPB_C_INCLUDES)) \
+	$(PRIVATE_NANOPB_C_FLAGS) \
+	--nanopb_out=$(PRIVATE_NANOPB_C_OUTPUT_DIR) --plugin=external/nanopb-c/generator/protoc-gen-nanopb $<
+endef
 
 ###########################################################
 ## Commands for running gcc to compile a C++ file
