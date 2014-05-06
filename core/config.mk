@@ -351,7 +351,7 @@ endif
 # ---------------------------------------------------------------
 # Generic tools.
 
-LEX := prebuilts/misc/$(BUILD_OS)-$(BUILD_ARCH)/flex/flex-2.5.39$(HOST_EXECUTABLE_SUFFIX)
+LEX := prebuilts/misc/$(BUILD_OS)-$(BUILD_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
 # external/bison/data.
 # To run bison from elsewhere you need to set up enviromental variable
