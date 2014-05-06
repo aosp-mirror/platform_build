@@ -18,6 +18,13 @@
 # emulator-related modules to PRODUCT_PACKAGES.
 #
 
+# RM(2014-05-05) temporarily disable emulator build
+# (ongoing breakage with emulator-64 on darwin, being worked
+#  upon but we need the rest of the build to work in between.)
+ifneq ($(HOST_OS),darwin)
+$(warning ######### emulator-64 temporarily deactivated for $(HOST_OS) ########)
+
+
 # Host modules
 PRODUCT_PACKAGES += \
     emulator \
@@ -62,3 +69,5 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/init.goldfish.rc:root/init.goldfish.rc \
     device/generic/goldfish/init.goldfish.sh:system/etc/init.goldfish.sh \
     device/generic/goldfish/ueventd.goldfish.rc:root/ueventd.goldfish.rc
+
+endif
