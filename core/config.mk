@@ -351,7 +351,7 @@ endif
 # ---------------------------------------------------------------
 # Generic tools.
 
-LEX := flex
+LEX := prebuilts/misc/$(BUILD_OS)-$(BUILD_ARCH)/flex/flex-2.5.39$(HOST_EXECUTABLE_SUFFIX)
 # The default PKGDATADIR built in the prebuilt bison is a relative path
 # external/bison/data.
 # To run bison from elsewhere you need to set up enviromental variable
@@ -408,8 +408,6 @@ COLUMN:= cat
 else
 COLUMN:= column
 endif
-
-OLD_FLEX := prebuilts/misc/$(HOST_PREBUILT_TAG)/flex/flex-2.5.4a$(HOST_EXECUTABLE_SUFFIX)
 
 ifeq ($(HOST_OS),darwin)
 ifeq ($(LEGACY_USE_JAVA6),)
