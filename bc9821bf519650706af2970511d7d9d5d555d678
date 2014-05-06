@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8aba749a_f837d3f8",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1001100
+      },
+      "writtenOn": "2014-05-06T03:47:41Z",
+      "side": 1,
+      "message": "For the record I forgot to place the $(warning) in an else section so it gets reversed.\nAnyway, this is an ugly hack that needs to get reverted tomorrow.",
+      "revId": "bc9821bf519650706af2970511d7d9d5d555d678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
