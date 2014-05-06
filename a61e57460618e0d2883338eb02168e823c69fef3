@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8aba749a_d6d421f4",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-06T01:50:39Z",
+      "side": 1,
+      "message": "Nit: \":\u003d\" is preffered\nBUILD_EMULATOR :\u003d false",
+      "revId": "a61e57460618e0d2883338eb02168e823c69fef3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
