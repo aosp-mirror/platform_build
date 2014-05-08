@@ -194,7 +194,8 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_TARGET_LIBGCC) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O))
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O)) \
+	$(PRIVATE_LDLIBS)
 endef
 
 define $(combo_2nd_arch_prefix)transform-o-to-executable-inner
@@ -219,7 +220,8 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_TARGET_LIBGCC) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
+	$(PRIVATE_LDLIBS)
 endef
 
 define $(combo_2nd_arch_prefix)transform-o-to-static-executable-inner
