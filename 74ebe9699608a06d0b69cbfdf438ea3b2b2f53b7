@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "2a57c842_7afe154c",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-08T20:39:43Z",
+      "side": 1,
+      "message": "You don\u0027t need this.",
+      "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa62d821_4888ab11",
         "filename": "core/executable_prefer_symlink.mk",
         "patchSetId": 2
@@ -19,6 +36,74 @@
         "endLine": 4,
         "endChar": 2
       },
+      "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a57c842_5a0351a4",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-08T20:39:43Z",
+      "side": 1,
+      "message": "ws",
+      "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a58b470_6f9931f4",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-08T20:39:43Z",
+      "side": 1,
+      "message": "Use a locally-scoped varible like \"my_symlink\", and then reset it at the end of this file.",
+      "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a58b470_efa4212e",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-08T20:39:43Z",
+      "side": 1,
+      "message": "We use PRIVATE_ prefix for target specific variables:\n$(my_symlink): PRIVATE_SRC_BINARY_NAME :\u003d ...",
+      "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a58b470_2f78d9d5",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-08T20:39:43Z",
+      "side": 1,
+      "message": "In rare cases actually it\u0027s not named Android.mk. The build system has a LOCAL_MODULE_MAKEFILE for this purpose.",
       "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
