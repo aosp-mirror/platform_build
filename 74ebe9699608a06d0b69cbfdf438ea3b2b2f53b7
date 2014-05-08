@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa62d821_4888ab11",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-05-08T18:48:56Z",
+      "side": 1,
+      "message": "please remove trailing whitespace",
+      "range": {
+        "startLine": 4,
+        "startChar": 1,
+        "endLine": 4,
+        "endChar": 2
+      },
+      "revId": "74ebe9699608a06d0b69cbfdf438ea3b2b2f53b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
