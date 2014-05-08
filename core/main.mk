@@ -1002,7 +1002,7 @@ $(call dist-for-goals,sdk win_sdk, \
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
         java-host-tests java-target-tests native-host-tests native-target-tests \
-        java-tests native-tests host-tests target-tests
+        java-tests native-tests host-tests target-tests tests
 # some synonyms
 .PHONY: host-java target-java host-native target-native \
         target-java-tests target-native-tests
@@ -1012,6 +1012,7 @@ host-native : native-host
 target-native : native-target
 target-java-tests : java-target-tests
 target-native-tests : native-target-tests
+tests : host-tests target-tests
 
 
 .PHONY: lintall
