@@ -29,11 +29,5 @@ PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32_64.rc:root/init.zygote32
 # This line must be parsed before the one in core_minimal.mk
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32_64
 
-# Temporary hack to prefer launching processes as 32 bit
-# instead of 64 bit.
-#
-# STOPSHIP: Revert this to allow products to select it themselves
-TARGET_PREFER_32_BIT_APPS := true
-
 TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true
