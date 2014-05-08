@@ -27,21 +27,21 @@ $(warning ######### emulator-64 temporarily deactivated for $(HOST_OS) ########)
 
 # Host modules
 PRODUCT_PACKAGES += \
-    emulator \
-    emulator-x86 \
-    emulator-arm \
-    emulator-mips \
-    emulator64-x86 \
-    emulator64-arm \
-    emulator64-mips \
-    libOpenglRender \
-    libGLES_CM_translator \
-    libGLES_V2_translator \
-    libEGL_translator \
-    lib64OpenglRender \
-    lib64GLES_CM_translator \
-    lib64GLES_V2_translator \
-    lib64EGL_translator
+#    emulator \
+#    emulator-x86 \
+#    emulator-arm \
+#    emulator-mips \
+#    emulator64-x86 \
+#    emulator64-arm \
+#    emulator64-mips \
+#    libOpenglRender \
+#    libGLES_CM_translator \
+#    libGLES_V2_translator \
+#    libEGL_translator \
+#    lib64OpenglRender \
+#    lib64GLES_CM_translator \
+#    lib64GLES_V2_translator \
+#    lib64EGL_translator
 
 # Device modules
 PRODUCT_PACKAGES += \
