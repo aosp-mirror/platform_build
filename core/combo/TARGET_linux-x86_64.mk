@@ -224,7 +224,8 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_TARGET_LIBGCC) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
+	$(PRIVATE_LDLIBS)
 endef
 
 define transform-o-to-static-executable-inner
@@ -244,5 +245,6 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_TARGET_FDO_LIB) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	-Wl,--end-group \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
+	$(PRIVATE_LDLIBS)
 endef
