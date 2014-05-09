@@ -82,12 +82,11 @@ class EdifyGenerator(object):
     self.script.append(cmd)
 
   def AssertSomeFingerprint(self, *fp):
-    """Assert that the current system build fingerprint is one of *fp."""
+    """Assert that the current recovery build fingerprint is one of *fp."""
     if not fp:
       raise ValueError("must specify some fingerprints")
     cmd = (
-           ' ||\n    '.join([('file_getprop("/system/build.prop", '
-                         '"ro.build.fingerprint") == "%s"')
+           ' ||\n    '.join([('getprop("ro.build.fingerprint") == "%s"')
                         % i for i in fp]) +
            ' ||\n    abort("Package expects build fingerprint of %s; this '
            'device has " + getprop("ro.build.fingerprint") + ".");'
@@ -95,12 +94,11 @@ class EdifyGenerator(object):
     self.script.append(cmd)
 
   def AssertSomeThumbprint(self, *fp):
-    """Assert that the current system build thumbprint is one of *fp."""
+    """Assert that the current recovery build thumbprint is one of *fp."""
     if not fp:
       raise ValueError("must specify some thumbprints")
     cmd = (
-           ' ||\n    '.join([('file_getprop("/system/build.prop", '
-                         '"ro.build.thumbprint") == "%s"')
+           ' ||\n    '.join([('getprop(ro.build.thumbprint") == "%s"')
                         % i for i in fp]) +
            ' ||\n    abort("Package expects build thumbprint of %s; this '
            'device has " + getprop("ro.build.thumbprint") + ".");'
