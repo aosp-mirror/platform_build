@@ -120,7 +120,9 @@ TARGET_GLOBAL_CFLAGS += \
 			-funswitch-loops \
 			-funwind-tables \
 			-fstack-protector \
-			-m64
+			-m64 \
+			-no-canonical-prefixes \
+			-fno-canonical-system-headers
 
 # Help catch common 32/64-bit errors.
 TARGET_GLOBAL_CFLAGS += \
