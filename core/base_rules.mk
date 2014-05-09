@@ -598,6 +598,12 @@ ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) $(LOCAL_INSTALLED_MODULE))
+ifdef LOCAL_PICKUP_FILES
+# Files or directories ready to pick up by the build system
+# when $(LOCAL_BUILT_MODULE) is done.
+ALL_MODULES.$(my_register_name).PICKUP_FILES := \
+    $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
+endif
 ALL_MODULES.$(my_register_name).REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(LOCAL_REQUIRED_MODULES) \
       $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))

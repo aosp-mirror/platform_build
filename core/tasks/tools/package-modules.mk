@@ -1,0 +1,43 @@
+# Package up modules to a zip file.
+# It preserves the install path of the modules' installed files.
+#
+# Input variables:
+#   my_modules: a list of module names
+#   my_package_name: the name of the output zip file.
+# Output variables:
+#   my_package_zip: the path to the output zip file.
+#
+#
+
+my_staging_dir := $(call intermediates-dir-for,PACKAGING,$(my_package_name))
+my_built_modules :=
+my_copy_pairs :=
+my_pickup_files :=
+
+# Search for modules' built files and installed files;
+# Calculate the dest files in the output zip file.
+$(foreach m,$(my_modules),\
+  $(if $(ALL_MODULES.$(m).INSTALLED),,\
+      $(warning Unknown installed file for module '$(m)'))\
+  $(eval my_pickup_files += $(ALL_MODULES.$(m).PICKUP_FILES))\
+  $(foreach i,$(filter $(TARGET_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),\
+    $(eval b := $(filter %$(suffix $(i)),$(filter $(TARGET_OUT_ROOT)/%,$(ALL_MODULES.$(m).BUILT))))\
+    $(if $(filter 1,$(words $(b))),\
+      $(eval my_built_modules += $(b))\
+        $(eval my_copy_pairs += $(b):$(patsubst $(PRODUCT_OUT)/%,$(my_staging_dir)/%,$(i))),\
+      $(warning Unexpected module built file '$(b)' for module '$(m)'))\
+  ))
+
+my_package_zip := $(my_staging_dir)/$(my_package_name).zip
+$(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
+$(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
+$(my_package_zip) : $(my_built_modules)
+	@echo "Package $@"
+	@rm -rf $(dir $@) && mkdir -p $(dir $@)
+	$(hide) $(foreach p, $(PRIVATE_COPY_PAIRS), \
+	  $(eval pair := $(subst :,$(space),$(p)))\
+	  mkdir -p $(dir $(word 2,$(pair))); \
+	  cp -rf $(word 1,$(pair)) $(word 2,$(pair));)
+	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES), \
+	  cp -rf $(f) $(dir $@);)
+	$(hide) cd $(dir $@) && zip -rq $(notdir $@) *
