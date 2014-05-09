@@ -222,8 +222,10 @@ def BuildImage(in_dir, prop_dict, out_file):
   fs_type = prop_dict.get("fs_type", "")
   run_fsck = False
 
+  is_verity_partition = prop_dict.get("mount_point") == prop_dict.get("verity_mountpoint")
+  verity_supported = prop_dict.get("verity") == "true"
   # adjust the partition size to make room for the hashes if this is to be verified
-  if prop_dict.get("verity") == "true":
+  if verity_supported and is_verity_partition:
     partition_size = int(prop_dict.get("partition_size"))
     adjusted_size = AdjustPartitionSizeForVerity(partition_size)
     if not adjusted_size:
@@ -258,7 +260,7 @@ def BuildImage(in_dir, prop_dict, out_file):
     return False
 
   # create the verified image if this is to be verified
-  if prop_dict.get("verity") == "true":
+  if verity_supported and is_verity_partition:
     if not MakeVerityEnabledImage(out_file, prop_dict):
       return False
 
@@ -301,7 +303,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "verity",
       "verity_block_device",
       "verity_key",
-      "verity_signer_cmd"
+      "verity_signer_cmd",
+      "verity_mountpoint"
       )
   for p in common_props:
     copy_prop(p, p)
