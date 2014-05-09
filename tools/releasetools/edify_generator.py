@@ -98,7 +98,7 @@ class EdifyGenerator(object):
     if not fp:
       raise ValueError("must specify some thumbprints")
     cmd = (
-           ' ||\n    '.join([('getprop(ro.build.thumbprint") == "%s"')
+           ' ||\n    '.join([('getprop("ro.build.thumbprint") == "%s"')
                         % i for i in fp]) +
            ' ||\n    abort("Package expects build thumbprint of %s; this '
            'device has " + getprop("ro.build.thumbprint") + ".");'
