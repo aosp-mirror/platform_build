@@ -16,15 +16,24 @@ my_pickup_files :=
 
 # Search for modules' built files and installed files;
 # Calculate the dest files in the output zip file.
+# If for 1 module name we found multiple installed files,
+# we use suffix matching to find the corresponding built file.
 $(foreach m,$(my_modules),\
   $(if $(ALL_MODULES.$(m).INSTALLED),,\
-      $(warning Unknown installed file for module '$(m)'))\
+    $(warning Unknown installed file for module '$(m)'))\
   $(eval my_pickup_files += $(ALL_MODULES.$(m).PICKUP_FILES))\
   $(foreach i,$(filter $(TARGET_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),\
-    $(eval b := $(filter %$(suffix $(i)),$(filter $(TARGET_OUT_ROOT)/%,$(ALL_MODULES.$(m).BUILT))))\
+    $(eval my_suffix := $(suffix $(i))) \
+    $(if $(my_suffix),\
+      $(eval my_patt := $(TARGET_OUT_ROOT)/%$(my_suffix)),\
+      $(eval my_patt := $(TARGET_OUT_ROOT)/%$(notdir $(i))))\
+    $(eval b := $(filter $(my_patt),$(ALL_MODULES.$(m).BUILT)))\
     $(if $(filter 1,$(words $(b))),\
       $(eval my_built_modules += $(b))\
-        $(eval my_copy_pairs += $(b):$(patsubst $(PRODUCT_OUT)/%,$(my_staging_dir)/%,$(i))),\
+      $(eval my_copy_dest := $(patsubst data/%,DATA/%,\
+                               $(patsubst system/%,SYSTEM/%,\
+                                 $(patsubst $(PRODUCT_OUT)/%,%,$(i)))))\
+      $(eval my_copy_pairs += $(b):$(my_staging_dir)/$(my_copy_dest)),\
       $(warning Unexpected module built file '$(b)' for module '$(m)'))\
   ))
 
