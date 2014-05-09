@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a827417_aae4efb6",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1037287
+      },
+      "writtenOn": "2014-05-09T13:52:14Z",
+      "side": 1,
+      "message": "The option should be \"-fno-canonical-system-headers\" (plural):\n\nhttp://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html\n\nDitto other files in this patch set.",
+      "revId": "8e33cc3dbdadb8c69e600c5b1f24144f971ca690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
