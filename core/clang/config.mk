@@ -31,7 +31,8 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops \
   -Wno-psabi \
   -Wno-unused-but-set-variable \
-  -Wno-unused-but-set-parameter
+  -Wno-unused-but-set-parameter \
+  -fno-canonical-system-headers
 
 # Clang flags for all host rules
 CLANG_CONFIG_HOST_EXTRA_ASFLAGS :=
