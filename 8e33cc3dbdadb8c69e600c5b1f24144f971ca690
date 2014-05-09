@@ -16,6 +16,24 @@
       "revId": "8e33cc3dbdadb8c69e600c5b1f24144f971ca690",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a999485_41ab5c61",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-05-09T14:25:32Z",
+      "side": 1,
+      "message": "Done in 2nd patch.  Thanks for catching this.  3rd patch to address clang which doesn\u0027t accept this switch too.",
+      "parentUuid": "8a827417_aae4efb6",
+      "revId": "8e33cc3dbdadb8c69e600c5b1f24144f971ca690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
