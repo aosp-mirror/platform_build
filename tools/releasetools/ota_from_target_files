@@ -516,7 +516,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   boot_img = common.GetBootableImage("boot.img", "boot.img",
                                      OPTIONS.input_tmp, "BOOT")
 
-  if not has_recovery_patch:
+  if not block_based:
     def output_sink(fn, data):
       common.ZipWriteStr(output_zip, "recovery/" + fn, data)
       Item.Get("system/" + fn, dir=False)
