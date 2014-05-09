@@ -122,6 +122,8 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-fstack-protector \
 			-m32 \
 			-msse2 \
+			-no-canonical-prefixes \
+			-fno-canonical-system-headers \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
