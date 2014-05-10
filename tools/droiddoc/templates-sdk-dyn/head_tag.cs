@@ -36,7 +36,7 @@ if:android.whichdoc != 'online' ?>http:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto+Condensed">
 <link rel="stylesheet" href="<?cs
 if:android.whichdoc != 'online' ?>http:<?cs
-/if ?>//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold"
+/if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
 <link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
 
