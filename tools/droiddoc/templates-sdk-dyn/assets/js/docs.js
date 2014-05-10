@@ -564,6 +564,12 @@ function buildBreadcrumbs() {
   }
   // Add the primary horizontal nav
   var $selectedFirstNav = $("div#header-wrap ul.nav-x a.selected").clone().removeClass("selected");
+  // If there's no header nav item, use the logo link and title from alt text
+  if ($selectedFirstNav.length < 1) {
+    $selectedFirstNav = $("<a>")
+        .attr('href', $("div#header .logo a").attr('href'))
+        .text($("div#header .logo img").attr('alt'));
+  }
   $breadcrumbUl.prepend($("<li>").append($selectedFirstNav));
 }
 
