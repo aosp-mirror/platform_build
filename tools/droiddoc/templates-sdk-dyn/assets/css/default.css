@@ -4156,7 +4156,6 @@ EndColorStr='#ececec');
 }
 
 .logo a {
-  width:123px;
   float:left;
 }
 
@@ -4169,12 +4168,13 @@ EndColorStr='#ececec');
 }
 
 
-#header-wrap .logo-wear {
+#header-wrap .logo.wear-logo {
   width:220px;
   margin:0;
+  padding:0;
   margin-bottom:22px;
 }
-#header-wrap .logo-wear img {
+#header-wrap .logo.wear-logo img {
   padding:0 0 0 10px;
 }
 
