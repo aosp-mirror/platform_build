@@ -4,220 +4,127 @@
 <?cs else ?>
 <a name="top"></a>
 <?cs if:!devsite ?><?cs # leave out the global header for devsite; it is in devsite template ?>
-    <!-- Header --><div id="header-wrapper">
+  <!-- Header -->
+  <div id="header-wrapper">
     <div id="header">
-        <div class="wrap" id="header-wrap">
-          <div class="col-3 logo">
+      <div class="wrap" id="header-wrap">
+        <div class="col-3 logo">
           <a href="<?cs var:toroot ?>index.html">
             <img src="<?cs var:toroot ?>assets/images/dac_logo.png"
                 srcset="<?cs var:toroot ?>assets/images/dac_logo@2x.png 2x"
                 width="123" height="25" alt="Android Developers" />
           </a>
           <div class="btn-quicknav" id="btn-quicknav">
-          	<a href="#" class="arrow-inactive">Quicknav</a>
-			      <a href="#" class="arrow-active">Quicknav</a>
+            <a href="#" class="arrow-inactive">Quicknav</a>
+            <a href="#" class="arrow-active">Quicknav</a>
           </div>
-          </div>
-            <ul class="nav-x col-9">
-                <li class="design">
-                  <a href="<?cs var:toroot ?>design/index.html"
-                  zh-tw-lang="設計"
-                  zh-cn-lang="设计"
-                  ru-lang="Проектирование"
-                  ko-lang="디자인"
-                  ja-lang="設計"
-                  es-lang="Diseñar"               
-                  >Design</a></li>
-                <li class="develop"><a href="<?cs var:toroot ?>develop/index.html"
-                  zh-tw-lang="開發"
-                  zh-cn-lang="开发"
-                  ru-lang="Разработка"
-                  ko-lang="개발"
-                  ja-lang="開発"
-                  es-lang="Desarrollar"               
-                  >Develop</a></li>
-                <li class="distribute last"><a href="<?cs var:toroot ?>distribute/<?cs
-                  if:android.whichdoc == "offline" ?>googleplay/<?cs /if ?>index.html"
-                  zh-tw-lang="發佈"
-                  zh-cn-lang="分发"
-                  ru-lang="Распространение"
-                  ko-lang="배포"
-                  ja-lang="配布"
-                  es-lang="Distribuir"               
-                  >Distribute</a></li>
-            </ul>
-            
-            <!-- New Search -->
-            <div class="menu-container">
-            <div class="moremenu">
-    <div id="more-btn"></div>
-  </div>
-  <div class="morehover" id="moremenu">
-    <div class="top"></div>
-    <div class="mid">
-      <div class="header">Links</div>
-      <ul>
-        <li><a href="https://play.google.com/apps/publish/" target="_googleplay">Google Play Developer Console</a></li>
-        <li><a href="http://android-developers.blogspot.com/">Android Developers Blog</a></li>
-        <li><a href="<?cs var:toroot ?>about/index.html">About Android</a></li>
-      </ul>
-      <div class="header">Android Sites</div>
-      <ul>
-        <li><a href="http://www.android.com">Android.com</a></li>
-        <li class="active"><a>Android Developers</a></li>
-        <li><a href="http://source.android.com">Android Open Source Project</a></li>
-      </ul>
-      
-      <?cs # Include language switcher only in online docs ?>
-      <?cs if:android.whichdoc == "online" ?>
-        <div class="header">Language</div>
-          <div id="language" class="locales">
-            <select name="language" onChange="changeLangPref(this.value, true)">
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="ja">日本語</option>
-                <option value="ko">한국어</option>
-                <option value="ru">Русский</option>
-                <option value="zh-cn">中文 (中国)</option>
-                <option value="zh-tw">中文 (台灣)</option>
-            </select>
-          </div>
-        <script type="text/javascript">
-          <!--
-          loadLangPref();
-            //-->
-        </script>
-      <?cs /if ?>
-      <?cs # End of lang switcher ?>
-
-
-      <br class="clearfix" />
-    </div>
-    <div class="bottom"></div>
-  </div>
-  <div class="search" id="search-container">
-    <div class="search-inner">
-      <div id="search-btn"></div>
-      <div class="left"></div>
-      <form onsubmit="return submit_search()">
-        <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
-onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
-onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')" 
-onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
-      </form>
-      <div class="right"></div>
-        <a class="close hide">close</a>
-        <div class="left"></div>
-        <div class="right"></div>
-    </div>
-  </div>
-
-  <div class="search_filtered_wrapper reference">
-    <div class="suggest-card reference no-display">
-      <ul class="search_filtered">
-      </ul>
-    </div>
-  </div>
-
-  <div class="search_filtered_wrapper docs">
-    <div class="suggest-card dummy no-display">&nbsp;</div>
-    <div class="suggest-card develop no-display">
-      <ul class="search_filtered">
-      </ul>
-      <div class="child-card guides no-display">
-      </div>
-      <div class="child-card training no-display">
-      </div>
-      <div class="child-card samples no-display">
-      </div>
-    </div>
-    <div class="suggest-card design no-display">
-      <ul class="search_filtered">
-      </ul>
-    </div>
-    <div class="suggest-card distribute no-display">
-      <ul class="search_filtered">
-      </ul>
-    </div>
-  </div>
-
-  </div>
-  <!-- /New Search>
-          
-          
-     <!-- Expanded quicknav -->
-     <div id="quicknav" class="col-9">
-      <ul>
-          <li class="design">
-            <ul>
-              <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
-              <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
-              <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
-              <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
-              <li><a href="<?cs var:toroot ?>design/downloads/index.html">Downloads</a></li>
-              <li><a href="<?cs var:toroot ?>design/videos/index.html">Videos</a></li>
-            </ul>
-          </li>
-          <li class="develop">
-            <ul>
-              <li><a href="<?cs var:toroot ?>training/index.html"
-                zh-tw-lang="訓練課程"
-                zh-cn-lang="培训"
-                ru-lang="Курсы"
-                ko-lang="교육"
-                ja-lang="トレーニング"
-                es-lang="Capacitación"
-                >Training</a></li>
-              <li><a href="<?cs var:toroot ?>guide/index.html"
-                zh-tw-lang="API 指南"
-                zh-cn-lang="API 指南"
-                ru-lang="Руководства по API"
-                ko-lang="API 가이드"
-                ja-lang="API ガイド"
-                es-lang="Guías de la API"
-                >API Guides</a></li>
-              <li><a href="<?cs var:toroot ?>reference/packages.html"
-                zh-tw-lang="參考資源"
-                zh-cn-lang="参考"
-                ru-lang="Справочник"
-                ko-lang="참조문서"
-                ja-lang="リファレンス"
-                es-lang="Referencia"
-                >Reference</a></li>
-              <li><a href="<?cs var:toroot ?>tools/index.html"
-                zh-tw-lang="相關工具"
-                zh-cn-lang="工具"
-                ru-lang="Инструменты"
-                ko-lang="도구"
-                ja-lang="ツール"
-                es-lang="Herramientas"
-                >Tools</a>
-                <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
-              </li>
-              <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
-              </li>
-              <?cs if:android.hasSamples ?>
-                <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
-                </li>
-              <?cs /if ?>
-            </ul>
-          </li>
-          <li class="distribute last">
-            <ul>
-              <li><a href="<?cs var:toroot ?>distribute/googleplay/index.html">Google Play</a></li>
-              <li><a href="<?cs var:toroot ?>distribute/essentials/index.html">Essentials</a></li>
-              <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
-              <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
-              <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
-              <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
-              <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
-            </ul>
-          </li>
-      </ul>
-    </div><!-- /Expanded quicknav -->
-
         </div>
-    </div><!-- /Header -->
+        <ul class="nav-x col-9">
+            <li class="design">
+              <a href="<?cs var:toroot ?>design/index.html"
+              zh-tw-lang="設計"
+              zh-cn-lang="设计"
+              ru-lang="Проектирование"
+              ko-lang="디자인"
+              ja-lang="設計"
+              es-lang="Diseñar"
+              >Design</a></li>
+            <li class="develop"><a href="<?cs var:toroot ?>develop/index.html"
+              zh-tw-lang="開發"
+              zh-cn-lang="开发"
+              ru-lang="Разработка"
+              ko-lang="개발"
+              ja-lang="開発"
+              es-lang="Desarrollar"
+              >Develop</a></li>
+            <li class="distribute last"><a href="<?cs var:toroot ?>distribute/<?cs
+              if:android.whichdoc == "offline" ?>googleplay/<?cs /if ?>index.html"
+              zh-tw-lang="發佈"
+              zh-cn-lang="分发"
+              ru-lang="Распространение"
+              ko-lang="배포"
+              ja-lang="配布"
+              es-lang="Distribuir"
+              >Distribute</a></li>
+        </ul>
+
+
+        <?cs # ADD SEARCH AND MENU ?>
+        <?cs call:header_search_widget() ?>
+
+
+        <!-- Expanded quicknav -->
+        <div id="quicknav" class="col-9">
+          <ul>
+            <li class="design">
+              <ul>
+                <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
+                <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
+                <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
+                <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
+                <li><a href="<?cs var:toroot ?>design/downloads/index.html">Downloads</a></li>
+                <li><a href="<?cs var:toroot ?>design/videos/index.html">Videos</a></li>
+              </ul>
+            </li>
+            <li class="develop">
+              <ul>
+                <li><a href="<?cs var:toroot ?>training/index.html"
+                  zh-tw-lang="訓練課程"
+                  zh-cn-lang="培训"
+                  ru-lang="Курсы"
+                  ko-lang="교육"
+                  ja-lang="トレーニング"
+                  es-lang="Capacitación"
+                  >Training</a></li>
+                <li><a href="<?cs var:toroot ?>guide/index.html"
+                  zh-tw-lang="API 指南"
+                  zh-cn-lang="API 指南"
+                  ru-lang="Руководства по API"
+                  ko-lang="API 가이드"
+                  ja-lang="API ガイド"
+                  es-lang="Guías de la API"
+                  >API Guides</a></li>
+                <li><a href="<?cs var:toroot ?>reference/packages.html"
+                  zh-tw-lang="參考資源"
+                  zh-cn-lang="参考"
+                  ru-lang="Справочник"
+                  ko-lang="참조문서"
+                  ja-lang="リファレンス"
+                  es-lang="Referencia"
+                  >Reference</a></li>
+                <li><a href="<?cs var:toroot ?>tools/index.html"
+                  zh-tw-lang="相關工具"
+                  zh-cn-lang="工具"
+                  ru-lang="Инструменты"
+                  ko-lang="도구"
+                  ja-lang="ツール"
+                  es-lang="Herramientas"
+                  >Tools</a>
+                  <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
+                </li>
+                <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
+                </li>
+                <?cs if:android.hasSamples ?>
+                  <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
+                  </li>
+                <?cs /if ?>
+              </ul>
+            </li>
+            <li class="distribute last">
+              <ul>
+                <li><a href="<?cs var:toroot ?>distribute/googleplay/index.html">Google Play</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/essentials/index.html">Essentials</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /Expanded quicknav -->
+      </div><!-- end header-wrap.wrap -->
+    </div><!-- end header -->
 
   <?cs if:training || guide || reference || tools || develop || google || samples ?>
     <!-- Secondary x-nav -->
@@ -230,7 +137,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ru-lang="Курсы"
                   ko-lang="교육"
                   ja-lang="トレーニング"
-                  es-lang="Capacitación"               
+                  es-lang="Capacitación"
                   >Training</a></li>
                 <li class="guide"><a href="<?cs var:toroot ?>guide/index.html"
                   zh-tw-lang="API 指南"
@@ -238,7 +145,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ru-lang="Руководства по API"
                   ko-lang="API 가이드"
                   ja-lang="API ガイド"
-                  es-lang="Guías de la API"               
+                  es-lang="Guías de la API"
                   >API Guides</a></li>
                 <li class="reference"><a href="<?cs var:toroot ?>reference/packages.html"
                   zh-tw-lang="參考資源"
@@ -246,7 +153,7 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                   ru-lang="Справочник"
                   ko-lang="참조문서"
                   ja-lang="リファレンス"
-                  es-lang="Referencia"               
+                  es-lang="Referencia"
                   >Reference</a></li>
                 <li class="tools"><a href="<?cs var:toroot ?>tools/index.html"
                   zh-tw-lang="相關工具"
@@ -266,7 +173,6 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
                 <?cs /if ?>
             </ul>
         </div>
-        
     </div>
     <!-- /Sendondary x-nav -->
 
@@ -296,28 +202,25 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
             <a href="https://play.google.com/apps/publish/" class="developer-console-btn">Developer Console</a>
         </div> <!-- /Secondary distribute x-nav -->
     </div>
-
   <?cs /if ?>
 
+    <div id="searchResults" class="wrap" style="display:none;">
+      <h2 id="searchTitle">Results</h2>
+      <div id="leftSearchControl" class="search-control">Loading...</div>
+    </div>
+  </div> <!--end header-wrapper -->
 
-  <div id="searchResults" class="wrap" style="display:none;">
-    <h2 id="searchTitle">Results</h2>
-    <div id="leftSearchControl" class="search-control">Loading...</div>
+  <div id="sticky-header">
+    <div>
+      <a class="logo" href="#top"></a>
+      <a class="top" href="#top"></a>
+      <ul class="breadcrumb">
+        <?cs # More <li> elements added here with javascript ?>
+        <?cs if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
+        /if ?>
+      </ul>
+    </div>
   </div>
-
-</div> <!--end headerwrap -->
-
-<div id="sticky-header">
-  <div>
-    <a class="logo" href="#top"></a>
-    <a class="top" href="#top"></a>
-    <ul class="breadcrumb">
-      <?cs # More <li> elements added here with javascript ?>
-      <?cs if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
-      /if ?>
-    </ul>
-  </div>
-</div>
 
 <?cs /if ?><?cs # end if/else !devsite ?>
 <?cs /if ?><?cs # end if/else wear ?><?cs
@@ -326,128 +229,30 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
 <?cs def:wear_masthead() ?>
 <a name="top"></a>
 
-<!-- Header --><div id="header-wrapper">
-        <div class="wrap" id="header-wrap">
-          <div class="col_3 logo-wear">
-            <a href="<?cs var:toroot ?>wear/index.html">
-              <img src="<?cs var:toroot ?>wear/images/android-wear.png" height="16" alt="Android Wear" />
-            </a>
-          </div>
-        </div>
-
-        <div class="col-8" style="margin:0"><h1 style="margin:1px 0 0 20px;padding:0;line-height:16px;
-  color:#666;font-weight:100;font-size:24px;">Developer Preview</h1></div>
-
-          <!-- New Search -->
-          <div class="menu-container">
-            <div class="moremenu">
-          <div id="more-btn"></div>
-	    </div>
-  <div class="morehover" id="moremenu">
-    <div class="top"></div>
-    <div class="mid">
-      <div class="header">Links</div>
-      <ul>
-        <li><a href="https://play.google.com/apps/publish/">Google Play Developer Console</a></li>
-        <li><a href="http://android-developers.blogspot.com/">Android Developers Blog</a></li>
-        <li><a href="<?cs var:toroot ?>about/index.html">About Android</a></li>
-      </ul>
-      <div class="header">Android Sites</div>
-      <ul>
-        <li><a href="http://www.android.com">Android.com</a></li>
-        <li class="active"><a>Android Developers</a></li>
-        <li><a href="http://source.android.com">Android Open Source Project</a></li>
-      </ul>
-
-      <?cs # Include language switcher only in online docs ?>
-      <?cs if:android.whichdoc == "online" ?>
-        <div class="header">Language</div>
-          <div id="language" class="locales">
-            <select name="language" onChange="changeLangPref(this.value, true)">
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="ja">日本語</option>
-                <option value="ko">한국어</option>
-                <option value="ru">Русский</option>
-                <option value="zh-cn">中文 (中国)</option>
-                <option value="zh-tw">中文 (台灣)</option>
-            </select>
-          </div>
-        <script type="text/javascript">
-          <!--
-          loadLangPref();
-            //-->
-        </script>
-      <?cs /if ?>
-      <?cs # End of lang switcher ?>
-
-
-      <br class="clearfix" />
-    </div><!-- end mid -->
-    <div class="bottom"></div>
-  </div><!-- end morehover -->
-
-  <div class="search" id="search-container">
-    <div class="search-inner">
-      <div id="search-btn"></div>
-      <div class="left"></div>
-      <form onsubmit="return submit_search()">
-        <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
-onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
-onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')"
-onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
-      </form>
-      <div class="right"></div>
-        <a class="close hide">close</a>
-        <div class="left"></div>
-        <div class="right"></div>
-    </div>
-  </div><!--  end search -->
-
-  <div class="search_filtered_wrapper reference">
-    <div class="suggest-card reference no-display">
-      <ul class="search_filtered">
-      </ul>
-    </div>
-  </div>
-
-  <div class="search_filtered_wrapper docs">
-    <div class="suggest-card dummy no-display">&nbsp;</div>
-    <div class="suggest-card develop no-display">
-      <ul class="search_filtered">
-      </ul>
-      <div class="child-card guides no-display">
+<!-- Header -->
+<div id="header-wrapper">
+  <div id="header">
+    <div class="wrap" id="header-wrap">
+      <div class="col_3 logo wear-logo">
+        <a href="<?cs var:toroot ?>wear/index.html">
+          <img src="<?cs var:toroot ?>wear/images/android-wear.png" height="16" alt="Android Wear" />
+        </a>
       </div>
-      <div class="child-card training no-display">
-      </div>
-      <div class="child-card samples no-display">
-      </div>
-    </div>
-    <div class="suggest-card design no-display">
-      <ul class="search_filtered">
-      </ul>
-    </div>
-    <div class="suggest-card distribute no-display">
-      <ul class="search_filtered">
-      </ul>
-    </div>
-  </div><!-- end search_filtered_wrapper -->
+      <div class="col-8" style="margin:0"><h1 style="margin:1px 0 0 20px;padding:0;line-height:16px;
+color:#666;font-weight:100;font-size:24px;">Developer Preview</h1></div>
 
-  </div>
-  <!-- end menu_container -->
+      <?cs # ADD SEARCH AND MENU ?>
+      <?cs call:header_search_widget() ?>
 
-
-        </div><!-- end header-wrap -->
-    </div>
-    <!-- /Header -->
+    </div><!-- end header-wrap -->
+  </div><!-- /Header -->
 
 
   <div id="searchResults" class="wrap" style="display:none;">
           <h2 id="searchTitle">Results</h2>
           <div id="leftSearchControl" class="search-control">Loading...</div>
   </div>
-
-</div> <!--end headerwrap -->
+</div> <!--end header-wrapper -->
 
 <div id="sticky-header">
   <div>
@@ -461,5 +266,5 @@ onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
   </div>
 </div>
 
-  <?cs 
+  <?cs
 /def ?>
