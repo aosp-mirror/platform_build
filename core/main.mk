@@ -224,22 +224,8 @@ endif
 
 
 ifndef BUILD_EMULATOR
-ifeq (darwin,$(HOST_OS))
-GCC_REALPATH = $(realpath $(shell which $(HOST_CC)))
-ifneq ($(findstring llvm-gcc,$(GCC_REALPATH)),)
-  # Using LLVM GCC results in a non functional emulator due to it
-  # not honouring global register variables
-  $(warning ****************************************)
-  $(warning * gcc is linked to llvm-gcc which will *)
-  $(warning * not create a useable emulator.       *)
-  $(warning ****************************************)
+  # Emulator binaries are now provided under prebuilts/android-emulator/
   BUILD_EMULATOR := false
-else
-  BUILD_EMULATOR := true
-endif
-else   # HOST_OS is not darwin
-  BUILD_EMULATOR := true
-endif  # HOST_OS is darwin
 endif
 
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \

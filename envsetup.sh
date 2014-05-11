@@ -172,6 +172,25 @@ function setpaths()
     export ANDROID_QTOOLS=$T/development/emulator/qtools
     export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools
     export ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_QTOOLS:$ANDROID_TOOLCHAIN:$ANDROID_KERNEL_TOOLCHAIN_PATH$ANDROID_DEV_SCRIPTS:
+
+    # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
+    # to ensure that the corresponding 'emulator' binaries are used.
+    case $(uname -s) in
+        Darwin)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/darwin-x86_64
+            ;;
+        Linux)
+            ANDROID_EMULATOR_PREBUILTS=$T/prebuilts/android-emulator/linux-x86_64
+            ;;
+        *)
+            ANDROID_EMULATOR_PREBUILTS=
+            ;;
+    esac
+    if [ -n "$ANDROID_EMULATOR_PREBUILTS" -a -d "$ANDROID_EMULATOR_PREBUILTS" ]; then
+        ANDROID_BUILD_PATHS=$ANDROID_EMULATOR_PREBUILTS:$ANDROID_BUILD_PATHS
+        export ANDROID_EMULATOR_PREBUILTS
+    fi
+
     export PATH=$ANDROID_BUILD_PATHS$PATH
 
     unset ANDROID_JAVA_TOOLCHAIN
