@@ -26,6 +26,7 @@ import subprocess
 import sys
 import commands
 import shutil
+import tempfile
 
 import simg_map
 
@@ -170,10 +171,7 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   signer_path = prop_dict["verity_signer_cmd"]
 
   # make a tempdir
-  tempdir_name = os.path.join(os.path.dirname(out_file), "verity_images")
-  if os.path.exists(tempdir_name):
-    shutil.rmtree(tempdir_name)
-  os.mkdir(tempdir_name)
+  tempdir_name = tempfile.mkdtemp(suffix="_verity_images")
 
   # get partial image paths
   verity_image_path = os.path.join(tempdir_name, "verity.img")
@@ -181,7 +179,7 @@ def MakeVerityEnabledImage(out_file, prop_dict):
 
   # build the verity tree and get the root hash and salt
   if not BuildVerityTree(out_file, verity_image_path, prop_dict):
-    shutil.rmtree(tempdir_name)
+    shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
   # build the metadata blocks
@@ -194,17 +192,17 @@ def MakeVerityEnabledImage(out_file, prop_dict):
                               block_dev,
                               signer_path,
                               signer_key):
-    shutil.rmtree(tempdir_name)
+    shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
   # build the full verified image
   if not BuildVerifiedImage(out_file,
                             verity_image_path,
                             verity_metadata_path):
-    shutil.rmtree(tempdir_name)
+    shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
-  shutil.rmtree(tempdir_name)
+  shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
 
 def BuildImage(in_dir, prop_dict, out_file):
@@ -222,8 +220,10 @@ def BuildImage(in_dir, prop_dict, out_file):
   fs_type = prop_dict.get("fs_type", "")
   run_fsck = False
 
+  is_verity_partition = prop_dict.get("mount_point") == prop_dict.get("verity_mountpoint")
+  verity_supported = prop_dict.get("verity") == "true"
   # adjust the partition size to make room for the hashes if this is to be verified
-  if prop_dict.get("verity") == "true":
+  if verity_supported and is_verity_partition:
     partition_size = int(prop_dict.get("partition_size"))
     adjusted_size = AdjustPartitionSizeForVerity(partition_size)
     if not adjusted_size:
@@ -258,7 +258,7 @@ def BuildImage(in_dir, prop_dict, out_file):
     return False
 
   # create the verified image if this is to be verified
-  if prop_dict.get("verity") == "true":
+  if verity_supported and is_verity_partition:
     if not MakeVerityEnabledImage(out_file, prop_dict):
       return False
 
@@ -301,7 +301,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "verity",
       "verity_block_device",
       "verity_key",
-      "verity_signer_cmd"
+      "verity_signer_cmd",
+      "verity_mountpoint"
       )
   for p in common_props:
     copy_prop(p, p)
