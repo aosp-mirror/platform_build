@@ -29,9 +29,14 @@ CLANG_CONFIG_EXTRA_CFLAGS := \
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops \
+  -fno-tree-sra \
+  -finline-limit=64 \
   -Wno-psabi \
   -Wno-unused-but-set-variable \
   -Wno-unused-but-set-parameter \
+  -Wmaybe-uninitialized \
+  -Wno-maybe-uninitialized \
+  -Wno-error=maybe-uninitialized \
   -fno-canonical-system-headers
 
 # Clang flags for all host rules
