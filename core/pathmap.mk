@@ -85,6 +85,7 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    drm \
 	    opengl \
 	    sax \
+	    telecomm \
 	    telephony \
 	    wifi \
 	    keystore \
