@@ -684,28 +684,32 @@ recovery_build_prop := $(INSTALLED_BUILD_PROP_TARGET)
 recovery_binary := $(call intermediates-dir-for,EXECUTABLES,recovery)/recovery
 recovery_resources_common := $(call include-path-for, recovery)/res
 
-ifneq (,$(filter xxxhdpi,$(PRODUCT_AAPT_CONFIG_SP)))
-recovery_resources_common := $(recovery_resources_common)-xxxhdpi
-else ifneq (,$(filter xxhdpi,$(PRODUCT_AAPT_CONFIG_SP)))
-recovery_resources_common := $(recovery_resources_common)-xxhdpi
-else ifneq (,$(filter xhdpi,$(PRODUCT_AAPT_CONFIG_SP)))
-recovery_resources_common := $(recovery_resources_common)-xhdpi
-else ifneq (,$(filter hdpi,$(PRODUCT_AAPT_CONFIG_SP)))
-recovery_resources_common := $(recovery_resources_common)-hdpi
-else ifneq (,$(filter mdpi,$(PRODUCT_AAPT_CONFIG_SP)))
-recovery_resources_common := $(recovery_resources_common)-mdpi
+# Set recovery_density to the density bucket of the device.
+recovery_density := unknown
+ifneq (,$(PRODUCT_AAPT_PREF_CONFIG))
+# If PRODUCT_AAPT_PREF_CONFIG includes a dpi bucket, then use that value.
+recovery_density := $(filter %dpi,$(PRODUCT_AAPT_PREF_CONFIG))
 else
-# xhdpi is closest in size to the single set of resources we had
-# before, so make that the default if PRODUCT_AAPT_CONFIG doesn't
-# specify a dpi we have.
+# Otherwise, use the highest density that appears in PRODUCT_AAPT_CONFIG.
+# Order is important here; we'll take the first one that's found.
+recovery_densities := $(filter $(PRODUCT_AAPT_CONFIG_SP),xxxhdpi xxhdpi xhdpi hdpi mdpi ldpi)
+ifneq (,$(recovery_densities))
+recovery_density := $(word 1,$(recovery_densities))
+endif
+endif
+
+ifneq (,$(wildcard $(recovery_resources_common)-$(recovery_density)))
+recovery_resources_common := $(recovery_resources_common)-$(recovery_density)
+else
 recovery_resources_common := $(recovery_resources_common)-xhdpi
 endif
 
-# Select the 18x32 font on high-density devices; and the 12x22 font on
-# other devices.  Note that the font selected here can be overridden
-# for a particular device by putting a font.png in its private
-# recovery resources.
-ifneq (,$(filter xxhdpi xhdpi,$(subst $(comma),$(space),$(PRODUCT_AAPT_CONFIG))))
+# Select the 18x32 font on high-density devices (xhdpi and up); and
+# the 12x22 font on other devices.  Note that the font selected here
+# can be overridden for a particular device by putting a font.png in
+# its private recovery resources.
+
+ifneq (,$(filter xxxhdpi xxhdpi xhdpi,$(recovery_density)))
 recovery_font := $(call include-path-for, recovery)/fonts/18x32.png
 else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
