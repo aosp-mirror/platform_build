@@ -525,7 +525,7 @@ ifdef TARGET_2ND_ARCH
   endif
 endif
 
-ifneq (,$(filter $(DEX2OAT_TARGET_CPU_VARIANT),cortex-a7 cortex-a15 krait))
+ifneq (,$(filter $(DEX2OAT_TARGET_CPU_VARIANT),cortex-a7 cortex-a15 krait denver))
   DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
 endif
 
