@@ -167,10 +167,12 @@ $(document).ready(function() {
   // highlight Design tab
   if ($("body").hasClass("design")) {
     $("#header li.design a").addClass("selected");
+    $("#sticky-header").addClass("design");
 
   // highlight Develop tab
   } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
     $("#header li.develop a").addClass("selected");
+    $("#sticky-header").addClass("develop");
     // In Develop docs, also highlight appropriate sub-tab
     var rootDir = pagePathOriginal.substring(1,pagePathOriginal.indexOf('/', 1));
     if (rootDir == "training") {
@@ -195,12 +197,34 @@ $(document).ready(function() {
   // highlight Distribute tab
   } else if ($("body").hasClass("distribute")) {
     $("#header li.distribute a").addClass("selected");
-  }
+    $("#sticky-header").addClass("distribute");
+
+    var baseFrag = pagePathOriginal.indexOf('/', 1) + 1;
+    var secondFrag = pagePathOriginal.substring(baseFrag, pagePathOriginal.indexOf('/', baseFrag));
+    if (secondFrag == "users") {
+      $("#nav-x li.users a").addClass("selected");
+    } else if (secondFrag == "engage") {
+      $("#nav-x li.engage a").addClass("selected");
+    } else if (secondFrag == "monetize") {
+      $("#nav-x li.monetize a").addClass("selected");
+    } else if (secondFrag == "tools") {
+      $("#nav-x li.disttools a").addClass("selected");
+    } else if (secondFrag == "stories") {
+      $("#nav-x li.stories a").addClass("selected");
+    } else if (secondFrag == "essentials") {
+      $("#nav-x li.essentials a").addClass("selected");
+    } else if (secondFrag == "googleplay") {
+      $("#nav-x li.googleplay a").addClass("selected");
+    }
+  } else if ($("body").hasClass("about")) {
+    $("#sticky-header").addClass("about");
+  } 
 
   // set global variable so we can highlight the sidenav a bit later (such as for google reference)
   // and highlight the sidenav
   mPagePath = pagePath;
   highlightSidenav();
+  buildBreadcrumbs();
 
   // set up prev/next links if they exist
   var $selNavLink = $('#nav').find('a[href="' + pagePath + '"]');
@@ -385,70 +409,6 @@ false; // navigate across topic boundaries only in design docs
   });
 
 
-  // Set up fixed navbar
-  var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
-  $(window).scroll(function(event) {
-    if ($('#side-nav').length == 0) return;
-    if (event.target.nodeName == "DIV") {
-      // Dump scroll event if the target is a DIV, because that means the event is coming
-      // from a scrollable div and so there's no need to make adjustments to our layout
-      return;
-    }
-    var scrollTop = $(window).scrollTop();
-    var headerHeight = $('#header').outerHeight();
-    var subheaderHeight = $('#nav-x').outerHeight();
-    var searchResultHeight = $('#searchResults').is(":visible") ?
-                             $('#searchResults').outerHeight() : 0;
-    var totalHeaderHeight = headerHeight + subheaderHeight + searchResultHeight;
-    // we set the navbar fixed when the scroll position is beyond the height of the site header...
-    var navBarShouldBeFixed = scrollTop > totalHeaderHeight;
-    // ... except if the document content is shorter than the sidenav height.
-    // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
-    if ($("#doc-col").height() < $("#side-nav").height()) {
-      navBarShouldBeFixed = false;
-    }
-
-    var scrollLeft = $(window).scrollLeft();
-    // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
-    if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
-      updateSideNavPosition();
-      prevScrollLeft = scrollLeft;
-    }
-
-    // Don't continue if the header is sufficently far away
-    // (to avoid intensive resizing that slows scrolling)
-    if (navBarIsFixed && navBarShouldBeFixed) {
-      return;
-    }
-
-    if (navBarIsFixed != navBarShouldBeFixed) {
-      if (navBarShouldBeFixed) {
-        // make it fixed
-        var width = $('#devdoc-nav').width();
-        $('#devdoc-nav')
-            .addClass('fixed')
-            .css({'width':width+'px'})
-            .prependTo('#body-content');
-        // add neato "back to top" button
-        $('#devdoc-nav a.totop').css({'display':'block','width':$("#nav").innerWidth()+'px'});
-
-        // update the sidenaav position for side scrolling
-        updateSideNavPosition();
-      } else {
-        // make it static again
-        $('#devdoc-nav')
-            .removeClass('fixed')
-            .css({'width':'auto','margin':''})
-            .prependTo('#side-nav');
-        $('#devdoc-nav a.totop').hide();
-      }
-      navBarIsFixed = navBarShouldBeFixed;
-    }
-
-    resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
-  });
-
-
   var navBarLeftPos;
   if ($('#devdoc-nav').length) {
     setNavBarLeftPos();
@@ -593,6 +553,28 @@ function initExpandableNavItems(rootTag) {
   });
 }
 
+
+/** Create the list of breadcrumb links in the sticky header */
+function buildBreadcrumbs() {
+  var $breadcrumbUl =  $("#sticky-header ul.breadcrumb");
+  // Add the secondary horizontal nav item, if provided
+  var $selectedSecondNav = $("div#nav-x ul.nav-x a.selected").clone().removeClass("selected");
+  if ($selectedSecondNav.length) {
+    $breadcrumbUl.prepend($("<li>").append($selectedSecondNav))
+  }
+  // Add the primary horizontal nav
+  var $selectedFirstNav = $("div#header-wrap ul.nav-x a.selected").clone().removeClass("selected");
+  // If there's no header nav item, use the logo link and title from alt text
+  if ($selectedFirstNav.length < 1) {
+    $selectedFirstNav = $("<a>")
+        .attr('href', $("div#header .logo a").attr('href'))
+        .text($("div#header .logo img").attr('alt'));
+  }
+  $breadcrumbUl.prepend($("<li>").append($selectedFirstNav));
+}
+
+
+
 /** Highlight the current page in sidenav, expanding children as appropriate */
 function highlightSidenav() {
   // if something is already highlighted, undo it. This is for dynamic navigation (Samples index)
@@ -705,9 +687,8 @@ function resizeNav(delay) {
   // Then figure out based on scroll position whether the header is visible
   var windowHeight = $window.height();
   var scrollTop = $window.scrollTop();
-  var headerHeight = $('#header').outerHeight();
-  var subheaderHeight = $('#nav-x').outerHeight();
-  var headerVisible = (scrollTop < (headerHeight + subheaderHeight));
+  var headerHeight = $('#header-wrapper').outerHeight();
+  var headerVisible = scrollTop < stickyTop;
 
   // get the height of space between nav and top of window.
   // Could be either margin or top position, depending on whether the nav is fixed.
@@ -717,7 +698,7 @@ function resizeNav(delay) {
   // Depending on whether the header is visible, set the side nav's height.
   if (headerVisible) {
     // The sidenav height grows as the header goes off screen
-    navHeight = windowHeight - (headerHeight + subheaderHeight - scrollTop) - topMargin;
+    navHeight = windowHeight - (headerHeight - scrollTop) - topMargin;
   } else {
     // Once header is off screen, the nav height is almost full window height
     navHeight = windowHeight - topMargin;
@@ -905,7 +886,114 @@ function writeCookie(cookie, val, section, expiration) {
 
 
 
+var stickyTop;
+/* Sets the vertical scoll position at which the sticky bar should appear.
+   This method is called to reset the position when search results appear or hide */
+function setStickyTop() {
+  stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
+}
 
+
+/* 
+ * Displays sticky nav bar on pages when dac header scrolls out of view 
+ */
+(function() {
+  $(document).ready(function() {
+
+    setStickyTop();
+    var sticky = false;
+    var hiding = false;
+    var $stickyEl = $('#sticky-header');
+    var $menuEl = $('.menu-container');
+
+    var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
+
+    $(window).scroll(function() {
+      // Exit if there's no sidenav
+      if ($('#side-nav').length == 0) return;
+      // Exit if the mouse target is a DIV, because that means the event is coming
+      // from a scrollable div and so there's no need to make adjustments to our layout
+      if (event.target.nodeName == "DIV") {
+        return;
+      }
+
+
+      var top = $(window).scrollTop();
+      // we set the navbar fixed when the scroll position is beyond the height of the site header...
+      var shouldBeSticky = top >= stickyTop;
+      // ... except if the document content is shorter than the sidenav height.
+      // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
+      if ($("#doc-col").height() < $("#side-nav").height()) {
+        shouldBeSticky = false;
+      }
+
+      // Don't continue if the header is sufficently far away
+      // (to avoid intensive resizing that slows scrolling)
+      if (sticky && shouldBeSticky) {
+        return;
+      }
+
+      // Account for horizontal scroll
+      var scrollLeft = $(window).scrollLeft();
+      // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
+      if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
+        updateSideNavPosition();
+        prevScrollLeft = scrollLeft;
+      }
+
+      // If sticky header visible and position is now near top, hide sticky
+      if (sticky && !shouldBeSticky) {
+        sticky = false;
+        hiding = true;
+        // make the sidenav static again
+        $('#devdoc-nav')
+            .removeClass('fixed')
+            .css({'width':'auto','margin':''})
+            .prependTo('#side-nav');
+        // delay hide the sticky
+        $menuEl.removeClass('sticky-menu');
+        $stickyEl.fadeOut(250);
+        hiding = false;
+
+        // update the sidenaav position for side scrolling
+        updateSideNavPosition();
+      } else if (!sticky && shouldBeSticky) {
+        sticky = true;
+        $stickyEl.fadeIn(10);
+        $menuEl.addClass('sticky-menu');
+
+        // make the sidenav fixed
+        var width = $('#devdoc-nav').width();
+        $('#devdoc-nav')
+            .addClass('fixed')
+            .css({'width':width+'px'})
+            .prependTo('#body-content');
+
+        // update the sidenaav position for side scrolling
+        updateSideNavPosition();
+
+      } else if (hiding && top < 15) {
+        $menuEl.removeClass('sticky-menu');
+        $stickyEl.hide();
+        hiding = false;
+      }
+
+      resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
+    });
+
+    // Stack hover states
+    $('.section-card-menu').each(function(index, el) {
+      var height = $(el).height();
+      $(el).css({height:height+'px', position:'relative'});
+      var $cardInfo = $(el).find('.card-info');
+
+      $cardInfo.css({position: 'absolute', bottom:'0px', left:'0px', right:'0px', overflow:'visible'});
+    });
+
+    resizeNav();  // must resize once loading is finished
+  });
+
+})();
 
 
 
@@ -1724,6 +1812,7 @@ function search_changed(e, kd, toroot)
             $('.suggest-card').hide();
             if ($("#searchResults").is(":hidden") && (search.value != "")) {
               // if results aren't showing (and text not empty), return true to allow search to execute
+              $('body,html').animate({scrollTop:0}, '500', 'swing');
               return true;
             } else {
               // otherwise, results are already showing, so allow ajax to auto refresh the results
@@ -2278,13 +2367,13 @@ function submit_search() {
   var query = document.getElementById('search_autocomplete').value;
   location.hash = 'q=' + query;
   loadSearchResults();
-  $("#searchResults").slideDown('slow');
+  $("#searchResults").slideDown('slow', setStickyTop);
   return false;
 }
 
 
 function hideResults() {
-  $("#searchResults").slideUp();
+  $("#searchResults").slideUp('fast', setStickyTop);
   $(".search .close").addClass("hide");
   location.hash = '';
 
@@ -2401,7 +2490,7 @@ google.setOnLoadCallback(function(){
     return;
   } else {
     // first time loading search results for this page
-    $('#searchResults').slideDown('slow');
+    $('#searchResults').slideDown('slow', setStickyTop);
     $(".search .close").removeClass("hide");
     loadSearchResults();
   }
@@ -2409,19 +2498,22 @@ google.setOnLoadCallback(function(){
 
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
-  // Exit if the hash isn't a search query or there's an error in the query
+  // If the hash isn't a search query or there's an error in the query,
+  // then adjust the scroll position to account for sticky header, then exit.
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
     // If the results pane is open, close it.
     if (!$("#searchResults").is(":hidden")) {
       hideResults();
     }
+    // Adjust the scroll position to account for sticky header
+    $(window).scrollTop($(window).scrollTop() - 60);
     return;
   }
 
   // Otherwise, we have a search to do
   var query = decodeURI(getQuery(location.hash));
   searchControl.execute(query);
-  $('#searchResults').slideDown('slow');
+  $('#searchResults').slideDown('slow', setStickyTop);
   $("#search_autocomplete").focus();
   $(".search .close").removeClass("hide");
 
@@ -3233,3 +3325,560 @@ function showSamples() {
   $("#samples").append($ul);
 
 }
+
+
+
+/* ########################################################## */
+/* ###################  RESOURCE CARDS  ##################### */
+/* ########################################################## */
+
+/** Handle resource queries, collections, and grids (sections). Requires
+    jd_tag_helpers.js and the *_unified_data.js to be loaded. */
+
+(function() {
+  // Prevent the same resource from being loaded more than once per page.
+  var addedPageResources = {};
+
+  $(document).ready(function() {
+    $('.resource-widget').each(function() {
+      initResourceWidget(this);
+    });
+
+    /* Pass the line height to ellipsisfade() to adjust the height of the
+    text container to show the max number of lines possible, without
+    showing lines that are cut off. This works with the css ellipsis
+    classes to fade last text line and apply an ellipsis char. */
+
+    //card text currently uses 15px line height. 
+    var lineHeight = 15;
+    $('.card-info .text').ellipsisfade(lineHeight);
+  });
+
+  /*
+    Three types of resource layouts:
+    Flow - Uses a fixed row-height flow using float left style.
+    Carousel - Single card slideshow all same dimension absolute.
+    Stack - Uses fixed columns and flexible element height.
+  */
+  function initResourceWidget(widget) {
+    var $widget = $(widget);
+    var isFlow = $widget.hasClass('resource-flow-layout'),
+        isCarousel = $widget.hasClass('resource-carousel-layout'),
+        isStack = $widget.hasClass('resource-stack-layout');
+
+    // find size of widget by pulling out its class name
+    var sizeCols = 1;
+    var m = $widget.get(0).className.match(/\bcol-(\d+)\b/);
+    if (m) {
+      sizeCols = parseInt(m[1], 10);
+    }
+
+    var opts = {
+      cardSizes: ($widget.data('cardsizes') || '').split(','),
+      maxResults: parseInt($widget.data('maxresults') || '100', 10),
+      itemsPerPage: $widget.data('itemsperpage'),
+      sortOrder: $widget.data('sortorder'),
+      query: $widget.data('query'),
+      section: $widget.data('section'),
+      sizeCols: sizeCols
+    };
+
+    // run the search for the set of resources to show
+
+    var resources = buildResourceList(opts);
+
+    if (isFlow) {
+      drawResourcesFlowWidget($widget, opts, resources);
+    } else if (isCarousel) {
+      drawResourcesCarouselWidget($widget, opts, resources);
+    } else if (isStack) {
+      var sections = buildSectionList(opts);
+      opts['numStacks'] = $widget.data('numstacks');
+      drawResourcesStackWidget($widget, opts, resources, sections);
+    }
+  }
+
+  /* Initializes a Resource Carousel Widget */
+  function drawResourcesCarouselWidget($widget, opts, resources) {
+    $widget.empty();
+    var plusone = true; //always show plusone on carousel
+
+    $widget.addClass('resource-card slideshow-container')
+      .append($('<a>').addClass('slideshow-prev').text('Prev'))
+      .append($('<a>').addClass('slideshow-next').text('Next'));
+
+    var css = { 'width': $widget.width() + 'px',
+                'height': $widget.height() + 'px' };
+
+    var $ul = $('<ul>');
+
+    for (var i = 0; i < resources.length; ++i) {
+      //keep url clean for matching and offline mode handling
+      var urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
+      var $card = $('<a>')
+        .attr('href', urlPrefix + resources[i].url)
+        .decorateResourceCard(resources[i],plusone);
+
+      $('<li>').css(css)
+          .append($card)
+          .appendTo($ul);
+    }
+
+    $('<div>').addClass('frame')
+      .append($ul)
+      .appendTo($widget);
+
+    $widget.dacSlideshow({
+      auto: true,
+      btnPrev: '.slideshow-prev',
+      btnNext: '.slideshow-next'
+    });
+  };
+
+  /* Initializes a Resource Card Stack Widget (column-based layout) */
+  function drawResourcesStackWidget($widget, opts, resources, sections) {
+    // Don't empty widget, grab all items inside since they will be the first
+    // items stacked, followed by the resource query
+    var plusone = true; //by default show plusone on section cards
+    var cards = $widget.find('.resource-card').detach().toArray();
+    var numStacks = opts.numStacks || 1;
+    var $stacks = [];
+    var urlString;
+
+    for (var i = 0; i < numStacks; ++i) {
+      $stacks[i] = $('<div>').addClass('resource-card-stack')
+          .appendTo($widget);
+    }
+
+    var sectionResources = [];
+
+    // Extract any subsections that are actually resource cards
+    for (var i = 0; i < sections.length; ++i) {
+      if (!sections[i].sections || !sections[i].sections.length) {
+        //keep url clean for matching and offline mode handling
+        urlPrefix = sections[i].url.indexOf("//") > -1 ? "" : toRoot;
+        // Render it as a resource card
+
+        sectionResources.push(
+          $('<a>')
+            .addClass('resource-card section-card')
+            .attr('href', urlPrefix + sections[i].resource.url)
+            .decorateResourceCard(sections[i].resource,plusone)[0]
+        );
+
+      } else {
+        cards.push(
+          $('<div>')
+            .addClass('resource-card section-card-menu')
+            .decorateResourceSection(sections[i],plusone)[0]
+        );
+      }
+    }
+
+    cards = cards.concat(sectionResources);
+
+    for (var i = 0; i < resources.length; ++i) {
+      //keep url clean for matching and offline mode handling
+      urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
+      var $card = $('<a>')
+          .addClass('resource-card related-card')
+          .attr('href', urlPrefix + resources[i].url)
+          .decorateResourceCard(resources[i],plusone);
+
+      cards.push($card[0]);
+    }
+
+    for (var i = 0; i < cards.length; ++i) {
+      // Find the stack with the shortest height, but give preference to
+      // left to right order.
+      var minHeight = $stacks[0].height();
+      var minIndex = 0;
+
+      for (var j = 1; j < numStacks; ++j) {
+        var height = $stacks[j].height();
+        if (height < minHeight - 45) {
+          minHeight = height;
+          minIndex = j;
+        }
+      }
+
+      $stacks[minIndex].append($(cards[i]));
+    }
+
+  };
+
+  /* Initializes a flow widget, see distribute.scss for generating accompanying css */
+  function drawResourcesFlowWidget($widget, opts, resources) {
+    $widget.empty();
+    var cardSizes = opts.cardSizes || ['6x6'];
+    var i = 0, j = 0;
+    var plusone = true; // by default show plusone on resource cards
+
+    while (i < resources.length) {
+      var cardSize = cardSizes[j++ % cardSizes.length];
+      cardSize = cardSize.replace(/^\s+|\s+$/,'');
+      console.log("cardsize is " + cardSize);
+      // Some card sizes do not get a plusone button, such as where space is constrained
+      // or for cards commonly embedded in docs (to improve overall page speed).
+      plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
+                  (cardSize == "9x2") || (cardSize == "9x3") ||
+                  (cardSize == "12x2") || (cardSize == "12x3"));
+
+      // A stack has a third dimension which is the number of stacked items
+      var isStack = cardSize.match(/(\d+)x(\d+)x(\d+)/);
+      var stackCount = 0;
+      var $stackDiv = null;
+
+      if (isStack) {
+        // Create a stack container which should have the dimensions defined
+        // by the product of the items inside.
+        $stackDiv = $('<div>').addClass('resource-card-stack resource-card-' + isStack[1]
+            + 'x' + isStack[2] * isStack[3]) .appendTo($widget);
+      }
+
+      // Build each stack item or just a single item
+      do {
+        var resource = resources[i];
+        //keep url clean for matching and offline mode handling
+        urlPrefix = resource.url.indexOf("//") > -1 ? "" : toRoot;
+        var $card = $('<a>')
+            .addClass('resource-card resource-card-' + cardSize + ' resource-card-' + resource.type)
+            .attr('href', urlPrefix + resource.url);
+
+        if (isStack) {
+          $card.addClass('resource-card-' + isStack[1] + 'x' + isStack[2]);
+          if (++stackCount == parseInt(isStack[3])) {
+            $card.addClass('resource-card-row-stack-last');
+            stackCount = 0;
+          }
+        } else {
+          stackCount = 0;
+        }
+
+        $card.decorateResourceCard(resource,plusone)
+          .appendTo($stackDiv || $widget);
+
+      } while (++i < resources.length && stackCount > 0);
+    }
+  }
+
+  /* Build a site map of resources using a section as a root. */
+  function buildSectionList(opts) {
+    if (opts.section && SECTION_BY_ID[opts.section]) {
+      return SECTION_BY_ID[opts.section].sections || [];
+    }
+    return [];
+  }
+
+  function buildResourceList(opts) {
+    var maxResults = opts.maxResults || 100;
+
+    var query = opts.query || '';
+    var expressions = parseResourceQuery(query);
+    var addedResourceIndices = {};
+    var results = [];
+
+    for (var i = 0; i < expressions.length; i++) {
+      var clauses = expressions[i];
+
+      // build initial set of resources from first clause
+      var firstClause = clauses[0];
+      var resources = [];
+      switch (firstClause.attr) {
+        case 'type':
+          resources = ALL_RESOURCES_BY_TYPE[firstClause.value];
+          break;
+        case 'lang':
+          resources = ALL_RESOURCES_BY_LANG[firstClause.value];
+          break;
+        case 'tag':
+          resources = ALL_RESOURCES_BY_TAG[firstClause.value];
+          break;
+        case 'collection':
+          var urls = RESOURCE_COLLECTIONS[firstClause.value].resources || [];
+          resources = urls.map(function(url){ return ALL_RESOURCES_BY_URL[url]; });
+          break;
+        case 'section':
+          var urls = SITE_MAP[firstClause.value].sections || [];
+          resources = urls.map(function(url){ return ALL_RESOURCES_BY_URL[url]; });
+          break;
+      }
+      // console.log(firstClause.attr + ':' + firstClause.value);
+      resources = resources || [];
+
+      // use additional clauses to filter corpus
+      if (clauses.length > 1) {
+        var otherClauses = clauses.slice(1);
+        resources = resources.filter(getResourceMatchesClausesFilter(otherClauses));
+      }
+
+      // filter out resources already added
+      if (i > 1) {
+        resources = resources.filter(getResourceNotAlreadyAddedFilter(addedResourceIndices));
+      }
+
+      // add to list of already added indices
+      for (var j = 0; j < resources.length; j++) {
+        // console.log(resources[j].title);
+        addedResourceIndices[resources[j].index] = 1;
+      }
+
+      // concat to final results list
+      results = results.concat(resources);
+    }
+
+    if (opts.sortOrder && results.length) {
+      var attr = opts.sortOrder;
+
+      if (opts.sortOrder == 'random') {
+        var i = results.length, j, temp;
+        while (--i) {
+          j = Math.floor(Math.random() * (i + 1));
+          temp = results[i];
+          results[i] = results[j];
+          results[j] = temp;
+        }
+      } else {
+        var desc = attr.charAt(0) == '-';
+        if (desc) {
+          attr = attr.substring(1);
+        }
+        results = results.sort(function(x,y) {
+          return (desc ? -1 : 1) * (parseInt(x[attr], 10) - parseInt(y[attr], 10));
+        });
+      }
+    }
+
+    results = results.filter(getResourceNotAlreadyAddedFilter(addedPageResources));
+    results = results.slice(0, maxResults);
+
+    for (var j = 0; j < results.length; ++j) {
+      addedPageResources[results[j].index] = 1;
+    }
+
+    return results;
+  }
+
+
+  function getResourceNotAlreadyAddedFilter(addedResourceIndices) {
+    return function(resource) {
+      return !addedResourceIndices[resource.index];
+    };
+  }
+
+
+  function getResourceMatchesClausesFilter(clauses) {
+    return function(resource) {
+      return doesResourceMatchClauses(resource, clauses);
+    };
+  }
+
+
+  function doesResourceMatchClauses(resource, clauses) {
+    for (var i = 0; i < clauses.length; i++) {
+      var map;
+      switch (clauses[i].attr) {
+        case 'type':
+          map = IS_RESOURCE_OF_TYPE[clauses[i].value];
+          break;
+        case 'lang':
+          map = IS_RESOURCE_IN_LANG[clauses[i].value];
+          break;
+        case 'tag':
+          map = IS_RESOURCE_TAGGED[clauses[i].value];
+          break;
+      }
+
+      if (!map || (!!clauses[i].negative ? map[resource.index] : !map[resource.index])) {
+        return clauses[i].negative;
+      }
+    }
+    return true;
+  }
+
+
+  function parseResourceQuery(query) {
+    // Parse query into array of expressions (expression e.g. 'tag:foo + type:video')
+    var expressions = [];
+    var expressionStrs = query.split(',') || [];
+    for (var i = 0; i < expressionStrs.length; i++) {
+      var expr = expressionStrs[i] || '';
+
+      // Break expression into clauses (clause e.g. 'tag:foo')
+      var clauses = [];
+      var clauseStrs = expr.split(/(?=[\+\-])/);
+      for (var j = 0; j < clauseStrs.length; j++) {
+        var clauseStr = clauseStrs[j] || '';
+
+        // Get attribute and value from clause (e.g. attribute='tag', value='foo')
+        var parts = clauseStr.split(':');
+        var clause = {};
+
+        clause.attr = parts[0].replace(/^\s+|\s+$/g,'');
+        if (clause.attr) {
+          if (clause.attr.charAt(0) == '+') {
+            clause.attr = clause.attr.substring(1);
+          } else if (clause.attr.charAt(0) == '-') {
+            clause.negative = true;
+            clause.attr = clause.attr.substring(1);
+          }
+        }
+
+        if (parts.length > 1) {
+          clause.value = parts[1].replace(/^\s+|\s+$/g,'');
+        }
+
+        clauses.push(clause);
+      }
+
+      if (!clauses.length) {
+        continue;
+      }
+
+      expressions.push(clauses);
+    }
+
+    return expressions;
+  }
+})();
+
+(function($) {
+  /* Simple jquery function to create dom for a standard resource card */
+  $.fn.decorateResourceCard = function(resource,plusone) {
+    var section = resource.group || resource.type;
+    var imgUrl;
+    if (resource.image) {
+      //keep url clean for matching and offline mode handling
+      var urlPrefix = resource.image.indexOf("//") > -1 ? "" : toRoot;
+      imgUrl = urlPrefix + resource.image;
+    }
+    //add linkout logic here. check url or type, assign a class, map to css :after
+    $('<div>')
+        .addClass('card-bg')
+        .css('background-image', 'url(' + (imgUrl || toRoot + 'assets/images/resource-card-default-android.jpg') + ')')
+      .appendTo(this);
+    if (!plusone) {
+      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
+        .append($('<div>').addClass('section').text(section))
+        .append($('<div>').addClass('title').html(resource.title))
+        .append($('<div>').addClass('description ellipsis')
+            .append($('<div>').addClass('text').html(resource.summary))
+          .append($('<div>').addClass('util')))
+          .appendTo(this);
+    } else {
+      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
+        .append($('<div>').addClass('section').text(section))
+        .append($('<div>').addClass('title').html(resource.title))
+        .append($('<div>').addClass('description ellipsis')
+            .append($('<div>').addClass('text').html(resource.summary))
+          .append($('<div>').addClass('util')
+            .append($('<div>').addClass('g-plusone')
+              .attr('data-size', 'small')
+              .attr('data-align', 'right')
+              .attr('data-href', resource.url))))
+            .appendTo(this);
+    }
+
+    return this;
+  };
+
+  /* Simple jquery function to create dom for a resource section card (menu) */
+  $.fn.decorateResourceSection = function(section,plusone) {
+    var resource = section.resource;
+    //keep url clean for matching and offline mode handling
+    var urlPrefix = resource.image.indexOf("//") > -1 ? "" : toRoot;
+    var $base = $('<a>')
+        .addClass('card-bg')
+        .attr('href', resource.url)
+        .append($('<div>').addClass('card-section-icon')
+          .append($('<div>').addClass('icon'))
+          .append($('<div>').addClass('section').html(resource.title)))
+      .appendTo(this);
+
+    var $cardInfo = $('<div>').addClass('card-info').appendTo(this);
+
+    if (section.sections && section.sections.length) {
+      // Recurse the section sub-tree to find a resource image.
+      var stack = [section];
+
+      while (stack.length) {
+        if (stack[0].resource.image) {
+          $base.css('background-image', 'url(' + urlPrefix + stack[0].resource.image + ')');
+          break;
+        }
+
+        if (stack[0].sections) {
+          stack = stack.concat(stack[0].sections);
+        }
+
+        stack.shift();
+      }
+
+      var $ul = $('<ul>')
+        .appendTo($cardInfo);
+
+      var max = section.sections.length > 3 ? 3 : section.sections.length;
+
+      for (var i = 0; i < max; ++i) {
+
+        var subResource = section.sections[i];
+        if (!plusone) {
+          $('<li>')
+            .append($('<a>').attr('href', subResource.url)
+              .append($('<div>').addClass('title').html(subResource.title))
+              .append($('<div>').addClass('description ellipsis')
+                .append($('<div>').addClass('text').html(subResource.summary))
+                .append($('<div>').addClass('util'))))
+          .appendTo($ul);
+        } else {
+          $('<li>')
+            .append($('<a>').attr('href', subResource.url)
+              .append($('<div>').addClass('title').html(subResource.title))
+              .append($('<div>').addClass('description ellipsis')
+                .append($('<div>').addClass('text').html(subResource.summary))
+                .append($('<div>').addClass('util')
+                  .append($('<div>').addClass('g-plusone')
+                    .attr('data-size', 'small')
+                    .attr('data-align', 'right')
+                    .attr('data-href', resource.url)))))
+          .appendTo($ul);
+        }
+      }
+
+      // Add a more row
+      if (max < section.sections.length) {
+        $('<li>')
+          .append($('<a>').attr('href', resource.url)
+            .append($('<div>')
+              .addClass('title')
+              .text('More')))
+        .appendTo($ul);
+      }
+    } else {
+      // No sub-resources, just render description?
+    }
+
+    return this;
+  };
+})(jQuery);
+/* Calculate the vertical area remaining */
+(function($) {
+    $.fn.ellipsisfade= function(lineHeight) {
+        this.each(function() {
+            // get element text
+            var $this = $(this);
+            var remainingHeight = $this.parent().parent().height();
+            $this.parent().siblings().each(function ()
+            {
+              var h = $(this).height();
+              remainingHeight = remainingHeight - h;
+            });
+
+            adjustedRemainingHeight = ((remainingHeight)/lineHeight>>0)*lineHeight
+            $this.parent().css({'height': adjustedRemainingHeight});
+            $this.css({'height': "auto"});
+        });
+
+        return this;
+    };
+}) (jQuery);
