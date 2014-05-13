@@ -60,6 +60,7 @@ PRODUCT_PACKAGES += \
     libmtp \
     libnetlink \
     libnetutils \
+    libpdfrenderer \
     libreference-ril \
     libreverbwrapper \
     libril \
