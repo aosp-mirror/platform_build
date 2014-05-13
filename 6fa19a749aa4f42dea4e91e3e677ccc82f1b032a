@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cafc6cef_5c8bddc7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-05-13T23:54:41Z",
+      "side": 1,
+      "message": "narayan wanted it changed to\n\n\u003carch-name\u003e/\u003cmodule_name\u003e.odex\n\nto match the \n\n/data/dalvik-cache/\u003carch-name\u003e/\u003cmodule_name\u003e.dex pattern.\n\nobviously a code change will be required in art for this too.",
+      "range": {
+        "startLine": 13,
+        "startChar": 31,
+        "endLine": 13,
+        "endChar": 61
+      },
+      "revId": "6fa19a749aa4f42dea4e91e3e677ccc82f1b032a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
