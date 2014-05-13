@@ -157,13 +157,7 @@ LOCAL_DEX_PREOPT := false
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 #######################################
 ifdef LOCAL_DEX_PREOPT
-$(built_module): PRIVATE_DEX_PREOPT_IMAGE := $(LOCAL_DEX_PREOPT_IMAGE)
-$(built_module): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(built_module): PRIVATE_BUILT_ODEX := $(built_odex)
-# Make sure the boot jars get dexpreopt-ed first
-$(built_module) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT)
-$(built_module) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS)
-(built_module) : $(LOCAL_DEX_PREOPT_IMAGE)
 # built_odex is byproduct of LOCAL_BUILT_MODULE without its own build recipe.
 $(built_odex) : $(LOCAL_BUILT_MODULE)
 endif # LOCAL_DEX_PREOPT
@@ -174,7 +168,7 @@ ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	$(sign-package)
 endif
 ifdef LOCAL_DEX_PREOPT
-	$(call dexpreopt-one-file,$(PRIVATE_DEX_PREOPT_IMAGE),$@,$(PRIVATE_DEX_LOCATION),$(PRIVATE_BUILT_ODEX))
+	$(call dexpreopt-one-file,$@,$(PRIVATE_BUILT_ODEX))
 endif
 	$(align-package)
 
