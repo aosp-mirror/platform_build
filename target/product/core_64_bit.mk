@@ -31,3 +31,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32_64
 
 TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true
+
+# Disable DEXPREOPT until we have multilib support (bug 14694978).
+WITH_DEXPREOPT := false
