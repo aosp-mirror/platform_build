@@ -32,7 +32,6 @@ PRODUCT_PACKAGES += \
     libaudioutils \
     libfilterpack_imageproc \
     libgabi++ \
-    libkeystore \
     libmdnssd \
     libnfc_ndef \
     libportable \
