@@ -66,6 +66,7 @@ PRODUCT_PACKAGES += \
     libOpenSLES \
     libdownmix \
     libfilterfw \
+    libkeystore \
     libsqlite_jni \
     libwilhelm \
     make_ext4fs \

@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     libdrmframework \
     libdrmframework_jni \
     libfilterfw \
+    libkeystore \
     libsqlite_jni \
     libwilhelm \
     make_ext4fs \

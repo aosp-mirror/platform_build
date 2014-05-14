@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += \
     libbcc \
     libfilterpack_imageproc \
     libgabi++ \
-    libkeystore \
     libmdnssd \
     libnfc_ndef \
     libportable \
