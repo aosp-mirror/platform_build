@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "caaaaceb_afa8d5ae",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-14T04:57:57Z",
+      "side": 1,
+      "message": "We may need a way to specify an arch- or 32/64-bit- aware custom LOCAL_DEX_PREOPT_IMAGE. We don\u0027t use it in normal modules, but I saw it in some art tests.\nI\u0027ll revisit it later if it\u0027s needed.",
+      "revId": "5f68b59da63e00bb84489f53f6de2ce15aa8d51e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
