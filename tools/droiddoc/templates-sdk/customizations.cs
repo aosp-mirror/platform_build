@@ -7,7 +7,6 @@ def:sdk_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs 
         include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
@@ -15,33 +14,16 @@ def:sdk_nav() ?>
 
       </div>
     </div> <!-- end side-nav -->
-<?cs /def ?>
-<?cs 
-def:resources_tab_nav() ?>
+<?cs /def ?><?cs
+
+def:no_nav() ?>
   <div class="wrap clearfix" id="body-content">
-    <a
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
+<?cs /def ?><?cs
 
-<?cs 
-        include:"../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
-
-
-      </div>
-    </div> <!-- end side-nav -->
-    <script>
-      $(document).ready(function() {
-        scrollIntoView("devdoc-nav");
-        });
-    </script>
-<?cs /def ?>
-<?cs
 def:tools_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 <?cs 
         include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
         
@@ -59,7 +41,6 @@ def:training_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 
 <?cs 
@@ -73,14 +54,110 @@ def:training_nav() ?>
         scrollIntoView("devdoc-nav");
         });
     </script>
-<?cs /def ?>
-<?cs 
+<?cs /def ?><?cs
+
+def:googleplay_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
+def:essentials_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
+def:users_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
+def:engage_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
+def:monetize_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
+def:disttools_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
+def:stories_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
 def:guide_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
-
 
 <?cs 
         include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
@@ -99,7 +176,6 @@ def:design_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 
 <?cs
@@ -119,7 +195,6 @@ def:distribute_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
@@ -139,7 +214,6 @@ def:samples_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
@@ -159,7 +233,6 @@ def:google_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
@@ -183,7 +256,6 @@ def:about_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
@@ -204,7 +276,6 @@ def:wear_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs
         include:"../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
@@ -227,8 +298,6 @@ def:default_left_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav">
-
-<a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
       <div id="api-nav-header">
         <div id="api-level-toggle">
           <label for="apiLevelCheckbox" class="disabled"
@@ -329,10 +398,111 @@ def:default_left_nav() ?>
     <?cs 
 /def ?>
 
+
+<?cs
+def:header_search_widget() ?>
+<div class="menu-container">
+  <div class="moremenu">
+    <div id="more-btn"></div>
+  </div>
+  <div class="morehover" id="moremenu">
+    <div class="top"></div>
+    <div class="mid">
+      <div class="header">Links</div>
+      <ul>
+        <li><a href="https://play.google.com/apps/publish/" target="_googleplay">Google Play Developer Console</a></li>
+        <li><a href="http://android-developers.blogspot.com/">Android Developers Blog</a></li>
+        <li><a href="<?cs var:toroot ?>about/index.html">About Android</a></li>
+      </ul>
+      <div class="header">Android Sites</div>
+      <ul>
+        <li><a href="http://www.android.com">Android.com</a></li>
+        <li class="active"><a>Android Developers</a></li>
+        <li><a href="http://source.android.com">Android Open Source Project</a></li>
+      </ul>
+
+      <?cs # Include language switcher only in online docs ?>
+      <?cs if:android.whichdoc == "online" ?>
+        <div class="header">Language</div>
+          <div id="language" class="locales">
+            <select name="language" onChange="changeLangPref(this.value, true)">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="ru">Русский</option>
+                <option value="zh-cn">中文 (中国)</option>
+                <option value="zh-tw">中文 (台灣)</option>
+            </select>
+          </div>
+        <script type="text/javascript">
+          <!--
+          loadLangPref();
+            //-->
+        </script>
+      <?cs /if ?>
+      <?cs # End of lang switcher ?>
+      <br class="clearfix" />
+    </div><!-- end 'mid' -->
+    <div class="bottom"></div>
+  </div><!-- end 'moremenu' -->
+
+  <div class="search" id="search-container">
+    <div class="search-inner">
+      <div id="search-btn"></div>
+      <div class="left"></div>
+      <form onsubmit="return submit_search()">
+        <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
+          onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
+          onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')"
+          onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
+      </form>
+      <div class="right"></div>
+      <a class="close hide">close</a>
+      <div class="left"></div>
+      <div class="right"></div>
+    </div><!-- end search-inner -->
+  </div><!-- end search-container -->
+
+  <div class="search_filtered_wrapper reference">
+    <div class="suggest-card reference no-display">
+      <ul class="search_filtered">
+      </ul>
+    </div>
+  </div>
+
+  <div class="search_filtered_wrapper docs">
+    <div class="suggest-card dummy no-display">&nbsp;</div>
+    <div class="suggest-card develop no-display">
+      <ul class="search_filtered">
+      </ul>
+      <div class="child-card guides no-display">
+      </div>
+      <div class="child-card training no-display">
+      </div>
+      <div class="child-card samples no-display">
+      </div>
+    </div>
+    <div class="suggest-card design no-display">
+      <ul class="search_filtered">
+      </ul>
+    </div>
+    <div class="suggest-card distribute no-display">
+      <ul class="search_filtered">
+      </ul>
+    </div>
+  </div>
+</div><!-- end menu-container (search and menu widget) -->
+<?cs /def ?>
+
+
+
 <?cs 
 def:custom_left_nav() ?><?cs
-  if:fullpage ?><?cs 
-    call:fullpage() ?><?cs 
+  if:fullpage ?><?cs
+    call:fullpage() ?><?cs
+  elif:nonavpage ?><?cs
+    call:no_nav() ?><?cs
   elif:guide ?><?cs 
     call:guide_nav() ?><?cs 
   elif:design ?><?cs
@@ -345,17 +515,31 @@ def:custom_left_nav() ?><?cs
     call:google_nav() ?><?cs 
   elif:samples ?><?cs
     call:samples_nav() ?><?cs
-  elif:more ?><?cs 
-    call:dist_more_nav() ?><?cs
   elif:distribute ?><?cs 
-    call:distribute_nav() ?><?cs 
-  elif:about ?><?cs 
+    if:googleplay ?><?cs
+      call:googleplay_nav() ?><?cs
+    elif:essentials ?><?cs
+      call:essentials_nav() ?><?cs
+    elif:users ?><?cs
+      call:users_nav() ?><?cs
+    elif:engage ?><?cs
+      call:engage_nav() ?><?cs
+    elif:monetize ?><?cs
+      call:monetize_nav() ?><?cs
+    elif:disttools ?><?cs
+      call:disttools_nav() ?><?cs
+    elif:stories ?><?cs
+      call:stories_nav() ?><?cs
+    /if ?><?cs
+  elif:about ?><?cs
     call:about_nav() ?><?cs
+  elif:distribute ?><?cs
+    call:distribute_nav() ?><?cs
   elif:wear ?><?cs
     call:wear_nav() ?><?cs
-  else ?><?cs 
-    call:default_left_nav() ?> <?cs 
-  /if ?><?cs 
+  else ?><?cs
+    call:default_left_nav() ?> <?cs
+  /if ?><?cs
 /def ?>
 
 <?cs # appears at the bottom of every page ?><?cs 
