@@ -90,8 +90,7 @@ def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
   mapdata = None
 
   if sparse:
-    img.seek(os.SEEK_SET, 0)
-    data = img.read()
+    data = open(img.name).read()
     img.close()
   else:
     success, name = build_image.UnsparseImage(img.name, replace=False)
