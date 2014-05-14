@@ -64,13 +64,6 @@ else
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
 
-<!-- RESOURCES LIBRARY -->
-<script src="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//androiddevdocs-staging.appspot.com/ytblogger_lists_unified.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>jd_lists_unified.js" type="text/javascript"></script>
-<script src="<?cs var:toroot ?>assets/js/jd_tag_helpers.js" type="text/javascript"></script>
-<link href="<?cs var:toroot ?>assets/css/resourcecards.css"  rel="stylesheet" type="text/css" />
-<script src="<?cs var:toroot ?>assets/js/resourcecards.js" type="text/javascript"></script>
-
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-5831155-1']);
