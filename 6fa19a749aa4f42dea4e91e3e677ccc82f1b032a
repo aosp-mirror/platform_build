@@ -40,6 +40,24 @@
       "revId": "6fa19a749aa4f42dea4e91e3e677ccc82f1b032a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea9db0d4_535c7cd0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-05-14T04:10:53Z",
+      "side": 1,
+      "message": "yeah, it seems like it might be a bit ugly in the C++ code too, I\u0027m looking at that part right now.",
+      "parentUuid": "caaaaceb_4c64df5b",
+      "revId": "6fa19a749aa4f42dea4e91e3e677ccc82f1b032a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
