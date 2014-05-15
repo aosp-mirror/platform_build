@@ -3,6 +3,7 @@
 # By default, an package is built for TARGET_ARCH.
 # To build it for TARGET_2ND_ARCH in a 64bit product, use "LOCAL_MULTILIB := 32".
 
+my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
 ifeq ($(TARGET_SUPPORTS_32_BIT_APPS)|$(TARGET_SUPPORTS_64_BIT_APPS),true|true)

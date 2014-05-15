@@ -1,3 +1,4 @@
+my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
 ifndef my_module_multilib

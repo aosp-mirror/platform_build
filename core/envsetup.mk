@@ -40,16 +40,16 @@ UNAME := $(shell uname -sm)
 
 # HOST_OS
 ifneq (,$(findstring Linux,$(UNAME)))
-	HOST_OS := linux
+  HOST_OS := linux
 endif
 ifneq (,$(findstring Darwin,$(UNAME)))
-	HOST_OS := darwin
+  HOST_OS := darwin
 endif
 ifneq (,$(findstring Macintosh,$(UNAME)))
-	HOST_OS := darwin
+  HOST_OS := darwin
 endif
 ifneq (,$(findstring CYGWIN,$(UNAME)))
-	HOST_OS := windows
+  HOST_OS := windows
 endif
 
 # BUILD_OS is the real host doing the build.
@@ -59,7 +59,7 @@ BUILD_OS := $(HOST_OS)
 # Windows SDK. Only a subset of tools and SDK will manage to build properly.
 ifeq ($(HOST_OS),linux)
 ifneq ($(USE_MINGW),)
-	HOST_OS := windows
+  HOST_OS := windows
 endif
 endif
 
@@ -69,15 +69,24 @@ endif
 
 
 # HOST_ARCH
-ifneq (,$(findstring 86,$(UNAME)))
-	HOST_ARCH := x86
-endif
-
-ifneq (,$(findstring Power,$(UNAME)))
-	HOST_ARCH := ppc
+ifneq (,$(findstring x86_64,$(UNAME)))
+  # TODO: Replace BUILD_HOST_64bit with a flag that forces 32-bit build,
+  # after we default to 64-bit host build.
+  ifeq (,$(BUILD_HOST_64bit))
+    HOST_ARCH := x86
+    HOST_2ND_ARCH :=
+  else
+    HOST_ARCH := x86_64
+    HOST_2ND_ARCH := x86
+  endif
+else ifneq (,$(findstring 86,$(UNAME)))
+  # It's not officially supported!
+  HOST_ARCH := x86
+  HOST_2ND_ARCH :=
 endif
 
 BUILD_ARCH := $(HOST_ARCH)
+BUILD_2ND_ARCH := $(HOST_2ND_ARCH)
 
 ifeq ($(HOST_ARCH),)
 $(error Unable to determine HOST_ARCH from uname -sm: $(UNAME)!)
@@ -94,12 +103,14 @@ $(error HOST_BUILD_TYPE must be either release or debug, not '$(HOST_BUILD_TYPE)
 endif
 endif
 
+# We don't want to move all the prebuilt host tools to a $(HOST_OS)-x86_64 dir.
+HOST_PREBUILT_ARCH := x86
 # This is the standard way to name a directory containing prebuilt host
 # objects. E.g., prebuilt/$(HOST_PREBUILT_TAG)/cc
 ifeq ($(HOST_OS),windows)
   HOST_PREBUILT_TAG := windows
 else
-  HOST_PREBUILT_TAG := $(HOST_OS)-$(HOST_ARCH)
+  HOST_PREBUILT_TAG := $(HOST_OS)-$(HOST_PREBUILT_ARCH)
 endif
 
 # TARGET_COPY_OUT_* are all relative to the staging directory, ie PRODUCT_OUT.
@@ -181,11 +192,12 @@ HOST_OUT_ROOT_release := $(OUT_DIR)/host
 HOST_OUT_ROOT_debug := $(DEBUG_OUT_DIR)/host
 HOST_OUT_ROOT := $(HOST_OUT_ROOT_$(HOST_BUILD_TYPE))
 
-HOST_OUT_release := $(HOST_OUT_ROOT_release)/$(HOST_OS)-$(HOST_ARCH)
-HOST_OUT_debug := $(HOST_OUT_ROOT_debug)/$(HOST_OS)-$(HOST_ARCH)
+# We want to avoid two host bin directories in multilib build.
+HOST_OUT_release := $(HOST_OUT_ROOT_release)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
+HOST_OUT_debug := $(HOST_OUT_ROOT_debug)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 HOST_OUT := $(HOST_OUT_$(HOST_BUILD_TYPE))
 
-BUILD_OUT := $(OUT_DIR)/host/$(BUILD_OS)-$(BUILD_ARCH)
+BUILD_OUT := $(OUT_DIR)/host/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)
 
 TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
 
@@ -212,6 +224,15 @@ HOST_OUT_FAKE := $(HOST_OUT)/fake_packages
 
 HOST_OUT_GEN := $(HOST_OUT)/gen
 HOST_OUT_COMMON_GEN := $(HOST_COMMON_OUT_ROOT)/gen
+
+# Out for HOST_2ND_ARCH
+HOST_2ND_ARCH_VAR_PREFIX := 2ND_
+HOST_2ND_ARCH_MODULE_SUFFIX := _32
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATES := $(HOST_OUT)/obj32
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATE_LIBRARIES := $($(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATES)/lib
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES := $(HOST_OUT)/lib32
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_EXECUTABLES := $(HOST_OUT_EXECUTABLES)
+
 
 TARGET_OUT_INTERMEDIATES := $(PRODUCT_OUT)/obj
 TARGET_OUT_HEADERS := $(TARGET_OUT_INTERMEDIATES)/include

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-# Configuration for Linux on x86.
+# Configuration for Windows on x86_64.
 # Included by combo/select.make
 
 # right now we get these from the environment, but we should
@@ -22,34 +22,33 @@
 TOOLS_PREFIX := #prebuilt/windows/host/bin/
 TOOLS_EXE_SUFFIX := .exe
 
+HOST_IS_64_BIT := true
+
 # Settings to use MinGW has a cross-compiler under Linux
 ifneq ($(findstring Linux,$(UNAME)),)
 ifneq ($(strip $(USE_MINGW)),)
 HOST_ACP_UNAVAILABLE := true
 TOOLS_EXE_SUFFIX :=
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -DUSE_MINGW
-TOOLS_PREFIX := /usr/bin/i586-mingw32msvc-
-$(combo_2nd_arch_prefix)HOST_C_INCLUDES += /usr/lib/gcc/i586-mingw32msvc/3.4.4/include
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LD_DIRS += -L/usr/i586-mingw32msvc/lib
+HOST_GLOBAL_CFLAGS += -DUSE_MINGW
+TOOLS_PREFIX := /usr/bin/amd64-mingw32msvc-
+HOST_C_INCLUDES += /usr/lib/gcc/amd64-mingw32msvc/4.4.2/include
+HOST_GLOBAL_LD_DIRS += -L/usr/amd64-mingw32msvc/lib
 endif # USE_MINGW
 endif # Linux
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS -D__USE_MINGW_ANSI_STDIO
+HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS -D__USE_MINGW_ANSI_STDIO
 
-$(combo_2nd_arch_prefix)HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
-$(combo_2nd_arch_prefix)HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)
-$(combo_2nd_arch_prefix)HOST_AR := $(TOOLS_PREFIX)ar$(TOOLS_EXE_SUFFIX)
+HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
+HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)
+HOST_AR := $(TOOLS_PREFIX)ar$(TOOLS_EXE_SUFFIX)
 
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += \
-    -include $(call select-android-config-h,windows)
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += \
-    --enable-stdcall-fixup
-
+HOST_GLOBAL_CFLAGS += -include $(call select-android-config-h,windows)
+HOST_GLOBAL_LDFLAGS += --enable-stdcall-fixup
 ifneq ($(strip $(BUILD_HOST_static)),)
 # Statically-linked binaries are desirable for sandboxed environment
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -static
+HOST_GLOBAL_LDFLAGS += -static
 endif # BUILD_HOST_static
 
 # when building under Cygwin, ensure that we use Mingw compilation by default.
@@ -63,19 +62,7 @@ endif # BUILD_HOST_static
 #
 ifneq ($(findstring CYGWIN,$(UNAME)),)
 ifeq ($(strip $(USE_CYGWIN)),)
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -mno-cygwin
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -mno-cygwin -mconsole
+HOST_GLOBAL_CFLAGS += -mno-cygwin
+HOST_GLOBAL_LDFLAGS += -mno-cygwin -mconsole
 endif
 endif
-
-############################################################
-## Macros after this line are shared by the 64-bit config.
-
-HOST_SHLIB_SUFFIX := .dll
-HOST_EXECUTABLE_SUFFIX := .exe
-
-# $(1): The file to check
-# TODO: find out what format cygwin's stat(1) uses
-define get-file-size
-999999999
-endef

@@ -10,6 +10,7 @@ $(warning $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsuppo
 endif
 endif
 
+my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
 ifndef my_module_multilib
