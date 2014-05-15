@@ -884,102 +884,98 @@ function writeCookie(cookie, val, section, expiration) {
 /* #########     END COOKIES!     ########## */
 
 
-
-
+var sticky = false;
 var stickyTop;
+var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
 /* Sets the vertical scoll position at which the sticky bar should appear.
    This method is called to reset the position when search results appear or hide */
 function setStickyTop() {
   stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
 }
 
-
-/* 
+/*
  * Displays sticky nav bar on pages when dac header scrolls out of view 
+ */
+$(window).scroll(function(event) {
+
+  setStickyTop();
+  var hiding = false;
+  var $stickyEl = $('#sticky-header');
+  var $menuEl = $('.menu-container');
+  // Exit if there's no sidenav
+  if ($('#side-nav').length == 0) return;
+  // Exit if the mouse target is a DIV, because that means the event is coming
+  // from a scrollable div and so there's no need to make adjustments to our layout
+  if ($(event.target).nodeName == "DIV") {
+    return;
+  }
+
+  var top = $(window).scrollTop();
+  // we set the navbar fixed when the scroll position is beyond the height of the site header...
+  var shouldBeSticky = top >= stickyTop;
+  // ... except if the document content is shorter than the sidenav height.
+  // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
+  if ($("#doc-col").height() < $("#side-nav").height()) {
+    shouldBeSticky = false;
+  }
+
+  // Don't continue if the header is sufficently far away
+  // (to avoid intensive resizing that slows scrolling)
+  if (sticky == shouldBeSticky) {
+    return;
+  }
+  // Account for horizontal scroll
+  var scrollLeft = $(window).scrollLeft();
+  // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
+  if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
+    updateSideNavPosition();
+    prevScrollLeft = scrollLeft;
+  }
+
+  // If sticky header visible and position is now near top, hide sticky
+  if (sticky && !shouldBeSticky) {
+    sticky = false;
+    hiding = true;
+    // make the sidenav static again
+    $('#devdoc-nav')
+        .removeClass('fixed')
+        .css({'width':'auto','margin':''})
+        .prependTo('#side-nav');
+    // delay hide the sticky
+    $menuEl.removeClass('sticky-menu');
+    $stickyEl.fadeOut(250);
+    hiding = false;
+
+    // update the sidenaav position for side scrolling
+    updateSideNavPosition();
+  } else if (!sticky && shouldBeSticky) {
+    sticky = true;
+    $stickyEl.fadeIn(10);
+    $menuEl.addClass('sticky-menu');
+
+    // make the sidenav fixed
+    var width = $('#devdoc-nav').width();
+    $('#devdoc-nav')
+        .addClass('fixed')
+        .css({'width':width+'px'})
+        .prependTo('#body-content');
+
+    // update the sidenaav position for side scrolling
+    updateSideNavPosition();
+
+  } else if (hiding && top < 15) {
+    $menuEl.removeClass('sticky-menu');
+    $stickyEl.hide();
+    hiding = false;
+  }
+  resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
+});
+
+/*
+ * Manages secion card states and nav resize to conclude loading
  */
 (function() {
   $(document).ready(function() {
-
-    setStickyTop();
-    var sticky = false;
-    var hiding = false;
-    var $stickyEl = $('#sticky-header');
-    var $menuEl = $('.menu-container');
-
-    var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
-
-    $(window).scroll(function() {
-      // Exit if there's no sidenav
-      if ($('#side-nav').length == 0) return;
-      // Exit if the mouse target is a DIV, because that means the event is coming
-      // from a scrollable div and so there's no need to make adjustments to our layout
-      if (event.target.nodeName == "DIV") {
-        return;
-      }
-
-
-      var top = $(window).scrollTop();
-      // we set the navbar fixed when the scroll position is beyond the height of the site header...
-      var shouldBeSticky = top >= stickyTop;
-      // ... except if the document content is shorter than the sidenav height.
-      // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
-      if ($("#doc-col").height() < $("#side-nav").height()) {
-        shouldBeSticky = false;
-      }
-
-      // Don't continue if the header is sufficently far away
-      // (to avoid intensive resizing that slows scrolling)
-      if (sticky && shouldBeSticky) {
-        return;
-      }
-
-      // Account for horizontal scroll
-      var scrollLeft = $(window).scrollLeft();
-      // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
-      if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
-        updateSideNavPosition();
-        prevScrollLeft = scrollLeft;
-      }
-
-      // If sticky header visible and position is now near top, hide sticky
-      if (sticky && !shouldBeSticky) {
-        sticky = false;
-        hiding = true;
-        // make the sidenav static again
-        $('#devdoc-nav')
-            .removeClass('fixed')
-            .css({'width':'auto','margin':''})
-            .prependTo('#side-nav');
-        // delay hide the sticky
-        $menuEl.removeClass('sticky-menu');
-        $stickyEl.fadeOut(250);
-        hiding = false;
-
-        // update the sidenaav position for side scrolling
-        updateSideNavPosition();
-      } else if (!sticky && shouldBeSticky) {
-        sticky = true;
-        $stickyEl.fadeIn(10);
-        $menuEl.addClass('sticky-menu');
-
-        // make the sidenav fixed
-        var width = $('#devdoc-nav').width();
-        $('#devdoc-nav')
-            .addClass('fixed')
-            .css({'width':width+'px'})
-            .prependTo('#body-content');
-
-        // update the sidenaav position for side scrolling
-        updateSideNavPosition();
-
-      } else if (hiding && top < 15) {
-        $menuEl.removeClass('sticky-menu');
-        $stickyEl.hide();
-        hiding = false;
-      }
-
-      resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
-    });
 
     // Stack hover states
     $('.section-card-menu').each(function(index, el) {
@@ -1827,6 +1823,11 @@ function search_changed(e, kd, toroot)
     }
     // Stop here if Google results are showing
     else if ($("#searchResults").is(":visible")) {
+        //If search_results is scrolled out of view, scroll to top on input
+        if ((sticky ) && (search.value != "")) {
+          $('body,html').animate({scrollTop:0}, '500', 'swing');
+        }
+        // if results aren't showing (and text not empty), return true to allow search to execute
         return true;
     }
     // 38 UP ARROW
@@ -2505,8 +2506,6 @@ $(window).hashchange( function(){
     if (!$("#searchResults").is(":hidden")) {
       hideResults();
     }
-    // Adjust the scroll position to account for sticky header
-    $(window).scrollTop($(window).scrollTop() - 60);
     return;
   }
 
@@ -3517,7 +3516,6 @@ function showSamples() {
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
-      console.log("cardsize is " + cardSize);
       // Some card sizes do not get a plusone button, such as where space is constrained
       // or for cards commonly embedded in docs (to improve overall page speed).
       plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
