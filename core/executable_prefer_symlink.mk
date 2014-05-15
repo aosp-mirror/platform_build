@@ -5,12 +5,20 @@
 # Note: now only limited to the binaries that will be installed under system/bin directory
 
 my_symlink := $(addprefix $(TARGET_OUT)/bin/, $(LOCAL_MODULE))
-# create link to the one used for prefer version
+# Create link to the one used depending on the target
+# configuration. Note that we require the TARGET_IS_64_BIT
+# check because 32 bit targets may not define TARGET_PREFER_32_BIT_APPS
+# et al. since those variables make no sense in that context.
+ifeq ($(TARGET_IS_64_BIT),true)
 ifneq ($(TARGET_PREFER_32_BIT_APPS),true)
   $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_64)
 else
   $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
 endif
+else
+  $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
+endif
+
 
 $(my_symlink): $(LOCAL_INSTALLED_MODULE) $(LOCAL_MODULE_MAKEFILE)
 	@echo "Symlink: $@ -> $(PRIVATE_SRC_BINARY_NAME)"
