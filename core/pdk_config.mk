@@ -193,20 +193,15 @@ ifneq (,$(filter platform platform-java, $(MAKECMDGOALS))$(filter true,$(TARGET_
 # files under $(PRODUCT_OUT)/symbols to help debugging.
 # Source not included to PDK due to dependency issue, so provide symbols instead.
 
-# find the real path of app_process, not the symlink
-_all_app_process := $(filter system/bin/app_process%, $(_pdk_fusion_file_list))
-ifneq (1,$(words $(_all_app_process)))
-_all_app_process := $(filter-out system/bin/app_process, $(_all_app_process))
-endif
-
+# We may not be building all of them.
+# The platform.zip just silently ignores the nonexistent ones.
 PDK_SYMBOL_FILES_LIST := \
-    $(_all_app_process)
-
-_all_app_process :=
+    system/bin/app_process32 \
+    system/bin/app_process64
 
 ifdef PDK_FUSION_PLATFORM_ZIP
 # symbols should be explicitly pulled for fusion build
-$(foreach f,$(PDK_SYMBOL_FILES_LIST),\
+$(foreach f,$(filter $(PDK_SYMBOL_FILES_LIST), $(_pdk_fusion_file_list)),\
   $(eval $(call add-dependency,$(PRODUCT_OUT)/$(f),$(PRODUCT_OUT)/symbols/$(f))))
 endif # PLATFORM_ZIP
 endif # platform.zip build or PDK
