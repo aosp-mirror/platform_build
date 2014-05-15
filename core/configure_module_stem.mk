@@ -1,4 +1,4 @@
-my_multilib_stem := $(LOCAL_MODULE_STEM_$(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_IS_64_BIT),64,32))
+my_multilib_stem := $(LOCAL_MODULE_STEM_$(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32))
 ifdef my_multilib_stem
 LOCAL_MODULE_STEM := $(my_multilib_stem)
 endif

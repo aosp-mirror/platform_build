@@ -6,6 +6,7 @@
 # LOCAL_MODULE_PATH_32 and LOCAL_MODULE_PATH_64 or LOCAL_MODULE_STEM_32 and
 # LOCAL_MODULE_STEM_64
 
+my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
 ifeq ($(my_module_multilib),both)
