@@ -41,8 +41,6 @@ LOCAL_INTERMEDIATE_TARGETS := $(linked_module)
 include $(BUILD_SYSTEM)/binary.mk
 ###################################
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_2ND_ARCH_VAR_PREFIX := $(LOCAL_2ND_ARCH_VAR_PREFIX)
-
 # Make sure that our guess at the value of intermediates was correct.
 ifneq ($(intermediates),$(guessed_intermediates))
 $(error Internal error: guessed path '$(guessed_intermediates)' doesn't match '$(intermediates))

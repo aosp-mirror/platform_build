@@ -1,30 +1,37 @@
-###########################################################
-## Standard rules for building a static library for the host.
-##
-## Additional inputs from base_rules.make:
-## None.
-##
-## LOCAL_MODULE_SUFFIX will be set for you.
-###########################################################
+my_prefix := HOST_
+include $(BUILD_SYSTEM)/multilib.mk
 
-ifeq ($(strip $(LOCAL_MODULE_CLASS)),)
-LOCAL_MODULE_CLASS := STATIC_LIBRARIES
+ifndef my_module_multilib
+# By default we only build host module for the first arch.
+my_module_multilib := first
 endif
-ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
-LOCAL_MODULE_SUFFIX := .a
+
+LOCAL_2ND_ARCH_VAR_PREFIX :=
+include $(BUILD_SYSTEM)/module_arch_supported.mk
+
+ifeq ($(my_module_arch_supported),true)
+include $(BUILD_SYSTEM)/host_static_library_internal.mk
 endif
-ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
-$(error $(LOCAL_PATH): Cannot set module stem for a library)
+
+ifdef HOST_2ND_ARCH
+LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/module_arch_supported.mk
+ifeq ($(my_module_arch_supported),true)
+# Build for HOST_2ND_ARCH
+OVERRIDE_BUILT_MODULE_PATH :=
+LOCAL_BUILT_MODULE :=
+LOCAL_INSTALLED_MODULE :=
+LOCAL_MODULE_STEM :=
+LOCAL_BUILT_MODULE_STEM :=
+LOCAL_INSTALLED_MODULE_STEM :=
+LOCAL_INTERMEDIATE_TARGETS :=
+
+include $(BUILD_SYSTEM)/host_static_library_internal.mk
 endif
-LOCAL_UNINSTALLABLE_MODULE := true
+LOCAL_2ND_ARCH_VAR_PREFIX :=
+endif  # HOST_2ND_ARCH
 
-LOCAL_IS_HOST_MODULE := true
-
-include $(BUILD_SYSTEM)/binary.mk
-
-$(LOCAL_BUILT_MODULE): $(built_whole_libraries)
-$(LOCAL_BUILT_MODULE): $(all_objects)
-	$(transform-host-o-to-static-lib)
+my_module_arch_supported :=
 
 ###########################################################
 ## Copy headers to the install tree

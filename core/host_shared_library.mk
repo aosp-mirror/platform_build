@@ -1,49 +1,37 @@
-###########################################################
-## Standard rules for building a normal shared library.
-##
-## Additional inputs from base_rules.make:
-## None.
-##
-## LOCAL_MODULE_SUFFIX will be set for you.
-###########################################################
+my_prefix := HOST_
+include $(BUILD_SYSTEM)/multilib.mk
 
-LOCAL_IS_HOST_MODULE := true
-
-ifeq ($(strip $(LOCAL_MODULE_CLASS)),)
-LOCAL_MODULE_CLASS := SHARED_LIBRARIES
-endif
-ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
-LOCAL_MODULE_SUFFIX := $(HOST_SHLIB_SUFFIX)
-endif
-ifneq ($(strip $(OVERRIDE_BUILT_MODULE_PATH)),)
-$(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
-endif
-ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
-$(error $(LOCAL_PATH): Cannot set module stem for a library)
+ifndef my_module_multilib
+# By default we only build host module for the first arch.
+my_module_multilib := first
 endif
 
-$(call host-shared-library-hook)
+LOCAL_2ND_ARCH_VAR_PREFIX :=
+include $(BUILD_SYSTEM)/module_arch_supported.mk
 
-skip_build_from_source :=
-ifdef LOCAL_PREBUILT_MODULE_FILE
-ifeq (,$(call if-build-from-source,$(LOCAL_MODULE),$(LOCAL_PATH)))
-include $(BUILD_SYSTEM)/prebuilt_internal.mk
-skip_build_from_source := true
-endif
+ifeq ($(my_module_arch_supported),true)
+include $(BUILD_SYSTEM)/host_shared_library_internal.mk
 endif
 
-ifndef skip_build_from_source
+ifdef HOST_2ND_ARCH
+LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/module_arch_supported.mk
+ifeq ($(my_module_arch_supported),true)
+# Build for HOST_2ND_ARCH
+OVERRIDE_BUILT_MODULE_PATH :=
+LOCAL_BUILT_MODULE :=
+LOCAL_INSTALLED_MODULE :=
+LOCAL_MODULE_STEM :=
+LOCAL_BUILT_MODULE_STEM :=
+LOCAL_INSTALLED_MODULE_STEM :=
+LOCAL_INTERMEDIATE_TARGETS :=
 
-# Put the built modules of all shared libraries in a common directory
-# to simplify the link line.
-OVERRIDE_BUILT_MODULE_PATH := $(HOST_OUT_INTERMEDIATE_LIBRARIES)
+include $(BUILD_SYSTEM)/host_shared_library_internal.mk
+endif
+LOCAL_2ND_ARCH_VAR_PREFIX :=
+endif  # HOST_2ND_ARCH
 
-include $(BUILD_SYSTEM)/binary.mk
-
-$(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries) $(LOCAL_ADDITIONAL_DEPENDENCIES)
-	$(transform-host-o-to-shared-lib)
-
-endif  # skip_build_from_source
+my_module_arch_supported :=
 
 ###########################################################
 ## Copy headers to the install tree

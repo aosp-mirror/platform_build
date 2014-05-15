@@ -22,18 +22,13 @@ LOCAL_DONT_CHECK_MODULE := true
 ifdef LOCAL_PREBUILT_MODULE_FILE
   my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
 else
-  ifdef LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-    my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+  ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+    my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
   else
     my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
   endif
 endif
 
-ifdef LOCAL_IS_HOST_MODULE
-  my_prefix := HOST_
-else
-  my_prefix := TARGET_
-endif
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # Put the built targets of all shared libraries in a common directory
   # to simplify the link line.

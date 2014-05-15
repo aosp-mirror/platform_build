@@ -426,7 +426,7 @@ $(strip \
     $(eval _idf2ndArchPrefix := $(if $(call directory_is_64_bit_blacklisted,$(LOCAL_PATH))$(strip $(5)),$(TARGET_2ND_ARCH_VAR_PREFIX))) \
     $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_INTERMEDIATES)) \
-      ,$(if $(filter $(_idfPrefix)-$(_idfClass),TARGET-SHARED_LIBRARIES TARGET-STATIC_LIBRARIES TARGET-EXECUTABLES TARGET-GYP),\
+      ,$(if $(filter $(_idfClass),SHARED_LIBRARIES STATIC_LIBRARIES EXECUTABLES GYP),\
           $(eval _idfIntBase := $($(_idf2ndArchPrefix)$(_idfPrefix)_OUT_INTERMEDIATES)) \
        ,$(eval _idfIntBase := $($(_idfPrefix)_OUT_INTERMEDIATES)) \
        ) \
@@ -1170,7 +1170,7 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
     filelist=; \
-    for f in `$(TARGET_AR) t $(1)`; do \
+    for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) t $(1)`; do \
         $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) p $(1) $$f > $$ldir/$$f; \
         filelist="$$filelist $$ldir/$$f"; \
     done ; \
@@ -1191,7 +1191,8 @@ define transform-o-to-static-lib
 @rm -f $@
 $(extract-and-include-target-whole-static-libs)
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
-$(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
+$(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
+    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
     $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
 endef
 
@@ -1206,11 +1207,12 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
     filelist=; \
-    for f in `$(HOST_AR) t $(1) | \grep '\.o$$'`; do \
-        $(HOST_AR) p $(1) $$f > $$ldir/$$f; \
+    for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) t $(1) | \grep '\.o$$'`; do \
+        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) p $(1) $$f > $$ldir/$$f; \
         filelist="$$filelist $$ldir/$$f"; \
     done ; \
-    $(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@ $$filelist
+    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
+        $(PRIVATE_ARFLAGS) $@ $$filelist
 
 endef
 
@@ -1226,7 +1228,9 @@ define transform-host-o-to-static-lib
 @rm -f $@
 $(extract-and-include-host-whole-static-libs)
 @echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
-$(call split-long-arguments,$(HOST_AR) $(HOST_GLOBAL_ARFLAGS) $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
+$(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) \
+    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
+    $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
 endef
 
 
@@ -1239,10 +1243,10 @@ endef
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
-	-Wl,-rpath-link=$(HOST_OUT_INTERMEDIATE_LIBRARIES) \
-	-Wl,-rpath,\$$ORIGIN/../lib \
+	-Wl,-rpath-link=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATE_LIBRARIES) \
+	-Wl,-rpath,\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
 	-shared -Wl,-soname,$(notdir $@) \
-	$(HOST_GLOBAL_LD_DIRS) \
+	$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS) \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	   $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
 	) \
@@ -1412,9 +1416,9 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
-	-Wl,-rpath-link=$(HOST_OUT_INTERMEDIATE_LIBRARIES) \
-	-Wl,-rpath,\$$ORIGIN/../lib \
-	$(HOST_GLOBAL_LD_DIRS) \
+	-Wl,-rpath-link=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATE_LIBRARIES) \
+	-Wl,-rpath,\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
+	$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS) \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 		$(PRIVATE_HOST_GLOBAL_LDFLAGS) \
 		$(HOST_FPIE_FLAGS) \

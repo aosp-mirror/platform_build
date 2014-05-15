@@ -1,6 +1,6 @@
 
 include $(BUILD_SYSTEM)/clang/x86_64.mk
-include $(BUILD_SYSTEM)/clang/x86_common.mk
+include $(BUILD_SYSTEM)/clang/HOST_x86_common.mk
 
 ifeq ($(HOST_OS),linux)
 CLANG_CONFIG_x86_64_HOST_TRIPLE := x86_64-linux-gnu
