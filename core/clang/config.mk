@@ -47,10 +47,13 @@ CLANG_CONFIG_TARGET_EXTRA_CPPFLAGS := -nostdlibinc
 CLANG_CONFIG_TARGET_EXTRA_LDFLAGS :=
 
 # HOST config
-ifneq ($(strip $(BUILD_HOST_64bit)),)
-include $(BUILD_SYSTEM)/clang/HOST_x86_64.mk
-else
+clang_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/clang/HOST_$(HOST_ARCH).mk
+
+# HOST_2ND_ARCH config
+ifdef HOST_2ND_ARCH
+clang_2nd_arch_prefix := $(HOST_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/clang/HOST_$(HOST_2ND_ARCH).mk
 endif
 
 # TARGET config
