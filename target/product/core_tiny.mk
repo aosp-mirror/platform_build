@@ -18,6 +18,7 @@
 
 PRODUCT_PACKAGES := \
     Bluetooth \
+    CalendarProvider \
     ContactsProvider \
     CertInstaller \
     FusedLocation \
