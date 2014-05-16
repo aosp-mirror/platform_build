@@ -49,7 +49,7 @@ endif # $(HOST_TOOLCHAIN_PREFIX)-gcc exists
 
 # gcc location for clang; to be updated when clang is updated
 # HOST_TOOLCHAIN_ROOT is a Darwin-specific define
-HOST_TOOLCHAIN_FOR_CLANG := $(HOST_TOOLCHAIN_ROOT)
+$(combo_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT)
 
 $(combo_2nd_arch_prefix)HOST_AR := $(AR)
 
