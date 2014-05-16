@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f01d8f5_bbd98702",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-16T23:47:38Z",
+      "side": 1,
+      "message": "If it\u0027s used at runtime, shouldn\u0027t it be something like /system/framework/boot.art? instead of out/target/product/.../boot.art (i.e. the path of the build file)?\nIf that\u0027s the case, that variable should follow LIBART_BOOT_IMAGE instead of DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION. LIBART_BOOT_IMAGE evaluates to something like /system/framework/arm64/boot.art, while DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION evaluates to out/target/product/flounder/dex_bootjars/system/framework/arm64/boot.art.",
+      "revId": "d2c5312682ec69d8d6c586da89bca98757a43e83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
