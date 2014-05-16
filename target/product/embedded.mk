@@ -67,7 +67,8 @@ PRODUCT_PACKAGES += \
     servicemanager \
     sh \
     surfaceflinger \
-    toolbox
+    toolbox \
+    libsigchain
 
 # SELinux packages
 PRODUCT_PACKAGES += \
