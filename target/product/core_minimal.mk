@@ -57,10 +57,13 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     logd \
     make_ext4fs \
+    mms-common \
     screencap \
     sensorservice \
+    telephony-common \
     uiautomator \
     uncrypt \
+    voip-common \
     webview \
     wifi-service
 
@@ -74,6 +77,9 @@ PRODUCT_BOOT_JARS := \
     ext \
     framework \
     framework2 \
+    telephony-common \
+    voip-common \
+    mms-common \
     android.policy \
     services \
     apache-xml \
