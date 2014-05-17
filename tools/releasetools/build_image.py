@@ -30,6 +30,8 @@ import tempfile
 
 import simg_map
 
+FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
+
 def RunCommand(cmd):
   """ Echo and run the given command
 
@@ -79,7 +81,7 @@ def AdjustPartitionSizeForVerity(partition_size):
   return partition_size - verity_tree_size - verity_metadata_size
 
 def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
-  cmd = ("build_verity_tree %s %s" % (sparse_image_path, verity_image_path))
+  cmd = ("build_verity_tree -A %s %s %s" % (FIXED_SALT, sparse_image_path, verity_image_path))
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
