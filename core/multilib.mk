@@ -1,4 +1,4 @@
-# Translate LOCAL_32_BIT_ONLY and LOCAL_NO_2ND_ARCH to LOCAL_MULTILIB,
+# Translate LOCAL_32_BIT_ONLY to LOCAL_MULTILIB,
 # and check LOCAL_MULTILIB is a valid value.  Returns module's multilib
 # setting in my_module_multilib, or empty if not set.
 
