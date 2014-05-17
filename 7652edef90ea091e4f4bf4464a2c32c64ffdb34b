@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa1c9852_f732c815",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-17T03:00:37Z",
+      "side": 1,
+      "message": "This doesn\u0027t work in my tests:\n$ out/host/linux-x86/bin/dex2oatd --runtime-arg -Xms64m --runtime-arg -Xmx64m --boot-image\u003dout/target/product/generic_arm64/dex_bootjars/system/framework/boot.art --dex-file\u003dout/target/common/obj/JAVA_LIBRARIES/am_intermediates/javalib.jar --dex-location\u003d/system/framework/am.jar --oat-file\u003dout/target/product/generic_arm64/obj/JAVA_LIBRARIES/am_intermediates/arm64/javalib.odex --android-root\u003dout/target/product/generic_arm64/system --instruction-set\u003darm64 --instruction-set-features\u003ddefault\ndex2oatd I 11682 11682 art/dex2oat/dex2oat.cc:1088] out/host/linux-x86/bin/dex2oatd --runtime-arg -Xms64m --runtime-arg -Xmx64m --boot-image\u003dout/target/product/generic_arm64/dex_bootjars/system/framework/boot.art --dex-file\u003dout/target/common/obj/JAVA_LIBRARIES/am_intermediates/javalib.jar --dex-location\u003d/system/framework/am.jar --oat-file\u003dout/target/product/generic_arm64/obj/JAVA_LIBRARIES/am_intermediates/arm64/javalib.odex --android-root\u003dout/target/product/generic_arm64/system --instruction-set\u003darm64 --instruction-set-features\u003ddefault\ndex2oatd F 11682 11682 art/runtime/utils.cc:1159] ANDROID_DATA not set and /data does not exist\ndex2oatd F 11682 11682 art/runtime/runtime.cc:266] Runtime aborting...\ndex2oatd F 11682 11682 art/runtime/runtime.cc:266] (Aborting thread was not attached to runtime!)\n\u003cstack trace\u003e",
+      "revId": "7652edef90ea091e4f4bf4464a2c32c64ffdb34b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
