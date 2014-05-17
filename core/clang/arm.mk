@@ -1,16 +1,11 @@
 # Clang flags for arm arch, target or host.
 
-CLANG_CONFIG_arm_EXTRA_ASFLAGS := \
-  -no-integrated-as
+CLANG_CONFIG_arm_EXTRA_ASFLAGS :=
 
 CLANG_CONFIG_arm_EXTRA_CFLAGS := \
-  -no-integrated-as
+  -mllvm -arm-enable-ehabi
 
-CLANG_CONFIG_arm_EXTRA_CPPFLAGS := \
-  -no-integrated-as
-
-CLANG_CONFIG_arm_EXTRA_LDFLAGS := \
-  -no-integrated-as
+CLANG_CONFIG_arm_EXTRA_LDFLAGS :=
 
 # Include common unknown flags
 CLANG_CONFIG_arm_UNKNOWN_CFLAGS := \
