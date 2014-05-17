@@ -1,6 +1,5 @@
 # We don't automatically set up rules to build packages for both
 # TARGET_ARCH and TARGET_2ND_ARCH.
-# By default, an package is built for TARGET_ARCH.
 # To build it for TARGET_2ND_ARCH in a 64bit product, use "LOCAL_MULTILIB := 32".
 
 my_prefix := TARGET_
