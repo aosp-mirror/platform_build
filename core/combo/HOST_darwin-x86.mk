@@ -123,9 +123,7 @@ define transform-host-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
         -dynamiclib -single_module -read_only_relocs suppress \
         $(HOST_GLOBAL_LD_DIRS) \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	   $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
-	) \
+        $(HOST_GLOBAL_LDFLAGS) \
         $(PRIVATE_ALL_OBJECTS) \
         $(addprefix -force_load , $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
@@ -142,11 +140,9 @@ define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
         -Wl,-rpath,@loader_path/../lib \
         -o $@ \
-        $(PRE_LION_DYNAMIC_LINKER_OPTIONS) -Wl,-headerpad_max_install_names \
+        $(PRE_LION_DYNAMIC_LINKER_OPTIONS) -headerpad_max_install_names \
         $(HOST_GLOBAL_LD_DIRS) \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	   $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
-	) \
+        $(HOST_GLOBAL_LDFLAGS) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
         $(PRIVATE_ALL_OBJECTS) \
         $(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
