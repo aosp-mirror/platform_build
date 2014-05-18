@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f15a02d_f36850c5",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-05-18T19:28:07Z",
+      "side": 1,
+      "message": "ws",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 1
+      },
+      "revId": "315a49ec8ba18b3c233de7a3bce9857af881b0ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
