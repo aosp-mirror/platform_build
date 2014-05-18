@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3f0aac14_21fc341f",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-05-18T19:24:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f10a43e_afd38906",
+      "revId": "6eb95a83f49157491e5e69ce1371d369723b9687",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f0aac14_4101689c",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2014-05-18T17:02:30Z",
       "side": 1,
       "message": "The second argument should be:\n$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH)",
+      "revId": "6eb95a83f49157491e5e69ce1371d369723b9687",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f10a43e_8ff7a56e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-05-18T19:24:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3f0aac14_4101689c",
       "revId": "6eb95a83f49157491e5e69ce1371d369723b9687",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
