@@ -34,6 +34,24 @@
       "revId": "7652edef90ea091e4f4bf4464a2c32c64ffdb34b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f15a02d_0884af82",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-05-18T08:15:14Z",
+      "side": 1,
+      "message": "I tested patchset 5 with full_mako-userdebug (with predexopt enabled with https://android-review.googlesource.com/#/c/94973/)\n\nyou\u0027ll need my art change as well:\n\nhttps://android-review.googlesource.com/#/c/94961/",
+      "parentUuid": "8a3274d1_24b7cede",
+      "revId": "7652edef90ea091e4f4bf4464a2c32c64ffdb34b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
