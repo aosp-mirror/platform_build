@@ -1,2 +1,3 @@
 allow bootanim self:process execmem;
 allow bootanim ashmem_device:chr_file execute;
+allow bootanim qemu_device:chr_file rw_file_perms;
