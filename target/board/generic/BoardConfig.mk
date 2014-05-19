@@ -78,6 +78,7 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 BOARD_SEPOLICY_UNION += \
         adbd.te \
+        app.te \
         bootanim.te \
         device.te \
         domain.te \
@@ -88,4 +89,5 @@ BOARD_SEPOLICY_UNION += \
         rild.te \
         shell.te \
         surfaceflinger.te \
-        system_server.te
+        system_server.te \
+        zygote.te
