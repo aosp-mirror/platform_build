@@ -533,20 +533,17 @@ TARGET_CPU_SMP ?= true
 DEX2OAT_TARGET_ARCH := $(TARGET_ARCH)
 DEX2OAT_TARGET_CPU_VARIANT := $(TARGET_CPU_VARIANT)
 DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
-
-# If for a 64bit build we have a 2nd architecture but the zygote isn't 64bit,
-# assume DEX2OAT should DEXPREOPT for the 2nd architecture.
-ifdef TARGET_2ND_ARCH
-  ifeq (true,$(TARGET_IS_64_BIT))
-    ifeq ($(filter ro.zygote=zygote64,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES)),)
-      DEX2OAT_TARGET_ARCH := $(TARGET_2ND_ARCH)
-      DEX2OAT_TARGET_CPU_VARIANT := $(TARGET_2ND_CPU_VARIANT)
-    endif
-  endif
-endif
-
 ifneq (,$(filter $(DEX2OAT_TARGET_CPU_VARIANT),cortex-a7 cortex-a15 krait denver))
   DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
+endif
+
+ifdef TARGET_2ND_ARCH
+$(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH := $(TARGET_2ND_ARCH)
+$(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT := $(TARGET_2ND_CPU_VARIANT)
+$(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
+ifneq (,$(filter $($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT),cortex-a7 cortex-a15 krait denver))
+  $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := div
+endif
 endif
 
 # define clang/llvm tools and global flags

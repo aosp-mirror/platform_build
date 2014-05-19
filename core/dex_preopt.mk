@@ -49,25 +49,26 @@ endif
 include $(BUILD_SYSTEM)/dex_preopt_libart.mk
 
 # Define dexpreopt-one-file based on current default runtime.
-# $(1): the boot image to use (unused for libdvm)
-# $(2): the input .jar or .apk file
-# $(3): the input .jar or .apk target location (unused for libdvm)
-# $(4): the output .odex file
+# $(1): the input .jar or .apk file
+# $(2): the output .odex file
 ifeq ($(DALVIK_VM_LIB),libdvm.so)
 define dexpreopt-one-file
-$(call dexopt-one-file,$(2),$(4))
+$(call dexopt-one-file,$(1),$(2))
 endef
 
 DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS := $(DEXOPT_DEPENDENCY)
 DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $(DEXPREOPT_BOOT_ODEXS)
 else
 define dexpreopt-one-file
-$(call dex2oat-one-file,$(1),$(2),$(3),$(4))
+$(call dex2oat-one-file,$(1),$(2))
 endef
 
 DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS := $(DEX2OATD_DEPENDENCY)
-DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $(DEFAULT_DEX_PREOPT_BUILT_IMAGE)
-endif
+DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
+ifdef TARGET_2ND_ARCH
+$(TARGET_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
+endif  # TARGET_2ND_ARCH
+endif  # DALVIK_VM_LIB
 else
 $(warning No DALVIK_VM_LIB, disable dexpreopt.)
 WITH_DEXPREOPT := false

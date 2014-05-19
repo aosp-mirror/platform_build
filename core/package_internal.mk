@@ -334,13 +334,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
 ifdef LOCAL_DEX_PREOPT
-$(LOCAL_BUILT_MODULE): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(LOCAL_BUILT_MODULE): PRIVATE_BUILT_ODEX := $(built_odex)
-$(LOCAL_BUILT_MODULE): PRIVATE_DEX_PREOPT_IMAGE := $(LOCAL_DEX_PREOPT_IMAGE)
-# Make sure the boot jars get dexpreopt-ed first
-$(LOCAL_BUILT_MODULE) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT)
-$(LOCAL_BUILT_MODULE) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS)
-$(LOCAL_BUILT_MODULE) : $(LOCAL_DEX_PREOPT_IMAGE)
 
 # built_odex is byproduct of LOCAL_BUILT_MODULE without its own build recipe.
 $(built_odex) : $(LOCAL_BUILT_MODULE)
@@ -374,7 +368,7 @@ ifneq ($(extra_jar_args),)
 endif
 	$(sign-package)
 ifdef LOCAL_DEX_PREOPT
-	$(call dexpreopt-one-file,$(PRIVATE_DEX_PREOPT_IMAGE),$@,$(PRIVATE_DEX_LOCATION),$(PRIVATE_BUILT_ODEX))
+	$(call dexpreopt-one-file,$@,$(PRIVATE_BUILT_ODEX))
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
