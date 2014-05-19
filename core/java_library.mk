@@ -93,15 +93,10 @@ endif
 
 else # ! boot jar
 $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
-$(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
-$(built_odex): PRIVATE_DEX_PREOPT_IMAGE := $(LOCAL_DEX_PREOPT_IMAGE)
-# Make sure the boot jars get dex-preopt-ed first
-$(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT)
-$(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS)
-$(built_odex) : $(LOCAL_DEX_PREOPT_IMAGE)
-$(built_odex) : $(common_javalib.jar)
+# Use pattern rule - we may have multiple built odex files.
+$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
 	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
-	$(call dexpreopt-one-file,$(PRIVATE_DEX_PREOPT_IMAGE),$<,$(PRIVATE_DEX_LOCATION),$@)
+	$(call dexpreopt-one-file,$<,$@)
 
 $(LOCAL_BUILT_MODULE) : $(common_javalib.jar) | $(ACP)
 	$(call copy-file-to-target)
