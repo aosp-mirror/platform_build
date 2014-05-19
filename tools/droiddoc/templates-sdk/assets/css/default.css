@@ -713,6 +713,7 @@ ul#title-tabs li a:active {
     color: #33b5e5;
     border-bottom-color: #33b5e5; } }
 
+h1:target,
 h2:target,
 h3:target {
     -webkit-animation-name: glowheader;
@@ -1131,7 +1132,7 @@ h3 {
 h3, h4 {
     color:#333;
     line-height: 20px;
-    margin: 10px 0;
+    margin: 10px 0 14px 0;
 }
 h4 {
   font-size: 16px;
@@ -5137,10 +5138,12 @@ a.download-sdk {
   margin-bottom: 0px;
   font-size: 20px;
   color: #363636;
+  padding-top: 70px;
+  margin-top:-60px;
 }
 .headerLine hr {
   overflow: hidden;
-  margin: 42px 0 0 0;
+  margin: 30px 0 0 0;
 }
 
 .article-detail #body-content {
@@ -5365,11 +5368,11 @@ a.download-sdk {
 .resource-flow-layout:after {
   content: ".";
   display: block;
-  height: 0;
+  height: 10;
+  position:relative;
   clear: both;
   visibility: hidden;
 }
-
 .resource-card:hover {
   cursor: pointer;
 }
@@ -6383,4 +6386,12 @@ height:30px;
 div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .section-card-menu .card-info ul li {
   border-top-color: #7e3794 !important;
+}
+
+div.jd-descr > h2:before, h3:before {
+display:block;
+content: "   ";
+margin-top:-60px;
+height: 70px;
+visibility:hidden;
 }
