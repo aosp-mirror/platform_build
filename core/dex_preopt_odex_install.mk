@@ -43,22 +43,86 @@ else # libdvm.so
 # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
 # We use this installed_odex trick to get boot.art installed.
 installed_odex := $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
+# Append the odex for the 2nd arch if we have one.
+installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
 endif # libdvm.so
 else  # boot jar
+ifeq ($(DALVIK_VM_LIB),libdvm.so)
 built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
 installed_odex := $(basename $(LOCAL_INSTALLED_MODULE)).odex
 
-ifneq ($(DALVIK_VM_LIB),libdvm.so) # libart
-ifndef LOCAL_DEX_PREOPT_IMAGE
-LOCAL_DEX_PREOPT_IMAGE := $(DEFAULT_DEX_PREOPT_BUILT_IMAGE)
+$(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
+                $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS)
+else # libart
+ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+# For a Java library, we build odex for both 1st arch and 2nd arch, if we have one.
+# #################################################
+# Odex for the 1st arch
+built_odex := $(call get-odex-file-path,$(DEX2OAT_TARGET_ARCH),$(LOCAL_BUILT_MODULE))
+ifdef LOCAL_DEX_PREOPT_IMAGE_LOCATION
+my_dex_preopt_image_location := $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
+else
+my_dex_preopt_image_location := $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
 endif
+my_dex_preopt_image_filename := $(call get-image-file-path,$(DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
+$(built_odex): PRIVATE_2ND_ARCH_VAR_PREFIX :=
+$(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+$(built_odex): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
+$(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
+                $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
+                $(my_dex_preopt_image_filename)
+installed_odex := $(call get-odex-file-path,$(DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+
+# #################################################
+# Odex for the 2nd arch
+ifdef TARGET_2ND_ARCH
+built_odex2 := $(call get-odex-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_BUILT_MODULE))
+ifdef LOCAL_DEX_PREOPT_IMAGE_LOCATION
+my_dex_preopt_image_location := $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
+else
+my_dex_preopt_image_location := $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
+endif
+my_dex_preopt_image_filename := $(call get-image-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
+$(built_odex2): PRIVATE_2ND_ARCH_VAR_PREFIX := $(TARGET_2ND_ARCH_VAR_PREFIX)
+$(built_odex2): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+$(built_odex2): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
+$(built_odex2) : $($(TARGET_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
+                 $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
+                 $(my_dex_preopt_image_filename)
+
+built_odex += $(built_odex2)
+installed_odex += $(call get-odex-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+endif  # TARGET_2ND_ARCH
+# #################################################
+else  # must be APPS
+# For an app, we build for the multilib arch it's targeted for.
+built_odex := $(call get-odex-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_BUILT_MODULE))
+ifdef LOCAL_DEX_PREOPT_IMAGE_LOCATION
+my_dex_preopt_image_location := $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
+else
+my_dex_preopt_image_location := $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
+endif
+my_dex_preopt_image_filename := $(call get-image-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
+# $(built_odex) is byproduct of $(LOCAL_BUILT_MODULE)
+$(LOCAL_BUILT_MODULE) $(built_odex): PRIVATE_2ND_ARCH_VAR_PREFIX := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+$(LOCAL_BUILT_MODULE) $(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+$(LOCAL_BUILT_MODULE) $(built_odex): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
+$(LOCAL_BUILT_MODULE) $(built_odex) : $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
+                $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
+                $(my_dex_preopt_image_filename)
+installed_odex := $(call get-odex-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+endif  # LOCAL_MODULE_CLASS
 endif # libart
 endif # boot jar
 
 ifdef built_odex
 # We need $(LOCAL_BUILT_MODULE) in the deps to enforce reinstallation
 # even if $(built_odex) is byproduct of $(LOCAL_BUILT_MODULE), such as in package.mk.
-$(installed_odex) : $(built_odex) $(LOCAL_BUILT_MODULE) | $(ACP)
+# Use pattern rule - we may have multiple installed odex files.
+# Ugly syntax - See the definition get-odex-file-path.
+$(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%/$(notdir $(word 1,$(installed_odex))) \
+                  : $(dir $(LOCAL_BUILT_MODULE))%/$(notdir $(word 1,$(built_odex))) \
+    $(LOCAL_BUILT_MODULE) | $(ACP)
 	@echo "Install: $@"
 	$(copy-file-to-target)
 endif
