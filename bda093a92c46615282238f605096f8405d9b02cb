@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f440856_c997d563",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-20T21:42:27Z",
+      "side": 1,
+      "message": "I guess the increase comes from the multilib .odex/.oat/.art files.\nI changed the generic_x86_64 to 786432000 (750M) recently. Maybe we shall just use that value?",
+      "revId": "bda093a92c46615282238f605096f8405d9b02cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
