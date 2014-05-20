@@ -16,6 +16,24 @@
       "revId": "506c544eef13deecde096ce215393d2bf16d06b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f1ab865_269d5bdf",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2014-05-20T21:08:40Z",
+      "side": 1,
+      "message": "Oops, yes, this is actually broken in two different ways. The : here is not necessary, and a trailing : needs to be added. Fixing right now.",
+      "parentUuid": "ff281483_17717e5e",
+      "revId": "506c544eef13deecde096ce215393d2bf16d06b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
