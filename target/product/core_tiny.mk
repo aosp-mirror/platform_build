@@ -62,6 +62,7 @@ PRODUCT_PACKAGES += \
     libsqlite_jni \
     libwilhelm \
     make_ext4fs \
+    nullwebview \
     screencap \
     sensorservice \
     uiautomator \
@@ -79,7 +80,8 @@ PRODUCT_BOOT_JARS := \
     framework2 \
     android.policy \
     services \
-    apache-xml
+    apache-xml \
+    nullwebview
 
 PRODUCT_RUNTIMES := runtime_libdvm_default
 
