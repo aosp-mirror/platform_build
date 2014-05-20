@@ -4094,6 +4094,7 @@ EndColorStr='#ececec');
   width: 26px;
   height: 25px;
   background: url(../images/dac_logo.png);
+  background-image: -webkit-image-set(url(../images/dac_logo.png) 1x, url(../images/dac_logo@2x.png) 2x);
   z-index: 52;
   position: relative;
 }
