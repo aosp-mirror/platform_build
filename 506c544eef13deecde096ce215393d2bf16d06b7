@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff281483_17717e5e",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-20T21:02:11Z",
+      "side": 1,
+      "message": "It should be appended here. Otherwise we may end up with \"::\" in PATH.",
+      "revId": "506c544eef13deecde096ce215393d2bf16d06b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
