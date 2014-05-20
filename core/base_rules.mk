@@ -598,7 +598,7 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) $(LOCAL_INSTALLED_MODULE))
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
-    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED)$(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE))
+    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
