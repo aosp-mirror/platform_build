@@ -229,6 +229,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Adding dalvik.vm.dex2oat-flags to eng builds
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# 4.4.4 (KKWT)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
