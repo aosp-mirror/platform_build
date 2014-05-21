@@ -61,7 +61,7 @@ PRODUCT_PACKAGES += \
     libnetd_client \
     libnetlink \
     libnetutils \
-    libpdfium \
+    libpdfrenderer \
     libreference-ril \
     libreverbwrapper \
     libril \
