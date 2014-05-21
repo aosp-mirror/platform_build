@@ -36,6 +36,7 @@ PRODUCT_PACKAGES += \
     com.android.media.remotedisplay \
     com.android.media.remotedisplay.xml \
     drmserver \
+    ethernet-service \
     framework-res \
     idmap \
     installd \
@@ -86,6 +87,7 @@ PRODUCT_BOOT_JARS := \
     android.policy \
     services \
     apache-xml \
+    ethernet-service \
     webviewchromium \
     wifi-service
 
