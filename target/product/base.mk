@@ -42,7 +42,8 @@ PRODUCT_PACKAGES += \
     libandroid_servers \
     libaudioeffect_jni \
     libaudioflinger \
-    libaudiopolicy \
+    libaudiopolicyservice \
+    libaudiopolicymanager \
     libbundlewrapper \
     libcamera_client \
     libcameraservice \
