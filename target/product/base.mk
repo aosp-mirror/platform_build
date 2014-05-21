@@ -58,6 +58,7 @@ PRODUCT_PACKAGES += \
     libmedia_jni \
     libmediaplayerservice \
     libmtp \
+    libnetd_client \
     libnetlink \
     libnetutils \
     libpdfium \
