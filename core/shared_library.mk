@@ -1,3 +1,12 @@
+my_prefix := TARGET_
+include $(BUILD_SYSTEM)/multilib.mk
+
+ifndef my_module_multilib
+# libraries default to building for both architecturess
+my_module_multilib := both
+endif
+
+ifeq ($(my_module_multilib),both)
 ifneq ($(LOCAL_MODULE_PATH),)
 ifneq ($(TARGET_2ND_ARCH),)
 $(warning $(LOCAL_MODULE): LOCAL_MODULE_PATH for shared libraries is unsupported in multiarch builds, use LOCAL_MODULE_RELATIVE_PATH instead)
@@ -9,14 +18,8 @@ ifneq ($(TARGET_2ND_ARCH),)
 $(warning $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsupported in multiarch builds)
 endif
 endif
+endif # my_module_multilib == both
 
-my_prefix := TARGET_
-include $(BUILD_SYSTEM)/multilib.mk
-
-ifndef my_module_multilib
-# libraries default to building for both architecturess
-my_module_multilib := both
-endif
 
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 include $(BUILD_SYSTEM)/module_arch_supported.mk
