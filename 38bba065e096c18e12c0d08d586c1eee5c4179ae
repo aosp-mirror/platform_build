@@ -16,6 +16,24 @@
       "revId": "38bba065e096c18e12c0d08d586c1eee5c4179ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f5ee42c_f941434c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-05-21T23:58:37Z",
+      "side": 1,
+      "message": "related cl is this https://android-review.googlesource.com/95403 VG is a bit exotic in this regard.",
+      "parentUuid": "3f8d4cf3_43a958b0",
+      "revId": "38bba065e096c18e12c0d08d586c1eee5c4179ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
