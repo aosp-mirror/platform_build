@@ -39,7 +39,6 @@ PRODUCT_PACKAGES += \
     libGLESv2 \
     libbinder \
     libc \
-    libctest \
     libcutils \
     libdl \
     libgui \
