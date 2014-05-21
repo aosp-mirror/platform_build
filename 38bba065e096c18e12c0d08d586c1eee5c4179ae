@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f8d4cf3_43a958b0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-21T23:49:40Z",
+      "side": 1,
+      "message": "I think the current approach is to discourage people using LOCAL_PATH for shared library.",
+      "revId": "38bba065e096c18e12c0d08d586c1eee5c4179ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
