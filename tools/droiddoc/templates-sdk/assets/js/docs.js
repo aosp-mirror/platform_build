@@ -218,7 +218,7 @@ $(document).ready(function() {
     }
   } else if ($("body").hasClass("about")) {
     $("#sticky-header").addClass("about");
-  } 
+  }
 
   // set global variable so we can highlight the sidenav a bit later (such as for google reference)
   // and highlight the sidenav
@@ -894,7 +894,7 @@ function setStickyTop() {
 }
 
 /*
- * Displays sticky nav bar on pages when dac header scrolls out of view 
+ * Displays sticky nav bar on pages when dac header scrolls out of view
  */
 $(window).scroll(function(event) {
 
@@ -986,7 +986,10 @@ $(window).scroll(function(event) {
       $cardInfo.css({position: 'absolute', bottom:'0px', left:'0px', right:'0px', overflow:'visible'});
     });
 
-    resizeNav();  // must resize once loading is finished
+    // Resize once loading is finished
+    resizeNav();
+    // Check if there's an anchor that we need to scroll into view
+    offsetScrollForSticky();
   });
 
 })();
@@ -1821,13 +1824,12 @@ function search_changed(e, kd, toroot)
             return false;
         }
     }
-    // Stop here if Google results are showing
+    // If Google results are showing, return true to allow ajax search to execute
     else if ($("#searchResults").is(":visible")) {
-        //If search_results is scrolled out of view, scroll to top on input
+        // Also, if search_results is scrolled out of view, scroll to top to make results visible
         if ((sticky ) && (search.value != "")) {
           $('body,html').animate({scrollTop:0}, '500', 'swing');
         }
-        // if results aren't showing (and text not empty), return true to allow search to execute
         return true;
     }
     // 38 UP ARROW
@@ -2497,6 +2499,25 @@ google.setOnLoadCallback(function(){
   }
 }, true);
 
+/* Adjust the scroll position to account for sticky header, only if the hash matches an id */
+function offsetScrollForSticky() {
+  var hash = location.hash;
+  var $matchingElement = $(hash);
+  // If there's no element with the hash as an ID, then look for an <a name=''> with it.
+  if ($matchingElement.length < 1) {
+    $matchingElement = $('a[name="' + hash.substr(1) + '"]');
+  }
+  // Sanity check that hash is a real hash and that there's an element with that ID on the page
+  if ((hash.indexOf("#") == 0) && $matchingElement.length) {
+    // If the position of the target element is near the top of the page (<20px, where we expect it
+    // to be because we need to move it down 60px to become in view), then move it down 60px
+    if (Math.abs($matchingElement.offset().top - $(window).scrollTop()) < 20) {
+      $(window).scrollTop($(window).scrollTop() - 60);
+    } else {
+    }
+  }
+}
+
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
   // If the hash isn't a search query or there's an error in the query,
@@ -2506,6 +2527,7 @@ $(window).hashchange( function(){
     if (!$("#searchResults").is(":hidden")) {
       hideResults();
     }
+    offsetScrollForSticky();
     return;
   }
 
@@ -3348,7 +3370,7 @@ function showSamples() {
     showing lines that are cut off. This works with the css ellipsis
     classes to fade last text line and apply an ellipsis char. */
 
-    //card text currently uses 15px line height. 
+    //card text currently uses 15px line height.
     var lineHeight = 15;
     $('.card-info .text').ellipsisfade(lineHeight);
   });
@@ -3516,6 +3538,7 @@ function showSamples() {
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
+      // console.log("cardsize is " + cardSize);
       // Some card sizes do not get a plusone button, such as where space is constrained
       // or for cards commonly embedded in docs (to improve overall page speed).
       plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
