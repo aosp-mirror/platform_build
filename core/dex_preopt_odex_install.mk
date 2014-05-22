@@ -103,11 +103,10 @@ else
 my_dex_preopt_image_location := $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
 endif
 my_dex_preopt_image_filename := $(call get-image-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
-# $(built_odex) is byproduct of $(LOCAL_BUILT_MODULE)
-$(LOCAL_BUILT_MODULE) $(built_odex): PRIVATE_2ND_ARCH_VAR_PREFIX := $(LOCAL_2ND_ARCH_VAR_PREFIX)
-$(LOCAL_BUILT_MODULE) $(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
-$(LOCAL_BUILT_MODULE) $(built_odex): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
-$(LOCAL_BUILT_MODULE) $(built_odex) : $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
+$(built_odex): PRIVATE_2ND_ARCH_VAR_PREFIX := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+$(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+$(built_odex): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
+$(built_odex) : $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
                 $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
                 $(my_dex_preopt_image_filename)
 installed_odex := $(call get-odex-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
@@ -116,13 +115,11 @@ endif # libart
 endif # boot jar
 
 ifdef built_odex
-# We need $(LOCAL_BUILT_MODULE) in the deps to enforce reinstallation
-# even if $(built_odex) is byproduct of $(LOCAL_BUILT_MODULE), such as in package.mk.
 # Use pattern rule - we may have multiple installed odex files.
 # Ugly syntax - See the definition get-odex-file-path.
 $(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%/$(notdir $(word 1,$(installed_odex))) \
                   : $(dir $(LOCAL_BUILT_MODULE))%/$(notdir $(word 1,$(built_odex))) \
-    $(LOCAL_BUILT_MODULE) | $(ACP)
+    | $(ACP)
 	@echo "Install: $@"
 	$(copy-file-to-target)
 endif
