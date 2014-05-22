@@ -587,6 +587,9 @@ INTERNAL_PLATFORM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGI
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
 TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
+ifdef TARGET_2ND_ARCH
+TARGET_2ND_PREBUILT_TAG := android-$(TARGET_2ND_ARCH)
+endif
 
 # Set up RS prebuilt variables for compatibility library
 
