@@ -159,11 +159,6 @@ LOCAL_DEX_PREOPT := false
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 #######################################
-ifdef LOCAL_DEX_PREOPT
-$(built_module): PRIVATE_BUILT_ODEX := $(built_odex)
-# built_odex is byproduct of LOCAL_BUILT_MODULE without its own build recipe.
-$(built_odex) : $(LOCAL_BUILT_MODULE)
-endif # LOCAL_DEX_PREOPT
 # Sign and align non-presigned .apks.
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
@@ -174,9 +169,18 @@ ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	$(sign-package)
 endif
 ifdef LOCAL_DEX_PREOPT
-	$(call dexpreopt-one-file,$@,$(PRIVATE_BUILT_ODEX))
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+	$(call dexpreopt-remove-classes.dex,$@)
+endif
 endif
 	$(align-package)
+
+###############################
+## Rule to build the odex file
+ifdef LOCAL_DEX_PREOPT
+$(built_odex) : $(my_prebuilt_src_file)
+	$(call dexpreopt-one-file,$<,$@)
+endif
 
 else # LOCAL_MODULE_CLASS != APPS
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
