@@ -333,12 +333,6 @@ $(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
 
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
-ifdef LOCAL_DEX_PREOPT
-$(LOCAL_BUILT_MODULE): PRIVATE_BUILT_ODEX := $(built_odex)
-
-# built_odex is byproduct of LOCAL_BUILT_MODULE without its own build recipe.
-$(built_odex) : $(LOCAL_BUILT_MODULE)
-endif
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abi)
 ifneq ($(TARGET_BUILD_APPS),)
@@ -368,13 +362,24 @@ ifneq ($(extra_jar_args),)
 endif
 	$(sign-package)
 ifdef LOCAL_DEX_PREOPT
-	$(call dexpreopt-one-file,$@,$(PRIVATE_BUILT_ODEX))
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
 endif
 	@# Alignment must happen after all other zip operations.
 	$(align-package)
+
+###############################
+## Rule to build the odex file
+ifdef LOCAL_DEX_PREOPT
+$(built_odex): PRIVATE_DEX_FILE := $(built_dex)
+$(built_odex) : $(built_dex)
+	$(create-empty-package)
+	$(add-dex-to-package)
+	$(hide) mv $@ $@.input
+	$(call dexpreopt-one-file,$@.input,$@)
+	$(hide) rm $@.input
+endif
 
 # Save information about this package
 PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
