@@ -895,7 +895,7 @@ scroll top left;
   .framed-nexus4-port-216 img {
     width: 216px;
     height: 360px; }
-    
+
 .framed-nexus5-port-span-5 {
   background: transparent url(../images/styles/device_nexus5_blank_port_span5.png) no-repeat
   scroll top left;
@@ -2762,7 +2762,7 @@ table.blank th, table.blank td {
 .caption {
   margin: 0.5em 0 2em 0;
   color: #000;
-  font-size: 11.5px; 
+  font-size: 11.5px;
 }
 
 .nolist, .nolist ul, .nolist ol {
@@ -5139,8 +5139,6 @@ a.download-sdk {
   margin-bottom: 0px;
   font-size: 20px;
   color: #363636;
-  padding-top: 70px;
-  margin-top:-60px;
 }
 .headerLine hr {
   overflow: hidden;
@@ -5381,7 +5379,7 @@ a.download-sdk {
   opacity: 0;
 }
 /* disabled to make way for fade/ellipsis truncation,
-   and the plusone moves up. 
+   and the plusone moves up.
 .resource-card:hover .card-info .description .text {
   padding-right: 70px;
 } */
@@ -6387,12 +6385,4 @@ height:30px;
 div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .section-card-menu .card-info ul li {
   border-top-color: #7e3794 !important;
-}
-
-div.jd-descr > h2:before, h3:before {
-display:block;
-content: "   ";
-margin-top:-60px;
-height: 70px;
-visibility:hidden;
 }
