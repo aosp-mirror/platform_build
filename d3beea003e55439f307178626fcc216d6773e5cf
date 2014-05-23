@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fe088ae_4fe66d7e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-23T17:58:43Z",
+      "side": 1,
+      "message": "i\u003d$$(($$i + 1))",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7fd184e1_d56bcebf",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-23T17:58:43Z",
+      "side": 1,
+      "message": "You should use $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS), which already includes cqPD.",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7fd184e1_d59d0e88",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-23T17:58:43Z",
+      "side": 1,
+      "message": "_extract-and-include-single-target-whole-static-lib used to be long-running job when the whole static libraries get really big in external/llvm .\n I think this change would make it worse. One optimization I can think of is to for the 1st .a we can actually just do a copy instead of extracting and merging.",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
