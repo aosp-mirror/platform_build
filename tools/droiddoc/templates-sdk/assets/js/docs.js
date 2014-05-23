@@ -347,7 +347,20 @@ false; // navigate across topic boundaries only in design docs
   // Set up the course landing pages for Training with class names and descriptions
   if ($('body.trainingcourse').length) {
     var $classLinks = $selListItem.find('ul li a').not('#nav .nav-section .nav-section ul a');
-    var $classDescriptions = $classLinks.attr('description');
+
+    // create an array for all the class descriptions
+    var $classDescriptions = new Array($classLinks.length);
+    var lang = getLangPref();
+    $classLinks.each(function(index) {
+      var langDescr = $(this).attr(lang + "-description");
+      if (typeof langDescr !== 'undefined' && langDescr !== false) {
+        // if there's a class description in the selected language, use that
+        $classDescriptions[index] = langDescr;
+      } else {
+        // otherwise, use the default english description
+        $classDescriptions[index] = $(this).attr("description");
+      }
+    });
 
     var $olClasses  = $('<ol class="class-list"></ol>');
     var $liClass;
@@ -359,7 +372,7 @@ false; // navigate across topic boundaries only in design docs
     $classLinks.each(function(index) {
       $liClass  = $('<li></li>');
       $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2>' + $(this).html()+'</h2><span></span></a>');
-      $pSummary = $('<p class="description">' + $(this).attr('description') + '</p>');
+      $pSummary = $('<p class="description">' + $classDescriptions[index] + '</p>');
 
       $olLessons  = $('<ol class="lesson-list"></ol>');
 
@@ -3538,7 +3551,6 @@ function showSamples() {
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
-      // console.log("cardsize is " + cardSize);
       // Some card sizes do not get a plusone button, such as where space is constrained
       // or for cards commonly embedded in docs (to improve overall page speed).
       plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
