@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "5fd680dc_349a5e59",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-23T18:15:41Z",
+      "side": 1,
+      "message": "$(combo_var_prefix)GLOBAL_ARFLAGS in core/combo/select.mk is only used here. But yes, you need to \"make checkbuild\" to make sure it doesn\u0027t break existing builds.",
+      "parentUuid": "7fd184e1_35feda89",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7fd184e1_d59d0e88",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -101,6 +119,24 @@
       "side": 1,
       "message": "I don\u0027t think this should perform that much worse. There will be a small hit for having to run ar more times, but q is much faster than r because it doesn\u0027t have to scan the archive; it just appends the new file to the end. We might actually see a performance improvement here... tough to say without trying it.",
       "parentUuid": "7fd184e1_d59d0e88",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1fe088ae_123e4aaa",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-23T18:15:41Z",
+      "side": 1,
+      "message": "Good to know q would improve performance. But copy-the-first seems to still be good to have. I\u0027s appreciate if you can do it :-)",
+      "parentUuid": "5fd680dc_943a2ab8",
       "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
