@@ -19,7 +19,6 @@ $.ajaxSetup({
 
 /******  ON LOAD SET UP STUFF *********/
 
-var navBarIsFixed = false;
 $(document).ready(function() {
 
   // load json file for JD doc search suggestions
@@ -411,7 +410,7 @@ false; // navigate across topic boundaries only in design docs
     var stylesheet = $('link[rel="stylesheet"][class="fullscreen"]');
     setNavBarLeftPos(); // do this even if sidenav isn't fixed because it could become fixed
     // make sidenav behave when resizing the window and side-scolling is a concern
-    if (navBarIsFixed) {
+    if (sticky) {
       if ((stylesheet.attr("disabled") == "disabled") || stylesheet.length == 0) {
         updateSideNavPosition();
       } else {
@@ -931,18 +930,18 @@ $(window).scroll(function(event) {
   if ($("#doc-col").height() < $("#side-nav").height()) {
     shouldBeSticky = false;
   }
+  // Account for horizontal scroll
+  var scrollLeft = $(window).scrollLeft();
+  // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
+  if (sticky && (scrollLeft != prevScrollLeft)) {
+    updateSideNavPosition();
+    prevScrollLeft = scrollLeft;
+  }
 
   // Don't continue if the header is sufficently far away
   // (to avoid intensive resizing that slows scrolling)
   if (sticky == shouldBeSticky) {
     return;
-  }
-  // Account for horizontal scroll
-  var scrollLeft = $(window).scrollLeft();
-  // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
-  if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
-    updateSideNavPosition();
-    prevScrollLeft = scrollLeft;
   }
 
   // If sticky header visible and position is now near top, hide sticky
@@ -2655,7 +2654,7 @@ var maxLevel = 1;
   }
 
 function updateSidenavFixedWidth() {
-  if (!navBarIsFixed) return;
+  if (!sticky) return;
   $('#devdoc-nav').css({
     'width' : $('#side-nav').css('width'),
     'margin' : $('#side-nav').css('margin')
@@ -2666,7 +2665,7 @@ function updateSidenavFixedWidth() {
 }
 
 function updateSidenavFullscreenWidth() {
-  if (!navBarIsFixed) return;
+  if (!sticky) return;
   $('#devdoc-nav').css({
     'width' : $('#side-nav').css('width'),
     'margin' : $('#side-nav').css('margin')
