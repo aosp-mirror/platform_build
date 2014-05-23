@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1fe088ae_12f64af9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-05-23T18:04:30Z",
+      "side": 1,
+      "message": "Thanks. I knew there had to be a better way.",
+      "parentUuid": "1fe088ae_4fe66d7e",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7fd184e1_d56bcebf",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "7fd184e1_35feda89",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-05-23T18:04:30Z",
+      "side": 1,
+      "message": "It actually used r instead of q, which replaces duplicate names. If changing the global arflags to use q won\u0027t interfere with anything else, then that makes the most sense.",
+      "parentUuid": "7fd184e1_d56bcebf",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7fd184e1_d59d0e88",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2014-05-23T17:58:43Z",
       "side": 1,
       "message": "_extract-and-include-single-target-whole-static-lib used to be long-running job when the whole static libraries get really big in external/llvm .\n I think this change would make it worse. One optimization I can think of is to for the 1st .a we can actually just do a copy instead of extracting and merging.",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5fd680dc_943a2ab8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1179,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-05-23T18:04:30Z",
+      "side": 1,
+      "message": "I don\u0027t think this should perform that much worse. There will be a small hit for having to run ar more times, but q is much faster than r because it doesn\u0027t have to scan the archive; it just appends the new file to the end. We might actually see a performance improvement here... tough to say without trying it.",
+      "parentUuid": "7fd184e1_d59d0e88",
       "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
