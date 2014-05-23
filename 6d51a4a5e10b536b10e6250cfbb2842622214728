@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f52ac51_f8a6b135",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-23T23:17:06Z",
+      "side": 1,
+      "message": "$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) is more efficient :-).",
+      "revId": "6d51a4a5e10b536b10e6250cfbb2842622214728",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
