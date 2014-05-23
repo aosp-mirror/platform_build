@@ -3,8 +3,12 @@ my_prefix := HOST_
 include $(BUILD_SYSTEM)/multilib.mk
 
 ifndef my_module_multilib
+ifeq ($(HOST_PREFER_32_BIT),true)
+my_module_multilib := 32
+else
 # By default we only build host module for the first arch.
 my_module_multilib := first
+endif
 endif
 
 ifeq ($(my_module_multilib),both)
@@ -33,9 +37,6 @@ ifeq ($(my_module_arch_supported),true)
 OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
-LOCAL_MODULE_STEM :=
-LOCAL_BUILT_MODULE_STEM :=
-LOCAL_INSTALLED_MODULE_STEM :=
 LOCAL_INTERMEDIATE_TARGETS :=
 
 include $(BUILD_SYSTEM)/host_executable_internal.mk

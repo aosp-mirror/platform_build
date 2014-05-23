@@ -36,7 +36,7 @@ my_embed_jni := true
 endif
 
 # App-specific lib path.
-my_app_lib_path :=  $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET$(partition_tag)_OUT_SHARED_LIBRARIES)/$(basename $(LOCAL_INSTALLED_MODULE_STEM))
+my_app_lib_path :=  $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET$(partition_tag)_OUT_SHARED_LIBRARIES)/$(basename $(my_installed_module_stem))
 my_extracted_jni_libs :=
 
 ifdef my_embed_jni

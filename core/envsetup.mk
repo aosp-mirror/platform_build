@@ -67,6 +67,10 @@ ifeq ($(HOST_OS),)
 $(error Unable to determine HOST_OS from uname -sm: $(UNAME)!)
 endif
 
+ifeq ($(HOST_PREFER_32_BIT),true)
+# User asks for multilib build, but use 32-bit as preferred arch.
+BUILD_HOST_64bit := true
+endif
 
 # HOST_ARCH
 ifneq (,$(findstring x86_64,$(UNAME)))
@@ -230,7 +234,13 @@ HOST_2ND_ARCH_VAR_PREFIX := 2ND_
 HOST_2ND_ARCH_MODULE_SUFFIX := _32
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATES := $(HOST_OUT)/obj32
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATE_LIBRARIES := $($(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATES)/lib
+ifeq ($(HOST_PREFER_32_BIT),true)
+# To keep path compatibility, put 32-bit libs in lib/ and 64-bit libs in lib64/.
+HOST_OUT_SHARED_LIBRARIES := $(HOST_OUT)/lib64
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES := $(HOST_OUT)/lib
+else
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES := $(HOST_OUT)/lib32
+endif
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_EXECUTABLES := $(HOST_OUT_EXECUTABLES)
 
 
