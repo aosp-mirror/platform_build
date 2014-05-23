@@ -173,11 +173,11 @@ ifdef OVERRIDE_BUILT_MODULE_PATH
 else
   built_module_path := $(intermediates)
 endif
-LOCAL_BUILT_MODULE := $(built_module_path)/$(LOCAL_BUILT_MODULE_STEM)
+LOCAL_BUILT_MODULE := $(built_module_path)/$(my_built_module_stem)
 built_module_path :=
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-  LOCAL_INSTALLED_MODULE := $(my_module_path)/$(LOCAL_INSTALLED_MODULE_STEM)
+  LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
 
 # Assemble the list of targets to create PRIVATE_ variables for.
@@ -569,9 +569,11 @@ endif
 ifdef LOCAL_DONT_CHECK_MODULE
   LOCAL_CHECKED_MODULE :=
 endif
-# Don't check build the module defined for the 2nd arch
+# Don't check build target module defined for the 2nd arch
+ifndef LOCAL_IS_HOST_MODULE
 ifdef LOCAL_2ND_ARCH_VAR_PREFIX
   LOCAL_CHECKED_MODULE :=
+endif
 endif
 
 ###########################################################
