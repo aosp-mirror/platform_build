@@ -84,8 +84,9 @@ ALL_GPL_MODULE_LICENSE_FILES:=
 # Target and host installed module's dependencies on shared libraries.
 # They are list of "<module_name>:<installed_file>:lib1,lib2...".
 TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES :=
-2ND_TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES :=
 HOST_DEPENDENCIES_ON_SHARED_LIBRARIES :=
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_DEPENDENCIES_ON_SHARED_LIBRARIES :=
 
 # Generated class file names for Android resource.
 # They are escaped and quoted so can be passed safely to a bash command.

@@ -6,20 +6,15 @@
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
 DEX2OATD := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 
-LIBART_COMPILER := $(HOST_OUT_SHARED_LIBRARIES)/libart-compiler$(HOST_SHLIB_SUFFIX)
-LIBARTD_COMPILER := $(HOST_OUT_SHARED_LIBRARIES)/libartd-compiler$(HOST_SHLIB_SUFFIX)
-
 # By default, do not run rerun dex2oat if the tool changes.
 # Comment out the | to force dex2oat to rerun on after all changes.
 DEX2OAT_DEPENDENCY := art/runtime/oat.cc # dependency on oat version number
 DEX2OAT_DEPENDENCY += art/runtime/image.cc # dependency on image version number
 DEX2OAT_DEPENDENCY += |
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
-DEX2OAT_DEPENDENCY += $(LIBART_COMPILER)
 
 DEX2OATD_DEPENDENCY := $(DEX2OAT_DEPENDENCY)
 DEX2OATD_DEPENDENCY += $(DEX2OATD)
-DEX2OATD_DEPENDENCY += $(LIBARTD_COMPILER)
 
 PRELOADED_CLASSES := frameworks/base/preloaded-classes
 
