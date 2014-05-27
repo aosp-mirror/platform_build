@@ -252,6 +252,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Unset TARGET_PREFER_32_BIT_APPS for 64 bit targets.
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# Switching the x86 emulator over to a 64 bit primary zygote.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
