@@ -1167,16 +1167,16 @@ endef
 # $(1): the full path of the source static library.
 define _extract-and-include-single-target-whole-static-lib
 @echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(1)]"
-$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
-    rm -rf $$ldir; \
-    mkdir -p $$ldir; \
-    filelist=; \
-    for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) t $(1)`; do \
-        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) p $(1) $$f > $$ldir/$$f; \
-        filelist="$$filelist $$ldir/$$f"; \
-    done ; \
-    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-        $(PRIVATE_ARFLAGS) $@ $$filelist
+$(hide) \
+    for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) t $(1) | sort | uniq`; do \
+        i=0; \
+        for ff in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) t $(1) $$f`; do \
+            i=$$(($$i + 1)); \
+            $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) xN $$i $(1) $$f; \
+            $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
+                $(PRIVATE_ARFLAGS) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) $@ $$f; \
+        done ; \
+    done ;
 
 endef
 
@@ -1204,16 +1204,16 @@ endef
 # $(1): the full path of the source static library.
 define _extract-and-include-single-host-whole-static-lib
 @echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(1)]"
-$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
-    rm -rf $$ldir; \
-    mkdir -p $$ldir; \
-    filelist=; \
-    for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) t $(1) | \grep '\.o$$'`; do \
-        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) p $(1) $$f > $$ldir/$$f; \
-        filelist="$$filelist $$ldir/$$f"; \
-    done ; \
-    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
-        $(PRIVATE_ARFLAGS) $@ $$filelist
+$(hide) \
+    for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) t $(1) | \grep '\.o$$' | sort | uniq`; do \
+        i=0; \
+        for ff in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) t $(1) $$f`; do \
+            i=$$(($$i + 1)); \
+            $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) xN $$i $(1) $$f; \
+            $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) \
+                $(PRIVATE_ARFLAGS) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) $@ $$f; \
+        done ; \
+    done ;
 
 endef
 
