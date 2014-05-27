@@ -77,6 +77,7 @@ $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
+$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS :=
 $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
 		$(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES)
