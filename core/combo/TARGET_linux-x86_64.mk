@@ -195,12 +195,12 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(PRIVATE_TARGET_LIBGCC) \
+	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
 	$(PRIVATE_TARGET_FDO_LIB) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_TARGET_LIBGCC) \
+	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O))
 endef
 
@@ -220,12 +220,12 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(PRIVATE_TARGET_LIBGCC) \
+	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
 	$(PRIVATE_TARGET_FDO_LIB) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_TARGET_LIBGCC) \
+	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
 endef
@@ -245,7 +245,7 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--start-group \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(PRIVATE_TARGET_FDO_LIB) \
-	$(PRIVATE_TARGET_LIBGCC) \
+	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
