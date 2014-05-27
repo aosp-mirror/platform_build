@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "7ffd0472_78e0f95d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-05-27T17:32:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1fe088ae_12f64af9",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7fd184e1_d56bcebf",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -84,6 +102,24 @@
       "side": 1,
       "message": "$(combo_var_prefix)GLOBAL_ARFLAGS in core/combo/select.mk is only used here. But yes, you need to \"make checkbuild\" to make sure it doesn\u0027t break existing builds.",
       "parentUuid": "7fd184e1_35feda89",
+      "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ffd0472_18ebad45",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1177,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-05-27T17:32:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5fd680dc_349a5e59",
       "revId": "d3beea003e55439f307178626fcc216d6773e5cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
