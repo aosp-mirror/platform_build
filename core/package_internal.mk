@@ -385,7 +385,7 @@ endif
 ifdef LOCAL_DEX_PREOPT
 $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
 $(built_odex) : $(built_dex)
-	$(create-empty-package)
+	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(add-dex-to-package)
 	$(hide) mv $@ $@.input
 	$(call dexpreopt-one-file,$@.input,$@)
