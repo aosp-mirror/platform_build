@@ -249,6 +249,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Adding dalvik.vm.dex2oat-flags to eng builds
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# Rename persist.sys.dalvik.vm.lib.1 to allow new default
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
