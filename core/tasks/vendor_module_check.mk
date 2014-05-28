@@ -30,6 +30,7 @@ _vendor_owner_whitelist := \
         nvidia \
         nxp \
         qcom \
+        qti \
         samsung \
         samsung_arm \
         ti \
