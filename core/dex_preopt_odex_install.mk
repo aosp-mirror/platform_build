@@ -117,8 +117,8 @@ endif # boot jar
 ifdef built_odex
 # Use pattern rule - we may have multiple installed odex files.
 # Ugly syntax - See the definition get-odex-file-path.
-$(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%/$(notdir $(word 1,$(installed_odex))) \
-                  : $(dir $(LOCAL_BUILT_MODULE))%/$(notdir $(word 1,$(built_odex))) \
+$(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(installed_odex))) \
+                  : $(dir $(LOCAL_BUILT_MODULE))%$(notdir $(word 1,$(built_odex))) \
     | $(ACP)
 	@echo "Install: $@"
 	$(copy-file-to-target)
