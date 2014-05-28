@@ -903,7 +903,7 @@ $(hide) $(PRIVATE_RS_CC) \
   -a $@ -MD \
   -reflect-c++ \
   $(PRIVATE_RS_FLAGS) \
-  $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
+  $(addprefix -I , $(PRIVATE_RS_INCLUDES)) \
   $(PRIVATE_RS_SOURCE_FILES)
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
