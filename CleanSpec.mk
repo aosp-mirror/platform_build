@@ -259,6 +259,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 # Rename persist.sys.dalvik.vm.lib.1 to allow new default
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# Switching PRODUCT_RUNTIMES default for some devices
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
