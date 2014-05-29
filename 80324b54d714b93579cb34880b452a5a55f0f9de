@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fbfa8df_b7aec871",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-29T16:19:37Z",
+      "side": 1,
+      "message": "presumably we\u0027ll add it for the host too when we\u0027ve updated the prebuilts?",
+      "revId": "80324b54d714b93579cb34880b452a5a55f0f9de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfcdbca8_3404f0e0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-29T16:19:37Z",
+      "side": 1,
+      "message": "you mean specifically libm.a? i think this part of your comment is more confusing than useful. i think what you\u0027re trying to say is that libatomic is more like libgcc than libm. but i think you\u0027ve already said that above and can just stop at the end of line 14.",
+      "revId": "80324b54d714b93579cb34880b452a5a55f0f9de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
