@@ -83,7 +83,7 @@ PRODUCT_BOOT_JARS := \
     apache-xml \
     nullwebview
 
-PRODUCT_RUNTIMES := runtime_libdvm_default
+PRODUCT_RUNTIMES := runtime_libart_default
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
