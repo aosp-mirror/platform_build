@@ -27,6 +27,7 @@ _vendor_owner_whitelist := \
         invensense \
         intel \
         lge \
+        moto \
         nvidia \
         nxp \
         qcom \
