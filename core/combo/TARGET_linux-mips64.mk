@@ -224,6 +224,7 @@ define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) \
 	-Wl,--gc-sections \
+	-shared \
 	-Wl,-shared,-Bsymbolic \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_SO_O)) \
