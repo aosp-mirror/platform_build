@@ -75,7 +75,6 @@ PRODUCT_BOOT_JARS := \
     webviewchromium
 
 PRODUCT_RUNTIMES := runtime_libart_default
-PRODUCT_RUNTIMES += runtime_libdvm
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.zygote=zygote32
