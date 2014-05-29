@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fcab88f_d3f1544a",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-05-29T19:56:42Z",
+      "side": 1,
+      "message": "Dan, do we need to exclude LIBATOMIC as well if libc++ is used?",
+      "revId": "4c952d72b7aca4801e0ee4070cf54e3de57b98b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
