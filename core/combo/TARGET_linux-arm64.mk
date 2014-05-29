@@ -132,6 +132,8 @@ libstdc++_root := bionic/libstdc++
 
 TARGET_LIBGCC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 	-print-libgcc-file-name)
+TARGET_LIBATOMIC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
+	-print-file-name=libatomic.a)
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
@@ -178,6 +180,7 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O)) \
 	$(PRIVATE_LDLIBS)
@@ -204,6 +207,7 @@ $(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
@@ -226,6 +230,7 @@ $(hide) $(PRIVATE_CXX) -nostdlib -Bstatic \
 	$(call normalize-target-libraries,$(filter %libc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
 	$(call normalize-target-libraries,$(filter %libc_nomalloc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
 	$(PRIVATE_TARGET_FDO_LIB) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
