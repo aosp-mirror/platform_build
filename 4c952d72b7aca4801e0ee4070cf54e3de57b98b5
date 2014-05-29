@@ -16,6 +16,24 @@
       "revId": "4c952d72b7aca4801e0ee4070cf54e3de57b98b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5fc5a077_2233947d",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-05-29T20:11:55Z",
+      "side": 1,
+      "message": "I believe with libc++ is fine, but it should probably be excluded from any clang builds. If clang has similar needs it\u0027s probably in compiler-rt, but that will conflict with libgcc.",
+      "parentUuid": "9fcab88f_d3f1544a",
+      "revId": "4c952d72b7aca4801e0ee4070cf54e3de57b98b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
