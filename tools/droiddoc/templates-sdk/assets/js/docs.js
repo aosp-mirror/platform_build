@@ -494,7 +494,11 @@ false; // navigate across topic boundaries only in design docs
     }
   }
 
+  // Resize once loading is finished
   resizeNav();
+  // Check if there's an anchor that we need to scroll into view.
+  // A delay is needed, because some browsers do not immediately scroll down to the anchor
+  window.setTimeout(offsetScrollForSticky, 100);
 
   /* init the language selector based on user cookie for lang */
   loadLangPref();
@@ -998,10 +1002,6 @@ $(window).scroll(function(event) {
       $cardInfo.css({position: 'absolute', bottom:'0px', left:'0px', right:'0px', overflow:'visible'});
     });
 
-    // Resize once loading is finished
-    resizeNav();
-    // Check if there's an anchor that we need to scroll into view
-    offsetScrollForSticky();
   });
 
 })();
@@ -2525,7 +2525,6 @@ function offsetScrollForSticky() {
     // to be because we need to move it down 60px to become in view), then move it down 60px
     if (Math.abs($matchingElement.offset().top - $(window).scrollTop()) < 20) {
       $(window).scrollTop($(window).scrollTop() - 60);
-    } else {
     }
   }
 }
