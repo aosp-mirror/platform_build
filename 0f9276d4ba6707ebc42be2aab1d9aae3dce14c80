@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfe21c19_8f2b9972",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-05-30T07:41:25Z",
+      "side": 1,
+      "message": "GCC passes -shared to linker.  We can remove -Wl,-shared here.\nie. -shared,-Wl,-Bsymbolic",
+      "range": {
+        "startLine": 227,
+        "startChar": 1,
+        "endLine": 227,
+        "endChar": 24
+      },
+      "revId": "0f9276d4ba6707ebc42be2aab1d9aae3dce14c80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
