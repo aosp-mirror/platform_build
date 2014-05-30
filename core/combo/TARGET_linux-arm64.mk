@@ -106,10 +106,10 @@ TARGET_GLOBAL_CFLAGS += -fno-strict-volatile-bitfields
 #
 TARGET_GLOBAL_CFLAGS += -Wno-psabi
 
-# TODO - temporarily remove "-Wl,-z,relro -Wl,-z,now" as they cause segmentation fault on the
-# v8 foundation model.
 TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
+			-Wl,-z,relro \
+			-Wl,-z,now \
 			-Wl,--warn-shared-textrel \
 			-Wl,--fatal-warnings \
 			-Wl,-maarch64linux \
