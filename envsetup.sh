@@ -2,7 +2,7 @@ function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
 - lunch:   lunch <product_name>-<build_variant>
-- tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5] [eng|userdebug|user]
+- tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
 - croot:   Changes directory to the top of the tree.
 - m:       Makes from the top of the tree.
 - mm:      Builds all of the modules in the current directory, but not their dependencies.
@@ -590,9 +590,9 @@ complete -F _lunch lunch
 # Run tapas with one or more app names (from LOCAL_PACKAGE_NAME)
 function tapas()
 {
-    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5)$' | xargs)"
+    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
 
     if [ $(echo $arch | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build archs supplied: $arch"
@@ -605,9 +605,12 @@ function tapas()
 
     local product=full
     case $arch in
-      x86)   product=full_x86;;
-      mips)  product=full_mips;;
-      armv5) product=generic_armv5;;
+      x86)    product=full_x86;;
+      mips)   product=full_mips;;
+      armv5)  product=generic_armv5;;
+      arm64)  product=aosp_arm64;;
+      x86_64) product=aosp_x86_64;;
+      mips64)  product=aosp_mips64;;
     esac
     if [ -z "$variant" ]; then
         variant=eng
