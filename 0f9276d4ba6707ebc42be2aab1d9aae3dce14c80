@@ -22,6 +22,30 @@
       "revId": "0f9276d4ba6707ebc42be2aab1d9aae3dce14c80",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dffef0bb_ba64552a",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-05-30T22:03:59Z",
+      "side": 1,
+      "message": "I\u0027d like to go ahead and submit as is and clean this up in the future.",
+      "parentUuid": "bfe21c19_8f2b9972",
+      "range": {
+        "startLine": 227,
+        "startChar": 1,
+        "endLine": 227,
+        "endChar": 24
+      },
+      "revId": "0f9276d4ba6707ebc42be2aab1d9aae3dce14c80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
