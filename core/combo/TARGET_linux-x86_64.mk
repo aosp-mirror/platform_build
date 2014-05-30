@@ -62,6 +62,8 @@ TARGET_STRIP := $(TARGET_TOOLS_PREFIX)strip$(HOST_EXECUTABLE_SUFFIX)
 ifneq ($(wildcard $(TARGET_CC)),)
 TARGET_LIBGCC := \
 	$(shell $(TARGET_CC) -m64 -print-file-name=libgcc.a)
+TARGET_LIBATOMIC := \
+	$(shell $(TARGET_CC) -m64 -print-file-name=libatomic.a)
 target_libgcov := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 	-print-file-name=libgcov.a)
 endif
@@ -200,6 +202,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O))
 endef
@@ -225,6 +228,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
@@ -245,6 +249,7 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--start-group \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(PRIVATE_TARGET_FDO_LIB) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
