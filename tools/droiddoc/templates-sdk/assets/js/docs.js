@@ -3798,6 +3798,7 @@ function showSamples() {
           .append($('<div>').addClass('util')))
           .appendTo(this);
     } else {
+      var plusurl = resource.url.indexOf("//") > -1 ? resource.url : "//developer.android.com/" + resource.url;
       $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
         .append($('<div>').addClass('section').text(section))
         .append($('<div>').addClass('title').html(resource.title))
@@ -3807,7 +3808,7 @@ function showSamples() {
             .append($('<div>').addClass('g-plusone')
               .attr('data-size', 'small')
               .attr('data-align', 'right')
-              .attr('data-href', resource.url))))
+              .attr('data-href', plusurl))))
             .appendTo(this);
     }
 
