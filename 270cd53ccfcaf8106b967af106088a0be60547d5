@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fef0c01_e4d9228f",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-31T02:27:26Z",
+      "side": 1,
+      "message": "no, this is wrong. ..../system/bin really is where the target executables live.",
+      "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfd51034_569b0a93",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-05-31T02:27:26Z",
+      "side": 1,
+      "message": "what you\u0027ll need to do is bear in mind that OUT_EXE_SYMBOLS is really pointing to ..../system/bin. so you\u0027ll probably want to strip the \"/system/bin\" yourself and then use the full path to the executable (which the local EXE\u003d... line is currently mangling).",
+      "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
