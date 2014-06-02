@@ -1,7 +1,7 @@
 # Selects a Java compiler.
 #
 # Inputs:
-#	CUSTOM_JAVA_COMPILER -- "eclipse", "openjdk". or nothing for the system 
+#	CUSTOM_JAVA_COMPILER -- "eclipse", "openjdk". or nothing for the system
 #                           default
 #	ALTERNATE_JAVAC -- the alternate java compiler to use
 #
@@ -20,6 +20,13 @@ ifeq ($(ALTERNATE_JAVAC),)
 JAVACC := javac
 else
 JAVACC := $(ALTERNATE_JAVAC)
+endif
+
+# The actual compiler can be wrapped by setting the JAVAC_WRAPPER var.
+ifdef JAVAC_WRAPPER
+    ifneq ($(JAVAC_WRAPPER),$(firstword $(JAVACC)))
+        JAVACC := $(JAVAC_WRAPPER) $(JAVACC)
+    endif
 endif
 
 # Whatever compiler is on this system.
