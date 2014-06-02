@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fbfa8df_34bf4951",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-02T18:14:06Z",
+      "side": 1,
+      "message": "Guard with \"ifdef JAVAC_WRAPPER\".",
+      "revId": "2756c2669936d0f9420029657c0a5b3ba2ba5ba9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9fcab88f_9febd689",
+        "filename": "core/combo/select.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-02T18:14:06Z",
+      "side": 1,
+      "message": "guard it with \"ifdef CC_WRAPPER\", otherwise we may end up with extra spaces at the beginning of $(combo_var_prefix)CC",
+      "revId": "2756c2669936d0f9420029657c0a5b3ba2ba5ba9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
