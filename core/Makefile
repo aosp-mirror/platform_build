@@ -1502,7 +1502,7 @@ endif
 # The SDK
 
 # The SDK includes host-specific components, so it belongs under HOST_OUT.
-sdk_dir := $(HOST_OUT)/sdk
+sdk_dir := $(HOST_OUT)/sdk/$(TARGET_PRODUCT)
 
 # Build a name that looks like:
 #
