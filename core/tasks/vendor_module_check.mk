@@ -34,6 +34,7 @@ _vendor_owner_whitelist := \
         qti \
         samsung \
         samsung_arm \
+        synaptics \
         ti \
         trusted_logic \
         widevine
