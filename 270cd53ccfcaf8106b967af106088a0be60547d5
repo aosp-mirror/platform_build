@@ -51,6 +51,42 @@
       "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfd51034_8236c81c",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-04T16:39:57Z",
+      "side": 1,
+      "message": "you can\u0027t change the makefile without changing everything that uses that. so what i think you need to do is  to strip the \"/system/bin\" yourself _here_ and then use the full path to the executable (which the local EXE\u003d... line is currently mangling).\n\nas usual, though, step 1 is to get yourself a reproduceable test case. get a command line that should work but currently doesn\u0027t, like when we were messing around attaching gdb to your test. make sure it _doesn\u0027t_ work without any changes, and then you work in the script to fix things.\n\nyou probably want to add a new function that returns a path to the symbols for a given binary, and have both callers in here call that.",
+      "parentUuid": "bfcdbca8_8a9a74e5",
+      "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fef0c01_17cc5347",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-04T16:39:57Z",
+      "side": 1,
+      "message": "you can\u0027t change the makefile without changing everything that uses that. so what i think you need to do is  to strip the \"/system/bin\" yourself _here_ and then use the full path to the executable (which the local EXE\u003d... line is currently mangling).\n\nas usual, though, step 1 is to get yourself a reproduceable test case. get a command line that should work but currently doesn\u0027t, like when we were messing around attaching gdb to your test. make sure it _doesn\u0027t_ work without any changes, and then you work in the script to fix things.\n\nyou probably want to add a new function that returns a path to the symbols for a given binary, and have both callers in here call that.",
+      "parentUuid": "bfcdbca8_8a9a74e5",
+      "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
