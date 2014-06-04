@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf505ca5_96b4fc0d",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-06-04T16:39:16Z",
+      "side": 1,
+      "message": "it seems strange these just don\u0027t agree with the TARGET_CPU above. Presumably we could build arm code (ie not 64-bit) with armv8 as a variant. There are instructions in armv8 beyond even what\u0027s in cortex-a15 iirc.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 33
+      },
+      "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
