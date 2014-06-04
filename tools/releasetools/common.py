@@ -482,6 +482,8 @@ def CheckSize(data, target, info_dict):
   if target.endswith(".img"): target = target[:-4]
   mount_point = "/" + target
 
+  fs_type = None
+  limit = None
   if info_dict["fstab"]:
     if mount_point == "/userdata": mount_point = "/data"
     p = info_dict["fstab"][mount_point]
