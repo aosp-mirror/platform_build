@@ -22,6 +22,24 @@
       "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f1c24fb_e3b820d9",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-04T17:11:27Z",
+      "side": 1,
+      "message": "We wanted to use the exactly same configuration of 32-bit arm build for the second arch.",
+      "parentUuid": "bf505ca5_96b4fc0d",
+      "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
