@@ -58,6 +58,24 @@
       "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f1c24fb_8eb06b7a",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-04T21:39:25Z",
+      "side": 1,
+      "message": "The configurations in build/core/combo.\nWith armv8-a for the second arch, it won\u0027t bulid, for we don\u0027t have armv8-a.mk in build/core/combo/arch/arm/. Also I don\u0027t know if the 32-bit toolchain knows armv8-a as arch variant and cpu variant.",
+      "parentUuid": "3f162cdd_52d754cb",
+      "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
