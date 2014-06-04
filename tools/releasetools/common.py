@@ -339,9 +339,12 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   else:
     print "building image from target_files %s..." % (tree_subdir,)
     fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
-    return File(name, BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
-                                         os.path.join(unpack_dir, fs_config),
-                                         info_dict))
+    data = BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
+                              os.path.join(unpack_dir, fs_config),
+                              info_dict)
+    if data:
+      return File(name, data)
+    return None
 
 
 def UnzipTemp(filename, pattern=None):
