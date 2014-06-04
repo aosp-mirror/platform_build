@@ -76,6 +76,24 @@
       "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df4350e0_10ef8dda",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-06-04T22:07:11Z",
+      "side": 1,
+      "message": "Our ARM 32-bit GCC supports armv8-a as a -march option:\n\n$ arm-eabi-gcc-4.8 -march\u003darmv8-a\narm-eabi-gcc-4.8: fatal error: no input files\ncompilation terminated.\n\nit seems like we should add a armv8-a.mk in build/core/combo/arch/arm/, looking at:\nhttps://gcc.gnu.org/onlinedocs/gcc-4.8.3/gcc/ARM-Options.html#ARM-Options\nThere are other options we can specify for potentially better neon support like:\n-mfpu\u003dneon-fp-armv8\nI defer to Ben and ARM on the best default combination. It seems wrong that we\u0027re not treating 32-bit ARMv8 as an improved instruction set in this patch but making it look like a cortex-a15 (although that\u0027s better than just generic).",
+      "parentUuid": "7f1c24fb_8eb06b7a",
+      "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
