@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f1c24fb_1d22570b",
+        "filename": "core/clang/TARGET_mips.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-04T01:52:40Z",
+      "side": 1,
+      "message": "Good catch!",
+      "revId": "36b2cebe71d067198eb9041650759a34177e06ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
