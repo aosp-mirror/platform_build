@@ -33,6 +33,24 @@
       "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bfcdbca8_8a9a74e5",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 960,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-04T16:33:04Z",
+      "side": 1,
+      "message": "Do you mean to remove /system/bin from $OUT_EXE_SYMBOLS?  That\u0027s what my change to envsetup.mk did, but I\u0027m not sure exactly where I should be stripping it.",
+      "parentUuid": "dfd51034_569b0a93",
+      "revId": "270cd53ccfcaf8106b967af106088a0be60547d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
