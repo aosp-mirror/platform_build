@@ -74,7 +74,10 @@ PRODUCT_PACKAGES += \
     nullwebview \
     screencap \
     sensorservice \
-    uiautomator
+    uiautomator \
+    telephony-common \
+    voip-common \
+    mms-common
 
 # The order matters
 PRODUCT_BOOT_JARS := \
@@ -86,6 +89,9 @@ PRODUCT_BOOT_JARS := \
     ext \
     framework \
     framework2 \
+    telephony-common \
+    voip-common \
+    mms-common \
     android.policy \
     services \
     apache-xml \
