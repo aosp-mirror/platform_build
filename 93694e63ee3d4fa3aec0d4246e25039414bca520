@@ -40,6 +40,24 @@
       "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f162cdd_52d754cb",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-06-04T21:26:29Z",
+      "side": 1,
+      "message": "What is \"exactly same configuration\" ? The variant here has neon while the normal BoardConfig.mk doesn\u0027t. As Aarch64 implies Arm64 implies armv8 then I think the right options are:\nTARGET_2ND_ARCH_VARIANT :\u003d armv8-a\nTARGET_2ND_CPU_VARIANT :\u003d armv8-a",
+      "parentUuid": "7f1c24fb_e3b820d9",
+      "revId": "93694e63ee3d4fa3aec0d4246e25039414bca520",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
