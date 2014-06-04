@@ -269,11 +269,14 @@ def main(argv):
 
   output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
 
-  common.GetBootableImage(
-      "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT").AddToZip(output_zip)
-  common.GetBootableImage(
-      "recovery.img", "recovery.img", OPTIONS.input_tmp,
-      "RECOVERY").AddToZip(output_zip)
+  boot_image = common.GetBootableImage(
+      "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
+  if boot_image:
+      boot_image.AddToZip(output_zip)
+  recovery_image = common.GetBootableImage(
+      "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
+  if recovery_image:
+    recovery_image.AddToZip(output_zip)
 
   if not bootable_only:
     AddSystem(output_zip)
