@@ -290,6 +290,22 @@ def:wear_nav() ?>
     </script>
 <?cs /def ?>
 
+<?cs
+def:preview_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+        <?cs
+          include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
 <?cs # The default side navigation for the reference docs ?><?cs 
 def:default_left_nav() ?>
 <?cs if:reference.gcm || reference.gms ?>
@@ -537,6 +553,8 @@ def:custom_left_nav() ?><?cs
     call:distribute_nav() ?><?cs
   elif:wear ?><?cs
     call:wear_nav() ?><?cs
+  elif:preview ?><?cs
+    call:preview_nav() ?><?cs
   else ?><?cs
     call:default_left_nav() ?> <?cs
   /if ?><?cs
