@@ -66,7 +66,10 @@ PRODUCT_PACKAGES += \
     screencap \
     sensorservice \
     uiautomator \
-    uncrypt
+    uncrypt \
+    telephony-common \
+    voip-common \
+    mms-common
 
 # The order matters
 PRODUCT_BOOT_JARS := \
@@ -78,6 +81,9 @@ PRODUCT_BOOT_JARS := \
     ext \
     framework \
     framework2 \
+    telephony-common \
+    voip-common \
+    mms-common \
     android.policy \
     services \
     apache-xml \
