@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1f908898_b5fd688d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:18:56Z",
+      "side": 1,
+      "message": "(this is a really good check-in comment.)",
+      "revId": "14474d5f73852378859f665d0548ea2f6cd5540e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1f908898_153b14bf",
         "filename": "envsetup.sh",
         "patchSetId": 5
