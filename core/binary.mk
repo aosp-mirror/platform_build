@@ -744,6 +744,19 @@ endif
 asm_objects := $(asm_objects_S) $(asm_objects_s)
 
 
+# .asm for x86 needs to be compiled with yasm.
+ifeq (x86,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+asm_sources_asm := $(filter %.asm,$(my_src_files))
+ifneq ($(strip $(asm_sources_asm)),)
+asm_objects_asm := $(addprefix $(intermediates)/,$(asm_sources_asm:.asm=.o))
+$(asm_objects_asm): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.asm \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+	$(transform-asm-to-o)
+
+asm_objects += $(asm_objects_asm)
+endif
+endif
+
 ####################################################
 ## Import includes
 ####################################################
