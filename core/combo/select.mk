@@ -92,8 +92,12 @@ ifneq ($(USE_CCACHE),)
   # Check that the executable is here.
   ccache := $(strip $(wildcard $(ccache)))
   ifdef ccache
-    CC_WRAPPER ?= $(ccache)
-    CXX_WRAPPER ?= $(ccache)
+    ifndef CC_WRAPPER
+      CC_WRAPPER := $(ccache)
+    endif
+    ifndef CXX_WRAPPER
+      CXX_WRAPPER := $(ccache)
+    endif
     ccache =
   endif
 endif
