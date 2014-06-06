@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f908898_153b14bf",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 947,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:18:07Z",
+      "side": 1,
+      "message": "comment out of date.",
+      "revId": "14474d5f73852378859f665d0548ea2f6cd5540e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f868066_fd43d226",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:18:07Z",
+      "side": 1,
+      "message": "get_symbols_directory seems more honest.",
+      "revId": "14474d5f73852378859f665d0548ea2f6cd5540e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f26384e_108b1513",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:18:07Z",
+      "side": 1,
+      "message": "i think you\u0027ve misunderstood. get_abs_build_var is just a thing in our makefiles that returns the value of a make variable. TARGET_OUT_EXECUTABLES_UNSTRIPPED is the make variable we care about. so this shouldn\u0027t be a parameter here because it would be a mistake to pass in anything else.\n\nif we do pass in a parameter, i think it should be the absolute path to an executable (say /system/bin/ls) so we can return ..../symbols/system/bin/ls rather than ..../symbols like we currently do.",
+      "revId": "14474d5f73852378859f665d0548ea2f6cd5540e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f26384e_d094bd2d",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:18:07Z",
+      "side": 1,
+      "message": "i don\u0027t think you need to do this in a subshell with $(). i think you can just call the function like a function.",
+      "revId": "14474d5f73852378859f665d0548ea2f6cd5540e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f908898_d5eeecdc",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 1068,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:18:07Z",
+      "side": 1,
+      "message": "debugging output left in.",
+      "revId": "14474d5f73852378859f665d0548ea2f6cd5540e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
