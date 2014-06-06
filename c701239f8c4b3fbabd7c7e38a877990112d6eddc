@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf505ca5_4e19f5dc",
+        "filename": "envsetup.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 965,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-06T23:53:58Z",
+      "side": 1,
+      "message": "oh, duh, sorry. i forgot there\u0027s no real \"return\", and that the whole point of get_symbols_directory is to return a string. i misunderstood why $() was being used. since it\u0027s actually necessary and seems to be the local style, please switch back to $().",
+      "revId": "c701239f8c4b3fbabd7c7e38a877990112d6eddc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
