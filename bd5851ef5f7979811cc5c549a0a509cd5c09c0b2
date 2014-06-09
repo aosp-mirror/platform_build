@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3f646c99_8899376f",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-09T17:37:28Z",
+      "side": 1,
+      "message": "note that this is broken too. i think this should be \nadb shell readlink /proc/$PID/exe\" instead, to get the absolute path to the executable. i\u0027m a bit confused about how this can be working for you. this should get you \"crasher\", and OUT_EXE_SYMBOLS should be .../symbols, so where is the missing \"/system/xbin/\" coming from?",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f646c99_e8c79379",
         "filename": "envsetup.sh",
         "patchSetId": 8
@@ -13,6 +30,40 @@
       "writtenOn": "2014-06-09T17:01:54Z",
       "side": 1,
       "message": "i think we should either have /$(EXE) here so the content matches the variable name, or rename these variables to match what they actually contain. (i know they were the names we inherited, but they\u0027re misleading names.)",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f646c99_6863a398",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 966,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-09T17:37:28Z",
+      "side": 1,
+      "message": "(actually, you don\u0027t even need the symbols here since you\u0027re just calling file(1). here PRODUCT_OUT should do fine.)",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f646c99_08da27f6",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 1067,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-09T17:37:28Z",
+      "side": 1,
+      "message": "again, if you fix the name of the variable, it\u0027s more obvious that this is wrong. there are no executables in the symbols directory. so the example gdbclient commands on go/dalvik don\u0027t work after this change. they used to work \"by accident\" because most stuff is actually in /system/bin. but now you need to know what executable you\u0027re actually trying to run.\n\nsince a pid is mandatory to actually connect, i think this function needs to use readlink, and then it can just pass the absolute path (on the _device_ file system) to any functions that need an executable.",
       "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
