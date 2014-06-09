@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1f696874_47eb2e8a",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-09T21:45:47Z",
+      "side": 1,
+      "message": "I am providing the full pathname for this argument (i.e. /system/xbin/crasher).",
+      "parentUuid": "3f646c99_8899376f",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f646c99_e8c79379",
         "filename": "envsetup.sh",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-09T17:01:54Z",
       "side": 1,
       "message": "i think we should either have /$(EXE) here so the content matches the variable name, or rename these variables to match what they actually contain. (i know they were the names we inherited, but they\u0027re misleading names.)",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f696874_30eaeec3",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 965,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-09T21:45:47Z",
+      "side": 1,
+      "message": "What would be a better name? Something like OUT_EXE_SYMBOLS_DIR?",
+      "parentUuid": "3f646c99_e8c79379",
       "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
