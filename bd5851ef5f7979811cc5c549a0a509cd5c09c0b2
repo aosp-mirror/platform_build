@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "bffcdced_e2268240",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 963,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-09T22:18:31Z",
+      "side": 1,
+      "message": "try running this line at the prompt, and adding one pipe element at a time so you can what it\u0027s doing.",
+      "parentUuid": "1f696874_47eb2e8a",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3f646c99_e8c79379",
         "filename": "envsetup.sh",
         "patchSetId": 8
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "What would be a better name? Something like OUT_EXE_SYMBOLS_DIR?",
       "parentUuid": "3f646c99_e8c79379",
+      "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bffcdced_82369e6a",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 965,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-09T22:18:31Z",
+      "side": 1,
+      "message": "that would certainly be an improvement. but since it\u0027s only used in one place and the function already has a perfectly good name, it\u0027s not obvious that we need to give it a local name at all.",
+      "parentUuid": "1f696874_30eaeec3",
       "revId": "bd5851ef5f7979811cc5c549a0a509cd5c09c0b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
