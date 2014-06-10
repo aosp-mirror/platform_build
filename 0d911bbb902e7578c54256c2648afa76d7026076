@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bffcdced_4bb4b1d5",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-06-10T00:31:33Z",
+      "side": 1,
+      "message": "we should be removing this stuff, not perpetuating it in a new form.",
+      "range": {
+        "startLine": 167,
+        "startChar": 0,
+        "endLine": 167,
+        "endChar": 33
+      },
+      "revId": "0d911bbb902e7578c54256c2648afa76d7026076",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
