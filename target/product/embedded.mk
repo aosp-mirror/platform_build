@@ -75,7 +75,8 @@ PRODUCT_PACKAGES += \
     seapp_contexts \
     property_contexts \
     mac_permissions.xml \
-    selinux_version
+    selinux_version \
+    service_contexts
 
 
 PRODUCT_COPY_FILES += \
