@@ -6,11 +6,6 @@ WITHOUT_TARGET_CLANG := true
 WITHOUT_HOST_CLANG := true
 endif
 
-# We don't have 64-bit host prebuilts yet.
-ifeq (true,$(HOST_IS_64_BIT))
-FORCE_BUILD_LLVM_COMPONENTS := true
-endif
-
 LLVM_PREBUILTS_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/3.5/bin
 LLVM_PREBUILTS_HEADER_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/3.5/lib/clang/3.5/include/
 
