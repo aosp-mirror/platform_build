@@ -36,7 +36,6 @@ PRODUCT_PACKAGES += \
     libkeystore \
     libmdnssd \
     libnfc_ndef \
-    libportable \
     libpowermanager \
     libspeexresampler \
     libstagefright_chromium_http \
