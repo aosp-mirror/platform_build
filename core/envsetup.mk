@@ -67,26 +67,30 @@ ifeq ($(HOST_OS),)
 $(error Unable to determine HOST_OS from uname -sm: $(UNAME)!)
 endif
 
+# TODO: Replace BUILD_HOST_64bit with a flag that forces 32-bit build,
+# after we default to 64-bit host build.
+ifeq (,$(BUILD_HOST_64bit))
+# Default to 32-bit-by-default multilib host build.
+HOST_PREFER_32_BIT := true
 ifeq ($(HOST_PREFER_32_BIT),true)
-# User asks for multilib build, but use 32-bit as preferred arch.
 BUILD_HOST_64bit := true
+endif
 endif
 
 # HOST_ARCH
 ifneq (,$(findstring x86_64,$(UNAME)))
-  # TODO: Replace BUILD_HOST_64bit with a flag that forces 32-bit build,
-  # after we default to 64-bit host build.
-  ifeq (,$(BUILD_HOST_64bit))
-    HOST_ARCH := x86
-    HOST_2ND_ARCH :=
-  else
-    HOST_ARCH := x86_64
-    HOST_2ND_ARCH := x86
-  endif
+  HOST_ARCH := x86_64
+  HOST_2ND_ARCH := x86
 else ifneq (,$(findstring 86,$(UNAME)))
   # It's not officially supported!
   HOST_ARCH := x86
   HOST_2ND_ARCH :=
+endif
+
+ifeq ($(HOST_PREFER_32_BIT),true)
+SDK_HOST_ARCH := x86
+else
+SDK_HOST_ARCH := $(HOST_ARCH)
 endif
 
 BUILD_ARCH := $(HOST_ARCH)
