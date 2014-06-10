@@ -22,6 +22,24 @@
       "revId": "0d911bbb902e7578c54256c2648afa76d7026076",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f12b80c_f330100e",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-10T00:50:35Z",
+      "side": 1,
+      "message": "Done.\nI just removed the \"ifneq ($(HOST_ARCH),x86_64)\" .\nThe setting of WITH_HOST_DALVIK will be removed in future change after no other place using it.",
+      "parentUuid": "bffcdced_4bb4b1d5",
+      "revId": "0d911bbb902e7578c54256c2648afa76d7026076",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
