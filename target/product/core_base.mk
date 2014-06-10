@@ -35,7 +35,6 @@ PRODUCT_PACKAGES += \
     libgabi++ \
     libmdnssd \
     libnfc_ndef \
-    libportable \
     libpowermanager \
     libspeexresampler \
     libstagefright_chromium_http \
