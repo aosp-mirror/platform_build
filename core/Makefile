@@ -1528,7 +1528,7 @@ else
   INTERNAL_SDK_HOST_OS_NAME := $(HOST_OS)
 endif
 ifneq ($(HOST_OS),windows)
-  INTERNAL_SDK_HOST_OS_NAME := $(INTERNAL_SDK_HOST_OS_NAME)-$(HOST_ARCH)
+  INTERNAL_SDK_HOST_OS_NAME := $(INTERNAL_SDK_HOST_OS_NAME)-$(SDK_HOST_ARCH)
 endif
 sdk_name := $(sdk_name)_$(INTERNAL_SDK_HOST_OS_NAME)
 
@@ -1554,7 +1554,7 @@ atree_dir := development/build
 
 sdk_atree_files := \
 	$(atree_dir)/sdk.exclude.atree \
-	$(atree_dir)/sdk-$(HOST_OS)-$(HOST_ARCH).atree
+	$(atree_dir)/sdk-$(HOST_OS)-$(SDK_HOST_ARCH).atree
 
 # development/build/sdk-android-<abi>.atree is used to differentiate
 # between architecture models (e.g. ARMv5TE versus ARMv7) when copying
