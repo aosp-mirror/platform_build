@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f8a489d_813cf1dd",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 2
+      },
+      "lineNbr": 973,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2014-06-11T20:51:24Z",
+      "side": 1,
+      "message": "IMHO, we should error out if --worker_threads is not a digit, rather than silently ignoring it.",
+      "revId": "dc51b023d0ce1ff7b6443452db0580161f1c986f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
