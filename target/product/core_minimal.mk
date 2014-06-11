@@ -40,6 +40,7 @@ PRODUCT_PACKAGES += \
     framework-res \
     idmap \
     installd \
+    ims-common \
     ip \
     ip-up-vpn \
     ip6tables \
@@ -83,6 +84,7 @@ PRODUCT_BOOT_JARS := \
     framework2 \
     telephony-common \
     voip-common \
+    ims-common \
     mms-common \
     android.policy \
     services \
