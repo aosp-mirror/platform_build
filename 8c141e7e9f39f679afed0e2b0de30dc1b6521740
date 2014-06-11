@@ -40,6 +40,24 @@
       "revId": "8c141e7e9f39f679afed0e2b0de30dc1b6521740",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f6328c5_b776a857",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1005480
+      },
+      "writtenOn": "2014-06-11T21:47:52Z",
+      "side": 1,
+      "message": "Silly me: I thought that \"repo rebase\" was behaving like \"repo sync\" and continued to rebase and just list all errors. But it stops on 1st error.\n\nAll good now.",
+      "parentUuid": "7f6424c8_fd9723bd",
+      "revId": "8c141e7e9f39f679afed0e2b0de30dc1b6521740",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
