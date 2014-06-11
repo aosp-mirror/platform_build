@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f5e2cfe_f8c73147",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1005480
+      },
+      "writtenOn": "2014-06-11T21:09:24Z",
+      "side": 1,
+      "message": "Breaks the build:\n\nbuild/core/target_test_internal.mk:23: *** system/extras/tests/wifi/stress: Do not set LOCAL_MODULE_PATH when building test wifiLoadScanAssoc.  Stop.",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 87
+      },
+      "revId": "8c141e7e9f39f679afed0e2b0de30dc1b6521740",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
