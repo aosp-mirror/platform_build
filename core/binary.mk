@@ -211,7 +211,7 @@ installed_shared_library_module_names := $(sort $(installed_shared_library_modul
 ifdef LOCAL_INSTALLED_MODULE
 ifdef installed_shared_library_module_names
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
-    $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
+    $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
 endif
 endif
 

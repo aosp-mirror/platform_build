@@ -626,37 +626,36 @@ h_m :=
 t_r :=
 h_r :=
 
-# Resolve the dependencies on shared libraries.
-$(foreach m,$(TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES), \
-  $(eval p := $(subst :,$(space),$(m))) \
-  $(eval r := $(filter $(TARGET_OUT_ROOT)/%,$(call module-installed-files,\
-    $(subst $(comma),$(space),$(lastword $(p)))))) \
-  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
-$(foreach m,$(HOST_DEPENDENCIES_ON_SHARED_LIBRARIES), \
-  $(eval p := $(subst :,$(space),$(m))) \
-  $(eval r := $(filter $(HOST_OUT_ROOT)/%,$(call module-installed-files,\
-    $(subst $(comma),$(space),$(lastword $(p)))))) \
-  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
+# Establish the dependecies on the shared libraries.
+# It also adds the shared library module names to ALL_MODULES.$(m).REQUIRED,
+# so they can be expanded to product_MODULES later.
+# $(1): TARGET_ or HOST_.
+# $(2): non-empty for 2nd arch.
+define resolve-shared-libs-depes
+$(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LIBRARIES),\
+  $(eval p := $(subst :,$(space),$(m)))\
+  $(eval mod := $(firstword $(p)))\
+  $(eval deps := $(subst $(comma),$(space),$(lastword $(p))))\
+  $(if $(2),$(eval deps := $(addsuffix $($(1)2ND_ARCH_MODULE_SUFFIX),$(deps))))\
+  $(eval r := $(filter $($(1)OUT_ROOT)/%,$(call module-installed-files,\
+    $(deps))))\
+  $(eval $(call add-required-deps,$(word 2,$(p)),$(r)))\
+  $(eval ALL_MODULES.$(mod).REQUIRED += $(deps)))
+endef
+
+$(call resolve-shared-libs-depes,TARGET_)
 ifdef TARGET_2ND_ARCH
-$(foreach m,$($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES), \
-  $(eval p := $(subst :,$(space),$(m))) \
-  $(eval r := $(filter $(TARGET_OUT_ROOT)/%,$(call module-installed-files,\
-    $(addsuffix $(TARGET_2ND_ARCH_MODULE_SUFFIX), \
-      $(subst $(comma),$(space),$(lastword $(p))))))) \
-  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
+$(call resolve-shared-libs-depes,TARGET_,true)
 endif
+$(call resolve-shared-libs-depes,HOST_)
 ifdef HOST_2ND_ARCH
-$(foreach m,$($(HOST_2ND_ARCH_VAR_PREFIX)HOST_DEPENDENCIES_ON_SHARED_LIBRARIES), \
-  $(eval p := $(subst :,$(space),$(m))) \
-  $(eval r := $(filter $(HOST_OUT_ROOT)/%,$(call module-installed-files,\
-    $(addsuffix $(HOST_2ND_ARCH_MODULE_SUFFIX), \
-      $(subst $(comma),$(space),$(lastword $(p))))))) \
-  $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))
+$(call resolve-shared-libs-depes,HOST_,true)
 endif
 
 m :=
 r :=
 p :=
+deps :=
 add-required-deps :=
 
 # -------------------------------------------------------------------
@@ -664,6 +663,20 @@ add-required-deps :=
 #
 # Of the modules defined by the component makefiles,
 # determine what we actually want to build.
+
+###########################################################
+## Expand a module name list with REQUIRED modules
+###########################################################
+# $(1): The variable name that holds the initial module name list.
+#       the variable will be modified to hold the expanded results.
+# $(2): The initial module name list.
+# Returns empty string (maybe with some whitespaces).
+define expand-required-modules
+$(eval _erm_new_modules := $(sort $(filter-out $($(1)),\
+  $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED)))))\
+$(if $(_erm_new_modules),$(eval $(1) += $(_erm_new_modules))\
+  $(call expand-required-modules,$(1),$(_erm_new_modules)))
+endef
 
 ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
@@ -689,6 +702,7 @@ ifdef FULL_BUILD
   endif
 
   $(call expand-required-modules,product_MODULES,$(product_MODULES))
+
   product_FILES := $(call module-installed-files, $(product_MODULES))
   ifeq (0,1)
     $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)

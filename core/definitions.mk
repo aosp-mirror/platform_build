@@ -2136,20 +2136,6 @@ define set-inherited-package-variables-internal
 endef
 
 ###########################################################
-## Expand a module name list with REQUIRED modules
-###########################################################
-# $(1): The variable name that holds the initial module name list.
-#       the variable will be modified to hold the expanded results.
-# $(2): The initial module name list.
-# Returns empty string (maybe with some whitespaces).
-define expand-required-modules
-$(eval _erm_new_modules := $(sort $(filter-out $($(1)),\
-  $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED)))))\
-$(if $(_erm_new_modules),$(eval $(1) += $(_erm_new_modules))\
-  $(call expand-required-modules,$(1),$(_erm_new_modules)))
-endef
-
-###########################################################
 ## API Check
 ###########################################################
 

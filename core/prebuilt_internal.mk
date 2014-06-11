@@ -92,7 +92,7 @@ endif  # prebuilt_module_is_a_library
 ifdef LOCAL_INSTALLED_MODULE
 ifdef LOCAL_SHARED_LIBRARIES
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
-  $(LOCAL_MODULE):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
+  $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(LOCAL_SHARED_LIBRARIES))
 
 # We also need the LOCAL_BUILT_MODULE dependency,
 # since we use -rpath-link which points to the built module's path.
