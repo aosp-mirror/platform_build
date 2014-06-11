@@ -34,7 +34,6 @@ PRODUCT_PACKAGES += \
     libgabi++ \
     libmdnssd \
     libnfc_ndef \
-    libportable \
     libpowermanager \
     libspeexresampler \
     libstagefright_soft_aacdec \
