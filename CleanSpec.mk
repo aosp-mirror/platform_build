@@ -255,6 +255,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Switching PRODUCT_RUNTIMES default for some devices
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# KKWT has become API 20
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
