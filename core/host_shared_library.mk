@@ -12,10 +12,6 @@ endif
 endif
 endif
 
-ifneq ($(my_module_multilib),both)
-LOCAL_NO_2ND_ARCH_MODULE_SUFFIX := true
-endif
-
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 
@@ -38,7 +34,6 @@ endif
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 endif  # HOST_2ND_ARCH
 
-LOCAL_NO_2ND_ARCH_MODULE_SUFFIX :=
 my_module_arch_supported :=
 
 ###########################################################
