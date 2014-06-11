@@ -569,7 +569,6 @@ CUSTOM_MODULES := \
 # brought in as requirements of other modules.
 #
 # Resolve the required module name to 32-bit or 64-bit variant.
-ifeq ($(TARGET_IS_64_BIT),true)
 # Get a list of corresponding 32-bit module names, if one exists.
 define get-32-bit-modules
 $(strip $(foreach m,$(1),\
@@ -599,12 +598,10 @@ $(foreach m,$(ALL_MODULES),\
         $(eval r_r := $(r) $(call get-32-bit-modules,$(r)))\
        )\
      )\
-     $(eval ALL_MODULES.$(m).REQUIRED := $(r_r))\
+     $(eval ALL_MODULES.$(m).REQUIRED := $(strip $(r_r)))\
   )\
 )
 r_r :=
-endif
-
 
 define add-required-deps
 $(1): | $(2)
@@ -695,15 +692,11 @@ ifdef FULL_BUILD
   modules_32 := $(patsubst %:32,%,$(filter %:32, $(product_MODULES)))
   modules_64 := $(patsubst %:64,%,$(filter %:64, $(product_MODULES)))
   modules_rest := $(filter-out %:32 %:64,$(product_MODULES))
-  ifeq ($(TARGET_IS_64_BIT),true)
-    product_MODULES := $(addsuffix $(TARGET_2ND_ARCH_MODULE_SUFFIX),$(modules_32))
-    product_MODULES += $(modules_64)
-    # For the rest we add both
-    product_MODULES += $(call get-32-bit-modules, $(modules_rest))
-    product_MODULES += $(modules_rest)
-  else
-    product_MODULES := $(modules_32) $(modules_64) $(modules_rest)
-  endif
+  product_MODULES := $(addsuffix $(TARGET_2ND_ARCH_MODULE_SUFFIX),$(modules_32))
+  product_MODULES += $(modules_64)
+  # For the rest we add both
+  product_MODULES += $(call get-32-bit-modules, $(modules_rest))
+  product_MODULES += $(modules_rest)
 
   $(call expand-required-modules,product_MODULES,$(product_MODULES))
 
@@ -773,7 +766,7 @@ ifdef is_sdk_build
   # TODO: Should we do this for all builds and not just the sdk?
   dangling_modules :=
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES), \
-    $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
+    $(if $(strip $(ALL_MODULES.$(m).INSTALLED) $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).INSTALLED)),,\
       $(eval dangling_modules += $(m))))
   ifneq ($(TARGET_IS_64_BIT),true)
     # We know those 64-bit modules don't exist in the 32-bit SDK build.
