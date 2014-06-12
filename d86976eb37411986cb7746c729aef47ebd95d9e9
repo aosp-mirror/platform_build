@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f6328c5_ccfb8b59",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1026058
+      },
+      "writtenOn": "2014-06-12T15:40:07Z",
+      "side": 1,
+      "message": "nit: change descriptions tend to be in the present-tense: \"add read permission\" \"create policy\" etc.",
+      "revId": "d86976eb37411986cb7746c729aef47ebd95d9e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
