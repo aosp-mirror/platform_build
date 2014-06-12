@@ -55,12 +55,6 @@
 #define HAVE_FUTEX
 
 /*
- * Define if we already have the futex wrapper functions defined. Yes if
- * compiling against bionic.
- */
-#define HAVE_FUTEX_WRAPPERS 1
-
-/*
  * Process creation model.  Choose one:
  *
  * HAVE_FORKEXEC - use fork() and exec()
@@ -281,19 +275,9 @@
 #define OS_SHARED_LIB_FORMAT_STR    "lib%s.so"
 
 /*
- * Do we have __memcmp16()?
- */
-#define HAVE__MEMCMP16  1
-
-/*
  * type for the third argument to mincore().
  */
 #define MINCORE_POINTER_TYPE unsigned char *
-
-/*
- * Do we have the sigaction flag SA_NOCLDWAIT?
- */
-#define HAVE_SA_NOCLDWAIT
 
 /*
  * The default path separator for the platform
