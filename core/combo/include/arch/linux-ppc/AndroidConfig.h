@@ -246,11 +246,6 @@
 #define MINCORE_POINTER_TYPE unsigned char *
 
 /*
- * Do we have the sigaction flag SA_NOCLDWAIT?
- */
-#define HAVE_SA_NOCLDWAIT
-
-/*
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '/'
