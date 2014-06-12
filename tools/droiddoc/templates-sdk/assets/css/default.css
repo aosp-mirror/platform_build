@@ -437,10 +437,7 @@ video.with-shadow {
   padding-bottom:0;}
 
 .content-header h1 {
-  color:#000;
-  margin:0;
-  border-bottom:0;
-  padding:0;
+  margin-top:16px; /* +20px from div.content header == 34px */
 }
 .content-header > div:first-child {
   height:55px; /* set fixed height for the header div to ensure the
@@ -1103,12 +1100,13 @@ table, fieldset {
 }
 h1 {
     color:#333;
-    font-size: 22px;
-    margin: 20px 0 20px;
+    font-size: 34px;
+    margin: 36px 0 12px;
     padding:0 0 10px;
+    font-weight:300;
 }
 h1, h2 {
-    line-height: 32px;
+    line-height: 34px;
 }
 h1.short {
   margin-right:320px;
@@ -1121,21 +1119,24 @@ h1.super {
 }
 h2 {
     color:#333;
-    font-size: 20px;
-    margin: 20px 0 20px;
+    font-size: 26px;
+    margin: 32px 0 20px;
     padding:0;
+    font-weight:300;
 }
 h3 {
     color:#333;
-    font-size: 18px;
+    font-size: 21px;
+    font-weight:400;
+    margin:21px 0 14px 0;
 }
 h3, h4 {
-    color:#333;
-    line-height: 20px;
-    margin: 10px 0 14px 0;
+    line-height: 21px;
 }
 h4 {
-  font-size: 16px;
+  font-size: 18px;
+  margin: 12px 0;
+  font-weight:500;
 }
 h5 {
   font-size: 14px;
@@ -1148,7 +1149,7 @@ h6 {
 }
 hr { /* applied to the bottom of h2 elements */
   height: 1px;
-  margin: 5px 0 20px;
+  margin: 3px 0 12px;
   border: 0;
   background: #ccc;
 }
@@ -1250,6 +1251,7 @@ th {
 tr:first-of-type th:first-of-type:empty {
     visibility: hidden;
 }
+
 /* --------------------------------------------------------------------------
 Footer
 */
@@ -3331,28 +3333,37 @@ Page-Specific Styles
 }
 
 #jd-header {
-  padding: 0 0 5px;
-  margin: 20px 0 10px;
-  font-size:13px;
+  padding: 0 0 12px;
+  margin: 20px 0 12px;
+  font-size:12px;
+  padding-bottom:12px;
   border-bottom:solid 1px #ccc;
 }
 
 #jd-header h1 {
   margin:0;
-  padding:0;
+  padding:0 0 6px 0;
 }
+
+/* not sure if this is needed in the ref docs, disabling for now
+.jd-descr h2 {
+  margin:16px 0;
+}
+*/
 
 /* page-top-right container for reference pages (holds
 links to summary tables) */
 #api-info-block {
-  font-size:13px;
+  font-size:12px;
   margin:20px 0 0;
   padding:0 10px 6px;
   font-weight:normal;
   float:right;
   text-align:right;
   color:#999;
-  max-width:70%;
+  max-width:80%;
+  font-size: 12px;
+  line-height:14px;
 }
 
 #api-info-block div.api-level {
@@ -3369,7 +3380,8 @@ links to summary tables) */
   border-spacing:0;
   margin:0;
   padding:0;
-  font-size:13px;
+  font-size:12px;
+  line-height:14px;
   background-color:transparent;
 }
 .jd-inheritance-table tr td {
@@ -4576,7 +4588,9 @@ EndColorStr='#ececec');
 }
 
 
-
+#landing h1 {
+  margin:17px 0 20px 0 !important;
+}
 
 a.download-sdk {
     float:right;
@@ -4747,14 +4761,14 @@ a.download-sdk {
 
 /* Slideshow */
 .slideshow-develop {
-  height: 300px;
+  height: 316px;
   width: 940px;
   position: relative;
   overflow:hidden;
 }
 .slideshow-develop .frame {
   width: 940px;
-  height: 300px;
+  height: 316px;
 }
 .slideshow-develop img.play {
   max-width:350px;
@@ -4786,6 +4800,7 @@ a.download-sdk {
   padding:0;
   margin-bottom:10px;
   border:none;
+  font-size:24px;
 }
 .slideshow-develop .item {
   height: 300px;
@@ -4958,7 +4973,8 @@ a.download-sdk {
   margin-bottom:0;
 }
 .landing-banner h1 {
-  margin-top:0;
+  margin-top:16px;
+  padding-bottom:24px;
 }
 .landing-docs,
 .landing-banner {
