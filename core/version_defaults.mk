@@ -53,7 +53,7 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
-  PLATFORM_SDK_VERSION := 19
+  PLATFORM_SDK_VERSION := 20
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
@@ -64,7 +64,7 @@ ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is all of the development codenames that are active.  Should be either
   # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
   # codenames after PLATFORM_VERSION_CODENAME.
-  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME),KKWT
+  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME)
 endif
 
 ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
