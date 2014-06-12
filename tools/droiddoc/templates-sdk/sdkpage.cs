@@ -430,7 +430,7 @@ var:sdk.linux_download
 
     /* set up primary adt download button */
     $('#download-bundle-button').show();
-    $('#download-bundle-button').append("Download the SDK <br/><span class='small'>ADT Bundle for " + os + "</span>");
+    $('#download-bundle-button').append("Download the SDK <br/><span class='small'>with the Eclipse ADT Bundle for " + os + "</span>");
     $('#download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
 
     /* set up sdk tools only button */
@@ -501,9 +501,18 @@ var:sdk.linux_download
   function onDownloadForRealz(link) {
     if ($("input#agree").is(':checked') && $("#bitpicker input:checked").length) {
       $("div.sdk-terms").slideUp();
-      $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow');
-      $("#next-steps").fadeIn('slow');
-      $("h1#tos-header").text('Get Ready to Code!');
+      $("h1#tos-header").text('Now downloading ' + $(link).text() + '...');
+      $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow', function() {
+        setTimeout(function() {
+          if ($("#downloadForRealz").attr('bundle') == 'true') {
+            // User downloaded the ADT Bundle
+            window.location = "/sdk/installing/index.html?pkg=adt";
+          } else {
+            // User downloaded the SDK Tools
+            window.location = "/sdk/installing/index.html?pkg=tools";
+          }
+        }, 500);
+      });
       _gaq.push(['_trackEvent', 'SDK', 'ADT and Tools', $("#downloadForRealz").html()]);
       return true;
     } else {
