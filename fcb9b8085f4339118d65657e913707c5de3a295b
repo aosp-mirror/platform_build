@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f49844c_75ba625a",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-12T23:16:59Z",
+      "side": 1,
+      "message": "do you need this, given the -shared on the next line?",
+      "revId": "fcb9b8085f4339118d65657e913707c5de3a295b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df74307d_6a225b0c",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-12T23:16:59Z",
+      "side": 1,
+      "message": "is it a bug that not all targets have --gc-sections?",
+      "revId": "fcb9b8085f4339118d65657e913707c5de3a295b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
