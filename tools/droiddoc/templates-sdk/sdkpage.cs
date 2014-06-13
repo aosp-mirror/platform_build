@@ -280,7 +280,7 @@
 
 <h4><a href='' class="expandable"
   onclick="toggleExpandable(this,'.pax');hideExpandable('.myide,.reqs');return false;"
-  >DOWNLOAD FOR OTHER PLATFORMS</a></h4>
+  >VIEW ALL DOWNLOADS AND SIZES</a></h4>
 
 
 <div class="pax col-13 online" style="display:none;margin:0;">
@@ -430,12 +430,12 @@ var:sdk.linux_download
 
     /* set up primary adt download button */
     $('#download-bundle-button').show();
-    $('#download-bundle-button').append("Download the SDK <br/><span class='small'>with the Eclipse ADT Bundle for " + os + "</span>");
+    $('#download-bundle-button').append("Download Eclipse ADT <br/><span class='small'>with the Android SDK for " + os + "</span>");
     $('#download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
 
     /* set up sdk tools only button */
     $('#download-tools-button').show();
-    $('#download-tools-button').append("Download the SDK Tools for " + os);
+    $('#download-tools-button').append("Download the stand-alone Android SDK Tools for " + os);
     $('#download-tools-button').click(function() {return onDownload(this,true);}).attr('href', $toolslink.attr('href'));
   } else {
     $('.pax').show();
