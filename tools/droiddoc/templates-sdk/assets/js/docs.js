@@ -173,6 +173,18 @@ $(document).ready(function() {
     $("#header li.design a").addClass("selected");
     $("#sticky-header").addClass("design");
 
+  // highlight About tabs
+  } else if ($("body").hasClass("about")) {
+    var rootDir = pagePathOriginal.substring(1,pagePathOriginal.indexOf('/', 1));
+    if (rootDir == "about") {
+      $("#nav-x li.about a").addClass("selected");
+    } else if (rootDir == "wear") {
+      $("#nav-x li.wear a").addClass("selected");
+    } else if (rootDir == "tv") {
+      $("#nav-x li.tv a").addClass("selected");
+    } else if (rootDir == "auto") {
+      $("#nav-x li.auto a").addClass("selected");
+    }
   // highlight Develop tab
   } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
     $("#header li.develop a").addClass("selected");
