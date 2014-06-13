@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "bfc3fcc9_5eeab5c3",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-06-13T18:50:23Z",
+      "side": 1,
+      "message": "The mgrep indicates that people are looking at $(BUILD_NUMBER).  We could leave that alone and put a more parsimonious version of it into the fingerprint.",
+      "parentUuid": "df74307d_edd040db",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f49844c_5b682f33",
         "filename": "tools/post_process_props.py",
         "patchSetId": 1
