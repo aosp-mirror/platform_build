@@ -61,6 +61,8 @@ PRODUCT_PACKAGES += \
     libkeystore \
     libsqlite_jni \
     libwilhelm \
+    libdrmframework_jni \
+    libdrmframework \
     make_ext4fs \
     nullwebview \
     screencap \
