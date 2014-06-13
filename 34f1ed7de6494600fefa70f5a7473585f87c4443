@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "df74307d_12c67d26",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2014-06-13T17:20:51Z",
+      "side": 1,
+      "message": "I think that if the problem is that the fingerprint is too bloated, the solution should be to unbloat the fingerprint, not hack up the property processor.\n\nPerhaps the max property size can be increased somewhat; these aren\u0027t the days of swetland.\n\nFor the specific case in that bug, I\u0027d look at:\n\n- what purpose does \"eng.\" in BUILD_NUMBER serve? can we just drop it?\n- how about the timestamp?  these usually aren\u0027t even accurate, since they only change when build.prop is regenerated, which isn\u0027t every build.\n- can we remove the periods in BUILD_NUMBER?\n- can we truncate usernames to (say) 8 chars?\n- can BUILD_ID be something shorter than \"OPENMASTER\" for aosp?",
+      "parentUuid": "7f49844c_2155f87d",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f49844c_5b682f33",
         "filename": "tools/post_process_props.py",
         "patchSetId": 1
