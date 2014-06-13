@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7f49844c_2155f87d",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-13T17:02:01Z",
+      "side": 1,
+      "message": "In that case most of the aosp_*-userdebug (or if the user has a long username) won\u0027t build, because the fingerprint will be too long. What are the users supposed to do to proceed?\nIt seems with truncated fingerprint at least a dev build still work as long as you are not testing build fingerprint related code.\nOTOH, do you think if we can remove or shorten any part of the $(BUILD_FINGERPRINT)?  see discussion in https://b.corp.google.com/issue?id\u003d15593959 .",
+      "parentUuid": "7f49844c_a17008b7",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f49844c_5b682f33",
         "filename": "tools/post_process_props.py",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-13T02:14:32Z",
       "side": 1,
       "message": "I like the idea of truncating.  Lines 66, 67 should be removed.",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df74307d_529e3584",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-13T17:02:01Z",
+      "side": 1,
+      "message": "Hmm, these lines just tell the truth what would cause if the value is too long, that\u0027s why I prefer to keep them. Shall I change \"This will cause ...\" to \"This would cause ...\"?",
+      "parentUuid": "7f49844c_5b682f33",
       "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
