@@ -1526,6 +1526,9 @@ Header, Login, Nav-X, Search
     color: #333;
     font-size: 16px;
 }
+.about a.selected {
+    color: #9933CC;
+}
 .design a.selected {
     color: #33b5e5;
 }
