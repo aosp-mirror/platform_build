@@ -18,7 +18,7 @@ if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
     if:monetize ?> monetize<?cs /if ?><?cs
     if:disttools ?> disttools<?cs /if ?><?cs
     if:stories ?> stories<?cs /if ?><?cs
-  elif:about ?>about<?cs
+  elif:(about||wear||tv||auto) ?>about<?cs
   elif:design ?>design<?cs
 /if ?><?cs
 if:page.trainingcourse ?> trainingcourse<?cs
