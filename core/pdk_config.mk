@@ -61,6 +61,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
 	target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
 	target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
+	target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/mms-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android-common_intermediates \
