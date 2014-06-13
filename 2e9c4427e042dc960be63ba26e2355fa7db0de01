@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df74307d_c6560237",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1026058
+      },
+      "writtenOn": "2014-06-13T22:35:47Z",
+      "side": 1,
+      "message": "too many?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 32
+      },
+      "revId": "2e9c4427e042dc960be63ba26e2355fa7db0de01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f4e8057_d494f22d",
+        "filename": "target/board/generic/sepolicy/device.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1026058
+      },
+      "writtenOn": "2014-06-13T22:35:47Z",
+      "side": 1,
+      "message": "I don\u0027t know if we actually need this type.  The only rules for qemu_device seem to be allowing rw_file_perms across a variety of domains.  It might make sense to just allow that to all domains too, and not need the new type.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 33
+      },
+      "revId": "2e9c4427e042dc960be63ba26e2355fa7db0de01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
