@@ -18,6 +18,6 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-BUILD_ID := OPENMASTER
+BUILD_ID := AOSP
 
 DISPLAY_BUILD_NUMBER := true
