@@ -89,7 +89,7 @@
                   ja-lang="リファレンス"
                   es-lang="Referencia"
                   >Reference</a></li>
-                <li><a href="<?cs var:toroot ?>tools/index.html"
+                <li><a href="<?cs var:toroot ?>sdk/index.html"
                   zh-tw-lang="相關工具"
                   zh-cn-lang="工具"
                   ru-lang="Инструменты"
@@ -97,7 +97,6 @@
                   ja-lang="ツール"
                   es-lang="Herramientas"
                   >Tools</a>
-                  <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
                 </li>
                 <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
                 </li>
@@ -172,7 +171,7 @@
                   ja-lang="リファレンス"
                   es-lang="Referencia"
                   >Reference</a></li>
-                <li class="tools"><a href="<?cs var:toroot ?>tools/index.html"
+                <li class="tools"><a href="<?cs var:toroot ?>sdk/index.html"
                   zh-tw-lang="相關工具"
                   zh-cn-lang="工具"
                   ru-lang="Инструменты"
