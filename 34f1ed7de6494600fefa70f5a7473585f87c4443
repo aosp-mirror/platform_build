@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "df74307d_edd040db",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-06-13T18:46:04Z",
+      "side": 1,
+      "message": "I the bug, I believe Ying noted that people are looking at the eng.* specifically for various reasons.\n\nreplace \"OPENMASTER\" with \"AOSP\" perhaps?",
+      "parentUuid": "df74307d_12c67d26",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f49844c_5b682f33",
         "filename": "tools/post_process_props.py",
         "patchSetId": 1
