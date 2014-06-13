@@ -90,7 +90,7 @@ include:"header.cs" ?>
       </div>
     <?cs /if ?><?cs # end if training ?>
   </div>
-  <?cs /if ?>
+  <?cs /if ?><?cs # end if header.hide ?>
 
 <?cs elif:samplesProjectIndex ?>
   <div id="api-info-block">
@@ -103,7 +103,14 @@ include:"header.cs" ?>
   <h1 itemprop="name"><?cs var:projectDir ?></h1>
 
 <?cs else ?>
-
+  <?cs if:training ?>
+<?cs # horrible horrible hack to move TOC up when the next/prev links are not there ?>
+<style>
+  #tb-wrapper {
+    margin-top:6px;
+  }
+</style>
+  <?cs /if ?>
 
   <?cs if:(!fullpage && !header.hide) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>

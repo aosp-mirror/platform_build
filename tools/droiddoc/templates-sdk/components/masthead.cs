@@ -51,8 +51,16 @@
 
 
         <!-- Expanded quicknav -->
-        <div id="quicknav" class="col-9">
+        <div id="quicknav" class="col-13">
           <ul>
+            <li class="about">
+              <ul>
+                <li><a href="<?cs var:toroot ?>about/index.html">About</a></li>
+                <li><a href="<?cs var:toroot ?>wear/index.html">Wear</a></li>
+                <li><a href="<?cs var:toroot ?>tv/index.html">TV</a></li>
+                <li><a href="<?cs var:toroot ?>auto/index.html">Auto</a></li>
+              </ul>
+            </li>
             <li class="design">
               <ul>
                 <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
