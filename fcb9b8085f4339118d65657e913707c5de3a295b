@@ -33,6 +33,24 @@
       "revId": "fcb9b8085f4339118d65657e913707c5de3a295b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f49844c_c12c2c26",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-06-13T17:00:12Z",
+      "side": 1,
+      "message": "Someone else probably needs to chime in here... bccheng?",
+      "parentUuid": "df74307d_6a225b0c",
+      "revId": "fcb9b8085f4339118d65657e913707c5de3a295b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
