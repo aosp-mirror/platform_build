@@ -837,7 +837,6 @@ def TestBlockPatch(src_muimg, src_map, patch_data, tgt_map, tgt_sha1):
 
   with tempfile.NamedTemporaryFile() as src_file,\
        tempfile.NamedTemporaryFile() as patch_file,\
-       tempfile.NamedTemporaryFile() as tgt_file,\
        tempfile.NamedTemporaryFile() as src_map_file,\
        tempfile.NamedTemporaryFile() as tgt_map_file:
 
@@ -853,20 +852,16 @@ def TestBlockPatch(src_muimg, src_map, patch_data, tgt_map, tgt_sha1):
 
     patch_file.write(patch_data)
 
-    tgt_total = sum(tgt_regions) * tgt_blksize
-    tgt_file.truncate(tgt_total)
-
     src_map_file.write(src_map)
     tgt_map_file.write(tgt_map)
 
     src_file.flush()
     src_map_file.flush()
     patch_file.flush()
-    tgt_file.flush()
     tgt_map_file.flush()
 
     p = common.Run(["syspatch_host", src_file.name, src_map_file.name,
-                    patch_file.name, tgt_file.name, tgt_map_file.name],
+                    patch_file.name, src_file.name, tgt_map_file.name],
                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdoutdata, _ = p.communicate()
     if p.returncode != 0:
@@ -874,10 +869,11 @@ def TestBlockPatch(src_muimg, src_map, patch_data, tgt_map, tgt_sha1):
       raise ValueError("failed to reconstruct target system image from patch")
 
     h = sha1()
+    src_file.seek(0, 0)
     for i in range(0, len(tgt_regions), 2):
       c, dc = tgt_regions[i:i+2]
-      h.update(tgt_file.read(c*tgt_blksize))
-      tgt_file.seek(dc*tgt_blksize, 1)
+      h.update(src_file.read(c*tgt_blksize))
+      src_file.seek(dc*tgt_blksize, 1)
 
     if h.hexdigest() != tgt_sha1:
       raise ValueError("patch reconstructed incorrect target system image")
