@@ -1,7 +1,4 @@
 <?cs def:custom_masthead() ?>
-<?cs if:wear ?>
-  <?cs call:wear_masthead() ?>
-<?cs else ?>
 <a name="top"></a>
 <?cs if:!devsite ?><?cs # leave out the global header for devsite; it is in devsite template ?>
   <!-- Header -->
@@ -126,7 +123,27 @@
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
 
-  <?cs if:training || guide || reference || tools || develop || google || samples ?>
+  <?cs if:about || wear || tv || auto ?>
+    <!-- Secondary x-nav -->
+    <div id="nav-x">
+        <div class="wrap">
+            <ul class="nav-x col-9 about" style="width:100%">
+                <li class="about"><a href="<?cs var:toroot ?>about/index.html"
+                  >About</a></li>
+                <li class="wear"><a href="<?cs var:toroot ?>wear/index.html"
+                  >Wear</a></li>
+                <li class="tv"><a href="<?cs var:toroot ?>tv/index.html"
+                  >TV</a></li>
+                <li class="auto"><a href="<?cs var:toroot ?>auto/index.html"
+                  >Auto</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /Sendondary x-nav ABOUT -->
+
+
+
+  <?cs elif:training || guide || reference || tools || develop || google || samples ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap">
@@ -174,7 +191,7 @@
             </ul>
         </div>
     </div>
-    <!-- /Sendondary x-nav -->
+    <!-- /Sendondary x-nav DEVELOP -->
 
   <?cs elif:distribute || googleplay || essentials || users || engage || monetize || disttools || stories ?>
     <!-- Secondary distribute x-nav -->
@@ -202,6 +219,7 @@
             <a href="https://play.google.com/apps/publish/" class="developer-console-btn">Developer Console</a>
         </div> <!-- /Secondary distribute x-nav -->
     </div>
+    <!-- /Sendondary x-nav DISTRIBUTE -->
   <?cs /if ?>
 
     <div id="searchResults" class="wrap" style="display:none;">
@@ -222,49 +240,5 @@
     </div>
   </div>
 
-<?cs /if ?><?cs # end if/else !devsite ?>
-<?cs /if ?><?cs # end if/else wear ?><?cs
-/def ?>
-
-<?cs def:wear_masthead() ?>
-<a name="top"></a>
-
-<!-- Header -->
-<div id="header-wrapper">
-  <div id="header">
-    <div class="wrap" id="header-wrap">
-      <div class="col_3 logo wear-logo">
-        <a href="<?cs var:toroot ?>wear/index.html">
-          <img src="<?cs var:toroot ?>wear/images/android-wear.png" height="16" alt="Android Wear" />
-        </a>
-      </div>
-      <div class="col-8" style="margin:0"><h1 style="margin:1px 0 0 20px;padding:0;line-height:16px;
-color:#666;font-weight:100;font-size:24px;">Developer Preview</h1></div>
-
-      <?cs # ADD SEARCH AND MENU ?>
-      <?cs call:header_search_widget() ?>
-
-    </div><!-- end header-wrap -->
-  </div><!-- /Header -->
-
-
-  <div id="searchResults" class="wrap" style="display:none;">
-          <h2 id="searchTitle">Results</h2>
-          <div id="leftSearchControl" class="search-control">Loading...</div>
-  </div>
-</div> <!--end header-wrapper -->
-
-<div id="sticky-header">
-  <div>
-    <a class="logo" href="#top"></a>
-    <a class="top" href="#top"></a>
-    <ul class="breadcrumb">
-      <?cs # More <li> elements added here with javascript ?>
-      <?cs if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
-      /if ?>
-    </ul>
-  </div>
-</div>
-
-  <?cs
+<?cs /if ?><?cs # end if/else !devsite ?><?cs
 /def ?>
