@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "df74307d_add728ca",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-06-13T18:47:30Z",
+      "side": 1,
+      "message": "also, ccross noted that we can\u0027t increase the size because the API doesn\u0027t specify the size of the callers buffer. so yes, we can change the API and push that through, but that is a bigger project.",
+      "parentUuid": "df74307d_12c67d26",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f49844c_5b682f33",
         "filename": "tools/post_process_props.py",
         "patchSetId": 1
