@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fc0f8c0_fdf567ec",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-06-14T00:47:55Z",
+      "side": 1,
+      "message": "is \"Android system property length limit.\" clearer?\n\nperhaps mention limit of PROPERTY_VALUE_MAX\u003d92",
+      "range": {
+        "startLine": 115,
+        "startChar": 80,
+        "endLine": 115,
+        "endChar": 104
+      },
+      "revId": "4a7c1d58be11338357203cf98cb05404eab91619",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
