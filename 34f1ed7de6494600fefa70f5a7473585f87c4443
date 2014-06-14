@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "bf713c8e_05e0f55c",
+        "filename": "tools/post_process_props.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-14T00:45:42Z",
+      "side": 1,
+      "message": "Suggestions accepted:\n1) \"OPENMASTER\" -\u003e \"AOSP\"\n2) eng.$(USER).$(shell date +%Y%m%d.%H%M%S) -\u003e $(USER)$(shell date %m%d.%H%M)",
+      "parentUuid": "df74307d_edd040db",
+      "revId": "34f1ed7de6494600fefa70f5a7473585f87c4443",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f49844c_5b682f33",
         "filename": "tools/post_process_props.py",
         "patchSetId": 1
