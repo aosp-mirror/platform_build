@@ -158,12 +158,6 @@ video.with-shadow {
 .layout-content-row {
   display: inline-block;
   margin-bottom: 10px; }
-  .layout-content-row:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden; }
   * html .layout-content-row {
     height: 1px; }
 
@@ -430,17 +424,19 @@ video.with-shadow {
 /* content header */
 .content-header {
   height: 30px;
-  margin:20px 0 25px;
-  padding:0 0 10px;}
+  margin:36px 0 23px;  /* same as h1 */
+  padding:0 0 10px;}  /* same as h1 */
 .content-header.just-links {
   margin-bottom:0;
   padding-bottom:0;}
 
 .content-header h1 {
-  margin-top:16px; /* +20px from div.content header == 34px */
+  margin:0;
+  padding:0;
+  width: 700px;
 }
 .content-header > div:first-child {
-  height:55px; /* set fixed height for the header div to ensure the
+  height:1px; /* set fixed height for the header div to ensure the
                   next/prev links align with toc on training classes */
 }
 
@@ -1101,12 +1097,12 @@ table, fieldset {
 h1 {
     color:#333;
     font-size: 34px;
-    margin: 36px 0 12px;
+    margin: 36px 0 27px;
     padding:0 0 10px;
     font-weight:300;
 }
 h1, h2 {
-    line-height: 34px;
+    line-height: 30px;
 }
 h1.short {
   margin-right:320px;
@@ -1840,6 +1836,11 @@ EndColorStr='#ececec');
   margin:0 0 0 20px;
 }
 
+.training-nav-top {
+  position:relative;
+  top:73px;
+}
+
 .training-nav-bottom {
   padding:0 0 20px;
 }
@@ -1848,12 +1849,12 @@ EndColorStr='#ececec');
 #qv-wrapper {
   float:right;
   clear:right;
-  margin:0 0 0 30px; /* negative top-margin to counter the content-header bottom margin */
+  margin:6px 0 0 30px; /* negative top-margin to counter the content-header bottom margin */
   padding:0 0 30px;
 }
 
 #tb-wrapper {
-  margin:-29px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
+  margin:51px 0 0 20px; /* negative top-margin to counter the content-header bottom margin */
 }
 
 #tb,
@@ -4247,7 +4248,7 @@ EndColorStr='#ececec');
 #quicknav {
  float:none;
  clear:both;
- margin-left:180px;
+ margin-left:0;
  margin-top:-30px;
  display:none;
  overflow:hidden;
@@ -4260,6 +4261,10 @@ EndColorStr='#ececec');
 #quicknav ul {
   margin:10px 0;
   padding:0;
+}
+
+#quicknav ul li.about {
+  border-top:1px solid #9933CC;
 }
 
 #quicknav ul li.design {
