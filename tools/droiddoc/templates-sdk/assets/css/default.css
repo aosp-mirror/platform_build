@@ -1938,6 +1938,10 @@ EndColorStr='#ececec');
   margin:0 15px 10px 35px;
 }
 
+#tb p {
+  margin:0 15px 10px;
+}
+
 #qv ol {
   list-style:none;
   margin:0 15px 15px;
