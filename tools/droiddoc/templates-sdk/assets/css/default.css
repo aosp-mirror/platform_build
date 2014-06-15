@@ -4174,13 +4174,13 @@ EndColorStr='#ececec');
 }
 
 
-#header-wrap .logo.wear-logo {
+#header-wrap .logo.landing-logo {
   width:220px;
   margin:0;
   padding:0;
   margin-bottom:22px;
 }
-#header-wrap .logo.wear-logo img {
+#header-wrap .logo.landing-logo img {
   padding:0 0 0 10px;
 }
 
@@ -6381,4 +6381,876 @@ height:30px;
 div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .section-card-menu .card-info ul li {
   border-top-color: #7e3794 !important;
+}
+
+/**
+ * UTILITIES
+ */
+
+
+.border-box {
+  box-sizing: border-box;
+}
+
+.vertical-center-outer {
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+
+.vertical-center-inner {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+/**
+ * TYPE STYLES
+ */
+
+.landing-h1 {
+  font-weight: 100;
+  font-size: 60px;
+  line-height: 78px;
+  text-align: center;
+  letter-spacing: -1px;
+}
+
+.landing-pre-h1 {
+  font-weight: 400;
+  font-size: 28px;
+  color: #93B73F;
+  line-height: 36px;
+  text-align: center;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+
+}
+
+.landing-h1.hero {
+  text-align: left;
+}
+
+.landing-h2 {
+  font-weight: 300;
+  font-size: 42px;
+  line-height: 64px;
+  text-align: center;
+}
+
+.landing-subhead {
+  color: #999999;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight:300;
+  text-align: center;
+}
+.landing-subhead.hero {
+  text-align: left;
+  color: white;
+}
+
+.landing-hero-description {
+  text-align: left;
+  margin: 1em 0;
+}
+
+.landing-hero-description p {
+  font-weight: 300;
+  margin: 0;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.landing-body .landing-small {
+  font-size: 14px;
+  line-height: 19px;
+}
+
+.landing-body.landing-align-center {
+  text-align: center;
+}
+
+.landing-align-left {
+  text-align: left;
+}
+
+/**
+ * LAYOUT
+ */
+
+#body-content,
+.fullpage,
+#jd-content,
+.jd-descr,
+.landing-body-content {
+  height: 100%;
+}
+
+.landing-section {
+  padding: 80px 10px 80px;
+  width: 100%;
+  margin-left: -10px;
+  text-rendering: optimizeLegibility;
+}
+
+#extending-android-to-wearables {
+  padding-top: 30px;
+}
+
+.landing-short-section {
+  padding: 40px 10px 28px;
+}
+
+.landing-gray-background {
+  background-color: #e9e9e9;
+}
+
+.landing-white-background {
+  background-color: white;
+}
+
+.landing-red-background {
+  color: white;
+  background-color: hsl(8, 70%, 54%);
+}
+
+.landing-subhead-red {
+  color: hsl(8, 71%, 84%);
+  text-align: left;
+}
+
+.landing-subhead-red p {
+  margin-top: 20px;
+}
+
+.landing-hero-container {
+  height: 100%;
+}
+
+
+.preview-hero {
+  height: calc(100% - 70px);
+  min-height: 504px;
+  margin-top: -5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-image: url(../../preview/images/hero.jpg);
+  background-size: cover;
+  background-position: right center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.wear-hero {
+  height: calc(100% - 70px);
+  min-height: 504px;
+  margin-top: -5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-image: url(../../wear/images/hero.jpg);
+  background-size: cover;
+  background-position: top center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.tv-hero {
+  height: calc(100% - 70px);
+  min-height: 504px;
+  margin-top: -5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-image: url(../../tv/images/living-room.jpg);
+  background-size: cover;
+  background-position: right center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.auto-hero {
+  height: calc(100% - 70px);
+  min-height: 504px;
+  margin-top: -5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-image: url(../../auto/images/hero.jpg);
+  background-size: cover;
+  background-position: right center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-hero-scrim {
+  background: black;
+  opacity: .2;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin-left: -10px;
+}
+
+.landing-hero-wrap {
+  margin: 0 auto;
+  width: 940px;
+  clear: both;
+  height: 100%;
+  position: relative;
+}
+
+.landing-section-header {
+  margin-bottom: 40px;
+}
+
+.landing-hero-wrap .landing-section-header {
+  margin-bottom: 16px;
+}
+
+.landing-body {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.landing-button {
+  white-space: nowrap;
+  display: inline-block;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  cursor: pointer;
+  color: white;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+       -o-user-select: none;
+  user-select: none;
+  -webkit-transition: .2s background-color ease-in-out;
+     -moz-transition: .2s background-color ease-in-out;
+       -o-transition: .2s background-color ease-in-out;
+  transition: .2s background-color ease-in-out;
+}
+
+.landing-primary {
+  background-color: hsl(8, 70%, 54%); /* #dc4b35 */
+  color: #f8f8f8;
+}
+
+.landing-button.landing-primary:hover {
+  background-color: hsl(8, 70%, 44%); /* #bf3722 */
+}
+
+.landing-button.landing-primary:active {
+  background-color: hsl(8, 70%, 36%); /* # */
+}
+
+.landing-button.landing-secondary {
+  background-color: hsl(8, 70%, 44%);
+}
+
+.landing-button.landing-secondary:hover {
+  background-color: hsl(8, 70%, 36%);
+}
+
+.landing-button.landing-secondary:active {
+  background-color: hsl(8, 70%, 30%);
+}
+
+a.landing-button,
+a.landing-button:hover,
+a.landing-button:visited {
+  color: white !important;
+}
+
+.landing-video-link {
+  white-space: nowrap;
+  display: inline-block;
+  padding: 16px 32px 16px 82px;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+  cursor: pointer;
+  color: hsla(0, 0%, 100%, .8);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+       -o-user-select: none;
+  user-select: none;
+  -webkit-transition: .2s color ease-in-out;
+     -moz-transition: .2s color ease-in-out;
+       -o-transition: .2s color ease-in-out;
+  transition: .2s color ease-in-out;
+}
+
+.landing-video-link:before {
+  height: 64px;
+  width: 64px;
+  display: inline-block;
+  background-image: url(data:image/png;base64,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);
+  background-size: contain;
+  position: absolute;
+  content: "";
+  opacity: .7;
+  margin-top: -19px;
+  margin-left: -64px;
+  -webkit-transition: .2s opacity ease-in-out;
+     -moz-transition: .2s opacity ease-in-out;
+       -o-transition: .2s opacity ease-in-out;
+  transition: .2s opacity ease-in-out;
+}
+
+.landing-video-link:hover {
+  color: hsla(0, 0%, 100%, 1);
+}
+
+.landing-video-link:hover:before {
+  opacity: 1;
+}
+
+.landing-social-image {
+  float: left;
+  margin-right: 14px;
+  height: 64px;
+  width: 64px;
+}
+
+.landing-social-copy {
+  padding-left: 78px;
+}
+
+.landing-scroll-down-affordance {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+}
+
+.landing-down-arrow {
+  padding: 24px;
+  display: inline-block;
+  opacity: .5;
+  -webkit-transition: .2s opacity ease-in-out;
+     -moz-transition: .2s opacity ease-in-out;
+       -o-transition: .2s opacity ease-in-out;
+  transition: .2s opacity ease-in-out;
+
+  -webkit-animation-name: pulse-opacity;
+  -webkit-animation-duration: 4s;
+}
+
+.landing-down-arrow:hover {
+  opacity: 1;
+}
+
+.landing-down-arrow img {
+  height: 28px;
+  width: 28px;
+  margin: 0 auto;
+  display: block;
+}
+
+.landing-divider {
+  display: inline-block;
+  height: 2px;
+  background-color: white;
+  position: relative;
+  margin: 10px 0;
+}
+
+/* 3 CLOLUMN LAYOUT */
+
+.landing-breakout {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.landing-breakout img {
+  margin-bottom: 20px;
+}
+
+.landing-partners img {
+  margin-bottom: 20px;
+}
+
+.landing-breakout p {
+  padding: 0 23px;
+}
+
+.landing-inset-video-container {
+  position: relative;
+}
+
+.landing-inset-video-container img.gif {
+  max-width: 222px;
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+img.landing-bezel-only {
+  height:302px;
+  width:302px;
+}
+
+.landing-breakout.landing-partners img {
+  margin-bottom: 20px;
+}
+
+.col-3-wide {
+  display: inline;
+  float: left;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.col-3-wide {
+  width: 302px;
+}
+
+.col-2-wide {
+  display: inline;
+  float: left;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.col-2-wide {
+  width: 402px;
+}
+
+/**
+ * ANIMATION
+ */
+
+@-webkit-keyframes pulse-opacity {
+  0% {
+    opacity: .5;
+  }
+  20% {
+    opacity: .5;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: .5;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: .5;
+  }
+}
+
+
+
+/**
+ * VIDEO
+ */
+
+#video-container {
+  display:none;
+  position:fixed;
+  top:0;
+  left:-10px;
+  width:102%;
+  height:100%;
+  background-color:rgba(0,0,0,0.7);
+  z-index:99;
+}
+
+#video-frame {
+  width:940px;
+  height:526.4px;
+  margin:80px auto 0;
+  display:none;
+}
+
+.video-close {
+cursor: pointer;
+position: relative;
+left: 940px;
+top: 0;
+pointer-events: all;
+}
+
+#icon-video-close {
+background-image: url("../images/close.png");
+background-position: 0 0;
+height: 36px;
+width: 36px;
+display:block;
+}
+
+
+
+
+/******************
+Styles for d.a.c/index: 
+*******************/
+
+
+
+/* Generic full screen carousel styling to be used across pages. */
+.fullscreen-carousel {
+  margin: 0 -10px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.fullscreen-carousel-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: table; /* For vertical centering */
+}
+
+.fullscreen-carousel .vcenter {
+  display: table-cell;
+  vertical-align: middle;
+  position: relative;
+}
+
+.fullscreen-carousel .vcenter > div {
+  margin: 10px auto;
+}
+
+/* Styles for the full-bleed hero image type. */
+.fullscreen-carousel .hero, .fullscreen-carousel .hero h1 {
+  color: #fff;
+}
+
+.fullscreen-carousel .hero h1 {
+  font-weight: 300;
+  font-size: 60px;
+  line-height: 68px;
+  letter-spacing: -1px;
+  margin-top: 0;
+}
+
+.fullscreen-carousel .hero p {
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 24px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.fullscreen-carousel .hero .hero-bg {
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+
+/* Full screen carousel styling for the resource flow layout type of content */
+.fullscreen-carousel .resource-flow-layout:after {
+  height: 0; /* Dont know why this is set at 10 in default.css */
+}
+
+.fullscreen-carousel .resource-flow-layout {
+  margin-bottom: 20px;
+}
+
+
+
+/* Generic Tab carousel styling to be used across multiple pages. */
+
+.tab-carousel .tab-nav {
+  list-style: none;
+  position: relative;
+  text-align: center;
+}
+
+.tab-carousel .tab-nav li {
+  display: inline-block;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 50px;
+  list-style: none;
+  margin: 0;
+  padding: 0 25px;
+  position: relative;
+}
+
+.tab-carousel .tab-nav li a,  
+.tab-carousel .tab-nav li a:hover {
+  color: #333 !important;
+  padding: 10px 10px 13px 10px;
+  position: relative;
+  z-index: 1000;
+}
+
+.tab-carousel .tab-nav li:after {
+  background: #ddd;
+  bottom: 0;
+  content: '';
+  height: 4px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+}
+
+.tab-carousel .tab-nav .highlight {
+  position: absolute;
+  height: 4px;
+  width: 100px;
+  bottom: 0;
+  background: #33b5e5;
+}
+
+.tab-carousel .tab-carousel-content {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tab-carousel .tab-carousel-content [data-tab] {
+  display: inline-block;
+  white-space: normal;
+}
+
+
+
+/*
+  Resource styling for the tab carousel. The tab carousel contains either
+  a 3 column layout of resources or a single full-width resource. The
+  latter has the 18x12 class applied to it and can be styled differently
+  that way.
+*/
+
+.tab-carousel .resource .image {
+  width: 100%;
+  height: 250px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 50% 50%;
+}
+
+.tab-carousel .resource .info .title {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.tab-carousel .resource .info .summary,
+.tab-carousel .resource .info .cta {
+  line-height: 24px;
+  font-size: 16px;
+}
+
+.tab-carousel .resource-card-18x12 {
+  position: relative;
+  padding-left: 450px;
+  box-sizing: border-box;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.tab-carousel .resource-card-18x12 .image {
+  position: absolute;
+  width: 420px;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.tab-carousel .resource-card-18x12 .info {
+  display: inline-block;
+}
+
+.tab-carousel .resource-card-18x12 .info .title {
+  margin-bottom: 26px;
+}
+
+
+
+
+
+/* 
+   Styles for the entity link used in the actions bar and in the cta of
+   the resources that appear in the tab carousel.
+*/
+.actions-bar a:after,
+.resource .cta:after {
+  content: '›';
+  font-weight: 400;
+  font-size: 22px;
+  left: 5px;
+  line-height: 1;
+  position: relative;
+  top: 1px;
+  transition: left 190ms ease-out;
+}
+
+.actions-bar a:hover:after,
+.resource .cta:hover:after {
+  left: 10px;
+}
+
+
+
+
+/*
+  Styles for the actions bar.
+*/
+.actions-bar {
+  background: #9acd00;
+  margin: 0 -10px;
+  margin-top:-20px;
+  text-align: center;
+}
+
+.actions-bar .actions {
+  padding: 30px 0 30px;
+  text-align: justify;
+  font-size: 0.1px;
+  line-height: 0.1px;
+  margin: 0 10px;
+}
+
+.actions-bar .actions:after {
+  content: '';
+  width: 100%;
+  display: inline-block;
+}
+
+.actions-bar .actions > div {
+  display: inline-block;
+}
+
+.actions-bar a {
+  font-size: 21px;
+  line-height: 27px;
+  color: #fff;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+.actions-bar a:after {
+  top: 0px;
+  font-size: 22px;
+}
+
+.actions-bar a:hover {
+  color: #fff !important;
+}
+
+
+
+
+
+/* 
+  Specific styles for new home page layout of the carousels.
+*/
+
+/* Big blue button */
+a.home-new-cta-btn,
+.home-new-carousel-1 .resource-card-18x6 .cta {
+  white-space: nowrap;
+  display: inline-block;
+  padding: 14px 32px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  cursor: pointer;
+  background: #33b5e6;
+  border-radius: 4px;
+  margin-top: 20px;
+  color: #fff;
+  transition: 0.2s background-color ease-in-out;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .cta:after {
+  display: none; /* Hide the entity for this button */
+}
+
+a.home-new-cta-btn:hover,
+.home-new-carousel-1 .resource-card-18x6 .cta:hover {
+  color: #fff !important;
+  background: #2d9fca;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .cta {
+  position: absolute;
+  bottom: 20px;
+  left: 16px;
+}
+
+/* Fullscreen carousel. */
+.home-new-carousel-1 {
+  max-height: 700px; /* Set max height so doesn't get too long */
+  margin-top: 20px;
+}
+
+.home-new-carousel-1 .fullscreen-carousel-content {
+  min-height: 450px;  /* Set min height for all content */
+}
+
+.home-new-carousel-1 .hero {
+  background: #000;
+}
+
+.home-new-carousel-1 .hero-bg {
+  background-image: url(/home-new/images/hero.jpg);
+  background-position: right center;
+  opacity: 0.85;
+}
+
+/* 
+  Styling for special top card of full screen layout resource layout.
+  We need to specifically style the 18x6 card to adjust its size and layout,
+  since it's not a standard card, not sure if this is unique to the home page
+  layout or should be namespaced within the fullscreen-carousel container.
+*/
+.home-new-carousel-1 .resource-flow-layout.col-16 .resource-card-18x6 {
+  height: 334px;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .card-bg {
+  width: 636px;
+  height: 100%;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .card-info {
+  right: 0px;
+  left: 636px;
+  height: 100%;
+  top: 0px;
+  padding: 15px 22px;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .card-info .util {
+  display: none;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .card-info .title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.home-new-carousel-1 .resource-card-18x6 .card-info .text {
+  font-size: 15px;
+  line-height: 21px;
+}
+
+
+/* Tabbed carousel. */
+.home-new-carousel-2 {
+  margin: 35px auto 100px auto;
+}
+
+.home-new-carousel-2 h1 {
+  font-size: 47px;
+  font-weight: 100;
+  line-height: 54px;
+  text-align: center;
 }
