@@ -3429,7 +3429,10 @@ function showSamples() {
       sortOrder: $widget.data('sortorder'),
       query: $widget.data('query'),
       section: $widget.data('section'),
-      sizeCols: sizeCols
+      sizeCols: sizeCols,
+      /* Added by LFL 6/6/14 */
+      resourceStyle: $widget.data('resourcestyle') || 'card',
+      stackSort: $widget.data('stacksort') || 'true'
     };
 
     // run the search for the set of resources to show
@@ -3441,9 +3444,13 @@ function showSamples() {
     } else if (isCarousel) {
       drawResourcesCarouselWidget($widget, opts, resources);
     } else if (isStack) {
-      var sections = buildSectionList(opts);
+      /* Looks like this got removed and is not used, so repurposing for the 
+          homepage style layout. 
+          Modified by LFL 6/6/14
+      */
+      //var sections = buildSectionList(opts);
       opts['numStacks'] = $widget.data('numstacks');
-      drawResourcesStackWidget($widget, opts, resources, sections);
+      drawResourcesStackWidget($widget, opts, resources/*, sections*/);
     }
   }
 
@@ -3462,10 +3469,8 @@ function showSamples() {
     var $ul = $('<ul>');
 
     for (var i = 0; i < resources.length; ++i) {
-      //keep url clean for matching and offline mode handling
-      var urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
       var $card = $('<a>')
-        .attr('href', urlPrefix + resources[i].url)
+        .attr('href', cleanUrl(resources[i].url))
         .decorateResourceCard(resources[i],plusone);
 
       $('<li>').css(css)
@@ -3484,7 +3489,9 @@ function showSamples() {
     });
   };
 
-  /* Initializes a Resource Card Stack Widget (column-based layout) */
+  /* Initializes a Resource Card Stack Widget (column-based layout)
+     Modified by LFL 6/6/14
+   */
   function drawResourcesStackWidget($widget, opts, resources, sections) {
     // Don't empty widget, grab all items inside since they will be the first
     // items stacked, followed by the resource query
@@ -3502,59 +3509,87 @@ function showSamples() {
     var sectionResources = [];
 
     // Extract any subsections that are actually resource cards
-    for (var i = 0; i < sections.length; ++i) {
-      if (!sections[i].sections || !sections[i].sections.length) {
-        //keep url clean for matching and offline mode handling
-        urlPrefix = sections[i].url.indexOf("//") > -1 ? "" : toRoot;
-        // Render it as a resource card
+    if (sections) {
+      for (var i = 0; i < sections.length; ++i) {
+        if (!sections[i].sections || !sections[i].sections.length) {
+          // Render it as a resource card
+          sectionResources.push(
+            $('<a>')
+              .addClass('resource-card section-card')
+              .attr('href', cleanUrl(sections[i].resource.url))
+              .decorateResourceCard(sections[i].resource,plusone)[0]
+          );
 
-        sectionResources.push(
-          $('<a>')
-            .addClass('resource-card section-card')
-            .attr('href', urlPrefix + sections[i].resource.url)
-            .decorateResourceCard(sections[i].resource,plusone)[0]
-        );
-
-      } else {
-        cards.push(
-          $('<div>')
-            .addClass('resource-card section-card-menu')
-            .decorateResourceSection(sections[i],plusone)[0]
-        );
+        } else {
+          cards.push(
+            $('<div>')
+              .addClass('resource-card section-card-menu')
+              .decorateResourceSection(sections[i],plusone)[0]
+          );
+        }
       }
     }
 
     cards = cards.concat(sectionResources);
 
     for (var i = 0; i < resources.length; ++i) {
-      //keep url clean for matching and offline mode handling
-      urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
-      var $card = $('<a>')
-          .addClass('resource-card related-card')
-          .attr('href', urlPrefix + resources[i].url)
-          .decorateResourceCard(resources[i],plusone);
-
+      var $card = createResourceElement(resources[i], opts);
+      
+      if (opts.resourceStyle.indexOf('related') > -1) {
+        $card.addClass('related-card');
+      }
+      
       cards.push($card[0]);
     }
 
-    for (var i = 0; i < cards.length; ++i) {
-      // Find the stack with the shortest height, but give preference to
-      // left to right order.
-      var minHeight = $stacks[0].height();
-      var minIndex = 0;
+    if (opts.stackSort != 'false') {
+      for (var i = 0; i < cards.length; ++i) {
+        // Find the stack with the shortest height, but give preference to
+        // left to right order.
+        var minHeight = $stacks[0].height();
+        var minIndex = 0;
 
-      for (var j = 1; j < numStacks; ++j) {
-        var height = $stacks[j].height();
-        if (height < minHeight - 45) {
-          minHeight = height;
-          minIndex = j;
+        for (var j = 1; j < numStacks; ++j) {
+          var height = $stacks[j].height();
+          if (height < minHeight - 45) {
+            minHeight = height;
+            minIndex = j;
+          }
         }
-      }
 
-      $stacks[minIndex].append($(cards[i]));
+        $stacks[minIndex].append($(cards[i]));
+      }
     }
 
   };
+  
+  /* 
+    Create a resource card using the given resource object and a list of html
+     configured options. Returns a jquery object containing the element.
+  */
+  function createResourceElement(resource, opts, plusone) {     
+    var $el;
+    
+    // The difference here is that generic cards are not entirely clickable
+    // so its a div instead of an a tag, also the generic one is not given
+    // the resource-card class so it appears with a transparent background
+    // and can be styled in whatever way the css setup.
+    if (opts.resourceStyle == 'generic') {
+      $el = $('<div>')
+        .addClass('resource')
+        .attr('href', cleanUrl(resource.url))
+        .decorateResource(resource, opts);
+    } else {
+      var cls = 'resource resource-card';
+      
+      $el = $('<a>')
+        .addClass(cls)
+        .attr('href', cleanUrl(resource.url))
+        .decorateResourceCard(resource, plusone);
+    }
+    
+    return $el;
+  }
 
   /* Initializes a flow widget, see distribute.scss for generating accompanying css */
   function drawResourcesFlowWidget($widget, opts, resources) {
@@ -3587,12 +3622,12 @@ function showSamples() {
       // Build each stack item or just a single item
       do {
         var resource = resources[i];
-        //keep url clean for matching and offline mode handling
-        urlPrefix = resource.url.indexOf("//") > -1 ? "" : toRoot;
-        var $card = $('<a>')
-            .addClass('resource-card resource-card-' + cardSize + ' resource-card-' + resource.type)
-            .attr('href', urlPrefix + resource.url);
 
+        var $card = createResourceElement(resources[i], opts, plusone);
+        
+        $card.addClass('resource-card-' + cardSize + 
+          ' resource-card-' + resource.type);
+          
         if (isStack) {
           $card.addClass('resource-card-' + isStack[1] + 'x' + isStack[2]);
           if (++stackCount == parseInt(isStack[3])) {
@@ -3603,8 +3638,7 @@ function showSamples() {
           stackCount = 0;
         }
 
-        $card.decorateResourceCard(resource,plusone)
-          .appendTo($stackDiv || $widget);
+        $card.appendTo($stackDiv || $widget);
 
       } while (++i < resources.length && stackCount > 0);
     }
@@ -3743,6 +3777,15 @@ function showSamples() {
     }
     return true;
   }
+  
+  function cleanUrl(url)
+  {
+    if (url && url.indexOf('//') === -1) {
+      url = toRoot + url;
+    }
+    
+    return url;
+  }
 
 
   function parseResourceQuery(query) {
@@ -3791,42 +3834,55 @@ function showSamples() {
 })();
 
 (function($) {
+
+  /* 
+    Utility method for creating dom for the description area of a card.
+    Used in decorateResourceCard and decorateResource.
+  */
+  function buildResourceCardDescription(resource, plusone) {
+    var $description = $('<div>').addClass('description ellipsis');
+    
+    $description.append($('<div>').addClass('text').html(resource.summary));
+    
+    if (resource.cta) {
+      $description.append($('<a>').addClass('cta').html(resource.cta));
+    }
+    
+    if (plusone) {
+      var plusurl = resource.url.indexOf("//") > -1 ? resource.url : 
+        "//developer.android.com/" + resource.url;
+        
+      $description.append($('<div>').addClass('util')
+        .append($('<div>').addClass('g-plusone')
+          .attr('data-size', 'small')
+          .attr('data-align', 'right')
+          .attr('data-href', plusurl)));
+    }
+    
+    return $description;
+  }
+  
+  
   /* Simple jquery function to create dom for a standard resource card */
   $.fn.decorateResourceCard = function(resource,plusone) {
     var section = resource.group || resource.type;
-    var imgUrl;
-    if (resource.image) {
-      //keep url clean for matching and offline mode handling
-      var urlPrefix = resource.image.indexOf("//") > -1 ? "" : toRoot;
-      imgUrl = urlPrefix + resource.image;
+    var imgUrl = resource.image || 
+      'assets/images/resource-card-default-android.jpg';
+    
+    if (imgUrl.indexOf('//') === -1) {
+      imgUrl = toRoot + imgUrl;
     }
-    //add linkout logic here. check url or type, assign a class, map to css :after
-    $('<div>')
-        .addClass('card-bg')
-        .css('background-image', 'url(' + (imgUrl || toRoot + 'assets/images/resource-card-default-android.jpg') + ')')
+
+    $('<div>').addClass('card-bg')
+      .css('background-image', 'url(' + (imgUrl || toRoot + 
+        'assets/images/resource-card-default-android.jpg') + ')')
       .appendTo(this);
-    if (!plusone) {
-      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
-        .append($('<div>').addClass('section').text(section))
-        .append($('<div>').addClass('title').html(resource.title))
-        .append($('<div>').addClass('description ellipsis')
-            .append($('<div>').addClass('text').html(resource.summary))
-          .append($('<div>').addClass('util')))
-          .appendTo(this);
-    } else {
-      var plusurl = resource.url.indexOf("//") > -1 ? resource.url : "//developer.android.com/" + resource.url;
-      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
-        .append($('<div>').addClass('section').text(section))
-        .append($('<div>').addClass('title').html(resource.title))
-        .append($('<div>').addClass('description ellipsis')
-            .append($('<div>').addClass('text').html(resource.summary))
-          .append($('<div>').addClass('util')
-            .append($('<div>').addClass('g-plusone')
-              .attr('data-size', 'small')
-              .attr('data-align', 'right')
-              .attr('data-href', plusurl))))
-            .appendTo(this);
-    }
+      
+    $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
+      .append($('<div>').addClass('section').text(section))
+      .append($('<div>').addClass('title').html(resource.title))
+      .append(buildResourceCardDescription(resource, plusone))
+      .appendTo(this);
 
     return this;
   };
@@ -3909,7 +3965,39 @@ function showSamples() {
 
     return this;
   };
+  
+  
+  
+  
+  /* Render other types of resource styles that are not cards. */
+  $.fn.decorateResource = function(resource, opts) {
+    var imgUrl = resource.image || 
+      'assets/images/resource-card-default-android.jpg';
+    var linkUrl = resource.url;
+    
+    if (imgUrl.indexOf('//') === -1) {
+      imgUrl = toRoot + imgUrl;
+    }
+    
+    if (linkUrl && linkUrl.indexOf('//') === -1) {
+      linkUrl = toRoot + linkUrl;
+    }
+
+    $(this).append(
+      $('<div>').addClass('image')
+        .css('background-image', 'url(' + imgUrl + ')'),
+      $('<div>').addClass('info').append(
+        $('<h4>').addClass('title').html(resource.title),
+        $('<p>').addClass('summary').html(resource.summary),
+        $('<a>').attr('href', linkUrl).addClass('cta').html('Learn More')
+      )
+    );
+
+    return this;
+  };
 })(jQuery);
+
+
 /* Calculate the vertical area remaining */
 (function($) {
     $.fn.ellipsisfade= function(lineHeight) {
@@ -3931,3 +4019,189 @@ function showSamples() {
         return this;
     };
 }) (jQuery);
+
+/*
+  Fullscreen Carousel
+  
+  The following allows for an area at the top of the page that takes over the
+  entire browser height except for its top offset and an optional bottom 
+  padding specified as a data attribute.
+  
+  HTML:
+  
+  <div class="fullscreen-carousel">
+    <div class="fullscreen-carousel-content">
+      <!-- content here -->
+    </div>
+    <div class="fullscreen-carousel-content">
+      <!-- content here -->
+    </div>
+    
+    etc ...
+    
+  </div>
+  
+  Control over how the carousel takes over the screen can mostly be defined in
+  a css file. Setting min-height on the .fullscreen-carousel-content elements
+  will prevent them from shrinking to far vertically when the browser is very 
+  short, and setting max-height on the .fullscreen-carousel itself will prevent
+  the area from becoming to long in the case that the browser is stretched very 
+  tall.
+  
+  There is limited functionality for having multiple sections since that request
+  was removed, but it is possible to add .next-arrow and .prev-arrow elements to
+  scroll between multiple content areas.
+*/
+
+(function() {
+  $(document).ready(function() {
+    $('.fullscreen-carousel').each(function() {
+      initWidget(this);
+    });
+  });
+
+  function initWidget(widget) {
+    var $widget = $(widget);
+    
+    var topOffset = $widget.offset().top;
+    var padBottom = parseInt($widget.data('paddingbottom')) || 0;
+    var maxHeight = 0;
+    var minHeight = 0;
+    var $content = $widget.find('.fullscreen-carousel-content');
+    var $nextArrow = $widget.find('.next-arrow');
+    var $prevArrow = $widget.find('.prev-arrow');
+    var $curSection = $($content[0]);
+    
+    if ($content.length <= 1) {
+      $nextArrow.hide();
+      $prevArrow.hide();
+    } else {
+      $nextArrow.click(function() {
+        var index = ($content.index($curSection) + 1);
+        $curSection.hide();
+        $curSection = $($content[index >= $content.length ? 0 : index]);
+        $curSection.show();
+      });
+      
+      $prevArrow.click(function() {
+        var index = ($content.index($curSection) - 1);
+        $curSection.hide();
+        $curSection = $($content[index < 0 ? $content.length - 1 : 0]);
+        $curSection.show();
+      });
+    }
+
+    // Just hide all content sections except first.
+    $content.each(function(index) {
+      if ($(this).height() > minHeight) minHeight = $(this).height();
+      $(this).css({position: 'absolute',  display: index > 0 ? 'none' : ''});
+    });
+
+    // Register for changes to window size, and trigger.
+    $(window).resize(resizeWidget);
+    resizeWidget();
+
+    function resizeWidget() {
+      var height = $(window).height() - topOffset - padBottom;
+      $widget.width($(window).width());
+      $widget.height(height < minHeight ? minHeight : 
+        (maxHeight && height > maxHeight ? maxHeight : height));
+    }
+  } 
+})();
+
+
+
+
+
+/*
+  Tab Carousel
+  
+  The following allows tab widgets to be installed via the html below. Each
+  tab content section should have a data-tab attribute matching one of the
+  nav items'. Also each tab content section should have a width matching the
+  tab carousel.
+  
+  HTML:
+  
+  <div class="tab-carousel">
+    <ul class="tab-nav">
+      <li><a href="#" data-tab="handsets">Handsets</a>
+      <li><a href="#" data-tab="wearable">Wearable</a>
+      <li><a href="#" data-tab="tv">TV</a>
+    </ul>
+            
+    <div class="tab-carousel-content">
+      <div data-tab="handsets">
+        <!--Full width content here-->
+      </div>
+      
+      <div data-tab="wearable">
+        <!--Full width content here-->
+      </div>
+      
+      <div data-tab="tv">
+        <!--Full width content here-->
+      </div>
+    </div>
+  </div>
+  
+*/
+(function() {
+  $(document).ready(function() {
+    $('.tab-carousel').each(function() {
+      initWidget(this);
+    });
+  });
+
+  function initWidget(widget) {
+    var $widget = $(widget);
+    var $nav = $widget.find('.tab-nav');
+    var $anchors = $nav.find('[data-tab]');
+    var $li = $nav.find('li');
+    var $contentContainer = $widget.find('.tab-carousel-content');
+    var $tabs = $contentContainer.find('[data-tab]');
+    var $curTab = $($tabs[0]); // Current tab is first tab.
+    var width = $widget.width();
+
+    // Setup nav interactivity.
+    $anchors.click(function(evt) {
+      evt.preventDefault();
+      var query = '[data-tab=' + $(this).data('tab') + ']';
+      transitionWidget($tabs.filter(query)); 
+    });
+    
+    // Add highlight for navigation on first item.
+    var $highlight = $('<div>').addClass('highlight')
+      .css({left:$li.position().left + 'px', width:$li.outerWidth() + 'px'})
+      .appendTo($nav);
+    
+    // Store height since we will change contents to absolute.
+    $contentContainer.height($contentContainer.height());
+    
+    // Absolutely position tabs so they're ready for transition.
+    $tabs.each(function(index) {
+      $(this).css({position: 'absolute', left: index > 0 ? width + 'px' : '0'});
+    });
+    
+    function transitionWidget($toTab) {
+      if (!$curTab.is($toTab)) {
+        var curIndex = $tabs.index($curTab[0]);
+        var toIndex = $tabs.index($toTab[0]);
+        var dir = toIndex > curIndex ? 1 : -1;
+        
+        // Animate content sections.
+        $toTab.css({left:(width * dir) + 'px'});
+        $curTab.animate({left:(width * -dir) + 'px'});
+        $toTab.animate({left:'0'});
+        
+        // Animate navigation highlight.
+        $highlight.animate({left:$($li[toIndex]).position().left + 'px', 
+          width:$($li[toIndex]).outerWidth() + 'px'})
+          
+        // Store new current section.
+        $curTab = $toTab;
+      }
+    }
+  } 
+})();

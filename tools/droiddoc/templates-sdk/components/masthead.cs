@@ -1,4 +1,7 @@
 <?cs def:custom_masthead() ?>
+<?cs if:preview ?>
+  <?cs call:preview_masthead() ?>
+<?cs else ?>
 <a name="top"></a>
 <?cs if:!devsite ?><?cs # leave out the global header for devsite; it is in devsite template ?>
   <!-- Header -->
@@ -247,5 +250,51 @@
     </div>
   </div>
 
-<?cs /if ?><?cs # end if/else !devsite ?><?cs
+<?cs /if ?><?cs # end if/else !devsite ?>
+<?cs /if ?><?cs # end if/else preview ?><?cs
+/def ?>
+
+<?cs def:preview_masthead() ?>
+<a name="top"></a>
+
+
+<!-- Header -->
+<div id="header-wrapper">
+  <div id="header">
+    <div class="wrap" id="header-wrap">
+      <div class="col_3 logo landing-logo" style="width:240px">
+        <a href="<?cs var:toroot ?>index.html">
+          <img src="<?cs var:toroot ?>preview/images/android.png"
+          style="margin-top:8px" height="16" alt="L Developer Preview" />
+        </a>
+      </div>
+      <div class="col-8" style="margin:0"><h1 style="margin: 8px 0 0 0px;padding:0;line-height:16px;
+color:#666;font-weight:100;font-size:24px;">L Developer Preview</h1></div>
+
+      <?cs # ADD SEARCH AND MENU ?>
+      <?cs call:header_search_widget() ?>
+
+    </div><!-- end header-wrap -->
+  </div><!-- /Header -->
+
+
+  <div id="searchResults" class="wrap" style="display:none;">
+          <h2 id="searchTitle">Results</h2>
+          <div id="leftSearchControl" class="search-control">Loading...</div>
+  </div>
+</div> <!--end header-wrapper -->
+
+<div id="sticky-header">
+  <div>
+    <a class="logo" href="#top"></a>
+    <a class="top" href="#top"></a>
+    <ul class="breadcrumb">
+      <?cs # More <li> elements added here with javascript ?>
+      <?cs if:!section.landing ?><li class="current"><?cs var:page.title ?></li><?cs
+      /if ?>
+    </ul>
+  </div>
+</div>
+
+  <?cs
 /def ?>
