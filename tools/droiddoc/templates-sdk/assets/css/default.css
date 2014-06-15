@@ -6562,7 +6562,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   margin-top: -5px;
   padding-top: 0;
   padding-bottom: 0;
-  background-image: url(../../tv/images/living-room.jpg);
+  background-image: url(../../tv/images/hero.jpg);
   background-size: cover;
   background-position: right center;
   color: white;
@@ -6809,17 +6809,6 @@ img.landing-bezel-only {
   width: 302px;
 }
 
-.col-2-wide {
-  display: inline;
-  float: left;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.col-2-wide {
-  width: 402px;
-}
-
 /**
  * ANIMATION
  */
@@ -6889,7 +6878,7 @@ display:block;
 
 
 /******************
-Styles for d.a.c/index: 
+Styles for d.a.c/index:
 *******************/
 
 
@@ -6979,7 +6968,7 @@ Styles for d.a.c/index:
   position: relative;
 }
 
-.tab-carousel .tab-nav li a,  
+.tab-carousel .tab-nav li a,
 .tab-carousel .tab-nav li a:hover {
   color: #333 !important;
   padding: 10px 10px 13px 10px;
@@ -7073,7 +7062,7 @@ Styles for d.a.c/index:
 
 
 
-/* 
+/*
    Styles for the entity link used in the actions bar and in the cta of
    the resources that appear in the tab carousel.
 */
@@ -7146,7 +7135,7 @@ Styles for d.a.c/index:
 
 
 
-/* 
+/*
   Specific styles for new home page layout of the carousels.
 */
 
@@ -7203,7 +7192,7 @@ a.home-new-cta-btn:hover,
   opacity: 0.85;
 }
 
-/* 
+/*
   Styling for special top card of full screen layout resource layout.
   We need to specifically style the 18x6 card to adjust its size and layout,
   since it's not a standard card, not sure if this is unique to the home page
