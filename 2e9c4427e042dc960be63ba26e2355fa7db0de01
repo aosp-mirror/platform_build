@@ -69,6 +69,30 @@
       "revId": "2e9c4427e042dc960be63ba26e2355fa7db0de01",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fd0ec87_fdb8c1d8",
+        "filename": "target/board/generic/sepolicy/device.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1026058
+      },
+      "writtenOn": "2014-06-16T16:28:36Z",
+      "side": 1,
+      "message": "Agreed.  Nick and I discussed this on Friday and came to the same conclusion.",
+      "parentUuid": "9f6e38af_dc8dfcb4",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 33
+      },
+      "revId": "2e9c4427e042dc960be63ba26e2355fa7db0de01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
