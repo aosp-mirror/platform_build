@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f3264d4_84387ac1",
+        "filename": "envsetup.sh",
+        "patchSetId": 11
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-16T22:59:25Z",
+      "side": 1,
+      "message": "I think you can just call $(get_abs_build_var TARGET_OUT_UNSTRIPPED), instead of double $(dirname)s.",
+      "revId": "e54fd7219e7d27fcd05b2990d476120c4a9aef72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
