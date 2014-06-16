@@ -1008,14 +1008,14 @@ def XZ(path):
   p.communicate()
   assert p.returncode == 0, "Couldn't compress patch"
 
-def MakeSystemPatch(source_file, target_file):
+def MakePartitionPatch(source_file, target_file, partition):
   with tempfile.NamedTemporaryFile() as output_file:
     XDelta3(source_file.name, target_file.name, output_file.name)
     XZ(output_file.name)
     with open(output_file.name + ".xz") as patch_file:
       patch_data = patch_file.read()
       os.unlink(patch_file.name)
-      return File("system.muimg.p", patch_data)
+      return File(partition + ".muimg.p", patch_data)
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):
