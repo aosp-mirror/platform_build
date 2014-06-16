@@ -1,3 +1,2 @@
 allow system_server self:process execmem;
 unix_socket_connect(system_server, qemud, qemud)
-allow system_server qemu_device:chr_file rw_file_perms;
