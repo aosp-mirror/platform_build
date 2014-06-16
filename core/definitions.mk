@@ -2001,8 +2001,8 @@ $(eval _isfds_value :=))
 endef
 
 # $(1): The file(s) to check (often $@)
-# $(2): The maximum total image size, in decimal bytes
-# $(3): the type of filesystem "yaffs" or "raw"
+# $(2): The maximum total image size, in decimal bytes.
+#    Make sure to take into account any reserved space needed for the FS.
 #
 # If $(2) is empty, evaluates to "true"
 #
@@ -2015,15 +2015,9 @@ $(if $(2), \
   total=$$(( $$( echo "$$size" ) )); \
   printname=$$(echo -n "$(1)" | tr " " +); \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
-  if [ "$(3)" == "yaffs" ]; then \
-    reservedblocks=8; \
-  else \
-    reservedblocks=0; \
-  fi; \
   twoblocks=$$((img_blocksize * 2)); \
   onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
-  reserve=$$(((twoblocks > onepct ? twoblocks : onepct) + \
-               reservedblocks * img_blocksize)); \
+  reserve=$$((twoblocks > onepct ? twoblocks : onepct)); \
   maxsize=$$(($(2) - reserve)); \
   echo "$$printname maxsize=$$maxsize blocksize=$$img_blocksize total=$$total reserve=$$reserve"; \
   if [ "$$total" -gt "$$maxsize" ]; then \
@@ -2045,8 +2039,7 @@ endef
 # $(2): The partition size.
 define assert-max-image-size
 $(if $(2), \
-  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))), \
-  true)
+  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))))
 endef
 
 
