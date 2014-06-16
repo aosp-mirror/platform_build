@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f439833_2eb4070c",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-16T18:42:03Z",
+      "side": 1,
+      "message": "Hmm, I just deleted this several days ago. Any particular reason to add it back?",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf469c40_cf00e19c",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-16T18:42:03Z",
+      "side": 1,
+      "message": "I think we should change to $(BUILD_OUT_EXECUTABLES) in the above instead. $(BUILD_OUT_EXECUTABLES) points to the build OS directory.",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
