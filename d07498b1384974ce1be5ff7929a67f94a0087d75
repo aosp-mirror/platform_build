@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "04fbdd34_1e998d62",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-06-16T23:19:24Z",
+      "side": 1,
+      "message": "My tree (sync\u0027d this morning has both changes already.  I just tried again and found I still miss libLLVM.dll and libclang.dll w/o FORCE_BUILD_LLVM_COMPONENTS:\u003dtrue",
+      "parentUuid": "7f3264d4_39845bba",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf469c40_cf00e19c",
         "filename": "core/clang/config.mk",
         "patchSetId": 1
