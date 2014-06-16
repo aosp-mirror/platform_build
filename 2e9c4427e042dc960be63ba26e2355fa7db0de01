@@ -45,6 +45,30 @@
       "revId": "2e9c4427e042dc960be63ba26e2355fa7db0de01",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f6e38af_dc8dfcb4",
+        "filename": "target/board/generic/sepolicy/device.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2014-06-16T14:53:14Z",
+      "side": 1,
+      "message": "Given that device/generic/goldfish/ueventd.goldfish.rc makes /dev/qemu_trace and /dev/qemu_pipe 0666, I think we can just allow all domains rw_file_perms to qemu_device and not add a new type.  If we are concerned about any future /dev/qemu_ devices, then we could explicitly list /dev/qemu_trace and /dev/qemu_pipe in build/target/board/generic*/sepolicy/file_contexts rather than using the /dev/qemu_.* regex so that we do not assign qemu_device to any future devices without updating those files, although I\u0027m not sure that is needed.",
+      "parentUuid": "5f4e8057_d494f22d",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 33
+      },
+      "revId": "2e9c4427e042dc960be63ba26e2355fa7db0de01",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
