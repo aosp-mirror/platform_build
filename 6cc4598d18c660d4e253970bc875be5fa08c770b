@@ -16,6 +16,24 @@
       "revId": "6cc4598d18c660d4e253970bc875be5fa08c770b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9fc0f8c0_38426d51",
+        "filename": "core/combo/include/arch/freebsd-x86/AndroidConfig.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-16T20:14:37Z",
+      "side": 0,
+      "message": "i don\u0027t think freebsd-x86 and linux-ppc are used. wangying?\n\nlinux-arm64 is misleading --- it\u0027s really a target, not host. target_linux-x86 is just because linux-x86 was already used for the host (aiui).",
+      "parentUuid": "7fd6e483_3f1b7b8d",
+      "revId": "6cc4598d18c660d4e253970bc875be5fa08c770b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
