@@ -6529,7 +6529,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 
 
 .preview-hero {
-  height: calc(100% - 70px);
+  height: calc(100% - 110px);
   min-height: 504px;
   margin-top: -5px;
   padding-top: 0;
@@ -6543,7 +6543,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .wear-hero {
-  height: calc(100% - 70px);
+  height: calc(100% - 110px);
   min-height: 504px;
   margin-top: -5px;
   padding-top: 0;
@@ -6557,7 +6557,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .tv-hero {
-  height: calc(100% - 70px);
+  height: calc(100% - 110px);
   min-height: 504px;
   margin-top: -5px;
   padding-top: 0;
@@ -6571,7 +6571,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .auto-hero {
-  height: calc(100% - 70px);
+  height: calc(100% - 110px);
   min-height: 504px;
   margin-top: -5px;
   padding-top: 0;
