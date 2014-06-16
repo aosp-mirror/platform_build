@@ -83,8 +83,17 @@ def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
   fstab = info_dict["fstab"]
   if fstab:
     image_props["fs_type" ] = fstab["/system"].fs_type
+
+  fs_config = os.path.join(input_dir, "META/filesystem_config.txt")
+  if not os.path.exists(fs_config): fs_config = None
+
+  fc_config = os.path.join(input_dir, "BOOT/RAMDISK/file_contexts")
+  if not os.path.exists(fc_config): fc_config = None
+
   succ = build_image.BuildImage(os.path.join(input_dir, "system"),
-                                image_props, img.name)
+                                image_props, img.name,
+                                fs_config=fs_config,
+                                fc_config=fc_config)
   assert succ, "build system.img image failed"
 
   mapdata = None

@@ -207,13 +207,20 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
 
-def BuildImage(in_dir, prop_dict, out_file):
+def BuildImage(in_dir, prop_dict, out_file,
+               fs_config=None,
+               fc_config=None):
   """Build an image to out_file from in_dir with property prop_dict.
 
   Args:
     in_dir: path of input directory.
     prop_dict: property dictionary.
     out_file: path of the output image file.
+    fs_config: path to the fs_config file (typically
+      META/filesystem_config.txt).  If None then the configuration in
+      the local client will be used.
+    fc_config: path to the SELinux file_contexts file.  If None then
+      the value from prop_dict['selinux_fc'] will be used.
 
   Returns:
     True iff the image is built successfully.
@@ -243,7 +250,11 @@ def BuildImage(in_dir, prop_dict, out_file):
     build_command.append(prop_dict["partition_size"])
     if "timestamp" in prop_dict:
       build_command.extend(["-T", str(prop_dict["timestamp"])])
-    if "selinux_fc" in prop_dict:
+    if fs_config is not None:
+      build_command.extend(["-C", fs_config])
+    if fc_config is not None:
+      build_command.append(fc_config)
+    elif "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   else:
     build_command = ["mkyaffs2image", "-f"]
