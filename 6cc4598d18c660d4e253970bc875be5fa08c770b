@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7fd6e483_3f1b7b8d",
+        "filename": "core/combo/include/arch/freebsd-x86/AndroidConfig.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-06-16T20:11:36Z",
+      "side": 0,
+      "message": "Heh, I like this comment...\n\nAnyway... what\u0027s freebsd-x86 used for ? Is this an officially supported build configuration ? (what about linux-ppc , linux-arm64 etc. assuming these are host configurations).",
+      "revId": "6cc4598d18c660d4e253970bc875be5fa08c770b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
