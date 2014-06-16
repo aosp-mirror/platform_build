@@ -256,6 +256,9 @@ def BuildImage(in_dir, prop_dict, out_file,
       build_command.append(fc_config)
     elif "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
+  elif fs_type.startswith("f2fs"):
+    build_command = ["mkf2fsuserimg.sh"]
+    build_command.extend([out_file, prop_dict["partition_size"]])
   else:
     build_command = ["mkyaffs2image", "-f"]
     if prop_dict.get("mkyaffs2_extra_flags", None):
@@ -325,7 +328,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
   elif mount_point == "data":
+    # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
+    copy_prop("userdata_fs_type", "fs_type")
     copy_prop("userdata_size", "partition_size")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
