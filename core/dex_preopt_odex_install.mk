@@ -33,12 +33,14 @@ endif
 
 built_odex :=
 installed_odex :=
+built_installed_odex :=
 ifdef LOCAL_DEX_PREOPT
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
 ifdef dexpreopt_boot_jar_module
 ifeq ($(DALVIK_VM_LIB),libdvm.so)
 built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
 installed_odex := $(basename $(LOCAL_INSTALLED_MODULE)).odex
+built_installed_odex := $(built_odex):$(installed_odex)
 else # libdvm.so
 # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
 # We use this installed_odex trick to get boot.art installed.
@@ -50,6 +52,7 @@ else  # boot jar
 ifeq ($(DALVIK_VM_LIB),libdvm.so)
 built_odex := $(basename $(LOCAL_BUILT_MODULE)).odex
 installed_odex := $(basename $(LOCAL_INSTALLED_MODULE)).odex
+built_installed_odex := $(built_odex):$(installed_odex)
 
 $(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
                 $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS)
@@ -72,7 +75,7 @@ $(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
                 $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
                 $(my_dex_preopt_image_filename)
 installed_odex := $(call get-odex-file-path,$(DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
-
+built_installed_odex := $(built_odex):$(installed_odex)
 # #################################################
 # Odex for the 2nd arch
 ifdef TARGET_2ND_ARCH
@@ -90,8 +93,10 @@ $(built_odex2) : $($(TARGET_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BU
                  $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
                  $(my_dex_preopt_image_filename)
 
+installed_odex2 := $(call get-odex-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
 built_odex += $(built_odex2)
-installed_odex += $(call get-odex-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+installed_odex += $(installed_odex2)
+built_installed_odex += $(built_odex2):$(installed_odex2)
 endif  # TARGET_2ND_ARCH
 # #################################################
 else  # must be APPS
@@ -110,6 +115,7 @@ $(built_odex) : $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUIL
                 $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
                 $(my_dex_preopt_image_filename)
 installed_odex := $(call get-odex-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+built_installed_odex := $(built_odex):$(installed_odex)
 endif  # LOCAL_MODULE_CLASS
 endif # libart
 endif # boot jar
@@ -125,7 +131,9 @@ $(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(install
 endif
 
 # Add the installed_odex to the list of installed files for this module.
-ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(installed_odex)
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
+
 # Make sure to install the .odex when you run "make <module_name>"
 $(my_register_name): $(installed_odex)
 
