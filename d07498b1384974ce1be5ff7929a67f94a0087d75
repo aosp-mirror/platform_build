@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "7f3264d4_fe0549a9",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-06-16T21:49:54Z",
+      "side": 1,
+      "message": "How are we going to build the initial prebuilts in such a case? Also, we will need updated prebuilts checked in along with any patch that re-enables a windows llvm-rs-cc, since the slang sources have changed due to LLVM rebases, etc.",
+      "parentUuid": "64ec997a_2128ae0b",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf469c40_cf00e19c",
         "filename": "core/clang/config.mk",
         "patchSetId": 1
