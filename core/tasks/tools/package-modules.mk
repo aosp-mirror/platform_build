@@ -31,7 +31,7 @@ $(foreach m,$(my_modules),\
     $(if $(filter 1,$(words $(b))),\
       $(eval my_built_modules += $(b))\
       $(eval my_copy_dest := $(patsubst data/%,DATA/%,\
-                               $(patsubst system/%,SYSTEM/%,\
+                               $(patsubst system/%,DATA/%,\
                                  $(patsubst $(PRODUCT_OUT)/%,%,$(i)))))\
       $(eval my_copy_pairs += $(b):$(my_staging_dir)/$(my_copy_dest)),\
       $(warning Unexpected module built file '$(b)' for module '$(m)'))\
