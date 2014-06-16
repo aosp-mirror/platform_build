@@ -18,10 +18,14 @@ my_pickup_files :=
 # Calculate the dest files in the output zip file.
 
 $(foreach m,$(my_modules),\
-  $(if $(ALL_MODULES.$(m).BUILT_INSTALLED),,\
+  $(eval _pickup_files := $(strip $(ALL_MODULES.$(m).PICKUP_FILES)\
+    $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).PICKUP_FILES)))\
+  $(eval _built_files := $(strip $(ALL_MODULES.$(m).BUILT_INSTALLED)\
+    $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).BUILT_INSTALLED)))\
+  $(if $(_pickup_files)$(_built_files),,\
     $(warning Unknown installed file for module '$(m)'))\
-  $(eval my_pickup_files += $(ALL_MODULES.$(m).PICKUP_FILES))\
-  $(foreach i, $(ALL_MODULES.$(m).BUILT_INSTALLED),\
+  $(eval my_pickup_files += $(_pickup_files))\
+  $(foreach i, $(_built_files),\
     $(eval bui_ins := $(subst :,$(space),$(i)))\
     $(eval ins := $(word 2,$(bui_ins)))\
     $(if $(filter $(TARGET_OUT_ROOT)/%,$(ins)),\
