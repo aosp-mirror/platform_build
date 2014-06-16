@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1f3168d1_e79782bd",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-06-16T21:03:22Z",
+      "side": 1,
+      "message": "Done that, but strangely by the time g++ links llvm-rs-cc.exe its dependencies out/host/windows-x86/obj32/lib/libLLVM.dll and out/host/windows-x86/obj32/lib/libclang.dll are not built yet.  Please help.",
+      "parentUuid": "9f439833_2eb4070c",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf469c40_cf00e19c",
         "filename": "core/clang/config.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-16T18:42:03Z",
       "side": 1,
       "message": "I think we should change to $(BUILD_OUT_EXECUTABLES) in the above instead. $(BUILD_OUT_EXECUTABLES) points to the build OS directory.",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f538cfe_b65cd026",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-06-16T21:03:22Z",
+      "side": 1,
+      "message": "Sure.  Should I change the following line#24,25 to use BUILD_OUT_EXECUTABLES as well.",
+      "parentUuid": "bf469c40_cf00e19c",
       "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
