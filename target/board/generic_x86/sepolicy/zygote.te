@@ -1,2 +1,3 @@
 allow zygote self:process execmem;
 allow zygote self:capability sys_nice;
+allow zygote qemu_device:chr_file rw_file_perms;
