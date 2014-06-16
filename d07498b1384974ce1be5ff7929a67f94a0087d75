@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "64ec997a_2128ae0b",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-16T21:36:44Z",
+      "side": 1,
+      "message": "You shouldn\u0027t be building llvm-rs-cc.exe at all, the prebuilts in prebuilts/sdk/tools/windows will be used. See prebuilts/sdk/tools/Android.mk.",
+      "parentUuid": "1f3168d1_e79782bd",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf469c40_cf00e19c",
         "filename": "core/clang/config.mk",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Sure.  Should I change the following line#24,25 to use BUILD_OUT_EXECUTABLES as well.",
       "parentUuid": "bf469c40_cf00e19c",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f439833_7156f038",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-16T21:36:44Z",
+      "side": 1,
+      "message": "Then you don\u0027t need the ifneq..else..endif any more.\n$(BUILD_OUT_EXECUTABLES) points to out/host/linux-x86/bin in windows build.",
+      "parentUuid": "3f538cfe_b65cd026",
       "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
