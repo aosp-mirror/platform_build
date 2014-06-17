@@ -273,6 +273,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 # ims-common.jar added to BOOTCLASSPATH
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/ETC/init.environ.rc_intermediates)
 
+# Change ro.zygote for core_64_bit.mk from zygote32_64 to zygote64_32
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

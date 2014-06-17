@@ -23,10 +23,6 @@
 # that isn't a wifi connection. This will instruct init.rc to enable the
 # network connection so that you can use it with ADB
 
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote64_32
-PRODUCT_COPY_FILES += system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc
-
-
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
