@@ -107,9 +107,11 @@ FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 FRAMEWORKS_SUPPORT_SUBDIRS := \
         annotations \
         v4 \
-        v7/gridlayout \
         v7/appcompat \
+        v7/cardview \
+        v7/gridlayout \
         v7/mediarouter \
+        v7/palette \
         v7/recyclerview \
         v8/renderscript \
         v13 \
