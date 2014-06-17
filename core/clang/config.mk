@@ -24,8 +24,12 @@ CLANG_CONFIG_EXTRA_CFLAGS :=
 CLANG_CONFIG_EXTRA_CPPFLAGS :=
 CLANG_CONFIG_EXTRA_LDFLAGS :=
 
-CLANG_CONFIG_EXTRA_CFLAGS := \
+CLANG_CONFIG_EXTRA_CFLAGS += \
   -D__compiler_offsetof=__builtin_offsetof
+
+# Help catch common 32/64-bit errors.
+CLANG_CONFIG_EXTRA_CFLAGS += \
+  -Werror=int-conversion
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops \
