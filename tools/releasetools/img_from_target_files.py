@@ -59,9 +59,21 @@ def AddSystem(output_zip, sparse=True):
   data = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse)
   common.ZipWriteStr(output_zip, "system.img", data)
 
-
 def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
-  print "creating system.img..."
+  return CreateImage(input_dir, info_dict, "system",
+                     sparse=sparse, map_file=map_file)
+
+def AddVendor(output_zip, sparse=True):
+  data = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse)
+  common.ZipWriteStr(output_zip, "vendor.img", data)
+
+def BuildVendor(input_dir, info_dict, sparse=True, map_file=None):
+  return CreateImage(input_dir, info_dict, "vendor",
+                     sparse=sparse, map_file=map_file)
+
+
+def CreateImage(input_dir, info_dict, what, sparse=True, map_file=None):
+  print "creating " + what + ".img..."
 
   img = tempfile.NamedTemporaryFile()
 
@@ -69,8 +81,8 @@ def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
   # mkyaffs2image.  It wants "system" but we have a directory named
   # "SYSTEM", so create a symlink.
   try:
-    os.symlink(os.path.join(input_dir, "SYSTEM"),
-               os.path.join(input_dir, "system"))
+    os.symlink(os.path.join(input_dir, what.upper()),
+               os.path.join(input_dir, what))
   except OSError, e:
       # bogus error on my mac version?
       #   File "./build/tools/releasetools/img_from_target_files", line 86, in AddSystem
@@ -79,22 +91,28 @@ def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
     if (e.errno == errno.EEXIST):
       pass
 
-  image_props = build_image.ImagePropFromGlobalDict(info_dict, "system")
+  image_props = build_image.ImagePropFromGlobalDict(info_dict, what)
   fstab = info_dict["fstab"]
   if fstab:
-    image_props["fs_type" ] = fstab["/system"].fs_type
+    image_props["fs_type" ] = fstab["/" + what].fs_type
 
-  fs_config = os.path.join(input_dir, "META/filesystem_config.txt")
+  if what == "system":
+    fs_config_prefix = ""
+  else:
+    fs_config_prefix = what + "_"
+
+  fs_config = os.path.join(
+      input_dir, "META/" + fs_config_prefix + "filesystem_config.txt")
   if not os.path.exists(fs_config): fs_config = None
 
   fc_config = os.path.join(input_dir, "BOOT/RAMDISK/file_contexts")
   if not os.path.exists(fc_config): fc_config = None
 
-  succ = build_image.BuildImage(os.path.join(input_dir, "system"),
+  succ = build_image.BuildImage(os.path.join(input_dir, what),
                                 image_props, img.name,
                                 fs_config=fs_config,
                                 fc_config=fc_config)
-  assert succ, "build system.img image failed"
+  assert succ, "build " + what + ".img image failed"
 
   mapdata = None
 
@@ -104,7 +122,7 @@ def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
   else:
     success, name = build_image.UnsparseImage(img.name, replace=False)
     if not success:
-      assert False, "unsparsing system.img failed"
+      assert False, "unsparsing " + what + ".img failed"
 
     if map_file:
       mmap = tempfile.NamedTemporaryFile()
@@ -129,45 +147,6 @@ def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
     return data
   else:
     return mapdata, data
-
-
-def AddVendor(output_zip):
-  """Turn the contents of VENDOR into vendor.img and store it in
-  output_zip."""
-
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "vendor")
-  # The build system has to explicitly request for vendor.img.
-  if "fs_type" not in image_props:
-    return
-
-  print "creating vendor.img..."
-
-  img = tempfile.NamedTemporaryFile()
-
-  # The name of the directory it is making an image out of matters to
-  # mkyaffs2image.  It wants "vendor" but we have a directory named
-  # "VENDOR", so create a symlink or an empty directory if VENDOR does not
-  # exist.
-  if not os.path.exists(os.path.join(OPTIONS.input_tmp, "vendor")):
-    if os.path.exists(os.path.join(OPTIONS.input_tmp, "VENDOR")):
-      os.symlink(os.path.join(OPTIONS.input_tmp, "VENDOR"),
-                 os.path.join(OPTIONS.input_tmp, "vendor"))
-    else:
-      os.mkdir(os.path.join(OPTIONS.input_tmp, "vendor"))
-
-  img = tempfile.NamedTemporaryFile()
-
-  fstab = OPTIONS.info_dict["fstab"]
-  if fstab:
-    image_props["fs_type" ] = fstab["/vendor"].fs_type
-  succ = build_image.BuildImage(os.path.join(OPTIONS.input_tmp, "vendor"),
-                                image_props, img.name)
-  assert succ, "build vendor.img image failed"
-
-  common.CheckSize(img.name, "vendor.img", OPTIONS.info_dict)
-  output_zip.write(img.name, "vendor.img")
-  img.close()
 
 
 def AddUserdata(output_zip):
@@ -287,10 +266,21 @@ def main(argv):
   if recovery_image:
     recovery_image.AddToZip(output_zip)
 
+  def banner(s):
+    print "\n\n++++ " + s + " ++++\n\n"
+
   if not bootable_only:
+    banner("AddSystem")
     AddSystem(output_zip)
-    AddVendor(output_zip)
+    try:
+      input_zip.getinfo("VENDOR/")
+      banner("AddVendor")
+      AddVendor(output_zip)
+    except KeyError:
+      pass   # no vendor partition for this device
+    banner("AddUserdata")
     AddUserdata(output_zip)
+    banner("AddCache")
     AddCache(output_zip)
     CopyInfo(output_zip)
 
