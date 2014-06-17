@@ -59,6 +59,8 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     logd \
     make_ext4fs \
+    e2fsck \
+    resize2fs \
     mms-common \
     screencap \
     sensorservice \

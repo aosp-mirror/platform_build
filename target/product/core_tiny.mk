@@ -64,6 +64,8 @@ PRODUCT_PACKAGES += \
     libdrmframework_jni \
     libdrmframework \
     make_ext4fs \
+    e2fsck \
+    resize2fs \
     nullwebview \
     screencap \
     sensorservice \
