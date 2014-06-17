@@ -250,6 +250,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Switching to 32-bit-by-default host multilib build
 $(call add-clean-step, rm -rf $(HOST_OUT_INTERMEDIATES))
 
+# Change ro.zygote for core_64_bit.mk from zygote32_64 to zygote64_32
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
