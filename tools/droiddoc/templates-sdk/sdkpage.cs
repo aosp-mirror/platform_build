@@ -501,7 +501,7 @@ var:sdk.linux_download
   function onDownloadForRealz(link) {
     if ($("input#agree").is(':checked') && $("#bitpicker input:checked").length) {
       $("div.sdk-terms").slideUp();
-      $("h1#tos-header").text('Now downloading ' + $(link).text() + '...');
+      $("h1#tos-header").text('Now redirecting to the install instructions...');
       $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow', function() {
         setTimeout(function() {
           if ($("#downloadForRealz").attr('bundle') == 'true') {
