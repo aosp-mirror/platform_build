@@ -2989,6 +2989,34 @@ a.header-toggle {
 }
 
 
+/* for IDE instruction toggle (Studio/Eclipse/Other) */
+select.ide {
+  background: transparent;
+  border: 1px solid #bbb;
+  border-left: 0;
+  border-right: 0;
+  margin: 10px 0;
+  padding: 10px 0;
+  color:#666;
+}
+select.ide,
+select.ide option {
+  font-family: inherit;
+  font-size:16px;
+  font-weight:500;
+}
+/* hide all except eclipse by default */
+.select-ide.studio,
+.select-ide.other {
+  display:none;
+}
+/* ... unless eclipse also includes one of the others */
+.select-ide.eclipse.studio,
+.select-ide.eclipse.other {
+  display:block;
+}
+
+
 /* -----------------------------------------------
 good/bad example containers
 */
