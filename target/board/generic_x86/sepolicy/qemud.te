@@ -1,6 +1,0 @@
-# qemu support daemon
-type qemud, domain;
-type qemud_exec, exec_type, file_type;
-
-init_daemon_domain(qemud)
-unconfined_domain(qemud)
