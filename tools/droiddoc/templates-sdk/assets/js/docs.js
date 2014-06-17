@@ -1088,8 +1088,16 @@ function hideNestedItems(list, toggle) {
 }
 
 
+/* Call this to add listeners to a <select> element for Studio/Eclipse/Other docs */
+function setupIdeDocToggle() {
+  $( "select.ide" ).change(function() {
+    var selected = $(this).find("option:selected").attr("value");
+    $(".select-ide").hide();
+    $(".select-ide."+selected).show();
 
-
+    $("select.ide").val(selected);
+  });
+}
 
 
 
@@ -3444,8 +3452,8 @@ function showSamples() {
     } else if (isCarousel) {
       drawResourcesCarouselWidget($widget, opts, resources);
     } else if (isStack) {
-      /* Looks like this got removed and is not used, so repurposing for the 
-          homepage style layout. 
+      /* Looks like this got removed and is not used, so repurposing for the
+          homepage style layout.
           Modified by LFL 6/6/14
       */
       //var sections = buildSectionList(opts);
@@ -3534,11 +3542,11 @@ function showSamples() {
 
     for (var i = 0; i < resources.length; ++i) {
       var $card = createResourceElement(resources[i], opts);
-      
+
       if (opts.resourceStyle.indexOf('related') > -1) {
         $card.addClass('related-card');
       }
-      
+
       cards.push($card[0]);
     }
 
@@ -3562,14 +3570,14 @@ function showSamples() {
     }
 
   };
-  
-  /* 
+
+  /*
     Create a resource card using the given resource object and a list of html
      configured options. Returns a jquery object containing the element.
   */
-  function createResourceElement(resource, opts, plusone) {     
+  function createResourceElement(resource, opts, plusone) {
     var $el;
-    
+
     // The difference here is that generic cards are not entirely clickable
     // so its a div instead of an a tag, also the generic one is not given
     // the resource-card class so it appears with a transparent background
@@ -3581,13 +3589,13 @@ function showSamples() {
         .decorateResource(resource, opts);
     } else {
       var cls = 'resource resource-card';
-      
+
       $el = $('<a>')
         .addClass(cls)
         .attr('href', cleanUrl(resource.url))
         .decorateResourceCard(resource, plusone);
     }
-    
+
     return $el;
   }
 
@@ -3624,10 +3632,10 @@ function showSamples() {
         var resource = resources[i];
 
         var $card = createResourceElement(resources[i], opts, plusone);
-        
-        $card.addClass('resource-card-' + cardSize + 
+
+        $card.addClass('resource-card-' + cardSize +
           ' resource-card-' + resource.type);
-          
+
         if (isStack) {
           $card.addClass('resource-card-' + isStack[1] + 'x' + isStack[2]);
           if (++stackCount == parseInt(isStack[3])) {
@@ -3777,13 +3785,13 @@ function showSamples() {
     }
     return true;
   }
-  
+
   function cleanUrl(url)
   {
     if (url && url.indexOf('//') === -1) {
       url = toRoot + url;
     }
-    
+
     return url;
   }
 
@@ -3835,49 +3843,49 @@ function showSamples() {
 
 (function($) {
 
-  /* 
+  /*
     Utility method for creating dom for the description area of a card.
     Used in decorateResourceCard and decorateResource.
   */
   function buildResourceCardDescription(resource, plusone) {
     var $description = $('<div>').addClass('description ellipsis');
-    
+
     $description.append($('<div>').addClass('text').html(resource.summary));
-    
+
     if (resource.cta) {
       $description.append($('<a>').addClass('cta').html(resource.cta));
     }
-    
+
     if (plusone) {
-      var plusurl = resource.url.indexOf("//") > -1 ? resource.url : 
+      var plusurl = resource.url.indexOf("//") > -1 ? resource.url :
         "//developer.android.com/" + resource.url;
-        
+
       $description.append($('<div>').addClass('util')
         .append($('<div>').addClass('g-plusone')
           .attr('data-size', 'small')
           .attr('data-align', 'right')
           .attr('data-href', plusurl)));
     }
-    
+
     return $description;
   }
-  
-  
+
+
   /* Simple jquery function to create dom for a standard resource card */
   $.fn.decorateResourceCard = function(resource,plusone) {
     var section = resource.group || resource.type;
-    var imgUrl = resource.image || 
+    var imgUrl = resource.image ||
       'assets/images/resource-card-default-android.jpg';
-    
+
     if (imgUrl.indexOf('//') === -1) {
       imgUrl = toRoot + imgUrl;
     }
 
     $('<div>').addClass('card-bg')
-      .css('background-image', 'url(' + (imgUrl || toRoot + 
+      .css('background-image', 'url(' + (imgUrl || toRoot +
         'assets/images/resource-card-default-android.jpg') + ')')
       .appendTo(this);
-      
+
     $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
       .append($('<div>').addClass('section').text(section))
       .append($('<div>').addClass('title').html(resource.title))
@@ -3965,20 +3973,20 @@ function showSamples() {
 
     return this;
   };
-  
-  
-  
-  
+
+
+
+
   /* Render other types of resource styles that are not cards. */
   $.fn.decorateResource = function(resource, opts) {
-    var imgUrl = resource.image || 
+    var imgUrl = resource.image ||
       'assets/images/resource-card-default-android.jpg';
     var linkUrl = resource.url;
-    
+
     if (imgUrl.indexOf('//') === -1) {
       imgUrl = toRoot + imgUrl;
     }
-    
+
     if (linkUrl && linkUrl.indexOf('//') === -1) {
       linkUrl = toRoot + linkUrl;
     }
@@ -4022,13 +4030,13 @@ function showSamples() {
 
 /*
   Fullscreen Carousel
-  
+
   The following allows for an area at the top of the page that takes over the
-  entire browser height except for its top offset and an optional bottom 
+  entire browser height except for its top offset and an optional bottom
   padding specified as a data attribute.
-  
+
   HTML:
-  
+
   <div class="fullscreen-carousel">
     <div class="fullscreen-carousel-content">
       <!-- content here -->
@@ -4036,18 +4044,18 @@ function showSamples() {
     <div class="fullscreen-carousel-content">
       <!-- content here -->
     </div>
-    
+
     etc ...
-    
+
   </div>
-  
+
   Control over how the carousel takes over the screen can mostly be defined in
   a css file. Setting min-height on the .fullscreen-carousel-content elements
-  will prevent them from shrinking to far vertically when the browser is very 
+  will prevent them from shrinking to far vertically when the browser is very
   short, and setting max-height on the .fullscreen-carousel itself will prevent
-  the area from becoming to long in the case that the browser is stretched very 
+  the area from becoming to long in the case that the browser is stretched very
   tall.
-  
+
   There is limited functionality for having multiple sections since that request
   was removed, but it is possible to add .next-arrow and .prev-arrow elements to
   scroll between multiple content areas.
@@ -4062,7 +4070,7 @@ function showSamples() {
 
   function initWidget(widget) {
     var $widget = $(widget);
-    
+
     var topOffset = $widget.offset().top;
     var padBottom = parseInt($widget.data('paddingbottom')) || 0;
     var maxHeight = 0;
@@ -4071,7 +4079,7 @@ function showSamples() {
     var $nextArrow = $widget.find('.next-arrow');
     var $prevArrow = $widget.find('.prev-arrow');
     var $curSection = $($content[0]);
-    
+
     if ($content.length <= 1) {
       $nextArrow.hide();
       $prevArrow.hide();
@@ -4082,7 +4090,7 @@ function showSamples() {
         $curSection = $($content[index >= $content.length ? 0 : index]);
         $curSection.show();
       });
-      
+
       $prevArrow.click(function() {
         var index = ($content.index($curSection) - 1);
         $curSection.hide();
@@ -4104,10 +4112,10 @@ function showSamples() {
     function resizeWidget() {
       var height = $(window).height() - topOffset - padBottom;
       $widget.width($(window).width());
-      $widget.height(height < minHeight ? minHeight : 
+      $widget.height(height < minHeight ? minHeight :
         (maxHeight && height > maxHeight ? maxHeight : height));
     }
-  } 
+  }
 })();
 
 
@@ -4116,36 +4124,36 @@ function showSamples() {
 
 /*
   Tab Carousel
-  
+
   The following allows tab widgets to be installed via the html below. Each
   tab content section should have a data-tab attribute matching one of the
   nav items'. Also each tab content section should have a width matching the
   tab carousel.
-  
+
   HTML:
-  
+
   <div class="tab-carousel">
     <ul class="tab-nav">
       <li><a href="#" data-tab="handsets">Handsets</a>
       <li><a href="#" data-tab="wearable">Wearable</a>
       <li><a href="#" data-tab="tv">TV</a>
     </ul>
-            
+
     <div class="tab-carousel-content">
       <div data-tab="handsets">
         <!--Full width content here-->
       </div>
-      
+
       <div data-tab="wearable">
         <!--Full width content here-->
       </div>
-      
+
       <div data-tab="tv">
         <!--Full width content here-->
       </div>
     </div>
   </div>
-  
+
 */
 (function() {
   $(document).ready(function() {
@@ -4168,40 +4176,40 @@ function showSamples() {
     $anchors.click(function(evt) {
       evt.preventDefault();
       var query = '[data-tab=' + $(this).data('tab') + ']';
-      transitionWidget($tabs.filter(query)); 
+      transitionWidget($tabs.filter(query));
     });
-    
+
     // Add highlight for navigation on first item.
     var $highlight = $('<div>').addClass('highlight')
       .css({left:$li.position().left + 'px', width:$li.outerWidth() + 'px'})
       .appendTo($nav);
-    
+
     // Store height since we will change contents to absolute.
     $contentContainer.height($contentContainer.height());
-    
+
     // Absolutely position tabs so they're ready for transition.
     $tabs.each(function(index) {
       $(this).css({position: 'absolute', left: index > 0 ? width + 'px' : '0'});
     });
-    
+
     function transitionWidget($toTab) {
       if (!$curTab.is($toTab)) {
         var curIndex = $tabs.index($curTab[0]);
         var toIndex = $tabs.index($toTab[0]);
         var dir = toIndex > curIndex ? 1 : -1;
-        
+
         // Animate content sections.
         $toTab.css({left:(width * dir) + 'px'});
         $curTab.animate({left:(width * -dir) + 'px'});
         $toTab.animate({left:'0'});
-        
+
         // Animate navigation highlight.
-        $highlight.animate({left:$($li[toIndex]).position().left + 'px', 
+        $highlight.animate({left:$($li[toIndex]).position().left + 'px',
           width:$($li[toIndex]).outerWidth() + 'px'})
-          
+
         // Store new current section.
         $curTab = $toTab;
       }
     }
-  } 
+  }
 })();
