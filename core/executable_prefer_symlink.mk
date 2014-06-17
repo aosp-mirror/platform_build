@@ -10,9 +10,20 @@ my_symlink := $(addprefix $(TARGET_OUT)/bin/, $(LOCAL_MODULE))
 # check because 32 bit targets may not define TARGET_PREFER_32_BIT_APPS
 # et al. since those variables make no sense in that context.
 ifeq ($(TARGET_IS_64_BIT),true)
-ifneq ($(TARGET_PREFER_32_BIT_APPS),true)
+ifeq ($(TARGET_SUPPORTS_64_BIT_APPS)|$(TARGET_SUPPORTS_32_BIT_APPS),true|true)
+  # We support both 32 and 64 bit apps, so we will have to
+  # base our decision on whether the target prefers one or the
+  # other.
+  ifneq ($(TARGET_PREFER_32_BIT_APPS),true)
+    $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
+  else
+    $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_64)
+  endif
+else ifeq ($(TARGET_SUPPORTS_64_BIT_APPS),true)
+  # We support only 64 bit apps.
   $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_64)
 else
+  # We support only 32 bit apps.
   $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
 endif
 else
