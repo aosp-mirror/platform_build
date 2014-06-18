@@ -332,11 +332,15 @@ false; // navigate across topic boundaries only in design docs
                           .click(function() { return false; });
       if ($nextLink.length) {
         $('.next-class-link').attr('href',$nextLink.attr('href'))
-                             .removeClass("hide").append($nextLink.html());
+                             .removeClass("hide")
+                             .append(": " + $nextLink.html());
         $('.next-class-link').find('.new').empty();
       }
     } else {
-      $('.next-page-link').attr('href', $nextLink.attr('href')).removeClass("hide");
+      $('.next-page-link').attr('href', $nextLink.attr('href'))
+                          .removeClass("hide");
+      // for the footer link, also add the next page title
+      $('.content-footer .next-page-link').append(": " + $nextLink.html());
     }
 
     if (!startClass && $prevLink.length) {
