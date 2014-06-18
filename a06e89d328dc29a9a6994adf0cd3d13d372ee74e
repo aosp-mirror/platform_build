@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a0e55c_22cc4a9d",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2014-06-18T19:22:31Z",
+      "side": 1,
+      "message": "you could also handle:\n\n /system/lib/* -\u003e /system/lib64/*\n /system/lib64/* -\u003e /system/lib/*\n /system/vendor/lib/* -\u003e /system/vendor/lib64/*\n /system/vendor/lib64/* -\u003e /system/vendor/lib/*",
+      "revId": "a06e89d328dc29a9a6994adf0cd3d13d372ee74e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
