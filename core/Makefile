@@ -1597,6 +1597,10 @@ $(INTERNAL_SDK_TARGET): PRIVATE_DIR := $(sdk_dir)/$(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DEP_FILE := $(sdk_dep_file)
 $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
 
+sdk_font_temp_dir := $(call intermediates-dir-for,PACKAGING,sdk-fonts)
+sdk_font_input_list := frameworks/base/data/fonts external/noto-fonts
+sdk_font_rename_script := frameworks/base/tools/layoutlib/rename_font/build_font.py
+
 # Set SDK_GNU_ERROR to non-empty to fail when a GNU target is built.
 #
 #SDK_GNU_ERROR := true
@@ -1612,6 +1616,9 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	  fi; \
 	done; \
 	if [ $$FAIL ]; then exit 1; fi
+	$(hide) mkdir -p $(sdk_font_temp_dir)
+	$(hide) PYTHONPATH=$$PYTHONPATH:external/fonttools/Lib $(sdk_font_rename_script) $(sdk_font_input_list) \
+	        $(sdk_font_temp_dir)
 	$(hide) ( \
 		ATREE_STRIP="strip -x" \
 		$(HOST_OUT_EXECUTABLES)/atree \
@@ -1627,6 +1634,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-v "TARGET_ARCH=$(TARGET_ARCH)" \
 			-v "TARGET_CPU_ABI=$(TARGET_CPU_ABI)" \
 			-v "DLL_EXTENSION=$(HOST_SHLIB_SUFFIX)" \
+			-v "FONT_OUT=$(sdk_font_temp_dir)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \
