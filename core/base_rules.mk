@@ -403,7 +403,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_ja
 #                 be up-to-date.
 ifdef LOCAL_IS_HOST_MODULE
 ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-deps,core-hostdex,$(LOCAL_IS_HOST_MODULE))
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-deps,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
