@@ -444,7 +444,7 @@ video.with-shadow {
   border-top: 1px solid #ccc;
   margin-top: 10px;
   padding-top:10px;
-  height: 30px; }
+  width:100%; }
 
 .content-footer .col-9 {
   margin-left:0;
@@ -455,9 +455,15 @@ video.with-shadow {
 .content-footer.wrap {
   width:940px;
 }
+.content-footer .plus-container {
+  margin:5px 0 0;
+  text-align:right;
+  float:right;
+}
 
 .paging-links {
-  position: relative; }
+  position: relative;
+  height:30px; }
   .paging-links a {
     position: absolute; }
   .paging-links a,
@@ -482,7 +488,7 @@ video.with-shadow {
     .paging-links .prev-page-link {
       left: -15px; }
     .paging-links .next-page-link {
-      right: 0px; }
+      right: 0; }
     .next-page-link:after,
     .start-class-link:after,
     .start-course-link:after,
@@ -499,6 +505,9 @@ video.with-shadow {
     .next-page-link.inline:after {
       content: none; }
 
+  .content-footer .paging-links .next-page-link {
+    left:0;
+  }
 
   .training-nav-top a {
     display:block;
@@ -537,7 +546,6 @@ video.with-shadow {
 
   .paging-links a.start-class-link {
     width:100%;
-    text-align:right;
   }
 
   /* list of classes on course landing page */
@@ -625,7 +633,6 @@ video.with-shadow {
 
   .content-footer.next-class a.next-class-link {
     display:block;
-    float:right;
     text-transform:uppercase;
   }
 

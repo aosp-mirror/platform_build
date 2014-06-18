@@ -157,25 +157,9 @@ include:"header.cs" ?>
                     if:fullpage ?>wrap<?cs
                     else ?>layout-content-row<?cs /if ?>"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <div class="layout-content-col <?cs
-                    if:fullpage ?>col-16<?cs
-                    elif:training||guide ?>col-8<?cs
-                    else ?>col-9<?cs /if ?>" style="padding-top:4px">
-          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
-            <div class="g-plusone" data-size="medium"></div>
-          <?cs /if ?>
-        </div>
         <?cs if:!fullscreen ?>
-        <div class="paging-links layout-content-col col-4">
+        <div class="paging-links layout-content-col col-10">
           <?cs if:(design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
-            <a href="#" class="prev-page-link hide"
-                zh-tw-lang="上一堂課"
-                zh-cn-lang="上一课"
-                ru-lang="Предыдущий"
-                ko-lang="이전"
-                ja-lang="前へ"
-                es-lang="Anterior"
-                >Previous</a>
             <a href="#" class="next-page-link hide"
                 zh-tw-lang="下一堂課"
                 zh-cn-lang="下一课"
@@ -194,13 +178,18 @@ include:"header.cs" ?>
                 >Get started</a>
           <?cs /if ?>
         </div>
+        <div class="layout-content-col plus-container col-2" >
+          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
+            <div class="g-plusone" data-size="medium"></div>
+          <?cs /if ?>
+        </div>
         <?cs /if ?>
       </div>
 
       <?cs # for training classes, provide a different kind of link when the next page is a different class ?>
       <?cs if:training && !page.article ?>
       <div class="layout-content-row content-footer next-class" style="display:none" itemscope itemtype="http://schema.org/SiteNavigationElement">
-          <a href="#" class="next-class-link hide">Next class: </a>
+          <a href="#" class="next-class-link hide">Next class</a>
       </div>
       <?cs /if ?>
 
