@@ -16,6 +16,24 @@
       "revId": "a06e89d328dc29a9a6994adf0cd3d13d372ee74e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4466b513_52e35442",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-18T21:17:28Z",
+      "side": 1,
+      "message": "Done.\nIt\u0027s a little tricky to get it right.",
+      "parentUuid": "c4a0e55c_22cc4a9d",
+      "revId": "a06e89d328dc29a9a6994adf0cd3d13d372ee74e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
