@@ -28,8 +28,6 @@ ifeq ($($(my_prefix)IS_64_BIT)|$(my_module_multilib),true|32)
 my_module_arch_supported := false
 else ifeq ($($(my_prefix)IS_64_BIT)|$(my_module_multilib),|64)
 my_module_arch_supported := false
-else ifeq ($(call directory_is_64_bit_blacklisted,$(LOCAL_PATH)),true)
-my_module_arch_supported := false
 endif
 else # LOCAL_2ND_ARCH_VAR_PREFIX
 ifeq ($(my_module_multilib),first)
