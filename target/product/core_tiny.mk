@@ -77,7 +77,7 @@ PRODUCT_PACKAGES += \
 
 # The order matters
 PRODUCT_BOOT_JARS := \
-    core \
+    core-libart \
     conscrypt \
     okhttp \
     core-junit \
