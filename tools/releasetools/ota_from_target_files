@@ -57,6 +57,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       first, so that any changes made to the system partition are done
       using the new recovery (new kernel, etc.).
 
+  -t  (--worker_threads) <int>
+      Specifies the number of worker-threads that will be used when
+      generating patches for incremental updates (defaults to 3).
+
 """
 
 import sys
@@ -965,8 +969,12 @@ def main(argv):
         OPTIONS.aslr_mode = True
       else:
         OPTIONS.aslr_mode = False
-    elif o in ("--worker_threads"):
-      OPTIONS.worker_threads = int(a)
+    elif o in ("-t", "--worker_threads"):
+      if a.isdigit():
+        OPTIONS.worker_threads = int(a)
+      else:
+        raise ValueError("Cannot parse value %r for option %r - only "
+                         "integers are allowed." % (a, o))
     elif o in ("-2", "--two_step"):
       OPTIONS.two_step = True
     elif o in ("--no_signing"):
@@ -976,7 +984,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:a:2",
+                             extra_opts="b:k:i:d:wne:t:a:2",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
