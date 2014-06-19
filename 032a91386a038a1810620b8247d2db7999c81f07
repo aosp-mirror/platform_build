@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04803dc3_dc2f857b",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1040443
+      },
+      "writtenOn": "2014-06-19T14:19:10Z",
+      "side": 1,
+      "message": "I think you want CLANG_CXX here.",
+      "range": {
+        "startLine": 33,
+        "startChar": 34,
+        "endLine": 33,
+        "endChar": 39
+      },
+      "revId": "032a91386a038a1810620b8247d2db7999c81f07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
