@@ -20,6 +20,7 @@
 # entirely appropriate to inherit from for on-device configurations.
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 
 # Overrides
 PRODUCT_BRAND := generic_x86_64
