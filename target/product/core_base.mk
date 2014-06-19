@@ -67,7 +67,7 @@ PRODUCT_PACKAGES += \
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
 # Override the PRODUCT_BOOT_JARS set in core_minimal.mk. The order matters.
 PRODUCT_BOOT_JARS := \
-    core \
+    core-libart \
     conscrypt \
     okhttp \
     core-junit \

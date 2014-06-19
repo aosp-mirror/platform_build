@@ -100,7 +100,7 @@ $(hide) java -Xmx256M \
 	$(PRIVATE_PARAMS) CollectAllTests $(1) $(2) $(3) "$(4)" $(5) $(6)
 endef
 
-CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-libart,,COMMON)
 CONSCRYPT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,conscrypt,,COMMON)
 BOUNCYCASTLE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,bouncycastle,,COMMON)
 APACHEXML_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,apache-xml,,COMMON)
