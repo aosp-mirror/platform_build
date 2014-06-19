@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84d18de4_5873956b",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2014-06-19T22:06:03Z",
+      "side": 1,
+      "message": "Over time, we should create an /selinux directory, and start putting all of our files there.",
+      "revId": "fd1c60f240d88d29ced94a0cb1fbf8a1419ba53f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
