@@ -878,9 +878,20 @@ systemimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,systemimage)
 BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
 
+# Create symlink /system/vendor to /vendor if necessary.
+ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+define create-system-vendor-symlink
+$(hide) ln -sf /vendor $(TARGET_OUT)/vendor
+endef
+else
+define create-system-vendor-symlink
+endef
+endif
+
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
+  $(call create-system-vendor-symlink)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-userimage-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt, \
       skip_fsck=true)
@@ -936,10 +947,11 @@ endif
 #######
 ## system tarball
 define build-systemtarball-target
-    $(call pretty,"Target system fs tarball: $(INSTALLED_SYSTEMTARBALL_TARGET)")
-    $(MKTARBALL) $(FS_GET_STATS) \
-		$(PRODUCT_OUT) system $(PRIVATE_SYSTEM_TAR) \
-		$(INSTALLED_SYSTEMTARBALL_TARGET)
+  $(call pretty,"Target system fs tarball: $(INSTALLED_SYSTEMTARBALL_TARGET)")
+  $(call create-system-vendor-symlink)
+  $(MKTARBALL) $(FS_GET_STATS) \
+    $(PRODUCT_OUT) system $(PRIVATE_SYSTEM_TAR) \
+    $(INSTALLED_SYSTEMTARBALL_TARGET)
 endef
 
 ifndef SYSTEM_TARBALL_FORMAT
