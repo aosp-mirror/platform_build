@@ -2362,6 +2362,13 @@ a:visited,
 #doc-col {
   margin-right:0;
 }
+
+/* Uncomment this for preview release watermark
+#doc-col {
+  background: url('../images/preview.png') repeat;
+}
+*/
+
 #doc-content-container {
   margin-left: 291px
 }
