@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a70589_c7424051",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-19T17:10:48Z",
+      "side": 1,
+      "message": "This also enables ccache with clang. Did you guys test it?",
+      "revId": "3b7a4d811df5b326e714984edd7dd3e2b11e16d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
