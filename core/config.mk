@@ -523,7 +523,7 @@ endif
 
 # allow overriding default Java libraries on a per-target basis
 ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
-  TARGET_DEFAULT_JAVA_LIBRARIES := core core-junit ext framework framework2
+  TARGET_DEFAULT_JAVA_LIBRARIES := core-libart core-junit ext framework framework2
 endif
 
 TARGET_CPU_SMP ?= true
