@@ -16,6 +16,24 @@
       "revId": "1bb6b9540c026d02bbd9349c7d2304a96e904db6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e47c09a6_9b8d9370",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-06-19T10:27:28Z",
+      "side": 1,
+      "message": "eh... \"s/now core/now that core-libart/\"",
+      "parentUuid": "e47c09a6_db830b44",
+      "revId": "1bb6b9540c026d02bbd9349c7d2304a96e904db6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
