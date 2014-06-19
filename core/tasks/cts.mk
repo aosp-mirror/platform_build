@@ -298,7 +298,7 @@ $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql.xml: $(CTS_C
 CORE_VM_TEST_TF_DESC := $(CTS_TESTCASES_OUT)/android.core.vm-tests-tf.xml
 
 # core tests only needed to get hold of junit-framework-classes
-CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core,,COMMON)
+CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-libart,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 
 GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_JAR):$(DDMLIB_JAR):$(TF_JAR)
