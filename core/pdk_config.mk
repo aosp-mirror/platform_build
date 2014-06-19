@@ -53,7 +53,7 @@ ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
 # all paths under out dir
 PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
 	target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
-	target/common/obj/JAVA_LIBRARIES/core_intermediates \
+	target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
 	target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
 	target/common/obj/JAVA_LIBRARIES/ext_intermediates \
 	target/common/obj/JAVA_LIBRARIES/framework_intermediates \
