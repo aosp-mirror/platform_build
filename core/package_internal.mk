@@ -297,7 +297,7 @@ all_library_res_package_export_deps := \
     $(foreach lib,$(LOCAL_RES_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
 
-$(resource_export_package) $(R_file_stamp): $(all_library_res_package_export_deps)
+$(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 endif # LOCAL_NO_STANDARD_LIBRARIES
