@@ -71,6 +71,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       instead of the binary in the build's target_files.  Use for
       development only.
 
+  -t  (--worker_threads) <int>
+      Specifies the number of worker-threads that will be used when
+      generating patches for incremental updates (defaults to 3).
+
 """
 
 import sys
@@ -1421,8 +1425,12 @@ def main(argv):
         OPTIONS.aslr_mode = True
       else:
         OPTIONS.aslr_mode = False
-    elif o in ("--worker_threads"):
-      OPTIONS.worker_threads = int(a)
+    elif o in ("-t", "--worker_threads"):
+      if a.isdigit():
+        OPTIONS.worker_threads = int(a)
+      else:
+        raise ValueError("Cannot parse value %r for option %r - only "
+                         "integers are allowed." % (a, o))
     elif o in ("-2", "--two_step"):
       OPTIONS.two_step = True
     elif o == "--no_signing":
@@ -1436,7 +1444,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:a:2o:",
+                             extra_opts="b:k:i:d:wne:t:a:2o:",
                              extra_long_opts=["board_config=",
                                               "package_key=",
                                               "incremental_from=",
