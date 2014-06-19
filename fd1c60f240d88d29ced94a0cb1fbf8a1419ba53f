@@ -16,6 +16,24 @@
       "revId": "fd1c60f240d88d29ced94a0cb1fbf8a1419ba53f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c44c65b5_3c43f17a",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1048048
+      },
+      "writtenOn": "2014-06-19T22:42:11Z",
+      "side": 1,
+      "message": "Currently working on this in a separate branch.",
+      "parentUuid": "84d18de4_5873956b",
+      "revId": "fd1c60f240d88d29ced94a0cb1fbf8a1419ba53f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
