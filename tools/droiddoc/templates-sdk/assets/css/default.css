@@ -5408,7 +5408,7 @@ a.download-sdk {
 .resource-flow-layout:after {
   content: ".";
   display: block;
-  height: 10;
+  height: 0;
   position:relative;
   clear: both;
   visibility: hidden;
