@@ -264,12 +264,12 @@
     <div class="wrap" id="header-wrap">
       <div class="col_3 logo landing-logo" style="width:240px">
         <a href="<?cs var:toroot ?>index.html">
-          <img src="<?cs var:toroot ?>preview/images/android.png"
-          style="margin-top:8px" height="16" alt="L Developer Preview" />
+          <img src="<?cs var:toroot ?>assets/images/android.png" height="25" alt="Android"
+            style="margin:-3px 0 0" />
         </a>
       </div>
-      <div class="col-8" style="margin:0"><h1 style="margin: 8px 0 0 0px;padding:0;line-height:16px;
-color:#666;font-weight:100;font-size:24px;">L Developer Preview</h1></div>
+      <div class="col-8" style="margin:0"><h1 style="margin: 2px 0 0 0px;padding:0;line-height:16px;
+color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
 
       <?cs # ADD SEARCH AND MENU ?>
       <?cs call:header_search_widget() ?>
