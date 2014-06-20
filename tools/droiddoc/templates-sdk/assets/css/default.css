@@ -6708,11 +6708,11 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .landing-button.landing-secondary {
-  background-color: #09c;
+  background-color: #2faddb;
 }
 
 .landing-button.landing-secondary:hover {
-  background-color: #2faddb;
+  background-color: #09c;
 }
 
 .landing-button.landing-secondary:active {
