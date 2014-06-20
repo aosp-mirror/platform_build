@@ -4018,9 +4018,11 @@ function showSamples() {
             var $this = $(this);
             var remainingHeight = $this.parent().parent().height();
             $this.parent().siblings().each(function ()
-            {
-              var h = $(this).height();
-              remainingHeight = remainingHeight - h;
+            { 
+              if ($(this).is(":visible")) {
+                var h = $(this).height();
+                remainingHeight = remainingHeight - h;
+              }
             });
 
             adjustedRemainingHeight = ((remainingHeight)/lineHeight>>0)*lineHeight
