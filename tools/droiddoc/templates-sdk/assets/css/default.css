@@ -6695,16 +6695,16 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .landing-primary {
-  background-color: hsl(8, 70%, 54%); /* #dc4b35 */
+  background-color: hsl(8, 70%, 44%);
   color: #f8f8f8;
 }
 
 .landing-button.landing-primary:hover {
-  background-color: hsl(8, 70%, 44%); /* #bf3722 */
+  background-color: hsl(8, 70%, 36%);
 }
 
 .landing-button.landing-primary:active {
-  background-color: hsl(8, 70%, 36%); /* # */
+  background-color: hsl(8, 70%, 30%);
 }
 
 .landing-button.landing-secondary {
