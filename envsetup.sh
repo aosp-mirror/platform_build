@@ -932,7 +932,8 @@ function stacks()
             adb shell cat $TMP
         else
             # Dump stacks of native process
-            adb shell debuggerd -b $PID
+            local USE64BIT="$(is64bit $PID)"
+            adb shell debuggerd$USE64BIT -b $PID
         fi
     fi
 }
@@ -949,17 +950,13 @@ function get_symbols_directory()
     echo $(get_abs_build_var TARGET_OUT_UNSTRIPPED)
 }
 
-# process the symbolic link of /proc/$PID/exe and use the host file tool to
-# determine whether it is a 32-bit or 64-bit executable. It returns "" or "64"
-# which can be conveniently used as suffix.
+# Read the ELF header from /proc/$PID/exe to determine if the process is
+# 64-bit.
 function is64bit()
 {
     local PID="$1"
     if [ "$PID" ] ; then
-        local EXE=`adb shell readlink /proc/$PID/exe`
-        local EXE_DIR=`get_abs_build_var PRODUCT_OUT`
-        local IS64BIT=`file "$EXE_DIR$EXE" | grep "64-bit"`
-        if [ "$IS64BIT" != "" ]; then
+        if [[ "$(adb shell cat /proc/$PID/exe | xxd -l 1 -s 4 -ps)" -eq "02" ]] ; then
             echo "64"
         else
             echo ""
