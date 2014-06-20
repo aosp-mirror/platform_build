@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "442075de_05c22517",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 954,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-20T23:41:10Z",
+      "side": 1,
+      "message": "comment now out of date",
+      "revId": "0a69d00891ae85c93e0749a81e98875429c9d614",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
