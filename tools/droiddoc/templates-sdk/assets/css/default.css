@@ -5260,6 +5260,9 @@ a.download-sdk {
   -o-transition: opacity 0.5s;
   transition: opacity 0.5s;
 }
+.static .card-bg:after {
+  display:none;
+}
 .card-bg .card-section-icon {
   position: absolute;
   top: 50%;
@@ -5412,6 +5415,9 @@ a.download-sdk {
 }
 .resource-card:hover {
   cursor: pointer;
+}
+.static .resource-card:hover {
+  cursor: auto;
 }
 .resource-card:hover .card-bg:after {
   opacity: 0;
@@ -6329,6 +6335,17 @@ a.download-sdk {
   display: none;
 }
 
+
+/* Override to show the description instead of the content section */
+.no-section .resource-card-3x2 > .card-info .section,
+.no-section .resource-card-6x2 > .card-info .section {
+  display: none;
+}
+.no-section .resource-card-3x2 > .card-info .description,
+.no-section .resource-card-6x2 > .card-info .description {
+  display: block;
+}
+
 /* 1/2 row items */
 .resource-card-3x3 > .card-bg, .resource-card-6x3 > .card-bg, .resource-card-9x3 > .card-bg, .resource-card-12x3 > .card-bg, .resource-card-15x3 > .card-bg, .resource-card-18x3 > .card-bg {
   left: 0;
@@ -6424,6 +6441,8 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .section-card-menu .card-info ul li {
   border-top-color: #7e3794 !important;
 }
+
+
 
 /**
  * UTILITIES
@@ -6689,15 +6708,15 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .landing-button.landing-secondary {
-  background-color: hsl(8, 70%, 44%);
+  background-color: #09c;
 }
 
 .landing-button.landing-secondary:hover {
-  background-color: hsl(8, 70%, 36%);
+  background-color: #2faddb;
 }
 
 .landing-button.landing-secondary:active {
-  background-color: hsl(8, 70%, 30%);
+  background-color: #3990ab;
 }
 
 a.landing-button,
@@ -7134,7 +7153,6 @@ Styles for d.a.c/index:
 .actions-bar {
   background: #9acd00;
   margin: 0 -10px;
-  margin-top:-20px;
   text-align: center;
 }
 
@@ -7143,7 +7161,7 @@ Styles for d.a.c/index:
   text-align: justify;
   font-size: 0.1px;
   line-height: 0.1px;
-  margin: 0 10px;
+  margin: 0 10px 0 0;
 }
 
 .actions-bar .actions:after {
