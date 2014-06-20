@@ -254,7 +254,7 @@ endif
 #
 # Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
 # is always 32 bits. If this isn't the case, these variables should
-# be overriden in the boarc configuration.
+# be overriden in the board configuration.
 ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
   ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
     TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
