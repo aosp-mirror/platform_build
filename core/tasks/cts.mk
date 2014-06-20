@@ -59,9 +59,14 @@ CTS_CORE_CASE_LIST += \
 	android.core.tests.libcore.package.harmony_prefs \
 	android.core.tests.libcore.package.harmony_sql
 
+
+CTS_TEST_JAR_LIST := \
+	CtsJdwp
+
 # Depend on the full package paths rather than the phony targets to avoid
 # rebuilding the packages every time.
 CTS_CORE_CASES := $(foreach pkg,$(CTS_CORE_CASE_LIST),$(call intermediates-dir-for,APPS,$(pkg))/package.apk)
+CTS_TEST_JAR_FILES := $(foreach c,$(CTS_TEST_JAR_LIST),$(call intermediates-dir-for,JAVA_LIBRARIES,$(c))/javalib.jar)
 
 -include cts/CtsTestCaseList.mk
 CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
@@ -69,7 +74,7 @@ CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
 CTS_TEST_CASE_LIST_FILES := $(foreach c, $(CTS_TEST_CASE_LIST), $(call intermediates-dir-for,APPS,$(c))/package.apk)
 $(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(JUNIT_HOST_JAR)
-$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST_FILES) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST_FILES) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP) $(CTS_TEST_JAR_FILES)
 # Make necessary directory for CTS
 	$(hide) rm -rf $(PRIVATE_CTS_DIR)
 	$(hide) mkdir -p $(TMP_DIR)
@@ -81,6 +86,7 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_C
 	$(hide) $(ACP) -fp $(VMTESTSTF_JAR) $(PRIVATE_DIR)/repository/testcases
 	$(hide) $(ACP) -fp $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
 # Change mode of the executables
+	$(foreach jar,$(CTS_TEST_JAR_LIST),$(call copy-testcase-jar,$(jar)))
 	$(foreach apk,$(CTS_CASE_LIST),$(call copy-testcase-apk,$(apk)))
 	$(foreach testcase,$(CTS_TEST_CASES),$(call copy-testcase,$(testcase)))
 	$(hide) touch $@
@@ -361,3 +367,11 @@ define copy-testcase
 $(hide) $(ACP) -fp $(1) $(PRIVATE_DIR)/repository/testcases/$(notdir $1)
 
 endef
+
+define copy-testcase-jar
+
+$(hide) $(ACP) -fp $(call intermediates-dir-for,JAVA_LIBRARIES,$(1))/javalib.jar \
+	$(PRIVATE_DIR)/repository/testcases/$(1).jar
+
+endef
+
