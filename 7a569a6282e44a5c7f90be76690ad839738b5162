@@ -22,6 +22,30 @@
       "revId": "7a569a6282e44a5c7f90be76690ad839738b5162",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4db2937_d70724e7",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1000,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-21T01:07:30Z",
+      "side": 1,
+      "message": "no, this is changing the behavior back to being more like what it used to be.",
+      "parentUuid": "04df5d24_e4238ec5",
+      "range": {
+        "startLine": 1000,
+        "startChar": 31,
+        "endLine": 1000,
+        "endChar": 32
+      },
+      "revId": "7a569a6282e44a5c7f90be76690ad839738b5162",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
