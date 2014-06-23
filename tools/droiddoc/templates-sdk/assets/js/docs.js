@@ -278,7 +278,6 @@ false; // navigate across topic boundaries only in design docs
     // set up next links
     var $nextLink = [];
     var startClass = false;
-    var training = $(".next-class-link").length; // decides whether to provide "next class" link
     var isCrossingBoundary = false;
 
     if ($selListItem.hasClass('nav-section') && $selListItem.children('div.empty').length == 0) {
@@ -305,7 +304,7 @@ false; // navigate across topic boundaries only in design docs
       if ($nextLink.length == 0) {
         isCrossingBoundary = true;
         // no more topics in this section, jump to the first topic in the next section
-        $nextLink = $selListItem.parents('li:eq(0)').next('li.nav-section').find('a:eq(0)');
+        $nextLink = $selListItem.parents('li:eq(0)').next('li').find('a:eq(0)');
         if (!$nextLink.length) {  // Go up another layer to look for next page (lesson > class > course)
           $nextLink = $selListItem.parents('li:eq(1)').next('li.nav-section').find('a:eq(0)');
           if ($nextLink.length == 0) {
@@ -354,14 +353,6 @@ false; // navigate across topic boundaries only in design docs
       } else {
         $('.prev-page-link').attr('href', $prevLink.attr('href')).removeClass("hide");
       }
-    }
-
-    // If this is a training 'article', there should be no prev/next nav
-    // ... if the grandparent is the "nav" ... and it has no child list items...
-    if (training && $selListItem.parents('ul').eq(1).is('[id="nav"]') &&
-        !$selListItem.find('li').length) {
-      $('.next-page-link,.prev-page-link').attr('href','').addClass("disabled")
-                          .click(function() { return false; });
     }
 
   }
