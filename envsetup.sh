@@ -1018,6 +1018,9 @@ function gdbclient()
        local EXE="$1"
        if [ "$EXE" ] ; then
            EXE=$1
+           if [[ $EXE =~ ^[^/].* ]] ; then
+               EXE="system/bin/"$EXE
+           fi
        else
            EXE="app_process"
        fi
