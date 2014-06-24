@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "048d9d44_42c362d0",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1004735
+      },
+      "writtenOn": "2014-06-24T16:32:18Z",
+      "side": 1,
+      "message": "This breaks using \u0027mymodule:32\u0027 in PRODUCT_PACKAGES for our BSP -- we use that to specify that we only ever want to install the 32 bit version of a module for either 32-bit or 64-bit builds.\n\nAfter this change, those dependencies get dropped, since product_MODULES contains \u0027mymodule_32\u0027, but a 32-bit target build only defines \u0027mymodule\u0027\n\nIs there a recommended alternative, or does this need to be fixed in the build system?",
+      "revId": "ff3a9045229b0613552e45de2a31a7ac8debb597",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
