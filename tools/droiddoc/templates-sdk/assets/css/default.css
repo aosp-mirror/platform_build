@@ -468,8 +468,6 @@ video.with-shadow {
     position: absolute; }
   .paging-links a,
   .training-nav-top a {
-    font-size: 14px;
-    line-height: 30px;
     color: #555555;
     text-decoration: none;
     text-transform: uppercase; }
@@ -1232,6 +1230,13 @@ a:link, a:visited {
 a:focus, a:hover, a:active {
   color: #33B5E5;
   text-decoration: none;
+}
+a.white {
+  color: #fff;
+  text-decoration:underline;
+}
+a.white:hover, a.white:active {
+  color: #ccc !important;
 }
 strong, b {
   font-weight:bold;
