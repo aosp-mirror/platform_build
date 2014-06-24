@@ -2,7 +2,7 @@
 <?cs include:"macros.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation 
+<body class="gc-documentation
 
 <?cs
 if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
@@ -176,6 +176,7 @@ include:"header.cs" ?>
                 ja-lang="開始する"
                 es-lang="Empezar"
                 >Get started</a>
+            <a href="#" class="next-class-link hide">Next class</a>
           <?cs /if ?>
         </div>
         <div class="layout-content-col plus-container col-2" >
@@ -185,13 +186,6 @@ include:"header.cs" ?>
         </div>
         <?cs /if ?>
       </div>
-
-      <?cs # for training classes, provide a different kind of link when the next page is a different class ?>
-      <?cs if:training && !page.article ?>
-      <div class="layout-content-row content-footer next-class" style="display:none" itemscope itemtype="http://schema.org/SiteNavigationElement">
-          <a href="#" class="next-class-link hide">Next class</a>
-      </div>
-      <?cs /if ?>
 
   </div> <!-- end jd-content -->
 

@@ -255,7 +255,7 @@ $(document).ready(function() {
     var crossBoundaries = ($("body.design").length > 0) || ($("body.guide").length > 0) ? true :
 false; // navigate across topic boundaries only in design docs
     if ($prevListItem.length) {
-      if ($prevListItem.hasClass('nav-section')) {
+      if ($prevListItem.hasClass('nav-section') || crossBoundaries) {
         // jump to last topic of previous section
         $prevLink = $prevListItem.find('a:last');
       } else if (!$selListItem.hasClass('nav-section')) {
@@ -312,6 +312,8 @@ false; // navigate across topic boundaries only in design docs
             // if that doesn't work, we're at the end of the list, so disable NEXT link
             $('.next-page-link').attr('href','').addClass("disabled")
                                 .click(function() { return false; });
+            // and completely hide the one in the footer
+            $('.content-footer .next-page-link').hide();
           }
         }
       }
@@ -330,6 +332,8 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link').attr('href','')
                           .removeClass("hide").addClass("disabled")
                           .click(function() { return false; });
+      // and completely hide the one in the footer
+      $('.content-footer .next-page-link').hide();
       if ($nextLink.length) {
         $('.next-class-link').attr('href',$nextLink.attr('href'))
                              .removeClass("hide")
@@ -4018,7 +4022,7 @@ function showSamples() {
             var $this = $(this);
             var remainingHeight = $this.parent().parent().height();
             $this.parent().siblings().each(function ()
-            { 
+            {
               if ($(this).is(":visible")) {
                 var h = $(this).height();
                 remainingHeight = remainingHeight - h;
