@@ -34,6 +34,24 @@
       "revId": "ff3a9045229b0613552e45de2a31a7ac8debb597",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44a315b3_e509bc92",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1013389
+      },
+      "writtenOn": "2014-06-24T17:41:00Z",
+      "side": 1,
+      "message": "Well, our BSP defines a product configuration that our devices can inherit from, and it has no idea whether the end device will be 32-bit or 64-bit, since we don\u0027t want to duplicate all that information. I\u0027ll test that change",
+      "parentUuid": "649e596e_b3129be5",
+      "revId": "ff3a9045229b0613552e45de2a31a7ac8debb597",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
