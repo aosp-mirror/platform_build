@@ -690,7 +690,9 @@ ifdef FULL_BUILD
   modules_32 := $(patsubst %:32,%,$(filter %:32, $(product_MODULES)))
   modules_64 := $(patsubst %:64,%,$(filter %:64, $(product_MODULES)))
   modules_rest := $(filter-out %:32 %:64,$(product_MODULES))
-  product_MODULES := $(addsuffix $(TARGET_2ND_ARCH_MODULE_SUFFIX),$(modules_32))
+  # Note for 32-bit product, $(modules_32) and $(modules_64) will be
+  # added as their original module names.
+  product_MODULES := $(call get-32-bit-modules-if-we-can, $(modules_32))
   product_MODULES += $(modules_64)
   # For the rest we add both
   product_MODULES += $(call get-32-bit-modules, $(modules_rest))
