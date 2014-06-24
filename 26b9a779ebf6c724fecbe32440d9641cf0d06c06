@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44a315b3_fa2316c5",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-24T19:06:05Z",
+      "side": 1,
+      "message": "i don\u0027t think you need to duplicate the whole thing. there\u0027s two parts to this block: the first gets the arguments and the second does something with them. the second part doesn\u0027t need to be duplicated. you just need to make sure that the arguments are sorted out by the time you get to that code.\n\nyou might also find $# useful. see the bash man page.",
+      "revId": "26b9a779ebf6c724fecbe32440d9641cf0d06c06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
