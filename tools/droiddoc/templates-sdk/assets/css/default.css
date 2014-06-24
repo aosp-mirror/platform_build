@@ -624,18 +624,6 @@ video.with-shadow {
     display:none !important;
   }
 
-  .content-footer.next-class {
-    display:block;
-    border:0;
-    margin-top:0;
-    padding-top:0;
-  }
-
-  .content-footer.next-class a.next-class-link {
-    display:block;
-    text-transform:uppercase;
-  }
-
 
 
   /* inner-doc tabs w/ title */
@@ -929,6 +917,30 @@ scroll top left;
   width: 216px;
   height: 384px;
 }
+
+/* wear device frames */
+
+.framed-wear-square {
+  background: transparent url(../images/styles/device_wear_square.png) no-repeat scroll top left;
+  background-size: 302px 302px;
+  height:222px;
+  width:222px;
+  padding:40px;
+  overflow:hidden;
+}
+
+#jd-content
+.framed-wear-square img {
+  height:222px;
+  width: 222px;
+  padding:0;
+  margin:0;
+}
+
+
+
+
+
 
 /* landing page disclosures */
 .landing-page-link {
@@ -6837,22 +6849,6 @@ a.landing-button:visited {
 
 .landing-breakout p {
   padding: 0 23px;
-}
-
-.landing-inset-video-container {
-  position: relative;
-}
-
-.landing-inset-video-container img.gif {
-  max-width: 222px;
-  position: absolute;
-  top: 40px;
-  left: 40px;
-}
-
-img.landing-bezel-only {
-  height:302px;
-  width:302px;
 }
 
 .landing-breakout.landing-partners img {
