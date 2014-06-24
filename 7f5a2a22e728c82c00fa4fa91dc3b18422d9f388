@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44a315b3_9044a92f",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-24T21:54:08Z",
+      "side": 1,
+      "message": "am i missing something? why isn\u0027t this more like\n\n  if [ $# -eq 3 ]; then\n    EXE\u003d\"$1\"\n    PORT\u003d\"$2\"\n    PID\u003d\"$3\"\n  elif [ $# -eq 2 ]; then\n    PORT\u003d\"$1\"\n    PID\u003d\"$2\"\n  fi\n\n  if [ -z \"$EXE\" ]; then\n    EXE\u003d`adb shell readlink /proc/$PID/exe`\n  fi\n  if [ -z \"$PORT\" ]; then\n    PORT\u003d\":5039\"\n  fi\n  if [ ! \"$PID\" \u003d~ ^[0-9]+$ ]; then\n    ...\n  fi\n\nthere\u0027s too much nesting here for any human to understand, i think.\n\n(it\u0027s unfortunate that this function allowed so many different uses, but we\u0027re largely stuck with that.)",
+      "revId": "7f5a2a22e728c82c00fa4fa91dc3b18422d9f388",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
