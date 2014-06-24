@@ -16,6 +16,24 @@
       "revId": "ff3a9045229b0613552e45de2a31a7ac8debb597",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "649e596e_b3129be5",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-24T17:28:15Z",
+      "side": 1,
+      "message": "Hmm, it doesn\u0027t make sense to have \":32\" or \":64\" in a 32-bit product configuration. But yes, I think the build system can do better job if by any chance they end up in a 32-bit product configuration. I just uploaded a change: https://android-review.googlesource.com/99208",
+      "parentUuid": "048d9d44_42c362d0",
+      "revId": "ff3a9045229b0613552e45de2a31a7ac8debb597",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
