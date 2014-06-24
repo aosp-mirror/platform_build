@@ -16,6 +16,24 @@
       "revId": "7f5a2a22e728c82c00fa4fa91dc3b18422d9f388",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04abdd9e_cd6c158c",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-24T21:56:12Z",
+      "side": 1,
+      "message": "Nope, that definitely makes more sense.  That was a consequence of how quickly I\u0027ve gotten sick of staring at this file!",
+      "parentUuid": "44a315b3_9044a92f",
+      "revId": "7f5a2a22e728c82c00fa4fa91dc3b18422d9f388",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
