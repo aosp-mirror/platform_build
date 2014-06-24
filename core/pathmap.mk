@@ -109,10 +109,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/gridlayout \
         v7/appcompat \
         v7/mediarouter \
-        v7/recyclerview \
         v8/renderscript \
-        v13 \
-        v17/leanback
+        v13
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
