@@ -927,10 +927,27 @@ scroll top left;
   overflow:hidden;
 }
 
+.framed-wear-square-small {
+  background: transparent url(../images/styles/device_wear_square_small.png) no-repeat scroll top left;
+  background-size: 169px 200px;
+  height:147px;
+  width:147px;
+  padding:27px 11px;
+  overflow:hidden;
+}
+
 #jd-content
 .framed-wear-square img {
   height:222px;
   width: 222px;
+  padding:0;
+  margin:0;
+}
+
+#jd-content
+.framed-wear-square-small img {
+  height:147px;
+  width: 147px;
   padding:0;
   margin:0;
 }

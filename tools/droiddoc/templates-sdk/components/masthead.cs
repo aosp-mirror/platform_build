@@ -67,6 +67,7 @@
             <li class="design">
               <ul>
                 <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
+                <li><a href="<?cs var:toroot ?>design/devices.html">Devices</a></li>
                 <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
                 <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
                 <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
