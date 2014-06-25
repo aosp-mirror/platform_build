@@ -2710,19 +2710,22 @@ Butterbar
   width:100%;
 }
 #butterbar {
-  width:940px;
+  width:100%;
   margin:0 auto;
 }
 #butterbar-message {
-  background-color:#f80;
-  float:right;
-  font-size:12px;
-  font-weight:bold;
-  padding:0 10px;
-  border-radius: 0 0 5px 5px;
+  background-color:rgba(255, 187, 51, .4);
+  font-size:13px;
+  padding: 5px 0;
+  text-align:center;
 }
-#butterbar-message a {color:#fff !important}
-#butterbar-message a:hover {text-decoration:underline;}
+a#butterbar-message {
+  cursor:pointer;
+  display:block;
+}
+a#butterbar-message:hover {
+  text-decoration:underline;
+}
 
 /* --------------------------------------------------------------------------
 Misc
@@ -3943,7 +3946,7 @@ EndColorStr='#ececec');
 #header-wrapper {
   background: #f9f9f9;
   margin: 0 -10px 0 -10px;
-  padding: 31px 10px 0px 10px;
+  padding: 51px 10px 0px 10px;
   position: relative;
 }
 #header-wrapper #nav-x div.wrap {
