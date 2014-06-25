@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a4ca118f_793dbf48",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1014,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-25T20:57:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "649c9984_44db40f9",
+      "revId": "404e92ea4cf2786546066c54aced2ff55d13de64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "649c9984_24d83cfa",
         "filename": "envsetup.sh",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-06-24T23:39:43Z",
       "side": 1,
       "message": "don\u0027t you need some kind of early return here?",
+      "revId": "404e92ea4cf2786546066c54aced2ff55d13de64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4ca118f_593a0353",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1018,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-25T20:57:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "649c9984_24d83cfa",
       "revId": "404e92ea4cf2786546066c54aced2ff55d13de64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "64c57978_488ea76b",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-25T20:57:01Z",
+      "side": 1,
+      "message": "EXE has to be specified, though.  In the 3 argument case it is specified explicitly, and in the 2 argument case I take the PID on line 1024.",
+      "parentUuid": "649c9984_04f65873",
+      "revId": "404e92ea4cf2786546066c54aced2ff55d13de64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "649c9984_c4ff5043",
         "filename": "envsetup.sh",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2014-06-24T23:39:43Z",
       "side": 1,
       "message": "i still don\u0027t understand what\u0027s going on here.",
+      "revId": "404e92ea4cf2786546066c54aced2ff55d13de64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44ba35ef_41c0c85e",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1036,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-06-25T20:57:01Z",
+      "side": 1,
+      "message": "Originally this reference to $PTEMP was $3 or $2 depending on which # of arguments were provided.  Even if we can\u0027t find the value of the PID anywhere in the next 3 if statements, I don\u0027t want to lose the original value.  Before I added the 2 argument case, the echo on line 1043 just used $3 instead of $PTEMP, but I don\u0027t want to make another if statement deciding which of $3 or $2 to print (or use in the ps | grep line).  If you think there is a way I can make this behavior clearer, I\u0027d be happy to change it.",
+      "parentUuid": "649c9984_c4ff5043",
       "revId": "404e92ea4cf2786546066c54aced2ff55d13de64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
