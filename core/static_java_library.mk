@@ -26,7 +26,10 @@ LOCAL_MODULE_CLASS := JAVA_LIBRARIES
 # Hack to build static Java library with Android resource
 # See bug 5714516
 all_resources :=
+need_compile_res :=
+# A static Java library needs to explicily set LOCAL_RESOURCE_DIR.
 ifdef LOCAL_RESOURCE_DIR
+need_compile_res := true
 all_resources := $(strip \
     $(foreach dir, $(LOCAL_RESOURCE_DIR), \
       $(addprefix $(dir)/, \
@@ -36,7 +39,6 @@ all_resources := $(strip \
       ) \
     ))
 
-ifneq (,$(all_resources))
 # By default we should remove the R/Manifest classes from a static Java library,
 # because they will be regenerated in the app that uses it.
 # But if the static Java library will be used by a library, then we may need to
@@ -56,14 +58,13 @@ ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
 endif
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
-endif  # all_resources
 endif  # LOCAL_RESOURCE_DIR
 
 all_res_assets := $(all_resources)
 
 include $(BUILD_SYSTEM)/java_library.mk
 
-ifneq (,$(all_resources))
+ifeq (true,$(need_compile_res))
 R_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.stamp
 
 ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
@@ -124,7 +125,7 @@ ifneq ($(full_classes_jar),)
 $(full_classes_compiled_jar): $(R_file_stamp)
 endif
 
-endif  # $(all_resources) not empty
+endif  # need_compile_res
 
 # Reset internal variables.
 all_res_assets :=
