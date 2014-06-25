@@ -73,6 +73,7 @@ PRODUCT_PACKAGES += \
     uncrypt \
     telephony-common \
     voip-common \
+    logd \
     mms-common
 
 # The order matters
