@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4cd45a8_68260b22",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1004,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-25T23:18:33Z",
+      "side": 1,
+      "message": "this is weird. you set PORT to a $2, then if that was non-empty, you do it again?\n\ni was expecting that the defaulting would come at the _end_. so you try to initialize from the arguments, then you fill in values for those things that didn\u0027t get set?",
+      "revId": "39b92a675400e8eb9c670de27fb61bd5aece0726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84e50d1e_c69aa260",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1021,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-25T23:18:33Z",
+      "side": 1,
+      "message": "this is the case where \"PID\" isn\u0027t a number. (so maybe we should call the argument \u0027process\u0027 or \u0027pid_or_name\u0027 or somesuch, and only set PID when we actually know we have a pid? \"temp\" tells us nothing, so it\u0027s not a good name.)\n\n\nokay, so where\u0027s EXE actually used?",
+      "revId": "39b92a675400e8eb9c670de27fb61bd5aece0726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4ca118f_a26fa00c",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1058,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-25T23:18:33Z",
+      "side": 1,
+      "message": "...here...",
+      "revId": "39b92a675400e8eb9c670de27fb61bd5aece0726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4ca118f_427facb8",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1084,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-25T23:18:33Z",
+      "side": 1,
+      "message": "...and here.\n\nso why are we setting it on L1022? why aren\u0027t we waiting until we have a good PID, and then using adb shell to get the actual EXE from /proc?",
+      "revId": "39b92a675400e8eb9c670de27fb61bd5aece0726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84e50d1e_c66ce28b",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-06-25T23:18:33Z",
+      "side": 1,
+      "message": "now you know how to do an early return, you can lose a lot of the useless indentation from this function by moving this up to L995.",
+      "revId": "39b92a675400e8eb9c670de27fb61bd5aece0726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
