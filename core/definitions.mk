@@ -1723,10 +1723,20 @@ $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     -F $@
 endef
 
+# We need the extra blank line, so that the command will be on a separate line.
+# $(1): the ABI name
+# $(2): the list of shared libraies
+define _add-jni-shared-libs-to-package-per-abi
+$(hide) cp $(2) $(dir $@)lib/$(1)
+
+endef
+
 define add-jni-shared-libs-to-package
 $(hide) rm -rf $(dir $@)lib
-$(hide) mkdir -p $(dir $@)lib/$(PRIVATE_JNI_SHARED_LIBRARIES_ABI)
-$(hide) cp $(PRIVATE_JNI_SHARED_LIBRARIES) $(dir $@)lib/$(PRIVATE_JNI_SHARED_LIBRARIES_ABI)
+$(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
+$(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
+  $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
+    $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
 $(hide) (cd $(dir $@) && zip -r $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
