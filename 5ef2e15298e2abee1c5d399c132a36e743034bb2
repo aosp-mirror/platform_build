@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e472491f_e8a26b21",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1730,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2014-06-25T10:26:35Z",
+      "side": 1,
+      "message": "Remove stray blank line ?",
+      "revId": "5ef2e15298e2abee1c5d399c132a36e743034bb2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
