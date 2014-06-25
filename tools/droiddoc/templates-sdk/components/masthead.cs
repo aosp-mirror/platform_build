@@ -10,7 +10,7 @@
       <div id="butterbar-wrapper">
         <div id="butterbar">
           <a href="<?cs var:toroot ?>preview/index.html" id="butterbar-message">
-            The SDKs announced at Google IO will be available on June 26th!
+            Android Wear, TV, and L Developer Preview SDKs are coming on June 26th!
           </a>
         </div>
       </div>
