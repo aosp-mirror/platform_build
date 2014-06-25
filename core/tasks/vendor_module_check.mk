@@ -30,6 +30,7 @@ _vendor_owner_whitelist := \
         moto \
         nvidia \
         nxp \
+        nxpsw \
         qcom \
         qti \
         samsung \
