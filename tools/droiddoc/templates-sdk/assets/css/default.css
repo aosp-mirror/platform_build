@@ -7262,7 +7262,6 @@ a.home-new-cta-btn:hover,
 /* Fullscreen carousel. */
 .home-new-carousel-1 {
   max-height: 700px; /* Set max height so doesn't get too long */
-  margin-top: 20px;
 }
 
 .home-new-carousel-1 .fullscreen-carousel-content {
@@ -7286,7 +7285,11 @@ a.home-new-cta-btn:hover,
   layout or should be namespaced within the fullscreen-carousel container.
 */
 .home-new-carousel-1 .resource-flow-layout.col-16 .resource-card-18x6 {
-  height: 334px;
+  height: 320px;
+  background-color:#F9F9F9;
+  border-radius: 0px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+
 }
 
 .home-new-carousel-1 .resource-card-18x6 .card-bg {
