@@ -165,7 +165,7 @@ include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 # Sign and align non-presigned .apks.
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
-ifdef my_extracted_jni_libs
+ifdef extracted_jni_libs
 	$(hide) zip -d $@ 'lib/*.so'  # strip embedded JNI libraries.
 endif
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
