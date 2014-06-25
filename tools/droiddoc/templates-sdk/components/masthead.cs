@@ -7,6 +7,13 @@
   <!-- Header -->
   <div id="header-wrapper">
     <div id="header">
+      <div id="butterbar-wrapper">
+        <div id="butterbar">
+          <a href="<?cs var:toroot ?>preview/index.html" id="butterbar-message">
+            The SDKs announced at Google IO will be available on June 26th!
+          </a>
+        </div>
+      </div>
       <div class="wrap" id="header-wrap">
         <div class="col-3 logo">
           <a href="<?cs var:toroot ?>index.html">
