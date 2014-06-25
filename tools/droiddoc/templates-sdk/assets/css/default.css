@@ -461,6 +461,11 @@ video.with-shadow {
   float:right;
 }
 
+a.back-link {
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
 .paging-links {
   position: relative;
   height:30px; }
@@ -472,7 +477,8 @@ video.with-shadow {
     text-decoration: none;
     text-transform: uppercase; }
     .paging-links .prev-page-link:before,
-    .training-nav-top .prev-page-link:before {
+    .training-nav-top .prev-page-link:before,
+    a.back-link:before {
       content: '';
       background: transparent url(../images/styles/disclosure_left.png) no-repeat scroll 50% 50%;
       width: 10px;
