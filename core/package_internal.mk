@@ -82,8 +82,12 @@ ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif
 
+# LOCAL_RESOURCE_DIR may point to resource generated during the build
+need_compile_res :=
 ifeq (,$(LOCAL_RESOURCE_DIR))
   LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
+else
+  need_compile_res := true
 endif
 
 package_resource_overlays := $(strip \
@@ -106,6 +110,10 @@ all_resources := $(strip \
        ) \
      ))
 
+ifneq ($(all_resources),)
+  need_compile_res := true
+endif
+
 all_res_assets := $(strip $(all_assets) $(all_resources))
 
 package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
@@ -114,7 +122,7 @@ package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
 ifeq (,$(all_assets))
 LOCAL_ASSET_DIR:=
 endif
-ifeq (,$(all_resources))
+ifneq (true,$(need_compile_res))
 LOCAL_RESOURCE_DIR:=
 R_file_stamp :=
 else
@@ -139,9 +147,9 @@ ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 endif
 proguard_options_file :=
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
-ifneq ($(all_resources),)
+ifeq ($(need_compile_res),true)
     proguard_options_file := $(package_expected_intermediates_COMMON)/proguard_options
-endif # all_resources
+endif # need_compile_res
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
@@ -196,7 +204,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_DEFAULT_APP_TARGET_SDK := $(DEFAULT_APP_TARGET_SDK)
 endif
 
-ifneq ($(all_resources),)
+ifeq ($(need_compile_res),true)
 
 # Since we don't know where the real R.java file is going to end up,
 # we need to use another file to stand in its place.  We'll just
@@ -265,7 +273,7 @@ ifneq ($(full_classes_jar),)
 $(full_classes_compiled_jar): $(R_file_stamp)
 endif
 
-endif  # all_resources
+endif  # need_compile_res
 
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # We need to explicitly clear this var so that we don't
