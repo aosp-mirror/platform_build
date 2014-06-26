@@ -956,6 +956,7 @@ endef
 ## Commands for running protoc to compile .proto into .pb.cc and .pb.h
 ######################################################################
 define transform-proto-to-cc
+$(warning transform-proto-to-cc)
 @mkdir -p $(dir $@)
 @echo "Protoc: $@ <= $<"
 $(hide) $(PROTOC) \
@@ -968,6 +969,7 @@ endef
 ## Commands for running protoc to compile .proto into nano protobuf .pb.c and .pb.h
 ######################################################################
 define transform-nanopb_c-to-c
+$(warning transform-nanopb_c-to-c)
 @mkdir -p $(dir $@)
 @echo "Protoc: $@ <= $<"
 $(hide) $(PROTOC) \

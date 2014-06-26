@@ -472,13 +472,15 @@ ALL_GENERATED_SOURCES += $(my_generated_sources)
 
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 
-ifneq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c)
+proto_generated_objects :=
+proto_generated_headers :=
+nanopb_c_generated_objects :=
+nanopb_c_generated_headers :=
+ifeq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
 
 ###########################################################
 ## Compile the .proto files to .cc and then to .o
 ###########################################################
-proto_generated_objects :=
-proto_generated_headers :=
 ifneq ($(proto_sources),)
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 proto_generated_cc_sources_dir := $(generated_sources_dir)/proto
@@ -491,7 +493,6 @@ proto_generated_objects := $(addprefix $(proto_generated_obj_dir)/, \
 
 # Auto-export the generated proto source dir.
 LOCAL_EXPORT_C_INCLUDE_DIRS += $(proto_generated_cc_sources_dir)
-$(warning wink protobuf LECID=$(LOCAL_EXPORT_C_INCLUDE_DIRS))
 
 # Ensure the transform-proto-to-cc rule is only defined once in multilib build.
 ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
@@ -527,10 +528,8 @@ endif  # $(proto_sources) non-empty
 else
 
 ###########################################################
-## Compile the .proto files to nanopb-c and then to .o
+## Compile the .proto files to .c from nanopb-c and then to .o
 ###########################################################
-nanopb_c_generated_objects :=
-nanopb_c_generated_headers :=
 ifneq ($(proto_sources),)
 nanopb_c_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 nanopb_c_generated_sources_dir := $(intermediates)/proto
@@ -540,7 +539,6 @@ nanopb_c_generated_objects := $(patsubst %.c,%.o, $(nanopb_c_generated_sources))
 
 # Auto-export the generated proto source dir.
 LOCAL_EXPORT_C_INCLUDE_DIRS += $(nanopb_c_generated_sources_dir)
-$(warning wink nanopb LECID=$(LOCAL_EXPORT_C_INCLUDE_DIRS))
 
 $(nanopb_c_generated_sources): PRIVATE_NANOPB_C_INCLUDES := $(TOP)
 $(nanopb_c_generated_sources): PRIVATE_NANOPB_C_OUTPUT_DIR := $(nanopb_c_generated_sources_dir)
@@ -554,12 +552,16 @@ $(nanopb_c_generated_headers): $(nanopb_c_generated_sources_dir)/%.pb.h: $(nanop
 
 $(nanopb_c_generated_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(nanopb_c_generated_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(nanopb_c_generated_objects): $(nanopb_c_generated_sources_dir)/%.pb.o: $(nanopb_c_generated_sources_dir)/%.pb.c $(nanopb_c_generated_headers)
-	$(transform-$(PRIVATE_HOST)cpp-to-o)
+$(nanopb_c_generated_objects): $(nanopb_c_generated_sources_dir)/%.o: $(nanopb_c_generated_sources_dir)/%.c $(nanopb_c_generated_headers)
+	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(nanopb_c_generated_objects:%.o=%.P)
 
 LOCAL_C_INCLUDES += external/nanopb-c $(dir $(nanopb_c_generated_headers))
+ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc)
+LOCAL_STATIC_LIBRARIES += libnanopb-c-2.8.0-enable_malloc
+else
 LOCAL_STATIC_LIBRARIES += libnanopb-c-2.8.0
+endif
 endif
 
 endif
@@ -742,7 +744,7 @@ $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 c_objects        := $(c_arm_objects) $(c_normal_objects)
 
 ifneq ($(strip $(c_objects)),)
-$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) \
+$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) $(nanopb_c_generated_headers) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES) \
     | $(my_compiler_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
@@ -761,7 +763,7 @@ ifneq ($(strip $(gen_c_objects)),)
 # TODO: support compiling certain generated files as arm.
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) \
+$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) $(nanopb_c_generated_headers) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES) \
     | $(my_compiler_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
