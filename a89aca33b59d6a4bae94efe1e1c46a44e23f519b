@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4962558_60493a75",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1041813
+      },
+      "writtenOn": "2014-06-26T14:45:21Z",
+      "side": 1,
+      "message": "is this line needed for the host modules?\nor adding line like \"ART_HOST_EXECUTABLES +\u003d $(HOST_OUT_EXECUTABLES)/$(LOCAL_MODULE)\" here with condition is better?",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 11
+      },
+      "revId": "a89aca33b59d6a4bae94efe1e1c46a44e23f519b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
