@@ -154,8 +154,9 @@ def AddUserdata(output_zip):
 
   image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
                                                     "data")
-  # If no userdata_size is provided for extfs, skip userdata.img.
-  if (image_props.get("fs_type", "").startswith("ext") and
+  # We only allow yaffs to have a 0/missing partition_size.
+  # Extfs, f2fs must have a size. Skip userdata.img if no size.
+  if (not image_props.get("fs_type", "").startswith("yaffs") and
       not image_props.get("partition_size")):
     return
 
