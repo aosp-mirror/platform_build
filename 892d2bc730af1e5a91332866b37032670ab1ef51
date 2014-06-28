@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6438195d_8ab36f26",
+        "filename": "core/executable_prefer_symlink.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-06-28T00:20:40Z",
+      "side": 1,
+      "message": "# Create the symlink when you run mm/mmm or \"make \u003cmodule_name\u003e\"\n$(LOCAL_MODULE) : $(my_symlink)",
+      "revId": "892d2bc730af1e5a91332866b37032670ab1ef51",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
