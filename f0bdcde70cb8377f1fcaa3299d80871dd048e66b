@@ -16,6 +16,24 @@
       "revId": "f0bdcde70cb8377f1fcaa3299d80871dd048e66b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "241b8108_4b8d65db",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-06-30T17:38:28Z",
+      "side": 1,
+      "message": "that might work, but technically if there is a gap, it is not part of the multidex classes, and should be left there.",
+      "parentUuid": "64865967_c425d39f",
+      "revId": "f0bdcde70cb8377f1fcaa3299d80871dd048e66b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
