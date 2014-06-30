@@ -56,6 +56,8 @@ extracted_jni_libs += $(my_extracted_jni_libs)
 # Include RS dynamically-generated libraries as well
 # TODO: Add multilib support once RS supports generating multilib libraries.
 jni_shared_libraries += $(rs_compatibility_jni_libs)
+jni_shared_libraries_with_abis += $(addprefix $(my_jni_shared_libraries_abi):,\
+    $(rs_compatibility_jni_libs))
 endif  # my_add_jni
 
 #######################################
