@@ -1,10 +1,9 @@
-<?cs 
+<?cs
 def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
           <a href="<?cs var:toroot ?>guide/index.html"><img
-              src="<?cs var:toroot ?>assets/images/android-partner-logo.png" alt="Android Platform Development Kit" /></a>
-       
+              src="<?cs var:toroot ?>assets/images/android_logo.png" alt="Android Platform Development Kit" /></a>
       </div>
       <div id="headerRight">
           <div id="headerLinks">
