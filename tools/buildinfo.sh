@@ -26,7 +26,7 @@ echo "ro.product.board=$TARGET_BOOTLOADER_BOARD_NAME"
 # instead (see below).
 echo "# ro.product.cpu.abi and ro.product.cpu.abi2 are obsolete,"
 echo "# use ro.product.cpu.abilist instead."
-if [ -n "TARGET_2ND_CPU_ABI" ] ; then
+if [ -n "$TARGET_2ND_CPU_ABI" ] ; then
   echo "ro.product.cpu.abi=$TARGET_2ND_CPU_ABI"
   if [ -n "$TARGET_2ND_CPU_ABI2" ] ; then
     echo "ro.product.cpu.abi2=$TARGET_2ND_CPU_ABI2"
