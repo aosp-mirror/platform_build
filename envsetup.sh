@@ -1479,7 +1479,7 @@ function pez {
 function make()
 {
     local start_time=$(date +"%s")
-    command make $@
+    command make "$@"
     local ret=$?
     local end_time=$(date +"%s")
     local tdiff=$(($end_time-$start_time))
