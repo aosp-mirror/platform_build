@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04f3dd1b_73efe221",
+        "filename": "tools/adbs",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-01T23:39:09Z",
+      "side": 1,
+      "message": "you\u0027ve accidentally merged your adbs change onto your gdbserver change.",
+      "revId": "a7fc37b8ea4923360af900f686c5b7025f54b8b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84d6ed80_4a2153bd",
+        "filename": "tools/adbs",
+        "patchSetId": 6
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-01T23:39:09Z",
+      "side": 1,
+      "message": "can\u0027t all these functions be removed now?",
+      "revId": "a7fc37b8ea4923360af900f686c5b7025f54b8b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
