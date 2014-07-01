@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c450e5a6_25db74fa",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2014-07-01T12:42:11Z",
+      "side": 1,
+      "message": "$${dex_index}\n\nEven with --quiet it always end on the message:\n\"zip error: Nothing to do! (...)\"\nmaybe we should redirect zip outputs.",
+      "range": {
+        "startLine": 23,
+        "startChar": 39,
+        "endLine": 23,
+        "endChar": 51
+      },
+      "revId": "3008eabd93192e87284324e45f42093f856e3be5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
