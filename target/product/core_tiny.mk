@@ -88,6 +88,7 @@ PRODUCT_BOOT_JARS := \
     framework2 \
     telephony-common \
     voip-common \
+    ims-common \
     mms-common \
     android.policy \
     services \
@@ -95,6 +96,11 @@ PRODUCT_BOOT_JARS := \
     nullwebview
 
 PRODUCT_RUNTIMES := runtime_libart_default
+
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.zygote=zygote32
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
