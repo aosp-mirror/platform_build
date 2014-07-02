@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04cafddd_1a4b2d95",
+        "filename": "tools/adbs",
+        "patchSetId": 4
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-02T23:30:24Z",
+      "side": 1,
+      "message": "which of the functions in this file are still actually needed?",
+      "revId": "8905facfe8d902c856ea611478994ff8c36a52a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84498d4f_f8d00932",
+        "filename": "tools/adbs",
+        "patchSetId": 4
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-02T23:30:24Z",
+      "side": 1,
+      "message": "do you still have the bug where your version never exits (if you do \"adbs\", say, rather than \"adbs logcat\")? can you see from this diff why that is?",
+      "revId": "8905facfe8d902c856ea611478994ff8c36a52a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
