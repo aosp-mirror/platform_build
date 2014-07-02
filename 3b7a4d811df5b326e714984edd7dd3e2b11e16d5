@@ -16,6 +16,24 @@
       "revId": "3b7a4d811df5b326e714984edd7dd3e2b11e16d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "240701cd_971b8445",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1040328
+      },
+      "writtenOn": "2014-07-02T07:27:31Z",
+      "side": 1,
+      "message": "to verify it works with ccache is it sufficient if I compile with ccache, blow away out and re-compile or is there a more scientific way? :)",
+      "parentUuid": "c4a70589_c7424051",
+      "revId": "3b7a4d811df5b326e714984edd7dd3e2b11e16d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
