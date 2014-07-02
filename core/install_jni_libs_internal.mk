@@ -18,7 +18,7 @@ my_jni_shared_libraries := \
           $(LOCAL_JNI_SHARED_LIBRARIES)))
 
 # App-specific lib path.
-my_app_lib_path :=  $($(my_2nd_arch_prefix)TARGET$(partition_tag)_OUT_SHARED_LIBRARIES)/$(basename $(my_installed_module_stem))
+my_app_lib_path :=  $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES)/$(basename $(my_installed_module_stem))
 my_extracted_jni_libs :=
 
 ifdef my_embed_jni
@@ -54,7 +54,7 @@ ifneq ($(my_jni_shared_libraries),)
 # The jni libaries will be installed to the system.img.
 my_jni_filenames := $(notdir $(my_jni_shared_libraries))
 # Make sure the JNI libraries get installed
-$(LOCAL_INSTALLED_MODULE) : | $(addprefix $($(my_2nd_arch_prefix)TARGET$(partition_tag)_OUT_SHARED_LIBRARIES)/, $(my_jni_filenames))
+$(LOCAL_INSTALLED_MODULE) : | $(addprefix $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES)/, $(my_jni_filenames))
 
 # Create symlink in the app specific lib path
 ifdef LOCAL_POST_INSTALL_CMD
