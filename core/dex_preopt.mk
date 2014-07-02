@@ -18,7 +18,11 @@ DEXPREOPT_BOOT_JAR_DIR_FULL_PATH := $(DEXPREOPT_PRODUCT_DIR_FULL_PATH)/$(DEXPREO
 
 # $(1): the .jar or .apk to remove classes.dex
 define dexpreopt-remove-classes.dex
-$(hide) $(AAPT) remove $(1) classes.dex
+$(hide) zip --quiet --delete $(1) classes.dex; \
+dex_index=2; \
+while zip --quiet --delete $(1) classes$${dex_index}.dex > /dev/null; do \
+  let dex_index=dex_index+1; \
+done
 endef
 
 # Special rules for building stripped boot jars that override java_library.mk rules
