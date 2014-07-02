@@ -48,6 +48,7 @@ PRODUCT_PACKAGES += \
     com.android.location.provider.xml \
     framework-res \
     installd \
+    ims-common \
     ip \
     ip-up-vpn \
     ip6tables \
