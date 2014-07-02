@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04cafddd_d515e610",
+        "filename": "tools/adbs",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-02T23:55:19Z",
+      "side": 1,
+      "message": "right. (don\u0027t forget to send out your own replies when you\u0027re addressing review comments.)",
+      "revId": "eba447da28d81d3998af4bf29a75b47ac3d0f6ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

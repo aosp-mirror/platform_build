@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4c6c9d8_dffb43de",
+        "filename": "tools/adbs",
+        "patchSetId": 5
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-02T23:55:19Z",
+      "side": 0,
+      "message": "the old behavior of \"adbs logcat\" is that it\u0027s exactly like \"adb logcat\" except that it decodes stack traces. the new version loses all the non-stack lines. how can we fix that?",
+      "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
