@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04cafddd_750b5243",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-02T23:33:43Z",
+      "side": 1,
+      "message": "why not just use readlink? could you write a program for which this code wouldn\u0027t work?",
+      "revId": "c579290d3dd8129b8326bc75ff7815553a608190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
