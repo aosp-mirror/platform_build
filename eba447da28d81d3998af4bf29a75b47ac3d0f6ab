@@ -16,6 +16,24 @@
       "revId": "eba447da28d81d3998af4bf29a75b47ac3d0f6ab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471c58d_b4478083",
+        "filename": "tools/adbs",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-07-03T00:15:00Z",
+      "side": 1,
+      "message": "It\u0027s definitely hard to get used to!",
+      "parentUuid": "04cafddd_d515e610",
+      "revId": "eba447da28d81d3998af4bf29a75b47ac3d0f6ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

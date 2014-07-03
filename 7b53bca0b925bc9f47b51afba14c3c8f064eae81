@@ -16,6 +16,24 @@
       "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e474097d_98d3996f",
+        "filename": "tools/adbs",
+        "patchSetId": 5
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-07-03T00:15:00Z",
+      "side": 0,
+      "message": "The two ideas I\u0027m thinking are either to return some value from the ProcessLine function to say that the line was not a recognized bit of output (like maybe return true when it finds a line it recognizes and false otherwise, and then print \"line\" on false), or to have ProcessLine print unrecognized lines.  The former seems preferable since the latter could add a lot of output where it isn\u0027t wanted.",
+      "parentUuid": "e4c6c9d8_dffb43de",
+      "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
