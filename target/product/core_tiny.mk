@@ -75,7 +75,8 @@ PRODUCT_PACKAGES += \
     telephony-common \
     voip-common \
     logd \
-    mms-common
+    mms-common \
+    wifi-service
 
 # The order matters
 PRODUCT_BOOT_JARS := \
@@ -94,7 +95,8 @@ PRODUCT_BOOT_JARS := \
     android.policy \
     services \
     apache-xml \
-    nullwebview
+    nullwebview \
+    wifi-service
 
 PRODUCT_RUNTIMES := runtime_libart_default
 
