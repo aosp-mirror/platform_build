@@ -34,6 +34,23 @@
       "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e474097d_4f34d115",
+        "filename": "tools/adbs",
+        "patchSetId": 6
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-07T22:03:26Z",
+      "side": 0,
+      "message": "what was this line for?",
+      "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
