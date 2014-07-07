@@ -232,7 +232,7 @@ event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
 
 # Emit a java source file with constants for the tags, if
 # LOCAL_MODULE_CLASS is "APPS" or "JAVA_LIBRARIES".
-ifneq ($(strip $(filter $(LOCAL_MODULE_CLASS),APPS JAVA_LIBRARIES)),)
+ifneq ($(filter $(LOCAL_MODULE_CLASS),APPS JAVA_LIBRARIES),)
 
 logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
 logtags_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(logtags_sources))
@@ -623,6 +623,9 @@ ALL_MODULES.$(my_register_name).OWNER := \
 endif
 ifdef LOCAL_2ND_ARCH_VAR_PREFIX
 ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
+endif
+ifdef aidl_sources
+ALL_MODULES.$(my_register_name).AIDL_FILES := $(aidl_sources)
 endif
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)

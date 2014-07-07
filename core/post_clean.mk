@@ -15,6 +15,7 @@
 # Clean steps that need global knowledge of individual modules.
 # This file must be included after all Android.mks have been loaded.
 
+#######################################################
 # Checks the current build configurations against the previous build,
 # clean artifacts in TARGET_COMMON_OUT_ROOT if necessary.
 # If a package's resource overlay has been changed, its R class needs to be
@@ -51,3 +52,31 @@ $(shell mv -f $(current_package_overlay_config) $(previous_package_overlay_confi
 previous_package_overlay_config :=
 current_package_overlay_config :=
 current_all_packages_config :=
+
+#######################################################
+# Check if we need to delete obsolete aidl-generated java files.
+# When an aidl file gets deleted (or renamed), the generated java file is obsolete.
+previous_aidl_config := $(TARGET_OUT_COMMON_INTERMEDIATES)/previous_aidl_config.mk
+current_aidl_config := $(TARGET_OUT_COMMON_INTERMEDIATES)/current_aidl_config.mk
+
+$(shell rm -rf $(current_aidl_config) && mkdir -p $(dir $(current_aidl_config)))
+-include $(previous_aidl_config)
+
+intermediates_to_clean :=
+$(foreach p, $(ALL_MODULES), \
+  $(if $(ALL_MODULES.$(p).AIDL_FILES),\
+    $(shell echo 'AIDL_FILES.$(p) := $(ALL_MODULES.$(p).AIDL_FILES)' >> $(current_aidl_config)))\
+  $(if $(filter-out $(ALL_MODULES.$(p).AIDL_FILES),$(AIDL_FILES.$(p))),\
+    $(eval intermediates_to_clean += $(ALL_MODULES.$(p).INTERMEDIATE_SOURCE_DIR))))
+ifdef intermediates_to_clean
+$(info *** Obsolete aidl-generated files detected, clean intermediate files...)
+$(info *** rm -rf $(intermediates_to_clean))
+$(shell rm -rf $(intermediates_to_clean))
+intermediates_to_clean :=
+endif
+
+# Now current becomes previous.
+$(shell mv -f $(current_aidl_config) $(previous_aidl_config))
+
+previous_aidl_config :=
+current_aidl_config :=
