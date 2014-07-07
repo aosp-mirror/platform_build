@@ -51,6 +51,24 @@
       "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "643739c4_bd7f57ec",
+        "filename": "tools/adbs",
+        "patchSetId": 6
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 1047249
+      },
+      "writtenOn": "2014-07-07T22:10:42Z",
+      "side": 0,
+      "message": "I\u0027m not actually seeing a difference between having it there and not having it there, but I put it back in on the assumption that it will be a good idea to ensure things are printed as expected.",
+      "parentUuid": "e474097d_4f34d115",
+      "revId": "7b53bca0b925bc9f47b51afba14c3c8f064eae81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
