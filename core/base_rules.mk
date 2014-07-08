@@ -413,8 +413,8 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
     $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
 full_java_lib_deps := $(full_shared_java_libs)
-endif # LOCAL_BUILD_HOST_DEX
-else
+endif # USE_CORE_LIB_BOOTCLASSPATH
+else # !LOCAL_IS_HOST_MODULE
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 endif # !LOCAL_IS_HOST_MODULE
