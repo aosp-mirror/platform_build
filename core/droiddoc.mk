@@ -53,6 +53,10 @@ endif
 
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
 $(full_target): PRIVATE_BOOTCLASSPATH :=
+full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
+  $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
+full_java_lib_deps := $(full_java_libs)
+
 else
 
 ifneq ($(LOCAL_SDK_VERSION),)
@@ -70,10 +74,9 @@ else
 endif  # LOCAL_SDK_VERSION
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
 
+full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES)) $(LOCAL_CLASSPATH)
+full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES)) $(LOCAL_CLASSPATH)
 endif # !LOCAL_IS_HOST_MODULE
-
-full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE)) $(LOCAL_CLASSPATH)
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE)) $(LOCAL_CLASSPATH)
 
 $(full_target): PRIVATE_CLASSPATH := $(subst $(space),:,$(full_java_libs))
 
