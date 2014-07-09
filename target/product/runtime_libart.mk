@@ -22,4 +22,10 @@ PRODUCT_PACKAGES += \
         dex2oat \
         oatdump
 
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    dalvik.vm.image-dex2oat-Xms=64m \
+    dalvik.vm.image-dex2oat-Xmx=64m \
+    dalvik.vm.dex2oat-Xms=64m \
+    dalvik.vm.dex2oat-Xmx=512m \
+
 include $(SRC_TARGET_DIR)/product/runtime_common.mk
