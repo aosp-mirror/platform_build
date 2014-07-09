@@ -22,8 +22,6 @@
 TOOLS_PREFIX := #prebuilt/windows/host/bin/
 TOOLS_EXE_SUFFIX := .exe
 
-HOST_IS_64_BIT := true
-
 # Settings to use MinGW has a cross-compiler under Linux
 ifneq ($(findstring Linux,$(UNAME)),)
 ifneq ($(strip $(USE_MINGW)),)
