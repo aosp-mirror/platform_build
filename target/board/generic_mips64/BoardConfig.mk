@@ -30,7 +30,11 @@ TARGET_CPU_ABI  := mips64
 
 TARGET_2ND_ARCH := mips
 ifeq (,$(TARGET_2ND_ARCH_VARIANT))
+ifeq ($(TARGET_ARCH_VARIANT),mips64r6)
+TARGET_2ND_ARCH_VARIANT :=  mips32r6
+else
 TARGET_2ND_ARCH_VARIANT :=  mips32r2-fp
+endif
 endif
 TARGET_2ND_CPU_ABI  := mips
 

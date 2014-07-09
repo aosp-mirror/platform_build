@@ -1,7 +1,5 @@
 # Clang flags for mips64 arch, target or host.
 
-$(warning Untested mips64 clang flags, fix me!)
-
 CLANG_CONFIG_mips64_EXTRA_ASFLAGS :=
 CLANG_CONFIG_mips64_EXTRA_CFLAGS :=
 CLANG_CONFIG_mips64_EXTRA_LDFLAGS :=
@@ -9,6 +7,7 @@ CLANG_CONFIG_mips64_EXTRA_LDFLAGS :=
 # Include common unknown flags
 CLANG_CONFIG_mips64_UNKNOWN_CFLAGS := \
   $(CLANG_CONFIG_UNKNOWN_CFLAGS) \
+  -mips64r6 \
   -fno-strict-volatile-bitfields \
   -fgcse-after-reload \
   -frerun-cse-after-loop \
