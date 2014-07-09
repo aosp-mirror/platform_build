@@ -17,8 +17,6 @@
 # Configuration for builds hosted on linux-x86_64.
 # Included by combo/select.mk
 
-HOST_IS_64_BIT := true
-
 ifeq ($(strip $(HOST_TOOLCHAIN_PREFIX)),)
 HOST_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.6/bin/x86_64-linux-
 endif

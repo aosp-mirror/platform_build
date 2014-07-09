@@ -31,8 +31,6 @@ else
 TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
 endif
 
-TARGET_IS_64_BIT := true
-
 # Include the arch-variant-specific configuration file.
 # Its role is to define various ARCH_X86_HAVE_XXX feature macros,
 # plus initial values for TARGET_GLOBAL_CFLAGS
