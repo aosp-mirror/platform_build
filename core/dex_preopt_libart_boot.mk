@@ -43,7 +43,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 	@echo "target dex2oat: $@ ($?)"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
-	$(hide) $(DEX2OATD) --runtime-arg $(DEX2OAT_IMAGE_XMS) --runtime-arg $(DEX2OAT_IMAGE_XMX) \
+	$(hide) $(DEX2OATD) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) --runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
 		--image-classes=$(PRELOADED_CLASSES) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
 		$(addprefix --dex-location=,$(LIBART_TARGET_BOOT_DEX_LOCATIONS)) \
