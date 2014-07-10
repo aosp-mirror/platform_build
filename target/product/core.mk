@@ -25,6 +25,7 @@ PRODUCT_PACKAGES += \
     Calculator \
     Calendar \
     CalendarProvider \
+    CaptivePortalLogin \
     CertInstaller \
     Contacts \
     DeskClock \
