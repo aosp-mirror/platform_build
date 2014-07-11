@@ -110,7 +110,7 @@ TARGET_GLOBAL_CFLAGS += \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=2 \
 			-Wstrict-aliasing=2 \
-			-fPIC -fPIE \
+			-fPIC \
 			-ffunction-sections \
 			-finline-functions \
 			-finline-limit=300 \
