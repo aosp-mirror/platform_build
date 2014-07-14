@@ -276,6 +276,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/ETC/init.environ.rc_intermediat
 # Change ro.zygote for core_64_bit.mk from zygote32_64 to zygote64_32
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
+
+# Adding dalvik.vm.dex2oat-Xms, dalvik.vm.dex2oat-Xmx
+# dalvik.vm.image-dex2oat-Xms, and dalvik.vm.image-dex2oat-Xmx
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
