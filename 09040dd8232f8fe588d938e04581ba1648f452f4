@@ -58,6 +58,24 @@
       "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "196c2814_eab36f7f",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-07-14T21:19:04Z",
+      "side": 1,
+      "message": "You are right :-) Ying what do you prefer in the light of the clarification?",
+      "parentUuid": "b9495ca6_fb050fa1",
+      "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
