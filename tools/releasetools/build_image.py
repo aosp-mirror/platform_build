@@ -229,7 +229,7 @@ def BuildImage(in_dir, prop_dict, out_file,
   fs_type = prop_dict.get("fs_type", "")
   run_fsck = False
 
-  is_verity_partition = prop_dict.get("mount_point") == prop_dict.get("verity_mountpoint")
+  is_verity_partition = "verity_block_device" in prop_dict
   verity_supported = prop_dict.get("verity") == "true"
   # adjust the partition size to make room for the hashes if this is to be verified
   if verity_supported and is_verity_partition:
@@ -315,10 +315,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "selinux_fc",
       "skip_fsck",
       "verity",
-      "verity_block_device",
       "verity_key",
-      "verity_signer_cmd",
-      "verity_mountpoint"
+      "verity_signer_cmd"
       )
   for p in common_props:
     copy_prop(p, p)
@@ -327,6 +325,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   if mount_point == "system":
     copy_prop("fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
+    copy_prop("system_verity_block_device", "verity_block_device")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -338,6 +337,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "vendor":
     copy_prop("vendor_fs_type", "fs_type")
     copy_prop("vendor_size", "partition_size")
+    copy_prop("vendor_verity_block_device", "verity_block_device")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
