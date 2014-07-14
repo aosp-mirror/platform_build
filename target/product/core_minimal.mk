@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
     PackageInstaller \
     SettingsProvider \
     Shell \
+    bcc \
     bu \
     com.android.location.provider \
     com.android.location.provider.xml \
