@@ -76,6 +76,24 @@
       "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9683404_fe617588",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-14T21:21:48Z",
+      "side": 1,
+      "message": "Sorry, I missed that too.",
+      "parentUuid": "196c2814_eab36f7f",
+      "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
