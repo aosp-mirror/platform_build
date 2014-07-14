@@ -27,14 +27,14 @@ else
 LIBART_IMG_TARGET_BASE_ADDRESS := 0x70000000
 endif
 
-define get-product-property
-  $(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_PROPERTY_OVERRIDES))))
+define get-product-default-property
+$(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))
 endef
 
-DEX2OAT_IMAGE_XMS := $(get-product-property dalvik.vm.image-dex2oat-Xms)
-DEX2OAT_IMAGE_XMX := $(get-product-property dalvik.vm.image-dex2oat-Xmx)
-DEX2OAT_XMS := $(get-product-property dalvik.vm.dex2oat-Xms)
-DEX2OAT_XMX := $(get-product-property dalvik.vm.dex2oat-Xmx)
+DEX2OAT_IMAGE_XMS := $(call get-product-default-property,dalvik.vm.image-dex2oat-Xms)
+DEX2OAT_IMAGE_XMX := $(call get-product-default-property,dalvik.vm.image-dex2oat-Xmx)
+DEX2OAT_XMS := $(call get-product-default-property,dalvik.vm.dex2oat-Xms)
+DEX2OAT_XMX := $(call get-product-default-property,dalvik.vm.dex2oat-Xmx)
 
 ########################################################################
 # The full system boot classpath
@@ -77,7 +77,7 @@ define dex2oat-one-file
 $(hide) rm -f $(2)
 $(hide) mkdir -p $(dir $(2))
 $(hide) $(DEX2OATD) \
-	--runtime-arg $(DEX2OAT_XMS) --runtime-arg $(DEX2OAT_XMX) \
+	--runtime-arg -Xms$(DEX2OAT_XMS) --runtime-arg -Xmx$(DEX2OAT_XMX) \
 	--boot-image=$(PRIVATE_DEX_PREOPT_IMAGE_LOCATION) \
 	--dex-file=$(1) \
 	--dex-location=$(PRIVATE_DEX_LOCATION) \
