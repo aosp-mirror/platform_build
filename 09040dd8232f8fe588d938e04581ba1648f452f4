@@ -22,6 +22,24 @@
       "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "196c2814_df02b796",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-14T20:34:26Z",
+      "side": 1,
+      "message": "Yes",
+      "parentUuid": "393e4ceb_5fa50b9e",
+      "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
