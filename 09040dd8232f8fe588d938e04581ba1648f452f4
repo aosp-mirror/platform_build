@@ -40,6 +40,24 @@
       "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9495ca6_fb050fa1",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1010121
+      },
+      "writtenOn": "2014-07-14T21:00:42Z",
+      "side": 1,
+      "message": "This is a shell script and not a Makefile, so what the make manual says doesn\u0027t really matter.\n\nrealpath does exist in coreutils as well and generally returns the same thing as readlink -f, so both variants will work.",
+      "parentUuid": "196c2814_df02b796",
+      "revId": "09040dd8232f8fe588d938e04581ba1648f452f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
