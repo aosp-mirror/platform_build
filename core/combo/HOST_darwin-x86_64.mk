@@ -17,8 +17,6 @@
 # Configuration for Darwin (Mac OS X) on x86_64.
 # Included by combo/select.mk
 
-HOST_IS_64_BIT := true
-
 HOST_GLOBAL_CFLAGS += -m64
 HOST_GLOBAL_LDFLAGS += -m64
 
