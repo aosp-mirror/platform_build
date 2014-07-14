@@ -18,7 +18,6 @@
 
 PRODUCT_SUPPORTS_VERITY := true
 PRODUCT_VERITY_SIGNING_KEY := build/target/product/security/verity_private_dev_key
-PRODUCT_VERITY_MOUNTPOINT := system
 
 PRODUCT_PACKAGES += \
         verity_key

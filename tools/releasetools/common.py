@@ -153,6 +153,7 @@ def LoadInfoDict(input):
   makeint("recovery_api_version")
   makeint("blocksize")
   makeint("system_size")
+  makeint("vendor_size")
   makeint("userdata_size")
   makeint("cache_size")
   makeint("recovery_size")
