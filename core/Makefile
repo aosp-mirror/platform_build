@@ -898,6 +898,11 @@ BUILT_SYSTEMIMAGE := $(systemimage_intermediates)/system.img
 # Create symlink /system/vendor to /vendor if necessary.
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 define create-system-vendor-symlink
+$(hide) if [ -d $(TARGET_OUT)/vendor ] && [ ! -h $(TARGET_OUT)/vendor ]; then \
+  echo 'Non-symlink $(TARGET_OUT)/vendor detected!' 1>&2; \
+  echo 'You cannot install files to $(TARGET_OUT)/vendor while building a separate vendor.img!' 1>&2; \
+  exit 1; \
+fi
 $(hide) ln -sf /vendor $(TARGET_OUT)/vendor
 endef
 else
