@@ -716,7 +716,7 @@ recovery_density := $(filter %dpi,$(PRODUCT_AAPT_PREF_CONFIG))
 else
 # Otherwise, use the highest density that appears in PRODUCT_AAPT_CONFIG.
 # Order is important here; we'll take the first one that's found.
-recovery_densities := $(filter $(PRODUCT_AAPT_CONFIG_SP),xxxhdpi xxhdpi xhdpi hdpi mdpi ldpi)
+recovery_densities := $(filter $(PRODUCT_AAPT_CONFIG_SP),xxxhdpi xxhdpi xhdpi hdpi tvdpi mdpi ldpi)
 ifneq (,$(recovery_densities))
 recovery_density := $(word 1,$(recovery_densities))
 endif
