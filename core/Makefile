@@ -1005,6 +1005,10 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 		$(TARGET_COPY_OUT_SYSTEM) \
 		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES)) \
 		$(addprefix symbols/,$(PDK_SYMBOL_FILES_LIST))
+ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+	$(hide) cd $(dir $@) && zip -qry $(notdir $@) \
+		$(TARGET_COPY_OUT_VENDOR)
+endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
 	$(hide) cd $(OUT_DIR) && zip -qry $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
 endif
@@ -1151,7 +1155,12 @@ endif # BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
 # vendor partition image
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 INTERNAL_VENDORIMAGE_FILES := \
-    $(filter $(TARGET_OUT_VENDOR)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
+    $(filter $(TARGET_OUT_VENDOR)/%,\
+      $(ALL_DEFAULT_INSTALLED_MODULES)\
+      $(ALL_PDK_FUSION_FILES))
+
+# platform.zip depends on $(INTERNAL_VENDORIMAGE_FILES).
+$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_VENDORIMAGE_FILES)
 
 vendorimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,vendor)
