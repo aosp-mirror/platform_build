@@ -39,7 +39,7 @@ ifeq ($(TARGET_ARCH),mips)
 # via a property as we want the larger Xmx value if we're running on a
 # MIPS device.
 LIBART_IMG_TARGET_BASE_ADDRESS := 0x30000000
-DEX2OAT_IMAGE_XMX := 128m
+DEX2OAT_XMX := 128m
 endif
 
 ########################################################################
