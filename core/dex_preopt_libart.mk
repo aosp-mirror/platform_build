@@ -20,12 +20,7 @@ PRELOADED_CLASSES := frameworks/base/preloaded-classes
 
 # start of image reserved address space
 LIBART_IMG_HOST_BASE_ADDRESS   := 0x60000000
-
-ifeq ($(TARGET_ARCH),mips)
-LIBART_IMG_TARGET_BASE_ADDRESS := 0x30000000
-else
 LIBART_IMG_TARGET_BASE_ADDRESS := 0x70000000
-endif
 
 define get-product-default-property
 $(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))
@@ -35,6 +30,17 @@ DEX2OAT_IMAGE_XMS := $(call get-product-default-property,dalvik.vm.image-dex2oat
 DEX2OAT_IMAGE_XMX := $(call get-product-default-property,dalvik.vm.image-dex2oat-Xmx)
 DEX2OAT_XMS := $(call get-product-default-property,dalvik.vm.dex2oat-Xms)
 DEX2OAT_XMX := $(call get-product-default-property,dalvik.vm.dex2oat-Xmx)
+
+ifeq ($(TARGET_ARCH),mips)
+# MIPS specific overrides.
+# For MIPS the ART image is loaded at a lower address. This causes issues
+# with the image overlapping with memory on the host cross-compiling and
+# building the image. We therefore limit the Xmx value. This isn't done
+# via a property as we want the larger Xmx value if we're running on a
+# MIPS device.
+LIBART_IMG_TARGET_BASE_ADDRESS := 0x30000000
+DEX2OAT_IMAGE_XMX := 128m
+endif
 
 ########################################################################
 # The full system boot classpath
