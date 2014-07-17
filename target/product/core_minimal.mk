@@ -93,7 +93,6 @@ PRODUCT_BOOT_JARS := \
     services \
     apache-xml \
     ethernet-service \
-    webviewchromium \
     wifi-service
 
 PRODUCT_RUNTIMES := runtime_libart_default
