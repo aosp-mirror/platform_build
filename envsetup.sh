@@ -36,7 +36,7 @@ function get_abs_build_var()
         return
     fi
     (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
+      command make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
 }
 
 # Get the exact value of a build variable.
@@ -48,7 +48,7 @@ function get_build_var()
         return
     fi
     (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      make --no-print-directory -f build/core/config.mk dumpvar-$1)
+      command make --no-print-directory -f build/core/config.mk dumpvar-$1)
 }
 
 # check to see if the supplied product is one we can build
@@ -1452,6 +1452,34 @@ function pez {
         echo -e "\e[0;32mSUCCESS\e[00m"
     fi
     return $retval
+}
+
+function make()
+{
+    local start_time=$(date +"%s")
+    command make "$@"
+    local ret=$?
+    local end_time=$(date +"%s")
+    local tdiff=$(($end_time-$start_time))
+    local hours=$(($tdiff / 3600 ))
+    local mins=$((($tdiff % 3600) / 60))
+    local secs=$(($tdiff % 60))
+    echo
+    if [ $ret -eq 0 ] ; then
+        echo -n -e "#### make completed successfully "
+    else
+        echo -n -e "#### make failed to build some targets "
+    fi
+    if [ $hours -gt 0 ] ; then
+        printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+    elif [ $mins -gt 0 ] ; then
+        printf "(%02g:%02g (mm:ss))" $mins $secs
+    elif [ $secs -gt 0 ] ; then
+        printf "(%s seconds)" $secs
+    fi
+    echo -e " ####"
+    echo
+    return $ret
 }
 
 if [ "x$SHELL" != "x/bin/bash" ]; then
