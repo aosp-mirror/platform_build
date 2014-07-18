@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1975083e_28083748",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-18T00:05:34Z",
+      "side": 1,
+      "message": "We only need this.",
+      "revId": "98e3324d2eb12922728f5e07c0c09c13d3a19759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d97e1025_c60e4608",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-18T00:05:34Z",
+      "side": 1,
+      "message": "This isn\u0027t necessary.",
+      "revId": "98e3324d2eb12922728f5e07c0c09c13d3a19759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1975083e_e8f9cfe9",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-18T00:05:34Z",
+      "side": 1,
+      "message": "Unnecessary either.",
+      "revId": "98e3324d2eb12922728f5e07c0c09c13d3a19759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9ef5430_e3e16634",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-18T00:05:34Z",
+      "side": 1,
+      "message": "Unnecessary either.",
+      "revId": "98e3324d2eb12922728f5e07c0c09c13d3a19759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
