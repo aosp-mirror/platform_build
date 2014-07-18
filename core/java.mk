@@ -72,10 +72,10 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 # Choose leaf name for the compiled jar file.
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 full_classes_compiled_jar_leaf := classes-no-debug-var.jar
-built_dex_intermediate_leaf := classes-no-local.dex
+built_dex_intermediate_leaf := no-local
 else
 full_classes_compiled_jar_leaf := classes-full-debug.jar
-built_dex_intermediate_leaf := classes-with-local.dex
+built_dex_intermediate_leaf := with-local
 endif
 
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
@@ -96,7 +96,7 @@ emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # only the output directory can be changed
 full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
 full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
-built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)
+built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 
 ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
@@ -470,7 +470,9 @@ $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -f $(dir $@)/classes*.dex
+	$(hide) $(ACP) -fp $(dir $<)/classes*.dex $(dir $@)
 ifneq ($(GENERATE_DEX_DEBUG),)
 	$(install-dex-debug)
 endif
