@@ -110,7 +110,12 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/appcompat \
         v7/mediarouter \
         v8/renderscript \
-        v13 \
+        v13
+
+#
+# A list of all source roots under frameworks/support.
+#
+FRAMEWORKS_MULTIDEX_SUBDIRS := \
         multidex \
         multidex/instrumentation
 
@@ -119,11 +124,13 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
 # the root of the tree.
 #
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
-	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS))
+	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
+        $(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS))
 
 #
 # A list of support library modules.
 #
 FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
-    $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir)))
+    $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir))) \
+    $(foreach dir,$(FRAMEWORKS_MULTIDEX_SUBDIRS),android-support-$(subst /,-,$(dir)))
 
