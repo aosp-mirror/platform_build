@@ -118,7 +118,7 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v17/leanback
 
 #
-# A list of all source roots under frameworks/support.
+# A list of all source roots under frameworks/multidex.
 #
 FRAMEWORKS_MULTIDEX_SUBDIRS := \
         multidex \
@@ -130,7 +130,7 @@ FRAMEWORKS_MULTIDEX_SUBDIRS := \
 #
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
-        $(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS))
+        $(addsuffix /src,$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)))
 
 #
 # A list of support library modules.
