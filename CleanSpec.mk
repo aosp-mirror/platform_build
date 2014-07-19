@@ -281,6 +281,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 # dalvik.vm.image-dex2oat-Xms, and dalvik.vm.image-dex2oat-Xmx
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
