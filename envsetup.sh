@@ -1248,9 +1248,7 @@ function runhat()
     fi
 
     # issue "am" command to cause the hprof dump
-    local sdcard=$(adb ${adbOptions} shell echo -n '$EXTERNAL_STORAGE')
-    local devFile=$sdcard/hprof-$targetPid
-    #local devFile=/data/local/hprof-$targetPid
+    local devFile=/data/local/tmp/hprof-$targetPid
     echo "Poking $targetPid and waiting for data..."
     echo "Storing data at $devFile"
     adb ${adbOptions} shell am dumpheap $targetPid $devFile
