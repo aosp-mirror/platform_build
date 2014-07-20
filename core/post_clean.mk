@@ -72,6 +72,7 @@ $(foreach p, $(ALL_MODULES), \
     $(shell echo 'AIDL_FILES.$(p) := $(ALL_MODULES.$(p).AIDL_FILES)' >> $(current_aidl_config)))\
   $(if $(filter-out $(ALL_MODULES.$(p).AIDL_FILES),$(AIDL_FILES.$(p))),\
     $(eval intermediates_to_clean += $(ALL_MODULES.$(p).INTERMEDIATE_SOURCE_DIR))))
+intermediates_to_clean := $(strip $(intermediates_to_clean))
 ifdef intermediates_to_clean
 $(info *** Obsolete aidl-generated files detected, clean intermediate files...)
 $(info *** rm -rf $(intermediates_to_clean))

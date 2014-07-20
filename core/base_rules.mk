@@ -179,6 +179,13 @@ LOCAL_BUILT_MODULE := $(built_module_path)/$(my_built_module_stem)
 built_module_path :=
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+  # Apk and its attachments reside in its own subdir.
+  ifeq ($(LOCAL_MODULE_CLASS),APPS)
+  # framework-res.apk doesn't like the additional layer.
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+  endif
+  endif
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
 
