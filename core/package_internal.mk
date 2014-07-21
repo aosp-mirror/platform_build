@@ -194,7 +194,7 @@ include $(BUILD_SYSTEM)/android_manifest.mk
 
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
-ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_DEFAULT_APP_TARGET_SDK := $(LOCAL_SDK_VERSION)
 else
@@ -282,7 +282,7 @@ else
 # Most packages should link against the resources defined by framework-res.
 # Even if they don't have their own resources, they may use framework
 # resources.
-ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_RES_VERSION))),)
+ifneq ($(filter-out current system_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current,$(LOCAL_SDK_RES_VERSION))),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
