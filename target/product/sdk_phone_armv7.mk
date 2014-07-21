@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 The Android Open Source Project
+# Copyright (C) 2007 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 # limitations under the License.
 #
 
-# Don't modify this file - It's just an alias!
+$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_phone_x86.mk)
-
-PRODUCT_NAME := sdk_x86
+# Overrides
+PRODUCT_BRAND := generic
+PRODUCT_NAME := sdk_phone_armv7
+PRODUCT_DEVICE := generic
