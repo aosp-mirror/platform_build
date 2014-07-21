@@ -54,6 +54,11 @@ ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
 endif
 endif
 
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
+LOCAL_BUILT_MODULE_STEM := package.apk
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
+endif
+
 ifeq ($(LOCAL_STRIP_MODULE),true)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
