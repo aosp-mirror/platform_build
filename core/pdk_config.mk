@@ -57,7 +57,6 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
 	target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
 	target/common/obj/JAVA_LIBRARIES/ext_intermediates \
 	target/common/obj/JAVA_LIBRARIES/framework_intermediates \
-	target/common/obj/JAVA_LIBRARIES/framework2_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
 	target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
