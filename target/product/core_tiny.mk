@@ -87,7 +87,6 @@ PRODUCT_BOOT_JARS := \
     bouncycastle \
     ext \
     framework \
-    framework2 \
     telephony-common \
     voip-common \
     ims-common \
