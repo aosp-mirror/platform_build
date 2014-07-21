@@ -26,6 +26,8 @@ ifneq ($(LOCAL_SDK_VERSION),)
       ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
         # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
         LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
+      else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+        LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
       else
         LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
       endif
@@ -142,7 +144,7 @@ renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
 else
 ifneq (,$(LOCAL_SDK_VERSION))
 # Set target-api for LOCAL_SDK_VERSIONs other than current.
-ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
 renderscript_target_api := $(LOCAL_SDK_VERSION)
 endif
 endif  # LOCAL_SDK_VERSION is set
@@ -158,7 +160,7 @@ renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
 
 # prepend the RenderScript system include path
-ifneq ($(filter-out current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_VERSION))),)
+ifneq ($(filter-out current system_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current,$(LOCAL_SDK_VERSION))),)
 # if a numeric LOCAL_SDK_VERSION, or current LOCAL_SDK_VERSION with TARGET_BUILD_APPS
 LOCAL_RENDERSCRIPT_INCLUDES := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/clang-include \

@@ -78,7 +78,7 @@ framework_res_package_export :=
 framework_res_package_export_deps :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_RES_VERSION))),)
+ifneq ($(filter-out current system_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
 framework_res_package_export_deps := $(framework_res_package_export)
@@ -98,7 +98,7 @@ $(R_file_stamp): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := $(intermediates.COMMON)/public_resources.xml
 $(R_file_stamp): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(R_file_stamp): PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
-ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
 $(R_file_stamp): PRIVATE_DEFAULT_APP_TARGET_SDK := $(LOCAL_SDK_VERSION)
 else
 $(R_file_stamp): PRIVATE_DEFAULT_APP_TARGET_SDK := $(DEFAULT_APP_TARGET_SDK)
