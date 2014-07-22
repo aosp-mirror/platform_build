@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59b7804c_f7cd8f6c",
+        "filename": "core/clang/mips.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-07-22T23:56:10Z",
+      "side": 1,
+      "message": "This seems wrong. You are stripping these flags as unknown, when it appears that clang knows about odd-spreg, etc. just fine.",
+      "revId": "890ee7f100e78f6105e0fd03fa3718f98127b986",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b2845d_9a654c6e",
+        "filename": "core/combo/arch/mips64/mips64r2.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-07-22T23:56:10Z",
+      "side": 1,
+      "message": "Should this file/ABI even exist? Is there a mips64r2 target or just r6? If it is just for bringup purposes, please put a comment here that this file should be deleted when r6 is working.",
+      "revId": "890ee7f100e78f6105e0fd03fa3718f98127b986",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
