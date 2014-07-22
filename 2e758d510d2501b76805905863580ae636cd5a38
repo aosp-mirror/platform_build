@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39bc8c31_3e15355c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1742,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T20:54:55Z",
+      "side": 1,
+      "message": "We don\u0027t need it as a parameter. Just use $(PRIVATE_JNI_SHARED_LIBRARIES_ZIP_OPTIONS), as other $(PRIVE_*)s in the rule.",
+      "revId": "2e758d510d2501b76805905863580ae636cd5a38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b2845d_c5753add",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1787,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T20:54:55Z",
+      "side": 1,
+      "message": "Same here - you can reference directly the $(PRIVATE_*) variables in the build recipe.",
+      "revId": "2e758d510d2501b76805905863580ae636cd5a38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
