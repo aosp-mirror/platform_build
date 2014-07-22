@@ -136,9 +136,7 @@ function setpaths()
         arm64) toolchaindir=aarch64/aarch64-linux-android-$targetgccversion/bin;
                toolchaindir2=arm/arm-linux-androideabi-$targetgccversion2/bin
             ;;
-        mips) toolchaindir=mips/mipsel-linux-android-$targetgccversion/bin
-            ;;
-        mips64) toolchaindir=mips/mips64el-linux-android-$targetgccversion/bin
+        mips|mips64) toolchaindir=mips/mips64el-linux-android-$targetgccversion/bin
             ;;
         *)
             echo "Can't find toolchain for unknown architecture: $ARCH"
@@ -980,8 +978,7 @@ function gdbclient()
    case "$ARCH" in
        arm) GDB=arm-linux-androideabi-gdb;;
        arm64) GDB=arm-linux-androideabi-gdb; GDB64=aarch64-linux-android-gdb;;
-       mips) GDB=mipsel-linux-android-gdb;;
-       mips64) GDB=mipsel-linux-android-gdb;;
+       mips|mips64) GDB=mips64el-linux-android-gdb;;
        x86) GDB=x86_64-linux-android-gdb;;
        x86_64) GDB=x86_64-linux-android-gdb;;
        *) echo "Unknown arch $ARCH"; return 1;;
