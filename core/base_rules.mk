@@ -176,7 +176,6 @@ else
   built_module_path := $(intermediates)
 endif
 LOCAL_BUILT_MODULE := $(built_module_path)/$(my_built_module_stem)
-built_module_path :=
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
