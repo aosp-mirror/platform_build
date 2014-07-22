@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39bc8c31_15b494b9",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T18:40:45Z",
+      "side": 1,
+      "message": "Upper-case is preferred.",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59b7804c_5603c49b",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T18:40:45Z",
+      "side": 1,
+      "message": "You don\u0027t need this, or other changes in this file.",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59b7804c_16093cbe",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T18:40:45Z",
+      "side": 1,
+      "message": "Use the macro defined in config.mk?",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b2845d_3770c017",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T18:40:45Z",
+      "side": 1,
+      "message": "Use just the LOCAL_ variable to decide the value of jni_zip_options. Or perhaps we should use LOCAL_JNI_LIBS_ZIP_OPTIONS? so you can pass it directly to the zip command line.",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b2845d_97efec61",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-22T18:40:45Z",
+      "side": 1,
+      "message": "Also I hope we can extend LOCAL_PACKAGE_ALIGNMENT to LOCAL_ZIPALIGN_OPTIONS.",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
