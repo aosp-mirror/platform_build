@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "59b7804c_d940871d",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-07-22T19:35:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "39bc8c31_15b494b9",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59b7804c_5603c49b",
         "filename": "core/install_jni_libs.mk",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-22T18:40:45Z",
       "side": 1,
       "message": "You don\u0027t need this, or other changes in this file.",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39bc8c31_d840811d",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-07-22T19:35:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59b7804c_5603c49b",
       "revId": "30115178e2128746779403996f66d6181de4a2c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "39bc8c31_785075ea",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-07-22T19:35:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59b7804c_16093cbe",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79b2845d_3770c017",
         "filename": "core/package_internal.mk",
         "patchSetId": 4
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "79b2845d_da2cf91d",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-07-22T19:35:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79b2845d_3770c017",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79b2845d_97efec61",
         "filename": "core/package_internal.mk",
         "patchSetId": 4
@@ -81,6 +153,24 @@
       "writtenOn": "2014-07-22T18:40:45Z",
       "side": 1,
       "message": "Also I hope we can extend LOCAL_PACKAGE_ALIGNMENT to LOCAL_ZIPALIGN_OPTIONS.",
+      "revId": "30115178e2128746779403996f66d6181de4a2c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39bc8c31_58881110",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-07-22T19:35:28Z",
+      "side": 1,
+      "message": "zipalign does not have many options, package alignment is the only one.",
+      "parentUuid": "79b2845d_97efec61",
       "revId": "30115178e2128746779403996f66d6181de4a2c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
