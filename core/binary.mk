@@ -177,7 +177,6 @@ my_compiler_dependencies :=
 ifneq ($(strip $(LOCAL_FDO_SUPPORT)),)
   ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),)
     my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_CFLAGS)
-    my_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_CFLAGS)
     my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_CFLAGS)
   endif
 endif
