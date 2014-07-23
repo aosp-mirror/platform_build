@@ -68,6 +68,10 @@ ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
 LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
 endif
 
+ifdef LOCAL_PACKAGE_SPLITS
+LOCAL_AAPT_FLAGS += $(addprefix --split ,$(LOCAL_PACKAGE_SPLITS))
+endif
+
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
 endif
@@ -402,6 +406,32 @@ $(built_odex) : $(built_dex)
 	$(call dexpreopt-one-file,$@.input,$@)
 	$(hide) rm $@.input
 endif
+
+###############################
+## APK splits
+ifdef LOCAL_PACKAGE_SPLITS
+built_apk_splits := $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/package_$(s).apk)
+installed_apk_splits := $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+
+$(built_apk_splits): PRIVATE_PRIVATE_KEY := $(private_key)
+$(built_apk_splits): PRIVATE_CERTIFICATE := $(certificate)
+# The splits should have been built in the same command building the base apk.
+# This rule just establishes the dependency and make sure the splits are up to date.
+$(foreach s,$(built_apk_splits),\
+  $(eval $(call build-split-apk,$(s),$(LOCAL_BUILT_MODULE))))
+
+# Rules to install the splits
+$(foreach s,$(LOCAL_PACKAGE_SPLITS),\
+  $(eval $(call copy-one-file,$(built_module_path)/package_$(s).apk,$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)))
+
+# Register the additional built and installed files.
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
+  $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+
+# Make sure to install the splits when you run "make <module_name>".
+$(my_register_name): $(installed_apk_splits)
+endif # LOCAL_PACKAGE_SPLITS
 
 # Save information about this package
 PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
