@@ -41,7 +41,7 @@ $(error Unknown $(TARGET_$(combo_2nd_arch_prefix)ARCH) architecture version: $(T
 endif
 
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
-
+include $(BUILD_SYSTEM)/combo/fdo.mk
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $($(combo_2nd_arch_prefix)TARGET_TOOLS_PREFIX)),)
@@ -71,34 +71,6 @@ $(combo_2nd_arch_prefix)TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 libc_root := bionic/libc
 libm_root := bionic/libm
 libstdc++_root := bionic/libstdc++
-
-# Define FDO (Feedback Directed Optimization) options.
-
-$(combo_2nd_arch_prefix)TARGET_FDO_CFLAGS:=
-$(combo_2nd_arch_prefix)TARGET_FDO_LIB:=
-
-ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
-  # Set BUILD_FDO_INSTRUMENT=true to turn on FDO instrumentation.
-  # The profile will be generated on /data/local/tmp/profile on the device.
-  $(combo_2nd_arch_prefix)TARGET_FDO_CFLAGS := -fprofile-generate=/data/local/tmp/profile -DANDROID_FDO
-  $(combo_2nd_arch_prefix)TARGET_FDO_LIB := $(target_libgcov)
-else
-  # If BUILD_FDO_INSTRUMENT is turned off, then consider doing the FDO optimizations.
-  # Set TARGET_FDO_PROFILE_PATH to set a custom profile directory for your build.
-  ifeq ($(strip $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH)),)
-    $(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH := fdo/profiles/$(TARGET_$(combo_2nd_arch_prefix)ARCH)/$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT)
-  else
-    ifeq ($(strip $(wildcard $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH))),)
-      $(warning Custom $(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH supplied, but directory does not exist. Turn off FDO.)
-    endif
-  endif
-
-  # If the FDO profile directory can't be found, then FDO is off.
-  ifneq ($(strip $(wildcard $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH))),)
-    $(combo_2nd_arch_prefix)TARGET_FDO_CFLAGS := -fprofile-use=$($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH) -DANDROID_FDO
-    $(combo_2nd_arch_prefix)TARGET_FDO_LIB := $(target_libgcov)
-  endif
-endif
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-x86 # x86 covers both x86 and x86_64.
