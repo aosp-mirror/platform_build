@@ -170,6 +170,7 @@ endif
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 #######################################
 # Sign and align non-presigned .apks.
+$(built_module) : PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES := $(LOCAL_PAGE_ALIGN_JNI_SHARED_LIBRARIES)
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 ifdef extracted_jni_libs
