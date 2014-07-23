@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79b2845d_b3fe7bce",
+        "filename": "core/clang/mips.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-23T02:50:17Z",
+      "side": 1,
+      "message": "wait... aren\u0027t these last two lines equivalent to just \"-mno-odd-spreg\"? what did you intend?",
+      "revId": "bc07dba96a99a2c049d099eb3eccb71a0bbc8552",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39bc8c31_31aa8307",
+        "filename": "core/combo/TARGET_linux-mips.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-23T02:50:17Z",
+      "side": 1,
+      "message": "dalvik? ain\u0027t nobody got time for that.",
+      "revId": "bc07dba96a99a2c049d099eb3eccb71a0bbc8552",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b2845d_f3f803e4",
+        "filename": "core/combo/TARGET_linux-mips64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-23T02:50:17Z",
+      "side": 1,
+      "message": "dalvik64? that isn\u0027t even a thing :-)",
+      "revId": "bc07dba96a99a2c049d099eb3eccb71a0bbc8552",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79b2845d_9308974a",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-23T02:50:17Z",
+      "side": 1,
+      "message": "or just merge them as\n\n  mips|mips64) ...",
+      "revId": "bc07dba96a99a2c049d099eb3eccb71a0bbc8552",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
