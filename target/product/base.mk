@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     20-dns.conf \
     95-configured \
+    appwidget \
     am \
     android.policy \
     android.test.runner \
