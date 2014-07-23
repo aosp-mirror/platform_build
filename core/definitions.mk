@@ -1805,18 +1805,6 @@ $(hide) $(ZIPALIGN) -f 4 $@.unaligned $@.aligned
 $(hide) mv $@.aligned $@
 endef
 
-# Build a split APK
-# The splti APKs are already built in the same command building the base APK.
-# We only need to do zipalign and signing etc.
-# This macro must be called with $(eval).
-# $(1): the path to the built split APK.
-# $(2): the path to the base APK.
-define build-split-apk
-$(1) : $(2)
-	$$(sign-package)
-	$$(align-package)
-endef
-
 define install-dex-debug
 $(hide) if [ -f "$(PRIVATE_INTERMEDIATES_DIR)/classes.dex" ]; then \
 	    mkdir -p $(TOP)/dalvik/DEBUG-FILES; \
