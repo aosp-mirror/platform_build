@@ -49,6 +49,7 @@ $(error Unknown ARM architecture version: $(TARGET_ARCH_VARIANT))
 endif
 
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
+include $(BUILD_SYSTEM)/combo/fdo.mk
 
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
