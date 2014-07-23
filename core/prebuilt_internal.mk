@@ -187,6 +187,42 @@ $(built_odex) : $(my_prebuilt_src_file)
 	$(call dexpreopt-one-file,$<,$@)
 endif
 
+###############################
+## Install split apks.
+ifdef LOCAL_PACKAGE_SPLITS
+# LOCAL_PACKAGE_SPLITS is a list of apks to be installed.
+built_apk_splits := $(addprefix $(built_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
+installed_apk_splits := $(addprefix $(my_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
+
+# Rules to sign and zipalign the split apks.
+my_src_dir := $(sort $(dir $(LOCAL_PACKAGE_SPLITS)))
+ifneq (1,$(words $(my_src_dir)))
+$(error You must put all the split source apks in the same folder: $(LOCAL_PACKAGE_SPLITS))
+endif
+my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
+
+$(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
+$(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
+$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(ACP)
+	$(copy-file-to-new-target)
+	$(sign-package)
+	$(align-package)
+
+# Rules to install the split apks.
+$(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk | $(ACP)
+	@echo "Install: $@"
+	$(copy-file-to-new-target)
+
+# Register the additional built and installed files.
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
+  $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/$(notdir $(s)):$(my_module_path)/$(notdir $(s)))
+
+# Make sure to install the splits when you run "make <module_name>".
+$(my_register_name): $(installed_apk_splits)
+
+endif # LOCAL_PACKAGE_SPLITS
+
 else # LOCAL_MODULE_CLASS != APPS
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
