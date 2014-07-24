@@ -48,9 +48,6 @@ ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
 $(error Unknown MIPS architecture variant: $(TARGET_ARCH_VARIANT))
 endif
 
-# TODO: Enable Clang when its mips64 prebuilt is added
-WITHOUT_TARGET_CLANG := true
-
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 include $(BUILD_SYSTEM)/combo/fdo.mk
 
