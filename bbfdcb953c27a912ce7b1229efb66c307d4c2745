@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9949f84f_c66282e1",
+        "filename": "core/combo/arch/mips/mips32r6.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-24T18:22:37Z",
+      "side": 1,
+      "message": "thanks! merged.",
+      "parentUuid": "595300fd_b693f0da",
+      "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9461042_96050931",
         "filename": "core/combo/arch/mips/mips32r6.mk",
         "patchSetId": 1
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Agreed.\n\nAlso, rev 6 of Mips arch supports misaligned mem operands with regular load/store ops.",
       "parentUuid": "d9461042_96050931",
+      "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f922f488_e8cd8b6c",
+        "filename": "core/combo/arch/mips/mips32r6.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-24T18:22:37Z",
+      "side": 1,
+      "message": "excellent... that will fix a lot of mips portability problems.",
+      "parentUuid": "794e0458_7a888d10",
       "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
