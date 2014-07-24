@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b91cfc52_03b9ee04",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-24T22:20:03Z",
+      "side": 1,
+      "message": "there must be a space between ifneq and (.",
+      "revId": "5ca1dc15a1cb072442d2b1070e8b6cfa34b0a87a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
