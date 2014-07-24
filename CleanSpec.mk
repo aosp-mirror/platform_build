@@ -283,6 +283,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system)
+
+# Switch host builds to Clang by default
+$(call add-clean-step, rm -rf $(OUT_DIR)/host)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
