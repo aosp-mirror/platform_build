@@ -410,19 +410,29 @@ endif
 ###############################
 ## APK splits
 ifdef LOCAL_PACKAGE_SPLITS
+# LOCAL_PACKAGE_SPLITS is a list of resource labels.
 built_apk_splits := $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/package_$(s).apk)
 installed_apk_splits := $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
+# The splits should have been built in the same command building the base apk.
+# This rule just runs signing and zipalign etc.
+# Note that we explicily check the existence of the split apk and remove the
+# built base apk if the split apk isn't there.
+# That way the build system will rerun the aapt after the user changes the splitting parameters.
 $(built_apk_splits): PRIVATE_PRIVATE_KEY := $(private_key)
 $(built_apk_splits): PRIVATE_CERTIFICATE := $(certificate)
-# The splits should have been built in the same command building the base apk.
-# This rule just establishes the dependency and make sure the splits are up to date.
-$(foreach s,$(built_apk_splits),\
-  $(eval $(call build-split-apk,$(s),$(LOCAL_BUILT_MODULE))))
+$(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
+	$(hide) if [ ! -f $@ ]; then \
+	  echo 'No $@ generated, check your apk splitting parameters.' 1>&2; \
+	  rm $<; exit 1; \
+	fi
+	$(sign-package)
+	$(align-package)
 
 # Rules to install the splits
-$(foreach s,$(LOCAL_PACKAGE_SPLITS),\
-  $(eval $(call copy-one-file,$(built_module_path)/package_$(s).apk,$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)))
+$(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
+	@echo "Install: $@"
+	$(copy-file-to-new-target)
 
 # Register the additional built and installed files.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
