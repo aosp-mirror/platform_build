@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "193d089f_f5fac752",
+        "filename": "core/combo/arch/mips/mips32r6.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-24T03:53:45Z",
+      "side": 1,
+      "message": "i can\u0027t see anywhere where this is set to false. should we just adjust the single reference in bionic and then remove this?",
+      "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9461042_96050931",
+        "filename": "core/combo/arch/mips/mips32r6.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-07-24T03:53:45Z",
+      "side": 1,
+      "message": "seems like ARCH_HAVE_ALIGNED_DOUBLES was only used in dalvik, so this is dead.",
+      "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
