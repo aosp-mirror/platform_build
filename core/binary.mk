@@ -133,9 +133,11 @@ endif
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
-ifeq ($(my_clang),)
-    my_clang := true
-endif
+    ifneq($(HOST_OS),windows)
+    ifeq ($(my_clang),)
+        my_clang := true
+    endif
+    endif
 endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
