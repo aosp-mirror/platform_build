@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "595300fd_b693f0da",
+        "filename": "core/combo/arch/mips/mips32r6.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-07-24T18:20:58Z",
+      "side": 1,
+      "message": "agreed.\nsee https://android-review.googlesource.com/#/c/102482/2",
+      "parentUuid": "193d089f_f5fac752",
+      "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9461042_96050931",
         "filename": "core/combo/arch/mips/mips32r6.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2014-07-24T03:53:45Z",
       "side": 1,
       "message": "seems like ARCH_HAVE_ALIGNED_DOUBLES was only used in dalvik, so this is dead.",
+      "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "794e0458_7a888d10",
+        "filename": "core/combo/arch/mips/mips32r6.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-07-24T18:20:58Z",
+      "side": 1,
+      "message": "Agreed.\n\nAlso, rev 6 of Mips arch supports misaligned mem operands with regular load/store ops.",
+      "parentUuid": "d9461042_96050931",
       "revId": "bbfdcb953c27a912ce7b1229efb66c307d4c2745",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
