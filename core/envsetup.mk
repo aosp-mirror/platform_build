@@ -119,12 +119,21 @@ endif
 # Define them here so they can be used in product config files.
 TARGET_COPY_OUT_SYSTEM := system
 TARGET_COPY_OUT_DATA := data
-TARGET_COPY_OUT_VENDOR := system/vendor
 TARGET_COPY_OUT_OEM := oem
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
+###########################################
+# Define TARGET_COPY_OUT_VENDOR to a placeholder, for at this point
+# we don't know if the device wants to build a separate vendor.img
+# or just build vendor stuff into system.img.
+# A device can set up TARGET_COPY_OUT_VENDOR to "vendor" in its
+# BoardConfig.mk.
+# We'll substitute with the real value after loading BoardConfig.mk.
+_vendor_path_placeholder := ||VENDOR-PATH-PH||
+TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
+###########################################
 
-# Read the product specs so we an get TARGET_DEVICE and other
+# Read the product specs so we can get TARGET_DEVICE and other
 # variables that we need in order to locate the output files.
 include $(BUILD_SYSTEM)/product_config.mk
 
@@ -156,6 +165,17 @@ ifeq ($(TARGET_ARCH),)
 endif
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
+ifeq ($(TARGET_COPY_OUT_VENDOR),$(_vendor_path_placeholder))
+TARGET_COPY_OUT_VENDOR := system/vendor
+else ifeq ($(filter vendor system/vendor,$(TARGET_COPY_OUT_VENDOR)),)
+$(error TARGET_COPY_OUT_VENDOR must be either 'vendor' or 'system/vendor', seeing '$(TARGET_COPY_OUT_VENDOR)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),$(PRODUCT_COPY_FILES))
+###########################################
+
 
 # ---------------------------------------------------------------
 # Set up configuration for target machine.
