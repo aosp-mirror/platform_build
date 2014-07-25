@@ -133,7 +133,7 @@ endif
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
-    ifneq($(HOST_OS),windows)
+    ifneq ($(HOST_OS),windows)
     ifeq ($(my_clang),)
         my_clang := true
     endif
