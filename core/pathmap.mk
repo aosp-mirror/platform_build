@@ -121,8 +121,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
 # A list of all source roots under frameworks/multidex.
 #
 FRAMEWORKS_MULTIDEX_SUBDIRS := \
-        multidex \
-        multidex/instrumentation
+        multidex/library/src \
+        multidex/instrumentation/src
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
@@ -130,12 +130,13 @@ FRAMEWORKS_MULTIDEX_SUBDIRS := \
 #
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
-        $(addsuffix /src,$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)))
+	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS))
 
 #
 # A list of support library modules.
 #
 FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
     $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir))) \
-    $(foreach dir,$(FRAMEWORKS_MULTIDEX_SUBDIRS),android-support-$(subst /,-,$(dir)))
+    android-support-multidex \
+    android-support-multidex-instrumentation
 
