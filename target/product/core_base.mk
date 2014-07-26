@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_mp3dec \
     libstagefright_soft_mpeg4dec \
     libstagefright_soft_mpeg4enc \
+    libstagefright_soft_opusdec \
     libstagefright_soft_rawdec \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
