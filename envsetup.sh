@@ -14,6 +14,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - ggrep:   Greps on all local Gradle files.
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
+- sgrep:   Greps on all local source files.
 - godir:   Go to the directory containing a file.
 
 Look at the source to view more functions. The complete list is:
@@ -21,7 +22,7 @@ EOF
     T=$(gettop)
     local A
     A=""
-    for i in `cat $T/build/envsetup.sh | sed -n "/^function /s/function \([a-z_]*\).*/\1/p" | sort`; do
+    for i in `cat $T/build/envsetup.sh | sed -n "/^[ \t]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
       A="$A $i"
     done
     echo $A
@@ -1091,14 +1092,14 @@ case `uname -s` in
     Darwin)
         function sgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cpp|S|java|xml|sh|mk)' -print0 | xargs -0 grep --color -n "$@"
+            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|S|java|xml|sh|mk|aidl)' -print0 | xargs -0 grep --color -n "$@"
         }
 
         ;;
     *)
         function sgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cpp\|S\|java\|xml\|sh\|mk\)' -print0 | xargs -0 grep --color -n "$@"
+            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|S\|java\|xml\|sh\|mk\|aidl\)' -print0 | xargs -0 grep --color -n "$@"
         }
         ;;
 esac
