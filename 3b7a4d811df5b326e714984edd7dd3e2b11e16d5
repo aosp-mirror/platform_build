@@ -52,6 +52,24 @@
       "revId": "3b7a4d811df5b326e714984edd7dd3e2b11e16d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9949f84f_9c2feabb",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-26T00:43:34Z",
+      "side": 1,
+      "message": "I just did a couple of builds and it didn\u0027t show any problem. Actually it\u0027s a big win as we are moving to clang for host build by default in master.",
+      "parentUuid": "36f65b4a_e5b772d7",
+      "revId": "3b7a4d811df5b326e714984edd7dd3e2b11e16d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
