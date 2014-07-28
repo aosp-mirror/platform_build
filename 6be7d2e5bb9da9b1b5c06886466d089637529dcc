@@ -22,6 +22,24 @@
       "revId": "6be7d2e5bb9da9b1b5c06886466d089637529dcc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f974b47c_06cf1a3f",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-28T22:58:42Z",
+      "side": 0,
+      "message": "I\u0027ve thought about that, but we can\u0027t do that: Many unbundled branches build only Java code and they don\u0027t need host toolchains in their repo manifest.",
+      "parentUuid": "36f65b4a_72c2f9ce",
+      "revId": "6be7d2e5bb9da9b1b5c06886466d089637529dcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
