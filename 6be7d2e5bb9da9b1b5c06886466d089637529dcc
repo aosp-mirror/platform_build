@@ -40,6 +40,24 @@
       "revId": "6be7d2e5bb9da9b1b5c06886466d089637529dcc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36f65b4a_1494b87d",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-07-29T01:00:44Z",
+      "side": 0,
+      "message": "ah, I see. well, in that case, maybe assign a clear error value if they try to use it? such as\n\n$(combo_2nd_arch_prefix)HOST_CC :\u003d error-$(combo_2nd_arch_prefix)HOST_CC-is-not-set",
+      "parentUuid": "f974b47c_06cf1a3f",
+      "revId": "6be7d2e5bb9da9b1b5c06886466d089637529dcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
