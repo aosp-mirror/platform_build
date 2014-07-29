@@ -1049,8 +1049,14 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
   _, _, patch = d.ComputePatch()
   output_sink("recovery-from-boot.p", patch)
 
-  boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
-  recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict)
+  td_pair = GetTypeAndDevice("/boot", info_dict)
+  if not td_pair:
+    return
+  boot_type, boot_device = td_pair
+  td_pair = GetTypeAndDevice("/recovery", info_dict)
+  if not td_pair:
+    return
+  recovery_type, recovery_device = td_pair
 
   sh = """#!/system/bin/sh
 if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
