@@ -72,8 +72,11 @@ ifdef LOCAL_PACKAGE_SPLITS
 LOCAL_AAPT_FLAGS += $(addprefix --split ,$(LOCAL_PACKAGE_SPLITS))
 endif
 
+need_compile_asset :=
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
+else
+need_compile_asset := true
 endif
 
 # LOCAL_RESOURCE_DIR may point to resource generated during the build
@@ -101,6 +104,10 @@ all_assets := $(strip \
        ) \
      ))
 
+ifneq ($(all_assets),)
+need_compile_asset := true
+endif
+
 all_resources := $(strip \
     $(foreach dir, $(LOCAL_RESOURCE_DIR), \
       $(addprefix $(dir)/, \
@@ -119,7 +126,7 @@ all_res_assets := $(strip $(all_assets) $(all_resources))
 package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
 # If no assets or resources were found, clear the directory variables so
 # we don't try to build them.
-ifeq (,$(all_assets))
+ifneq (true,$(need_compile_asset))
 LOCAL_ASSET_DIR:=
 endif
 ifneq (true,$(need_compile_res))
