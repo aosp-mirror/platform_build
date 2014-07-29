@@ -58,6 +58,24 @@
       "revId": "6be7d2e5bb9da9b1b5c06886466d089637529dcc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f922f488_b3469be0",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-07-29T17:07:16Z",
+      "side": 0,
+      "message": "Hmmm, that would give a weird error message like:\nbash: error-HOST_CC-is-not-set : No such file or directory.\nI\u0027d rather like it to be:\nbash: prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.8/bin/gcc : No such file or directory.",
+      "parentUuid": "36f65b4a_1494b87d",
+      "revId": "6be7d2e5bb9da9b1b5c06886466d089637529dcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
