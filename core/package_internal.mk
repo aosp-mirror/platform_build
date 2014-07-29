@@ -78,8 +78,11 @@ ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
 LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
 endif
 
+need_compile_asset :=
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
+else
+need_compile_asset := true
 endif
 
 # LOCAL_RESOURCE_DIR may point to resource generated during the build
@@ -101,6 +104,10 @@ LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
 all_assets := $(call find-subdir-assets,$(LOCAL_ASSET_DIR))
 all_assets := $(addprefix $(LOCAL_ASSET_DIR)/,$(patsubst assets/%,%,$(all_assets)))
 
+ifneq ($(all_assets),)
+need_compile_asset := true
+endif
+
 all_resources := $(strip \
     $(foreach dir, $(LOCAL_RESOURCE_DIR), \
       $(addprefix $(dir)/, \
@@ -119,7 +126,7 @@ all_res_assets := $(strip $(all_assets) $(all_resources))
 package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
 # If no assets or resources were found, clear the directory variables so
 # we don't try to build them.
-ifeq (,$(all_assets))
+ifneq (true,$(need_compile_asset))
 LOCAL_ASSET_DIR:=
 endif
 ifneq (true,$(need_compile_res))
