@@ -82,6 +82,10 @@ ifneq ($(USE_CCACHE),)
   # on a workstation.
   export CCACHE_BASEDIR := /
 
+  # Workaround for ccache with clang.
+  # See http://petereisentraut.blogspot.com/2011/09/ccache-and-clang-part-2.html
+  export CCACHE_CPP2 := true
+
   CCACHE_HOST_TAG := $(HOST_PREBUILT_TAG)
   # If we are cross-compiling Windows binaries on Linux
   # then use the linux ccache binary instead.
