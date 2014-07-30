@@ -17,6 +17,17 @@ LLVM_LINK := $(LLVM_PREBUILTS_PATH)/llvm-link$(BUILD_EXECUTABLE_SUFFIX)
 CLANG_TBLGEN := $(HOST_OUT_EXECUTABLES)/clang-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 LLVM_TBLGEN := $(HOST_OUT_EXECUTABLES)/llvm-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 
+# The C/C++ compiler can be wrapped by setting the CC/CXX_WRAPPER vars.
+ifdef CC_WRAPPER
+  ifneq ($(CC_WRAPPER),$(firstword $(CLANG)))
+    CLANG := $(CC_WRAPPER) $(CLANG)
+  endif
+endif
+ifdef CXX_WRAPPER
+  ifneq ($(CXX_WRAPPER),$(firstword $(CLANG_CXX)))
+    CLANG_CXX := $(CXX_WRAPPER) $(CLANG_CXX)
+  endif
+endif
 
 # Clang flags for all host or target rules
 CLANG_CONFIG_EXTRA_ASFLAGS :=
