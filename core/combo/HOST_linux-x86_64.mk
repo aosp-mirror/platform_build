@@ -20,12 +20,9 @@
 ifeq ($(strip $(HOST_TOOLCHAIN_PREFIX)),)
 HOST_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.6/bin/x86_64-linux-
 endif
-# Don't do anything if the toolchain is not there
-ifneq (,$(strip $(wildcard $(HOST_TOOLCHAIN_PREFIX)gcc)))
 HOST_CC  := $(HOST_TOOLCHAIN_PREFIX)gcc
 HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)g++
 HOST_AR  := $(HOST_TOOLCHAIN_PREFIX)ar
-endif # $(HOST_TOOLCHAIN_PREFIX)gcc exists
 
 # gcc location for clang; to be updated when clang is updated
 HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.6/
