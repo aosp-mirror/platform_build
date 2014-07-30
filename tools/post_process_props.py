@@ -16,9 +16,10 @@
 
 import sys
 
-# See PROP_VALUE_MAX system_properties.h.
-# PROP_VALUE_MAX in system_properties.h includes the termination NUL,
-# so we decrease it by 1 here.
+# See PROP_NAME_MAX and PROP_VALUE_MAX system_properties.h.
+# The constants in system_properties.h includes the termination NUL,
+# so we decrease the values by 1 here.
+PROP_NAME_MAX = 31
 PROP_VALUE_MAX = 91
 
 # Put the modifications that you need to make into the /system/build.prop into this
@@ -56,6 +57,11 @@ def validate(prop):
                              "").startswith("eng")
   for key, value in buildprops.iteritems():
     # Check build properties' length.
+    if len(key) > PROP_NAME_MAX:
+      check_pass = False
+      sys.stderr.write("error: %s cannot exceed %d bytes: " %
+                       (key, PROP_NAME_MAX))
+      sys.stderr.write("%s (%d)\n" % (key, len(key)))
     if len(value) > PROP_VALUE_MAX:
       # If dev build, show a warning message, otherwise fail the
       # build with error message
