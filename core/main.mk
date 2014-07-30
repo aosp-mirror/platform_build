@@ -769,7 +769,7 @@ ifdef is_sdk_build
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED) $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).INSTALLED)),,\
       $(eval dangling_modules += $(m))))
   ifneq ($(dangling_modules),)
-    $(error Module names '$(dangling_modules)' in PRODUCT_PACKAGES has nothing to install!)
+    $(warning Module names '$(dangling_modules)' in PRODUCT_PACKAGES has nothing to install!)
   endif
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
