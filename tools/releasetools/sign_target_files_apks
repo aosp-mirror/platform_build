@@ -90,6 +90,8 @@ OPTIONS = common.OPTIONS
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
+OPTIONS.replace_verity_public_key = False
+OPTIONS.replace_verity_private_key = False
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
@@ -172,7 +174,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     data = input_tf_zip.read(info.filename)
     out_info = copy.copy(info)
 
-    if (info.filename.startswith("BOOT/") or
+    if (info.filename == "META/misc_info.txt" and
+        OPTIONS.replace_verity_public_key):
+      ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info, OPTIONS.replace_verity_private_key[1])
+    elif (info.filename == "BOOT/RAMDISK/verity_key" and
+        OPTIONS.replace_verity_private_key):
+      ReplaceVerityPublicKey(output_tf_zip, OPTIONS.replace_verity_public_key[1])
+    elif (info.filename.startswith("BOOT/") or
         info.filename.startswith("RECOVERY/") or
         info.filename.startswith("META/") or
         info.filename == "SYSTEM/etc/recovery-resource.dat"):
@@ -207,6 +215,12 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
           info.filename in ("RECOVERY/RAMDISK/res/keys",
                             "SYSTEM/etc/security/otacerts.zip")):
       # don't copy these files if we're regenerating them below
+      pass
+    elif (OPTIONS.replace_verity_public_key and
+          info.filename == "META/misc_info.txt"):
+      pass
+    elif (OPTIONS.replace_verity_private_key and
+          info.filename == "BOOT/RAMDISK/verity_key"):
       pass
     else:
       # a non-APK file; copy it verbatim
@@ -374,6 +388,17 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 
   return new_recovery_keys
 
+def ReplaceVerityPublicKey(targetfile_zip, key_path):
+  print "Replacing verity public key with %s" % key_path
+  with open(key_path) as f:
+    common.ZipWriteStr(targetfile_zip, "BOOT/RAMDISK/verity_key", f.read())
+
+def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip, misc_info, key_path):
+  print "Replacing verity private key with %s" % key_path
+  current_key = misc_info["verity_key"]
+  original_misc_info = targetfile_input_zip.read("META/misc_info.txt")
+  new_misc_info = original_misc_info.replace(current_key, key_path)
+  common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
 
 def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
@@ -417,6 +442,10 @@ def main(argv):
           raise ValueError("Bad tag change '%s'" % (i,))
         new.append(i[0] + i[1:].strip())
       OPTIONS.tag_changes = tuple(new)
+    elif o == "--replace_verity_public_key":
+      OPTIONS.replace_verity_public_key = (True, a)
+    elif o == "--replace_verity_private_key":
+      OPTIONS.replace_verity_private_key = (True, a)
     else:
       return False
     return True
@@ -427,7 +456,9 @@ def main(argv):
                                               "default_key_mappings=",
                                               "key_mapping=",
                                               "replace_ota_keys",
-                                              "tag_changes="],
+                                              "tag_changes=",
+                                              "replace_verity_public_key=",
+                                              "replace_verity_private_key="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
