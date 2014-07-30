@@ -33,8 +33,6 @@ include $(BUILD_COMBOS)/mac_version.mk
 
 $(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT := prebuilts/gcc/darwin-x86/host/i686-apple-darwin-4.2.1
 $(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT)/bin/i686-apple-darwin$(gcc_darwin_version)
-# Don't do anything if the toolchain is not there
-ifneq (,$(strip $(wildcard $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX)-gcc)))
 $(combo_2nd_arch_prefix)HOST_CC  := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX)-gcc
 $(combo_2nd_arch_prefix)HOST_CXX := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX)-g++
 ifeq ($(mac_sdk_version),10.8)
@@ -42,10 +40,6 @@ ifeq ($(mac_sdk_version),10.8)
 host_toolchain_header := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT)/lib/gcc/i686-apple-darwin$(gcc_darwin_version)/4.2.1/include
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -isystem $(host_toolchain_header)
 endif
-else
-$(combo_2nd_arch_prefix)HOST_CC := gcc
-$(combo_2nd_arch_prefix)HOST_CXX := g++
-endif # $(HOST_TOOLCHAIN_PREFIX)-gcc exists
 
 # gcc location for clang; to be updated when clang is updated
 # HOST_TOOLCHAIN_ROOT is a Darwin-specific define
