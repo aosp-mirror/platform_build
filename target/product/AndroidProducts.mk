@@ -62,5 +62,8 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/vbox_x86.mk \
     $(LOCAL_DIR)/sdk.mk \
     $(LOCAL_DIR)/sdk_x86.mk \
-    $(LOCAL_DIR)/sdk_mips.mk
+    $(LOCAL_DIR)/sdk_mips.mk \
+    $(LOCAL_DIR)/sdk_arm64.mk \
+    $(LOCAL_DIR)/sdk_x86_64.mk \
+    $(LOCAL_DIR)/sdk_mips64.mk
 endif
