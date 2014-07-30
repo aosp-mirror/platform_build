@@ -3,7 +3,7 @@ include $(BUILD_SYSTEM)/clang/mips.mk
 
 CLANG_CONFIG_mips_TARGET_TRIPLE := mipsel-linux-android
 CLANG_CONFIG_mips_TARGET_TOOLCHAIN_PREFIX := \
-  $($(clang_2nd_arch_prefix)TARGET_TOOLCHAIN_ROOT)/$(CLANG_CONFIG_mips_TARGET_TRIPLE)/bin
+  $($(clang_2nd_arch_prefix)TARGET_TOOLCHAIN_ROOT)/mips64el-linux-android/bin
 
 CLANG_CONFIG_mips_TARGET_EXTRA_ASFLAGS := \
   $(CLANG_CONFIG_EXTRA_ASFLAGS) \
