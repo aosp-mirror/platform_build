@@ -7,18 +7,17 @@ CLANG_CONFIG_mips_EXTRA_LDFLAGS :=
 # Include common unknown flags
 CLANG_CONFIG_mips_UNKNOWN_CFLAGS := \
   $(CLANG_CONFIG_UNKNOWN_CFLAGS) \
-  -EL \
   -mips32 \
   -mips32r2 \
-  -mhard-float \
+  -mfp32 \
+  -mfp64 \
+  -mfpxx \
+  -modd-spreg \
+  -mno-odd-spreg \
   -fno-strict-volatile-bitfields \
   -fgcse-after-reload \
   -frerun-cse-after-loop \
   -frename-registers \
-  -march=mips32r2 \
-  -mtune=mips32r2 \
-  -march=mips32 \
-  -mtune=mips32 \
   -msynci \
   -mno-fused-madd
 
