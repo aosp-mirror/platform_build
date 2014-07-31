@@ -16,6 +16,24 @@
       "revId": "6670e24aed1ca66f21a6af759a0d156bb3df1739",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6204393_fe10106d",
+        "filename": "core/clang/mips.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-07-31T22:10:25Z",
+      "side": 1,
+      "message": "Agreed.\n\nHandled by https://android-review.googlesource.com/#/c/102872/",
+      "parentUuid": "16295785_310b6afa",
+      "revId": "6670e24aed1ca66f21a6af759a0d156bb3df1739",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
