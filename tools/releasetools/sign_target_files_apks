@@ -82,6 +82,7 @@ import subprocess
 import tempfile
 import zipfile
 
+import add_img_to_target_files
 import common
 
 OPTIONS = common.OPTIONS
@@ -166,6 +167,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
           f.write(data)
 
   for info in input_tf_zip.infolist():
+    if info.filename.startswith("IMAGES/"): continue
+
     data = input_tf_zip.read(info.filename)
     out_info = copy.copy(info)
 
@@ -447,6 +450,8 @@ def main(argv):
 
   input_zip.close()
   output_zip.close()
+
+  add_img_to_target_files.AddImagesToTargetFiles(args[1])
 
   print "done."
 
