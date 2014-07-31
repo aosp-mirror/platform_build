@@ -62,8 +62,6 @@ TARGET_LIBGCC := \
 	$(shell $(TARGET_CC) -m64 -print-file-name=libgcc.a)
 TARGET_LIBATOMIC := \
 	$(shell $(TARGET_CC) -m64 -print-file-name=libatomic.a)
-target_libgcov := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
-	-print-file-name=libgcov.a)
 endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
@@ -169,7 +167,6 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
-	$(PRIVATE_TARGET_FDO_LIB) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
@@ -195,7 +192,6 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
-	$(PRIVATE_TARGET_FDO_LIB) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
@@ -219,7 +215,6 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--no-whole-archive \
 	-Wl,--start-group \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
-	$(PRIVATE_TARGET_FDO_LIB) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	-Wl,--end-group \
