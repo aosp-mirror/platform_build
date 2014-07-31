@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16295785_310b6afa",
+        "filename": "core/clang/mips.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-07-31T00:59:41Z",
+      "side": 1,
+      "message": "I see you kept this in when submitting. Unfortunately, I have a feeling that that is going to break all of your code that is compiled with Clang (RenderScript, bcc, libpng, etc.).",
+      "revId": "6670e24aed1ca66f21a6af759a0d156bb3df1739",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
