@@ -292,6 +292,11 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
 
   cmd = [mkbootimg, "--kernel", os.path.join(sourcedir, "kernel")]
 
+  fn = os.path.join(sourcedir, "second")
+  if os.access(fn, os.F_OK):
+    cmd.append("--second")
+    cmd.append(fn)
+
   fn = os.path.join(sourcedir, "cmdline")
   if os.access(fn, os.F_OK):
     cmd.append("--cmdline")
