@@ -98,7 +98,6 @@ except ImportError:
   from sha import sha as sha1
 
 import common
-import img_from_target_files
 import edify_generator
 import build_image
 
@@ -418,6 +417,63 @@ def CalculateFingerprint(oem_props, oem_dict, info_dict):
     GetOemProperty("ro.product.device", oem_props, oem_dict, info_dict),
     GetBuildProp("ro.build.thumbprint", info_dict))
 
+def GetImage(which, tmpdir, info_dict):
+  # Return (mapdata, data) for the given image.  which should be
+  # "system" or "vendor".
+
+  assert which in ("system", "vendor")
+
+  path = os.path.join(tmpdir, "IMAGES", which + ".img")
+  if os.path.exists(path):
+    print "using %s.img from target-files" % (which,)
+
+    # This is a 'new' target-files, which already has the image in it.
+    # The image is a sparse image, though, so we need to unsparse it
+    # and extract the map data.
+
+    success, name = build_image.UnsparseImage(path, replace=False)
+    if not success:
+      assert False, "unsparsing " + which + ".img failed"
+
+    mmap = tempfile.NamedTemporaryFile()
+    mimg = tempfile.NamedTemporaryFile(delete=False)
+    success = build_image.MappedUnsparseImage(
+        path, name, mmap.name, mimg.name)
+    if not success:
+      assert False, "creating sparse map failed"
+    os.unlink(name)
+    name = mimg.name
+
+    with open(mmap.name) as f:
+      mapdata = f.read()
+
+    try:
+      with open(name) as f:
+        data = f.read()
+    finally:
+      os.unlink(name)
+
+    print "unsparsed data sha1 is " + sha1(data).hexdigest()
+    return mapdata, data
+
+  else:
+    print "building %s.img from target-files" % (which,)
+
+    # This is an 'old' target-files, which does not contain images
+    # already built.  Build them.
+
+    import add_img_to_target_files
+    if which == "system":
+      mapdata, data = add_img_to_target_files.BuildSystem(
+          tmpdir, info_dict, sparse=False, map_file=True)
+    elif which == "vendor":
+      mapdata, data = add_img_to_target_files.BuildVendor(
+          tmpdir, info_dict, sparse=False, map_file=True)
+
+    print "built data sha1 is " + sha1(data).hexdigest()
+    return mapdata, data
+
+
 def WriteFullOTAPackage(input_zip, output_zip):
   # TODO: how to determine this?  We don't know what version it will
   # be installed on top of.  For now, we expect the API just won't
@@ -514,9 +570,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   system_items = ItemSet("system", "META/filesystem_config.txt")
   script.ShowProgress(system_progress, 0)
   if block_based:
-    mapdata, data = img_from_target_files.BuildSystem(
-        OPTIONS.input_tmp, OPTIONS.info_dict,
-        sparse=False, map_file=True)
+    mapdata, data = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
 
     common.ZipWriteStr(output_zip, "system.map", mapdata)
     common.ZipWriteStr(output_zip, "system.muimg", data)
@@ -551,9 +605,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     script.ShowProgress(0.1, 0)
 
     if block_based:
-      mapdata, data = img_from_target_files.BuildVendor(
-          OPTIONS.input_tmp, OPTIONS.info_dict,
-          sparse=False, map_file=True)
+      mapdata, data = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
 
       common.ZipWriteStr(output_zip, "vendor.map", mapdata)
       common.ZipWriteStr(output_zip, "vendor.muimg", data)
@@ -647,14 +699,14 @@ def AddToKnownPaths(filename, known_paths):
     dirs.pop()
 
 class BlockDifference:
-  def __init__(self, partition, builder, output_zip):
+  def __init__(self, partition, output_zip):
     with tempfile.NamedTemporaryFile() as src_file:
       with tempfile.NamedTemporaryFile() as tgt_file:
         print "building source " + partition + " image..."
         src_file = tempfile.NamedTemporaryFile()
-        src_mapdata, src_data = builder(OPTIONS.source_tmp,
-                                        OPTIONS.source_info_dict,
-                                        sparse=False, map_file=True)
+        src_mapdata, src_data = GetImage(partition,
+                                         OPTIONS.source_tmp,
+                                         OPTIONS.source_info_dict)
 
         self.src_sha1 = sha1(src_data).hexdigest()
         print "source " + partition + " sha1:", self.src_sha1
@@ -662,9 +714,9 @@ class BlockDifference:
 
         print "building target " + partition + " image..."
         tgt_file = tempfile.NamedTemporaryFile()
-        tgt_mapdata, tgt_data = builder(OPTIONS.target_tmp,
-                                        OPTIONS.target_info_dict,
-                                        sparse=False, map_file=True)
+        tgt_mapdata, tgt_data = GetImage(partition,
+                                         OPTIONS.target_tmp,
+                                         OPTIONS.target_info_dict)
         self.tgt_sha1 = sha1(tgt_data).hexdigest()
         print "target " + partition + " sha1:", self.tgt_sha1
         tgt_len = len(tgt_data)
@@ -731,13 +783,11 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
   updating_recovery = (source_recovery.data != target_recovery.data)
 
-  system_diff = BlockDifference("system", img_from_target_files.BuildSystem,
-                                output_zip)
+  system_diff = BlockDifference("system", output_zip)
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_diff = BlockDifference("vendor", img_from_target_files.BuildVendor,
-                                  output_zip)
+    vendor_diff = BlockDifference("vendor", output_zip)
 
   oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
   oem_dict = None
