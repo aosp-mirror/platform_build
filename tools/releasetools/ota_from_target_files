@@ -118,6 +118,7 @@ OPTIONS.no_signing = False
 OPTIONS.block_based = False
 OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
+OPTIONS.fallback_to_full = True
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -1439,6 +1440,8 @@ def main(argv):
       OPTIONS.block_based = True
     elif o in ("-b", "--binary"):
       OPTIONS.updater_binary = a
+    elif o in ("--no_fallback_to_full",):
+      OPTIONS.fallback_to_full = False
     else:
       return False
     return True
@@ -1458,6 +1461,7 @@ def main(argv):
                                               "block",
                                               "binary=",
                                               "oem_settings=",
+                                              "no_fallback_to_full",
                                               ],
                              extra_option_handler=option_handler)
 
@@ -1504,35 +1508,47 @@ def main(argv):
   if OPTIONS.device_specific is not None:
     OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
 
-  if OPTIONS.no_signing:
-    output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
-  else:
-    temp_zip_file = tempfile.NamedTemporaryFile()
-    output_zip = zipfile.ZipFile(temp_zip_file, "w",
-                                 compression=zipfile.ZIP_DEFLATED)
+  while True:
 
-  if OPTIONS.incremental_source is None:
-    WriteFullOTAPackage(input_zip, output_zip)
-    if OPTIONS.package_key is None:
-      OPTIONS.package_key = OPTIONS.info_dict.get(
-          "default_system_dev_certificate",
-          "build/target/product/security/testkey")
-  else:
-    print "unzipping source target-files..."
-    OPTIONS.source_tmp, source_zip = common.UnzipTemp(OPTIONS.incremental_source)
-    OPTIONS.target_info_dict = OPTIONS.info_dict
-    OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
-    if "selinux_fc" in OPTIONS.source_info_dict:
-      OPTIONS.source_info_dict["selinux_fc"] = os.path.join(OPTIONS.source_tmp, "BOOT", "RAMDISK",
-                                                            "file_contexts")
-    if OPTIONS.package_key is None:
-      OPTIONS.package_key = OPTIONS.source_info_dict.get(
-          "default_system_dev_certificate",
-          "build/target/product/security/testkey")
-    if OPTIONS.verbose:
-      print "--- source info ---"
-      common.DumpInfoDict(OPTIONS.source_info_dict)
-    WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+    if OPTIONS.no_signing:
+      if os.path.exists(args[1]): os.unlink(args[1])
+      output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
+    else:
+      temp_zip_file = tempfile.NamedTemporaryFile()
+      output_zip = zipfile.ZipFile(temp_zip_file, "w",
+                                   compression=zipfile.ZIP_DEFLATED)
+
+    if OPTIONS.incremental_source is None:
+      WriteFullOTAPackage(input_zip, output_zip)
+      if OPTIONS.package_key is None:
+        OPTIONS.package_key = OPTIONS.info_dict.get(
+            "default_system_dev_certificate",
+            "build/target/product/security/testkey")
+      break
+
+    else:
+      print "unzipping source target-files..."
+      OPTIONS.source_tmp, source_zip = common.UnzipTemp(OPTIONS.incremental_source)
+      OPTIONS.target_info_dict = OPTIONS.info_dict
+      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
+      if "selinux_fc" in OPTIONS.source_info_dict:
+        OPTIONS.source_info_dict["selinux_fc"] = os.path.join(OPTIONS.source_tmp, "BOOT", "RAMDISK",
+                                                              "file_contexts")
+      if OPTIONS.package_key is None:
+        OPTIONS.package_key = OPTIONS.source_info_dict.get(
+            "default_system_dev_certificate",
+            "build/target/product/security/testkey")
+      if OPTIONS.verbose:
+        print "--- source info ---"
+        common.DumpInfoDict(OPTIONS.source_info_dict)
+      try:
+        WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+        break
+      except ValueError:
+        if not OPTIONS.fallback_to_full: raise
+        print "--- failed to build incremental; falling back to full ---"
+        OPTIONS.incremental_source = None
+        output_zip.close()
 
   output_zip.close()
 
