@@ -158,7 +158,7 @@ define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	 -nostdlib -Wl,-soname,$(notdir $@) \
-	 -shared \
+	$(if $(filter true,$(PRIVATE_CLANG)),-shared,-Wl,-shared) \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_SO_O)) \
 	$(PRIVATE_ALL_OBJECTS) \
