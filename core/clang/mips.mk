@@ -9,6 +9,7 @@ CLANG_CONFIG_mips_UNKNOWN_CFLAGS := \
   $(CLANG_CONFIG_UNKNOWN_CFLAGS) \
   -mips32 \
   -mips32r2 \
+  -mips32r6 \
   -mfp32 \
   -mfp64 \
   -mfpxx \
