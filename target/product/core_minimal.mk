@@ -89,8 +89,11 @@ PRODUCT_BOOT_JARS := \
     ims-common \
     mms-common \
     android.policy \
-    services \
     apache-xml \
+
+# The order of PRODUCT_SYSTEM_SERVER_JARS matters.
+PRODUCT_SYSTEM_SERVER_JARS := \
+    services \
     ethernet-service \
     wifi-service
 
