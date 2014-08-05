@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "d64c1fb5_cb7201b1",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-05T19:21:26Z",
+      "side": 1,
+      "message": "The variable name is misleading: actually you dex-preopt only the libraries in $(DEXPREOPT_BOOT_JARS_MODULES), not other Java libraries. Change it to someting like WITH_DEXPREOPT_BOOT_IMG_ONLY?",
+      "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "56390f00_a0e07a9e",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 1
@@ -19,6 +36,40 @@
         "endLine": 14,
         "endChar": 30
       },
+      "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d64c1fb5_2bed65d9",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-05T19:21:26Z",
+      "side": 1,
+      "message": "This is incorrect: we need to unset LOCAL_DEX_PREOPT instead of setting it to nostripping, if dex-preopt is disabled.",
+      "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16431782_8d6f6d78",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-05T19:21:26Z",
+      "side": 1,
+      "message": "I\u0027d expect something like this here:\nifeq ($(WITH_DEXPREOPT_BOOT_IMG_ONLY),true)\nifeq ($(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)\nLOCAL_DEX_PREOPT :\u003d\nendif\nendif\n\nThen you don\u0027t need to change other lines in this file.",
       "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
