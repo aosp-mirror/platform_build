@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16431782_384ad98d",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-05T21:11:42Z",
+      "side": 1,
+      "message": "Currently the default is false.\nWe need this only if we plan to default it to true.",
+      "revId": "ed7079193d66328645aebd8aef8748b2ba88884f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
