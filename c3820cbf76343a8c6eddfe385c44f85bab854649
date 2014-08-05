@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56390f00_a0e07a9e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-08-05T08:26:51Z",
+      "side": 1,
+      "message": "I was more expecting WITH_DEXPREOPT_APPS to be used here without the other changes?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 30
+      },
+      "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "56390f00_60ff9242",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-08-05T08:26:51Z",
+      "side": 1,
+      "message": "if we default this based on WITH_DEXOPT, we don\u0027t need this right?",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 27
+      },
+      "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f63f63e6_7da1f793",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-08-05T08:26:51Z",
+      "side": 1,
+      "message": "if we default this based on WITH_DEXOPT, we don\u0027t need this right?",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 27
+      },
+      "revId": "c3820cbf76343a8c6eddfe385c44f85bab854649",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
