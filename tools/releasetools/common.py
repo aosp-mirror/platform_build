@@ -900,10 +900,26 @@ class Difference(object):
       cmd.append(ttemp.name)
       cmd.append(ptemp.name)
       p = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      _, err = p.communicate()
+      err = []
+      def run():
+        _, e = p.communicate()
+        if e: err.append(e)
+      th = threading.Thread(target=run)
+      th.start()
+      th.join(timeout=300)   # 5 mins
+      if th.is_alive():
+        print "WARNING: diff command timed out"
+        p.terminate()
+        th.join(5)
+        if th.is_alive():
+          p.kill()
+          th.join()
+
       if err or p.returncode != 0:
-        print "WARNING: failure running %s:\n%s\n" % (diff_program, err)
-        return None
+        print "WARNING: failure running %s:\n%s\n" % (
+            diff_program, "".join(err))
+        self.patch = None
+        return None, None, None
       diff = ptemp.read()
     finally:
       ptemp.close()
