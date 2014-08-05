@@ -16,6 +16,24 @@
       "revId": "ed7079193d66328645aebd8aef8748b2ba88884f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36b9fbaa_2df9b92c",
+        "filename": "target/board/generic_x86/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1047769
+      },
+      "writtenOn": "2014-08-05T21:53:45Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "16431782_384ad98d",
+      "revId": "ed7079193d66328645aebd8aef8748b2ba88884f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
