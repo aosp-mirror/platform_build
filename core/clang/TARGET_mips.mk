@@ -43,7 +43,7 @@ $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CFLAGS := \
   $(CLANG_CONFIG_mips_TARGET_EXTRA_CFLAGS)
 
 $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CPPFLAGS := \
-  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$(clang_2nd_arch_prefix)$(TARGET_GLOBAL_CPPFLAGS)) \
+  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS)) \
   $(CLANG_CONFIG_mips_TARGET_EXTRA_CPPFLAGS)
 
 $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_LDFLAGS := \
