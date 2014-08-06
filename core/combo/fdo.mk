@@ -26,7 +26,7 @@ else
   ifeq ($(strip $(BUILD_FDO_OPTIMIZE)), true)
     # Set TARGET_FDO_PROFILE_PATH to set a custom profile directory for your build.
     ifeq ($(strip $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH)),)
-      $(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH := fdo_profiles
+      $(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH := vendor/google_data/fdo_profile
     endif
 
     ifneq ($(strip $(wildcard $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH))),)
