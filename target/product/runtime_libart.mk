@@ -20,7 +20,8 @@ PRODUCT_PACKAGES += \
         core-libart \
         libart \
         dex2oat \
-        oatdump
+        oatdump \
+        patchoat
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.image-dex2oat-Xms=64m \
