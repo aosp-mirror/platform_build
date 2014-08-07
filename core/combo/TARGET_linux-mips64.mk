@@ -84,7 +84,6 @@ android_config_h := $(call select-android-config-h,linux-mips64)
 TARGET_GLOBAL_CFLAGS += \
 			$(TARGET_mips_CFLAGS) \
 			-U__unix -U__unix__ -Umips \
-			-fpic -fPIE\
 			-ffunction-sections \
 			-fdata-sections \
 			-funwind-tables \
@@ -198,7 +197,7 @@ $(hide) $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-executable-inner
-$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -pie \
 	-Wl,-dynamic-linker,/system/bin/linker64 \
 	-Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \

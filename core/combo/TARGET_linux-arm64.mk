@@ -73,7 +73,6 @@ TARGET_GLOBAL_CFLAGS += \
 android_config_h := $(call select-android-config-h,linux-arm64)
 
 TARGET_GLOBAL_CFLAGS += \
-			-fpic -fPIE \
 			-fstack-protector \
 			-ffunction-sections \
 			-fdata-sections \
@@ -186,7 +185,7 @@ $(hide) $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-executable-inner
-$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -fPIE -pie \
+$(hide) $(PRIVATE_CXX) -nostdlib -Bdynamic -pie \
 	-Wl,-dynamic-linker,/system/bin/linker64 \
 	-Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
