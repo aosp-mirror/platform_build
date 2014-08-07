@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6dbe336_40bd1052",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-07T19:47:25Z",
+      "side": 1,
+      "message": "Let\u0027s not use $(findstring) but set it explictly as PRIVATE_CLANG in binary.mk, near where we set PRIVATE_CXX.",
+      "revId": "1bfe92eb8d384a785528dd199780fdfee01af8cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
