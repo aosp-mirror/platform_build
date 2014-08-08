@@ -24,7 +24,7 @@ TOOLS_EXE_SUFFIX := .exe
 
 # Settings to use MinGW has a cross-compiler under Linux
 ifneq ($(findstring Linux,$(UNAME)),)
-ifneq ($(strip $(USE_MINGW)),)
+ifdef USE_MINGW
 HOST_ACP_UNAVAILABLE := true
 TOOLS_EXE_SUFFIX :=
 HOST_GLOBAL_CFLAGS += -DUSE_MINGW
