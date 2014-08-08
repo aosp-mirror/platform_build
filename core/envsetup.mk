@@ -58,7 +58,7 @@ BUILD_OS := $(HOST_OS)
 # Under Linux, if USE_MINGW is set, we change HOST_OS to Windows to build the
 # Windows SDK. Only a subset of tools and SDK will manage to build properly.
 ifeq ($(HOST_OS),linux)
-ifneq ($(USE_MINGW),)
+ifdef USE_MINGW
   HOST_OS := windows
 endif
 endif
