@@ -116,7 +116,7 @@ my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
 # all code is position independent, and then those warnings get promoted to
 # errors.
-ifeq ($(strip $(USE_MINGW)),)
+ifndef USE_MINGW
 ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
 my_cflags += -fpie
 else
