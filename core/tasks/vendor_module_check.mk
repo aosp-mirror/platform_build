@@ -28,6 +28,7 @@ _vendor_owner_whitelist := \
         intel \
         lge \
         moto \
+        mtk \
         nvidia \
         nxp \
         nxpsw \
@@ -35,6 +36,7 @@ _vendor_owner_whitelist := \
         qti \
         samsung \
         samsung_arm \
+        sony \
         synaptics \
         ti \
         trusted_logic \
