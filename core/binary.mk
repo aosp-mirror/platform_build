@@ -332,6 +332,7 @@ ifneq ($(LOCAL_NO_SYNTAX_CHECK),true)
 endif
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLANG := $(my_clang)
 
 # TODO: support a mix of standard extensions so that this isn't necessary
 LOCAL_CPP_EXTENSION := $(strip $(LOCAL_CPP_EXTENSION))
