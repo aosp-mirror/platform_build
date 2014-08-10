@@ -1643,6 +1643,29 @@ else
 sdk_atree_files += $(atree_dir)/sdk.atree
 endif
 
+# For fonts to be bundled with the SDK. We copy them from the output of the device build.
+# They are also processed by the following script to edit their PS Names.
+sdk_font_rename_script := frameworks/base/tools/layoutlib/rename_font/build_font_single.py
+fonttools_lib := external/fonttools/Lib
+sdk_font_temp_dir := $(call intermediates-dir-for,PACKAGING,sdk-fonts)
+sdk_fonts := $(filter $(TARGET_OUT)/fonts/%tf, $(INTERNAL_SYSTEMIMAGE_FILES))
+sdk_fonts := $(addprefix $(sdk_font_temp_dir)/, $(notdir $(sdk_fonts)))
+sdk_font_config := $(wildcard frameworks/base/data/fonts/*.xml)
+sdk_font_config :=  $(addprefix $(sdk_font_temp_dir)/, $(notdir $(sdk_font_config)))
+
+# Files ending in 'tf' - .ttf or .otf. This excludes .xml files
+$(sdk_fonts): $(sdk_font_temp_dir)/%tf: $(TARGET_OUT)/fonts/%tf \
+			$(sdk_font_rename_script)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) PYTHONPATH=$$PYTHONPATH:$(fonttools_lib) $(sdk_font_rename_script) \
+	    $< $@
+
+# Files ending in 'xml'
+$(sdk_font_config): $(sdk_font_temp_dir)/%.xml: \
+			frameworks/base/data/fonts/%.xml
+	$(hide) mkdir -p $(dir $@)
+	$(hide) cp -vf $< $@
+
 deps := \
 	$(target_notice_file_txt) \
 	$(tools_notice_file_txt) \
@@ -1656,17 +1679,15 @@ deps := \
 	$(ATREE_FILES) \
 	$(sdk_atree_files) \
 	$(HOST_OUT_EXECUTABLES)/atree \
-	$(HOST_OUT_EXECUTABLES)/line_endings
+	$(HOST_OUT_EXECUTABLES)/line_endings \
+	$(sdk_fonts) \
+	$(sdk_font_config)
 
 INTERNAL_SDK_TARGET := $(sdk_dir)/$(sdk_name).zip
 $(INTERNAL_SDK_TARGET): PRIVATE_NAME := $(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DIR := $(sdk_dir)/$(sdk_name)
 $(INTERNAL_SDK_TARGET): PRIVATE_DEP_FILE := $(sdk_dep_file)
 $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
-
-sdk_font_temp_dir := $(call intermediates-dir-for,PACKAGING,sdk-fonts)
-sdk_font_input_list := frameworks/base/data/fonts external/noto-fonts external/google-fonts external/naver-fonts
-sdk_font_rename_script := frameworks/base/tools/layoutlib/rename_font/build_font.py
 
 # Set SDK_GNU_ERROR to non-empty to fail when a GNU target is built.
 #
@@ -1683,9 +1704,6 @@ $(INTERNAL_SDK_TARGET): $(deps)
 	  fi; \
 	done; \
 	if [ $$FAIL ]; then exit 1; fi
-	$(hide) mkdir -p $(sdk_font_temp_dir)
-	$(hide) PYTHONPATH=$$PYTHONPATH:external/fonttools/Lib $(sdk_font_rename_script) $(sdk_font_input_list) \
-	        $(sdk_font_temp_dir)
 	$(hide) ( \
 		ATREE_STRIP="strip -x" \
 		$(HOST_OUT_EXECUTABLES)/atree \
