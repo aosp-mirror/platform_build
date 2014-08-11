@@ -1413,7 +1413,7 @@ endef
 ifdef BUILD_HOST_static
 HOST_FPIE_FLAGS :=
 else
-HOST_FPIE_FLAGS := -fPIE -pie
+HOST_FPIE_FLAGS := -pie
 endif
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
