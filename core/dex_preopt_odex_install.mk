@@ -32,6 +32,12 @@ endif
 ifneq (,$(filter $(LOCAL_MODULE),$(PRODUCT_DEX_PREOPT_PACKAGES_IN_DATA)))
 LOCAL_DEX_PREOPT :=
 endif
+# if WITH_DEXPREOPT_BOOT_IMG_ONLY=true and module is not in boot class path skip
+ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_ONLY))
+ifeq ($(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
+LOCAL_DEX_PREOPT :=
+endif
+endif
 
 built_odex :=
 installed_odex :=
