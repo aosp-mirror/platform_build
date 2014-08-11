@@ -113,10 +113,15 @@ my_cxx := $(LOCAL_CXX)
 my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 
+# MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
+# all code is position independent, and then those warnings get promoted to
+# errors.
+ifeq ($(strip $(USE_MINGW)),)
 ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
 my_cflags += -fpie
 else
 my_cflags += -fPIC
+endif
 endif
 
 my_src_files += $(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
