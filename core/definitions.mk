@@ -1309,7 +1309,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	-Wl,-rpath-link=$(PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../lib \
-	-shared -Wl,-soname,$(notdir $@) \
+	-Wl,-shared -Wl,-soname,$(notdir $@) \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(PRIVATE_ALL_OBJECTS) \
