@@ -253,7 +253,8 @@ _product_stash_var_list += \
 
 _product_stash_var_list += \
 	DEFAULT_SYSTEM_DEV_CERTIFICATE \
-	WITH_DEXPREOPT
+	WITH_DEXPREOPT \
+	WITH_DEXPREOPT_BOOT_IMG_ONLY
 
 #
 # Stash values of the variables in _product_stash_var_list.
