@@ -1643,28 +1643,7 @@ else
 sdk_atree_files += $(atree_dir)/sdk.atree
 endif
 
-# For fonts to be bundled with the SDK. We copy them from the output of the device build.
-# They are also processed by the following script to edit their PS Names.
-sdk_font_rename_script := frameworks/base/tools/layoutlib/rename_font/build_font_single.py
-fonttools_lib := external/fonttools/Lib
-sdk_font_temp_dir := $(call intermediates-dir-for,PACKAGING,sdk-fonts)
-sdk_fonts := $(filter $(TARGET_OUT)/fonts/%tf, $(INTERNAL_SYSTEMIMAGE_FILES))
-sdk_fonts := $(addprefix $(sdk_font_temp_dir)/, $(notdir $(sdk_fonts)))
-sdk_font_config := $(wildcard frameworks/base/data/fonts/*.xml)
-sdk_font_config :=  $(addprefix $(sdk_font_temp_dir)/, $(notdir $(sdk_font_config)))
-
-# Files ending in 'tf' - .ttf or .otf. This excludes .xml files
-$(sdk_fonts): $(sdk_font_temp_dir)/%tf: $(TARGET_OUT)/fonts/%tf \
-			$(sdk_font_rename_script)
-	$(hide) mkdir -p $(dir $@)
-	$(hide) PYTHONPATH=$$PYTHONPATH:$(fonttools_lib) $(sdk_font_rename_script) \
-	    $< $@
-
-# Files ending in 'xml'
-$(sdk_font_config): $(sdk_font_temp_dir)/%.xml: \
-			frameworks/base/data/fonts/%.xml
-	$(hide) mkdir -p $(dir $@)
-	$(hide) cp -vf $< $@
+include $(BUILD_SYSTEM)/sdk_font.mk
 
 deps := \
 	$(target_notice_file_txt) \
@@ -1680,8 +1659,7 @@ deps := \
 	$(sdk_atree_files) \
 	$(HOST_OUT_EXECUTABLES)/atree \
 	$(HOST_OUT_EXECUTABLES)/line_endings \
-	$(sdk_fonts) \
-	$(sdk_font_config)
+	$(SDK_FONT_DEPS)
 
 INTERNAL_SDK_TARGET := $(sdk_dir)/$(sdk_name).zip
 $(INTERNAL_SDK_TARGET): PRIVATE_NAME := $(sdk_name)
@@ -1719,7 +1697,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-v "TARGET_ARCH=$(TARGET_ARCH)" \
 			-v "TARGET_CPU_ABI=$(TARGET_CPU_ABI)" \
 			-v "DLL_EXTENSION=$(HOST_SHLIB_SUFFIX)" \
-			-v "FONT_OUT=$(sdk_font_temp_dir)" \
+			-v "FONT_OUT=$(SDK_FONT_TEMP)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \
