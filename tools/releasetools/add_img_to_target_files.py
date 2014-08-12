@@ -49,23 +49,38 @@ OPTIONS = common.OPTIONS
 def AddSystem(output_zip, sparse=True, prefix="IMAGES/"):
   """Turn the contents of SYSTEM into a system image and store it in
   output_zip."""
-  data = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse)
+  block_list = tempfile.NamedTemporaryFile()
+  data = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse,
+                     block_list=block_list.name)
   common.ZipWriteStr(output_zip, prefix + "system.img", data)
+  with open(block_list.name, "rb") as f:
+    block_list_data = f.read()
+  common.ZipWriteStr(output_zip, prefix + "system.map", block_list_data)
+  block_list.close()
 
-def BuildSystem(input_dir, info_dict, sparse=True, map_file=None):
+def BuildSystem(input_dir, info_dict, sparse=True, map_file=None,
+                block_list=None):
   return CreateImage(input_dir, info_dict, "system",
-                     sparse=sparse, map_file=map_file)
+                     sparse=sparse, map_file=map_file, block_list=block_list)
 
 def AddVendor(output_zip, sparse=True, prefix="IMAGES/"):
-  data = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse)
+  block_list = tempfile.NamedTemporaryFile()
+  data = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse,
+                     block_list=block_list.name)
   common.ZipWriteStr(output_zip, prefix + "vendor.img", data)
+  with open(block_list.name, "rb") as f:
+    block_list_data = f.read()
+  common.ZipWriteStr(output_zip, prefix + "vendor.map", block_list_data)
+  block_list.close()
 
-def BuildVendor(input_dir, info_dict, sparse=True, map_file=None):
+def BuildVendor(input_dir, info_dict, sparse=True, map_file=None,
+                block_list=None):
   return CreateImage(input_dir, info_dict, "vendor",
-                     sparse=sparse, map_file=map_file)
+                     sparse=sparse, map_file=map_file, block_list=block_list)
 
 
-def CreateImage(input_dir, info_dict, what, sparse=True, map_file=None):
+def CreateImage(input_dir, info_dict, what, sparse=True, map_file=None,
+                block_list=None):
   print "creating " + what + ".img..."
 
   img = tempfile.NamedTemporaryFile()
@@ -104,7 +119,8 @@ def CreateImage(input_dir, info_dict, what, sparse=True, map_file=None):
   succ = build_image.BuildImage(os.path.join(input_dir, what),
                                 image_props, img.name,
                                 fs_config=fs_config,
-                                fc_config=fc_config)
+                                fc_config=fc_config,
+                                block_list=block_list)
   assert succ, "build " + what + ".img image failed"
 
   mapdata = None

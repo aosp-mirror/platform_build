@@ -90,6 +90,7 @@ def main(argv):
       if images:
         for i in images:
           if bootable_only and i not in ("boot.img", "recovery.img"): continue
+          if not i.endswith(".img"): continue
           with open(os.path.join(images_path, i), "r") as f:
             common.ZipWriteStr(output_zip, i, f.read())
         done = True

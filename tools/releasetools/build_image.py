@@ -209,7 +209,8 @@ def MakeVerityEnabledImage(out_file, prop_dict):
 
 def BuildImage(in_dir, prop_dict, out_file,
                fs_config=None,
-               fc_config=None):
+               fc_config=None,
+               block_list=None):
   """Build an image to out_file from in_dir with property prop_dict.
 
   Args:
@@ -252,6 +253,8 @@ def BuildImage(in_dir, prop_dict, out_file,
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     if fs_config is not None:
       build_command.extend(["-C", fs_config])
+    if block_list is not None:
+      build_command.extend(["-B", block_list])
     if fc_config is not None:
       build_command.append(fc_config)
     elif "selinux_fc" in prop_dict:
