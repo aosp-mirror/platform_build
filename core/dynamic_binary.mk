@@ -110,6 +110,15 @@ $(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY
 $(strip_output): PRIVATE_READELF := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_READELF)
 $(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 	$(transform-to-stripped-keep-symbols)
+
+# A product may be configured to strip everything in some build variants.
+# We do the stripping as a post-install command so that LOCAL_BUILT_MODULE
+# is still with the symbols and we don't need to clean it (and relink) when
+# you switch build variant.
+ifneq ($(filter $(STRIP_EVERYTHING_BUILD_VARIANTS),$(TARGET_BUILD_VARIANT)),)
+$(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := \
+  $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) --strip-all $(LOCAL_INSTALLED_MODULE)
+endif
 else
 # Don't strip the binary, just copy it.  We can't skip this step
 # because a copy of the binary must appear at LOCAL_BUILT_MODULE.
