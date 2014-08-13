@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b64deb11_dda29e50",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-13T19:14:43Z",
+      "side": 1,
+      "message": "Actually space is preferred over tab, for according to makefiile manual tab should be used on in build recipe.",
+      "revId": "e93893ad3e813d4c2456498f702480baebdf382b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
