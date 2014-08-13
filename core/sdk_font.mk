@@ -41,21 +41,26 @@ $(sdk_fonts_device): $(SDK_FONT_TEMP)/%.ttf: $(TARGET_OUT)/fonts/%.ttf \
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(call sdk_rename_font,$<,$@)
 
-# Extra fonts that are not part of the device build. These are used as a
-# replacement for the OpenType fonts.
-sdk_fonts_extra := NanumGothic.ttf DroidSansFallback.ttf
-sdk_fonts_extra := $(addprefix $(SDK_FONT_TEMP)/, $(sdk_fonts_extra))
-
-$(SDK_FONT_TEMP)/NanumGothic.ttf: external/naver-fonts/NanumGothic.ttf \
-			$(sdk_font_rename_script)
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(call sdk_rename_font,$<,$@)
-
-$(SDK_FONT_TEMP)/DroidSansFallback.ttf: frameworks/base/data/fonts/DroidSansFallbackFull.ttf \
-			$(sdk_font_rename_script)
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(call sdk_rename_font,$<,$@)
-
 # List of all dependencies - all fonts and configuration files.
-SDK_FONT_DEPS := $(sdk_fonts_device) $(sdk_fonts_extra) $(sdk_font_config)
+SDK_FONT_DEPS := $(sdk_fonts_device) $(sdk_font_config)
 
+# Define a macro to create rule for addititional fonts that we want to include
+# in the SDK.
+# $1 Output font name
+# $2 Source font path
+define sdk-extra-font-rule
+fontfullname := $$(SDK_FONT_TEMP)/$1
+ifeq ($$(filter $(fontfullname),$$(sdk_fonts_device)),)
+SDK_FONT_DEPS += $$(fontfullname)
+$$(fontfullname): $2 $(sdk_font_rename_script)
+	$$(hide) mkdir -p $$(dir $$@)
+	$$(hide) $$(call sdk_rename_font,$$<,$$@)
+endif
+fontfullname :=
+endef
+
+# These extra fonts are used as a replacement for OpenType fonts.
+$(eval $(call sdk-extra-font-rule,NanumGothic.ttf,external/naver-fonts/NanumGothic.ttf))
+$(eval $(call sdk-extra-font-rule,DroidSansFallback.ttf,frameworks/base/data/fonts/DroidSansFallbackFull.ttf))
+
+sdk-extra-font-rule :=
