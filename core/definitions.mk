@@ -884,7 +884,7 @@ $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	-Wl,-rpath,\$$ORIGIN/../lib \
 	$(dir $@)/$(notdir $(<:.bc=.o)) \
 	$(RS_PREBUILT_COMPILER_RT) \
-	-o $@ -L prebuilts/gcc/ \
+	-o $@ $(TARGET_GLOBAL_LDFLAGS) -L prebuilts/gcc/ \
 	-L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) $(RS_PREBUILT_LIBPATH) \
 	-lRSSupport -lm -lc
 endef
