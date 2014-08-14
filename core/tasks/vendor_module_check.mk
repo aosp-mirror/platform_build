@@ -18,6 +18,7 @@
 _vendor_owner_whitelist := \
         asus \
         audience \
+        atmel \
         broadcom \
         csr \
         elan \
