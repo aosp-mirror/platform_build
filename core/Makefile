@@ -940,7 +940,11 @@ define build-systemimage-target
       skip_fsck=true)
   $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
       ./build/tools/releasetools/build_image.py \
-      $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1)
+      $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) \
+      || ( echo "Out of space? the tree size of $(TARGET_OUT) is (MB): " 1>&2 ;\
+           du -sm $(TARGET_OUT) 1>&2;\
+           echo "The max is $$(( $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) / 1048576 )) MB." 1>&2 ;\
+           exit 1 )
 endef
 
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
