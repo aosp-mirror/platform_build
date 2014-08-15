@@ -26,6 +26,13 @@ ifndef skip_build_from_source
 
 include $(BUILD_SYSTEM)/dynamic_binary.mk
 
+# Check for statically linked libc
+ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+ifneq ($(filter $(my_static_libraries),libc),)
+$(error $(LOCAL_PATH): $(LOCAL_MODULE) is statically linking libc to dynamic executable, please remove libc from static libs or set LOCAL_FORCE_STATIC_EXECUTABLE := true)
+endif
+endif
+
 # Define PRIVATE_ variables from global vars
 my_target_global_ld_dirs := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LD_DIRS)
 my_target_fdo_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_LIB)
