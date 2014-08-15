@@ -15,7 +15,7 @@ ifneq ($(LOCAL_IS_HOST_MODULE),true)
       # We support both 32 and 64 bit apps, so we will have to
       # base our decision on whether the target prefers one or the
       # other.
-      ifneq ($(TARGET_PREFER_32_BIT_APPS),true)
+      ifeq ($(TARGET_PREFER_32_BIT_APPS),true)
         $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
       else
         $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_64)
