@@ -36,6 +36,8 @@ PRODUCT_PACKAGES += \
     com.android.location.provider.xml \
     com.android.media.remotedisplay \
     com.android.media.remotedisplay.xml \
+    com.android.mediadrm.signer \
+    com.android.mediadrm.signer.xml \
     drmserver \
     ethernet-service \
     framework-res \
