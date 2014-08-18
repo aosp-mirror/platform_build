@@ -29,10 +29,10 @@ else
       $(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH := vendor/google_data/fdo_profile
     endif
 
-    ifneq ($(strip $(wildcard $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH))),)
+    ifneq ($(strip $(wildcard $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH)/$(PRODUCT_OUT))),)
       $(combo_2nd_arch_prefix)TARGET_FDO_CFLAGS := -fprofile-use=$($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH) -DANDROID_FDO -fprofile-correction -Wcoverage-mismatch -Wno-error
     else
-      $(warning Profile directory $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH) does not exist. Turn off FDO.)
+      $(warning Profile directory $($(combo_2nd_arch_prefix)TARGET_FDO_PROFILE_PATH)/$(PRODUCT_OUT) does not exist. Turn off FDO.)
     endif
   endif
 endif
