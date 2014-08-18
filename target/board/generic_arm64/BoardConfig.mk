@@ -22,10 +22,35 @@ TARGET_CPU_VARIANT := generic
 TARGET_CPU_ABI := arm64-v8a
 
 TARGET_2ND_ARCH := arm
+
+ifdef TARGET_BUILD_APPS
+# DO NOT USE
+# DO NOT USE
+#
+# This architecture / CPU variant must NOT be used for any 64 bit
+# platform builds. It is the lowest common denominator required
+# to build an unbundled application for all supported 32 and 64 bit
+# platforms.
+#
+# If you're building a 64 bit platform (and not an application) the
+# ARM-v8 specification allows you to assume NEON and all the features
+# available in a cortex-A15 CPU. You should be able to set :
+#
+# TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+# TARGET_2ND_CPU_VARIANT := cortex-a15
+#
+# DO NOT USE
+# DO NOT USE
 TARGET_2ND_ARCH_VARIANT := armv7-a
+# DO NOT USE
+# DO NOT USE
 TARGET_2ND_CPU_VARIANT := generic
-TARGET_2ND_CPU_ABI := armeabi-v7a
-TARGET_2ND_CPU_ABI2 := armeabi
+# DO NOT USE
+# DO NOT USE
+else
+TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_CPU_VARIANT := cortex-a15
+endif
 
 TARGET_USES_64_BIT_BINDER := true
 
