@@ -161,11 +161,6 @@
  */
 #define HAVE_CXXABI 0
 
-/*
- * Defined if we have the gettid() system call.
- */
-#define HAVE_GETTID
-
 /* 
  * Defined if we have the sched_setscheduler() call
  */
