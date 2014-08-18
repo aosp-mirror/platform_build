@@ -133,12 +133,12 @@ my_asflags += $(LOCAL_ASFLAGS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $
 my_c_includes += $(LOCAL_C_INCLUDES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_C_INCLUDES_$(my_32_64_bit_suffix))
 my_generated_sources += $(LOCAL_GENERATED_SOURCES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_GENERATED_SOURCES_$(my_32_64_bit_suffix))
 
-my_clang := $(LOCAL_CLANG)
+my_clang := $(strip $(LOCAL_CLANG))
 ifdef LOCAL_CLANG_$(my_32_64_bit_suffix)
-my_clang := $(LOCAL_CLANG_$(my_32_64_bit_suffix))
+my_clang := $(strip $(LOCAL_CLANG_$(my_32_64_bit_suffix)))
 endif
 ifdef LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-my_clang := $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+my_clang := $(strip $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 endif
 
 # clang is enabled by default for host builds
@@ -314,7 +314,7 @@ else
 endif
 
 ifeq ($(strip $(my_cc)),)
-  ifeq ($(strip $(my_clang)),true)
+  ifeq ($(my_clang),true)
     my_cc := $(CLANG)
   else
     my_cc := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CC)
@@ -330,7 +330,7 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
 
 ifeq ($(strip $(my_cxx)),)
-  ifeq ($(strip $(my_clang)),true)
+  ifeq ($(my_clang),true)
     my_cxx := $(CLANG_CXX)
   else
     my_cxx := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CXX)
@@ -380,7 +380,7 @@ normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 # actually used (although they are usually empty).
 arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(normal_objects_mode)_CFLAGS)
-ifeq ($(strip $(my_clang)),true)
+ifeq ($(my_clang),true)
 arm_objects_cflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(arm_objects_cflags))
 normal_objects_cflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(normal_objects_cflags))
 endif
