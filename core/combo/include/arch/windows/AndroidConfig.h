@@ -112,13 +112,6 @@
 #endif
 
 /*
- * Define this if you have <sys/sendfile.h>
- */
-#ifdef __CYGWIN__
-#  define  HAVE_SYS_SENDFILE_H 1
-#endif
-
-/*
  * Define this if you build against MSVCRT.DLL
  */
 #ifndef __CYGWIN__
@@ -142,11 +135,6 @@
  * Define this if we have gethostbyname_r().
  */
 /* #define HAVE_GETHOSTBYNAME_R */
-
-/*
- * Define this if we have ioctl().
- */
-/* #define HAVE_IOCTL */
 
 /*
  * Define this if we want to use WinSock.
@@ -200,12 +188,6 @@
 #define HAVE_BACKTRACE 0
 
 /*
- * Defined if we have the cxxabi.h header for demangling C++ symbols.  If
- * not defined, stack crawls will be displayed with raw mangled symbols
- */
-#define HAVE_CXXABI 0
-
-/*
  * Define if tm struct has tm_gmtoff field
  */
 /* #define HAVE_TM_GMTOFF 1 */
@@ -249,11 +231,6 @@
  * sprintf() format string for shared library naming.
  */
 #define OS_SHARED_LIB_FORMAT_STR    "lib%s.dll"
-
-/*
- * type for the third argument to mincore().
- */
-#define MINCORE_POINTER_TYPE unsigned char *
 
 /*
  * The default path separator for the platform

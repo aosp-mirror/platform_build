@@ -86,11 +86,6 @@
 #define  HAVE_TERMIO_H 1
 
 /*
- * Define this if you have <sys/sendfile.h>
- */
-#define  HAVE_SYS_SENDFILE_H 1
-
-/*
  * Define this if you build against MSVCRT.DLL
  */
 /* #define HAVE_MS_C_RUNTIME */
@@ -115,11 +110,6 @@
  * Define this if we have gethostbyname_r().
  */
 /* #define HAVE_GETHOSTBYNAME_R */
-
-/*
- * Define this if we have ioctl().
- */
-#define HAVE_IOCTL
 
 /*
  * Define this if we want to use WinSock.
@@ -170,12 +160,6 @@
  * non-functional.
  */
 #define HAVE_BACKTRACE 0
-
-/*
- * Defined if we have the cxxabi.h header for demangling C++ symbols.  If
- * not defined, stack crawls will be displayed with raw mangled symbols
- */
-#define HAVE_CXXABI 0
 
 /*
  * Defined if we have the sched_setscheduler() call
@@ -261,11 +245,6 @@
  * sprintf() format string for shared library naming.
  */
 #define OS_SHARED_LIB_FORMAT_STR    "lib%s.so"
-
-/*
- * type for the third argument to mincore().
- */
-#define MINCORE_POINTER_TYPE unsigned char *
 
 /*
  * The default path separator for the platform
