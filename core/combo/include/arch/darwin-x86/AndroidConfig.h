@@ -164,12 +164,6 @@
 #define HAVE_CXXABI 0
 
 /*
- * Defined if we have the gettid() system call.
- */
-/* #define HAVE_GETTID */
-
-
-/*
  * Add any extra platform-specific defines here.
  */
 #define _THREAD_SAFE
