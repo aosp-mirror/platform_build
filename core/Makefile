@@ -944,6 +944,7 @@ define build-systemimage-target
       || ( echo "Out of space? the tree size of $(TARGET_OUT) is (MB): " 1>&2 ;\
            du -sm $(TARGET_OUT) 1>&2;\
            echo "The max is $$(( $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) / 1048576 )) MB." 1>&2 ;\
+           mkdir -p $(DIST_DIR); cp $(INSTALLED_FILES_FILE) $(DIST_DIR)/installed-files-rescued.txt; \
            exit 1 )
 endef
 
