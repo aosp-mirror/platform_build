@@ -308,6 +308,11 @@ ifneq ($(filter sdk win_sdk sdk_addon,$(MAKECMDGOALS)),)
 is_sdk_build := true
 endif
 
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.isa.$(TARGET_ARCH).features=$(DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
+ifdef TARGET_2ND_ARCH
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).features=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
+endif
+
 ## user/userdebug ##
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
