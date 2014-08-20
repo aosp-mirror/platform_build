@@ -33,6 +33,23 @@
       "revId": "a14511cf73d722191509d0e60b6e884c5bb5ad6d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d33271f0_07d38596",
+        "filename": "target/product/ranchu_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2014-08-20T21:16:37Z",
+      "side": 1,
+      "message": "Hi David,\n   Where can I download the /device/linaro/ranchu/* so that I can try building it?",
+      "revId": "a14511cf73d722191509d0e60b6e884c5bb5ad6d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
