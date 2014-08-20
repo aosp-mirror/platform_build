@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d33271f0_e98732c2",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-20T19:22:36Z",
+      "side": 1,
+      "message": "Sorry, this product configuration is used to build unbundled apps across lots of unbundled branches, so it shouldn\u0027t use BoardConfig.mk outside the build project. We recently hacked the generic_arm64 BoardConfig.mk just for this, see http://b.corp.google.com/issue?id\u003d16951392 .\nCould we fix files inside build/target/board/generic_arm64 instead?",
+      "revId": "a14511cf73d722191509d0e60b6e884c5bb5ad6d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3344ad56_a4ccaea4",
+        "filename": "target/product/ranchu_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-20T19:22:36Z",
+      "side": 1,
+      "message": "I don\u0027t think the generic devices can reference files inside particular vendor\u0027s device tree.",
+      "revId": "a14511cf73d722191509d0e60b6e884c5bb5ad6d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
