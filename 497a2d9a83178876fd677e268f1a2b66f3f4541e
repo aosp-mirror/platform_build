@@ -16,6 +16,24 @@
       "revId": "497a2d9a83178876fd677e268f1a2b66f3f4541e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d33271f0_070385e0",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1240,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-08-20T20:57:03Z",
+      "side": 1,
+      "message": "Oops. Good catch. Funny how that happens when I haven\u0027t looked at the CL since May...",
+      "parentUuid": "d33271f0_a9bb6aa7",
+      "revId": "497a2d9a83178876fd677e268f1a2b66f3f4541e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
