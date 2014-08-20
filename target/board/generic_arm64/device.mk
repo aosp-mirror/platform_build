@@ -27,6 +27,16 @@ PRODUCT_COPY_FILES := \
     device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
     device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml
 
+# The ranchu configuration files are needed to run under qemu-android
+PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+    device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
+    device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
+    device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc)
+
 PRODUCT_PACKAGES := \
     audio.primary.goldfish \
     vibrator.goldfish
+
+# Adjust the Dalvik heap to be appropriate for a tablet.
+$(call inherit-product-if-exists, frameworks/base/build/tablet-dalvik-heap.mk)
+$(call inherit-product-if-exists, frameworks/native/build/tablet-dalvik-heap.mk)
