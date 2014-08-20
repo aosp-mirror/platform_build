@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d33271f0_a9bb6aa7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1240,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-20T19:15:43Z",
+      "side": 1,
+      "message": "$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) here too.",
+      "revId": "497a2d9a83178876fd677e268f1a2b66f3f4541e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
