@@ -28,8 +28,6 @@ import commands
 import shutil
 import tempfile
 
-import simg_map
-
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 
 def RunCommand(cmd):
@@ -149,13 +147,6 @@ def UnsparseImage(sparse_image_path, replace=True):
     os.remove(unsparse_image_path)
     return False, None
   return True, unsparse_image_path
-
-def MappedUnsparseImage(sparse_image_path, unsparse_image_path,
-                        map_path, mapped_unsparse_image_path):
-  if simg_map.ComputeMap(sparse_image_path, unsparse_image_path,
-                         map_path, mapped_unsparse_image_path):
-    return False
-  return True
 
 def MakeVerityEnabledImage(out_file, prop_dict):
   """Creates an image that is verifiable using dm-verity.

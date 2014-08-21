@@ -46,44 +46,46 @@ import common
 OPTIONS = common.OPTIONS
 
 
-def AddSystem(output_zip, sparse=True, prefix="IMAGES/"):
+def AddSystem(output_zip, prefix="IMAGES/"):
   """Turn the contents of SYSTEM into a system image and store it in
   output_zip."""
-  block_list = tempfile.NamedTemporaryFile()
-  data = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse,
+  block_list = common.MakeTempFile(prefix="system-blocklist-", suffix=".map")
+  imgname = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict,
+                        block_list=block_list)
+  with open(imgname, "rb") as f:
+    common.ZipWriteStr(output_zip, prefix + "system.img", f.read())
+  with open(block_list, "rb") as f:
+    common.ZipWriteStr(output_zip, prefix + "system.map", f.read())
+
+
+def BuildSystem(input_dir, info_dict, block_list=None):
+  """Build the (sparse) system image and return the name of a temp
+  file containing it."""
+  return CreateImage(input_dir, info_dict, "system", block_list=block_list)
+
+
+def AddVendor(output_zip, prefix="IMAGES/"):
+  """Turn the contents of VENDOR into a vendor image and store in it
+  output_zip."""
+  block_list = common.MakeTempFile(prefix="vendor-blocklist-", suffix=".map")
+  imgname = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict,
                      block_list=block_list.name)
-  common.ZipWriteStr(output_zip, prefix + "system.img", data)
-  with open(block_list.name, "rb") as f:
-    block_list_data = f.read()
-  common.ZipWriteStr(output_zip, prefix + "system.map", block_list_data)
-  block_list.close()
-
-def BuildSystem(input_dir, info_dict, sparse=True, map_file=None,
-                block_list=None):
-  return CreateImage(input_dir, info_dict, "system",
-                     sparse=sparse, map_file=map_file, block_list=block_list)
-
-def AddVendor(output_zip, sparse=True, prefix="IMAGES/"):
-  block_list = tempfile.NamedTemporaryFile()
-  data = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict, sparse=sparse,
-                     block_list=block_list.name)
-  common.ZipWriteStr(output_zip, prefix + "vendor.img", data)
-  with open(block_list.name, "rb") as f:
-    block_list_data = f.read()
-  common.ZipWriteStr(output_zip, prefix + "vendor.map", block_list_data)
-  block_list.close()
-
-def BuildVendor(input_dir, info_dict, sparse=True, map_file=None,
-                block_list=None):
-  return CreateImage(input_dir, info_dict, "vendor",
-                     sparse=sparse, map_file=map_file, block_list=block_list)
+  with open(imgname, "rb") as f:
+    common.ZipWriteStr(output_zip, prefix + "vendor.img", f.read())
+  with open(block_list, "rb") as f:
+    common.ZipWriteStr(output_zip, prefix + "vendor.map", f.read())
 
 
-def CreateImage(input_dir, info_dict, what, sparse=True, map_file=None,
-                block_list=None):
+def BuildVendor(input_dir, info_dict, block_list=None):
+  """Build the (sparse) vendor image and return the name of a temp
+  file containing it."""
+  return CreateImage(input_dir, info_dict, "vendor", block_list=block_list)
+
+
+def CreateImage(input_dir, info_dict, what, block_list=None):
   print "creating " + what + ".img..."
 
-  img = tempfile.NamedTemporaryFile()
+  img = common.MakeTempFile(prefix=what + "-", suffix=".img")
 
   # The name of the directory it is making an image out of matters to
   # mkyaffs2image.  It wants "system" but we have a directory named
@@ -117,45 +119,13 @@ def CreateImage(input_dir, info_dict, what, sparse=True, map_file=None,
   if not os.path.exists(fc_config): fc_config = None
 
   succ = build_image.BuildImage(os.path.join(input_dir, what),
-                                image_props, img.name,
+                                image_props, img,
                                 fs_config=fs_config,
                                 fc_config=fc_config,
                                 block_list=block_list)
   assert succ, "build " + what + ".img image failed"
 
-  mapdata = None
-
-  if sparse:
-    data = open(img.name).read()
-    img.close()
-  else:
-    success, name = build_image.UnsparseImage(img.name, replace=False)
-    if not success:
-      assert False, "unsparsing " + what + ".img failed"
-
-    if map_file:
-      mmap = tempfile.NamedTemporaryFile()
-      mimg = tempfile.NamedTemporaryFile(delete=False)
-      success = build_image.MappedUnsparseImage(
-          img.name, name, mmap.name, mimg.name)
-      if not success:
-        assert False, "creating sparse map failed"
-      os.unlink(name)
-      name = mimg.name
-
-      with open(mmap.name) as f:
-        mapdata = f.read()
-
-    try:
-      with open(name) as f:
-        data = f.read()
-    finally:
-      os.unlink(name)
-
-  if mapdata is None:
-    return data
-  else:
-    return mapdata, data
+  return img
 
 
 def AddUserdata(output_zip, prefix="IMAGES/"):
@@ -226,57 +196,53 @@ def AddCache(output_zip, prefix="IMAGES/"):
 
 def AddImagesToTargetFiles(filename):
   OPTIONS.input_tmp, input_zip = common.UnzipTemp(filename)
+
+  for n in input_zip.namelist():
+    if n.startswith("IMAGES/"):
+      print "target_files appears to already contain images."
+      sys.exit(1)
+
   try:
+    input_zip.getinfo("VENDOR/")
+    has_vendor = True
+  except KeyError:
+    has_vendor = False
 
-    for n in input_zip.namelist():
-      if n.startswith("IMAGES/"):
-        print "target_files appears to already contain images."
-        sys.exit(1)
+  OPTIONS.info_dict = common.LoadInfoDict(input_zip)
+  if "selinux_fc" in OPTIONS.info_dict:
+    OPTIONS.info_dict["selinux_fc"] = os.path.join(
+        OPTIONS.input_tmp, "BOOT", "RAMDISK", "file_contexts")
 
-    try:
-      input_zip.getinfo("VENDOR/")
-      has_vendor = True
-    except KeyError:
-      has_vendor = False
+  input_zip.close()
+  output_zip = zipfile.ZipFile(filename, "a",
+                               compression=zipfile.ZIP_DEFLATED)
 
-    OPTIONS.info_dict = common.LoadInfoDict(input_zip)
-    if "selinux_fc" in OPTIONS.info_dict:
-      OPTIONS.info_dict["selinux_fc"] = os.path.join(
-          OPTIONS.input_tmp, "BOOT", "RAMDISK", "file_contexts")
+  def banner(s):
+    print "\n\n++++ " + s + " ++++\n\n"
 
-    input_zip.close()
-    output_zip = zipfile.ZipFile(filename, "a",
-                                 compression=zipfile.ZIP_DEFLATED)
+  banner("boot")
+  boot_image = common.GetBootableImage(
+      "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
+  if boot_image:
+    boot_image.AddToZip(output_zip)
 
-    def banner(s):
-      print "\n\n++++ " + s + " ++++\n\n"
+  banner("recovery")
+  recovery_image = common.GetBootableImage(
+      "IMAGES/recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
+  if recovery_image:
+    recovery_image.AddToZip(output_zip)
 
-    banner("boot")
-    boot_image = common.GetBootableImage(
-        "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-    if boot_image:
-      boot_image.AddToZip(output_zip)
+  banner("system")
+  AddSystem(output_zip)
+  if has_vendor:
+    banner("vendor")
+    AddVendor(output_zip)
+  banner("userdata")
+  AddUserdata(output_zip)
+  banner("cache")
+  AddCache(output_zip)
 
-    banner("recovery")
-    recovery_image = common.GetBootableImage(
-        "IMAGES/recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
-    if recovery_image:
-      recovery_image.AddToZip(output_zip)
-
-    banner("system")
-    AddSystem(output_zip)
-    if has_vendor:
-      banner("vendor")
-      AddVendor(output_zip)
-    banner("userdata")
-    AddUserdata(output_zip)
-    banner("cache")
-    AddCache(output_zip)
-
-    output_zip.close()
-
-  finally:
-    shutil.rmtree(OPTIONS.input_tmp)
+  output_zip.close()
 
 
 def main(argv):
@@ -298,3 +264,5 @@ if __name__ == '__main__':
     print "   ERROR: %s" % (e,)
     print
     sys.exit(1)
+  finally:
+    common.Cleanup()

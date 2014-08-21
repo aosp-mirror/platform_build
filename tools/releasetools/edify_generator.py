@@ -334,10 +334,3 @@ class EdifyGenerator(object):
       data = open(input_path, "rb").read()
     common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-binary",
                        data, perms=0755)
-
-  def Syspatch(self, filename, target_mapfile, target_sha,
-               source_mapfile, source_sha, patchfile):
-    """Applies a compressed binary patch to a block device."""
-    call = 'syspatch("%s", "%s", "%s", "%s", "%s", "%s");'
-    self.script.append(call % (filename, target_mapfile, target_sha,
-                               source_mapfile, source_sha, patchfile))
