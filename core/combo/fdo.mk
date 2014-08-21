@@ -22,6 +22,7 @@ ifeq ($(strip $(BUILD_FDO_INSTRUMENT)), true)
   # Set BUILD_FDO_INSTRUMENT=true to turn on FDO instrumentation.
   # The profile will be generated on /sdcard/fdo_profile on the device.
   $(combo_2nd_arch_prefix)TARGET_FDO_CFLAGS := -fprofile-generate=/sdcard/fdo_profile -DANDROID_FDO
+  $(combo_2nd_arch_prefix)TARGET_FDO_LDFLAGS := -lgcov -lgcc
 else
   ifeq ($(strip $(BUILD_FDO_OPTIMIZE)), true)
     # Set TARGET_FDO_PROFILE_PATH to set a custom profile directory for your build.
