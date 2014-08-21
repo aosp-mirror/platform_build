@@ -42,11 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Do we have the futex syscall?
- */
-#define HAVE_FUTEX
-
-/*
  * Process creation model.  Choose one:
  *
  * HAVE_FORKEXEC - use fork() and exec()
