@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3a7d188_a4038274",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-21T16:29:06Z",
+      "side": 1,
+      "message": "You don\u0027t need to add them to board config.\nTo enable those two, include build/target/product/core_64_bit.mk, which aosp_arm64.mk already does.",
+      "revId": "0a6e66f588e629a17c49bdfd23b95d368d8cebf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13aec965_86b8ca5d",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-21T16:29:06Z",
+      "side": 1,
+      "message": "Why do we need this?\nI believe that flag is only for RS team debugging.\nAlso this will break unbundled build.",
+      "revId": "0a6e66f588e629a17c49bdfd23b95d368d8cebf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
