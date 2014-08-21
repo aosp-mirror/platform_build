@@ -64,13 +64,6 @@
 #define HAVE_WIN32_THREADS
 
 /*
- * Do we have the futex syscall?
- */
-
-/* #define HAVE_FUTEX */
-
-
-/*
  * Process creation model.  Choose one:
  *
  * HAVE_FORKEXEC - use fork() and exec()
