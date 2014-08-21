@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "33b90dab_a75f0aa0",
+        "filename": "target/product/sdk_arm64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-21T16:31:41Z",
+      "side": 1,
+      "message": "Now runtime_libart_default is the default and you don\u0027t need to set this.",
+      "revId": "6fca5eb72b47482e7c7e89fb91fa14175dde3fa9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
