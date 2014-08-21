@@ -33,6 +33,24 @@
       "revId": "0a6e66f588e629a17c49bdfd23b95d368d8cebf5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13aec965_e64f3ea3",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1017430
+      },
+      "writtenOn": "2014-08-21T16:38:43Z",
+      "side": 1,
+      "message": "I don\u0027t think you want this; FORCE_BUILD_LLVM_COMPONENTS is only used to rebuild LLVM and put it in out, but I think we\u0027re always using clang prebuilts for compilation rather than any clang we build.",
+      "parentUuid": "13aec965_86b8ca5d",
+      "revId": "0a6e66f588e629a17c49bdfd23b95d368d8cebf5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
