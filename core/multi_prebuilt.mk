@@ -76,8 +76,7 @@ $(foreach t,$(1), \
      ) \
    ) \
   $(eval LOCAL_MODULE_SUFFIX := $(suffix $(LOCAL_SRC_FILES))) \
-  $(if $(filter user,$(TARGET_BUILD_VARIANT)), \
-    $(eval LOCAL_STRIP_MODULE := $(8))) \
+  $(eval LOCAL_STRIP_MODULE := $(8)) \
   $(eval include $(BUILD_PREBUILT)) \
  )
 endef
