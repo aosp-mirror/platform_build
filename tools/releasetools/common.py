@@ -355,22 +355,28 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                      info_dict=None):
   """Return a File object (with name 'name') with the desired bootable
   image.  Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name
-  'prebuilt_name', otherwise construct it from the source files in
+  'prebuilt_name', otherwise look for it under 'unpack_dir'/IMAGES,
+  otherwise construct it from the source files in
   'unpack_dir'/'tree_subdir'."""
 
   prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
-    print "using prebuilt %s..." % (prebuilt_name,)
+    print "using prebuilt %s from BOOTABLE_IMAGES..." % (prebuilt_name,)
     return File.FromLocalFile(name, prebuilt_path)
-  else:
-    print "building image from target_files %s..." % (tree_subdir,)
-    fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
-    data = BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
-                              os.path.join(unpack_dir, fs_config),
-                              info_dict)
-    if data:
-      return File(name, data)
-    return None
+
+  prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
+  if os.path.exists(prebuilt_path):
+    print "using prebuilt %s from IMAGES..." % (prebuilt_name,)
+    return File.FromLocalFile(name, prebuilt_path)
+
+  print "building image from target_files %s..." % (tree_subdir,)
+  fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
+  data = BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
+                            os.path.join(unpack_dir, fs_config),
+                            info_dict)
+  if data:
+    return File(name, data)
+  return None
 
 
 def UnzipTemp(filename, pattern=None):
