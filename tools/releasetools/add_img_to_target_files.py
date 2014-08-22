@@ -69,7 +69,7 @@ def AddVendor(output_zip, prefix="IMAGES/"):
   output_zip."""
   block_list = common.MakeTempFile(prefix="vendor-blocklist-", suffix=".map")
   imgname = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict,
-                     block_list=block_list.name)
+                     block_list=block_list)
   with open(imgname, "rb") as f:
     common.ZipWriteStr(output_zip, prefix + "vendor.img", f.read())
   with open(block_list, "rb") as f:
