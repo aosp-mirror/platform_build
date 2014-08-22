@@ -1037,31 +1037,6 @@ def ParseCertificate(data):
   cert = "".join(cert).decode('base64')
   return cert
 
-def XDelta3(source_path, target_path, output_path):
-  diff_program = ["xdelta3", "-0", "-B", str(64<<20), "-e", "-f", "-s"]
-  diff_program.append(source_path)
-  diff_program.append(target_path)
-  diff_program.append(output_path)
-  p = Run(diff_program, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, "Couldn't produce patch"
-
-def XZ(path):
-  compress_program = ["xz", "-zk", "-9", "--check=crc32"]
-  compress_program.append(path)
-  p = Run(compress_program, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, "Couldn't compress patch"
-
-def MakePartitionPatch(source_file, target_file, partition):
-  with tempfile.NamedTemporaryFile() as output_file:
-    XDelta3(source_file.name, target_file.name, output_file.name)
-    XZ(output_file.name)
-    with open(output_file.name + ".xz") as patch_file:
-      patch_data = patch_file.read()
-      os.unlink(patch_file.name)
-      return File(partition + ".muimg.p", patch_data)
-
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):
   """Generate a binary patch that creates the recovery image starting

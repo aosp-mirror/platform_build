@@ -1242,8 +1242,6 @@ DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
 	  $(HOST_OUT_EXECUTABLES)/simg2img \
 	  $(HOST_OUT_EXECUTABLES)/e2fsck \
-	  $(HOST_OUT_EXECUTABLES)/xdelta3 \
-	  $(HOST_OUT_EXECUTABLES)/syspatch_host \
 	  $(HOST_OUT_EXECUTABLES)/build_verity_tree \
 	  $(HOST_OUT_EXECUTABLES)/verity_signer \
 	  $(HOST_OUT_EXECUTABLES)/append2simg \
