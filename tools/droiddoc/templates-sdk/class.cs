@@ -1,5 +1,6 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
+<?cs include:"macros_override.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 <body class="gc-documentation <?cs if:(reference.gms || reference.gcm) ?>google<?cs /if ?>
@@ -123,6 +124,7 @@ Summary:
   <?cs /if ?>
   <?cs set:colspan = colspan-1 ?>
 <?cs /each ?>
+<?cs call:show_annotations_list(class, "<span class='annotation-message'>Included in documentation by the annotations: ", "</span>") ?>
 
 </div><!-- end header -->
 
@@ -193,7 +195,10 @@ Summary:
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><?cs call:cond_link(method.name, toroot, method.href, included) ?></span>(<?cs call:parameter_list(method.params) ?>)</nobr>
         <?cs if:subcount(method.shortDescr) || subcount(method.deprecated) ?>
-        <div class="jd-descrdiv"><?cs call:short_descr(method) ?></div>
+        <div class="jd-descrdiv">
+          <?cs call:short_descr(method) ?>
+          <?cs call:show_annotations_list(method, "<span class='annotation-message'>Included in documentation by the annotations: ", "</span>") ?>
+        </div>
   <?cs /if ?>
   </td></tr>
 <?cs set:count = count + #1 ?>
@@ -546,6 +551,7 @@ From <?cs var:cl.kind ?>
         <?cs call:federated_refs(method) ?>
       </div>
     <div class="jd-details-descr">
+      <?cs call:show_annotations_list(method, "<span class='annotation-message'>Included in documentation by the annotations: ", "</span>") ?>
       <?cs call:description(method) ?>
     </div>
 </div>
