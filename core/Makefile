@@ -1260,6 +1260,7 @@ DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/imgdiff \
 	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
 	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
+	  $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
 	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
 	  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
 	  $(HOST_OUT_EXECUTABLES)/simg2img \
@@ -1274,6 +1275,29 @@ OTATOOLS := $(DISTTOOLS) \
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
+
+BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
+$(BUILT_OTATOOLS_PACKAGE): \
+	intermediate := $(call intermediates-dir-for,PACKAGING,otatools)
+$(BUILT_OTATOOLS_PACKAGE): \
+	zip_root := $(intermediate)/otatools
+
+$(BUILT_OTATOOLS_PACKAGE): \
+		$(OTATOOLS)
+	@echo "Package OTA tools: $@"
+	$(hide) rm -rf $@ $(zip_root)
+	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
+	$(hide) $(ACP) -p $(OTATOOLS) $(zip_root)/bin
+	$(hide) mv $(zip_root)/bin/*.jar $(zip_root)/framework/
+	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
+	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
+	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) bin framework releasetools)
+	$(hide) zip -qry $(abspath $@) build/target/product/security/
+	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem | xargs zip -qry $(abspath $@)
+
+.PHONY: otatools-package
+otatools-package: $(BUILT_OTATOOLS_PACKAGE)
+
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
