@@ -82,7 +82,7 @@ endif
 
 # For modules not loaded by the current build (e.g. you are running mm/mmm),
 # we copy the info from the previous bulid.
-$(foreach p, $(filter-out $(modules_with_aidl_files),$(MODULES_WITH_AIDL_FILES)),\
+$(foreach p, $(filter-out $(ALL_MODULES),$(MODULES_WITH_AIDL_FILES)),\
   $(shell echo 'AIDL_FILES.$(p) := $(AIDL_FILES.$(p))' >> $(current_aidl_config)))
 MODULES_WITH_AIDL_FILES := $(sort $(MODULES_WITH_AIDL_FILES) $(modules_with_aidl_files))
 $(shell echo 'MODULES_WITH_AIDL_FILES := $(MODULES_WITH_AIDL_FILES)' >> $(current_aidl_config))
