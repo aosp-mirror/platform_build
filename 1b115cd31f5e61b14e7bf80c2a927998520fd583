@@ -16,6 +16,24 @@
       "revId": "1b115cd31f5e61b14e7bf80c2a927998520fd583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f389353b_bc36ed17",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-08-25T23:58:17Z",
+      "side": 1,
+      "message": "Got it. I have undone this change and added some of the GCC only flags into arm.mk file first. Please review patch set 4. I will add more flags into each target .mk file later, maybe in follow up CLs.",
+      "parentUuid": "f389353b_7373d8f3",
+      "revId": "1b115cd31f5e61b14e7bf80c2a927998520fd583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
