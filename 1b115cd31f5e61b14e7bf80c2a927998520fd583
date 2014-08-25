@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f389353b_7373d8f3",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-08-25T21:50:11Z",
+      "side": 1,
+      "message": "You should add them to build/core/clang/config.mk, or arch-specific clang config makefiles. Then they will be covered by function call of $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags) in this file.",
+      "revId": "1b115cd31f5e61b14e7bf80c2a927998520fd583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
