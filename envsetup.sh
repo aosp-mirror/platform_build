@@ -1472,10 +1472,15 @@ function pez {
     return $retval
 }
 
+function get_make_command()
+{
+  echo command make
+}
+
 function make()
 {
     local start_time=$(date +"%s")
-    command make "$@"
+    $(get_make_command) "$@"
     local ret=$?
     local end_time=$(date +"%s")
     local tdiff=$(($end_time-$start_time))
