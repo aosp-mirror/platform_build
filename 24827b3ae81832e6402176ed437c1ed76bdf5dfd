@@ -52,6 +52,24 @@
       "revId": "24827b3ae81832e6402176ed437c1ed76bdf5dfd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f389353b_966f52c9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-08-25T22:01:57Z",
+      "side": 1,
+      "message": "Done, in Patch Set 3.",
+      "parentUuid": "f389353b_93168465",
+      "revId": "24827b3ae81832e6402176ed437c1ed76bdf5dfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
