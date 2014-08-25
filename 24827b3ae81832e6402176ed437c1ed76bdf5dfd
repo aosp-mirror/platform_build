@@ -16,6 +16,24 @@
       "revId": "24827b3ae81832e6402176ed437c1ed76bdf5dfd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9399d985_27a4a8a7",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-08-25T21:11:08Z",
+      "side": 1,
+      "message": "Don\u0027t we already have something like this in core/clang/config.mk?",
+      "parentUuid": "f389353b_93168465",
+      "revId": "24827b3ae81832e6402176ed437c1ed76bdf5dfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
