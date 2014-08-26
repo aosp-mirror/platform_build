@@ -455,35 +455,6 @@ def GetImage(which, tmpdir, info_dict):
   return sparse_img.SparseImage(path, mappath)
 
 
-class BlockDifference:
-  def __init__(self, partition, tgt, src=None):
-    self.partition = partition
-
-    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads)
-    tmpdir = tempfile.mkdtemp()
-    OPTIONS.tempfiles.append(tmpdir)
-    self.path = os.path.join(tmpdir, partition)
-    b.Compute(self.path)
-
-    _, self.device = common.GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
-
-  def WriteScript(self, script, output_zip):
-    partition = self.partition
-    with open(self.path + ".transfer.list", "rb") as f:
-      common.ZipWriteStr(output_zip, partition + ".transfer.list", f.read())
-    with open(self.path + ".new.dat", "rb") as f:
-      common.ZipWriteStr(output_zip, partition + ".new.dat", f.read())
-    with open(self.path + ".patch.dat", "rb") as f:
-      common.ZipWriteStr(output_zip, partition + ".patch.dat", f.read(),
-                         compression=zipfile.ZIP_STORED)
-
-    call = (('block_image_update("%s", '
-             'package_extract_file("%s.transfer.list"), '
-             '"%s.new.dat", "%s.patch.dat");\n') %
-            (self.device, partition, partition, partition))
-    script.AppendExtra(script._WordWrap(call))
-
-
 def WriteFullOTAPackage(input_zip, output_zip):
   # TODO: how to determine this?  We don't know what version it will
   # be installed on top of.  For now, we expect the API just won't
@@ -586,7 +557,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     # writes incrementals to do it.
     system_tgt = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
     system_tgt.ResetFileMap()
-    system_diff = BlockDifference("system", system_tgt, src=None)
+    system_diff = common.BlockDifference("system", system_tgt, src=None)
     system_diff.WriteScript(script, output_zip)
   else:
     script.FormatPartition("/system")
@@ -619,7 +590,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     if block_based:
       vendor_tgt = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
       vendor_tgt.ResetFileMap()
-      vendor_diff = BlockDifference("vendor", vendor_tgt)
+      vendor_diff = common.BlockDifference("vendor", vendor_tgt)
       vendor_diff.WriteScript(script, output_zip)
     else:
       script.FormatPartition("/vendor")
@@ -760,14 +731,14 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   system_src = GetImage("system", OPTIONS.source_tmp, OPTIONS.source_info_dict)
   system_tgt = GetImage("system", OPTIONS.target_tmp, OPTIONS.target_info_dict)
-  system_diff = BlockDifference("system", system_tgt, system_src)
+  system_diff = common.BlockDifference("system", system_tgt, system_src)
 
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
     vendor_src = GetImage("vendor", OPTIONS.source_tmp, OPTIONS.source_info_dict)
     vendor_tgt = GetImage("vendor", OPTIONS.target_tmp, OPTIONS.target_info_dict)
-    vendor_diff = BlockDifference("vendor", vendor_tgt, vendor_src)
+    vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src)
   else:
     vendor_diff = None
 
@@ -867,32 +838,10 @@ else
 
   device_specific.IncrementalOTA_InstallBegin()
 
-  script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
-                     (system_diff.device, system_src.care_map.to_string_raw(),
-                      system_src.TotalSha1()))
-  script.Print("Patching system image...")
-  script.ShowProgress(0.8 if vendor_diff else 0.9, 0)
-  system_diff.WriteScript(script, output_zip)
-  script.AppendExtra(('else\n'
-                      '  (range_sha1("%s", "%s") == "%s") ||\n'
-                      '  abort("system partition has unexpected contents");\n'
-                      'endif;') %
-                     (system_diff.device, system_tgt.care_map.to_string_raw(),
-                      system_tgt.TotalSha1()))
-
+  system_diff.WriteScript(script, output_zip,
+                          progress=0.8 if vendor_diff else 0.9)
   if vendor_diff:
-    script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
-                       (vendor_diff.device, vendor_src.care_map.to_string_raw(),
-                        vendor_src.TotalSha1()))
-    script.Print("Patching vendor image...")
-    script.ShowProgress(0.1, 0)
-    vendor_diff.WriteScript(script, output_zip)
-    script.AppendExtra(('else\n'
-                        '  (range_sha1("%s", "%s") == "%s") ||\n'
-                        '  abort("vendor partition has unexpected contents");\n'
-                        'endif;') %
-                       (vendor_diff.device, vendor_tgt.care_map.to_string_raw(),
-                        vendor_tgt.TotalSha1()))
+    vendor_diff.WriteScript(script, output_zip, progress=0.1)
 
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
