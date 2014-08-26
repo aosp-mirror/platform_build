@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3d0553d_b89d955e",
+        "filename": "core/clang/arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-08-26T17:42:45Z",
+      "side": 1,
+      "message": "Pretty sure clang supports this flag.",
+      "revId": "1c6c0c4b42e22e25967893b821b12ba16979fa3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
