@@ -14,6 +14,8 @@ import tempfile
 
 from rangelib import *
 
+__all__ = ["EmptyImage", "DataImage", "BlockImageDiff"]
+
 def compute_patch(src, tgt, imgdiff=False):
   srcfd, srcfile = tempfile.mkstemp(prefix="src-")
   tgtfd, tgtfile = tempfile.mkstemp(prefix="tgt-")
@@ -60,6 +62,59 @@ class EmptyImage(object):
   file_map = {}
   def ReadRangeSet(self, ranges):
     return ()
+  def TotalSha1(self):
+    return sha1().hexdigest()
+
+
+class DataImage(object):
+  """An image wrapped around a single string of data."""
+
+  def __init__(self, data, trim=False, pad=False):
+    self.data = data
+    self.blocksize = 4096
+
+    assert not (trim and pad)
+
+    partial = len(self.data) % self.blocksize
+    if partial > 0:
+      if trim:
+        self.data = self.data[:-partial]
+      elif pad:
+        self.data += '\0' * (self.blocksize - partial)
+      else:
+        raise ValueError(("data for DataImage must be multiple of %d bytes "
+                          "unless trim or pad is specified") %
+                         (self.blocksize,))
+
+    assert len(self.data) % self.blocksize == 0
+
+    self.total_blocks = len(self.data) / self.blocksize
+    self.care_map = RangeSet(data=(0, self.total_blocks))
+
+    zero_blocks = []
+    nonzero_blocks = []
+    reference = '\0' * self.blocksize
+
+    for i in range(self.total_blocks):
+      d = self.data[i*self.blocksize : (i+1)*self.blocksize]
+      if d == reference:
+        zero_blocks.append(i)
+        zero_blocks.append(i+1)
+      else:
+        nonzero_blocks.append(i)
+        nonzero_blocks.append(i+1)
+
+    self.file_map = {"__ZERO": RangeSet(zero_blocks),
+                     "__NONZERO": RangeSet(nonzero_blocks)}
+
+  def ReadRangeSet(self, ranges):
+    return [self.data[s*self.blocksize:e*self.blocksize] for (s, e) in ranges]
+
+  def TotalSha1(self):
+    if not hasattr(self, "sha1"):
+      self.sha1 = sha1(self.data).hexdigest()
+    return self.sha1
+
 
 class Transfer(object):
   def __init__(self, tgt_name, src_name, tgt_ranges, src_ranges, style, by_id):
@@ -103,6 +158,10 @@ class Transfer(object):
 #      elements together should produce the requested data.
 #      Implementations are free to break up the data into list/tuple
 #      elements in any way that is convenient.
+#
+#    TotalSha1(): a function that returns (as a hex string) the SHA-1
+#      hash of all the data in the image (ie, all the blocks in the
+#      care_map)
 #
 # When creating a BlockImageDiff, the src image may be None, in which
 # case the list of transfers produced will never read from the
@@ -478,7 +537,12 @@ class BlockImageDiff(object):
         # If the blocks written by A are read by B, then B needs to go before A.
         i = a.tgt_ranges.intersect(b.src_ranges)
         if i:
-          size = i.size()
+          if b.src_name == "__ZERO":
+            # the cost of removing source blocks for the __ZERO domain
+            # is (nearly) zero.
+            size = 0
+          else:
+            size = i.size()
           b.goes_before[a] = size
           a.goes_after[b] = size
 
@@ -491,7 +555,8 @@ class BlockImageDiff(object):
         # in any file and that are filled with zeros.  We have a
         # special transfer style for zero blocks.
         src_ranges = self.src.file_map.get("__ZERO", empty)
-        Transfer(tgt_fn, None, tgt_ranges, src_ranges, "zero", self.transfers)
+        Transfer(tgt_fn, "__ZERO", tgt_ranges, src_ranges,
+                 "zero", self.transfers)
         continue
 
       elif tgt_fn in self.src.file_map:

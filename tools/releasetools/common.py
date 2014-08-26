@@ -29,6 +29,8 @@ import threading
 import time
 import zipfile
 
+import blockimgdiff
+
 try:
   from hashlib import sha1 as sha1
 except ImportError:
@@ -1008,6 +1010,60 @@ def ComputeDifferences(diffs):
     th.start()
   while threads:
     threads.pop().join()
+
+
+class BlockDifference:
+  def __init__(self, partition, tgt, src=None):
+    self.tgt = tgt
+    self.src = src
+    self.partition = partition
+
+    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads)
+    tmpdir = tempfile.mkdtemp()
+    OPTIONS.tempfiles.append(tmpdir)
+    self.path = os.path.join(tmpdir, partition)
+    b.Compute(self.path)
+
+    _, self.device = GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
+
+  def WriteScript(self, script, output_zip, progress=None):
+    if not self.src:
+      # write the output unconditionally
+      if progress: script.ShowProgress(progress, 0)
+      self._WriteUpdate(script, output_zip)
+
+    else:
+      script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
+                         (self.device, self.src.care_map.to_string_raw(),
+                          self.src.TotalSha1()))
+      script.Print("Patching %s image..." % (self.partition,))
+      if progress: script.ShowProgress(progress, 0)
+      self._WriteUpdate(script, output_zip)
+      script.AppendExtra(('else\n'
+                          '  (range_sha1("%s", "%s") == "%s") ||\n'
+                          '  abort("%s partition has unexpected contents");\n'
+                          'endif;') %
+                         (self.device, self.tgt.care_map.to_string_raw(),
+                          self.tgt.TotalSha1(), self.partition))
+
+  def _WriteUpdate(self, script, output_zip):
+    partition = self.partition
+    with open(self.path + ".transfer.list", "rb") as f:
+      ZipWriteStr(output_zip, partition + ".transfer.list", f.read())
+    with open(self.path + ".new.dat", "rb") as f:
+      ZipWriteStr(output_zip, partition + ".new.dat", f.read())
+    with open(self.path + ".patch.dat", "rb") as f:
+      ZipWriteStr(output_zip, partition + ".patch.dat", f.read(),
+                         compression=zipfile.ZIP_STORED)
+
+    call = (('block_image_update("%s", '
+             'package_extract_file("%s.transfer.list"), '
+             '"%s.new.dat", "%s.patch.dat");\n') %
+            (self.device, partition, partition, partition))
+    script.AppendExtra(script._WordWrap(call))
+
+
+DataImage = blockimgdiff.DataImage
 
 
 # map recovery.fstab's fs_types to mount/format "partition types"
