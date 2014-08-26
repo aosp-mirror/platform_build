@@ -652,6 +652,15 @@ def ParseOptions(argv,
   return args
 
 
+def MakeTempFile(prefix=None, suffix=None):
+  """Make a temp file and add it to the list of things to be deleted
+  when Cleanup() is called.  Return the filename."""
+  fd, fn = tempfile.mkstemp(prefix=prefix, suffix=suffix)
+  os.close(fd)
+  OPTIONS.tempfiles.append(fn)
+  return fn
+
+
 def Cleanup():
   for i in OPTIONS.tempfiles:
     if os.path.isdir(i):

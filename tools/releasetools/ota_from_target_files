@@ -85,6 +85,7 @@ if sys.hexversion < 0x02070000:
 
 import copy
 import errno
+import multiprocessing
 import os
 import re
 import subprocess
@@ -92,14 +93,13 @@ import tempfile
 import time
 import zipfile
 
-try:
-  from hashlib import sha1 as sha1
-except ImportError:
-  from sha import sha as sha1
+from hashlib import sha1 as sha1
 
 import common
 import edify_generator
 import build_image
+import blockimgdiff
+import sparse_img
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = None
@@ -111,7 +111,9 @@ OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
-OPTIONS.worker_threads = 3
+OPTIONS.worker_threads = multiprocessing.cpu_count() // 2
+if OPTIONS.worker_threads == 0:
+  OPTIONS.worker_threads = 1
 OPTIONS.two_step = False
 OPTIONS.no_signing = False
 OPTIONS.block_based = False
@@ -418,44 +420,20 @@ def CalculateFingerprint(oem_props, oem_dict, info_dict):
     GetOemProperty("ro.product.device", oem_props, oem_dict, info_dict),
     GetBuildProp("ro.build.thumbprint", info_dict))
 
+
 def GetImage(which, tmpdir, info_dict):
-  # Return (mapdata, data) for the given image.  which should be
-  # "system" or "vendor".
+  # Return an image object (suitable for passing to BlockImageDiff)
+  # for the 'which' partition (most be "system" or "vendor").  If a
+  # prebuilt image and file map are found in tmpdir they are used,
+  # otherwise they are reconstructed from the individual files.
 
   assert which in ("system", "vendor")
 
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
-  if os.path.exists(path):
+  mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
+  if os.path.exists(path) and os.path.exists(mappath):
     print "using %s.img from target-files" % (which,)
-
     # This is a 'new' target-files, which already has the image in it.
-    # The image is a sparse image, though, so we need to unsparse it
-    # and extract the map data.
-
-    success, name = build_image.UnsparseImage(path, replace=False)
-    if not success:
-      assert False, "unsparsing " + which + ".img failed"
-
-    mmap = tempfile.NamedTemporaryFile()
-    mimg = tempfile.NamedTemporaryFile(delete=False)
-    success = build_image.MappedUnsparseImage(
-        path, name, mmap.name, mimg.name)
-    if not success:
-      assert False, "creating sparse map failed"
-    os.unlink(name)
-    name = mimg.name
-
-    with open(mmap.name) as f:
-      mapdata = f.read()
-
-    try:
-      with open(name) as f:
-        data = f.read()
-    finally:
-      os.unlink(name)
-
-    print "unsparsed data sha1 is " + sha1(data).hexdigest()
-    return mapdata, data
 
   else:
     print "building %s.img from target-files" % (which,)
@@ -463,16 +441,47 @@ def GetImage(which, tmpdir, info_dict):
     # This is an 'old' target-files, which does not contain images
     # already built.  Build them.
 
+    mappath = tempfile.mkstemp()[1]
+    OPTIONS.tempfiles.append(mappath)
+
     import add_img_to_target_files
     if which == "system":
-      mapdata, data = add_img_to_target_files.BuildSystem(
-          tmpdir, info_dict, sparse=False, map_file=True)
+      path = add_img_to_target_files.BuildSystem(
+          tmpdir, info_dict, block_list=mappath)
     elif which == "vendor":
-      mapdata, data = add_img_to_target_files.BuildVendor(
-          tmpdir, info_dict, sparse=False, map_file=True)
+      path = add_img_to_target_files.BuildVendor(
+          tmpdir, info_dict, block_list=mappath)
 
-    print "built data sha1 is " + sha1(data).hexdigest()
-    return mapdata, data
+  return sparse_img.SparseImage(path, mappath)
+
+
+class BlockDifference:
+  def __init__(self, partition, tgt, src=None):
+    self.partition = partition
+
+    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads)
+    tmpdir = tempfile.mkdtemp()
+    OPTIONS.tempfiles.append(tmpdir)
+    self.path = os.path.join(tmpdir, partition)
+    b.Compute(self.path)
+
+    _, self.device = common.GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
+
+  def WriteScript(self, script, output_zip):
+    partition = self.partition
+    with open(self.path + ".transfer.list", "rb") as f:
+      common.ZipWriteStr(output_zip, partition + ".transfer.list", f.read())
+    with open(self.path + ".new.dat", "rb") as f:
+      common.ZipWriteStr(output_zip, partition + ".new.dat", f.read())
+    with open(self.path + ".patch.dat", "rb") as f:
+      common.ZipWriteStr(output_zip, partition + ".patch.dat", f.read(),
+                         compression=zipfile.ZIP_STORED)
+
+    call = (('block_image_update("%s", '
+             'package_extract_file("%s.transfer.list"), '
+             '"%s.new.dat", "%s.patch.dat");\n') %
+            (self.device, partition, partition, partition))
+    script.AppendExtra(script._WordWrap(call))
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
@@ -571,12 +580,14 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   system_items = ItemSet("system", "META/filesystem_config.txt")
   script.ShowProgress(system_progress, 0)
   if block_based:
-    mapdata, data = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
-
-    common.ZipWriteStr(output_zip, "system.map", mapdata)
-    common.ZipWriteStr(output_zip, "system.muimg", data)
-    script.WipeBlockDevice("/system")
-    script.WriteRawImage("/system", "system.muimg", mapfn="system.map")
+    # Full OTA is done as an "incremental" against an empty source
+    # image.  This has the effect of writing new data from the package
+    # to the entire partition, but lets us reuse the updater code that
+    # writes incrementals to do it.
+    system_tgt = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
+    system_tgt.ResetFileMap()
+    system_diff = BlockDifference("system", system_tgt, src=None)
+    system_diff.WriteScript(script, output_zip)
   else:
     script.FormatPartition("/system")
     script.Mount("/system")
@@ -606,12 +617,10 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     script.ShowProgress(0.1, 0)
 
     if block_based:
-      mapdata, data = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
-
-      common.ZipWriteStr(output_zip, "vendor.map", mapdata)
-      common.ZipWriteStr(output_zip, "vendor.muimg", data)
-      script.WipeBlockDevice("/vendor")
-      script.WriteRawImage("/vendor", "vendor.muimg", mapfn="vendor.map")
+      vendor_tgt = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
+      vendor_tgt.ResetFileMap()
+      vendor_diff = BlockDifference("vendor", vendor_tgt)
+      vendor_diff.WriteScript(script, output_zip)
     else:
       script.FormatPartition("/vendor")
       script.Mount("/vendor")
@@ -656,6 +665,7 @@ endif;
   script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
+
 def WritePolicyConfig(file_context, output_zip):
   f = open(file_context, 'r');
   basename = os.path.basename(file_context)
@@ -666,6 +676,7 @@ def WriteMetadata(metadata, output_zip):
   common.ZipWriteStr(output_zip, "META-INF/com/android/metadata",
                      "".join(["%s=%s\n" % kv
                               for kv in sorted(metadata.iteritems())]))
+
 
 def LoadPartitionFiles(z, partition):
   """Load all the files from the given partition in a given target-files
@@ -688,6 +699,7 @@ def GetBuildProp(prop, info_dict):
   except KeyError:
     raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
 
+
 def AddToKnownPaths(filename, known_paths):
   if filename[-1] == "/":
     return
@@ -699,44 +711,6 @@ def AddToKnownPaths(filename, known_paths):
     known_paths.add(path)
     dirs.pop()
 
-class BlockDifference:
-  def __init__(self, partition, output_zip):
-    with tempfile.NamedTemporaryFile() as src_file:
-      with tempfile.NamedTemporaryFile() as tgt_file:
-        print "building source " + partition + " image..."
-        src_file = tempfile.NamedTemporaryFile()
-        src_mapdata, src_data = GetImage(partition,
-                                         OPTIONS.source_tmp,
-                                         OPTIONS.source_info_dict)
-
-        self.src_sha1 = sha1(src_data).hexdigest()
-        print "source " + partition + " sha1:", self.src_sha1
-        src_file.write(src_data)
-
-        print "building target " + partition + " image..."
-        tgt_file = tempfile.NamedTemporaryFile()
-        tgt_mapdata, tgt_data = GetImage(partition,
-                                         OPTIONS.target_tmp,
-                                         OPTIONS.target_info_dict)
-        self.tgt_sha1 = sha1(tgt_data).hexdigest()
-        print "target " + partition + " sha1:", self.tgt_sha1
-        tgt_len = len(tgt_data)
-        tgt_file.write(tgt_data)
-
-        system_type, self.device = common.GetTypeAndDevice("/" + partition,
-                                                           OPTIONS.info_dict)
-        self.patch = common.MakePartitionPatch(src_file, tgt_file, partition)
-
-        TestBlockPatch(src_data, src_mapdata, self.patch.data,
-                       tgt_mapdata, self.tgt_sha1)
-        src_data = None
-        tgt_data = None
-
-        self.patch.AddToZip(output_zip, compression=zipfile.ZIP_STORED)
-        self.src_mapfilename = self.patch.name + ".src.map"
-        common.ZipWriteStr(output_zip, self.src_mapfilename, src_mapdata)
-        self.tgt_mapfilename = self.patch.name + ".tgt.map"
-        common.ZipWriteStr(output_zip, self.tgt_mapfilename, tgt_mapdata)
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   source_version = OPTIONS.source_info_dict["recovery_api_version"]
@@ -784,11 +758,18 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
   updating_recovery = (source_recovery.data != target_recovery.data)
 
-  system_diff = BlockDifference("system", output_zip)
+  system_src = GetImage("system", OPTIONS.source_tmp, OPTIONS.source_info_dict)
+  system_tgt = GetImage("system", OPTIONS.target_tmp, OPTIONS.target_info_dict)
+  system_diff = BlockDifference("system", system_tgt, system_src)
+
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_diff = BlockDifference("vendor", output_zip)
+    vendor_src = GetImage("vendor", OPTIONS.source_tmp, OPTIONS.source_info_dict)
+    vendor_tgt = GetImage("vendor", OPTIONS.target_tmp, OPTIONS.target_info_dict)
+    vendor_diff = BlockDifference("vendor", vendor_tgt, vendor_src)
+  else:
+    vendor_diff = None
 
   oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
   oem_dict = None
@@ -886,23 +867,32 @@ else
 
   device_specific.IncrementalOTA_InstallBegin()
 
-  if HasVendorPartition(target_zip):
+  script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
+                     (system_diff.device, system_src.care_map.to_string_raw(),
+                      system_src.TotalSha1()))
+  script.Print("Patching system image...")
+  script.ShowProgress(0.8 if vendor_diff else 0.9, 0)
+  system_diff.WriteScript(script, output_zip)
+  script.AppendExtra(('else\n'
+                      '  (range_sha1("%s", "%s") == "%s") ||\n'
+                      '  abort("system partition has unexpected contents");\n'
+                      'endif;') %
+                     (system_diff.device, system_tgt.care_map.to_string_raw(),
+                      system_tgt.TotalSha1()))
+
+  if vendor_diff:
+    script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
+                       (vendor_diff.device, vendor_src.care_map.to_string_raw(),
+                        vendor_src.TotalSha1()))
     script.Print("Patching vendor image...")
     script.ShowProgress(0.1, 0)
-    script.Syspatch(vendor_diff.device,
-                    vendor_diff.tgt_mapfilename, vendor_diff.tgt_sha1,
-                    vendor_diff.src_mapfilename, vendor_diff.src_sha1,
-                    vendor_diff.patch.name)
-    sys_progress = 0.8
-  else:
-    sys_progress = 0.9
-
-  script.Print("Patching system image...")
-  script.ShowProgress(sys_progress, 0)
-  script.Syspatch(system_diff.device,
-                  system_diff.tgt_mapfilename, system_diff.tgt_sha1,
-                  system_diff.src_mapfilename, system_diff.src_sha1,
-                  system_diff.patch.name)
+    vendor_diff.WriteScript(script, output_zip)
+    script.AppendExtra(('else\n'
+                        '  (range_sha1("%s", "%s") == "%s") ||\n'
+                        '  abort("vendor partition has unexpected contents");\n'
+                        'endif;') %
+                       (vendor_diff.device, vendor_tgt.care_map.to_string_raw(),
+                        vendor_tgt.TotalSha1()))
 
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
@@ -952,61 +942,6 @@ endif;
   script.SetProgress(1)
   script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
-
-def ParseMap(map_str):
-  x = map_str.split()
-  assert int(x[0]) == 4096
-  assert int(x[1]) == len(x)-2
-  return int(x[0]), [int(i) for i in x[2:]]
-
-def TestBlockPatch(src_muimg, src_map, patch_data, tgt_map, tgt_sha1):
-  src_blksize, src_regions = ParseMap(src_map)
-  tgt_blksize, tgt_regions = ParseMap(tgt_map)
-
-  with tempfile.NamedTemporaryFile() as src_file,\
-       tempfile.NamedTemporaryFile() as patch_file,\
-       tempfile.NamedTemporaryFile() as src_map_file,\
-       tempfile.NamedTemporaryFile() as tgt_map_file:
-
-    src_total = sum(src_regions) * src_blksize
-    src_file.truncate(src_total)
-    p = 0
-    for i in range(0, len(src_regions), 2):
-      c, dc = src_regions[i:i+2]
-      src_file.write(src_muimg[p:(p+c*src_blksize)])
-      p += c*src_blksize
-      src_file.seek(dc*src_blksize, 1)
-    assert src_file.tell() == src_total
-
-    patch_file.write(patch_data)
-
-    src_map_file.write(src_map)
-    tgt_map_file.write(tgt_map)
-
-    src_file.flush()
-    src_map_file.flush()
-    patch_file.flush()
-    tgt_map_file.flush()
-
-    p = common.Run(["syspatch_host", src_file.name, src_map_file.name,
-                    patch_file.name, src_file.name, tgt_map_file.name],
-                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdoutdata, _ = p.communicate()
-    if p.returncode != 0:
-      print stdoutdata
-      raise ValueError("failed to reconstruct target system image from patch")
-
-    h = sha1()
-    src_file.seek(0, 0)
-    for i in range(0, len(tgt_regions), 2):
-      c, dc = tgt_regions[i:i+2]
-      h.update(src_file.read(c*tgt_blksize))
-      src_file.seek(dc*tgt_blksize, 1)
-
-    if h.hexdigest() != tgt_sha1:
-      raise ValueError("patch reconstructed incorrect target system image")
-
-  print "test of system image patch succeeded"
 
 
 class FileDifference:
@@ -1616,8 +1551,6 @@ def main(argv):
     SignOutput(temp_zip_file.name, args[1])
     temp_zip_file.close()
 
-  common.Cleanup()
-
   print "done."
 
 
@@ -1630,3 +1563,5 @@ if __name__ == '__main__':
     print "   ERROR: %s" % (e,)
     print
     sys.exit(1)
+  finally:
+    common.Cleanup()
