@@ -315,8 +315,8 @@ PRODUCT_AAPT_CONFIG := $(strip \
     $(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
 PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCT_AAPT_PREF_CONFIG))
 
-# Everyone gets nodpi assets which are density-independent.
-PRODUCT_AAPT_CONFIG += nodpi
+# Everyone gets nodpi and anydpi assets which are density-independent.
+PRODUCT_AAPT_CONFIG += nodpi anydpi
 
 # Keep a copy of the space-separated config
 PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
