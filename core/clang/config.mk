@@ -43,18 +43,19 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
   -Werror=int-conversion
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
-  -funswitch-loops \
-  -fno-tree-sra \
   -finline-limit=64 \
+  -fno-canonical-system-headers \
+  -fno-tree-sra \
+  -funswitch-loops \
+  -Wmaybe-uninitialized \
+  -Wno-error=maybe-uninitialized \
+  -Wno-literal-suffix \
+  -Wno-maybe-uninitialized \
+  -Wno-old-style-declaration \
   -Wno-psabi \
   -Wno-unused-but-set-variable \
   -Wno-unused-but-set-parameter \
-  -Wmaybe-uninitialized \
-  -Wno-maybe-uninitialized \
-  -Wno-error=maybe-uninitialized \
-  -fno-canonical-system-headers \
-  -Wno-unused-local-typedefs \
-  -Wno-literal-suffix
+  -Wno-unused-local-typedefs
 
 # Clang flags for all host rules
 CLANG_CONFIG_HOST_EXTRA_ASFLAGS :=
