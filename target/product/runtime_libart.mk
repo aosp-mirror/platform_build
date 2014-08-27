@@ -28,5 +28,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.image-dex2oat-Xmx=64m \
     dalvik.vm.dex2oat-Xms=64m \
     dalvik.vm.dex2oat-Xmx=512m \
+    ro.dalvik.vm.native.bridge=0 \
 
 include $(SRC_TARGET_DIR)/product/runtime_common.mk
