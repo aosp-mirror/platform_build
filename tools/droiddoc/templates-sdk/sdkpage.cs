@@ -407,7 +407,7 @@
     <td>Windows 32-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle32"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win32_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win32_bundle_checksum ?></td>
@@ -416,7 +416,7 @@
     <td>Windows 64-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win64_bundle_checksum ?></td>
@@ -425,7 +425,7 @@
     <td><nobr>Mac OS X 64-bit</nobr></td>
     <td>
   <a onClick="return onDownload(this)" id="mac-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.mac64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.mac64_bundle_checksum ?></td>
@@ -434,7 +434,7 @@
     <td>Linux 32-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle32"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux32_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux32_bundle_checksum ?></td>
@@ -443,7 +443,7 @@
     <td>Linux 64-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux64_bundle_checksum ?></td>
