@@ -50,4 +50,5 @@ $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_LDFLAGS := \
   $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_mips_TARGET_EXTRA_LDFLAGS)
 
-$(clang_2nd_arch_prefix)RS_TRIPLE := mipsel-unknown-linux
+$(clang_2nd_arch_prefix)RS_TRIPLE := armv7-none-linux-gnueabi
+$(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS :=
