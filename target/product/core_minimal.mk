@@ -72,8 +72,7 @@ PRODUCT_BOOT_JARS := \
     framework2 \
     android.policy \
     services \
-    apache-xml \
-    webviewchromium
+    apache-xml
 
 PRODUCT_RUNTIMES := runtime_libart_default
 
