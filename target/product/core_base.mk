@@ -80,5 +80,4 @@ PRODUCT_BOOT_JARS := \
     mms-common \
     android.policy \
     services \
-    apache-xml \
-    webviewchromium
+    apache-xml
