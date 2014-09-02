@@ -67,24 +67,11 @@ ifeq ($(HOST_OS),)
 $(error Unable to determine HOST_OS from uname -sm: $(UNAME)!)
 endif
 
-# TODO: Replace BUILD_HOST_64bit with a flag that forces 32-bit build,
-# after we default to 64-bit host build.
-ifeq (,$(BUILD_HOST_64bit))
-# Default to 32-bit-by-default multilib host build.
-HOST_PREFER_32_BIT := true
-endif
-
 # HOST_ARCH
 ifneq (,$(findstring x86_64,$(UNAME)))
   HOST_ARCH := x86_64
   HOST_2ND_ARCH := x86
   HOST_IS_64_BIT := true
-endif
-
-ifeq ($(HOST_PREFER_32_BIT),true)
-SDK_HOST_ARCH := x86
-else
-SDK_HOST_ARCH := $(HOST_ARCH)
 endif
 
 BUILD_ARCH := $(HOST_ARCH)
@@ -142,6 +129,17 @@ ifneq ($(build_variant)-$(words $(TARGET_BUILD_VARIANT)),-1)
 $(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
 $(error must be empty or one of: eng user userdebug)
 endif
+
+# Build host as 32-bit for SDK build.
+ifneq ($(filter $(MAKECMDGOALS),win_sdk sdk),)
+HOST_PREFER_32_BIT := true
+endif
+ifdef USE_MINGW
+# We only build sdk host tools in the MinGW windows build.
+# Build it as 32-bit as well.
+HOST_PREFER_32_BIT := true
+endif
+SDK_HOST_ARCH := x86
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
