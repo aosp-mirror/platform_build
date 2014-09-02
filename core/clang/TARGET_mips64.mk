@@ -50,4 +50,5 @@ CLANG_TARGET_GLOBAL_LDFLAGS := \
   $(call convert-to-clang-flags,$(TARGET_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_mips64_TARGET_EXTRA_LDFLAGS)
 
-RS_TRIPLE := mips64el-unknown-linux
+RS_TRIPLE := aarch64-linux-android
+RS_TRIPLE_CFLAGS :=
