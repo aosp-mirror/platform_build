@@ -50,4 +50,5 @@ CLANG_TARGET_GLOBAL_LDFLAGS := \
   $(call convert-to-clang-flags,$(TARGET_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_x86_64_TARGET_EXTRA_LDFLAGS)
 
-RS_TRIPLE := x86_64-unknown-linux
+RS_TRIPLE := aarch64-linux-android
+RS_TRIPLE_CFLAGS := -D__x86_64__
