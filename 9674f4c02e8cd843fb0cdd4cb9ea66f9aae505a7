@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f04e8b81_48463f3e",
+        "filename": "target/board/generic/sepolicy/property_contexts",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2014-09-03T18:03:00Z",
+      "side": 1,
+      "message": "If we\u0027re going to create a dalvik property, I would prefer this be in external/sepolicy. Dalvik properties are not specific to the emulator.",
+      "revId": "9674f4c02e8cd843fb0cdd4cb9ea66f9aae505a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
