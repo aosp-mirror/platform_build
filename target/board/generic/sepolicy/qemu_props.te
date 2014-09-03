@@ -1,0 +1,10 @@
+# qemu-props service:  Sets system properties on boot.
+type qemu_props, domain;
+type qemu_props_exec, exec_type, file_type;
+permissive_or_unconfined(qemu_props)
+
+init_daemon_domain(qemu_props)
+
+# Set properties.
+unix_socket_connect(qemu_props, property, init)
+allow qemu_props { qemu_prop dalvik_prop config_prop }:property_service set;
