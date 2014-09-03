@@ -96,18 +96,21 @@ ifeq ($(my_strip_module),)
   my_strip_module := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_MODULE)
 endif
 
-ifeq ($(my_strip_module),true)
-# Strip the binary
-$(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
-$(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
-$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
-	$(transform-to-stripped)
-else
-ifeq ($(my_strip_module),keep_symbols)
-# Strip only the debug frames, but leave the symbol table.
 $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 $(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
 $(strip_output): PRIVATE_READELF := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_READELF)
+ifeq ($(my_strip_module),no_debuglink)
+$(strip_output): PRIVATE_NO_DEBUGLINK := true
+else
+$(strip_output): PRIVATE_NO_DEBUGLINK :=
+endif
+
+ifneq ($(filter true no_debuglink,$(my_strip_module)),)
+# Strip the binary
+$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+	$(transform-to-stripped)
+else ifeq ($(my_strip_module),keep_symbols)
+# Strip only the debug frames, but leave the symbol table.
 $(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 	$(transform-to-stripped-keep-symbols)
 
@@ -133,7 +136,6 @@ else
 $(strip_output): $(strip_input)
 	@echo "target Unstripped: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target-with-cp)
-endif
 endif
 endif # my_strip_module
 
