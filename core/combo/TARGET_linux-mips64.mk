@@ -31,7 +31,7 @@
 # version.
 #
 ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
-TARGET_ARCH_VARIANT := mips64r2
+TARGET_ARCH_VARIANT := mips64r6
 endif
 
 # Decouple NDK library selection with platform compiler version
