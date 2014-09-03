@@ -16,6 +16,24 @@
       "revId": "9674f4c02e8cd843fb0cdd4cb9ea66f9aae505a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10979f03_9ee7bdf7",
+        "filename": "target/board/generic/sepolicy/property_contexts",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2014-09-03T18:23:46Z",
+      "side": 1,
+      "message": "Agreed, except that on the non-emulator these properties are never set in this way.  qemu-props seems to read out a list of boot properties from the emulator and set anything in the list, so potentially any property could end up being set here (e.g. using the -prop option to the emulator).  I originally was just going to allow setting anything in property_type (as with init, which previously qemu-props ran in), but this is now prohibited by neverallow in external/sepolicy for anything other than init.",
+      "parentUuid": "f04e8b81_48463f3e",
+      "revId": "9674f4c02e8cd843fb0cdd4cb9ea66f9aae505a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
