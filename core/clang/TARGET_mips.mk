@@ -52,3 +52,4 @@ $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_LDFLAGS := \
 
 $(clang_2nd_arch_prefix)RS_TRIPLE := armv7-none-linux-gnueabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS :=
+RS_COMPAT_TRIPLE := mipsel-linux-android
