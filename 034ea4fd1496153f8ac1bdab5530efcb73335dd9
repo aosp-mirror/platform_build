@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50583741_42229694",
+        "filename": "core/host_executable.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-03T22:37:23Z",
+      "side": 1,
+      "message": "You need to move it up here, before the first inclusion of $(BUILD_SYSTEM)/host_executable_internal.mk",
+      "revId": "034ea4fd1496153f8ac1bdab5530efcb73335dd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
