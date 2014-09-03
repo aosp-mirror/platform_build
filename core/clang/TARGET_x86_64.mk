@@ -52,3 +52,4 @@ CLANG_TARGET_GLOBAL_LDFLAGS := \
 
 RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS := -D__x86_64__
+RS_COMPAT_TRIPLE := x86_64-linux-android
