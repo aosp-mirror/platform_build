@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f04e8b81_9a8eb96c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1442,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-03T22:18:16Z",
+      "side": 1,
+      "message": "Also I believe we enclosed it in this conditional statement, because -pie doesn\u0027t work with the emulator, which is built with LOCAL_NO_DEFAULT_COMPILER_FLAGS. It seems fine to move it out of this if statement now, since we no longer build the emulator in the source tree.",
+      "revId": "b7d529f6ad6d571c46ffd120b46d49e536367f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "50583741_d7f88626",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1447,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-03T22:18:16Z",
+      "side": 1,
+      "message": "This won\u0027t work.\nVariable in build recipe won\u0027t be evaluated until the recipe run.\nI think we can move the $(HOST_FPIE_FLAGS) to LOCAL_LDFLAGS  in build/core/host_execuable.mk. Add $(HOST_FPIE_FLAGS) to LOCAL_LDFLAGS only if LOCAL_NO_FPIE is not set.",
+      "revId": "b7d529f6ad6d571c46ffd120b46d49e536367f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
