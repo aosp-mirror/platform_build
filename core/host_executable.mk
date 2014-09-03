@@ -13,6 +13,10 @@ endif
 endif
 endif
 
+ifeq ($(LOCAL_NO_FPIE),)
+LOCAL_LDFLAGS += $(HOST_FPIE_FLAGS)
+endif
+
 ifeq ($(my_module_multilib),both)
 ifeq ($(LOCAL_MODULE_PATH_32)$(LOCAL_MODULE_STEM_32),)
 $(error $(LOCAL_PATH): LOCAL_MODULE_STEM_32 or LOCAL_MODULE_PATH_32 is required for LOCAL_MULTILIB := both for module $(LOCAL_MODULE))
