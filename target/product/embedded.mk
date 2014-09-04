@@ -78,6 +78,10 @@ PRODUCT_PACKAGES += \
     selinux_version \
     service_contexts
 
+# Ensure that this property is always defined so that bionic_systrace.cpp
+# can rely on it being initially set by init.
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    debug.atrace.tags.enableflags=0
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
