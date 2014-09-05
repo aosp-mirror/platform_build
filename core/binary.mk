@@ -927,6 +927,10 @@ endif
 ###########################################################
 
 ifeq ($(my_clang),true)
+my_cflags += $(LOCAL_CLANG_CFLAGS)
+my_cpplags += $(LOCAL_CLANG_CPPFLAGS)
+my_asflags += $(LOCAL_CLANG_ASFLAGS)
+my_ldflags += $(LOCAL_CLANG_LDFLAGS)
 my_cflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(my_cflags))
 my_cppflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(my_cppflags))
 my_asflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(my_asflags))
