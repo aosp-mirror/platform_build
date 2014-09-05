@@ -50,9 +50,9 @@ SDK_FONT_DEPS := $(sdk_fonts_device) $(sdk_font_config)
 # $2 Source font path
 define sdk-extra-font-rule
 fontfullname := $$(SDK_FONT_TEMP)/$1
-ifeq ($$(filter $(fontfullname),$$(sdk_fonts_device)),)
+ifeq ($$(filter $$(fontfullname),$$(sdk_fonts_device)),)
 SDK_FONT_DEPS += $$(fontfullname)
-$$(fontfullname): $2 $(sdk_font_rename_script)
+$$(fontfullname): $2 $$(sdk_font_rename_script)
 	$$(hide) mkdir -p $$(dir $$@)
 	$$(hide) $$(call sdk_rename_font,$$<,$$@)
 endif
