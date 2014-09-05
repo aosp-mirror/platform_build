@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10979f03_f3871254",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-05T00:48:53Z",
+      "side": 1,
+      "message": "I think you added LOCAL_CLANG_LDFLAGS, not LOCAL_CLANG_LDLIBS :-)",
+      "revId": "7431a4a679d505f1c765501d8d8fd29ce5dbbcd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
