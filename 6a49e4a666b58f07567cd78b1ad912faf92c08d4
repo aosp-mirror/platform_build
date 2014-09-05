@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10979f03_93d56e58",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 933,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-05T00:22:34Z",
+      "side": 1,
+      "message": "You need to reset the new LOCAL_ variables in build/core/clear_vars.mk.",
+      "revId": "6a49e4a666b58f07567cd78b1ad912faf92c08d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
