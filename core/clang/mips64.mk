@@ -7,7 +7,6 @@ CLANG_CONFIG_mips64_EXTRA_LDFLAGS :=
 # Include common unknown flags
 CLANG_CONFIG_mips64_UNKNOWN_CFLAGS := \
   $(CLANG_CONFIG_UNKNOWN_CFLAGS) \
-  -mips64r6 \
   -fno-strict-volatile-bitfields \
   -fgcse-after-reload \
   -frerun-cse-after-loop \
