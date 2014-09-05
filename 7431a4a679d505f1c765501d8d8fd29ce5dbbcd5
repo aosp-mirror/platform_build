@@ -16,6 +16,24 @@
       "revId": "7431a4a679d505f1c765501d8d8fd29ce5dbbcd5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10807fc3_c4623ce4",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-09-05T01:44:43Z",
+      "side": 1,
+      "message": "Thanks for the catch. Now it should be fixed in patch set 3.",
+      "parentUuid": "10979f03_f3871254",
+      "revId": "7431a4a679d505f1c765501d8d8fd29ce5dbbcd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
