@@ -580,8 +580,8 @@ def ParseOptions(argv,
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=", "extra_signapk_args=",
-         "java_path=", "public_key_suffix=", "private_key_suffix=",
-         "device_specific=", "extra="] +
+         "java_path=", "java_args=", "public_key_suffix=",
+         "private_key_suffix=", "device_specific=", "extra="] +
         list(extra_long_opts))
   except getopt.GetoptError, err:
     Usage(docstring)
