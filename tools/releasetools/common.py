@@ -44,6 +44,7 @@ OPTIONS.search_path = "out/host/linux-x86"
 OPTIONS.signapk_path = "framework/signapk.jar"  # Relative to search_path
 OPTIONS.extra_signapk_args = []
 OPTIONS.java_path = "java"  # Use the one on the path by default.
+OPTIONS.java_args = "-Xmx2048m" # JVM Args
 OPTIONS.public_key_suffix = ".x509.pem"
 OPTIONS.private_key_suffix = ".pk8"
 OPTIONS.verbose = False
@@ -456,7 +457,7 @@ def SignFile(input_name, output_name, key, password, align=None,
   else:
     sign_name = output_name
 
-  cmd = [OPTIONS.java_path, "-Xmx2048m", "-jar",
+  cmd = [OPTIONS.java_path, OPTIONS.java_args, "-jar",
          os.path.join(OPTIONS.search_path, OPTIONS.signapk_path)]
   cmd.extend(OPTIONS.extra_signapk_args)
   if whole_file:
@@ -604,6 +605,8 @@ def ParseOptions(argv,
       OPTIONS.extra_signapk_args = shlex.split(a)
     elif o in ("--java_path",):
       OPTIONS.java_path = a
+    elif o in ("--java_args",):
+      OPTIONS.java_args = a
     elif o in ("--public_key_suffix",):
       OPTIONS.public_key_suffix = a
     elif o in ("--private_key_suffix",):
