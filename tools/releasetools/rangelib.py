@@ -173,3 +173,39 @@ class RangeSet(object):
       else:
         total -= p
     return total
+
+  def map_within(self, other):
+    """'other' should be a subset of 'self'.  Returns a RangeSet
+    representing what 'other' would get translated to if the integers
+    of 'self' were translated down to be contiguous starting at zero.
+
+    >>> RangeSet.parse("0-9").map_within(RangeSet.parse("3-4")).to_string()
+    '3-4'
+    >>> RangeSet.parse("10-19").map_within(RangeSet.parse("13-14")).to_string()
+    '3-4'
+    >>> RangeSet.parse("10-19 30-39").map_within(
+    ...     RangeSet.parse("17-19 30-32")).to_string()
+    '7-12'
+    >>> RangeSet.parse("10-19 30-39").map_within(
+    ...     RangeSet.parse("12-13 17-19 30-32")).to_string()
+    '2-3 7-12'
+    """
+
+    out = []
+    offset = 0
+    start = None
+    for p, d in heapq.merge(zip(self.data, itertools.cycle((-5, +5))),
+                            zip(other.data, itertools.cycle((-1, +1)))):
+      if d == -5:
+        start = p
+      elif d == +5:
+        offset += p-start
+        start = None
+      else:
+        out.append(offset + p - start)
+    return RangeSet(data=out)
+
+
+if __name__ == "__main__":
+  import doctest
+  doctest.testmod()
