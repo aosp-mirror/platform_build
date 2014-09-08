@@ -403,6 +403,14 @@ $(1): $(2)
 endef
 
 ###########################################################
+## Reverse order of a list
+###########################################################
+
+define reverse-list
+$(if $(1),$(call reverse-list,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
+endef
+
+###########################################################
 ## The intermediates directory.  Where object files go for
 ## a given target.  We could technically get away without
 ## the "_intermediates" suffix on the directory, but it's
@@ -592,13 +600,43 @@ endef
 # $(1): library name
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-full-dep
-$(call _java-lib-dir,$(1),$(2))/$(if $(2),javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX)
+$(call _java-lib-dir,$(1),$(2))/$(if $(2),javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX) $(call _java-lib-full-classes.jar,$(lib),$(2))
 endef
 
 # $(1): library name list
 # $(2): Non-empty if IS_HOST_MODULE
 define java-lib-deps
 $(foreach lib,$(1),$(call _java-lib-full-dep,$(lib),$(2)))
+endef
+
+###########################################################
+## Convert "core ext framework" to "out/.../classes.jack ..."
+## $(1): library list
+## $(2): Non-empty if IS_HOST_MODULE
+###########################################################
+
+# $(1): library name
+# $(2): Non-empty if IS_HOST_MODULE
+define _jack-lib-full-classes
+$(call _java-lib-dir,$(1),$(2))/classes.jack
+endef
+
+# $(1): library name list
+# $(2): Non-empty if IS_HOST_MODULE
+define jack-lib-files
+$(foreach lib,$(1),$(call _jack-lib-full-classes,$(lib),$(2)))
+endef
+
+# $(1): library name
+# $(2): Non-empty if IS_HOST_MODULE
+define _jack-lib-full-dep
+$(call _jack-lib-full-classes,$(1),$(2))
+endef
+
+# $(1): library name list
+# $(2): Non-empty if IS_HOST_MODULE
+define jack-lib-deps
+$(foreach lib,$(1),$(call _jack-lib-full-dep,$(lib),$(2)))
 endef
 
 ###########################################################
@@ -1647,6 +1685,122 @@ define transform-java-to-classes.jar
 $(call compile-java,$(TARGET_JAVAC),$(PRIVATE_BOOTCLASSPATH))
 endef
 
+# Invoke Jack to compile java from source to dex and jack files.
+#
+# Some historical notes:
+# - below we write the list of java files to java-source-list to avoid argument
+#   list length problems with Cygwin
+# - we filter out duplicate java file names because Jack doesn't like them.
+# TODO (yroussel) PRIVATE_RMTYPEDEFS
+define jack-java-to-dex
+$(hide) rm -f $@
+$(hide) rm -f $(PRIVATE_CLASSES_JACK)
+$(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
+$(hide) mkdir -p $(dir $@)
+$(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
+$(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
+# TODO unzip only resources?
+$(call unzip-jar-files,$(PRIVATE_STATIC_JACK_LIBRARIES),$(PRIVATE_JACK_INTERMEDIATES_DIR))
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
+$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+          find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
+fi
+$(hide) tr ' ' '\n' < $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list \
+    | sort -u > $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq
+$(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
+    $(hide) echo -basedirectory $(CURDIR) > $@.flags; \
+    echo $(PRIVATE_JACK_PROGUARD_FLAGS) >> $@.flags; \
+)
+$(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
+    export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
+else \
+    export tmpEcjArg=""; \
+fi; \
+$(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
+    $(strip $(PRIVATE_JACK_FLAGS)) \
+    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
+    $(if $(NO_OPTIMIZE_DX), \
+        -D jack.dex.optimize="false") \
+    $(addprefix --classpath ,$(strip \
+        $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
+    $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
+    -D jack.import.resource.policy=keep-first \
+    -D jack.import.jackfile.policy=keep-first \
+    --output-jack $(PRIVATE_CLASSES_JACK) \
+    -D jack.java.source.version=1.7 \
+    --output-dex $(dir $@) \
+    $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
+    $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
+    $$tmpEcjArg \
+    || ( rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR); rm -f $@; exit 41 )
+$(call unzip-jar-files,$(PRIVATE_CLASSES_JACK),$(PRIVATE_JACK_INTERMEDIATES_DIR))
+$(hide) rm -f $(PRIVATE_CLASSES_JACK)
+$(hide) rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
+$(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq $(PRIVATE_JACK_INTERMEDIATES_DIR).java-source-list
+$(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
+$(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
+$(if $(PRIVATE_JAR_MANIFEST), \
+    $(hide) sed -e 's/%BUILD_NUMBER%/$(BUILD_NUMBER)/' \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $(PRIVATE_CLASSES_JACK))/manifest.mf && \
+        jar -cfm $(PRIVATE_CLASSES_JACK) $(dir $@)/manifest.mf \
+            -C $(PRIVATE_JACK_INTERMEDIATES_DIR) ., \
+    $(hide) jar -cf $(PRIVATE_CLASSES_JACK) -C $(PRIVATE_JACK_INTERMEDIATES_DIR) .)
+endef
+
+define transform-jar-to-jack
+	$(hide) mkdir -p $(dir $@)
+	$(JILL) --output $@ $<
+endef
+
+
+# Invoke Jack to compile java from source to jack files without shrink or obfuscation.
+#
+# Some historical notes:
+# - below we write the list of java files to java-source-list to avoid argument
+#   list length problems with Cygwin
+# - we filter out duplicate java file names because Jack doesn't like them.
+define java-to-jack
+$(hide) rm -f $@
+$(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
+$(hide) mkdir -p $(dir $@)
+$(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
+$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+          find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
+fi
+$(hide) tr ' ' '\n' < $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list \
+    | sort -u > $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq
+$(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
+    $(hide) echo -basedirectory $(CURDIR) > $@.flags; \
+    echo $(PRIVATE_JACK_PROGUARD_FLAGS) >> $@.flags; \
+)
+$(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
+    export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
+else \
+    export tmpEcjArg=""; \
+fi; \
+$(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
+    $(strip $(PRIVATE_JACK_FLAGS)) \
+    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
+    $(if $(NO_OPTIMIZE_DX), \
+        -D jack.dex.optimize="false") \
+    $(addprefix --classpath ,$(strip \
+        $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
+    $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
+    -D jack.import.resource.policy=keep-first \
+    -D jack.import.jackfile.policy=keep-first \
+    -D jack.java.source.version=1.7 \
+    --output-jack $@ \
+    $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
+    $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
+    $$tmpEcjArg \
+    || ( echo rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR); rm -f $@ ; exit 41 )
+$(hide) echo rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
+$(hide) echo rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq
+$(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
+$(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
+endef
+
 # Override the above definitions if we want to do incremetal javac
 ifeq (true, $(ENABLE_INCREMENTALJAVAC))
 define compile-java
@@ -1817,6 +1971,20 @@ $(hide) if [ -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) ] ; then \
     fi; \
 fi
 endef
+
+# Add resources carried by static Jack libraries.
+#
+define add-carried-jack-resources
+ $(hide) if [ -d $(PRIVATE_JACK_INTERMEDIATES_DIR) ] ; then \
+    jack_res_jar_flags=$$(find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f -a -not -name "*.jayce" \
+        | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C $(PRIVATE_JACK_INTERMEDIATES_DIR) ?"); \
+    if [ -n "$$jack_res_jar_flags" ] ; then \
+        echo $$jack_res_jar_flags >$(dir $@)jack_res_jar_flags; \
+        jar uf $@ $$jack_res_jar_flags; \
+    fi; \
+fi
+endef
+
 
 # Sign a package using the specified key/cert.
 #

@@ -365,6 +365,9 @@ endif
 
 # ---------------------------------------------------------------
 # Generic tools.
+JACK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jack.jar
+JILL_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jill.jar
+JACK_MULTIDEX_DEFAULT_PREPROCESSOR := frameworks/multidex/library/resources/JACK-INF/legacyMultidexInstallation.jpp
 
 LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
@@ -404,6 +407,18 @@ MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
+# call jack
+#
+# $(1): vm
+# $(2): vm arguments
+# $(3): jack perf arguments
+define call-jack
+$(1) $(2) -cp $(JACK_JAR) com.android.jack.Main $(3)
+endef
+DEFAULT_JACK_VM := java
+DEFAULT_JACK_VM_ARGS := -Dfile.encoding=UTF-8 -Xmx3584m -Xms2560m -XX:+TieredCompilation
+DEFAULT_JACK_EXTRA_ARGS := -D sched.runner=single-threaded --sanity-checks off
+JILL := java -Xmx3500m -cp $(JILL_JAR) com.android.jill.Main
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc$(HOST_EXECUTABLE_SUFFIX)

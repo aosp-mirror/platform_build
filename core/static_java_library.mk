@@ -56,7 +56,15 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
   proguard_options_file := $(intermediates.COMMON)/proguard_options
 endif
+
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
+
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+ifndef LOCAL_JACK_PROGUARD_FLAGS
+    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
+endif
+LOCAL_JACK_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_JACK_PROGUARD_FLAGS)
+endif # LOCAL_USE_JACK
 
 endif  # LOCAL_RESOURCE_DIR
 
@@ -114,9 +122,11 @@ $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
-ifneq ($(full_classes_jar),)
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+$(noshrob_classes_jack): $(R_file_stamp)
+$(full_classes_jack): $(R_file_stamp)
+endif # LOCAL_USE_JACK
 $(full_classes_compiled_jar): $(R_file_stamp)
-endif
 
 endif  # need_compile_res
 
