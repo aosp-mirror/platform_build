@@ -7330,3 +7330,8 @@ a.home-new-cta-btn:hover,
   line-height: 54px;
   text-align: center;
 }
+
+.annotation-message {
+    display: block;
+    font-style: italic;
+}
