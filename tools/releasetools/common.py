@@ -1030,7 +1030,14 @@ class BlockDifference:
     self.partition = partition
     self.check_first_block = check_first_block
 
-    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads)
+    version = 1
+    if OPTIONS.info_dict:
+      version = max(
+          int(i) for i in
+          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+
+    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
+                                    version=version)
     tmpdir = tempfile.mkdtemp()
     OPTIONS.tempfiles.append(tmpdir)
     self.path = os.path.join(tmpdir, partition)
