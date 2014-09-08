@@ -32,6 +32,7 @@ PRODUCT_PACKAGES += \
     Shell \
     bcc \
     bu \
+    com.android.future.usb.accessory \
     com.android.location.provider \
     com.android.location.provider.xml \
     com.android.media.remotedisplay \
