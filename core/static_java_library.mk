@@ -56,7 +56,19 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
   proguard_options_file := $(intermediates.COMMON)/proguard_options
 endif
+
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
+
+#################################
+include $(BUILD_SYSTEM)/configure_local_jack.mk
+#################################
+
+ifdef LOCAL_JACK_ENABLED
+ifndef LOCAL_JACK_PROGUARD_FLAGS
+    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
+endif
+LOCAL_JACK_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_JACK_PROGUARD_FLAGS)
+endif # LOCAL_JACK_ENABLED
 
 endif  # LOCAL_RESOURCE_DIR
 
@@ -114,9 +126,11 @@ $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
-ifneq ($(full_classes_jar),)
+ifdef LOCAL_JACK_ENABLED
+$(noshrob_classes_jack): $(R_file_stamp)
+$(full_classes_jack): $(R_file_stamp)
+endif # LOCAL_JACK_ENABLED
 $(full_classes_compiled_jar): $(R_file_stamp)
-endif
 
 endif  # need_compile_res
 

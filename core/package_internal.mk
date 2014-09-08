@@ -57,6 +57,10 @@ $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
 LOCAL_MODULE_CLASS := APPS
 
+#################################
+include $(BUILD_SYSTEM)/configure_local_jack.mk
+#################################
+
 # Package LOCAL_MODULE_TAGS default to optional
 LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
 ifeq ($(LOCAL_MODULE_TAGS),)
@@ -161,6 +165,13 @@ ifeq ($(need_compile_res),true)
 endif # need_compile_res
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
+
+ifdef LOCAL_JACK_ENABLED
+ifndef LOCAL_JACK_PROGUARD_FLAGS
+    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
+endif
+LOCAL_JACK_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_JACK_PROGUARD_FLAGS)
+endif # LOCAL_JACK_ENABLED
 
 ifeq (true,$(EMMA_INSTRUMENT))
 ifndef LOCAL_EMMA_INSTRUMENT
@@ -270,6 +281,18 @@ endif
 # Other modules should depend on the BUILT module if
 # they want to use this module's R.java file.
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
+
+ifdef LOCAL_JACK_ENABLED
+ifneq ($(built_dex_intermediate),)
+$(built_dex_intermediate): $(R_file_stamp)
+endif
+ifneq ($(noshrob_classes_jack),)
+$(noshrob_classes_jack): $(R_file_stamp)
+endif
+ifneq ($(full_classes_jack),)
+$(full_classes_jack): $(R_file_stamp)
+endif
+endif # LOCAL_JACK_ENABLED
 
 ifneq ($(full_classes_jar),)
 # If full_classes_jar is non-empty, we're building sources.
@@ -388,9 +411,13 @@ endif
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
+ifdef LOCAL_JACK_ENABLED
+	$(create-empty-package)
+else
 	$(if $(PRIVATE_SOURCE_ARCHIVE),\
 	  $(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@),\
 	  $(create-empty-package))
+endif
 	$(add-assets-to-package)
 ifneq ($(jni_shared_libraries),)
 	$(add-jni-shared-libs-to-package)
@@ -400,6 +427,9 @@ ifeq ($(full_classes_jar),)
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else
 	$(add-dex-to-package)
+endif
+ifdef LOCAL_JACK_ENABLED
+	$(add-carried-jack-resources)
 endif
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))

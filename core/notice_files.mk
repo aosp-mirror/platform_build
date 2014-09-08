@@ -43,7 +43,7 @@ else
       # javalib.jar is the default name for the build module (and isn't meaningful)
       # If that's what we have, substitute the module name instead.  These files
       # aren't included on the device, so this name is synthetic anyway.
-      ifeq ($(module_leaf),javalib.jar)
+      ifneq ($(filter javalib.jar classes.jack,$(module_leaf)),)
         module_leaf := $(LOCAL_MODULE).jar
       endif
       module_installed_filename := \
