@@ -247,7 +247,6 @@ class BlockImageDiff(object):
   def WriteTransfers(self, prefix):
     out = []
 
-    out.append("%d\n" % (self.version,))   # format version number
     total = 0
     performs_read = False
 
@@ -372,12 +371,6 @@ class BlockImageDiff(object):
       else:
         raise ValueError, "unknown transfer style '%s'\n" % (xf.style,)
 
-    out.insert(1, str(total) + "\n")
-    if self.version >= 2:
-      # version 2 only: after the total block count, we give the number
-      # of stash slots needed, and the maximum size needed (in blocks)
-      out.insert(2, str(next_stash_id) + "\n")
-      out.insert(3, str(max_stashed_blocks) + "\n")
 
       # sanity check: abort if we're going to need more than 512 MB if
       # stash space
@@ -394,7 +387,15 @@ class BlockImageDiff(object):
     else:
       # if nothing is read (ie, this is a full OTA), then we can start
       # by erasing the entire partition.
-      out.insert(2, "erase %s\n" % (all_tgt.to_string_raw(),))
+      out.insert(0, "erase %s\n" % (all_tgt.to_string_raw(),))
+
+    out.insert(0, "%d\n" % (self.version,))   # format version number
+    out.insert(1, str(total) + "\n")
+    if self.version >= 2:
+      # version 2 only: after the total block count, we give the number
+      # of stash slots needed, and the maximum size needed (in blocks)
+      out.insert(2, str(next_stash_id) + "\n")
+      out.insert(3, str(max_stashed_blocks) + "\n")
 
     with open(prefix + ".transfer.list", "wb") as f:
       for i in out:
