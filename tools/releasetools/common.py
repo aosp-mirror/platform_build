@@ -42,7 +42,13 @@ if not hasattr(os, "SEEK_SET"):
 
 class Options(object): pass
 OPTIONS = Options()
-OPTIONS.search_path = "out/host/linux-x86"
+
+DEFAULT_SEARCH_PATH_BY_PLATFORM = {
+    "linux2": "out/host/linux-x86",
+    "darwin": "out/host/darwin-x86",
+    }
+OPTIONS.search_path = DEFAULT_SEARCH_PATH_BY_PLATFORM.get(sys.platform, None)
+
 OPTIONS.signapk_path = "framework/signapk.jar"  # Relative to search_path
 OPTIONS.extra_signapk_args = []
 OPTIONS.java_path = "java"  # Use the one on the path by default.
@@ -651,8 +657,9 @@ def ParseOptions(argv,
       if extra_option_handler is None or not extra_option_handler(o, a):
         assert False, "unknown option \"%s\"" % (o,)
 
-  os.environ["PATH"] = (os.path.join(OPTIONS.search_path, "bin") +
-                        os.pathsep + os.environ["PATH"])
+  if OPTIONS.search_path:
+    os.environ["PATH"] = (os.path.join(OPTIONS.search_path, "bin") +
+                          os.pathsep + os.environ["PATH"])
 
   return args
 
