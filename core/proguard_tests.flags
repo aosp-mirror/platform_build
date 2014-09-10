@@ -1,5 +1,6 @@
 # Keep everything for tests
--dontshrink
+# This flag has been moved to the makefiles and is set for tests by default.
+#-dontshrink
 
 # But we may want to obfuscate if the main app gets obfuscated.
 # This flag has been moved to the makefiles.
