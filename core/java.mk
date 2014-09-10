@@ -386,7 +386,7 @@ $(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
 
 # Run proguard if necessary, otherwise just copy the file.
 ifdef LOCAL_PROGUARD_ENABLED
-ifneq ($(filter-out full custom nosystem obfuscation optimization,$(LOCAL_PROGUARD_ENABLED)),)
+ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
     $(warning while processing: $(LOCAL_MODULE))
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
@@ -403,6 +403,9 @@ endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
 proguard_flags += -include $(BUILD_SYSTEM)/proguard_tests.flags
+ifeq ($(filter shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
+proguard_flags += -dontshrink # don't shrink tests by default
+endif # shrinktests
 endif # test package
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no obfuscation
