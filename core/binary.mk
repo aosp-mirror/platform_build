@@ -426,6 +426,10 @@ endif
 renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
 
+
+renderscript_flags += -m$(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
+
+
 renderscript_includes := \
     $(TOPDIR)external/clang/lib/Headers \
     $(TOPDIR)frameworks/rs/scriptc \
