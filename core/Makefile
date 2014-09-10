@@ -1105,12 +1105,6 @@ vendorimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 endif # BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 
 # -----------------------------------------------------------------
-# bring in the installer image generation defines if necessary
-ifeq ($(TARGET_USE_DISKINSTALLER),true)
-include bootable/diskinstaller/config.mk
-endif
-
-# -----------------------------------------------------------------
 # host tools needed to build dist and OTA packages
 
 DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
