@@ -731,14 +731,16 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   system_src = GetImage("system", OPTIONS.source_tmp, OPTIONS.source_info_dict)
   system_tgt = GetImage("system", OPTIONS.target_tmp, OPTIONS.target_info_dict)
-  system_diff = common.BlockDifference("system", system_tgt, system_src)
+  system_diff = common.BlockDifference("system", system_tgt, system_src,
+                                       check_first_block=True)
 
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
     vendor_src = GetImage("vendor", OPTIONS.source_tmp, OPTIONS.source_info_dict)
     vendor_tgt = GetImage("vendor", OPTIONS.target_tmp, OPTIONS.target_info_dict)
-    vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src)
+    vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src,
+                                         check_first_block=True)
   else:
     vendor_diff = None
 
