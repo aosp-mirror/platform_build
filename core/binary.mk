@@ -425,10 +425,8 @@ endif
 # This can be disabled with LOCAL_RENDERSCRIPT_FLAGS := -Wno-error
 renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
-
-
-renderscript_flags += -m$(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
-
+# -m32 or -m64
+renderscript_flags += -m$(my_32_64_bit_suffix)
 
 renderscript_includes := \
     $(TOPDIR)external/clang/lib/Headers \
