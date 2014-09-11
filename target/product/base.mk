@@ -31,6 +31,7 @@ PRODUCT_PACKAGES += \
     dhcpcd \
     dhcpcd-run-hooks \
     dnsmasq \
+    dpm \
     framework \
     fsck_msdos \
     ime \
