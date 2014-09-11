@@ -30,6 +30,7 @@ import time
 import zipfile
 
 import blockimgdiff
+from rangelib import *
 
 try:
   from hashlib import sha1 as sha1
@@ -1023,10 +1024,11 @@ def ComputeDifferences(diffs):
 
 
 class BlockDifference:
-  def __init__(self, partition, tgt, src=None):
+  def __init__(self, partition, tgt, src=None, check_first_block=False):
     self.tgt = tgt
     self.src = src
     self.partition = partition
+    self.check_first_block = check_first_block
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads)
     tmpdir = tempfile.mkdtemp()
@@ -1043,6 +1045,9 @@ class BlockDifference:
       self._WriteUpdate(script, output_zip)
 
     else:
+      if self.check_first_block:
+        self._CheckFirstBlock(script)
+
       script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
                          (self.device, self.src.care_map.to_string_raw(),
                           self.src.TotalSha1()))
@@ -1071,6 +1076,18 @@ class BlockDifference:
              '"%s.new.dat", "%s.patch.dat");\n') %
             (self.device, partition, partition, partition))
     script.AppendExtra(script._WordWrap(call))
+
+  def _CheckFirstBlock(self, script):
+    r = RangeSet((0, 1))
+    h = sha1()
+    for data in self.src.ReadRangeSet(r):
+      h.update(data)
+    h = h.hexdigest()
+
+    script.AppendExtra(('(range_sha1("%s", "%s") == "%s") || '
+                        'abort("%s has been remounted R/W; '
+                        'reflash device to reenable OTA updates");')
+                       % (self.device, r.to_string_raw(), h, self.device))
 
 
 DataImage = blockimgdiff.DataImage
