@@ -1,5 +1,6 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
+<?cs include:"macros_override.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 <body class="gc-documentation <?cs if:(reference.gms || reference.gcm) ?>google<?cs /if ?>
@@ -30,7 +31,10 @@
     <?cs each:cl = letter ?>
         <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:cl.since ?>" >
             <td class="jd-linkcol"><?cs call:type_link(cl.type) ?></td>
-            <td class="jd-descrcol" width="100%"><?cs call:short_descr(cl) ?>&nbsp;</td>
+            <td class="jd-descrcol" width="100%">
+              <?cs call:short_descr(cl) ?>&nbsp;
+              <?cs call:show_annotations_list(cl, "<span class='annotation-message'>Included in documentation by the annotations: ", "</span>") ?>
+            </td>
         </tr>
     <?cs set:count = count + #1 ?>
     <?cs /each ?>
