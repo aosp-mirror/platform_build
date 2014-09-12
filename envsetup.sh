@@ -606,7 +606,8 @@ function gettop
 {
     local TOPFILE=build/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
-        echo $TOP
+        # The following circumlocution ensures we remove symlinks from TOP.
+        (cd $TOP; PWD= /bin/pwd)
     else
         if [ -f $TOPFILE ] ; then
             # The following circumlocution (repeated below as well) ensures
