@@ -49,7 +49,7 @@ PRODUCT_PACKAGES += \
     QuickSearchBox \
     Settings \
     SharedStorageBackup \
-    Telecomm \
+    Telecom \
     TeleService \
     VpnDialogs \
     MmsService
