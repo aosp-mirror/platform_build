@@ -69,61 +69,24 @@ ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 # For a Java library, we build odex for both 1st arch and 2nd arch, if we have one.
 # #################################################
 # Odex for the 1st arch
-built_odex := $(call get-odex-file-path,$(DEX2OAT_TARGET_ARCH),$(LOCAL_BUILT_MODULE))
-ifdef LOCAL_DEX_PREOPT_IMAGE_LOCATION
-my_dex_preopt_image_location := $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
-else
-my_dex_preopt_image_location := $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
-endif
-my_dex_preopt_image_filename := $(call get-image-file-path,$(DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
-$(built_odex): PRIVATE_2ND_ARCH_VAR_PREFIX :=
-$(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
-$(built_odex): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
-$(built_odex) : $(DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
-                $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
-                $(my_dex_preopt_image_filename)
-installed_odex := $(call get-odex-file-path,$(DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
-built_installed_odex := $(built_odex):$(installed_odex)
+my_2nd_arch_prefix :=
+include $(BUILD_SYSTEM)/setup_one_odex.mk
 # #################################################
 # Odex for the 2nd arch
 ifdef TARGET_2ND_ARCH
-built_odex2 := $(call get-odex-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_BUILT_MODULE))
-ifdef LOCAL_DEX_PREOPT_IMAGE_LOCATION
-my_dex_preopt_image_location := $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
-else
-my_dex_preopt_image_location := $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
-endif
-my_dex_preopt_image_filename := $(call get-image-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
-$(built_odex2): PRIVATE_2ND_ARCH_VAR_PREFIX := $(TARGET_2ND_ARCH_VAR_PREFIX)
-$(built_odex2): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
-$(built_odex2): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
-$(built_odex2) : $($(TARGET_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
-                 $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
-                 $(my_dex_preopt_image_filename)
-
-installed_odex2 := $(call get-odex-file-path,$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
-built_odex += $(built_odex2)
-installed_odex += $(installed_odex2)
-built_installed_odex += $(built_odex2):$(installed_odex2)
+my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/setup_one_odex.mk
 endif  # TARGET_2ND_ARCH
 # #################################################
 else  # must be APPS
-# For an app, we build for the multilib arch it's targeted for.
-built_odex := $(call get-odex-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_BUILT_MODULE))
-ifdef LOCAL_DEX_PREOPT_IMAGE_LOCATION
-my_dex_preopt_image_location := $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
-else
-my_dex_preopt_image_location := $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
-endif
-my_dex_preopt_image_filename := $(call get-image-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(my_dex_preopt_image_location))
-$(built_odex): PRIVATE_2ND_ARCH_VAR_PREFIX := $(LOCAL_2ND_ARCH_VAR_PREFIX)
-$(built_odex): PRIVATE_DEX_LOCATION := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
-$(built_odex): PRIVATE_DEX_PREOPT_IMAGE_LOCATION := $(my_dex_preopt_image_location)
-$(built_odex) : $($(LOCAL_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \
-                $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
-                $(my_dex_preopt_image_filename)
-installed_odex := $(call get-odex-file-path,$($(LOCAL_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
-built_installed_odex := $(built_odex):$(installed_odex)
+# The preferred arch
+my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/setup_one_odex.mk
+ifeq ($(LOCAL_MULTILIB),both)
+# The non-preferred arch
+my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
+include $(BUILD_SYSTEM)/setup_one_odex.mk
+endif  # LOCAL_MULTILIB is both
 endif  # LOCAL_MODULE_CLASS
 endif # libart
 endif # boot jar
