@@ -410,7 +410,8 @@ endif
 ## Rule to build the odex file
 ifdef LOCAL_DEX_PREOPT
 $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
-$(built_odex) : $(built_dex)
+# Use pattern rule - we may have multiple built odex files.
+$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(add-dex-to-package)
 	$(hide) mv $@ $@.input
