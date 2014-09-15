@@ -82,14 +82,16 @@ else  # must be APPS
 # The preferred arch
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/setup_one_odex.mk
+ifdef TARGET_2ND_ARCH
 ifeq ($(LOCAL_MULTILIB),both)
 # The non-preferred arch
 my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
 include $(BUILD_SYSTEM)/setup_one_odex.mk
 endif  # LOCAL_MULTILIB is both
+endif  # TARGET_2ND_ARCH
 endif  # LOCAL_MODULE_CLASS
-endif # libart
-endif # boot jar
+endif  # libart
+endif  # boot jar
 
 ifdef built_odex
 # Use pattern rule - we may have multiple installed odex files.
