@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0933369_59bfce49",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-15T23:31:57Z",
+      "side": 1,
+      "message": "Oops.",
+      "revId": "36d6cd9461e15e78799f9890b39b64f361f8afcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
