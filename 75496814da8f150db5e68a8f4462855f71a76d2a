@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "f0fe8bbb_144c6253",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-17T18:49:52Z",
+      "side": 1,
+      "message": "Correct. I think you\u0027re right though, we should make it possible to link a static libc++. I\u0027ll upload another revision for this when I get my tree into a more sane state.\n\n\u003e Btw, \"LOCAL_CXX_STL :\u003d none\" is more expressive than \"LOCAL_CXX_STL :\u003d\".\n\nFine by me. I\u0027ll fix that in the next revision as well.",
+      "parentUuid": "70137bdc_4fda41fb",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70137bdc_6f6bc56d",
         "filename": "core/binary.mk",
         "patchSetId": 2
