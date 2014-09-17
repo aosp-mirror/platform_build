@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f0fe8bbb_94305209",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-17T18:40:12Z",
+      "side": 1,
+      "message": "\u003e If a build is with TARGET_BUILD_APPS, but not LOCAL_SDK_VERSION, that means we are doing unbundled build in the full platform source tree (with bionic, such as the \"apps\" target in master on the build page), so libc++ should be available as well.\n\nThanks for clarifying. I know close to nothing about how the unbundled branches work.\n\n\u003e Regarding unbundled branches, are we going to add libc++ as one of the NDK stl variant? If not, will libc++ be built against the NDK (with LOCAL_SDK_VERSION in external/libcxx/Android.mk )? If not, unbundled branches won\u0027t be able to use libc++, because it will depend on bionic, which can\u0027t be used in unbundled branch.\n\nlibc++ already is an NDK STL variant, though strictly speaking it\u0027s a different libc++. The NDK folks maintain a separate source tree.",
+      "parentUuid": "10ab1f9f_b2aec86b",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "50a117b9_f5cd5a47",
         "filename": "core/binary.mk",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f0fe8bbb_3492be92",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-17T18:40:12Z",
+      "side": 1,
+      "message": "A static libc++ would be an option. iirc some of those tools are C only, and thus wouldn\u0027t need libc++ at all.",
+      "parentUuid": "50a117b9_f5cd5a47",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70137bdc_6f6bc56d",
         "filename": "core/binary.mk",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2014-09-17T18:25:04Z",
       "side": 1,
       "message": "We don\u0027t automatically add -lc or -lm previously.",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0fe8bbb_395cf75a",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-17T18:40:12Z",
+      "side": 1,
+      "message": "But they were implicitly added by the compile. I\u0027m explicitly adding them here because I need to counteract the -nodefaultlibs ld flag. Still need to use -nodefaultlibs to prevent g++ from linking libstdc++ though.",
+      "parentUuid": "70137bdc_6f6bc56d",
       "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
