@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10ab1f9f_b2aec86b",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-17T18:25:04Z",
+      "side": 1,
+      "message": "If a build is with TARGET_BUILD_APPS, but not LOCAL_SDK_VERSION, that means we are doing unbundled build in the full platform source tree (with bionic, such as the \"apps\" target in master on the build page), so libc++ should be available as well.\nRegarding unbundled branches, are we going to add libc++ as one of the NDK stl variant? If not, will libc++ be built against the NDK (with LOCAL_SDK_VERSION in external/libcxx/Android.mk )? If not, unbundled branches won\u0027t be able to use libc++, because it will depend on bionic, which can\u0027t be used in unbundled branch.",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "50a117b9_f5cd5a47",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-17T18:25:04Z",
+      "side": 1,
+      "message": "Note that for most of the common host tools, such as aapt, fastboot, adb etc, we don\u0027t want them to depend on any additional shared library, because that means we\u0027ll need to distribute the shared library together with the executables and deploy them with the correct directory structure.\nMaybe in that case we should use the static libc++?",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70137bdc_6f6bc56d",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-17T18:25:04Z",
+      "side": 1,
+      "message": "We don\u0027t automatically add -lc or -lm previously.",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
