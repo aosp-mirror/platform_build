@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "70137bdc_4fda41fb",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-17T18:47:46Z",
+      "side": 1,
+      "message": "Hmm. So we\u0027ll explicitly set \"LOCAL_CXX_STL :\u003d none\" in those modules?\nBtw, \"LOCAL_CXX_STL :\u003d none\" is more expressive than \"LOCAL_CXX_STL :\u003d\".",
+      "parentUuid": "f0fe8bbb_3492be92",
+      "revId": "75496814da8f150db5e68a8f4462855f71a76d2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70137bdc_6f6bc56d",
         "filename": "core/binary.mk",
         "patchSetId": 2
