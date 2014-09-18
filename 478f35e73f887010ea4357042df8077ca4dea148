@@ -22,6 +22,24 @@
       "revId": "478f35e73f887010ea4357042df8077ca4dea148",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10479fed_eda491aa",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1012228
+      },
+      "writtenOn": "2014-09-18T02:10:30Z",
+      "side": 1,
+      "message": "3.5 is hard-coded here originally, how do you think add \u0027LLVM_VERSION\u003d3.5\u0027 ?",
+      "parentUuid": "d0e2671a_b50a2285",
+      "revId": "478f35e73f887010ea4357042df8077ca4dea148",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
