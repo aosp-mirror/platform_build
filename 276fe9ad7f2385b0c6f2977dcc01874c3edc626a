@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "501677dd_d8ae2db8",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-18T00:12:42Z",
+      "side": 1,
+      "message": "I think we can use just empty string as the default now.",
+      "revId": "276fe9ad7f2385b0c6f2977dcc01874c3edc626a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "501677dd_58a3fdcd",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-18T00:12:42Z",
+      "side": 1,
+      "message": "We don\u0027t need LOCAL_STATIC_CXX_STL. Just use a new variant libc++_static, just like we have stlport_static and stlport_shared in the NDK stl variants.",
+      "revId": "276fe9ad7f2385b0c6f2977dcc01874c3edc626a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
