@@ -40,6 +40,24 @@
       "revId": "478f35e73f887010ea4357042df8077ca4dea148",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3042e3dc_2e6d973d",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-09-18T08:00:27Z",
+      "side": 1,
+      "message": "That seems like a better idea. I would also prefer to put back the verbose \"prebuilts/clang/$(BUILD_OS)-x86/host/$(LLVM_PREBUILTS_VERSION)/lib/clang/$(LLVM_PREBUILTS_VERSION)/include\" instead of having a path with \"../\" in the middle of it.\n\nCan I ask what is motivating this change right now? We probably will keep the 3.5 numbering for a few months (until 3.6 gets closer, even though 3.5 has shipped).",
+      "parentUuid": "10479fed_eda491aa",
+      "revId": "478f35e73f887010ea4357042df8077ca4dea148",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
