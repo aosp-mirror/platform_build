@@ -1397,7 +1397,9 @@ endif
 	$(hide) echo "update_rename_support=1" >> $(zip_root)/META/misc_info.txt
 ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES),)
 	# OTA scripts are only interested in fingerprint related properties
+ifneq ($(filter ro.product.brand ro.product.name ro.product.device, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES)),)
 	$(hide) echo "oem_fingerprint_properties=$(filter ro.product.brand ro.product.name ro.product.device, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES))" >> $(zip_root)/META/misc_info.txt
+endif
 endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
 	$(hide) ./build/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
