@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "906aaf64_6dcdf169",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-18T20:57:32Z",
+      "side": 1,
+      "message": "Sorry, the static libstlport was actually named libstlport_static. I prefer to naming the shared and static libraries differently. Can we name the static libc++ to libc++_static? Then the above logic can be simplified.",
+      "revId": "33093c8c86e3032a4c1b65a401c92d2e5229452d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
