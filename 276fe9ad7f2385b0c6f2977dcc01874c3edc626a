@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3042e3dc_05cbd68c",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-18T00:16:49Z",
+      "side": 1,
+      "message": "That\u0027s a lot less clear imo. If I were to write `LOCAL_CXX_STL :\u003d` in an Android.mk, I would expect to not get an STL (as it is now, it will puke out an error).\n\nI think it\u0027s reasonable to assume that someone might try that, given that it\u0027s very similar to the old behavior of `LOCAL_SYSTEM_SHARED_LIBRARIES :\u003d`.",
+      "parentUuid": "501677dd_d8ae2db8",
+      "revId": "276fe9ad7f2385b0c6f2977dcc01874c3edc626a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "501677dd_58a3fdcd",
         "filename": "core/binary.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2014-09-18T00:12:42Z",
       "side": 1,
       "message": "We don\u0027t need LOCAL_STATIC_CXX_STL. Just use a new variant libc++_static, just like we have stlport_static and stlport_shared in the NDK stl variants.",
+      "revId": "276fe9ad7f2385b0c6f2977dcc01874c3edc626a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3042e3dc_6588a264",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-18T00:16:49Z",
+      "side": 1,
+      "message": "Okay, had thought about doing it this way as well. I\u0027ll make the change.",
+      "parentUuid": "501677dd_58a3fdcd",
       "revId": "276fe9ad7f2385b0c6f2977dcc01874c3edc626a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
