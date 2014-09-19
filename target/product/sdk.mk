@@ -33,7 +33,6 @@ PRODUCT_PACKAGES := \
 	libWnnJpnDic \
 	libwnndict \
 	TeleService \
-	PinyinIME \
 	Protips \
 	SoftKeyboard \
 	SystemUI \
