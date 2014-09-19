@@ -116,11 +116,6 @@
 #define HAVE_POSIX_CLOCKS
 
 /*
- * Define this if we have linux style epoll()
- */
-#define HAVE_EPOLL
-
-/*
  * Endianness of the target machine.  Choose one:
  *
  * HAVE_ENDIAN_H -- have endian.h header we can include.
