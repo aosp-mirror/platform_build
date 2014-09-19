@@ -379,7 +379,7 @@ def SignOutput(temp_zip_name, output_zip_name):
 
 def AppendAssertions(script, info_dict, oem_dict = None):
   oem_props = info_dict.get("oem_fingerprint_properties")
-  if oem_props is None:
+  if oem_props is None or len(oem_props) == 0:
     device = GetBuildProp("ro.product.device", info_dict)
     script.AssertDevice(device)
   else:
@@ -463,7 +463,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   oem_dict = None
-  if oem_props is not None:
+  if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     script.Mount("/oem")
@@ -746,7 +746,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
   oem_dict = None
-  if oem_props is not None:
+  if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     script.Mount("/oem")
@@ -1036,7 +1036,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   oem_dict = None
-  if oem_props is not None:
+  if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     script.Mount("/oem")
