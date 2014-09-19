@@ -5,7 +5,17 @@
 LOCAL_CFLAGS += -DGTEST_OS_LINUX_ANDROID -DGTEST_HAS_STD_STRING
 
 LOCAL_C_INCLUDES += external/gtest/include
-ifneq ($(filter libc++,$(LOCAL_SHARED_LIBRARIES)),)
+
+my_test_libcxx := false
+ifndef LOCAL_SDK_VERSION
+ifeq (,$(TARGET_BUILD_APPS))
+ifeq ($(strip $(LOCAL_CXX_STL)),libc++)
+my_test_libcxx := true
+endif
+endif
+endif
+
+ifeq ($(my_test_libcxx),true)
 LOCAL_STATIC_LIBRARIES += libgtest_libc++ libgtest_main_libc++
 else
 LOCAL_STATIC_LIBRARIES += libgtest libgtest_main

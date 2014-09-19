@@ -68,7 +68,6 @@ TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 libc_root := bionic/libc
 libm_root := bionic/libm
-libstdc++_root := bionic/libstdc++
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-x86 # x86 covers both x86 and x86_64.
@@ -133,7 +132,6 @@ TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86_64/include \
 	$(libc_root)/include \
-	$(libstdc++_root)/include \
 	$(KERNEL_HEADERS) \
 	$(libm_root)/include \
 	$(libm_root)/include/amd64 \
@@ -147,7 +145,7 @@ TARGET_CRTEND_SO_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_so.o
 
 TARGET_STRIP_MODULE:=true
 
-TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libstdc++ libm
+TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libm
 
 TARGET_CUSTOM_LD_COMMAND := true
 define transform-o-to-shared-lib-inner
