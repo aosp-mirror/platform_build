@@ -21,5 +21,6 @@ LOCAL_STATIC_LIBRARIES := libhost
 LOCAL_C_INCLUDES := build/libs/host/include
 LOCAL_MODULE := acp
 LOCAL_ACP_UNAVAILABLE := true
+LOCAL_CXX_STL := none
 
 include $(BUILD_HOST_EXECUTABLE)
