@@ -36,7 +36,6 @@ PRODUCT_PACKAGES := \
 	Mms \
 	Music \
 	OpenWnn \
-	PinyinIME \
 	Protips \
 	rild \
 	SdkSetup \
