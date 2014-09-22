@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7021bb30_82a03b1a",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-22T23:11:21Z",
+      "side": 1,
+      "message": "Using a static library makes every test in the tree sensitive to libstdc++ being built with coverage information. Is there any downside to using a shared library?",
+      "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
