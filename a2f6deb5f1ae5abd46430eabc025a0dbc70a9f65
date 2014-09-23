@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "b012530c_363b9604",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-23T00:45:58Z",
+      "side": 1,
+      "message": "You need the \t$(combo_2nd_arch_prefix) prefix, so it works in multilib build.",
+      "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d01507f5_9a928d45",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-23T00:45:58Z",
+      "side": 1,
+      "message": "This won\u0027t work in multlib build.\nYou need to turn it into a target-specific variable (like the PRIVATE_TARGET_LIBATOMIC). Or can we merge PRIVATE_TARGET_LIBATOMIC, PRIVATE_TARGET_LIBGCOV and PRIVATE_TARGET_LIBGCC to a single PRIVATE_ variable?",
+      "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7021bb30_82a03b1a",
         "filename": "core/target_test_internal.mk",
         "patchSetId": 2
