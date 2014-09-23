@@ -75,14 +75,7 @@
 #  define HAVE_WIN32_PROC
 #endif
 
-/*
- * IPC model.  Choose one:
- *
- * HAVE_SYSV_IPC - use the classic SysV IPC mechanisms (semget, shmget).
- * HAVE_MACOSX_IPC - use Macintosh IPC mechanisms (sem_open, mmap).
- * HAVE_WIN32_IPC - use Win32 IPC (CreateSemaphore, CreateFileMapping).
- * HAVE_ANDROID_IPC - use Android versions (?, mmap).
- */
+/* TODO: replace references to this. */
 #define HAVE_WIN32_IPC
 
 /*
