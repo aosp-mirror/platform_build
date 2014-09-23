@@ -16,6 +16,24 @@
       "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b012530c_d69ce258",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-23T00:13:37Z",
+      "side": 1,
+      "message": "I remember this is a hack to fix bionic-unit-tests-static build, see https://b.corp.google.com/issue?id\u003d13643367#ISSUE_HistoryHeader9 . Not sure if moving to libstdc++.so would break the build.",
+      "parentUuid": "7021bb30_82a03b1a",
+      "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
