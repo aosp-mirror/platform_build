@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d01507f5_6359cc6a",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-09-23T16:38:43Z",
+      "side": 1,
+      "message": "PRIVATE_NATIVE_COVERAGE isn\u0027t used.",
+      "revId": "ff0d0db922315aec18ffb4e695ede887f7500410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
