@@ -34,6 +34,24 @@
       "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7021bb30_e55b412e",
+        "filename": "core/target_test_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-23T00:16:56Z",
+      "side": 1,
+      "message": "Ah, okay. I think we no longer have this issue because libc has that symbol itself now, but I\u0027m still re-verifying this.",
+      "parentUuid": "b012530c_d69ce258",
+      "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
