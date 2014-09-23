@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "50b7574c_5062ac8f",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-23T16:14:56Z",
+      "side": 1,
+      "message": "Merging them into a PRIVATE_BUILTINS would be nice, but that\u0027s probably a job for another patch, since that also will require us being consistent with the order in which libgcc is added (currently different for platform builds and unbundled). I think unbundled actually does the better thing by adding libgcc before all of the dependent libraries (since that ensures that no binary ever expects to receive libgcc symbols from libc).",
+      "parentUuid": "d01507f5_9a928d45",
+      "revId": "a2f6deb5f1ae5abd46430eabc025a0dbc70a9f65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7021bb30_82a03b1a",
         "filename": "core/target_test_internal.mk",
         "patchSetId": 2
