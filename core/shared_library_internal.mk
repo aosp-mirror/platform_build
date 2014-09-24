@@ -40,6 +40,7 @@ include $(BUILD_SYSTEM)/dynamic_binary.mk
 
 # Define PRIVATE_ variables from global vars
 my_target_global_ld_dirs := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LD_DIRS)
+my_target_libgcov := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCOV)
 my_target_libgcc := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCC)
 my_target_libatomic := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBATOMIC)
 my_target_crtbegin_so_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTBEGIN_SO_O)
@@ -57,6 +58,7 @@ my_target_crtend_so_o := $(wildcard $(my_ndk_sysroot_lib)/crtend_so.o)
 endif
 $(linked_module): PRIVATE_TARGET_GLOBAL_LD_DIRS := $(my_target_global_ld_dirs)
 $(linked_module): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
+$(linked_module): PRIVATE_TARGET_LIBGCOV := $(my_target_libgcov)
 $(linked_module): PRIVATE_TARGET_LIBGCC := $(my_target_libgcc)
 $(linked_module): PRIVATE_TARGET_LIBATOMIC := $(my_target_libatomic)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_SO_O := $(my_target_crtbegin_so_o)
