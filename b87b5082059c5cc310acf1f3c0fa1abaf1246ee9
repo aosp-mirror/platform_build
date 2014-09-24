@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d071878d_1a169d67",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-09-24T22:04:18Z",
+      "side": 1,
+      "message": "This really should be hard-coded. I do not want ../ anywhere in the path for this.\n\nI upload patch-set 3 to address this. +1 it if it suits your needs. If it doesn\u0027t you are going to have to explain why this needs to be a relative path here.",
+      "range": {
+        "startLine": 11,
+        "startChar": 51,
+        "endLine": 11,
+        "endChar": 56
+      },
+      "revId": "b87b5082059c5cc310acf1f3c0fa1abaf1246ee9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
