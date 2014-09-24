@@ -58,6 +58,24 @@
       "revId": "478f35e73f887010ea4357042df8077ca4dea148",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90d62f81_2a821ff6",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1012228
+      },
+      "writtenOn": "2014-09-24T03:54:40Z",
+      "side": 1,
+      "message": "I am thinking if we are moving to llvm-3.6 in the future, or we have multiple LLVM toolchains. We might test 3.6 like \"make LLVM_PREBUILTS_PATH\u003d{where-3.6-bin} LLVM_PREBUILTS_HEADER_PATH\u003d{where-3.6-headers}\".  \n\nIt is convenient if we could just set LLVM_PREBUILTS_PATH in the command line.  Could I know why \"../\"  is not recommended?",
+      "parentUuid": "3042e3dc_2e6d973d",
+      "revId": "478f35e73f887010ea4357042df8077ca4dea148",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
