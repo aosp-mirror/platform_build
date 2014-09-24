@@ -76,6 +76,24 @@
       "revId": "478f35e73f887010ea4357042df8077ca4dea148",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f08beba0_43e3daac",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-09-24T03:57:43Z",
+      "side": 1,
+      "message": "As it stands, your change is extremely error-prone, so I am tempted to abandon it. If you intend for a developer to set both variables for 3.6, this change should be abandoned. If you actually want to make it work for changing out the version number (i.e. 3.5 -\u003e 3.6), we need a different variable, as I suggested above. I am ok with either of those 2 options, but I am not ok with a relative path that still bakes in version-specific information.",
+      "parentUuid": "90d62f81_2a821ff6",
+      "revId": "478f35e73f887010ea4357042df8077ca4dea148",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
