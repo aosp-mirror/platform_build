@@ -62,6 +62,8 @@ TARGET_LIBGCC := \
 	$(shell $(TARGET_CC) -m64 -print-file-name=libgcc.a)
 TARGET_LIBATOMIC := \
 	$(shell $(TARGET_CC) -m64 -print-file-name=libatomic.a)
+TARGET_LIBGCOV := \
+	$(shell $(TARGET_CC) -m64 -print-file-name=libgcov.a)
 endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
@@ -167,6 +169,7 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O))
 endef
@@ -192,6 +195,7 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
@@ -212,6 +216,7 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--start-group \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
 	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
 	-Wl,--end-group \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
