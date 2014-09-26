@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9032afd1_10ae8c1c",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-09-26T22:31:38Z",
+      "side": 1,
+      "message": "This is something that the chromium_org Android.mk files should address.",
+      "revId": "3a266afbb9427b184727b3b5a631ae4577788c4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0433333_7a4c0555",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-09-26T22:31:38Z",
+      "side": 1,
+      "message": "We can do better than this, honestly.",
+      "revId": "3a266afbb9427b184727b3b5a631ae4577788c4c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
