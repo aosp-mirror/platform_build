@@ -2,17 +2,18 @@
 <?cs # pre is an HTML string to start the list, post is an HTML string to close the list ?>
 <?cs # for example call:show_annotations_list(cl, "<td>Annotations: ", "</td>") ?>
 <?cs # if obj has nothing on obj.showAnnotations, nothing will be output ?>
-<?cs def:show_annotations_list(obj, pre, post) ?>
+<?cs def:show_annotations_list(obj) ?>
     <?cs each:anno = obj.showAnnotations ?>
       <?cs if:first(anno) ?>
-        <?cs var:pre ?>
+        <span class='annotation-message'>
+          Included in documention by the annotations:
       <?cs /if ?>
       @<?cs var:anno.type.label ?>
       <?cs if:last(anno) == 0 ?>
         , &nbsp;
       <?cs /if ?>
       <?cs if:last(anno)?>
-        <?cs var:post ?>
+        </span>
       <?cs /if ?>
     <?cs /each ?>
 <?cs /def ?>
@@ -26,7 +27,7 @@
         <td class="jd-linkcol"><?cs call:type_link(cl.type) ?></td>
         <td class="jd-descrcol" width="100%">
           <?cs call:short_descr(cl) ?>&nbsp;
-          <?cs call:show_annotations_list(cl, "<span class='annotation-message'>Included in documentation by the annotations: ", "</span>") ?>
+          <?cs call:show_annotations_list(cl) ?>
         </td>
       </tr>
       <?cs set:count = count + #1 ?>
