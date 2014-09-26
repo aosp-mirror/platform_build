@@ -256,7 +256,7 @@
 /*
  * Define to 1 if <stdlib.h> provides qsort_r() with a GNU style function prototype.
  */
-#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8)
+#if defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8))
 #define HAVE_GNU_QSORT_R 1
 #else
 #define HAVE_GNU_QSORT_R 0
