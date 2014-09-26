@@ -33,7 +33,7 @@
             <td class="jd-linkcol"><?cs call:type_link(cl.type) ?></td>
             <td class="jd-descrcol" width="100%">
               <?cs call:short_descr(cl) ?>&nbsp;
-              <?cs call:show_annotations_list(cl, "<span class='annotation-message'>Included in documentation by the annotations: ", "</span>") ?>
+              <?cs call:show_annotations_list(cl) ?>
             </td>
         </tr>
     <?cs set:count = count + #1 ?>
