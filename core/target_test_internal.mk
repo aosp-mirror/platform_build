@@ -9,7 +9,7 @@ LOCAL_C_INCLUDES += external/gtest/include
 my_test_libcxx := false
 ifndef LOCAL_SDK_VERSION
 ifeq (,$(TARGET_BUILD_APPS))
-ifeq ($(strip $(LOCAL_CXX_STL)),libc++)
+ifneq ($(filter $(strip $(LOCAL_CXX_STL)),libc++ libc++_static),)
 my_test_libcxx := true
 endif
 endif
