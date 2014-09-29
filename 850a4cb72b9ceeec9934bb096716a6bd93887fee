@@ -16,6 +16,24 @@
       "revId": "850a4cb72b9ceeec9934bb096716a6bd93887fee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90f63048_c22b44ec",
+        "filename": "core/combo/include/arch/linux-x86/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-09-29T20:29:31Z",
+      "side": 1,
+      "message": "yeah, the only way to fix this is to move it into the calling code.\n\nof course, we don\u0027t support glibc that low any more, so you could just always #define it to 1.",
+      "parentUuid": "50f83838_7de657c4",
+      "revId": "850a4cb72b9ceeec9934bb096716a6bd93887fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
