@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50f83838_7de657c4",
+        "filename": "core/combo/include/arch/linux-x86/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-09-29T20:03:10Z",
+      "side": 1,
+      "message": "How can this ever be true? This define comes from a libc header, but this file is included before anything else is loaded. Didn\u0027t we fix a similar issue to this several months ago?",
+      "revId": "850a4cb72b9ceeec9934bb096716a6bd93887fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
