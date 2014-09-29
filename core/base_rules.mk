@@ -552,27 +552,29 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 ###########################################################
 ## CHECK_BUILD goals
 ###########################################################
-
+my_checked_module :=
 ifdef java_alternative_checked_module
-  LOCAL_CHECKED_MODULE := $(java_alternative_checked_module)
+  my_checked_module := $(java_alternative_checked_module)
 endif
 
 # If nobody has defined a more specific module for the
 # checked modules, use LOCAL_BUILT_MODULE.
-ifndef LOCAL_CHECKED_MODULE
-  LOCAL_CHECKED_MODULE := $(LOCAL_BUILT_MODULE)
+ifdef LOCAL_CHECKED_MODULE
+  my_checked_module := $(LOCAL_CHECKED_MODULE)
+else
+  my_checked_module := $(LOCAL_BUILT_MODULE)
 endif
 
 # If they request that this module not be checked, then don't.
 # PLEASE DON'T SET THIS.  ANY PLACES THAT SET THIS WITHOUT
 # GOOD REASON WILL HAVE IT REMOVED.
 ifdef LOCAL_DONT_CHECK_MODULE
-  LOCAL_CHECKED_MODULE :=
+  my_checked_module :=
 endif
 # Don't check build target module defined for the 2nd arch
 ifndef LOCAL_IS_HOST_MODULE
 ifdef LOCAL_2ND_ARCH_VAR_PREFIX
-  LOCAL_CHECKED_MODULE :=
+  my_checked_module :=
 endif
 endif
 
@@ -591,7 +593,7 @@ ALL_MODULES.$(my_register_name).PATH := \
 ALL_MODULES.$(my_register_name).TAGS := \
     $(ALL_MODULES.$(my_register_name).TAGS) $(my_module_tags)
 ALL_MODULES.$(my_register_name).CHECKED := \
-    $(ALL_MODULES.$(my_register_name).CHECKED) $(LOCAL_CHECKED_MODULE)
+    $(ALL_MODULES.$(my_register_name).CHECKED) $(my_checked_module)
 ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
@@ -662,9 +664,9 @@ h_or_t := target
 endif
 
 ifdef j_or_n
-$(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(LOCAL_CHECKED_MODULE)
+$(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(my_checked_module)
 ifneq (,$(filter $(my_module_tags),tests))
-$(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(LOCAL_CHECKED_MODULE)
+$(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
 endif
 
