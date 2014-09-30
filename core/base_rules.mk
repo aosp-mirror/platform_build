@@ -563,14 +563,12 @@ endif # !LOCAL_UNINSTALLABLE_MODULE
 ## CHECK_BUILD goals
 ###########################################################
 my_checked_module :=
-ifdef java_alternative_checked_module
-  my_checked_module := $(java_alternative_checked_module)
-endif
-
 # If nobody has defined a more specific module for the
 # checked modules, use LOCAL_BUILT_MODULE.
 ifdef LOCAL_CHECKED_MODULE
   my_checked_module := $(LOCAL_CHECKED_MODULE)
+else ifdef java_alternative_checked_module
+  my_checked_module := $(java_alternative_checked_module)
 else
   my_checked_module := $(LOCAL_BUILT_MODULE)
 endif
