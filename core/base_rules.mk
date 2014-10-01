@@ -402,7 +402,6 @@ endif # current or system_current
 endif # LOCAL_SDK_VERSION
 endif # TARGET_
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EXTRA_JAR_ARGS := $(extra_jar_args)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
 
@@ -464,6 +463,10 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   full_java_lib_deps += $(link_instr_classes_jar)
 endif
 
+endif  # need_compile_java
+
+# We may want to add jar manifest or jar resource files even if there is no java code at all.
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EXTRA_JAR_ARGS := $(extra_jar_args)
 jar_manifest_file :=
 ifneq ($(strip $(LOCAL_JAR_MANIFEST)),)
 jar_manifest_file := $(LOCAL_PATH)/$(LOCAL_JAR_MANIFEST)
@@ -471,9 +474,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST := $(jar_manifest_file)
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif
-
-endif  # need_compile_java
-
 
 ###########################################################
 ## make clean- targets
