@@ -28,9 +28,14 @@ ifneq ($(strip $(USE_MINGW)),)
 HOST_ACP_UNAVAILABLE := true
 TOOLS_EXE_SUFFIX :=
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -DUSE_MINGW
-TOOLS_PREFIX := /usr/bin/i586-mingw32msvc-
-$(combo_2nd_arch_prefix)HOST_C_INCLUDES += /usr/lib/gcc/i586-mingw32msvc/3.4.4/include
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LD_DIRS += -L/usr/i586-mingw32msvc/lib
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -Wno-unused-parameter
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += --sysroot=prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -m32
+$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -m32
+TOOLS_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/bin/x86_64-w64-mingw32-
+$(combo_2nd_arch_prefix)HOST_C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/include
+$(combo_2nd_arch_prefix)HOST_C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/lib/gcc/x86_64-w64-mingw32/4.8.3/include
+$(combo_2nd_arch_prefix)HOST_GLOBAL_LD_DIRS += -Lprebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/lib32
 endif # USE_MINGW
 endif # Linux
 
