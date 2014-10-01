@@ -63,11 +63,6 @@
 #define  HAVE_TERMIO_H 1
 
 /*
- * Define this if you build against MSVCRT.DLL
- */
-/* #define HAVE_MS_C_RUNTIME */
-
-/*
  * Define this if you have sys/uio.h
  */
 #define  HAVE_SYS_UIO_H 1
@@ -77,21 +72,6 @@
  * in its filesystems
  */
 #define HAVE_SYMLINKS
-
-/*
- * Define this if we have localtime_r().
- */
-/* #define HAVE_LOCALTIME_R 1 */
-
-/*
- * Define this if we have gethostbyname_r().
- */
-/* #define HAVE_GETHOSTBYNAME_R */
-
-/*
- * Define this if we want to use WinSock.
- */
-/* #define HAVE_WINSOCK */
 
 /*
  * Define this if have clock_gettime() and friends
@@ -171,20 +151,9 @@
 #define HAVE_LIBC_SYSTEM_PROPERTIES 1
 
 /*
- * Define if system provides a system property server (should be
- * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
- */
-/* #define HAVE_SYSTEM_PROPERTY_SERVER */
-
-/*
  * What CPU architecture does this platform use?
  */
 #define ARCH_AARCH64
-
-/*
- * Define if the size of enums is as short as possible,
- */
-/* #define HAVE_SHORT_ENUMS */
 
 /*
  * sprintf() format string for shared library naming.
@@ -255,15 +224,5 @@
  * Define if printf() supports %zd for size_t arguments
  */
 #define HAVE_PRINTF_ZD 1
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a BSD style function prototype.
- */
-#define HAVE_BSD_QSORT_R 0
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a GNU style function prototype.
- */
-#define HAVE_GNU_QSORT_R 0
 
 #endif /* _ANDROID_CONFIG_H */

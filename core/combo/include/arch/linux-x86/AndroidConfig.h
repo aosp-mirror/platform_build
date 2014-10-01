@@ -63,11 +63,6 @@
 #define  HAVE_TERMIO_H 1
 
 /*
- * Define this if you build against MSVCRT.DLL
- */
-/* #define HAVE_MS_C_RUNTIME */
-
-/*
  * Define this if you have sys/uio.h
  */
 #define  HAVE_SYS_UIO_H 1
@@ -87,11 +82,6 @@
  * Define this if we have gethostbyname_r().
  */
 #define HAVE_GETHOSTBYNAME_R
-
-/*
- * Define this if we want to use WinSock.
- */
-/* #define HAVE_WINSOCK */
 
 /*
  * Define this if have clock_gettime() and friends
@@ -129,28 +119,14 @@
 #define HAVE_SCHED_SETSCHEDULER
 
 /*
- * Add any extra platform-specific defines here.
- */
-
-/*
  * Define if we have <malloc.h> header
  */
 #define HAVE_MALLOC_H
 
 /*
- * Define if we have Linux-style non-filesystem Unix Domain Sockets
- */
-
-/*
  * What CPU architecture does this platform use?
  */
 #define ARCH_X86
-
-
-/*
- * Define if we have Linux's inotify in <sys/inotify.h>.
- */
-/*#define HAVE_INOTIFY 1*/
 
 /*
  * Define if we have madvise() in <sys/mman.h>
@@ -166,11 +142,6 @@
  * Define if dirent struct has d_type field
  */
 #define HAVE_DIRENT_D_TYPE 1
-
-/*
- * Define if libc includes Android system properties implementation.
- */
-/* #define HAVE_LIBC_SYSTEM_PROPERTIES */
 
 /*
  * Define if system provides a system property server (should be
@@ -197,16 +168,6 @@
  * Define if <sys/socket.h> exists.
  */
 #define HAVE_SYS_SOCKET_H 1
-
-/*
- * Define if the strlcpy() function exists on the system.
- */
-/* #define HAVE_STRLCPY 1 */
-
-/*
- * Define if the BSD funopen() function exists on the system.
- */
-/* #define HAVE_FUNOPEN 1 */
 
 /*
  * Define if prctl() exists
@@ -247,19 +208,5 @@
  * Define if printf() supports %zd for size_t arguments
  */
 #define HAVE_PRINTF_ZD 1
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a BSD style function prototype.
- */
-#define HAVE_BSD_QSORT_R 0
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a GNU style function prototype.
- */
-#if defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 8))
-#define HAVE_GNU_QSORT_R 1
-#else
-#define HAVE_GNU_QSORT_R 0
-#endif
 
 #endif /*_ANDROID_CONFIG_H*/
