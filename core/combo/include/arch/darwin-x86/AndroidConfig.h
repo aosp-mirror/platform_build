@@ -84,21 +84,6 @@
 #define HAVE_LOCALTIME_R 1
 
 /*
- * Define this if we have gethostbyname_r().
- */
-/* #define HAVE_GETHOSTBYNAME_R */
-
-/*
- * Define this if we want to use WinSock.
- */
-/* #define HAVE_WINSOCK */
-
-/*
- * Define this if have clock_gettime() and friends
- */
-/* #define HAVE_POSIX_CLOCKS */
-
-/*
  * Endianness of the target machine.  Choose one:
  *
  * HAVE_ENDIAN_H -- have endian.h header we can include.
@@ -231,15 +216,5 @@
  * Define if printf() supports %zd for size_t arguments
  */
 #define HAVE_PRINTF_ZD 1
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a BSD style function prototype.
- */
-#define HAVE_BSD_QSORT_R 1
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a GNU style function prototype.
- */
-#define HAVE_GNU_QSORT_R 0
 
 #endif /*_ANDROID_CONFIG_H*/

@@ -79,21 +79,6 @@
 #define HAVE_SYMLINKS
 
 /*
- * Define this if we have localtime_r().
- */
-/* #define HAVE_LOCALTIME_R 1 */
-
-/*
- * Define this if we have gethostbyname_r().
- */
-/* #define HAVE_GETHOSTBYNAME_R */
-
-/*
- * Define this if we want to use WinSock.
- */
-/* #define HAVE_WINSOCK */
-
-/*
  * Define this if have clock_gettime() and friends
  */
 #define HAVE_POSIX_CLOCKS
@@ -107,14 +92,6 @@
  */
 #define HAVE_ENDIAN_H
 #define HAVE_LITTLE_ENDIAN
-
-/*
- * We need to choose between 32-bit and 64-bit off_t.  All of our code should
- * agree on the same size.  For desktop systems, use 64-bit values,
- * because some of our libraries (e.g. wxWidgets) expect to be built that way.
- */
-/* #define _FILE_OFFSET_BITS 64 */
-/* #define _LARGEFILE_SOURCE 1 */
 
 /*
  * Defined if we have the backtrace() call for retrieving a stack trace.
@@ -176,20 +153,9 @@
 #define HAVE_LIBC_SYSTEM_PROPERTIES 1
 
 /*
- * Define if system provides a system property server (should be
- * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
- */
-/* #define HAVE_SYSTEM_PROPERTY_SERVER */
-
-/*
  * What CPU architecture does this platform use?
  */
 #define ARCH_ARM
-
-/*
- * Define if the size of enums is as short as possible,
- */
-/* #define HAVE_SHORT_ENUMS */
 
 /*
  * sprintf() format string for shared library naming.
@@ -260,15 +226,5 @@
  * Define if printf() supports %zd for size_t arguments
  */
 #define HAVE_PRINTF_ZD 1
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a BSD style function prototype.
- */
-#define HAVE_BSD_QSORT_R 0
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a GNU style function prototype.
- */
-#define HAVE_GNU_QSORT_R 0
 
 #endif /* _ANDROID_CONFIG_H */
