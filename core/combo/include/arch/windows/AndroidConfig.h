@@ -111,34 +111,12 @@
 #define  HAVE_SYS_UIO_H
 #endif
 
-
-/*
- * Define this if we have localtime_r().
- */
-/* #define HAVE_LOCALTIME_R 1 */
-
-/*
- * Define this if we have gethostbyname_r().
- */
-/* #define HAVE_GETHOSTBYNAME_R */
-
 /*
  * Define this if we want to use WinSock.
  */
 #ifndef __CYGWIN__
 #define HAVE_WINSOCK
 #endif
-
-/*
- * Define this if your platforms implements symbolic links
- * in its filesystems
- */
-/* #define HAVE_SYMLINKS */
-
-/*
- * Define this if have clock_gettime() and friends
- */
-/* #define HAVE_POSIX_CLOCKS */
 
 /*
  * Endianness of the target machine.  Choose one:
@@ -169,32 +147,6 @@
 #define HAVE_BACKTRACE 0
 
 /*
- * Define if tm struct has tm_gmtoff field
- */
-/* #define HAVE_TM_GMTOFF 1 */
-
-/*
- * Define if dirent struct has d_type field
- */
-/* #define HAVE_DIRENT_D_TYPE 1 */
-
-/*
- * Define if libc includes Android system properties implementation.
- */
-/* #define HAVE_LIBC_SYSTEM_PROPERTIES */
-
-/*
- * Define if system provides a system property server (should be
- * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
- */
-/* #define HAVE_SYSTEM_PROPERTY_SERVER */
-
-/*
- * Define if we have madvise() in <sys/mman.h>
- */
-/*#define HAVE_MADVISE 1*/
-
-/*
  * Add any extra platform-specific defines here.
  */
 #define WIN32 1                 /* stock Cygwin doesn't define these */
@@ -219,11 +171,6 @@
 #define OS_PATH_SEPARATOR '\\'
 
 /*
- * Is the filesystem case sensitive?
- */
-/* #define OS_CASE_SENSITIVE */
-
-/*
  * Define if <sys/socket.h> exists.
  * Cygwin has it, but not MinGW.
  */
@@ -232,16 +179,6 @@
 #else
 #define HAVE_SYS_SOCKET_H 1
 #endif
-
-/*
- * Define if the strlcpy() function exists on the system.
- */
-/* #define HAVE_STRLCPY 1 */
-
-/*
- * Define if the BSD funopen() function exists on the system.
- */
-/* #define HAVE_FUNOPEN 1 */
 
 /*
  * Define if <winsock2.h> exists.
@@ -261,48 +198,8 @@
 #endif
 
 /*
- * Define if writev() exists.
- */
-/* #define HAVE_WRITEV */
-
-/*
- * Define if <stdint.h> exists.
- */
-/* #define HAVE_STDINT_H */
-
-/*
  * Define if <stdbool.h> exists.
  */
 #define HAVE_STDBOOL_H
-
-/*
- * Define if <sched.h> exists.
- */
-/* #define HAVE_SCHED_H */
-
-/*
- * Define if pread() exists
- */
-/* #define HAVE_PREAD 1 */
-
-/*
- * Define if we have st_mtim in struct stat
- */
-/* #define HAVE_STAT_ST_MTIM 1 */
-
-/*
- * Define if printf() supports %zd for size_t arguments
- */
-/* #define HAVE_PRINTF_ZD 1 */
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a BSD style function prototype.
- */
-#define HAVE_BSD_QSORT_R 0
-
-/*
- * Define to 1 if <stdlib.h> provides qsort_r() with a GNU style function prototype.
- */
-#define HAVE_GNU_QSORT_R 0
 
 #endif /*_ANDROID_CONFIG_H*/
