@@ -157,8 +157,10 @@ else
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 
-# Disable dex-preopt of prebuilts to save space
+# Disable dex-preopt of prebuilts to save space, if requested.
+ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
 LOCAL_DEX_PREOPT := false
+endif
 
 #######################################
 # defines built_odex along with rule to install odex
