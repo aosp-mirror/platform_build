@@ -423,8 +423,10 @@ endif
 ## APK splits
 ifdef LOCAL_PACKAGE_SPLITS
 # LOCAL_PACKAGE_SPLITS is a list of resource labels.
-built_apk_splits := $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/package_$(s).apk)
-installed_apk_splits := $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+# aapt will convert comma inside resource lable to underscore in the file names.
+my_split_suffixes := $(subst $(comma),_,$(LOCAL_PACKAGE_SPLITS))
+built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk)
+installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
 # The splits should have been built in the same command building the base apk.
 # This rule just runs signing and zipalign etc.
@@ -449,7 +451,7 @@ $(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_modu
 # Register the additional built and installed files.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
-  $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+  $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
 # Make sure to install the splits when you run "make <module_name>".
 $(my_register_name): $(installed_apk_splits)
