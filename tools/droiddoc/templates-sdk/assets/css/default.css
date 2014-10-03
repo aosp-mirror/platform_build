@@ -4203,6 +4203,14 @@ EndColorStr='#ececec');
   z-index: 52;
 }
 
+/* offset the <a name=""> tags in reference to account for sticky nav */
+body.reference a[name] {
+  visibility: hidden;
+  display: block;
+  position: relative;
+  top: -56px;
+}
+
 
 }
 
