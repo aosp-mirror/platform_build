@@ -71,11 +71,20 @@ CTS_TEST_JAR_FILES := $(foreach c,$(CTS_TEST_JAR_LIST),$(call intermediates-dir-
 -include cts/CtsTestCaseList.mk
 CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
 
+# A module may have mutliple installed files (e.g. split apks)
+CTS_CASE_LIST_APKS :=
+CTS_CASE_LIST_APKS_DIR := $(cts_dir)/$(cts_name)/repository/testcases/
+$(foreach m, $(CTS_CASE_LIST),\
+  $(foreach fp, $(ALL_MODULES.$(m).BUILT_INSTALLED),\
+    $(eval pair := $(subst :,$(space),$(fp)))\
+    $(eval built := $(word 1,$(pair)))\
+    $(eval installed := $(CTS_CASE_LIST_APKS_DIR)/$(notdir $(word 2,$(pair))))\
+    $(eval $(call copy-one-file, $(built), $(installed)))\
+    $(eval CTS_CASE_LIST_APKS += $(installed))))
+
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
-CTS_TEST_CASE_LIST_FILES := $(foreach c, $(CTS_TEST_CASE_LIST), $(call intermediates-dir-for,APPS,$(c))/package.apk)
-$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST_FILES) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP) $(CTS_TEST_JAR_FILES)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP) $(CTS_TEST_JAR_FILES)
 # Make necessary directory for CTS
-	$(hide) rm -rf $(PRIVATE_CTS_DIR)
 	$(hide) mkdir -p $(TMP_DIR)
 	$(hide) mkdir -p $(PRIVATE_DIR)/docs
 	$(hide) mkdir -p $(PRIVATE_DIR)/tools
@@ -86,7 +95,6 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_C
 	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
 # Change mode of the executables
 	$(foreach jar,$(CTS_TEST_JAR_LIST),$(call copy-testcase-jar,$(jar)))
-	$(foreach apk,$(CTS_CASE_LIST),$(call copy-testcase-apk,$(apk)))
 	$(foreach testcase,$(CTS_TEST_CASES),$(call copy-testcase,$(testcase)))
 	$(hide) touch $@
 
@@ -354,12 +362,6 @@ $(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN)
 cts: $(INTERNAL_CTS_TARGET) adb
 $(call dist-for-goals,cts,$(INTERNAL_CTS_TARGET))
 
-define copy-testcase-apk
-
-$(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk \
-	$(PRIVATE_DIR)/repository/testcases/$(1).apk
-
-endef
 
 define copy-testcase
 
@@ -373,4 +375,3 @@ $(hide) $(ACP) -fp $(call intermediates-dir-for,JAVA_LIBRARIES,$(1))/javalib.jar
 	$(PRIVATE_DIR)/repository/testcases/$(1).jar
 
 endef
-
