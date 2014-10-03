@@ -6,6 +6,8 @@
 
 <body class="gc-documentation <?cs if:(reference.gms || reference.gcm) ?>google<?cs /if ?>
   <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
+    if:reference ?> reference<?cs
+    /if ?><?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
   /if ?>">
