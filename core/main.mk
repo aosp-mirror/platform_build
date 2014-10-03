@@ -378,10 +378,12 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
           $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))) \
           ro.setupwizard.mode=OPTIONAL
 endif
-# Don't even verify the image on eng builds to speed startup
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-none
-# Don't compile apps on eng builds to speed startup
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=interpret-only
+ifndef is_sdk_build
+  # Don't even verify the image on eng builds to speed startup
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-none
+  # Don't compile apps on eng builds to speed startup
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=interpret-only
+endif
 endif
 
 ## sdk ##
