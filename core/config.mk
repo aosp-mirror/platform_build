@@ -18,6 +18,14 @@ endif
 empty :=
 space := $(empty) $(empty)
 comma := ,
+# Note that make will eat the newline just before endef.
+define newline
+
+
+endef
+# Unfortunately you can't simply define backslash as \ or \\.
+backslash := \a
+backslash := $(patsubst %a,%,$(backslash))
 
 # Tell python not to spam the source tree with .pyc files.  This
 # only has an effect on python 2.6 and above.
