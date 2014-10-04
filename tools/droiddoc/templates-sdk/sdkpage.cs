@@ -622,7 +622,7 @@ var:sdk.linux_download
           }
         }, 500);
       });
-      _gaq.push(['_trackEvent', 'SDK', 'ADT and Tools', $("#downloadForRealz").html()]);
+      ga('send', 'event', 'SDK', 'IDE and Tools', $("#downloadForRealz").html());
       return true;
     } else {
       $("label#agreeLabel,#bitpicker input").parent().stop().animate({color: "#258AAF"}, 200,
