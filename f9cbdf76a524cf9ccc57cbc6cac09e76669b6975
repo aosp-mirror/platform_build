@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "701a9cb5_a6ac06b0",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-04T00:14:33Z",
+      "side": 1,
+      "message": "So we don\u0027t need this now.",
+      "revId": "f9cbdf76a524cf9ccc57cbc6cac09e76669b6975",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
