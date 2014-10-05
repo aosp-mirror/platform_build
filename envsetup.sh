@@ -1046,6 +1046,10 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx:$OUT_VENDOR_SO_SYMBOLS:$OUT_VENDOR_SO_SYMBOLS/hw:$OUT_VENDOR_SO_SYMBOLS/egl"
        echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+       # Enable special debugging for ART processes.
+       if [[ $EXE =~ (^|/)(app_process|dalvikvm)(|32|64)$ ]]; then
+          echo >> "$OUT_ROOT/gdbclient.cmds" "art-on"
+       fi
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
        local WHICH_GDB=
