@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0342809_3557881d",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-10-06T18:12:06Z",
+      "side": 1,
+      "message": "maybe add a comment as to the use case such as \n\n# Default to debug version to help find bugs,\n# but allow it to be disabled for benchmarking.\n\nbut is that really the reason?",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 35
+      },
+      "revId": "5ab7b9c42dbf7c6181cfdf051a9dabd363424d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
