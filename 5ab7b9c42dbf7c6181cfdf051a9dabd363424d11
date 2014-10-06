@@ -22,6 +22,30 @@
       "revId": "5ab7b9c42dbf7c6181cfdf051a9dabd363424d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90b9d0ac_a197f21d",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2014-10-06T18:17:39Z",
+      "side": 1,
+      "message": "Done. The reason is to allow just building release versions of dex2oat and not always debug+release versions.",
+      "parentUuid": "d0342809_3557881d",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 35
+      },
+      "revId": "5ab7b9c42dbf7c6181cfdf051a9dabd363424d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
