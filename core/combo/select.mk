@@ -106,6 +106,11 @@ ifneq ($(USE_CCACHE),)
   endif
 endif
 
+# Stash the original values of CC and CXX so we can still use the non-wrapped
+# values later.
+$(combo_2nd_arch_prefix)CC_BARE := $($(combo_var_prefix)CC)
+$(combo_2nd_arch_prefix)CXX_BARE := $($(combo_var_prefix)CXX)
+
 # The C/C++ compiler can be wrapped by setting the CC/CXX_WRAPPER vars.
 ifdef CC_WRAPPER
   ifneq ($(CC_WRAPPER),$(firstword $($(combo_var_prefix)CC)))
