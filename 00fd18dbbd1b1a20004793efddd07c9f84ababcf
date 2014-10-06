@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0d5f401_a3650404",
+        "filename": "core/find-jdk-tools-jar.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-06T20:33:11Z",
+      "side": 1,
+      "message": "In the above two commands on Mac, it prints error. you can redirect the stderr to /dev/null.",
+      "revId": "00fd18dbbd1b1a20004793efddd07c9f84ababcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
