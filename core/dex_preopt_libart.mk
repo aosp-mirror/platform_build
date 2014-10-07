@@ -22,7 +22,7 @@ PRELOADED_CLASSES := frameworks/base/preloaded-classes
 # Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
 ifneq ($(USE_DEX2OAT_DEBUG), false)
 DEX2OAT = $(DEX2OATD)
-DEX2OAT_DEPENDECY = $(DEX2OATD_DEPENDENCY)
+DEX2OAT_DEPENDENCY = $(DEX2OATD_DEPENDENCY)
 endif
 
 # start of image reserved address space
