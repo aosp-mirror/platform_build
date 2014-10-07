@@ -2540,8 +2540,8 @@ google.setOnLoadCallback(function(){
 function offsetScrollForSticky() {
   var hash = escape(location.hash.substr(1));
   var $matchingElement = $("#"+hash);
-  // Sanity check that hash is a real hash and that there's an element with that ID on the page
-  if ((hash.indexOf("#") == 0) && $matchingElement.length) {
+  // Sanity check that there's an element with that ID on the page
+  if ($matchingElement.length) {
     // If the position of the target element is near the top of the page (<20px, where we expect it
     // to be because we need to move it down 60px to become in view), then move it down 60px
     if (Math.abs($matchingElement.offset().top - $(window).scrollTop()) < 20) {
