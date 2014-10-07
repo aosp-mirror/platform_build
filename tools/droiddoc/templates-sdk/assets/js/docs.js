@@ -1642,8 +1642,8 @@ var gDocsListLength = 0;
 
 function onSuggestionClick(link) {
   // When user clicks a suggested document, track it
-  _gaq.push(['_trackEvent', 'Suggestion Click', 'clicked: ' + $(link).text(),
-            'from: ' + $("#search_autocomplete").val()]);
+  ga('send', 'event', 'Suggestion Click', 'clicked: ' + $(link).text(),
+            'from: ' + $("#search_autocomplete").val());
 }
 
 function set_item_selected($li, selected)
@@ -2610,8 +2610,8 @@ function addResultClickListeners() {
   $("#searchResults a.gs-title").each(function(index, link) {
     // When user clicks enter for Google search results, track it
     $(link).click(function() {
-      _gaq.push(['_trackEvent', 'Google Click', 'clicked: ' + $(this).text(),
-                'from: ' + $("#search_autocomplete").val()]);
+      ga('send', 'event', 'Google Click', 'clicked: ' + $(this).text(),
+                'from: ' + $("#search_autocomplete").val());
     });
   });
 }
