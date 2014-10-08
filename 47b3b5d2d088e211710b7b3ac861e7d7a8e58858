@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "f0992c84_181e2dd2",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-10-08T22:59:56Z",
+      "side": 1,
+      "message": "I think this is making it confusing as to whose flag has precedent. If a project sets LOCAL_DEX_PREOPT :\u003d true then this is overridden by $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG) being set false but the opposite isn\u0027t true. I\u0027m awash in a see of global variables anyway...",
+      "parentUuid": "f0b4ccdf_295b99d2",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0a334b2_b3346200",
         "filename": "core/product.mk",
         "patchSetId": 3
