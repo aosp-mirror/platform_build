@@ -22,6 +22,24 @@
       "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b007b451_8ba29e09",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T16:45:28Z",
+      "side": 1,
+      "message": "Sorry, I forgot that bit.\nDone.",
+      "parentUuid": "50c5985b_d8c03126",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
