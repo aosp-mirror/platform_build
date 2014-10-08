@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10116099_defd7745",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T23:53:46Z",
+      "side": 1,
+      "message": "This isn\u0027t correct now.",
+      "revId": "9662f9713fecb22812c848884f41830521eb6133",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0820c18_caa6834c",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T23:53:46Z",
+      "side": 1,
+      "message": "... explicitly sets LOCAL_NATIVE_COVERAGE :\u003d true",
+      "revId": "9662f9713fecb22812c848884f41830521eb6133",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
