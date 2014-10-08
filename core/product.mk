@@ -100,14 +100,18 @@ _product_var_list := \
     PRODUCT_FACTORY_BUNDLE_MODULES \
     PRODUCT_RUNTIMES \
     PRODUCT_BOOT_JARS \
-    PRODUCT_DEX_PREOPT_IMAGE_IN_DATA \
     PRODUCT_SUPPORTS_VERITY \
     PRODUCT_OEM_PROPERTIES \
     PRODUCT_SYSTEM_PROPERTY_BLACKLIST \
     PRODUCT_SYSTEM_SERVER_JARS \
     PRODUCT_VERITY_SIGNING_KEY \
     PRODUCT_SYSTEM_VERITY_PARTITION \
-    PRODUCT_VENDOR_VERITY_PARTITION
+    PRODUCT_VENDOR_VERITY_PARTITION \
+    PRODUCT_DEX_PREOPT_IMAGE_IN_DATA \
+    PRODUCT_DEX_PREOPT_MODULE_CONFIGS \
+    PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
+    PRODUCT_DEX_PREOPT_BOOT_FLAGS \
+
 
 define dump-product
 $(info ==== $(1) ====)\
@@ -298,4 +302,15 @@ endef
 
 define add-to-product-copy-files-if-exists
 $(if $(wildcard $(word 1,$(subst :, ,$(1)))),$(1))
+endef
+
+# whitespace placeholder when we record module's dex-preopt config.
+_PDPMC_SP_PLACE_HOLDER := |@SP@|
+# Set up dex-preopt config for a module.
+# $(1) list of module names
+# $(2) the modules' dex-preopt config
+define add-product-dex-preopt-module-config
+$(eval _c := $(subst $(space),$(_PDPMC_SP_PLACE_HOLDER),$(strip $(2))))\
+$(eval PRODUCT_DEX_PREOPT_MODULE_CONFIGS += \
+  $(foreach m,$(1),$(m)=$(_c)))
 endef

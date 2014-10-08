@@ -11,7 +11,12 @@ else # WITH_DEXPREOPT=true
     ifndef LOCAL_DEX_PREOPT # LOCAL_DEX_PREOPT undefined
       ifneq ($(filter $(TARGET_OUT)/%,$(my_module_path)),) # Installed to system.img.
         ifeq (,$(LOCAL_APK_LIBRARIES)) # LOCAL_APK_LIBRARIES empty
-          LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
+          # If we have product-specific config for this module?
+          ifeq (disable,$(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG))
+            LOCAL_DEX_PREOPT := false
+          else
+            LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
+          endif
         else # LOCAL_APK_LIBRARIES not empty
           LOCAL_DEX_PREOPT := nostripping
         endif # LOCAL_APK_LIBRARIES not empty
@@ -94,6 +99,14 @@ endif  # libart
 endif  # boot jar
 
 ifdef built_odex
+ifndef LOCAL_DEX_PREOPT_FLAGS
+LOCAL_DEX_PREOPT_FLAGS := $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG)
+ifndef LOCAL_DEX_PREOPT_FLAGS
+LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
+endif
+endif
+$(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
+
 # Use pattern rule - we may have multiple installed odex files.
 # Ugly syntax - See the definition get-odex-file-path.
 $(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(installed_odex))) \
