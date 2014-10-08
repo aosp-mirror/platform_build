@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50c5985b_d8c03126",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-10-08T03:30:52Z",
+      "side": 1,
+      "message": "I think if we had PRODUCT_DEX_PREOPT_BOOT_DEFAULT_FLAGS as well, we could use that for WITH_ART_SMALL_MODE so it wouldn\u0027t have to be a \"#if ART_SMALL_MODE\" in the code (assuming we also set some PRODUCT_PROPERTY_OVERRIDES as well. but that can be another change.",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 41
+      },
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
