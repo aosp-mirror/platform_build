@@ -66,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "f0b4ccdf_295b99d2",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T17:12:03Z",
+      "side": 1,
+      "message": "No, as the commit message says $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG) can be used either to disable LOCAL_DEX_PREOPT or pass dex2oat command line flags, for which we added a new LOCAL_DEX_PREOPT_FLAGS.",
+      "parentUuid": "90a8f091_efd60179",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0a334b2_b3346200",
         "filename": "core/product.mk",
         "patchSetId": 3
@@ -83,6 +101,24 @@
         "endLine": 294,
         "endChar": 25
       },
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b007b451_0b850e63",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T17:12:03Z",
+      "side": 1,
+      "message": "We want to replace all whitespaces in the config with the following string, so it appears as a single word in PRODUCT_DEX_PREOPT_MODULE_CONFIGS.",
+      "parentUuid": "b0a334b2_b3346200",
       "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -135,6 +171,42 @@
     },
     {
       "key": {
+        "uuid": "b007b451_4b66f64a",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T17:12:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b0a334b2_136b6ee4",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b007b451_ab6b2210",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T17:12:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90a8f091_efad21f9",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90a8f091_cfb05d54",
         "filename": "core/product_config.mk",
         "patchSetId": 3
@@ -152,6 +224,24 @@
         "endLine": 422,
         "endChar": 32
       },
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10bfa0c3_79c8ff7f",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T17:12:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "90a8f091_cfb05d54",
       "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
