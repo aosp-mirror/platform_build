@@ -50,7 +50,9 @@ echo "ro.build.product=$TARGET_DEVICE"
 echo "# Do not try to parse description, fingerprint, or thumbprint"
 echo "ro.build.description=$PRIVATE_BUILD_DESC"
 echo "ro.build.fingerprint=$BUILD_FINGERPRINT"
-echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
+if [ -n "$BUILD_THUMBPRINT" ] ; then
+  echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
+fi
 echo "ro.build.characteristics=$TARGET_AAPT_CHARACTERISTICS"
 
 echo "# end build properties"
