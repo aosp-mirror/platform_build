@@ -43,6 +43,23 @@
     },
     {
       "key": {
+        "uuid": "f0992c84_9b64d7bf",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T23:31:00Z",
+      "side": 1,
+      "message": "See here.",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90a8f091_efd60179",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 3
@@ -96,6 +113,24 @@
       "side": 1,
       "message": "I think this is making it confusing as to whose flag has precedent. If a project sets LOCAL_DEX_PREOPT :\u003d true then this is overridden by $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG) being set false but the opposite isn\u0027t true. I\u0027m awash in a see of global variables anyway...",
       "parentUuid": "f0b4ccdf_295b99d2",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0992c84_3b768b7c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-08T23:31:00Z",
+      "side": 1,
+      "message": "No, we run to this point only if LOCAL_DEX_PREOPT is not set by the project. The precedence is:\nproject\u0027s LOCAL variable \u003e $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG)  \u003e $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)",
+      "parentUuid": "f0992c84_181e2dd2",
       "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
