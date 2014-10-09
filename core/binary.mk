@@ -261,8 +261,10 @@ my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAG
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
 endif # my_clang
 
-# If the global flag NATIVE_COVERAGE is set, my_native_coverage will be true
-# unless the module explicitly sets my_native_coverage := false.
+# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
+# build with NATIVE_COVERAGE=true in your enviornment. Note that the build
+# system is not sensitive to changes to NATIVE_COVERAGE, so you should do a
+# clean build of your module after toggling it.
 ifeq ($(NATIVE_COVERAGE),true)
     ifeq ($(my_native_coverage),true)
         # We can't currently generate coverage for clang binaries for two
@@ -278,8 +280,8 @@ ifeq ($(NATIVE_COVERAGE),true)
         #    -no-integrated-as. Since most of the assembly in our tree is
         #    incompatible with clang's assembler, we can't turn off this flag.
         ifneq ($(my_clang),true)
-            my_target_global_cflags += --coverage
-            my_target_global_ldflags += --coverage
+            my_cflags += --coverage -O0
+            my_ldflags += --coverage
         endif
     endif
 else
