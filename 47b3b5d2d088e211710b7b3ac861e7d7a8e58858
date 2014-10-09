@@ -137,6 +137,24 @@
     },
     {
       "key": {
+        "uuid": "10bfa0c3_b254694d",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-10-09T22:35:24Z",
+      "side": 1,
+      "message": "But why can\u0027t $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG) be other values than false to override?",
+      "parentUuid": "f0992c84_3b768b7c",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0a334b2_b3346200",
         "filename": "core/product.mk",
         "patchSetId": 3
