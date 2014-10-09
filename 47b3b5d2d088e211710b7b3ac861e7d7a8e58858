@@ -155,6 +155,41 @@
     },
     {
       "key": {
+        "uuid": "5073d823_eb85052c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-09T22:48:24Z",
+      "side": 1,
+      "message": "Sure it can.",
+      "parentUuid": "10bfa0c3_b254694d",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9081d019_b0c53e47",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-09T22:48:24Z",
+      "side": 1,
+      "message": "Here is when $(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG) is other value than false.",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0a334b2_b3346200",
         "filename": "core/product.mk",
         "patchSetId": 3
