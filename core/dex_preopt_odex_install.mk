@@ -25,7 +25,7 @@ endif
 ifdef LOCAL_UNINSTALLABLE_MODULE
 LOCAL_DEX_PREOPT :=
 endif
-ifeq (,$(strip $(all_java_sources)$(full_static_java_libs)$(my_prebuilt_src_file))) # contains no java code
+ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file))) # contains no java code
 LOCAL_DEX_PREOPT :=
 endif
 # if module oat file requested in data, disable LOCAL_DEX_PREOPT, will default location to dalvik-cache
