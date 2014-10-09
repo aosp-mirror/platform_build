@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f0992c84_26cf4ebd",
+        "filename": "core/binary.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-09T00:06:12Z",
+      "side": 1,
+      "message": "I just found $(my_libcxx) has been removed by this CL. You need to update the use of PRIVATE_LIBCXX as well.",
+      "revId": "b05f2ca150dddf2a2a5ef0ae683181e3b979ef2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
