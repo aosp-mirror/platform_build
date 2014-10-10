@@ -80,7 +80,7 @@ $(foreach cf,$(files_to_copy), \
  )
 
 # The system-image source.properties is a template that we directly expand in-place
-addon_img_source_prop := $(call append-path,$(staging),$(addon_dir_img))/images/source.properties
+addon_img_source_prop := $(call append-path,$(staging),$(addon_dir_img))/images/$(TARGET_CPU_ABI)/source.properties
 sdk_addon_deps += $(addon_img_source_prop)
 
 $(addon_img_source_prop): $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP)
@@ -113,7 +113,7 @@ $(full_target): $(sdk_addon_deps) | $(ACP)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rq $$F $(notdir $(PRIVATE_STAGING_DIR)) )
 
-$(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon_dir_img))
+$(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon_dir_img))/images/$(TARGET_CPU_ABI)
 $(full_target_img): $(full_target) $(addon_img_source_prop)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
