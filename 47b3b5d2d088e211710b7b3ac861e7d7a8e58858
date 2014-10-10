@@ -190,6 +190,24 @@
     },
     {
       "key": {
+        "uuid": "10bfa0c3_156c27a3",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-10-10T00:23:13Z",
+      "side": 1,
+      "message": "But in that case the value is flags. What if I set DEX_PREOPT_DEFAULT:\u003dfalse then try to set specific things to true?",
+      "parentUuid": "9081d019_b0c53e47",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0a334b2_b3346200",
         "filename": "core/product.mk",
         "patchSetId": 3
