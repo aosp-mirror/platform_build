@@ -208,6 +208,24 @@
     },
     {
       "key": {
+        "uuid": "106de043_66c87080",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-10T00:40:25Z",
+      "side": 1,
+      "message": "Sorry, I don\u0027t understand. If DEX_PREOPT_DEFAULT:\u003dfalse, we don\u0027t do dex-preot for the module at all. Why bother to set module specific thing?\nAlso I believe we introduced DEX_PREOPT_DEFAULT to accommodate  \"nostripping\" when we wanted to preserve the classes.dex inside apks to allow dual boot. This flag should be gone now as we have removed dalvik.\nAgain, this change allows  you to attach an arbitrary string to a module in a product configuration. It\u0027s not meant to finalize how we interpret the string. We can improve that when the requirement becomes clearer.",
+      "parentUuid": "10bfa0c3_156c27a3",
+      "revId": "47b3b5d2d088e211710b7b3ac861e7d7a8e58858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b0a334b2_b3346200",
         "filename": "core/product.mk",
         "patchSetId": 3
