@@ -15,6 +15,5 @@ ARCH_X86_HAVE_MOVBE  := true
 # CFLAGS for this arch
 arch_variant_cflags := \
 	-march=slm \
-	-mstackrealign \
 	-mfpmath=sse \
 

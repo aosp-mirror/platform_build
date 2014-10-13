@@ -13,6 +13,5 @@ ARCH_X86_HAVE_MOVBE  := false
 # CFLAGS for this arch
 arch_variant_cflags := \
 	-march=core-avx-i \
-	-mstackrealign \
 	-mfpmath=sse \
 
