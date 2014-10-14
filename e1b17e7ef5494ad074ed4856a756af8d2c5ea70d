@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9090f09a_d8fb818c",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-10-14T21:48:12Z",
+      "side": 1,
+      "message": "Is there a reason this wasn\u0027t being done for x86 before? Was this just an error in not copying the changes from the other arches? (We should really do something about this duplication...)",
+      "revId": "e1b17e7ef5494ad074ed4856a756af8d2c5ea70d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
