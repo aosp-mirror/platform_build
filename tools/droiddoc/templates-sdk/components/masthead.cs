@@ -303,6 +303,9 @@ color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
 
 <?cs # (UN)COMMENT THE INSIDE OF THIS METHOD TO TOGGLE VISIBILITY ?>
 <?cs def:butter_bar() ?>
+
+<?cs # HIDE THE BUTTER BAR
+
     <div style="height:20px"><!-- spacer to bump header down --></div>
     <div id="butterbar-wrapper">
       <div id="butterbar">
@@ -311,4 +314,7 @@ color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
         </a>
       </div>
     </div>
+
+?>    
+
 <?cs /def ?>
