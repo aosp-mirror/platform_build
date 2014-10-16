@@ -16,6 +16,24 @@
       "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70f37c1b_41e3f436",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-10-16T17:25:25Z",
+      "side": 1,
+      "message": "That would make it impossible to work around chromium when I\u0027m trying to build with libc++ as the default. They have ~4000 makefiles, all of which need to have LOCAL_CXX_STL :\u003d stlport added to them in several places. I talked to them about fixing the makefiles, and they said the only way to do this would be to change gyp itself (the tool that generates their makefiles).\n\nAs such, my way around it is to just use sed to insert a LOCAL_CXX_STL :\u003d stlport after every include $(CLEAR_VARS) in chromium_org, including host modules. I can\u0027t just test for include $(BUILD_HOST...) because they don\u0027t always call that; they sometimes include some auxiliary makefile that does it for them.\n\nThis change preserves the intended behavior. No one wants stlport on the host (if you find someone that thinks otherwise, send them to me and I\u0027ll tell them why they\u0027re wrong :) ). stlport is only used to get features that somewhat approximate what the host stdlib gives them, so the intent for host modules is really to just use the system\u0027s stdlib.",
+      "parentUuid": "505bd8e0_942dd236",
+      "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
