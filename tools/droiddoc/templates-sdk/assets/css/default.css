@@ -1246,7 +1246,7 @@ code {
 legend {
     display: none;
 }
-a:link, a:visited {
+a:link, a:visited, .link-color {
   color: #258aaf;
   text-decoration: none;
 }
@@ -7346,4 +7346,47 @@ a.home-new-cta-btn:hover,
     display: block;
     font-style: italic;
     color: #F80;
+}
+
+
+
+/* Helpouts widget */
+.resource-card-6x2.helpouts-card {
+  width: 220px;
+  height: 40px;
+  position:absolute;
+  z-index:999;
+  top:-8px;
+  right:1px;
+}
+
+.resource-card-6x2.helpouts-card > .card-info {
+  left:35px;
+  height:35px;
+  padding:4px 8px 4px 0;
+}
+
+.resource-card-6x2.helpouts-card > .card-info .helpouts-description {
+  display:block;
+  overflow:visible;
+  font-size:12px;
+  line-height:12px;
+  text-align:right;
+  color:#666;
+}
+
+.helpouts-description .link-color {
+  text-transform: uppercase;
+}
+
+.resource-card-6x2 > .card-bg.helpouts-card-bg {
+  width:35px;
+  height:35px;
+  margin:2px 0 0 0;
+  background-image: url(../images/styles/helpouts-logo-35_2x.png);
+  background-image: -webkit-image-set(url(../images/styles/helpouts-logo-35.png) 1x, url(../images/styles/helpouts-logo-35_2x.png) 2x);
+}
+
+.resource-card-6x2 > .card-bg.helpouts-card-bg:after {
+  display:none;
 }
