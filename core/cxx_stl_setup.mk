@@ -38,11 +38,14 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_ldlibs += -lc -lm
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
-    my_c_includes += external/stlport/stlport bionic/libstdc++/include bionic
-    ifeq ($(my_cxx_stl),stlport)
-        my_shared_libraries += libstdc++ libstlport
-    else
-        my_static_libraries += libstdc++ libstlport_static
+    ifndef LOCAL_IS_HOST_MODULE
+        my_c_includes += external/stlport/stlport bionic/libstdc++/include \
+                         bionic
+        ifeq ($(my_cxx_stl),stlport)
+            my_shared_libraries += libstdc++ libstlport
+        else
+            my_static_libraries += libstdc++ libstlport_static
+        endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
     # Using an NDK STL. Handled farther up in this file.
