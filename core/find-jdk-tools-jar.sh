@@ -2,7 +2,13 @@
 if [ "x$ANDROID_JAVA_HOME" != x ] && [ -e "$ANDROID_JAVA_HOME/lib/tools.jar" ] ; then
     echo $ANDROID_JAVA_HOME/lib/tools.jar
 else
-    JAVAC=$(which javac)
+    JAVAC=$(realpath $(which javac) 2>/dev/null)
+    if [ -z "$JAVAC" ]; then
+        JAVAC=$(readlink -f $(which javac) 2>/dev/null)
+    fi
+    if [ -z "$JAVAC" ]; then
+        JAVAC=$(which javac)
+    fi
     if [ -z "$JAVAC" ] ; then
         exit 1
     fi
