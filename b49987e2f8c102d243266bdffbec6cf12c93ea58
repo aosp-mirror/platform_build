@@ -52,6 +52,24 @@
       "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90ee3033_a24c80be",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-10-16T17:53:04Z",
+      "side": 1,
+      "message": "Based on a previous discussion with torne, it\u0027s best to just sidestep that issue for the time being. I don\u0027t plan on checking in my sed nightmare, it\u0027s just for development purposes.",
+      "parentUuid": "d0218832_1c07a30b",
+      "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
