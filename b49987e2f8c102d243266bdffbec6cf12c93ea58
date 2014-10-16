@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "505bd8e0_942dd236",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-16T17:12:49Z",
+      "side": 1,
+      "message": "$(error) if someone use stlport in host module.",
+      "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
