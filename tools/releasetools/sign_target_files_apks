@@ -175,10 +175,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     out_info = copy.copy(info)
 
     if (info.filename == "META/misc_info.txt" and
-        OPTIONS.replace_verity_public_key):
+        OPTIONS.replace_verity_private_key):
       ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info, OPTIONS.replace_verity_private_key[1])
     elif (info.filename == "BOOT/RAMDISK/verity_key" and
-        OPTIONS.replace_verity_private_key):
+        OPTIONS.replace_verity_public_key):
       ReplaceVerityPublicKey(output_tf_zip, OPTIONS.replace_verity_public_key[1])
     elif (info.filename.startswith("BOOT/") or
         info.filename.startswith("RECOVERY/") or
@@ -216,10 +216,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                             "SYSTEM/etc/security/otacerts.zip")):
       # don't copy these files if we're regenerating them below
       pass
-    elif (OPTIONS.replace_verity_public_key and
+    elif (OPTIONS.replace_verity_private_key and
           info.filename == "META/misc_info.txt"):
       pass
-    elif (OPTIONS.replace_verity_private_key and
+    elif (OPTIONS.replace_verity_public_key and
           info.filename == "BOOT/RAMDISK/verity_key"):
       pass
     else:
