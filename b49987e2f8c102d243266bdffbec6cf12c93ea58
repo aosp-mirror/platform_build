@@ -34,6 +34,24 @@
       "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0218832_1c07a30b",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-16T17:50:00Z",
+      "side": 1,
+      "message": "Do you plan to move permanently to libc++ in chromium? I don\u0027t think you can modify the makefiles manually. Torne should be able to help add LOCAL_CXX_STL support to the gyp-to-Android.mk generator, based on if it\u0027s host or target module.",
+      "parentUuid": "70f37c1b_41e3f436",
+      "revId": "b49987e2f8c102d243266bdffbec6cf12c93ea58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
