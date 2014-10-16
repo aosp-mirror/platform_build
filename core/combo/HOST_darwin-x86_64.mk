@@ -37,8 +37,8 @@ HOST_TOOLCHAIN_PREFIX := $(HOST_TOOLCHAIN_ROOT)/bin/i686-apple-darwin$(gcc_darwi
 ifneq (,$(strip $(wildcard $(HOST_TOOLCHAIN_PREFIX)-gcc)))
 HOST_CC  := $(HOST_TOOLCHAIN_PREFIX)-gcc
 HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)-g++
-ifeq ($(mac_sdk_version),10.8)
-# Mac SDK 10.8 no longer has stdarg.h, etc
+ifneq ($(filter 10.8 10.9, $(mac_sdk_version)),)
+# Mac SDK 10.8+ no longer has stdarg.h, etc
 host_toolchain_header := $(HOST_TOOLCHAIN_ROOT)/lib/gcc/i686-apple-darwin$(gcc_darwin_version)/4.2.1/include
 HOST_GLOBAL_CFLAGS += -isystem $(host_toolchain_header)
 endif
