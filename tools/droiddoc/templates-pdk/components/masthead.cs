@@ -2,8 +2,8 @@
 def:custom_masthead() ?>
   <div id="header">
       <div id="headerLeft">
-          <a href="<?cs var:toroot ?>guide/getting_started.html"><img
-              src="<?cs var:toroot ?>assets/images/open_source.png" alt="Android Open Source Project" /></a>
+          <a href="<?cs var:toroot ?>guide/index.html"><img
+              src="<?cs var:toroot ?>assets/images/android-partner-logo.png" alt="Android Platform Development Kit" /></a>
        
       </div>
       <div id="headerRight">
