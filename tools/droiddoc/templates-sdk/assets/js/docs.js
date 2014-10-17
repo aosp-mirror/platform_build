@@ -2538,6 +2538,9 @@ google.setOnLoadCallback(function(){
 /* Adjust the scroll position to account for sticky header, only if the hash matches an id.
    This does not handle <a name=""> tags. Some CSS fixes those, but only for reference docs. */
 function offsetScrollForSticky() {
+  // Ignore if there's no search bar (some special pages have no header)
+  if ($("#search-container").length < 1) return;
+
   var hash = escape(location.hash.substr(1));
   var $matchingElement = $("#"+hash);
   // Sanity check that there's an element with that ID on the page
