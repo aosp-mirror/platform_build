@@ -14,7 +14,7 @@ ifeq ($(strip $(LOCAL_CXX_STL)),default)
             # Platform code. Select the appropriate STL.
             my_cxx_stl := libc++
         else
-            my_cxx_stl := bionic
+            my_cxx_stl := libstdc++
         endif
     else
         my_cxx_stl := ndk
@@ -52,7 +52,7 @@ else ifeq ($(my_cxx_stl),ndk)
     ifndef LOCAL_IS_HOST_MODULE
         my_system_shared_libraries += libstdc++
     endif
-else ifeq ($(my_cxx_stl),bionic)
+else ifeq ($(my_cxx_stl),libstdc++)
     # Using bionic's basic libstdc++. Not actually an STL. Only around until the
     # tree is in good enough shape to not need it.
     ifndef LOCAL_IS_HOST_MODULE
