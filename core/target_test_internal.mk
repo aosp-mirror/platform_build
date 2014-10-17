@@ -6,13 +6,12 @@ LOCAL_CFLAGS += -DGTEST_OS_LINUX_ANDROID -DGTEST_HAS_STD_STRING
 
 LOCAL_C_INCLUDES += external/gtest/include
 
-my_test_libcxx := false
-ifndef LOCAL_SDK_VERSION
-ifeq (,$(TARGET_BUILD_APPS))
-ifneq ($(filter $(strip $(LOCAL_CXX_STL)),libc++ libc++_static),)
 my_test_libcxx := true
+ifdef LOCAL_SDK_VERSION
+my_test_libcxx := false
 endif
-endif
+ifneq ($(filter $(strip $(LOCAL_CXX_STL)),stlport stlport_static),)
+my_test_libcxx := false
 endif
 
 ifeq ($(my_test_libcxx),true)
