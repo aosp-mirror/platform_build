@@ -97,6 +97,7 @@ $(hide) $(DEX2OAT) \
 	--oat-file=$(2) \
 	--android-root=$(PRODUCT_OUT)/system \
 	--instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
+	--instruction-set-variant=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT) \
 	--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 	--include-patch-information --runtime-arg -Xnorelocate --no-include-debug-symbols \
 	$(PRIVATE_DEX_PREOPT_FLAGS)
