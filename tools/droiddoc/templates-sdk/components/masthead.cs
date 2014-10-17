@@ -157,7 +157,7 @@
   <?cs elif:training || guide || reference || tools || develop || google || samples ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
-        <div class="wrap" style="position:relative">
+        <div class="wrap" style="position:relative;z-index:1">
 
         <?cs if:reference ?>
             <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card" 
