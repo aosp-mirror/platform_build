@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "703d3c9e_d42794a2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-18T00:11:31Z",
+      "side": 1,
+      "message": "That sounds good, but I think it will be difficult to introduce arch-specific change to those functions.\nActually the build system supports a general transform-o-to-static-executable-inner (and other similar functions), and it can be overridden by arch-specific functions. (Maybe initially all archs were using the general one).",
+      "revId": "403ab71eba79b116cf06876967e8a215514990cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
