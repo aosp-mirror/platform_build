@@ -34,6 +34,24 @@
       "revId": "403ab71eba79b116cf06876967e8a215514990cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "708ffcad_5b53bcab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-10-18T00:13:32Z",
+      "side": 1,
+      "message": "I think it would be better to do this by letting each arch override some variables used by the function rather than overriding the function itself. It would be _much_ clearer what is different between them if we do it this way (and it fits in with the way most of our other configuration changes work).",
+      "parentUuid": "703d3c9e_d42794a2",
+      "revId": "403ab71eba79b116cf06876967e8a215514990cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
