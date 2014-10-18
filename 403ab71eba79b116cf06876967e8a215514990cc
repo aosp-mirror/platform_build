@@ -52,6 +52,24 @@
       "revId": "403ab71eba79b116cf06876967e8a215514990cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "908ab09b_590e6353",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-18T00:19:16Z",
+      "side": 1,
+      "message": "Sounds good. (It may be harder to override things like argument order with variable). Thanks for taking care of this!",
+      "parentUuid": "708ffcad_5b53bcab",
+      "revId": "403ab71eba79b116cf06876967e8a215514990cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
