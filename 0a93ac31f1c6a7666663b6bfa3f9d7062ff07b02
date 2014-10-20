@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f0492c4e_a70c98df",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-10-20T20:49:42Z",
+      "side": 1,
+      "message": "_TARGET",
+      "revId": "0a93ac31f1c6a7666663b6bfa3f9d7062ff07b02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
