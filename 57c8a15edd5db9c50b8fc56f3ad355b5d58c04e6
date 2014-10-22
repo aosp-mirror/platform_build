@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55210a94_09e27933",
+        "filename": "core/clang/arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-10-22T16:48:36Z",
+      "side": 1,
+      "message": "Is it useful to keep these around?",
+      "revId": "57c8a15edd5db9c50b8fc56f3ad355b5d58c04e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
