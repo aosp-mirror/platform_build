@@ -17,6 +17,7 @@ include $(BUILD_SYSTEM)/multilib.mk
 my_skip_non_preferred_arch :=
 
 # check if first arch is supported
+LOCAL_2ND_ARCH_VAR_PREFIX :=
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # first arch is supported
