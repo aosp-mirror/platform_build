@@ -179,6 +179,8 @@ endif
 
 ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   my_clang := true
+  # Frame pointer based unwinder in ASan requires ARM frame setup.
+  LOCAL_ARM_MODE := arm
   my_cflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
   my_ldflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS)
   ifdef LOCAL_IS_HOST_MODULE
@@ -210,10 +212,10 @@ endif
 ####################################################
 ## Add FDO flags if FDO is turned on and supported
 ####################################################
-ifneq ($(strip $(LOCAL_FDO_SUPPORT)),)
+ifeq ($(strip $(LOCAL_FDO_SUPPORT)), true)
   ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),)
     my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_CFLAGS)
-    my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_CFLAGS)
+    my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_LDFLAGS)
   endif
 endif
 
@@ -457,6 +459,8 @@ endif
 # This can be disabled with LOCAL_RENDERSCRIPT_FLAGS := -Wno-error
 renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
+# -m32 or -m64
+renderscript_flags += -m$(my_32_64_bit_suffix)
 
 renderscript_includes := \
     $(TOPDIR)external/clang/lib/Headers \
@@ -526,6 +530,9 @@ proto_generated_headers := $(patsubst %.pb.cc,%.pb.h, $(proto_generated_cc_sourc
 proto_generated_obj_dir := $(intermediates)/proto
 proto_generated_objects := $(addprefix $(proto_generated_obj_dir)/, \
     $(patsubst %.proto,%.pb.o,$(proto_sources_fullpath)))
+
+# Auto-export the generated proto source dir.
+LOCAL_EXPORT_C_INCLUDE_DIRS += $(proto_generated_cc_sources_dir)
 
 # Ensure the transform-proto-to-cc rule is only defined once in multilib build.
 ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
@@ -1006,7 +1013,8 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 ###########################################################
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE)
+# Make sure .pb.h are already generated before any dependent source files get compiled.
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE) $(proto_generated_headers)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef LOCAL_EXPORT_C_INCLUDE_DIRS

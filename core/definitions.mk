@@ -1423,6 +1423,10 @@ ifdef BUILD_HOST_static
 HOST_FPIE_FLAGS :=
 else
 HOST_FPIE_FLAGS := -pie
+# Force the correct entry point to workaround a bug in binutils that manifests with -pie
+ifeq ($(HOST_OS),windows)
+HOST_FPIE_FLAGS += -Wl,-e_mainCRTStartup
+endif
 endif
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
@@ -1576,7 +1580,7 @@ $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
 $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-	    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
+          find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
 fi
 $(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
     | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
@@ -1601,12 +1605,21 @@ $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DI
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
     $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
     | xargs rm -rf)
-$(if $(PRIVATE_JAR_PACKAGES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -mindepth 1 -type d \
-    $(foreach pkg, $(PRIVATE_JAR_PACKAGES), \
-        -not -path $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))) \
-    | xargs rm -rf)
-$(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
-    $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
+$(if $(PRIVATE_JAR_PACKAGES), \
+    $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -mindepth 1 -type f \
+        $(foreach pkg, $(PRIVATE_JAR_PACKAGES), \
+            -not -path $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))/\*) -delete ; \
+        find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -empty -delete)
+$(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
+    $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
+        $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
+$(if $(PRIVATE_RMTYPEDEFS), $(hide) $(RMTYPEDEFS) -v $(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(if $(PRIVATE_JAR_MANIFEST), \
+    $(hide) sed -e 's/%BUILD_NUMBER%/$(BUILD_NUMBER)/' \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
+        jar -cfm $@ $(dir $@)/manifest.mf \
+            -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
+    $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
 endef
 
 define transform-java-to-classes.jar
@@ -1652,12 +1665,21 @@ $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DI
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
     $(addprefix -o -name , $(wordlist 2, 999, $(PRIVATE_JAR_EXCLUDE_FILES))) \
     | xargs rm -rf)
-$(if $(PRIVATE_JAR_PACKAGES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -mindepth 1 -type d \
-    $(foreach pkg, $(PRIVATE_JAR_PACKAGES), \
-        -not -path $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))) \
-    | xargs rm -rf)
-$(hide) jar $(if $(strip $(PRIVATE_JAR_MANIFEST)),-cfm,-cf) \
-    $@ $(PRIVATE_JAR_MANIFEST) -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .
+$(if $(PRIVATE_JAR_PACKAGES), \
+    $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -mindepth 1 -type f \
+        $(foreach pkg, $(PRIVATE_JAR_PACKAGES), \
+            -not -path $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))/\*) -delete ; \
+        find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -empty -delete)
+$(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
+    $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
+        $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
+$(if $(PRIVATE_RMTYPEDEFS), $(hide) $(RMTYPEDEFS) -v $(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(if $(PRIVATE_JAR_MANIFEST), \
+    $(hide) sed -e 's/%BUILD_NUMBER%/$(BUILD_NUMBER)/' \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
+        jar -cfm $@ $(dir $@)/manifest.mf \
+            -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
+    $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
 $(hide) mv $(PRIVATE_CLASS_INTERMEDIATES_DIR)/newstamp $(PRIVATE_CLASS_INTERMEDIATES_DIR)/stamp
 endef
 
@@ -1679,7 +1701,7 @@ endef
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
-$(hide) rm -f $(dir $@)/classes*.dex
+$(hide) rm -f $(dir $@)classes*.dex
 $(hide) $(DX) \
     $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx2048M) \
     --dex --output=$(dir $@) \
@@ -1717,7 +1739,7 @@ endef
 define add-assets-to-package
 $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
-    $(addprefix --preferred-configurations , $(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
+    $(addprefix --preferred-density , $(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
     $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
     $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
@@ -1752,7 +1774,7 @@ endef
 
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) zip -qj $@ $(dir $(PRIVATE_DEX_FILE))/classes*.dex
+$(hide) zip -qj $@ $(dir $(PRIVATE_DEX_FILE))classes*.dex
 endef
 
 # Add java resources added by the current module.
@@ -2001,8 +2023,8 @@ $(eval _isfds_value :=))
 endef
 
 # $(1): The file(s) to check (often $@)
-# $(2): The maximum total image size, in decimal bytes
-# $(3): the type of filesystem "yaffs" or "raw"
+# $(2): The maximum total image size, in decimal bytes.
+#    Make sure to take into account any reserved space needed for the FS.
 #
 # If $(2) is empty, evaluates to "true"
 #
@@ -2015,15 +2037,9 @@ $(if $(2), \
   total=$$(( $$( echo "$$size" ) )); \
   printname=$$(echo -n "$(1)" | tr " " +); \
   img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
-  if [ "$(3)" == "yaffs" ]; then \
-    reservedblocks=8; \
-  else \
-    reservedblocks=0; \
-  fi; \
   twoblocks=$$((img_blocksize * 2)); \
   onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
-  reserve=$$(((twoblocks > onepct ? twoblocks : onepct) + \
-               reservedblocks * img_blocksize)); \
+  reserve=$$((twoblocks > onepct ? twoblocks : onepct)); \
   maxsize=$$(($(2) - reserve)); \
   echo "$$printname maxsize=$$maxsize blocksize=$$img_blocksize total=$$total reserve=$$reserve"; \
   if [ "$$total" -gt "$$maxsize" ]; then \
@@ -2045,8 +2061,7 @@ endef
 # $(2): The partition size.
 define assert-max-image-size
 $(if $(2), \
-  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))), \
-  true)
+  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))))
 endef
 
 
@@ -2145,17 +2160,19 @@ endef
 #    $(1)  target
 #    $(2)  stable api file
 #    $(3)  api file to be tested
-#    $(4)  arguments for apicheck
-#    $(5)  command to run if apicheck failed
-#    $(6)  target dependent on this api check
-#    $(7)  additional dependencies
+#    $(4)  stable removed api file
+#    $(5)  removed api file to be tested
+#    $(6)  arguments for apicheck
+#    $(7)  command to run if apicheck failed
+#    $(8)  target dependent on this api check
+#    $(9)  additional dependencies
 define check-api
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(APICHECK) $(7)
+$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp: $(2) $(3) $(4) $(APICHECK) $(9)
 	@echo "Checking API:" $(1)
-	$(hide) ( $(APICHECK_COMMAND) $(4) $(2) $(3) || ( $(5) ; exit 38 ) )
+	$(hide) ( $(APICHECK_COMMAND) $(6) $(2) $(3) $(4) $(5) || ( $(7) ; exit 38 ) )
 	$(hide) mkdir -p $$(dir $$@)
 	$(hide) touch $$@
-$(6): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
+$(8): $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(strip $(1))-timestamp
 endef
 
 ## Whether to build from source if prebuilt alternative exists
@@ -2182,11 +2199,13 @@ define include-if-build-from-source
 $(if $(call if-build-from-source,$(2),$(3)),$(eval include $(1)))
 endef
 
-## Return the arch for the source file of a prebuilt
+# Return the arch for the source file of a prebuilt
+# Return "none" if no matching arch found, so the result can be passed to
+# LOCAL_MODULE_TARGET_ARCH.
 # $(1) the list of archs supported by the prebuilt
 define get-prebuilt-src-arch
 $(strip $(if $(filter $(TARGET_ARCH),$(1)),$(TARGET_ARCH),\
-  $(if $(filter $(TARGET_2ND_ARCH),$(1)),$(TARGET_2ND_ARCH))))
+  $(if $(filter $(TARGET_2ND_ARCH),$(1)),$(TARGET_2ND_ARCH),none)))
 endef
 
 ###########################################################

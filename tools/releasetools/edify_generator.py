@@ -68,16 +68,40 @@ class EdifyGenerator(object):
     with temporary=True) to this one."""
     self.script.extend(other.script)
 
+  def AssertOemProperty(self, name, value):
+    """Assert that a property on the OEM paritition matches a value."""
+    if not name:
+      raise ValueError("must specify an OEM property")
+    if not value:
+      raise ValueError("must specify the OEM value")
+    cmd = ('file_getprop("/oem/oem.prop", "%s") == "%s" || '
+           'abort("This package expects the value \\"%s\\"  for '
+           '\\"%s\\" on the OEM partition; '
+           'this has value \\"" + file_getprop("/oem/oem.prop") + "\\".");'
+           ) % (name, value, name, value)
+    self.script.append(cmd)
+
   def AssertSomeFingerprint(self, *fp):
-    """Assert that the current system build fingerprint is one of *fp."""
+    """Assert that the current recovery build fingerprint is one of *fp."""
     if not fp:
       raise ValueError("must specify some fingerprints")
     cmd = (
-           ' ||\n    '.join([('file_getprop("/system/build.prop", '
-                         '"ro.build.fingerprint") == "%s"')
+           ' ||\n    '.join([('getprop("ro.build.fingerprint") == "%s"')
                         % i for i in fp]) +
            ' ||\n    abort("Package expects build fingerprint of %s; this '
            'device has " + getprop("ro.build.fingerprint") + ".");'
+           ) % (" or ".join(fp),)
+    self.script.append(cmd)
+
+  def AssertSomeThumbprint(self, *fp):
+    """Assert that the current recovery build thumbprint is one of *fp."""
+    if not fp:
+      raise ValueError("must specify some thumbprints")
+    cmd = (
+           ' ||\n    '.join([('getprop("ro.build.thumbprint") == "%s"')
+                        % i for i in fp]) +
+           ' ||\n    abort("Package expects build thumbprint of %s; this '
+           'device has " + getprop("ro.build.thumbprint") + ".");'
            ) % (" or ".join(fp),)
     self.script.append(cmd)
 
@@ -178,6 +202,15 @@ class EdifyGenerator(object):
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
                           p.device, p.length, p.mount_point))
 
+  def WipeBlockDevice(self, partition):
+    if partition not in ("/system", "/vendor"):
+      raise ValueError(("WipeBlockDevice doesn't work on %s\n") % (partition,))
+    fstab = self.info.get("fstab", None)
+    size = self.info.get(partition.lstrip("/") + "_size", None)
+    device = fstab[partition].device
+
+    self.script.append('wipe_block_device("%s", %s);' % (device, size))
+
   def DeleteFiles(self, file_list):
     """Delete all files in file_list."""
     if not file_list: return
@@ -212,7 +245,7 @@ class EdifyGenerator(object):
     cmd = "".join(cmd)
     self.script.append(self._WordWrap(cmd))
 
-  def WriteRawImage(self, mount_point, fn):
+  def WriteRawImage(self, mount_point, fn, mapfn=None):
     """Write the given package file into the partition for the given
     mount point."""
 
@@ -226,8 +259,13 @@ class EdifyGenerator(object):
             'write_raw_image(package_extract_file("%(fn)s"), "%(device)s");'
             % args)
       elif partition_type == "EMMC":
-        self.script.append(
-            'package_extract_file("%(fn)s", "%(device)s");' % args)
+        if mapfn:
+          args["map"] = mapfn
+          self.script.append(
+              'package_extract_file("%(fn)s", "%(device)s", "%(map)s");' % args)
+        else:
+          self.script.append(
+              'package_extract_file("%(fn)s", "%(device)s");' % args)
       else:
         raise ValueError("don't know how to write \"%s\" partitions" % (p.fs_type,))
 
@@ -293,6 +331,6 @@ class EdifyGenerator(object):
     if input_path is None:
       data = input_zip.read("OTA/bin/updater")
     else:
-      data = open(os.path.join(input_path, "updater")).read()
+      data = open(input_path, "rb").read()
     common.ZipWriteStr(output_zip, "META-INF/com/google/android/update-binary",
                        data, perms=0755)

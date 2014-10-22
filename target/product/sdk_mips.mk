@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012 The Android Open Source Project
+# Copyright (C) 2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +14,8 @@
 # limitations under the License.
 #
 
-# This is a build configuration for a full-featured build of the
-# Open-Source part of the tree. It's geared toward a US-centric
-# build quite specifically for the emulator, and might not be
-# entirely appropriate to inherit from for on-device configurations.
+# Don't modify this file - It's just an alias!
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_phone_mips.mk)
 
-# Overrides
-PRODUCT_BRAND := generic_mips
 PRODUCT_NAME := sdk_mips
-PRODUCT_DEVICE := generic_mips
-PRODUCT_MODEL := Android SDK for Mips

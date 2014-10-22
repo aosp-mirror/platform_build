@@ -114,6 +114,8 @@ ifeq ($(my_module_path),)
   else
   ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
     partition_tag := _VENDOR
+  else ifeq (true,$(LOCAL_OEM_MODULE))
+    partition_tag := _OEM
   else
     # The definition of should-install-to-system will be different depending
     # on which goal (e.g., sdk or just droid) is being built.
@@ -174,9 +176,15 @@ else
   built_module_path := $(intermediates)
 endif
 LOCAL_BUILT_MODULE := $(built_module_path)/$(my_built_module_stem)
-built_module_path :=
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+  # Apk and its attachments reside in its own subdir.
+  ifeq ($(LOCAL_MODULE_CLASS),APPS)
+  # framework-res.apk doesn't like the additional layer.
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+  endif
+  endif
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
 
@@ -198,12 +206,12 @@ aidl_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(aidl_sources))
 aidl_preprocess_import :=
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 ifdef LOCAL_SDK_VERSION
-ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+ifneq ($(filter current system_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
   # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
   aidl_preprocess_import := $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/framework.aidl
-endif # !current
+endif # not current or system_current
 else
 # build against the platform.
 LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
@@ -230,7 +238,7 @@ event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
 
 # Emit a java source file with constants for the tags, if
 # LOCAL_MODULE_CLASS is "APPS" or "JAVA_LIBRARIES".
-ifneq ($(strip $(filter $(LOCAL_MODULE_CLASS),APPS JAVA_LIBRARIES)),)
+ifneq ($(filter $(LOCAL_MODULE_CLASS),APPS JAVA_LIBRARIES),)
 
 logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
 logtags_sources := $(addprefix $(TOP_DIR)$(LOCAL_PATH)/, $(logtags_sources))
@@ -386,13 +394,14 @@ else
 ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
 # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,android_stubs_current)
+else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,android_system_stubs_current)
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION))
-endif # current
+endif # current or system_current
 endif # LOCAL_SDK_VERSION
 endif # TARGET_
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EXTRA_JAR_ARGS := $(extra_jar_args)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
 
@@ -423,10 +432,10 @@ full_java_lib_deps += $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
 # This is set by packages that are linking to other packages that export
 # shared libraries, allowing them to make use of the code in the linked apk.
-LOCAL_APK_LIBRARIES := $(strip $(LOCAL_APK_LIBRARIES))
-ifdef LOCAL_APK_LIBRARIES
+apk_libraries := $(sort $(LOCAL_APK_LIBRARIES) $(LOCAL_RES_LIBRARIES))
+ifneq ($(apk_libraries),)
   link_apk_libraries := \
-      $(foreach lib,$(LOCAL_APK_LIBRARIES), \
+      $(foreach lib,$(apk_libraries), \
         $(call intermediates-dir-for, \
               APPS,$(lib),,COMMON)/classes.jar)
 
@@ -454,6 +463,10 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   full_java_lib_deps += $(link_instr_classes_jar)
 endif
 
+endif  # need_compile_java
+
+# We may want to add jar manifest or jar resource files even if there is no java code at all.
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EXTRA_JAR_ARGS := $(extra_jar_args)
 jar_manifest_file :=
 ifneq ($(strip $(LOCAL_JAR_MANIFEST)),)
 jar_manifest_file := $(LOCAL_PATH)/$(LOCAL_JAR_MANIFEST)
@@ -461,9 +474,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST := $(jar_manifest_file)
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif
-
-endif  # need_compile_java
-
 
 ###########################################################
 ## make clean- targets
@@ -598,7 +608,7 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) $(LOCAL_INSTALLED_MODULE))
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
-    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED)$(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE))
+    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
@@ -621,6 +631,9 @@ ALL_MODULES.$(my_register_name).OWNER := \
 endif
 ifdef LOCAL_2ND_ARCH_VAR_PREFIX
 ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
+endif
+ifdef aidl_sources
+ALL_MODULES.$(my_register_name).AIDL_FILES := $(aidl_sources)
 endif
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)

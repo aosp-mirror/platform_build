@@ -200,6 +200,12 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/DMService.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/SprintDM.apk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/omadm)
 
+# GCC 4.8
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/STATIC_LIBRARIES)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/SHARED_LIBRARIES)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/EXECUTABLES)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/lib/*.o)
+
 # KLP I mean KitKat now API 19.
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
@@ -211,10 +217,33 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # 4.4.2
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# "L" and beyond.
+# Make libart the default runtime
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
 # Rename persist.sys.dalvik.vm.lib to allow new default
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# KKWT development
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
+# L development
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
+# L development
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # Add ro.product.cpu.abilist{32,64} to build.prop.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+
+# Unset TARGET_PREFER_32_BIT_APPS for 64 bit targets.
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
 # Adding dalvik.vm.dex2oat-flags to eng builds
@@ -236,6 +265,14 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 # Switching to 32-bit-by-default host multilib build
 $(call add-clean-step, rm -rf $(HOST_OUT_INTERMEDIATES))
 
+# KKWT has become API 20
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
+# ims-common.jar added to BOOTCLASSPATH
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/ETC/init.environ.rc_intermediates)
+
 # Change ro.zygote for core_64_bit.mk from zygote32_64 to zygote64_32
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
@@ -245,6 +282,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system)
+
 # Switch host builds to Clang by default
 $(call add-clean-step, rm -rf $(OUT_DIR)/host)
 
@@ -252,6 +291,16 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/host)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
+
+# API 21?
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
+# API 21!
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

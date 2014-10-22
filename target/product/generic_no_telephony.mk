@@ -17,33 +17,15 @@
 # This is a generic phone product that isn't specialized for a specific device.
 # It includes the base Android platform.
 
-PRODUCT_POLICY := android.policy_phone
-
 PRODUCT_PACKAGES := \
-    DeskClock \
     Bluetooth \
-    Calculator \
-    Calendar \
     Camera2 \
-    CertInstaller \
-    Email \
-    Exchange2 \
-    FusedLocation \
     Gallery2 \
-    InputDevices \
-    Keyguard \
-    LatinIME \
-    Launcher2 \
     Music \
     MusicFX \
     OneTimeInitializer \
-    PrintSpooler \
     Provision \
-    QuickSearchBox \
-    Settings \
     SystemUI \
-    TeleService \
-    CalendarProvider \
     WallpaperCropper
 
 PRODUCT_PACKAGES += \
@@ -80,9 +62,9 @@ $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/dancing-script/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/carrois-gothic-sc/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/coming-soon/fonts.mk)
+$(call inherit-product-if-exists, external/google-fonts/cutive-mono/fonts.mk)
 $(call inherit-product-if-exists, external/noto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/naver-fonts/fonts.mk)
-$(call inherit-product-if-exists, external/sil-fonts/fonts.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)

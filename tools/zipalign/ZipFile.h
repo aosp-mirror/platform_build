@@ -127,6 +127,15 @@ public:
         int padding, ZipEntry** ppEntry);
 
     /*
+     * Add an entry by copying it from another zip file, recompressing with
+     * Zopfli if already compressed.
+     *
+     * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
+     */
+    status_t addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
+        ZipEntry** ppEntry);
+
+    /*
      * Mark an entry as having been removed.  It is not actually deleted
      * from the archive or our internal data structures until flush() is
      * called.
@@ -147,7 +156,7 @@ public:
      */
     //bool uncompress(const ZipEntry* pEntry, void* buf) const;
     //bool uncompress(const ZipEntry* pEntry, FILE* fp) const;
-    void* uncompress(const ZipEntry* pEntry);
+    void* uncompress(const ZipEntry* pEntry) const;
 
     /*
      * Get an entry, by name.  Returns NULL if not found.

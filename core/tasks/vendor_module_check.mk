@@ -18,19 +18,27 @@
 _vendor_owner_whitelist := \
         asus \
         audience \
+        atmel \
         broadcom \
         csr \
         elan \
         google \
+        htc \
         imgtec \
         invensense \
         intel \
         lge \
+        moto \
+        mtk \
         nvidia \
         nxp \
+        nxpsw \
         qcom \
+        qti \
         samsung \
         samsung_arm \
+        sony \
+        synaptics \
         ti \
         trusted_logic \
         widevine

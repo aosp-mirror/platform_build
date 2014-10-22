@@ -64,12 +64,15 @@ ifneq ($(LOCAL_SDK_VERSION),)
     # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
     LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
     $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, android_stubs_current)
+  else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+    LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
+    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, android_system_stubs_current)
   else
     LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
     $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
   endif
 else
-  LOCAL_JAVA_LIBRARIES := core-libart ext framework framework2 $(LOCAL_JAVA_LIBRARIES)
+  LOCAL_JAVA_LIBRARIES := core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
   $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, core-libart)
 endif  # LOCAL_SDK_VERSION
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
@@ -134,15 +137,13 @@ $(full_target): PRIVATE_CUSTOM_TEMPLATE_DIR := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_
 $(full_target): PRIVATE_IN_CUSTOM_ASSET_DIR := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR)/$(LOCAL_DROIDDOC_CUSTOM_ASSET_DIR)
 $(full_target): PRIVATE_OUT_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_ASSET_DIR)
 $(full_target): PRIVATE_OUT_CUSTOM_ASSET_DIR := $(out_dir)/$(LOCAL_DROIDDOC_CUSTOM_ASSET_DIR)
+
+html_dir_files :=
 ifneq ($(strip $(LOCAL_DROIDDOC_HTML_DIR)),)
 $(full_target): PRIVATE_DROIDDOC_HTML_DIR := -htmldir $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR)
+html_dir_files := $(shell find $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR) -type f)
 else
-$(full_target): PRIVATE_DROIDDOC_HTML_DIR := 
-endif
-ifneq ($(strip $(LOCAL_ADDITIONAL_HTML_DIR)),)
-$(full_target): PRIVATE_ADDITIONAL_HTML_DIR := -htmldir2 $(LOCAL_PATH)/$(LOCAL_ADDITIONAL_HTML_DIR)
-else
-$(full_target): PRIVATE_ADDITIONAL_HTML_DIR :=
+$(full_target): PRIVATE_DROIDDOC_HTML_DIR :=
 endif
 ifneq ($(strip $(LOCAL_ADDITIONAL_HTML_DIR)),)
 $(full_target): PRIVATE_ADDITIONAL_HTML_DIR := -htmldir2 $(LOCAL_PATH)/$(LOCAL_ADDITIONAL_HTML_DIR)
@@ -152,8 +153,6 @@ endif
 
 # TODO: not clear if this is used any more
 $(full_target): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
-
-html_dir_files := $(shell find $(LOCAL_PATH)/$(LOCAL_DROIDDOC_HTML_DIR) -type f)
 
 $(full_target): $(full_src_files) $(droiddoc_templates) $(droiddoc) $(html_dir_files) $(full_java_lib_deps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)

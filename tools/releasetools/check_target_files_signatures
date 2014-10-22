@@ -41,8 +41,8 @@ Usage:  check_target_file_signatures [flags] target_files
 
 import sys
 
-if sys.hexversion < 0x02040000:
-  print >> sys.stderr, "Python 2.4 or newer is required."
+if sys.hexversion < 0x02070000:
+  print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
 import os

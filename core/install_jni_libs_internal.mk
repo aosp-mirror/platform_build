@@ -18,7 +18,7 @@ my_jni_shared_libraries := \
           $(LOCAL_JNI_SHARED_LIBRARIES)))
 
 # App-specific lib path.
-my_app_lib_path :=  $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES)/$(basename $(my_installed_module_stem))
+my_app_lib_path := $(dir $(LOCAL_INSTALLED_MODULE))lib/$(TARGET_$(my_2nd_arch_prefix)ARCH)
 my_extracted_jni_libs :=
 
 ifdef my_embed_jni
@@ -54,16 +54,20 @@ ifneq ($(my_jni_shared_libraries),)
 # The jni libaries will be installed to the system.img.
 my_jni_filenames := $(notdir $(my_jni_shared_libraries))
 # Make sure the JNI libraries get installed
-$(LOCAL_INSTALLED_MODULE) : | $(addprefix $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES)/, $(my_jni_filenames))
+my_shared_library_path := $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES)
+$(LOCAL_INSTALLED_MODULE) : | $(addprefix $(my_shared_library_path)/, $(my_jni_filenames))
 
 # Create symlink in the app specific lib path
 ifdef LOCAL_POST_INSTALL_CMD
 # Add a shell command separator
 LOCAL_POST_INSTALL_CMD += ;
 endif
+
+my_symlink_target_dir := $(patsubst $(PRODUCT_OUT)%,%,\
+    $(my_shared_library_path))
 LOCAL_POST_INSTALL_CMD += \
   mkdir -p $(my_app_lib_path) \
-  $(foreach lib, $(my_jni_filenames), ;ln -sf ../$(lib) $(my_app_lib_path)/$(lib))
+  $(foreach lib, $(my_jni_filenames), ;ln -sf $(my_symlink_target_dir)/$(lib) $(my_app_lib_path)/$(lib))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 
 # Clear jni_shared_libraries to not embed it into the apk.

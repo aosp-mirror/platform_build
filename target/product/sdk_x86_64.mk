@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright (C) 2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@
 # limitations under the License.
 #
 
-# This is a build configuration for a full-featured build of the
-# Open-Source part of the tree. It's geared toward a US-centric
-# build quite specifically for the emulator, and might not be
-# entirely appropriate to inherit from for on-device configurations.
+# Don't modify this file - It's just an alias!
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_phone_x86_64.mk)
 
-# Overrides
-PRODUCT_BRAND := generic_x86_64
 PRODUCT_NAME := sdk_x86_64
-PRODUCT_DEVICE := generic_x86_64
-PRODUCT_MODEL := Android SDK built for x86_64

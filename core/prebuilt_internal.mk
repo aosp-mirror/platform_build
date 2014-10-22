@@ -54,6 +54,11 @@ ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
 endif
 endif
 
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
+LOCAL_BUILT_MODULE_STEM := package.apk
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
+endif
+
 ifeq ($(LOCAL_STRIP_MODULE),true)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
@@ -109,6 +114,7 @@ endif
 
 endif  # LOCAL_STRIP_MODULE not true
 
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
 rs_compatibility_jni_libs :=
@@ -128,11 +134,9 @@ ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 ifeq ($(LOCAL_CERTIFICATE),)
-  ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
-    # It is now a build error to add a prebuilt .apk without
-    # specifying a key for it.
-    $(error No LOCAL_CERTIFICATE specified for prebuilt "$(my_prebuilt_src_file)")
-  endif
+  # It is now a build error to add a prebuilt .apk without
+  # specifying a key for it.
+  $(error No LOCAL_CERTIFICATE specified for prebuilt "$(my_prebuilt_src_file)")
 else ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
   # The magic string "PRESIGNED" means this package is already checked
   # signed with its release key.
@@ -156,10 +160,10 @@ else
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 
-ifneq ($(filter APPS,$(LOCAL_MODULE_CLASS)),)
-
-# Disable dex-preopt of prebuilts to save space
+# Disable dex-preopt of prebuilts to save space, if requested.
+ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
 LOCAL_DEX_PREOPT := false
+endif
 
 #######################################
 # defines built_odex along with rule to install odex
@@ -187,6 +191,42 @@ ifdef LOCAL_DEX_PREOPT
 $(built_odex) : $(my_prebuilt_src_file)
 	$(call dexpreopt-one-file,$<,$@)
 endif
+
+###############################
+## Install split apks.
+ifdef LOCAL_PACKAGE_SPLITS
+# LOCAL_PACKAGE_SPLITS is a list of apks to be installed.
+built_apk_splits := $(addprefix $(built_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
+installed_apk_splits := $(addprefix $(my_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
+
+# Rules to sign and zipalign the split apks.
+my_src_dir := $(sort $(dir $(LOCAL_PACKAGE_SPLITS)))
+ifneq (1,$(words $(my_src_dir)))
+$(error You must put all the split source apks in the same folder: $(LOCAL_PACKAGE_SPLITS))
+endif
+my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
+
+$(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
+$(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
+$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(ACP)
+	$(copy-file-to-new-target)
+	$(sign-package)
+	$(align-package)
+
+# Rules to install the split apks.
+$(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk | $(ACP)
+	@echo "Install: $@"
+	$(copy-file-to-new-target)
+
+# Register the additional built and installed files.
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
+  $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/$(notdir $(s)):$(my_module_path)/$(notdir $(s)))
+
+# Make sure to install the splits when you run "make <module_name>".
+$(my_register_name): $(installed_apk_splits)
+
+endif # LOCAL_PACKAGE_SPLITS
 
 else # LOCAL_MODULE_CLASS != APPS
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)

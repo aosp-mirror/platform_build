@@ -18,9 +18,14 @@ pdk fusion: $(DEFAULT_GOAL)
 
 # if PDK_FUSION_PLATFORM_ZIP is specified, do not override.
 ifndef PDK_FUSION_PLATFORM_ZIP
+# Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
+# but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
+# with vendor/pdk/TARGET_PRODUCT.
 _pdk_fusion_default_platform_zip = $(wildcard \
 vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip \
-vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip)
+vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip \
+vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip \
+vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip)
 ifneq (,$(_pdk_fusion_default_platform_zip))
 PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
 TARGET_BUILD_PDK := true
@@ -37,29 +42,41 @@ endif
 endif  # fusion
 endif  # pdk or fusion
 
+PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR :=
+PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR := \
+	host/common/obj/JAVA_LIBRARIES/bouncycastle-host_intermediates
+PDK_PLATFORM_JAVA_ZIP_CONTENTS :=
+
 ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
 # additional items to add to platform.zip for platform-java build
 # For these dirs, add classes.jar and javalib.jar from the dir to platform.zip
 # all paths under out dir
-PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
+PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
 	target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
-	target/common/obj/JAVA_LIBRARIES/core_intermediates \
+	target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
 	target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
 	target/common/obj/JAVA_LIBRARIES/ext_intermediates \
 	target/common/obj/JAVA_LIBRARIES/framework_intermediates \
-	target/common/obj/JAVA_LIBRARIES/framework2_intermediates \
 	target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
 	target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
+	target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
 	target/common/obj/JAVA_LIBRARIES/mms-common_intermediates \
-	target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates
+	target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates \
+	target/common/obj/JAVA_LIBRARIES/android-common_intermediates \
+
 # not java libraries
-PDK_PLATFORM_JAVA_ZIP_CONTENTS := \
+PDK_PLATFORM_JAVA_ZIP_CONTENTS += \
 	target/common/obj/APPS/framework-res_intermediates/package-export.apk \
 	target/common/obj/APPS/framework-res_intermediates/src/R.stamp
+endif # platform-java or FUSION build
+
+PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
+	$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR) \
+	$(PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR)
+
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
     $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
-endif # platform-java or FUSION build
 
 # check and override java support level
 ifneq ($(TARGET_BUILD_PDK)$(PDK_FUSION_PLATFORM_ZIP),)
@@ -117,6 +134,11 @@ $(PRODUCT_OUT)/% : $(_pdk_fusion_intermediates)/% $(_pdk_fusion_stamp)
 	$(hide) rm -rf $@
 	$(hide) cp -fpPR $< $@
 
+# implicit rules for host java files
+$(HOST_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/host/common/% $(_pdk_fusion_stamp)
+	@mkdir -p $(dir $@)
+	$(hide) cp -fpPR $< $@
+
 ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
 
 PDK_FUSION_OUT_DIR := $(OUT_DIR)
@@ -137,11 +159,11 @@ target/common/obj/APPS/framework-res_intermediates/src/R.stamp,\
 target/common/obj/APPS/framework-res_intermediates/package-export.apk))
 
 # javalib.jar should pull classes.jar as classes.jar is not explicitly pulled.
-$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
+$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
 $(eval $(call JAVA_dependency_template,$(lib_dir)/javalib.jar,\
 $(lib_dir)/classes.jar)))
 
-# implicit rules for all others
+# implicit rules for all other target files
 $(TARGET_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/target/common/% $(_pdk_fusion_stamp)
 	@mkdir -p $(dir $@)
 	$(hide) cp -fpPR $< $@
@@ -170,12 +192,16 @@ endif # BUILD_PDK
 ifneq (,$(filter platform platform-java, $(MAKECMDGOALS))$(filter true,$(TARGET_BUILD_PDK)))
 # files under $(PRODUCT_OUT)/symbols to help debugging.
 # Source not included to PDK due to dependency issue, so provide symbols instead.
+
+# We may not be building all of them.
+# The platform.zip just silently ignores the nonexistent ones.
 PDK_SYMBOL_FILES_LIST := \
-	system/bin/app_process
+    system/bin/app_process32 \
+    system/bin/app_process64
 
 ifdef PDK_FUSION_PLATFORM_ZIP
 # symbols should be explicitly pulled for fusion build
-$(foreach f,$(PDK_SYMBOL_FILES_LIST),\
+$(foreach f,$(filter $(PDK_SYMBOL_FILES_LIST), $(_pdk_fusion_file_list)),\
   $(eval $(call add-dependency,$(PRODUCT_OUT)/$(f),$(PRODUCT_OUT)/symbols/$(f))))
 endif # PLATFORM_ZIP
 endif # platform.zip build or PDK

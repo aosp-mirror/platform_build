@@ -69,7 +69,11 @@ $(foreach t,$(1), \
   $(if $(7), \
     $(eval LOCAL_BUILT_MODULE_STEM := $(7)) \
    , \
-    $(eval LOCAL_BUILT_MODULE_STEM := $(notdir $(LOCAL_SRC_FILES))) \
+    $(if $(word 2,$(tw)), \
+      $(eval LOCAL_BUILT_MODULE_STEM := $(LOCAL_MODULE)$(suffix $(LOCAL_SRC_FILES))) \
+     , \
+      $(eval LOCAL_BUILT_MODULE_STEM := $(notdir $(LOCAL_SRC_FILES))) \
+     ) \
    ) \
   $(eval LOCAL_MODULE_SUFFIX := $(suffix $(LOCAL_SRC_FILES))) \
   $(if $(filter user,$(TARGET_BUILD_VARIANT)), \

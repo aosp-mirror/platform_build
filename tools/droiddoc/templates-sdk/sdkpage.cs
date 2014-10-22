@@ -183,21 +183,7 @@
     <td><?cs var:ndk.linux64.legacy_bytes ?></td>
     <td><?cs var:ndk.linux64.legacy_checksum ?></td>
   </tr> -->
-    <tr>
-      <th>Additional Download</th>
-      <th>Package</th>
-      <th style="white-space:nowrap">Size (Bytes)</th>
-      <th>MD5 Checksum</th>
-  </tr>
-  <tr>
-    <td>STL debug info</td>
-    <td>
-  <a onClick="return onDownload(this)"
-     href="http://dl.google.com/android/ndk/<?cs var:ndk.debug_info_download ?>"><?cs var:ndk.debug_info_download ?></a>
-    </td>
-    <td><?cs var:ndk.debug_info_bytes ?></td>
-    <td><?cs var:ndk.debug_info_checksum ?></td>
-  </tr>
+
   </table>
 
   <?cs ########  HERE IS THE JD DOC CONTENT ######### ?>
@@ -280,7 +266,7 @@
 
 <h4><a href='' class="expandable"
   onclick="toggleExpandable(this,'.pax');hideExpandable('.myide,.reqs');return false;"
-  >DOWNLOAD FOR OTHER PLATFORMS</a></h4>
+  >VIEW ALL DOWNLOADS AND SIZES</a></h4>
 
 
 <div class="pax col-13 online" style="display:none;margin:0;">
@@ -298,7 +284,7 @@
     <td>Windows 32-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle32"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win32_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win32_bundle_checksum ?></td>
@@ -307,7 +293,7 @@
     <td>Windows 64-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win64_bundle_checksum ?></td>
@@ -316,7 +302,7 @@
     <td><nobr>Mac OS X 64-bit</nobr></td>
     <td>
   <a onClick="return onDownload(this)" id="mac-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.mac64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.mac64_bundle_checksum ?></td>
@@ -325,7 +311,7 @@
     <td>Linux 32-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle32"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux32_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux32_bundle_checksum ?></td>
@@ -334,7 +320,7 @@
     <td>Linux 64-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
+     href="https://dl.google.com/android/adt/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux64_bundle_checksum ?></td>
@@ -430,12 +416,12 @@ var:sdk.linux_download
 
     /* set up primary adt download button */
     $('#download-bundle-button').show();
-    $('#download-bundle-button').append("Download the SDK <br/><span class='small'>ADT Bundle for " + os + "</span>");
+    $('#download-bundle-button').append("Download Eclipse ADT <br/><span class='small'>with the Android SDK for " + os + "</span>");
     $('#download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
 
     /* set up sdk tools only button */
     $('#download-tools-button').show();
-    $('#download-tools-button').append("Download the SDK Tools for " + os);
+    $('#download-tools-button').append("Download the stand-alone Android SDK Tools for " + os);
     $('#download-tools-button').click(function() {return onDownload(this,true);}).attr('href', $toolslink.attr('href'));
   } else {
     $('.pax').show();
@@ -501,10 +487,19 @@ var:sdk.linux_download
   function onDownloadForRealz(link) {
     if ($("input#agree").is(':checked') && $("#bitpicker input:checked").length) {
       $("div.sdk-terms").slideUp();
-      $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow');
-      $("#next-steps").fadeIn('slow');
-      $("h1#tos-header").text('Get Ready to Code!');
-      _gaq.push(['_trackEvent', 'SDK', 'ADT and Tools', $("#downloadForRealz").html()]);
+      $("h1#tos-header").text('Now redirecting to the install instructions...');
+      $("#sdk-terms-form,.sdk-terms-intro").fadeOut('slow', function() {
+        setTimeout(function() {
+          if ($("#downloadForRealz").attr('bundle') == 'true') {
+            // User downloaded the ADT Bundle
+            window.location = "/sdk/installing/index.html?pkg=adt";
+          } else {
+            // User downloaded the SDK Tools
+            window.location = "/sdk/installing/index.html?pkg=tools";
+          }
+        }, 500);
+      });
+      ga('send', 'event', 'SDK', 'IDE and Tools', $("#downloadForRealz").html());
       return true;
     } else {
       $("label#agreeLabel,#bitpicker input").parent().stop().animate({color: "#258AAF"}, 200,

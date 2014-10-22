@@ -15,13 +15,13 @@
 ?><?cs
   # END if/else devsite ?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width" />
+<meta name="viewport" content="width=<?cs
+  if:page.viewport_width ?><?cs
+    var:page.viewport_width ?><?cs
+  else ?>device-width<?cs /if ?>" />
 <?cs
   if:page.metaDescription ?>
 <meta name="Description" content="<?cs var:page.metaDescription ?>"><?cs
-  /if ?><?cs
-  if:page.customHeadTag ?>
-<?cs var:page.customHeadTag ?><?cs
   /if ?>
 <link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>favicon.ico" />
 <title><?cs 
@@ -31,10 +31,16 @@
 
 <!-- STYLESHEETS -->
 <link rel="stylesheet"
-href="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic,bold" title="roboto">
-<link href="<?cs var:toroot ?>assets/css/default.css" rel="stylesheet" type="text/css">
+href="<?cs
+if:android.whichdoc != 'online' ?>http:<?cs
+/if ?>//fonts.googleapis.com/css?family=Roboto+Condensed">
+<link rel="stylesheet" href="<?cs
+if:android.whichdoc != 'online' ?>http:<?cs
+/if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
+  title="roboto">
+<link href="<?cs var:toroot ?>assets/css/default.css?v=2" rel="stylesheet" type="text/css">
 
-<?cs if:reference && !(reference.gms || reference.gcm) ?>
+<?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
 <!-- FULLSCREEN STYLESHEET -->
 <link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" class="fullscreen"
 type="text/css">
@@ -47,23 +53,27 @@ if:devsite
   ?><script src="<?cs var:toroot ?>_static/js/android_3p-bundle.js" type="text/javascript"></script><?cs
 else
   ?><script src="<?cs var:toroot ?>assets/js/android_3p-bundle.js" type="text/javascript"></script><?cs
-/if ?>
+/if ?><?cs
+  if:page.customHeadTag ?>
+<?cs var:page.customHeadTag ?><?cs
+  /if ?>
 <script type="text/javascript">
   var toRoot = "<?cs var:toroot ?>";
   var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
-<script src="<?cs var:toroot ?>assets/js/docs.js" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js?v=2" type="text/javascript"></script>
 
-<script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-5831155-1']);
-  _gaq.push(['_trackPageview']);
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  ga('create', 'UA-5831155-1', 'android.com');
+  ga('create', 'UA-49880327-2', 'android.com', {'name': 'universal'});  // New tracker);
+  ga('send', 'pageview');
+  ga('universal.send', 'pageview'); // Send page view for new tracker.
 </script>
+
 </head>

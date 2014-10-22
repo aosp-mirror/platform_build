@@ -49,12 +49,16 @@
 # -keep class * extends android.preference.Preference
 # -keep class * extends android.app.BackupAgent
 
-#-keep class * implements android.os.Parcelable {
-#  public static final android.os.Parcelable$Creator *;
-#}
+# Parcelable CREATORs must be kept for Parcelable functionality
+-keep class * implements android.os.Parcelable {
+  public static final ** CREATOR;
+}
 
 # The support library contains references to newer platform versions.
 # Don't warn about those in case this app is linking against an older
 # platform version.  We know about them, and they are safe.
 # See proguard-android.txt in the SDK package.
 -dontwarn android.support.**
+
+# Less spammy.
+-dontnote

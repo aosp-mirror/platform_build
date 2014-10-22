@@ -281,6 +281,7 @@ endif
 
 # A list of module names of BOOTCLASSPATH (jar files)
 PRODUCT_BOOT_JARS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS))
+PRODUCT_SYSTEM_SERVER_JARS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_SERVER_JARS))
 
 # Find the device that this product maps to.
 TARGET_DEVICE := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEVICE)
@@ -314,11 +315,13 @@ PRODUCT_AAPT_CONFIG := $(strip \
     $(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
 PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCT_AAPT_PREF_CONFIG))
 
-# Everyone gets nodpi assets which are density-independent.
-PRODUCT_AAPT_CONFIG += nodpi
+# Everyone gets nodpi and anydpi assets which are density-independent.
+PRODUCT_AAPT_CONFIG += nodpi anydpi
+
+# Keep a copy of the space-separated config
+PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
 
 # Convert spaces to commas.
-comma := ,
 PRODUCT_AAPT_CONFIG := \
     $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
 PRODUCT_AAPT_PREF_CONFIG := \

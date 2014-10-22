@@ -1,9 +1,8 @@
-MAKE_UTIL=(`which make`)
 function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
 - lunch:   lunch <product_name>-<build_variant>
-- tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5] [eng|userdebug|user]
+- tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
 - croot:   Changes directory to the top of the tree.
 - m:       Makes from the top of the tree.
 - mm:      Builds all of the modules in the current directory, but not their dependencies.
@@ -12,8 +11,10 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - mma:     Builds all of the modules in the current directory, and their dependencies.
 - mmma:    Builds all of the modules in the supplied directories, and their dependencies.
 - cgrep:   Greps on all local C/C++ files.
+- ggrep:   Greps on all local Gradle files.
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
+- sgrep:   Greps on all local source files.
 - godir:   Go to the directory containing a file.
 
 Look at the source to view more functions. The complete list is:
@@ -21,7 +22,7 @@ EOF
     T=$(gettop)
     local A
     A=""
-    for i in `cat $T/build/envsetup.sh | sed -n "/^function /s/function \([a-z_]*\).*/\1/p" | sort`; do
+    for i in `cat $T/build/envsetup.sh | sed -n "/^[ \t]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
       A="$A $i"
     done
     echo $A
@@ -36,7 +37,7 @@ function get_abs_build_var()
         return
     fi
     (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      $MAKE_UTIL --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
+      command make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
 }
 
 # Get the exact value of a build variable.
@@ -48,7 +49,7 @@ function get_build_var()
         return
     fi
     (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      $MAKE_UTIL --no-print-directory -f build/core/config.mk dumpvar-$1)
+      command make --no-print-directory -f build/core/config.mk dumpvar-$1)
 }
 
 # check to see if the supplied product is one we can build
@@ -564,12 +565,12 @@ function _lunch()
 complete -F _lunch lunch
 
 # Configures the build to build unbundled apps.
-# Run tapas with one ore more app names (from LOCAL_PACKAGE_NAME)
+# Run tapas with one or more app names (from LOCAL_PACKAGE_NAME)
 function tapas()
 {
-    local arch=$(echo -n $(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5)$'))
-    local variant=$(echo -n $(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$'))
-    local apps=$(echo -n $(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5)$'))
+    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
+    local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
 
     if [ $(echo $arch | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build archs supplied: $arch"
@@ -582,9 +583,12 @@ function tapas()
 
     local product=full
     case $arch in
-      x86)   product=full_x86;;
-      mips)  product=full_mips;;
-      armv5) product=generic_armv5;;
+      x86)    product=full_x86;;
+      mips)   product=full_mips;;
+      armv5)  product=generic_armv5;;
+      arm64)  product=aosp_arm64;;
+      x86_64) product=aosp_x86_64;;
+      mips64)  product=aosp_mips64;;
     esac
     if [ -z "$variant" ]; then
         variant=eng
@@ -1036,11 +1040,16 @@ function gdbclient()
        fi
 
        OUT_SO_SYMBOLS=$OUT_SO_SYMBOLS$USE64BIT
+       OUT_VENDOR_SO_SYMBOLS=$OUT_VENDOR_SO_SYMBOLS$USE64BIT
 
        echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
        echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx:$OUT_VENDOR_SO_SYMBOLS:$OUT_VENDOR_SO_SYMBOLS/hw:$OUT_VENDOR_SO_SYMBOLS/egl"
        echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+       # Enable special debugging for ART processes.
+       if [[ $EXE =~ (^|/)(app_process|dalvikvm)(|32|64)$ ]]; then
+          echo >> "$OUT_ROOT/gdbclient.cmds" "art-on"
+       fi
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
        local WHICH_GDB=
@@ -1066,14 +1075,14 @@ case `uname -s` in
     Darwin)
         function sgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cpp|S|java|xml|sh|mk)' -print0 | xargs -0 grep --color -n "$@"
+            find -E . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.(c|h|cc|cpp|S|java|xml|sh|mk|aidl)' -print0 | xargs -0 grep --color -n "$@"
         }
 
         ;;
     *)
         function sgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cpp\|S\|java\|xml\|sh\|mk\)' -print0 | xargs -0 grep --color -n "$@"
+            find . -name .repo -prune -o -name .git -prune -o  -type f -iregex '.*\.\(c\|h\|cc\|cpp\|S\|java\|xml\|sh\|mk\|aidl\)' -print0 | xargs -0 grep --color -n "$@"
         }
         ;;
 esac
@@ -1081,6 +1090,11 @@ esac
 function gettargetarch
 {
     get_build_var TARGET_ARCH
+}
+
+function ggrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -type f -name "*\.gradle" -print0 | xargs -0 grep --color -n "$@"
 }
 
 function jgrep()
@@ -1218,9 +1232,7 @@ function runhat()
     fi
 
     # issue "am" command to cause the hprof dump
-    local sdcard=$(adb ${adbOptions} shell echo -n '$EXTERNAL_STORAGE')
-    local devFile=$sdcard/hprof-$targetPid
-    #local devFile=/data/local/hprof-$targetPid
+    local devFile=/data/local/tmp/hprof-$targetPid
     echo "Poking $targetPid and waiting for data..."
     echo "Storing data at $devFile"
     adb ${adbOptions} shell am dumpheap $targetPid $devFile
@@ -1446,10 +1458,15 @@ function pez {
     return $retval
 }
 
+function get_make_command()
+{
+  echo command make
+}
+
 function make()
 {
     local start_time=$(date +"%s")
-    $MAKE_UTIL "$@"
+    $(get_make_command) "$@"
     local ret=$?
     local end_time=$(date +"%s")
     local tdiff=$(($end_time-$start_time))
@@ -1458,9 +1475,9 @@ function make()
     local secs=$(($tdiff % 60))
     echo
     if [ $ret -eq 0 ] ; then
-        echo -n -e "\e[0;32m#### make completed successfully "
+        echo -n -e "#### make completed successfully "
     else
-        echo -n -e "\e[0;31m#### make failed to build some targets "
+        echo -n -e "#### make failed to build some targets "
     fi
     if [ $hours -gt 0 ] ; then
         printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
@@ -1469,7 +1486,7 @@ function make()
     elif [ $secs -gt 0 ] ; then
         printf "(%s seconds)" $secs
     fi
-    echo -e " ####\e[00m"
+    echo -e " ####"
     echo
     return $ret
 }

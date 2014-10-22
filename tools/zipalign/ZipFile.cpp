@@ -28,6 +28,8 @@
 #include <zlib.h>
 #define DEF_MEM_LEVEL 8                // normally in zutil.h?
 
+#include "zopfli/deflate.h"
+
 #include <memory.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -638,6 +640,141 @@ bail:
 }
 
 /*
+ * Add an entry by copying it from another zip file, recompressing with
+ * Zopfli if already compressed.
+ *
+ * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
+ */
+status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
+    ZipEntry** ppEntry)
+{
+    ZipEntry* pEntry = NULL;
+    status_t result;
+    long lfhPosn, startPosn, endPosn, uncompressedLen;
+
+    if (mReadOnly)
+        return INVALID_OPERATION;
+
+    /* make sure we're in a reasonable state */
+    assert(mZipFp != NULL);
+    assert(mEntries.size() == mEOCD.mTotalNumEntries);
+
+    if (fseek(mZipFp, mEOCD.mCentralDirOffset, SEEK_SET) != 0) {
+        result = UNKNOWN_ERROR;
+        goto bail;
+    }
+
+    pEntry = new ZipEntry;
+    if (pEntry == NULL) {
+        result = NO_MEMORY;
+        goto bail;
+    }
+
+    result = pEntry->initFromExternal(pSourceZip, pSourceEntry);
+    if (result != NO_ERROR)
+        goto bail;
+
+    /*
+     * From here on out, failures are more interesting.
+     */
+    mNeedCDRewrite = true;
+
+    /*
+     * Write the LFH, even though it's still mostly blank.  We need it
+     * as a place-holder.  In theory the LFH isn't necessary, but in
+     * practice some utilities demand it.
+     */
+    lfhPosn = ftell(mZipFp);
+    pEntry->mLFH.write(mZipFp);
+    startPosn = ftell(mZipFp);
+
+    /*
+     * Copy the data over.
+     *
+     * If the "has data descriptor" flag is set, we want to copy the DD
+     * fields as well.  This is a fixed-size area immediately following
+     * the data.
+     */
+    if (fseek(pSourceZip->mZipFp, pSourceEntry->getFileOffset(), SEEK_SET) != 0)
+    {
+        result = UNKNOWN_ERROR;
+        goto bail;
+    }
+
+    uncompressedLen = pSourceEntry->getUncompressedLen();
+
+    if (pSourceEntry->isCompressed()) {
+        void *buf = pSourceZip->uncompress(pSourceEntry);
+        if (buf == NULL) {
+            result = NO_MEMORY;
+            goto bail;
+        }
+        long startPosn = ftell(mZipFp);
+        unsigned long crc;
+        if (compressFpToFp(mZipFp, NULL, buf, uncompressedLen, &crc) != NO_ERROR) {
+            ALOGW("recompress of '%s' failed\n", pEntry->mCDE.mFileName);
+            result = UNKNOWN_ERROR;
+            free(buf);
+            goto bail;
+        }
+        long endPosn = ftell(mZipFp);
+        pEntry->setDataInfo(uncompressedLen, endPosn - startPosn,
+            pSourceEntry->getCRC32(), ZipEntry::kCompressDeflated);
+        free(buf);
+    } else {
+        off_t copyLen;
+        copyLen = pSourceEntry->getCompressedLen();
+        if ((pSourceEntry->mLFH.mGPBitFlag & ZipEntry::kUsesDataDescr) != 0)
+            copyLen += ZipEntry::kDataDescriptorLen;
+
+        if (copyPartialFpToFp(mZipFp, pSourceZip->mZipFp, copyLen, NULL)
+            != NO_ERROR)
+        {
+            ALOGW("copy of '%s' failed\n", pEntry->mCDE.mFileName);
+            result = UNKNOWN_ERROR;
+            goto bail;
+        }
+    }
+
+    /*
+     * Update file offsets.
+     */
+    endPosn = ftell(mZipFp);
+
+    /*
+     * Success!  Fill out new values.
+     */
+    pEntry->setLFHOffset(lfhPosn);
+    mEOCD.mNumEntries++;
+    mEOCD.mTotalNumEntries++;
+    mEOCD.mCentralDirSize = 0;      // mark invalid; set by flush()
+    mEOCD.mCentralDirOffset = endPosn;
+
+    /*
+     * Go back and write the LFH.
+     */
+    if (fseek(mZipFp, lfhPosn, SEEK_SET) != 0) {
+        result = UNKNOWN_ERROR;
+        goto bail;
+    }
+    pEntry->mLFH.write(mZipFp);
+
+    /*
+     * Add pEntry to the list.
+     */
+    mEntries.add(pEntry);
+    if (ppEntry != NULL)
+        *ppEntry = pEntry;
+    pEntry = NULL;
+
+    result = NO_ERROR;
+
+bail:
+    delete pEntry;
+    return result;
+}
+
+/*
  * Copy all of the bytes in "src" to "dst".
  *
  * On exit, "srcFp" will be seeked to the end of the file, and "dstFp"
@@ -744,73 +881,43 @@ status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
     const void* data, size_t size, unsigned long* pCRC32)
 {
     status_t result = NO_ERROR;
-    const size_t kBufSize = 32768;
+    const size_t kBufSize = 1024 * 1024;
     unsigned char* inBuf = NULL;
     unsigned char* outBuf = NULL;
-    z_stream zstream;
+    size_t outSize = 0;
     bool atEof = false;     // no feof() aviailable yet
     unsigned long crc;
-    int zerr;
+    ZopfliOptions options;
+    unsigned char bp = 0;
 
-    /*
-     * Create an input buffer and an output buffer.
-     */
-    inBuf = new unsigned char[kBufSize];
-    outBuf = new unsigned char[kBufSize];
-    if (inBuf == NULL || outBuf == NULL) {
-        result = NO_MEMORY;
-        goto bail;
-    }
-
-    /*
-     * Initialize the zlib stream.
-     */
-    memset(&zstream, 0, sizeof(zstream));
-    zstream.zalloc = Z_NULL;
-    zstream.zfree = Z_NULL;
-    zstream.opaque = Z_NULL;
-    zstream.next_in = NULL;
-    zstream.avail_in = 0;
-    zstream.next_out = outBuf;
-    zstream.avail_out = kBufSize;
-    zstream.data_type = Z_UNKNOWN;
-
-    zerr = deflateInit2(&zstream, Z_BEST_COMPRESSION,
-        Z_DEFLATED, -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY);
-    if (zerr != Z_OK) {
-        result = UNKNOWN_ERROR;
-        if (zerr == Z_VERSION_ERROR) {
-            ALOGE("Installed zlib is not compatible with linked version (%s)\n",
-                ZLIB_VERSION);
-        } else {
-            ALOGD("Call to deflateInit2 failed (zerr=%d)\n", zerr);
-        }
-        goto bail;
-    }
+    ZopfliInitOptions(&options);
 
     crc = crc32(0L, Z_NULL, 0);
 
-    /*
-     * Loop while we have data.
-     */
-    do {
-        size_t getSize;
-        int flush;
+    if (data) {
+        crc = crc32(crc, (const unsigned char*)data, size);
+        ZopfliDeflate(&options, 2, true, (const unsigned char*)data, size, &bp,
+            &outBuf, &outSize);
+    } else {
+        /*
+         * Create an input buffer and an output buffer.
+         */
+        inBuf = new unsigned char[kBufSize];
+        if (inBuf == NULL) {
+            result = NO_MEMORY;
+            goto bail;
+        }
 
-        /* only read if the input buffer is empty */
-        if (zstream.avail_in == 0 && !atEof) {
-            ALOGV("+++ reading %d bytes\n", (int)kBufSize);
-            if (data) {
-                getSize = size > kBufSize ? kBufSize : size;
-                memcpy(inBuf, data, getSize);
-                data = ((const char*)data) + getSize;
-                size -= getSize;
-            } else {
-                getSize = fread(inBuf, 1, kBufSize, srcFp);
-                if (ferror(srcFp)) {
-                    ALOGD("deflate read failed (errno=%d)\n", errno);
-                    goto z_bail;
-                }
+        /*
+         * Loop while we have data.
+         */
+        do {
+            size_t getSize;
+            getSize = fread(inBuf, 1, kBufSize, srcFp);
+            if (ferror(srcFp)) {
+                ALOGD("deflate read failed (errno=%d)\n", errno);
+                delete[] inBuf;
+                goto bail;
             }
             if (getSize < kBufSize) {
                 ALOGV("+++  got %d bytes, EOF reached\n",
@@ -819,51 +926,21 @@ status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
             }
 
             crc = crc32(crc, inBuf, getSize);
+            ZopfliDeflate(&options, 2, atEof, inBuf, getSize, &bp, &outBuf, &outSize);
+        } while (!atEof);
+        delete[] inBuf;
+    }
 
-            zstream.next_in = inBuf;
-            zstream.avail_in = getSize;
-        }
-
-        if (atEof)
-            flush = Z_FINISH;       /* tell zlib that we're done */
-        else
-            flush = Z_NO_FLUSH;     /* more to come! */
-
-        zerr = deflate(&zstream, flush);
-        if (zerr != Z_OK && zerr != Z_STREAM_END) {
-            ALOGD("zlib deflate call failed (zerr=%d)\n", zerr);
-            result = UNKNOWN_ERROR;
-            goto z_bail;
-        }
-
-        /* write when we're full or when we're done */
-        if (zstream.avail_out == 0 ||
-            (zerr == Z_STREAM_END && zstream.avail_out != (uInt) kBufSize))
-        {
-            ALOGV("+++ writing %d bytes\n", (int) (zstream.next_out - outBuf));
-            if (fwrite(outBuf, 1, zstream.next_out - outBuf, dstFp) !=
-                (size_t)(zstream.next_out - outBuf))
-            {
-                ALOGD("write %d failed in deflate\n",
-                    (int) (zstream.next_out - outBuf));
-                goto z_bail;
-            }
-
-            zstream.next_out = outBuf;
-            zstream.avail_out = kBufSize;
-        }
-    } while (zerr == Z_OK);
-
-    assert(zerr == Z_STREAM_END);       /* other errors should've been caught */
+    ALOGV("+++ writing %d bytes\n", (int)outSize);
+    if (fwrite(outBuf, 1, outSize, dstFp) != outSize) {
+        ALOGD("write %d failed in deflate\n", (int)outSize);
+        goto bail;
+    }
 
     *pCRC32 = crc;
 
-z_bail:
-    deflateEnd(&zstream);        /* free up any allocated structures */
-
 bail:
-    delete[] inBuf;
-    delete[] outBuf;
+    free(outBuf);
 
     return result;
 }
@@ -1148,7 +1225,7 @@ bool ZipFile::uncompress(const ZipEntry* pEntry, void* buf) const
 #endif
 
 // free the memory when you're done
-void* ZipFile::uncompress(const ZipEntry* entry)
+void* ZipFile::uncompress(const ZipEntry* entry) const
 {
     size_t unlen = entry->getUncompressedLen();
     size_t clen = entry->getCompressedLen();

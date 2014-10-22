@@ -29,10 +29,8 @@
 pathmap_INCL := \
     bootloader:bootable/bootloader/legacy/include \
     camera:system/media/camera/include \
-    corecg:external/skia/include/core \
     frameworks-base:frameworks/base/include \
     frameworks-native:frameworks/native/include \
-    graphics:external/skia/include/core \
     libc:bionic/libc/include \
     libhardware:hardware/libhardware/include \
     libhardware_legacy:hardware/libhardware_legacy/include \
@@ -51,6 +49,7 @@ pathmap_INCL := \
     audio-route:system/media/audio_route/include \
     wilhelm:frameworks/wilhelm/include \
     wilhelm-ut:frameworks/wilhelm/src/ut \
+    mediandk:frameworks/av/media/ndk/ \
     speex:external/speex/include
 
 #
@@ -86,7 +85,9 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    drm \
 	    opengl \
 	    sax \
+	    telecomm \
 	    telephony \
+	    phone \
 	    wifi \
 	    keystore \
 	    rs \
@@ -105,12 +106,17 @@ FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 # A list of all source roots under frameworks/support.
 #
 FRAMEWORKS_SUPPORT_SUBDIRS := \
+        annotations \
         v4 \
         v7/gridlayout \
         v7/appcompat \
+        v7/cardview \
         v7/mediarouter \
+        v7/palette \
+        v7/recyclerview \
         v8/renderscript \
-        v13
+        v13 \
+        v17/leanback
 
 #
 # A list of all source roots under frameworks/multidex.

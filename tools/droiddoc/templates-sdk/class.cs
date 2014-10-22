@@ -1,9 +1,12 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
+<?cs include:"macros_override.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 <body class="gc-documentation <?cs if:(reference.gms || reference.gcm) ?>google<?cs /if ?>
   <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
+    if:reference ?> reference<?cs
+    /if ?><?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
   /if ?>" itemscope itemtype="http://schema.org/Article">
@@ -123,6 +126,7 @@ Summary:
   <?cs /if ?>
   <?cs set:colspan = colspan-1 ?>
 <?cs /each ?>
+<?cs call:show_annotations_list(class) ?>
 
 </div><!-- end header -->
 
@@ -193,7 +197,10 @@ Summary:
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><?cs call:cond_link(method.name, toroot, method.href, included) ?></span>(<?cs call:parameter_list(method.params) ?>)</nobr>
         <?cs if:subcount(method.shortDescr) || subcount(method.deprecated) ?>
-        <div class="jd-descrdiv"><?cs call:short_descr(method) ?></div>
+        <div class="jd-descrdiv">
+          <?cs call:short_descr(method) ?>
+          <?cs call:show_annotations_list(method) ?>
+        </div>
   <?cs /if ?>
   </td></tr>
 <?cs set:count = count + #1 ?>
@@ -210,7 +217,10 @@ Summary:
           <?cs var:field.final ?>
           <?cs call:type_link(field.type) ?></nobr></td>
           <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, included) ?></td>
-          <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?></td>
+          <td class="jd-descrcol" width="100%">
+            <?cs call:short_descr(field) ?>
+            <?cs call:show_annotations_list(field) ?>
+          </td>
       </tr>
       <?cs set:count = count + #1 ?>
     <?cs /each ?>
@@ -222,7 +232,10 @@ Summary:
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:field.since ?>" >
         <td class="jd-typecol"><?cs call:type_link(field.type) ?></td>
         <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, included) ?></td>
-        <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?></td>
+        <td class="jd-descrcol" width="100%">
+          <?cs call:short_descr(field) ?>
+          <?cs call:show_annotations_list(field) ?>
+        </td>
     </tr>
     <?cs set:count = count + #1 ?>
     <?cs /each ?>
@@ -242,7 +255,10 @@ Summary:
             <?cs call:cond_link(m.name, toroot, m.href, included) ?>
             <?cs /each ?>
         </td>
-        <td class="jd-descrcol" width="100%"><?cs call:short_descr(attr) ?>&nbsp;</td>
+        <td class="jd-descrcol" width="100%">
+          <?cs call:short_descr(attr) ?>&nbsp;
+          <?cs call:show_annotations_list(attr) ?>
+        </td>
     </tr>
     <?cs set:count = count + #1 ?>
     <?cs /each ?>
@@ -259,7 +275,10 @@ Summary:
         <?cs var:cl.abstract ?>
         <?cs var:cl.kind ?></nobr></td>
       <td class="jd-linkcol"><?cs call:type_link(cl.type) ?></td>
-      <td class="jd-descrcol" width="100%"><?cs call:short_descr(cl) ?>&nbsp;</td>
+      <td class="jd-descrcol" width="100%">
+        <?cs call:short_descr(cl) ?>&nbsp;
+        <?cs call:show_annotations_list(cl) ?>
+      </td>
     </tr>
     <?cs set:count = count + #1 ?>
     <?cs /each ?>
@@ -335,7 +354,10 @@ Summary:
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:field.since ?>" >
         <td class="jd-descrcol"><?cs call:type_link(field.type) ?>&nbsp;</td>
         <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, cl.included) ?>&nbsp;</td>
-        <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?>&nbsp;</td>
+        <td class="jd-descrcol" width="100%">
+          <?cs call:short_descr(field) ?>&nbsp;
+          <?cs call:show_annotations_list(field) ?>
+        </td>
     </tr>
     <?cs set:count = count + #1 ?>
     <?cs /each ?>
@@ -504,6 +526,7 @@ From <?cs var:cl.kind ?>
         <?cs call:federated_refs(field) ?>
       </div>
     <div class="jd-details-descr">
+      <?cs call:show_annotations_list(field) ?>
       <?cs call:description(field) ?>
     <?cs if:subcount(field.constantValue) ?>
         <div class="jd-tagdata">
@@ -546,6 +569,7 @@ From <?cs var:cl.kind ?>
         <?cs call:federated_refs(method) ?>
       </div>
     <div class="jd-details-descr">
+      <?cs call:show_annotations_list(method) ?>
       <?cs call:description(method) ?>
     </div>
 </div>
@@ -560,6 +584,7 @@ From <?cs var:cl.kind ?>
     <h4 class="jd-details-title"><?cs var:attr.name ?>
     </h4>
     <div class="jd-details-descr">
+        <?cs call:show_annotations_list(attr) ?>
         <?cs call:description(attr) ?>
 
         <div class="jd-tagdata">

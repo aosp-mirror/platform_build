@@ -185,12 +185,8 @@ ifeq ($(requires_openjdk), true)
 # java version is really openjdk
 ifeq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
 $(info ************************************************************)
-$(info You are attempting to build with an unsupported JDK.)
-$(info $(space))
-$(info This build requires OpenJDK, but you are using:)
+$(info You asked for an OpenJDK 7 build but your version is)
 $(info $(java_version_str).)
-$(info Please follow the machine setup instructions at)
-$(info $(space)$(space)$(space)$(space)https://source.android.com/source/download.html)
 $(info ************************************************************)
 $(error stop)
 endif # java version is not OpenJdk
@@ -381,10 +377,12 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
           $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))) \
           ro.setupwizard.mode=OPTIONAL
 endif
-# Don't even verify the image on eng builds to speed startup
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-none
-# Don't compile apps on eng builds to speed startup
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=interpret-only
+ifndef is_sdk_build
+  # Don't even verify the image on eng builds to speed startup
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-none
+  # Don't compile apps on eng builds to speed startup
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=interpret-only
+endif
 endif
 
 ## sdk ##
@@ -395,7 +393,7 @@ ifdef is_sdk_build
 sdk_repo_goal := $(strip $(filter sdk_repo,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out sdk_repo,$(MAKECMDGOALS)))
 
-ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild,$(MAKECMDGOALS))),1)
+ifneq ($(words $(filter-out $(INTERNAL_MODIFIER_TARGETS) checkbuild emulator_tests target-files-package,$(MAKECMDGOALS))),1)
 $(error The 'sdk' target may not be specified with any other targets)
 endif
 
@@ -773,7 +771,7 @@ ifdef is_sdk_build
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED) $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).INSTALLED)),,\
       $(eval dangling_modules += $(m))))
   ifneq ($(dangling_modules),)
-    $(warning Module names '$(dangling_modules)' in PRODUCT_PACKAGES has nothing to install!)
+    $(warning: Modules '$(dangling_modules)' in PRODUCT_PACKAGES have nothing to install!)
   endif
   $(foreach m, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG), \
     $(if $(strip $(ALL_MODULES.$(m).INSTALLED)),,\
@@ -965,12 +963,14 @@ else # TARGET_BUILD_APPS
   $(foreach f,$(INSTALLED_RADIOIMAGE_TARGET), \
     $(call dist-for-goals, droidcore, $(f)))
 
+  ifneq ($(ANDROID_BUILD_EMBEDDED),true)
   ifneq ($(TARGET_BUILD_PDK),true)
     $(call dist-for-goals, droidcore, \
       $(APPS_ZIP) \
       $(INTERNAL_EMULATOR_PACKAGE_TARGET) \
       $(PACKAGE_STATS_FILE) \
     )
+  endif
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
@@ -1011,6 +1011,12 @@ target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests : host-tests target-tests
 
+# To catch more build breakage, check build tests modules in eng and userdebug builds.
+ifneq ($(TARGET_BUILD_PDK),true)
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+droidcore : target-tests host-tests
+endif
+endif
 
 .PHONY: lintall
 
@@ -1035,7 +1041,7 @@ findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
 .PHONY: clean
 clean:
-	@rm -rf $(OUT_DIR)
+	@rm -rf $(OUT_DIR)/*
 	@echo "Entire build directory removed."
 
 .PHONY: clobber

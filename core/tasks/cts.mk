@@ -17,8 +17,7 @@ cts_tools_src_dir := cts/tools
 
 cts_name := android-cts
 
-DDMLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/ddmlib-prebuilt.jar
-junit_host_jar := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
+JUNIT_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
 HOSTTESTLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
 TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar
 CTS_TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts-tradefed.jar
@@ -48,6 +47,7 @@ CTS_CORE_CASE_LIST := \
 	android.core.tests.libcore.package.harmony_java_text \
 	android.core.tests.libcore.package.harmony_java_util \
 	android.core.tests.libcore.package.harmony_javax_security \
+	android.core.tests.libcore.package.okhttp \
 	android.core.tests.runner
 
 # The list of test packages that apache-harmony-tests (external/apache-harmony/Android.mk)
@@ -58,19 +58,33 @@ CTS_CORE_CASE_LIST += \
 	android.core.tests.libcore.package.harmony_prefs \
 	android.core.tests.libcore.package.harmony_sql
 
+
+CTS_TEST_JAR_LIST := \
+        cts-junit \
+	CtsJdwp
+
 # Depend on the full package paths rather than the phony targets to avoid
 # rebuilding the packages every time.
 CTS_CORE_CASES := $(foreach pkg,$(CTS_CORE_CASE_LIST),$(call intermediates-dir-for,APPS,$(pkg))/package.apk)
+CTS_TEST_JAR_FILES := $(foreach c,$(CTS_TEST_JAR_LIST),$(call intermediates-dir-for,JAVA_LIBRARIES,$(c))/javalib.jar)
 
 -include cts/CtsTestCaseList.mk
 CTS_CASE_LIST := $(CTS_CORE_CASE_LIST) $(CTS_TEST_CASE_LIST)
 
+# A module may have mutliple installed files (e.g. split apks)
+CTS_CASE_LIST_APKS :=
+CTS_CASE_LIST_APKS_DIR := $(cts_dir)/$(cts_name)/repository/testcases/
+$(foreach m, $(CTS_CASE_LIST),\
+  $(foreach fp, $(ALL_MODULES.$(m).BUILT_INSTALLED),\
+    $(eval pair := $(subst :,$(space),$(fp)))\
+    $(eval built := $(word 1,$(pair)))\
+    $(eval installed := $(CTS_CASE_LIST_APKS_DIR)/$(notdir $(word 2,$(pair))))\
+    $(eval $(call copy-one-file, $(built), $(installed)))\
+    $(eval CTS_CASE_LIST_APKS += $(installed))))
+
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
-CTS_TEST_CASE_LIST_FILES := $(foreach c, $(CTS_TEST_CASE_LIST), $(call intermediates-dir-for,APPS,$(c))/package.apk)
-$(cts_dir)/all_cts_files_stamp: PRIVATE_JUNIT_HOST_JAR := $(junit_host_jar)
-$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_CASE_LIST_FILES) $(junit_host_jar) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP) $(CTS_TEST_JAR_FILES)
 # Make necessary directory for CTS
-	$(hide) rm -rf $(PRIVATE_CTS_DIR)
 	$(hide) mkdir -p $(TMP_DIR)
 	$(hide) mkdir -p $(PRIVATE_DIR)/docs
 	$(hide) mkdir -p $(PRIVATE_DIR)/tools
@@ -78,9 +92,9 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_C
 	$(hide) mkdir -p $(PRIVATE_DIR)/repository/plans
 # Copy executable and JARs to CTS directory
 	$(hide) $(ACP) -fp $(VMTESTSTF_JAR) $(PRIVATE_DIR)/repository/testcases
-	$(hide) $(ACP) -fp $(DDMLIB_JAR) $(PRIVATE_JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
+	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
 # Change mode of the executables
-	$(foreach apk,$(CTS_CASE_LIST),$(call copy-testcase-apk,$(apk)))
+	$(foreach jar,$(CTS_TEST_JAR_LIST),$(call copy-testcase-jar,$(jar)))
 	$(foreach testcase,$(CTS_TEST_CASES),$(call copy-testcase,$(testcase)))
 	$(hide) touch $@
 
@@ -90,29 +104,32 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_TEST_C
 # $2 : The AndroidManifest.xml corresponding to the test package
 # $3 : The jar file name on PRIVATE_CLASSPATH containing junit tests to search for
 # $4 : The package prefix of classes to include, possible empty
-# $5 : The directory containing vogar expectations files
-# $6 : The Android.mk corresponding to the test package (required for host-side tests only)
+# $5 : The architecture of the current build
+# $6 : The directory containing vogar expectations files
+# $7 : The Android.mk corresponding to the test package (required for host-side tests only)
 define generate-core-test-description
 @echo "Generate core-test description ("$(notdir $(1))")"
 $(hide) java -Xmx256M \
-	-Xbootclasspath/a:$(PRIVATE_CLASSPATH) \
-	-classpath $(PRIVATE_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_OUT_JAVA_LIBRARIES)/junit.jar:$(HOST_JDK_TOOLS_JAR) \
-	$(PRIVATE_PARAMS) CollectAllTests $(1) $(2) $(3) "$(4)" $(5) $(6)
+	-Xbootclasspath/a:$(PRIVATE_CLASSPATH):$(JUNIT_HOST_JAR) \
+	-classpath $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar:$(HOST_JDK_TOOLS_JAR) \
+	$(PRIVATE_PARAMS) CollectAllTests $(1) $(2) $(3) "$(4)" $(5) $(6) $(7)
 endef
 
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-libart,,COMMON)
 CONSCRYPT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,conscrypt,,COMMON)
 BOUNCYCASTLE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,bouncycastle,,COMMON)
 APACHEXML_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,apache-xml,,COMMON)
-OKHTTP_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,okhttp,,COMMON)
-APACHEHARMONY_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,apache-harmony-tests,,COMMON)
+OKHTTP_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,okhttp-nojarjar,,COMMON)
+OKHTTPTESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,okhttp-tests-nojarjar,,COMMON)
+OKHTTP_REPACKAGED_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,okhttp,,COMMON)
+APACHEHARMONYTESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,apache-harmony-tests,,COMMON)
 SQLITEJDBC_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,sqlite-jdbc,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 CORETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
 JSR166TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,jsr166-tests,,COMMON)
 CONSCRYPTTESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,conscrypt-tests,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(APACHEHARMONY_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(JSR166TESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(APACHEHARMONYTESTS_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(OKHTTPTESTS_INTERMEDIATES)/classes.jar:$(OKHTTP_REPACKAGED_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(JSR166TESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar
 
 CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml \
@@ -136,6 +153,7 @@ CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_logging.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_prefs.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.okhttp.xml \
 
 $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Why does this depend on javalib.jar instead of classes.jar?  Because
@@ -143,155 +161,161 @@ $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(APACHEHARMONY_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(JSR166TESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar build/core/tasks/cts.mk | $(ACP)
+CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(JUNIT_HOST_JAR) $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(OKHTTPTESTS_INTERMEDIATES)/javalib.jar $(OKHTTP_REPACKAGED_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(JSR166TESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar build/core/tasks/cts.mk | $(ACP)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik,\
 		cts/tests/core/libcore/dalvik/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,dalvik,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.com,\
 		cts/tests/core/libcore/com/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,com,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.conscrypt.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.conscrypt,\
 		cts/tests/core/libcore/conscrypt/AndroidManifest.xml,\
 		$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar,,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.sun,\
 		cts/tests/core/libcore/sun/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,sun,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tests,\
 		cts/tests/core/libcore/tests/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,tests,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org,\
 		cts/tests/core/libcore/org/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore,\
 		cts/tests/core/libcore/libcore/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,libcore,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.jsr166.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.jsr166,\
 		cts/tests/core/libcore/jsr166/AndroidManifest.xml,\
 		$(JSR166TESTS_INTERMEDIATES)/javalib.jar,jsr166,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_annotation.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_annotation,\
 		cts/tests/core/libcore/harmony_annotation/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.annotation.tests,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_io.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_io,\
 		cts/tests/core/libcore/harmony_java_io/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.io,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_lang.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_lang,\
 		cts/tests/core/libcore/harmony_java_lang/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.lang,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_math.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_math,\
 		cts/tests/core/libcore/harmony_java_math/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.math,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_net.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_net,\
 		cts/tests/core/libcore/harmony_java_net/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.net,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_nio.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_nio,\
 		cts/tests/core/libcore/harmony_java_nio/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.nio,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_text.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_text,\
 		cts/tests/core/libcore/harmony_java_text/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.text,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_util.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_java_util,\
 		cts/tests/core/libcore/harmony_java_util/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.java.util,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_javax_security.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_javax_security,\
 		cts/tests/core/libcore/harmony_javax_security/AndroidManifest.xml,\
 		$(CORETESTS_INTERMEDIATES)/javalib.jar,org.apache.harmony.tests.javax.security,\
-		libcore/expectations)
+		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_beans.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_beans,\
 		cts/tests/core/libcore/harmony_beans/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.beans,\
-		libcore/expectations external/apache-harmony/Android.mk)
+		$(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.beans,\
+		$(TARGET_ARCH),libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_logging.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_logging,\
 		cts/tests/core/libcore/harmony_logging/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.logging,\
-		libcore/expectations external/apache-harmony/Android.mk)
-
+		$(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.logging,\
+		$(TARGET_ARCH),libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_prefs.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_prefs,\
 		cts/tests/core/libcore/harmony_prefs/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.prefs,\
-		libcore/expectations external/apache-harmony/Android.mk)
+		$(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.prefs,\
+		$(TARGET_ARCH),libcore/expectations external/apache-harmony/Android.mk)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql,\
 		cts/tests/core/libcore/harmony_sql/AndroidManifest.xml,\
-		$(APACHEHARMONY_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.sql,\
-		libcore/expectations external/apache-harmony/Android.mk)
+		$(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar,com.android.org.apache.harmony.sql,\
+		$(TARGET_ARCH),libcore/expectations external/apache-harmony/Android.mk)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.okhttp.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.okhttp,\
+		cts/tests/core/libcore/okhttp/AndroidManifest.xml,\
+		$(OKHTTPTESTS_INTERMEDIATES)/javalib.jar,,\
+		$(TARGET_ARCH),libcore/expectations)
 
 # ----- Generate the test descriptions for the vm-tests-tf -----
 #
@@ -301,15 +325,16 @@ CORE_VM_TEST_TF_DESC := $(CTS_TESTCASES_OUT)/android.core.vm-tests-tf.xml
 CORE_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-libart,,COMMON)
 JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_JAR):$(DDMLIB_JAR):$(TF_JAR)
+GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(VMTESTSTF_JAR):$(TF_JAR)
 
 $(CORE_VM_TEST_TF_DESC): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Please see big comment above on why this line depends on javalib.jar instead of classes.jar
-$(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(HOST_OUT_JAVA_LIBRARIES)/junit.jar $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_JAR) $(DDMLIB_JAR) | $(ACP)
+$(CORE_VM_TEST_TF_DESC): $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(JUNIT_HOST_JAR) $(CORE_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(VMTESTSTF_JAR) | $(ACP)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.vm-tests-tf,\
 		cts/tests/vm-tests-tf/AndroidManifest.xml,\
 		$(VMTESTSTF_JAR),"",\
+		$(TARGET_ARCH),\
 		libcore/expectations,\
 		cts/tools/vm-tests-tf/Android.mk)
 
@@ -339,15 +364,16 @@ $(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN)
 cts: $(INTERNAL_CTS_TARGET) adb
 $(call dist-for-goals,cts,$(INTERNAL_CTS_TARGET))
 
-define copy-testcase-apk
-
-$(hide) $(ACP) -fp $(call intermediates-dir-for,APPS,$(1))/package.apk \
-	$(PRIVATE_DIR)/repository/testcases/$(1).apk
-
-endef
 
 define copy-testcase
 
 $(hide) $(ACP) -fp $(1) $(PRIVATE_DIR)/repository/testcases/$(notdir $1)
+
+endef
+
+define copy-testcase-jar
+
+$(hide) $(ACP) -fp $(call intermediates-dir-for,JAVA_LIBRARIES,$(1))/javalib.jar \
+	$(PRIVATE_DIR)/repository/testcases/$(1).jar
 
 endef

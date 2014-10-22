@@ -30,15 +30,12 @@ PRODUCT_PACKAGES += \
     libandroidfw \
     libaudiopreprocessing \
     libaudioutils \
-    libbcc \
     libfilterpack_imageproc \
     libgabi++ \
-    libkeystore \
     libmdnssd \
     libnfc_ndef \
     libpowermanager \
     libspeexresampler \
-    libstagefright_chromium_http \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
@@ -49,9 +46,11 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_gsmdec \
     libstagefright_soft_h264dec \
     libstagefright_soft_h264enc \
+    libstagefright_soft_hevcdec \
     libstagefright_soft_mp3dec \
     libstagefright_soft_mpeg4dec \
     libstagefright_soft_mpeg4enc \
+    libstagefright_soft_opusdec \
     libstagefright_soft_rawdec \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
@@ -59,25 +58,7 @@ PRODUCT_PACKAGES += \
     libvariablespeed \
     libwebrtc_audio_preprocessing \
     mdnsd \
-    mms-common \
     requestsync \
-    telephony-common \
-    voip-common
+    wifi-service
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
-# Override the PRODUCT_BOOT_JARS set in core_minimal.mk. The order matters.
-PRODUCT_BOOT_JARS := \
-    core-libart \
-    conscrypt \
-    okhttp \
-    core-junit \
-    bouncycastle \
-    ext \
-    framework \
-    framework2 \
-    telephony-common \
-    voip-common \
-    mms-common \
-    android.policy \
-    services \
-    apache-xml

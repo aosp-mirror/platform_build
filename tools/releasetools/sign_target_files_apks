@@ -67,8 +67,8 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
 import sys
 
-if sys.hexversion < 0x02040000:
-  print >> sys.stderr, "Python 2.4 or newer is required."
+if sys.hexversion < 0x02070000:
+  print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
 import base64
@@ -77,10 +77,12 @@ import copy
 import errno
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import zipfile
 
+import add_img_to_target_files
 import common
 
 OPTIONS = common.OPTIONS
@@ -88,6 +90,8 @@ OPTIONS = common.OPTIONS
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
+OPTIONS.replace_verity_public_key = False
+OPTIONS.replace_verity_private_key = False
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
@@ -139,14 +143,49 @@ def SignApk(data, keyname, pw):
   return data
 
 
-def SignApks(input_tf_zip, output_tf_zip, apk_key_map, key_passwords):
+def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
+                       apk_key_map, key_passwords):
+
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
+  rebuild_recovery = False
+
+  tmpdir = tempfile.mkdtemp()
+  def write_to_temp(fn, attr, data):
+    fn = os.path.join(tmpdir, fn)
+    if fn.endswith("/"):
+      fn = os.path.join(tmpdir, fn)
+      os.mkdir(fn)
+    else:
+      d = os.path.dirname(fn)
+      if d and not os.path.exists(d):
+        os.makedirs(d)
+
+      if attr >> 16 == 0xa1ff:
+        os.symlink(data, fn)
+      else:
+        with open(fn, "wb") as f:
+          f.write(data)
 
   for info in input_tf_zip.infolist():
+    if info.filename.startswith("IMAGES/"): continue
+
     data = input_tf_zip.read(info.filename)
     out_info = copy.copy(info)
+
+    if (info.filename == "META/misc_info.txt" and
+        OPTIONS.replace_verity_private_key):
+      ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info, OPTIONS.replace_verity_private_key[1])
+    elif (info.filename == "BOOT/RAMDISK/verity_key" and
+        OPTIONS.replace_verity_public_key):
+      ReplaceVerityPublicKey(output_tf_zip, OPTIONS.replace_verity_public_key[1])
+    elif (info.filename.startswith("BOOT/") or
+        info.filename.startswith("RECOVERY/") or
+        info.filename.startswith("META/") or
+        info.filename == "SYSTEM/etc/recovery-resource.dat"):
+      write_to_temp(info.filename, info.external_attr, data)
+
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
       key = apk_key_map[name]
@@ -161,15 +200,50 @@ def SignApks(input_tf_zip, output_tf_zip, apk_key_map, key_passwords):
     elif info.filename in ("SYSTEM/build.prop",
                            "RECOVERY/RAMDISK/default.prop"):
       print "rewriting %s:" % (info.filename,)
-      new_data = RewriteProps(data)
+      new_data = RewriteProps(data, misc_info)
       output_tf_zip.writestr(out_info, new_data)
+      if info.filename == "RECOVERY/RAMDISK/default.prop":
+        write_to_temp(info.filename, info.external_attr, new_data)
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
       new_data = ReplaceCerts(data)
       output_tf_zip.writestr(out_info, new_data)
+    elif info.filename in ("SYSTEM/recovery-from-boot.p",
+                           "SYSTEM/bin/install-recovery.sh"):
+      rebuild_recovery = True
+    elif (OPTIONS.replace_ota_keys and
+          info.filename in ("RECOVERY/RAMDISK/res/keys",
+                            "SYSTEM/etc/security/otacerts.zip")):
+      # don't copy these files if we're regenerating them below
+      pass
+    elif (OPTIONS.replace_verity_private_key and
+          info.filename == "META/misc_info.txt"):
+      pass
+    elif (OPTIONS.replace_verity_public_key and
+          info.filename == "BOOT/RAMDISK/verity_key"):
+      pass
     else:
       # a non-APK file; copy it verbatim
       output_tf_zip.writestr(out_info, data)
+
+  if OPTIONS.replace_ota_keys:
+    new_recovery_keys = ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
+    if new_recovery_keys:
+      write_to_temp("RECOVERY/RAMDISK/res/keys", 0755 << 16, new_recovery_keys)
+
+  if rebuild_recovery:
+    recovery_img = common.GetBootableImage(
+        "recovery.img", "recovery.img", tmpdir, "RECOVERY", info_dict=misc_info)
+    boot_img = common.GetBootableImage(
+        "boot.img", "boot.img", tmpdir, "BOOT", info_dict=misc_info)
+
+    def output_sink(fn, data):
+      output_tf_zip.writestr("SYSTEM/"+fn, data)
+
+    common.MakeRecoveryPatch(tmpdir, output_sink, recovery_img, boot_img,
+                             info_dict=misc_info)
+
+  shutil.rmtree(tmpdir)
 
 
 def ReplaceCerts(data):
@@ -214,14 +288,20 @@ def EditTags(tags):
   return ",".join(sorted(tags))
 
 
-def RewriteProps(data):
+def RewriteProps(data, misc_info):
   output = []
   for line in data.split("\n"):
     line = line.strip()
     original_line = line
-    if line and line[0] != '#':
+    if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
-      if key == "ro.build.fingerprint":
+      if (key == "ro.build.fingerprint"
+          and misc_info.get("oem_fingerprint_properties") is None):
+        pieces = value.split("/")
+        pieces[-1] = EditTags(pieces[-1])
+        value = "/".join(pieces)
+      elif (key == "ro.build.thumbprint"
+          and misc_info.get("oem_fingerprint_properties") is not None):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
@@ -235,7 +315,7 @@ def RewriteProps(data):
       elif key == "ro.build.display.id":
         # change, eg, "JWR66N dev-keys" to "JWR66N"
         value = value.split()
-        if len(value) >  1 and value[-1].endswith("-keys"):
+        if len(value) > 1 and value[-1].endswith("-keys"):
           value.pop()
         value = " ".join(value)
       line = key + "=" + value
@@ -265,7 +345,8 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   for k in keylist:
     m = re.match(r"^(.*)\.x509\.pem$", k)
     if not m:
-      raise common.ExternalError("can't parse \"%s\" from META/otakeys.txt" % (k,))
+      raise common.ExternalError(
+          "can't parse \"%s\" from META/otakeys.txt" % (k,))
     k = m.group(1)
     mapped_keys.append(OPTIONS.key_map.get(k, k) + ".x509.pem")
 
@@ -287,10 +368,11 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
                   os.path.join(OPTIONS.search_path, "framework", "dumpkey.jar")]
                  + mapped_keys + extra_recovery_keys,
                  stdout=subprocess.PIPE)
-  data, _ = p.communicate()
+  new_recovery_keys, _ = p.communicate()
   if p.returncode != 0:
     raise common.ExternalError("failed to run dumpkeys")
-  common.ZipWriteStr(output_tf_zip, "RECOVERY/RAMDISK/res/keys", data)
+  common.ZipWriteStr(output_tf_zip, "RECOVERY/RAMDISK/res/keys",
+                     new_recovery_keys)
 
   # SystemUpdateActivity uses the x509.pem version of the keys, but
   # put into a zipfile system/etc/security/otacerts.zip.
@@ -304,6 +386,19 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   common.ZipWriteStr(output_tf_zip, "SYSTEM/etc/security/otacerts.zip",
                      tempfile.getvalue())
 
+  return new_recovery_keys
+
+def ReplaceVerityPublicKey(targetfile_zip, key_path):
+  print "Replacing verity public key with %s" % key_path
+  with open(key_path) as f:
+    common.ZipWriteStr(targetfile_zip, "BOOT/RAMDISK/verity_key", f.read())
+
+def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip, misc_info, key_path):
+  print "Replacing verity private key with %s" % key_path
+  current_key = misc_info["verity_key"]
+  original_misc_info = targetfile_input_zip.read("META/misc_info.txt")
+  new_misc_info = original_misc_info.replace(current_key, key_path)
+  common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
 
 def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
@@ -347,6 +442,10 @@ def main(argv):
           raise ValueError("Bad tag change '%s'" % (i,))
         new.append(i[0] + i[1:].strip())
       OPTIONS.tag_changes = tuple(new)
+    elif o == "--replace_verity_public_key":
+      OPTIONS.replace_verity_public_key = (True, a)
+    elif o == "--replace_verity_private_key":
+      OPTIONS.replace_verity_private_key = (True, a)
     else:
       return False
     return True
@@ -357,7 +456,9 @@ def main(argv):
                                               "default_key_mappings=",
                                               "key_mapping=",
                                               "replace_ota_keys",
-                                              "tag_changes="],
+                                              "tag_changes=",
+                                              "replace_verity_public_key=",
+                                              "replace_verity_private_key="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -375,13 +476,13 @@ def main(argv):
   CheckAllApksSigned(input_zip, apk_key_map)
 
   key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
-  SignApks(input_zip, output_zip, apk_key_map, key_passwords)
-
-  if OPTIONS.replace_ota_keys:
-    ReplaceOtaKeys(input_zip, output_zip, misc_info)
+  ProcessTargetFiles(input_zip, output_zip, misc_info,
+                     apk_key_map, key_passwords)
 
   input_zip.close()
   output_zip.close()
+
+  add_img_to_target_files.AddImagesToTargetFiles(args[1])
 
   print "done."
 

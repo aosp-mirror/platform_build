@@ -16,6 +16,9 @@
 
 import sys
 
+# Usage: post_process_props.py file.prop [blacklist_key, ...]
+# Blacklisted keys are removed from the property file, if present
+
 # See PROP_NAME_MAX and PROP_VALUE_MAX system_properties.h.
 # The constants in system_properties.h includes the termination NUL,
 # so we decrease the values by 1 here.
@@ -88,8 +91,9 @@ class PropFile:
     for line in self.lines:
       if not line or line.startswith("#"):
         continue
-      key, value = line.split("=", 1)
-      props[key] = value
+      if "=" in line:
+        key, value = line.split("=", 1)
+        props[key] = value
     return props
 
   def get(self, name):
@@ -106,6 +110,10 @@ class PropFile:
         self.lines[i] = key + value
         return
     self.lines.append(key + value)
+
+  def delete(self, name):
+    key = name + "="
+    self.lines = [ line for line in self.lines if not line.startswith(key) ]
 
   def write(self, f):
     f.write("\n".join(self.lines))
@@ -129,6 +137,10 @@ def main(argv):
 
   if not validate(properties):
     sys.exit(1)
+
+  # Drop any blacklisted keys
+  for key in argv[2:]:
+    properties.delete(key)
 
   f = open(filename, 'w+')
   properties.write(f)

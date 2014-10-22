@@ -18,6 +18,14 @@ endif
 empty :=
 space := $(empty) $(empty)
 comma := ,
+# Note that make will eat the newline just before endef.
+define newline
+
+
+endef
+# Unfortunately you can't simply define backslash as \ or \\.
+backslash := \a
+backslash := $(patsubst %a,%,$(backslash))
 
 # Tell python not to spam the source tree with .pyc files.  This
 # only has an effect on python 2.6 and above.
@@ -37,13 +45,13 @@ SRC_HEADERS := \
 	$(TOPDIR)frameworks/native/include \
 	$(TOPDIR)frameworks/native/opengl/include \
 	$(TOPDIR)frameworks/av/include \
-	$(TOPDIR)frameworks/base/include \
-	$(TOPDIR)external/skia/include
+	$(TOPDIR)frameworks/base/include
 SRC_HOST_HEADERS:=$(TOPDIR)tools/include
 SRC_LIBRARIES:= $(TOPDIR)libs
 SRC_SERVERS:= $(TOPDIR)servers
 SRC_TARGET_DIR := $(TOPDIR)build/target
 SRC_API_DIR := $(TOPDIR)prebuilts/sdk/api
+SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/tools/droiddoc
@@ -387,6 +395,8 @@ FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXT2IMG := $(HOST_OUT_EXECUTABLES)/genext2fs$(HOST_EXECUTABLE_SUFFIX)
 MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/make_ext4fs$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg.sh
+MAKE_F2FS := $(HOST_OUT_EXECUTABLES)/make_f2fs$(HOST_EXECUTABLE_SUFFIX)
+MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 MKEXT2BOOTIMG := external/genext2fs/mkbootimg_ext2.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
@@ -399,6 +409,11 @@ JAVATAGS := build/tools/java-event-log-tags.py
 LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc$(HOST_EXECUTABLE_SUFFIX)
 BCC_COMPAT := $(HOST_OUT_EXECUTABLES)/bcc_compat$(HOST_EXECUTABLE_SUFFIX)
 LINT := prebuilts/sdk/tools/lint
+RMTYPEDEFS := $(HOST_OUT_EXECUTABLES)/rmtypedefs
+APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
+VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
+BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
+BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 
 # ACP is always for the build OS, not for the host OS
 ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)
@@ -406,8 +421,12 @@ ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
 ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign$(HOST_EXECUTABLE_SUFFIX)
-FINDBUGS := prebuilt/common/findbugs/bin/findbugs
+FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
+FINDBUGS := $(FINDBUGS_DIR)/findbugs
 EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
+
+# Tool to merge AndroidManifest.xmls
+ANDROID_MANIFEST_MERGER := java -classpath prebuilts/devtools/tools/lib/manifest-merger.jar com.android.manifmerger.Main merge
 
 YACC_HEADER_SUFFIX:= .hpp
 
@@ -523,7 +542,7 @@ endif
 
 # allow overriding default Java libraries on a per-target basis
 ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
-  TARGET_DEFAULT_JAVA_LIBRARIES := core-libart core-junit ext framework framework2
+  TARGET_DEFAULT_JAVA_LIBRARIES := core-libart core-junit ext framework
 endif
 
 TARGET_CPU_SMP ?= true
@@ -576,7 +595,13 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
     $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
+# We don't have prebuilt system_current SDK yet.
+TARGET_AVAILABLE_SDK_VERSIONS := $(TARGET_AVAILABLE_SDK_VERSIONS)
+
 INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.txt
+INTERNAL_PLATFORM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/removed.txt
+INTERNAL_PLATFORM_SYSTEM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-api.txt
+INTERNAL_PLATFORM_SYSTEM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-removed.txt
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so

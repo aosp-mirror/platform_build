@@ -52,16 +52,6 @@ $(error $(LOCAL_PATH): Package modules may not define LOCAL_MODULE)
 endif
 LOCAL_MODULE := $(LOCAL_PACKAGE_NAME)
 
-ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
-LOCAL_MANIFEST_FILE := AndroidManifest.xml
-endif
-
-# If you need to put the MANIFEST_FILE outside of LOCAL_PATH
-# you can use FULL_MANIFEST_FILE
-ifeq ($(strip $(LOCAL_FULL_MANIFEST_FILE)),)
-LOCAL_FULL_MANIFEST_FILE := $(LOCAL_PATH)/$(LOCAL_MANIFEST_FILE)
-endif
-
 ifneq ($(strip $(LOCAL_MODULE_CLASS)),)
 $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
@@ -76,6 +66,10 @@ endif
 ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
 # Force localization check if it's not tagged as tests.
 LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
+endif
+
+ifdef LOCAL_PACKAGE_SPLITS
+LOCAL_AAPT_FLAGS += $(addprefix --split ,$(LOCAL_PACKAGE_SPLITS))
 endif
 
 need_compile_asset :=
@@ -101,8 +95,14 @@ package_resource_overlays := $(strip \
 
 LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
 
-all_assets := $(call find-subdir-assets,$(LOCAL_ASSET_DIR))
-all_assets := $(addprefix $(LOCAL_ASSET_DIR)/,$(patsubst assets/%,%,$(all_assets)))
+all_assets := $(strip \
+    $(foreach dir, $(LOCAL_ASSET_DIR), \
+      $(addprefix $(dir)/, \
+        $(patsubst assets/%,%, \
+          $(call find-subdir-assets, $(dir)) \
+         ) \
+       ) \
+     ))
 
 ifneq ($(all_assets),)
 need_compile_asset := true
@@ -141,6 +141,7 @@ LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 endif
 
 LOCAL_BUILT_MODULE_STEM := package.apk
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
 
 LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
 ifndef LOCAL_PROGUARD_ENABLED
@@ -200,10 +201,11 @@ ifeq ($(LOCAL_SDK_RES_VERSION),)
   LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
 endif
 
-full_android_manifest := $(LOCAL_FULL_MANIFEST_FILE)
+include $(BUILD_SYSTEM)/android_manifest.mk
+
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
-ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_DEFAULT_APP_TARGET_SDK := $(LOCAL_SDK_VERSION)
 else
@@ -251,6 +253,7 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 
 $(proguard_options_file): $(R_file_stamp)
 
+resource_export_package :=
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 # Put this module's resources into a PRODUCT-agnositc package that
 # other packages can use to build their own PRODUCT-agnostic R.java (etc.)
@@ -290,7 +293,7 @@ else
 # Most packages should link against the resources defined by framework-res.
 # Even if they don't have their own resources, they may use framework
 # resources.
-ifneq ($(filter-out current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_RES_VERSION))),)
+ifneq ($(filter-out current system_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current,$(LOCAL_SDK_RES_VERSION))),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
@@ -304,9 +307,19 @@ framework_res_package_export := \
 framework_res_package_export_deps := \
     $(dir $(framework_res_package_export))src/R.stamp
 endif # LOCAL_SDK_RES_VERSION
-$(R_file_stamp): $(framework_res_package_export_deps)
+all_library_res_package_exports := \
+    $(framework_res_package_export) \
+    $(foreach lib,$(LOCAL_RES_LIBRARIES),\
+        $(call intermediates-dir-for,APPS,$(lib),,COMMON)/package-export.apk)
+
+all_library_res_package_export_deps := \
+    $(framework_res_package_export_deps) \
+    $(foreach lib,$(LOCAL_RES_LIBRARIES),\
+        $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
+
+$(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
-    PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
+    PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 endif # LOCAL_NO_STANDARD_LIBRARIES
 
 ifneq ($(full_classes_jar),)
@@ -364,7 +377,11 @@ ifeq ($(LOCAL_AAPT_INCLUDE_ALL_RESOURCES),true)
     $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 else
     $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG := $(PRODUCT_AAPT_CONFIG)
+ifdef LOCAL_PACKAGE_SPLITS
+    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
+else
     $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG := $(PRODUCT_AAPT_PREF_CONFIG)
+endif
 endif
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
@@ -401,6 +418,44 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(call dexpreopt-one-file,$@.input,$@)
 	$(hide) rm $@.input
 endif
+
+###############################
+## APK splits
+ifdef LOCAL_PACKAGE_SPLITS
+# LOCAL_PACKAGE_SPLITS is a list of resource labels.
+# aapt will convert comma inside resource lable to underscore in the file names.
+my_split_suffixes := $(subst $(comma),_,$(LOCAL_PACKAGE_SPLITS))
+built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk)
+installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+
+# The splits should have been built in the same command building the base apk.
+# This rule just runs signing and zipalign etc.
+# Note that we explicily check the existence of the split apk and remove the
+# built base apk if the split apk isn't there.
+# That way the build system will rerun the aapt after the user changes the splitting parameters.
+$(built_apk_splits): PRIVATE_PRIVATE_KEY := $(private_key)
+$(built_apk_splits): PRIVATE_CERTIFICATE := $(certificate)
+$(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
+	$(hide) if [ ! -f $@ ]; then \
+	  echo 'No $@ generated, check your apk splitting parameters.' 1>&2; \
+	  rm $<; exit 1; \
+	fi
+	$(sign-package)
+	$(align-package)
+
+# Rules to install the splits
+$(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
+	@echo "Install: $@"
+	$(copy-file-to-new-target)
+
+# Register the additional built and installed files.
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
+  $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+
+# Make sure to install the splits when you run "make <module_name>".
+$(my_register_name): $(installed_apk_splits)
+endif # LOCAL_PACKAGE_SPLITS
 
 # Save information about this package
 PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))

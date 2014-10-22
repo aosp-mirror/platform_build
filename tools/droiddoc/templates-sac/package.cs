@@ -45,6 +45,7 @@
   <?cs /if ?>
 <?cs /def ?>
 
+<?cs call:class_table("Annotations", package.annotations) ?>
 <?cs call:class_table("Interfaces", package.interfaces) ?>
 <?cs call:class_table("Classes", package.classes) ?>
 <?cs call:class_table("Enums", package.enums) ?>

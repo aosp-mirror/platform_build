@@ -26,6 +26,8 @@ ifneq ($(LOCAL_SDK_VERSION),)
       ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
         # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
         LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
+      else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+        LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
       else
         LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
       endif
@@ -142,7 +144,7 @@ renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
 else
 ifneq (,$(LOCAL_SDK_VERSION))
 # Set target-api for LOCAL_SDK_VERSIONs other than current.
-ifneq (,$(filter-out current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
 renderscript_target_api := $(LOCAL_SDK_VERSION)
 endif
 endif  # LOCAL_SDK_VERSION is set
@@ -158,7 +160,7 @@ renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
 
 # prepend the RenderScript system include path
-ifneq ($(filter-out current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current,$(LOCAL_SDK_VERSION))),)
+ifneq ($(filter-out current system_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current,$(LOCAL_SDK_VERSION))),)
 # if a numeric LOCAL_SDK_VERSION, or current LOCAL_SDK_VERSION with TARGET_BUILD_APPS
 LOCAL_RENDERSCRIPT_INCLUDES := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/clang-include \
@@ -321,6 +323,10 @@ layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE)
 
+ifdef LOCAL_RMTYPEDEFS
+$(full_classes_compiled_jar): | $(RMTYPEDEFS)
+endif
+
 # Compile the java files to a .jar file.
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
@@ -328,6 +334,8 @@ $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
+$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
+$(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 $(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
@@ -378,7 +386,7 @@ $(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
 
 # Run proguard if necessary, otherwise just copy the file.
 ifdef LOCAL_PROGUARD_ENABLED
-ifneq ($(filter-out full custom nosystem obfuscation optimization,$(LOCAL_PROGUARD_ENABLED)),)
+ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
     $(warning while processing: $(LOCAL_MODULE))
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
@@ -395,6 +403,9 @@ endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
 proguard_flags += -include $(BUILD_SYSTEM)/proguard_tests.flags
+ifeq ($(filter shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
+proguard_flags += -dontshrink # don't shrink tests by default
+endif # shrinktests
 endif # test package
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no obfuscation
@@ -499,7 +510,7 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 $(findbugs_html) : $(findbugs_xml)
 	@mkdir -p $(dir $@)
 	@echo ConvertXmlToText: $@
-	$(hide) prebuilt/common/findbugs/bin/convertXmlToText -html:fancy.xsl $(PRIVATE_XML_FILE) \
+	$(hide) $(FINDBUGS_DIR)/convertXmlToText -html:fancy.xsl $(PRIVATE_XML_FILE) \
 	> $@
 
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)

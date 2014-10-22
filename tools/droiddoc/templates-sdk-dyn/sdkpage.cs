@@ -11,7 +11,7 @@
 <?cs else ?>
   <?cs include:"head_tag.cs" ?>
 <?cs /if ?>
-<body class="gc-documentation 
+<body class="gc-documentation
   <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
@@ -107,7 +107,7 @@
     </td>
     <td><?cs var:ndk.win64_bytes ?></td>
     <td><?cs var:ndk.win64_checksum ?></td>
-  </tr> 
+  </tr>
  <!--  <tr>
     <td>
   <a onClick="return onDownload(this)"
@@ -199,12 +199,12 @@
     <td><?cs var:ndk.debug_info_checksum ?></td>
   </tr>
   </table>
-  
+
   <?cs ########  HERE IS THE JD DOC CONTENT ######### ?>
   <?cs call:tag_list(root.descr) ?>
 
 
-  
+
 <script>
   function onDownload(link) {
 
@@ -229,13 +229,13 @@
   function onDownloadNdkForRealz(link) {
     if ($("input#agree").is(':checked')) {
       $("#tos").fadeOut('slow');
-      
+
       $('html, body').animate({
           scrollTop: $("#Installing").offset().top
         }, 800, function() {
           $("#Installing").click();
       });
-     
+
       return true;
     } else {
       $("label#agreeLabel").parent().stop().animate({color: "#258AAF"}, 200,
@@ -254,7 +254,7 @@
 </script>
 
   <?cs else ?>
-<?cs # end if NDK ... 
+<?cs # end if NDK ...
 #
 #
 #
@@ -281,11 +281,11 @@
 <h4><a href='' class="expandable"
   onclick="toggleExpandable(this,'.pax');hideExpandable('.myide,.reqs');return false;"
   >DOWNLOAD FOR OTHER PLATFORMS</a></h4>
-  
-  
+
+
 <div class="pax col-13 online" style="display:none;margin:0;">
 
-  
+
 <p class="table-caption"><strong>ADT Bundle</strong></p>
   <table class="download">
     <tr>
@@ -298,7 +298,7 @@
     <td>Windows 32-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle32"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
+     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.win32_bundle_download ?>"><?cs var:sdk.win32_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win32_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win32_bundle_checksum ?></td>
@@ -307,7 +307,7 @@
     <td>Windows 64-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="win-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
+     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.win64_bundle_download ?>"><?cs var:sdk.win64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.win64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.win64_bundle_checksum ?></td>
@@ -316,7 +316,7 @@
     <td><nobr>Mac OS X 64-bit</nobr></td>
     <td>
   <a onClick="return onDownload(this)" id="mac-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
+     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:sdk.mac64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.mac64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.mac64_bundle_checksum ?></td>
@@ -325,7 +325,7 @@
     <td>Linux 32-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle32"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
+     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:sdk.linux32_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux32_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux32_bundle_checksum ?></td>
@@ -334,7 +334,7 @@
     <td>Linux 64-bit</td>
     <td>
   <a onClick="return onDownload(this)" id="linux-bundle64"
-     href="http://dl.google.com/android/adt/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
+     href="http://dl.google.com/android/adt/<?cs var:sdk.version ?>/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:sdk.linux64_bundle_download ?></a>
     </td>
     <td><?cs var:sdk.linux64_bundle_bytes ?> bytes</td>
     <td><?cs var:sdk.linux64_bundle_checksum ?></td>
@@ -396,10 +396,10 @@ var:sdk.linux_download
 
 
 </div><!-- end col-13 for lower-half content -->
-  
-  
-  
-  
+
+
+
+
 <script>
   if (location.hash == "#Requirements") {
     $('.reqs').show();
@@ -440,17 +440,17 @@ var:sdk.linux_download
   } else {
     $('.pax').show();
   }
-  
-  
+
+
   function onDownload(link, button, bundle) {
-  
+
     /* set text for download button */
     if (button) {
       $("#downloadForRealz").html($(link).text());
     } else {
       $("#downloadForRealz").html("Download " + $(link).text());
     }
-    
+
     /* if it's a bundle, show the 32/64-bit picker */
     if (bundle) {
       $("#downloadForRealz").attr('bundle','true');
@@ -482,7 +482,7 @@ var:sdk.linux_download
   function onAgreeChecked() {
     /* verify that the TOS is agreed and a bit version is chosen */
     if ($("input#agree").is(":checked") && $("#bitpicker input:checked").length) {
-      
+
       /* if downloading the bundle */
       if ($("#downloadForRealz").attr('bundle')) {
         /* construct the name of the link we want based on the bit version */
@@ -490,7 +490,7 @@ var:sdk.linux_download
         /* set the real url for download */
         $("a#downloadForRealz").attr("href", $(linkId).attr("href"));
       }
-      
+
       /* reveal the download button */
       $("a#downloadForRealz").removeClass('disabled');
     } else {
@@ -536,29 +536,29 @@ var:sdk.linux_download
       <p>Welcome developers! We are pleased to provide you with a preview SDK for the upcoming
     Android 3.0 release, to give you a head-start on developing applications for it.
     </p>
-    
+
       <p>See the <a
     href="<?cs var:toroot ?>sdk/preview/start.html">Getting Started</a> document for more information
     about how to set up the preview SDK and get started.</p>
     <style type="text/css">
     .non-preview { display:none; }
     </style>
-    
+
     <?cs else ?><?cs # it's normal offline docs ?>
-      
+
       <?cs ########  HERE IS THE JD DOC CONTENT FOR OFFLINE ######### ?>
       <?cs call:tag_list(root.descr) ?>
       <style type="text/css">
         body .offline { display:block; }
         body .online { display:none; }
-      </style>      
+      </style>
       <script>
         $('.reqs').show();
       </script>
     <?cs /if ?>
-    
+
   <?cs /if ?> <?cs # end if/else online ?>
-  
+
 <?cs /if ?> <?cs # end if/else NDK ?>
 
 <?cs /if ?> <?cs # end if/else redirect ?>
