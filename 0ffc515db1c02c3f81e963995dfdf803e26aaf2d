@@ -16,6 +16,24 @@
       "revId": "0ffc515db1c02c3f81e963995dfdf803e26aaf2d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d5889ae4_a13cdeb6",
+        "filename": "core/combo/arch/x86/x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-10-22T22:27:04Z",
+      "side": 1,
+      "message": "Changed the comment in patch set 2.\nDoing more tests with the emulator now.",
+      "parentUuid": "1549527c_d7252c4b",
+      "revId": "0ffc515db1c02c3f81e963995dfdf803e26aaf2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
