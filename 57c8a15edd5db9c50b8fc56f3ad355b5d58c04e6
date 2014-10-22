@@ -16,6 +16,24 @@
       "revId": "57c8a15edd5db9c50b8fc56f3ad355b5d58c04e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "150232f8_47c74171",
+        "filename": "core/clang/arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2014-10-22T17:20:35Z",
+      "side": 1,
+      "message": "Could be useful to keep the same variables for all targets, although it is empty now for arm. They are still included in TARGET_arm.mk.",
+      "parentUuid": "55210a94_09e27933",
+      "revId": "57c8a15edd5db9c50b8fc56f3ad355b5d58c04e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
