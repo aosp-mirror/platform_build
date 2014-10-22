@@ -16,6 +16,24 @@
       "revId": "c131ec09d9ffb92473c4162c92c0646d6e731b0c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5359ed2_92bc5cae",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2014-10-22T09:57:29Z",
+      "side": 0,
+      "message": "Just spotted that myself. Will fix.",
+      "parentUuid": "f5359ed2_d2b2e4db",
+      "revId": "c131ec09d9ffb92473c4162c92c0646d6e731b0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
