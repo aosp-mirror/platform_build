@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1549527c_d7252c4b",
+        "filename": "core/combo/arch/x86/x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-10-22T21:48:33Z",
+      "side": 1,
+      "message": "i think you should remove this comment if you change arch_variant_cflags.\n\nmight also be worth mentioning why we require prescott.\n\ni assume you tested the emulator and it actually supports the instructions in question?",
+      "revId": "0ffc515db1c02c3f81e963995dfdf803e26aaf2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
