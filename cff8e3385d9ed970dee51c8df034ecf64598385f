@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "351e565a_9a748d3f",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1022968
+      },
+      "writtenOn": "2014-10-23T10:15:45Z",
+      "side": 1,
+      "message": "I\u0027m always confused by the two ways to include library jars -- static and (I guess) dynamic. I suppose they matter only when building a library, where a static import will become part of the resulting jar and may go through ProGuard obfuscation if that library\u0027s build rule decides so.\n\nThis code is checking duplication in the dynamic libraries, and then add the dependency to the static libraries. Looks slightly awkward to me.\n\nMaybe it\u0027s the correct thing to do, but I\u0027m slightly worried about what would happen to my team:\n\nIn my team\u0027s case, both the main apk and a library it uses (BUILD_STATIC_JAVA_LIBRARY) import 2.3.0-nano statically. The library has explicit LOCAL_STATIC_JAVA_LIBRARIES dependency whereas the apk uses LOCAL_PROTOC_OPTIMIZE_TYPE\u003dnano. There\u0027s no ProGuard obfuscation in the whole build process, so currently the two instances of nano.jar are deduplicated thanks to completely equal class definitions.\n\nWhen this change lands, my team won\u0027t get the warning, but may end up importing two different versions of nano.jar resulting in (in the best case) build breaks or worse.",
+      "revId": "cff8e3385d9ed970dee51c8df034ecf64598385f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
