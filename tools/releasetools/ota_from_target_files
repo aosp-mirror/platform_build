@@ -462,11 +462,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem")
+    script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
 
   metadata = {"post-build": CalculateFingerprint(
@@ -548,6 +549,8 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
+  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
+
   system_items = ItemSet("system", "META/filesystem_config.txt")
   script.ShowProgress(system_progress, 0)
   if block_based:
@@ -561,7 +564,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     system_diff.WriteScript(script, output_zip)
   else:
     script.FormatPartition("/system")
-    script.Mount("/system")
+    script.Mount("/system", recovery_mount_options)
     if not has_recovery_patch:
       script.UnpackPackageDir("recovery", "/system")
     script.UnpackPackageDir("system", "/system")
@@ -594,7 +597,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
       vendor_diff.WriteScript(script, output_zip)
     else:
       script.FormatPartition("/vendor")
-      script.Mount("/vendor")
+      script.Mount("/vendor", recovery_mount_options)
       script.UnpackPackageDir("vendor", "/vendor")
 
       symlinks = CopyPartitionFiles(vendor_items, input_zip, output_zip)
@@ -745,11 +748,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     vendor_diff = None
 
   oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.target_info_dict.get("recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem")
+    script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
 
   AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
@@ -1035,11 +1039,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                                           OPTIONS.target_info_dict)
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem")
+    script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
 
   metadata = {"pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
@@ -1059,10 +1064,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       info_dict=OPTIONS.info_dict)
 
   system_diff = FileDifference("system", source_zip, target_zip, output_zip)
-  script.Mount("/system")
+  script.Mount("/system", recovery_mount_options)
   if HasVendorPartition(target_zip):
     vendor_diff = FileDifference("vendor", source_zip, target_zip, output_zip)
-    script.Mount("/vendor")
+    script.Mount("/vendor", recovery_mount_options)
   else:
     vendor_diff = None
 
