@@ -16,6 +16,24 @@
       "revId": "cff8e3385d9ed970dee51c8df034ecf64598385f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b58de6f4_46c72671",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1006780
+      },
+      "writtenOn": "2014-10-23T14:24:43Z",
+      "side": 1,
+      "message": "This was a bad copy-paste. Thanks for the catch. Naturally these are supposed to be the same variable at both ends.\n\nHowever, I think you\u0027d still have a possibility of a break in the case you mentioned. That\u0027s something that I think we just have to leave it to teams to address, and I note in the email draft that I sent out yesterday that hard-coded dependencies on -2.3.0- need to be removed.\n\nWhy does the library depend on LOCAL_STATIC_JAVA_LIBRARIES explicitly? Does it contain protos? Or just need access to common classes in the library?",
+      "parentUuid": "351e565a_9a748d3f",
+      "revId": "cff8e3385d9ed970dee51c8df034ecf64598385f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
