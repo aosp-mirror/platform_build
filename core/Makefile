@@ -678,7 +678,8 @@ endif
 # <fstype>=<fstype_opts>[|<fstype_opts>]...
 # fstype_opts := <opt>[,<opt>]...
 #         opt := <name>[=<value>]
-DEFAULT_TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS := ext4=match_batch_time=0,commit=1,data=journal,barrier=1,errors=panic,nodelalloc
+# The following worked on Nexus devices with Kernel 3.1, 3.4, 3.10
+DEFAULT_TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS := ext4=max_batch_time=0,commit=1,data=ordered,barrier=1,errors=panic,nodelalloc
 
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_EXT_FLAG := -s
