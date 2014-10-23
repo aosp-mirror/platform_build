@@ -528,13 +528,13 @@ def WriteFullOTAPackage(input_zip, output_zip):
     bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", recovery_img.data)
     script.AppendExtra("""
-if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
-else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
+else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
   device_specific.FullOTA_InstallBegin()
@@ -789,14 +789,14 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
     script.AppendExtra("""
-if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
     script.AppendExtra("sleep(20);\n");
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
-else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
+else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   script.Print("Verifying current system...")
@@ -1138,14 +1138,14 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
     script.AppendExtra("""
-if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
     script.AppendExtra("sleep(20);\n");
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
-else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
+else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   script.Print("Verifying current system...")
