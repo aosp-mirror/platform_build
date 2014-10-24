@@ -1402,7 +1402,7 @@ function godir () {
     \cd $T/$pathname
 }
 
-# Force JAVA_HOME to point to java 1.7 or java 1.6  if it isn't already set.
+# Force JAVA_HOME to point to java 1.7 if it isn't already set.
 #
 # Note that the MacOS path for java 1.7 includes a minor revision number (sigh).
 # For some reason, installing the JDK doesn't make it show up in the
@@ -1419,25 +1419,14 @@ function set_java_home() {
     fi
 
     if [ ! "$JAVA_HOME" ]; then
-      if [ -n "$LEGACY_USE_JAVA6" ]; then
-        case `uname -s` in
-            Darwin)
-                export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home
-                ;;
-            *)
-                export JAVA_HOME=/usr/lib/jvm/java-6-sun
-                ;;
-        esac
-      else
-        case `uname -s` in
-            Darwin)
-                export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
-                ;;
-            *)
-                export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-                ;;
-        esac
-      fi
+      case `uname -s` in
+          Darwin)
+              export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+              ;;
+          *)
+              export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+              ;;
+      esac
 
       # Keep track of the fact that we set JAVA_HOME ourselves, so that
       # we can change it on the next envsetup.sh, if required.
