@@ -936,6 +936,9 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(PROGUARD_DICT_ZIP))
 
+  $(SYMBOLS_ZIP) : $(apps_only_installed_files)
+  $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP))
+
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
