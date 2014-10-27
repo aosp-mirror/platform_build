@@ -27,7 +27,7 @@ ifneq ($(findstring Linux,$(UNAME)),)
 ifneq ($(strip $(USE_MINGW)),)
 HOST_ACP_UNAVAILABLE := true
 TOOLS_EXE_SUFFIX :=
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -DUSE_MINGW
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -DUSE_MINGW -DWIN32_LEAN_AND_MEAN
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -Wno-unused-parameter
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += --sysroot=prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -m32
