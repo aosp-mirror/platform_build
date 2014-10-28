@@ -237,16 +237,15 @@ ifdef LOCAL_SDK_VERSION
       $(my_shared_libraries)
 else
   installed_shared_library_module_names := \
-      $(my_system_shared_libraries) $(my_shared_libraries)
+      $(my_shared_libraries) $(my_system_shared_libraries)
 endif
-installed_shared_library_module_names := $(sort $(installed_shared_library_module_names))
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE
 ifdef installed_shared_library_module_names
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
-    $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(installed_shared_library_module_names))
+    $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(sort $(installed_shared_library_module_names)))
 endif
 endif
 
