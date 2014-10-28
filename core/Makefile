@@ -1511,10 +1511,14 @@ endif
 name := $(name)-symbols-$(FILE_NAME_TAG)
 
 SYMBOLS_ZIP := $(PRODUCT_OUT)/$(name).zip
+# For apps_only build we'll establish the dependency later in build/core/main.mk.
+ifndef TARGET_BUILD_APPS
 $(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) $(INSTALLED_BOOTIMAGE_TARGET)
+endif
+$(SYMBOLS_ZIP):
 	@echo "Package symbols: $@"
 	$(hide) rm -rf $@
-	$(hide) mkdir -p $(dir $@)
+	$(hide) mkdir -p $(dir $@) $(TARGET_OUT_UNSTRIPPED)
 	$(hide) zip -qr $@ $(TARGET_OUT_UNSTRIPPED)
 
 # -----------------------------------------------------------------
