@@ -323,6 +323,10 @@ class EdifyGenerator(object):
     """Append text verbatim to the output script."""
     self.script.append(extra)
 
+  def Unmount(self, mount_point):
+    self.script.append('unmount("%s");' % (mount_point,))
+    self.mounts.remove(mount_point);
+
   def UnmountAll(self):
     for p in sorted(self.mounts):
       self.script.append('unmount("%s");' % (p,))

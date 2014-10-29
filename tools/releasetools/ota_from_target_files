@@ -37,6 +37,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate an incremental OTA using the given target-files zip as
       the starting build.
 
+  -v  (--verify)
+      Remount and verify the checksums of the files written to the
+      system and vendor (if used) partitions.  Incremental builds only.
+
   -o  (--oem_settings)  <file>
       Use the file to specify the expected OEM-specific properties
       on the OEM partition of the intended device.
@@ -104,6 +108,7 @@ import sparse_img
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = None
 OPTIONS.incremental_source = None
+OPTIONS.verify = False
 OPTIONS.require_verbatim = set()
 OPTIONS.prohibit_verbatim = set(("system/build.prop",))
 OPTIONS.patch_threshold = 0.95
@@ -939,7 +944,7 @@ class FileDifference:
           raise common.ExternalError("\"%s\" must be sent verbatim" % (fn,))
         print "send", fn, "verbatim"
         tf.AddToZip(output_zip)
-        verbatim_targets.append((fn, tf.size))
+        verbatim_targets.append((fn, tf.size, tf.sha1))
         if fn in target_data.keys():
           AddToKnownPaths(fn, known_paths)
       elif tf.sha1 != sf.sha1:
@@ -960,7 +965,7 @@ class FileDifference:
         # or a patch + rename cannot take place due to the target
         # directory not existing
         tf.AddToZip(output_zip)
-        verbatim_targets.append((tf.name, tf.size))
+        verbatim_targets.append((tf.name, tf.size, tf.sha1))
         if sf.name in renames:
           del renames[sf.name]
         AddToKnownPaths(tf.name, known_paths)
@@ -979,6 +984,13 @@ class FileDifference:
       script.PatchCheck("/"+sf.name, tf.sha1, sf.sha1)
       so_far += sf.size
     return so_far
+
+  def EmitExplicitTargetVerification(self, script):
+    for fn, size, sha1 in self.verbatim_targets:
+      if (fn[-1] != "/"):
+        script.FileCheck("/"+fn, sha1)
+    for tf, _, _, _ in self.patch_list:
+      script.FileCheck(tf.name, tf.sha1)
 
   def RemoveUnneededFiles(self, script, extras=()):
     script.DeleteFiles(["/"+i[0] for i in self.verbatim_targets] +
@@ -1351,7 +1363,19 @@ endif;
 endif;
 """ % bcb_dev)
 
+  if OPTIONS.verify and system_diff:
+    script.Print("Remounting and verifying system partition files...")
+    script.Unmount("/system")
+    script.Mount("/system")
+    system_diff.EmitExplicitTargetVerification(script)
+
+  if OPTIONS.verify and vendor_diff:
+    script.Print("Remounting and verifying vendor partition files...")
+    script.Unmount("/vendor")
+    script.Mount("/vendor")
+    vendor_diff.EmitExplicitTargetVerification(script)
   script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
+
   WriteMetadata(metadata, output_zip)
 
 
@@ -1387,6 +1411,8 @@ def main(argv):
       OPTIONS.two_step = True
     elif o == "--no_signing":
       OPTIONS.no_signing = True
+    elif o in ("--verify"):
+      OPTIONS.verify = True
     elif o == "--block":
       OPTIONS.block_based = True
     elif o in ("-b", "--binary"):
@@ -1412,6 +1438,7 @@ def main(argv):
                                               "block",
                                               "binary=",
                                               "oem_settings=",
+                                              "verify",
                                               "no_fallback_to_full",
                                               ],
                              extra_option_handler=option_handler)
