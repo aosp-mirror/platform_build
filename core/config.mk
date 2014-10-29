@@ -437,17 +437,7 @@ else
 COLUMN:= column
 endif
 
-ifeq ($(HOST_OS),darwin)
-ifeq ($(LEGACY_USE_JAVA6),)
 HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
-else
-# Deliberately set to blank for Java 6 installations on MacOS. These
-# versions allegedly use a non-standard directory structure.
-HOST_JDK_TOOLS_JAR :=
-endif
-else
-HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
-endif
 
 ifneq ($(HOST_JDK_TOOLS_JAR),)
 ifeq ($(wildcard $(HOST_JDK_TOOLS_JAR)),)
