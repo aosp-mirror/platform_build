@@ -13,7 +13,11 @@ ARCH_X86_HAVE_MOVBE := false
 ARCH_X86_HAVE_POPCNT := false
 
 
-# Some intrinsic functions used by libcxx only exist for prescott or newer CPUs.
+# Some intrinsic functions used by libcxx only exist for prescott or newer CPUs,
+# when compiled with clang/llvm.
+# But g++ could have internal error with march=prescott. So we will use
+# march=i686 until the g++ error is fixed or all Android modules can work around
+# that problem, see b/18174291.
 arch_variant_cflags := \
-    -march=prescott \
+    -march=i686 \
 
