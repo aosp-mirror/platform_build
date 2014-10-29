@@ -29,12 +29,24 @@ all_res_assets :=
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 ifneq ($(proto_sources),)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
-    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-2.3.0-micro
+    ifneq ($(filter host-libprotobuf-java-2.3.0-micro,$(LOCAL_JAVA_LIBRARIES)),)
+        $(warning Stripping unneeded dependency on host-libprotobuf-java-2.3.0-micro in $(LOCAL_MODULE))
+        LOCAL_JAVA_LIBRARIES := $(filter-out host-libprotobuf-java-2.3.0-micro,$(LOCAL_JAVA_LIBRARIES))
+    endif
+    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-micro
 else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
-    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-2.3.0-nano
+    ifneq ($(filter host-libprotobuf-java-2.3.0-nano,$(LOCAL_JAVA_LIBRARIES)),)
+        $(warning Stripping unneeded dependency on host-libprotobuf-java-2.3.0-nano in $(LOCAL_MODULE))
+        LOCAL_JAVA_LIBRARIES := $(filter-out host-libprotobuf-java-2.3.0-nano,$(LOCAL_JAVA_LIBRARIES))
+    endif
+    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-nano
   else
-    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-2.3.0-lite
+    ifneq ($(filter host-libprotobuf-java-2.3.0-lite,$(LOCAL_JAVA_LIBRARIES)),)
+        $(warning Stripping unneeded dependency on host-libprotobuf-java-2.3.0-lite in $(LOCAL_MODULE))
+        LOCAL_JAVA_LIBRARIES := $(filter-out host-libprotobuf-java-2.3.0-lite,$(LOCAL_JAVA_LIBRARIES))
+    endif
+    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-lite
   endif
 endif
 endif
