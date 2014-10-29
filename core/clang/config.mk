@@ -54,6 +54,7 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops \
   -Wmaybe-uninitialized \
   -Wno-error=maybe-uninitialized \
+  -Wno-free-nonheap-object \
   -Wno-literal-suffix \
   -Wno-maybe-uninitialized \
   -Wno-old-style-declaration \
