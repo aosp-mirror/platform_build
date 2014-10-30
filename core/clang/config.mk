@@ -45,7 +45,8 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
 # Workaround for ccache with clang.
 # See http://petereisentraut.blogspot.com/2011/05/ccache-and-clang.html.
 CLANG_CONFIG_EXTRA_CFLAGS += \
-  -Wno-unused-command-line-argument
+  -Wno-unused-command-line-argument \
+  -fcolor-diagnostics
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -finline-limit=64 \
