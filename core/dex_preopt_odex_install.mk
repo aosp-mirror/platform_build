@@ -105,6 +105,12 @@ ifndef LOCAL_DEX_PREOPT_FLAGS
 LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
+
+# Compile apps with position-independent code if WITH_DEXPREOPT_PIC=true
+ifeq (true,$(WITH_DEXPREOPT_PIC))
+  LOCAL_DEX_PREOPT_FLAGS += --compile-pic
+endif
+
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 
 # Use pattern rule - we may have multiple installed odex files.
