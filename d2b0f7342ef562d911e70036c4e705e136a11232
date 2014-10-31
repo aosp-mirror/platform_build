@@ -16,6 +16,24 @@
       "revId": "d2b0f7342ef562d911e70036c4e705e136a11232",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d587ba27_e3360e27",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-10-31T15:54:28Z",
+      "side": 1,
+      "message": "the difference is you can lunch for example aosp_x86_64 and have arm-linux...-gdb and aarch64* in PATH, but mips-* are not included (that is if you lunch different target).",
+      "parentUuid": "75760e14_a92f99f8",
+      "revId": "d2b0f7342ef562d911e70036c4e705e136a11232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
