@@ -34,6 +34,24 @@
       "revId": "d2b0f7342ef562d911e70036c4e705e136a11232",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f582fe17_3e3a0170",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1050,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-10-31T16:01:40Z",
+      "side": 1,
+      "message": "actually - this is because I was switching targets between x86* and arm*, normally it only includes current toolchain. I will need to add toolchain path detection logic based on cpu.abi",
+      "parentUuid": "d587ba27_e3360e27",
+      "revId": "d2b0f7342ef562d911e70036c4e705e136a11232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
