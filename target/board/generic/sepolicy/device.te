@@ -1,1 +1,1 @@
-type qemu_device, dev_type;
+type qemu_device, dev_type, mlstrustedobject;
