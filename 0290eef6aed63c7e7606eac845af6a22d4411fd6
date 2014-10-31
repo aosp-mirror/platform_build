@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15b23212_de74c175",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1065,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2014-10-31T22:53:56Z",
+      "side": 1,
+      "message": "to $PORT",
+      "range": {
+        "startLine": 1065,
+        "startChar": 46,
+        "endLine": 1065,
+        "endChar": 49
+      },
+      "revId": "0290eef6aed63c7e7606eac845af6a22d4411fd6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
