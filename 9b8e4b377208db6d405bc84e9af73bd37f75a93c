@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "75ab6e9e_9e2d1d85",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1065,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-11-01T00:56:58Z",
+      "side": 1,
+      "message": "to\n\nis this really a worthwhile TODO? iirc this doesn\u0027t take a human-measurable fraction of the gdbserver startup time, right? this is milliseconds and the next step is multiple whole seconds?",
+      "revId": "9b8e4b377208db6d405bc84e9af73bd37f75a93c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
