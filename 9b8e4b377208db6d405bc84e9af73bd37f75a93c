@@ -16,6 +16,24 @@
       "revId": "9b8e4b377208db6d405bc84e9af73bd37f75a93c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15b23212_e1648243",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1065,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-11-01T01:06:33Z",
+      "side": 1,
+      "message": "it should be moved to L1075, in case gdbserver is started - check if adb is listening... and if not start it..",
+      "parentUuid": "75ab6e9e_9e2d1d85",
+      "revId": "9b8e4b377208db6d405bc84e9af73bd37f75a93c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
