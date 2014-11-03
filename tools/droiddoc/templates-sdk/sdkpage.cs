@@ -272,6 +272,115 @@
 <div class="pax col-13 online" style="display:none;margin:0;">
 
 
+
+<p class="table-caption"><strong>Android Studio Bundle</strong></p>
+  <table class="download">
+    <tr>
+      <th>Platform</th>
+      <th>Package</th>
+      <th>Size</th>
+      <th>SHA1 Sum</th>
+  </tr>
+  <tr>
+    <td>Windows 32-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="win-bundle32"
+     href="https://dl.google.com/android/studio/<?cs var:sdk.win32_bundle_download ?>"><?cs var:studio.win32_bundle_download ?></a>
+    </td>
+    <td><?cs var:studio.win32_bundle_bytes ?> bytes</td>
+    <td><?cs var:studio.win32_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Windows 64-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="win-bundle64"
+     href="https://dl.google.com/android/studio/<?cs var:sdk.win64_bundle_download ?>"><?cs var:studio.win64_bundle_download ?></a>
+    </td>
+    <td><?cs var:studio.win64_bundle_bytes ?> bytes</td>
+    <td><?cs var:studio.win64_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td><nobr>Mac OS X 64-bit</nobr></td>
+    <td>
+  <a onClick="return onDownload(this)" id="mac-bundle64"
+     href="https://dl.google.com/android/studio/<?cs var:sdk.mac64_bundle_download ?>"><?cs var:studio.mac64_bundle_download ?></a>
+    </td>
+    <td><?cs var:studio.mac64_bundle_bytes ?> bytes</td>
+    <td><?cs var:studio.mac64_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux 32-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="linux-bundle32"
+     href="https://dl.google.com/android/studio/<?cs var:sdk.linux32_bundle_download ?>"><?cs var:studio.linux32_bundle_download ?></a>
+    </td>
+    <td><?cs var:studio.linux32_bundle_bytes ?> bytes</td>
+    <td><?cs var:studio.linux32_bundle_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux 64-bit</td>
+    <td>
+  <a onClick="return onDownload(this)" id="linux-bundle64"
+     href="https://dl.google.com/android/studio/<?cs var:sdk.linux64_bundle_download ?>"><?cs var:studio.linux64_bundle_download ?></a>
+    </td>
+    <td><?cs var:studio.linux64_bundle_bytes ?> bytes</td>
+    <td><?cs var:studio.linux64_bundle_checksum ?></td>
+  </tr>
+  </table>
+
+
+
+
+<p class="table-caption"><strong>SDK Tools Only</strong></p>
+  <table class="download">
+    <tr>
+      <th>Platform</th>
+      <th>Package</th>
+      <th>Size</th>
+      <th>MD5 Checksum</th>
+  </tr>
+  <tr>
+    <td rowspan="2">Windows<br>32 &amp; 64-bit</td>
+    <td>
+  <a onclick="return onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
+?>"><?cs var:sdk.win_download ?></a>
+    </td>
+    <td><?cs var:sdk.win_bytes ?> bytes</td>
+    <td><?cs var:sdk.win_checksum ?></td>
+  </tr>
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this)" id="win-tools" href="http://dl.google.com/android/<?cs
+var:sdk.win_installer
+?>"><?cs var:sdk.win_installer ?></a> (Recommended)
+    </td>
+    <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
+    <td><?cs var:sdk.win_installer_checksum ?></td>
+  </tr>
+  <tr>
+    <td><nobr>Mac OS X</nobr><br>32 &amp; 64-bit</td>
+    <td>
+  <a onclick="return onDownload(this)" id="mac-tools" href="http://dl.google.com/android/<?cs
+var:sdk.mac_download
+?>"><?cs var:sdk.mac_download ?></a>
+    </td>
+    <td><?cs var:sdk.mac_bytes ?> bytes</td>
+    <td><?cs var:sdk.mac_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux<br>32 &amp; 64-bit</td>
+    <td>
+  <a onclick="return onDownload(this)" id="linux-tools" href="http://dl.google.com/android/<?cs
+var:sdk.linux_download
+?>"><?cs var:sdk.linux_download ?></a>
+    </td>
+    <td><?cs var:sdk.linux_bytes ?> bytes</td>
+    <td><?cs var:sdk.linux_checksum ?></td>
+  </tr>
+  </table>
+
+
 <p class="table-caption"><strong>ADT Bundle</strong></p>
   <table class="download">
     <tr>
@@ -328,54 +437,10 @@
   </table>
 
 
-<p class="table-caption"><strong>SDK Tools Only</strong></p>
-  <table class="download">
-    <tr>
-      <th>Platform</th>
-      <th>Package</th>
-      <th>Size</th>
-      <th>MD5 Checksum</th>
-  </tr>
-  <tr>
-    <td rowspan="2">Windows<br>32 &amp; 64-bit</td>
-    <td>
-  <a onclick="return onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
-?>"><?cs var:sdk.win_download ?></a>
-    </td>
-    <td><?cs var:sdk.win_bytes ?> bytes</td>
-    <td><?cs var:sdk.win_checksum ?></td>
-  </tr>
-  <tr>
-    <!-- blank TD from Windows rowspan -->
-    <td>
-  <a onclick="return onDownload(this)" id="win-tools" href="http://dl.google.com/android/<?cs
-var:sdk.win_installer
-?>"><?cs var:sdk.win_installer ?></a> (Recommended)
-    </td>
-    <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
-    <td><?cs var:sdk.win_installer_checksum ?></td>
-  </tr>
-  <tr>
-    <td><nobr>Mac OS X</nobr><br>32 &amp; 64-bit</td>
-    <td>
-  <a onclick="return onDownload(this)" id="mac-tools" href="http://dl.google.com/android/<?cs
-var:sdk.mac_download
-?>"><?cs var:sdk.mac_download ?></a>
-    </td>
-    <td><?cs var:sdk.mac_bytes ?> bytes</td>
-    <td><?cs var:sdk.mac_checksum ?></td>
-  </tr>
-  <tr>
-    <td>Linux<br>32 &amp; 64-bit</td>
-    <td>
-  <a onclick="return onDownload(this)" id="linux-tools" href="http://dl.google.com/android/<?cs
-var:sdk.linux_download
-?>"><?cs var:sdk.linux_download ?></a>
-    </td>
-    <td><?cs var:sdk.linux_bytes ?> bytes</td>
-    <td><?cs var:sdk.linux_checksum ?></td>
-  </tr>
-  </table>
+
+
+
+
 
 </div><!-- end pax -->
 
@@ -414,9 +479,9 @@ var:sdk.linux_download
   if (os) {
     $('#not-supported').hide();
 
-    /* set up primary adt download button */
+    /* set up primary Android Studio download button */
     $('#download-bundle-button').show();
-    $('#download-bundle-button').append("Download Eclipse ADT <br/><span class='small'>with the Android SDK for " + os + "</span>");
+    $('#download-bundle-button').append("Download Android Studio <br/><span class='small'>with the Android SDK for " + os + "</span>");
     $('#download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
 
     /* set up sdk tools only button */
@@ -439,7 +504,7 @@ var:sdk.linux_download
 
     /* if it's a bundle, show the 32/64-bit picker */
     if (bundle) {
-      $("#downloadForRealz").attr('bundle','true');
+      $("#downloadForRealz").attr('Eclipse ADT Bundle','true');
       if ($("#downloadForRealz").text().indexOf("Mac") == -1) {
         $("p#bitpicker").show();
       } else {
