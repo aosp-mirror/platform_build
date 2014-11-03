@@ -900,16 +900,14 @@ function readCookie(cookie) {
   return 0;
 }
 
-function writeCookie(cookie, val, section, expiration) {
+function writeCookie(cookie, val, section, age) {
   if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
-  if (expiration == null) {
-    var date = new Date();
-    date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
-    expiration = date.toGMTString();
+  if (age == null) {
+    var age = 2*365*24*60*60; // set max-age to 2 years
   }
   var cookieValue = cookie_namespace + section + cookie + "=" + val
-                    + "; expires=" + expiration+"; path=/";
+                    + "; max-age=" + age +"; path=/";
   document.cookie = cookieValue;
 }
 
