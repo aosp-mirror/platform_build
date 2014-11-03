@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d59c1a86_6736460a",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 990,
+      "author": {
+        "id": 1042649
+      },
+      "writtenOn": "2014-11-03T04:32:15Z",
+      "side": 1,
+      "message": "for example, gdbclient \"\" \"\" 1234",
+      "parentUuid": "5594aafe_2e7e65a1",
+      "range": {
+        "startLine": 990,
+        "startChar": 13,
+        "endLine": 990,
+        "endChar": 17
+      },
+      "revId": "f41d110805585769383e3f1d5d0dcd61b19902b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5594aafe_8ee3f9e7",
         "filename": "envsetup.sh",
         "patchSetId": 1
