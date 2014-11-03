@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5c5fa79_8e7e079f",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-03T19:52:01Z",
+      "side": 1,
+      "message": "Why do (only) this in a separate file? \nIf you want to do it in a separate file, I\u0027d like to move all the \nLOCAL_ADDRESS_SANITIZER stuff to that file.",
+      "revId": "4d32608d06ca250a296a2272650e9f586625a553",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
