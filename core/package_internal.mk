@@ -192,6 +192,8 @@ endif # LOCAL_EMMA_INSTRUMENT
 
 rs_compatibility_jni_libs :=
 
+include $(BUILD_SYSTEM)/android_manifest.mk
+
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################
@@ -200,8 +202,6 @@ LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
   LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
 endif
-
-include $(BUILD_SYSTEM)/android_manifest.mk
 
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
