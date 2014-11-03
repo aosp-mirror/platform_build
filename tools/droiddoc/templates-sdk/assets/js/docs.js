@@ -1988,7 +1988,7 @@ function search_changed(e, kd, toroot)
 
 
         // Search for matching JD docs
-        if (text.length >= 3) {
+        if (text.length >= 2) {
           // Regex to match only the beginning of a word
           var textRegex = new RegExp("\\b" + text.toLowerCase(), "g");
 
