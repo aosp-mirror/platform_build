@@ -890,14 +890,14 @@ function pid()
     fi
 }
 
-# coredump-setup - enable core dumps globally for any process
+# coredump_setup - enable core dumps globally for any process
 #                  that has the core-file-size limit set correctly
 #
 # NOTE: You must call also coredump-enable for a specific process
 #       if its core-file-size limit is not set already.
 # NOTE: Core dumps are written to ramdisk; they will not survive a reboot!
 
-function coredump-setup()
+function coredump_setup()
 {
 	echo "Getting root...";
 	adb root;
