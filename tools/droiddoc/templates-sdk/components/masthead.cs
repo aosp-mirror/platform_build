@@ -160,6 +160,7 @@
         <div class="wrap" style="position:relative;z-index:1">
 
         <?cs if:reference ?>
+        <?cs # HIDE HELPOUTS RECRUIT BANNER
             <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card" 
               href="http://helpouts.google.com/partner/landing/provider/googledevelopers" target="_blank">
               <div class="card-bg helpouts-card-bg"></div>
@@ -185,6 +186,7 @@
                 $("span#helpoutsLinkText").text(textB);
               }
             </script>
+        END HIDE HELPOUTS ?>
         <?cs /if ?>
 
             <ul class="nav-x col-9 develop" style="width:100%">
