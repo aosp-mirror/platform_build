@@ -406,16 +406,6 @@ endif
 
 BUILD_WITHOUT_PV := true
 
-## precise GC ##
-
-ifneq ($(filter dalvik.gc.type-precise,$(PRODUCT_TAGS)),)
-  # Enabling type-precise GC results in larger optimized DEX files.  The
-  # additional storage requirements for ".odex" files can cause /system
-  # to overflow on some devices, so this is configured separately for
-  # each product.
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dexopt-flags=m=y
-endif
-
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
 # enable vm tracing in files for now to help track
