@@ -61,7 +61,7 @@ define emit-product-node-props
 $(hide) echo \"$(1)\" [ \
 label=\"$(dir $(1))\\n$(notdir $(1))\\n\\n$(subst $(close_parenthesis),,$(subst $(open_parethesis),,$(PRODUCTS.$(strip $(1)).PRODUCT_MODEL)))\\n$(PRODUCTS.$(strip $(1)).PRODUCT_DEVICE)\" \
 $(if $(filter $(1),$(PRIVATE_PRODUCTS_FILTER)), style=\"filled\" fillcolor=\"#FFFDB0\",) \
-fontcolor=\"darkblue\" href=\"products/$(1).html\" \
+colorscheme=\"svg\" fontcolor=\"darkblue\" href=\"products/$(1).html\" \
 ] >> $(2)
 
 endef
