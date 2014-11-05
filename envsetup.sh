@@ -911,6 +911,7 @@ function coredump_setup()
 	sleep 1;
 	adb wait-for-device;
 	adb shell mkdir -p /cores;
+	adb shell mount -t tmpfs tmpfs /cores;
 	adb shell chmod 0777 /cores;
 
 	echo "Granting SELinux permission to dump in /cores...";
