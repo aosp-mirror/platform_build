@@ -896,7 +896,7 @@ function pid()
 # coredump_setup - enable core dumps globally for any process
 #                  that has the core-file-size limit set correctly
 #
-# NOTE: You must call also coredump-enable for a specific process
+# NOTE: You must call also coredump_enable for a specific process
 #       if its core-file-size limit is not set already.
 # NOTE: Core dumps are written to ramdisk; they will not survive a reboot!
 
@@ -922,13 +922,13 @@ function coredump_setup()
 	echo "Done."
 }
 
-# coredump-enable - enable core dumps for the specified process
+# coredump_enable - enable core dumps for the specified process
 # $1 = PID of process (e.g., $(pid mediaserver))
 #
-# NOTE: coredump-setup must have been called as well for a core
+# NOTE: coredump_setup must have been called as well for a core
 #       dump to actually be generated.
 
-function coredump-enable()
+function coredump_enable()
 {
 	local PID=$1;
 	if [ -z "$PID" ]; then
@@ -942,7 +942,7 @@ function coredump-enable()
 # core - send SIGV and pull the core for process
 # $1 = PID of process (e.g., $(pid mediaserver))
 #
-# NOTE: coredump-setup must be called once per boot for core dumps to be
+# NOTE: coredump_setup must be called once per boot for core dumps to be
 #       enabled globally.
 
 function core()
@@ -958,7 +958,7 @@ function core()
 	local COREPATH=/cores/$CORENAME;
 	local SIG=SEGV;
 
-	coredump-enable $1;
+	coredump_enable $1;
 
 	local done=0;
 	while [ $(adb shell "[ -d /proc/$PID ] && echo -n yes") ]; do
