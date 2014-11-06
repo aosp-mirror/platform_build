@@ -3,4 +3,7 @@ type qemud, domain;
 type qemud_exec, exec_type, file_type;
 
 init_daemon_domain(qemud)
-unconfined_domain(qemud)
+permissive_or_unconfined(qemud)
+
+# Access /dev/ttyS1.
+allow qemud serial_device:chr_file rw_file_perms;
