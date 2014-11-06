@@ -101,3 +101,8 @@ ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES := libasan
 # This allows us to use the superset of functionality that compiler-rt
 # provides to Clang (for supporting features like -ftrapv).
 COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler_rt-extras
+
+ifeq ($(HOST_PREFER_32_BIT),true)
+# We don't have 32-bit prebuilt libLLVM/libclang, so force to build them from source.
+FORCE_BUILD_LLVM_COMPONENTS := true
+endif
