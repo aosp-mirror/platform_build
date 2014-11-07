@@ -35,7 +35,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
-        my_ldlibs += -lc -lm
+        my_ldlibs += -lc -lm -lpthread
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
     ifndef LOCAL_IS_HOST_MODULE
