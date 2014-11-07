@@ -18,4 +18,6 @@
 # (like "CRB01").  It must be a single word, and is
 # capitalized by convention.
 
-export BUILD_ID=LMP
+BUILD_ID := AOSP
+
+DISPLAY_BUILD_NUMBER := true
