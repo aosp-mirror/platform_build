@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d54eda55_a00ba4c5",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-11-07T01:44:46Z",
+      "side": 1,
+      "message": "This conflicts with my other patch, so I\u0027ll have to reupload. I just want this here so bionicbb can confirm a build.",
+      "range": {
+        "startLine": 38,
+        "startChar": 28,
+        "endLine": 38,
+        "endChar": 38
+      },
+      "revId": "2d6f293626f98003781c772e49e1e8c2892d5001",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
