@@ -347,7 +347,7 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
 
   if info_dict.get("verity_key", None):
     path = "/" + os.path.basename(sourcedir).lower()
-    cmd = ["boot_signer", path, img.name, info_dict["verity_key"], img.name]
+    cmd = ["boot_signer", path, img.name, info_dict["verity_key"] + ".pk8", info_dict["verity_key"] + ".x509.pem", img.name]
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     assert p.returncode == 0, "boot_signer of %s image failed" % path
