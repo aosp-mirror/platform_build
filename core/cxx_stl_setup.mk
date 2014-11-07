@@ -4,16 +4,14 @@
 ## Output variables: My_cflags, my_c_includes, my_shared_libraries, etc.
 #############################################################
 
-# Only around for development purposes. Will be removed soon.
-my_libcxx_is_default := false
-
 # Select the appropriate C++ STL
 ifeq ($(strip $(LOCAL_CXX_STL)),default)
     ifndef LOCAL_SDK_VERSION
-        ifeq ($(strip $(my_libcxx_is_default)),true)
-            # Platform code. Select the appropriate STL.
+        # Platform code. Select the appropriate STL.
+        ifndef USE_MINGW
             my_cxx_stl := libc++
         else
+            # libc++ is not supported on mingw.
             my_cxx_stl := libstdc++
         endif
     else
