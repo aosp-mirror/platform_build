@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5697aa3_3cdfdd68",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2014-11-07T12:29:09Z",
+      "side": 1,
+      "message": "Please add this for host modules:\nLOCAL_ALLOW_UNDEFINED_SYMBOLS :\u003d true\n\nASan runtime library is statically linked into the main executable. As a result, all ASan libraries have undefined symbols.",
+      "range": {
+        "startLine": 21,
+        "startChar": 8,
+        "endLine": 21,
+        "endChar": 28
+      },
+      "revId": "087146322d76807111d784cfd2bac51b0fd6da1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
