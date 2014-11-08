@@ -115,11 +115,6 @@
 /* #define HAVE_MALLOC_H */
 
 /*
- * Define if tm struct has tm_gmtoff field
- */
-#define HAVE_TM_GMTOFF 1
-
-/*
  * Define if dirent struct has d_type field
  */
 #define HAVE_DIRENT_D_TYPE 1
