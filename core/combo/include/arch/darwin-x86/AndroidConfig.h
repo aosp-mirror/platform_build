@@ -105,13 +105,6 @@
 #define _LARGEFILE_SOURCE 1
 
 /*
- * Defined if we have the backtrace() call for retrieving a stack trace.
- * Needed for CallStack to operate; if not defined, CallStack is
- * non-functional.
- */
-#define HAVE_BACKTRACE 0
-
-/*
  * Add any extra platform-specific defines here.
  */
 #define _THREAD_SAFE
