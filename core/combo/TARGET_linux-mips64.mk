@@ -18,7 +18,7 @@
 # Included by combo/select.mk
 
 # You can set TARGET_ARCH_VARIANT to use an arch version other
-# than mips64. Each value should correspond to a file named
+# than mips64r6. Each value should correspond to a file named
 # $(BUILD_COMBOS)/arch/<name>.mk which must contain
 # makefile variable definitions similar to the preprocessor
 # defines in build/core/combo/include/arch/<combo>/AndroidConfig.h. Their
@@ -35,7 +35,7 @@ TARGET_ARCH_VARIANT := mips64r6
 endif
 
 # Decouple NDK library selection with platform compiler version
-TARGET_NDK_GCC_VERSION := 4.8
+TARGET_NDK_GCC_VERSION := 4.9
 
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
 TARGET_GCC_VERSION := 4.9
