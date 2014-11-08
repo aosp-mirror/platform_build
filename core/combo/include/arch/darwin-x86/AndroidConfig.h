@@ -171,11 +171,6 @@
 #define HAVE_STRLCPY 1
 
 /*
- * Define if the BSD funopen() function exists on the system.
- */
-#define HAVE_FUNOPEN 1
-
-/*
  * Define if writev() exists
  */
 #define HAVE_WRITEV 1
