@@ -93,13 +93,6 @@
 #define HAVE_ENDIAN_H
 #define HAVE_LITTLE_ENDIAN
 
-/*
- * Defined if we have the backtrace() call for retrieving a stack trace.
- * Needed for CallStack to operate; if not defined, CallStack is
- * non-functional.
- */
-#define HAVE_BACKTRACE 0
-
 /* 
  * Defined if we have the sched_setscheduler() call
  */
