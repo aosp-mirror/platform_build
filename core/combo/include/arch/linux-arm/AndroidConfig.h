@@ -176,11 +176,6 @@
 #define HAVE_STRLCPY 1
 
 /*
- * Define if the BSD funopen() function exists on the system.
- */
-#define HAVE_FUNOPEN 1
-
-/*
  * Define if prctl() exists
  */
 #define HAVE_PRCTL 1
