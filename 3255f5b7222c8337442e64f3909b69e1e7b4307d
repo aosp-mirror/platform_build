@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a1b3f6c_7ca2cdb9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-11-09T00:50:19Z",
+      "side": 1,
+      "message": "This is probably overkill. It can be worked around simply enough, but I thought I\u0027d get another opinion on it first.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 46
+      },
+      "revId": "3255f5b7222c8337442e64f3909b69e1e7b4307d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
