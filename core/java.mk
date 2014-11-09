@@ -349,9 +349,16 @@ $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 $(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
-$(full_classes_compiled_jar): $(java_sources) $(java_resource_sources) $(full_java_lib_deps) \
-        $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
-        $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(full_classes_compiled_jar): \
+        $(java_sources) \
+        $(java_resource_sources) \
+        $(full_java_lib_deps) \
+        $(jar_manifest_file) \
+        $(layers_file) \
+        $(RenderScript_file_stamp) \
+        $(proto_java_sources_file_stamp) \
+        $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
