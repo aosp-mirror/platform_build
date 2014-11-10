@@ -86,11 +86,6 @@
 /* #define _LARGEFILE_SOURCE 1 */
 
 /*
- * Defined if we have the sched_setscheduler() call
- */
-#define HAVE_SCHED_SETSCHEDULER
-
-/*
  * Add any extra platform-specific defines here.
  */
 #ifndef __linux__

@@ -106,11 +106,6 @@
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE 1
 
-/* 
- * Defined if we have the sched_setscheduler() call
- */
-#define HAVE_SCHED_SETSCHEDULER
-
 /*
  * Define if we have <malloc.h> header
  */
