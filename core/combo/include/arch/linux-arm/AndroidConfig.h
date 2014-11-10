@@ -93,11 +93,6 @@
 #define HAVE_ENDIAN_H
 #define HAVE_LITTLE_ENDIAN
 
-/* 
- * Defined if we have the sched_setscheduler() call
- */
-#define HAVE_SCHED_SETSCHEDULER
-
 /*
  * Add any extra platform-specific defines here.
  */
