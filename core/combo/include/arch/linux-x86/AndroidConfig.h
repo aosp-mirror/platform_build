@@ -122,11 +122,6 @@
 #define HAVE_MADVISE 1
 
 /*
- * Define if dirent struct has d_type field
- */
-#define HAVE_DIRENT_D_TYPE 1
-
-/*
  * Define if system provides a system property server (should be
  * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
  */
