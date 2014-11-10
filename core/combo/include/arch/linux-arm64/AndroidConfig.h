@@ -124,11 +124,6 @@
 #define HAVE_MADVISE 1
 
 /*
- * Define if dirent struct has d_type field
- */
-#define HAVE_DIRENT_D_TYPE 1
-
-/*
  * Define if libc includes Android system properties implementation.
  */
 #define HAVE_LIBC_SYSTEM_PROPERTIES 1
