@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c838a_2730d48a",
+        "filename": "libs/host/CopyFile.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-11-10T18:55:06Z",
+      "side": 1,
+      "message": "danalbert thinks this should be __MINGW32__.\n\nalso, prefer \"#if defined\" (especially when the code two lines later uses it).\n\n#elif?",
+      "revId": "751aee5bf6e6fed23b4efa045bc6978e55d6ef38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
