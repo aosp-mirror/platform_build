@@ -144,13 +144,6 @@
 #define OS_PATH_SEPARATOR '/'
 
 /*
- * Is the filesystem case sensitive?
- *
- * For tools apps, we'll treat is as not case sensitive.
- */
-/* #define OS_CASE_SENSITIVE */
-
-/*
  * Define if <sys/socket.h> exists.
  */
 #define HAVE_SYS_SOCKET_H 1
