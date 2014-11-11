@@ -112,25 +112,6 @@
 /* #define _LARGEFILE_SOURCE 1 */
 
 /*
- * Add any extra platform-specific defines here.
- */
-#ifndef __linux__
-#define __linux__ 1
-#endif
-
-#ifndef __linux
-#define __linux 1
-#endif
-
-#ifdef __unix__
-#undef __unix__
-#endif
-
-#ifdef __unix
-#undef __unix
-#endif
-
-/*
  * Define if we have <malloc.h> header
  */
 #define HAVE_MALLOC_H
