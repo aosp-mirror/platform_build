@@ -79,18 +79,6 @@
 #define HAVE_WIN32_IPC
 
 /*
- * Memory-mapping model. Choose one:
- *
- * HAVE_POSIX_FILEMAP - use the Posix sys/mmap.h
- * HAVE_WIN32_FILEMAP - use Win32 filemaps
- */
-#ifdef __CYGWIN__
-#define  HAVE_POSIX_FILEMAP
-#else
-#define  HAVE_WIN32_FILEMAP
-#endif
-
-/*
  * Define this if you have <termio.h>
  */
 #ifdef __CYGWIN__
