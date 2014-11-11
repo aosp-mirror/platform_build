@@ -114,6 +114,7 @@ my_cxx := $(LOCAL_CXX)
 my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
+my_additional_dependencies := $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
 # all code is position independent, and then those warnings get promoted to
@@ -603,7 +604,7 @@ yacc_objects := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.o)
 ifneq ($(strip $(y_yacc_cpps)),)
 $(y_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.y \
-    $(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(lex_cpps) $(my_additional_dependencies)
 	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
 $(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 endif
@@ -611,7 +612,7 @@ endif
 ifneq ($(strip $(yy_yacc_cpps)),)
 $(yy_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.yy \
-    $(lex_cpps) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(lex_cpps) $(my_additional_dependencies)
 	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
 $(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
 endif
@@ -655,7 +656,7 @@ $(lex_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(lex_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(lex_objects): $(intermediates)/%.o: \
     $(intermediates)/%$(LOCAL_CPP_EXTENSION) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+    $(my_additional_dependencies) \
     $(yacc_headers)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 endif
@@ -683,7 +684,7 @@ ifneq ($(strip $(cpp_objects)),)
 $(cpp_objects): $(intermediates)/%.o: \
     $(TOPDIR)$(LOCAL_PATH)/%$(LOCAL_CPP_EXTENSION) \
     $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(cpp_objects:%.o=%.P)
 endif
@@ -703,7 +704,7 @@ $(gen_cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_cpp_objects): $(intermediates)/%.o: \
     $(intermediates)/%$(LOCAL_CPP_EXTENSION) $(yacc_cpps) \
     $(proto_generated_headers) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(gen_cpp_objects:%.o=%.P)
 endif
@@ -717,7 +718,7 @@ gen_S_objects := $(gen_S_sources:%.S=%.o)
 
 ifneq ($(strip $(gen_S_sources)),)
 $(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(gen_S_objects:%.o=%.P)
 endif
@@ -727,7 +728,7 @@ gen_s_objects := $(gen_s_sources:%.s=%.o)
 
 ifneq ($(strip $(gen_s_objects)),)
 $(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(gen_s_objects:%.o=%.P)
 endif
@@ -759,7 +760,7 @@ c_objects        := $(c_arm_objects) $(c_normal_objects)
 
 ifneq ($(strip $(c_objects)),)
 $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(c_objects:%.o=%.P)
 endif
@@ -777,7 +778,7 @@ ifneq ($(strip $(gen_c_objects)),)
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(gen_c_objects:%.o=%.P)
 endif
@@ -791,7 +792,7 @@ objc_objects := $(addprefix $(intermediates)/,$(objc_sources:.m=.o))
 
 ifneq ($(strip $(objc_objects)),)
 $(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $(proto_generated_headers) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)m-to-o)
 -include $(objc_objects:%.o=%.P)
 endif
@@ -805,7 +806,7 @@ asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
 
 ifneq ($(strip $(asm_objects_S)),)
 $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o)
 -include $(asm_objects_S:%.o=%.P)
 endif
@@ -815,7 +816,7 @@ asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
 
 ifneq ($(strip $(asm_objects_s)),)
 $(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
 -include $(asm_objects_s:%.o=%.P)
 endif
@@ -829,7 +830,7 @@ asm_sources_asm := $(filter %.asm,$(my_src_files))
 ifneq ($(strip $(asm_sources_asm)),)
 asm_objects_asm := $(addprefix $(intermediates)/,$(asm_sources_asm:.asm=.o))
 $(asm_objects_asm): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.asm \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+    $(my_additional_dependencies)
 	$(transform-asm-to-o)
 
 asm_objects += $(asm_objects_asm)
