@@ -568,13 +568,23 @@ ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
         $(warning Stripping unneeded dependency on libprotobuf-cpp-2.3.0-full in $(LOCAL_MODULE))
         my_static_libraries := $(filter-out libprotobuf-cpp-2.3.0-full,$(my_static_libraries))
     endif
-    my_static_libraries += libprotobuf-cpp-full
+
+    ifdef LOCAL_SDK_VERSION
+        my_static_libraries += libprotobuf-cpp-full
+    else
+        my_shared_libraries += libprotobuf-cpp-full
+    endif
 else
     ifneq ($(filter libprotobuf-cpp-2.3.0-lite,$(my_static_libraries)),)
         $(warning Stripping unneeded dependency on libprotobuf-cpp-2.3.0-lite in $(LOCAL_MODULE))
         my_static_libraries := $(filter-out libprotobuf-cpp-2.3.0-lite,$(my_static_libraries))
     endif
-    my_static_libraries += libprotobuf-cpp-lite
+
+    ifdef LOCAL_SDK_VERSION
+        my_static_libraries += libprotobuf-cpp-lite
+    else
+        my_shared_libraries += libprotobuf-cpp-lite
+    endif
 endif
 endif  # $(proto_sources) non-empty
 
