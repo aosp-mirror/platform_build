@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c838a_ae34981b",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-11T00:48:27Z",
+      "side": 1,
+      "message": "You can\u0027t clear it here, because $(my-dir) is called only once for an Android.mk, but here may be multiple modules (with \"include $(CLEAR_VARS)) in an Android.mk.",
+      "revId": "b2f21a8fd7f044a7152ca6300f203c68ee58a2db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c838a_21dc3973",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-11T00:48:27Z",
+      "side": 1,
+      "message": "Not needed now.",
+      "revId": "b2f21a8fd7f044a7152ca6300f203c68ee58a2db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
