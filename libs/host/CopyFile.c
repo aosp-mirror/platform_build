@@ -68,14 +68,12 @@ static bool isSourceNewer(const struct stat* pSrcStat, const struct stat* pDstSt
  */
 static bool isHiresMtime(const struct stat* pSrcStat)
 {
-#if HAVE_STAT_ST_MTIM
-#if defined(MACOSX_RSRC)
+#if defined(__CYGWIN__) || defined(__MINGW32__)
+  return 0;
+#elif defined(MACOSX_RSRC)
     return pSrcStat->st_mtimespec.tv_nsec > 0;
 #else
     return pSrcStat->st_mtim.tv_nsec > 0;
-#endif
-#else
-    return 0;
 #endif
 }
 
