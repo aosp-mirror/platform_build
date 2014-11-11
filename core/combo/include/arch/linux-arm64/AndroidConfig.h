@@ -114,11 +114,6 @@
 #define HAVE_LINUX_LOCAL_SOCKET_NAMESPACE 1
 
 /*
- * Define if we have Linux's inotify in <sys/inotify.h>.
- */
-#define HAVE_INOTIFY 1
-
-/*
  * Define if we have madvise() in <sys/mman.h>
  */
 #define HAVE_MADVISE 1
