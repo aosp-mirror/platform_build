@@ -115,11 +115,6 @@
 /* #define HAVE_MALLOC_H */
 
 /*
- * Define if dirent struct has d_type field
- */
-#define HAVE_DIRENT_D_TYPE 1
-
-/*
  * Define if we have madvise() in <sys/mman.h>
  */
 #define HAVE_MADVISE 1
