@@ -18,14 +18,14 @@
 # Included by combo/select.mk
 
 ifeq ($(strip $(HOST_TOOLCHAIN_PREFIX)),)
-HOST_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.8/bin/x86_64-linux-
+HOST_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/bin/x86_64-linux-
 endif
 HOST_CC  := $(HOST_TOOLCHAIN_PREFIX)gcc
 HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)g++
 HOST_AR  := $(HOST_TOOLCHAIN_PREFIX)ar
 
 # gcc location for clang; to be updated when clang is updated
-HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.11-4.8/
+HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/
 
 HOST_GLOBAL_CFLAGS += -m64 -Wa,--noexecstack
 HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack
@@ -40,7 +40,7 @@ HOST_GLOBAL_CFLAGS += -fPIC \
   -no-canonical-prefixes \
   -include $(call select-android-config-h,linux-x86)
 
-# Disable new longjmp in glibc 2.11 and later. See bug 2967937.
+# Disable new longjmp in glibc 2.11 and later. See bug 2967937. Same for 2.15?
 HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
 
 # Workaround differences in inttypes.h between host and target.
