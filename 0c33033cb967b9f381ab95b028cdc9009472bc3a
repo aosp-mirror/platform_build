@@ -118,6 +118,30 @@
       "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1af89f89_54fd027b",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-11-13T01:14:43Z",
+      "side": 1,
+      "message": "good idea, but sometimes symbol_dir is not set because my ANDROID_SERIAL is pointing to incorrect device (or I did not build symbols), we need somehow to detect if it is tapas user and doesn\u0027t care about app_process symbols or it is lunch user who cares (in most cases)...",
+      "parentUuid": "1af89f89_b418a667",
+      "range": {
+        "startLine": 1012,
+        "startChar": 4,
+        "endLine": 1012,
+        "endChar": 8
+      },
+      "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
