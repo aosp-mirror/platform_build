@@ -71,11 +71,6 @@
 #define HAVE_SYMLINKS
 
 /*
- * Define this if we have localtime_r().
- */
-/* #define HAVE_LOCALTIME_R */
-
-/*
  * Define this if we want to use WinSock.
  */
 /* #define HAVE_WINSOCK */
