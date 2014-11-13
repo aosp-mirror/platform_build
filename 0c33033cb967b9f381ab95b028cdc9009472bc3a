@@ -46,6 +46,30 @@
       "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3afba387_f286c039",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1040443
+      },
+      "writtenOn": "2014-11-13T00:58:00Z",
+      "side": 1,
+      "message": "I am pretty sure the old one was looking for app_process in the right place (I think it was looking into ANDROID_PRODUCT_OUT rather than hardcoding product/$DEVICE).",
+      "parentUuid": "7af19ba1_572ea6bb",
+      "range": {
+        "startLine": 1012,
+        "startChar": 4,
+        "endLine": 1012,
+        "endChar": 8
+      },
+      "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
