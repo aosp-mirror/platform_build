@@ -42,14 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Process creation model.  Choose one:
- *
- * HAVE_FORKEXEC - use fork() and exec()
- * HAVE_WIN32_PROC - use CreateProcess()
- */
-#define HAVE_FORKEXEC
-
-/*
  * Define this if you have <termio.h>
  */
 #define  HAVE_TERMIO_H 1
