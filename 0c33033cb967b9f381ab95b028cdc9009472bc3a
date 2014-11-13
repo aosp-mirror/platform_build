@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af89f89_312cc88c",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1040443
+      },
+      "writtenOn": "2014-11-13T00:31:12Z",
+      "side": 1,
+      "message": "This error will still be hit on a tapas build. A tapas build doesn\u0027t have the target/product/mako (or similar) folder at all, just product/generic.\n\nI think you want the check above to be something like\nif [[ ! -d \"${SYMBOLS_DIR}\" || ! -d \"${TAPAS_SYMBOLS_DIR}\" ]]; then",
+      "range": {
+        "startLine": 1012,
+        "startChar": 4,
+        "endLine": 1012,
+        "endChar": 8
+      },
+      "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
