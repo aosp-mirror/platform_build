@@ -140,11 +140,6 @@
 #define ARCH_MIPS64 1
 
 /*
- * Define if the size of enums is as short as possible,
- */
-/* #define HAVE_SHORT_ENUMS */
-
-/*
  * sprintf() format string for shared library naming.
  */
 #define OS_SHARED_LIB_FORMAT_STR    "lib%s.so"
