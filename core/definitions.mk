@@ -1310,17 +1310,13 @@ endef
 
 #	-Wl,--version-script=$@.vers \
 
-# ld just seems to be so finicky with command order that we allow
-# it to be overriden en-masse see combo/linux-arm.make for an example.
-ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
-	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
-	-Wl,-rpath-link=$(PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES) \
-	-Wl,-rpath,\$$ORIGIN/../lib \
-	-Wl,-shared -Wl,-soname,$(notdir $@) \
-	$(PRIVATE_LDFLAGS) \
+	-nostdlib -Wl,-soname,$(notdir $@) \
+	-Wl,--gc-sections \
+	$(if $(filter true,$(PRIVATE_CLANG)),-shared,-Wl,-shared) \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_SO_O)) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -1328,16 +1324,22 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
+	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
+	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
+	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O)) \
 	$(PRIVATE_LDLIBS)
 endef
-endif
 
 define transform-o-to-shared-lib
 @mkdir -p $(dir $@)
 @echo "target SharedLib: $(PRIVATE_MODULE) ($@)"
-$($(PRIVATE_2ND_ARCH_VAR_PREFIX)transform-o-to-shared-lib-inner)
+$(transform-o-to-shared-lib-inner)
 endef
 
 
@@ -1369,14 +1371,15 @@ endef
 ## Commands for running gcc to link an executable
 ###########################################################
 
-ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-executable-inner
-$(hide) $(PRIVATE_CXX) \
-	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+$(hide) $(PRIVATE_CXX) -pie \
+	-nostdlib -Bdynamic \
+	-Wl,-dynamic-linker,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_LINKER) \
+	-Wl,--gc-sections \
+	-Wl,-z,nocopyreloc \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES) \
-	-Wl,-rpath,\$$ORIGIN/../lib \
-	$(PRIVATE_LDFLAGS) \
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O)) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -1384,35 +1387,60 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
+	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
+	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
+	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
 endef
-endif
 
 define transform-o-to-executable
 @mkdir -p $(dir $@)
 @echo "target Executable: $(PRIVATE_MODULE) ($@)"
-$($(PRIVATE_2ND_ARCH_VAR_PREFIX)transform-o-to-executable-inner)
+$(transform-o-to-executable-inner)
 endef
 
 
 ###########################################################
-## Commands for running gcc to link a statically linked
-## executable.  In practice, we only use this on arm, so
-## the other platforms don't have the
-## transform-o-to-static-executable defined
+## Commands for linking a static executable. In practice,
+## we only use this on arm, so the other platforms don't
+## have transform-o-to-static-executable defined.
 ###########################################################
 
-ifneq ($(TARGET_CUSTOM_LD_COMMAND),true)
 define transform-o-to-static-executable-inner
+$(hide) $(PRIVATE_CXX) \
+	-nostdlib -Bstatic \
+	-Wl,--gc-sections \
+	-o $@ \
+	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_STATIC_O)) \
+	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+	$(PRIVATE_LDFLAGS) \
+	$(PRIVATE_ALL_OBJECTS) \
+	-Wl,--whole-archive \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+	-Wl,--no-whole-archive \
+	$(call normalize-target-libraries,$(filter-out %libcompiler_rt.a,$(filter-out %libc_nomalloc.a,$(filter-out %libc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))))) \
+	-Wl,--start-group \
+	$(call normalize-target-libraries,$(filter %libc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
+	$(call normalize-target-libraries,$(filter %libc_nomalloc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
+	$(call normalize-target-libraries,$(filter %libcompiler_rt.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
+	$(if $(PRIVATE_LIBCXX),,$(PRIVATE_TARGET_LIBGCC)) \
+	-Wl,--end-group \
+	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
 endef
-endif
 
 define transform-o-to-static-executable
 @mkdir -p $(dir $@)
 @echo "target StaticExecutable: $(PRIVATE_MODULE) ($@)"
-$($(PRIVATE_2ND_ARCH_VAR_PREFIX)transform-o-to-static-executable-inner)
+$(transform-o-to-static-executable-inner)
 endef
 
 
