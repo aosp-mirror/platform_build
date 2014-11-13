@@ -63,18 +63,6 @@
  */
 #define HAVE_WIN32_THREADS
 
-/*
- * Process creation model.  Choose one:
- *
- * HAVE_FORKEXEC - use fork() and exec()
- * HAVE_WIN32_PROC - use CreateProcess()
- */
-#ifdef __CYGWIN__
-#  define HAVE_FORKEXEC
-#else
-#  define HAVE_WIN32_PROC
-#endif
-
 /* TODO: replace references to this. */
 #define HAVE_WIN32_IPC
 
