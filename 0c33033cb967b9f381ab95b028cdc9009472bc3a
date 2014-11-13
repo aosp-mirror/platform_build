@@ -94,6 +94,30 @@
       "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1af89f89_b418a667",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1040443
+      },
+      "writtenOn": "2014-11-13T01:09:40Z",
+      "side": 1,
+      "message": "To be honest it would be nice if could \"just work\" (TM) without doing hacks.\nAt this point the best solution, IMHO, seems to be:\nif symbols_dir is not set, adb pull the exe from the device.\nIn most of the cases folks want to debug Java apps, nor native binaries, which means that the exe will be app_process32/64 and we don\u0027t care about the debug symbols for that, we just need to make gdb happy.",
+      "parentUuid": "3afba387_f25d2036",
+      "range": {
+        "startLine": 1012,
+        "startChar": 4,
+        "endLine": 1012,
+        "endChar": 8
+      },
+      "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
