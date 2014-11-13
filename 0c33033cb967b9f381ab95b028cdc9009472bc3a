@@ -70,6 +70,30 @@
       "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3afba387_f25d2036",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-11-13T01:01:36Z",
+      "side": 1,
+      "message": "It wasn\u0027t tapas do not build app_process, so there is no correct location for it.. on the other hand - if you download symbols for your device/build, it has app_process32/64 at the right place. so you wont need to do cp -r out/target/product/hammerhead/symbols out/target/product/generic/",
+      "parentUuid": "3afba387_f286c039",
+      "range": {
+        "startLine": 1012,
+        "startChar": 4,
+        "endLine": 1012,
+        "endChar": 8
+      },
+      "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
