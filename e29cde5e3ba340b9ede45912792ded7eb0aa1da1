@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "3ac2c357_7d59cbfa",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-11-13T19:48:41Z",
+      "side": 1,
+      "message": "Hadn\u0027t verified these targets yet. Nice catch.",
+      "parentUuid": "7adfdb23_a708a899",
+      "revId": "e29cde5e3ba340b9ede45912792ded7eb0aa1da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5ac5b75b_3e7d8dde",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2014-11-13T19:33:46Z",
       "side": 1,
       "message": "It should be:\n$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_LINKER)",
+      "revId": "e29cde5e3ba340b9ede45912792ded7eb0aa1da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ac2c357_dd701f7a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1377,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-11-13T19:48:41Z",
+      "side": 1,
+      "message": "That would explain why my volantis won\u0027t boot :) Thanks.",
+      "parentUuid": "5ac5b75b_3e7d8dde",
       "revId": "e29cde5e3ba340b9ede45912792ded7eb0aa1da1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
