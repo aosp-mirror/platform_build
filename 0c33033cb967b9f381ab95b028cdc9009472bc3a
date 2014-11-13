@@ -22,6 +22,30 @@
       "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7af19ba1_572ea6bb",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-11-13T00:42:27Z",
+      "side": 1,
+      "message": "not really - we need access to executable to run gdb and to detect lp64. old one needed it too.\n\nSo for tapas you will need symbols from the build server or adb pull app_process32/64 workaround but with different path..",
+      "parentUuid": "1af89f89_312cc88c",
+      "range": {
+        "startLine": 1012,
+        "startChar": 4,
+        "endLine": 1012,
+        "endChar": 8
+      },
+      "revId": "0c33033cb967b9f381ab95b028cdc9009472bc3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
