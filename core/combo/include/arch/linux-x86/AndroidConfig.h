@@ -71,11 +71,6 @@
 #define HAVE_LOCALTIME_R 1
 
 /*
- * Define this if we have gethostbyname_r().
- */
-#define HAVE_GETHOSTBYNAME_R
-
-/*
  * Define this if have clock_gettime() and friends
  */
 #define HAVE_POSIX_CLOCKS
