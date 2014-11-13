@@ -66,11 +66,6 @@
 #define HAVE_SYMLINKS
 
 /*
- * Define this if we have localtime_r().
- */
-#define HAVE_LOCALTIME_R 1
-
-/*
  * Define this if have clock_gettime() and friends
  */
 #define HAVE_POSIX_CLOCKS
