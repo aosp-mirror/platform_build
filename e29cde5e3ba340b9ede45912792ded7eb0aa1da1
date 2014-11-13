@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ac5b75b_9e9ea1f2",
+        "filename": "core/combo/TARGET_linux-mips.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-13T19:33:46Z",
+      "side": 1,
+      "message": "combos_2nd_arch_prefix -\u003e combo_2nd_arch_prefix",
+      "revId": "e29cde5e3ba340b9ede45912792ded7eb0aa1da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7adfdb23_a708a899",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-13T19:33:46Z",
+      "side": 1,
+      "message": "combos_2nd_arch_prefix -\u003e combo_2nd_arch_prefix",
+      "revId": "e29cde5e3ba340b9ede45912792ded7eb0aa1da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ac5b75b_3e7d8dde",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1377,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-13T19:33:46Z",
+      "side": 1,
+      "message": "It should be:\n$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_LINKER)",
+      "revId": "e29cde5e3ba340b9ede45912792ded7eb0aa1da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
