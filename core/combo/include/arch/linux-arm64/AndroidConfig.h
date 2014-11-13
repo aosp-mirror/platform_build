@@ -50,14 +50,6 @@
 #define HAVE_FORKEXEC
 
 /*
- * Memory-mapping model. Choose one:
- *
- * HAVE_POSIX_FILEMAP - use the Posix sys/mmap.h
- * HAVE_WIN32_FILEMAP - use Win32 filemaps
- */
-#define  HAVE_POSIX_FILEMAP
-
-/*
  * Define this if you have <termio.h>
  */
 #define  HAVE_TERMIO_H 1
