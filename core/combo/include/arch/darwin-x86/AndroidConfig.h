@@ -71,11 +71,6 @@
 #define HAVE_SYMLINKS
 
 /*
- * Define this if we have localtime_r().
- */
-#define HAVE_LOCALTIME_R 1
-
-/*
  * Endianness of the target machine.  Choose one:
  *
  * HAVE_ENDIAN_H -- have endian.h header we can include.
