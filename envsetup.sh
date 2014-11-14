@@ -1056,7 +1056,11 @@ function is64bit()
 }
 
 function adb_get_product_device() {
-  echo `adb shell getprop ro.product.device | sed s/.$//`
+  local candidate=`adb shell getprop ro.product.device | sed s/.$//`
+  if [ -z $candidate ]; then
+    candidate=`adb shell getprop ro.hardware | sed s/.$//`
+  fi
+  echo $candidate
 }
 
 # returns 0 when process is not traced
@@ -1094,10 +1098,20 @@ function gdbclient() {
 
   local OUT_ROOT="$ROOT/out/target/product/$DEVICE"
   local SYMBOLS_DIR="$OUT_ROOT/symbols"
+  local IS_TAPAS_USER="$(get_build_var TARGET_BUILD_APPS)"
+  local TAPAS_SYMBOLS_DIR=
+
+  if [ $IS_TAPAS_USER ]; then
+    TAPAS_SYMBOLS_DIR=$(get_symbols_directory)
+  fi
 
   if [ ! -d $SYMBOLS_DIR ]; then
-    echo "Error: couldn't find symbols: $SYMBOLS_DIR does not exist or is not a directory."
-    return -3
+    if [ $IS_TAPAS_USER ]; then
+      mkdir -p $SYMBOLS_DIR/system/bin
+    else
+      echo "Error: couldn't find symbols: $SYMBOLS_DIR does not exist or is not a directory."
+      return -3
+    fi
   fi
 
   # let's figure out which executable we are about to debug
@@ -1117,14 +1131,23 @@ function gdbclient() {
   local LOCAL_EXE_PATH=$SYMBOLS_DIR$EXE
 
   if [ ! -f $LOCAL_EXE_PATH ]; then
-    echo "Error: unable to find symbols for executable $EXE: file $LOCAL_EXE_PATH does not exist"
-    return -5
+    if [ $IS_TAPAS_USER ]; then
+      adb pull $EXE $LOCAL_EXE_PATH
+    else
+      echo "Error: unable to find symbols for executable $EXE: file $LOCAL_EXE_PATH does not exist"
+      return -5
+    fi
   fi
 
   local USE64BIT=""
 
   if [[ "$(file $LOCAL_EXE_PATH)" =~ 64-bit ]]; then
     USE64BIT="64"
+  fi
+
+  # and now linker for tapas users...
+  if [ -n "$IS_TAPAS_USER" -a ! -f "$SYMBOLS_DIR/system/bin/linker$USE64BIT" ]; then
+    adb pull /system/bin/linker$USE64BIT $SYMBOLS_DIR/system/bin/linker$USE64BIT
   fi
 
   local GDB=
@@ -1151,7 +1174,7 @@ function gdbclient() {
   fi
 
   # TODO: check if tracing process is gdbserver and not some random strace...
-  if [ $(adb_get_traced_by $PID) -eq 0 ]; then
+  if [ "$(adb_get_traced_by $PID)" -eq 0 ]; then
     # start gdbserver
     echo "Starting gdbserver..."
     # TODO: check if adb is already listening $PORT
@@ -1165,14 +1188,24 @@ function gdbclient() {
     echo ". done"
   else
     echo "It looks like gdbserver is already attached to $PID (process is traced), trying to connect to it using local port=$PORT"
+    adb forward tcp:$PORT tcp:$PORT
   fi
 
   local OUT_SO_SYMBOLS=$SYMBOLS_DIR/system/lib$USE64BIT
+  local TAPAS_OUT_SO_SYMBOLS=$TAPAS_SYMBOLS_DIR/system/lib$USE64BIT
   local OUT_VENDOR_SO_SYMBOLS=$SYMBOLS_DIR/vendor/lib$USE64BIT
   local ART_CMD=""
 
-  echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $SYMBOLS_DIR"
-  echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx:$OUT_VENDOR_SO_SYMBOLS:$OUT_VENDOR_SO_SYMBOLS/hw:$OUT_VENDOR_SO_SYMBOLS/egl"
+  local SOLIB_SYSROOT=$SYMBOLS_DIR
+  local SOLIB_SEARCHPATH=$OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx:$OUT_VENDOR_SO_SYMBOLS:$OUT_VENDOR_SO_SYMBOLS/hw:$OUT_VENDOR_SO_SYMBOLS/egl
+
+  if [ $IS_TAPAS_USER ]; then
+    SOLIB_SYSROOT=$TAPAS_SYMBOLS_DIR:$SOLIB_SYSROOT
+    SOLIB_SEARCHPATH=$TAPAS_OUT_SO_SYMBOLS:$SOLIB_SEARCHPATH
+  fi
+
+  echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $SOLIB_SYSROOT"
+  echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $SOLIB_SEARCHPATH"
   local DALVIK_GDB_SCRIPT=$ROOT/development/scripts/gdb/dalvik.gdb
   if [ -f $DALVIK_GDB_SCRIPT ]; then
     echo >>"$OUT_ROOT/gdbclient.cmds" "source $DALVIK_GDB_SCRIPT"
