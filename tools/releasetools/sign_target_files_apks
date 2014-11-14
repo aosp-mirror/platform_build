@@ -179,7 +179,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info, OPTIONS.replace_verity_private_key[1])
     elif (info.filename == "BOOT/RAMDISK/verity_key" and
         OPTIONS.replace_verity_public_key):
-      ReplaceVerityPublicKey(output_tf_zip, OPTIONS.replace_verity_public_key[1])
+      new_data = ReplaceVerityPublicKey(output_tf_zip, OPTIONS.replace_verity_public_key[1])
+      write_to_temp(info.filename, info.external_attr, new_data)
     elif (info.filename.startswith("BOOT/") or
         info.filename.startswith("RECOVERY/") or
         info.filename.startswith("META/") or
@@ -391,7 +392,9 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 def ReplaceVerityPublicKey(targetfile_zip, key_path):
   print "Replacing verity public key with %s" % key_path
   with open(key_path) as f:
-    common.ZipWriteStr(targetfile_zip, "BOOT/RAMDISK/verity_key", f.read())
+    data = f.read()
+  common.ZipWriteStr(targetfile_zip, "BOOT/RAMDISK/verity_key", data)
+  return data
 
 def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip, misc_info, key_path):
   print "Replacing verity private key with %s" % key_path
@@ -399,6 +402,7 @@ def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip, misc_in
   original_misc_info = targetfile_input_zip.read("META/misc_info.txt")
   new_misc_info = original_misc_info.replace(current_key, key_path)
   common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
+  misc_info["verity_key"] = key_path
 
 def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
