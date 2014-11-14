@@ -16,6 +16,24 @@
       "revId": "6f2be420e2fcab8ef96852e6430406752e73cdf6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1a7bb5_c029222a",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1017,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-11-14T03:47:06Z",
+      "side": 1,
+      "message": "right... debugging shell scripts.. done.",
+      "parentUuid": "da9e076c_065b2841",
+      "revId": "6f2be420e2fcab8ef96852e6430406752e73cdf6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
