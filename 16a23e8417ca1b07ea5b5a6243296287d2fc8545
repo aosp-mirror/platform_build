@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a8d1b44_f8015e2a",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2014-11-14T23:41:56Z",
+      "side": 1,
+      "message": "$(...) ?",
+      "range": {
+        "startLine": 73,
+        "startChar": 46,
+        "endLine": 73,
+        "endChar": 69
+      },
+      "revId": "16a23e8417ca1b07ea5b5a6243296287d2fc8545",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
