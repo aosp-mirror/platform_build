@@ -111,6 +111,7 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,--warn-shared-textrel \
 			-Wl,--fatal-warnings \
 			-Wl,-maarch64linux \
+			-Wl,--hash-style=gnu \
 			$(arch_variant_ldflags)
 
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden

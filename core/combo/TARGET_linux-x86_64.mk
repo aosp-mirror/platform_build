@@ -130,6 +130,7 @@ TARGET_GLOBAL_LDFLAGS += -Wl,-z,relro -Wl,-z,now
 TARGET_GLOBAL_LDFLAGS += -Wl,--warn-shared-textrel
 TARGET_GLOBAL_LDFLAGS += -Wl,--fatal-warnings
 TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
+TARGET_GLOBAL_LDFLAGS += -Wl,--hash-style=gnu
 
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86_64/include \
