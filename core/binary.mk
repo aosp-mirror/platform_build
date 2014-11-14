@@ -9,6 +9,46 @@
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
+##################################################
+# Compute the dependency of the shared libraries
+##################################################
+# On the target, we compile with -nostdlib, so we must add in the
+# default system shared libraries, unless they have requested not
+# to by supplying a LOCAL_SYSTEM_SHARED_LIBRARIES value.  One would
+# supply that, for example, when building libc itself.
+ifdef LOCAL_IS_HOST_MODULE
+  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+      my_system_shared_libraries :=
+  else
+      my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+  endif
+else
+  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+      my_system_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES)
+  else
+      my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+  endif
+endif
+
+# The following LOCAL_ variables will be modified in this file.
+# Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
+# we can't modify them in place.
+my_src_files := $(LOCAL_SRC_FILES)
+my_static_libraries := $(LOCAL_STATIC_LIBRARIES)
+my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES)
+my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
+my_cflags := $(LOCAL_CFLAGS)
+my_cppflags := $(LOCAL_CPPFLAGS)
+my_ldflags := $(LOCAL_LDFLAGS)
+my_ldlibs := $(LOCAL_LDLIBS)
+my_asflags := $(LOCAL_ASFLAGS)
+my_cc := $(LOCAL_CC)
+my_cxx := $(LOCAL_CXX)
+my_c_includes := $(LOCAL_C_INCLUDES)
+my_generated_sources := $(LOCAL_GENERATED_SOURCES)
+my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
+my_additional_dependencies := $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+
 my_ndk_sysroot :=
 my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
@@ -27,6 +67,12 @@ ifdef LOCAL_SDK_VERSION
   else
     my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib
   endif
+
+  # The bionic linker now has support for gnu style hashes (which are much
+  # faster!), but shipping to older devices requires the old style hash.
+  #ifeq ($(shell expr $(LOCAL_SDK_VERSION) >= FIRST_SUPPORTED_VERSION),0)
+    my_ldflags += -Wl,--hash-style=sysv
+  #endif
 
   # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
   # See ndk/docs/CPLUSPLUS-SUPPORT.html
@@ -75,46 +121,6 @@ ifdef LOCAL_SDK_VERSION
   endif
   endif
 endif
-
-##################################################
-# Compute the dependency of the shared libraries
-##################################################
-# On the target, we compile with -nostdlib, so we must add in the
-# default system shared libraries, unless they have requested not
-# to by supplying a LOCAL_SYSTEM_SHARED_LIBRARIES value.  One would
-# supply that, for example, when building libc itself.
-ifdef LOCAL_IS_HOST_MODULE
-  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-      my_system_shared_libraries :=
-  else
-      my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
-  endif
-else
-  ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-      my_system_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES)
-  else
-      my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
-  endif
-endif
-
-# The following LOCAL_ variables will be modified in this file.
-# Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
-# we can't modify them in place.
-my_src_files := $(LOCAL_SRC_FILES)
-my_static_libraries := $(LOCAL_STATIC_LIBRARIES)
-my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES)
-my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
-my_cflags := $(LOCAL_CFLAGS)
-my_cppflags := $(LOCAL_CPPFLAGS)
-my_ldflags := $(LOCAL_LDFLAGS)
-my_ldlibs := $(LOCAL_LDLIBS)
-my_asflags := $(LOCAL_ASFLAGS)
-my_cc := $(LOCAL_CC)
-my_cxx := $(LOCAL_CXX)
-my_c_includes := $(LOCAL_C_INCLUDES)
-my_generated_sources := $(LOCAL_GENERATED_SOURCES)
-my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
-my_additional_dependencies := $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
 # all code is position independent, and then those warnings get promoted to
