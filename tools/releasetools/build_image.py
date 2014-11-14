@@ -160,7 +160,7 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   # get properties
   image_size = prop_dict["partition_size"]
   block_dev = prop_dict["verity_block_device"]
-  signer_key = prop_dict["verity_key"]
+  signer_key = prop_dict["verity_key"] + ".pk8"
   signer_path = prop_dict["verity_signer_cmd"]
 
   # make a tempdir
