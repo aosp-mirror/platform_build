@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "baba33ec_f872f185",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-11-15T01:50:18Z",
+      "side": 1,
+      "message": "Maybe put a \"Bug: 18395015\" here too.",
+      "revId": "16a23e8417ca1b07ea5b5a6243296287d2fc8545",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a8d1b44_f8015e2a",
         "filename": "core/binary.mk",
         "patchSetId": 1
