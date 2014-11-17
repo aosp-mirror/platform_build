@@ -115,8 +115,8 @@ PRODUCT_PACKAGES += \
     wm
 
 
-PRODUCT_COPY_FILES := \
-    frameworks/base/preloaded-classes:system/etc/preloaded-classes
+PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
+    frameworks/base/preloaded-classes:system/etc/preloaded-classes)
 
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)
