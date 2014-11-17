@@ -16,7 +16,9 @@ DEX2OAT_DEPENDENCY += $(DEX2OAT)
 DEX2OATD_DEPENDENCY := $(DEX2OAT_DEPENDENCY)
 DEX2OATD_DEPENDENCY += $(DEX2OATD)
 
-PRELOADED_CLASSES := frameworks/base/preloaded-classes
+# Use the first preloaded-classes file in PRODUCT_COPY_FILES.
+PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
+    $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
 
 # Default to debug version to help find bugs.
 # Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
