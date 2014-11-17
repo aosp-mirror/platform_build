@@ -67,13 +67,6 @@
 #define HAVE_WIN32_IPC
 
 /*
- * Define this if you have <termio.h>
- */
-#ifdef __CYGWIN__
-#  define  HAVE_TERMIO_H
-#endif
-
-/*
  * Define this if you build against MSVCRT.DLL
  */
 #ifndef __CYGWIN__
