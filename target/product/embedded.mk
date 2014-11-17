@@ -49,7 +49,6 @@ PRODUCT_PACKAGES += \
     libpixelflinger \
     libpower \
     libstdc++ \
-    libstlport \
     libsurfaceflinger \
     libsurfaceflinger_ddmconnection \
     libsysutils \
