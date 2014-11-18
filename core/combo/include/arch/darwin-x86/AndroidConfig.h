@@ -42,11 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Define this if you have <termio.h>
- */
-#define  HAVE_TERMIO_H
-
-/*
  * Define this if you build against MSVCRT.DLL
  */
 /* #define HAVE_MS_C_RUNTIME */
