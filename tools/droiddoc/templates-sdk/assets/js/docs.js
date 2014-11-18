@@ -658,7 +658,7 @@ function toggleFullscreen(enable) {
     setTimeout(updateSidenavFixedWidth,delay); // need to wait a moment for css to switch
     enabled = false;
   }
-  writeCookie("fullscreen", enabled, null, null);
+  writeCookie("fullscreen", enabled, null);
   setNavBarLeftPos();
   resizeNav(delay);
   updateSideNavPosition();
@@ -819,7 +819,7 @@ function reInitScrollbars() {
 function saveNavPanels() {
   var basePath = getBaseUri(location.pathname);
   var section = basePath.substring(1,basePath.indexOf("/",1));
-  writeCookie("height", resizePackagesNav.css("height"), section, null);
+  writeCookie("height", resizePackagesNav.css("height"), section);
 }
 
 
@@ -900,12 +900,10 @@ function readCookie(cookie) {
   return 0;
 }
 
-function writeCookie(cookie, val, section, age) {
+function writeCookie(cookie, val, section) {
   if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
-  if (age == null) {
-    var age = 2*365*24*60*60; // set max-age to 2 years
-  }
+  var age = 2*365*24*60*60; // set max-age to 2 years
   var cookieValue = cookie_namespace + section + cookie + "=" + val
                     + "; max-age=" + age +"; path=/";
   document.cookie = cookieValue;
@@ -1147,9 +1145,7 @@ function swapNav() {
     nav_pref = NAV_PREF_TREE;
     init_default_navtree(toRoot);
   }
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  writeCookie("nav", nav_pref, "reference", date.toGMTString());
+  writeCookie("nav", nav_pref, "reference");
 
   $("#nav-panels").toggle();
   $("#panel-link").toggle();
@@ -1217,11 +1213,7 @@ function changeNavLang(lang) {
 }
 
 function changeLangPref(lang, submit) {
-  var date = new Date();
-  expires = date.toGMTString(date.setTime(date.getTime()+(10*365*24*60*60*1000)));
-  // keep this for 50 years
-  //alert("expires: " + expires)
-  writeCookie("pref_lang", lang, null, expires);
+  writeCookie("pref_lang", lang, null);
 
   //  #######  TODO:  Remove this condition once we're stable on devsite #######
   //  This condition is only needed if we still need to support legacy GAE server
@@ -2730,10 +2722,7 @@ function changeApiLevel() {
   selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
   toggleVisisbleApis(selectedLevel, "body");
 
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  var expiration = date.toGMTString();
-  writeCookie(API_LEVEL_COOKIE, selectedLevel, null, expiration);
+  writeCookie(API_LEVEL_COOKIE, selectedLevel, null);
 
   if (selectedLevel < minLevel) {
     var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
