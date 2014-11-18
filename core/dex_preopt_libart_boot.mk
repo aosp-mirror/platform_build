@@ -32,6 +32,11 @@ ifneq ($(PRODUCT_DEX_PREOPT_IMAGE_IN_DATA),true)
 $(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE := $(PRODUCT_OUT)$($(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME)
 endif
 
+# Compile boot.oat as position-independent code if WITH_DEXPREOPT_PIC=true
+ifeq (true,$(WITH_DEXPREOPT_PIC))
+  PRODUCT_DEX_PREOPT_BOOT_FLAGS += --compile-pic
+endif
+
 # The rule to install boot.art and boot.oat
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP)
 	$(call copy-file-to-target)
