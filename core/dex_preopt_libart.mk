@@ -20,6 +20,10 @@ DEX2OATD_DEPENDENCY += $(DEX2OATD)
 PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
 
+# Use the first compiled-classes file in PRODUCT_COPY_FILES.
+COMPILED_CLASSES := $(call word-colon,1,$(firstword \
+    $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
+
 # Default to debug version to help find bugs.
 # Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
 ifneq ($(USE_DEX2OAT_DEBUG), false)
