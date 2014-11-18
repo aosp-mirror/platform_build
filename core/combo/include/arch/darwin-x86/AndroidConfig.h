@@ -101,11 +101,7 @@
 /*
  * What CPU architecture does this platform use?
  */
-#if (defined(__ppc__) || defined(__ppc64__))
-#   define ARCH_PPC
-#elif (defined(__i386__) || defined(__x86_64__))
-#   define ARCH_X86
-#endif
+#define ARCH_X86
 
 /*
  * sprintf() format string for shared library naming.
