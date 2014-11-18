@@ -18,6 +18,10 @@ DEX2OATD_DEPENDENCY += $(DEX2OATD)
 
 PRELOADED_CLASSES := frameworks/base/preloaded-classes
 
+# Use the first compiled-classes file in PRODUCT_COPY_FILES.
+COMPILED_CLASSES := $(call word-colon,1,$(firstword \
+    $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
+
 # start of image reserved address space
 LIBART_IMG_HOST_BASE_ADDRESS   := 0x60000000
 LIBART_IMG_TARGET_BASE_ADDRESS := 0x70000000
