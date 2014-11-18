@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aff77b8_28af03f5",
+        "filename": "target/board/generic/device.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2014-11-18T19:34:29Z",
+      "side": 1,
+      "message": "Interesting, can this be moved to emulator.mk as well, or does the power.goldfish doesn\u0027t build for ARM64? If so, it might make more sense to use a conditional in emulator.mk instead of adding this to all 32-bit ARM builds.",
+      "revId": "63ede392675ddf023d992608ca603748009454d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
