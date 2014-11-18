@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a1baf06_57642c07",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-11-18T01:36:11Z",
+      "side": 1,
+      "message": "remove this reference too?",
+      "range": {
+        "startLine": 2,
+        "startChar": 59,
+        "endLine": 2,
+        "endChar": 78
+      },
+      "revId": "7841cae279a67294b3869fb37188cd464dd0132b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a30bb7e_96496c81",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-11-18T01:36:11Z",
+      "side": 1,
+      "message": "and this",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 4
+      },
+      "revId": "7841cae279a67294b3869fb37188cd464dd0132b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a30bb7e_165ebc31",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-11-18T01:36:11Z",
+      "side": 1,
+      "message": "and this",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 22
+      },
+      "revId": "7841cae279a67294b3869fb37188cd464dd0132b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
