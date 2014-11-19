@@ -240,6 +240,8 @@ def BuildImage(in_dir, prop_dict, out_file,
     build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
     build_command.append(prop_dict["partition_size"])
+    if "journal_size" in prop_dict:
+      build_command.extend(["-j", prop_dict["journal_size"]])
     if "timestamp" in prop_dict:
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     if fs_config is not None:
@@ -319,6 +321,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   if mount_point == "system":
     copy_prop("fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
+    copy_prop("system_journal_size", "journal_size")
     copy_prop("system_verity_block_device", "verity_block_device")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
@@ -331,10 +334,12 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "vendor":
     copy_prop("vendor_fs_type", "fs_type")
     copy_prop("vendor_size", "partition_size")
+    copy_prop("vendor_journal_size", "journal_size")
     copy_prop("vendor_verity_block_device", "verity_block_device")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
+    copy_prop("oem_journal_size", "journal_size")
 
   return d
 
