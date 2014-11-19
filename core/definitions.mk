@@ -684,7 +684,7 @@ endef
 # any of those tags.
 # $(1): tag list
 define modules-for-tag-list
-$(sort $(foreach tag,$(1),$(ALL_MODULE_TAGS.$(tag))))
+$(sort $(foreach tag,$(1),$(foreach m,$(ALL_MODULE_NAME_TAGS.$(tag)),$(ALL_MODULES.$(m).INSTALLED))))
 endef
 
 # Same as modules-for-tag-list, but operates on
