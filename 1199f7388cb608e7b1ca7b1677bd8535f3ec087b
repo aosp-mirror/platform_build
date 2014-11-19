@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fadf4b7d_1c3aed5d",
+        "filename": "core/combo/HOST_darwin-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-11-19T01:50:37Z",
+      "side": 1,
+      "message": "This should be unnecessary. All builds have been moved to using the platform\u0027s libc++.",
+      "revId": "1199f7388cb608e7b1ca7b1677bd8535f3ec087b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
