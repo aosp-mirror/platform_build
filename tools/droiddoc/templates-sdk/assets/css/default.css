@@ -3152,6 +3152,7 @@ div#deprecatedSticker {
   -webkit-box-shadow:-5px 5px 10px #ccc;
 }
 
+div#langMessage,
 div#naMessage {
   display:none;
   width:555px;
@@ -3159,6 +3160,8 @@ div#naMessage {
   margin:0 auto;
 }
 
+
+div#langMessage>div,
 div#naMessage div {
   z-index:99;
   width:450px;
@@ -3172,12 +3175,16 @@ div#naMessage div {
   -webkit-box-shadow:-10px 10px 40px #888;
 }
 /* IE6 can't position fixed */
+* html div#langMessage>div,
 * html div#naMessage div { position:absolute; }
 
 div#naMessage strong {
   font-size:1.1em;
 }
 
+div#langMessage .lang {
+  display:none;
+}
 
 /* --------------------------------------------------------------------------
 Slideshow Controls & Next/Prev
