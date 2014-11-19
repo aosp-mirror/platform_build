@@ -16,6 +16,24 @@
       "revId": "63ede392675ddf023d992608ca603748009454d8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa89ff3_2ba5f913",
+        "filename": "target/board/generic/device.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-19T20:17:23Z",
+      "side": 1,
+      "message": "power.goldfish builds fine in aosp_arm64, aosp_x86_64.\nI\u0027ll move it to emulator.mk.",
+      "parentUuid": "5aff77b8_28af03f5",
+      "revId": "63ede392675ddf023d992608ca603748009454d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
