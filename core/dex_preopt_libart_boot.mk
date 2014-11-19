@@ -37,6 +37,12 @@ ifeq (true,$(WITH_DEXPREOPT_PIC))
   PRODUCT_DEX_PREOPT_BOOT_FLAGS += --compile-pic
 endif
 
+# If we have a compiled-classes file, create a parameter.
+COMPILED_CLASSES_FLAGS :=
+ifneq ($(COMPILED_CLASSES),)
+  COMPILED_CLASSES_FLAGS := --compiled-classes=$(COMPILED_CLASSES)
+endif
+
 # The rule to install boot.art and boot.oat
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP)
 	$(call copy-file-to-target)
@@ -60,4 +66,4 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--instruction-set-variant=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT) \
 		--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 		--android-root=$(PRODUCT_OUT)/system --include-patch-information --runtime-arg -Xnorelocate --no-include-debug-symbols \
-		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS)
+		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(COMPILED_CLASSES_FLAGS)
