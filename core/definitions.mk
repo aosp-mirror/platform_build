@@ -1701,8 +1701,6 @@ $(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
 $(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
-# TODO unzip only resources?
-$(call unzip-jar-files,$(PRIVATE_STATIC_JACK_LIBRARIES),$(PRIVATE_JACK_INTERMEDIATES_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
@@ -1727,31 +1725,36 @@ $(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA
         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
     -D jack.import.resource.policy=keep-first \
-    -D jack.import.jackfile.policy=keep-first \
+    -D jack.import.type.policy=keep-first \
     --output-jack $(PRIVATE_CLASSES_JACK) \
     -D jack.java.source.version=1.7 \
-    --output-dex $(dir $@) \
+    --output-dex $(PRIVATE_JACK_INTERMEDIATES_DIR) \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
     $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
     $$tmpEcjArg \
-    || ( rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR); rm -f $@; exit 41 )
-$(call unzip-jar-files,$(PRIVATE_CLASSES_JACK),$(PRIVATE_JACK_INTERMEDIATES_DIR))
-$(hide) rm -f $(PRIVATE_CLASSES_JACK)
+    || ( rm -rf $(PRIVATE_CLASSES_JACK); rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR); exit 41 )
+$(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/classes*.dex $(dir $@)
 $(hide) rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
 $(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq $(PRIVATE_JACK_INTERMEDIATES_DIR).java-source-list
 $(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
-$(if $(PRIVATE_JAR_MANIFEST), \
-    $(hide) sed -e 's/%BUILD_NUMBER%/$(BUILD_NUMBER)/' \
-            $(PRIVATE_JAR_MANIFEST) > $(dir $(PRIVATE_CLASSES_JACK))/manifest.mf && \
-        jar -cfm $(PRIVATE_CLASSES_JACK) $(dir $@)/manifest.mf \
-            -C $(PRIVATE_JACK_INTERMEDIATES_DIR) ., \
-    $(hide) jar -cf $(PRIVATE_CLASSES_JACK) -C $(PRIVATE_JACK_INTERMEDIATES_DIR) .)
+$(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
 endef
 
 define transform-jar-to-jack
 	$(hide) mkdir -p $(dir $@)
-	$(JILL) --output $@ $<
+	$(JILL) --output $@.tmpjill.jack $<
+	$(hide) mkdir -p $@.tmpjill.res
+	$(hide) $(call unzip-jar-files,$<,$@.tmpjill.res)
+	$(hide) find $@.tmpjill.res -iname "*.class" -delete
+	$(hide) $(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
+        -D jack.import.resource.policy=keep-first \
+        -D jack.import.type.policy=keep-first \
+	    --import $@.tmpjill.jack \
+	    --import-resource $@.tmpjill.res \
+	    --output-jack $@
+	$(hide) rm -rf $@.tmpjill.res
+	$(hide) rm $@.tmpjill.jack
 endef
 
 
@@ -1776,6 +1779,12 @@ $(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
     $(hide) echo -basedirectory $(CURDIR) > $@.flags; \
     echo $(PRIVATE_JACK_PROGUARD_FLAGS) >> $@.flags; \
 )
+$(if $(PRIVATE_EXTRA_JAR_ARGS),
+	$(hide) mkdir -p $@.res.tmp
+	$(hide) $(call create-empty-package-at,$@.res.tmp.zip)
+	$(hide) $(call add-java-resources-to,$@.res.tmp.zip)
+	$(hide) $(call unzip-jar-files,$@.res.tmp.zip,$@.res.tmp)
+	$(hide) rm $@.res.tmp.zip)
 $(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
 else \
@@ -1789,18 +1798,21 @@ $(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
+    $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
     -D jack.import.resource.policy=keep-first \
-    -D jack.import.jackfile.policy=keep-first \
+    -D jack.import.type.policy=keep-first \
     -D jack.java.source.version=1.7 \
     --output-jack $@ \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
     $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
     $$tmpEcjArg \
-    || ( echo rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR); rm -f $@ ; exit 41 )
-$(hide) echo rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
-$(hide) echo rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq
+    || ( rm -f $@ ; exit 41 )
+$(hide) rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
+$(if $(PRIVATE_EXTRA_JAR_ARGS),$(hide) rm -rf $@.res.tmp)
+$(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq $(PRIVATE_JACK_INTERMEDIATES_DIR).java-source-list
 $(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
+$(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
 endef
 
 # Override the above definitions if we want to do incremetal javac
@@ -1895,12 +1907,20 @@ endef
 # Create a mostly-empty .jar file that we'll add to later.
 # The MacOS jar tool doesn't like creating empty jar files,
 # so we need to give it something.
+# $(1) package to create
+define create-empty-package-at
+@mkdir -p $(dir $(1))
+$(hide) touch $(dir $(1))dummy
+$(hide) (cd $(dir $(1)) && jar cf $(notdir $(1)) dummy)
+$(hide) zip -qd $(1) dummy
+$(hide) rm $(dir $(1))dummy
+endef
+
+# Create a mostly-empty .jar file that we'll add to later.
+# The MacOS jar tool doesn't like creating empty jar files,
+# so we need to give it something.
 define create-empty-package
-@mkdir -p $(dir $@)
-$(hide) touch $(dir $@)dummy
-$(hide) (cd $(dir $@) && jar cf $(notdir $@) dummy)
-$(hide) zip -qd $@ dummy
-$(hide) rm $(dir $@)dummy
+$(call create-empty-package-at,$@)
 endef
 
 #TODO: we kinda want to build different asset packages for
@@ -1954,11 +1974,18 @@ $(hide) zip -qj $@ $(dir $(PRIVATE_DEX_FILE))classes*.dex
 endef
 
 # Add java resources added by the current module.
+# $(1) destination package
+#
+define add-java-resources-to
+$(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(1).jar-arg-list)
+$(hide) jar uf $(1) @$(1).jar-arg-list
+@rm -f $(1).jar-arg-list
+endef
+
+# Add java resources added by the current module.
 #
 define add-java-resources-to-package
-$(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(dir $@)jar-arg-list)
-$(hide) jar uf $@ @$(dir $@)jar-arg-list
-@rm -f $(dir $@)jar-arg-list
+$(call add-java-resources-to,$@)
 endef
 
 # Add java resources carried by static Java libraries.
@@ -1978,7 +2005,7 @@ endef
 #
 define add-carried-jack-resources
  $(hide) if [ -d $(PRIVATE_JACK_INTERMEDIATES_DIR) ] ; then \
-    jack_res_jar_flags=$$(find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f -a -not -name "*.jayce" \
+    jack_res_jar_flags=$$(find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f \
         | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C $(PRIVATE_JACK_INTERMEDIATES_DIR) ?"); \
     if [ -n "$$jack_res_jar_flags" ] ; then \
         echo $$jack_res_jar_flags >$(dir $@)jack_res_jar_flags; \
