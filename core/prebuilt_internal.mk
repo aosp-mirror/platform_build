@@ -124,6 +124,19 @@ endif  # LOCAL_STRIP_MODULE not true
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+# Select dpi-specific source
+ifdef LOCAL_DPI_VARIANTS
+my_dpi := $(filter $(LOCAL_DPI_VARIANTS),$(PRODUCT_AAPT_PREF_CONFIG))
+ifdef my_dpi
+ifdef LOCAL_DPI_FILE_STEM
+my_prebuilt_dpi_file_stem := $(LOCAL_DPI_FILE_STEM)
+else
+my_prebuilt_dpi_file_stem := $(LOCAL_MODULE)_%.apk
+endif
+my_prebuilt_src_file := $(dir $(my_prebuilt_src_file))$(subst %,$(my_dpi),$(my_prebuilt_dpi_file_stem))
+endif  # my_dpi
+endif  # LOCAL_DPI_VARIANTS
+
 rs_compatibility_jni_libs :=
 include $(BUILD_SYSTEM)/install_jni_libs.mk
 
