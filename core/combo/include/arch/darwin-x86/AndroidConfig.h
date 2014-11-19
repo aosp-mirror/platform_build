@@ -89,11 +89,6 @@
 /* #define HAVE_MALLOC_H */
 
 /*
- * Define if we have madvise() in <sys/mman.h>
- */
-#define HAVE_MADVISE 1
-
-/*
  * Define if we include <sys/mount.h> for statfs()
  */
 #define INCLUDE_SYS_MOUNT_FOR_STATFS 1
