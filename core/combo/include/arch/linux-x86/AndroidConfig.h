@@ -86,11 +86,6 @@
 #define ARCH_X86
 
 /*
- * Define if we have madvise() in <sys/mman.h>
- */
-#define HAVE_MADVISE 1
-
-/*
  * Define if system provides a system property server (should be
  * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
  */
