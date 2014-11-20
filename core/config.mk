@@ -598,5 +598,6 @@ RS_PREBUILT_COMPILER_RT := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libcomp
 
 # API Level lists for Renderscript Compat lib.
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
+RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
 
 include $(BUILD_SYSTEM)/dumpvar.mk
