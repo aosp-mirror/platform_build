@@ -89,11 +89,6 @@
 /* #define HAVE_MALLOC_H */
 
 /*
- * Define if we include <sys/mount.h> for statfs()
- */
-#define INCLUDE_SYS_MOUNT_FOR_STATFS 1
-
-/*
  * What CPU architecture does this platform use?
  */
 #define ARCH_X86
