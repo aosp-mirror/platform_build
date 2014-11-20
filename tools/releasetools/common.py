@@ -56,6 +56,7 @@ OPTIONS.java_path = "java"  # Use the one on the path by default.
 OPTIONS.java_args = "-Xmx2048m" # JVM Args
 OPTIONS.public_key_suffix = ".x509.pem"
 OPTIONS.private_key_suffix = ".pk8"
+OPTIONS.boot_signer_path = "boot_signer"  # use otatools built boot_signer by default
 OPTIONS.verbose = False
 OPTIONS.tempfiles = []
 OPTIONS.device_specific = None
@@ -347,7 +348,7 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
 
   if info_dict.get("verity_key", None):
     path = "/" + os.path.basename(sourcedir).lower()
-    cmd = ["boot_signer", path, img.name, info_dict["verity_key"] + ".pk8", info_dict["verity_key"] + ".x509.pem", img.name]
+    cmd = [OPTIONS.boot_signer_path, path, img.name, info_dict["verity_key"] + ".pk8", info_dict["verity_key"] + ".x509.pem", img.name]
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     assert p.returncode == 0, "boot_signer of %s image failed" % path
@@ -620,7 +621,8 @@ def ParseOptions(argv,
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=", "extra_signapk_args=",
          "java_path=", "java_args=", "public_key_suffix=",
-         "private_key_suffix=", "device_specific=", "extra="] +
+         "private_key_suffix=", "boot_signer_path=", "device_specific=",
+         "extra="] +
         list(extra_long_opts))
   except getopt.GetoptError, err:
     Usage(docstring)
@@ -649,6 +651,8 @@ def ParseOptions(argv,
       OPTIONS.public_key_suffix = a
     elif o in ("--private_key_suffix",):
       OPTIONS.private_key_suffix = a
+    elif o in ("--boot_signer_path",):
+      OPTIONS.boot_signer_path = a
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
