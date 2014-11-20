@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ff84938_c3758a3a",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1012,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-20T23:00:44Z",
+      "side": 1,
+      "message": "$(my_libcxx) isn\u0027t set anyway.",
+      "revId": "2863805c3d13fbb9eb5b084ad5e47fb8ca3a1c7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ff84938_83aae216",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1311,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-20T23:00:44Z",
+      "side": 1,
+      "message": "Hmm, remove the cruft.",
+      "revId": "2863805c3d13fbb9eb5b084ad5e47fb8ca3a1c7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ff84938_039ed2f2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1334,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-20T23:00:44Z",
+      "side": 1,
+      "message": "$(PRIVATE_LIBCXX) isn\u0027t set anyway.",
+      "revId": "2863805c3d13fbb9eb5b084ad5e47fb8ca3a1c7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
