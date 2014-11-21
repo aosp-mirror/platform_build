@@ -242,7 +242,6 @@ _product_stash_var_list := $(_product_var_list) \
 	TARGET_PROVIDES_INIT_RC \
 	TARGET_CPU_ABI \
 	TARGET_CPU_ABI2 \
-	TARGET_CPU_SMP \
 
 
 _product_stash_var_list += \
