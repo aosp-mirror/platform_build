@@ -20,6 +20,17 @@ $.ajaxSetup({
 /******  ON LOAD SET UP STUFF *********/
 
 $(document).ready(function() {
+  
+  // show lang dialog if the URL includes /intl/
+  //if (location.pathname.substring(0,6) == "/intl/") {
+  //  var lang = location.pathname.split('/')[2];
+   // if (lang != getLangPref()) {
+   //   $("#langMessage a.yes").attr("onclick","changeLangPref('" + lang
+   //       + "', true); $('#langMessage').hide(); return false;");
+  //    $("#langMessage .lang." + lang).show();
+   //   $("#langMessage").show();
+   // }
+  //}
 
   // load json file for JD doc search suggestions
   $.getScript(toRoot + 'jd_lists_unified.js');
