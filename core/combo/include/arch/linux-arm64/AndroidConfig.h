@@ -57,16 +57,6 @@
  */
 #define HAVE_POSIX_CLOCKS
 
-/*
- * Endianness of the target machine.  Choose one:
- *
- * HAVE_ENDIAN_H -- have endian.h header we can include.
- * HAVE_LITTLE_ENDIAN -- we are little endian.
- * HAVE_BIG_ENDIAN -- we are big endian.
- */
-#define HAVE_ENDIAN_H
-#define HAVE_LITTLE_ENDIAN
-
 #define _FILE_OFFSET_BITS 64
 /* #define _LARGEFILE_SOURCE 1 */
 
