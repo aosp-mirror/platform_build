@@ -91,11 +91,6 @@
 #define HAVE_ANDROID_OS 1
 
 /*
- * Define if we have Linux-style non-filesystem Unix Domain Sockets
- */
-#define HAVE_LINUX_LOCAL_SOCKET_NAMESPACE 1
-
-/*
  * Define if libc includes Android system properties implementation.
  */
 #define HAVE_LIBC_SYSTEM_PROPERTIES 1
