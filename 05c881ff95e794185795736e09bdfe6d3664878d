@@ -22,6 +22,24 @@
       "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fa1d55e_5613544c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-11-22T05:43:50Z",
+      "side": 1,
+      "message": "Good idea.\nLet\u0027s set up a variable in the arch variable specific config makefile.",
+      "parentUuid": "1f9ed122_e408b051",
+      "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
