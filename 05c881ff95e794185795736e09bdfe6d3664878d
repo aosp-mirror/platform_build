@@ -40,6 +40,24 @@
       "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff6c9df2_6e89d706",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-11-22T05:58:45Z",
+      "side": 1,
+      "message": "TARGET_CPU_VARIANT should already be defined, and so the definition on line 533 will hold. I was trying to avoid having different variant definitions for clang, GCC and dex2oat.",
+      "parentUuid": "3fa1d55e_5613544c",
+      "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
