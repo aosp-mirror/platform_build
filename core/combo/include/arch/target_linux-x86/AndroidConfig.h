@@ -45,16 +45,6 @@
 #define HAVE_POSIX_CLOCKS
 
 /*
- * Endianness of the target machine.  Choose one:
- *
- * HAVE_ENDIAN_H -- have endian.h header we can include.
- * HAVE_LITTLE_ENDIAN -- we are little endian.
- * HAVE_BIG_ENDIAN -- we are big endian.
- */
-#define HAVE_ENDIAN_H
-#define HAVE_LITTLE_ENDIAN
-
-/*
  * We need to choose between 32-bit and 64-bit off_t.  All of our code should
  * agree on the same size.  For desktop systems, use 64-bit values,
  * because some of our libraries (e.g. wxWidgets) expect to be built that way.
