@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f9ed122_e408b051",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-11-22T01:47:15Z",
+      "side": 1,
+      "message": "dex2oat should just pick this up from the variant now",
+      "range": {
+        "startLine": 535,
+        "startChar": 0,
+        "endLine": 550,
+        "endChar": 5
+      },
+      "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
