@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf0a2512_cde92917",
+        "filename": "core/combo/include/arch/darwin-x86/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-11-22T07:58:02Z",
+      "side": 0,
+      "message": "In the x86 file? *sigh*",
+      "revId": "9d3ca15f1c8789390b8baaa2df28fd11b14a0a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
