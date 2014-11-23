@@ -48,6 +48,7 @@ PRODUCT_PACKAGES += \
     libm \
     libpixelflinger \
     libpower \
+    libsigchain \
     libstdc++ \
     libsurfaceflinger \
     libsurfaceflinger_ddmconnection \
@@ -65,7 +66,7 @@ PRODUCT_PACKAGES += \
     sh \
     surfaceflinger \
     toolbox \
-    libsigchain
+    toybox \
 
 # SELinux packages
 PRODUCT_PACKAGES += \
