@@ -20,7 +20,7 @@ $.ajaxSetup({
 /******  ON LOAD SET UP STUFF *********/
 
 $(document).ready(function() {
-  
+
   // show lang dialog if the URL includes /intl/
   //if (location.pathname.substring(0,6) == "/intl/") {
   //  var lang = location.pathname.split('/')[2];
@@ -558,8 +558,72 @@ false; // navigate across topic boundaries only in design docs
     cookiePath = "distribute_";
   }
 
+
+  /* setup shadowbox for any videos that want it */
+  var $videoLinks = $("a.video-shadowbox-button");
+  if ($videoLinks.length) {
+    // if there's at least one, add the shadowbox HTML to the body
+    $('body').prepend(
+'<div id="video-container">'+
+  '<div id="video-frame">'+
+    '<div class="video-close">'+
+      '<span id="icon-video-close" onclick="closeVideo()">&nbsp;</span>'+
+    '</div>'+
+    '<div id="youTubePlayer"></div>'+
+  '</div>'+
+'</div>');
+
+    // loads the IFrame Player API code asynchronously.
+    $.getScript("https://www.youtube.com/iframe_api");
+
+    $videoLinks.each(function() {
+      var videoId = $(this).attr('href').split('?v=')[1];
+      $(this).click(function(event) {
+        event.preventDefault();
+        startYouTubePlayer(videoId);
+      });
+    });
+
+  }
+
 });
 // END of the onload event
+
+
+var youTubePlayer;
+function onYouTubeIframeAPIReady() {
+}
+
+function startYouTubePlayer(videoId) {
+  if (youTubePlayer == null) {
+    youTubePlayer = new YT.Player('youTubePlayer', {
+      height: '529',
+      width: '940',
+      videoId: videoId,
+      events: {
+        'onReady': onPlayerReady
+      }
+    });
+  } else {
+    youTubePlayer.playVideo();
+  }
+  $("#video-container").fadeIn(200, function(){$("#video-frame").show()});
+}
+
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+function closeVideo() {
+  try {
+    youTubePlayer.stopVideo();
+    $("#video-container").fadeOut(200);
+  } catch(e) {
+    console.log('Video not available');
+    $("#video-container").fadeOut(200);
+  }
+}
+
 
 
 function initExpandableNavItems(rootTag) {

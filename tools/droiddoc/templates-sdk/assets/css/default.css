@@ -6955,30 +6955,67 @@ a.landing-button:visited {
 }
 
 #video-frame {
-  width:940px;
-  height:526.4px;
-  margin:80px auto 0;
+  width:948px;
+  height:529px;
+  margin:32px auto 0;
   display:none;
 }
 
 .video-close {
-cursor: pointer;
-position: relative;
-left: 940px;
-top: 0;
-pointer-events: all;
+  cursor: pointer;
+  position: relative;
+  left: 948px;
+  top: -8px;
+  pointer-events: all;
 }
 
 #icon-video-close {
-background-image: url("../images/close.png");
-background-position: 0 0;
-height: 36px;
-width: 36px;
-display:block;
+  background-image: url("../images/close-white.png");
+  background-image: -webkit-image-set(url(../images/close-white.png) 1x, url(../images/close-white_2x.png) 2x);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 36px 36px;
+  height: 36px;
+  width: 36px;
+  display:block;
 }
 
+#icon-video-close:hover {
+  background-image: url("../images/close-grey.png");
+  background-image: -webkit-image-set(url(../images/close-grey.png) 1x, url(../images/close-grey_2x.png) 2x);
+}
 
+/* Preload the hover images */
+a.video-shadowbox-button.white:after {
+  display:none;
+  content:url("../images/close-grey.png") url("../images/close-grey_2x.png");
+}
 
+a.video-shadowbox-button.white {
+  background-image: url("../images/play-circle-white.png");
+  background-image: -webkit-image-set(url(../images/play-circle-white.png) 1x, url(../images/play-circle-white_2x.png) 2x);
+  background-size: 36px 36px;
+  background-repeat: no-repeat;
+  background-position: right;
+  padding: 16px 42px 16px 8px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #fff;
+  text-decoration:none;
+}
+
+a.video-shadowbox-button.white:hover {
+  color:#bababa !important;
+  background-image: url("../images/play-circle-grey.png");
+  background-image: -webkit-image-set(url(../images/play-circle-grey.png) 1x, url(../images/play-circle-grey_2x.png) 2x);
+}
+
+/* Preload the hover images */
+a.video-shadowbox-button.white:after {
+  display:none;
+  content:url("../images/play-circle-grey.png") url("../images/play-circle-grey_2x.png");
+}
 
 /******************
 Styles for d.a.c/index:
