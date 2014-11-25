@@ -146,9 +146,4 @@
 #define S_IRGRP 0
 #endif
 
-/*
- * Define if <stdbool.h> exists.
- */
-#define HAVE_STDBOOL_H
-
 #endif /*_ANDROID_CONFIG_H*/
