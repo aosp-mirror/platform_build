@@ -560,7 +560,7 @@ false; // navigate across topic boundaries only in design docs
 
 
   /* setup shadowbox for any videos that want it */
-  var $videoLinks = $("a.video-shadowbox-button");
+  var $videoLinks = $("a.video-shadowbox-button, a.notice-developers-video");
   if ($videoLinks.length) {
     // if there's at least one, add the shadowbox HTML to the body
     $('body').prepend(
@@ -583,9 +583,7 @@ false; // navigate across topic boundaries only in design docs
         startYouTubePlayer(videoId);
       });
     });
-
   }
-
 });
 // END of the onload event
 
@@ -601,7 +599,8 @@ function startYouTubePlayer(videoId) {
       width: '940',
       videoId: videoId,
       events: {
-        'onReady': onPlayerReady
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
       }
     });
   } else {
@@ -616,12 +615,28 @@ function onPlayerReady(event) {
 
 function closeVideo() {
   try {
-    youTubePlayer.stopVideo();
+    youTubePlayer.pauseVideo();
     $("#video-container").fadeOut(200);
   } catch(e) {
     console.log('Video not available');
     $("#video-container").fadeOut(200);
   }
+}
+
+/* Track youtube playback for analytics */
+function onPlayerStateChange(event) {
+    // Video starts, send the video ID
+    if (event.data == YT.PlayerState.PLAYING) {
+      ga('send', 'event', 'Videos', 'Play', youTubePlayer.getVideoUrl().split('?v=')[1]);
+    }
+    // Video paused, send video ID and video elapsed time
+    if (event.data == YT.PlayerState.PAUSED) {
+      ga('send', 'event', 'Videos', 'Paused', youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
+    }
+    // Video finished, send video ID and video elapsed time
+    if (event.data == YT.PlayerState.ENDED) {
+      ga('send', 'event', 'Videos', 'Finished', youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
+    }
 }
 
 
