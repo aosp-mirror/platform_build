@@ -117,11 +117,6 @@
 #define HAVE_PRCTL 1
 
 /*
- * Define if writev() exists
- */
-#define HAVE_WRITEV 1
-
-/*
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1
