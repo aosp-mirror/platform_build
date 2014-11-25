@@ -315,6 +315,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 
+# Make GNU++11 the default standard version. This requires a cleanspec because
+# char16_t/char32_t will be real types now instead of typedefs, which means
+# an ABI change since the names will mangle differently.
+$(call add-clean-step, rm -rf $(OUT_DIR))
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
