@@ -42,11 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Define this if you have sys/uio.h
- */
-#define  HAVE_SYS_UIO_H 1
-
-/*
  * Define this if your platforms implements symbolic links
  * in its filesystems
  */
