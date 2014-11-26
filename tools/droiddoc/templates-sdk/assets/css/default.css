@@ -466,6 +466,9 @@ a.back-link {
     text-transform: uppercase;
 }
 
+.content-header .paging-links {
+  margin-top:-25px;
+}
 .paging-links {
   position: relative;
   height:30px; }
