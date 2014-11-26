@@ -42,11 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Define this if you have sys/uio.h
- */
-#define  HAVE_SYS_UIO_H 1
-
-/*
  * Define this if your platforms implements symbolic links
  * in its filesystems
  */
@@ -58,7 +53,6 @@
 #define HAVE_POSIX_CLOCKS
 
 #define _FILE_OFFSET_BITS 64
-/* #define _LARGEFILE_SOURCE 1 */
 
 /*
  * Define if we have <malloc.h> header

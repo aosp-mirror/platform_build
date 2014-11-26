@@ -74,13 +74,6 @@
 #endif
 
 /*
- * Define this if you have sys/uio.h
- */
-#ifdef __CYGWIN__
-#define  HAVE_SYS_UIO_H
-#endif
-
-/*
  * Define this if we want to use WinSock.
  */
 #ifndef __CYGWIN__
