@@ -593,11 +593,17 @@ function onYouTubeIframeAPIReady() {
 }
 
 function startYouTubePlayer(videoId) {
+  var idAndHash = videoId.split("#");
+  var startTime = 0;
+  if (idAndHash.length > 1) {
+    startTime = idAndHash[1].split("t=")[1] != undefined ? idAndHash[1].split("t=")[1] : 0;
+  }
   if (youTubePlayer == null) {
     youTubePlayer = new YT.Player('youTubePlayer', {
       height: '529',
       width: '940',
-      videoId: videoId,
+      videoId: idAndHash[0],
+      playerVars: {start: startTime},
       events: {
         'onReady': onPlayerReady,
         'onStateChange': onPlayerStateChange
