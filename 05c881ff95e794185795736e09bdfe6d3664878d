@@ -58,6 +58,24 @@
       "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f633129_36aaf618",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1055300
+      },
+      "writtenOn": "2014-11-27T11:35:15Z",
+      "side": 1,
+      "message": "Ian, as I understood your patch form instruction set features based on TARGET_CPU_VARIANT.\n\nCurrent patch use DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES for passing instruction set features to dex2oat. So it\u0027s useless with your patch applied.\n\nPlease, correct me if I\u0027m wrong.",
+      "parentUuid": "ff6c9df2_6e89d706",
+      "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
