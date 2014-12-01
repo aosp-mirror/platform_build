@@ -991,7 +991,7 @@ endif
 
 ifeq ($(my_clang),true)
 my_cflags += $(LOCAL_CLANG_CFLAGS)
-my_cpplags += $(LOCAL_CLANG_CPPFLAGS)
+my_cppflags += $(LOCAL_CLANG_CPPFLAGS)
 my_asflags += $(LOCAL_CLANG_ASFLAGS)
 my_ldflags += $(LOCAL_CLANG_LDFLAGS)
 my_cflags += $(LOCAL_CLANG_CFLAGS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CLANG_CFLAGS_$(my_32_64_bit_suffix))
