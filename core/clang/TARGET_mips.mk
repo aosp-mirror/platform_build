@@ -19,6 +19,11 @@ CLANG_CONFIG_mips_TARGET_EXTRA_CFLAGS := \
   $(CLANG_CONFIG_mips_EXTRA_CFLAGS) \
   $(CLANG_CONFIG_mips_TARGET_EXTRA_ASFLAGS)
 
+CLANG_CONFIG_mips_TARGET_EXTRA_CONLYFLAGS := \
+  $(CLANG_CONFIG_EXTRA_CONLYFLAGS) \
+  $(CLANG_CONFIG_TARGET_EXTRA_CONLYFLAGS) \
+  $(CLANG_CONFIG_mips_EXTRA_CONLYFLAGS)
+
 CLANG_CONFIG_mips_TARGET_EXTRA_CPPFLAGS := \
   $(CLANG_CONFIG_EXTRA_CPPFLAGS) \
   $(CLANG_CONFIG_TARGET_EXTRA_CPPFLAGS) \
@@ -42,6 +47,10 @@ endef
 $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CFLAGS := \
   $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS)) \
   $(CLANG_CONFIG_mips_TARGET_EXTRA_CFLAGS)
+
+$(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CONLYFLAGS := \
+  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CONLYFLAGS)) \
+  $(CLANG_CONFIG_mips_TARGET_EXTRA_CONLYFLAGS)
 
 $(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CPPFLAGS := \
   $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS)) \

@@ -34,6 +34,12 @@ CLANG_CONFIG_x86_HOST_EXTRA_CFLAGS := \
   $(CLANG_CONFIG_x86_HOST_COMBO_EXTRA_CFLAGS) \
   $(CLANG_CONFIG_x86_HOST_EXTRA_ASFLAGS)
 
+CLANG_CONFIG_x86_HOST_EXTRA_CONLYFLAGS := \
+  $(CLANG_CONFIG_EXTRA_CONLYFLAGS) \
+  $(CLANG_CONFIG_HOST_EXTRA_CONLYFLAGS) \
+  $(CLANG_CONFIG_x86_EXTRA_CONLYFLAGS) \
+  $(CLANG_CONFIG_x86_HOST_COMBO_EXTRA_CONLYFLAGS)
+
 CLANG_CONFIG_x86_HOST_EXTRA_CPPFLAGS := \
   $(CLANG_CONFIG_EXTRA_CPPFLAGS) \
   $(CLANG_CONFIG_HOST_EXTRA_CPPFLAGS) \
@@ -58,6 +64,10 @@ endef
 $(clang_2nd_arch_prefix)CLANG_HOST_GLOBAL_CFLAGS := \
   $(call $(clang_2nd_arch_prefix)convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_GLOBAL_CFLAGS)) \
   $(CLANG_CONFIG_x86_HOST_EXTRA_CFLAGS)
+
+$(clang_2nd_arch_prefix)CLANG_HOST_GLOBAL_CONLYFLAGS := \
+  $(call $(clang_2nd_arch_prefix)convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_GLOBAL_CONLYFLAGS)) \
+  $(CLANG_CONFIG_x86_HOST_EXTRA_CONLYFLAGS)
 
 $(clang_2nd_arch_prefix)CLANG_HOST_GLOBAL_CPPFLAGS := \
   $(call $(clang_2nd_arch_prefix)convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_GLOBAL_CPPFLAGS)) \
