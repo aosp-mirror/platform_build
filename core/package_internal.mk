@@ -407,6 +407,16 @@ endif
 	$(align-package)
 
 ###############################
+## Build dpi-specific apks, if it's apps_only build.
+ifdef TARGET_BUILD_APPS
+ifdef LOCAL_DPI_VARIANTS
+$(foreach d, $(LOCAL_DPI_VARIANTS), \
+  $(eval my_dpi := $(d)) \
+  $(eval include $(BUILD_SYSTEM)/dpi_specific_apk.mk))
+endif
+endif
+
+###############################
 ## Rule to build the odex file
 ifdef LOCAL_DEX_PREOPT
 $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
