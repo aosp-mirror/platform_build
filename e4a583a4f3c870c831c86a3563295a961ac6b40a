@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fe09112_8e35db7d",
+        "filename": "core/combo/arch/x86/atom.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-12-03T16:24:57Z",
+      "side": 1,
+      "message": "i thought atom did support MOVBE? doesn\u0027t -march\u003datom cause GCC to emit MOVBE?",
+      "revId": "e4a583a4f3c870c831c86a3563295a961ac6b40a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
