@@ -76,6 +76,24 @@
       "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1ff971d6_862b8c71",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2014-12-03T18:58:22Z",
+      "side": 1,
+      "message": "Hi Anton, I don\u0027t follow your comment. I think the code above is unnecessary. Could you rebase the patch. Thanks!",
+      "parentUuid": "1f633129_36aaf618",
+      "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
