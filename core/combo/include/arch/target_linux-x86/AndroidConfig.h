@@ -44,7 +44,7 @@
  * agree on the same size.  For desktop systems, use 64-bit values,
  * because some of our libraries (e.g. wxWidgets) expect to be built that way.
  */
-#if __LP64__
+#if defined(__LP64__)
 #define _FILE_OFFSET_BITS 64
 #endif
 
