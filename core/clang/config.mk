@@ -6,7 +6,7 @@ WITHOUT_TARGET_CLANG := true
 WITHOUT_HOST_CLANG := true
 endif
 
-LLVM_PREBUILTS_VERSION := 3.5
+LLVM_PREBUILTS_VERSION := 3.6
 LLVM_PREBUILTS_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/$(LLVM_PREBUILTS_VERSION)/bin
 
 CLANG := $(LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
@@ -32,7 +32,7 @@ endif
 # Clang flags for all host or target rules
 CLANG_CONFIG_EXTRA_ASFLAGS :=
 CLANG_CONFIG_EXTRA_CFLAGS :=
-CLANG_CONFIG_EXTRA_CONLYFLAGS :=
+CLANG_CONFIG_EXTRA_CONLYFLAGS := -std=gnu99
 CLANG_CONFIG_EXTRA_CPPFLAGS :=
 CLANG_CONFIG_EXTRA_LDFLAGS :=
 
@@ -48,7 +48,13 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
 CLANG_CONFIG_EXTRA_CFLAGS += \
   -Wno-unused-command-line-argument
 
+# Disable -Winconsistent-missing-override until we can clean up the existing
+# codebase for it.
+CLANG_CONFIG_EXTRA_CPPFLAGS += \
+  -Wno-inconsistent-missing-override
+
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
+  -finline-functions \
   -finline-limit=64 \
   -fno-canonical-system-headers \
   -fno-tree-sra \
