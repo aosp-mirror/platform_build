@@ -94,6 +94,24 @@
       "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5f8a0930_c1df528c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1055300
+      },
+      "writtenOn": "2014-12-04T05:07:30Z",
+      "side": 1,
+      "message": "I\u0027ll abandon it. Functionality which this patch supports already implemented other way.",
+      "parentUuid": "1ff971d6_862b8c71",
+      "revId": "05c881ff95e794185795736e09bdfe6d3664878d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
