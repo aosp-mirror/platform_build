@@ -409,6 +409,7 @@ endif # TARGET_
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
 
 # full_java_libs: The list of files that should be used as the classpath.
 #                 Using this list as a dependency list WILL NOT WORK.
@@ -417,7 +418,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_ja
 #                 be up-to-date.
 ifdef LOCAL_IS_HOST_MODULE
 ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-deps,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
@@ -677,6 +678,105 @@ ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
 endif
+
+###########################################################
+# JACK
+###########################################################
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+ifdef need_compile_java
+
+full_static_jack_libs := \
+    $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
+      $(call intermediates-dir-for, \
+        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/classes.jack)
+
+ifeq ($(my_prefix),TARGET_)
+ifeq ($(LOCAL_SDK_VERSION),)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,core-libart)
+else
+ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+# LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,android_stubs_current)
+else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,android_system_stubs_current)
+else
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,sdk_v$(LOCAL_SDK_VERSION))
+endif # current or system_current
+endif # LOCAL_SDK_VERSION
+endif # TARGET_
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
+ifneq ($(ANDROID_JACK_VM_ARGS),)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(ANDROID_JACK_VM_ARGS)
+endif
+ifneq ($(LOCAL_JACK_VM_ARGS),)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(LOCAL_JACK_VM_ARGS)
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_EXTRA_ARGS := $(DEFAULT_JACK_EXTRA_ARGS)
+ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
+endif
+ifneq ($(LOCAL_JACK_EXTRA_ARGS),)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_EXTRA_ARGS := $(LOCAL_JACK_EXTRA_ARGS)
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM := $(DEFAULT_JACK_VM)
+ifneq ($(strip $(ANDROID_JACK_VM)),)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM := $(ANDROID_JACK_VM)
+endif
+
+ifdef LOCAL_IS_HOST_MODULE
+ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+else
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES :=
+full_shared_jack_libs := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_jack_lib_deps := $(full_shared_jack_libs)
+endif # USE_CORE_LIB_BOOTCLASSPATH
+else # !LOCAL_IS_HOST_MODULE
+full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+endif # !LOCAL_IS_HOST_MODULE
+full_jack_libs := $(full_shared_jack_libs) $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
+full_jack_lib_deps += $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
+
+# This is set by packages that are linking to other packages that export
+# shared libraries, allowing them to make use of the code in the linked apk.
+ifneq ($(apk_libraries),)
+  link_apk_jack_libraries := \
+      $(foreach lib,$(apk_libraries), \
+        $(call intermediates-dir-for, \
+              APPS,$(lib),,COMMON)/classes.jack)
+
+  # link against the jar with full original names (before proguard processing).
+  full_shared_jack_libs += $(link_apk_jack_libraries)
+  full_jack_libs += $(link_apk_jack_libraries)
+  full_jack_lib_deps += $(link_apk_jack_libraries)
+endif
+
+# This is set by packages that contain instrumentation, allowing them to
+# link against the package they are instrumenting.  Currently only one such
+# package is allowed.
+ifdef LOCAL_INSTRUMENTATION_FOR
+
+   # link against the jar with full original names (before proguard processing).
+   link_instr_classes_jack := $(link_instr_intermediates_dir.COMMON)/classes.noshrob.jack
+   full_jack_libs += $(link_instr_classes_jack)
+   full_jack_lib_deps += $(link_instr_classes_jack)
+endif
+
+endif  # need_compile_java
+
+# Propagate local configuration options to this target.
+$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_ALL_JACK_LIBRARIES:= $(full_jack_libs)
+$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+
+endif # LOCAL_USE_JACK
 
 ###########################################################
 ## NOTICE files

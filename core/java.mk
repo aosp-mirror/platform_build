@@ -126,6 +126,10 @@ else
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 built_dex := $(intermediates.COMMON)/classes.dex
 endif
+# final Jack library, shrinked and obfuscated if it must be
+full_classes_jack := $(intermediates.COMMON)/classes.jack
+# intermediate Jack library without shrink and obfuscation
+noshrob_classes_jack := $(intermediates.COMMON)/classes.noshrob.jack
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
@@ -134,6 +138,8 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_jar) \
     $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
+    $(full_classes_jack) \
+    $(noshrob_classes_jack) \
     $(built_dex) \
     $(full_classes_stubs_jar)
 
@@ -329,7 +335,7 @@ ifdef full_classes_jar
 # - This extra copy, with the dependency on LOCAL_BUILT_MODULE allows the
 #   PRIVATE_ vars to be preserved.
 $(full_classes_stubs_jar): PRIVATE_SOURCE_FILE := $(full_classes_jar)
-$(full_classes_stubs_jar) : $(LOCAL_BUILT_MODULE) | $(ACP)
+$(full_classes_stubs_jar) : $(full_classes_jar) | $(ACP)
 	@echo Copying $(PRIVATE_SOURCE_FILE)
 	$(hide) $(ACP) -fp $(PRIVATE_SOURCE_FILE) $@
 ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
@@ -415,50 +421,57 @@ ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
-proguard_flags := $(addprefix -libraryjars ,$(full_shared_java_libs)) \
+# jack already has the libraries in its classpath and doesn't support jars
+legacy_proguard_flags := $(addprefix -libraryjars ,$(full_shared_java_libs))
+common_proguard_flags :=  \
                   -forceprocessing \
                   -printmapping $(proguard_dictionary)
 
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
-proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
+common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
+common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
 endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
-proguard_flags += -include $(BUILD_SYSTEM)/proguard_tests.flags
+common_proguard_flags += -include $(BUILD_SYSTEM)/proguard_tests.flags
 ifeq ($(filter shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
-proguard_flags += -dontshrink # don't shrink tests by default
+common_proguard_flags += -dontshrink # don't shrink tests by default
 endif # shrinktests
 endif # test package
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no obfuscation
-proguard_flags += -dontobfuscate
+common_proguard_flags += -dontobfuscate
 endif  # No obfuscation
 ifeq ($(filter optimization,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no optimization
-proguard_flags += -dontoptimize
+common_proguard_flags += -dontoptimize
 endif  # No optimization
 
 ifdef LOCAL_INSTRUMENTATION_FOR
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # If no obfuscation, link in the instrmented package's classes.jar as a library.
 # link_instr_classes_jar is defined in base_rule.mk
-proguard_flags += -libraryjars $(link_instr_classes_jar)
+# jack already has this library in its classpath and doesn't support jars
+legacy_proguard_flags += -libraryjars $(link_instr_classes_jar)
 else # obfuscation
 # If obfuscation is enabled, the main app must be obfuscated too.
 # We need to run obfuscation using the main app's dictionary,
 # and treat the main app's class.jar as injars instead of libraryjars.
-proguard_flags := -injars  $(link_instr_classes_jar) \
+legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -outjars $(intermediates.COMMON)/proguard.$(LOCAL_INSTRUMENTATION_FOR).jar \
     -include $(link_instr_intermediates_dir.COMMON)/proguard_options \
     -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
     -verbose \
-    $(proguard_flags)
+    $(legacy_proguard_flags)
+# not supported with jack
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+    $(error $(LOCAL_MODULE): Build with jack of instrumentation when obfuscating is not yet supported)
+endif
 
 # Sometimes (test + main app) uses different keep rules from the main app -
 # apply the main app's dictionary anyway.
-proguard_flags += -ignorewarnings
+legacy_proguard_flags += -ignorewarnings
 
 # Make sure we run Proguard on the main app first
 $(full_classes_proguard_jar) : $(link_instr_intermediates_dir.COMMON)/proguard.classes.jar
@@ -476,7 +489,7 @@ else
 extra_input_jar :=
 endif
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
-$(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(proguard_flags) $(LOCAL_PROGUARD_FLAGS)
+$(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(proguard_flag_files) | $(ACP) $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
@@ -503,6 +516,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
+
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
@@ -540,3 +554,56 @@ $(findbugs_html) : $(findbugs_xml)
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
+
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jayces
+
+ifdef full_classes_jar
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_DEBUG_FLAGS := -g
+
+ifdef LOCAL_PROGUARD_ENABLED
+
+ifndef LOCAL_JACK_PROGUARD_FLAGS
+    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
+endif
+LOCAL_JACK_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
+ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
+    $(error $(LOCAL_MODULE): Build with jack when LOCAL_TEST_MODULE_TO_PROGUARD_WITH is defined is not yet implemented)
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS := $(common_proguard_flags) $(LOCAL_JACK_PROGUARD_FLAGS)
+else  # LOCAL_PROGUARD_ENABLED not defined
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS :=
+endif # LOCAL_PROGUARD_ENABLED defined
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
+
+jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
+        $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
+        $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
+        $(LOCAL_MODULE_MAKEFILE) $(JACK_JAR)
+
+ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
+$(full_classes_jack): $(jack_all_deps)
+	@echo Building with Jack: $@
+	$(java-to-jack)
+
+else #LOCAL_IS_STATIC_JAVA_LIBRARY
+$(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
+
+$(built_dex_intermediate): $(jack_all_deps)
+	@echo Building with Jack: $@
+	$(jack-java-to-dex)
+
+$(full_classes_jack): $(built_dex_intermediate)
+# nothing to do it's built as a side effect of $(built_dex_intermediate)
+endif #LOCAL_IS_STATIC_JAVA_LIBRARY
+
+$(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/noshrob
+$(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
+$(noshrob_classes_jack): $(jack_all_deps)
+	@echo Building with Jack: $@
+	$(java-to-jack)
+endif  # full_classes_jar is defined
+endif # LOCAL_USE_JACK

@@ -23,6 +23,23 @@
 USE_CORE_LIB_BOOTCLASSPATH := true
 LOCAL_JAVA_LIBRARIES += core-libart-hostdex
 
+intermediates.COMMON := $(call intermediates-dir-for,JAVA_LIBRARIES,$(LOCAL_MODULE),true,COMMON,)
+full_classes_jack := $(intermediates.COMMON)/classes.jack
+LOCAL_INTERMEDIATE_TARGETS += \
+    $(full_classes_jack)
+
 include $(BUILD_SYSTEM)/host_java_library.mk
+# proguard is not supported
+# *.proto files are not supported
+$(full_classes_jack): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
+$(full_classes_jack): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jack): \
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jayces
+$(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
+        $(jar_manifest_file) $(layers_file) $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
+        $(JACK_JAR)
+	@echo Building with Jack: $@
+	$(java-to-jack)
 
 USE_CORE_LIB_BOOTCLASSPATH :=

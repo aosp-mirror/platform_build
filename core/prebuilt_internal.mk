@@ -299,6 +299,13 @@ $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
 $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
 
+ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+$(intermediates.COMMON)/classes.jack : $(my_prebuilt_src_file) $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR)
+	$(transform-jar-to-jack)
+
+endif # JAVA_LIBRARIES
+
 $(built_module) : $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=

@@ -33,11 +33,13 @@ endif
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
+full_classes_jack := $(intermediates.COMMON)/classes.jack
 built_dex := $(intermediates.COMMON)/classes.dex
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_jarjar_jar) \
+    $(full_classes_jack) \
     $(full_classes_jar) \
     $(built_dex)
 
@@ -95,6 +97,7 @@ $(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
+ifneq ($(strip $(LOCAL_USE_JACK)),true)
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(built_dex): $(full_classes_jar) $(DX)
@@ -109,5 +112,32 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 ifneq ($(extra_jar_args),)
 	$(add-java-resources-to-package)
 endif
+
+else # LOCAL_USE_JACK
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jayces
+$(LOCAL_INTERMEDIATE_TARGETS):  PRIVATE_JACK_DEBUG_FLAGS := -g
+
+$(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
+$(built_dex): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
+$(built_dex): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
+        $(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK_JAR)
+	@echo Building with Jack: $@
+	$(jack-java-to-dex)
+
+$(full_classes_jack): $(built_dex)
+
+$(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
+$(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
+	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
+	$(create-empty-package)
+	$(add-dex-to-package)
+	$(add-carried-jack-resources)
+ifneq ($(extra_jar_args),)
+	$(add-java-resources-to-package)
+endif
+
+endif # LOCAL_USE_JACK
 
 USE_CORE_LIB_BOOTCLASSPATH :=

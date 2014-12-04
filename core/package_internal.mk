@@ -161,6 +161,13 @@ endif # need_compile_res
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+ifndef LOCAL_JACK_PROGUARD_FLAGS
+    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
+endif
+LOCAL_JACK_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_JACK_PROGUARD_FLAGS)
+endif # LOCAL_USE_JACK
+
 ifeq (true,$(EMMA_INSTRUMENT))
 ifndef LOCAL_EMMA_INSTRUMENT
 # No emma for test apks.
@@ -274,6 +281,18 @@ endif
 # Other modules should depend on the BUILT module if
 # they want to use this module's R.java file.
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
+
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
+ifneq ($(built_dex_intermediate),)
+$(built_dex_intermediate): $(R_file_stamp)
+endif
+ifneq ($(noshrob_classes_jack),)
+$(noshrob_classes_jack): $(R_file_stamp)
+endif
+ifneq ($(full_classes_jack),)
+$(full_classes_jack): $(R_file_stamp)
+endif
+endif # LOCAL_USE_JACK
 
 ifneq ($(full_classes_jar),)
 # If full_classes_jar is non-empty, we're building sources.
@@ -393,7 +412,11 @@ endif
 ifneq ($(full_classes_jar),)
 	$(add-dex-to-package)
 endif
+ifneq ($(strip $(LOCAL_USE_JACK)),true)
 	$(add-carried-java-resources)
+else
+	$(add-carried-jack-resources)
+endif
 ifneq ($(extra_jar_args),)
 	$(add-java-resources-to-package)
 endif
