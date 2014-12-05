@@ -66,11 +66,6 @@
 #define HAVE_MALLOC_H
 
 /*
- * What CPU architecture does this platform use?
- */
-#define ARCH_X86
-
-/*
  * Define if system provides a system property server (should be
  * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
  */
