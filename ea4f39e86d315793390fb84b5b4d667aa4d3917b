@@ -16,6 +16,24 @@
       "revId": "ea4f39e86d315793390fb84b5b4d667aa4d3917b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f96d1c9_1e7cc9a4",
+        "filename": "core/combo/include/arch/darwin-x86/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2014-12-05T18:57:26Z",
+      "side": 0,
+      "message": "all the other files have HAVE_MALLOC_H, so this will get killed when one of us deals with that.",
+      "parentUuid": "5f8cc9b9_1dd053d6",
+      "revId": "ea4f39e86d315793390fb84b5b4d667aa4d3917b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
