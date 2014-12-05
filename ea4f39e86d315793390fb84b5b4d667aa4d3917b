@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f8cc9b9_1dd053d6",
+        "filename": "core/combo/include/arch/darwin-x86/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-12-05T17:53:00Z",
+      "side": 0,
+      "message": "Should kill this while you\u0027re here.",
+      "revId": "ea4f39e86d315793390fb84b5b4d667aa4d3917b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
