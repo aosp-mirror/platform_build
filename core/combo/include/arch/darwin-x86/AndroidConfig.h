@@ -48,14 +48,6 @@
 #define HAVE_SYMLINKS
 
 /*
- * We need to choose between 32-bit and 64-bit off_t.  All of our code should
- * agree on the same size.  For desktop systems, use 64-bit values,
- * because some of our libraries (e.g. wxWidgets) expect to be built that way.
- */
-#define _FILE_OFFSET_BITS 64
-#define _LARGEFILE_SOURCE 1
-
-/*
  * Add any extra platform-specific defines here.
  */
 #define _THREAD_SAFE
