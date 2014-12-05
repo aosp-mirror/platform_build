@@ -52,8 +52,6 @@
  */
 #define HAVE_POSIX_CLOCKS
 
-#define _FILE_OFFSET_BITS 64
-
 /*
  * Define if we have <malloc.h> header
  */
