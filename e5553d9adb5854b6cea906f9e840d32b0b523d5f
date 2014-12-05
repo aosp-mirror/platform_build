@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf0225b9_fe4a9971",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2014-12-05T00:16:58Z",
+      "side": 1,
+      "message": "Do we always want to bundle this, or can we be more clever and detect whether or not this is necessary (or even make people choose that they want the I/O support)?",
+      "revId": "e5553d9adb5854b6cea906f9e840d32b0b523d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
