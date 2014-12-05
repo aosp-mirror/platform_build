@@ -40,15 +40,6 @@
 #define HAVE_POSIX_CLOCKS
 
 /*
- * We need to choose between 32-bit and 64-bit off_t.  All of our code should
- * agree on the same size.  For desktop systems, use 64-bit values,
- * because some of our libraries (e.g. wxWidgets) expect to be built that way.
- */
-#if defined(__LP64__)
-#define _FILE_OFFSET_BITS 64
-#endif
-
-/*
  * Define if we have <malloc.h> header
  */
 #define HAVE_MALLOC_H
