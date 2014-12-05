@@ -68,11 +68,6 @@
 #define HAVE_LIBC_SYSTEM_PROPERTIES 1
 
 /*
- * What CPU architecture does this platform use?
- */
-#define ARCH_ARM
-
-/*
  * sprintf() format string for shared library naming.
  */
 #define OS_SHARED_LIB_FORMAT_STR    "lib%s.so"
