@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "040206f8_9bfc8bcb",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-12-05T20:57:02Z",
+      "side": 1,
+      "message": "This is a build-script alternative, to adding more symlinks within prebuilts/ndk.  This may be simpler than extending the ndk build tools to create these new symlinks.\n\nSymlinks would perhaps be needed if the mips32r6 target were exposed to ndk users.  But that is not planned, and such users could instead target android-21 or later.",
+      "revId": "0fc42a438b59287d5ad78e3e24eb1b10ab39abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "040206f8_7b19bfa3",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-12-05T20:57:02Z",
+      "side": 1,
+      "message": "renamed my_cpu_abi as my_cpu_variant; no functional change",
+      "revId": "0fc42a438b59287d5ad78e3e24eb1b10ab39abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
