@@ -66,11 +66,6 @@
 /* #define HAVE_MALLOC_H */
 
 /*
- * What CPU architecture does this platform use?
- */
-#define ARCH_X86
-
-/*
  * sprintf() format string for shared library naming.
  */
 #define OS_SHARED_LIB_FORMAT_STR    "lib%s.dylib"
