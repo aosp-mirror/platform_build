@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "845d1634_6af8d78c",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2014-12-06T01:42:55Z",
+      "side": 1,
+      "message": "This is a little gross, but I don\u0027t see a better option for when ASAN needs to be applied to C programs with LOCAL_CXX_STL :\u003d none.",
+      "revId": "ed5bb6229278e56a5d70861953d9c65aa496dcd4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
