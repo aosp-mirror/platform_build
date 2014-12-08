@@ -284,21 +284,21 @@ These packages provide the basic SDK tools for app development, without an IDE.
   <tr>
     <td rowspan="2">Windows</td>
     <td>
-  <a onclick="return onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
-?>"><?cs var:sdk.win_download ?></a>
-    </td>
-    <td><?cs var:sdk.win_bytes ?> bytes</td>
-    <td><?cs var:sdk.win_checksum ?></td>
-  </tr>
-  <tr>
-    <!-- blank TD from Windows rowspan -->
-    <td>
   <a onclick="return onDownload(this)" id="win-tools" href="http://dl.google.com/android/<?cs
 var:sdk.win_installer
 ?>"><?cs var:sdk.win_installer ?></a> (Recommended)
     </td>
     <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
     <td><?cs var:sdk.win_installer_checksum ?></td>
+  </tr>
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this)" href="http://dl.google.com/android/<?cs var:sdk.win_download
+?>"><?cs var:sdk.win_download ?></a>
+    </td>
+    <td><?cs var:sdk.win_bytes ?> bytes</td>
+    <td><?cs var:sdk.win_checksum ?></td>
   </tr>
   <tr>
     <td><nobr>Mac OS X</nobr></td>
@@ -337,9 +337,31 @@ var:sdk.linux_download
   </tr>
 
   <tr>
-    <td>Windows</td>
+    <td rowspan="3">Windows</td>
     <td>
   <a onclick="return onDownload(this)" id="win-bundle"
+    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_exe_download ?>"
+    ><?cs var:studio.win_bundle_exe_download ?></a><br>(Recommended)
+    </td>
+    <td><?cs var:studio.win_bundle_exe_bytes ?> bytes</td>
+    <td><?cs var:studio.win_bundle_exe_checksum ?></td>
+  </tr>
+
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this)"
+    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
+    ><?cs var:studio.win_notools_exe_download ?></a><br>(No SDK tools included)
+    </td>
+    <td><?cs var:studio.win_notools_exe_bytes ?> bytes</td>
+    <td><?cs var:studio.win_notools_exe_checksum ?></td>
+  </tr>
+
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this)"
     href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
     ><?cs var:studio.win_bundle_download ?></a>
     </td>
@@ -351,7 +373,7 @@ var:sdk.linux_download
     <td><nobr>Mac OS X</nobr></td>
     <td>
   <a onclick="return onDownload(this)" id="mac-bundle"
-    href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.mac_bundle_download ?>"
+    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.mac_bundle_download ?>"
     ><?cs var:studio.mac_bundle_download ?></a>
     </td>
     <td><?cs var:studio.mac_bundle_bytes ?> bytes</td>
