@@ -50,6 +50,12 @@ my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
 my_additional_dependencies := $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
+ifdef LOCAL_IS_HOST_MODULE
+my_allow_undefined_symbols := true
+else
+my_allow_undefined_symbols := $(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS))
+endif
+
 my_ndk_sysroot :=
 my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
@@ -192,19 +198,10 @@ ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   my_cflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
   my_ldflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS)
   ifdef LOCAL_IS_HOST_MODULE
-      my_ldflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS_HOST)
-      my_ldlibs += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDLIBS_HOST)
-      my_shared_libraries += \
-          $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES_HOST)
-      my_static_libraries += \
-          $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES_HOST)
+      my_ldflags += -fsanitize=address
   else
-      my_ldflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS_TARGET)
-      my_ldlibs += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDLIBS_TARGET)
-      my_shared_libraries += \
-          $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES_TARGET)
-      my_static_libraries += \
-          $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES_TARGET)
+      my_shared_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES)
+      my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
   endif
 endif
 
@@ -410,7 +407,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CPP_EXTENSION := $(LOCAL_CPP_EXTENSION)
 # Certain modules like libdl have to have symbols resolved at runtime and blow
 # up if --no-undefined is passed to the linker.
 ifeq ($(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS)),)
-ifeq ($(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS)),)
+ifeq ($(my_allow_undefined_symbols),)
   my_ldflags +=  $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)NO_UNDEFINED_LDFLAGS)
 endif
 endif
