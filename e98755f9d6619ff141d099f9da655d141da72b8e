@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c488eee4_60bc875e",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-12-09T00:54:02Z",
+      "side": 0,
+      "message": "ifndef TARGET_BUILD_APPS\n# Platform build, set up the dependency on system shared libraries.\ninstalled_shared_library_module_names +\u003d $(my_system_shared_libraries)\nendif",
+      "revId": "e98755f9d6619ff141d099f9da655d141da72b8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
