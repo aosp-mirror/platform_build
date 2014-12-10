@@ -272,7 +272,7 @@
 <p>If you prefer to use a different IDE or run the tools from the
 command line or with build scripts, you can instead download the stand-alone Android SDK Tools.
 These packages provide the basic SDK tools for app development, without an IDE.
-</p>
+Also see the <a href="<?cs var:toroot ?>tools/sdk/tools-notes.html">SDK tools release notes</a>.</p>
 
   <table class="download">
     <tr>
@@ -326,7 +326,8 @@ var:sdk.linux_download
 
 <h3>All Android Studio Packages</h3>
 
-<p>Select a specific Android Studio package for your platform.</p>
+<p>Select a specific Android Studio package for your platform. Also see the
+<a href="<?cs var:toroot ?>tools/revisions/studio.html">Android Studio release notes</a>.</p>
 
   <table class="download">
     <tr>
