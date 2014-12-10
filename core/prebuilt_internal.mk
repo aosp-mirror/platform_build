@@ -116,7 +116,7 @@ PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
 # Select dpi-specific source
 ifdef LOCAL_DPI_VARIANTS
-my_dpi := $(filter $(LOCAL_DPI_VARIANTS),$(PRODUCT_AAPT_PREF_CONFIG))
+my_dpi := $(firstword $(filter $(LOCAL_DPI_VARIANTS),$(PRODUCT_AAPT_PREF_CONFIG) $(PRODUCT_AAPT_PREBUILT_DPI)))
 ifdef my_dpi
 ifdef LOCAL_DPI_FILE_STEM
 my_prebuilt_dpi_file_stem := $(LOCAL_DPI_FILE_STEM)
