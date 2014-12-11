@@ -557,7 +557,7 @@ endif  # full_classes_jar is defined
 
 ifeq ($(strip $(LOCAL_USE_JACK)),true)
 $(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jayces
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack
 
 ifdef full_classes_jar
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_DEBUG_FLAGS := -g
