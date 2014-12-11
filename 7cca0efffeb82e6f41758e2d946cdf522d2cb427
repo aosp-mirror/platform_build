@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44731e24_05a7b29b",
+        "filename": "target/board/generic_mips64/device.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2014-12-11T11:01:02Z",
+      "side": 1,
+      "message": "Are you sure this is still needed? I.e. these lines are already part of target/product/emulator.mk which should be included for any emulator-compatible system image.",
+      "revId": "7cca0efffeb82e6f41758e2d946cdf522d2cb427",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
