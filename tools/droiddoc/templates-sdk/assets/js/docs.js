@@ -617,6 +617,9 @@ function startYouTubePlayer(videoId) {
 
 function onPlayerReady(event) {
   event.target.playVideo();
+  // track the start playing event so we know from which page the video was selected
+  ga('send', 'event', 'Videos', 'Start: ' +
+      youTubePlayer.getVideoUrl().split('?v=')[1], 'on: ' + document.location.href);
 }
 
 function closeVideo() {
@@ -633,15 +636,18 @@ function closeVideo() {
 function onPlayerStateChange(event) {
     // Video starts, send the video ID
     if (event.data == YT.PlayerState.PLAYING) {
-      ga('send', 'event', 'Videos', 'Play', youTubePlayer.getVideoUrl().split('?v=')[1]);
+      ga('send', 'event', 'Videos', 'Play',
+          youTubePlayer.getVideoUrl().split('?v=')[1]);
     }
     // Video paused, send video ID and video elapsed time
     if (event.data == YT.PlayerState.PAUSED) {
-      ga('send', 'event', 'Videos', 'Paused', youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
+      ga('send', 'event', 'Videos', 'Paused',
+          youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
     }
     // Video finished, send video ID and video elapsed time
     if (event.data == YT.PlayerState.ENDED) {
-      ga('send', 'event', 'Videos', 'Finished', youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
+      ga('send', 'event', 'Videos', 'Finished',
+          youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
     }
 }
 
