@@ -98,11 +98,6 @@
 #define HAVE_WINDOWS_PATHS      /* needed by simulator */
 
 /*
- * sprintf() format string for shared library naming.
- */
-#define OS_SHARED_LIB_FORMAT_STR    "lib%s.dll"
-
-/*
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '\\'
