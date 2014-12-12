@@ -115,7 +115,7 @@ endif
 
 # Address sanitizer clang config
 ADDRESS_SANITIZER_RUNTIME_LIBRARY := libclang_rt.asan_$(TARGET_ARCH)_android
-ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -fsanitize=address -fno-omit-frame-pointer
+ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -fno-omit-frame-pointer
 ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS := -Wl,-u,__asan_preinit
 
 ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES := libdl $(ADDRESS_SANITIZER_RUNTIME_LIBRARY)
