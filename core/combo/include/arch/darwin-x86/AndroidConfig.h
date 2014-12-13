@@ -58,11 +58,6 @@
 /* #define HAVE_MALLOC_H */
 
 /*
- * sprintf() format string for shared library naming.
- */
-#define OS_SHARED_LIB_FORMAT_STR    "lib%s.dylib"
-
-/*
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '/'
