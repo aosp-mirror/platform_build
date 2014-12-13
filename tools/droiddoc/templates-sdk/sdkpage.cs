@@ -279,7 +279,7 @@ Also see the <a href="<?cs var:toroot ?>tools/sdk/tools-notes.html">SDK tools re
       <th>Platform</th>
       <th>Package</th>
       <th>Size</th>
-      <th>MD5 Checksum</th>
+      <th>SHA-1 Checksum</th>
   </tr>
   <tr>
     <td rowspan="2">Windows</td>
@@ -334,7 +334,7 @@ var:sdk.linux_download
       <th>Platform</th>
       <th>Package</th>
       <th>Size</th>
-      <th>SHA Sum</th>
+      <th>SHA-1 Checksum</th>
   </tr>
 
   <tr>
