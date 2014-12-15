@@ -171,6 +171,7 @@
                 <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/analyze/index.html">Analyze</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
               </ul>
@@ -268,7 +269,7 @@
     </div>
     <!-- /Sendondary x-nav DEVELOP -->
 
-  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || disttools || stories ?>
+  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || analyze ||  disttools || stories ?>
     <!-- Secondary distribute x-nav -->
     <div id="nav-x">
         <div class="wrap">
@@ -283,6 +284,9 @@
                   >Engage &amp; Retain</a></li>
                 <li class="monetize"><a href="<?cs var:toroot ?>distribute/monetize/index.html"
                   >Monetize</a>
+                </li>
+                <li class="analyze"><a href="<?cs var:toroot ?>distribute/analyze/index.html"
+                  >Analyze</a>
                 </li>
                 <li class="disttools"><a href="<?cs var:toroot ?>distribute/tools/index.html"
                   >Tools</a>
