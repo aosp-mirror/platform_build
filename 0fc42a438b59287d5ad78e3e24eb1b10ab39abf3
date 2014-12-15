@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "046f66ad_d677a2f8",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2014-12-15T11:57:59Z",
+      "side": 1,
+      "message": "missing \"endif\"",
+      "revId": "0fc42a438b59287d5ad78e3e24eb1b10ab39abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "040206f8_7b19bfa3",
         "filename": "core/binary.mk",
         "patchSetId": 2
