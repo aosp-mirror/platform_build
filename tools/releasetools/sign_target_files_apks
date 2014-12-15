@@ -296,12 +296,12 @@ def RewriteProps(data, misc_info):
     original_line = line
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
-      if (key == "ro.build.fingerprint"
+      if (key in ("ro.build.fingerprint", "ro.vendor.build.fingerprint")
           and misc_info.get("oem_fingerprint_properties") is None):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
-      elif (key == "ro.build.thumbprint"
+      elif (key in ("ro.build.thumbprint", "ro.vendor.build.thumbprint")
           and misc_info.get("oem_fingerprint_properties") is not None):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
