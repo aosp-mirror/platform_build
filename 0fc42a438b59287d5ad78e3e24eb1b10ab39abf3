@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "e1e7a492_c2d7c2d2",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-12-15T22:18:29Z",
+      "side": 1,
+      "message": "I think it is correct as is.\n\nAccording to https://www.gnu.org/software/make/manual/html_node/Conditional-Syntax.html , a single endif is used when \u0027else ifeq\u0027 pairs are together on one line.  It acts like single-token elsif in other languages.  There\u0027s plenty of examples of that in other build/core scripts.  Whereas extra, nested endifs are needed if the else and ifseq are on separate lines.  weird.",
+      "parentUuid": "046f66ad_d677a2f8",
+      "revId": "0fc42a438b59287d5ad78e3e24eb1b10ab39abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "040206f8_7b19bfa3",
         "filename": "core/binary.mk",
         "patchSetId": 2
