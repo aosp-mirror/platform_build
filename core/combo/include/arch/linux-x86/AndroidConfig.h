@@ -72,11 +72,6 @@
 #define HAVE_SYSTEM_PROPERTY_SERVER
 
 /*
- * sprintf() format string for shared library naming.
- */
-#define OS_SHARED_LIB_FORMAT_STR    "lib%s.so"
-
-/*
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '/'
