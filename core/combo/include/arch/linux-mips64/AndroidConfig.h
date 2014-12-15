@@ -93,11 +93,6 @@
 #define HAVE_STDINT_H 1
 
 /*
- * Define if <sched.h> exists.
- */
-#define HAVE_SCHED_H 1
-
-/*
  * Define if printf() supports %zd for size_t arguments
  */
 #define HAVE_PRINTF_ZD 1
