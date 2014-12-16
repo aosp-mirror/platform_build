@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1ec607c_8131ba92",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2014-12-16T04:35:20Z",
+      "side": 0,
+      "message": "i think we want to keep nostripping support. kroot says it will probably be needed in the future.\n\nthis predated libdvm vs libart",
+      "range": {
+        "startLine": 39,
+        "startChar": 29,
+        "endLine": 39,
+        "endChar": 40
+      },
+      "revId": "e98755f9d6619ff141d099f9da655d141da72b8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
