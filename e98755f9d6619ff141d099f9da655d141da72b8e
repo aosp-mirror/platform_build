@@ -22,6 +22,24 @@
       "revId": "e98755f9d6619ff141d099f9da655d141da72b8e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "815d0834_27ca1add",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-12-16T18:08:47Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "c1ec607c_8131ba92",
+      "revId": "e98755f9d6619ff141d099f9da655d141da72b8e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
