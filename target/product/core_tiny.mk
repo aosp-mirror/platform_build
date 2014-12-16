@@ -101,8 +101,6 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     wifi-service
 
-PRODUCT_RUNTIMES := runtime_libart_default
-
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.zygote=zygote32
 PRODUCT_COPY_FILES += \
@@ -111,6 +109,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 
