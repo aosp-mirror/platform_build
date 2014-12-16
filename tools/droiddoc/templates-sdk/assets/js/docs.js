@@ -595,6 +595,8 @@ function onYouTubeIframeAPIReady() {
 function startYouTubePlayer(videoId) {
   var idAndHash = videoId.split("#");
   var startTime = 0;
+  var lang = getLangPref();
+  var captionsOn = lang == 'en' ? 0 : 1;
   if (idAndHash.length > 1) {
     startTime = idAndHash[1].split("t=")[1] != undefined ? idAndHash[1].split("t=")[1] : 0;
   }
@@ -603,7 +605,7 @@ function startYouTubePlayer(videoId) {
       height: '529',
       width: '940',
       videoId: idAndHash[0],
-      playerVars: {start: startTime},
+      playerVars: {start: startTime, hl: lang, cc_load_policy: captionsOn},
       events: {
         'onReady': onPlayerReady,
         'onStateChange': onPlayerStateChange
