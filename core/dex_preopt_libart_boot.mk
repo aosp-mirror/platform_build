@@ -27,10 +27,7 @@ $(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME := /$(DEXPREOPT_BOOT_JAR_DIR)/$(
 # The .oat with symbols
 $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_OAT_UNSTRIPPED := $(TARGET_OUT_UNSTRIPPED)$(patsubst %.art,%.oat,$($(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME))
 
-$(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE :=
-ifneq ($(PRODUCT_DEX_PREOPT_IMAGE_IN_DATA),true)
 $(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE := $(PRODUCT_OUT)$($(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME)
-endif
 
 # Compile boot.oat as position-independent code if WITH_DEXPREOPT_PIC=true
 ifeq (true,$(WITH_DEXPREOPT_PIC))
