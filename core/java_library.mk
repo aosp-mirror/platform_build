@@ -85,12 +85,6 @@ $(LOCAL_BUILT_MODULE) : $(dexpreopted_boot_jar) | $(ACP)
 	$(call copy-file-to-target)
 
 # For libart boot jars, we don't have .odex files.
-ifeq ($(DALVIK_VM_LIB),libdvm.so)
-dexpreopted_boot_odex := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module).odex
-$(built_odex) : $(dexpreopted_boot_odex) | $(ACP)
-	$(call copy-file-to-target)
-endif
-
 else # ! boot jar
 $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
 # Use pattern rule - we may have multiple built odex files.
