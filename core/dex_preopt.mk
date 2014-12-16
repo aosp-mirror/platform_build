@@ -3,8 +3,6 @@
 #
 ####################################
 
-ifneq ($(DALVIK_VM_LIB),)
-
 # list of boot classpath jars for dexpreopt
 DEXPREOPT_BOOT_JARS := $(subst $(space),:,$(PRODUCT_BOOT_JARS))
 DEXPREOPT_BOOT_JARS_MODULES := $(PRODUCT_BOOT_JARS)
@@ -17,6 +15,9 @@ DEXPREOPT_PRODUCT_DIR_FULL_PATH := $(PRODUCT_OUT)/dex_bootjars
 DEXPREOPT_PRODUCT_DIR := $(patsubst $(DEXPREOPT_BUILD_DIR)/%,%,$(DEXPREOPT_PRODUCT_DIR_FULL_PATH))
 DEXPREOPT_BOOT_JAR_DIR := system/framework
 DEXPREOPT_BOOT_JAR_DIR_FULL_PATH := $(DEXPREOPT_PRODUCT_DIR_FULL_PATH)/$(DEXPREOPT_BOOT_JAR_DIR)
+
+# The default value for LOCAL_DEX_PREOPT
+DEX_PREOPT_DEFAULT ?= true
 
 # $(1): the .jar or .apk to remove classes.dex
 define dexpreopt-remove-classes.dex
@@ -60,7 +61,3 @@ DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $(DEFAULT_DEX_PREOPT_BUILT_IM
 ifdef TARGET_2ND_ARCH
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
 endif  # TARGET_2ND_ARCH
-else
-$(warning No DALVIK_VM_LIB, disable dexpreopt.)
-WITH_DEXPREOPT := false
-endif  # DALVIK_VM_LIB is defined.
