@@ -246,6 +246,7 @@ def BuildImage(in_dir, prop_dict, out_file,
       build_command.extend(["-C", fs_config])
     if block_list is not None:
       build_command.extend(["-B", block_list])
+    build_command.extend(["-L", prop_dict["mount_point"]])
     if fc_config is not None:
       build_command.append(fc_config)
     elif "selinux_fc" in prop_dict:
