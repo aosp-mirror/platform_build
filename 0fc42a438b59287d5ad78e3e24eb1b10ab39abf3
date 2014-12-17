@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "a1d5ac01_c9ca2929",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2014-12-17T20:11:02Z",
+      "side": 1,
+      "message": "I don\u0027t like to put arch-specific things in this file. They will be evaluated every time this file gets included.\nI would suggest to create symlinks. We have done that for arm64.\nAnother alternative is to set up per-arch(variant) per-sdk-version variables in an arch specific configuration file, and then uses such variables in this file.",
+      "revId": "0fc42a438b59287d5ad78e3e24eb1b10ab39abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "046f66ad_d677a2f8",
         "filename": "core/binary.mk",
         "patchSetId": 2
