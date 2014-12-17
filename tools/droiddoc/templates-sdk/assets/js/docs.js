@@ -592,18 +592,46 @@ var youTubePlayer;
 function onYouTubeIframeAPIReady() {
 }
 
+/* Returns the height the shadowbox video should be. It's based on the current
+   height of the "video-frame" element, which is 100% height for the window.
+   Then minus the margin so the video isn't actually the full window height. */
+function getVideoHeight() {
+  var frameHeight = $("#video-frame").height();
+  var marginTop = $("#video-frame").css('margin-top').split('px')[0];
+  return frameHeight - (marginTop * 2);
+}
+
 function startYouTubePlayer(videoId) {
-  var idAndHash = videoId.split("#");
-  var startTime = 0;
-  var lang = getLangPref();
-  var captionsOn = lang == 'en' ? 0 : 1;
-  if (idAndHash.length > 1) {
-    startTime = idAndHash[1].split("t=")[1] != undefined ? idAndHash[1].split("t=")[1] : 0;
+  $("#video-container").show();
+  $("#video-frame").show();
+
+  // compute the size of the player so it's centered in window
+  var maxWidth = 940;  // the width of the web site content
+  var videoAspect = .5625; // based on 1280x720 resolution
+  var maxHeight = maxWidth * videoAspect;
+  var videoHeight = getVideoHeight();
+  var videoWidth = videoHeight / videoAspect;
+  if (videoWidth > maxWidth) {
+    videoWidth = maxWidth;
+    videoHeight = maxHeight;
   }
+  $("#video-frame").css('width', videoWidth);
+
+  // check if we've already created this player
   if (youTubePlayer == null) {
+    // check if there's a start time specified
+    var idAndHash = videoId.split("#");
+    var startTime = 0;
+    if (idAndHash.length > 1) {
+      startTime = idAndHash[1].split("t=")[1] != undefined ? idAndHash[1].split("t=")[1] : 0;
+    }
+    // enable localized player
+    var lang = getLangPref();
+    var captionsOn = lang == 'en' ? 0 : 1;
+
     youTubePlayer = new YT.Player('youTubePlayer', {
-      height: '529',
-      width: '940',
+      height: videoHeight,
+      width: videoWidth,
       videoId: idAndHash[0],
       playerVars: {start: startTime, hl: lang, cc_load_policy: captionsOn},
       events: {
@@ -612,9 +640,10 @@ function startYouTubePlayer(videoId) {
       }
     });
   } else {
+    // reset the size in case the user adjusted the window since last play
+    youTubePlayer.setSize(videoWidth, videoHeight);
     youTubePlayer.playVideo();
   }
-  $("#video-container").fadeIn(200, function(){$("#video-frame").show()});
 }
 
 function onPlayerReady(event) {
@@ -627,11 +656,10 @@ function onPlayerReady(event) {
 function closeVideo() {
   try {
     youTubePlayer.pauseVideo();
-    $("#video-container").fadeOut(200);
   } catch(e) {
     console.log('Video not available');
-    $("#video-container").fadeOut(200);
   }
+  $("#video-container").fadeOut(200);
 }
 
 /* Track youtube playback for analytics */
