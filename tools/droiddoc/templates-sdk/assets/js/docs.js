@@ -642,6 +642,10 @@ function startYouTubePlayer(videoId) {
   } else {
     // reset the size in case the user adjusted the window since last play
     youTubePlayer.setSize(videoWidth, videoHeight);
+    // if a video different from the one already playing was requested, cue it up
+    if (videoId != youTubePlayer.getVideoUrl().split('?v=')[1]) {
+      youTubePlayer.cueVideoById(videoId);
+    }
     youTubePlayer.playVideo();
   }
 }
