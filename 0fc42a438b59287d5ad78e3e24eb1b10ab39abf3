@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "81a8a891_72b596c1",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2014-12-18T19:13:57Z",
+      "side": 1,
+      "message": "The thing with first_mipsr6_libs_versions could indeed be handled by symlinks within the prebuilts/ndk directory.  Those symlinks would need to be mechanically generated whether that prebuilts is remade.  I defer to Andrew on whether doing that in his tools or here is better.  I\u0027m unable to offer a patch to ndk tools to automate that.\n\nThe libr6 distinction cannot be done via symlink, but could be refactored by using a collection of make variables with variant suffix.  I\u0027m hesitant to make that large a change here, for this one issue.",
+      "parentUuid": "a1d5ac01_c9ca2929",
+      "revId": "0fc42a438b59287d5ad78e3e24eb1b10ab39abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "046f66ad_d677a2f8",
         "filename": "core/binary.mk",
         "patchSetId": 2
