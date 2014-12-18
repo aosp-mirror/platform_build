@@ -100,7 +100,8 @@ endif
 
 $(R_file_stamp): PRIVATE_MODULE := $(LOCAL_MODULE)
 # add --non-constant-id to prevent inlining constants.
-$(R_file_stamp): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id
+# AAR needs text symbol file R.txt.
+$(R_file_stamp): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(LOCAL_INTERMEDIATE_SOURCE_DIR)
 $(R_file_stamp): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
 $(R_file_stamp): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := $(intermediates.COMMON)/public_resources.xml
@@ -127,6 +128,27 @@ $(noshrob_classes_jack): $(R_file_stamp)
 $(full_classes_jack): $(R_file_stamp)
 endif # LOCAL_USE_JACK
 $(full_classes_compiled_jar): $(R_file_stamp)
+
+# Rule to build AAR, archive including classes.jar, resource, etc.
+built_aar := $(intermediates.COMMON)/javalib.aar
+$(built_aar): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(built_aar): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
+$(built_aar): PRIVATE_CLASSES_JAR := $(LOCAL_BUILT_MODULE)
+$(built_aar): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
+$(built_aar): PRIVATE_R_TXT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.txt
+$(built_aar) : $(LOCAL_BUILT_MODULE)
+	@echo "target AAR:  $(PRIVATE_MODULE) ($@)"
+	$(hide) rm -rf $(dir $@)aar && mkdir -p $(dir $@)aar/res
+	$(hide) cp $(PRIVATE_ANDROID_MANIFEST) $(dir $@)aar/AndroidManifest.xml
+	$(hide) cp $(PRIVATE_CLASSES_JAR) $(dir $@)aar/classes.jar
+	# Note: Use "cp -n" to honor the resource overlay rules, if multiple res dirs exist.
+	$(hide) $(foreach res,$(PRIVATE_RESOURCE_DIR),cp -Rfn $(res)/* $(dir $@)aar/res;)
+	$(hide) cp $(PRIVATE_R_TXT) $(dir $@)aar/R.txt
+	$(hide) jar -cMf $@ \
+	  -C $(dir $@)aar .
+
+# Register the aar file.
+ALL_MODULES.$(LOCAL_MODULE).AAR := $(built_aar)
 
 endif  # need_compile_res
 

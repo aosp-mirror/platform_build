@@ -915,7 +915,9 @@ ifneq ($(TARGET_BUILD_APPS),)
   # For uninstallable modules such as static Java library, we have to dist the built file,
   # as <module_name>.<suffix>
   apps_only_dist_built_files := $(foreach m,$(unbundled_build_modules),$(if $(ALL_MODULES.$(m).INSTALLED),,\
-      $(if $(ALL_MODULES.$(m).BUILT),$(ALL_MODULES.$(m).BUILT):$(m)$(suffix $(ALL_MODULES.$(m).BUILT)))))
+      $(if $(ALL_MODULES.$(m).BUILT),$(ALL_MODULES.$(m).BUILT):$(m)$(suffix $(ALL_MODULES.$(m).BUILT)))\
+      $(if $(ALL_MODULES.$(m).AAR),$(ALL_MODULES.$(m).AAR):$(m).aar)\
+      ))
   $(call dist-for-goals,apps_only, $(apps_only_dist_built_files))
 
   ifeq ($(EMMA_INSTRUMENT),true)
