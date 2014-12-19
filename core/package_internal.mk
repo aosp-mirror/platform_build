@@ -123,7 +123,8 @@ endif
 
 all_res_assets := $(strip $(all_assets) $(all_resources))
 
-package_expected_intermediates_COMMON := $(call local-intermediates-dir,COMMON)
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+
 # If no assets or resources were found, clear the directory variables so
 # we don't try to build them.
 ifneq (true,$(need_compile_asset))
@@ -136,7 +137,7 @@ else
 # Make sure that R_file_stamp inherits the proper PRIVATE vars.
 # If R.stamp moves, be sure to update the framework makefile,
 # which has intimate knowledge of its location.
-R_file_stamp := $(package_expected_intermediates_COMMON)/src/R.stamp
+R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 endif
 
@@ -156,7 +157,7 @@ endif
 proguard_options_file :=
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
 ifeq ($(need_compile_res),true)
-    proguard_options_file := $(package_expected_intermediates_COMMON)/proguard_options
+    proguard_options_file := $(intermediates.COMMON)/proguard_options
 endif # need_compile_res
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
@@ -230,11 +231,6 @@ ifeq ($(need_compile_res),true)
 # At the same time, this will copy the R.java file to a central
 # 'R' directory to make it easier to add the files to an IDE.
 #
-#TODO: use PRIVATE_SOURCE_INTERMEDIATES_DIR instead of
-#      $(intermediates.COMMON)/src
-ifneq ($(package_expected_intermediates_COMMON),$(intermediates.COMMON))
-  $(error $(LOCAL_MODULE): internal error: expected intermediates.COMMON "$(package_expected_intermediates_COMMON)" != intermediates.COMMON "$(intermediates.COMMON)")
-endif
 
 $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 			$(intermediates.COMMON)/public_resources.xml

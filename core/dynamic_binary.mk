@@ -17,16 +17,13 @@ endif
 # know its results before base_rules.mk is included.
 include $(BUILD_SYSTEM)/configure_module_stem.mk
 
-# base_rules.make defines $(intermediates), but we need its value
-# before we include base_rules.  Make a guess, and verify that
-# it's correct once the real value is defined.
-guessed_intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
+intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
 
 # Define the target that is the unmodified output of the linker.
 # The basename of this target must be the same as the final output
 # binary name, because it's used to set the "soname" in the binary.
 # The includer of this file will define a rule to build this target.
-linked_module := $(guessed_intermediates)/LINKED/$(my_built_module_stem)
+linked_module := $(intermediates)/LINKED/$(my_built_module_stem)
 
 ALL_ORIGINAL_DYNAMIC_BINARIES += $(linked_module)
 
@@ -40,11 +37,6 @@ LOCAL_INTERMEDIATE_TARGETS := $(linked_module)
 ###################################
 include $(BUILD_SYSTEM)/binary.mk
 ###################################
-
-# Make sure that our guess at the value of intermediates was correct.
-ifneq ($(intermediates),$(guessed_intermediates))
-$(error Internal error: guessed path '$(guessed_intermediates)' doesn't match '$(intermediates))
-endif
 
 ###########################################################
 ## Compress
