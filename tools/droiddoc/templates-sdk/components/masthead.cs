@@ -206,7 +206,7 @@
         <div class="wrap" style="position:relative;z-index:1">
 
         <?cs if:reference ?>
-        <?cs # HIDE HELPOUTS RECRUIT BANNER ?>
+        <?cs # HIDE HELPOUTS RECRUIT BANNER
             <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card" 
               href="http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=dac&utm_medium=banner&utm_campaign=android_provider_banner3" target="_blank">
               <div class="card-bg helpouts-card-bg"></div>
@@ -219,7 +219,7 @@
                 </div>
               </div>
             </a>
-        <?cs # END HIDE HELPOUTS ?>
+        # END HIDE HELPOUTS ?>
         <?cs /if ?>
 
             <ul class="nav-x col-9 develop" style="width:100%">
