@@ -109,7 +109,6 @@ $(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
 	$(hide) echo 'PRODUCT_EXTRA_RECOVERY_KEYS=$$(PRODUCTS.$(strip $(1)).PRODUCT_EXTRA_RECOVERY_KEYS)' >> $$@
 	$(hide) echo 'PRODUCT_PACKAGE_OVERLAYS=$$(PRODUCTS.$(strip $(1)).PRODUCT_PACKAGE_OVERLAYS)' >> $$@
 	$(hide) echo 'DEVICE_PACKAGE_OVERLAYS=$$(PRODUCTS.$(strip $(1)).DEVICE_PACKAGE_OVERLAYS)' >> $$@
-	$(hide) echo 'PRODUCT_TAGS=$$(PRODUCTS.$(strip $(1)).PRODUCT_TAGS)' >> $$@
 	$(hide) echo 'PRODUCT_SDK_ADDON_NAME=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_NAME)' >> $$@
 	$(hide) echo 'PRODUCT_SDK_ADDON_COPY_FILES=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_COPY_FILES)' >> $$@
 	$(hide) echo 'PRODUCT_SDK_ADDON_COPY_MODULES=$$(PRODUCTS.$(strip $(1)).PRODUCT_SDK_ADDON_COPY_MODULES)' >> $$@
