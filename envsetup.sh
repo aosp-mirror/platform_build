@@ -1078,9 +1078,9 @@ function gdbclient() {
   elif [[ $CPU_ABI =~ (^|,)arm ]]; then
     GDB=arm-linux-androideabi-gdb
   elif [[ $CPU_ABI =~ (^|,)x86_64 ]]; then
-    GDB=x86_64-linux-androideabi-gdb
+    GDB=x86_64-linux-android-gdb
   elif [[ $CPU_ABI =~ (^|,)x86 ]]; then
-    GDB=x86_64-linux-androideabi-gdb
+    GDB=x86_64-linux-android-gdb
   elif [[ $CPU_ABI =~ (^|,)mips64 ]]; then
     GDB=mipsel-linux-android-gdb
     GDB64=mips64el-linux-android-gdb
