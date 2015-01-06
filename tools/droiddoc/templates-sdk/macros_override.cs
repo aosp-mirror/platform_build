@@ -6,7 +6,7 @@
     <?cs each:anno = obj.showAnnotations ?>
       <?cs if:first(anno) ?>
         <span class='annotation-message'>
-          Included in documention by the annotations:
+          Included in documentation by the annotations:
       <?cs /if ?>
       @<?cs var:anno.type.label ?>
       <?cs if:last(anno) == 0 ?>
