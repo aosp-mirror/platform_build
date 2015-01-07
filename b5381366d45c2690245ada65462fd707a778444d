@@ -16,6 +16,24 @@
       "revId": "b5381366d45c2690245ada65462fd707a778444d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae52f94e_f8bcf1da",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1057368
+      },
+      "writtenOn": "2015-01-07T10:48:31Z",
+      "side": 1,
+      "message": "it\u0027s in a different change: https://android-review.googlesource.com/#/c/122010/",
+      "parentUuid": "2e7a89aa_37ced293",
+      "revId": "b5381366d45c2690245ada65462fd707a778444d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
