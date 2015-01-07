@@ -16,6 +16,24 @@
       "revId": "bff64f5b46bdc7ed905f4913011dd28145750842",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae52f94e_b8a27936",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1002951
+      },
+      "writtenOn": "2015-01-07T14:50:31Z",
+      "side": 1,
+      "message": "This file is using a locally defined LoadGlobalDict. And, no, the contents of the glob_dict[\"build.prop\"] is a string object, not a dictionary. LoadGlobalDict does:\n\n  def LoadGlobalDict(filename):\n  ...\n  v \u003d line.split(\"\u003d\", 1)\n  ...\n\nAnd the input file contains a line on this format:\n\n  build.prop\u003d{\u0027ro.build.date.utc\u0027: 1418245729}\n\nline.split will result in a string that is stored in glob_dict.\n\nThis string needs to be parsed into a dictionary object.",
+      "parentUuid": "2ea1a95e_906324af",
+      "revId": "bff64f5b46bdc7ed905f4913011dd28145750842",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
