@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ea1a95e_906324af",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-07T02:42:17Z",
+      "side": 1,
+      "message": "Isn\u0027t glob_dict[\"build.prop\"] already a dict object? see build/tools/releasetools/common.py:\nd[\"build.prop\"] \u003d LoadBuildProp(read_helper)",
+      "revId": "bff64f5b46bdc7ed905f4913011dd28145750842",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
