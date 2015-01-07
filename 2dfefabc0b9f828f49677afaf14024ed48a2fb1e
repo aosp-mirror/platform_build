@@ -34,6 +34,24 @@
       "revId": "2dfefabc0b9f828f49677afaf14024ed48a2fb1e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce2badc1_e90ed5a6",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2015-01-07T22:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ce63adf0_4963e1af",
+      "revId": "2dfefabc0b9f828f49677afaf14024ed48a2fb1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
