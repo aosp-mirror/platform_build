@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e7a89aa_37ced293",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-07T02:20:31Z",
+      "side": 1,
+      "message": "Where is module sensors.ranchu defined? I couldn\u0027t find it in the source tree.",
+      "revId": "b5381366d45c2690245ada65462fd707a778444d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
