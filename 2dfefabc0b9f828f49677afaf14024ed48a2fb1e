@@ -16,6 +16,24 @@
       "revId": "2dfefabc0b9f828f49677afaf14024ed48a2fb1e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce63adf0_4963e1af",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2015-01-07T03:12:09Z",
+      "side": 1,
+      "message": "I see.  The internal ABI mipsr6 in NDK built script should really be named mips32r6.  https://android-review.googlesource.com/#/c/121742 fixes it, and https://android-review.googlesource.com/#/c/121940 fixes prebuilts/ndk",
+      "parentUuid": "2e7a89aa_b7fae2ca",
+      "revId": "2dfefabc0b9f828f49677afaf14024ed48a2fb1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
