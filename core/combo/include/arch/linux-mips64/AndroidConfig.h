@@ -97,9 +97,4 @@
  */
 #define HAVE_PRINTF_ZD 1
 
-/*
- * Whether or not _Unwind_Context is defined as a struct.
- */
-#define HAVE_UNWIND_CONTEXT_STRUCT 1
-
 #endif /* _ANDROID_CONFIG_H */

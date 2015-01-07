@@ -75,11 +75,6 @@
 #define HAVE_PRCTL 1
 
 /*
- * Whether or not _Unwind_Context is defined as a struct.
- */
-#define HAVE_UNWIND_CONTEXT_STRUCT
-
-/*
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1
