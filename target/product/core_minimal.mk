@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
     DownloadProvider \
     HTMLViewer \
+    IntentFilterVerifier \
     MediaProvider \
     PackageInstaller \
     SettingsProvider \
