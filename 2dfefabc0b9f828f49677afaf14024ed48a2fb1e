@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e7a89aa_b7fae2ca",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-07T02:17:08Z",
+      "side": 1,
+      "message": "Hmm, this is really confusing, caused by the irregularity of mips32r6.  Andrew, can we create symlink directory mips32r6 pointing to mipsr6 to eliminate the irregularity?",
+      "revId": "2dfefabc0b9f828f49677afaf14024ed48a2fb1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
