@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ceb9edd9_b94e1f37",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-01-08T08:54:30Z",
+      "side": 1,
+      "message": "I want Ying to comment on whether or not we should allow $(shell) at all in our makefiles. If we do, you should cache this operation the first time (i.e. some_var\u003d$(shell expr ....)), rather than making the same shell call a few lines down.",
+      "revId": "8025a67bad7ca0ac547a90486972498c77ee1398",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
