@@ -16,6 +16,41 @@
       "revId": "8025a67bad7ca0ac547a90486972498c77ee1398",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee823118_ed4e0106",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-08T19:41:54Z",
+      "side": 1,
+      "message": "Yes, $(shell) is more expensive than makefile builtins.\nYou can define a list of supported API levels lower than 21 somewhere, and then use $(filter) here, something like:\nRENDERSCRIPT_32BIT_ONLY_API_LEVELS :\u003d 9 10 ... 20\nifeq ($(filter $(RENDERSCRIPT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)\n...",
+      "parentUuid": "ceb9edd9_b94e1f37",
+      "revId": "8025a67bad7ca0ac547a90486972498c77ee1398",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae7cb9f1_686cc376",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-08T19:41:54Z",
+      "side": 1,
+      "message": "If you store the path in a variable, you don\u0027t need to handle the conditional here.",
+      "revId": "8025a67bad7ca0ac547a90486972498c77ee1398",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
