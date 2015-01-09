@@ -63,11 +63,6 @@
 #define OS_PATH_SEPARATOR '/'
 
 /*
- * Define if <sys/socket.h> exists.
- */
-#define HAVE_SYS_SOCKET_H 1
-
-/*
  * Define if the strlcpy() function exists on the system.
  */
 #define HAVE_STRLCPY 1
