@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6eaba19e_5e231544",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-01-09T07:57:38Z",
+      "side": 1,
+      "message": "Can you make sure that the naming conventions between this and your other patch (for 64-bit support) are reasonably consistent? In other words, can you make sure we use RS_COMPAT vs. RENDERSCRIPT in the names for both places? It just will look awkward after both CLs go in if they are different.",
+      "revId": "27ea2415c17bce48d5b9efd6b89ebd6bbd9c5735",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
