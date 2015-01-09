@@ -77,11 +77,6 @@
 #define OS_PATH_SEPARATOR '/'
 
 /*
- * Define if prctl() exists
- */
-#define HAVE_PRCTL 1
-
-/*
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1

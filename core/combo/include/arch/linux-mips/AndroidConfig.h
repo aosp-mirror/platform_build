@@ -83,11 +83,6 @@
 #define HAVE_STRLCPY 1
 
 /*
- * Define if prctl() exists
- */
-#define HAVE_PRCTL 1
-
-/*
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1
