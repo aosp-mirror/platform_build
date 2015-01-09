@@ -471,7 +471,7 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -verbose \
     $(legacy_proguard_flags)
 # not supported with jack
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
     $(error $(LOCAL_MODULE): Build with jack of instrumentation when obfuscating is not yet supported)
 endif
 
@@ -506,7 +506,7 @@ $(full_classes_proguard_jar) : $(full_classes_jar)
 
 endif # LOCAL_PROGUARD_ENABLED defined
 
-ifneq ($(strip $(LOCAL_USE_JACK)),true)
+ifndef LOCAL_JACK_ENABLED
 # Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
 # will work even when intermediates != intermediates.COMMON.
 $(built_dex_intermediate): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
@@ -522,7 +522,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
-endif # !LOCAL_USE_JACK
+endif # LOCAL_JACK_ENABLED is disabled
 
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
@@ -562,9 +562,16 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 $(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
+ifeq ($(LOCAL_JACK_ENABLED),incremental)
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
+else
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_JACK_INCREMENTAL_DIR :=
+endif
 
 ifdef full_classes_jar
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_DEBUG_FLAGS := -g
@@ -607,10 +614,15 @@ $(full_classes_jack): $(built_dex_intermediate)
 # nothing to do it's built as a side effect of $(built_dex_intermediate)
 endif #LOCAL_IS_STATIC_JAVA_LIBRARY
 
-$(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/noshrob
+$(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
+ifeq ($(LOCAL_JACK_ENABLED),incremental)
+$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-noshrob-incremental
+else
+$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR :=
+endif
 $(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
 $(noshrob_classes_jack): $(jack_all_deps)
 	@echo Building with Jack: $@
 	$(java-to-jack)
 endif  # full_classes_jar is defined
-endif # LOCAL_USE_JACK
+endif # LOCAL_JACK_ENABLED

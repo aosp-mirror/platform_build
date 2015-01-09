@@ -57,6 +57,13 @@ $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
 LOCAL_MODULE_CLASS := APPS
 
+LOCAL_JACK_ENABLED := $(strip $(LOCAL_JACK_ENABLED))
+ifneq ($(LOCAL_JACK_ENABLED),full)
+ifneq ($(LOCAL_JACK_ENABLED),incremental)
+LOCAL_JACK_ENABLED :=
+endif
+endif
+
 # Package LOCAL_MODULE_TAGS default to optional
 LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
 ifeq ($(LOCAL_MODULE_TAGS),)
@@ -162,12 +169,12 @@ endif # need_compile_res
 endif # !custom
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 ifndef LOCAL_JACK_PROGUARD_FLAGS
     LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
 endif
 LOCAL_JACK_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_JACK_PROGUARD_FLAGS)
-endif # LOCAL_USE_JACK
+endif # LOCAL_JACK_ENABLED
 
 ifeq (true,$(EMMA_INSTRUMENT))
 ifndef LOCAL_EMMA_INSTRUMENT
@@ -278,7 +285,7 @@ endif
 # they want to use this module's R.java file.
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 ifneq ($(built_dex_intermediate),)
 $(built_dex_intermediate): $(R_file_stamp)
 endif
@@ -288,7 +295,7 @@ endif
 ifneq ($(full_classes_jack),)
 $(full_classes_jack): $(R_file_stamp)
 endif
-endif # LOCAL_USE_JACK
+endif # LOCAL_JACK_ENABLED
 
 ifneq ($(full_classes_jar),)
 # If full_classes_jar is non-empty, we're building sources.
@@ -406,7 +413,7 @@ endif
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 	$(create-empty-package)
 else
 	$(if $(PRIVATE_SOURCE_ARCHIVE),\
@@ -420,7 +427,7 @@ endif
 ifneq ($(full_classes_jar),)
 	$(add-dex-to-package)
 endif
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
 endif
 	$(sign-package)

@@ -69,13 +69,13 @@ $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(common_javalib.jar): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 	$(create-empty-package)
 else
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
 endif
 	$(add-dex-to-package)
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
 endif
 

@@ -35,7 +35,14 @@ include $(BUILD_SYSTEM)/host_java_library.mk
 $(full_classes_jack): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
 $(full_classes_jack): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jack): \
-	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
+ifeq ($(LOCAL_JACK_ENABLED),incremental)
+$(full_classes_jack): \
+	PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
+else
+$(full_classes_jack): \
+	PRIVATE_JACK_INCREMENTAL_DIR :=
+endif
 $(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
         $(jar_manifest_file) $(layers_file) $(LOCAL_MODULE_MAKEFILE) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \

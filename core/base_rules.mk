@@ -43,6 +43,13 @@ endif
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
 
+LOCAL_JACK_ENABLED := $(strip $(LOCAL_JACK_ENABLED))
+ifneq ($(LOCAL_JACK_ENABLED),full)
+ifneq ($(LOCAL_JACK_ENABLED),incremental)
+LOCAL_JACK_ENABLED :=
+endif
+endif
+
 ###########################################################
 ## Validate and define fallbacks for input LOCAL_* variables.
 ###########################################################
@@ -682,7 +689,7 @@ endif
 ###########################################################
 # JACK
 ###########################################################
-ifeq ($(LOCAL_USE_JACK),true)
+ifdef LOCAL_JACK_ENABLED
 ifdef need_compile_java
 
 full_static_jack_libs := \
@@ -757,7 +764,7 @@ endif  # need_compile_java
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_ALL_JACK_LIBRARIES:= $(full_jack_libs)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 
-endif # LOCAL_USE_JACK
+endif # LOCAL_JACK_ENABLED
 
 ###########################################################
 ## NOTICE files
