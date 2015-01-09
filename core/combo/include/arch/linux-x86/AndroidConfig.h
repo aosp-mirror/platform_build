@@ -77,11 +77,6 @@
 #define OS_PATH_SEPARATOR '/'
 
 /*
- * Define if <sys/socket.h> exists.
- */
-#define HAVE_SYS_SOCKET_H 1
-
-/*
  * Define if prctl() exists
  */
 #define HAVE_PRCTL 1
