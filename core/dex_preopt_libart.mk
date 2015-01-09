@@ -44,7 +44,7 @@ DEX2OAT_IMAGE_XMX := $(call get-product-default-property,dalvik.vm.image-dex2oat
 DEX2OAT_XMS := $(call get-product-default-property,dalvik.vm.dex2oat-Xms)
 DEX2OAT_XMX := $(call get-product-default-property,dalvik.vm.dex2oat-Xmx)
 
-ifeq ($(TARGET_ARCH),mips)
+ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),mips mips64))
 # MIPS specific overrides.
 # For MIPS the ART image is loaded at a lower address. This causes issues
 # with the image overlapping with memory on the host cross-compiling and
