@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aea119bc_69da9d7c",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-09T01:11:54Z",
+      "side": 1,
+      "message": "Let\u0027s move this definition to build/core/config.mk (or build/core/clang/config.mk).",
+      "revId": "5d0fc2243439807def1ad5b59895960408d384fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
