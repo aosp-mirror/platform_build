@@ -226,29 +226,6 @@ endif
 my_asflags += -D__ASSEMBLY__
 
 
-##########################################################
-## Set up installed module dependency
-## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
-## they may cusomize their install path with LOCAL_MODULE_PATH
-##########################################################
-# Get the list of INSTALLED libraries as module names.
-ifdef LOCAL_SDK_VERSION
-  installed_shared_library_module_names := \
-      $(my_shared_libraries)
-else
-  installed_shared_library_module_names := \
-      $(my_shared_libraries) $(my_system_shared_libraries)
-endif
-
-# The real dependency will be added after all Android.mks are loaded and the install paths
-# of the shared libraries are determined.
-ifdef LOCAL_INSTALLED_MODULE
-ifdef installed_shared_library_module_names
-$(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
-    $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(sort $(installed_shared_library_module_names)))
-endif
-endif
-
 ###########################################################
 ## Define PRIVATE_ variables from global vars
 ###########################################################
@@ -839,6 +816,31 @@ $(asm_objects_asm): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.asm \
 asm_objects += $(asm_objects_asm)
 endif
 endif
+
+
+##########################################################
+## Set up installed module dependency
+## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
+## they may cusomize their install path with LOCAL_MODULE_PATH
+##########################################################
+# Get the list of INSTALLED libraries as module names.
+ifdef LOCAL_SDK_VERSION
+  installed_shared_library_module_names := \
+      $(my_shared_libraries)
+else
+  installed_shared_library_module_names := \
+      $(my_shared_libraries) $(my_system_shared_libraries)
+endif
+
+# The real dependency will be added after all Android.mks are loaded and the install paths
+# of the shared libraries are determined.
+ifdef LOCAL_INSTALLED_MODULE
+ifdef installed_shared_library_module_names
+$(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
+    $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(sort $(installed_shared_library_module_names)))
+endif
+endif
+
 
 ####################################################
 ## Import includes
