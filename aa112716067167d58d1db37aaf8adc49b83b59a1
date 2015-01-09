@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ed17d3e_9e29a1b0",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2015-01-09T20:30:21Z",
+      "side": 0,
+      "message": "Is this a problem? Have you compiled the mingw sdk target to verify there aren\u0027t any problems?",
+      "range": {
+        "startLine": 106,
+        "startChar": 3,
+        "endLine": 107,
+        "endChar": 31
+      },
+      "revId": "aa112716067167d58d1db37aaf8adc49b83b59a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
