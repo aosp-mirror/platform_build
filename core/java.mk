@@ -213,8 +213,20 @@ $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIP
 
 ifneq ($(LOCAL_RENDERSCRIPT_COMPATIBILITY),)
 bc_files := $(patsubst %.fs,%.bc, $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources))))
+
+
+ifeq ($(filter $(RSCOMPAT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)
+ifeq ($(TARGET_IS_64_BIT),true)
+renderscript_intermediate.bc_folder := $(renderscript_intermediate.COMMON)/res/raw/bc64/
+else
+renderscript_intermediate.bc_folder := $(renderscript_intermediate.COMMON)/res/raw/bc32/
+endif
+else
+renderscript_intermediate.bc_folder := $(renderscript_intermediate.COMMON)/res/raw/
+endif
+
 rs_generated_bc := $(addprefix \
-    $(renderscript_intermediate.COMMON)/res/raw/, $(bc_files))
+    $(renderscript_intermediate.bc_folder), $(bc_files))
 
 renderscript_intermediate := $(intermediates)/renderscript
 
@@ -239,7 +251,7 @@ $(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
-    $(renderscript_intermediate.COMMON)/res/raw/%.bc
+    $(renderscript_intermediate.bc_folder)%.bc
 	$(transform-bc-to-so)
 
 endif
