@@ -103,16 +103,6 @@
 #define OS_PATH_SEPARATOR '\\'
 
 /*
- * Define if <sys/socket.h> exists.
- * Cygwin has it, but not MinGW.
- */
-#ifdef USE_MINGW
-/* #define HAVE_SYS_SOCKET_H */
-#else
-#define HAVE_SYS_SOCKET_H 1
-#endif
-
-/*
  * Define if <winsock2.h> exists.
  * Only MinGW has it.
  */
