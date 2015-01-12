@@ -58,11 +58,6 @@
 #define HAVE_ANDROID_OS 1
 
 /*
- * Define if libc includes Android system properties implementation.
- */
-#define HAVE_LIBC_SYSTEM_PROPERTIES 1
-
-/*
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '/'
