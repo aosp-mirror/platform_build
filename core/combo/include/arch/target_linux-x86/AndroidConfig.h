@@ -34,12 +34,6 @@
 #define HAVE_SYMLINKS 1
 
 /*
- * Define this if have clock_gettime() and friends
- *
- */
-#define HAVE_POSIX_CLOCKS
-
-/*
  * Define if we have <malloc.h> header
  */
 #define HAVE_MALLOC_H
