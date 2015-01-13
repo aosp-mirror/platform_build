@@ -61,12 +61,6 @@
 #define HAVE_MALLOC_H
 
 /*
- * Define if system provides a system property server (should be
- * mutually exclusive with HAVE_LIBC_SYSTEM_PROPERTIES).
- */
-#define HAVE_SYSTEM_PROPERTY_SERVER
-
-/*
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '/'
