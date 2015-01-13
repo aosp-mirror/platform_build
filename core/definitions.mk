@@ -1220,10 +1220,21 @@ define _extract-and-include-single-target-whole-static-lib
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
+    cp $(1) $$ldir; \
+    lib_to_include=$$ldir/$(notdir $(1)); \
     filelist=; \
+    subdir=0; \
     for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) t $(1)`; do \
-        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) p $(1) $$f > $$ldir/$$f; \
-        filelist="$$filelist $$ldir/$$f"; \
+        if [ -e $$ldir/$$f ]; then \
+            mkdir $$ldir/$$subdir; \
+            ext=$$subdir/; \
+            subdir=$$((subdir+1)); \
+            $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) m $$lib_to_include $$f; \
+        else \
+            ext=; \
+        fi; \
+        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
+        filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
         $(PRIVATE_ARFLAGS) $@ $$filelist
@@ -1265,10 +1276,21 @@ define _extract-and-include-single-host-whole-static-lib
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
+    cp $(1) $$ldir; \
+    lib_to_include=$$ldir/$(notdir $(1)); \
     filelist=; \
+    subdir=0; \
     for f in `$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) t $(1) | \grep '\.o$$'`; do \
-        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) p $(1) $$f > $$ldir/$$f; \
-        filelist="$$filelist $$ldir/$$f"; \
+        if [ -e $$ldir/$$f ]; then \
+           mkdir $$ldir/$$subdir; \
+           ext=$$subdir/; \
+           subdir=$$((subdir+1)); \
+           $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) m $$lib_to_include $$f; \
+        else \
+           ext=; \
+        fi; \
+        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
+        filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
         $(PRIVATE_ARFLAGS) $@ $$filelist
