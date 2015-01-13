@@ -28,8 +28,9 @@
 #  define  mkdir(path,mode)   _mkdir(path)
 #endif
 
-#ifndef HAVE_SYMLINKS
-#  define  lstat              stat
+#if defined(_WIN32)
+#  define S_ISLNK(s) 0
+#  define lstat stat
 #  ifndef EACCESS   /* seems to be missing from the Mingw headers */
 #    define  EACCESS            13
 #  endif
@@ -337,7 +338,6 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
 }
 
 
-#ifdef HAVE_SYMLINKS
 /*
  * Copy a symlink.  This only happens if we're in "no derefence" mode,
  * in which we copy the links rather than the files that are pointed at.
@@ -346,6 +346,9 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
  * we want to throw it out and replace it.  If it's not a symlink, we
  * need to trash it so we can create one.
  */
+#if defined(_WIN32)
+extern int copySymlink(const char* src, const char* dst, const struct stat* pSrcStat, unsigned int options) __attribute__((error("no symlinks on Windows")));
+#else
 static int copySymlink(const char* src, const char* dst, const struct stat* pSrcStat, unsigned int options)
 {
     struct stat dstStat;
@@ -420,7 +423,7 @@ static int copySymlink(const char* src, const char* dst, const struct stat* pSrc
 
     return 0;
 }
-#endif /* HAVE_SYMLINKS */
+#endif
 
 /*
  * Copy the contents of one directory to another.  Both "src" and "dst"
@@ -616,10 +619,8 @@ static int copyFileRecursive(const char* src, const char* dst, bool isCmdLine, u
         } else {
             retVal = copyDirectory(src, dst, &srcStat, options);
         }
-#ifdef HAVE_SYMLINKS
     } else if (S_ISLNK(srcStat.st_mode)) {
         retVal = copySymlink(src, dst, &srcStat, options);
-#endif		
     } else if (S_ISREG(srcStat.st_mode)) {
         retVal = copyRegular(src, dst, &srcStat, options);
     } else {

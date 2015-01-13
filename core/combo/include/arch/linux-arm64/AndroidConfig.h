@@ -42,12 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Define this if your platforms implements symbolic links
- * in its filesystems
- */
-#define HAVE_SYMLINKS
-
-/*
  * Define if we have <malloc.h> header
  */
 #define HAVE_MALLOC_H
