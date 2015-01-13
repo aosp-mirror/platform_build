@@ -42,12 +42,6 @@
 #define HAVE_PTHREADS
 
 /*
- * Define this if your platforms implements symbolic links
- * in its filesystems
- */
-#define HAVE_SYMLINKS
-
-/*
  * Add any extra platform-specific defines here.
  */
 #define _THREAD_SAFE
