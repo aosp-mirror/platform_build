@@ -1783,7 +1783,7 @@ $(if $(PRIVATE_EXTRA_JAR_ARGS),
 	$(hide) mkdir -p $@.res.tmp
 	$(hide) $(call create-empty-package-at,$@.res.tmp.zip)
 	$(hide) $(call add-java-resources-to,$@.res.tmp.zip)
-	$(hide) $(call unzip-jar-files,$@.res.tmp.zip,$@.res.tmp)
+	$(hide) unzip -qo $@.res.tmp.zip -d $@.res.tmp
 	$(hide) rm $@.res.tmp.zip)
 $(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
