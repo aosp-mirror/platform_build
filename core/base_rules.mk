@@ -409,7 +409,6 @@ endif # TARGET_
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
 
 # full_java_libs: The list of files that should be used as the classpath.
 #                 Using this list as a dependency list WILL NOT WORK.
@@ -682,7 +681,7 @@ endif
 ###########################################################
 # JACK
 ###########################################################
-ifeq ($(strip $(LOCAL_USE_JACK)),true)
+ifeq ($(LOCAL_USE_JACK),true)
 ifdef need_compile_java
 
 full_static_jack_libs := \
