@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     iptables \
     keystore \
     keystore.default \
+    ld.mc \
     libbcc \
     libOpenMAXAL \
     libOpenSLES \
