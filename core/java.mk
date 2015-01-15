@@ -512,7 +512,7 @@ $(full_classes_proguard_jar) : $(full_classes_jar)
 
 endif # LOCAL_PROGUARD_ENABLED defined
 
-
+ifneq ($(strip $(LOCAL_USE_JACK)),true)
 # Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
 # will work even when intermediates != intermediates.COMMON.
 $(built_dex_intermediate): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
@@ -528,6 +528,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
+endif # !LOCAL_USE_JACK
 
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
