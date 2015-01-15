@@ -264,6 +264,21 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT)">>$@
 endif
 
+# ----------------------------------------------------------------
+# boot.img build.prop
+# as with vendor build.prop above, for verifying that the bootimage
+# build is what we think it is
+
+INSTALLED_BOOTIMAGE_BUILD_PROP_TARGET := $(TARGET_ROOT_OUT)/build.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BOOTIMAGE_BUILD_PROP_TARGET)
+$(INSTALLED_BOOTIMAGE_BUILD_PROP_TARGET):
+	@echo Target bootimage buildinfo: $@
+	@mkdir -p $(dir $@)
+	$(hide) echo > $@
+	$(hide) echo ro.bootimage.build.date=`date`>>$@
+	$(hide) echo ro.bootimage.build.date.utc=`date +%s`>>$@
+	$(hide) echo ro.bootimage.build.fingerprint="$(BUILD_FINGERPRINT)">>$@
+
 # -----------------------------------------------------------------
 # sdk-build.prop
 #
