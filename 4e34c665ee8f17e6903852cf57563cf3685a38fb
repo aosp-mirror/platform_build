@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b971303_befb99ce",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-15T18:30:30Z",
+      "side": 1,
+      "message": "We can just remove the above part.\nThere is no ro.product.locale mentioned in product makefiles. You need just update the oem.prop in the internal source tree.",
+      "revId": "4e34c665ee8f17e6903852cf57563cf3685a38fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
