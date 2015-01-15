@@ -533,22 +533,12 @@ $(proto_generated_objects): $(proto_generated_obj_dir)/%.o: $(proto_generated_cc
 my_c_includes += external/protobuf/src $(proto_generated_cc_sources_dir)
 my_cflags += -DGOOGLE_PROTOBUF_NO_RTTI
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
-    ifneq ($(filter libprotobuf-cpp-2.3.0-full,$(my_static_libraries)),)
-        $(warning Stripping unneeded dependency on libprotobuf-cpp-2.3.0-full in $(LOCAL_MODULE))
-        my_static_libraries := $(filter-out libprotobuf-cpp-2.3.0-full,$(my_static_libraries))
-    endif
-
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-full
     else
         my_shared_libraries += libprotobuf-cpp-full
     endif
 else
-    ifneq ($(filter libprotobuf-cpp-2.3.0-lite,$(my_static_libraries)),)
-        $(warning Stripping unneeded dependency on libprotobuf-cpp-2.3.0-lite in $(LOCAL_MODULE))
-        my_static_libraries := $(filter-out libprotobuf-cpp-2.3.0-lite,$(my_static_libraries))
-    endif
-
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-lite
     else
