@@ -38,7 +38,7 @@ if:android.whichdoc != 'online' ?>http:<?cs
 if:android.whichdoc != 'online' ?>http:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
-<link href="<?cs var:toroot ?>assets/css/default.css?v=4" rel="stylesheet" type="text/css">
+<link href="<?cs var:toroot ?>assets/css/default.css?v=5" rel="stylesheet" type="text/css">
 
 <?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
 <!-- FULLSCREEN STYLESHEET -->
