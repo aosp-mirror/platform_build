@@ -112,6 +112,20 @@ def:engage_nav() ?>
     </script>
 <?cs /def ?><?cs
 
+def:analyze_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
 def:monetize_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -544,6 +558,8 @@ def:custom_left_nav() ?><?cs
       call:engage_nav() ?><?cs
     elif:monetize ?><?cs
       call:monetize_nav() ?><?cs
+    elif:analyze ?><?cs
+      call:analyze_nav() ?><?cs
     elif:disttools ?><?cs
       call:disttools_nav() ?><?cs
     elif:stories ?><?cs

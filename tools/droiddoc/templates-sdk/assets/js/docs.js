@@ -234,6 +234,8 @@ $(document).ready(function() {
       $("#nav-x li.engage a").addClass("selected");
     } else if (secondFrag == "monetize") {
       $("#nav-x li.monetize a").addClass("selected");
+    } else if (secondFrag == "analyze") {
+      $("#nav-x li.analyze a").addClass("selected");
     } else if (secondFrag == "tools") {
       $("#nav-x li.disttools a").addClass("selected");
     } else if (secondFrag == "stories") {
