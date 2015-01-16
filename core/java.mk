@@ -44,23 +44,11 @@ endif
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 ifneq ($(proto_sources),)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
-    ifneq ($(filter libprotobuf-java-2.3.0-micro,$(LOCAL_STATIC_JAVA_LIBRARIES)),)
-        $(warning Stripping unneeded dependency on libprotobuf-java-2.3.0-micro in $(LOCAL_MODULE))
-        LOCAL_STATIC_JAVA_LIBRARIES := $(filter-out libprotobuf-java-2.3.0-micro,$(LOCAL_STATIC_JAVA_LIBRARIES))
-    endif
     LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-micro
 else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
-    ifneq ($(filter libprotobuf-java-2.3.0-nano,$(LOCAL_STATIC_JAVA_LIBRARIES)),)
-        $(warning Stripping unneeded dependency on libprotobuf-java-2.3.0-nano in $(LOCAL_MODULE))
-        LOCAL_STATIC_JAVA_LIBRARIES := $(filter-out libprotobuf-java-2.3.0-nano,$(LOCAL_STATIC_JAVA_LIBRARIES))
-    endif
     LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-nano
   else
-    ifneq ($(filter libprotobuf-java-2.3.0-lite,$(LOCAL_STATIC_JAVA_LIBRARIES)),)
-        $(warning Stripping unneeded dependency on libprotobuf-java-2.3.0-lite in $(LOCAL_MODULE))
-        LOCAL_STATIC_JAVA_LIBRARIES := $(filter-out libprotobuf-java-2.3.0-lite,$(LOCAL_STATIC_JAVA_LIBRARIES))
-    endif
     LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-lite
   endif
 endif
