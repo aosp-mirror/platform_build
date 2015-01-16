@@ -4066,7 +4066,7 @@ EndColorStr='#ececec');
   height: 38px;
 }
 #header-wrapper #nav-x ul.nav-x li {
-  margin-right: 36px !important;
+  margin-right: 31px !important;
   margin-top: 5px;
   margin-bottom: 0px;
   height: 30px;
@@ -4424,7 +4424,7 @@ body.reference a[name] {
 }
 
 #header-wrap.quicknav {
-  height:196px;
+  height:216px;
 
 }
 
