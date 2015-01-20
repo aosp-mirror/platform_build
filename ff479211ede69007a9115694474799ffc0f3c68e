@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b1ab3b5_c6d2e2df",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-20T23:09:32Z",
+      "side": 1,
+      "message": "The dependency on the boot image has been set up in build/core/setup_one_odex.mk:\n$(my_built_odex) : $($(my_2nd_arch_prefix)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT) \\",
+      "revId": "ff479211ede69007a9115694474799ffc0f3c68e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
