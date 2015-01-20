@@ -44,11 +44,7 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(built_dex)
 
 # See comment in java.mk
-ifeq ($(strip $(LOCAL_USE_JACK)),true)
-java_alternative_checked_module := $(full_classes_jack)
-else
 java_alternative_checked_module := $(full_classes_compiled_jar)
-endif
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
