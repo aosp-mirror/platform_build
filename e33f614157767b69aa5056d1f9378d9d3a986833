@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b6c7315_597c07db",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-01-20T17:50:50Z",
+      "side": 1,
+      "message": "This isn\u0027t really necessary, is it? Most modules in the tree are built with either gcc _or_ clang, not both. Those few that are can handle that condition themselves.",
+      "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
