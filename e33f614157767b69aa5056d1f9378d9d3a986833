@@ -16,6 +16,24 @@
       "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b6c7315_1c5a7d45",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-01-20T18:03:14Z",
+      "side": 1,
+      "message": "I felt it was better to make something global, instead of remembering it locally all the time.\n\nYour strategy becomes \"complicated\" when you compile for both host and target. Example: fdlibm.",
+      "parentUuid": "6b6c7315_597c07db",
+      "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
