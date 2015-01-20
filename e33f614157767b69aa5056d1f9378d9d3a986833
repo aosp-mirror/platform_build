@@ -34,6 +34,41 @@
       "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb5d5f61_ffcfb768",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-20T18:43:09Z",
+      "side": 1,
+      "message": "You don\u0027t need this: we\u0027ll call the filtering function on line 989.",
+      "parentUuid": "6b6c7315_1c5a7d45",
+      "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6bf1d3a1_91ae5ea2",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-20T18:43:09Z",
+      "side": 1,
+      "message": "We\u0027ll filter the unknown flags here.",
+      "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
