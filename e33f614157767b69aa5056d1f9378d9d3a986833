@@ -69,6 +69,24 @@
       "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6bf1d3a1_31d20a18",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-01-20T18:46:29Z",
+      "side": 1,
+      "message": "Yeah, you\u0027re right. The reason it wasn\u0027t working before was the quotes they used, and I never tried again after fixing that.",
+      "parentUuid": "6bf1d3a1_91ae5ea2",
+      "revId": "e33f614157767b69aa5056d1f9378d9d3a986833",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
