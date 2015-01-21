@@ -262,17 +262,14 @@ LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
 LOCAL_RESOURCE_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript/res $(LOCAL_RESOURCE_DIR)
 endif
 
-java_alternative_checked_module :=
-ifdef full_classes_jar
-ifneq ($(strip $(LOCAL_USE_JACK)),true)
 # All of the rules after full_classes_compiled_jar are very unlikely
 # to fail except for bugs in their respective tools.  If you would
 # like to run these rules, add the "all" modifier goal to the make
 # command line.
+ifdef full_classes_jar
 java_alternative_checked_module := $(full_classes_compiled_jar)
 else
-java_alternative_checked_module := $(full_classes_jack)
-endif # !LOCAL_USE_JACK
+java_alternative_checked_module :=
 endif
 
 # TODO: It looks like the only thing we need from base_rules is
