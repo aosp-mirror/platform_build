@@ -101,18 +101,21 @@ $(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
-ifneq ($(LOCAL_USE_JACK),true)
+ifneq ($(strip $(LOCAL_USE_JACK)),true)
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(built_dex): $(full_classes_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
-$(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
-	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
+	$(create-empty-package)
 	$(add-dex-to-package)
+	$(add-carried-java-resources)
+ifneq ($(extra_jar_args),)
+	$(add-java-resources-to-package)
+endif
 
 else # LOCAL_USE_JACK
 $(LOCAL_INTERMEDIATE_TARGETS): \
@@ -135,6 +138,9 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	$(create-empty-package)
 	$(add-dex-to-package)
 	$(add-carried-jack-resources)
+ifneq ($(extra_jar_args),)
+	$(add-java-resources-to-package)
+endif
 
 endif # LOCAL_USE_JACK
 

@@ -1702,7 +1702,6 @@ $(if $(PRIVATE_JAR_MANIFEST), \
         jar -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
     $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
-$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
 define transform-java-to-classes.jar
@@ -1734,12 +1733,6 @@ $(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
     $(hide) echo -basedirectory $(CURDIR) > $@.flags; \
     echo $(PRIVATE_JACK_PROGUARD_FLAGS) >> $@.flags; \
 )
-$(if $(PRIVATE_EXTRA_JAR_ARGS),
-    $(hide) mkdir -p $@.res.tmp
-    $(hide) $(call create-empty-package-at,$@.res.tmp.zip)
-    $(hide) $(call add-java-resources-to,$@.res.tmp.zip)
-    $(hide) $(call unzip-jar-files,$@.res.tmp.zip,$@.res.tmp)
-    $(hide) rm $@.res.tmp.zip)
 $(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
 else \
@@ -1753,7 +1746,6 @@ $(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
-    $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
     --output-jack $(PRIVATE_CLASSES_JACK) \
@@ -1765,7 +1757,6 @@ $(call call-jack,$(PRIVATE_JACK_VM),$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA
     || ( rm -rf $(PRIVATE_CLASSES_JACK); rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR); exit 41 )
 $(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/classes*.dex $(dir $@)
 $(hide) rm -f $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list
-$(if $(PRIVATE_EXTRA_JAR_ARGS),$(hide) rm -rf $@.res.tmp)
 $(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq $(PRIVATE_JACK_INTERMEDIATES_DIR).java-source-list
 $(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
@@ -1899,7 +1890,6 @@ $(if $(PRIVATE_JAR_MANIFEST), \
         jar -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
     $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
-$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 $(hide) mv $(PRIVATE_CLASS_INTERMEDIATES_DIR)/newstamp $(PRIVATE_CLASS_INTERMEDIATES_DIR)/stamp
 endef
 
@@ -1953,15 +1943,6 @@ endef
 # so we need to give it something.
 define create-empty-package
 $(call create-empty-package-at,$@)
-endef
-
-# Copy an arhchive file and delete any class files and empty folders inside.
-# $(1): the source archive file.
-# $(2): the destination archive file.
-define initialize-package-file
-@mkdir -p $(dir $(2))
-$(hide) cp -f $(1) $(2)
-$(hide) zip -qd $(2) "*.class" && zip -qd $(2) "*/"
 endef
 
 #TODO: we kinda want to build different asset packages for
@@ -2023,6 +2004,25 @@ $(hide) jar uf $(1) @$(1).jar-arg-list
 @rm -f $(1).jar-arg-list
 endef
 
+# Add java resources added by the current module.
+#
+define add-java-resources-to-package
+$(call add-java-resources-to,$@)
+endef
+
+# Add java resources carried by static Java libraries.
+#
+define add-carried-java-resources
+$(hide) if [ -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) ] ; then \
+    java_res_jar_flags=$$(find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -type f -a -not -name "*.class" \
+        | sed -e "s?^$(PRIVATE_CLASS_INTERMEDIATES_DIR)/? -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ?"); \
+    if [ -n "$$java_res_jar_flags" ] ; then \
+        echo $$java_res_jar_flags >$(dir $@)java_res_jar_flags; \
+        jar uf $@ $$java_res_jar_flags; \
+    fi; \
+fi
+endef
+
 # Add resources carried by static Jack libraries.
 #
 define add-carried-jack-resources
@@ -2035,6 +2035,7 @@ define add-carried-jack-resources
     fi; \
 fi
 endef
+
 
 # Sign a package using the specified key/cert.
 #
@@ -2077,6 +2078,7 @@ endef
 define transform-host-java-to-package
 @echo "host Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
 $(call compile-java,$(HOST_JAVAC),$(PRIVATE_BOOTCLASSPATH))
+$(if $(PRIVATE_EXTRA_JAR_ARGS), $(call add-java-resources-to-package))
 endef
 
 ###########################################################

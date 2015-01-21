@@ -474,7 +474,7 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -verbose \
     $(legacy_proguard_flags)
 # not supported with jack
-ifeq ($(LOCAL_USE_JACK),true)
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
     $(error $(LOCAL_MODULE): Build with jack of instrumentation when obfuscating is not yet supported)
 endif
 
@@ -565,7 +565,7 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-ifeq ($(LOCAL_USE_JACK),true)
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack
 

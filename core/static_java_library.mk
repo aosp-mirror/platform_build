@@ -59,7 +59,7 @@ endif
 
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
-ifeq ($(LOCAL_USE_JACK),true)
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
 ifndef LOCAL_JACK_PROGUARD_FLAGS
     LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
 endif
@@ -123,7 +123,7 @@ $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
-ifeq ($(LOCAL_USE_JACK),true)
+ifeq ($(strip $(LOCAL_USE_JACK)),true)
 $(noshrob_classes_jack): $(R_file_stamp)
 $(full_classes_jack): $(R_file_stamp)
 endif # LOCAL_USE_JACK
