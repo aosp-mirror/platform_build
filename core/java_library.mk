@@ -58,9 +58,6 @@ $(common_javalib.jar) : $(full_classes_jar)
 endif
 	@echo "target Static Jar: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
-ifneq ($(extra_jar_args),)
-	$(add-java-resources-to-package)
-endif
 
 $(LOCAL_BUILT_MODULE): $(common_javalib.jar)
 	$(copy-file-to-target)
@@ -68,14 +65,11 @@ $(LOCAL_BUILT_MODULE): $(common_javalib.jar)
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(common_javalib.jar): PRIVATE_DEX_FILE := $(built_dex)
+$(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
-	$(create-empty-package)
+	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
 	$(add-dex-to-package)
-	$(add-carried-java-resources)
-ifneq ($(extra_jar_args),)
-	$(add-java-resources-to-package)
-endif
 
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar

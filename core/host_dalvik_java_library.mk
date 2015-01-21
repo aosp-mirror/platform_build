@@ -101,13 +101,10 @@ $(built_dex): $(full_classes_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
+$(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
-	$(create-empty-package)
+	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
 	$(add-dex-to-package)
-	$(add-carried-java-resources)
-ifneq ($(extra_jar_args),)
-	$(add-java-resources-to-package)
-endif
 
 USE_CORE_LIB_BOOTCLASSPATH :=

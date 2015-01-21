@@ -324,7 +324,12 @@ endif # LOCAL_NO_STANDARD_LIBRARIES
 
 ifneq ($(full_classes_jar),)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
+# Use the jarjar processed arhive as the initial package file.
+$(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(LOCAL_BUILT_MODULE): $(built_dex)
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE :=
+$(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE :=
 endif # full_classes_jar
 
 include $(BUILD_SYSTEM)/install_jni_libs.mk
@@ -385,17 +390,15 @@ endif
 endif
 $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-	$(create-empty-package)
+	$(if $(PRIVATE_SOURCE_ARCHIVE),\
+	  $(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@),\
+	  $(create-empty-package))
 	$(add-assets-to-package)
 ifneq ($(jni_shared_libraries),)
 	$(add-jni-shared-libs-to-package)
 endif
 ifneq ($(full_classes_jar),)
 	$(add-dex-to-package)
-endif
-	$(add-carried-java-resources)
-ifneq ($(extra_jar_args),)
-	$(add-java-resources-to-package)
 endif
 	$(sign-package)
 ifdef LOCAL_DEX_PREOPT

@@ -1663,6 +1663,7 @@ $(if $(PRIVATE_JAR_MANIFEST), \
         jar -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
     $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
+$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
 define transform-java-to-classes.jar
@@ -1723,6 +1724,7 @@ $(if $(PRIVATE_JAR_MANIFEST), \
         jar -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
     $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
+$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 $(hide) mv $(PRIVATE_CLASS_INTERMEDIATES_DIR)/newstamp $(PRIVATE_CLASS_INTERMEDIATES_DIR)/stamp
 endef
 
@@ -1768,6 +1770,15 @@ $(hide) touch $(dir $@)dummy
 $(hide) (cd $(dir $@) && jar cf $(notdir $@) dummy)
 $(hide) zip -qd $@ dummy
 $(hide) rm $(dir $@)dummy
+endef
+
+# Copy an arhchive file and delete any class files and empty folders inside.
+# $(1): the source archive file.
+# $(2): the destination archive file.
+define initialize-package-file
+@mkdir -p $(dir $(2))
+$(hide) cp -f $(1) $(2)
+$(hide) zip -qd $(2) "*.class" "*/" || true # Ignore the error when nothing to delete.
 endef
 
 #TODO: we kinda want to build different asset packages for
@@ -1821,24 +1832,12 @@ $(hide) zip -qj $@ $(dir $(PRIVATE_DEX_FILE))classes*.dex
 endef
 
 # Add java resources added by the current module.
+# $(1) destination package
 #
-define add-java-resources-to-package
-$(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(dir $@)jar-arg-list)
-$(hide) jar uf $@ @$(dir $@)jar-arg-list
-@rm -f $(dir $@)jar-arg-list
-endef
-
-# Add java resources carried by static Java libraries.
-#
-define add-carried-java-resources
-$(hide) if [ -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) ] ; then \
-    java_res_jar_flags=$$(find $(PRIVATE_CLASS_INTERMEDIATES_DIR) -type f -a -not -name "*.class" \
-        | sed -e "s?^$(PRIVATE_CLASS_INTERMEDIATES_DIR)/? -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ?"); \
-    if [ -n "$$java_res_jar_flags" ] ; then \
-        echo $$java_res_jar_flags >$(dir $@)java_res_jar_flags; \
-        jar uf $@ $$java_res_jar_flags; \
-    fi; \
-fi
+define add-java-resources-to
+$(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(1).jar-arg-list)
+$(hide) jar uf $(1) @$(1).jar-arg-list
+@rm -f $(1).jar-arg-list
 endef
 
 # Sign a package using the specified key/cert.
@@ -1882,7 +1881,6 @@ endef
 define transform-host-java-to-package
 @echo "host Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
 $(call compile-java,$(HOST_JAVAC),$(PRIVATE_BOOTCLASSPATH))
-$(if $(PRIVATE_EXTRA_JAR_ARGS), $(call add-java-resources-to-package))
 endef
 
 ###########################################################
