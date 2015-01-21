@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb02bf41_f4ab5610",
+        "filename": "target/product/generic_no_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1002563
+      },
+      "writtenOn": "2015-01-21T04:22:37Z",
+      "side": 1,
+      "message": "local_time.default is defined here",
+      "revId": "567ea28838678f1cea789538dbf79cd94db1f2d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
