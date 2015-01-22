@@ -7,7 +7,7 @@ To make these errors go away, you have two choices:
       errors above.
 
    2) You can update current.txt by executing the following command:
-         make %UPDATE_API%
+         make update-api
 
       To submit the revised current.txt to the main Android repository,
       you will need approval.
