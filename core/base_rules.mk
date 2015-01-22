@@ -420,7 +420,8 @@ ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE)) \
+    $(full_shared_java_libs)
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 
