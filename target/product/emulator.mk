@@ -44,7 +44,8 @@ PRODUCT_PACKAGES += \
     e2fsck \
     audio.primary.goldfish \
     vibrator.goldfish \
-    power.goldfish
+    power.goldfish \
+    sensors.ranchu
 
 
 PRODUCT_COPY_FILES += \
