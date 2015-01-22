@@ -329,6 +329,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 # instead.
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# On to MNC
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
