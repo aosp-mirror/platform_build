@@ -1129,11 +1129,18 @@ function gdbclient() {
     if [ -z "$PID" ]; then
       echo "Error: couldn't resolve pid by process name: $PROCESS_NAME"
       return -4
+    else
+      echo "Resolved pid for $PROCESS_NAME is $PID"
     fi
   fi
 
   local EXE=`adb shell readlink /proc/$PID/exe | sed s/.$//`
-  # TODO: print error in case there is no such pid
+
+  if [ -z "$EXE" ]; then
+    echo "Error: no such pid=$PID - is process still alive?"
+    return -4
+  fi
+
   local LOCAL_EXE_PATH=$SYMBOLS_DIR$EXE
 
   if [ ! -f $LOCAL_EXE_PATH ]; then
