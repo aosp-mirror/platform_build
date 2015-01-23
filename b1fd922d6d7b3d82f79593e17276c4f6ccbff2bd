@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2b7fdb22_4fc6f15a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1429,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-01-23T21:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b732f24_b9db67a4",
+      "range": {
+        "startLine": 1429,
+        "startChar": 31,
+        "endLine": 1429,
+        "endChar": 39
+      },
+      "revId": "b1fd922d6d7b3d82f79593e17276c4f6ccbff2bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b70bb17_ebb18251",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "4b724f59_0dd6b1d5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1430,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-01-23T21:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b70bb17_ebb18251",
+      "range": {
+        "startLine": 1430,
+        "startChar": 68,
+        "endLine": 1430,
+        "endChar": 77
+      },
+      "revId": "b1fd922d6d7b3d82f79593e17276c4f6ccbff2bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b732f24_399937e1",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2015-01-23T04:23:06Z",
       "side": 1,
       "message": "If we want to go this way, I think it\u0027s better to use:\n$(filter $(PRIVATE_LDFLAGS),-shared)\nthan $(findstring).",
+      "range": {
+        "startLine": 1437,
+        "startChar": 6,
+        "endLine": 1437,
+        "endChar": 48
+      },
+      "revId": "b1fd922d6d7b3d82f79593e17276c4f6ccbff2bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b75533d_ee379f80",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1437,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-01-23T21:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b732f24_399937e1",
       "range": {
         "startLine": 1437,
         "startChar": 6,
