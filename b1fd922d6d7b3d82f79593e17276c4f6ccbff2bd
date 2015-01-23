@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b732f24_b9db67a4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1429,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-23T04:23:06Z",
+      "side": 1,
+      "message": "-dynamic or -shared?",
+      "range": {
+        "startLine": 1429,
+        "startChar": 31,
+        "endLine": 1429,
+        "endChar": 39
+      },
+      "revId": "b1fd922d6d7b3d82f79593e17276c4f6ccbff2bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b70bb17_ebb18251",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1430,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-23T04:23:06Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 1430,
+        "startChar": 68,
+        "endLine": 1430,
+        "endChar": 77
+      },
+      "revId": "b1fd922d6d7b3d82f79593e17276c4f6ccbff2bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b732f24_399937e1",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1437,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-23T04:23:06Z",
+      "side": 1,
+      "message": "If we want to go this way, I think it\u0027s better to use:\n$(filter $(PRIVATE_LDFLAGS),-shared)\nthan $(findstring).",
+      "range": {
+        "startLine": 1437,
+        "startChar": 6,
+        "endLine": 1437,
+        "endChar": 48
+      },
+      "revId": "b1fd922d6d7b3d82f79593e17276c4f6ccbff2bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
