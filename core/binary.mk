@@ -258,33 +258,6 @@ my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAG
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
 endif # my_clang
 
-# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
-# build with NATIVE_COVERAGE=true in your enviornment. Note that the build
-# system is not sensitive to changes to NATIVE_COVERAGE, so you should do a
-# clean build of your module after toggling it.
-ifeq ($(NATIVE_COVERAGE),true)
-    ifeq ($(my_native_coverage),true)
-        # We can't currently generate coverage for clang binaries for two
-        # reasons:
-        #
-        # 1) b/17574078 We currently don't have a prebuilt
-        #    libclang_rt.profile-<ARCH>.a, which clang is hardcoded to link if
-        #    --coverage is passed in the link stage. For now we manually link
-        #    libprofile_rt (which is the name it is built as from
-        #    external/compiler-rt).
-        #
-        # 2) b/17583330 Clang doesn't generate .gcno files when using
-        #    -no-integrated-as. Since most of the assembly in our tree is
-        #    incompatible with clang's assembler, we can't turn off this flag.
-        ifneq ($(my_clang),true)
-            my_cflags += --coverage -O0
-            my_ldflags += --coverage
-        endif
-    endif
-else
-    my_native_coverage := false
-endif
-
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_PROJECT_INCLUDES := $(my_target_project_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_C_INCLUDES := $(my_target_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
@@ -314,6 +287,33 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CONLYFLAGS := $(my_host_globa
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CPPFLAGS := $(my_host_global_cppflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_LDFLAGS := $(my_host_global_ldflags)
 endif # LOCAL_IS_HOST_MODULE
+
+# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
+# build with NATIVE_COVERAGE=true in your enviornment. Note that the build
+# system is not sensitive to changes to NATIVE_COVERAGE, so you should do a
+# clean build of your module after toggling it.
+ifeq ($(NATIVE_COVERAGE),true)
+    ifeq ($(my_native_coverage),true)
+        # We can't currently generate coverage for clang binaries for two
+        # reasons:
+        #
+        # 1) b/17574078 We currently don't have a prebuilt
+        #    libclang_rt.profile-<ARCH>.a, which clang is hardcoded to link if
+        #    --coverage is passed in the link stage. For now we manually link
+        #    libprofile_rt (which is the name it is built as from
+        #    external/compiler-rt).
+        #
+        # 2) b/17583330 Clang doesn't generate .gcno files when using
+        #    -no-integrated-as. Since most of the assembly in our tree is
+        #    incompatible with clang's assembler, we can't turn off this flag.
+        ifneq ($(my_clang),true)
+            my_cflags += --coverage -O0
+            my_ldflags += --coverage
+        endif
+    endif
+else
+    my_native_coverage := false
+endif
 
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types
