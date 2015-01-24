@@ -1464,11 +1464,16 @@ endef
 ## Commands for linking a static executable. In practice,
 ## we only use this on arm, so the other platforms don't
 ## have transform-o-to-static-executable defined.
+## Clang driver needs -static to create static executable.
+## However, bionic/linker uses -shared to overwrite.
+## Linker for x86 targets does not allow coexistance of -static and -shared,
+## so we add -static only if -shared is not used.
 ###########################################################
 
 define transform-o-to-static-executable-inner
 $(hide) $(PRIVATE_CXX) \
 	-nostdlib -Bstatic \
+	$(if $(filter $(PRIVATE_LDFLAGS),-shared),,-static) \
 	-Wl,--gc-sections \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
