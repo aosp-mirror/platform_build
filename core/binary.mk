@@ -287,20 +287,22 @@ endif # LOCAL_IS_HOST_MODULE
 # clean build of your module after toggling it.
 ifeq ($(NATIVE_COVERAGE),true)
     ifeq ($(my_native_coverage),true)
-        # We can't currently generate coverage for clang binaries for two
-        # reasons:
-        #
-        # 1) b/17574078 We currently don't have a prebuilt
-        #    libclang_rt.profile-<ARCH>.a, which clang is hardcoded to link if
-        #    --coverage is passed in the link stage. For now we manually link
-        #    libprofile_rt (which is the name it is built as from
-        #    external/compiler-rt).
-        #
-        # 2) b/17583330 Clang doesn't generate .gcno files when using
-        #    -no-integrated-as. Since most of the assembly in our tree is
-        #    incompatible with clang's assembler, we can't turn off this flag.
-        ifneq ($(my_clang),true)
-            my_cflags += --coverage -O0
+        my_cflags += --coverage -O0
+        ifeq ($(my_clang),true)
+            # b/17574078
+            # We currently don't have a prebuilt libclang_rt.profile-<ARCH>.a,
+            # which clang is hardcoded to link if --coverage is passed in the
+            # link stage.  For now we manually link libprofile_rt (which is the
+            # name it is built as from external/compiler-rt).
+            #
+            # Note that clang coverage doesn't play nicely with acov out of the
+            # box. Clang apparently generates .gcno files that aren't compatible
+            # with gcov-4.8.  This can be solved by installing gcc-4.6 and
+            # invoking lcov with `--gcov-tool /usr/bin/gcov-4.6`.
+            #
+            # http://stackoverflow.com/questions/17758126/clang-code-coverage-invalid-output
+            my_static_libraries += libprofile_rt
+        else
             my_ldflags += --coverage
         endif
     endif
