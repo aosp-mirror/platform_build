@@ -46,6 +46,30 @@
       "revId": "4809f9c4b288bc4c35433fde6a594595373de502",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab2cab7b_5121e639",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-26T23:38:37Z",
+      "side": 1,
+      "message": "+Runtime and framework folks.\nI am not sure if it\u0027s good idea to allow partially zipalign\u0027ed prebult apks in the system.img.\nOtherwise I have no problem with the CL.",
+      "parentUuid": "abd02b89_ee22db92",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 13,
+        "endChar": 4
+      },
+      "revId": "4809f9c4b288bc4c35433fde6a594595373de502",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
