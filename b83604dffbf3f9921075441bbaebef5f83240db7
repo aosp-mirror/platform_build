@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "8b58c71b_d21242c5",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-26T19:30:53Z",
+      "side": 1,
+      "message": "Use $(LLVM_PREBUILTS_VERSION)?",
+      "range": {
+        "startLine": 11,
+        "startChar": 55,
+        "endLine": 11,
+        "endChar": 58
+      },
+      "revId": "b83604dffbf3f9921075441bbaebef5f83240db7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b75ef75_550e2ca7",
         "filename": "core/combo/TARGET_linux-arm.mk",
         "patchSetId": 1
