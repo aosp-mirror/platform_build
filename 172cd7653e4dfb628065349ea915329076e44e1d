@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b78f36f_d6b7a477",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-01-26T00:37:36Z",
+      "side": 0,
+      "message": "Can\u0027t think of why this was so far down the link line... This only needs to resolve symbols in object files and static libraries, as shared libraries will already have those symbols linked.",
+      "revId": "172cd7653e4dfb628065349ea915329076e44e1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

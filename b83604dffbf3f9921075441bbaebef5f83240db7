@@ -16,6 +16,23 @@
       "revId": "b83604dffbf3f9921075441bbaebef5f83240db7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b75ef75_f51738b2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1344,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-01-26T00:37:36Z",
+      "side": 1,
+      "message": "We can\u0027t just let the driver deal with this for us because using -nodefaultlibs (so we link bionic) links the libraries in the wrong order. The driver places -lclang_rt.profile... after libc, so profile_rt can\u0027t resolve symbols from libc.",
+      "revId": "b83604dffbf3f9921075441bbaebef5f83240db7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
