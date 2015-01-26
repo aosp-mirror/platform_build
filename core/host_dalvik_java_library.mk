@@ -20,6 +20,7 @@
 # They will be compiled against libcore and not the host JRE.
 #
 
+ifeq ($(HOST_OS),linux)
 USE_CORE_LIB_BOOTCLASSPATH := true
 
 #######################################
@@ -135,3 +136,5 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 endif # LOCAL_USE_JACK
 
 USE_CORE_LIB_BOOTCLASSPATH :=
+
+endif
