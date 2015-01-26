@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b75ef75_550e2ca7",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-01-26T00:27:55Z",
+      "side": 1,
+      "message": "Has clang grown something similar to -print-file-name yet? I remember there was talk of it on the list a while back for printing the locations for the sanitizer libs, but don\u0027t know if that was ever resolved.",
+      "revId": "b83604dffbf3f9921075441bbaebef5f83240db7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
