@@ -19,6 +19,7 @@
 # These libraries will be compiled against libcore and not the host
 # JRE.
 #
+ifeq ($(HOST_OS),linux)
 
 USE_CORE_LIB_BOOTCLASSPATH := true
 LOCAL_JAVA_LIBRARIES += core-libart-hostdex
@@ -26,3 +27,5 @@ LOCAL_JAVA_LIBRARIES += core-libart-hostdex
 include $(BUILD_SYSTEM)/host_java_library.mk
 
 USE_CORE_LIB_BOOTCLASSPATH :=
+
+endif
