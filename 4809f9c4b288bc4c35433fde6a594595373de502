@@ -22,6 +22,30 @@
       "revId": "4809f9c4b288bc4c35433fde6a594595373de502",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "abd02b89_ee22db92",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1065171
+      },
+      "writtenOn": "2015-01-26T22:44:27Z",
+      "side": 1,
+      "message": "Yes. But SW like DexGuard allows you to zipalign some items and skip others. So assume this scenario: a user creates an apk with DexGuard and chooses to zipalign only jpeg images but not pngs (for whatever reason). Then Dexguard will create the signature based on that alignment, however, Android will zipalign ALL the content that can be zipaligned within the apk while integrating the apk into the build; thus the signature will get broken due to the zipalignment will change.",
+      "parentUuid": "2b20bb81_c448beb0",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 13,
+        "endChar": 4
+      },
+      "revId": "4809f9c4b288bc4c35433fde6a594595373de502",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
