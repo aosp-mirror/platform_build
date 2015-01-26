@@ -62,3 +62,5 @@ CLANG_TARGET_GLOBAL_LDFLAGS := \
 RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS :=
 RS_COMPAT_TRIPLE := aarch64-linux-android
+
+TARGET_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-aarch64-android.a
