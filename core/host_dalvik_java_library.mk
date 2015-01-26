@@ -128,7 +128,7 @@ $(full_classes_jack): $(built_dex)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
-	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
+	$(create-empty-package)
 	$(add-dex-to-package)
 	$(add-carried-jack-resources)
 
