@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b20bb81_c448beb0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-01-26T22:04:40Z",
+      "side": 1,
+      "message": "Re-zipalign a zipalign\u0027ed apk should be a noop. I just did a test and it behaved as a noop.",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 13,
+        "endChar": 4
+      },
+      "revId": "4809f9c4b288bc4c35433fde6a594595373de502",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
