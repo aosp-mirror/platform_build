@@ -33,15 +33,6 @@
  */
 
 /*
- * Threading model.  Choose one:
- *
- * HAVE_PTHREADS - use the pthreads library.
- * HAVE_WIN32_THREADS - use Win32 thread primitives.
- *  -- combine HAVE_CREATETHREAD, HAVE_CREATEMUTEX, and HAVE__BEGINTHREADEX
- */
-#define HAVE_PTHREADS
-
-/*
  * We need to choose between 32-bit and 64-bit off_t.  All of our code should
  * agree on the same size.  For desktop systems, use 64-bit values,
  * because some of our libraries (e.g. wxWidgets) expect to be built that way.
