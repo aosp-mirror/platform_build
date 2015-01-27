@@ -33,15 +33,6 @@
  */
 
 /*
- * Threading model.  Choose one:
- *
- * HAVE_PTHREADS - use the pthreads library.
- * HAVE_WIN32_THREADS - use Win32 thread primitives.
- *  -- combine HAVE_CREATETHREAD, HAVE_CREATEMUTEX, and HAVE__BEGINTHREADEX
- */
-#define HAVE_PTHREADS
-
-/*
  * Add any extra platform-specific defines here.
  */
 #define _THREAD_SAFE

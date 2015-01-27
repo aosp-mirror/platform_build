@@ -33,15 +33,6 @@
  */
 
 /*
- * Threading model.  Choose one:
- *
- * HAVE_PTHREADS - use the pthreads library.
- * HAVE_WIN32_THREADS - use Win32 thread primitives.
- *  -- combine HAVE_CREATETHREAD, HAVE_CREATEMUTEX, and HAVE__BEGINTHREADEX
- */
-#define HAVE_PTHREADS
-
-/*
  * Define this if you build against MSVCRT.DLL
  */
 /* #define HAVE_MS_C_RUNTIME */
