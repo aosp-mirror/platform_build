@@ -1719,7 +1719,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 MAIN_SDK_NAME := $(sdk_name)
 MAIN_SDK_DIR  := $(sdk_dir)
 MAIN_SDK_ZIP  := $(INTERNAL_SDK_TARGET)
-ifneq ($(filter win_sdk,$(MAKECMDGOALS)),)
+ifneq ($(filter win_sdk winsdk-tools,$(MAKECMDGOALS)),)
 include $(TOPDIR)development/build/tools/windows_sdk.mk
 endif
 
