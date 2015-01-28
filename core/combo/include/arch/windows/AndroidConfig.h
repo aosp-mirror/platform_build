@@ -55,14 +55,6 @@
 #  endif
 #endif
 
-/*
- * Threading model.  Choose one:
- *
- * HAVE_PTHREADS - use the pthreads library.
- * HAVE_WIN32_THREADS - use Win32 thread primitives.
- */
-#define HAVE_WIN32_THREADS
-
 /* TODO: replace references to this. */
 #define HAVE_WIN32_IPC
 
