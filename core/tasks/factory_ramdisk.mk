@@ -44,7 +44,7 @@ $(if $(filter 1,$(words $(_iofrm_src))), \
     $(eval _fulldest := $(TARGET_FACTORY_RAMDISK_OUT)/$(1)) \
     $(eval $(call copy-one-file,$(_iofrm_src),$(_fulldest))) \
     $(eval INTERNAL_FACTORY_RAMDISK_EXTRA_MODULES_FILES += $(_fulldest)), \
-    $(error Error: Cannot find match in "$(2)" for "$(1)") \
+    $(warning Warning: Cannot find built file in "$(2)" for "$(1)") \
     )
 endef
 

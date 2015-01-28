@@ -46,7 +46,7 @@ copied_files := \
     $(eval _fb_m_name := $(word 1,$(_fb_m_tuple))) \
     $(eval _fb_dests := $(wordlist 2,999,$(_fb_m_tuple))) \
     $(eval _fb_m_built := $(filter $(HOST_OUT)/%, $(ALL_MODULES.$(_fb_m_name).BUILT))) \
-    $(if $(_fb_m_built),,$(error no built file in requested_modules for '$(_fb_m_built)'))\
+    $(if $(_fb_m_built),,$(warning no built file in requested_modules for '$(_fb_m_built)'))\
     $(foreach _fb_f,$(_fb_dests),$(eval $(call copy-one-file,$(_fb_m_built),$(root_dir)/$(_fb_f))))\
     $(addprefix $(root_dir)/,$(_fb_dests)) \
     )) \
@@ -82,4 +82,3 @@ endif
 
 endif # TARGET_BUILD_PDK
 endif # ONE_SHOT_MAKEFILE
-
