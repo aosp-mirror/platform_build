@@ -558,6 +558,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   system_items = ItemSet("system", "META/filesystem_config.txt")
   script.ShowProgress(system_progress, 0)
+
   if block_based:
     # Full OTA is done as an "incremental" against an empty source
     # image.  This has the effect of writing new data from the package
@@ -844,6 +845,11 @@ set_stage("%(bcb_dev)s", "2/3");
 reboot_now("%(bcb_dev)s", "");
 else
 """ % bcb_dev)
+
+  # Verify the existing partitions.
+  system_diff.WriteVerifyScript(script)
+  if vendor_diff:
+    vendor_diff.WriteVerifyScript(script)
 
   script.Comment("---- start making changes here ----")
 
