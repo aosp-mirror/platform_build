@@ -66,6 +66,7 @@ else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(common_javalib.jar): PRIVATE_DEX_FILE := $(built_dex)
 $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
+$(common_javalib.jar): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)

@@ -103,6 +103,7 @@ $(built_dex): $(full_classes_jar) $(DX)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
+$(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
