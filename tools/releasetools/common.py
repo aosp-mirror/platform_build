@@ -1048,9 +1048,16 @@ class BlockDifference:
   def WriteScript(self, script, output_zip, progress=None):
     if not self.src:
       # write the output unconditionally
-      if progress: script.ShowProgress(progress, 0)
-      self._WriteUpdate(script, output_zip)
+      script.Print("Patching %s image unconditionally..." % (self.partition,))
+    else:
+      script.Print("Patching %s image after verification." % (self.partition,))
 
+    if progress: script.ShowProgress(progress, 0)
+    self._WriteUpdate(script, output_zip)
+
+  def WriteVerifyScript(self, script):
+    if not self.src:
+      script.Print("Image %s will be patched unconditionally." % (self.partition,))
     else:
       if self.check_first_block:
         self._CheckFirstBlock(script)
@@ -1058,9 +1065,7 @@ class BlockDifference:
       script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
                          (self.device, self.src.care_map.to_string_raw(),
                           self.src.TotalSha1()))
-      script.Print("Patching %s image..." % (self.partition,))
-      if progress: script.ShowProgress(progress, 0)
-      self._WriteUpdate(script, output_zip)
+      script.Print("Verified %s image..." % (self.partition,))
       script.AppendExtra(('else\n'
                           '  (range_sha1("%s", "%s") == "%s") ||\n'
                           '  abort("%s partition has unexpected contents");\n'
