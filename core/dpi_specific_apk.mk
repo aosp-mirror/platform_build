@@ -8,7 +8,7 @@ built_dpi_apk := $(dpi_intermediate)/package.apk
 
 # Set up all the target-specific variables.
 $(built_dpi_apk): PRIVATE_MODULE := $(dpi_apk_name)
-$(built_dpi_apk): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) $(PRODUCT_AAPT_FLAGS)
+$(built_dpi_apk): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) $(PRODUCT_AAPT_FLAGS) $($(LOCAL_PACKAGE_NAME)_aapt_flags_$(my_dpi))
 # Clear PRIVATE_PRODUCT_AAPT_CONFIG to include everything by default.
 $(built_dpi_apk): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(built_dpi_apk): PRIVATE_PRODUCT_AAPT_PREF_CONFIG := $(my_dpi)
