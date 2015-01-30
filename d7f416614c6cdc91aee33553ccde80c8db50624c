@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "378ae32f_ada23d87",
+        "filename": "core/definitions.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 1868,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-01-30T01:35:41Z",
+      "side": 1,
+      "message": "resources and shared libraries require different alignment. I do not want to introduce \"sequence of alignments\" syntax to zipalign command line options.",
+      "parentUuid": "97a38fb2_96958ca2",
+      "range": {
+        "startLine": 1865,
+        "startChar": 1,
+        "endLine": 1868,
+        "endChar": 110
+      },
+      "revId": "d7f416614c6cdc91aee33553ccde80c8db50624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d797c75c_c24982a6",
         "filename": "core/definitions.mk",
         "patchSetId": 9
@@ -36,6 +60,30 @@
       "writtenOn": "2015-01-30T01:26:05Z",
       "side": 1,
       "message": "It\u0027s unnecessary to check the alignment at this point here.",
+      "range": {
+        "startLine": 1870,
+        "startChar": 0,
+        "endLine": 1871,
+        "endChar": 89
+      },
+      "revId": "d7f416614c6cdc91aee33553ccde80c8db50624c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d797c75c_4581fc26",
+        "filename": "core/definitions.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 1871,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-01-30T01:35:41Z",
+      "side": 1,
+      "message": "Done - removed",
+      "parentUuid": "d797c75c_c24982a6",
       "range": {
         "startLine": 1870,
         "startChar": 0,
