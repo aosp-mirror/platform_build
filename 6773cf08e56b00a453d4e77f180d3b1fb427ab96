@@ -51,6 +51,24 @@
       "revId": "6773cf08e56b00a453d4e77f180d3b1fb427ab96",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17cebfa3_975e26dd",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-01-30T18:19:38Z",
+      "side": 1,
+      "message": "do we want to restrict alignment be apply only to \"*.so entities or all uncompressed entities\"?",
+      "parentUuid": "97baafec_dbcba7a5",
+      "revId": "6773cf08e56b00a453d4e77f180d3b1fb427ab96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
