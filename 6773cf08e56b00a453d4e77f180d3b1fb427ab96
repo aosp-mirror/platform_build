@@ -33,6 +33,24 @@
       "revId": "6773cf08e56b00a453d4e77f180d3b1fb427ab96",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97baafec_dbcba7a5",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-01-30T17:56:46Z",
+      "side": 1,
+      "message": "that\u0027s kinda why i didn\u0027t want it here.",
+      "parentUuid": "37d10340_98ebf9b8",
+      "revId": "6773cf08e56b00a453d4e77f180d3b1fb427ab96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
