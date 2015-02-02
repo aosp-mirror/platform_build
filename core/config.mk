@@ -405,17 +405,30 @@ MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
+
+ifneq ($(strip $(ANDROID_JACK_VM)),)
+JACK_VM := $(ANDROID_JACK_VM)
+else
+JACK_VM := java
+endif
 # call jack
 #
-# $(1): vm
-# $(2): vm arguments
-# $(3): jack perf arguments
+# $(1): vm arguments
+# $(2): jack perf arguments
 define call-jack
-$(1) $(2) -cp $(JACK_JAR) com.android.jack.Main $(3)
+$(JACK_VM) $(1) -cp $(JACK_JAR) com.android.jack.Main $(2)
 endef
-DEFAULT_JACK_VM := java
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
+ifneq ($(ANDROID_JACK_VM_ARGS),)
+DEFAULT_JACK_VM_ARGS := $(ANDROID_JACK_VM_ARGS)
+else
 DEFAULT_JACK_VM_ARGS := -Dfile.encoding=UTF-8 -Xmx3584m -Xms2560m -XX:+TieredCompilation
+endif
+ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
+DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
+else
 DEFAULT_JACK_EXTRA_ARGS := -D sched.runner=single-threaded --sanity-checks off
+endif
 JILL := java -Xmx3500m -cp $(JILL_JAR) com.android.jill.Main
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
