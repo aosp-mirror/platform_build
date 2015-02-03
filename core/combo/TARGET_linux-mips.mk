@@ -109,6 +109,9 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += \
 			-Wl,--fatal-warnings \
 			$(arch_variant_ldflags)
 
+# Disable transitive dependency library symbol resolving.
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--allow-shlib-undefined
+
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 # More flags/options can be added here
