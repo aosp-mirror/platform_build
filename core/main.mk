@@ -840,12 +840,6 @@ endif
 .PHONY: ramdisk
 ramdisk: $(INSTALLED_RAMDISK_TARGET)
 
-.PHONY: factory_ramdisk
-factory_ramdisk: $(INSTALLED_FACTORY_RAMDISK_TARGET)
-
-.PHONY: factory_bundle
-factory_bundle: $(INSTALLED_FACTORY_BUNDLE_TARGET)
-
 .PHONY: systemtarball
 systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
 
@@ -955,8 +949,6 @@ else # TARGET_BUILD_APPS
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
-    $(INSTALLED_FACTORY_RAMDISK_TARGET) \
-    $(INSTALLED_FACTORY_BUNDLE_TARGET) \
    )
 
   # Put a copy of the radio/bootloader files in the dist dir.
