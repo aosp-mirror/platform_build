@@ -23,6 +23,22 @@ LOCAL_MODULE_SUFFIX := $(COMMON_JAVA_PACKAGE_SUFFIX)
 LOCAL_IS_HOST_MODULE := true
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
+intermediates := $(call local-intermediates-dir)
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
+
+built_javalib_jar := $(intermediates)/javalib.jar
+
+#################################
+include $(BUILD_SYSTEM)/configure_local_jack.mk
+#################################
+
+ifdef LOCAL_JACK_ENABLED
+ifdef LOCAL_IS_STATIC_JAVA_LIBRARY
+LOCAL_BUILT_MODULE_STEM := classes.jack
+LOCAL_INTERMEDIATE_TARGETS += $(built_javalib_jar)
+endif
+endif
+
 # base_rules.mk looks at this
 all_res_assets :=
 
@@ -38,9 +54,6 @@ else
   endif
 endif
 endif
-
-intermediates := $(call local-intermediates-dir)
-intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
