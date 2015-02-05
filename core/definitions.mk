@@ -1731,6 +1731,7 @@ $(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
 $(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
+$(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
@@ -1765,6 +1766,7 @@ $(call call-jack,$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
     -D jack.import.type.policy=keep-first \
     --output-jack $(PRIVATE_CLASSES_JACK) \
     -D jack.java.source.version=1.7 \
+    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
     --output-dex $(PRIVATE_JACK_INTERMEDIATES_DIR) \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
     $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
@@ -1807,6 +1809,7 @@ $(hide) rm -f $@
 $(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
+$(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
@@ -1840,6 +1843,7 @@ $(call call-jack,$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
     -D jack.java.source.version=1.7 \
+    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
     --output-jack $@ \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
     $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \

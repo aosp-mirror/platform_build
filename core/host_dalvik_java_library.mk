@@ -98,7 +98,7 @@ $(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
-ifneq ($(LOCAL_USE_JACK),true)
+ifndef LOCAL_JACK_ENABLED
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(built_dex): $(full_classes_jar) $(DX)
@@ -112,9 +112,17 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
 	$(add-dex-to-package)
 
-else # LOCAL_USE_JACK
+else # LOCAL_JACK_ENABLED
 $(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jayces
+	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
+
+ifeq ($(LOCAL_JACK_ENABLED),incremental)
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
+else
+$(LOCAL_INTERMEDIATE_TARGETS): \
+	PRIVATE_JACK_INCREMENTAL_DIR :=
+endif
 $(LOCAL_INTERMEDIATE_TARGETS):  PRIVATE_JACK_DEBUG_FLAGS := -g
 
 $(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
@@ -134,7 +142,7 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	$(add-dex-to-package)
 	$(add-carried-jack-resources)
 
-endif # LOCAL_USE_JACK
+endif # LOCAL_JACK_ENABLED
 
 USE_CORE_LIB_BOOTCLASSPATH :=
 
