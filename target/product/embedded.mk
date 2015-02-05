@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += \
     dumpstate \
     dumpsys \
     gralloc.default \
+    grep \
     gzip \
     healthd \
     init \
