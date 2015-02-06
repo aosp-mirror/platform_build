@@ -198,6 +198,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print "NOT signing: %s" % (name,)
         output_tf_zip.writestr(out_info, data)
     elif info.filename in ("SYSTEM/build.prop",
+                           "VENDOR/build.prop",
                            "RECOVERY/RAMDISK/default.prop"):
       print "rewriting %s:" % (info.filename,)
       new_data = RewriteProps(data, misc_info)
