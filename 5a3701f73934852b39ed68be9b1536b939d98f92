@@ -22,6 +22,30 @@
       "revId": "5a3701f73934852b39ed68be9b1536b939d98f92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c9e48d1_70ca4ece",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1038928
+      },
+      "writtenOn": "2015-02-06T20:38:37Z",
+      "side": 1,
+      "message": "Done, although we\u0027re running close to the 32 char limit here. Not a problem now but not sure if it will be. Maybe ro.req?",
+      "parentUuid": "3c9e48d1_0da49194",
+      "range": {
+        "startLine": 246,
+        "startChar": 86,
+        "endLine": 246,
+        "endChar": 89
+      },
+      "revId": "5a3701f73934852b39ed68be9b1536b939d98f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
