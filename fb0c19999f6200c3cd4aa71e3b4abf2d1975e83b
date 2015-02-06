@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bce4f851_4455c0b7",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-02-06T18:30:02Z",
+      "side": 1,
+      "message": "This is wrong. You can\u0027t modify a target in another target\u0027s build recipe.",
+      "range": {
+        "startLine": 28,
+        "startChar": 1,
+        "endLine": 28,
+        "endChar": 107
+      },
+      "revId": "fb0c19999f6200c3cd4aa71e3b4abf2d1975e83b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
