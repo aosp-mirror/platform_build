@@ -92,7 +92,6 @@ PRODUCT_BOOT_JARS := \
     voip-common \
     ims-common \
     mms-common \
-    android.policy \
     apache-xml \
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
