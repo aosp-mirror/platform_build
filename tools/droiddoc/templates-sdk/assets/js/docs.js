@@ -603,9 +603,12 @@ function getVideoHeight() {
   return frameHeight - (marginTop * 2);
 }
 
+var mPlayerPaused = false;
+
 function startYouTubePlayer(videoId) {
   $("#video-container").show();
   $("#video-frame").show();
+  mPlayerPaused = false;
 
   // compute the size of the player so it's centered in window
   var maxWidth = 940;  // the width of the web site content
@@ -645,7 +648,7 @@ function startYouTubePlayer(videoId) {
     // reset the size in case the user adjusted the window since last play
     youTubePlayer.setSize(videoWidth, videoHeight);
     // if a video different from the one already playing was requested, cue it up
-    if (videoId != youTubePlayer.getVideoUrl().split('?v=')[1]) {
+    if (videoId != youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0]) {
       youTubePlayer.cueVideoById(videoId);
     }
     youTubePlayer.playVideo();
@@ -654,16 +657,13 @@ function startYouTubePlayer(videoId) {
 
 function onPlayerReady(event) {
   event.target.playVideo();
-  // track the start playing event so we know from which page the video was selected
-  ga('send', 'event', 'Videos', 'Start: ' +
-      youTubePlayer.getVideoUrl().split('?v=')[1], 'on: ' + document.location.href);
+  mPlayerPaused = false;
 }
 
 function closeVideo() {
   try {
     youTubePlayer.pauseVideo();
   } catch(e) {
-    console.log('Video not available');
   }
   $("#video-container").fadeOut(200);
 }
@@ -672,18 +672,30 @@ function closeVideo() {
 function onPlayerStateChange(event) {
     // Video starts, send the video ID
     if (event.data == YT.PlayerState.PLAYING) {
-      ga('send', 'event', 'Videos', 'Play',
-          youTubePlayer.getVideoUrl().split('?v=')[1]);
+      if (mPlayerPaused) {
+        ga('send', 'event', 'Videos', 'Resume',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0]);
+      } else {
+        // track the start playing event so we know from which page the video was selected
+        ga('send', 'event', 'Videos', 'Start: ' +
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            'on: ' + document.location.href);
+      }
+      mPlayerPaused = false;
     }
     // Video paused, send video ID and video elapsed time
     if (event.data == YT.PlayerState.PAUSED) {
       ga('send', 'event', 'Videos', 'Paused',
-          youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            youTubePlayer.getCurrentTime());
+      mPlayerPaused = true;
     }
     // Video finished, send video ID and video elapsed time
     if (event.data == YT.PlayerState.ENDED) {
       ga('send', 'event', 'Videos', 'Finished',
-          youTubePlayer.getVideoUrl().split('?v=')[1], youTubePlayer.getCurrentTime());
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            youTubePlayer.getCurrentTime());
+      mPlayerPaused = true;
     }
 }
 
