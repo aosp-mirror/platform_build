@@ -94,6 +94,7 @@ PRODUCT_BOOT_JARS := \
     mms-common \
     android.policy \
     apache-xml \
+    org.apache.http.legacy
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
