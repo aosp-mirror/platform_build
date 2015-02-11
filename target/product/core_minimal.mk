@@ -93,6 +93,7 @@ PRODUCT_BOOT_JARS := \
     ims-common \
     mms-common \
     apache-xml \
+    org.apache.http.legacy
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
