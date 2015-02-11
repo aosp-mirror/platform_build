@@ -21,7 +21,7 @@ JUNIT_HOST_JAR := $(HOST_OUT_JAVA_LIBRARIES)/junit.jar
 HOSTTESTLIB_JAR := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
 TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar
 CTS_TF_JAR := $(HOST_OUT_JAVA_LIBRARIES)/cts-tradefed.jar
-CTS_TF_EXEC_PATH := $(HOST_OUT_EXECUTABLES)/cts-tradefed
+CTS_TF_EXEC_PATH ?= $(HOST_OUT_EXECUTABLES)/cts-tradefed
 CTS_TF_README_PATH := $(cts_tools_src_dir)/tradefed-host/README
 
 VMTESTSTF_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,vm-tests-tf,HOST)
@@ -89,7 +89,8 @@ $(foreach m, $(CTS_TEST_JAR_LIST),\
   $(eval CTS_CASE_LIST_JARS += $(CTS_TESTCASES_OUT)/$(m).jar))
 
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
-$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_JAR_FILES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(CTS_CASE_LIST_JARS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_JAR_FILES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(CTS_CASE_LIST_JARS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ADDITIONAL_TF_JARS) $(ACP)
+
 # Make necessary directory for CTS
 	$(hide) mkdir -p $(TMP_DIR)
 	$(hide) mkdir -p $(PRIVATE_DIR)/docs
@@ -98,7 +99,7 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_JAR_FILES) $(CTS_TE
 	$(hide) mkdir -p $(PRIVATE_DIR)/repository/plans
 # Copy executable and JARs to CTS directory
 	$(hide) $(ACP) -fp $(VMTESTSTF_JAR) $(CTS_TESTCASES_OUT)
-	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
+	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(ADDITIONAL_TF_JARS) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
 	$(hide) touch $@
 
 # Generate the test descriptions for the core-tests
