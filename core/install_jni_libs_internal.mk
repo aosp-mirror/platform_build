@@ -100,9 +100,15 @@ endif
 my_prebuilt_jni_libs := $(addprefix $(LOCAL_PATH)/, \
     $(filter-out @%, $(my_prebuilt_jni_libs)))
 ifdef my_prebuilt_jni_libs
+ifdef my_embed_jni
+# Embed my_prebuilt_jni_libs to the apk
+my_jni_shared_libraries += $(my_prebuilt_jni_libs)
+else # not my_embed_jni
+# Install my_prebuilt_jni_libs as separate files.
 $(foreach lib, $(my_prebuilt_jni_libs), \
     $(eval $(call copy-one-file, $(lib), $(my_app_lib_path)/$(notdir $(lib)))))
 
 $(LOCAL_INSTALLED_MODULE) : | $(addprefix $(my_app_lib_path)/, $(notdir $(my_prebuilt_jni_libs)))
+endif  # my_embed_jni
 endif  # inner my_prebuilt_jni_libs
 endif  # outer my_prebuilt_jni_libs
