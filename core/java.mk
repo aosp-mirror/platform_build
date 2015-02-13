@@ -220,6 +220,11 @@ renderscript_intermediate := $(intermediates)/renderscript
 
 # We don't need the .so files in bundled branches
 # Prevent these from showing up on the device
+# One exception is librsjni.so, which is needed for
+# both native path and compat path.
+rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
+LOCAL_JNI_SHARED_LIBRARIES += librsjni
+
 ifneq (,$(TARGET_BUILD_APPS)$(FORCE_BUILD_RS_COMPAT))
 
 rs_compatibility_jni_libs := $(addprefix \
@@ -229,8 +234,7 @@ rs_compatibility_jni_libs := $(addprefix \
 $(rs_generated_bc) : $(RenderScript_file_stamp)
 
 rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
-rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
-LOCAL_JNI_SHARED_LIBRARIES += libRSSupport librsjni
+LOCAL_JNI_SHARED_LIBRARIES += libRSSupport
 
 rs_support_io_lib :=
 # check if the target api level support USAGE_IO
