@@ -133,7 +133,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 #                 be up-to-date.
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-libart)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-oj):$(call java-lib-files,core-libart)
 else
 ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
 # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
@@ -151,7 +151,7 @@ full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HO
 else # LOCAL_IS_HOST_MODULE
 
 ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(call java-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE)) \
@@ -262,7 +262,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_ja
 
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,core-libart)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,core-oj):$(call jack-lib-files,core-libart)
 else
 ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
 # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
@@ -280,7 +280,7 @@ full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HO
 else # LOCAL_IS_HOST_MODULE
 
 ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(call jack-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 else
