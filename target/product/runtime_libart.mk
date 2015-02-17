@@ -22,6 +22,7 @@ PRODUCT_PACKAGES += \
     bouncycastle \
     cacerts \
     conscrypt \
+    core-oj \
     core-junit \
     core-libart \
     dalvikvm \
@@ -39,6 +40,7 @@ PRODUCT_PACKAGES += \
     libicui18n \
     libicuuc \
     libjavacore \
+    libopenjdk \
     libnativehelper \
     libssl \
     libz \

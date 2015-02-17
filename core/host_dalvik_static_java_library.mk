@@ -24,6 +24,7 @@ ifeq ($(HOST_OS),linux)
 LOCAL_UNINSTALLABLE_MODULE := true
 LOCAL_IS_STATIC_JAVA_LIBRARY := true
 USE_CORE_LIB_BOOTCLASSPATH := true
+LOCAL_JAVA_LIBRARIES += core-oj-hostdex
 LOCAL_JAVA_LIBRARIES += core-libart-hostdex
 
 intermediates.COMMON := $(call intermediates-dir-for,JAVA_LIBRARIES,$(LOCAL_MODULE),true,COMMON,)
