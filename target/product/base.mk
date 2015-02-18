@@ -38,6 +38,8 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     ime \
     input \
+    inputflinger \
+    inputflingerhost \
     javax.obex \
     libandroid \
     libandroid_runtime \
@@ -55,6 +57,7 @@ PRODUCT_PACKAGES += \
     libeffects \
     libinput \
     libinputflinger \
+    libinputflingerhost \
     libiprouteutil \
     libjnigraphics \
     libldnhncr \
