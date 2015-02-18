@@ -1,13 +1,3 @@
-# These unsets should stay to clear the old functions from any long running
-# shells.
-# TODO(danalbert): Remove this in a day or so.
-unset -f gdbwrapper
-unset -f get_symbols_directory
-unset -f adb_get_product_device
-unset -f adb_get_traced_by
-unset -f gdbclient
-unset -f gdbclient_old
-
 function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
