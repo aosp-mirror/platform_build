@@ -538,17 +538,14 @@ ifneq ($(GENERATE_DEX_DEBUG),)
 endif
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
-$(findbugs_xml) : PRIVATE_JAR_FILE := $(full_classes_jar)
 $(findbugs_xml) : PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \
 								$(call normalize-path-list,$(filter %.jar,\
 										$(full_java_libs)))))
-# We can't depend directly on full_classes_jar because the PRIVATE_
-# vars won't be set up correctly.
-$(findbugs_xml) : $(LOCAL_BUILT_MODULE)
+$(findbugs_xml) : $(full_classes_jar)
 	@echo Findbugs: $@
 	$(hide) $(FINDBUGS) -textui -effort:min -xml:withMessages \
 		$(PRIVATE_AUXCLASSPATH) \
-		$(PRIVATE_JAR_FILE) \
+		$< \
 		> $@
 
 ALL_FINDBUGS_FILES += $(findbugs_xml)

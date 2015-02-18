@@ -21,6 +21,8 @@
 #
 ifeq ($(HOST_OS),linux)
 
+LOCAL_UNINSTALLABLE_MODULE := true
+LOCAL_IS_STATIC_JAVA_LIBRARY := true
 USE_CORE_LIB_BOOTCLASSPATH := true
 LOCAL_JAVA_LIBRARIES += core-libart-hostdex
 
@@ -51,5 +53,5 @@ $(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_lib_d
 	$(java-to-jack)
 
 USE_CORE_LIB_BOOTCLASSPATH :=
-
+LOCAL_IS_STATIC_JAVA_LIBRARY :=
 endif

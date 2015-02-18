@@ -43,13 +43,6 @@ endif
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
 
-LOCAL_JACK_ENABLED := $(strip $(LOCAL_JACK_ENABLED))
-ifneq ($(LOCAL_JACK_ENABLED),full)
-ifneq ($(LOCAL_JACK_ENABLED),incremental)
-LOCAL_JACK_ENABLED :=
-endif
-endif
-
 ###########################################################
 ## Validate and define fallbacks for input LOCAL_* variables.
 ###########################################################

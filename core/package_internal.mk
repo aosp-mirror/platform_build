@@ -57,12 +57,9 @@ $(error $(LOCAL_PATH): Package modules may not set LOCAL_MODULE_CLASS)
 endif
 LOCAL_MODULE_CLASS := APPS
 
-LOCAL_JACK_ENABLED := $(strip $(LOCAL_JACK_ENABLED))
-ifneq ($(LOCAL_JACK_ENABLED),full)
-ifneq ($(LOCAL_JACK_ENABLED),incremental)
-LOCAL_JACK_ENABLED :=
-endif
-endif
+#################################
+include $(BUILD_SYSTEM)/configure_local_jack.mk
+#################################
 
 # Package LOCAL_MODULE_TAGS default to optional
 LOCAL_MODULE_TAGS := $(strip $(LOCAL_MODULE_TAGS))
