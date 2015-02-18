@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b721c91_f4bd78b2",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-02-18T21:56:35Z",
+      "side": 1,
+      "message": "Don\u0027t know what style Ying prefers, but this looks overly complicated. If DEX_PREOPT_IN_DATA_LIST was empty in case DEX_PREOPT_IN_DATA!\u003dtrue, the filter part below would suffice.",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 40
+      },
+      "revId": "2457fa1e266d4d162d3a9961ff2d8a2eee4cfdbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b721c91_54d70cfa",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-02-18T21:56:35Z",
+      "side": 1,
+      "message": "Is that common style? I haven\u0027t seen this before, and it\u0027s distracting, as ! is a common character for boolean negation (which it is not here).",
+      "range": {
+        "startLine": 185,
+        "startChar": 7,
+        "endLine": 185,
+        "endChar": 8
+      },
+      "revId": "2457fa1e266d4d162d3a9961ff2d8a2eee4cfdbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
