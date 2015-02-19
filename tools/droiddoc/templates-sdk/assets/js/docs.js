@@ -21,6 +21,17 @@ $.ajaxSetup({
 
 $(document).ready(function() {
 
+  // show lang dialog if the URL includes /intl/
+  //if (location.pathname.substring(0,6) == "/intl/") {
+  //  var lang = location.pathname.split('/')[2];
+   // if (lang != getLangPref()) {
+   //   $("#langMessage a.yes").attr("onclick","changeLangPref('" + lang
+   //       + "', true); $('#langMessage').hide(); return false;");
+  //    $("#langMessage .lang." + lang).show();
+   //   $("#langMessage").show();
+   // }
+  //}
+
   // load json file for JD doc search suggestions
   $.getScript(toRoot + 'jd_lists_unified.js');
   // load json file for Android API search suggestions
@@ -223,6 +234,8 @@ $(document).ready(function() {
       $("#nav-x li.engage a").addClass("selected");
     } else if (secondFrag == "monetize") {
       $("#nav-x li.monetize a").addClass("selected");
+    } else if (secondFrag == "analyze") {
+      $("#nav-x li.analyze a").addClass("selected");
     } else if (secondFrag == "tools") {
       $("#nav-x li.disttools a").addClass("selected");
     } else if (secondFrag == "stories") {
@@ -547,8 +560,145 @@ false; // navigate across topic boundaries only in design docs
     cookiePath = "distribute_";
   }
 
+
+  /* setup shadowbox for any videos that want it */
+  var $videoLinks = $("a.video-shadowbox-button, a.notice-developers-video");
+  if ($videoLinks.length) {
+    // if there's at least one, add the shadowbox HTML to the body
+    $('body').prepend(
+'<div id="video-container">'+
+  '<div id="video-frame">'+
+    '<div class="video-close">'+
+      '<span id="icon-video-close" onclick="closeVideo()">&nbsp;</span>'+
+    '</div>'+
+    '<div id="youTubePlayer"></div>'+
+  '</div>'+
+'</div>');
+
+    // loads the IFrame Player API code asynchronously.
+    $.getScript("https://www.youtube.com/iframe_api");
+
+    $videoLinks.each(function() {
+      var videoId = $(this).attr('href').split('?v=')[1];
+      $(this).click(function(event) {
+        event.preventDefault();
+        startYouTubePlayer(videoId);
+      });
+    });
+  }
 });
 // END of the onload event
+
+
+var youTubePlayer;
+function onYouTubeIframeAPIReady() {
+}
+
+/* Returns the height the shadowbox video should be. It's based on the current
+   height of the "video-frame" element, which is 100% height for the window.
+   Then minus the margin so the video isn't actually the full window height. */
+function getVideoHeight() {
+  var frameHeight = $("#video-frame").height();
+  var marginTop = $("#video-frame").css('margin-top').split('px')[0];
+  return frameHeight - (marginTop * 2);
+}
+
+var mPlayerPaused = false;
+
+function startYouTubePlayer(videoId) {
+  $("#video-container").show();
+  $("#video-frame").show();
+  mPlayerPaused = false;
+
+  // compute the size of the player so it's centered in window
+  var maxWidth = 940;  // the width of the web site content
+  var videoAspect = .5625; // based on 1280x720 resolution
+  var maxHeight = maxWidth * videoAspect;
+  var videoHeight = getVideoHeight();
+  var videoWidth = videoHeight / videoAspect;
+  if (videoWidth > maxWidth) {
+    videoWidth = maxWidth;
+    videoHeight = maxHeight;
+  }
+  $("#video-frame").css('width', videoWidth);
+
+  // check if we've already created this player
+  if (youTubePlayer == null) {
+    // check if there's a start time specified
+    var idAndHash = videoId.split("#");
+    var startTime = 0;
+    if (idAndHash.length > 1) {
+      startTime = idAndHash[1].split("t=")[1] != undefined ? idAndHash[1].split("t=")[1] : 0;
+    }
+    // enable localized player
+    var lang = getLangPref();
+    var captionsOn = lang == 'en' ? 0 : 1;
+
+    youTubePlayer = new YT.Player('youTubePlayer', {
+      height: videoHeight,
+      width: videoWidth,
+      videoId: idAndHash[0],
+      playerVars: {start: startTime, hl: lang, cc_load_policy: captionsOn},
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  } else {
+    // reset the size in case the user adjusted the window since last play
+    youTubePlayer.setSize(videoWidth, videoHeight);
+    // if a video different from the one already playing was requested, cue it up
+    if (videoId != youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0]) {
+      youTubePlayer.cueVideoById(videoId);
+    }
+    youTubePlayer.playVideo();
+  }
+}
+
+function onPlayerReady(event) {
+  event.target.playVideo();
+  mPlayerPaused = false;
+}
+
+function closeVideo() {
+  try {
+    youTubePlayer.pauseVideo();
+  } catch(e) {
+  }
+  $("#video-container").fadeOut(200);
+}
+
+/* Track youtube playback for analytics */
+function onPlayerStateChange(event) {
+    // Video starts, send the video ID
+    if (event.data == YT.PlayerState.PLAYING) {
+      if (mPlayerPaused) {
+        ga('send', 'event', 'Videos', 'Resume',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0]);
+      } else {
+        // track the start playing event so we know from which page the video was selected
+        ga('send', 'event', 'Videos', 'Start: ' +
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            'on: ' + document.location.href);
+      }
+      mPlayerPaused = false;
+    }
+    // Video paused, send video ID and video elapsed time
+    if (event.data == YT.PlayerState.PAUSED) {
+      ga('send', 'event', 'Videos', 'Paused',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            youTubePlayer.getCurrentTime());
+      mPlayerPaused = true;
+    }
+    // Video finished, send video ID and video elapsed time
+    if (event.data == YT.PlayerState.ENDED) {
+      ga('send', 'event', 'Videos', 'Finished',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            youTubePlayer.getCurrentTime());
+      mPlayerPaused = true;
+    }
+}
+
 
 
 function initExpandableNavItems(rootTag) {
@@ -658,7 +808,7 @@ function toggleFullscreen(enable) {
     setTimeout(updateSidenavFixedWidth,delay); // need to wait a moment for css to switch
     enabled = false;
   }
-  writeCookie("fullscreen", enabled, null, null);
+  writeCookie("fullscreen", enabled, null);
   setNavBarLeftPos();
   resizeNav(delay);
   updateSideNavPosition();
@@ -819,7 +969,7 @@ function reInitScrollbars() {
 function saveNavPanels() {
   var basePath = getBaseUri(location.pathname);
   var section = basePath.substring(1,basePath.indexOf("/",1));
-  writeCookie("height", resizePackagesNav.css("height"), section, null);
+  writeCookie("height", resizePackagesNav.css("height"), section);
 }
 
 
@@ -900,16 +1050,12 @@ function readCookie(cookie) {
   return 0;
 }
 
-function writeCookie(cookie, val, section, expiration) {
+function writeCookie(cookie, val, section) {
   if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
-  if (expiration == null) {
-    var date = new Date();
-    date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
-    expiration = date.toGMTString();
-  }
+  var age = 2*365*24*60*60; // set max-age to 2 years
   var cookieValue = cookie_namespace + section + cookie + "=" + val
-                    + "; expires=" + expiration+"; path=/";
+                    + "; max-age=" + age +"; path=/";
   document.cookie = cookieValue;
 }
 
@@ -1149,9 +1295,7 @@ function swapNav() {
     nav_pref = NAV_PREF_TREE;
     init_default_navtree(toRoot);
   }
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  writeCookie("nav", nav_pref, "reference", date.toGMTString());
+  writeCookie("nav", nav_pref, "reference");
 
   $("#nav-panels").toggle();
   $("#panel-link").toggle();
@@ -1219,11 +1363,7 @@ function changeNavLang(lang) {
 }
 
 function changeLangPref(lang, submit) {
-  var date = new Date();
-  expires = date.toGMTString(date.setTime(date.getTime()+(10*365*24*60*60*1000)));
-  // keep this for 50 years
-  //alert("expires: " + expires)
-  writeCookie("pref_lang", lang, null, expires);
+  writeCookie("pref_lang", lang, null);
 
   //  #######  TODO:  Remove this condition once we're stable on devsite #######
   //  This condition is only needed if we still need to support legacy GAE server
@@ -1642,8 +1782,8 @@ var gDocsListLength = 0;
 
 function onSuggestionClick(link) {
   // When user clicks a suggested document, track it
-  ga('send', 'event', 'Suggestion Click', 'clicked: ' + $(link).text(),
-            'from: ' + $("#search_autocomplete").val());
+  ga('send', 'event', 'Suggestion Click', 'clicked: ' + $(link).attr('href'),
+                'query: ' + $("#search_autocomplete").val().toLowerCase());
 }
 
 function set_item_selected($li, selected)
@@ -1988,7 +2128,7 @@ function search_changed(e, kd, toroot)
 
 
         // Search for matching JD docs
-        if (text.length >= 3) {
+        if (text.length >= 2) {
           // Regex to match only the beginning of a word
           var textRegex = new RegExp("\\b" + text.toLowerCase(), "g");
 
@@ -2616,8 +2756,8 @@ function addResultClickListeners() {
   $("#searchResults a.gs-title").each(function(index, link) {
     // When user clicks enter for Google search results, track it
     $(link).click(function() {
-      ga('send', 'event', 'Google Click', 'clicked: ' + $(this).text(),
-                'from: ' + $("#search_autocomplete").val());
+      ga('send', 'event', 'Google Click', 'clicked: ' + $(this).attr('href'),
+                'query: ' + $("#search_autocomplete").val().toLowerCase());
     });
   });
 }
@@ -2732,10 +2872,7 @@ function changeApiLevel() {
   selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
   toggleVisisbleApis(selectedLevel, "body");
 
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  var expiration = date.toGMTString();
-  writeCookie(API_LEVEL_COOKIE, selectedLevel, null, expiration);
+  writeCookie(API_LEVEL_COOKIE, selectedLevel, null);
 
   if (selectedLevel < minLevel) {
     var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";

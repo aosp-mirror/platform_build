@@ -466,6 +466,9 @@ a.back-link {
     text-transform: uppercase;
 }
 
+.content-header .paging-links {
+  margin-top:-25px;
+}
 .paging-links {
   position: relative;
   height:30px; }
@@ -3062,15 +3065,15 @@ select.ide option {
   font-size:16px;
   font-weight:500;
 }
-/* hide all except eclipse by default */
-.select-ide.studio,
+/* hide all except studio by default */
+.select-ide.eclipse,
 .select-ide.other {
   display:none;
 }
-/* ... unless eclipse also includes one of the others */
-.select-ide.eclipse.studio,
-.select-ide.eclipse.other {
-  display:block;
+/* ... unless studio also includes one of the others */
+.select-ide.studio.eclipse,
+.select-ide.studio.other {
+  display:none;
 }
 
 
@@ -3152,6 +3155,7 @@ div#deprecatedSticker {
   -webkit-box-shadow:-5px 5px 10px #ccc;
 }
 
+div#langMessage,
 div#naMessage {
   display:none;
   width:555px;
@@ -3159,6 +3163,8 @@ div#naMessage {
   margin:0 auto;
 }
 
+
+div#langMessage>div,
 div#naMessage div {
   z-index:99;
   width:450px;
@@ -3172,12 +3178,16 @@ div#naMessage div {
   -webkit-box-shadow:-10px 10px 40px #888;
 }
 /* IE6 can't position fixed */
+* html div#langMessage>div,
 * html div#naMessage div { position:absolute; }
 
 div#naMessage strong {
   font-size:1.1em;
 }
 
+div#langMessage .lang {
+  display:none;
+}
 
 /* --------------------------------------------------------------------------
 Slideshow Controls & Next/Prev
@@ -4056,7 +4066,7 @@ EndColorStr='#ececec');
   height: 38px;
 }
 #header-wrapper #nav-x ul.nav-x li {
-  margin-right: 36px !important;
+  margin-right: 31px !important;
   margin-top: 5px;
   margin-bottom: 0px;
   height: 30px;
@@ -4414,7 +4424,7 @@ body.reference a[name] {
 }
 
 #header-wrap.quicknav {
-  height:196px;
+  height:216px;
 
 }
 
@@ -6940,38 +6950,76 @@ a.landing-button:visited {
   display:none;
   position:fixed;
   top:0;
-  left:-10px;
-  width:102%;
+  left:0;
+  width:100%;
   height:100%;
-  background-color:rgba(0,0,0,0.7);
-  z-index:99;
+  background-color:rgba(0,0,0,0.8);
+  z-index:9999;
 }
 
 #video-frame {
   width:940px;
-  height:526.4px;
-  margin:80px auto 0;
+  height:100%;
+  margin:72px auto;
   display:none;
+  position:relative;
 }
 
 .video-close {
-cursor: pointer;
-position: relative;
-left: 940px;
-top: 0;
-pointer-events: all;
+  cursor: pointer;
+  position: absolute;
+  right: -49px;
+  top: -49px;
+  pointer-events: all;
 }
 
 #icon-video-close {
-background-image: url("../images/close.png");
-background-position: 0 0;
-height: 36px;
-width: 36px;
-display:block;
+  background-image: url("../images/close-white.png");
+  background-image: -webkit-image-set(url(../images/close-white.png) 1x, url(../images/close-white_2x.png) 2x);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 36px 36px;
+  height: 36px;
+  width: 36px;
+  display:block;
 }
 
+#icon-video-close:hover {
+  background-image: url("../images/close-grey.png");
+  background-image: -webkit-image-set(url(../images/close-grey.png) 1x, url(../images/close-grey_2x.png) 2x);
+}
 
+/* Preload the hover images */
+a.video-shadowbox-button.white:after {
+  display:none;
+  content:url("../images/close-grey.png") url("../images/close-grey_2x.png");
+}
 
+a.video-shadowbox-button.white {
+  background-image: url("../images/play-circle-white.png");
+  background-image: -webkit-image-set(url(../images/play-circle-white.png) 1x, url(../images/play-circle-white_2x.png) 2x);
+  background-size: 36px 36px;
+  background-repeat: no-repeat;
+  background-position: right;
+  padding: 16px 42px 16px 8px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #fff;
+  text-decoration:none;
+}
+
+a.video-shadowbox-button.white:hover {
+  color:#bababa !important;
+  background-image: url("../images/play-circle-grey.png");
+  background-image: -webkit-image-set(url(../images/play-circle-grey.png) 1x, url(../images/play-circle-grey_2x.png) 2x);
+}
+
+/* Preload the hover images */
+a.video-shadowbox-button.white:after {
+  display:none;
+  content:url("../images/play-circle-grey.png") url("../images/play-circle-grey_2x.png");
+}
 
 /******************
 Styles for d.a.c/index:
@@ -7352,7 +7400,7 @@ a.home-new-cta-btn:hover,
 
 /* Helpouts widget */
 .resource-card-6x2.helpouts-card {
-  width: 220px;
+  width: 255px;
   height: 40px;
   position:absolute;
   z-index:999;

@@ -194,10 +194,10 @@ include:"header.cs" ?>
 
 <?cs include:"trailer.cs" ?>
   <script src="https://developer.android.com/ytblogger_lists_unified.js" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_lists_unified.js?v=3" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_extras.js?v=4" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_collections.js?v=4" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=3" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_lists_unified.js?v=8" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_extras.js?v=9" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_collections.js?v=9" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=5" type="text/javascript"></script>
 
 </body>
 </html>

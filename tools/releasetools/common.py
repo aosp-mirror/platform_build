@@ -347,7 +347,7 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
 
   if info_dict.get("verity_key", None):
     path = "/" + os.path.basename(sourcedir).lower()
-    cmd = ["boot_signer", path, img.name, info_dict["verity_key"], img.name]
+    cmd = ["boot_signer", path, img.name, info_dict["verity_key"] + ".pk8", info_dict["verity_key"] + ".x509.pem", img.name]
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     assert p.returncode == 0, "boot_signer of %s image failed" % path
@@ -1030,7 +1030,14 @@ class BlockDifference:
     self.partition = partition
     self.check_first_block = check_first_block
 
-    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads)
+    version = 1
+    if OPTIONS.info_dict:
+      version = max(
+          int(i) for i in
+          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+
+    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
+                                    version=version)
     tmpdir = tempfile.mkdtemp()
     OPTIONS.tempfiles.append(tmpdir)
     self.path = os.path.join(tmpdir, partition)
@@ -1041,9 +1048,16 @@ class BlockDifference:
   def WriteScript(self, script, output_zip, progress=None):
     if not self.src:
       # write the output unconditionally
-      if progress: script.ShowProgress(progress, 0)
-      self._WriteUpdate(script, output_zip)
+      script.Print("Patching %s image unconditionally..." % (self.partition,))
+    else:
+      script.Print("Patching %s image after verification." % (self.partition,))
 
+    if progress: script.ShowProgress(progress, 0)
+    self._WriteUpdate(script, output_zip)
+
+  def WriteVerifyScript(self, script):
+    if not self.src:
+      script.Print("Image %s will be patched unconditionally." % (self.partition,))
     else:
       if self.check_first_block:
         self._CheckFirstBlock(script)
@@ -1051,9 +1065,7 @@ class BlockDifference:
       script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
                          (self.device, self.src.care_map.to_string_raw(),
                           self.src.TotalSha1()))
-      script.Print("Patching %s image..." % (self.partition,))
-      if progress: script.ShowProgress(progress, 0)
-      self._WriteUpdate(script, output_zip)
+      script.Print("Verified %s image..." % (self.partition,))
       script.AppendExtra(('else\n'
                           '  (range_sha1("%s", "%s") == "%s") ||\n'
                           '  abort("%s partition has unexpected contents");\n'

@@ -578,7 +578,8 @@ function tapas()
 {
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
+    local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5|arm64|x86_64|mips64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
 
     if [ $(echo $arch | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build archs supplied: $arch"
@@ -586,6 +587,10 @@ function tapas()
     fi
     if [ $(echo $variant | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build variants supplied: $variant"
+        return
+    fi
+    if [ $(echo $density | wc -w) -gt 1 ]; then
+        echo "tapas: Error: Multiple densities supplied: $density"
         return
     fi
 
@@ -604,9 +609,13 @@ function tapas()
     if [ -z "$apps" ]; then
         apps=all
     fi
+    if [ -z "$density" ]; then
+        density=alldpi
+    fi
 
     export TARGET_PRODUCT=$product
     export TARGET_BUILD_VARIANT=$variant
+    export TARGET_BUILD_DENSITY=$density
     export TARGET_BUILD_TYPE=release
     export TARGET_BUILD_APPS=$apps
 
@@ -890,6 +899,85 @@ function pid()
         echo "usage: pid [--exact] <process name>"
 		return 255
     fi
+}
+
+# coredump_setup - enable core dumps globally for any process
+#                  that has the core-file-size limit set correctly
+#
+# NOTE: You must call also coredump_enable for a specific process
+#       if its core-file-size limit is not set already.
+# NOTE: Core dumps are written to ramdisk; they will not survive a reboot!
+
+function coredump_setup()
+{
+	echo "Getting root...";
+	adb root;
+	adb wait-for-device;
+
+	echo "Remounting root parition read-write...";
+	adb shell mount -w -o remount -t rootfs rootfs;
+	sleep 1;
+	adb wait-for-device;
+	adb shell mkdir -p /cores;
+	adb shell mount -t tmpfs tmpfs /cores;
+	adb shell chmod 0777 /cores;
+
+	echo "Granting SELinux permission to dump in /cores...";
+	adb shell restorecon -R /cores;
+
+	echo "Set core pattern.";
+	adb shell 'echo /cores/core.%p > /proc/sys/kernel/core_pattern';
+
+	echo "Done."
+}
+
+# coredump_enable - enable core dumps for the specified process
+# $1 = PID of process (e.g., $(pid mediaserver))
+#
+# NOTE: coredump_setup must have been called as well for a core
+#       dump to actually be generated.
+
+function coredump_enable()
+{
+	local PID=$1;
+	if [ -z "$PID" ]; then
+		printf "Expecting a PID!\n";
+		return;
+	fi;
+	echo "Setting core limit for $PID to infinite...";
+	adb shell prlimit $PID 4 -1 -1
+}
+
+# core - send SIGV and pull the core for process
+# $1 = PID of process (e.g., $(pid mediaserver))
+#
+# NOTE: coredump_setup must be called once per boot for core dumps to be
+#       enabled globally.
+
+function core()
+{
+	local PID=$1;
+
+	if [ -z "$PID" ]; then
+		printf "Expecting a PID!\n";
+		return;
+	fi;
+
+	local CORENAME=core.$PID;
+	local COREPATH=/cores/$CORENAME;
+	local SIG=SEGV;
+
+	coredump_enable $1;
+
+	local done=0;
+	while [ $(adb shell "[ -d /proc/$PID ] && echo -n yes") ]; do
+		printf "\tSending SIG%s to %d...\n" $SIG $PID;
+		adb shell kill -$SIG $PID;
+		sleep 1;
+	done;
+
+	adb shell "while [ ! -f $COREPATH ] ; do echo waiting for $COREPATH to be generated; sleep 1; done"
+	echo "Done: core is under $COREPATH on device.";
 }
 
 # systemstack - dump the current stack trace of all threads in the system process

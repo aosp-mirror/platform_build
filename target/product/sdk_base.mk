@@ -95,14 +95,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 -include external/svox/pico/lang/PicoLangFrFrInSystem.mk
 -include external/svox/pico/lang/PicoLangItItInSystem.mk
 
-# locale + densities. en_US is both first and in alphabetical order to
+# locale. en_US is both first and in alphabetical order to
 # ensure this is the default locale.
 PRODUCT_LOCALES := \
 	en_US \
-	ldpi \
-	hdpi \
-	mdpi \
-	xhdpi \
 	ar_EG \
 	ar_IL \
 	bg_BG \

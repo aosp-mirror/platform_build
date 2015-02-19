@@ -117,6 +117,19 @@ endif  # LOCAL_STRIP_MODULE not true
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+# Select dpi-specific source
+ifdef LOCAL_DPI_VARIANTS
+my_dpi := $(firstword $(filter $(LOCAL_DPI_VARIANTS),$(PRODUCT_AAPT_PREF_CONFIG) $(PRODUCT_AAPT_PREBUILT_DPI)))
+ifdef my_dpi
+ifdef LOCAL_DPI_FILE_STEM
+my_prebuilt_dpi_file_stem := $(LOCAL_DPI_FILE_STEM)
+else
+my_prebuilt_dpi_file_stem := $(LOCAL_MODULE)_%.apk
+endif
+my_prebuilt_src_file := $(dir $(my_prebuilt_src_file))$(subst %,$(my_dpi),$(my_prebuilt_dpi_file_stem))
+endif  # my_dpi
+endif  # LOCAL_DPI_VARIANTS
+
 rs_compatibility_jni_libs :=
 include $(BUILD_SYSTEM)/install_jni_libs.mk
 
@@ -250,10 +263,26 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 # while the deps should be in the common dir, so we make a copy in the common dir.
 # For nonstatic library, $(common_javalib_jar) is the dependency file,
 # while $(common_classes_jar) is used to link.
-common_classes_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(LOCAL_MODULE),,COMMON)/classes.jar
-common_javalib_jar := $(dir $(common_classes_jar))javalib.jar
+common_classes_jar := $(intermediates.COMMON)/classes.jar
+common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
-$(common_classes_jar) : $(my_prebuilt_src_file) | $(ACP)
+$(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+
+ifneq ($(filter %.aar, $(my_prebuilt_src_file)),)
+# This is .aar file, archive of classes.jar and Android resources.
+my_src_jar := $(intermediates.COMMON)/aar/classes.jar
+
+$(my_src_jar) : $(my_prebuilt_src_file)
+	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
+	$(hide) unzip -qo -d $(dir $@) $<
+	# Make sure the extracted classes.jar has a new timestamp.
+	$(hide) touch $@
+
+else
+# This is jar file.
+my_src_jar := $(my_prebuilt_src_file)
+endif
+$(common_classes_jar) : $(my_src_jar) | $(ACP)
 	$(transform-prebuilt-to-target)
 
 $(common_javalib_jar) : $(common_classes_jar) | $(ACP)

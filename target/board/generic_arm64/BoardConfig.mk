@@ -25,13 +25,13 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 
-ifdef TARGET_BUILD_APPS
+ifneq ($(TARGET_BUILD_APPS)$(filter cts,$(MAKECMDGOALS)),)
 # DO NOT USE
 # DO NOT USE
 #
 # This architecture / CPU variant must NOT be used for any 64 bit
 # platform builds. It is the lowest common denominator required
-# to build an unbundled application for all supported 32 and 64 bit
+# to build an unbundled application or cts for all supported 32 and 64 bit
 # platforms.
 #
 # If you're building a 64 bit platform (and not an application) the
@@ -76,10 +76,9 @@ BUILD_EMULATOR_OPENGL := true
 USE_OPENGL_RENDERER := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 845427200
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 943718400
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
-

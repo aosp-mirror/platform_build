@@ -274,19 +274,9 @@ ifneq (,$(extra_locales))
 endif
 
 # Add PRODUCT_LOCALES to PRODUCT_AAPT_CONFIG
-PRODUCT_AAPT_CONFIG := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_CONFIG))
-PRODUCT_AAPT_CONFIG := $(PRODUCT_LOCALES) $(PRODUCT_AAPT_CONFIG)
+PRODUCT_AAPT_CONFIG := $(strip $(PRODUCT_LOCALES) $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_CONFIG))
 PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_PREF_CONFIG))
-
-# Default to medium-density assets.
-# (Can be overridden in the device config, e.g.: PRODUCT_AAPT_CONFIG += hdpi)
-PRODUCT_AAPT_CONFIG := $(strip \
-    $(PRODUCT_AAPT_CONFIG) \
-    $(if $(filter %dpi,$(PRODUCT_AAPT_CONFIG)),,mdpi))
-PRODUCT_AAPT_PREF_CONFIG := $(strip $(PRODUCT_AAPT_PREF_CONFIG))
-
-# Everyone gets nodpi and anydpi assets which are density-independent.
-PRODUCT_AAPT_CONFIG += nodpi anydpi
+PRODUCT_AAPT_PREBUILT_DPI := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_AAPT_PREBUILT_DPI))
 
 # Keep a copy of the space-separated config
 PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
@@ -294,8 +284,6 @@ PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
 # Convert spaces to commas.
 PRODUCT_AAPT_CONFIG := \
     $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
-PRODUCT_AAPT_PREF_CONFIG := \
-    $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_PREF_CONFIG)))
 
 # product-scoped aapt flags
 PRODUCT_AAPT_FLAGS :=

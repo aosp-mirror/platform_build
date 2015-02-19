@@ -37,6 +37,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate an incremental OTA using the given target-files zip as
       the starting build.
 
+  -v  (--verify)
+      Remount and verify the checksums of the files written to the
+      system and vendor (if used) partitions.  Incremental builds only.
+
   -o  (--oem_settings)  <file>
       Use the file to specify the expected OEM-specific properties
       on the OEM partition of the intended device.
@@ -104,6 +108,7 @@ import sparse_img
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = None
 OPTIONS.incremental_source = None
+OPTIONS.verify = False
 OPTIONS.require_verbatim = set()
 OPTIONS.prohibit_verbatim = set(("system/build.prop",))
 OPTIONS.patch_threshold = 0.95
@@ -462,11 +467,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem")
+    script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
 
   metadata = {"post-build": CalculateFingerprint(
@@ -527,13 +533,13 @@ def WriteFullOTAPackage(input_zip, output_zip):
     bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", recovery_img.data)
     script.AppendExtra("""
-if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
-else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
+else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
   device_specific.FullOTA_InstallBegin()
@@ -548,8 +554,11 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
+  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
+
   system_items = ItemSet("system", "META/filesystem_config.txt")
   script.ShowProgress(system_progress, 0)
+
   if block_based:
     # Full OTA is done as an "incremental" against an empty source
     # image.  This has the effect of writing new data from the package
@@ -561,7 +570,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     system_diff.WriteScript(script, output_zip)
   else:
     script.FormatPartition("/system")
-    script.Mount("/system")
+    script.Mount("/system", recovery_mount_options)
     if not has_recovery_patch:
       script.UnpackPackageDir("recovery", "/system")
     script.UnpackPackageDir("system", "/system")
@@ -594,7 +603,7 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
       vendor_diff.WriteScript(script, output_zip)
     else:
       script.FormatPartition("/vendor")
-      script.Mount("/vendor")
+      script.Mount("/vendor", recovery_mount_options)
       script.UnpackPackageDir("vendor", "/vendor")
 
       symlinks = CopyPartitionFiles(vendor_items, input_zip, output_zip)
@@ -745,11 +754,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     vendor_diff = None
 
   oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.target_info_dict.get("recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem")
+    script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
 
   AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
@@ -785,14 +795,14 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
     script.AppendExtra("""
-if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
     script.AppendExtra("sleep(20);\n");
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
-else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
+else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   script.Print("Verifying current system...")
@@ -835,6 +845,11 @@ set_stage("%(bcb_dev)s", "2/3");
 reboot_now("%(bcb_dev)s", "");
 else
 """ % bcb_dev)
+
+  # Verify the existing partitions.
+  system_diff.WriteVerifyScript(script)
+  if vendor_diff:
+    vendor_diff.WriteVerifyScript(script)
 
   script.Comment("---- start making changes here ----")
 
@@ -935,7 +950,7 @@ class FileDifference:
           raise common.ExternalError("\"%s\" must be sent verbatim" % (fn,))
         print "send", fn, "verbatim"
         tf.AddToZip(output_zip)
-        verbatim_targets.append((fn, tf.size))
+        verbatim_targets.append((fn, tf.size, tf.sha1))
         if fn in target_data.keys():
           AddToKnownPaths(fn, known_paths)
       elif tf.sha1 != sf.sha1:
@@ -956,7 +971,7 @@ class FileDifference:
         # or a patch + rename cannot take place due to the target
         # directory not existing
         tf.AddToZip(output_zip)
-        verbatim_targets.append((tf.name, tf.size))
+        verbatim_targets.append((tf.name, tf.size, tf.sha1))
         if sf.name in renames:
           del renames[sf.name]
         AddToKnownPaths(tf.name, known_paths)
@@ -975,6 +990,13 @@ class FileDifference:
       script.PatchCheck("/"+sf.name, tf.sha1, sf.sha1)
       so_far += sf.size
     return so_far
+
+  def EmitExplicitTargetVerification(self, script):
+    for fn, size, sha1 in self.verbatim_targets:
+      if (fn[-1] != "/"):
+        script.FileCheck("/"+fn, sha1)
+    for tf, _, _, _ in self.patch_list:
+      script.FileCheck(tf.name, tf.sha1)
 
   def RemoveUnneededFiles(self, script, extras=()):
     script.DeleteFiles(["/"+i[0] for i in self.verbatim_targets] +
@@ -1035,11 +1057,12 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
                                           OPTIONS.target_info_dict)
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem")
+    script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(open(OPTIONS.oem_source).readlines())
 
   metadata = {"pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
@@ -1059,10 +1082,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       info_dict=OPTIONS.info_dict)
 
   system_diff = FileDifference("system", source_zip, target_zip, output_zip)
-  script.Mount("/system")
+  script.Mount("/system", recovery_mount_options)
   if HasVendorPartition(target_zip):
     vendor_diff = FileDifference("vendor", source_zip, target_zip, output_zip)
-    script.Mount("/vendor")
+    script.Mount("/vendor", recovery_mount_options)
   else:
     vendor_diff = None
 
@@ -1133,14 +1156,14 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     bcb_dev = {"bcb_dev": fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
     script.AppendExtra("""
-if get_stage("%(bcb_dev)s", "stage") == "2/3" then
+if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
     script.AppendExtra("sleep(20);\n");
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
-else if get_stage("%(bcb_dev)s", "stage") != "3/3" then
+else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   script.Print("Verifying current system...")
@@ -1346,7 +1369,19 @@ endif;
 endif;
 """ % bcb_dev)
 
+  if OPTIONS.verify and system_diff:
+    script.Print("Remounting and verifying system partition files...")
+    script.Unmount("/system")
+    script.Mount("/system")
+    system_diff.EmitExplicitTargetVerification(script)
+
+  if OPTIONS.verify and vendor_diff:
+    script.Print("Remounting and verifying vendor partition files...")
+    script.Unmount("/vendor")
+    script.Mount("/vendor")
+    vendor_diff.EmitExplicitTargetVerification(script)
   script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
+
   WriteMetadata(metadata, output_zip)
 
 
@@ -1382,6 +1417,8 @@ def main(argv):
       OPTIONS.two_step = True
     elif o == "--no_signing":
       OPTIONS.no_signing = True
+    elif o in ("--verify"):
+      OPTIONS.verify = True
     elif o == "--block":
       OPTIONS.block_based = True
     elif o in ("-b", "--binary"):
@@ -1407,6 +1444,7 @@ def main(argv):
                                               "block",
                                               "binary=",
                                               "oem_settings=",
+                                              "verify",
                                               "no_fallback_to_full",
                                               ],
                              extra_option_handler=option_handler)

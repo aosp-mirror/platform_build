@@ -24,7 +24,9 @@ class RangeSet(object):
   lots of runs."""
 
   def __init__(self, data=None):
-    if data:
+    if isinstance(data, str):
+      self._parse_internal(data)
+    elif data:
       self.data = tuple(self._remove_pairs(data))
     else:
       self.data = ()
@@ -46,6 +48,9 @@ class RangeSet(object):
     else:
       return self.to_string()
 
+  def __repr__(self):
+    return '<RangeSet("' + self.to_string() + '")>'
+
   @classmethod
   def parse(cls, text):
     """Parse a text string consisting of a space-separated list of
@@ -59,7 +64,9 @@ class RangeSet(object):
     "15-20 30 10-14" is not, even though they represent the same set
     of blocks (and the two RangeSets will compare equal with ==).
     """
+    return cls(text)
 
+  def _parse_internal(self, text):
     data = []
     last = -1
     monotonic = True
@@ -81,9 +88,8 @@ class RangeSet(object):
         else:
           monotonic = True
     data.sort()
-    r = RangeSet(cls._remove_pairs(data))
-    r.monotonic = monotonic
-    return r
+    self.data = tuple(self._remove_pairs(data))
+    self.monotonic = monotonic
 
   @staticmethod
   def _remove_pairs(source):
@@ -113,7 +119,13 @@ class RangeSet(object):
 
   def union(self, other):
     """Return a new RangeSet representing the union of this RangeSet
-    with the argument."""
+    with the argument.
+
+    >>> RangeSet("10-19 30-34").union(RangeSet("18-29"))
+    <RangeSet("10-34")>
+    >>> RangeSet("10-19 30-34").union(RangeSet("22 32"))
+    <RangeSet("10-19 22 30-34")>
+    """
     out = []
     z = 0
     for p, d in heapq.merge(zip(self.data, itertools.cycle((+1, -1))),
@@ -125,7 +137,13 @@ class RangeSet(object):
 
   def intersect(self, other):
     """Return a new RangeSet representing the intersection of this
-    RangeSet with the argument."""
+    RangeSet with the argument.
+
+    >>> RangeSet("10-19 30-34").intersect(RangeSet("18-32"))
+    <RangeSet("18-19 30-32")>
+    >>> RangeSet("10-19 30-34").intersect(RangeSet("22-28"))
+    <RangeSet("")>
+    """
     out = []
     z = 0
     for p, d in heapq.merge(zip(self.data, itertools.cycle((+1, -1))),
@@ -137,7 +155,13 @@ class RangeSet(object):
 
   def subtract(self, other):
     """Return a new RangeSet representing subtracting the argument
-    from this RangeSet."""
+    from this RangeSet.
+
+    >>> RangeSet("10-19 30-34").subtract(RangeSet("18-32"))
+    <RangeSet("10-17 33-34")>
+    >>> RangeSet("10-19 30-34").subtract(RangeSet("22-28"))
+    <RangeSet("10-19 30-34")>
+    """
 
     out = []
     z = 0
@@ -150,7 +174,13 @@ class RangeSet(object):
 
   def overlaps(self, other):
     """Returns true if the argument has a nonempty overlap with this
-    RangeSet."""
+    RangeSet.
+
+    >>> RangeSet("10-19 30-34").overlaps(RangeSet("18-32"))
+    True
+    >>> RangeSet("10-19 30-34").overlaps(RangeSet("22-28"))
+    False
+    """
 
     # This is like intersect, but we can stop as soon as we discover the
     # output is going to be nonempty.
@@ -164,7 +194,11 @@ class RangeSet(object):
 
   def size(self):
     """Returns the total size of the RangeSet (ie, how many integers
-    are in the set)."""
+    are in the set).
+
+    >>> RangeSet("10-19 30-34").size()
+    15
+    """
 
     total = 0
     for i, p in enumerate(self.data):
@@ -173,3 +207,37 @@ class RangeSet(object):
       else:
         total -= p
     return total
+
+  def map_within(self, other):
+    """'other' should be a subset of 'self'.  Returns a RangeSet
+    representing what 'other' would get translated to if the integers
+    of 'self' were translated down to be contiguous starting at zero.
+
+    >>> RangeSet("0-9").map_within(RangeSet("3-4"))
+    <RangeSet("3-4")>
+    >>> RangeSet("10-19").map_within(RangeSet("13-14"))
+    <RangeSet("3-4")>
+    >>> RangeSet("10-19 30-39").map_within(RangeSet("17-19 30-32"))
+    <RangeSet("7-12")>
+    >>> RangeSet("10-19 30-39").map_within(RangeSet("12-13 17-19 30-32"))
+    <RangeSet("2-3 7-12")>
+    """
+
+    out = []
+    offset = 0
+    start = None
+    for p, d in heapq.merge(zip(self.data, itertools.cycle((-5, +5))),
+                            zip(other.data, itertools.cycle((-1, +1)))):
+      if d == -5:
+        start = p
+      elif d == +5:
+        offset += p-start
+        start = None
+      else:
+        out.append(offset + p - start)
+    return RangeSet(data=out)
+
+
+if __name__ == "__main__":
+  import doctest
+  doctest.testmod()

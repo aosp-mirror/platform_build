@@ -3,6 +3,52 @@
   <?cs call:preview_masthead() ?>
 <?cs else ?>
 <a name="top"></a>
+
+<!-- dialog to prompt lang pref change when loaded from hardcoded URL 
+<div id="langMessage" style="display:none">
+  <div>
+    <div class="lang en">
+      <p>You requested a page in English, would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang es">
+      <p>You requested a page in Spanish (Español), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang ja">
+      <p>You requested a page in Japanese (日本語), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang ko">
+      <p>You requested a page in Korean (한국어), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang ru">
+      <p>You requested a page in Russian (Русский), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang zh-cn">
+      <p>You requested a page in Simplified Chinese (简体中文), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang zh-tw">
+      <p>You requested a page in Traditional Chinese (繁體中文), would you like to proceed with this language setting?</p>
+    </div>
+    <a href="#" class="button yes" onclick="return false;">
+      <span class="lang en">Yes</span>
+      <span class="lang es">Sí</span>
+      <span class="lang ja">Yes</span>
+      <span class="lang ko">Yes</span>
+      <span class="lang ru">Yes</span>
+      <span class="lang zh-cn">是的</span>
+      <span class="lang zh-tw">没有</span>
+    </a>
+    <a href="#" class="button" onclick="$('#langMessage').hide();return false;">
+      <span class="lang en">No</span>
+      <span class="lang es">No</span>
+      <span class="lang ja">No</span>
+      <span class="lang ko">No</span>
+      <span class="lang ru">No</span>
+      <span class="lang zh-cn">没有</span>
+      <span class="lang zh-tw">没有</span>
+    </a>
+  </div>
+</div> -->
+
 <?cs if:!devsite ?><?cs # leave out the global header for devsite; it is in devsite template ?>
   <!-- Header -->
   <div id="header-wrapper">
@@ -125,6 +171,7 @@
                 <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/analyze/index.html">Analyze</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
               </ul>
@@ -160,31 +207,20 @@
         <div class="wrap" style="position:relative;z-index:1">
 
         <?cs if:reference ?>
+        <?cs # HIDE HELPOUTS RECRUIT BANNER
             <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card" 
-              href="http://helpouts.google.com/partner/landing/provider/googledevelopers" target="_blank">
+              href="http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=dac&utm_medium=banner&utm_campaign=android_provider_banner3" target="_blank">
               <div class="card-bg helpouts-card-bg"></div>
               <div class="card-info">
                 <div class="helpouts-description">
-                  <div class="text">Help developers solve problems<br/>
-                    <span id="helpoutsLinkText" class="link-color" style="display:block;padding-top:5px;text-align:right">Learn more</span>
+                  <div class="text">Help Android Wear and TV developers<br/>
+                    <span id="helpoutsLinkText" class="link-color" 
+                    style="display:block;padding-top:5px;text-align:right">Learn more</span>
                   </div>
                 </div>
               </div>
             </a>
-            <script>
-              var textA = "LEARN MORE";
-              var linkA = "http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=android_banner1&utm_medium=banner&utm_campaign=android_provider_banner1";
-              var textB = "SIGN UP NOW";
-              var linkB = "http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=android_banner2&utm_medium=banner&utm_campaign=android_provider_banner2";
-
-              if (Math.floor(1/Math.random()) > 1) {
-                $("a#helpoutsLink").attr('href', linkA);
-                $("span#helpoutsLinkText").text(textA);
-              } else {
-                $("a#helpoutsLink").attr('href', linkB);
-                $("span#helpoutsLinkText").text(textB);
-              }
-            </script>
+        # END HIDE HELPOUTS ?>
         <?cs /if ?>
 
             <ul class="nav-x col-9 develop" style="width:100%">
@@ -233,7 +269,7 @@
     </div>
     <!-- /Sendondary x-nav DEVELOP -->
 
-  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || disttools || stories ?>
+  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || analyze ||  disttools || stories ?>
     <!-- Secondary distribute x-nav -->
     <div id="nav-x">
         <div class="wrap">
@@ -248,6 +284,9 @@
                   >Engage &amp; Retain</a></li>
                 <li class="monetize"><a href="<?cs var:toroot ?>distribute/monetize/index.html"
                   >Monetize</a>
+                </li>
+                <li class="analyze"><a href="<?cs var:toroot ?>distribute/analyze/index.html"
+                  >Analyze</a>
                 </li>
                 <li class="disttools"><a href="<?cs var:toroot ?>distribute/tools/index.html"
                   >Tools</a>

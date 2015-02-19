@@ -302,6 +302,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 
+# API 22!
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
+
 # Move to libc++ as the default STL.
 $(call add-clean-step, rm -rf $(OUT_DIR))
 
@@ -314,6 +319,11 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)
 # char16_t/char32_t will be real types now instead of typedefs, which means
 # an ABI change since the names will mangle differently.
 $(call add-clean-step, rm -rf $(OUT_DIR))
+
+# 5.1!
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 
 # Remove ro.product.locale.language/country and add ro.product.locale
 # instead.

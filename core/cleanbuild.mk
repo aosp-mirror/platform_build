@@ -132,23 +132,11 @@ endif  # if not ONE_SHOT_MAKEFILE dont_bother
 
 previous_build_config_file := $(PRODUCT_OUT)/previous_build_config.mk
 
-# TODO: this special case for the sdk is only necessary while "sdk"
-# is a valid make target.  Eventually, it will just be a product, at
-# which point TARGET_PRODUCT will handle it and we can avoid this check
-# of MAKECMDGOALS.  The "addprefix" is just to keep things pretty.
-ifneq ($(TARGET_PRODUCT),sdk)
-  building_sdk := $(addprefix -,$(filter sdk,$(MAKECMDGOALS)))
-else
-  # Don't bother with this extra part when explicitly building the sdk product.
-  building_sdk :=
-endif
-
 # A change in the list of aapt configs warrants an installclean, too.
 aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG) $(PRODUCT_AAPT_PREF_CONFIG))
 
 current_build_config := \
-    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(aapt_config_list)}
-building_sdk :=
+    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)-{$(aapt_config_list)}
 aapt_config_list :=
 force_installclean := false
 
@@ -220,6 +208,7 @@ installclean_files := \
 	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES \
 	$(PRODUCT_OUT)/obj/FAKE \
 	$(PRODUCT_OUT)/obj/EXECUTABLES/adbd_intermediates \
+	$(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libfs_mgr_intermediates \
 	$(PRODUCT_OUT)/obj/EXECUTABLES/init_intermediates \
 	$(PRODUCT_OUT)/obj/ETC/mac_permissions.xml_intermediates \
 	$(PRODUCT_OUT)/obj/ETC/sepolicy_intermediates \

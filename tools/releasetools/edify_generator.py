@@ -164,14 +164,25 @@ class EdifyGenerator(object):
     self.script.append(('apply_patch_space(%d) || abort("Not enough free space '
                         'on /system to apply patches.");') % (amount,))
 
-  def Mount(self, mount_point):
-    """Mount the partition with the given mount_point."""
+  def Mount(self, mount_point, mount_options_by_format=""):
+    """Mount the partition with the given mount_point.
+      mount_options_by_format:
+      [fs_type=option[,option]...[|fs_type=option[,option]...]...]
+      where option is optname[=optvalue]
+      E.g. ext4=barrier=1,nodelalloc,errors=panic|f2fs=errors=recover
+    """
     fstab = self.info.get("fstab", None)
     if fstab:
       p = fstab[mount_point]
-      self.script.append('mount("%s", "%s", "%s", "%s");' %
+      mount_dict = {}
+      if mount_options_by_format is not None:
+        for option in mount_options_by_format.split("|"):
+          if "=" in option:
+            key, value = option.split("=", 1)
+            mount_dict[key] = value
+      self.script.append('mount("%s", "%s", "%s", "%s", "%s");' %
                          (p.fs_type, common.PARTITION_TYPES[p.fs_type],
-                          p.device, p.mount_point))
+                          p.device, p.mount_point, mount_dict.get(p.fs_type, "")))
       self.mounts.add(p.mount_point)
 
   def UnpackPackageDir(self, src, dst):
@@ -189,6 +200,17 @@ class EdifyGenerator(object):
   def Print(self, message):
     """Log a message to the screen (if the logs are visible)."""
     self.script.append('ui_print("%s");' % (message,))
+
+  def TunePartition(self, partition, *options):
+    fstab = self.info.get("fstab", None)
+    if fstab:
+      p = fstab[partition]
+      if (p.fs_type not in ( "ext2", "ext3", "ext4")):
+        raise ValueError("Partition %s cannot be tuned\n" % (partition,))
+    self.script.append('tune2fs(' +
+                       "".join(['"%s", ' % (i,) for i in options]) +
+                       '"%s") || abort("Failed to tune partition %s");'
+                       % ( p.device,partition));
 
   def FormatPartition(self, partition):
     """Format the given partition, specified by its mount point (eg,
@@ -311,6 +333,10 @@ class EdifyGenerator(object):
   def AppendExtra(self, extra):
     """Append text verbatim to the output script."""
     self.script.append(extra)
+
+  def Unmount(self, mount_point):
+    self.script.append('unmount("%s");' % (mount_point,))
+    self.mounts.remove(mount_point);
 
   def UnmountAll(self):
     for p in sorted(self.mounts):

@@ -24,8 +24,8 @@
 <meta name="Description" content="<?cs var:page.metaDescription ?>"><?cs
   /if ?>
 <link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>favicon.ico" />
-<title><?cs 
-  if:page.title ?><?cs 
+<title><?cs
+  if:page.title ?><?cs
     var:page.title ?> | <?cs
   /if ?>Android Developers</title>
 
@@ -38,7 +38,7 @@ if:android.whichdoc != 'online' ?>http:<?cs
 if:android.whichdoc != 'online' ?>http:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
-<link href="<?cs var:toroot ?>assets/css/default.css?v=2" rel="stylesheet" type="text/css">
+<link href="<?cs var:toroot ?>assets/css/default.css?v=5" rel="stylesheet" type="text/css">
 
 <?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
 <!-- FULLSCREEN STYLESHEET -->
@@ -62,7 +62,14 @@ else
   var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
-<script src="<?cs var:toroot ?>assets/js/docs.js?v=2" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js?v=3" type="text/javascript"></script>
+
+<?cs if:helpoutsWidget ?>
+<script type="text/javascript" src="https://helpouts.google.com/ps/res/embed.js" defer async
+    data-helpouts-embed data-helpouts-vertical="programming"
+    data-helpouts-tags="<?cs var:page.tags ?>" data-helpouts-prefix="android"
+    data-helpouts-standalone="true"></script>
+<?cs /if ?>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
