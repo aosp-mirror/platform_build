@@ -427,7 +427,7 @@ endif
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
-DEFAULT_JACK_EXTRA_ARGS := -D sched.runner=single-threaded --sanity-checks off
+DEFAULT_JACK_EXTRA_ARGS := --sanity-checks off
 endif
 JILL := java -Xmx3500m -cp $(JILL_JAR) com.android.jill.Main
 PROGUARD := external/proguard/bin/proguard.sh
