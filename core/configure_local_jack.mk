@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+ifdef ANDROID_FORCE_JACK_ENABLED
+LOCAL_JACK_ENABLED := $(ANDROID_FORCE_JACK_ENABLED)
+endif
 LOCAL_JACK_ENABLED := $(strip $(LOCAL_JACK_ENABLED))
 ifneq ($(LOCAL_JACK_ENABLED),full)
 ifneq ($(LOCAL_JACK_ENABLED),incremental)
