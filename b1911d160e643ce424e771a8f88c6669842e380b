@@ -34,6 +34,24 @@
       "revId": "b1911d160e643ce424e771a8f88c6669842e380b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48d41a2e_96e98c05",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-02-20T18:25:26Z",
+      "side": 1,
+      "message": "I can probably get rid of this define - it isn\u0027t used anywhere.\n\n(the result under experimental/ doesn\u0027t count because it\u0027s never compiled for windows)",
+      "parentUuid": "88ba92ec_18ec85bd",
+      "revId": "b1911d160e643ce424e771a8f88c6669842e380b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
