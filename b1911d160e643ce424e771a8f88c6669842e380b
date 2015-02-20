@@ -16,6 +16,24 @@
       "revId": "b1911d160e643ce424e771a8f88c6669842e380b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88ba92ec_18ec85bd",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-02-20T18:18:53Z",
+      "side": 1,
+      "message": "not afaik.\n\ni think most of these things should just be turned into _WIN32 and pushed down into the call sites.\n\nwe should probably bump the _WIN32_WINNT value at some point too. i think there are places where we\u0027d like to use stuff that\u0027s been added since Win2K.",
+      "parentUuid": "a89cb684_a1b2fe90",
+      "revId": "b1911d160e643ce424e771a8f88c6669842e380b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
