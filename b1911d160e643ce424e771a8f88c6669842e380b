@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a89cb684_a1b2fe90",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-02-20T17:26:53Z",
+      "side": 1,
+      "message": "i wonder if these \"ifdef USE_MINGW\" are still necessary. do we support anything other than mingw for windows native builds ?",
+      "revId": "b1911d160e643ce424e771a8f88c6669842e380b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
