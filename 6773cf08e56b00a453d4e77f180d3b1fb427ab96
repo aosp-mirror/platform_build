@@ -69,6 +69,24 @@
       "revId": "6773cf08e56b00a453d4e77f180d3b1fb427ab96",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28f0c60e_60254ca3",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-02-21T18:19:39Z",
+      "side": 1,
+      "message": "narayan suggests endsWith(\".so\") or an explicit list. callers can do their wildcarding in the build system if they really feel the need?",
+      "parentUuid": "17cebfa3_975e26dd",
+      "revId": "6773cf08e56b00a453d4e77f180d3b1fb427ab96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
