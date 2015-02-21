@@ -58,19 +58,19 @@
 /* TODO: replace references to this. */
 #define HAVE_WIN32_IPC
 
+#ifdef __CYGWIN__
+#error "CYGWIN is unsupported for platform builds"
+#endif
+
 /*
  * Define this if you build against MSVCRT.DLL
  */
-#ifndef __CYGWIN__
-#  define HAVE_MS_C_RUNTIME
-#endif
+#define HAVE_MS_C_RUNTIME
 
 /*
  * Define this if we want to use WinSock.
  */
-#ifndef __CYGWIN__
 #define HAVE_WINSOCK
-#endif
 
 /*
  * We need to choose between 32-bit and 64-bit off_t.  All of our code should
@@ -93,16 +93,6 @@
  * The default path separator for the platform
  */
 #define OS_PATH_SEPARATOR '\\'
-
-/*
- * Define if <winsock2.h> exists.
- * Only MinGW has it.
- */
-#ifdef USE_MINGW
-#define HAVE_WINSOCK2_H 1
-#else
-/* #define HAVE_WINSOCK2_H */
-#endif
 
 /*
  * Various definitions missing in MinGW
