@@ -110,6 +110,7 @@ PRODUCT_PACKAGES += \
     sdcard \
     services \
     settings \
+    sgdisk \
     svc \
     tc \
     vdc \
