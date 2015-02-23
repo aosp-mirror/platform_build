@@ -1,6 +1,5 @@
 # goldfish-logcat service:  runs logcat -Q
 type goldfish_logcat, domain;
-permissive_or_unconfined(goldfish_logcat)
 
 domain_auto_trans(init, logcat_exec, goldfish_logcat)
 
