@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48789a6f_96652c05",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1003,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-02-23T17:50:09Z",
+      "side": 1,
+      "message": "That\u0027s a user error.\nIf you want to ensure a global variable not to be modified by individual Android.mk, you can add it to _product_stash_var_list in build/core/product.mk.",
+      "range": {
+        "startLine": 1001,
+        "startChar": 34,
+        "endLine": 1003,
+        "endChar": 14
+      },
+      "revId": "6c6d302170a63fae822a828617de30cbe1deaa50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a86916a4_99647bb0",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1014,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-02-23T17:50:09Z",
+      "side": 1,
+      "message": "You can define global variables (in config.mk or definitions.mk) and reference the global variables in the functions.",
+      "range": {
+        "startLine": 1014,
+        "startChar": 0,
+        "endLine": 1014,
+        "endChar": 89
+      },
+      "revId": "6c6d302170a63fae822a828617de30cbe1deaa50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
