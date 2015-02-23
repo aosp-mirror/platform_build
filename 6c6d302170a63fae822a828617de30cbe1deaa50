@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a880367a_24597cf8",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1003,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-02-23T18:03:17Z",
+      "side": 1,
+      "message": "Or perhaps an error user :)\n\nUser error or not, the mistake can be made and the effects would not be obvious, so I wanted a way to ensure it couldn\u0027t happen. Looks like _product_stash_var_list is the way to fix that, thanks for the pointer.",
+      "parentUuid": "48789a6f_96652c05",
+      "range": {
+        "startLine": 1001,
+        "startChar": 34,
+        "endLine": 1003,
+        "endChar": 14
+      },
+      "revId": "6c6d302170a63fae822a828617de30cbe1deaa50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a86916a4_99647bb0",
         "filename": "core/binary.mk",
         "patchSetId": 1
