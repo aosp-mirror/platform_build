@@ -1,7 +1,6 @@
 # goldfish-setup service: runs init.goldfish.sh script
 type goldfish_setup, domain;
 type goldfish_setup_exec, exec_type, file_type;
-permissive_or_unconfined(goldfish_setup)
 
 init_daemon_domain(goldfish_setup)
 
