@@ -91,6 +91,7 @@ TARGET_GLOBAL_CFLAGS += \
 TARGET_GLOBAL_CFLAGS += \
     -Werror=pointer-to-int-cast \
     -Werror=int-to-pointer-cast \
+    -Werror=implicit-function-declaration \
 
 TARGET_GLOBAL_CFLAGS += -fno-strict-volatile-bitfields
 
