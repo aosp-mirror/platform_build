@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5cb393b_eb2ab19f",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-02-24T01:48:39Z",
+      "side": 1,
+      "message": "This won\u0027t work if WITH_ART_SMALL_MODE is set in BoardConfig.mk, because board config is loaded only after product makefiles are loaded.\nI saw other properties set in build/core/main.mk. We can move this to that file as well, if you want WITH_ART_SMALL_MODE set as board config variable.",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "80823d73ae91892c870b7d72f5dddcbeb645eec4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
