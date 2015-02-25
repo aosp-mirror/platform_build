@@ -26,11 +26,11 @@ PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
     DownloadProvider \
     HTMLViewer \
-    IntentFilterVerifier \
     MediaProvider \
     PackageInstaller \
     SettingsProvider \
     Shell \
+    StatementService \
     bcc \
     bu \
     com.android.future.usb.accessory \
