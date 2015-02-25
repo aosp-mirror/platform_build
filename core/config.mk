@@ -119,6 +119,12 @@ COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 COMMON_GLOBAL_CPPFLAGS:= $(COMMON_GLOBAL_CFLAGS) -Wsign-promo -std=gnu++11
 COMMON_RELEASE_CPPFLAGS:= $(COMMON_RELEASE_CFLAGS)
 
+GLOBAL_CFLAGS_NO_OVERRIDE :=  \
+    -Werror=int-to-pointer-cast \
+    -Werror=pointer-to-int-cast \
+
+GLOBAL_CPPFLAGS_NO_OVERRIDE :=
+
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
 COMMON_JAVA_PACKAGE_SUFFIX := .jar
