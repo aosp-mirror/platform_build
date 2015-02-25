@@ -96,6 +96,12 @@ TARGET_GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
+# Help catch common 32/64-bit errors.
+TARGET_GLOBAL_CFLAGS += \
+    -Werror=pointer-to-int-cast \
+    -Werror=int-to-pointer-cast \
+    -Werror=implicit-function-declaration \
+
 ifneq ($(ARCH_MIPS_PAGE_SHIFT),)
 TARGET_GLOBAL_CFLAGS += -DPAGE_SHIFT=$(ARCH_MIPS_PAGE_SHIFT)
 endif
