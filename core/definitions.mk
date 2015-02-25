@@ -1028,6 +1028,8 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_CFLAGS) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
+	$(GLOBAL_CFLAGS_NO_OVERRIDE) \
+	$(GLOBAL_CPPFLAGS_NO_OVERRIDE) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 $(transform-d-to-p)
 endef
@@ -1060,7 +1062,11 @@ endef
 
 define transform-c-to-o-no-deps
 @echo "target $(PRIVATE_ARM_MODE) C: $(PRIVATE_MODULE) <= $<"
-$(call transform-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_CONLYFLAGS) $(PRIVATE_DEBUG_CFLAGS))
+$(call transform-c-or-s-to-o-no-deps, \
+    $(PRIVATE_CFLAGS) \
+    $(PRIVATE_CONLYFLAGS) \
+    $(PRIVATE_DEBUG_CFLAGS) \
+    $(GLOBAL_CFLAGS_NO_OVERRIDE))
 endef
 
 define transform-s-to-o-no-deps
