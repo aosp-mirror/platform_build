@@ -1837,7 +1837,7 @@ $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -r $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -r $(PRIVATE_JNI_SHARED_LIBRARIES_ZIP_OPTIONS) $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
@@ -1865,12 +1865,15 @@ $(hide) java -jar $(SIGNAPK_JAR) \
 $(hide) mv $@.signed $@
 endef
 
-# Align STORED entries of a package on 4-byte boundaries
-# to make them easier to mmap.
+# Align STORED entries of a package on 4-byte boundaries to make them easier to mmap.
 #
 define align-package
 $(hide) mv $@ $@.unaligned
-$(hide) $(ZIPALIGN) -f 4 $@.unaligned $@.aligned
+$(hide) $(ZIPALIGN) \
+    -f \
+    $(if $(findstring true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-p ,) \
+    4 \
+    $@.unaligned $@.aligned
 $(hide) mv $@.aligned $@
 endef
 
