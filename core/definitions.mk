@@ -1779,10 +1779,10 @@ endef
 # so we need to give it something.
 define create-empty-package
 @mkdir -p $(dir $@)
-$(hide) touch $(dir $@)dummy
-$(hide) (cd $(dir $@) && jar cf $(notdir $@) dummy)
-$(hide) zip -qd $@ dummy
-$(hide) rm $(dir $@)dummy
+$(hide) touch $(dir $@)zipdummy
+$(hide) (cd $(dir $@) && jar cf $(notdir $@) zipdummy)
+$(hide) zip -qd $@ zipdummy
+$(hide) rm $(dir $@)zipdummy
 endef
 
 # Copy an arhchive file and delete any class files and empty folders inside.
