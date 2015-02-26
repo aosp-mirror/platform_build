@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a22bf7c1_a91e9d04",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-02-26T12:39:09Z",
+      "side": 1,
+      "message": "drat - this delta is unnecessary. i\u0027ll upload a change to address this.",
+      "revId": "13e5965306212a9051772ff1d5bc3a88e5fb519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
