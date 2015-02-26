@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22dc672f_9dbf83a6",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-02-26T12:16:44Z",
+      "side": 1,
+      "message": "const?",
+      "revId": "65dee24f41b0db3acb508f60d899981bcf1d5341",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a22bf7c1_69d305da",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-02-26T12:16:44Z",
+      "side": 1,
+      "message": "{ }",
+      "revId": "65dee24f41b0db3acb508f60d899981bcf1d5341",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
