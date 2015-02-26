@@ -16,6 +16,63 @@
       "revId": "13e5965306212a9051772ff1d5bc3a88e5fb519a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "428ddb43_0e4d0b88",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1037287
+      },
+      "writtenOn": "2015-02-26T16:48:23Z",
+      "side": 1,
+      "message": "Won\u0027t supplying a [list of files] after zipalign -c produce usage (from line 276)?",
+      "range": {
+        "startLine": 36,
+        "startChar": 53,
+        "endLine": 36,
+        "endChar": 57
+      },
+      "revId": "13e5965306212a9051772ff1d5bc3a88e5fb519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "428ddb43_2e52c726",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1037287
+      },
+      "writtenOn": "2015-02-26T16:48:23Z",
+      "side": 1,
+      "message": "Stray colon here.",
+      "revId": "13e5965306212a9051772ff1d5bc3a88e5fb519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62a81f91_2f3649df",
+        "filename": "tools/zipalign/ZipAlign.cpp",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1037287
+      },
+      "writtenOn": "2015-02-26T16:48:23Z",
+      "side": 1,
+      "message": "kPageAlignment isn\u0027t used outside of getAlignment; maybe move it inside the function.",
+      "revId": "13e5965306212a9051772ff1d5bc3a88e5fb519a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
