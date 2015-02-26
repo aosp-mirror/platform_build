@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "626bbfdd_b78f4891",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 415,
+      "author": {
+        "id": 1012623
+      },
+      "writtenOn": "2015-02-26T09:50:04Z",
+      "side": 1,
+      "message": "it seem this is a merge issue\nwill re-upload new patchset",
+      "range": {
+        "startLine": 415,
+        "startChar": 6,
+        "endLine": 415,
+        "endChar": 7
+      },
+      "revId": "2457fa1e266d4d162d3a9961ff2d8a2eee4cfdbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0b721c91_f4bd78b2",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 3
