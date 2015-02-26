@@ -1959,10 +1959,10 @@ endef
 # $(1) package to create
 define create-empty-package-at
 @mkdir -p $(dir $(1))
-$(hide) touch $(dir $(1))dummy
-$(hide) (cd $(dir $(1)) && jar cf $(notdir $(1)) dummy)
-$(hide) zip -qd $(1) dummy
-$(hide) rm $(dir $(1))dummy
+$(hide) touch $(dir $(1))zipdummy
+$(hide) (cd $(dir $(1)) && jar cf $(notdir $(1)) zipdummy)
+$(hide) zip -qd $(1) zipdummy
+$(hide) rm $(dir $(1))zipdummy
 endef
 
 # Create a mostly-empty .jar file that we'll add to later.
