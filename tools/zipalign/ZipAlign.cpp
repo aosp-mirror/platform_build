@@ -32,20 +32,39 @@ void usage(void)
     fprintf(stderr, "Zip alignment utility\n");
     fprintf(stderr, "Copyright (C) 2009 The Android Open Source Project\n\n");
     fprintf(stderr,
-        "Usage: zipalign [-f] [-v] [-z] <align> infile.zip outfile.zip\n"
-        "       zipalign -c [-v] <align> infile.zip\n\n" );
+        "Usage: zipalign [-f] [-p] [-v] [-z] <align> infile.zip outfile.zip\n"
+        "       zipalign -c [-v] <align> infile.zip [list of files]\n\n" );
     fprintf(stderr,
         "  <align>: alignment in bytes, e.g. '4' provides 32-bit alignment\n");
     fprintf(stderr, "  -c: check alignment only (does not modify file)\n");
     fprintf(stderr, "  -f: overwrite existing outfile.zip\n");
+    fprintf(stderr, "  -p: page align stored shared object: files\n");
     fprintf(stderr, "  -v: verbose output\n");
     fprintf(stderr, "  -z: recompress using Zopfli\n");
+}
+
+static const int kPageAlignment = 4096;
+
+static int getAlignment(bool pageAlignSharedLibs, int defaultAlignment,
+    ZipEntry* pEntry) {
+
+    if (!pageAlignSharedLibs) {
+        return defaultAlignment;
+    }
+
+    const char* ext = strrchr(pEntry->getFileName(), '.');
+    if (ext && strcmp(ext, ".so") == 0) {
+        return kPageAlignment;
+    }
+
+    return defaultAlignment;
 }
 
 /*
  * Copy all entries from "pZin" to "pZout", aligning as needed.
  */
-static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfli)
+static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfli,
+    bool pageAlignSharedLibs)
 {
     int numEntries = pZin->getNumEntries();
     ZipEntry* pEntry;
@@ -75,13 +94,15 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
                 status = pZout->add(pZin, pEntry, padding, &pNewEntry);
             }
         } else {
+            const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
+
             /*
              * Copy the entry, adjusting as required.  We assume that the
              * file position in the new file will be equal to the file
              * position in the original.
              */
             long newOffset = pEntry->getFileOffset() + bias;
-            padding = (alignment - (newOffset % alignment)) % alignment;
+            padding = (alignTo - (newOffset % alignTo)) % alignTo;
 
             //printf("--- %s: orig at %ld(+%d) len=%ld, adding pad=%d\n",
             //    pEntry->getFileName(), (long) pEntry->getFileOffset(),
@@ -105,7 +126,7 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
  * output file exists and "force" wasn't specified.
  */
 static int process(const char* inFileName, const char* outFileName,
-    int alignment, bool force, bool zopfli)
+    int alignment, bool force, bool zopfli, bool pageAlignSharedLibs)
 {
     ZipFile zin, zout;
 
@@ -136,7 +157,7 @@ static int process(const char* inFileName, const char* outFileName,
         return 1;
     }
 
-    int result = copyAndAlign(&zin, &zout, alignment, zopfli);
+    int result = copyAndAlign(&zin, &zout, alignment, zopfli, pageAlignSharedLibs);
     if (result != 0) {
         printf("zipalign: failed rewriting '%s' to '%s'\n",
             inFileName, outFileName);
@@ -147,7 +168,8 @@ static int process(const char* inFileName, const char* outFileName,
 /*
  * Verify the alignment of a zip archive.
  */
-static int verify(const char* fileName, int alignment, bool verbose)
+static int verify(const char* fileName, int alignment, bool verbose,
+    bool pageAlignSharedLibs)
 {
     ZipFile zipFile;
     bool foundBad = false;
@@ -172,11 +194,12 @@ static int verify(const char* fileName, int alignment, bool verbose)
             }
         } else {
             long offset = pEntry->getFileOffset();
-            if ((offset % alignment) != 0) {
+            const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
+            if ((offset % alignTo) != 0) {
                 if (verbose) {
                     printf("%8ld %s (BAD - %ld)\n",
                         (long) offset, pEntry->getFileName(),
-                        offset % alignment);
+                        offset % alignTo);
                 }
                 foundBad = true;
             } else {
@@ -204,6 +227,7 @@ int main(int argc, char* const argv[])
     bool force = false;
     bool verbose = false;
     bool zopfli = false;
+    bool pageAlignSharedLibs = false;
     int result = 1;
     int alignment;
     char* endp;
@@ -233,6 +257,9 @@ int main(int argc, char* const argv[])
             case 'z':
                 zopfli = true;
                 break;
+            case 'p':
+                pageAlignSharedLibs = true;
+                break;
             default:
                 fprintf(stderr, "ERROR: unknown flag -%c\n", *cp);
                 wantUsage = true;
@@ -260,14 +287,15 @@ int main(int argc, char* const argv[])
 
     if (check) {
         /* check existing archive for correct alignment */
-        result = verify(argv[1], alignment, verbose);
+        result = verify(argv[1], alignment, verbose, pageAlignSharedLibs);
     } else {
         /* create the new archive */
-        result = process(argv[1], argv[2], alignment, force, zopfli);
+        result = process(argv[1], argv[2], alignment, force, zopfli, pageAlignSharedLibs);
 
         /* trust, but verify */
-        if (result == 0)
-            result = verify(argv[2], alignment, verbose);
+        if (result == 0) {
+            result = verify(argv[2], alignment, verbose, pageAlignSharedLibs);
+        }
     }
 
 bail:
