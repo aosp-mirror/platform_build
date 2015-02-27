@@ -33,20 +33,20 @@ void usage(void)
     fprintf(stderr, "Copyright (C) 2009 The Android Open Source Project\n\n");
     fprintf(stderr,
         "Usage: zipalign [-f] [-p] [-v] [-z] <align> infile.zip outfile.zip\n"
-        "       zipalign -c [-v] <align> infile.zip [list of files]\n\n" );
+        "       zipalign -c [-v] <align> infile.zip\n\n" );
     fprintf(stderr,
         "  <align>: alignment in bytes, e.g. '4' provides 32-bit alignment\n");
     fprintf(stderr, "  -c: check alignment only (does not modify file)\n");
     fprintf(stderr, "  -f: overwrite existing outfile.zip\n");
-    fprintf(stderr, "  -p: page align stored shared object: files\n");
+    fprintf(stderr, "  -p: page align stored shared object files\n");
     fprintf(stderr, "  -v: verbose output\n");
     fprintf(stderr, "  -z: recompress using Zopfli\n");
 }
 
-static const int kPageAlignment = 4096;
-
 static int getAlignment(bool pageAlignSharedLibs, int defaultAlignment,
     ZipEntry* pEntry) {
+
+    static const int kPageAlignment = 4096;
 
     if (!pageAlignSharedLibs) {
         return defaultAlignment;
