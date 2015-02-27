@@ -611,13 +611,12 @@ $(built_dex_intermediate): $(jack_all_deps)
 	@echo Building with Jack: $@
 	$(jack-java-to-dex)
 
-# The empty command was added because, without it, make misses the fact the $(built_dex) also
-# change $(full_classes_jack). Looks like it would test the date before running $(built_dex)
-# command.
+# $(full_classes_jack) is just by-product of $(built_dex_intermediate).
+# The dummy command was added because, without it, make misses the fact the $(built_dex) also
+# change $(full_classes_jack).
 $(full_classes_jack): $(built_dex_intermediate)
-	@echo
+	$(hide) touch $@
 
-# nothing to do it's built as a side effect of $(built_dex_intermediate)
 endif #LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
