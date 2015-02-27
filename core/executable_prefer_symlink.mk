@@ -39,7 +39,10 @@ $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
   endif
 endif
 
-$(my_symlink): $(LOCAL_INSTALLED_MODULE) $(LOCAL_MODULE_MAKEFILE)
+# $(my_symlink) doesn't need to depend on $(PRIVATE_SRC_BINARY_NAME): we can generate symlink to nonexistent file.
+# If you add the dependency, make would compare the timestamp of a file against that of its symlink:
+# they are always equal, because make follows symlink.
+$(my_symlink): $(LOCAL_MODULE_MAKEFILE)
 	@echo "Symlink: $@ -> $(PRIVATE_SRC_BINARY_NAME)"
 	@mkdir -p $(dir $@)
 	@rm -rf $@

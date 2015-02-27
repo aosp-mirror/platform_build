@@ -483,6 +483,7 @@ rs_generated_cpps := $(addprefix \
 # This is just a dummy rule to make sure gmake doesn't skip updating the dependents.
 $(rs_generated_cpps) : $(RenderScript_file_stamp)
 	@echo "Updated RS generated cpp file $@."
+	$(hide) touch $@
 
 my_c_includes += $(renderscript_intermediate)
 my_generated_sources += $(rs_generated_cpps)
@@ -535,6 +536,7 @@ $(proto_generated_cc_sources): $(proto_generated_cc_sources_dir)/%.pb.cc: %.prot
 # This is just a dummy rule to make sure gmake doesn't skip updating the dependents.
 $(proto_generated_headers): $(proto_generated_cc_sources_dir)/%.pb.h: $(proto_generated_cc_sources_dir)/%.pb.cc
 	@echo "Updated header file $@."
+	$(hide) touch $@
 
 $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined := true
 endif  # transform-proto-to-cc rule included only once
