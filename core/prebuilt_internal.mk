@@ -301,6 +301,7 @@ $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+$(intermediates.COMMON)/classes.jack : PRIVATE_JILL_FLAGS:=$(LOCAL_JILL_FLAGS)
 $(intermediates.COMMON)/classes.jack : $(my_prebuilt_src_file) $(LOCAL_MODULE_MAKEFILE) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR) $(JACK_JAR)
 	$(transform-jar-to-jack)

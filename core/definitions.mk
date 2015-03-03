@@ -1789,7 +1789,7 @@ endef
 
 define transform-jar-to-jack
 	$(hide) mkdir -p $(dir $@)
-	$(JILL) --output $@.tmpjill.jack $<
+	$(JILL) $(PRIVATE_JILL_FLAGS) --output $@.tmpjill.jack $<
 	$(hide) mkdir -p $@.tmpjill.res
 	$(hide) $(call unzip-jar-files,$<,$@.tmpjill.res)
 	$(hide) find $@.tmpjill.res -iname "*.class" -delete
