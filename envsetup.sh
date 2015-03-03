@@ -1442,19 +1442,21 @@ function make()
     local hours=$(($tdiff / 3600 ))
     local mins=$((($tdiff % 3600) / 60))
     local secs=$(($tdiff % 60))
+    local ncolors=$(tput colors 2>/dev/null)
+    if [ -n "$ncolors" ] && [ $ncolors -ge 8 ]; then
+        color_failed="\e[0;31m"
+        color_success="\e[0;32m"
+        color_reset="\e[00m"
+    else
+        color_failed=""
+        color_success=""
+        color_reset=""
+    fi
     echo
     if [ $ret -eq 0 ] ; then
-        if [ $(uname) != "Darwin" ]; then
-            echo -n -e "\e[0;32m#### make completed successfully "
-        else
-            echo -n -e "#### make completed successfully "
-        fi
+        echo -n -e "${color_success}#### make completed successfully "
     else
-        if [ $(uname) != "Darwin" ]; then
-            echo -n -e "\e[0;31m#### make failed to build some targets "
-        else
-            echo -n -e "#### make failed to build some targets "
-        fi
+        echo -n -e "${color_failed}#### make failed to build some targets "
     fi
     if [ $hours -gt 0 ] ; then
         printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
@@ -1463,9 +1465,7 @@ function make()
     elif [ $secs -gt 0 ] ; then
         printf "(%s seconds)" $secs
     fi
-    if [ $(uname) != "Darwin" ]; then
-        echo -e " ####\e[00m"
-    fi
+    echo -e " ####${color_reset}"
     echo
     return $ret
 }
