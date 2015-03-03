@@ -10,6 +10,11 @@ ifeq ($(strip $(LOCAL_CXX_STL)),default)
         # Platform code. Select the appropriate STL.
         ifndef USE_MINGW
             my_cxx_stl := libc++
+            ifdef LOCAL_IS_HOST_MODULE
+                ifneq (,$(BUILD_HOST_static))
+                    my_cxx_stl := libc++_static
+                endif
+            endif
         else
             # libc++ is not supported on mingw.
             my_cxx_stl := libstdc++
@@ -33,7 +38,8 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
-        my_ldlibs += -lc -lm -lpthread
+        my_ldlibs += -lpthread -lm
+        my_ldlibs += -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
     ifndef LOCAL_IS_HOST_MODULE
@@ -61,7 +67,8 @@ else ifeq ($(my_cxx_stl),libstdc++)
 else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
-        my_ldflags += -nodefaultlibs -lc -lm
+        my_ldflags += -nodefaultlibs
+        my_ldlibs += -lm -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
     endif
 else
     $(error $(my_cxx_stl) is not a supported STL.)
