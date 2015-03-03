@@ -252,6 +252,14 @@ def BuildImage(in_dir, prop_dict, out_file,
       build_command.append(fc_config)
     elif "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
+  elif fs_type.startswith("squash"):
+    build_command = ["mksquashfsimage.sh"]
+    build_command.extend([in_dir, out_file])
+    build_command.extend(["-m", prop_dict["mount_point"]])
+    if fc_config is not None:
+      build_command.extend(["-c", fc_config])
+    elif "selinux_fc" in prop_dict:
+      build_command.extend(["-c", prop_dict["selinux_fc"]])
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["partition_size"]])
@@ -320,6 +328,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d["mount_point"] = mount_point
   if mount_point == "system":
     copy_prop("fs_type", "fs_type")
+    # Copy the generic sysetem fs type first, override with specific one if available.
+    copy_prop("system_fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
     copy_prop("system_journal_size", "journal_size")
     copy_prop("system_verity_block_device", "verity_block_device")
