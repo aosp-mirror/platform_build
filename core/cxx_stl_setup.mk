@@ -26,6 +26,10 @@ else
     my_cxx_stl := $(strip $(LOCAL_CXX_STL))
 endif
 
+# Yes, this is actually what the clang driver does.
+HOST_dynamic_gcclibs := -lgcc_s -lgcc -lc -lgcc_s -lgcc
+HOST_static_gcclibs := -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
+
 ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     my_cflags += -D_USING_LIBCXX
     my_c_includes += external/libcxx/include
@@ -39,7 +43,11 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
         my_ldlibs += -lpthread -lm
-        my_ldlibs += -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
+        ifeq (,$(BUILD_HOST_static))
+            my_ldlibs += $(HOST_dynamic_gcclibs)
+        else
+            my_ldlibs += $(HOST_static_gcclibs)
+        endif
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
     ifndef LOCAL_IS_HOST_MODULE
@@ -68,7 +76,11 @@ else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
-        my_ldlibs += -lm -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
+        ifeq (,$(BUILD_HOST_static))
+            my_ldlibs += $(HOST_dynamic_gcclibs)
+        else
+            my_ldlibs += $(HOST_static_gcclibs)
+        endif
     endif
 else
     $(error $(my_cxx_stl) is not a supported STL.)
