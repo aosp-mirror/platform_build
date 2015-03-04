@@ -30,6 +30,20 @@ endif
 HOST_dynamic_gcclibs := -lgcc_s -lgcc -lc -lgcc_s -lgcc
 HOST_static_gcclibs := -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
 
+my_link_type := dynamic
+ifdef LOCAL_IS_HOST_MODULE
+    ifneq (,$(BUILD_HOST_static))
+        my_link_type := static
+    endif
+    ifeq (-static,$(filter -static,$(my_ldflags)))
+        my_link_type := static
+    endif
+else
+    ifeq (true,$(LOCAL_FORCE_STATIC_EXECUTABLE))
+        my_link_type := static
+    endif
+endif
+
 ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     my_cflags += -D_USING_LIBCXX
     my_c_includes += external/libcxx/include
@@ -43,11 +57,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
         my_ldlibs += -lpthread -lm
-        ifeq (,$(BUILD_HOST_static))
-            my_ldlibs += $(HOST_dynamic_gcclibs)
-        else
-            my_ldlibs += $(HOST_static_gcclibs)
-        endif
+        my_ldlibs += $($(my_prefix)$(my_link_type)_gcclibs)
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
     ifndef LOCAL_IS_HOST_MODULE
@@ -76,11 +86,7 @@ else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
-        ifeq (,$(BUILD_HOST_static))
-            my_ldlibs += $(HOST_dynamic_gcclibs)
-        else
-            my_ldlibs += $(HOST_static_gcclibs)
-        endif
+        my_ldlibs += $($(my_prefix)$(my_link_type)_gcclibs)
     endif
 else
     $(error $(my_cxx_stl) is not a supported STL.)
