@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b2f34a1a_fef58106",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-04T05:51:37Z",
+      "side": 1,
+      "message": "I\u0027m still looking in to this, but I can\u0027t even make this work right with a basic foo.cpp outside of Android. I\u0027m not sure we actually need it though, so that\u0027s what I\u0027m checking first.\n\nIf we don\u0027t need it, setting it to this should make sure the error is obvious if someone tries to use it.",
+      "revId": "d666bb100965c1465eec5e03af30a30d33fafebe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
