@@ -27,8 +27,10 @@ else
 endif
 
 # Yes, this is actually what the clang driver does.
-HOST_dynamic_gcclibs := -lgcc_s -lgcc -lc -lgcc_s -lgcc
-HOST_static_gcclibs := -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
+HOST_linux_dynamic_gcclibs := -lgcc_s -lgcc -lc -lgcc_s -lgcc
+HOST_linux_static_gcclibs := -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
+HOST_darwin_dynamic_gcclibs := -lc -lSystem
+HOST_darwin_static_gcclibs := NO_STATIC_HOST_BINARIES_ON_DARWIN
 
 my_link_type := dynamic
 ifdef LOCAL_IS_HOST_MODULE
@@ -57,7 +59,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
         my_ldlibs += -lpthread -lm
-        my_ldlibs += $($(my_prefix)$(my_link_type)_gcclibs)
+        my_ldlibs += $($(my_prefix)$(HOST_OS)_$(my_link_type)_gcclibs)
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
     ifndef LOCAL_IS_HOST_MODULE
@@ -86,7 +88,7 @@ else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
-        my_ldlibs += $($(my_prefix)$(my_link_type)_gcclibs)
+        my_ldlibs += $($(my_prefix)$(HOST_OS)_$(my_link_type)_gcclibs)
     endif
 else
     $(error $(my_cxx_stl) is not a supported STL.)
