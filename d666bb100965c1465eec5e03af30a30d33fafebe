@@ -16,6 +16,24 @@
       "revId": "d666bb100965c1465eec5e03af30a30d33fafebe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b2f34a1a_3ef08913",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-04T06:08:26Z",
+      "side": 1,
+      "message": "Looks like we don\u0027t need it.",
+      "parentUuid": "b2f34a1a_fef58106",
+      "revId": "d666bb100965c1465eec5e03af30a30d33fafebe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
