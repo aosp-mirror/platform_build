@@ -449,8 +449,8 @@ DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
 DEFAULT_JACK_EXTRA_ARGS := --sanity-checks off
 endif
-# Redirect jack warnings to stdout.
-DEFAULT_JACK_EXTRA_ARGS += -D jack.reporter.level.file=error=--,warning=-
+# Turn off jack warnings by default.
+DEFAULT_JACK_EXTRA_ARGS += --verbose error
 
 JILL := java -Xmx3500m -jar $(JILL_JAR)
 PROGUARD := external/proguard/bin/proguard.sh
