@@ -58,6 +58,7 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -finline-limit=64 \
   -fno-canonical-system-headers \
   -fno-tree-sra \
+  -fprefetch-loop-arrays \
   -funswitch-loops \
   -Wmaybe-uninitialized \
   -Wno-error=maybe-uninitialized \
