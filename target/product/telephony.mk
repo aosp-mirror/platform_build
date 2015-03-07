@@ -19,6 +19,7 @@
 
 PRODUCT_PACKAGES := \
     Dialer \
+    CallLogBackup \
     Mms \
     rild
 
