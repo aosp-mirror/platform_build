@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c249dae_0d91714a",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 837,
+      "author": {
+        "id": 1013986
+      },
+      "writtenOn": "2015-03-09T22:59:47Z",
+      "side": 1,
+      "message": "Is there a way to combine this with the x86 case, where it checks for either x86 or x86_64? The rest of the block looks identical.",
+      "range": {
+        "startLine": 837,
+        "startChar": 29,
+        "endLine": 837,
+        "endChar": 54
+      },
+      "revId": "3c0526019cd97b6739a1fc03489bc5550c029504",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c3369f5_acdb8310",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 1013986
+      },
+      "writtenOn": "2015-03-09T22:59:47Z",
+      "side": 1,
+      "message": "If it can\u0027t be combined because of this line it should still be moved next to the x86 block.",
+      "range": {
+        "startLine": 843,
+        "startChar": 12,
+        "endLine": 843,
+        "endChar": 13
+      },
+      "revId": "3c0526019cd97b6739a1fc03489bc5550c029504",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c249dae_2de8adad",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1064,
+      "author": {
+        "id": 1013986
+      },
+      "writtenOn": "2015-03-09T22:59:47Z",
+      "side": 1,
+      "message": "This looks like it might be trickier to combine.",
+      "range": {
+        "startLine": 1064,
+        "startChar": 22,
+        "endLine": 1064,
+        "endChar": 23
+      },
+      "revId": "3c0526019cd97b6739a1fc03489bc5550c029504",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
