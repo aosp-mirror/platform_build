@@ -117,6 +117,9 @@ endif
 ifeq ($(ARCH_X86_HAVE_SSE4_2),true)
     TARGET_GLOBAL_CFLAGS += -msse4.2
 endif
+ifeq ($(ARCH_X86_HAVE_POPCNT),true)
+    TARGET_GLOBAL_CFLAGS += -mpopcnt
+endif
 ifeq ($(ARCH_X86_HAVE_AVX),true)
     TARGET_GLOBAL_CFLAGS += -mavx
 endif
