@@ -22,6 +22,30 @@
       "revId": "fe1e5c3453caa43662ee5a21be74aa160fdbc628",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5ca30580_635ee250",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 1004496
+      },
+      "writtenOn": "2015-03-10T02:13:49Z",
+      "side": 1,
+      "message": "The original version is transform-asm-to-o for x86 Arch.",
+      "parentUuid": "5ca30580_83dafe63",
+      "range": {
+        "startLine": 804,
+        "startChar": 17,
+        "endLine": 804,
+        "endChar": 19
+      },
+      "revId": "fe1e5c3453caa43662ee5a21be74aa160fdbc628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
