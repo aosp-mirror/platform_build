@@ -46,6 +46,30 @@
       "revId": "fe1e5c3453caa43662ee5a21be74aa160fdbc628",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c97e954_ccf14fe5",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-10T17:30:35Z",
+      "side": 1,
+      "message": "we have unified the function.",
+      "parentUuid": "5ca30580_83dafe63",
+      "range": {
+        "startLine": 804,
+        "startChar": 17,
+        "endLine": 804,
+        "endChar": 19
+      },
+      "revId": "fe1e5c3453caa43662ee5a21be74aa160fdbc628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
