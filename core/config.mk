@@ -375,6 +375,7 @@ endif
 
 # ---------------------------------------------------------------
 # Generic tools.
+JACK := $(HOST_OUT_EXECUTABLES)/jack
 JACK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jack.jar
 JILL_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jill.jar
 JACK_MULTIDEX_DEFAULT_PREPROCESSOR := frameworks/multidex/library/resources/JACK-INF/legacyMultidexInstallation.jpp
@@ -436,19 +437,22 @@ endif
 #
 # $(1): vm arguments
 # $(2): jack perf arguments
+ifneq (,$(strip $(filter dist,$(MAKECMDGOALS))))
+JACK_SERVER_LOG_COMMAND := mkdir -p $(DIST_DIR)/logs/; SERVER_LOG=$(DIST_DIR)/logs/jack-server.log
+endif
 define call-jack
-$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG) -jar $(JACK_JAR) $(2)
+$(JACK_SERVER_LOG_COMMAND) JACK_VM_COMMAND="$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG)" JACK_JAR="$(JACK_JAR)" $(JACK) $(2)
 endef
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
 ifneq ($(ANDROID_JACK_VM_ARGS),)
 DEFAULT_JACK_VM_ARGS := $(ANDROID_JACK_VM_ARGS)
 else
-DEFAULT_JACK_VM_ARGS := -Dfile.encoding=UTF-8 -Xmx3584m -Xms2560m -XX:+TieredCompilation
+DEFAULT_JACK_VM_ARGS := -Dfile.encoding=UTF-8 -Xms2560m -XX:+TieredCompilation
 endif
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
-DEFAULT_JACK_EXTRA_ARGS := --sanity-checks off
+DEFAULT_JACK_EXTRA_ARGS := -D sched.runner=multi-threaded -D  sched.runner.thread.kind=fixed -D sched.runner.thread.fixed.count=4 --sanity-checks off -D jack.reporter.level.file=error=--,warning=-
 endif
 # Turn off jack warnings by default.
 DEFAULT_JACK_EXTRA_ARGS += --verbose error
