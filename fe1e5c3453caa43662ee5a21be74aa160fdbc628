@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ca30580_83dafe63",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 804,
+      "author": {
+        "id": 1013986
+      },
+      "writtenOn": "2015-03-10T02:05:21Z",
+      "side": 1,
+      "message": "my only question is the earlier version was to 64o.",
+      "range": {
+        "startLine": 804,
+        "startChar": 17,
+        "endLine": 804,
+        "endChar": 19
+      },
+      "revId": "fe1e5c3453caa43662ee5a21be74aa160fdbc628",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
