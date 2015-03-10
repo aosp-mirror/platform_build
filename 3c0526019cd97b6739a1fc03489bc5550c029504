@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5cca253a_ab4a697c",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 837,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-10T01:26:52Z",
+      "side": 1,
+      "message": "Definitely we should combine.\nI\u0027ll upload a new patch.",
+      "parentUuid": "9c249dae_0d91714a",
+      "range": {
+        "startLine": 837,
+        "startChar": 29,
+        "endLine": 837,
+        "endChar": 54
+      },
+      "revId": "3c0526019cd97b6739a1fc03489bc5550c029504",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c3369f5_acdb8310",
         "filename": "core/binary.mk",
         "patchSetId": 1
