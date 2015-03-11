@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c73bd93_159cb4b1",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1172,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-03-11T01:42:19Z",
+      "side": 1,
+      "message": "This could collide if a module used:\n\n LOCAL_SRC_FILES :\u003d a.c ../a.c ../../a.c\n\nMaybe\n\n $(subst ../,dotdot/,$(1))",
+      "revId": "5bd886b0a9902d026d28703aae5b7aee4c0c5036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
