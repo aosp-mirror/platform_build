@@ -22,6 +22,30 @@
       "revId": "026123b6c9e3c6603f78d2ef5ea8a86eafd728a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c9d0d70_74e3c621",
+        "filename": "core/combo/arch/x86_64/x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017368
+      },
+      "writtenOn": "2015-03-11T09:14:13Z",
+      "side": 1,
+      "message": "In terms of the compiler that is not necessary, as \"-msse4.2\" flag implies all the \"sse\"s bellow (so sse4.1, ssse3.. are all turned on when \"-msse4.2\" is specified). \n\nHowever, if there is some other switch in the code - that can be a problem. So it is better to add all the missing things here.\n\nWhat has to be done though, is adding \"ARCH_X86_HAVE_POPCNT :\u003d true\" as this is a different instruction set and it is not automatically turned on with \"-msse4.2\".",
+      "parentUuid": "f7e9342c_c0f6de64",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 20
+      },
+      "revId": "026123b6c9e3c6603f78d2ef5ea8a86eafd728a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
