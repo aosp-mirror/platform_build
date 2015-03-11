@@ -16,6 +16,24 @@
       "revId": "5bd886b0a9902d026d28703aae5b7aee4c0c5036",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc3de1a0_eee2ff1c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1172,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-11T02:07:39Z",
+      "side": 1,
+      "message": "Yes, but that would end up with duplicate rule for the same object file and make will give warning for that case.\nAnyway I think that\u0027s good and idea and advice is taken.",
+      "parentUuid": "9c73bd93_159cb4b1",
+      "revId": "5bd886b0a9902d026d28703aae5b7aee4c0c5036",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
