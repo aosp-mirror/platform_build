@@ -46,6 +46,30 @@
       "revId": "026123b6c9e3c6603f78d2ef5ea8a86eafd728a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "619ca22a_5bbce301",
+        "filename": "core/combo/arch/x86_64/x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2015-03-11T17:01:44Z",
+      "side": 1,
+      "message": "Unfortunately, some of the makefiles explicitly check for ARCH_X86_HAVE_SSE4_1 and use different code in that case. So for completeness, everything supported has to be set to true. It would never show up as a correctness issue, only as a performance issue.",
+      "parentUuid": "1c9d0d70_74e3c621",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 20
+      },
+      "revId": "026123b6c9e3c6603f78d2ef5ea8a86eafd728a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
