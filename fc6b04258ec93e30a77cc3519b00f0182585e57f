@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1ded2f5_0fdf0552",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-11T17:56:06Z",
+      "side": 1,
+      "message": "You shouldn\u0027t do that. The build system is dependency based: if none of the dependency is changed, you shouldn\u0027t rebuild the target.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 8
+      },
+      "revId": "fc6b04258ec93e30a77cc3519b00f0182585e57f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "817a76a8_94ad646c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1963,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-11T17:56:06Z",
+      "side": 1,
+      "message": "In most cases we\u0027d expect the src and the dest are not identical and this will be waste of time.",
+      "revId": "fc6b04258ec93e30a77cc3519b00f0182585e57f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
