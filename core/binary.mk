@@ -638,16 +638,33 @@ endif
 
 # we also do this on host modules, even though
 # it's not really arm, because there are files that are shared.
-cpp_arm_sources    := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)))
-cpp_arm_objects    := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))
+cpp_arm_sources := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)))
+dotdot_arm_sources := $(filter ../%,$(cpp_arm_sources))
+cpp_arm_sources := $(filter-out ../%,$(cpp_arm_sources))
+cpp_arm_objects := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))
 
-cpp_normal_sources := $(filter %$(LOCAL_CPP_EXTENSION),$(my_src_files))
+# For source files starting with ../, we remove all the ../ in the object file path,
+# to avoid object file escaping the intermediate directory.
+dotdot_arm_objects :=
+$(foreach s,$(dotdot_arm_sources),\
+  $(eval $(call compile-dotdot-cpp-file,$(s),\
+  $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
+  dotdot_arm_objects)))
+
+dotdot_sources := $(filter ../%$(LOCAL_CPP_EXTENSION),$(my_src_files))
+dotdot_objects :=
+$(foreach s,$(dotdot_sources),\
+  $(eval $(call compile-dotdot-cpp-file,$(s),\
+    $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
+    dotdot_objects)))
+
+cpp_normal_sources := $(filter-out ../%,$(filter %$(LOCAL_CPP_EXTENSION),$(my_src_files)))
 cpp_normal_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
 
-$(cpp_arm_objects):    PRIVATE_ARM_MODE := $(arm_objects_mode)
-$(cpp_arm_objects):    PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
-$(cpp_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(cpp_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
+$(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
+$(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
+$(dotdot_objects) $(cpp_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(dotdot_objects) $(cpp_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 cpp_objects        := $(cpp_arm_objects) $(cpp_normal_objects)
 
@@ -659,6 +676,8 @@ $(cpp_objects): $(intermediates)/%.o: \
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 -include $(cpp_objects:%.o=%.P)
 endif
+
+cpp_objects += $(dotdot_arm_objects) $(dotdot_objects)
 
 ###########################################################
 ## C++: Compile generated .cpp files to .o.
@@ -716,16 +735,33 @@ gen_o_objects := $(filter %.o,$(my_generated_sources))
 ## C: Compile .c files to .o.
 ###########################################################
 
-c_arm_sources    := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(my_src_files)))
-c_arm_objects    := $(addprefix $(intermediates)/,$(c_arm_sources:.c=.o))
+c_arm_sources := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(my_src_files)))
+dotdot_arm_sources := $(filter ../%,$(c_arm_sources))
+c_arm_sources := $(filter-out ../%,$(c_arm_sources))
+c_arm_objects := $(addprefix $(intermediates)/,$(c_arm_sources:.c=.o))
 
-c_normal_sources := $(filter %.c,$(my_src_files))
+# For source files starting with ../, we remove all the ../ in the object file path,
+# to avoid object file escaping the intermediate directory.
+dotdot_arm_objects :=
+$(foreach s,$(dotdot_arm_sources),\
+  $(eval $(call compile-dotdot-c-file,$(s),\
+    $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
+    dotdot_arm_objects)))
+
+dotdot_sources := $(filter ../%.c, $(my_src_files))
+dotdot_objects :=
+$(foreach s, $(dotdot_sources),\
+  $(eval $(call compile-dotdot-c-file,$(s),\
+    $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
+    dotdot_objects)))
+
+c_normal_sources := $(filter-out ../%,$(filter %.c,$(my_src_files)))
 c_normal_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
 
-$(c_arm_objects):    PRIVATE_ARM_MODE := $(arm_objects_mode)
-$(c_arm_objects):    PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
-$(c_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
+$(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
+$(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
+$(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 c_objects        := $(c_arm_objects) $(c_normal_objects)
 
@@ -735,6 +771,8 @@ $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(pr
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(c_objects:%.o=%.P)
 endif
+
+c_objects += $(dotdot_arm_objects) $(dotdot_objects)
 
 ###########################################################
 ## C: Compile generated .c files to .o.
@@ -773,7 +811,15 @@ endif
 ###########################################################
 
 asm_sources_S := $(filter %.S,$(my_src_files))
+dotdot_sources := $(filter ../%,$(asm_sources_S))
+asm_sources_S := $(filter-out ../%,$(asm_sources_S))
 asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
+
+dotdot_objects_S :=
+$(foreach s,$(dotdot_sources),\
+  $(eval $(call compile-dotdot-s-file,$(s),\
+    $(my_additional_dependencies),\
+    dotdot_objects_S)))
 
 ifneq ($(strip $(asm_objects_S)),)
 $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
@@ -783,16 +829,23 @@ $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
 endif
 
 asm_sources_s := $(filter %.s,$(my_src_files))
+dotdot_sources := $(filter ../%,$(asm_sources_s))
+asm_sources_s := $(filter-out ../%,$(asm_sources_s))
 asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
+
+dotdot_objects_s :=
+$(foreach s,$(dotdot_sources),\
+  $(eval $(call compile-dotdot-s-file-no-deps,$(s),\
+    $(my_additional_dependencies),\
+    dotdot_objects_s)))
 
 ifneq ($(strip $(asm_objects_s)),)
 $(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
--include $(asm_objects_s:%.o=%.P)
 endif
 
-asm_objects := $(asm_objects_S) $(asm_objects_s)
+asm_objects := $(dotdot_objects_S) $(dotdot_objects_s) $(asm_objects_S) $(asm_objects_s)
 
 
 # .asm for x86 needs to be compiled with yasm.
