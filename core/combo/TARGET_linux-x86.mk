@@ -147,3 +147,5 @@ $(combo_2nd_arch_prefix)TARGET_STRIP_MODULE:=true
 $(combo_2nd_arch_prefix)TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libm
 
 $(combo_2nd_arch_prefix)TARGET_LINKER := /system/bin/linker
+
+$(combo_2nd_arch_prefix)TARGET_GLOBAL_YASM_FLAGS := -f elf32 -m x86
