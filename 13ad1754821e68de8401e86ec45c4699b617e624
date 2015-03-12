@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2168ea9d_3f626f8d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2015-03-12T21:06:53Z",
+      "side": 1,
+      "message": "add to build/CleanSpec.mk\n\n# Adding dalvik.vm.usejit\n$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)\n$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)\n$(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/default.prop)",
+      "range": {
+        "startLine": 393,
+        "startChar": 0,
+        "endLine": 393,
+        "endChar": 54
+      },
+      "revId": "13ad1754821e68de8401e86ec45c4699b617e624",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
