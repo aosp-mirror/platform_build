@@ -1024,17 +1024,19 @@ def ComputeDifferences(diffs):
 
 
 class BlockDifference:
-  def __init__(self, partition, tgt, src=None, check_first_block=False):
+  def __init__(self, partition, tgt, src=None, check_first_block=False, version=None):
     self.tgt = tgt
     self.src = src
     self.partition = partition
     self.check_first_block = check_first_block
 
-    self.version = 1
-    if OPTIONS.info_dict:
-      self.version = max(
-          int(i) for i in
-          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+    if version is None:
+      version = 1
+      if OPTIONS.info_dict:
+        version = max(
+            int(i) for i in
+            OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+    self.version = version
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
                                     version=self.version)
