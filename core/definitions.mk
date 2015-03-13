@@ -1435,7 +1435,8 @@ endif
 define transform-to-stripped
 @mkdir -p $(dir $@)
 @echo "target Strip: $(PRIVATE_MODULE) ($@)"
-$(hide) $(PRIVATE_STRIP) --strip-all $< -o $@ $(TARGET_STRIP_EXTRA)
+$(hide) $(PRIVATE_STRIP) --strip-all $< -o $@ \
+  $(if $(PRIVATE_NO_DEBUGLINK),,$(TARGET_STRIP_EXTRA))
 endef
 
 define transform-to-stripped-keep-symbols
