@@ -368,23 +368,28 @@ def main(argv):
   out_file = argv[2]
 
   glob_dict = LoadGlobalDict(glob_dict_file)
-  image_filename = os.path.basename(out_file)
-  mount_point = ""
-  if image_filename == "system.img":
-    mount_point = "system"
-  elif image_filename == "userdata.img":
-    mount_point = "data"
-  elif image_filename == "cache.img":
-    mount_point = "cache"
-  elif image_filename == "vendor.img":
-    mount_point = "vendor"
-  elif image_filename == "oem.img":
-    mount_point = "oem"
+  if "mount_point" in glob_dict:
+    # The caller knows the mount point and provides a dictionay needed by BuildImage().
+    image_properties = glob_dict
   else:
-    print >> sys.stderr, "error: unknown image file name ", image_filename
-    exit(1)
+    image_filename = os.path.basename(out_file)
+    mount_point = ""
+    if image_filename == "system.img":
+      mount_point = "system"
+    elif image_filename == "userdata.img":
+      mount_point = "data"
+    elif image_filename == "cache.img":
+      mount_point = "cache"
+    elif image_filename == "vendor.img":
+      mount_point = "vendor"
+    elif image_filename == "oem.img":
+      mount_point = "oem"
+    else:
+      print >> sys.stderr, "error: unknown image file name ", image_filename
+      exit(1)
 
-  image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
+    image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
+
   if not BuildImage(in_dir, image_properties, out_file):
     print >> sys.stderr, "error: failed to build %s from %s" % (out_file, in_dir)
     exit(1)
