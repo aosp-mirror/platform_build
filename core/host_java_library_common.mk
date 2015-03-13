@@ -50,7 +50,11 @@ else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
     LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-nano
   else
-    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-lite
+    ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
+      LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-full
+    else
+      LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-lite
+    endif
   endif
 endif
 endif
