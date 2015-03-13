@@ -1196,6 +1196,64 @@ $(transform-host-m-to-o-no-deps)
 $(transform-d-to-p)
 endef
 
+
+###########################################################
+## Rules to compile a single C/C++ source with ../ in the path
+###########################################################
+# Replace "../" in object paths with $(DOTDOT_REPLACEMENT).
+DOTDOT_REPLACEMENT := dotdot/
+
+## Rule to compile a C++ source file with ../ in the path.
+## Must be called with $(eval).
+# $(1): the C++ source file in LOCAL_SRC_FILES.
+# $(2): the additional dependencies.
+# $(3): the variable name to collect the output object file.
+define compile-dotdot-cpp-file
+o := $(intermediates)/$(patsubst %$(LOCAL_CPP_EXTENSION),%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+	$$(transform-$$(PRIVATE_HOST)cpp-to-o)
+-include $$(o:%.o=%.P)
+$(3) += $$(o)
+endef
+
+## Rule to compile a C source file with ../ in the path.
+## Must be called with $(eval).
+# $(1): the C source file in LOCAL_SRC_FILES.
+# $(2): the additional dependencies.
+# $(3): the variable name to collect the output object file.
+define compile-dotdot-c-file
+o := $(intermediates)/$(patsubst %.c,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+	$$(transform-$$(PRIVATE_HOST)c-to-o)
+-include $$(o:%.o=%.P)
+$(3) += $$(o)
+endef
+
+## Rule to compile a .S source file with ../ in the path.
+## Must be called with $(eval).
+# $(1): the .S source file in LOCAL_SRC_FILES.
+# $(2): the additional dependencies.
+# $(3): the variable name to collect the output object file.
+define compile-dotdot-s-file
+o := $(intermediates)/$(patsubst %.S,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+	$$(transform-$$(PRIVATE_HOST)s-to-o)
+-include $$(o:%.o=%.P)
+$(3) += $$(o)
+endef
+
+## Rule to compile a .s source file with ../ in the path.
+## Must be called with $(eval).
+# $(1): the .s source file in LOCAL_SRC_FILES.
+# $(2): the additional dependencies.
+# $(3): the variable name to collect the output object file.
+define compile-dotdot-s-file-no-deps
+o := $(intermediates)/$(patsubst %.s,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+	$$(transform-$$(PRIVATE_HOST)s-to-o-no-deps)
+$(3) += $$(o)
+endef
+
 ###########################################################
 ## Commands for running ar
 ###########################################################
