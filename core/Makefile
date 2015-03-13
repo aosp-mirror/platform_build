@@ -1270,16 +1270,19 @@ $(BUILT_OTATOOLS_PACKAGE): \
 $(BUILT_OTATOOLS_PACKAGE): \
 	zip_root := $(intermediate)/otatools
 
+otatools_lib_path := $(notdir $(HOST_OUT_SHARED_LIBRARIES))
 $(BUILT_OTATOOLS_PACKAGE): \
-		$(OTATOOLS)
+		$(OTATOOLS) \
+		$(HOST_OUT_SHARED_LIBRARIES)/libc++.so
 	@echo "Package OTA tools: $@"
 	$(hide) rm -rf $@ $(zip_root)
-	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
+	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools $(zip_root)/$(otatools_lib_path)
 	$(hide) $(ACP) -p $(OTATOOLS) $(zip_root)/bin
 	$(hide) mv $(zip_root)/bin/*.jar $(zip_root)/framework/
+	$(hide) $(ACP) $(HOST_OUT_SHARED_LIBRARIES)/libc++.so $(zip_root)/$(otatools_lib_path)
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
-	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) bin framework releasetools)
+	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) bin framework releasetools $(otatools_lib_path))
 	$(hide) zip -qry $(abspath $@) build/target/product/security/
 	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem | xargs zip -qry $(abspath $@)
 
