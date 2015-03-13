@@ -134,6 +134,12 @@ TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=addre
 # TODO: do symbol compression
 TARGET_COMPRESS_MODULE_SYMBOLS := false
 
+ifdef TMPDIR
+JAVA_TMPDIR_ARG := -Djava.io.tmpdir=$(TMPDIR)
+else
+JAVA_TMPDIR_ARG :=
+endif
+
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -430,7 +436,7 @@ endif
 # $(1): vm arguments
 # $(2): jack perf arguments
 define call-jack
-$(JACK_VM) $(1) -cp $(JACK_JAR) com.android.jack.Main $(2)
+$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG) -cp $(JACK_JAR) com.android.jack.Main $(2)
 endef
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
 ifneq ($(ANDROID_JACK_VM_ARGS),)
@@ -443,6 +449,7 @@ DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
 DEFAULT_JACK_EXTRA_ARGS := --sanity-checks off
 endif
+
 JILL := java -Xmx3500m -cp $(JILL_JAR) com.android.jill.Main
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
