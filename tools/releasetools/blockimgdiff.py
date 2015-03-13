@@ -277,6 +277,8 @@ class BlockImageDiff(object):
       if stashed_blocks > max_stashed_blocks:
         max_stashed_blocks = stashed_blocks
 
+      free_string = []
+
       if self.version == 1:
         src_string = xf.src_ranges.to_string_raw()
       elif self.version == 2:
