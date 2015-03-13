@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c178ee71_6441a8c4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-03-13T22:11:21Z",
+      "side": 1,
+      "message": "... \"we just want to give a more informative error message.\"\n\nright?",
+      "revId": "49420cb70c5acde6e05ce88788829257ba65f6da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
