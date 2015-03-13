@@ -213,10 +213,15 @@ endif
 ## Please note that we will do option filtering during FDO build.
 ## i.e. Os->O2, remove -fno-early-inline and -finline-limit.
 ##################################################################
-ifeq ($(strip $(LOCAL_FDO_SUPPORT)), true)
-  ifeq ($(strip $(LOCAL_IS_HOST_MODULE)),)
-    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_CFLAGS)
-    my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_LDFLAGS)
+my_fdo_build :=
+ifneq ($(filter true always, $(LOCAL_FDO_SUPPORT)),)
+  ifeq ($(BUILD_FDO_INSTRUMENT),true)
+    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_INSTRUMENT_CFLAGS)
+    my_ldflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_INSTRUMENT_LDFLAGS)
+    my_fdo_build := true
+  else ifneq ($(filter true,$(BUILD_FDO_OPTIMIZE))$(filter always,$(LOCAL_FDO_SUPPORT)),)
+    my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_OPTIMIZE_CFLAGS)
+    my_fdo_build := true
   endif
 endif
 
@@ -1045,19 +1050,10 @@ my_asflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flag
 my_ldflags := $(call $(LOCAL_2ND_ARCH_VAR_PREFIX)convert-to-$(my_host)clang-flags,$(my_ldflags))
 endif
 
-ifeq ($(LOCAL_FDO_SUPPORT), true)
-  build_with_fdo := false
-  ifeq ($(BUILD_FDO_INSTRUMENT), true)
-    build_with_fdo := true
-  endif
-  ifeq ($(BUILD_FDO_OPTIMIZE), true)
-    build_with_fdo := true
-  endif
-  ifeq ($(build_with_fdo), true)
-    my_cflags := $(patsubst -Os,-O2,$(my_cflags))
-    fdo_incompatible_flags=-fno-early-inlining -finline-limit=%
-    my_cflags := $(filter-out $(fdo_incompatible_flags),$(my_cflags))
-  endif
+ifeq ($(my_fdo_build), true)
+  my_cflags := $(patsubst -Os,-O2,$(my_cflags))
+  fdo_incompatible_flags := -fno-early-inlining -finline-limit=%
+  my_cflags := $(filter-out $(fdo_incompatible_flags),$(my_cflags))
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
