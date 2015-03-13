@@ -190,14 +190,14 @@ class Transfer(object):
 # original image.
 
 class BlockImageDiff(object):
-  def __init__(self, tgt, src=None, threads=None, version=2):
+  def __init__(self, tgt, src=None, threads=None, version=3):
     if threads is None:
       threads = multiprocessing.cpu_count() // 2
       if threads == 0: threads = 1
     self.threads = threads
     self.version = version
 
-    assert version in (1, 2)
+    assert version in (1, 2, 3)
 
     self.tgt = tgt
     if src is None:
@@ -244,6 +244,15 @@ class BlockImageDiff(object):
     self.ComputePatches(prefix)
     self.WriteTransfers(prefix)
 
+  def HashBlocks(self, source, ranges):
+    data = source.ReadRangeSet(ranges)
+    ctx = sha1()
+
+    for p in data:
+      ctx.update(p)
+
+    return ctx.hexdigest()
+
   def WriteTransfers(self, prefix):
     out = []
 
@@ -272,14 +281,22 @@ class BlockImageDiff(object):
           next_stash_id += 1
         stashes[s] = sid
         stashed_blocks += sr.size()
-        out.append("stash %d %s\n" % (sid, sr.to_string_raw()))
+        if self.version == 2:
+          out.append("stash %d %s\n" % (sid, sr.to_string_raw()))
+        else:
+          sh = self.HashBlocks(self.src, sr)
+          if sh in stashes:
+            stashes[sh] += 1
+          else:
+            stashes[sh] = 1
+            out.append("stash %s %s\n" % (sh, sr.to_string_raw()))
 
       if stashed_blocks > max_stashed_blocks:
         max_stashed_blocks = stashed_blocks
 
       if self.version == 1:
         src_string = xf.src_ranges.to_string_raw()
-      elif self.version == 2:
+      elif self.version >= 2:
 
         #   <# blocks> <src ranges>
         #     OR
@@ -289,6 +306,7 @@ class BlockImageDiff(object):
 
         size = xf.src_ranges.size()
         src_string = [str(size)]
+        free_string = []
 
         unstashed_src_ranges = xf.src_ranges
         mapped_stashes = []
@@ -296,9 +314,18 @@ class BlockImageDiff(object):
           sid = stashes.pop(s)
           stashed_blocks -= sr.size()
           unstashed_src_ranges = unstashed_src_ranges.subtract(sr)
+          sh = self.HashBlocks(self.src, sr)
           sr = xf.src_ranges.map_within(sr)
           mapped_stashes.append(sr)
-          src_string.append("%d:%s" % (sid, sr.to_string_raw()))
+          if self.version == 2:
+            src_string.append("%d:%s" % (sid, sr.to_string_raw()))
+          else:
+            assert sh in stashes
+            src_string.append("%s:%s" % (sh, sr.to_string_raw()))
+            stashes[sh] -= 1
+            if stashes[sh] == 0:
+              free_string.append("free %s\n" % (sh))
+              stashes.pop(sh)
           heapq.heappush(free_stash_ids, sid)
 
         if unstashed_src_ranges:
@@ -314,7 +341,7 @@ class BlockImageDiff(object):
 
         src_string = " ".join(src_string)
 
-      # both versions:
+      # all versions:
       #   zero <rangeset>
       #   new <rangeset>
       #   erase <rangeset>
@@ -328,6 +355,11 @@ class BlockImageDiff(object):
       #   bsdiff patchstart patchlen <tgt rangeset> <src_string>
       #   imgdiff patchstart patchlen <tgt rangeset> <src_string>
       #   move <tgt rangeset> <src_string>
+      #
+      # version 3:
+      #   bsdiff patchstart patchlen srchash tgthash <tgt rangeset> <src_string>
+      #   imgdiff patchstart patchlen srchash tgthash <tgt rangeset> <src_string>
+      #   move hash <tgt rangeset> <src_string>
 
       tgt_size = xf.tgt_ranges.size()
 
@@ -348,6 +380,11 @@ class BlockImageDiff(object):
             out.append("%s %s %s\n" % (
                 xf.style,
                 xf.tgt_ranges.to_string_raw(), src_string))
+          elif self.version >= 3:
+            out.append("%s %s %s %s\n" % (
+                xf.style,
+                self.HashBlocks(self.tgt, xf.tgt_ranges),
+                xf.tgt_ranges.to_string_raw(), src_string))
           total += tgt_size
       elif xf.style in ("bsdiff", "imgdiff"):
         performs_read = True
@@ -361,6 +398,13 @@ class BlockImageDiff(object):
           out.append("%s %d %d %s %s\n" % (
               xf.style, xf.patch_start, xf.patch_len,
               xf.tgt_ranges.to_string_raw(), src_string))
+        elif self.version >= 3:
+          out.append("%s %d %d %s %s %s %s\n" % (
+              xf.style,
+              xf.patch_start, xf.patch_len,
+              self.HashBlocks(self.src, xf.src_ranges),
+              self.HashBlocks(self.tgt, xf.tgt_ranges),
+              xf.tgt_ranges.to_string_raw(), src_string))
         total += tgt_size
       elif xf.style == "zero":
         assert xf.tgt_ranges
@@ -370,6 +414,9 @@ class BlockImageDiff(object):
           total += to_zero.size()
       else:
         raise ValueError, "unknown transfer style '%s'\n" % (xf.style,)
+
+      if free_string:
+        out.append("".join(free_string))
 
 
       # sanity check: abort if we're going to need more than 512 MB if

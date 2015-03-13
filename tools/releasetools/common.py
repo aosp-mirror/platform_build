@@ -1056,18 +1056,21 @@ class BlockDifference:
     self._WriteUpdate(script, output_zip)
 
   def WriteVerifyScript(self, script):
+    partition = self.partition
     if not self.src:
-      script.Print("Image %s will be patched unconditionally." % (self.partition,))
+      script.Print("Image %s will be patched unconditionally." % (partition,))
     else:
+      script.AppendExtra(('if block_image_verify("%s", '
+                          'package_extract_file("%s.transfer.list"), '
+                          '"%s.new.dat", "%s.patch.dat") then') %
+                         (self.device, partition, partition, partition))
+      script.Print("Verified %s image..." % (partition,))
+      script.AppendExtra('else');
+
       if self.check_first_block:
         self._CheckFirstBlock(script)
 
-      script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
-                         (self.device, self.src.care_map.to_string_raw(),
-                          self.src.TotalSha1()))
-      script.Print("Verified %s image..." % (self.partition,))
-      script.AppendExtra(('else\n'
-                          '  (range_sha1("%s", "%s") == "%s") ||\n'
+      script.AppendExtra(('(range_sha1("%s", "%s") == "%s") ||\n'
                           '  abort("%s partition has unexpected contents");\n'
                           'endif;') %
                          (self.device, self.tgt.care_map.to_string_raw(),
@@ -1089,18 +1092,27 @@ class BlockDifference:
             (self.device, partition, partition, partition))
     script.AppendExtra(script._WordWrap(call))
 
+  def _HashBlocks(self, source, ranges):
+    data = source.ReadRangeSet(ranges)
+    ctx = sha1()
+
+    for p in data:
+      ctx.update(p)
+
+    return ctx.hexdigest()
+
   def _CheckFirstBlock(self, script):
     r = RangeSet((0, 1))
-    h = sha1()
-    for data in self.src.ReadRangeSet(r):
-      h.update(data)
-    h = h.hexdigest()
+    srchash = self._HashBlocks(self.src, r);
+    tgthash = self._HashBlocks(self.tgt, r);
 
     script.AppendExtra(('(range_sha1("%s", "%s") == "%s") || '
+                        '(range_sha1("%s", "%s") == "%s") || '
                         'abort("%s has been remounted R/W; '
                         'reflash device to reenable OTA updates");')
-                       % (self.device, r.to_string_raw(), h, self.device))
-
+                       % (self.device, r.to_string_raw(), srchash,
+                          self.device, r.to_string_raw(), tgthash,
+                          self.device))
 
 DataImage = blockimgdiff.DataImage
 
