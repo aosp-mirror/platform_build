@@ -39,6 +39,10 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # Put the built targets of all shared libraries in a common directory
   # to simplify the link line.
   OVERRIDE_BUILT_MODULE_PATH := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
+  ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_STRIP_MODULE),)
+    # Strip but not try to add debuglink
+    LOCAL_STRIP_MODULE := no_debuglink
+  endif
 endif
 
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
@@ -59,7 +63,7 @@ LOCAL_BUILT_MODULE_STEM := package.apk
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
 endif
 
-ifeq ($(LOCAL_STRIP_MODULE),true)
+ifneq ($(filter true no_debuglink,$(LOCAL_STRIP_MODULE)),)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
   endif
@@ -71,6 +75,7 @@ ifeq ($(LOCAL_STRIP_MODULE),true)
   endif
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
+
 else  # LOCAL_STRIP_MODULE not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
@@ -112,6 +117,8 @@ $(LOCAL_BUILT_MODULE) : $(my_built_shared_libraries)
 endif
 endif
 
+# We need to enclose the above export_includes and built_shared_libraries in
+# "LOCAL_STRIP_MODULE not true" because otherwise the rules are defined in dynamic_binary.mk.
 endif  # LOCAL_STRIP_MODULE not true
 
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
