@@ -1058,29 +1058,38 @@ class BlockDifference:
     self._WriteUpdate(script, output_zip)
 
   def WriteVerifyScript(self, script):
+    partition = self.partition
     if not self.src:
-      script.Print("Image %s will be patched unconditionally." % (self.partition,))
+      script.Print("Image %s will be patched unconditionally." % (partition,))
     else:
+      if self.version >= 3:
+        script.AppendExtra(('if block_image_verify("%s", '
+                            'package_extract_file("%s.transfer.list"), '
+                            '"%s.new.dat", "%s.patch.dat") then') %
+                           (self.device, partition, partition, partition))
+      else:
+        script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
+                            (self.device, self.src.care_map.to_string_raw(),
+                            self.src.TotalSha1()))
+      script.Print('Verified %s image...' % (partition,))
+      script.AppendExtra('else');
+
+      # When generating incrementals for the system and vendor partitions,
+      # explicitly check the first block (which contains the superblock) of
+      # the partition to see if it's what we expect. If this check fails,
+      # give an explicit log message about the partition having been
+      # remounted R/W (the most likely explanation) and the need to flash to
+      # get OTAs working again.
       if self.check_first_block:
         self._CheckFirstBlock(script)
 
-      script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
-                         (self.device, self.src.care_map.to_string_raw(),
-                          self.src.TotalSha1()))
-      script.Print("Verified %s image..." % (self.partition,))
-      # Abort the OTA update if it doesn't support resumable OTA (i.e. version<3)
-      # and the checksum doesn't match the one in the source partition.
-      if self.version < 3:
-        script.AppendExtra(('else\n'
-                            '  abort("%s partition has unexpected contents");\n'
-                            'endif;') % (self.partition))
-      else:
-        script.AppendExtra(('else\n'
-                            '  (range_sha1("%s", "%s") == "%s") ||\n'
-                            '  abort("%s partition has unexpected contents");\n'
-                            'endif;') %
-                           (self.device, self.tgt.care_map.to_string_raw(),
-                            self.tgt.TotalSha1(), self.partition))
+      # Abort the OTA update. Note that the incremental OTA cannot be applied
+      # even if it may match the checksum of the target partition.
+      # a) If version < 3, operations like move and erase will make changes
+      #    unconditionally and damage the partition.
+      # b) If version >= 3, it won't even reach here.
+      script.AppendExtra(('abort("%s partition has unexpected contents");\n'
+                          'endif;') % (partition,))
 
   def _WriteUpdate(self, script, output_zip):
     partition = self.partition
@@ -1098,18 +1107,24 @@ class BlockDifference:
             (self.device, partition, partition, partition))
     script.AppendExtra(script._WordWrap(call))
 
+  def _HashBlocks(self, source, ranges):
+    data = source.ReadRangeSet(ranges)
+    ctx = sha1()
+
+    for p in data:
+      ctx.update(p)
+
+    return ctx.hexdigest()
+
   def _CheckFirstBlock(self, script):
     r = RangeSet((0, 1))
-    h = sha1()
-    for data in self.src.ReadRangeSet(r):
-      h.update(data)
-    h = h.hexdigest()
+    srchash = self._HashBlocks(self.src, r);
 
     script.AppendExtra(('(range_sha1("%s", "%s") == "%s") || '
                         'abort("%s has been remounted R/W; '
                         'reflash device to reenable OTA updates");')
-                       % (self.device, r.to_string_raw(), h, self.device))
-
+                       % (self.device, r.to_string_raw(), srchash,
+                          self.device))
 
 DataImage = blockimgdiff.DataImage
 
