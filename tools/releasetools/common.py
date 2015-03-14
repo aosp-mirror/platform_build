@@ -1024,17 +1024,19 @@ def ComputeDifferences(diffs):
 
 
 class BlockDifference:
-  def __init__(self, partition, tgt, src=None, check_first_block=False):
+  def __init__(self, partition, tgt, src=None, check_first_block=False, version=None):
     self.tgt = tgt
     self.src = src
     self.partition = partition
     self.check_first_block = check_first_block
 
-    self.version = 1
-    if OPTIONS.info_dict:
-      self.version = max(
-          int(i) for i in
-          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+    if version is None:
+      version = 1
+      if OPTIONS.info_dict:
+        version = max(
+            int(i) for i in
+            OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+    self.version = version
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
                                     version=self.version)
@@ -1069,17 +1071,25 @@ class BlockDifference:
         script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
                             (self.device, self.src.care_map.to_string_raw(),
                             self.src.TotalSha1()))
-      script.Print("Verified %s image..." % (partition,))
+      script.Print('Verified %s image...' % (partition,))
       script.AppendExtra('else');
 
+      # When generating incrementals for the system and vendor partitions,
+      # explicitly check the first block (which contains the superblock) of
+      # the partition to see if it's what we expect. If this check fails,
+      # give an explicit log message about the partition having been
+      # remounted R/W (the most likely explanation) and the need to flash to
+      # get OTAs working again.
       if self.check_first_block:
         self._CheckFirstBlock(script)
 
-      script.AppendExtra(('(range_sha1("%s", "%s") == "%s") ||\n'
-                          '  abort("%s partition has unexpected contents");\n'
-                          'endif;') %
-                         (self.device, self.tgt.care_map.to_string_raw(),
-                          self.tgt.TotalSha1(), self.partition))
+      # Abort the OTA update. Note that the incremental OTA cannot be applied
+      # even if it may match the checksum of the target partition.
+      # a) If version < 3, operations like move and erase will make changes
+      #    unconditionally and damage the partition.
+      # b) If version >= 3, it won't even reach here.
+      script.AppendExtra(('abort("%s partition has unexpected contents");\n'
+                          'endif;') % (partition,))
 
   def _WriteUpdate(self, script, output_zip):
     partition = self.partition
@@ -1109,14 +1119,11 @@ class BlockDifference:
   def _CheckFirstBlock(self, script):
     r = RangeSet((0, 1))
     srchash = self._HashBlocks(self.src, r);
-    tgthash = self._HashBlocks(self.tgt, r);
 
     script.AppendExtra(('(range_sha1("%s", "%s") == "%s") || '
-                        '(range_sha1("%s", "%s") == "%s") || '
                         'abort("%s has been remounted R/W; '
                         'reflash device to reenable OTA updates");')
                        % (self.device, r.to_string_raw(), srchash,
-                          self.device, r.to_string_raw(), tgthash,
                           self.device))
 
 DataImage = blockimgdiff.DataImage
