@@ -96,8 +96,6 @@ BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
 
--include cts/build/config.mk
-
 # ###############################################################
 # Parse out any modifier targets.
 # ###############################################################
