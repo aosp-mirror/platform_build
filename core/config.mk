@@ -447,8 +447,10 @@ endif
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
-DEFAULT_JACK_EXTRA_ARGS := --sanity-checks off -D jack.reporter.level.file=error=--,warning=-
+DEFAULT_JACK_EXTRA_ARGS := --sanity-checks off
 endif
+# Redirect jack warnings to stdout.
+DEFAULT_JACK_EXTRA_ARGS += -D jack.reporter.level.file=error=--,warning=-
 
 JILL := java -Xmx3500m -cp $(JILL_JAR) com.android.jill.Main
 PROGUARD := external/proguard/bin/proguard.sh
