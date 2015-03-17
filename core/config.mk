@@ -436,7 +436,7 @@ endif
 # $(1): vm arguments
 # $(2): jack perf arguments
 define call-jack
-$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG) -cp $(JACK_JAR) com.android.jack.Main $(2)
+$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG) -jar $(JACK_JAR) $(2)
 endef
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
 ifneq ($(ANDROID_JACK_VM_ARGS),)
@@ -452,7 +452,7 @@ endif
 # Redirect jack warnings to stdout.
 DEFAULT_JACK_EXTRA_ARGS += -D jack.reporter.level.file=error=--,warning=-
 
-JILL := java -Xmx3500m -cp $(JILL_JAR) com.android.jill.Main
+JILL := java -Xmx3500m -jar $(JILL_JAR)
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc$(HOST_EXECUTABLE_SUFFIX)
