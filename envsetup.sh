@@ -13,6 +13,8 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - cgrep:   Greps on all local C/C++ files.
 - ggrep:   Greps on all local Gradle files.
 - jgrep:   Greps on all local Java files.
+- mgrep:   Greps on all local Makefiles.
+- bgrep:   Greps on all local Blueprints files.
 - resgrep: Greps on all local res/*.xml files.
 - mangrep: Greps on all local AndroidManifest.xml files.
 - sepgrep: Greps on all local sepolicy files.
@@ -1100,6 +1102,11 @@ function mangrep()
 function sepgrep()
 {
     find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -name sepolicy -type d -print0 | xargs -0 grep --color -n -r --exclude-dir=\.git "$@"
+}
+
+function bgrep()
+{
+    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'Blueprints' -print0 | xargs -0 grep --color -n "$@"
 }
 
 case `uname -s` in
