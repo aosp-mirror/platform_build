@@ -646,10 +646,8 @@ endif;
   WriteMetadata(metadata, output_zip)
 
 
-def WritePolicyConfig(file_context, output_zip):
-  f = open(file_context, 'r');
-  basename = os.path.basename(file_context)
-  common.ZipWriteStr(output_zip, basename, f.read())
+def WritePolicyConfig(file_name, output_zip):
+  common.ZipWrite(output_zip, file_name, os.path.basename(file_name))
 
 
 def WriteMetadata(metadata, output_zip):
