@@ -60,8 +60,12 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -fno-tree-sra \
   -fprefetch-loop-arrays \
   -funswitch-loops \
+  -Werror=unused-but-set-variable \
+  -Werror=unused-but-set-parameter \
   -Wmaybe-uninitialized \
   -Wno-error=maybe-uninitialized \
+  -Wno-error=unused-but-set-variable \
+  -Wno-error=unused-but-set-parameter \
   -Wno-free-nonheap-object \
   -Wno-literal-suffix \
   -Wno-maybe-uninitialized \
