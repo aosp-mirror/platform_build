@@ -19,11 +19,8 @@ CLANG_CONFIG_x86_TARGET_EXTRA_CFLAGS := \
   $(CLANG_CONFIG_TARGET_EXTRA_CFLAGS) \
   $(CLANG_CONFIG_x86_EXTRA_CFLAGS) \
   $(CLANG_CONFIG_x86_TARGET_EXTRA_ASFLAGS) \
-  -fno-optimize-sibling-calls \
   -mstackrealign
 
-# http://llvm.org/bugs/show_bug.cgi?id=15086,
-# llvm tail call optimization is wrong for x86.
 # -mstackrealign is needed to realign stack in native code
 # that could be called from JNI, so that movaps instruction
 # will work on assumed stack aligned local variables.
