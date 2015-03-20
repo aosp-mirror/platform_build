@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66259842_9c80a492",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-20T18:50:10Z",
+      "side": 1,
+      "message": "typo: it should be $(UNAME)!",
+      "range": {
+        "startLine": 77,
+        "startChar": 56,
+        "endLine": 77,
+        "endChar": 65
+      },
+      "revId": "ff1474e2d742cd98479ddfc78d08f56fcebb0269",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
