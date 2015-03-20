@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46825452_6dd3aefe",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2015-03-20T18:24:47Z",
+      "side": 1,
+      "message": "verify-none should be faster, right? or it isn\u0027t because we still resolve and quicken",
+      "range": {
+        "startLine": 392,
+        "startChar": 64,
+        "endLine": 392,
+        "endChar": 81
+      },
+      "revId": "62a7cac50dd8334ac051f8a50241f2fc224f9bce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
