@@ -53,6 +53,11 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_shared_libraries += libc++
     else
         my_static_libraries += libc++_static
+        ifndef LOCAL_IS_HOST_MODULE
+            ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+                my_static_libraries += libm libc libdl
+            endif
+        endif
     endif
 
     ifdef LOCAL_IS_HOST_MODULE
