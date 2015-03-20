@@ -140,8 +140,11 @@ class Transfer(object):
     self.style = style
     self.intact = (getattr(tgt_ranges, "monotonic", False) and
                    getattr(src_ranges, "monotonic", False))
-    self.goes_before = {}
-    self.goes_after = {}
+
+    # We use OrderedDict rather than dict so that the output is repeatable;
+    # otherwise it would depend on the hash values of the Transfer objects.
+    self.goes_before = OrderedDict()
+    self.goes_after = OrderedDict()
 
     self.stash_before = []
     self.use_stash = []
