@@ -349,8 +349,9 @@ def CopyPartitionFiles(itemset, input_zip, output_zip=None, substitute=None):
   partition = itemset.partition
 
   for info in input_zip.infolist():
-    if info.filename.startswith(partition.upper() + "/"):
-      basefilename = info.filename[7:]
+    prefix = partition.upper() + "/"
+    if info.filename.startswith(prefix):
+      basefilename = info.filename[len(prefix):]
       if IsSymlink(info):
         symlinks.append((input_zip.read(info.filename),
                          "/" + partition + "/" + basefilename))
@@ -663,7 +664,7 @@ def LoadPartitionFiles(z, partition):
   prefix = partition.upper() + "/"
   for info in z.infolist():
     if info.filename.startswith(prefix) and not IsSymlink(info):
-      basefilename = info.filename[7:]
+      basefilename = info.filename[len(prefix):]
       fn = partition + "/" + basefilename
       data = z.read(info.filename)
       out[fn] = common.File(fn, data)
