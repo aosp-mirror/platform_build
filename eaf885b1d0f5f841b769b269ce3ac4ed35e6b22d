@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a6731093_b5fce0f0",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 2
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-23T23:20:12Z",
+      "side": 1,
+      "message": "Uh... isn\u0027t this just os.path.basename? Or are they expecting basefilename to possibly contain \"/\"?",
+      "range": {
+        "startLine": 354,
+        "startChar": 6,
+        "endLine": 354,
+        "endChar": 48
+      },
+      "revId": "eaf885b1d0f5f841b769b269ce3ac4ed35e6b22d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
