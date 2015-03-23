@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86c44cd3_cab54732",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-23T21:33:20Z",
+      "side": 1,
+      "message": "Should reset this after calling close (or just not bother with resetting it in ZipWrite).",
+      "revId": "fe85af9289208722c90adfc1949d9226ceaa8cde",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
