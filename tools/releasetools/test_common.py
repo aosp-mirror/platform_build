@@ -62,6 +62,7 @@ class CommonZipTest(unittest.TestCase):
       new_stat = os.stat(test_file_name)
       self.assertEqual(int(old_stat.st_mode), int(new_stat.st_mode))
       self.assertEqual(int(old_stat.st_mtime), int(new_stat.st_mtime))
+      self.assertIsNone(zip_file.testzip())
 
       zip_file.close()
       zip_file = zipfile.ZipFile(zip_file_name, "r")
@@ -71,6 +72,7 @@ class CommonZipTest(unittest.TestCase):
       mode = (info.external_attr >> 16) & 0o777
       self.assertEqual(mode, expected_mode)
       self.assertEqual(zip_file.read(arcname), contents)
+      self.assertIsNone(zip_file.testzip())
     finally:
       os.remove(test_file_name)
       os.remove(zip_file_name)
