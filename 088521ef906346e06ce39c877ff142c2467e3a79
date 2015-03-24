@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "467c1457_a5bae803",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 0,
+      "message": "good catch!",
+      "range": {
+        "startLine": 737,
+        "startChar": 0,
+        "endLine": 737,
+        "endChar": 19
+      },
+      "revId": "088521ef906346e06ce39c877ff142c2467e3a79",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

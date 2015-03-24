@@ -1,0 +1,326 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06869c96_23f6d4dc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 113,
+        "startChar": 16,
+        "endLine": 113,
+        "endChar": 17
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "467c1457_85d6c443",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 320,
+        "startChar": 29,
+        "endLine": 320,
+        "endChar": 30
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "267f204e_ea3f5bd9",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "i guess this is to avoid hitting the line length limit... but it looks a bit strange since it\u0027s different from the lines right above and below.",
+      "range": {
+        "startLine": 375,
+        "startChar": 69,
+        "endLine": 375,
+        "endChar": 76
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "467c1457_65d9c076",
+        "filename": "tools/releasetools/check_target_files_signatures",
+        "patchSetId": 1
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 438,
+        "startChar": 29,
+        "endLine": 438,
+        "endChar": 30
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06869c96_c3e6082d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 109,
+        "startChar": 20,
+        "endLine": 109,
+        "endChar": 22
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "267f204e_8a25efa4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 638,
+        "startChar": 27,
+        "endLine": 638,
+        "endChar": 28
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06869c96_80c2369e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "not sure if this is the right place to wrap?",
+      "range": {
+        "startLine": 748,
+        "startChar": 38,
+        "endLine": 748,
+        "endChar": 39
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "467c1457_25cfb8ac",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 792,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 792,
+        "startChar": 18,
+        "endLine": 792,
+        "endChar": 19
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "467c1457_45ccbcb5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1069,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 1069,
+        "startChar": 20,
+        "endLine": 1069,
+        "endChar": 21
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06869c96_e3db0c6a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 1291,
+        "startChar": 27,
+        "endLine": 1291,
+        "endChar": 28
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06869c96_e0878262",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "shall we kill this?",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 17
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "467c1457_05cab49c",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 156,
+        "startChar": 29,
+        "endLine": 156,
+        "endChar": 30
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "267f204e_aaf2b3b2",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "shouldn\u0027t dir be one of the arguments?",
+      "range": {
+        "startLine": 229,
+        "startChar": 4,
+        "endLine": 229,
+        "endChar": 18
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06869c96_83d6c043",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 1595,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-03-24T04:51:41Z",
+      "side": 1,
+      "message": "as",
+      "range": {
+        "startLine": 1595,
+        "startChar": 29,
+        "endLine": 1595,
+        "endChar": 30
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
