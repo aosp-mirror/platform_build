@@ -72,14 +72,15 @@ def AdjustPartitionSizeForVerity(partition_size):
   """
   success, verity_tree_size = GetVerityTreeSize(partition_size)
   if not success:
-    return 0;
+    return 0
   success, verity_metadata_size = GetVerityMetadataSize(partition_size)
   if not success:
     return 0
   return partition_size - verity_tree_size - verity_metadata_size
 
 def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
-  cmd = ("build_verity_tree -A %s %s %s" % (FIXED_SALT, sparse_image_path, verity_image_path))
+  cmd = "build_verity_tree -A %s %s %s" % (
+      FIXED_SALT, sparse_image_path, verity_image_path)
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -92,14 +93,10 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
 
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
                         block_device, signer_path, key):
-  cmd = ("system/extras/verity/build_verity_metadata.py %s %s %s %s %s %s %s" %
-              (image_size,
-              verity_metadata_path,
-              root_hash,
-              salt,
-              block_device,
-              signer_path,
-              key))
+  cmd_template = (
+      "system/extras/verity/build_verity_metadata.py %s %s %s %s %s %s %s")
+  cmd = cmd_template % (image_size, verity_metadata_path, root_hash, salt,
+                        block_device, signer_path, key)
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -125,10 +122,13 @@ def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
     return False
   return True
 
-def BuildVerifiedImage(data_image_path, verity_image_path, verity_metadata_path):
-  if not Append2Simg(data_image_path, verity_metadata_path, "Could not append verity metadata!"):
+def BuildVerifiedImage(data_image_path, verity_image_path,
+                       verity_metadata_path):
+  if not Append2Simg(data_image_path, verity_metadata_path,
+                     "Could not append verity metadata!"):
     return False
-  if not Append2Simg(data_image_path, verity_image_path, "Could not append verity tree!"):
+  if not Append2Simg(data_image_path, verity_image_path,
+                     "Could not append verity tree!"):
     return False
   return True
 
@@ -153,7 +153,8 @@ def MakeVerityEnabledImage(out_file, prop_dict):
 
   Args:
     out_file: the location to write the verifiable image at
-    prop_dict: a dictionary of properties required for image creation and verification
+    prop_dict: a dictionary of properties required for image creation and
+               verification
   Returns:
     True on success, False otherwise.
   """
@@ -178,13 +179,8 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   # build the metadata blocks
   root_hash = prop_dict["verity_root_hash"]
   salt = prop_dict["verity_salt"]
-  if not BuildVerityMetadata(image_size,
-                              verity_metadata_path,
-                              root_hash,
-                              salt,
-                              block_dev,
-                              signer_path,
-                              signer_key):
+  if not BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
+                             block_dev, signer_path, signer_key):
     shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
@@ -223,7 +219,8 @@ def BuildImage(in_dir, prop_dict, out_file,
 
   is_verity_partition = "verity_block_device" in prop_dict
   verity_supported = prop_dict.get("verity") == "true"
-  # adjust the partition size to make room for the hashes if this is to be verified
+  # adjust the partition size to make room for the hashes if this is to be
+  # verified
   if verity_supported and is_verity_partition:
     partition_size = int(prop_dict.get("partition_size"))
     adjusted_size = AdjustPartitionSizeForVerity(partition_size)
@@ -329,7 +326,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d["mount_point"] = mount_point
   if mount_point == "system":
     copy_prop("fs_type", "fs_type")
-    # Copy the generic sysetem fs type first, override with specific one if available.
+    # Copy the generic sysetem fs type first, override with specific one if
+    # available.
     copy_prop("system_fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
     copy_prop("system_journal_size", "journal_size")
@@ -397,7 +395,8 @@ def main(argv):
 
   image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
   if not BuildImage(in_dir, image_properties, out_file):
-    print >> sys.stderr, "error: failed to build %s from %s" % (out_file, in_dir)
+    print >> sys.stderr, "error: failed to build %s from %s" % (out_file,
+                                                                in_dir)
     exit(1)
 
 
