@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c626449c_66b2aec7",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "I\u0027d done some driveby cleanups of these, but apparently didn\u0027t get all of them.\n\nThere might be a lint warning that could be turned on (though 2to3 will catch all of these for us).",
+      "parentUuid": "06869c96_23f6d4dc",
+      "range": {
+        "startLine": 113,
+        "startChar": 16,
+        "endLine": 113,
+        "endChar": 17
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "467c1457_85d6c443",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
@@ -65,6 +89,47 @@
         "endLine": 375,
         "endChar": 76
       },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6642f831_0bdc9d0f",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "I\u0027ll clean up the others as well.",
+      "parentUuid": "267f204e_ea3f5bd9",
+      "range": {
+        "startLine": 375,
+        "startChar": 69,
+        "endLine": 375,
+        "endChar": 76
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6215087_658aa6b2",
+        "filename": "tools/releasetools/check_target_files_signatures",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "All of these concerned me a bit. It\u0027s difficult to reason about these when they weren\u0027t initialized in the constructor.\n\nI\u0027ve chosen None as the default for everything since it\u0027s the most likely to cause an error if someone tries to do anything with it.",
       "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -117,6 +182,29 @@
     },
     {
       "key": {
+        "uuid": "8620cc83_64b8ea56",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "As best as I could tell, anyway.",
+      "range": {
+        "startLine": 316,
+        "startChar": 64,
+        "endLine": 316,
+        "endChar": 73
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "267f204e_8a25efa4",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
@@ -151,6 +239,30 @@
       "writtenOn": "2015-03-24T04:51:41Z",
       "side": 1,
       "message": "not sure if this is the right place to wrap?",
+      "range": {
+        "startLine": 748,
+        "startChar": 38,
+        "endLine": 748,
+        "endChar": 39
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8620cc83_a4a82203",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "It\u0027s a weird place to do it, but pylint doesn\u0027t mind. I do though, so I\u0027ll clean it up.",
+      "parentUuid": "06869c96_80c2369e",
       "range": {
         "startLine": 748,
         "startChar": 38,
@@ -209,6 +321,23 @@
     },
     {
       "key": {
+        "uuid": "8620cc83_64cc6ae4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "docstrings are absolutely hideous for this kind of thing.\n\nIf we have enough of these cases it might make sense to use a templating library like jinja2.",
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "06869c96_e3db0c6a",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
@@ -243,6 +372,30 @@
       "writtenOn": "2015-03-24T04:51:41Z",
       "side": 1,
       "message": "shall we kill this?",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 17
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8620cc83_24b8b227",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "I thought I already had. Guess not.",
+      "parentUuid": "06869c96_e0878262",
       "range": {
         "startLine": 39,
         "startChar": 0,
@@ -295,6 +448,47 @@
         "endLine": 229,
         "endChar": 18
       },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8620cc83_07f658dc",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "Yeah. This didn\u0027t fire for pylint because dir is the name of a builtin function.",
+      "parentUuid": "267f204e_aaf2b3b2",
+      "range": {
+        "startLine": 229,
+        "startChar": 4,
+        "endLine": 229,
+        "endChar": 18
+      },
+      "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3fb9632_7ebad105",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-03-24T18:08:52Z",
+      "side": 1,
+      "message": "I\u0027m not sure why this line didn\u0027t show as an error, but I\u0027ll have to undo all the cases where I removed the last argument. All the callers I had seen always passed dir\u003dFalse, so I thought it was safe to remove. Missed one though.",
       "revId": "23652b107982b2cb04436027f03ee35c2f1b1953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
