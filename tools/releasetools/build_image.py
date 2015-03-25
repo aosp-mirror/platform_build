@@ -198,25 +198,39 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
 
-def BuildImage(in_dir, prop_dict, out_file,
-               fs_config=None,
-               fc_config=None,
-               block_list=None):
+def BuildImage(in_dir, prop_dict, out_file):
   """Build an image to out_file from in_dir with property prop_dict.
 
   Args:
     in_dir: path of input directory.
     prop_dict: property dictionary.
     out_file: path of the output image file.
-    fs_config: path to the fs_config file (typically
-      META/filesystem_config.txt).  If None then the configuration in
-      the local client will be used.
-    fc_config: path to the SELinux file_contexts file.  If None then
-      the value from prop_dict['selinux_fc'] will be used.
 
   Returns:
     True iff the image is built successfully.
   """
+  # system_root_image=true: build a system.img that combines the contents of /system
+  # and the ramdisk, and can be mounted at the root of the file system.
+  origin_in = in_dir
+  fs_config = prop_dict.get("fs_config")
+  if (prop_dict.get("system_root_image") == "true"
+      and prop_dict["mount_point"] == "system"):
+    in_dir = tempfile.mkdtemp()
+    # Change the mount point to "/"
+    prop_dict["mount_point"] = "/"
+    if fs_config:
+      # We need to merge the fs_config files of system and ramdisk.
+      fd, merged_fs_config = tempfile.mkstemp(prefix="root_fs_config",
+                                              suffix=".txt")
+      os.close(fd)
+      with open(merged_fs_config, "w") as fw:
+        if "ramdisk_fs_config" in prop_dict:
+          with open(prop_dict["ramdisk_fs_config"]) as fr:
+            fw.writelines(fr.readlines())
+        with open(fs_config) as fr:
+          fw.writelines(fr.readlines())
+      fs_config = merged_fs_config
+
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
   run_fsck = False
@@ -244,22 +258,18 @@ def BuildImage(in_dir, prop_dict, out_file,
       build_command.extend(["-j", prop_dict["journal_size"]])
     if "timestamp" in prop_dict:
       build_command.extend(["-T", str(prop_dict["timestamp"])])
-    if fs_config is not None:
+    if fs_config:
       build_command.extend(["-C", fs_config])
-    if block_list is not None:
-      build_command.extend(["-B", block_list])
+    if "block_list" in prop_dict:
+      build_command.extend(["-B", prop_dict["block_list"]])
     build_command.extend(["-L", prop_dict["mount_point"]])
-    if fc_config is not None:
-      build_command.append(fc_config)
-    elif "selinux_fc" in prop_dict:
+    if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
     build_command.extend(["-m", prop_dict["mount_point"]])
-    if fc_config is not None:
-      build_command.extend(["-c", fc_config])
-    elif "selinux_fc" in prop_dict:
+    if "selinux_fc" in prop_dict:
       build_command.extend(["-c", prop_dict["selinux_fc"]])
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
@@ -274,7 +284,23 @@ def BuildImage(in_dir, prop_dict, out_file,
       build_command.append(prop_dict["selinux_fc"])
       build_command.append(prop_dict["mount_point"])
 
-  exit_code = RunCommand(build_command)
+  if in_dir != origin_in:
+    # Construct a staging directory of the root file system.
+    ramdisk_dir = prop_dict.get("ramdisk_dir")
+    if ramdisk_dir:
+      shutil.rmtree(in_dir)
+      shutil.copytree(ramdisk_dir, in_dir, symlinks=True)
+    staging_system = os.path.join(in_dir, "system")
+    shutil.rmtree(staging_system, ignore_errors=True)
+    shutil.copytree(origin_in, staging_system, symlinks=True)
+  try:
+    exit_code = RunCommand(build_command)
+  finally:
+    if in_dir != origin_in:
+      # Clean up temporary directories and files.
+      shutil.rmtree(in_dir, ignore_errors=True)
+      if fs_config:
+        os.remove(fs_config)
   if exit_code != 0:
     return False
 
@@ -334,6 +360,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_size", "partition_size")
     copy_prop("system_journal_size", "journal_size")
     copy_prop("system_verity_block_device", "verity_block_device")
+    copy_prop("system_root_image","system_root_image")
+    copy_prop("ramdisk_dir","ramdisk_dir")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
