@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "43d246e8_84a8ef83",
+        "filename": "core/tasks/check_boot_jars/check_boot_jars.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-03-26T23:25:14Z",
+      "side": 0,
+      "message": "Good catch. I missed this case.\nI remember I had tested this case. I don\u0027t know why I didn\u0027t catch it...",
+      "parentUuid": "23be3291_a9d4bd3e",
+      "range": {
+        "startLine": 77,
+        "startChar": 3,
+        "endLine": 77,
+        "endChar": 12
+      },
+      "revId": "a45223b63566d8496250ae797778a4d16ee81419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "23be3291_49e3c11f",
         "filename": "core/tasks/check_boot_jars/check_boot_jars.py",
         "patchSetId": 2
