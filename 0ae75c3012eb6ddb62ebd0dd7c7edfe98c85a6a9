@@ -34,6 +34,24 @@
       "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43d246e8_3761370e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-03-26T23:55:20Z",
+      "side": 1,
+      "message": "POSIX says no: \"If guardsize is zero, a guard area shall not be provided for threads created with attr.\"\n\nbut that\u0027s not your real enemy. your real enemy is pthread_attr_setstack (http://pubs.opengroup.org/stage7tc1/functions/pthread_attr_getstack.html#). in that case, the caller allocated the stack, and we can\u0027t go around calling mprotect on memory they gave us. (especially not because they probably sized it deliberately and assume they can use it all.)",
+      "parentUuid": "63758ab8_4d4c1d4f",
+      "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
