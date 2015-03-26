@@ -135,11 +135,20 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
   fc_config = os.path.join(input_dir, "BOOT/RAMDISK/file_contexts")
   if not os.path.exists(fc_config): fc_config = None
 
+  # Override values loaded from info_dict.
+  if fs_config:
+    image_props["fs_config"] = fs_config
+  if fc_config:
+    image_props["selinux_fc"] = fc_config
+  if block_list:
+    image_props["block_list"] = block_list
+  if image_props.get("system_root_image") == "true":
+    image_props["ramdisk_dir"] = os.path.join(input_dir, "BOOT/RAMDISK")
+    image_props["ramdisk_fs_config"] = os.path.join(
+        input_dir, "META/boot_filesystem_config.txt")
+
   succ = build_image.BuildImage(os.path.join(input_dir, what),
-                                image_props, img,
-                                fs_config=fs_config,
-                                fc_config=fc_config,
-                                block_list=block_list)
+                                image_props, img)
   assert succ, "build " + what + ".img image failed"
 
   return img
