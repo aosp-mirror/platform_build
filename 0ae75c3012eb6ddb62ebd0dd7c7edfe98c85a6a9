@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a37b02ac_290c35bf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-03-26T23:48:34Z",
+      "side": 1,
+      "message": "by default, yes, but there\u0027s no actual requirement that you have a guard page. http://pubs.opengroup.org/stage7tc1/functions/pthread_attr_getguardsize.html",
+      "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
