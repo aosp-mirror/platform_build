@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23be3291_a9d4bd3e",
+        "filename": "core/tasks/check_boot_jars/check_boot_jars.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1019458
+      },
+      "writtenOn": "2015-03-26T22:55:40Z",
+      "side": 0,
+      "message": "This does not mean that the exit code of this program is 1.",
+      "range": {
+        "startLine": 77,
+        "startChar": 3,
+        "endLine": 77,
+        "endChar": 12
+      },
+      "revId": "a45223b63566d8496250ae797778a4d16ee81419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23be3291_49e3c11f",
+        "filename": "core/tasks/check_boot_jars/check_boot_jars.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1019458
+      },
+      "writtenOn": "2015-03-26T22:55:40Z",
+      "side": 0,
+      "message": "The exit code is 0 (success) regardless of the return value of the main function because sys.exit() is not called.",
+      "revId": "a45223b63566d8496250ae797778a4d16ee81419",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
