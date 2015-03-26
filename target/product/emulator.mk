@@ -40,11 +40,13 @@ PRODUCT_PACKAGES += \
     camera.goldfish.jpeg \
     lights.goldfish \
     gps.goldfish \
+    fingerprint.goldfish \
     sensors.goldfish \
     e2fsck \
     audio.primary.goldfish \
     vibrator.goldfish \
     power.goldfish \
+    fingerprint.ranchu \
     sensors.ranchu
 
 
