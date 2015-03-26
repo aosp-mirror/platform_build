@@ -62,7 +62,7 @@ endif
 # $(1): the arch name.
 # $(2): the full path (including file name) of the corresponding .jar or .apk.
 define get-odex-file-path
-$(dir $(2))$(1)/$(basename $(notdir $(2))).odex
+$(dir $(2))oat/$(1)/$(basename $(notdir $(2))).odex
 endef
 
 # Returns the path to the image file (such as "/system/framework/<arch>/boot.art"
