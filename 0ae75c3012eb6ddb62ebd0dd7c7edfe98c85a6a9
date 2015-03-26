@@ -52,6 +52,24 @@
       "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43d246e8_d7222bcd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1069238
+      },
+      "writtenOn": "2015-03-26T23:55:28Z",
+      "side": 1,
+      "message": "If you disable the guard page you lose the guarantee that this will trigger a segmentation fault. The one byte probe write can\u0027t really cause any additional harm if the guard page is missing though. The thread is going to clobber a bunch of stuff with or without this if you do overflow.",
+      "parentUuid": "a37b02ac_290c35bf",
+      "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
