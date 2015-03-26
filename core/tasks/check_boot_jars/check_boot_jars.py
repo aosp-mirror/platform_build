@@ -64,10 +64,10 @@ def CheckJar(jar):
 def main(argv):
   if len(argv) < 2:
     print __doc__
-    sys.exit(1)
+    return 1
 
   if not LoadWhitelist(argv[0]):
-    sys.exit(1)
+    return 1
 
   passed = True
   for jar in argv[1:]:
@@ -80,4 +80,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-  main(sys.argv[1:])
+  sys.exit(main(sys.argv[1:]))
