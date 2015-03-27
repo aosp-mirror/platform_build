@@ -14,12 +14,11 @@
 
 import bisect
 import os
-import sys
 import struct
-import pprint
 from hashlib import sha1
 
-from rangelib import *
+import rangelib
+
 
 class SparseImage(object):
   """Wraps a sparse image file (and optional file map) into an image
@@ -39,7 +38,6 @@ class SparseImage(object):
     self.blocksize = blk_sz = header[5]
     self.total_blocks = total_blks = header[6]
     total_chunks = header[7]
-    image_checksum = header[8]
 
     if magic != 0xED26FF3A:
       raise ValueError("Magic should be 0xED26FF3A but is 0x%08X" % (magic,))
@@ -64,7 +62,6 @@ class SparseImage(object):
       header_bin = f.read(12)
       header = struct.unpack("<2H2I", header_bin)
       chunk_type = header[0]
-      reserved1 = header[1]
       chunk_sz = header[2]
       total_sz = header[3]
       data_sz = total_sz - 12
@@ -102,7 +99,7 @@ class SparseImage(object):
         raise ValueError("Unknown chunk type 0x%04X not supported" %
                          (chunk_type,))
 
-    self.care_map = RangeSet(care_data)
+    self.care_map = rangelib.RangeSet(care_data)
     self.offset_index = [i[0] for i in offset_map]
 
     if file_map_fn:
@@ -166,7 +163,7 @@ class SparseImage(object):
     with open(fn) as f:
       for line in f:
         fn, ranges = line.split(None, 1)
-        ranges = RangeSet.parse(ranges)
+        ranges = rangelib.RangeSet.parse(ranges)
         out[fn] = ranges
         assert ranges.size() == ranges.intersect(remaining).size()
         remaining = remaining.subtract(ranges)
@@ -186,7 +183,7 @@ class SparseImage(object):
     for s, e in remaining:
       for b in range(s, e):
         idx = bisect.bisect_right(self.offset_index, b) - 1
-        chunk_start, chunk_len, filepos, fill_data = self.offset_map[idx]
+        chunk_start, _, filepos, fill_data = self.offset_map[idx]
         if filepos is not None:
           filepos += (b-chunk_start) * self.blocksize
           f.seek(filepos, os.SEEK_SET)
@@ -204,8 +201,8 @@ class SparseImage(object):
           nonzero_blocks.append(b)
           nonzero_blocks.append(b+1)
 
-    out["__ZERO"] = RangeSet(data=zero_blocks)
-    out["__NONZERO"] = RangeSet(data=nonzero_blocks)
+    out["__ZERO"] = rangelib.RangeSet(data=zero_blocks)
+    out["__NONZERO"] = rangelib.RangeSet(data=nonzero_blocks)
 
   def ResetFileMap(self):
     """Throw away the file map and treat the entire image as

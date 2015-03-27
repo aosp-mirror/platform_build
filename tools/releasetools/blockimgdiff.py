@@ -20,16 +20,16 @@ import heapq
 import itertools
 import multiprocessing
 import os
-import pprint
 import re
 import subprocess
-import sys
 import threading
 import tempfile
 
-from rangelib import *
+from rangelib import RangeSet
+
 
 __all__ = ["EmptyImage", "DataImage", "BlockImageDiff"]
+
 
 def compute_patch(src, tgt, imgdiff=False):
   srcfd, srcfile = tempfile.mkstemp(prefix="src-")
@@ -69,7 +69,16 @@ def compute_patch(src, tgt, imgdiff=False):
     except OSError:
       pass
 
-class EmptyImage(object):
+
+class Image(object):
+  def ReadRangeSet(self, ranges):
+    raise NotImplementedError
+
+  def TotalSha1(self):
+    raise NotImplementedError
+
+
+class EmptyImage(Image):
   """A zero-length image."""
   blocksize = 4096
   care_map = RangeSet()
@@ -81,7 +90,7 @@ class EmptyImage(object):
     return sha1().hexdigest()
 
 
-class DataImage(object):
+class DataImage(Image):
   """An image wrapped around a single string of data."""
 
   def __init__(self, data, trim=False, pad=False):
@@ -126,9 +135,7 @@ class DataImage(object):
     return [self.data[s*self.blocksize:e*self.blocksize] for (s, e) in ranges]
 
   def TotalSha1(self):
-    if not hasattr(self, "sha1"):
-      self.sha1 = sha1(self.data).hexdigest()
-    return self.sha1
+    return sha1(self.data).hexdigest()
 
 
 class Transfer(object):
@@ -196,9 +203,13 @@ class BlockImageDiff(object):
   def __init__(self, tgt, src=None, threads=None, version=2):
     if threads is None:
       threads = multiprocessing.cpu_count() // 2
-      if threads == 0: threads = 1
+      if threads == 0:
+        threads = 1
     self.threads = threads
     self.version = version
+    self.transfers = []
+    self.src_basenames = {}
+    self.src_numpatterns = {}
 
     assert version in (1, 2)
 
@@ -247,6 +258,15 @@ class BlockImageDiff(object):
     self.ComputePatches(prefix)
     self.WriteTransfers(prefix)
 
+  def HashBlocks(self, source, ranges): # pylint: disable=no-self-use
+    data = source.ReadRangeSet(ranges)
+    ctx = sha1()
+
+    for p in data:
+      ctx.update(p)
+
+    return ctx.hexdigest()
+
   def WriteTransfers(self, prefix):
     out = []
 
@@ -283,8 +303,8 @@ class BlockImageDiff(object):
       free_string = []
 
       if self.version == 1:
-        src_string = xf.src_ranges.to_string_raw()
-      elif self.version == 2:
+        src_str = xf.src_ranges.to_string_raw()
+      elif self.version >= 2:
 
         #   <# blocks> <src ranges>
         #     OR
@@ -293,7 +313,7 @@ class BlockImageDiff(object):
         #   <# blocks> - <stash refs...>
 
         size = xf.src_ranges.size()
-        src_string = [str(size)]
+        src_str = [str(size)]
 
         unstashed_src_ranges = xf.src_ranges
         mapped_stashes = []
@@ -303,21 +323,29 @@ class BlockImageDiff(object):
           unstashed_src_ranges = unstashed_src_ranges.subtract(sr)
           sr = xf.src_ranges.map_within(sr)
           mapped_stashes.append(sr)
-          src_string.append("%d:%s" % (sid, sr.to_string_raw()))
+          if self.version == 2:
+            src_str.append("%d:%s" % (sid, sr.to_string_raw()))
+          else:
+            assert sh in stashes
+            src_str.append("%s:%s" % (sh, sr.to_string_raw()))
+            stashes[sh] -= 1
+            if stashes[sh] == 0:
+              free_string.append("free %s\n" % (sh))
+              stashes.pop(sh)
           heapq.heappush(free_stash_ids, sid)
 
         if unstashed_src_ranges:
-          src_string.insert(1, unstashed_src_ranges.to_string_raw())
+          src_str.insert(1, unstashed_src_ranges.to_string_raw())
           if xf.use_stash:
             mapped_unstashed = xf.src_ranges.map_within(unstashed_src_ranges)
-            src_string.insert(2, mapped_unstashed.to_string_raw())
+            src_str.insert(2, mapped_unstashed.to_string_raw())
             mapped_stashes.append(mapped_unstashed)
             self.AssertPartition(RangeSet(data=(0, size)), mapped_stashes)
         else:
-          src_string.insert(1, "-")
+          src_str.insert(1, "-")
           self.AssertPartition(RangeSet(data=(0, size)), mapped_stashes)
 
-        src_string = " ".join(src_string)
+        src_str = " ".join(src_str)
 
       # both versions:
       #   zero <rangeset>
@@ -330,9 +358,14 @@ class BlockImageDiff(object):
       #   move <src rangeset> <tgt rangeset>
       #
       # version 2:
-      #   bsdiff patchstart patchlen <tgt rangeset> <src_string>
-      #   imgdiff patchstart patchlen <tgt rangeset> <src_string>
-      #   move <tgt rangeset> <src_string>
+      #   bsdiff patchstart patchlen <tgt rangeset> <src_str>
+      #   imgdiff patchstart patchlen <tgt rangeset> <src_str>
+      #   move <tgt rangeset> <src_str>
+      #
+      # version 3:
+      #   bsdiff patchstart patchlen srchash tgthash <tgt rangeset> <src_str>
+      #   imgdiff patchstart patchlen srchash tgthash <tgt rangeset> <src_str>
+      #   move hash <tgt rangeset> <src_str>
 
       tgt_size = xf.tgt_ranges.size()
 
@@ -352,7 +385,12 @@ class BlockImageDiff(object):
           elif self.version == 2:
             out.append("%s %s %s\n" % (
                 xf.style,
-                xf.tgt_ranges.to_string_raw(), src_string))
+                xf.tgt_ranges.to_string_raw(), src_str))
+          elif self.version >= 3:
+            out.append("%s %s %s %s\n" % (
+                xf.style,
+                self.HashBlocks(self.tgt, xf.tgt_ranges),
+                xf.tgt_ranges.to_string_raw(), src_str))
           total += tgt_size
       elif xf.style in ("bsdiff", "imgdiff"):
         performs_read = True
@@ -365,7 +403,14 @@ class BlockImageDiff(object):
         elif self.version == 2:
           out.append("%s %d %d %s %s\n" % (
               xf.style, xf.patch_start, xf.patch_len,
-              xf.tgt_ranges.to_string_raw(), src_string))
+              xf.tgt_ranges.to_string_raw(), src_str))
+        elif self.version >= 3:
+          out.append("%s %d %d %s %s %s %s\n" % (
+              xf.style,
+              xf.patch_start, xf.patch_len,
+              self.HashBlocks(self.src, xf.src_ranges),
+              self.HashBlocks(self.tgt, xf.tgt_ranges),
+              xf.tgt_ranges.to_string_raw(), src_str))
         total += tgt_size
       elif xf.style == "zero":
         assert xf.tgt_ranges
@@ -374,8 +419,10 @@ class BlockImageDiff(object):
           out.append("%s %s\n" % (xf.style, to_zero.to_string_raw()))
           total += to_zero.size()
       else:
-        raise ValueError, "unknown transfer style '%s'\n" % (xf.style,)
+        raise ValueError("unknown transfer style '%s'\n" % xf.style)
 
+    if free_string:
+      out.append("".join(free_string))
 
       # sanity check: abort if we're going to need more than 512 MB if
       # stash space
@@ -481,11 +528,13 @@ class BlockImageDiff(object):
 
       patches = [None] * patch_num
 
+      # TODO: Rewrite with multiprocessing.ThreadPool?
       lock = threading.Lock()
       def diff_worker():
         while True:
           with lock:
-            if not diff_q: return
+            if not diff_q:
+              return
             tgt_size, src, tgt, xf, patchnum = diff_q.pop()
           patch = compute_patch(src, tgt, imgdiff=(xf.style == "imgdiff"))
           size = len(patch)
@@ -497,7 +546,7 @@ class BlockImageDiff(object):
                     xf.tgt_name + " (from " + xf.src_name + ")")))
 
       threads = [threading.Thread(target=diff_worker)
-                 for i in range(self.threads)]
+                 for _ in range(self.threads)]
       for th in threads:
         th.start()
       while threads:
@@ -624,8 +673,6 @@ class BlockImageDiff(object):
     stash_size = 0
 
     for xf in self.transfers:
-      lost = 0
-      size = xf.src_ranges.size()
       for u in xf.goes_before.copy():
         # xf should go before u
         if xf.order < u.order:
@@ -691,7 +738,8 @@ class BlockImageDiff(object):
       # Put all sinks at the end of the sequence.
       while True:
         sinks = [u for u in G if not u.outgoing]
-        if not sinks: break
+        if not sinks:
+          break
         for u in sinks:
           s2.appendleft(u)
           del G[u]
@@ -701,14 +749,16 @@ class BlockImageDiff(object):
       # Put all the sources at the beginning of the sequence.
       while True:
         sources = [u for u in G if not u.incoming]
-        if not sources: break
+        if not sources:
+          break
         for u in sources:
           s1.append(u)
           del G[u]
           for iu in u.outgoing:
             del iu.incoming[u]
 
-      if not G: break
+      if not G:
+        break
 
       # Find the "best" vertex to put next.  "Best" is the one that
       # maximizes the net difference in source blocks saved we get by
@@ -746,7 +796,8 @@ class BlockImageDiff(object):
     print("Generating digraph...")
     for a in self.transfers:
       for b in self.transfers:
-        if a is b: continue
+        if a is b:
+          continue
 
         # If the blocks written by A are read by B, then B needs to go before A.
         i = a.tgt_ranges.intersect(b.src_ranges)
@@ -761,7 +812,6 @@ class BlockImageDiff(object):
           a.goes_after[b] = size
 
   def FindTransfers(self):
-    self.transfers = []
     empty = RangeSet()
     for tgt_fn, tgt_ranges in self.tgt.file_map.items():
       if tgt_fn == "__ZERO":
@@ -801,9 +851,6 @@ class BlockImageDiff(object):
       Transfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
 
   def AbbreviateSourceNames(self):
-    self.src_basenames = {}
-    self.src_numpatterns = {}
-
     for k in self.src.file_map.keys():
       b = os.path.basename(k)
       self.src_basenames[b] = k
