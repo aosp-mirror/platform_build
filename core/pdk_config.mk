@@ -76,7 +76,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
 	$(PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR)
 
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
-    $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
+    $(lib_dir)/classes.jack $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
 
 # check and override java support level
 ifneq ($(TARGET_BUILD_PDK)$(PDK_FUSION_PLATFORM_ZIP),)
