@@ -24,6 +24,7 @@ class RangeSet(object):
   lots of runs."""
 
   def __init__(self, data=None):
+    self.monotonic = False
     if isinstance(data, str):
       self._parse_internal(data)
     elif data:
@@ -185,7 +186,7 @@ class RangeSet(object):
     # This is like intersect, but we can stop as soon as we discover the
     # output is going to be nonempty.
     z = 0
-    for p, d in heapq.merge(zip(self.data, itertools.cycle((+1, -1))),
+    for _, d in heapq.merge(zip(self.data, itertools.cycle((+1, -1))),
                             zip(other.data, itertools.cycle((+1, -1)))):
       if (z == 1 and d == 1) or (z == 2 and d == -1):
         return True
