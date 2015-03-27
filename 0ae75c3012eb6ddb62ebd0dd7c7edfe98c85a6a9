@@ -70,6 +70,24 @@
       "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63758ab8_0dadc514",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1069238
+      },
+      "writtenOn": "2015-03-27T00:00:36Z",
+      "side": 1,
+      "message": "One way to make exploitation harder even if there\u0027s no guard page would be to add weak secondary stack ASLR in Bionic. The problem with that is it can screw over callers with very precisely sized stacks, as they\u0027ll have less available than they expect.\n\nUsing a single page for ASLR with stacks \u003e\u003d 1M is arguably sane because they could be screwed over by a compiler update if they\u0027re that close to the end...\n\nI have a patch doing this but it\u0027s pretty sketchy so I didn\u0027t have plans to upstream it.",
+      "parentUuid": "43d246e8_d7222bcd",
+      "revId": "0ae75c3012eb6ddb62ebd0dd7c7edfe98c85a6a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
