@@ -66,7 +66,6 @@ PRODUCT_PACKAGES += \
     make_ext4fs \
     e2fsck \
     resize2fs \
-    mms-common \
     screencap \
     sensorservice \
     telephony-common \
@@ -91,7 +90,6 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
-    mms-common \
     apache-xml \
     org.apache.http.legacy
 
