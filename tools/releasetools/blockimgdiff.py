@@ -421,8 +421,8 @@ class BlockImageDiff(object):
       else:
         raise ValueError("unknown transfer style '%s'\n" % xf.style)
 
-    if free_string:
-      out.append("".join(free_string))
+      if free_string:
+        out.append("".join(free_string))
 
       # sanity check: abort if we're going to need more than 512 MB if
       # stash space
