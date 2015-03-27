@@ -423,7 +423,10 @@ endif
 ifneq ($(jni_shared_libraries),)
 	$(add-jni-shared-libs-to-package)
 endif
-ifneq ($(full_classes_jar),)
+ifeq ($(full_classes_jar),)
+# We don't build jar, need to add the Java resources here.
+	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
+else
 	$(add-dex-to-package)
 endif
 ifdef LOCAL_JACK_ENABLED
