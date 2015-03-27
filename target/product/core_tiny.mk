@@ -76,7 +76,6 @@ PRODUCT_PACKAGES += \
     telephony-common \
     voip-common \
     logd \
-    mms-common \
     wifi-service
 
 # The order matters
@@ -91,7 +90,6 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
-    mms-common \
     apache-xml \
     nullwebview \
     org.apache.http.legacy
