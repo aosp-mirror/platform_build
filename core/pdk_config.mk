@@ -52,18 +52,20 @@ ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
 # For these dirs, add classes.jar and javalib.jar from the dir to platform.zip
 # all paths under out dir
 PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
-	target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
-	target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
-	target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
-	target/common/obj/JAVA_LIBRARIES/ext_intermediates \
-	target/common/obj/JAVA_LIBRARIES/framework_intermediates \
-	target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
-	target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
-	target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
-	target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
-	target/common/obj/JAVA_LIBRARIES/mms-common_intermediates \
-	target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates \
-	target/common/obj/JAVA_LIBRARIES/android-common_intermediates \
+  target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
+  target/common/obj/JAVA_LIBRARIES/android-common_intermediates \
+  target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates \
+  target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
+  target/common/obj/JAVA_LIBRARIES/bouncycastle_intermediates \
+  target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates \
+  target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
+  target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
+  target/common/obj/JAVA_LIBRARIES/ext_intermediates \
+  target/common/obj/JAVA_LIBRARIES/framework_intermediates \
+  target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
+  target/common/obj/JAVA_LIBRARIES/okhttp_intermediates \
+  target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
+  target/common/obj/JAVA_LIBRARIES/voip-common_intermediates \
 
 # not java libraries
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += \
