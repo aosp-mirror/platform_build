@@ -50,6 +50,10 @@ CTS_CORE_CASE_LIST := \
 	android.core.tests.libcore.package.okhttp \
 	android.core.tests.runner
 
+# Additional CTS packages for code under libcore
+CTS_CORE_CASE_LIST += \
+	android.core.tests.libcore.package.tzdata
+
 # The list of test packages that apache-harmony-tests (external/apache-harmony/Android.mk)
 # is split into.
 CTS_CORE_CASE_LIST += \
@@ -128,8 +132,10 @@ JUNIT_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-junit,,CO
 CORETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,core-tests,,COMMON)
 JSR166TESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,jsr166-tests,,COMMON)
 CONSCRYPTTESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,conscrypt-tests,,COMMON)
+TZDATAUPDATETESTS_INTERMEDIATES :=$(call intermediates-dir-for,JAVA_LIBRARIES,tzdata_update-tests,,COMMON)
 
-GEN_CLASSPATH := $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(APACHEHARMONYTESTS_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(OKHTTPTESTS_INTERMEDIATES)/classes.jar:$(OKHTTP_REPACKAGED_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(JSR166TESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar
+GEN_CLASSPATH := \
+    $(CORE_INTERMEDIATES)/classes.jar:$(CONSCRYPT_INTERMEDIATES)/classes.jar:$(BOUNCYCASTLE_INTERMEDIATES)/classes.jar:$(APACHEXML_INTERMEDIATES)/classes.jar:$(APACHEHARMONYTESTS_INTERMEDIATES)/classes.jar:$(OKHTTP_INTERMEDIATES)/classes.jar:$(OKHTTPTESTS_INTERMEDIATES)/classes.jar:$(OKHTTP_REPACKAGED_INTERMEDIATES)/classes.jar:$(JUNIT_INTERMEDIATES)/classes.jar:$(SQLITEJDBC_INTERMEDIATES)/javalib.jar:$(CORETESTS_INTERMEDIATES)/javalib.jar:$(JSR166TESTS_INTERMEDIATES)/javalib.jar:$(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar:$(TZDATAUPDATETESTS_INTERMEDIATES)/javalib.jar
 
 CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml \
@@ -154,6 +160,7 @@ CTS_CORE_XMLS := \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_prefs.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.harmony_sql.xml \
 	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.okhttp.xml \
+	$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tzdata.xml \
 
 $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # Why does this depend on javalib.jar instead of classes.jar?  Because
@@ -315,6 +322,13 @@ $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.okhttp.xml: $(CTS_CORE_X
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.okhttp,\
 		cts/tests/core/libcore/okhttp/AndroidManifest.xml,\
 		$(OKHTTPTESTS_INTERMEDIATES)/javalib.jar,,\
+		$(TARGET_ARCH),libcore/expectations)
+
+$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tzdata.xml: $(CTS_CORE_XMLS_DEPS)
+	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
+	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.tzdata,\
+		cts/tests/core/libcore/tzdata/AndroidManifest.xml,\
+		$(TZDATAUPDATETESTS_INTERMEDIATES)/javalib.jar,,\
 		$(TARGET_ARCH),libcore/expectations)
 
 # ----- Generate the test descriptions for the vm-tests-tf -----
