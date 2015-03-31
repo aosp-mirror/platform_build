@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     ip6tables \
     iptables \
+    gatekeeper.default \
     keystore \
     keystore.default \
     ld.mc \
@@ -61,6 +62,7 @@ PRODUCT_PACKAGES += \
     libdrmframework_jni \
     libfilterfw \
     libkeystore \
+    libgatekeeper \
     libsqlite_jni \
     libwilhelm \
     logd \
