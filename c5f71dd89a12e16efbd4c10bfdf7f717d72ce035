@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8370be19_38469113",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-01T18:56:51Z",
+      "side": 1,
+      "message": "you\u0027ll need this to regenerate it with the new property added.",
+      "parentUuid": "e37fbae4_5b68a3ef",
+      "range": {
+        "startLine": 352,
+        "startChar": 0,
+        "endLine": 353,
+        "endChar": 63
+      },
+      "revId": "c5f71dd89a12e16efbd4c10bfdf7f717d72ce035",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e37fbae4_07a6d60f",
         "filename": "core/main.mk",
         "patchSetId": 1
