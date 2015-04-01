@@ -46,6 +46,30 @@
       "revId": "c5f71dd89a12e16efbd4c10bfdf7f717d72ce035",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43b5e6d8_9d9867f5",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-04-01T18:37:28Z",
+      "side": 1,
+      "message": "i have the vague recollection that it has to be in default.prop to be consistently available when init is starting up the zygote.",
+      "parentUuid": "a371421d_3963f717",
+      "range": {
+        "startLine": 370,
+        "startChar": 2,
+        "endLine": 370,
+        "endChar": 67
+      },
+      "revId": "c5f71dd89a12e16efbd4c10bfdf7f717d72ce035",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
