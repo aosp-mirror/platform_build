@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e37fbae4_07a6d60f",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-01T16:45:46Z",
+      "side": 1,
+      "message": "Is it intentional to set this in /default.prop instead of /system/build.prop?",
+      "range": {
+        "startLine": 370,
+        "startChar": 2,
+        "endLine": 370,
+        "endChar": 67
+      },
+      "revId": "c5f71dd89a12e16efbd4c10bfdf7f717d72ce035",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
