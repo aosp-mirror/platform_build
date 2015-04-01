@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03af6e90_1e5e0d55",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-04-01T17:18:49Z",
+      "side": 1,
+      "message": "nit: this should be m0a",
+      "revId": "433dd755ab0266b931960be84b7ac346210a1b49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03af6e90_3e63d117",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-04-01T17:18:49Z",
+      "side": 1,
+      "message": "m1a",
+      "revId": "433dd755ab0266b931960be84b7ac346210a1b49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
