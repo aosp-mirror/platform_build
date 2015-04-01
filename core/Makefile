@@ -1302,7 +1302,7 @@ $(BUILT_OTATOOLS_PACKAGE): \
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
 	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) bin framework releasetools)
 	$(hide) zip -qry $(abspath $@) build/target/product/security/
-	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem | xargs zip -qry $(abspath $@)
+	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem | xargs zip -qry $(abspath $@)>/dev/null || true
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
