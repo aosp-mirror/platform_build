@@ -43,8 +43,9 @@ OPTIONS = common.OPTIONS
 
 def CopyInfo(output_zip):
   """Copy the android-info.txt file from the input to the output."""
-  output_zip.write(os.path.join(OPTIONS.input_tmp, "OTA", "android-info.txt"),
-                   "android-info.txt")
+  common.ZipWrite(
+      output_zip, os.path.join(OPTIONS.input_tmp, "OTA", "android-info.txt"),
+      "android-info.txt")
 
 
 def main(argv):
@@ -133,13 +134,7 @@ def main(argv):
 
   finally:
     print "cleaning up..."
-    # http://b/18015246
-    # See common.py for context.  zipfile also refers to ZIP64_LIMIT during
-    # close() when it writes out the central directory.
-    saved_zip64_limit = zipfile.ZIP64_LIMIT
-    zipfile.ZIP64_LIMIT = (1 << 32) - 1
-    output_zip.close()
-    zipfile.ZIP64_LIMIT = saved_zip64_limit
+    common.ZipClose(output_zip)
     shutil.rmtree(OPTIONS.input_tmp)
 
   print "done."

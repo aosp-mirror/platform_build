@@ -32,10 +32,7 @@ import zipfile
 import blockimgdiff
 import rangelib
 
-try:
-  from hashlib import sha1 as sha1
-except ImportError:
-  from sha import sha as sha1
+from hashlib import sha1 as sha1
 
 
 class Options(object):
@@ -379,6 +376,10 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     assert p.returncode == 0, "vboot_signer of %s image failed" % path
+
+    # Clean up the temp files.
+    img_unsigned.close()
+    img_keyblock.close()
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
@@ -854,16 +855,50 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
     zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
-def ZipWriteStr(zip_file, filename, data, perms=0o644, compression=None):
-  # use a fixed timestamp so the output is repeatable.
-  zinfo = zipfile.ZipInfo(filename=filename,
-                          date_time=(2009, 1, 1, 0, 0, 0))
-  if compression is None:
+def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=0o644,
+                compress_type=None):
+  """Wrap zipfile.writestr() function to work around the zip64 limit.
+
+  Even with the ZIP64_LIMIT workaround, it won't allow writing a string
+  longer than 2GiB. It gives 'OverflowError: size does not fit in an int'
+  when calling crc32(bytes).
+
+  But it still works fine to write a shorter string into a large zip file.
+  We should use ZipWrite() whenever possible, and only use ZipWriteStr()
+  when we know the string won't be too long.
+  """
+
+  saved_zip64_limit = zipfile.ZIP64_LIMIT
+  zipfile.ZIP64_LIMIT = (1 << 32) - 1
+
+  if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
+    zinfo = zipfile.ZipInfo(filename=zinfo_or_arcname)
     zinfo.compress_type = zip_file.compression
   else:
-    zinfo.compress_type = compression
+    zinfo = zinfo_or_arcname
+
+  # If compress_type is given, it overrides the value in zinfo.
+  if compress_type is not None:
+    zinfo.compress_type = compress_type
+
+  # Use a fixed timestamp so the output is repeatable.
   zinfo.external_attr = perms << 16
+  zinfo.date_time = (2009, 1, 1, 0, 0, 0)
+
   zip_file.writestr(zinfo, data)
+  zipfile.ZIP64_LIMIT = saved_zip64_limit
+
+
+def ZipClose(zip_file):
+  # http://b/18015246
+  # zipfile also refers to ZIP64_LIMIT during close() when it writes out the
+  # central directory.
+  saved_zip64_limit = zipfile.ZIP64_LIMIT
+  zipfile.ZIP64_LIMIT = (1 << 32) - 1
+
+  zip_file.close()
+
+  zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
 class DeviceSpecificParams(object):
@@ -969,7 +1004,7 @@ class File(object):
     return t
 
   def AddToZip(self, z, compression=None):
-    ZipWriteStr(z, self.name, self.data, compression=compression)
+    ZipWriteStr(z, self.name, self.data, compress_type=compression)
 
 DIFF_PROGRAM_BY_EXT = {
     ".gz" : "imgdiff",
