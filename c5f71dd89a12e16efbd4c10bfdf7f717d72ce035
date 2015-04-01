@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "e37fbae4_5b68a3ef",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2015-04-01T18:47:03Z",
+      "side": 1,
+      "message": "this was never set right? its new here? then this is unneeded.",
+      "range": {
+        "startLine": 352,
+        "startChar": 0,
+        "endLine": 353,
+        "endChar": 63
+      },
+      "revId": "c5f71dd89a12e16efbd4c10bfdf7f717d72ce035",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e37fbae4_07a6d60f",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -85,6 +108,30 @@
       "side": 1,
       "message": "No, you can override both in product\u0027s makefile.",
       "parentUuid": "a371421d_3963f717",
+      "range": {
+        "startLine": 370,
+        "startChar": 2,
+        "endLine": 370,
+        "endChar": 67
+      },
+      "revId": "c5f71dd89a12e16efbd4c10bfdf7f717d72ce035",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a371421d_39abf7d6",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2015-04-01T18:47:03Z",
+      "side": 1,
+      "message": "all the other dalvik.vm ones seem to be ADDITIONAL_DEFAULT_PROPERITIES",
+      "parentUuid": "8370be19_2dabb5d6",
       "range": {
         "startLine": 370,
         "startChar": 2,
