@@ -45,21 +45,3 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 BOARD_SEPOLICY_DIRS += \
         build/target/board/generic/sepolicy \
         build/target/board/generic_x86/sepolicy
-
-BOARD_SEPOLICY_UNION += \
-        device.te \
-        domain.te \
-        file.te \
-        file_contexts \
-        healthd.te \
-        installd.te \
-        goldfish_setup.te \
-        goldfish_logcat.te \
-        property.te \
-        property_contexts \
-        qemu_props.te \
-        qemud.te \
-        rild.te \
-        shell.te \
-        system_server.te \
-        zygote.te
