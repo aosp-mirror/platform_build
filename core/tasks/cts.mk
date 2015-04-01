@@ -172,7 +172,7 @@ $(CTS_CORE_XMLS): PRIVATE_CLASSPATH:=$(GEN_CLASSPATH)
 # build system requires that dependencies use javalib.jar.  If
 # javalib.jar is up-to-date, then classes.jar is as well.  Depending
 # on classes.jar will build the files incorrectly.
-CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(JUNIT_HOST_JAR) $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(OKHTTPTESTS_INTERMEDIATES)/javalib.jar $(OKHTTP_REPACKAGED_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(JSR166TESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar build/core/tasks/cts.mk | $(ACP)
+CTS_CORE_XMLS_DEPS := $(CTS_CORE_CASES) $(HOST_OUT_JAVA_LIBRARIES)/descGen.jar $(JUNIT_HOST_JAR) $(CORE_INTERMEDIATES)/javalib.jar $(BOUNCYCASTLE_INTERMEDIATES)/javalib.jar $(APACHEXML_INTERMEDIATES)/javalib.jar $(APACHEHARMONYTESTS_INTERMEDIATES)/javalib.jar $(OKHTTP_INTERMEDIATES)/javalib.jar $(OKHTTPTESTS_INTERMEDIATES)/javalib.jar $(OKHTTP_REPACKAGED_INTERMEDIATES)/javalib.jar $(SQLITEJDBC_INTERMEDIATES)/javalib.jar $(JUNIT_INTERMEDIATES)/javalib.jar $(CORETESTS_INTERMEDIATES)/javalib.jar $(JSR166TESTS_INTERMEDIATES)/javalib.jar $(CONSCRYPTTESTS_INTERMEDIATES)/javalib.jar $(TZDATAUPDATETESTS_INTERMEDIATES)/javalib.jar build/core/tasks/cts.mk | $(ACP)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.dalvik.xml: $(CTS_CORE_XMLS_DEPS)
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
