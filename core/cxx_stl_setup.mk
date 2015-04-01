@@ -65,6 +65,18 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         my_ldflags += -nodefaultlibs
         my_ldlibs += -lpthread -lm
         my_ldlibs += $($(my_prefix)$(HOST_OS)_$(my_link_type)_gcclibs)
+    else
+        ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+            my_static_libraries += libunwind_llvm
+        else
+            my_static_libraries += libunwindbacktrace
+        endif
+
+        ifeq ($(my_link_type),static)
+            my_static_libraries += libdl
+        else
+            my_shared_libraries += libdl
+        endif
     endif
 else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
     ifndef LOCAL_IS_HOST_MODULE
