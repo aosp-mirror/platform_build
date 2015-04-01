@@ -92,7 +92,6 @@ if sys.hexversion < 0x02070000:
   print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
-import copy
 import multiprocessing
 import os
 import tempfile
@@ -371,6 +370,7 @@ def CopyPartitionFiles(itemset, input_zip, output_zip=None, substitute=None):
         symlinks.append((input_zip.read(info.filename),
                          "/" + partition + "/" + basefilename))
       else:
+        import copy
         info2 = copy.copy(info)
         fn = info2.filename = partition + "/" + basefilename
         if substitute and fn in substitute and substitute[fn] is None:
@@ -380,7 +380,7 @@ def CopyPartitionFiles(itemset, input_zip, output_zip=None, substitute=None):
             data = substitute[fn]
           else:
             data = input_zip.read(info.filename)
-          output_zip.writestr(info2, data)
+          common.ZipWriteStr(output_zip, info2, data)
         if fn.endswith("/"):
           itemset.Get(fn[:-1], is_dir=True)
         else:
@@ -1581,6 +1581,7 @@ def main(argv):
         OPTIONS.package_key = OPTIONS.info_dict.get(
             "default_system_dev_certificate",
             "build/target/product/security/testkey")
+      common.ZipClose(output_zip)
       break
 
     else:
@@ -1601,15 +1602,14 @@ def main(argv):
         common.DumpInfoDict(OPTIONS.source_info_dict)
       try:
         WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+        common.ZipClose(output_zip)
         break
       except ValueError:
         if not OPTIONS.fallback_to_full:
           raise
         print "--- failed to build incremental; falling back to full ---"
         OPTIONS.incremental_source = None
-        output_zip.close()
-
-  output_zip.close()
+        common.ZipClose(output_zip)
 
   if not OPTIONS.no_signing:
     SignOutput(temp_zip_file.name, args[1])
