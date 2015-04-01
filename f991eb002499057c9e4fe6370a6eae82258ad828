@@ -16,6 +16,24 @@
       "revId": "f991eb002499057c9e4fe6370a6eae82258ad828",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8370be19_e47ffa8b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 860,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-01T16:32:35Z",
+      "side": 1,
+      "message": "Thanks! I didn\u0027t spot that and no error showed up when I tested it because PRODUCT_SUPPORTS_VBOOT flag was not actually set in internal master branch.",
+      "parentUuid": "a371421d_250d8e6d",
+      "revId": "f991eb002499057c9e4fe6370a6eae82258ad828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
