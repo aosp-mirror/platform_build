@@ -22,6 +22,30 @@
       "revId": "dd063528edea7b47071dee451ae52341239192fd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63bd8ac9_2d02c18f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1037321
+      },
+      "writtenOn": "2015-04-01T02:06:26Z",
+      "side": 1,
+      "message": "It\u0027s:\ntotal_verity_data \u003d (image_size - adjusted_image_size) \u003e partition_size - image_size\n\nI can change AdjustPartitionSizeForVerity to VerityDataSize that returns just total_verity_data instead and make it clearer. Let me know?",
+      "parentUuid": "63bd8ac9_6d5119ba",
+      "range": {
+        "startLine": 315,
+        "startChar": 11,
+        "endLine": 315,
+        "endChar": 12
+      },
+      "revId": "dd063528edea7b47071dee451ae52341239192fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
