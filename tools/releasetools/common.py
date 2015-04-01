@@ -346,8 +346,14 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
-  cmd.extend(["--ramdisk", ramdisk_img.name,
-              "--output", img.name])
+  img_unsigned = None
+  if info_dict.get("vboot", None):
+    img_unsigned = tempfile.NamedTemporaryFile()
+    cmd.extend(["--ramdisk", ramdisk_img.name,
+                "--output", img_unsigned.name])
+  else:
+    cmd.extend(["--ramdisk", ramdisk_img.name,
+                "--output", img.name])
 
   p = Run(cmd, stdout=subprocess.PIPE)
   p.communicate()
@@ -361,6 +367,18 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     assert p.returncode == 0, "boot_signer of %s image failed" % path
+
+  # Sign the image if vboot is non-empty.
+  elif info_dict.get("vboot", None):
+    path = "/" + os.path.basename(sourcedir).lower()
+    img_keyblock = tempfile.NamedTemporaryFile()
+    cmd = [info_dict["vboot_signer_cmd"], info_dict["futility"],
+           img_unsigned.name, info_dict["vboot_key"] + ".vbpubk",
+           info_dict["vboot_key"] + ".vbprivk", img_keyblock.name,
+           img.name]
+    p = Run(cmd, stdout=subprocess.PIPE)
+    p.communicate()
+    assert p.returncode == 0, "vboot_signer of %s image failed" % path
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
