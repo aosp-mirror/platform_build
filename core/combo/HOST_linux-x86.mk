@@ -49,7 +49,6 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CO
 
 $(combo_2nd_arch_prefix)HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-
 ############################################################
 ## Macros after this line are shared by the 64-bit config.
 

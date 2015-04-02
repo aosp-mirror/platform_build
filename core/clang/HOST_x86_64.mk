@@ -76,3 +76,5 @@ CLANG_HOST_GLOBAL_CPPFLAGS := \
 CLANG_HOST_GLOBAL_LDFLAGS := \
   $(call convert-to-host-clang-flags,$(HOST_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_x86_64_HOST_EXTRA_LDFLAGS)
+
+HOST_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-x86_64.a
