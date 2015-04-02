@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3bdfae6_a029e004",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T01:25:58Z",
+      "side": 1,
+      "message": "This file isn\u0027t intended to be included multiple times.\nIt has been included once in build/core/config.mk.\nAlso clang/config.mk has been written in a way that it has dependency on variables set in core/combo/[HOST|TARGET]_*.mk, not the opposite.\nI\u0027d suggest to move the *_LIBPROFILE_RT variables to build/core/clang/config.mk.",
+      "range": {
+        "startLine": 52,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 39
+      },
+      "revId": "82f0b9121d830df4140b2b19e7a672f615abfd96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
