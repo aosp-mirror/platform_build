@@ -231,11 +231,14 @@ def BuildImage(in_dir, prop_dict, out_file):
   fs_type = prop_dict.get("fs_type", "")
   run_fsck = False
 
+  fs_spans_partition = True
+  if fs_type.startswith("squash"):
+      fs_spans_partition = False
+
   is_verity_partition = "verity_block_device" in prop_dict
   verity_supported = prop_dict.get("verity") == "true"
-  # adjust the partition size to make room for the hashes if this is to be
-  # verified
-  if verity_supported and is_verity_partition:
+  # adjust the partition size to make room for the hashes if this is to be verified
+  if verity_supported and is_verity_partition and fs_spans_partition:
     partition_size = int(prop_dict.get("partition_size"))
     adjusted_size = AdjustPartitionSizeForVerity(partition_size)
     if not adjusted_size:
@@ -300,6 +303,20 @@ def BuildImage(in_dir, prop_dict, out_file):
         os.remove(fs_config)
   if exit_code != 0:
     return False
+
+  if not fs_spans_partition:
+    mount_point = prop_dict.get("mount_point")
+    partition_size = int(prop_dict.get("partition_size"))
+    image_size = os.stat(out_file).st_size
+    if image_size > partition_size:
+        print "Error: %s image size of %d is larger than partition size of %d" % (mount_point, image_size, partition_size)
+        return False
+    if verity_supported and is_verity_partition:
+        if 2 * image_size - AdjustPartitionSizeForVerity(image_size) > partition_size:
+            print "Error: No more room on %s to fit verity data" % mount_point
+            return False
+    prop_dict["original_partition_size"] = prop_dict["partition_size"]
+    prop_dict["partition_size"] = str(image_size)
 
   # create the verified image if this is to be verified
   if verity_supported and is_verity_partition:
