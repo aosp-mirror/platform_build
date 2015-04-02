@@ -48,11 +48,6 @@
 #define OS_PATH_SEPARATOR '/'
 
 /*
- * Define if the strlcpy() function exists on the system.
- */
-#define HAVE_STRLCPY 1
-
-/*
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1
