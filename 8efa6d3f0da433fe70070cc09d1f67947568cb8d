@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63de6a5c_4d725011",
+        "filename": "tools/fs_get_stats/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2015-04-02T20:57:54Z",
+      "side": 1,
+      "message": "I did not see this one in the list of DISTTOOLS, so shared should be ok?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 35
+      },
+      "revId": "8efa6d3f0da433fe70070cc09d1f67947568cb8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
