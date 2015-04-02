@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63de6a5c_9a163181",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T16:01:26Z",
+      "side": 1,
+      "message": "You don\u0027t want to install both, do you?",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 127,
+        "endChar": 62
+      },
+      "revId": "1677c1904ece4fa410e325cb2ca4d5d0131ce64d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23c4727c_4e010fbc",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T16:01:26Z",
+      "side": 1,
+      "message": "Why doesn\u0027t it apply to jar files?",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 50
+      },
+      "revId": "1677c1904ece4fa410e325cb2ca4d5d0131ce64d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
