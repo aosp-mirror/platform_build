@@ -76,3 +76,5 @@ $(clang_2nd_arch_prefix)CLANG_HOST_GLOBAL_CPPFLAGS := \
 $(clang_2nd_arch_prefix)CLANG_HOST_GLOBAL_LDFLAGS := \
   $(call $(clang_2nd_arch_prefix)convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_x86_HOST_EXTRA_LDFLAGS)
+
+$(clang_2nd_arch_prefix)HOST_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-i686.a

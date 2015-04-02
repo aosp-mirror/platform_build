@@ -27,6 +27,9 @@ ifndef skip_build_from_source
 
 include $(BUILD_SYSTEM)/binary.mk
 
+my_host_libprofile_rt := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_LIBPROFILE_RT)
+$(LOCAL_BUILT_MODULE): PRIVATE_HOST_LIBPROFILE_RT := $(my_host_libprofile_rt)
+
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 	$(transform-host-o-to-executable)
 
