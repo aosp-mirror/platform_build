@@ -22,6 +22,30 @@
       "revId": "ed1158e01f69ca15f0493e465c3bc36f49d5eed7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2312b2d8_acd30bdb",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1298,
+      "author": {
+        "id": 1002951
+      },
+      "writtenOn": "2015-04-02T20:50:09Z",
+      "side": 1,
+      "message": "Do you consider it an error if there is no certificate found? If it is not an error there is not much to log, right?",
+      "parentUuid": "23c4727c_f177a351",
+      "range": {
+        "startLine": 1298,
+        "startChar": 110,
+        "endLine": 1298,
+        "endChar": 120
+      },
+      "revId": "ed1158e01f69ca15f0493e465c3bc36f49d5eed7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
