@@ -46,6 +46,30 @@
       "revId": "ed1158e01f69ca15f0493e465c3bc36f49d5eed7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23c4727c_8abee9a0",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1298,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T21:41:09Z",
+      "side": 1,
+      "message": "I was worried it may fail in other way, without printing a message. But it seems unlikely.",
+      "parentUuid": "2312b2d8_acd30bdb",
+      "range": {
+        "startLine": 1298,
+        "startChar": 110,
+        "endLine": 1298,
+        "endChar": 120
+      },
+      "revId": "ed1158e01f69ca15f0493e465c3bc36f49d5eed7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
