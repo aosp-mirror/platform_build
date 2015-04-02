@@ -22,6 +22,30 @@
       "revId": "e1b0b643c72190f9bc40e343898d3eba8a537fb9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23c4727c_ee1fc35d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2015-04-02T15:37:25Z",
+      "side": 1,
+      "message": "Ah, the point is to say that this ARM32 target has ARMv8 instructions. Should this be being picked up from the architecture variant? That should then also work for the native side - assuming the appropriate architecture variant work has been done in GCC and clang.",
+      "parentUuid": "63de6a5c_ffcf67dc",
+      "range": {
+        "startLine": 546,
+        "startChar": 2,
+        "endLine": 546,
+        "endChar": 70
+      },
+      "revId": "e1b0b643c72190f9bc40e343898d3eba8a537fb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
