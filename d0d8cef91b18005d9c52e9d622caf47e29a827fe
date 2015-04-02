@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63de6a5c_39c1829c",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "We should allow the device define a custom value in its BoardConfig.mk;\nIs fs_config_dirs and/or fs_config_files required for every build? If so we may need to give a default android_filesystem_config.h.\nOtherwise enclose the whole thing with conditional:\nifdef TARGET_ANDROID_FILESYSTEM_CONFIG_H\n...\nendif",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 98
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "23c4727c_768ca0cb",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "You don\u0027t need this. The build system will establish the dependency on all the header files included by the source.",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 70
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3bdfae6_92897bbd",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "I\u0027d use:\n-I $(dir $(TARGET_ANDROID_FILESYSTEM_CONFIG_H))",
+      "range": {
+        "startLine": 47,
+        "startChar": 16,
+        "endLine": 47,
+        "endChar": 42
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63de6a5c_9951966b",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "I found this is hard to read. I\u0027d change it to:\n-DANDROID_FILESYSTEM_CONFIG\u003d\\\"$(TARGET_ANDROID_FILESYSTEM_CONFIG_H)\\\"\n\nDo you really want to build the file path into the binary?",
+      "range": {
+        "startLine": 48,
+        "startChar": 16,
+        "endLine": 48,
+        "endChar": 80
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63de6a5c_3daccd9c",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "$(LOCAL_BUILT_MODULE) : $(HOST_OUT_EXECUTABLES)/fs_config_generate_$(TARGET_DEVICE)\n   mkdir -p $(dir $@)\n   $\u003c -D -o $@",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 91
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3bdfae6_f52541d7",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "$(LOCAL_BUILT_MODULE) : $(HOST_OUT_EXECUTABLES)/fs_config_generate_$(TARGET_DEVICE)\n   mkdir -p $(dir $@)\n   $\u003c -F -o $@",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 92
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63de6a5c_fd67651f",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-02T23:54:10Z",
+      "side": 1,
+      "message": "I\u0027d move the default value to a header file and use it if a device header file isn\u0027t provided. So that we can have all the above logic in the makefile and not pass the path to the c file.",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 6
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
