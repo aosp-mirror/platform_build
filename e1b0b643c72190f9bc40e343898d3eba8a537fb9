@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63de6a5c_ffcf67dc",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2015-04-02T15:35:07Z",
+      "side": 1,
+      "message": "I\u0027m likely behind the times, I believe the \"instruction set features\" should be dying a death and CPU variants be being used to determine \"features\". The ART CPU variant naming conventions should align with those of clang and GCC, however, clang and GCC have been slow in getting support for some architecture variants like krait. Fwiw, as the variant information from /proc/cpuinfo and HWCAP are unreliable we store the CPU variant into a system property and pass that to dex2oat. The instruction set features test in ART covers this and it should be made a CTS test and the broken /proc/cpuinfo and HWCAP... fixed. I\u0027m unaware of there being an ARM64 feature called aarch32.",
+      "range": {
+        "startLine": 546,
+        "startChar": 2,
+        "endLine": 546,
+        "endChar": 70
+      },
+      "revId": "e1b0b643c72190f9bc40e343898d3eba8a537fb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
