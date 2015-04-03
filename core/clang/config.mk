@@ -66,20 +66,22 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -fno-tree-sra \
   -fprefetch-loop-arrays \
   -funswitch-loops \
-  -Werror=unused-but-set-variable \
   -Werror=unused-but-set-parameter \
+  -Werror=unused-but-set-variable \
   -Wmaybe-uninitialized \
   -Wno-error=maybe-uninitialized \
-  -Wno-error=unused-but-set-variable \
   -Wno-error=unused-but-set-parameter \
+  -Wno-error=unused-but-set-variable \
   -Wno-free-nonheap-object \
   -Wno-literal-suffix \
   -Wno-maybe-uninitialized \
   -Wno-old-style-declaration \
   -Wno-psabi \
-  -Wno-unused-but-set-variable \
   -Wno-unused-but-set-parameter \
-  -Wno-unused-local-typedefs
+  -Wno-unused-but-set-variable \
+  -Wno-unused-local-typedefs \
+  -Wunused-but-set-parameter \
+  -Wunused-but-set-variable
 
 # Clang flags for all host rules
 CLANG_CONFIG_HOST_EXTRA_ASFLAGS :=
