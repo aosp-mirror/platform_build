@@ -52,9 +52,4 @@
  */
 #define HAVE_STDINT_H 1
 
-/*
- * Define if printf() supports %zd for size_t arguments
- */
-#define HAVE_PRINTF_ZD 1
-
 #endif /* _ANDROID_CONFIG_H */
