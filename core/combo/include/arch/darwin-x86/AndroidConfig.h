@@ -33,11 +33,6 @@
  */
 
 /*
- * Add any extra platform-specific defines here.
- */
-#define _THREAD_SAFE
-
-/*
  * Define if we have <malloc.h> header
  */
 /* #define HAVE_MALLOC_H */
