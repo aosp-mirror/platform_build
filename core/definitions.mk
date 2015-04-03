@@ -1289,7 +1289,7 @@ $(extract-and-include-target-whole-static-libs)
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
+    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
 endef
 
 ###########################################################
@@ -1338,7 +1338,7 @@ $(extract-and-include-host-whole-static-libs)
 @echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
+    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
 endef
 
 
