@@ -871,6 +871,8 @@ $(hide) $(PRIVATE_RS_CC) \
   $(PRIVATE_RS_FLAGS) \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
   $(PRIVATE_RS_SOURCE_FILES)
+  $(foreach d,$(PRIVATE_DEP_FILES),\
+    $(call transform-d-to-p-args,$(d),$(d:%.d=%.P))$(newline))
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
@@ -905,6 +907,8 @@ $(hide) $(PRIVATE_RS_CC) \
   $(PRIVATE_RS_FLAGS) \
   $(addprefix -I , $(PRIVATE_RS_INCLUDES)) \
   $(PRIVATE_RS_SOURCE_FILES)
+  $(foreach d,$(PRIVATE_DEP_FILES),\
+    $(call transform-d-to-p-args,$(d),$(d:%.d=%.P))$(newline))
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
