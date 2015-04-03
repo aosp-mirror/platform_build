@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "23c4727c_70e943ad",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-03T00:56:30Z",
+      "side": 1,
+      "message": "We can ask TARGET_ANDROID_FILESYSTEM_CONFIG_H to have a fixed file name, but not the path. I think that\u0027s reasonable.\n\n\n(Or you can use:\nLOCAL_CFLAGS +\u003d -include $(TARGET_ANDROID_FILESYSTEM_CONFIG_H), but it\u0027s not preferred.",
+      "parentUuid": "e3bdfae6_286ec0ac",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 98
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "23c4727c_768ca0cb",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 1
@@ -130,6 +154,30 @@
       "side": 1,
       "message": "I do not need the path, it was meant to be informational (the tool could print out the full path of the file being included and processed), but I do need this to _not_ be defined if TARGET_ANDROID_FILESYSTEM_CONFIG_H does not exist so that the source procedes to a default.\n\nWould you be more comfortable with $(patsubst) rather than the short-hand? I could do an ifneq ($(TARGET_...),)?",
       "parentUuid": "63de6a5c_9951966b",
+      "range": {
+        "startLine": 48,
+        "startChar": 16,
+        "endLine": 48,
+        "endChar": 80
+      },
+      "revId": "d0d8cef91b18005d9c52e9d622caf47e29a827fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63de6a5c_a05536dd",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-03T00:56:30Z",
+      "side": 1,
+      "message": "Yes, I got it after I read the c file.\nYes, you can use \"ifneq ...\" here.",
+      "parentUuid": "e3bdfae6_08309c18",
       "range": {
         "startLine": 48,
         "startChar": 16,
