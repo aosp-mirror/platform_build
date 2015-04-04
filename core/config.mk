@@ -38,6 +38,7 @@ SRC_DOCS:= $(TOPDIR)docs
 # TODO: See if we can remove most of these from the global list.
 SRC_HEADERS := \
 	$(TOPDIR)system/core/include \
+	$(TOPDIR)system/media/audio/include \
 	$(TOPDIR)hardware/libhardware/include \
 	$(TOPDIR)hardware/libhardware_legacy/include \
 	$(TOPDIR)hardware/ril/include \
