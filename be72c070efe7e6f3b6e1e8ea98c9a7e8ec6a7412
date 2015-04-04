@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3bdfae6_a8c4f990",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-04T01:03:28Z",
+      "side": 1,
+      "message": "This never evaluates to true.",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 58
+      },
+      "revId": "be72c070efe7e6f3b6e1e8ea98c9a7e8ec6a7412",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e3bdfae6_e8e3111e",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-04T01:03:28Z",
+      "side": 1,
+      "message": "This complexity is really unnecessary.\nI think it\u0027s reasonable to require a fixed header file name, such as android_filesystem_config.h.\nI\u0027ll upload a cleaner one.",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 35
+      },
+      "revId": "be72c070efe7e6f3b6e1e8ea98c9a7e8ec6a7412",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63f74ae2_56e8957b",
+        "filename": "tools/fs_config/android_filesystem_config.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-04T01:03:28Z",
+      "side": 1,
+      "message": "With \"LOCAL_CFLAGS :\u003d -Werror\" the above line fails the build.",
+      "revId": "be72c070efe7e6f3b6e1e8ea98c9a7e8ec6a7412",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63f74ae2_f6ce6130",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-04T01:03:28Z",
+      "side": 1,
+      "message": "Where is this functiond efined?\nI got this error:\nerror: implicit declaration of function \u0027fs_config_generate\u0027 is invalid in C99 [-Werror,-Wimplicit-function-declaration]",
+      "range": {
+        "startLine": 125,
+        "startChar": 4,
+        "endLine": 125,
+        "endChar": 65
+      },
+      "revId": "be72c070efe7e6f3b6e1e8ea98c9a7e8ec6a7412",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
