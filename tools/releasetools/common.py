@@ -362,7 +362,8 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
   assert p.returncode == 0, "mkbootimg of %s image failed" % (
       os.path.basename(sourcedir),)
 
-  if info_dict.get("verity_key", None):
+  if (info_dict.get("boot_signer", None) == "true" and
+      info_dict.get("verity_key", None)):
     path = "/" + os.path.basename(sourcedir).lower()
     cmd = [OPTIONS.boot_signer_path, path, img.name,
            info_dict["verity_key"] + ".pk8",
