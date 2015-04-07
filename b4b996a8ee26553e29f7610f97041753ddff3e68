@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a32b0216_8a0937df",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-04-07T20:31:22Z",
+      "side": 0,
+      "message": "Oops. Bad rebase.",
+      "revId": "b4b996a8ee26553e29f7610f97041753ddff3e68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
