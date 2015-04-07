@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23e3924b_04da989e",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-07T21:35:50Z",
+      "side": 1,
+      "message": "You don\u0027t need this. They are already defined in build/core/config.mk.",
+      "range": {
+        "startLine": 39,
+        "startChar": 2,
+        "endLine": 41,
+        "endChar": 28
+      },
+      "revId": "89e49aa22d9f4da9fec6b392e33b0319b8757d2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
