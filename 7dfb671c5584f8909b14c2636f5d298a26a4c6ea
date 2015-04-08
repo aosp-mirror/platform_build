@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "237f124e_108e727f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-04-08T22:13:44Z",
+      "side": 1,
+      "message": "is 400dpi a thing too? i see mentions of it in parts of the documentation that mention 560. (most places don\u0027t mention 560 :-( )",
+      "revId": "7dfb671c5584f8909b14c2636f5d298a26a4c6ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
