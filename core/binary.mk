@@ -600,9 +600,9 @@ my_c_includes += $(my_proto_c_includes)
 my_export_c_include_dirs += $(my_proto_c_includes)
 
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc)
-    my_static_libraries += libnanopb-c-2.8.0-enable_malloc
+    my_static_libraries += libprotobuf-c-nano-enable_malloc
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c)
-    my_static_libraries += libnanopb-c-2.8.0
+    my_static_libraries += libprotobuf-c-nano
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-full
