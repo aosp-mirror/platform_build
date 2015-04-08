@@ -49,6 +49,7 @@ my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
 my_additional_dependencies := $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
 
 ifdef LOCAL_IS_HOST_MODULE
 my_allow_undefined_symbols := true
@@ -385,7 +386,7 @@ endif
 ## Define arm-vs-thumb-mode flags.
 ###########################################################
 LOCAL_ARM_MODE := $(strip $(LOCAL_ARM_MODE))
-ifeq ($(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),arm)
+ifeq ($($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),arm)
 arm_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)
 normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 
@@ -499,46 +500,44 @@ my_generated_sources := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%
 ALL_GENERATED_SOURCES += $(my_generated_sources)
 
 ###########################################################
-# PROTOC transforms
-###########################################################
-
-proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
-
-proto_generated_objects :=
-proto_generated_headers :=
-nanopb_c_generated_objects :=
-nanopb_c_generated_headers :=
-ifeq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
-
-###########################################################
-## Compile the .proto files to .cc and then to .o
+## Compile the .proto files to .cc (or .c) and then to .o
 ###########################################################
 proto_sources := $(filter %.proto,$(my_src_files))
 proto_generated_objects :=
 proto_generated_headers :=
 ifneq ($(proto_sources),)
-proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
-proto_generated_cc_sources_dir := $(generated_sources_dir)/proto
-proto_generated_cc_sources := $(addprefix $(proto_generated_cc_sources_dir)/, \
-    $(patsubst %.proto,%.pb.cc,$(proto_sources_fullpath)))
-proto_generated_headers := $(patsubst %.pb.cc,%.pb.h, $(proto_generated_cc_sources))
+proto_generated_sources_dir := $(generated_sources_dir)/proto
 proto_generated_obj_dir := $(intermediates)/proto
+
+ifneq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
+my_proto_source_suffix := .c
+my_proto_c_includes := external/nanopb-c
+my_protoc_flags := --nanopb_out=$(proto_generated_sources_dir) \
+    --plugin=external/nanopb-c/generator/protoc-gen-nanopb
+else
+my_proto_source_suffix := .cc
+my_proto_c_includes := external/protobuf/src
+my_cflags += -DGOOGLE_PROTOBUF_NO_RTTI
+my_protoc_flags := --cpp_out=$(proto_generated_sources_dir)
+endif
+my_proto_c_includes += $(proto_generated_sources_dir)
+
+proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
+proto_generated_sources := $(addprefix $(proto_generated_sources_dir)/, \
+    $(patsubst %.proto,%.pb$(my_proto_source_suffix),$(proto_sources_fullpath)))
+proto_generated_headers := $(patsubst %.pb$(my_proto_source_suffix),%.pb.h, $(proto_generated_sources))
 proto_generated_objects := $(addprefix $(proto_generated_obj_dir)/, \
     $(patsubst %.proto,%.pb.o,$(proto_sources_fullpath)))
 
-# Auto-export the generated proto source dir.
-LOCAL_EXPORT_C_INCLUDE_DIRS += $(proto_generated_cc_sources_dir)
-
 # Ensure the transform-proto-to-cc rule is only defined once in multilib build.
 ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
-$(proto_generated_cc_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
-$(proto_generated_cc_sources): PRIVATE_PROTO_CC_OUTPUT_DIR := $(proto_generated_cc_sources_dir)
-$(proto_generated_cc_sources): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
-$(proto_generated_cc_sources): $(proto_generated_cc_sources_dir)/%.pb.cc: %.proto $(PROTOC)
+$(proto_generated_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
+$(proto_generated_sources): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS) $(my_protoc_flags)
+$(proto_generated_sources): $(proto_generated_sources_dir)/%.pb$(my_proto_source_suffix): %.proto $(PROTOC)
 	$(transform-proto-to-cc)
 
 # This is just a dummy rule to make sure gmake doesn't skip updating the dependents.
-$(proto_generated_headers): $(proto_generated_cc_sources_dir)/%.pb.h: $(proto_generated_cc_sources_dir)/%.pb.cc
+$(proto_generated_headers): $(proto_generated_sources_dir)/%.pb.h: $(proto_generated_sources_dir)/%.pb$(my_proto_source_suffix)
 	@echo "Updated header file $@."
 	$(hide) touch $@
 
@@ -547,13 +546,23 @@ endif  # transform-proto-to-cc rule included only once
 
 $(proto_generated_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(proto_generated_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(proto_generated_objects): $(proto_generated_obj_dir)/%.o: $(proto_generated_cc_sources_dir)/%.cc $(proto_generated_headers)
+$(proto_generated_objects): $(proto_generated_obj_dir)/%.o: $(proto_generated_sources_dir)/%$(my_proto_source_suffix) $(proto_generated_headers)
+ifeq ($(my_proto_source_suffix),.c)
+	$(transform-$(PRIVATE_HOST)c-to-o)
+else
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
+endif
 -include $(proto_generated_objects:%.o=%.P)
 
-my_c_includes += external/protobuf/src $(proto_generated_cc_sources_dir)
-my_cflags += -DGOOGLE_PROTOBUF_NO_RTTI
-ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
+my_c_includes += $(my_proto_c_includes)
+# Auto-export the generated proto source dir.
+my_export_c_include_dirs += $(my_proto_c_includes)
+
+ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc)
+    my_static_libraries += libnanopb-c-2.8.0-enable_malloc
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c)
+    my_static_libraries += libnanopb-c-2.8.0
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-full
     else
@@ -567,48 +576,6 @@ else
     endif
 endif
 endif  # $(proto_sources) non-empty
-
-
-else
-
-###########################################################
-## Compile the .proto files to .c from nanopb-c and then to .o
-###########################################################
-ifneq ($(proto_sources),)
-nanopb_c_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
-nanopb_c_generated_sources_dir := $(intermediates)/proto
-nanopb_c_generated_sources := $(addprefix $(nanopb_c_generated_sources_dir)/, \
-    $(patsubst %.proto,%.pb.c,$(nanopb_c_sources_fullpath)))
-nanopb_c_generated_objects := $(patsubst %.c,%.o, $(nanopb_c_generated_sources))
-
-# Auto-export the generated proto source dir.
-LOCAL_EXPORT_C_INCLUDE_DIRS += $(nanopb_c_generated_sources_dir)
-
-$(nanopb_c_generated_sources): PRIVATE_NANOPB_C_INCLUDES := $(TOP)
-$(nanopb_c_generated_sources): PRIVATE_NANOPB_C_OUTPUT_DIR := $(nanopb_c_generated_sources_dir)
-$(nanopb_c_generated_sources): PRIVATE_NANOPB_C_FLAGS := $(LOCAL_PROTOC_FLAGS)
-
-$(nanopb_c_generated_sources): $(nanopb_c_generated_sources_dir)/%.pb.c: %.proto $(PROTOC)
-	$(transform-nanopb_c-to-c)
-
-nanopb_c_generated_headers := $(patsubst %.pb.c,%.pb.h, $(nanopb_c_generated_sources))
-$(nanopb_c_generated_headers): $(nanopb_c_generated_sources_dir)/%.pb.h: $(nanopb_c_generated_sources_dir)/%.pb.c
-
-$(nanopb_c_generated_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(nanopb_c_generated_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(nanopb_c_generated_objects): $(nanopb_c_generated_sources_dir)/%.o: $(nanopb_c_generated_sources_dir)/%.c $(nanopb_c_generated_headers)
-	$(transform-$(PRIVATE_HOST)c-to-o)
--include $(nanopb_c_generated_objects:%.o=%.P)
-
-LOCAL_C_INCLUDES += external/nanopb-c $(dir $(nanopb_c_generated_headers))
-ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc)
-LOCAL_STATIC_LIBRARIES += libnanopb-c-2.8.0-enable_malloc
-else
-LOCAL_STATIC_LIBRARIES += libnanopb-c-2.8.0
-endif
-endif
-
-endif
 
 ###########################################################
 ## YACC: Compile .y and .yy files to .cpp and the to .o.
@@ -820,7 +787,7 @@ $(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cf
 c_objects        := $(c_arm_objects) $(c_normal_objects)
 
 ifneq ($(strip $(c_objects)),)
-$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) $(nanopb_c_generated_headers) \
+$(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(c_objects:%.o=%.P)
@@ -840,7 +807,7 @@ ifneq ($(strip $(gen_c_objects)),)
 # TODO: support compiling certain generated files as arm.
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) $(nanopb_c_generated_headers) \
+$(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
 -include $(gen_c_objects:%.o=%.P)
@@ -975,7 +942,6 @@ normal_objects := \
     $(objc_objects) \
     $(yacc_objects) \
     $(lex_objects) \
-    $(nanopb_c_generated_objects) \
     $(proto_generated_objects) \
     $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 
@@ -1142,12 +1108,12 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 # Export includes
 ###########################################################
 export_includes := $(intermediates)/export_includes
-$(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
+$(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
 # Make sure .pb.h are already generated before any dependent source files get compiled.
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE) $(proto_generated_headers) $(nanopb_c_generated_headers)
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE) $(proto_generated_headers)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
-ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
+ifdef my_export_c_include_dirs
 	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
 	        echo "-I $$d" >> $@; \
 	        done

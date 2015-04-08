@@ -995,29 +995,15 @@ $(hide) touch $@
 endef
 
 ######################################################################
-## Commands for running protoc to compile .proto into .pb.cc and .pb.h
+## Commands for running protoc to compile .proto into .pb.cc (or.pb.c) and .pb.h
 ######################################################################
 define transform-proto-to-cc
-$(warning transform-proto-to-cc)
 @mkdir -p $(dir $@)
 @echo "Protoc: $@ <= $<"
 $(hide) $(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
 	$(PRIVATE_PROTOC_FLAGS) \
-	--cpp_out=$(PRIVATE_PROTO_CC_OUTPUT_DIR) $<
-endef
-
-######################################################################
-## Commands for running protoc to compile .proto into nano protobuf .pb.c and .pb.h
-######################################################################
-define transform-nanopb_c-to-c
-$(warning transform-nanopb_c-to-c)
-@mkdir -p $(dir $@)
-@echo "Protoc: $@ <= $<"
-$(hide) $(PROTOC) \
-	$(addprefix --proto_path=, $(PRIVATE_NANOPB_C_INCLUDES)) \
-	$(PRIVATE_NANOPB_C_FLAGS) \
-	--nanopb_out=$(PRIVATE_NANOPB_C_OUTPUT_DIR) --plugin=external/nanopb-c/generator/protoc-gen-nanopb $<
+	$<
 endef
 
 ###########################################################
