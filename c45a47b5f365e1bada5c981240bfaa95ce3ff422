@@ -22,6 +22,30 @@
       "revId": "c45a47b5f365e1bada5c981240bfaa95ce3ff422",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03868e96_63161c01",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1274,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-08T20:52:42Z",
+      "side": 1,
+      "message": "I have no idea what licence implication for the DISTOOLS or OTATOOLS. They are just host tools we don\u0027t distribute to anybody outside google, do we?\nIf you add new tool to the platform, you\u0027ll still need to get the license approval.",
+      "parentUuid": "83c43ed3_64160a01",
+      "range": {
+        "startLine": 1274,
+        "startChar": 0,
+        "endLine": 1274,
+        "endChar": 49
+      },
+      "revId": "c45a47b5f365e1bada5c981240bfaa95ce3ff422",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
