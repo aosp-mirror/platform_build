@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83c43ed3_64160a01",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1274,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2015-04-08T19:54:02Z",
+      "side": 1,
+      "message": "Do we need some \u0027rules\u0027 as to what shared libraries we want to allow into DISTTOOLS? How do we deal with GPL compliance?\n\nFirst one(s) to add are libcutils and liblog ... followed by a bunch of cleanups to switch STATIC for SHARED for the set above :-)",
+      "range": {
+        "startLine": 1274,
+        "startChar": 0,
+        "endLine": 1274,
+        "endChar": 49
+      },
+      "revId": "c45a47b5f365e1bada5c981240bfaa95ce3ff422",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
