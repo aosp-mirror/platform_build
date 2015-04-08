@@ -1280,10 +1280,7 @@ OTATOOLS := $(DISTTOOLS) \
 otatools: $(OTATOOLS)
 
 BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
-$(BUILT_OTATOOLS_PACKAGE): \
-	intermediate := $(call intermediates-dir-for,PACKAGING,otatools)
-$(BUILT_OTATOOLS_PACKAGE): \
-	zip_root := $(intermediate)/otatools
+$(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
 
 $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	@echo "Package OTA tools: $@"
