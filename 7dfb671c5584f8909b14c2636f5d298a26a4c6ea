@@ -16,6 +16,24 @@
       "revId": "7dfb671c5584f8909b14c2636f5d298a26a4c6ea",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "237f124e_5bdadb14",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 769,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-08T22:33:55Z",
+      "side": 1,
+      "message": "oh yes. 400dpi is greater than xhdpi (320dpi), it should be in this list as well. ideally we should map x*hdpi back to numeric forms like 480dpi. then we can handle that more easily.",
+      "parentUuid": "237f124e_108e727f",
+      "revId": "7dfb671c5584f8909b14c2636f5d298a26a4c6ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
