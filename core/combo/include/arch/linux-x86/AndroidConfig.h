@@ -43,7 +43,7 @@
 /*
  * Define if we have <malloc.h> header
  */
-#define HAVE_MALLOC_H
+#define HAVE_MALLOC_H 1
 
 /*
  * The default path separator for the platform
