@@ -766,7 +766,7 @@ endif
 # can be overridden for a particular device by putting a font.png in
 # its private recovery resources.
 
-ifneq (,$(filter xxxhdpi xxhdpi xhdpi,$(recovery_density)))
+ifneq (,$(filter xxxhdpi 560dpi xxhdpi 400dpi xhdpi,$(recovery_density)))
 recovery_font := $(call include-path-for, recovery)/fonts/18x32.png
 else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
