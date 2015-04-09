@@ -55,11 +55,6 @@ HOST_JNILIB_SUFFIX := .jnilib
 HOST_GLOBAL_CFLAGS += \
     -include $(call select-android-config-h,darwin-x86)
 
-ifneq ($(filter 10.7 10.7.% 10.8 10.8.%, $(build_mac_version)),)
-       HOST_RUN_RANLIB_AFTER_COPYING := false
-else
-       HOST_RUN_RANLIB_AFTER_COPYING := true
-endif
 HOST_GLOBAL_ARFLAGS := cqs
 
 # We Reuse the following functions with the same name from HOST_darwin-x86.mk:
