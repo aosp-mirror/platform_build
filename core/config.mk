@@ -444,8 +444,16 @@ define call-jack
 $(JACK_SERVER_LOG_COMMAND) JACK_VM_COMMAND="$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG)" JACK_JAR="$(JACK_JAR)" $(JACK) $(2)
 endef
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
+ifneq ($(ANDROID_JACK_VM_ARGS),)
+DEFAULT_JACK_VM_ARGS := $(ANDROID_JACK_VM_ARGS)
+else
 DEFAULT_JACK_VM_ARGS := -Dfile.encoding=UTF-8 -Xms2560m -XX:+TieredCompilation
+endif
+ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
+DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
+else
 DEFAULT_JACK_EXTRA_ARGS := -D sched.runner=multi-threaded -D  sched.runner.thread.kind=fixed -D sched.runner.thread.fixed.count=4 --sanity-checks off -D jack.reporter.level.file=error=--,warning=-
+endif
 # Turn off jack warnings by default.
 DEFAULT_JACK_EXTRA_ARGS += --verbose error
 
