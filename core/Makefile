@@ -1270,26 +1270,30 @@ endif
 # host tools needed to build dist and OTA packages
 
 DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
-	  $(HOST_OUT_EXECUTABLES)/mkbootfs \
-	  $(HOST_OUT_EXECUTABLES)/mkbootimg \
-	  $(HOST_OUT_EXECUTABLES)/fs_config \
-	  $(HOST_OUT_EXECUTABLES)/zipalign \
-	  $(HOST_OUT_EXECUTABLES)/bsdiff \
-	  $(HOST_OUT_EXECUTABLES)/imgdiff \
-	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
-	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
-	  $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
-	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
-	  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
-	  $(HOST_OUT_EXECUTABLES)/simg2img \
-	  $(HOST_OUT_EXECUTABLES)/e2fsck \
-	  $(HOST_OUT_EXECUTABLES)/build_verity_tree \
-	  $(HOST_OUT_EXECUTABLES)/verity_signer \
-	  $(HOST_OUT_EXECUTABLES)/append2simg \
-	  $(HOST_OUT_EXECUTABLES)/boot_signer
+  $(HOST_OUT_EXECUTABLES)/mkbootfs \
+  $(HOST_OUT_EXECUTABLES)/mkbootimg \
+  $(HOST_OUT_EXECUTABLES)/fs_config \
+  $(HOST_OUT_EXECUTABLES)/zipalign \
+  $(HOST_OUT_EXECUTABLES)/bsdiff \
+  $(HOST_OUT_EXECUTABLES)/imgdiff \
+  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
+  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
+  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
+  $(HOST_OUT_EXECUTABLES)/simg2img \
+  $(HOST_OUT_EXECUTABLES)/e2fsck \
+  $(HOST_OUT_EXECUTABLES)/build_verity_tree \
+  $(HOST_OUT_EXECUTABLES)/verity_signer \
+  $(HOST_OUT_EXECUTABLES)/append2simg \
+  $(HOST_OUT_EXECUTABLES)/boot_signer
+
+# Shared libraries.
+DISTTOOLS += \
+  $(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX)
 
 OTATOOLS := $(DISTTOOLS) \
-	  $(HOST_OUT_EXECUTABLES)/aapt
+  $(HOST_OUT_EXECUTABLES)/aapt
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
@@ -1300,19 +1304,14 @@ $(BUILT_OTATOOLS_PACKAGE): \
 $(BUILT_OTATOOLS_PACKAGE): \
 	zip_root := $(intermediate)/otatools
 
-otatools_lib_path := $(notdir $(HOST_OUT_SHARED_LIBRARIES))
-$(BUILT_OTATOOLS_PACKAGE): \
-		$(OTATOOLS) \
-		$(HOST_OUT_SHARED_LIBRARIES)/libc++.so
+$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	@echo "Package OTA tools: $@"
 	$(hide) rm -rf $@ $(zip_root)
-	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools $(zip_root)/$(otatools_lib_path)
-	$(hide) $(ACP) -p $(OTATOOLS) $(zip_root)/bin
-	$(hide) mv $(zip_root)/bin/*.jar $(zip_root)/framework/
-	$(hide) $(ACP) $(HOST_OUT_SHARED_LIBRARIES)/libc++.so $(zip_root)/$(otatools_lib_path)
+	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
+	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
-	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) bin framework releasetools $(otatools_lib_path))
+	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) *)
 	$(hide) zip -qry $(abspath $@) build/target/product/security/
 	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem -o -name oem.prop | xargs zip -qry $(abspath $@)>/dev/null || true
 

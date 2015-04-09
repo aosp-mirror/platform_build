@@ -2278,6 +2278,17 @@ define transform-prebuilt-to-target-strip-comments
 $(copy-file-to-target-strip-comments)
 endef
 
+# Copy a list of files/directories to target location, with sub dir structure preserved.
+# For example $(HOST_OUT_EXECUTABLES)/aapt -> $(staging)/bin/aapt .
+# $(1): the source list of files/directories.
+# $(2): the path prefix to strip. In the above example it would be $(HOST_OUT).
+# $(3): the target location.
+define copy-files-with-structure
+$(foreach t,$(1),\
+  $(eval s := $(patsubst $(2)%,%,$(t)))\
+  $(hide) mkdir -p $(dir $(3)/$(s)); cp -Rf $(t) $(3)/$(s)$(newline))
+endef
+
 ###########################################################
 ## On some platforms (MacOS), after copying a static
 ## library, ranlib must be run to update an internal
