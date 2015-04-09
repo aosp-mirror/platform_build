@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03868e96_d836e361",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1583,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-04-09T20:03:24Z",
+      "side": 1,
+      "message": "Closing twice? Maybe just wrap the whole block in try/finally.",
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e356daec_ef45a174",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-04-09T20:03:24Z",
+      "side": 1,
+      "message": "I\u0027m not a fan of the copy/paste. Aren\u0027t these basically all the same test that just call a different function? If so, make the function to call be an argument to the inner most test and make all these just be wrappers around it.",
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e356daec_0f72e5e1",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-04-09T20:03:24Z",
+      "side": 1,
+      "message": "This got duplicated?",
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
