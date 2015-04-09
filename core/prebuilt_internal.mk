@@ -256,13 +256,6 @@ $(built_module) : $(my_prebuilt_src_file)
 else
 $(built_module) : $(my_prebuilt_src_file) | $(ACP)
 	$(transform-prebuilt-to-target)
-ifneq ($(prebuilt_module_is_a_library),)
-  ifneq ($(LOCAL_IS_HOST_MODULE),)
-	$(transform-host-ranlib-copy-hack)
-  else
-	$(transform-ranlib-copy-hack)
-  endif
-endif
 endif
 endif # LOCAL_MODULE_CLASS != APPS
 

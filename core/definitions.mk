@@ -2289,32 +2289,6 @@ $(foreach t,$(1),\
   $(hide) mkdir -p $(dir $(3)/$(s)); cp -Rf $(t) $(3)/$(s)$(newline))
 endef
 
-###########################################################
-## On some platforms (MacOS), after copying a static
-## library, ranlib must be run to update an internal
-## timestamp!?!?!
-###########################################################
-
-ifeq ($(HOST_RUN_RANLIB_AFTER_COPYING),true)
-define transform-host-ranlib-copy-hack
-    $(hide) ranlib $@ || true
-endef
-else
-define transform-host-ranlib-copy-hack
-@true
-endef
-endif
-
-ifeq ($(TARGET_RUN_RANLIB_AFTER_COPYING),true)
-define transform-ranlib-copy-hack
-    $(hide) ranlib $@
-endef
-else
-define transform-ranlib-copy-hack
-@true
-endef
-endif
-
 
 ###########################################################
 ## Commands to call Proguard
