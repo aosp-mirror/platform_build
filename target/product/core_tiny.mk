@@ -54,12 +54,14 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     ip6tables \
     iptables \
+    gatekeeper.default \
     keystore \
     keystore.default \
     libOpenMAXAL \
     libOpenSLES \
     libdownmix \
     libfilterfw \
+    libgatekeeper \
     libkeystore \
     libsqlite_jni \
     libwilhelm \
