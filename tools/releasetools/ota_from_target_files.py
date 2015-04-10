@@ -556,6 +556,10 @@ reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
+  # Dump fingerprints
+  script.Print("Target: %s" % CalculateFingerprint(
+      oem_props, oem_dict, OPTIONS.info_dict))
+
   device_specific.FullOTA_InstallBegin()
 
   system_progress = 0.75
@@ -731,6 +735,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.info_dict)
 
+  # TODO: Currently this works differently from WriteIncrementalOTAPackage().
+  # This function doesn't consider thumbprints when writing
+  # metadata["pre/post-build"]. One possible reason is that the current
+  # devices with thumbprints are all using file-based OTAs. Long term we
+  # should factor out the common parts into a shared one to avoid further
+  # divergence.
   source_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.source_info_dict)
   target_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.target_info_dict)
   metadata["pre-build"] = source_fp
@@ -827,6 +837,12 @@ set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
+
+  # Dump fingerprints
+  script.Print("Source: %s" % CalculateFingerprint(
+      oem_props, oem_dict, OPTIONS.source_info_dict))
+  script.Print("Target: %s" % CalculateFingerprint(
+      oem_props, oem_dict, OPTIONS.target_info_dict))
 
   script.Print("Verifying current system...")
 
@@ -1205,6 +1221,10 @@ set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
+
+  # Dump fingerprints
+  script.Print("Source: %s" % (source_fp,))
+  script.Print("Target: %s" % (target_fp,))
 
   script.Print("Verifying current system...")
 
