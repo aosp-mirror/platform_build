@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "636d8ab3_259fb0df",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1583,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-10T18:39:35Z",
+      "side": 1,
+      "message": "This is a weird format. It won\u0027t close twice actually, and it\u0027s not to handle the exception. There is an infinite loop from L1537 to L1581. In each iteration, it opens the zipfile. Before getting into another iteration, it needs to close the zipfile... I\u0027ve moved L1583 inside the loop to make it less weird.",
+      "parentUuid": "03868e96_d836e361",
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e356daec_ef45a174",
         "filename": "tools/releasetools/test_common.py",
         "patchSetId": 4
