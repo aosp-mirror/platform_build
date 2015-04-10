@@ -54,6 +54,7 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     ip6tables \
     iptables \
+    gatekeeperd \
     gatekeeper.default \
     keystore \
     keystore.default \
