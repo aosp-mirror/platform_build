@@ -49,6 +49,11 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
 CLANG_CONFIG_EXTRA_CFLAGS += \
   -Wno-reserved-id-macro
 
+# Disable overly aggressive warning for format strings.
+# Bug: 20148343
+CLANG_CONFIG_EXTRA_CFLAGS += \
+  -Wno-format-pedantic
+
 # Workaround for ccache with clang.
 # See http://petereisentraut.blogspot.com/2011/05/ccache-and-clang.html.
 CLANG_CONFIG_EXTRA_CFLAGS += \
