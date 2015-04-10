@@ -36,6 +36,47 @@
     },
     {
       "key": {
+        "uuid": "636d8ab3_e54cd853",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-10T18:31:49Z",
+      "side": 1,
+      "message": "i\u0027m combining _test_ZipWriteStr_arcname() and _test_ZipWriteStr_zinfo(), but still leaving _Write() and _WriteStr() as separate ones. _Write() needs a tempfile, and also it checks the stat after writing. Keeping them separate seems more cleaner.",
+      "parentUuid": "e356daec_ef45a174",
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e356daec_bd73c218",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-10T18:31:49Z",
+      "side": 1,
+      "message": "I\u0027m merging this with ZipWriteStr_resets_ZIP64_LIMIT.",
+      "range": {
+        "startLine": 236,
+        "startChar": 6,
+        "endLine": 236,
+        "endChar": 38
+      },
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e356daec_0f72e5e1",
         "filename": "tools/releasetools/test_common.py",
         "patchSetId": 4
@@ -47,6 +88,24 @@
       "writtenOn": "2015-04-09T20:03:24Z",
       "side": 1,
       "message": "This got duplicated?",
+      "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "636d8ab3_45cf4c5b",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-10T18:31:49Z",
+      "side": 1,
+      "message": "bad copy \u0026 paste :( pylint actually caught that but i missed the warning.",
+      "parentUuid": "e356daec_0f72e5e1",
       "revId": "5baaa54f90ee6ba2fd6c572129d62af210aec864",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
