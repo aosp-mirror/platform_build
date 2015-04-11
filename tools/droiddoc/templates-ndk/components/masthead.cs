@@ -4,7 +4,7 @@
 <?cs else ?>
 <a name="top"></a>
 
-<!-- dialog to prompt lang pref change when loaded from hardcoded URL 
+<!-- dialog to prompt lang pref change when loaded from hardcoded URL
 <div id="langMessage" style="display:none">
   <div>
     <div class="lang en">
@@ -67,31 +67,22 @@
         </div>
         <ul class="nav-x col-9">
             <li class="design">
-              <a href="<?cs var:toroot ?>design/index.html"
+              <a href="<?cs var:toroot ?>ndk2/index.html"
               zh-tw-lang="設計"
               zh-cn-lang="设计"
               ru-lang="Проектирование"
               ko-lang="디자인"
               ja-lang="設計"
               es-lang="Diseñar"
-              >Design</a></li>
-            <li class="develop"><a href="<?cs var:toroot ?>develop/index.html"
+              >NDK</a></li>
+            <li class="develop"><a href="<?cs var:toroot ?>ndk2/radiance/index.html"
               zh-tw-lang="開發"
               zh-cn-lang="开发"
               ru-lang="Разработка"
               ko-lang="개발"
               ja-lang="開発"
               es-lang="Desarrollar"
-              >Develop</a></li>
-            <li class="distribute last"><a href="<?cs var:toroot ?>distribute/<?cs
-              if:android.whichdoc == "offline" ?>googleplay/<?cs /if ?>index.html"
-              zh-tw-lang="發佈"
-              zh-cn-lang="分发"
-              ru-lang="Распространение"
-              ko-lang="배포"
-              ja-lang="配布"
-              es-lang="Distribuir"
-              >Distribute</a></li>
+              >Radiance</a></li>
         </ul>
 
 
@@ -123,45 +114,15 @@
             </li>
             <li class="develop">
               <ul>
-                <li><a href="<?cs var:toroot ?>training/index.html"
-                  zh-tw-lang="訓練課程"
-                  zh-cn-lang="培训"
-                  ru-lang="Курсы"
-                  ko-lang="교육"
-                  ja-lang="トレーニング"
-                  es-lang="Capacitación"
-                  >Training</a></li>
-                <li><a href="<?cs var:toroot ?>guide/index.html"
-                  zh-tw-lang="API 指南"
-                  zh-cn-lang="API 指南"
-                  ru-lang="Руководства по API"
-                  ko-lang="API 가이드"
-                  ja-lang="API ガイド"
-                  es-lang="Guías de la API"
-                  >API Guides</a></li>
-                <li><a href="<?cs var:toroot ?>reference/packages.html"
-                  zh-tw-lang="參考資源"
-                  zh-cn-lang="参考"
-                  ru-lang="Справочник"
-                  ko-lang="참조문서"
-                  ja-lang="リファレンス"
-                  es-lang="Referencia"
-                  >Reference</a></li>
-                <li><a href="<?cs var:toroot ?>sdk/index.html"
-                  zh-tw-lang="相關工具"
-                  zh-cn-lang="工具"
-                  ru-lang="Инструменты"
-                  ko-lang="도구"
-                  ja-lang="ツール"
-                  es-lang="Herramientas"
-                  >Tools</a>
+                <li><a href="<?cs var:toroot ?>ndk2/refer/index.html">
+                    Guides</a></li>
+                <li><a href="<?cs var:toroot ?>ndk2/reference/index.html">
+                    API Reference</a></li>
+                <li><a href="<?cs var:toroot ?>ndk2/samples/index.html">
+                    Samples</a></li>
+                <li><a href="<?cs var:toroot ?>ndk2/articles/index.html">
+                    Articles</a>
                 </li>
-                <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
-                </li>
-                <?cs if:android.hasSamples ?>
-                  <li><a href="<?cs var:toroot ?>samples/index.html">Samples</a>
-                  </li>
-                <?cs /if ?>
               </ul>
             </li>
             <li class="distribute last">
@@ -201,20 +162,20 @@
 
 
 
-  <?cs elif:training || guide || reference || tools || develop || google || samples ?>
+  <?cs elif:refer || guides || ndk2 ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap" style="position:relative;z-index:1">
 
         <?cs if:reference ?>
         <?cs # HIDE HELPOUTS RECRUIT BANNER
-            <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card" 
+            <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card"
               href="http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=dac&utm_medium=banner&utm_campaign=android_provider_banner3" target="_blank">
               <div class="card-bg helpouts-card-bg"></div>
               <div class="card-info">
                 <div class="helpouts-description">
                   <div class="text">Help Android Wear and TV developers<br/>
-                    <span id="helpoutsLinkText" class="link-color" 
+                    <span id="helpoutsLinkText" class="link-color"
                     style="display:block;padding-top:5px;text-align:right">Learn more</span>
                   </div>
                 </div>
@@ -224,46 +185,15 @@
         <?cs /if ?>
 
             <ul class="nav-x col-9 develop" style="width:100%">
-                <li class="training"><a href="<?cs var:toroot ?>training/index.html"
-                  zh-tw-lang="訓練課程"
-                  zh-cn-lang="培训"
-                  ru-lang="Курсы"
-                  ko-lang="교육"
-                  ja-lang="トレーニング"
-                  es-lang="Capacitación"
-                  >Training</a></li>
-                <li class="guide"><a href="<?cs var:toroot ?>guide/index.html"
-                  zh-tw-lang="API 指南"
-                  zh-cn-lang="API 指南"
-                  ru-lang="Руководства по API"
-                  ko-lang="API 가이드"
-                  ja-lang="API ガイド"
-                  es-lang="Guías de la API"
-                  >API Guides</a></li>
-                <li class="reference"><a href="<?cs var:toroot ?>reference/packages.html"
-                  zh-tw-lang="參考資源"
-                  zh-cn-lang="参考"
-                  ru-lang="Справочник"
-                  ko-lang="참조문서"
-                  ja-lang="リファレンス"
-                  es-lang="Referencia"
-                  >Reference</a></li>
-                <li class="tools"><a href="<?cs var:toroot ?>sdk/index.html"
-                  zh-tw-lang="相關工具"
-                  zh-cn-lang="工具"
-                  ru-lang="Инструменты"
-                  ko-lang="도구"
-                  ja-lang="ツール"
-                  es-lang="Herramientas"
-                  >Tools</a></li>
-                <li class="google"><a href="<?cs var:toroot ?>google/index.html"
-                  >Google Services</a>
+                <li class="guides"><a href="<?cs var:toroot ?>ndk2/guides/index.html">
+                    Guides</a></li>
+                <li class="refer"><a href="<?cs var:toroot ?>ndk2/refer/index.html">
+                    API Reference</a></li>
+                <li><a href="<?cs var:toroot ?>ndk2/samples/index.html">
+                    Samples</a></li>
+                <li><a href="<?cs var:toroot ?>ndk2/articles/index.html">
+                    Articles</a>
                 </li>
-                <?cs if:android.hasSamples ?>
-                  <li class="samples"><a href="<?cs var:toroot ?>samples/index.html"
-                    >Samples</a>
-                  </li>
-                <?cs /if ?>
             </ul>
         </div>
     </div>
@@ -383,6 +313,6 @@ color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
       </div>
     </div>
 
-?>    
+?>
 
 <?cs /def ?>

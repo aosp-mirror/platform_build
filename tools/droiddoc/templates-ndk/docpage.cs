@@ -6,7 +6,7 @@
 
 <?cs
 if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
-  if:(guide||develop||training||reference||tools||sdk||samples) ?>develop<?cs
+  if:(guide||develop||training||reference||tools||sdk||samples||ndk2||guides||refer) ?>develop<?cs
     if:guide ?> guide<?cs /if ?><?cs
     if:samples ?> samples<?cs /if ?><?cs
   elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories)
@@ -195,8 +195,8 @@ include:"header.cs" ?>
 <?cs include:"trailer.cs" ?>
   <script src="https://developer.android.com/ytblogger_lists_unified.js" type="text/javascript"></script>
   <script src="<?cs var:toroot ?>jd_lists_unified.js?v=8" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_extras.js?v=10" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_collections.js?v=10" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_extras.js?v=9" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_collections.js?v=9" type="text/javascript"></script>
   <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=5" type="text/javascript"></script>
 
 </body>
