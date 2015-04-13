@@ -219,6 +219,16 @@ $(document).ready(function() {
       $("#nav-x li.google a").addClass("selected");
     } else if ($("body").hasClass("samples")) {
       $("#nav-x li.samples a").addClass("selected");
+    } else if (rootDir == "ndk") {
+      if ($("body").hasClass("guide")) {
+        $("#nav-x li.guide a").addClass("selected");
+      } else if ($("body").hasClass("samples")) {
+        $("#nav-x li.samples a").addClass("selected");
+      } else if ($("body").hasClass("downloads")) {
+        $("#nav-x li.downloads a").addClass("selected");
+      } else if ($("body").hasClass("reference")) {
+        $("#nav-x li.reference a").addClass("selected");
+      }
     }
 
   // highlight Distribute tab
