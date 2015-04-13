@@ -75,6 +75,7 @@ PRODUCT_PACKAGES += \
     librtp_jni \
     libsensorservice \
     libskia \
+    libsonic \
     libsonivox \
     libsoundpool \
     libsoundtrigger \
