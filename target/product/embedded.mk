@@ -25,6 +25,7 @@ PRODUCT_PACKAGES += \
     debuggerd \
     dumpstate \
     dumpsys \
+    fastboot \
     gralloc.default \
     grep \
     gzip \
