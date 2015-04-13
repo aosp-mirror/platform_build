@@ -65,171 +65,33 @@
             <a href="#" class="arrow-active">Quicknav</a>
           </div>
         </div>
-        <ul class="nav-x col-9">
-            <li class="design">
-              <a href="<?cs var:toroot ?>ndk2/index.html"
-              zh-tw-lang="設計"
-              zh-cn-lang="设计"
-              ru-lang="Проектирование"
-              ko-lang="디자인"
-              ja-lang="設計"
-              es-lang="Diseñar"
-              >NDK</a></li>
-            <li class="develop"><a href="<?cs var:toroot ?>ndk2/radiance/index.html"
-              zh-tw-lang="開發"
-              zh-cn-lang="开发"
-              ru-lang="Разработка"
-              ko-lang="개발"
-              ja-lang="開発"
-              es-lang="Desarrollar"
-              >Radiance</a></li>
-        </ul>
 
+        <?cs # design/dev/dist tabs usually here ?>
 
-        <?cs # ADD SEARCH AND MENU ?>
-        <?cs call:header_search_widget() ?>
+        <?cs # call:header_search_widget() ?>
 
-
-        <!-- Expanded quicknav -->
-        <div id="quicknav" class="col-13">
-          <ul>
-            <li class="about">
-              <ul>
-                <li><a href="<?cs var:toroot ?>about/index.html">About</a></li>
-                <li><a href="<?cs var:toroot ?>wear/index.html">Wear</a></li>
-                <li><a href="<?cs var:toroot ?>tv/index.html">TV</a></li>
-                <li><a href="<?cs var:toroot ?>auto/index.html">Auto</a></li>
-              </ul>
-            </li>
-            <li class="design">
-              <ul>
-                <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
-                <li><a href="<?cs var:toroot ?>design/devices.html">Devices</a></li>
-                <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
-                <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
-                <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
-                <li><a href="<?cs var:toroot ?>design/downloads/index.html">Downloads</a></li>
-                <li><a href="<?cs var:toroot ?>design/videos/index.html">Videos</a></li>
-              </ul>
-            </li>
-            <li class="develop">
-              <ul>
-                <li><a href="<?cs var:toroot ?>ndk2/refer/index.html">
-                    Guides</a></li>
-                <li><a href="<?cs var:toroot ?>ndk2/reference/index.html">
-                    API Reference</a></li>
-                <li><a href="<?cs var:toroot ?>ndk2/samples/index.html">
-                    Samples</a></li>
-                <li><a href="<?cs var:toroot ?>ndk2/articles/index.html">
-                    Articles</a>
-                </li>
-              </ul>
-            </li>
-            <li class="distribute last">
-              <ul>
-                <li><a href="<?cs var:toroot ?>distribute/googleplay/index.html">Google Play</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/essentials/index.html">Essentials</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/analyze/index.html">Analyze</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
-                <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div><!-- /Expanded quicknav -->
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
 
-  <?cs if:about || wear || tv || auto ?>
-    <!-- Secondary x-nav -->
-    <div id="nav-x">
-        <div class="wrap">
-            <ul class="nav-x col-9 about" style="width:100%">
-                <li class="about"><a href="<?cs var:toroot ?>about/index.html"
-                  >About</a></li>
-                <li class="wear"><a href="<?cs var:toroot ?>wear/index.html"
-                  >Wear</a></li>
-                <li class="tv"><a href="<?cs var:toroot ?>tv/index.html"
-                  >TV</a></li>
-                <li class="auto"><a href="<?cs var:toroot ?>auto/index.html"
-                  >Auto</a></li>
-            </ul>
-        </div>
-    </div>
-    <!-- /Sendondary x-nav ABOUT -->
 
-
-
-  <?cs elif:refer || guides || ndk2 ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap" style="position:relative;z-index:1">
 
-        <?cs if:reference ?>
-        <?cs # HIDE HELPOUTS RECRUIT BANNER
-            <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card"
-              href="http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=dac&utm_medium=banner&utm_campaign=android_provider_banner3" target="_blank">
-              <div class="card-bg helpouts-card-bg"></div>
-              <div class="card-info">
-                <div class="helpouts-description">
-                  <div class="text">Help Android Wear and TV developers<br/>
-                    <span id="helpoutsLinkText" class="link-color"
-                    style="display:block;padding-top:5px;text-align:right">Learn more</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-        # END HIDE HELPOUTS ?>
-        <?cs /if ?>
-
             <ul class="nav-x col-9 develop" style="width:100%">
-                <li class="guides"><a href="<?cs var:toroot ?>ndk2/guides/index.html">
+                <li class="guide"><a href="<?cs var:toroot ?>ndk/guides/index.html">
                     Guides</a></li>
-                <li class="refer"><a href="<?cs var:toroot ?>ndk2/refer/index.html">
-                    API Reference</a></li>
-                <li><a href="<?cs var:toroot ?>ndk2/samples/index.html">
+                <li class="reference"><a href="<?cs var:toroot ?>ndk/reference/index.html">
+                    Reference</a></li>
+                <li class="samples"><a href="<?cs var:toroot ?>ndk/samples/index.html">
                     Samples</a></li>
-                <li><a href="<?cs var:toroot ?>ndk2/articles/index.html">
-                    Articles</a>
+                <li class="downloads"><a href="<?cs var:toroot ?>ndk/downloads/index.html">
+                    Downloads</a></li>
                 </li>
             </ul>
         </div>
     </div>
-    <!-- /Sendondary x-nav DEVELOP -->
 
-  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || analyze ||  disttools || stories ?>
-    <!-- Secondary distribute x-nav -->
-    <div id="nav-x">
-        <div class="wrap">
-            <ul class="nav-x distribute">
-                <li class="googleplay"><a href="<?cs var:toroot ?>distribute/googleplay/index.html"
-                  >Google Play</a></li>
-                <li class="essentials"><a href="<?cs var:toroot ?>distribute/essentials/index.html"
-                  >Essentials</a></li>
-                <li class="users"><a href="<?cs var:toroot ?>distribute/users/index.html"
-                  >Get Users</a></li>
-                <li class="engage"><a href="<?cs var:toroot ?>distribute/engage/index.html"
-                  >Engage &amp; Retain</a></li>
-                <li class="monetize"><a href="<?cs var:toroot ?>distribute/monetize/index.html"
-                  >Monetize</a>
-                </li>
-                <li class="analyze"><a href="<?cs var:toroot ?>distribute/analyze/index.html"
-                  >Analyze</a>
-                </li>
-                <li class="disttools"><a href="<?cs var:toroot ?>distribute/tools/index.html"
-                  >Tools</a>
-                </li>
-                <li class="stories"><a href="<?cs var:toroot ?>distribute/stories/index.html"
-                  >Stories</a>
-                </li>
-            </ul>
-            <a href="https://play.google.com/apps/publish/" class="developer-console-btn">Developer Console</a>
-        </div> <!-- /Secondary distribute x-nav -->
-    </div>
-    <!-- /Sendondary x-nav DISTRIBUTE -->
-  <?cs /if ?>
 
     <div id="searchResults" class="wrap" style="display:none;">
       <h2 id="searchTitle">Results</h2>
@@ -271,7 +133,7 @@
 color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
 
       <?cs # ADD SEARCH AND MENU ?>
-      <?cs call:header_search_widget() ?>
+      <?cs # call:header_search_widget() ?>
 
     </div><!-- end header-wrap -->
   </div><!-- /Header -->
