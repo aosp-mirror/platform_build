@@ -2,27 +2,11 @@
 <?cs include:"macros.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation
-
-<?cs
-if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
-  if:(guide||develop||training||reference||tools||sdk||samples||ndk2||guides||refer) ?>develop<?cs
+<body class="gc-documentation develop <?cs
     if:guide ?> guide<?cs /if ?><?cs
+    if:reference ?> reference<?cs /if ?><?cs
     if:samples ?> samples<?cs /if ?><?cs
-  elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories)
-    ?>distribute<?cs
-    if:googleplay ?> googleplay<?cs /if ?><?cs
-    if:essentials ?> essentials<?cs /if ?><?cs
-    if:users ?> users<?cs /if ?><?cs
-    if:engage ?> engage<?cs /if ?><?cs
-    if:monetize ?> monetize<?cs /if ?><?cs
-    if:disttools ?> disttools<?cs /if ?><?cs
-    if:stories ?> stories<?cs /if ?><?cs
-  elif:(about||wear||tv||auto) ?>about<?cs
-  elif:design ?>design<?cs
-/if ?><?cs
-if:page.trainingcourse ?> trainingcourse<?cs
-/if ?>" itemscope itemtype="http://schema.org/Article"><?cs
+    if:downloads ?> downloads<?cs /if ?>" itemscope itemtype="http://schema.org/Article"><?cs
 include:"header.cs" ?>
 
 <div <?cs
@@ -195,8 +179,8 @@ include:"header.cs" ?>
 <?cs include:"trailer.cs" ?>
   <script src="https://developer.android.com/ytblogger_lists_unified.js" type="text/javascript"></script>
   <script src="<?cs var:toroot ?>jd_lists_unified.js?v=8" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_extras.js?v=9" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_collections.js?v=9" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_extras.js?v=10" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_collections.js?v=10" type="text/javascript"></script>
   <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=5" type="text/javascript"></script>
 
 </body>
