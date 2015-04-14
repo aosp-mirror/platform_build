@@ -205,7 +205,7 @@ ifeq ($(strip $($(LOCAL_2ND_ARCH_VAR_PREFIX)WITHOUT_$(my_prefix)CLANG)),true)
 endif
 
 # Add in libcompiler_rt for all regular device builds
-ifeq (,$(LOCAL_SDK_VERSION)$(LOCAL_IS_HOST_MODULE)$(WITHOUT_LIBCOMPILER_RT))
+ifeq (,$(LOCAL_SDK_VERSION)$(WITHOUT_LIBCOMPILER_RT))
   my_static_libraries += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 
