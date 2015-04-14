@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0242aae_6be8b926",
+        "filename": "tools/zipalign/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-14T22:42:18Z",
+      "side": 1,
+      "message": "I don\u0027t see libselinux",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 7
+      },
+      "revId": "14cc79f1f2026547378b842770b18d25467c0990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0242aae_866e3cfb",
+        "filename": "tools/zipalign/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-14T22:42:18Z",
+      "side": 1,
+      "message": "zipalign is part of the SDK build tool package. That means:\n1) The shared libraries should be built in linux, darwin and windows.\n2) you need to add any shared library dependencies to the SDK package, by adding them to the .atree files development/build/sdk-[linux|darwin|windows]-x86.atree.",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 0
+      },
+      "revId": "14cc79f1f2026547378b842770b18d25467c0990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
