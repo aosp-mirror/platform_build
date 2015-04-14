@@ -377,6 +377,7 @@ endif
 # Generic tools.
 JACK := $(HOST_OUT_EXECUTABLES)/jack
 JACK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jack.jar
+JACK_LAUNCHER_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jack-launcher.jar
 JILL_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jill.jar
 JACK_MULTIDEX_DEFAULT_PREPROCESSOR := frameworks/multidex/library/resources/JACK-INF/legacyMultidexInstallation.jpp
 
@@ -441,7 +442,7 @@ ifneq (,$(strip $(filter dist,$(MAKECMDGOALS))))
 JACK_SERVER_LOG_COMMAND := mkdir -p $(DIST_DIR)/logs/; SERVER_LOG=$(DIST_DIR)/logs/jack-server.log
 endif
 define call-jack
-$(JACK_SERVER_LOG_COMMAND) JACK_VM_COMMAND="$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG)" JACK_JAR="$(JACK_JAR)" $(JACK) $(2)
+$(JACK_SERVER_LOG_COMMAND) JACK_VM_COMMAND="$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG) -jar $(JACK_LAUNCHER_JAR) " JACK_JAR="$(JACK_JAR)" $(JACK) $(2)
 endef
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
 ifneq ($(ANDROID_JACK_VM_ARGS),)
