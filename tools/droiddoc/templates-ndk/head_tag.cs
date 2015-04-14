@@ -40,12 +40,6 @@ if:android.whichdoc != 'online' ?>http:<?cs
   title="roboto">
 <link href="<?cs var:toroot ?>assets/css/default.css?v=5" rel="stylesheet" type="text/css">
 
-<?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
-<!-- FULLSCREEN STYLESHEET -->
-<link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" class="fullscreen"
-type="text/css">
-<?cs /if ?>
-
 <!-- JAVASCRIPT -->
 <script src="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//www.google.com/jsapi" type="text/javascript"></script>
 <?cs

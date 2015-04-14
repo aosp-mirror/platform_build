@@ -38,12 +38,12 @@ def:tools_nav() ?>
 <?cs /def ?>
 <?cs
 
-def:ndk2_guides_nav() ?>
+def:ndk_guides_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html/ndk2/guides/guides_toc.cs" ?>
+        include:"../../../../frameworks/base/docs/html-ndk/ndk/guides/guides_toc.cs" ?>
 
 
       </div>
@@ -57,12 +57,50 @@ def:ndk2_guides_nav() ?>
 
 <?cs
 
-def:ndk2_ref_nav() ?>
+def:ndk_reference_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html/ndk2/refer/refer_toc.cs" ?>
+        include:"../../../../frameworks/base/docs/html-ndk/ndk/reference/reference_toc.cs" ?>
+
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
+<?cs
+
+def:ndk_samples_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs
+        include:"../../../../frameworks/base/docs/html-ndk/ndk/samples/samples_toc.cs" ?>
+
+
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
+<?cs
+
+def:ndk_downloads_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs
+        include:"../../../../frameworks/base/docs/html-ndk/ndk/downloads/downloads_toc.cs" ?>
 
 
       </div>
@@ -573,6 +611,16 @@ def:custom_left_nav() ?><?cs
     call:fullpage() ?><?cs
   elif:nonavpage ?><?cs
     call:no_nav() ?><?cs
+  elif:ndk ?><?cs
+    if:guide ?><?cs
+      call:ndk_guides_nav() ?><?cs
+    elif:reference ?><?cs
+      call:ndk_reference_nav() ?><?cs
+    elif:samples ?><?cs
+      call:ndk_samples_nav() ?><?cs
+    elif:downloads ?><?cs
+      call:ndk_downloads_nav() ?><?cs
+    /if ?><?cs
   elif:guide ?><?cs
     call:guide_nav() ?><?cs
   elif:design ?><?cs
@@ -581,10 +629,6 @@ def:custom_left_nav() ?><?cs
     call:training_nav() ?><?cs
   elif:tools ?><?cs
     call:tools_nav() ?><?cs
-  elif:ndk2 ?><?cs
-      call:ndk2_guides_nav() ?><?cs
-    elif:refer ?><?cs
-      call:ndk2_ref_nav() ?><?cs
   elif:google ?><?cs
     call:google_nav() ?><?cs
   elif:samples ?><?cs
