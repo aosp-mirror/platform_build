@@ -1093,8 +1093,12 @@ ul ul, ul ol, ol ul, ol ol {
 li {
   margin:0 0 5px;
 }
+dt {
+  font-weight:bold;
+}
 dd {
   margin:0 0 10px 30px;
+  padding: 5px;
 }
 dd p,
 dd pre,
