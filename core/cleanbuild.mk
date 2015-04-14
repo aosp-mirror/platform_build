@@ -286,6 +286,48 @@ ifeq "$(force_objclean)" "true"
 endif
 force_objclean :=
 
+###########################################################
+# Clean build tools when swithcing between prebuilt host tools (such as in
+# apps_only build) and tools built from source (platform build).
+previous_prebuilt_tools_config_file := $(HOST_OUT)/previous_prebuilt_tools_config.mk
+ifneq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
+current_prebuilt_tools := true
+else
+current_prebuilt_tools := false
+endif
+PREVIOUS_PREBUILT_TOOLS :=
+-include $(previous_prebuilt_tools_config_file)
+force_tools_clean :=
+ifdef PREVIOUS_PREBUILT_TOOLS
+ifneq ($(PREVIOUS_PREBUILT_TOOLS),$(current_prebuilt_tools))
+force_tools_clean := true
+endif
+endif # else, this is the first build, so no need to clean.
+
+# Write the new state to the file.
+$(shell \
+  mkdir -p $(dir $(previous_prebuilt_tools_config_file)) && \
+  echo "PREVIOUS_PREBUILT_TOOLS:=$(current_prebuilt_tools)" > \
+    $(previous_prebuilt_tools_config_file))
+
+ifeq ($(force_tools_clean),true)
+# For this list of prebuilt tools, see prebuilts/sdk/tools/Android.mk.
+tools_clean_files := \
+  $(HOST_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/signapk_intermediates \
+  $(HOST_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/dx_intermediates \
+  $(HOST_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/shrinkedAndroid_intermediates \
+  $(HOST_OUT)/obj*/EXECUTABLES/aapt_intermediates \
+  $(HOST_OUT)/obj*/EXECUTABLES/aidl_intermediates \
+  $(HOST_OUT)/obj*/EXECUTABLES/zipalign_intermediates \
+  $(HOST_OUT)/obj*/lib/libc++$(HOST_SHLIB_SUFFIX) \
+
+$(info *** build type changed, clean host tools...)
+$(info *** rm -rf $(tools_clean_files))
+$(shell rm -rf $(tools_clean_files))
+endif
+
+###########################################################
+
 .PHONY: clean-jack-files
 clean-jack-files: clean-dex-files
 	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
@@ -303,4 +345,3 @@ clean-dex-files:
 clean-jack-incremental:
 	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
 	@echo "All jack incremental dirs have been removed."
-
