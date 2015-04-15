@@ -22,6 +22,30 @@
       "revId": "1d8171540bd14c7e185471343064df42e66a5326",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "907ac6a8_deaf725d",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-15T21:14:35Z",
+      "side": 1,
+      "message": "Please remove this line: it\u0027s noop for a host module.",
+      "parentUuid": "907ac6a8_9e49fa95",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 37
+      },
+      "revId": "1d8171540bd14c7e185471343064df42e66a5326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
