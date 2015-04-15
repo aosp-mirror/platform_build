@@ -402,12 +402,12 @@ ifeq ($(full_classes_jar),)
 else
 	$(add-dex-to-package)
 endif
-	$(sign-package)
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
 endif
+	$(sign-package)
 	@# Alignment must happen after all other zip operations.
 	$(align-package)
 
