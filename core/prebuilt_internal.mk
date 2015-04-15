@@ -193,16 +193,17 @@ include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 $(built_module) : PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES := $(LOCAL_PAGE_ALIGN_JNI_SHARED_LIBRARIES)
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
+ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
+	@# Only strip out files if we can re-sign the package.
 ifdef extracted_jni_libs
 	$(hide) zip -d $@ 'lib/*.so'  # strip embedded JNI libraries.
-endif
-ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
-	$(sign-package)
 endif
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
+endif
+	$(sign-package)
 endif
 	$(align-package)
 
