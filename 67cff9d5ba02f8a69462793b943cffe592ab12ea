@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b07b4aac_e1d3b151",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-15T19:28:15Z",
+      "side": 1,
+      "message": "I am not sure if you can put a comment line inside the build recipe. Did you try running such case?",
+      "range": {
+        "startLine": 200,
+        "startChar": 0,
+        "endLine": 200,
+        "endChar": 63
+      },
+      "revId": "67cff9d5ba02f8a69462793b943cffe592ab12ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
