@@ -22,6 +22,30 @@
       "revId": "0d8d78c4456dc8f264b7c6a35ff083c55e049ff5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "907ac6a8_6e01d38a",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-15T19:22:34Z",
+      "side": 1,
+      "message": "Probably.\nOr should we disable dex-preopt for PRESIGNED apks?",
+      "parentUuid": "907ac6a8_ae612b83",
+      "range": {
+        "startLine": 204,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 38
+      },
+      "revId": "0d8d78c4456dc8f264b7c6a35ff083c55e049ff5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
