@@ -7,7 +7,7 @@
 <title><?cs 
   if:page.title ?><?cs 
     var:page.title ?> | <?cs
-  /if ?>Android Developers</title>
+  /if ?>Android Open Source Project</title>
 
 <!-- STYLESHEETS -->
 <link rel="stylesheet"
