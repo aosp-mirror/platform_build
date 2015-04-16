@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
         usage();
         exit(EXIT_FAILURE);
       }
-      fp = fopen(optarg, "w");
+      fp = fopen(optarg, "wb");
       if (fp == NULL) {
         fprintf(stderr, "Can not open \"%s\"\n", optarg);
         exit(EXIT_FAILURE);
