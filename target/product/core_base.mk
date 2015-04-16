@@ -41,13 +41,14 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_amrdec \
     libstagefright_soft_amrnbenc \
     libstagefright_soft_amrwbenc \
+    libstagefright_soft_avcdec \
+    libstagefright_soft_avcenc \
     libstagefright_soft_flacenc \
     libstagefright_soft_g711dec \
     libstagefright_soft_gsmdec \
-    libstagefright_soft_h264dec \
-    libstagefright_soft_h264enc \
     libstagefright_soft_hevcdec \
     libstagefright_soft_mp3dec \
+    libstagefright_soft_mpeg2dec \
     libstagefright_soft_mpeg4dec \
     libstagefright_soft_mpeg4enc \
     libstagefright_soft_opusdec \
