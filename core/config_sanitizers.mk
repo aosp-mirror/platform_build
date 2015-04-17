@@ -50,11 +50,15 @@ ifneq ($(my_clang),true)
   endif
 endif
 
-unknown_sanitizers := $(filter-out address, \
-                      $(filter-out undefined,$(my_sanitize)))
+ifneq ($(filter default-ub,$(my_sanitize)),)
+  my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
+  my_ldlibs += -ldl
 
-ifneq ($(unknown_sanitizers),)
-  $(error Unknown sanitizers: $(unknown_sanitizers))
+  ifdef LOCAL_IS_HOST_MODULE
+    my_cflags += -fno-sanitize-recover=all
+  else
+    my_cflags += -fsanitize-undefined-trap-on-error
+  endif
 endif
 
 ifneq ($(my_sanitize),)
