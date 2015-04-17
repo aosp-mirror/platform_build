@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d080bec6_95d22502",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-17T17:49:35Z",
+      "side": 1,
+      "message": "For a target module, my_sanitize_host isn\u0027t initialized, and\nyou may pick up the value of a random host module.\nIt seems to me we don\u0027t need the variable my_sanitize_host at all.",
+      "range": {
+        "startLine": 39,
+        "startChar": 1,
+        "endLine": 39,
+        "endChar": 36
+      },
+      "revId": "27ccb75af78f2fe9bf05f9141b5470fd3c0eeeba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
