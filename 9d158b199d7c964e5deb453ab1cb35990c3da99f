@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0c51e25_a80ee735",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-17T18:30:49Z",
+      "side": 1,
+      "message": "Nit: we may want to move this to build/core/config.mk (or similar) as a global constant, so we dont\u0027 need to parse it for every module.",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 80,
+        "endChar": 39
+      },
+      "revId": "9d158b199d7c964e5deb453ab1cb35990c3da99f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
