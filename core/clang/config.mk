@@ -98,6 +98,32 @@ CLANG_CONFIG_TARGET_EXTRA_CFLAGS := -nostdlibinc
 CLANG_CONFIG_TARGET_EXTRA_CPPFLAGS := -nostdlibinc
 CLANG_CONFIG_TARGET_EXTRA_LDFLAGS :=
 
+CLANG_DEFAULT_UB_CHECKS := \
+  bool \
+  integer-divide-by-zero \
+  return \
+  returns-nonnull-attribute \
+  shift-exponent \
+  unreachable \
+  vla-bound \
+
+# TODO(danalbert): The following checks currently have compiler performance
+# issues.
+# CLANG_DEFAULT_UB_CHECKS += alignment
+# CLANG_DEFAULT_UB_CHECKS += bounds
+# CLANG_DEFAULT_UB_CHECKS += enum
+# CLANG_DEFAULT_UB_CHECKS += float-cast-overflow
+# CLANG_DEFAULT_UB_CHECKS += float-divide-by-zero
+# CLANG_DEFAULT_UB_CHECKS += nonnull-attribute
+# CLANG_DEFAULT_UB_CHECKS += null
+# CLANG_DEFAULT_UB_CHECKS += shift-base
+# CLANG_DEFAULT_UB_CHECKS += signed-integer-overflow
+
+# TODO(danalbert): Fix UB in libc++'s __tree so we can turn this on.
+# https://llvm.org/PR19302
+# http://reviews.llvm.org/D6974
+# CLANG_DEFAULT_UB_CHECKS += object-size
+
 # HOST config
 clang_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/clang/HOST_$(HOST_ARCH).mk
