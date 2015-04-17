@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b0926a12_92724a60",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2015-04-17T17:55:24Z",
+      "side": 1,
+      "message": "Correct. I looked into this and stashing only the overlapping blocks does not really seem to reduce the amount of stash space required. Often most of the blocks overlap and there are large block ranges that overlap fully almost always. At least for the OTAs I checked.\n\nIf we want to reduce stash usage, we could split large moves and diffs into smaller segments. It might also be a good idea to have a parameter for ota_from_target_files to specify the maximum amount of stash space available.",
+      "parentUuid": "d0c51e25_42ef2283",
+      "revId": "29f529f33e5288efd8823cdc935260cfb0d8c7fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d0c51e25_62c9fe2b",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-04-17T17:39:37Z",
       "side": 1,
       "message": "Sami, I just spotted this line and wanted to check with you. In theory it may need up to 512mb for the stash space. So we will need 512mb+ cache partition on any device that supports block-based OTA, right?",
+      "revId": "29f529f33e5288efd8823cdc935260cfb0d8c7fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0926a12_3277b652",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2015-04-17T17:55:24Z",
+      "side": 1,
+      "message": "This line was here before v3, but yes, 512MB seems to be the maximum.",
+      "parentUuid": "d0c51e25_62c9fe2b",
       "revId": "29f529f33e5288efd8823cdc935260cfb0d8c7fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
