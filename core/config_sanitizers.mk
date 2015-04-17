@@ -2,23 +2,6 @@
 ## Perform configuration steps for sanitizers.
 ##############################################
 
-# Configure SANITIZE_HOST.
-ifdef LOCAL_IS_HOST_MODULE
-  my_sanitize_host := $(strip $(SANITIZE_HOST))
-endif
-
-# SANTIZIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
-ifeq ($(my_sanitize_host),true)
-  my_sanitize_host := address
-endif
-
-# SANITIZE_HOST is only in effect if the module is already using clang (host
-# modules that haven't set `LOCAL_CLANG := false` and device modules that have
-# set `LOCAL_CLANG := true`.
-ifneq ($(my_clang),true)
-  my_sanitize_host :=
-endif
-
 my_sanitize := $(strip $(LOCAL_SANITIZE))
 
 # Keep compatibility for LOCAL_ADDRESS_SANITIZER until all targets have moved to
@@ -37,8 +20,23 @@ ifdef LOCAL_SDK_VERSION
   my_sanitize := never
 endif
 
-ifeq ($(my_sanitize),)
-  my_sanitize := $(my_sanitize_host)
+# Configure SANITIZE_HOST.
+ifdef LOCAL_IS_HOST_MODULE
+  ifeq ($(my_sanitize),)
+    my_sanitize := $(strip $(SANITIZE_HOST))
+
+    # SANTIZIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+    ifeq ($(my_sanitize),true)
+      my_sanitize := address
+    endif
+
+    # SANITIZE_HOST is only in effect if the module is already using clang (host
+    # modules that haven't set `LOCAL_CLANG := false` and device modules that
+    # have set `LOCAL_CLANG := true`.
+    ifneq ($(my_clang),true)
+      my_sanitize :=
+    endif
+  endif
 endif
 
 ifeq ($(my_sanitize),never)
