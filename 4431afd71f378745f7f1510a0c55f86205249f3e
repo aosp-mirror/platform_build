@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "907ac6a8_125f0079",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-17T18:25:40Z",
+      "side": 1,
+      "message": "Since LOCAL_SANITIZE is already multiple valued, can we make this an optional value for LOCA_SANTITIZE?\nI want to reduce the number of LOCAL variables if possible.",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 39
+      },
+      "revId": "4431afd71f378745f7f1510a0c55f86205249f3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
