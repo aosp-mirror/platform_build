@@ -22,6 +22,30 @@
       "revId": "27ccb75af78f2fe9bf05f9141b5470fd3c0eeeba",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "907ac6a8_f2c844a7",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-04-17T17:50:49Z",
+      "side": 1,
+      "message": "That\u0027s a good point. Oops. I\u0027ll have a fix in a bit.",
+      "parentUuid": "d080bec6_95d22502",
+      "range": {
+        "startLine": 39,
+        "startChar": 1,
+        "endLine": 39,
+        "endChar": 36
+      },
+      "revId": "27ccb75af78f2fe9bf05f9141b5470fd3c0eeeba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
