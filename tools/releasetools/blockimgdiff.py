@@ -387,6 +387,12 @@ class BlockImageDiff(object):
                 xf.style,
                 xf.tgt_ranges.to_string_raw(), src_str))
           elif self.version >= 3:
+            # take into account automatic stashing of overlapping blocks
+            if xf.src_ranges.overlaps(xf.tgt_ranges):
+              temp_stash_usage = stashed_blocks + xf.src_ranges.size();
+              if temp_stash_usage > max_stashed_blocks:
+                max_stashed_blocks = temp_stash_usage
+
             out.append("%s %s %s %s\n" % (
                 xf.style,
                 self.HashBlocks(self.tgt, xf.tgt_ranges),
@@ -405,6 +411,12 @@ class BlockImageDiff(object):
               xf.style, xf.patch_start, xf.patch_len,
               xf.tgt_ranges.to_string_raw(), src_str))
         elif self.version >= 3:
+          # take into account automatic stashing of overlapping blocks
+          if xf.src_ranges.overlaps(xf.tgt_ranges):
+            temp_stash_usage = stashed_blocks + xf.src_ranges.size();
+            if temp_stash_usage > max_stashed_blocks:
+              max_stashed_blocks = temp_stash_usage
+
           out.append("%s %d %d %s %s %s %s\n" % (
               xf.style,
               xf.patch_start, xf.patch_len,
