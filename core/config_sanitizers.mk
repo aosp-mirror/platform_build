@@ -4,16 +4,20 @@
 
 # Configure SANITIZE_HOST.
 ifdef LOCAL_IS_HOST_MODULE
-ifeq ($(SANITIZE_HOST),true)
-ifneq ($(strip $(LOCAL_CLANG)),false)
-ifneq ($(strip $(LOCAL_ADDRESS_SANITIZER)),false)
-  LOCAL_SANITIZE := address
-endif
-endif
-endif
+  my_sanitize_host := $(strip $(SANITIZE_HOST))
 endif
 
-my_sanitize := $(LOCAL_SANITIZE)
+# SANTIZIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+ifeq ($(my_sanitize_host),true)
+  my_sanitize_host := address
+endif
+
+# `LOCAL_CLANG := false` disables SANITIZE_HOST.
+ifeq ($(my_clang),false)
+  my_sanitize_host :=
+endif
+
+my_sanitize := $(strip $(LOCAL_SANITIZE))
 
 # Keep compatibility for LOCAL_ADDRESS_SANITIZER until all targets have moved to
 # `LOCAL_SANITIZE := address`.
@@ -21,8 +25,21 @@ ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
   my_sanitize += address
 endif
 
+# And `LOCAL_SANITIZE := never`.
+ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),false)
+  my_sanitize := never
+endif
+
 # Don't apply sanitizers to NDK code.
 ifdef LOCAL_SDK_VERSION
+  my_sanitize := never
+endif
+
+ifeq ($(my_sanitize),)
+  my_sanitize := $(my_sanitize_host)
+endif
+
+ifeq ($(my_sanitize),never)
   my_sanitize :=
 endif
 
