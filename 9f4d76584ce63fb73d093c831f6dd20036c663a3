@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "907ac6a8_d2eae872",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1907,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-17T18:09:21Z",
+      "side": 1,
+      "message": "Use $(filter) instead of $(findstring).",
+      "range": {
+        "startLine": 1907,
+        "startChar": 11,
+        "endLine": 1907,
+        "endChar": 22
+      },
+      "revId": "9f4d76584ce63fb73d093c831f6dd20036c663a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
