@@ -12,8 +12,10 @@ ifeq ($(my_sanitize_host),true)
   my_sanitize_host := address
 endif
 
-# `LOCAL_CLANG := false` disables SANITIZE_HOST.
-ifeq ($(my_clang),false)
+# SANITIZE_HOST is only in effect if the module is already using clang (host
+# modules that haven't set `LOCAL_CLANG := false` and device modules that have
+# set `LOCAL_CLANG := true`.
+ifneq ($(my_clang),true)
   my_sanitize_host :=
 endif
 
@@ -43,6 +45,13 @@ ifeq ($(my_sanitize),never)
   my_sanitize :=
 endif
 
+# Sanitizers can only be used with clang.
+ifneq ($(my_clang),true)
+  ifneq ($(my_sanitize),)
+    $(error $(LOCAL_PATH): $(LOCAL_MODULE): Use of sanitizers requires LOCAL_CLANG := true)
+  endif
+endif
+
 unknown_sanitizers := $(filter-out address, \
                       $(filter-out undefined,$(my_sanitize)))
 
@@ -51,8 +60,6 @@ ifneq ($(unknown_sanitizers),)
 endif
 
 ifneq ($(my_sanitize),)
-  my_clang := true
-
   fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize)),
   my_cflags += -fsanitize=$(fsanitize_arg)
 
