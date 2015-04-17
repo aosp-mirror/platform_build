@@ -1903,7 +1903,8 @@ $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -r $(PRIVATE_JNI_SHARED_LIBRARIES_ZIP_OPTIONS) $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -r \
+    $(if $(filter true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-0,) $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
@@ -1937,7 +1938,7 @@ define align-package
 $(hide) mv $@ $@.unaligned
 $(hide) $(ZIPALIGN) \
     -f \
-    $(if $(findstring true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-p ,) \
+    $(if $(filter true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-p,) \
     4 \
     $@.unaligned $@.aligned
 $(hide) mv $@.aligned $@
