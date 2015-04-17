@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0c51e25_42ef2283",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-17T17:39:37Z",
+      "side": 1,
+      "message": "So whenever there are overlapping blocks, we\u0027ll always back up the whole range, instead of only the overlapping ones, right?",
+      "revId": "29f529f33e5288efd8823cdc935260cfb0d8c7fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0c51e25_62c9fe2b",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-04-17T17:39:37Z",
+      "side": 1,
+      "message": "Sami, I just spotted this line and wanted to check with you. In theory it may need up to 512mb for the stash space. So we will need 512mb+ cache partition on any device that supports block-based OTA, right?",
+      "revId": "29f529f33e5288efd8823cdc935260cfb0d8c7fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
