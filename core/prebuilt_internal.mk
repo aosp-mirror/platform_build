@@ -205,6 +205,9 @@ endif
 endif
 	$(sign-package)
 endif
+ifeq ($(LOCAL_PAGE_ALIGN_JNI_SHARED_LIBRARIES),true)
+	$(uncompress-shared-libs)
+endif
 	$(align-package)
 
 ###############################
