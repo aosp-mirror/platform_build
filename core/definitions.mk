@@ -2142,6 +2142,16 @@ $(hide) $(ZIPALIGN) \
 $(hide) mv $@.aligned $@
 endef
 
+define uncompress-shared-libs
+$(hide) rm -rf $(dir $@)/tmpworkdir
+$(hide) mv $@ $@.compressed
+$(hide) mkdir $(dir $@)/tmpworkdir
+$(hide) unzip $@.compressed 'lib/*.so' -d $(dir $@)/tmpworkdir
+$(hide) ( cd $(dir $@)/tmpworkdir && zip -D -r -0 ../$(notdir $@).compressed lib )
+$(hide) mv $@.compressed $@
+$(hide) rm -rf $(dir $@)/tmpworkdir
+endef
+
 define install-dex-debug
 $(hide) if [ -f "$(PRIVATE_INTERMEDIATES_DIR)/classes.dex" ]; then \
 	    mkdir -p $(TOP)/dalvik/DEBUG-FILES; \
