@@ -85,6 +85,15 @@ ifdef my_extracted_jni_libs
 ifndef my_prebuilt_src_file
 $(error No prebuilt apk to extract prebuilt jni libraries $(my_extracted_jni_libs))
 endif
+ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
+$(warning Extracting files using LOCAL_PREBUILT_JNI_LIBS cannot be done while)
+$(warning using LOCAL_CERTIFICATE:=PRESIGNED, as this would corrupt)
+$(warning the APK or waste disk space. Instead, you should delete)
+$(warning LOCAL_PREBUILT_JNI_LIBS and use LOCAL_PAGE_ALIGN_JNI_SHARED_LIBRARIES:=true)
+$(warning This will allow loading of shared libraries directly from the APK,)
+$(warning eliminating the need to separately extract them.)
+$(error Failed to build: $(LOCAL_MODULE))
+endif
 # We use the first jni lib file as dependency.
 my_installed_prebuilt_jni := $(my_app_lib_path)/$(notdir $(firstword $(my_extracted_jni_libs)))
 $(my_installed_prebuilt_jni): PRIVATE_JNI_LIBS := $(my_extracted_jni_libs)
