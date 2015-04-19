@@ -204,6 +204,24 @@ endif # LOCAL_EMMA_INSTRUMENT
 
 rs_compatibility_jni_libs :=
 
+ifeq ($(LOCAL_DATA_BINDING),true)
+data_binding_intermediates := $(intermediates.COMMON)/data-binding
+
+LOCAL_JAVACFLAGS += -processorpath $(DATA_BINDING_COMPILER) -s $(data_binding_intermediates)/anno-src
+LOCAL_JACK_FLAGS += --processorpath $(DATA_BINDING_COMPILER)
+
+LOCAL_STATIC_JAVA_LIBRARIES += databinding-baselibrary
+LOCAL_STATIC_JAVA_AAR_LIBRARIES += databinding-library databinding-adapters
+
+data_binding_res_in := $(LOCAL_RESOURCE_DIR)
+data_binding_res_out := $(data_binding_intermediates)/res
+
+# Replace with the processed merged res dir.
+LOCAL_RESOURCE_DIR := $(data_binding_res_out)
+
+LOCAL_AAPT_FLAGS += --auto-add-overlay --extra-packages com.android.databinding.library
+endif  # LOCAL_DATA_BINDING
+
 include $(BUILD_SYSTEM)/android_manifest.mk
 
 #################################
@@ -224,6 +242,34 @@ else
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_DEFAULT_APP_TARGET_SDK := $(DEFAULT_APP_TARGET_SDK)
 endif
+
+ifeq ($(LOCAL_DATA_BINDING),true)
+data_binding_stamp := $(data_binding_intermediates)/data-binding.stamp
+$(data_binding_stamp): PRIVATE_INTERMEDIATES := $(data_binding_intermediates)
+$(data_binding_stamp): PRIVATE_MANIFEST := $(full_android_manifest)
+# Generate code into $(LOCAL_INTERMEDIATE_SOURCE_DIR) so that the generated .java files
+# will be automatically picked up by function compile-java.
+$(data_binding_stamp): PRIVATE_SRC_OUT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/data-binding
+$(data_binding_stamp): PRIVATE_XML_OUT := $(data_binding_intermediates)/xml
+$(data_binding_stamp): PRIVATE_RES_OUT := $(data_binding_res_out)
+$(data_binding_stamp): PRIVATE_RES_IN := $(data_binding_res_in)
+$(data_binding_stamp): PRIVATE_ANNO_SRC_DIR := $(data_binding_intermediates)/anno-src
+
+$(data_binding_stamp) : $(all_res_assets) $(full_android_manifest) \
+    $(DATA_BINDING_COMPILER)
+	@echo "Data-binding process: $@"
+	@rm -rf $(PRIVATE_INTERMEDIATES) $(PRIVATE_SRC_OUT) && \
+	  mkdir -p $(PRIVATE_INTERMEDIATES) $(PRIVATE_SRC_OUT) \
+	      $(PRIVATE_XML_OUT) $(PRIVATE_RES_OUT) $(PRIVATE_ANNO_SRC_DIR)
+	$(hide) java -classpath $(DATA_BINDING_COMPILER) android.databinding.tool.MakeCopy \
+	  $(PRIVATE_MANIFEST) $(PRIVATE_SRC_OUT) $(PRIVATE_XML_OUT) $(PRIVATE_RES_OUT) $(PRIVATE_RES_IN)
+	$(hide) touch $@
+
+# Make sure the data-binding process happens before javac and generation of R.java.
+$(R_file_stamp) $(full_classes_compiled_jar) : $(data_binding_stamp)
+# The dependency path when jack is enabled
+$(built_dex_intermediate) : $(data_binding_stamp)
+endif  # LOCAL_DATA_BINDING
 
 ifeq ($(need_compile_res),true)
 
