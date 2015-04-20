@@ -39,30 +39,6 @@ include $(BUILD_SYSTEM)/binary.mk
 ###################################
 
 ###########################################################
-## Compress
-###########################################################
-compress_input := $(linked_module)
-
-ifeq ($(strip $(LOCAL_COMPRESS_MODULE_SYMBOLS)),)
-  LOCAL_COMPRESS_MODULE_SYMBOLS := $(strip $(TARGET_COMPRESS_MODULE_SYMBOLS))
-endif
-
-ifeq ($(LOCAL_COMPRESS_MODULE_SYMBOLS),true)
-$(error Symbol compression not yet supported.)
-compress_output := $(intermediates)/COMPRESSED-$(my_built_module_stem)
-
-#TODO: write the real $(STRIPPER) rule.
-#TODO: define a rule to build TARGET_SYMBOL_FILTER_FILE, and
-#      make it depend on ALL_ORIGINAL_DYNAMIC_BINARIES.
-$(compress_output): $(compress_input) $(TARGET_SYMBOL_FILTER_FILE) | $(ACP)
-	@echo "target Compress Symbols: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
-else
-# Skip this step.
-compress_output := $(compress_input)
-endif
-
-###########################################################
 ## Store a copy with symbols for symbolic debugging
 ###########################################################
 ifeq ($(LOCAL_UNSTRIPPED_PATH),)
@@ -70,7 +46,7 @@ my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(m
 else
 my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
-symbolic_input := $(compress_output)
+symbolic_input := $(linked_module)
 symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
 $(symbolic_output) : $(symbolic_input) | $(ACP)
 	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
@@ -134,5 +110,4 @@ endif # my_strip_module
 
 $(cleantarget): PRIVATE_CLEAN_FILES += \
     $(linked_module) \
-    $(symbolic_output) \
-    $(compress_output)
+    $(symbolic_output)

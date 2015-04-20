@@ -132,9 +132,6 @@ COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 # list of flags to turn specific warnings in to errors
 TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point
 
-# TODO: do symbol compression
-TARGET_COMPRESS_MODULE_SYMBOLS := false
-
 ifdef TMPDIR
 JAVA_TMPDIR_ARG := -Djava.io.tmpdir=$(TMPDIR)
 else
