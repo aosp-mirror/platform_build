@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d08d1e46_71ef5283",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-04-21T23:44:45Z",
+      "side": 1,
+      "message": "(try to avoid \u0027it\u0027 in comments/help text/checkin comments.)\n\n\"It\u0027s only\" \u003d\u003e \"This option is only\"\n\n\"it would\" \u003d\u003e not sure what you mean here. do you actually mean \", because a full radio is always included in full OTAs\"?\n\n\n\ndo we actually need a short option for this? i\u0027m especially wary of using \"-f\" which has a lot of traditional meanings (none of which are \"full radio\" :-) ).",
+      "revId": "45d8718653a4dde153fbd396e80be3aeb23b37cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
