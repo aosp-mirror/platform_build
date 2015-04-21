@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "309d9a70_5125f460",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-21T23:12:55Z",
+      "side": 1,
+      "message": "where is the source of this tool?\nNote that with the new dependency on this tool it may break many existing unbundled branches.",
+      "range": {
+        "startLine": 428,
+        "startChar": 21,
+        "endLine": 428,
+        "endChar": 86
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "302afabf_46c423e3",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
