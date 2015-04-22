@@ -92,8 +92,11 @@ CTS_CASE_LIST_JARS :=
 $(foreach m, $(CTS_TEST_JAR_LIST),\
   $(eval CTS_CASE_LIST_JARS += $(CTS_TESTCASES_OUT)/$(m).jar))
 
+CTS_SHARED_LIBS := \
+	$(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX)
+
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
-$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_JAR_FILES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(CTS_CASE_LIST_JARS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ADDITIONAL_TF_JARS) $(ACP)
+$(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_JAR_FILES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(CTS_CASE_LIST_JARS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ADDITIONAL_TF_JARS) $(ACP) $(CTS_SHARED_LIBS)
 
 # Make necessary directory for CTS
 	$(hide) mkdir -p $(TMP_DIR)
@@ -104,6 +107,7 @@ $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_JAR_FILES) $(CTS_TE
 # Copy executable and JARs to CTS directory
 	$(hide) $(ACP) -fp $(VMTESTSTF_JAR) $(CTS_TESTCASES_OUT)
 	$(hide) $(ACP) -fp $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(ADDITIONAL_TF_JARS) $(CTS_TF_README_PATH) $(PRIVATE_DIR)/tools
+	$(hide) $(call copy-files-with-structure, $(CTS_SHARED_LIBS),$(HOST_OUT)/,$(PRIVATE_DIR))
 	$(hide) touch $@
 
 # Generate the test descriptions for the core-tests
