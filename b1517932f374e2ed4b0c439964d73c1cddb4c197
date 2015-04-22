@@ -46,6 +46,30 @@
       "revId": "b1517932f374e2ed4b0c439964d73c1cddb4c197",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d08d1e46_57cde665",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-22T00:50:27Z",
+      "side": 1,
+      "message": "Oh, I was wondering why you use \"ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)\" below.",
+      "parentUuid": "10a416b9_365300f3",
+      "range": {
+        "startLine": 118,
+        "startChar": 30,
+        "endLine": 118,
+        "endChar": 35
+      },
+      "revId": "b1517932f374e2ed4b0c439964d73c1cddb4c197",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
