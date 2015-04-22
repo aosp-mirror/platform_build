@@ -37,6 +37,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate an incremental OTA using the given target-files zip as
       the starting build.
 
+  --full_radio
+      When generating an incremental OTA, always include a full copy of
+      radio image. This option is only meaningful when -i is specified,
+      because a full radio is always included in a full OTA if applicable.
+
   -v  (--verify)
       Remount and verify the checksums of the files written to the
       system and vendor (if used) partitions.  Incremental builds only.
@@ -117,6 +122,7 @@ OPTIONS.block_based = False
 OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
+OPTIONS.full_radio = False
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -1456,6 +1462,8 @@ def main(argv):
       OPTIONS.package_key = a
     elif o in ("-i", "--incremental_from"):
       OPTIONS.incremental_source = a
+    elif o == "--full_radio":
+      OPTIONS.full_radio = True
     elif o in ("-w", "--wipe_user_data"):
       OPTIONS.wipe_user_data = True
     elif o in ("-n", "--no_prereq"):
@@ -1497,6 +1505,7 @@ def main(argv):
                                  "board_config=",
                                  "package_key=",
                                  "incremental_from=",
+                                 "full_radio",
                                  "wipe_user_data",
                                  "no_prereq",
                                  "extra_script=",
