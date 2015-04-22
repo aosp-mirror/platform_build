@@ -22,6 +22,30 @@
       "revId": "b1517932f374e2ed4b0c439964d73c1cddb4c197",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10a416b9_365300f3",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:34:31Z",
+      "side": 1,
+      "message": "opt-out. This is true when LOCAL_FORCE_STATIC_EXECUTABLE is not set to \u0027true\u0027",
+      "parentUuid": "309d9a70_b4644e94",
+      "range": {
+        "startLine": 118,
+        "startChar": 30,
+        "endLine": 118,
+        "endChar": 35
+      },
+      "revId": "b1517932f374e2ed4b0c439964d73c1cddb4c197",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
