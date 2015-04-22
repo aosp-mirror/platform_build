@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d08d1e46_f405f041",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d01a7eb3_dec9f4fb",
+      "range": {
+        "startLine": 191,
+        "startChar": 0,
+        "endLine": 191,
+        "endChar": 49
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "309d9a70_5190944b",
         "filename": "core/combo/TARGET_linux-arm.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2015-04-21T23:09:07Z",
       "side": 1,
       "message": "We can remove this since all archs are with this enabled.",
+      "range": {
+        "startLine": 193,
+        "startChar": 0,
+        "endLine": 193,
+        "endChar": 60
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "10a416b9_d3bc864b",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "309d9a70_5190944b",
       "range": {
         "startLine": 193,
         "startChar": 0,
@@ -95,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "10a416b9_73867a63",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Is bionic present in all unbundled branches?",
+      "parentUuid": "d08d1e46_6ee92fad",
+      "range": {
+        "startLine": 428,
+        "startChar": 21,
+        "endLine": 428,
+        "endChar": 86
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "302afabf_46c423e3",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
@@ -130,6 +202,24 @@
     },
     {
       "key": {
+        "uuid": "10a416b9_33d872a5",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "309d9a70_f186e8e4",
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d08d1e46_ee1c3f96",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
@@ -141,6 +231,30 @@
       "writtenOn": "2015-04-21T23:09:07Z",
       "side": 1,
       "message": "You need to add it to build/core/clear_vars.mk",
+      "range": {
+        "startLine": 122,
+        "startChar": 32,
+        "endLine": 122,
+        "endChar": 61
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "309d9a70_54cde265",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d08d1e46_ee1c3f96",
       "range": {
         "startLine": 122,
         "startChar": 32,
@@ -176,6 +290,30 @@
     },
     {
       "key": {
+        "uuid": "10a416b9_93b83e28",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "10a416b9_308148d3",
+      "range": {
+        "startLine": 129,
+        "startChar": 7,
+        "endLine": 129,
+        "endChar": 16
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d08d1e46_8e701bd7",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
@@ -187,6 +325,30 @@
       "writtenOn": "2015-04-21T23:09:07Z",
       "side": 1,
       "message": "you need $(ACP) too, because you call $(copy-file-to-target) in $(pack-elf-relocations).",
+      "range": {
+        "startLine": 131,
+        "startChar": 56,
+        "endLine": 131,
+        "endChar": 78
+      },
+      "revId": "8607ed178f2e9f0087e7281a545f0a5aa643396b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d08d1e46_d4ac749d",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-22T00:09:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d08d1e46_8e701bd7",
       "range": {
         "startLine": 131,
         "startChar": 56,
