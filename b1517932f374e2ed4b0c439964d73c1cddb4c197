@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "309d9a70_b4644e94",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-04-22T00:29:22Z",
+      "side": 1,
+      "message": "In your previous patcheset, it defaults to true, by the arch specific global variables removed in this PS.\nDo you want it to opt-in or opt-out?",
+      "range": {
+        "startLine": 118,
+        "startChar": 30,
+        "endLine": 118,
+        "endChar": 35
+      },
+      "revId": "b1517932f374e2ed4b0c439964d73c1cddb4c197",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
