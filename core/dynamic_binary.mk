@@ -57,11 +57,11 @@ $(symbolic_output) : $(symbolic_input) | $(ACP)
 ## Strip
 ###########################################################
 strip_input := $(symbolic_output)
-strip_output := $(intermediates)/STRIPPED/$(my_built_module_stem)
+strip_output := $(LOCAL_BUILT_MODULE)
 
 my_strip_module := $(LOCAL_STRIP_MODULE)
 ifeq ($(my_strip_module),)
-  my_strip_module := true
+  my_strip_module := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_MODULE)
 endif
 
 $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
@@ -107,35 +107,7 @@ $(strip_output): $(strip_input)
 endif
 endif # my_strip_module
 
-###########################################################
-## Pack relocation tables
-###########################################################
-relocation_packer_input := $(strip_output)
-relocation_packer_output := $(LOCAL_BUILT_MODULE)
-
-my_pack_module_relocations := $(LOCAL_PACK_MODULE_RELOCATIONS)
-
-# Do not pack relocations for static executables.
-ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-  my_pack_module_relocations := false
-endif
-
-# TODO (dimitry): Relocation packer is not yet available for darwin
-ifneq ($(HOST_OS),linux)
-  my_pack_module_relocations := false
-endif
-
-ifneq (false,$(my_pack_module_relocations))
-# Pack relocations
-$(relocation_packer_output): $(relocation_packer_input) | $(ACP)
-	$(pack-elf-relocations)
-else
-$(relocation_packer_output): $(relocation_packer_input) | $(ACP)
-	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
-endif
 
 $(cleantarget): PRIVATE_CLEAN_FILES += \
     $(linked_module) \
-    $(symbolic_output) \
-    $(strip_output)
+    $(symbolic_output)
