@@ -43,6 +43,11 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
     # Strip but not try to add debuglink
     LOCAL_STRIP_MODULE := no_debuglink
   endif
+
+  ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_PACK_MODULE_RELOCATIONS),)
+    # Do not pack relocations by default
+    LOCAL_PACK_MODULE_RELOCATIONS := false
+  endif
 endif
 
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
@@ -63,20 +68,20 @@ LOCAL_BUILT_MODULE_STEM := package.apk
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
 endif
 
-ifneq ($(filter true no_debuglink,$(LOCAL_STRIP_MODULE)),)
+ifneq ($(filter true no_debuglink,$(LOCAL_STRIP_MODULE) $(LOCAL_PACK_MODULE_RELOCATIONS)),)
   ifdef LOCAL_IS_HOST_MODULE
-    $(error Cannot strip host module LOCAL_PATH=$(LOCAL_PATH))
+    $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
   endif
   ifeq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
-    $(error Can strip only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
+    $(error Can strip/pack only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
   endif
   ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-    $(error Cannot strip scripts LOCAL_PATH=$(LOCAL_PATH))
+    $(error Cannot strip/pack scripts LOCAL_PATH=$(LOCAL_PATH))
   endif
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
 
-else  # LOCAL_STRIP_MODULE not true
+else  # LOCAL_STRIP_MODULE and LOCAL_PACK_MODULE_RELOCATIONS not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
 
