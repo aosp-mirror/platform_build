@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "309d9a70_34ce88df",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1057503
+      },
+      "writtenOn": "2015-04-24T01:53:27Z",
+      "side": 1,
+      "message": "and disabling packed relocations.",
+      "range": {
+        "startLine": 82,
+        "startChar": 22,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "8a5cfeba93ed15f9c40f9e4634dafb5785fbaa14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
