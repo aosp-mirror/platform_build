@@ -77,10 +77,12 @@ ifdef LOCAL_SDK_VERSION
     my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib
   endif
 
-  # The bionic linker now has support for gnu style hashes (which are much
-  # faster!), but shipping to older devices requires the old style hash.
+  # The bionic linker now has support for packed relocations and gnu style
+  # hashes (which are much faster!), but shipping to older devices requires
+  # the old style hash and disabling packed relocations.
   #ifeq ($(shell expr $(LOCAL_SDK_VERSION) >= FIRST_SUPPORTED_VERSION),0)
     my_ldflags += -Wl,--hash-style=sysv
+    LOCAL_PACK_MODULE_RELOCATIONS := false
   #endif
 
   # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
