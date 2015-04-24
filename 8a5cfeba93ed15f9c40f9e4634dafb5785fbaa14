@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "10a416b9_0e124ad9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-24T02:02:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "309d9a70_34ce88df",
+      "range": {
+        "startLine": 82,
+        "startChar": 22,
+        "endLine": 82,
+        "endChar": 23
+      },
+      "revId": "8a5cfeba93ed15f9c40f9e4634dafb5785fbaa14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "10a416b9_0e97aac2",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2015-04-24T01:55:17Z",
       "side": 1,
       "message": "This is commented out, so the enclosed will be applied universally. See the commit message in https://android-review.googlesource.com/#/c/114664/\n\nI think we can switch to opt-in for unbundled build in build/core/dynamic_binary.mk for now:\nifeq ($(my_pack_module_relocations),)\nifdef BUILD_TARGET_APPS\n# Unbundled build\n  my_pack_module_relocations :\u003d false\nelse\n  my_pack_module_relocations :\u003d $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PACK_MODULE_RELOCATIONS)\nendif\nendif",
+      "range": {
+        "startLine": 83,
+        "startChar": 2,
+        "endLine": 83,
+        "endChar": 73
+      },
+      "revId": "8a5cfeba93ed15f9c40f9e4634dafb5785fbaa14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0d43e30_c77aa170",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-24T02:02:41Z",
+      "side": 1,
+      "message": "As far as I understand this will be disabled only for libraries with defined LOCAL_SDK_VERSION (L62), so platform libraries are going to get packed relocations.\n\nAnd once we have first supported version, it is going to be supported for libraries that target it.",
+      "parentUuid": "10a416b9_0e97aac2",
       "range": {
         "startLine": 83,
         "startChar": 2,
