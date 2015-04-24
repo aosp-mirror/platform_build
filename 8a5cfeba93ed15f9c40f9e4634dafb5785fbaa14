@@ -93,6 +93,30 @@
       "revId": "8a5cfeba93ed15f9c40f9e4634dafb5785fbaa14",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "309d9a70_e84d004f",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-04-24T03:28:39Z",
+      "side": 1,
+      "message": "in other words - we still want opt-out scheme in the case when app targets API level \u003e\u003d FIRST_SUPPORTED_VERSION. And unconditionally disabling unsupported sections if target_api is less than first supported one.",
+      "parentUuid": "d0d43e30_c77aa170",
+      "range": {
+        "startLine": 83,
+        "startChar": 2,
+        "endLine": 83,
+        "endChar": 73
+      },
+      "revId": "8a5cfeba93ed15f9c40f9e4634dafb5785fbaa14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
