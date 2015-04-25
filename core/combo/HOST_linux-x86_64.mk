@@ -28,7 +28,7 @@ HOST_AR  := $(HOST_TOOLCHAIN_PREFIX)ar
 HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/
 
 HOST_GLOBAL_CFLAGS += -m64 -Wa,--noexecstack
-HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack
+HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now
 
 ifneq ($(strip $(BUILD_HOST_static)),)
 # Statically-linked binaries are desirable for sandboxed environment
@@ -40,8 +40,8 @@ HOST_GLOBAL_CFLAGS += -fPIC \
   -no-canonical-prefixes \
   -include $(call select-android-config-h,linux-x86)
 
-# Disable new longjmp in glibc 2.11 and later. See bug 2967937. Same for 2.15?
-HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
+# TODO: Set _FORTIFY_SOURCE=2. Bug 20558757.
+HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0 -fstack-protector
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
