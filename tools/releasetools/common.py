@@ -1140,10 +1140,13 @@ class BlockDifference(object):
       script.Print("Image %s will be patched unconditionally." % (partition,))
     else:
       if self.version >= 3:
-        script.AppendExtra(('if block_image_verify("%s", '
+        script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
+                            'block_image_verify("%s", '
                             'package_extract_file("%s.transfer.list"), '
-                            '"%s.new.dat", "%s.patch.dat") then') %
-                           (self.device, partition, partition, partition))
+                            '"%s.new.dat", "%s.patch.dat")) then') % (
+                            self.device, self.src.care_map.to_string_raw(),
+                            self.src.TotalSha1(),
+                            self.device, partition, partition, partition))
       else:
         script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
             self.device, self.src.care_map.to_string_raw(),
