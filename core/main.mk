@@ -29,7 +29,7 @@ endif
 # TOPDIR is the normal variable you should use, because
 # if we are executing relative to the current directory
 # it can be "", whereas TOP must be "." which causes
-# pattern matching probles when make strips off the
+# pattern matching problems when make strips off the
 # trailing "./" from paths in various places.
 #ifeq ($(TOP),.)
 #TOPDIR :=
