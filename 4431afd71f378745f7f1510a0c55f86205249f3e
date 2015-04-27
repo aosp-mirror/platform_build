@@ -22,6 +22,30 @@
       "revId": "4431afd71f378745f7f1510a0c55f86205249f3e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0d99e70_0ec3203e",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-04-27T19:52:53Z",
+      "side": 1,
+      "message": "No, I don\u0027t think so. Determining which elements in LOCAL_SANITIZE need to be passed to -fsanitize and which need to be passed to -fsanitize-recover would be unreliable and take more time than the additional LOCAL.",
+      "parentUuid": "907ac6a8_125f0079",
+      "range": {
+        "startLine": 128,
+        "startChar": 16,
+        "endLine": 128,
+        "endChar": 39
+      },
+      "revId": "4431afd71f378745f7f1510a0c55f86205249f3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
