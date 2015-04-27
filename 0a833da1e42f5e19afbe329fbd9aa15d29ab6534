@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b0d42a38_3ec3a73e",
+        "filename": "core/clang/TARGET_arm.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-04-27T21:50:59Z",
+      "side": 1,
+      "message": "Right. Fixed.",
+      "parentUuid": "f0f222e5_5bbd6643",
+      "range": {
+        "startLine": 71,
+        "startChar": 73,
+        "endLine": 71,
+        "endChar": 89
+      },
+      "revId": "0a833da1e42f5e19afbe329fbd9aa15d29ab6534",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d0d99e70_64308394",
         "filename": "core/clang/TARGET_arm.mk",
         "patchSetId": 3
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "f0f222e5_7b9dcab0",
+        "filename": "core/clang/TARGET_arm.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-04-27T21:50:59Z",
+      "side": 1,
+      "message": "Of course. Thanks for noticing.",
+      "parentUuid": "d0d99e70_64308394",
+      "revId": "0a833da1e42f5e19afbe329fbd9aa15d29ab6534",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f0f222e5_3b9182cb",
         "filename": "core/config_sanitizers.mk",
         "patchSetId": 3
@@ -53,6 +95,24 @@
       "writtenOn": "2015-04-27T21:40:41Z",
       "side": 1,
       "message": "Won\u0027t this show up after the rpath for /system/lib?",
+      "revId": "0a833da1e42f5e19afbe329fbd9aa15d29ab6534",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0d99e70_44c0e798",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-04-27T21:50:59Z",
+      "side": 1,
+      "message": "There is no rpath for /system/lib.\nThat\u0027s something the dynamic loader takes care of.",
+      "parentUuid": "f0f222e5_3b9182cb",
       "revId": "0a833da1e42f5e19afbe329fbd9aa15d29ab6534",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
