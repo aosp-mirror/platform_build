@@ -129,7 +129,7 @@ def javaName(name):
     out += "_"
   return out
 
-javaTypes = ["ERROR", "int", "long", "String", "Object[]"]
+javaTypes = ["ERROR", "int", "long", "String", "Object[]", "float"]
 for t in tagfile.tags:
   methodName = javaName("write_" + t.tagname)
   if t.description:
