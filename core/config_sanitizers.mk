@@ -79,7 +79,7 @@ ifneq ($(filter address,$(my_sanitize)),)
     # -nodefaultlibs (provided with libc++) prevents the driver from linking
     # libraries needed with -fsanitize=address. http://b/18650275 (WAI)
     my_ldlibs += -lm -ldl -lpthread
-    my_ldflags += --no-as-needed
+    my_ldflags += -Wl,--no-as-needed
   else
     # ASan runtime library must be the first in the link order.
     my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
