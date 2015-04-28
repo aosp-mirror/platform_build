@@ -114,7 +114,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/recyclerview \
         v8/renderscript \
         v13 \
-        v17/leanback
+        v17/leanback \
+        design
 
 #
 # A list of all source roots under frameworks/multidex.
