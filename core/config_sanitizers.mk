@@ -100,7 +100,7 @@ ifneq ($(filter undefined,$(my_sanitize)),)
 endif
 
 
-ifeq ($(strip $(LOCAL_SANITIZE_RECOVER)),true)
-  recover_arg := $(subst $(space),$(comma),$(my_sanitize)),
+ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
+  recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_RECOVER)),
   my_cflags += -fsanitize-recover=$(recover_arg)
 endif
