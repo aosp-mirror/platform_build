@@ -50,8 +50,10 @@ ifeq ($(my_pack_module_relocations),)
   my_pack_module_relocations := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PACK_MODULE_RELOCATIONS)
 endif
 
-# Do not pack relocations for static executables.
-ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+# Do not pack relocations for executables. Because packing results in
+# non-zero p_vaddr which causes kernel to load executables to lower
+# address (starting at 0x8000) http://b/20665974
+ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
   my_pack_module_relocations := false
 endif
 
