@@ -29,7 +29,7 @@ endif
 # TOPDIR is the normal variable you should use, because
 # if we are executing relative to the current directory
 # it can be "", whereas TOP must be "." which causes
-# pattern matching probles when make strips off the
+# pattern matching problems when make strips off the
 # trailing "./" from paths in various places.
 #ifeq ($(TOP),.)
 #TOPDIR :=
@@ -388,10 +388,10 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
           ro.setupwizard.mode=OPTIONAL
 endif
 ifndef is_sdk_build
-  # Don't even verify the image on eng builds to speed startup
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-none
-  # Don't compile apps on eng builds to speed startup
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=interpret-only
+  # Don't verify or compile the image on eng builds to speed startup.
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
+  # Don't verify or compile apps on eng builds to speed startup.
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=verify-at-runtime
 endif
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.usejit=true
 endif

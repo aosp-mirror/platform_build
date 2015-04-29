@@ -871,6 +871,8 @@ $(hide) $(PRIVATE_RS_CC) \
   $(PRIVATE_RS_FLAGS) \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
   $(PRIVATE_RS_SOURCE_FILES)
+  $(foreach d,$(PRIVATE_DEP_FILES),\
+    $(call transform-d-to-p-args,$(d),$(d:%.d=%.P))$(newline))
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
@@ -905,6 +907,8 @@ $(hide) $(PRIVATE_RS_CC) \
   $(PRIVATE_RS_FLAGS) \
   $(addprefix -I , $(PRIVATE_RS_INCLUDES)) \
   $(PRIVATE_RS_SOURCE_FILES)
+  $(foreach d,$(PRIVATE_DEP_FILES),\
+    $(call transform-d-to-p-args,$(d),$(d:%.d=%.P))$(newline))
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
@@ -1289,7 +1293,7 @@ $(extract-and-include-target-whole-static-libs)
 @echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
+    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
 endef
 
 ###########################################################
@@ -1338,7 +1342,7 @@ $(extract-and-include-host-whole-static-libs)
 @echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(filter %.o, $^))
+    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
 endef
 
 
@@ -1367,6 +1371,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_LDLIBS)
@@ -1404,14 +1409,14 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBPROFILE_RT)) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(PRIVATE_TARGET_LIBGCC) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_TARGET_LIBATOMIC) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
-	$(PRIVATE_TARGET_LIBGCC) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O)) \
 	$(PRIVATE_LDLIBS)
 endef
@@ -1447,6 +1452,15 @@ $(hide) $(PRIVATE_OBJCOPY) \
     $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
 endef
 
+###########################################################
+## Commands for packing a target executable or library
+###########################################################
+
+define pack-elf-relocations
+$(copy-file-to-target)
+@echo "target Pack Relocations: $(PRIVATE_MODULE) ($@)"
+$(hide) $(RELOCATION_PACKER) $@
+endef
 
 ###########################################################
 ## Commands for running gcc to link an executable
@@ -1468,14 +1482,14 @@ $(hide) $(PRIVATE_CXX) -pie \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(if $(TARGET_BUILD_APPS),$(PRIVATE_TARGET_LIBGCC)) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBPROFILE_RT)) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
+	$(PRIVATE_TARGET_LIBGCC) \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_TARGET_LIBATOMIC) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
-	$(PRIVATE_TARGET_LIBGCC) \
 	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
 	$(PRIVATE_LDLIBS)
 endef
@@ -1515,8 +1529,9 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--start-group \
 	$(call normalize-target-libraries,$(filter %libc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
 	$(call normalize-target-libraries,$(filter %libc_nomalloc.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
-	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBGCOV)) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_LIBPROFILE_RT)) \
+	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(call normalize-target-libraries,$(filter %libcompiler_rt.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	-Wl,--end-group \
@@ -1554,6 +1569,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
+	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
 	$(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
 	-Wl,-rpath-link=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATE_LIBRARIES) \
 	-Wl,-rpath,\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
@@ -1896,7 +1912,8 @@ $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -r $(PRIVATE_JNI_SHARED_LIBRARIES_ZIP_OPTIONS) $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -r \
+    $(if $(filter true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-0,) $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
@@ -1930,10 +1947,20 @@ define align-package
 $(hide) mv $@ $@.unaligned
 $(hide) $(ZIPALIGN) \
     -f \
-    $(if $(findstring true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-p ,) \
+    $(if $(filter true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-p,) \
     4 \
     $@.unaligned $@.aligned
 $(hide) mv $@.aligned $@
+endef
+
+define uncompress-shared-libs
+$(hide) rm -rf $(dir $@)/tmpworkdir
+$(hide) mv $@ $@.compressed
+$(hide) mkdir $(dir $@)/tmpworkdir
+$(hide) unzip $@.compressed 'lib/*.so' -d $(dir $@)/tmpworkdir
+$(hide) ( cd $(dir $@)/tmpworkdir && zip -D -r -0 ../$(notdir $@).compressed lib )
+$(hide) mv $@.compressed $@
+$(hide) rm -rf $(dir $@)/tmpworkdir
 endef
 
 define install-dex-debug
@@ -2073,31 +2100,16 @@ define transform-prebuilt-to-target-strip-comments
 $(copy-file-to-target-strip-comments)
 endef
 
-###########################################################
-## On some platforms (MacOS), after copying a static
-## library, ranlib must be run to update an internal
-## timestamp!?!?!
-###########################################################
-
-ifeq ($(HOST_RUN_RANLIB_AFTER_COPYING),true)
-define transform-host-ranlib-copy-hack
-    $(hide) ranlib $@ || true
+# Copy a list of files/directories to target location, with sub dir structure preserved.
+# For example $(HOST_OUT_EXECUTABLES)/aapt -> $(staging)/bin/aapt .
+# $(1): the source list of files/directories.
+# $(2): the path prefix to strip. In the above example it would be $(HOST_OUT).
+# $(3): the target location.
+define copy-files-with-structure
+$(foreach t,$(1),\
+  $(eval s := $(patsubst $(2)%,%,$(t)))\
+  $(hide) mkdir -p $(dir $(3)/$(s)); cp -Rf $(t) $(3)/$(s)$(newline))
 endef
-else
-define transform-host-ranlib-copy-hack
-@true
-endef
-endif
-
-ifeq ($(TARGET_RUN_RANLIB_AFTER_COPYING),true)
-define transform-ranlib-copy-hack
-    $(hide) ranlib $@
-endef
-else
-define transform-ranlib-copy-hack
-@true
-endef
-endif
 
 
 ###########################################################

@@ -29,7 +29,7 @@ $(combo_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host
 
 # We expect SSE3 floating point math.
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -msse3 -mfpmath=sse -m32 -Wa,--noexecstack -march=prescott
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -m32 -Wl,-z,noexecstack
+$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -m32 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now
 
 ifneq ($(strip $(BUILD_HOST_static)),)
 # Statically-linked binaries are desirable for sandboxed environment
@@ -40,15 +40,14 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -fPIC \
   -no-canonical-prefixes \
   -include $(call select-android-config-h,linux-x86)
 
-# Disable new longjmp in glibc 2.11 and later. See bug 2967937. Same for 2.15?
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0
+# TODO: Set _FORTIFY_SOURCE=2. Bug 20558757.
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0 -fstack-protector
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
 
 $(combo_2nd_arch_prefix)HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
-
 
 ############################################################
 ## Macros after this line are shared by the 64-bit config.

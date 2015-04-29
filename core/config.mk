@@ -131,9 +131,6 @@ COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 # list of flags to turn specific warnings in to errors
 TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point
 
-# TODO: do symbol compression
-TARGET_COMPRESS_MODULE_SYMBOLS := false
-
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -428,6 +425,10 @@ ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
 ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign$(HOST_EXECUTABLE_SUFFIX)
+
+# relocation packer
+RELOCATION_PACKER := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/relocation_packer/relocation_packer
+
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
 EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)

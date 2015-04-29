@@ -56,12 +56,6 @@ $(combo_2nd_arch_prefix)HOST_JNILIB_SUFFIX := .jnilib
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += \
     -include $(call select-android-config-h,darwin-x86)
 
-ifneq ($(filter 10.7 10.7.% 10.8 10.8.%, $(build_mac_version)),)
-       $(combo_2nd_arch_prefix)HOST_RUN_RANLIB_AFTER_COPYING := false
-else
-       $(combo_2nd_arch_prefix)HOST_RUN_RANLIB_AFTER_COPYING := true
-       PRE_LION_DYNAMIC_LINKER_OPTIONS := -Wl,-dynamic
-endif
 $(combo_2nd_arch_prefix)HOST_GLOBAL_ARFLAGS := cqs
 
 ############################################################
@@ -91,7 +85,7 @@ define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
         -Wl,-rpath,@loader_path/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
         -o $@ \
-        $(PRE_LION_DYNAMIC_LINKER_OPTIONS) -Wl,-headerpad_max_install_names \
+        -Wl,-headerpad_max_install_names \
         $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS) \
         $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
            $(PRIVATE_HOST_GLOBAL_LDFLAGS) \

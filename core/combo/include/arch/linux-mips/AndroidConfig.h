@@ -33,14 +33,9 @@
  */
 
 /*
- * Define this if you build against MSVCRT.DLL
- */
-/* #define HAVE_MS_C_RUNTIME */
-
-/*
  * Define if we have <malloc.h> header
  */
-#define HAVE_MALLOC_H
+#define HAVE_MALLOC_H 1
 
 /*
  * Define if we're running on *our* linux on device or emulator.
@@ -53,18 +48,8 @@
 #define OS_PATH_SEPARATOR '/'
 
 /*
- * Define if the strlcpy() function exists on the system.
- */
-#define HAVE_STRLCPY 1
-
-/*
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1
-
-/*
- * Define if printf() supports %zd for size_t arguments
- */
-#define HAVE_PRINTF_ZD 1
 
 #endif /* _ANDROID_CONFIG_H */

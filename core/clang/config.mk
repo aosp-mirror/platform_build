@@ -8,6 +8,7 @@ endif
 
 LLVM_PREBUILTS_VERSION := 3.6
 LLVM_PREBUILTS_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/$(LLVM_PREBUILTS_VERSION)/bin
+LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib/clang/$(LLVM_PREBUILTS_VERSION)/lib/linux/
 
 CLANG := $(LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
 CLANG_CXX := $(LLVM_PREBUILTS_PATH)/clang++$(BUILD_EXECUTABLE_SUFFIX)
@@ -43,6 +44,16 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
 CLANG_CONFIG_EXTRA_CFLAGS += \
   -Werror=int-conversion
 
+# Disable overly aggressive warning for macros defined with a leading underscore
+# This happens in AndroidConfig.h, which is included nearly everywhere.
+CLANG_CONFIG_EXTRA_CFLAGS += \
+  -Wno-reserved-id-macro
+
+# Disable overly aggressive warning for format strings.
+# Bug: 20148343
+CLANG_CONFIG_EXTRA_CFLAGS += \
+  -Wno-format-pedantic
+
 # Workaround for ccache with clang.
 # See http://petereisentraut.blogspot.com/2011/05/ccache-and-clang.html.
 CLANG_CONFIG_EXTRA_CFLAGS += \
@@ -62,14 +73,18 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -funswitch-loops \
   -Wmaybe-uninitialized \
   -Wno-error=maybe-uninitialized \
+  -Wno-error=unused-but-set-parameter \
+  -Wno-error=unused-but-set-variable \
   -Wno-free-nonheap-object \
   -Wno-literal-suffix \
   -Wno-maybe-uninitialized \
   -Wno-old-style-declaration \
   -Wno-psabi \
-  -Wno-unused-but-set-variable \
   -Wno-unused-but-set-parameter \
-  -Wno-unused-local-typedefs
+  -Wno-unused-but-set-variable \
+  -Wno-unused-local-typedefs \
+  -Wunused-but-set-parameter \
+  -Wunused-but-set-variable
 
 # Clang flags for all host rules
 CLANG_CONFIG_HOST_EXTRA_ASFLAGS :=
@@ -82,6 +97,32 @@ CLANG_CONFIG_TARGET_EXTRA_ASFLAGS :=
 CLANG_CONFIG_TARGET_EXTRA_CFLAGS := -nostdlibinc
 CLANG_CONFIG_TARGET_EXTRA_CPPFLAGS := -nostdlibinc
 CLANG_CONFIG_TARGET_EXTRA_LDFLAGS :=
+
+CLANG_DEFAULT_UB_CHECKS := \
+  bool \
+  integer-divide-by-zero \
+  return \
+  returns-nonnull-attribute \
+  shift-exponent \
+  unreachable \
+  vla-bound \
+
+# TODO(danalbert): The following checks currently have compiler performance
+# issues.
+# CLANG_DEFAULT_UB_CHECKS += alignment
+# CLANG_DEFAULT_UB_CHECKS += bounds
+# CLANG_DEFAULT_UB_CHECKS += enum
+# CLANG_DEFAULT_UB_CHECKS += float-cast-overflow
+# CLANG_DEFAULT_UB_CHECKS += float-divide-by-zero
+# CLANG_DEFAULT_UB_CHECKS += nonnull-attribute
+# CLANG_DEFAULT_UB_CHECKS += null
+# CLANG_DEFAULT_UB_CHECKS += shift-base
+# CLANG_DEFAULT_UB_CHECKS += signed-integer-overflow
+
+# TODO(danalbert): Fix UB in libc++'s __tree so we can turn this on.
+# https://llvm.org/PR19302
+# http://reviews.llvm.org/D6974
+# CLANG_DEFAULT_UB_CHECKS += object-size
 
 # HOST config
 clang_2nd_arch_prefix :=
@@ -103,12 +144,10 @@ clang_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/clang/TARGET_$(TARGET_2ND_ARCH).mk
 endif
 
-# Address sanitizer clang config
-ADDRESS_SANITIZER_RUNTIME_LIBRARY := libclang_rt.asan_$(TARGET_ARCH)_android
-ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -fsanitize=address -fno-omit-frame-pointer
+ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -fno-omit-frame-pointer
 ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS := -Wl,-u,__asan_preinit
 
-ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES := libdl $(ADDRESS_SANITIZER_RUNTIME_LIBRARY)
+ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES := libdl
 ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES := libasan
 
 # This allows us to use the superset of functionality that compiler-rt

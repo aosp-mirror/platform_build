@@ -717,6 +717,13 @@ $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),$(hide) echo "verit
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),$(hide) echo "verity_signer_cmd=$(VERITY_SIGNER)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION),$(hide) echo "system_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION),$(hide) echo "vendor_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_key=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "futility=$(FUTILITY)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_signer_cmd=$(VBOOT_SIGNER)" >> $(1))
+$(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
+    $(hide) echo "system_root_image=true" >> $(1);\
+    echo "ramdisk_dir=$(TARGET_ROOT_OUT)" >> $(1))
 $(if $(2),$(hide) $(foreach kv,$(2),echo "$(kv)" >> $(1);))
 endef
 
@@ -759,7 +766,7 @@ endif
 # can be overridden for a particular device by putting a font.png in
 # its private recovery resources.
 
-ifneq (,$(filter xxxhdpi xxhdpi xhdpi,$(recovery_density)))
+ifneq (,$(filter xxxhdpi 560dpi xxhdpi 400dpi xhdpi,$(recovery_density)))
 recovery_font := $(call include-path-for, recovery)/fonts/18x32.png
 else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
@@ -831,7 +838,7 @@ define build-recoveryimage-target
   $(hide) cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
   $(hide) rm -f $(TARGET_RECOVERY_ROOT_OUT)/sepolicy
   $(hide) cp -f $(recovery_sepolicy) $(TARGET_RECOVERY_ROOT_OUT)/sepolicy
-  $(hide) cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/ | true # Ignore error when the src file doesn't exist.
+  $(hide) cp $(TARGET_ROOT_OUT)/init.recovery.*.rc $(TARGET_RECOVERY_ROOT_OUT)/ || true # Ignore error when the src file doesn't exist.
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
   $(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
   $(hide) cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
@@ -844,9 +851,13 @@ define build-recoveryimage-target
   $(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
           > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(hide) $(MKBOOTFS) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
-  $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1)
+  $(if $(filter true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)), \
+    $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1).unsigned, \
+    $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1))
   $(if $(filter true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY)),\
     $(BOOT_SIGNER) /recovery $(1) $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).pk8 $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY).x509.pem $(1))
+  $(if $(filter true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)), \
+    $(VBOOT_SIGNER) $(FUTILITY) $(1).unsigned $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(1).keyblock $(1))
   $(hide) $(call assert-max-image-size,$(1),$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))
   @echo ----- Made recovery image: $(1) --------
 endef
@@ -1240,51 +1251,50 @@ endif
 # host tools needed to build dist and OTA packages
 
 DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
-	  $(HOST_OUT_EXECUTABLES)/mkbootfs \
-	  $(HOST_OUT_EXECUTABLES)/mkbootimg \
-	  $(HOST_OUT_EXECUTABLES)/fs_config \
-	  $(HOST_OUT_EXECUTABLES)/zipalign \
-	  $(HOST_OUT_EXECUTABLES)/bsdiff \
-	  $(HOST_OUT_EXECUTABLES)/imgdiff \
-	  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
-	  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
-	  $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
-	  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
-	  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
-	  $(HOST_OUT_EXECUTABLES)/simg2img \
-	  $(HOST_OUT_EXECUTABLES)/e2fsck \
-	  $(HOST_OUT_EXECUTABLES)/build_verity_tree \
-	  $(HOST_OUT_EXECUTABLES)/verity_signer \
-	  $(HOST_OUT_EXECUTABLES)/append2simg \
-	  $(HOST_OUT_EXECUTABLES)/boot_signer
+  $(HOST_OUT_EXECUTABLES)/mkbootfs \
+  $(HOST_OUT_EXECUTABLES)/mkbootimg \
+  $(HOST_OUT_EXECUTABLES)/fs_config \
+  $(HOST_OUT_EXECUTABLES)/zipalign \
+  $(HOST_OUT_EXECUTABLES)/bsdiff \
+  $(HOST_OUT_EXECUTABLES)/imgdiff \
+  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
+  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
+  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
+  $(HOST_OUT_EXECUTABLES)/simg2img \
+  $(HOST_OUT_EXECUTABLES)/e2fsck \
+  $(HOST_OUT_EXECUTABLES)/build_verity_tree \
+  $(HOST_OUT_EXECUTABLES)/verity_signer \
+  $(HOST_OUT_EXECUTABLES)/append2simg \
+  $(HOST_OUT_EXECUTABLES)/boot_signer
+
+# Shared libraries.
+DISTTOOLS += \
+  $(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/liblog$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libcutils$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libselinux$(HOST_SHLIB_SUFFIX)
 
 OTATOOLS := $(DISTTOOLS) \
-	  $(HOST_OUT_EXECUTABLES)/aapt
+  $(HOST_OUT_EXECUTABLES)/aapt
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
 
 BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
-$(BUILT_OTATOOLS_PACKAGE): \
-	intermediate := $(call intermediates-dir-for,PACKAGING,otatools)
-$(BUILT_OTATOOLS_PACKAGE): \
-	zip_root := $(intermediate)/otatools
+$(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
 
-otatools_lib_path := $(notdir $(HOST_OUT_SHARED_LIBRARIES))
-$(BUILT_OTATOOLS_PACKAGE): \
-		$(OTATOOLS) \
-		$(HOST_OUT_SHARED_LIBRARIES)/libc++.so
+$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	@echo "Package OTA tools: $@"
 	$(hide) rm -rf $@ $(zip_root)
-	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools $(zip_root)/$(otatools_lib_path)
-	$(hide) $(ACP) -p $(OTATOOLS) $(zip_root)/bin
-	$(hide) mv $(zip_root)/bin/*.jar $(zip_root)/framework/
-	$(hide) $(ACP) $(HOST_OUT_SHARED_LIBRARIES)/libc++.so $(zip_root)/$(otatools_lib_path)
+	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
+	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
-	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) bin framework releasetools $(otatools_lib_path))
+	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) *)
 	$(hide) zip -qry $(abspath $@) build/target/product/security/
-	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem -o -name oem.prop | xargs zip -qry $(abspath $@)
+	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem -o -name oem.prop | xargs zip -qry $(abspath $@)>/dev/null || true
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
@@ -1417,7 +1427,7 @@ endif
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) $(ACP) $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
 	$(hide) if test -e $(tool_extensions)/releasetools.py; then $(ACP) $(tool_extensions)/releasetools.py $(zip_root)/META/; fi
-	$(hide)	echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
+	$(hide) echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
 	$(hide) echo "recovery_api_version=$(PRIVATE_RECOVERY_API_VERSION)" > $(zip_root)/META/misc_info.txt
 	$(hide) echo "fstab_version=$(PRIVATE_RECOVERY_FSTAB_VERSION)" >> $(zip_root)/META/misc_info.txt
 ifdef BOARD_FLASH_BLOCK_SIZE
@@ -1450,7 +1460,7 @@ ifneq ($(OEM_THUMBPRINT_PROPERTIES),)
 	$(hide) echo "oem_fingerprint_properties=$(OEM_THUMBPRINT_PROPERTIES)" >> $(zip_root)/META/misc_info.txt
 endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
-	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    ./build/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
@@ -1461,7 +1471,7 @@ endif
 	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="BOOT/RAMDISK/" } /^BOOT\/RAMDISK\// {print $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -S $(SELINUX_FC) > $(zip_root)/META/boot_filesystem_config.txt
 	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -S $(SELINUX_FC) > $(zip_root)/META/recovery_filesystem_config.txt
 	$(hide) (cd $(zip_root) && zip -q ../$(notdir $@) META/*filesystem_config.txt)
-	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    ./build/tools/releasetools/add_img_to_target_files -p $(HOST_OUT) $@
 
 .PHONY: target-files-package

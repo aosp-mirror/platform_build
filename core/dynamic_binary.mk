@@ -39,30 +39,6 @@ include $(BUILD_SYSTEM)/binary.mk
 ###################################
 
 ###########################################################
-## Compress
-###########################################################
-compress_input := $(linked_module)
-
-ifeq ($(strip $(LOCAL_COMPRESS_MODULE_SYMBOLS)),)
-  LOCAL_COMPRESS_MODULE_SYMBOLS := $(strip $(TARGET_COMPRESS_MODULE_SYMBOLS))
-endif
-
-ifeq ($(LOCAL_COMPRESS_MODULE_SYMBOLS),true)
-$(error Symbol compression not yet supported.)
-compress_output := $(intermediates)/COMPRESSED-$(my_built_module_stem)
-
-#TODO: write the real $(STRIPPER) rule.
-#TODO: define a rule to build TARGET_SYMBOL_FILTER_FILE, and
-#      make it depend on ALL_ORIGINAL_DYNAMIC_BINARIES.
-$(compress_output): $(compress_input) $(TARGET_SYMBOL_FILTER_FILE) | $(ACP)
-	@echo "target Compress Symbols: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
-else
-# Skip this step.
-compress_output := $(compress_input)
-endif
-
-###########################################################
 ## Store a copy with symbols for symbolic debugging
 ###########################################################
 ifeq ($(LOCAL_UNSTRIPPED_PATH),)
@@ -70,7 +46,7 @@ my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(m
 else
 my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
-symbolic_input := $(compress_output)
+symbolic_input := $(linked_module)
 symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
 $(symbolic_output) : $(symbolic_input) | $(ACP)
 	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
@@ -81,11 +57,11 @@ $(symbolic_output) : $(symbolic_input) | $(ACP)
 ## Strip
 ###########################################################
 strip_input := $(symbolic_output)
-strip_output := $(LOCAL_BUILT_MODULE)
+strip_output := $(intermediates)/STRIPPED/$(my_built_module_stem)
 
 my_strip_module := $(LOCAL_STRIP_MODULE)
 ifeq ($(my_strip_module),)
-  my_strip_module := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP_MODULE)
+  my_strip_module := true
 endif
 
 $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
@@ -131,8 +107,39 @@ $(strip_output): $(strip_input)
 endif
 endif # my_strip_module
 
+###########################################################
+## Pack relocation tables
+###########################################################
+relocation_packer_input := $(strip_output)
+relocation_packer_output := $(LOCAL_BUILT_MODULE)
+
+my_pack_module_relocations := $(LOCAL_PACK_MODULE_RELOCATIONS)
+
+ifeq ($(my_pack_module_relocations),)
+  my_pack_module_relocations := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PACK_MODULE_RELOCATIONS)
+endif
+
+# Do not pack relocations for static executables.
+ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+  my_pack_module_relocations := false
+endif
+
+# TODO (dimitry): Relocation packer is not yet available for darwin
+ifneq ($(HOST_OS),linux)
+  my_pack_module_relocations := false
+endif
+
+ifeq (true,$(my_pack_module_relocations))
+# Pack relocations
+$(relocation_packer_output): $(relocation_packer_input) | $(ACP)
+	$(pack-elf-relocations)
+else
+$(relocation_packer_output): $(relocation_packer_input) | $(ACP)
+	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
+	$(copy-file-to-target)
+endif
 
 $(cleantarget): PRIVATE_CLEAN_FILES += \
     $(linked_module) \
     $(symbolic_output) \
-    $(compress_output)
+    $(strip_output)

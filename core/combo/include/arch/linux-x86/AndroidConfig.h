@@ -43,7 +43,7 @@
 /*
  * Define if we have <malloc.h> header
  */
-#define HAVE_MALLOC_H
+#define HAVE_MALLOC_H 1
 
 /*
  * The default path separator for the platform
@@ -54,10 +54,5 @@
  * Define if <stdint.h> exists.
  */
 #define HAVE_STDINT_H 1
-
-/*
- * Define if printf() supports %zd for size_t arguments
- */
-#define HAVE_PRINTF_ZD 1
 
 #endif /*_ANDROID_CONFIG_H*/

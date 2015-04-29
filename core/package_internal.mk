@@ -369,7 +369,6 @@ $(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
 # PRIVATE_JNI_SHARED_LIBRARIES_ABI is a list of ABI names.
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abis)
-$(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES_ZIP_OPTIONS := $(LOCAL_JNI_SHARED_LIBRARIES_ZIP_OPTIONS)
 $(LOCAL_BUILT_MODULE): PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES := $(LOCAL_PAGE_ALIGN_JNI_SHARED_LIBRARIES)
 ifneq ($(TARGET_BUILD_APPS),)
     # Include all resources for unbundled apps.
@@ -396,15 +395,18 @@ $(LOCAL_BUILT_MODULE): $(all_res_assets) $(jni_shared_libraries) $(full_android_
 ifneq ($(jni_shared_libraries),)
 	$(add-jni-shared-libs-to-package)
 endif
-ifneq ($(full_classes_jar),)
+ifeq ($(full_classes_jar),)
+# We don't build jar, need to add the Java resources here.
+	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
+else
 	$(add-dex-to-package)
 endif
-	$(sign-package)
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
 endif
+	$(sign-package)
 	@# Alignment must happen after all other zip operations.
 	$(align-package)
 
