@@ -12,6 +12,7 @@ CLANG_CONFIG_mips_UNKNOWN_CFLAGS := \
   -frerun-cse-after-loop \
   -frename-registers \
   -msynci \
+  -mno-synci \
   -mno-fused-madd
 
 # We don't have any mips flags to substitute yet.
