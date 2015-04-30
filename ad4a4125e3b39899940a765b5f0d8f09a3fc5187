@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90fd66eb_4bb3117b",
+        "filename": "core/clang/mips.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-04-30T00:32:37Z",
+      "side": 1,
+      "message": "Rather than placing this in the main unknown section here, can you do a \"+\u003d\" later on along with a comment that has a bug # for tracking this?",
+      "revId": "ad4a4125e3b39899940a765b5f0d8f09a3fc5187",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70f8f2fa_f08ac66d",
+        "filename": "core/clang/mips64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-04-30T00:32:37Z",
+      "side": 1,
+      "message": "Same comment about just making this a separate addition with a bug number.",
+      "revId": "ad4a4125e3b39899940a765b5f0d8f09a3fc5187",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
