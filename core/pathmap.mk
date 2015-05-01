@@ -113,7 +113,6 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/cardview \
         v7/mediarouter \
         v7/palette \
-        v7/recyclerview \
         v8/renderscript \
         v13 \
         v17/leanback \
@@ -132,13 +131,15 @@ FRAMEWORKS_MULTIDEX_SUBDIRS := \
 #
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
-	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS))
+	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)) \
+	frameworks/support/v7/recyclerview/src
 
 #
 # A list of support library modules.
 #
 FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
     $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir))) \
+    android-support-v7-recyclerview \
     android-support-multidex \
     android-support-multidex-instrumentation
 
