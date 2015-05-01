@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d078be71_80c15730",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-05-01T23:00:06Z",
+      "side": 1,
+      "message": "add this separately below, with a comment and a link to the bug?",
+      "revId": "e070e6baaf3639bf2a7d1853c81d032b88636abc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "105fb6fa_a76674d6",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-05-01T23:00:06Z",
+      "side": 1,
+      "message": "does the bug exist on x86-64?",
+      "revId": "e070e6baaf3639bf2a7d1853c81d032b88636abc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
