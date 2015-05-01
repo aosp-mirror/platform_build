@@ -2029,8 +2029,7 @@ $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -r \
-    $(if $(filter true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-0,) $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -r -0 $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
@@ -2076,21 +2075,22 @@ endef
 define align-package
 $(hide) mv $@ $@.unaligned
 $(hide) $(ZIPALIGN) \
-    -f \
-    $(if $(filter true, $(PRIVATE_PAGE_ALIGN_JNI_SHARED_LIBRARIES)),-p,) \
+    -f -p \
     4 \
     $@.unaligned $@.aligned
 $(hide) mv $@.aligned $@
 endef
 
+# Uncompress shared libraries embedded in an apk.
+#
 define uncompress-shared-libs
-$(hide) rm -rf $(dir $@)/tmpworkdir
-$(hide) mv $@ $@.compressed
-$(hide) mkdir $(dir $@)/tmpworkdir
-$(hide) unzip $@.compressed 'lib/*.so' -d $(dir $@)/tmpworkdir
-$(hide) ( cd $(dir $@)/tmpworkdir && zip -D -r -0 ../$(notdir $@).compressed lib )
-$(hide) mv $@.compressed $@
-$(hide) rm -rf $(dir $@)/tmpworkdir
+$(hide) if unzip -l $@ $(PRIVATE_EMBEDDED_JNI_LIBS) >/dev/null ; then \
+  rm -rf $(dir $@)uncompressedlibs && mkdir $(dir $@)uncompressedlibs; \
+  unzip $@ $(PRIVATE_EMBEDDED_JNI_LIBS) -d $(dir $@)uncompressedlibs && \
+  zip -d $@ 'lib/*.so' && \
+  ( cd $(dir $@)uncompressedlibs && zip -D -r -0 ../$(notdir $@) lib ) && \
+  rm -rf $(dir $@)uncompressedlibs; \
+  fi
 endef
 
 define install-dex-debug
