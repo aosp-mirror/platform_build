@@ -33,6 +33,24 @@
       "revId": "e070e6baaf3639bf2a7d1853c81d032b88636abc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f06142bc_20532bc1",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-05-02T00:00:52Z",
+      "side": 1,
+      "message": "Yes. I saw the devirtualized call in -m64 test case output too.",
+      "parentUuid": "105fb6fa_a76674d6",
+      "revId": "e070e6baaf3639bf2a7d1853c81d032b88636abc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
