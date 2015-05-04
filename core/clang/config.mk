@@ -68,10 +68,13 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -finline-functions \
   -finline-limit=64 \
   -fno-canonical-system-headers \
+  -Wno-clobbered \
+  -fno-devirtualize \
   -fno-tree-sra \
   -fprefetch-loop-arrays \
   -funswitch-loops \
   -Wmaybe-uninitialized \
+  -Wno-error=clobbered \
   -Wno-error=maybe-uninitialized \
   -Wno-error=unused-but-set-parameter \
   -Wno-error=unused-but-set-variable \
