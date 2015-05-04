@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7042b231_6ab352c9",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-05-04T21:06:46Z",
+      "side": 1,
+      "message": "gcc 4.9 gives new -Wclobbered in other modules that we might need to ignore, if the source code is not fixed. So, here for clang we need to filter out this flag.",
+      "parentUuid": "102df676_4ec307a7",
+      "revId": "8a71b569954f361cb3270a1e02cdf299e313cb24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7042b231_20b9702b",
         "filename": "core/combo/TARGET_linux-x86.mk",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2015-05-04T20:31:10Z",
       "side": 1,
       "message": "Typo.",
+      "revId": "8a71b569954f361cb3270a1e02cdf299e313cb24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "105fb6fa_09d3aed9",
+        "filename": "core/combo/TARGET_linux-x86_64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-05-04T21:06:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7042b231_f7facb88",
       "revId": "8a71b569954f361cb3270a1e02cdf299e313cb24",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
