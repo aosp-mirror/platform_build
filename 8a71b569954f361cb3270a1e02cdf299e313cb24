@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7042b231_20b9702b",
+        "filename": "core/combo/TARGET_linux-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-05-04T19:37:21Z",
+      "side": 1,
+      "message": "virtualization",
+      "revId": "8a71b569954f361cb3270a1e02cdf299e313cb24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
