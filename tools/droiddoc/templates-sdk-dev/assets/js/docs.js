@@ -19,8 +19,18 @@ $.ajaxSetup({
 
 /******  ON LOAD SET UP STUFF *********/
 
-var navBarIsFixed = false;
 $(document).ready(function() {
+
+  // show lang dialog if the URL includes /intl/
+  //if (location.pathname.substring(0,6) == "/intl/") {
+  //  var lang = location.pathname.split('/')[2];
+   // if (lang != getLangPref()) {
+   //   $("#langMessage a.yes").attr("onclick","changeLangPref('" + lang
+   //       + "', true); $('#langMessage').hide(); return false;");
+  //    $("#langMessage .lang." + lang).show();
+   //   $("#langMessage").show();
+   // }
+  //}
 
   // load json file for JD doc search suggestions
   $.getScript(toRoot + 'jd_lists_unified.js');
@@ -64,7 +74,12 @@ $(document).ready(function() {
   $('.scroll-pane').jScrollPane( {verticalGutter:0} );
 
   // add HRs below all H2s (except for a few other h2 variants)
-  $('h2').not('#qv h2').not('#tb h2').not('.sidebox h2').not('#devdoc-nav h2').not('h2.norule').css({marginBottom:0}).after('<hr/>');
+  $('h2').not('#qv h2')
+         .not('#tb h2')
+         .not('.sidebox h2')
+         .not('#devdoc-nav h2')
+         .not('h2.norule').css({marginBottom:0})
+         .after('<hr/>');
 
   // set up the search close button
   $('.search .close').click(function() {
@@ -169,6 +184,18 @@ $(document).ready(function() {
     $("#header li.design a").addClass("selected");
     $("#sticky-header").addClass("design");
 
+  // highlight About tabs
+  } else if ($("body").hasClass("about")) {
+    var rootDir = pagePathOriginal.substring(1,pagePathOriginal.indexOf('/', 1));
+    if (rootDir == "about") {
+      $("#nav-x li.about a").addClass("selected");
+    } else if (rootDir == "wear") {
+      $("#nav-x li.wear a").addClass("selected");
+    } else if (rootDir == "tv") {
+      $("#nav-x li.tv a").addClass("selected");
+    } else if (rootDir == "auto") {
+      $("#nav-x li.auto a").addClass("selected");
+    }
   // highlight Develop tab
   } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
     $("#header li.develop a").addClass("selected");
@@ -207,6 +234,8 @@ $(document).ready(function() {
       $("#nav-x li.engage a").addClass("selected");
     } else if (secondFrag == "monetize") {
       $("#nav-x li.monetize a").addClass("selected");
+    } else if (secondFrag == "analyze") {
+      $("#nav-x li.analyze a").addClass("selected");
     } else if (secondFrag == "tools") {
       $("#nav-x li.disttools a").addClass("selected");
     } else if (secondFrag == "stories") {
@@ -218,7 +247,7 @@ $(document).ready(function() {
     }
   } else if ($("body").hasClass("about")) {
     $("#sticky-header").addClass("about");
-  } 
+  }
 
   // set global variable so we can highlight the sidenav a bit later (such as for google reference)
   // and highlight the sidenav
@@ -239,7 +268,7 @@ $(document).ready(function() {
     var crossBoundaries = ($("body.design").length > 0) || ($("body.guide").length > 0) ? true :
 false; // navigate across topic boundaries only in design docs
     if ($prevListItem.length) {
-      if ($prevListItem.hasClass('nav-section')) {
+      if ($prevListItem.hasClass('nav-section') || crossBoundaries) {
         // jump to last topic of previous section
         $prevLink = $prevListItem.find('a:last');
       } else if (!$selListItem.hasClass('nav-section')) {
@@ -262,7 +291,6 @@ false; // navigate across topic boundaries only in design docs
     // set up next links
     var $nextLink = [];
     var startClass = false;
-    var training = $(".next-class-link").length; // decides whether to provide "next class" link
     var isCrossingBoundary = false;
 
     if ($selListItem.hasClass('nav-section') && $selListItem.children('div.empty').length == 0) {
@@ -289,13 +317,15 @@ false; // navigate across topic boundaries only in design docs
       if ($nextLink.length == 0) {
         isCrossingBoundary = true;
         // no more topics in this section, jump to the first topic in the next section
-        $nextLink = $selListItem.parents('li:eq(0)').next('li.nav-section').find('a:eq(0)');
+        $nextLink = $selListItem.parents('li:eq(0)').next('li').find('a:eq(0)');
         if (!$nextLink.length) {  // Go up another layer to look for next page (lesson > class > course)
           $nextLink = $selListItem.parents('li:eq(1)').next('li.nav-section').find('a:eq(0)');
           if ($nextLink.length == 0) {
             // if that doesn't work, we're at the end of the list, so disable NEXT link
             $('.next-page-link').attr('href','').addClass("disabled")
                                 .click(function() { return false; });
+            // and completely hide the one in the footer
+            $('.content-footer .next-page-link').hide();
           }
         }
       }
@@ -314,13 +344,19 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link').attr('href','')
                           .removeClass("hide").addClass("disabled")
                           .click(function() { return false; });
+      // and completely hide the one in the footer
+      $('.content-footer .next-page-link').hide();
       if ($nextLink.length) {
         $('.next-class-link').attr('href',$nextLink.attr('href'))
-                             .removeClass("hide").append($nextLink.html());
+                             .removeClass("hide")
+                             .append(": " + $nextLink.html());
         $('.next-class-link').find('.new').empty();
       }
     } else {
-      $('.next-page-link').attr('href', $nextLink.attr('href')).removeClass("hide");
+      $('.next-page-link').attr('href', $nextLink.attr('href'))
+                          .removeClass("hide");
+      // for the footer link, also add the next page title
+      $('.content-footer .next-page-link').append(": " + $nextLink.html());
     }
 
     if (!startClass && $prevLink.length) {
@@ -332,14 +368,6 @@ false; // navigate across topic boundaries only in design docs
       }
     }
 
-    // If this is a training 'article', there should be no prev/next nav
-    // ... if the grandparent is the "nav" ... and it has no child list items...
-    if (training && $selListItem.parents('ul').eq(1).is('[id="nav"]') &&
-        !$selListItem.find('li').length) {
-      $('.next-page-link,.prev-page-link').attr('href','').addClass("disabled")
-                          .click(function() { return false; });
-    }
-
   }
 
 
@@ -347,7 +375,20 @@ false; // navigate across topic boundaries only in design docs
   // Set up the course landing pages for Training with class names and descriptions
   if ($('body.trainingcourse').length) {
     var $classLinks = $selListItem.find('ul li a').not('#nav .nav-section .nav-section ul a');
-    var $classDescriptions = $classLinks.attr('description');
+
+    // create an array for all the class descriptions
+    var $classDescriptions = new Array($classLinks.length);
+    var lang = getLangPref();
+    $classLinks.each(function(index) {
+      var langDescr = $(this).attr(lang + "-description");
+      if (typeof langDescr !== 'undefined' && langDescr !== false) {
+        // if there's a class description in the selected language, use that
+        $classDescriptions[index] = langDescr;
+      } else {
+        // otherwise, use the default english description
+        $classDescriptions[index] = $(this).attr("description");
+      }
+    });
 
     var $olClasses  = $('<ol class="class-list"></ol>');
     var $liClass;
@@ -359,7 +400,7 @@ false; // navigate across topic boundaries only in design docs
     $classLinks.each(function(index) {
       $liClass  = $('<li></li>');
       $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2>' + $(this).html()+'</h2><span></span></a>');
-      $pSummary = $('<p class="description">' + $(this).attr('description') + '</p>');
+      $pSummary = $('<p class="description">' + $classDescriptions[index] + '</p>');
 
       $olLessons  = $('<ol class="lesson-list"></ol>');
 
@@ -398,7 +439,7 @@ false; // navigate across topic boundaries only in design docs
     var stylesheet = $('link[rel="stylesheet"][class="fullscreen"]');
     setNavBarLeftPos(); // do this even if sidenav isn't fixed because it could become fixed
     // make sidenav behave when resizing the window and side-scolling is a concern
-    if (navBarIsFixed) {
+    if (sticky) {
       if ((stylesheet.attr("disabled") == "disabled") || stylesheet.length == 0) {
         updateSideNavPosition();
       } else {
@@ -482,7 +523,11 @@ false; // navigate across topic boundaries only in design docs
     }
   }
 
+  // Resize once loading is finished
   resizeNav();
+  // Check if there's an anchor that we need to scroll into view.
+  // A delay is needed, because some browsers do not immediately scroll down to the anchor
+  window.setTimeout(offsetScrollForSticky, 100);
 
   /* init the language selector based on user cookie for lang */
   loadLangPref();
@@ -515,8 +560,145 @@ false; // navigate across topic boundaries only in design docs
     cookiePath = "distribute_";
   }
 
+
+  /* setup shadowbox for any videos that want it */
+  var $videoLinks = $("a.video-shadowbox-button, a.notice-developers-video");
+  if ($videoLinks.length) {
+    // if there's at least one, add the shadowbox HTML to the body
+    $('body').prepend(
+'<div id="video-container">'+
+  '<div id="video-frame">'+
+    '<div class="video-close">'+
+      '<span id="icon-video-close" onclick="closeVideo()">&nbsp;</span>'+
+    '</div>'+
+    '<div id="youTubePlayer"></div>'+
+  '</div>'+
+'</div>');
+
+    // loads the IFrame Player API code asynchronously.
+    $.getScript("https://www.youtube.com/iframe_api");
+
+    $videoLinks.each(function() {
+      var videoId = $(this).attr('href').split('?v=')[1];
+      $(this).click(function(event) {
+        event.preventDefault();
+        startYouTubePlayer(videoId);
+      });
+    });
+  }
 });
 // END of the onload event
+
+
+var youTubePlayer;
+function onYouTubeIframeAPIReady() {
+}
+
+/* Returns the height the shadowbox video should be. It's based on the current
+   height of the "video-frame" element, which is 100% height for the window.
+   Then minus the margin so the video isn't actually the full window height. */
+function getVideoHeight() {
+  var frameHeight = $("#video-frame").height();
+  var marginTop = $("#video-frame").css('margin-top').split('px')[0];
+  return frameHeight - (marginTop * 2);
+}
+
+var mPlayerPaused = false;
+
+function startYouTubePlayer(videoId) {
+  $("#video-container").show();
+  $("#video-frame").show();
+  mPlayerPaused = false;
+
+  // compute the size of the player so it's centered in window
+  var maxWidth = 940;  // the width of the web site content
+  var videoAspect = .5625; // based on 1280x720 resolution
+  var maxHeight = maxWidth * videoAspect;
+  var videoHeight = getVideoHeight();
+  var videoWidth = videoHeight / videoAspect;
+  if (videoWidth > maxWidth) {
+    videoWidth = maxWidth;
+    videoHeight = maxHeight;
+  }
+  $("#video-frame").css('width', videoWidth);
+
+  // check if we've already created this player
+  if (youTubePlayer == null) {
+    // check if there's a start time specified
+    var idAndHash = videoId.split("#");
+    var startTime = 0;
+    if (idAndHash.length > 1) {
+      startTime = idAndHash[1].split("t=")[1] != undefined ? idAndHash[1].split("t=")[1] : 0;
+    }
+    // enable localized player
+    var lang = getLangPref();
+    var captionsOn = lang == 'en' ? 0 : 1;
+
+    youTubePlayer = new YT.Player('youTubePlayer', {
+      height: videoHeight,
+      width: videoWidth,
+      videoId: idAndHash[0],
+      playerVars: {start: startTime, hl: lang, cc_load_policy: captionsOn},
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  } else {
+    // reset the size in case the user adjusted the window since last play
+    youTubePlayer.setSize(videoWidth, videoHeight);
+    // if a video different from the one already playing was requested, cue it up
+    if (videoId != youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0]) {
+      youTubePlayer.cueVideoById(videoId);
+    }
+    youTubePlayer.playVideo();
+  }
+}
+
+function onPlayerReady(event) {
+  event.target.playVideo();
+  mPlayerPaused = false;
+}
+
+function closeVideo() {
+  try {
+    youTubePlayer.pauseVideo();
+  } catch(e) {
+  }
+  $("#video-container").fadeOut(200);
+}
+
+/* Track youtube playback for analytics */
+function onPlayerStateChange(event) {
+    // Video starts, send the video ID
+    if (event.data == YT.PlayerState.PLAYING) {
+      if (mPlayerPaused) {
+        ga('send', 'event', 'Videos', 'Resume',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0]);
+      } else {
+        // track the start playing event so we know from which page the video was selected
+        ga('send', 'event', 'Videos', 'Start: ' +
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            'on: ' + document.location.href);
+      }
+      mPlayerPaused = false;
+    }
+    // Video paused, send video ID and video elapsed time
+    if (event.data == YT.PlayerState.PAUSED) {
+      ga('send', 'event', 'Videos', 'Paused',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            youTubePlayer.getCurrentTime());
+      mPlayerPaused = true;
+    }
+    // Video finished, send video ID and video elapsed time
+    if (event.data == YT.PlayerState.ENDED) {
+      ga('send', 'event', 'Videos', 'Finished',
+            youTubePlayer.getVideoUrl().split('?v=')[1].split('&')[0].split('%')[0],
+            youTubePlayer.getCurrentTime());
+      mPlayerPaused = true;
+    }
+}
+
 
 
 function initExpandableNavItems(rootTag) {
@@ -626,7 +808,7 @@ function toggleFullscreen(enable) {
     setTimeout(updateSidenavFixedWidth,delay); // need to wait a moment for css to switch
     enabled = false;
   }
-  writeCookie("fullscreen", enabled, null, null);
+  writeCookie("fullscreen", enabled, null);
   setNavBarLeftPos();
   resizeNav(delay);
   updateSideNavPosition();
@@ -787,7 +969,7 @@ function reInitScrollbars() {
 function saveNavPanels() {
   var basePath = getBaseUri(location.pathname);
   var section = basePath.substring(1,basePath.indexOf("/",1));
-  writeCookie("height", resizePackagesNav.css("height"), section, null);
+  writeCookie("height", resizePackagesNav.css("height"), section);
 }
 
 
@@ -868,118 +1050,110 @@ function readCookie(cookie) {
   return 0;
 }
 
-function writeCookie(cookie, val, section, expiration) {
+function writeCookie(cookie, val, section) {
   if (val==undefined) return;
   section = section == null ? "_" : "_"+section+"_";
-  if (expiration == null) {
-    var date = new Date();
-    date.setTime(date.getTime()+(10*365*24*60*60*1000)); // default expiration is one week
-    expiration = date.toGMTString();
-  }
+  var age = 2*365*24*60*60; // set max-age to 2 years
   var cookieValue = cookie_namespace + section + cookie + "=" + val
-                    + "; expires=" + expiration+"; path=/";
+                    + "; max-age=" + age +"; path=/";
   document.cookie = cookieValue;
 }
 
 /* #########     END COOKIES!     ########## */
 
 
-
-
+var sticky = false;
 var stickyTop;
+var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
 /* Sets the vertical scoll position at which the sticky bar should appear.
    This method is called to reset the position when search results appear or hide */
 function setStickyTop() {
   stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
 }
 
+/*
+ * Displays sticky nav bar on pages when dac header scrolls out of view
+ */
+$(window).scroll(function(event) {
 
-/* 
- * Displays sticky nav bar on pages when dac header scrolls out of view 
+  setStickyTop();
+  var hiding = false;
+  var $stickyEl = $('#sticky-header');
+  var $menuEl = $('.menu-container');
+  // Exit if there's no sidenav
+  if ($('#side-nav').length == 0) return;
+  // Exit if the mouse target is a DIV, because that means the event is coming
+  // from a scrollable div and so there's no need to make adjustments to our layout
+  if ($(event.target).nodeName == "DIV") {
+    return;
+  }
+
+  var top = $(window).scrollTop();
+  // we set the navbar fixed when the scroll position is beyond the height of the site header...
+  var shouldBeSticky = top >= stickyTop;
+  // ... except if the document content is shorter than the sidenav height.
+  // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
+  if ($("#doc-col").height() < $("#side-nav").height()) {
+    shouldBeSticky = false;
+  }
+  // Account for horizontal scroll
+  var scrollLeft = $(window).scrollLeft();
+  // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
+  if (sticky && (scrollLeft != prevScrollLeft)) {
+    updateSideNavPosition();
+    prevScrollLeft = scrollLeft;
+  }
+
+  // Don't continue if the header is sufficently far away
+  // (to avoid intensive resizing that slows scrolling)
+  if (sticky == shouldBeSticky) {
+    return;
+  }
+
+  // If sticky header visible and position is now near top, hide sticky
+  if (sticky && !shouldBeSticky) {
+    sticky = false;
+    hiding = true;
+    // make the sidenav static again
+    $('#devdoc-nav')
+        .removeClass('fixed')
+        .css({'width':'auto','margin':''})
+        .prependTo('#side-nav');
+    // delay hide the sticky
+    $menuEl.removeClass('sticky-menu');
+    $stickyEl.fadeOut(250);
+    hiding = false;
+
+    // update the sidenaav position for side scrolling
+    updateSideNavPosition();
+  } else if (!sticky && shouldBeSticky) {
+    sticky = true;
+    $stickyEl.fadeIn(10);
+    $menuEl.addClass('sticky-menu');
+
+    // make the sidenav fixed
+    var width = $('#devdoc-nav').width();
+    $('#devdoc-nav')
+        .addClass('fixed')
+        .css({'width':width+'px'})
+        .prependTo('#body-content');
+
+    // update the sidenaav position for side scrolling
+    updateSideNavPosition();
+
+  } else if (hiding && top < 15) {
+    $menuEl.removeClass('sticky-menu');
+    $stickyEl.hide();
+    hiding = false;
+  }
+  resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
+});
+
+/*
+ * Manages secion card states and nav resize to conclude loading
  */
 (function() {
   $(document).ready(function() {
-
-    setStickyTop();
-    var sticky = false;
-    var hiding = false;
-    var $stickyEl = $('#sticky-header');
-    var $menuEl = $('.menu-container');
-
-    var prevScrollLeft = 0; // used to compare current position to previous position of horiz scroll
-
-    $(window).scroll(function() {
-      // Exit if there's no sidenav
-      if ($('#side-nav').length == 0) return;
-      // Exit if the mouse target is a DIV, because that means the event is coming
-      // from a scrollable div and so there's no need to make adjustments to our layout
-      if (event.target.nodeName == "DIV") {
-        return;
-      }
-
-
-      var top = $(window).scrollTop();
-      // we set the navbar fixed when the scroll position is beyond the height of the site header...
-      var shouldBeSticky = top >= stickyTop;
-      // ... except if the document content is shorter than the sidenav height.
-      // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
-      if ($("#doc-col").height() < $("#side-nav").height()) {
-        shouldBeSticky = false;
-      }
-
-      // Don't continue if the header is sufficently far away
-      // (to avoid intensive resizing that slows scrolling)
-      if (sticky && shouldBeSticky) {
-        return;
-      }
-
-      // Account for horizontal scroll
-      var scrollLeft = $(window).scrollLeft();
-      // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
-      if (navBarIsFixed && (scrollLeft != prevScrollLeft)) {
-        updateSideNavPosition();
-        prevScrollLeft = scrollLeft;
-      }
-
-      // If sticky header visible and position is now near top, hide sticky
-      if (sticky && !shouldBeSticky) {
-        sticky = false;
-        hiding = true;
-        // make the sidenav static again
-        $('#devdoc-nav')
-            .removeClass('fixed')
-            .css({'width':'auto','margin':''})
-            .prependTo('#side-nav');
-        // delay hide the sticky
-        $menuEl.removeClass('sticky-menu');
-        $stickyEl.fadeOut(250);
-        hiding = false;
-
-        // update the sidenaav position for side scrolling
-        updateSideNavPosition();
-      } else if (!sticky && shouldBeSticky) {
-        sticky = true;
-        $stickyEl.fadeIn(10);
-        $menuEl.addClass('sticky-menu');
-
-        // make the sidenav fixed
-        var width = $('#devdoc-nav').width();
-        $('#devdoc-nav')
-            .addClass('fixed')
-            .css({'width':width+'px'})
-            .prependTo('#body-content');
-
-        // update the sidenaav position for side scrolling
-        updateSideNavPosition();
-
-      } else if (hiding && top < 15) {
-        $menuEl.removeClass('sticky-menu');
-        $stickyEl.hide();
-        hiding = false;
-      }
-
-      resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
-    });
 
     // Stack hover states
     $('.section-card-menu').each(function(index, el) {
@@ -990,7 +1164,6 @@ function setStickyTop() {
       $cardInfo.css({position: 'absolute', bottom:'0px', left:'0px', right:'0px', overflow:'visible'});
     });
 
-    resizeNav();  // must resize once loading is finished
   });
 
 })();
@@ -1060,8 +1233,16 @@ function hideNestedItems(list, toggle) {
 }
 
 
+/* Call this to add listeners to a <select> element for Studio/Eclipse/Other docs */
+function setupIdeDocToggle() {
+  $( "select.ide" ).change(function() {
+    var selected = $(this).find("option:selected").attr("value");
+    $(".select-ide").hide();
+    $(".select-ide."+selected).show();
 
-
+    $("select.ide").val(selected);
+  });
+}
 
 
 
@@ -1114,9 +1295,7 @@ function swapNav() {
     nav_pref = NAV_PREF_TREE;
     init_default_navtree(toRoot);
   }
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  writeCookie("nav", nav_pref, "reference", date.toGMTString());
+  writeCookie("nav", nav_pref, "reference");
 
   $("#nav-panels").toggle();
   $("#panel-link").toggle();
@@ -1184,11 +1363,7 @@ function changeNavLang(lang) {
 }
 
 function changeLangPref(lang, submit) {
-  var date = new Date();
-  expires = date.toGMTString(date.setTime(date.getTime()+(10*365*24*60*60*1000)));
-  // keep this for 50 years
-  //alert("expires: " + expires)
-  writeCookie("pref_lang", lang, null, expires);
+  writeCookie("pref_lang", lang, null);
 
   //  #######  TODO:  Remove this condition once we're stable on devsite #######
   //  This condition is only needed if we still need to support legacy GAE server
@@ -1607,8 +1782,8 @@ var gDocsListLength = 0;
 
 function onSuggestionClick(link) {
   // When user clicks a suggested document, track it
-  _gaq.push(['_trackEvent', 'Suggestion Click', 'clicked: ' + $(link).text(),
-            'from: ' + $("#search_autocomplete").val()]);
+  ga('send', 'event', 'Suggestion Click', 'clicked: ' + $(link).attr('href'),
+                'query: ' + $("#search_autocomplete").val().toLowerCase());
 }
 
 function set_item_selected($li, selected)
@@ -1825,8 +2000,12 @@ function search_changed(e, kd, toroot)
             return false;
         }
     }
-    // Stop here if Google results are showing
+    // If Google results are showing, return true to allow ajax search to execute
     else if ($("#searchResults").is(":visible")) {
+        // Also, if search_results is scrolled out of view, scroll to top to make results visible
+        if ((sticky ) && (search.value != "")) {
+          $('body,html').animate({scrollTop:0}, '500', 'swing');
+        }
         return true;
     }
     // 38 UP ARROW
@@ -1949,7 +2128,7 @@ function search_changed(e, kd, toroot)
 
 
         // Search for matching JD docs
-        if (text.length >= 3) {
+        if (text.length >= 2) {
           // Regex to match only the beginning of a word
           var textRegex = new RegExp("\\b" + text.toLowerCase(), "g");
 
@@ -2496,8 +2675,29 @@ google.setOnLoadCallback(function(){
   }
 }, true);
 
+/* Adjust the scroll position to account for sticky header, only if the hash matches an id.
+   This does not handle <a name=""> tags. Some CSS fixes those, but only for reference docs. */
+function offsetScrollForSticky() {
+  // Ignore if there's no search bar (some special pages have no header)
+  if ($("#search-container").length < 1) return;
+
+  var hash = escape(location.hash.substr(1));
+  var $matchingElement = $("#"+hash);
+  // Sanity check that there's an element with that ID on the page
+  if ($matchingElement.length) {
+    // If the position of the target element is near the top of the page (<20px, where we expect it
+    // to be because we need to move it down 60px to become in view), then move it down 60px
+    if (Math.abs($matchingElement.offset().top - $(window).scrollTop()) < 20) {
+      $(window).scrollTop($(window).scrollTop() - 60);
+    }
+  }
+}
+
 // when an event on the browser history occurs (back, forward, load) requery hash and do search
 $(window).hashchange( function(){
+  // Ignore if there's no search bar (some special pages have no header)
+  if ($("#search-container").length < 1) return;
+
   // If the hash isn't a search query or there's an error in the query,
   // then adjust the scroll position to account for sticky header, then exit.
   if ((location.hash.indexOf("q=") == -1) || (query == "undefined")) {
@@ -2505,8 +2705,7 @@ $(window).hashchange( function(){
     if (!$("#searchResults").is(":hidden")) {
       hideResults();
     }
-    // Adjust the scroll position to account for sticky header
-    $(window).scrollTop($(window).scrollTop() - 60);
+    offsetScrollForSticky();
     return;
   }
 
@@ -2557,8 +2756,8 @@ function addResultClickListeners() {
   $("#searchResults a.gs-title").each(function(index, link) {
     // When user clicks enter for Google search results, track it
     $(link).click(function() {
-      _gaq.push(['_trackEvent', 'Google Click', 'clicked: ' + $(this).text(),
-                'from: ' + $("#search_autocomplete").val()]);
+      ga('send', 'event', 'Google Click', 'clicked: ' + $(this).attr('href'),
+                'query: ' + $("#search_autocomplete").val().toLowerCase());
     });
   });
 }
@@ -2621,7 +2820,7 @@ var maxLevel = 1;
   }
 
 function updateSidenavFixedWidth() {
-  if (!navBarIsFixed) return;
+  if (!sticky) return;
   $('#devdoc-nav').css({
     'width' : $('#side-nav').css('width'),
     'margin' : $('#side-nav').css('margin')
@@ -2632,7 +2831,7 @@ function updateSidenavFixedWidth() {
 }
 
 function updateSidenavFullscreenWidth() {
-  if (!navBarIsFixed) return;
+  if (!sticky) return;
   $('#devdoc-nav').css({
     'width' : $('#side-nav').css('width'),
     'margin' : $('#side-nav').css('margin')
@@ -2673,10 +2872,7 @@ function changeApiLevel() {
   selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
   toggleVisisbleApis(selectedLevel, "body");
 
-  var date = new Date();
-  date.setTime(date.getTime()+(10*365*24*60*60*1000)); // keep this for 10 years
-  var expiration = date.toGMTString();
-  writeCookie(API_LEVEL_COOKIE, selectedLevel, null, expiration);
+  writeCookie(API_LEVEL_COOKIE, selectedLevel, null);
 
   if (selectedLevel < minLevel) {
     var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
@@ -3349,7 +3545,7 @@ function showSamples() {
     showing lines that are cut off. This works with the css ellipsis
     classes to fade last text line and apply an ellipsis char. */
 
-    //card text currently uses 15px line height. 
+    //card text currently uses 15px line height.
     var lineHeight = 15;
     $('.card-info .text').ellipsisfade(lineHeight);
   });
@@ -3380,7 +3576,10 @@ function showSamples() {
       sortOrder: $widget.data('sortorder'),
       query: $widget.data('query'),
       section: $widget.data('section'),
-      sizeCols: sizeCols
+      sizeCols: sizeCols,
+      /* Added by LFL 6/6/14 */
+      resourceStyle: $widget.data('resourcestyle') || 'card',
+      stackSort: $widget.data('stacksort') || 'true'
     };
 
     // run the search for the set of resources to show
@@ -3392,9 +3591,13 @@ function showSamples() {
     } else if (isCarousel) {
       drawResourcesCarouselWidget($widget, opts, resources);
     } else if (isStack) {
-      var sections = buildSectionList(opts);
+      /* Looks like this got removed and is not used, so repurposing for the
+          homepage style layout.
+          Modified by LFL 6/6/14
+      */
+      //var sections = buildSectionList(opts);
       opts['numStacks'] = $widget.data('numstacks');
-      drawResourcesStackWidget($widget, opts, resources, sections);
+      drawResourcesStackWidget($widget, opts, resources/*, sections*/);
     }
   }
 
@@ -3413,10 +3616,8 @@ function showSamples() {
     var $ul = $('<ul>');
 
     for (var i = 0; i < resources.length; ++i) {
-      //keep url clean for matching and offline mode handling
-      var urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
       var $card = $('<a>')
-        .attr('href', urlPrefix + resources[i].url)
+        .attr('href', cleanUrl(resources[i].url))
         .decorateResourceCard(resources[i],plusone);
 
       $('<li>').css(css)
@@ -3435,7 +3636,9 @@ function showSamples() {
     });
   };
 
-  /* Initializes a Resource Card Stack Widget (column-based layout) */
+  /* Initializes a Resource Card Stack Widget (column-based layout)
+     Modified by LFL 6/6/14
+   */
   function drawResourcesStackWidget($widget, opts, resources, sections) {
     // Don't empty widget, grab all items inside since they will be the first
     // items stacked, followed by the resource query
@@ -3453,59 +3656,87 @@ function showSamples() {
     var sectionResources = [];
 
     // Extract any subsections that are actually resource cards
-    for (var i = 0; i < sections.length; ++i) {
-      if (!sections[i].sections || !sections[i].sections.length) {
-        //keep url clean for matching and offline mode handling
-        urlPrefix = sections[i].url.indexOf("//") > -1 ? "" : toRoot;
-        // Render it as a resource card
+    if (sections) {
+      for (var i = 0; i < sections.length; ++i) {
+        if (!sections[i].sections || !sections[i].sections.length) {
+          // Render it as a resource card
+          sectionResources.push(
+            $('<a>')
+              .addClass('resource-card section-card')
+              .attr('href', cleanUrl(sections[i].resource.url))
+              .decorateResourceCard(sections[i].resource,plusone)[0]
+          );
 
-        sectionResources.push(
-          $('<a>')
-            .addClass('resource-card section-card')
-            .attr('href', urlPrefix + sections[i].resource.url)
-            .decorateResourceCard(sections[i].resource,plusone)[0]
-        );
-
-      } else {
-        cards.push(
-          $('<div>')
-            .addClass('resource-card section-card-menu')
-            .decorateResourceSection(sections[i],plusone)[0]
-        );
+        } else {
+          cards.push(
+            $('<div>')
+              .addClass('resource-card section-card-menu')
+              .decorateResourceSection(sections[i],plusone)[0]
+          );
+        }
       }
     }
 
     cards = cards.concat(sectionResources);
 
     for (var i = 0; i < resources.length; ++i) {
-      //keep url clean for matching and offline mode handling
-      urlPrefix = resources[i].url.indexOf("//") > -1 ? "" : toRoot;
-      var $card = $('<a>')
-          .addClass('resource-card related-card')
-          .attr('href', urlPrefix + resources[i].url)
-          .decorateResourceCard(resources[i],plusone);
+      var $card = createResourceElement(resources[i], opts);
+
+      if (opts.resourceStyle.indexOf('related') > -1) {
+        $card.addClass('related-card');
+      }
 
       cards.push($card[0]);
     }
 
-    for (var i = 0; i < cards.length; ++i) {
-      // Find the stack with the shortest height, but give preference to
-      // left to right order.
-      var minHeight = $stacks[0].height();
-      var minIndex = 0;
+    if (opts.stackSort != 'false') {
+      for (var i = 0; i < cards.length; ++i) {
+        // Find the stack with the shortest height, but give preference to
+        // left to right order.
+        var minHeight = $stacks[0].height();
+        var minIndex = 0;
 
-      for (var j = 1; j < numStacks; ++j) {
-        var height = $stacks[j].height();
-        if (height < minHeight - 45) {
-          minHeight = height;
-          minIndex = j;
+        for (var j = 1; j < numStacks; ++j) {
+          var height = $stacks[j].height();
+          if (height < minHeight - 45) {
+            minHeight = height;
+            minIndex = j;
+          }
         }
-      }
 
-      $stacks[minIndex].append($(cards[i]));
+        $stacks[minIndex].append($(cards[i]));
+      }
     }
 
   };
+
+  /*
+    Create a resource card using the given resource object and a list of html
+     configured options. Returns a jquery object containing the element.
+  */
+  function createResourceElement(resource, opts, plusone) {
+    var $el;
+
+    // The difference here is that generic cards are not entirely clickable
+    // so its a div instead of an a tag, also the generic one is not given
+    // the resource-card class so it appears with a transparent background
+    // and can be styled in whatever way the css setup.
+    if (opts.resourceStyle == 'generic') {
+      $el = $('<div>')
+        .addClass('resource')
+        .attr('href', cleanUrl(resource.url))
+        .decorateResource(resource, opts);
+    } else {
+      var cls = 'resource resource-card';
+
+      $el = $('<a>')
+        .addClass(cls)
+        .attr('href', cleanUrl(resource.url))
+        .decorateResourceCard(resource, plusone);
+    }
+
+    return $el;
+  }
 
   /* Initializes a flow widget, see distribute.scss for generating accompanying css */
   function drawResourcesFlowWidget($widget, opts, resources) {
@@ -3517,7 +3748,6 @@ function showSamples() {
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
-      console.log("cardsize is " + cardSize);
       // Some card sizes do not get a plusone button, such as where space is constrained
       // or for cards commonly embedded in docs (to improve overall page speed).
       plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
@@ -3539,11 +3769,11 @@ function showSamples() {
       // Build each stack item or just a single item
       do {
         var resource = resources[i];
-        //keep url clean for matching and offline mode handling
-        urlPrefix = resource.url.indexOf("//") > -1 ? "" : toRoot;
-        var $card = $('<a>')
-            .addClass('resource-card resource-card-' + cardSize + ' resource-card-' + resource.type)
-            .attr('href', urlPrefix + resource.url);
+
+        var $card = createResourceElement(resources[i], opts, plusone);
+
+        $card.addClass('resource-card-' + cardSize +
+          ' resource-card-' + resource.type);
 
         if (isStack) {
           $card.addClass('resource-card-' + isStack[1] + 'x' + isStack[2]);
@@ -3555,8 +3785,7 @@ function showSamples() {
           stackCount = 0;
         }
 
-        $card.decorateResourceCard(resource,plusone)
-          .appendTo($stackDiv || $widget);
+        $card.appendTo($stackDiv || $widget);
 
       } while (++i < resources.length && stackCount > 0);
     }
@@ -3696,6 +3925,15 @@ function showSamples() {
     return true;
   }
 
+  function cleanUrl(url)
+  {
+    if (url && url.indexOf('//') === -1) {
+      url = toRoot + url;
+    }
+
+    return url;
+  }
+
 
   function parseResourceQuery(query) {
     // Parse query into array of expressions (expression e.g. 'tag:foo + type:video')
@@ -3743,41 +3981,55 @@ function showSamples() {
 })();
 
 (function($) {
+
+  /*
+    Utility method for creating dom for the description area of a card.
+    Used in decorateResourceCard and decorateResource.
+  */
+  function buildResourceCardDescription(resource, plusone) {
+    var $description = $('<div>').addClass('description ellipsis');
+
+    $description.append($('<div>').addClass('text').html(resource.summary));
+
+    if (resource.cta) {
+      $description.append($('<a>').addClass('cta').html(resource.cta));
+    }
+
+    if (plusone) {
+      var plusurl = resource.url.indexOf("//") > -1 ? resource.url :
+        "//developer.android.com/" + resource.url;
+
+      $description.append($('<div>').addClass('util')
+        .append($('<div>').addClass('g-plusone')
+          .attr('data-size', 'small')
+          .attr('data-align', 'right')
+          .attr('data-href', plusurl)));
+    }
+
+    return $description;
+  }
+
+
   /* Simple jquery function to create dom for a standard resource card */
   $.fn.decorateResourceCard = function(resource,plusone) {
     var section = resource.group || resource.type;
-    var imgUrl;
-    if (resource.image) {
-      //keep url clean for matching and offline mode handling
-      var urlPrefix = resource.image.indexOf("//") > -1 ? "" : toRoot;
-      imgUrl = urlPrefix + resource.image;
+    var imgUrl = resource.image ||
+      'assets/images/resource-card-default-android.jpg';
+
+    if (imgUrl.indexOf('//') === -1) {
+      imgUrl = toRoot + imgUrl;
     }
-    //add linkout logic here. check url or type, assign a class, map to css :after
-    $('<div>')
-        .addClass('card-bg')
-        .css('background-image', 'url(' + (imgUrl || toRoot + 'assets/images/resource-card-default-android.jpg') + ')')
+
+    $('<div>').addClass('card-bg')
+      .css('background-image', 'url(' + (imgUrl || toRoot +
+        'assets/images/resource-card-default-android.jpg') + ')')
       .appendTo(this);
-    if (!plusone) {
-      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
-        .append($('<div>').addClass('section').text(section))
-        .append($('<div>').addClass('title').html(resource.title))
-        .append($('<div>').addClass('description ellipsis')
-            .append($('<div>').addClass('text').html(resource.summary))
-          .append($('<div>').addClass('util')))
-          .appendTo(this);
-    } else {
-      $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
-        .append($('<div>').addClass('section').text(section))
-        .append($('<div>').addClass('title').html(resource.title))
-        .append($('<div>').addClass('description ellipsis')
-            .append($('<div>').addClass('text').html(resource.summary))
-          .append($('<div>').addClass('util')
-            .append($('<div>').addClass('g-plusone')
-              .attr('data-size', 'small')
-              .attr('data-align', 'right')
-              .attr('data-href', resource.url))))
-            .appendTo(this);
-    }
+
+    $('<div>').addClass('card-info' + (!resource.summary ? ' empty-desc' : ''))
+      .append($('<div>').addClass('section').text(section))
+      .append($('<div>').addClass('title').html(resource.title))
+      .append(buildResourceCardDescription(resource, plusone))
+      .appendTo(this);
 
     return this;
   };
@@ -3860,7 +4112,39 @@ function showSamples() {
 
     return this;
   };
+
+
+
+
+  /* Render other types of resource styles that are not cards. */
+  $.fn.decorateResource = function(resource, opts) {
+    var imgUrl = resource.image ||
+      'assets/images/resource-card-default-android.jpg';
+    var linkUrl = resource.url;
+
+    if (imgUrl.indexOf('//') === -1) {
+      imgUrl = toRoot + imgUrl;
+    }
+
+    if (linkUrl && linkUrl.indexOf('//') === -1) {
+      linkUrl = toRoot + linkUrl;
+    }
+
+    $(this).append(
+      $('<div>').addClass('image')
+        .css('background-image', 'url(' + imgUrl + ')'),
+      $('<div>').addClass('info').append(
+        $('<h4>').addClass('title').html(resource.title),
+        $('<p>').addClass('summary').html(resource.summary),
+        $('<a>').attr('href', linkUrl).addClass('cta').html('Learn More')
+      )
+    );
+
+    return this;
+  };
 })(jQuery);
+
+
 /* Calculate the vertical area remaining */
 (function($) {
     $.fn.ellipsisfade= function(lineHeight) {
@@ -3870,8 +4154,10 @@ function showSamples() {
             var remainingHeight = $this.parent().parent().height();
             $this.parent().siblings().each(function ()
             {
-              var h = $(this).height();
-              remainingHeight = remainingHeight - h;
+              if ($(this).is(":visible")) {
+                var h = $(this).height();
+                remainingHeight = remainingHeight - h;
+              }
             });
 
             adjustedRemainingHeight = ((remainingHeight)/lineHeight>>0)*lineHeight
@@ -3882,3 +4168,189 @@ function showSamples() {
         return this;
     };
 }) (jQuery);
+
+/*
+  Fullscreen Carousel
+
+  The following allows for an area at the top of the page that takes over the
+  entire browser height except for its top offset and an optional bottom
+  padding specified as a data attribute.
+
+  HTML:
+
+  <div class="fullscreen-carousel">
+    <div class="fullscreen-carousel-content">
+      <!-- content here -->
+    </div>
+    <div class="fullscreen-carousel-content">
+      <!-- content here -->
+    </div>
+
+    etc ...
+
+  </div>
+
+  Control over how the carousel takes over the screen can mostly be defined in
+  a css file. Setting min-height on the .fullscreen-carousel-content elements
+  will prevent them from shrinking to far vertically when the browser is very
+  short, and setting max-height on the .fullscreen-carousel itself will prevent
+  the area from becoming to long in the case that the browser is stretched very
+  tall.
+
+  There is limited functionality for having multiple sections since that request
+  was removed, but it is possible to add .next-arrow and .prev-arrow elements to
+  scroll between multiple content areas.
+*/
+
+(function() {
+  $(document).ready(function() {
+    $('.fullscreen-carousel').each(function() {
+      initWidget(this);
+    });
+  });
+
+  function initWidget(widget) {
+    var $widget = $(widget);
+
+    var topOffset = $widget.offset().top;
+    var padBottom = parseInt($widget.data('paddingbottom')) || 0;
+    var maxHeight = 0;
+    var minHeight = 0;
+    var $content = $widget.find('.fullscreen-carousel-content');
+    var $nextArrow = $widget.find('.next-arrow');
+    var $prevArrow = $widget.find('.prev-arrow');
+    var $curSection = $($content[0]);
+
+    if ($content.length <= 1) {
+      $nextArrow.hide();
+      $prevArrow.hide();
+    } else {
+      $nextArrow.click(function() {
+        var index = ($content.index($curSection) + 1);
+        $curSection.hide();
+        $curSection = $($content[index >= $content.length ? 0 : index]);
+        $curSection.show();
+      });
+
+      $prevArrow.click(function() {
+        var index = ($content.index($curSection) - 1);
+        $curSection.hide();
+        $curSection = $($content[index < 0 ? $content.length - 1 : 0]);
+        $curSection.show();
+      });
+    }
+
+    // Just hide all content sections except first.
+    $content.each(function(index) {
+      if ($(this).height() > minHeight) minHeight = $(this).height();
+      $(this).css({position: 'absolute',  display: index > 0 ? 'none' : ''});
+    });
+
+    // Register for changes to window size, and trigger.
+    $(window).resize(resizeWidget);
+    resizeWidget();
+
+    function resizeWidget() {
+      var height = $(window).height() - topOffset - padBottom;
+      $widget.width($(window).width());
+      $widget.height(height < minHeight ? minHeight :
+        (maxHeight && height > maxHeight ? maxHeight : height));
+    }
+  }
+})();
+
+
+
+
+
+/*
+  Tab Carousel
+
+  The following allows tab widgets to be installed via the html below. Each
+  tab content section should have a data-tab attribute matching one of the
+  nav items'. Also each tab content section should have a width matching the
+  tab carousel.
+
+  HTML:
+
+  <div class="tab-carousel">
+    <ul class="tab-nav">
+      <li><a href="#" data-tab="handsets">Handsets</a>
+      <li><a href="#" data-tab="wearable">Wearable</a>
+      <li><a href="#" data-tab="tv">TV</a>
+    </ul>
+
+    <div class="tab-carousel-content">
+      <div data-tab="handsets">
+        <!--Full width content here-->
+      </div>
+
+      <div data-tab="wearable">
+        <!--Full width content here-->
+      </div>
+
+      <div data-tab="tv">
+        <!--Full width content here-->
+      </div>
+    </div>
+  </div>
+
+*/
+(function() {
+  $(document).ready(function() {
+    $('.tab-carousel').each(function() {
+      initWidget(this);
+    });
+  });
+
+  function initWidget(widget) {
+    var $widget = $(widget);
+    var $nav = $widget.find('.tab-nav');
+    var $anchors = $nav.find('[data-tab]');
+    var $li = $nav.find('li');
+    var $contentContainer = $widget.find('.tab-carousel-content');
+    var $tabs = $contentContainer.find('[data-tab]');
+    var $curTab = $($tabs[0]); // Current tab is first tab.
+    var width = $widget.width();
+
+    // Setup nav interactivity.
+    $anchors.click(function(evt) {
+      evt.preventDefault();
+      var query = '[data-tab=' + $(this).data('tab') + ']';
+      transitionWidget($tabs.filter(query));
+    });
+
+    // Add highlight for navigation on first item.
+    var $highlight = $('<div>').addClass('highlight')
+      .css({left:$li.position().left + 'px', width:$li.outerWidth() + 'px'})
+      .appendTo($nav);
+
+    // Store height since we will change contents to absolute.
+    $contentContainer.height($contentContainer.height());
+
+    // Absolutely position tabs so they're ready for transition.
+    $tabs.each(function(index) {
+      $(this).css({position: 'absolute', left: index > 0 ? width + 'px' : '0'});
+    });
+
+    function transitionWidget($toTab) {
+      if (!$curTab.is($toTab)) {
+        var curIndex = $tabs.index($curTab[0]);
+        var toIndex = $tabs.index($toTab[0]);
+        var dir = toIndex > curIndex ? 1 : -1;
+
+        // Animate content sections.
+        $toTab.css({left:(width * dir) + 'px'});
+        $curTab.animate({left:(width * -dir) + 'px'});
+        $toTab.animate({left:'0'});
+
+        // Animate navigation highlight.
+        $highlight.animate({left:$($li[toIndex]).position().left + 'px',
+          width:$($li[toIndex]).outerWidth() + 'px'})
+
+        // Store new current section.
+        $curTab = $toTab;
+      }
+    }
+  }
+})();
