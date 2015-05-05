@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0218a87_e8a3cb7b",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-05-05T01:35:28Z",
+      "side": 1,
+      "message": "I guess for Linux/Mac this config doesn\u0027t build any more.",
+      "range": {
+        "startLine": 72,
+        "startChar": 2,
+        "endLine": 74,
+        "endChar": 25
+      },
+      "revId": "29c776dfc73fcfa5d034f7c36bc9478ff73ab3e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b0218a87_8894171b",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-05-05T01:35:28Z",
+      "side": 1,
+      "message": "Let\u0027s overwrite it here, and add a comment to make it clear this doesn\u0027t mean we still support pure 32-bit host build.",
+      "revId": "29c776dfc73fcfa5d034f7c36bc9478ff73ab3e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
