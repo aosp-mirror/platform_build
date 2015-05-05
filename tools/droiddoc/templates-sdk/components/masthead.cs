@@ -4,7 +4,7 @@
 <?cs else ?>
 <a name="top"></a>
 
-<!-- dialog to prompt lang pref change when loaded from hardcoded URL 
+<!-- dialog to prompt lang pref change when loaded from hardcoded URL
 <div id="langMessage" style="display:none">
   <div>
     <div class="lang en">
@@ -207,20 +207,7 @@
         <div class="wrap" style="position:relative;z-index:1">
 
         <?cs if:reference ?>
-        <?cs # HIDE HELPOUTS RECRUIT BANNER
-            <a id="helpoutsLink" class="resource resource-card resource-card-6x2x3 resource-card-6x2 helpouts-card" 
-              href="http://helpouts.google.com/partner/landing/provider/googledevelopers?utm_source=dac&utm_medium=banner&utm_campaign=android_provider_banner3" target="_blank">
-              <div class="card-bg helpouts-card-bg"></div>
-              <div class="card-info">
-                <div class="helpouts-description">
-                  <div class="text">Help Android Wear and TV developers<br/>
-                    <span id="helpoutsLinkText" class="link-color" 
-                    style="display:block;padding-top:5px;text-align:right">Learn more</span>
-                  </div>
-                </div>
-              </div>
-            </a>
-        # END HIDE HELPOUTS ?>
+
         <?cs /if ?>
 
             <ul class="nav-x col-9 develop" style="width:100%">
@@ -338,7 +325,7 @@
         </a>
       </div>
       <div class="col-8" style="margin:0"><h1 style="margin: 4px 0 0 0px;padding:0;line-height:16px;
-color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
+color:#666;font-weight:100;font-size:27px;">M Developer Preview</h1></div>
 
       <?cs # ADD SEARCH AND MENU ?>
       <?cs call:header_search_widget() ?>
@@ -378,11 +365,11 @@ color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
     <div id="butterbar-wrapper">
       <div id="butterbar">
         <a href="http://googleblog.blogspot.com/" id="butterbar-message">
-          The Android 5.0 SDK will be available on October 17th!
+          The Android {version_number} SDK will be available on {Month} {Day}!
         </a>
       </div>
     </div>
 
-?>    
+?>
 
 <?cs /def ?>
