@@ -58,7 +58,12 @@
 # Don't warn about those in case this app is linking against an older
 # platform version.  We know about them, and they are safe.
 # See proguard-android.txt in the SDK package.
--dontwarn android.support.**
+#
+# DO NOT USE THIS: We figured it's dangerous to blindly ignore all support library warnings.
+# ProGuard may strip members of subclass of unknown super classes, in case an app is linking against
+# LOCAL_SDK_VERSION lower than the support library's LOCAL_SDK_VERSION.
+# See bug/20658265.
+# -dontwarn android.support.**
 
 # Less spammy.
 -dontnote
