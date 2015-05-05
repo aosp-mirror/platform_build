@@ -1,12 +1,58 @@
 <?cs def:custom_masthead() ?>
-<?cs if:wear ?>
-  <?cs call:wear_masthead() ?>
+<?cs if:preview ?>
+  <?cs call:preview_masthead() ?>
 <?cs else ?>
 <a name="top"></a>
+
+<!-- dialog to prompt lang pref change when loaded from hardcoded URL
+<div id="langMessage" style="display:none">
+  <div>
+    <div class="lang en">
+      <p>You requested a page in English, would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang es">
+      <p>You requested a page in Spanish (Español), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang ja">
+      <p>You requested a page in Japanese (日本語), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang ko">
+      <p>You requested a page in Korean (한국어), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang ru">
+      <p>You requested a page in Russian (Русский), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang zh-cn">
+      <p>You requested a page in Simplified Chinese (简体中文), would you like to proceed with this language setting?</p>
+    </div>
+    <div class="lang zh-tw">
+      <p>You requested a page in Traditional Chinese (繁體中文), would you like to proceed with this language setting?</p>
+    </div>
+    <a href="#" class="button yes" onclick="return false;">
+      <span class="lang en">Yes</span>
+      <span class="lang es">Sí</span>
+      <span class="lang ja">Yes</span>
+      <span class="lang ko">Yes</span>
+      <span class="lang ru">Yes</span>
+      <span class="lang zh-cn">是的</span>
+      <span class="lang zh-tw">没有</span>
+    </a>
+    <a href="#" class="button" onclick="$('#langMessage').hide();return false;">
+      <span class="lang en">No</span>
+      <span class="lang es">No</span>
+      <span class="lang ja">No</span>
+      <span class="lang ko">No</span>
+      <span class="lang ru">No</span>
+      <span class="lang zh-cn">没有</span>
+      <span class="lang zh-tw">没有</span>
+    </a>
+  </div>
+</div> -->
+
 <?cs if:!devsite ?><?cs # leave out the global header for devsite; it is in devsite template ?>
   <!-- Header -->
   <div id="header-wrapper">
-    <div id="header">
+    <div id="header"><?cs call:butter_bar() ?>
       <div class="wrap" id="header-wrap">
         <div class="col-3 logo">
           <a href="<?cs var:toroot ?>index.html">
@@ -54,11 +100,20 @@
 
 
         <!-- Expanded quicknav -->
-        <div id="quicknav" class="col-9">
+        <div id="quicknav" class="col-13">
           <ul>
+            <li class="about">
+              <ul>
+                <li><a href="<?cs var:toroot ?>about/index.html">About</a></li>
+                <li><a href="<?cs var:toroot ?>wear/index.html">Wear</a></li>
+                <li><a href="<?cs var:toroot ?>tv/index.html">TV</a></li>
+                <li><a href="<?cs var:toroot ?>auto/index.html">Auto</a></li>
+              </ul>
+            </li>
             <li class="design">
               <ul>
                 <li><a href="<?cs var:toroot ?>design/index.html">Get Started</a></li>
+                <li><a href="<?cs var:toroot ?>design/devices.html">Devices</a></li>
                 <li><a href="<?cs var:toroot ?>design/style/index.html">Style</a></li>
                 <li><a href="<?cs var:toroot ?>design/patterns/index.html">Patterns</a></li>
                 <li><a href="<?cs var:toroot ?>design/building-blocks/index.html">Building Blocks</a></li>
@@ -92,7 +147,7 @@
                   ja-lang="リファレンス"
                   es-lang="Referencia"
                   >Reference</a></li>
-                <li><a href="<?cs var:toroot ?>tools/index.html"
+                <li><a href="<?cs var:toroot ?>sdk/index.html"
                   zh-tw-lang="相關工具"
                   zh-cn-lang="工具"
                   ru-lang="Инструменты"
@@ -100,7 +155,6 @@
                   ja-lang="ツール"
                   es-lang="Herramientas"
                   >Tools</a>
-                  <ul><li><a href="<?cs var:toroot ?>sdk/index.html">Get the SDK</a></li></ul>
                 </li>
                 <li><a href="<?cs var:toroot ?>google/index.html">Google Services</a>
                 </li>
@@ -117,6 +171,7 @@
                 <li><a href="<?cs var:toroot ?>distribute/users/index.html">Get Users</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a></li>
+                <li><a href="<?cs var:toroot ?>distribute/analyze/index.html">Analyze</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/tools/index.html">Tools &amp; Reference</a></li>
                 <li><a href="<?cs var:toroot ?>distribute/stories/index.html">Developer Stories</a></li>
               </ul>
@@ -126,10 +181,35 @@
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
 
-  <?cs if:training || guide || reference || tools || develop || google || samples ?>
+  <?cs if:about || wear || tv || auto ?>
     <!-- Secondary x-nav -->
     <div id="nav-x">
         <div class="wrap">
+            <ul class="nav-x col-9 about" style="width:100%">
+                <li class="about"><a href="<?cs var:toroot ?>about/index.html"
+                  >About</a></li>
+                <li class="wear"><a href="<?cs var:toroot ?>wear/index.html"
+                  >Wear</a></li>
+                <li class="tv"><a href="<?cs var:toroot ?>tv/index.html"
+                  >TV</a></li>
+                <li class="auto"><a href="<?cs var:toroot ?>auto/index.html"
+                  >Auto</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /Sendondary x-nav ABOUT -->
+
+
+
+  <?cs elif:training || guide || reference || tools || develop || google || samples ?>
+    <!-- Secondary x-nav -->
+    <div id="nav-x">
+        <div class="wrap" style="position:relative;z-index:1">
+
+        <?cs if:reference ?>
+
+        <?cs /if ?>
+
             <ul class="nav-x col-9 develop" style="width:100%">
                 <li class="training"><a href="<?cs var:toroot ?>training/index.html"
                   zh-tw-lang="訓練課程"
@@ -155,7 +235,7 @@
                   ja-lang="リファレンス"
                   es-lang="Referencia"
                   >Reference</a></li>
-                <li class="tools"><a href="<?cs var:toroot ?>tools/index.html"
+                <li class="tools"><a href="<?cs var:toroot ?>sdk/index.html"
                   zh-tw-lang="相關工具"
                   zh-cn-lang="工具"
                   ru-lang="Инструменты"
@@ -174,9 +254,9 @@
             </ul>
         </div>
     </div>
-    <!-- /Sendondary x-nav -->
+    <!-- /Sendondary x-nav DEVELOP -->
 
-  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || disttools || stories ?>
+  <?cs elif:distribute || googleplay || essentials || users || engage || monetize || analyze ||  disttools || stories ?>
     <!-- Secondary distribute x-nav -->
     <div id="nav-x">
         <div class="wrap">
@@ -192,6 +272,9 @@
                 <li class="monetize"><a href="<?cs var:toroot ?>distribute/monetize/index.html"
                   >Monetize</a>
                 </li>
+                <li class="analyze"><a href="<?cs var:toroot ?>distribute/analyze/index.html"
+                  >Analyze</a>
+                </li>
                 <li class="disttools"><a href="<?cs var:toroot ?>distribute/tools/index.html"
                   >Tools</a>
                 </li>
@@ -202,6 +285,7 @@
             <a href="https://play.google.com/apps/publish/" class="developer-console-btn">Developer Console</a>
         </div> <!-- /Secondary distribute x-nav -->
     </div>
+    <!-- /Sendondary x-nav DISTRIBUTE -->
   <?cs /if ?>
 
     <div id="searchResults" class="wrap" style="display:none;">
@@ -223,23 +307,25 @@
   </div>
 
 <?cs /if ?><?cs # end if/else !devsite ?>
-<?cs /if ?><?cs # end if/else wear ?><?cs
+<?cs /if ?><?cs # end if/else preview ?><?cs
 /def ?>
 
-<?cs def:wear_masthead() ?>
+<?cs def:preview_masthead() ?>
 <a name="top"></a>
+
 
 <!-- Header -->
 <div id="header-wrapper">
-  <div id="header">
+  <div id="header"><?cs call:butter_bar() ?>
     <div class="wrap" id="header-wrap">
-      <div class="col_3 logo wear-logo">
-        <a href="<?cs var:toroot ?>wear/index.html">
-          <img src="<?cs var:toroot ?>wear/images/android-wear.png" height="16" alt="Android Wear" />
+      <div class="col_3 logo landing-logo" style="width:240px">
+        <a href="<?cs var:toroot ?>preview/index.html">
+          <img src="<?cs var:toroot ?>assets/images/android.png" height="25" alt="Android"
+            style="margin:-3px 0 0" />
         </a>
       </div>
-      <div class="col-8" style="margin:0"><h1 style="margin:1px 0 0 20px;padding:0;line-height:16px;
-color:#666;font-weight:100;font-size:24px;">Developer Preview</h1></div>
+      <div class="col-8" style="margin:0"><h1 style="margin: 4px 0 0 0px;padding:0;line-height:16px;
+color:#666;font-weight:100;font-size:27px;">M Developer Preview</h1></div>
 
       <?cs # ADD SEARCH AND MENU ?>
       <?cs call:header_search_widget() ?>
@@ -268,3 +354,22 @@ color:#666;font-weight:100;font-size:24px;">Developer Preview</h1></div>
 
   <?cs
 /def ?>
+
+
+<?cs # (UN)COMMENT THE INSIDE OF THIS METHOD TO TOGGLE VISIBILITY ?>
+<?cs def:butter_bar() ?>
+
+<?cs # HIDE THE BUTTER BAR
+
+    <div style="height:20px"><!-- spacer to bump header down --></div>
+    <div id="butterbar-wrapper">
+      <div id="butterbar">
+        <a href="http://googleblog.blogspot.com/" id="butterbar-message">
+          The Android {version_number} SDK will be available on {Month} {Day}!
+        </a>
+      </div>
+    </div>
+
+?>
+
+<?cs /def ?>

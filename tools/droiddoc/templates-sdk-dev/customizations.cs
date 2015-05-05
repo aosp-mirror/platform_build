@@ -112,6 +112,20 @@ def:engage_nav() ?>
     </script>
 <?cs /def ?><?cs
 
+def:analyze_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
 def:monetize_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -290,6 +304,22 @@ def:wear_nav() ?>
     </script>
 <?cs /def ?>
 
+<?cs
+def:preview_nav() ?>
+  <div class="wrap clearfix" id="body-content">
+    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div id="devdoc-nav" class="scroll-pane">
+        <?cs
+          include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
+
 <?cs # The default side navigation for the reference docs ?><?cs 
 def:default_left_nav() ?>
 <?cs if:reference.gcm || reference.gms ?>
@@ -337,6 +367,7 @@ def:default_left_nav() ?>
 <?cs 
             if:subcount(class.package) ?>
             <ul>
+              <?cs call:list("Annotations", class.package.annotations) ?>
               <?cs call:list("Interfaces", class.package.interfaces) ?>
               <?cs call:list("Classes", class.package.classes) ?>
               <?cs call:list("Enums", class.package.enums) ?>
@@ -345,6 +376,7 @@ def:default_left_nav() ?>
             </ul><?cs 
             elif:subcount(package) ?>
             <ul>
+              <?cs call:class_link_list("Annotations", package.annotations) ?>
               <?cs call:class_link_list("Interfaces", package.interfaces) ?>
               <?cs call:class_link_list("Classes", package.classes) ?>
               <?cs call:class_link_list("Enums", package.enums) ?>
@@ -431,8 +463,8 @@ def:header_search_widget() ?>
                 <option value="ja">日本語</option>
                 <option value="ko">한국어</option>
                 <option value="ru">Русский</option>
-                <option value="zh-cn">中文 (中国)</option>
-                <option value="zh-tw">中文 (台灣)</option>
+                <option value="zh-cn">中文（简体)</option>
+                <option value="zh-tw">中文（繁體)</option>
             </select>
           </div>
         <script type="text/javascript">
@@ -526,6 +558,8 @@ def:custom_left_nav() ?><?cs
       call:engage_nav() ?><?cs
     elif:monetize ?><?cs
       call:monetize_nav() ?><?cs
+    elif:analyze ?><?cs
+      call:analyze_nav() ?><?cs
     elif:disttools ?><?cs
       call:disttools_nav() ?><?cs
     elif:stories ?><?cs
@@ -537,6 +571,8 @@ def:custom_left_nav() ?><?cs
     call:distribute_nav() ?><?cs
   elif:wear ?><?cs
     call:wear_nav() ?><?cs
+  elif:preview ?><?cs
+    call:preview_nav() ?><?cs
   else ?><?cs
     call:default_left_nav() ?> <?cs
   /if ?><?cs

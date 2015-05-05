@@ -1,10 +1,13 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
+<?cs include:"macros_override.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
 
 <body class="gc-documentation <?cs if:(reference.gms || reference.gcm) ?>google<?cs /if ?>
   <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
+    if:reference ?> reference<?cs
+    /if ?><?cs
   elif:design ?>design<?cs
   elif:distribute ?>distribute<?cs
   /if ?>">
@@ -45,6 +48,7 @@
   <?cs /if ?>
 <?cs /def ?>
 
+<?cs call:class_table("Annotations", package.annotations) ?>
 <?cs call:class_table("Interfaces", package.interfaces) ?>
 <?cs call:class_table("Classes", package.classes) ?>
 <?cs call:class_table("Enums", package.enums) ?>
