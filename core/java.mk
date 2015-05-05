@@ -432,8 +432,29 @@ ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
+
+# Hack: see b/20667396
+# When an app's LOCAL_SDK_VERSION is lower than the support library's LOCAL_SDK_VERSION,
+# we artifically raises the "SDK version" "linked" by ProGuard, to
+# - suppress ProGuard warnings of referencing symbols unknown to the lower SDK version.
+# - prevent ProGuard stripping subclass in the support library that extends class added in the higher SDK version.
+my_support_library_sdk_raise :=
+ifneq (,$(filter android-support-%,$(LOCAL_STATIC_JAVA_LIBRARIES)))
+ifdef LOCAL_SDK_VERSION
+ifeq (,$(filter current system_current, $(LOCAL_SDK_VERSION)))
+ifdef TARGET_BUILD_APPS
+  my_support_library_sdk_raise := $(call java-lib-files, sdk_vcurrent)
+else
+  # For platform build, we can't just raise to the "current" SDK,
+  # that would break apps that use APIs removed from the current SDK.
+  my_support_library_sdk_raise := $(call java-lib-files,framework)
+endif
+endif
+endif
+endif
+
 # jack already has the libraries in its classpath and doesn't support jars
-legacy_proguard_flags := $(addprefix -libraryjars ,$(full_shared_java_libs))
+legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) $(full_shared_java_libs))
 common_proguard_flags :=  \
                   -forceprocessing \
                   -printmapping $(proguard_dictionary)
@@ -501,7 +522,7 @@ extra_input_jar :=
 endif
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(proguard_flag_files) | $(ACP) $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(proguard_flag_files) | $(ACP) $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
 else  # LOCAL_PROGUARD_ENABLED not defined
