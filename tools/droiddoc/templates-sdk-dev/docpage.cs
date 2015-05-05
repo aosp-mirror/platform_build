@@ -2,7 +2,7 @@
 <?cs include:"macros.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation 
+<body class="gc-documentation
 
 <?cs
 if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
@@ -18,7 +18,7 @@ if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
     if:monetize ?> monetize<?cs /if ?><?cs
     if:disttools ?> disttools<?cs /if ?><?cs
     if:stories ?> stories<?cs /if ?><?cs
-  elif:about ?>about<?cs
+  elif:(about||wear||tv||auto) ?>about<?cs
   elif:design ?>design<?cs
 /if ?><?cs
 if:page.trainingcourse ?> trainingcourse<?cs
@@ -90,7 +90,7 @@ include:"header.cs" ?>
       </div>
     <?cs /if ?><?cs # end if training ?>
   </div>
-  <?cs /if ?>
+  <?cs /if ?><?cs # end if header.hide ?>
 
 <?cs elif:samplesProjectIndex ?>
   <div id="api-info-block">
@@ -103,7 +103,14 @@ include:"header.cs" ?>
   <h1 itemprop="name"><?cs var:projectDir ?></h1>
 
 <?cs else ?>
-
+  <?cs if:training ?>
+<?cs # horrible horrible hack to move TOC up when the next/prev links are not there ?>
+<style>
+  #tb-wrapper {
+    margin-top:6px;
+  }
+</style>
+  <?cs /if ?>
 
   <?cs if:(!fullpage && !header.hide) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
@@ -150,25 +157,9 @@ include:"header.cs" ?>
                     if:fullpage ?>wrap<?cs
                     else ?>layout-content-row<?cs /if ?>"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <div class="layout-content-col <?cs
-                    if:fullpage ?>col-16<?cs
-                    elif:training||guide ?>col-8<?cs
-                    else ?>col-9<?cs /if ?>" style="padding-top:4px">
-          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
-            <div class="g-plusone" data-size="medium"></div>
-          <?cs /if ?>
-        </div>
         <?cs if:!fullscreen ?>
-        <div class="paging-links layout-content-col col-4">
+        <div class="paging-links layout-content-col col-10">
           <?cs if:(design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
-            <a href="#" class="prev-page-link hide"
-                zh-tw-lang="上一堂課"
-                zh-cn-lang="上一课"
-                ru-lang="Предыдущий"
-                ko-lang="이전"
-                ja-lang="前へ"
-                es-lang="Anterior"
-                >Previous</a>
             <a href="#" class="next-page-link hide"
                 zh-tw-lang="下一堂課"
                 zh-cn-lang="下一课"
@@ -185,41 +176,28 @@ include:"header.cs" ?>
                 ja-lang="開始する"
                 es-lang="Empezar"
                 >Get started</a>
+            <a href="#" class="next-class-link hide">Next class</a>
+          <?cs /if ?>
+        </div>
+        <div class="layout-content-col plus-container col-2" >
+          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
+            <div class="g-plusone" data-size="medium"></div>
           <?cs /if ?>
         </div>
         <?cs /if ?>
       </div>
-
-      <?cs # for training classes, provide a different kind of link when the next page is a different class ?>
-      <?cs if:training && !page.article ?>
-      <div class="layout-content-row content-footer next-class" style="display:none" itemscope itemtype="http://schema.org/SiteNavigationElement">
-          <a href="#" class="next-class-link hide">Next class: </a>
-      </div>
-      <?cs /if ?>
 
   </div> <!-- end jd-content -->
 
 <?cs include:"footer.cs" ?>
 </div><!-- end doc-content -->
 
-<!-- Start of Tag -->
-<script type="text/javascript">
-var axel = Math.random() + "";
-var a = axel * 10000000000000;
-document.write('<iframe src="https://2507573.fls.doubleclick.net/activityi;src=2507573;type=other026;cat=googl348;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
-</script>
-<noscript>
-<iframe src="https://2507573.fls.doubleclick.net/activityi;src=2507573;type=other026;cat=googl348;ord=1?" width="1" height="1" frameborder="0" style="display:none"></iframe>
-</noscript>
-<!-- End of Tag -->
-
-
 <?cs include:"trailer.cs" ?>
   <script src="https://developer.android.com/ytblogger_lists_unified.js" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_lists_unified.js" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_extras.js" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_collections.js" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_tag_helpers.js" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_lists_unified.js?v=9" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_extras.js?v=11" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_collections.js?v=12" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=5" type="text/javascript"></script>
 
 </body>
 </html>

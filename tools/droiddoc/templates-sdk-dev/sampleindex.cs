@@ -21,7 +21,7 @@
 &#124; <a href="<?cs var:toroot ?>samples/<?cs var:projectDir ?>/project.html">Project</a>
 <?cs /if ?>
 &#124; <a href="<?cs var:toroot ?>downloads/samples/<?cs var:projectDir ?>.zip"
-    onclick="_gaq.push(['_trackEvent', 'Samples', 'Download', <?cs var:projectDir ?>]);"
+    onclick="ga('send', 'event', 'Samples', 'Download', <?cs var:projectDir ?>);"
     >Download</a>
 
 </div><!-- end sum-details-links -->
