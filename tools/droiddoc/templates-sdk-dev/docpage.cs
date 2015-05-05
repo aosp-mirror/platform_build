@@ -6,7 +6,7 @@
 
 <?cs
 if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
-  if:(guide||develop||training||reference||tools||sdk||samples) ?>develop<?cs
+  if:(guide||develop||training||reference||tools||google||sdk||samples) ?>develop<?cs
     if:guide ?> guide<?cs /if ?><?cs
     if:samples ?> samples<?cs /if ?><?cs
   elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories)
@@ -28,7 +28,7 @@ include:"header.cs" ?>
 <div <?cs
   if:fullpage
     ?>class="fullpage"<?cs
-  elif:(design||tools||about||sdk||googleplay||essentials||users||monetize||disttools) && !nonavpage
+  elif:(design||tools||about||sdk||googleplay||essentials||users||engage||monetize||disttools||stories) && !nonavpage
     ?>class="col-13" id="doc-col"<?cs
   elif:!nonavpage
     ?>class="col-12" id="doc-col"<?cs /if ?> >
@@ -36,14 +36,12 @@ include:"header.cs" ?>
 <?cs if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs # header logic for docs that provide previous/next buttons ?>
   <?cs if:header.hide ?>
   <?cs else ?>
-  <div class="layout-content-row content-header <?cs if:header.justLinks ?>just-links<?cs /if ?>">
-    <div class="layout-content-col <?cs if:training ?>span-7<?cs else ?>span-9<?cs /if ?>">
+  <div class="content-header <?cs if:header.justLinks ?>just-links<?cs /if ?>">
       <?cs if:header.justLinks ?>&nbsp;
       <?cs else ?><h1 itemprop="name"><?cs var:page.title ?></h1>
       <?cs /if ?>
-    </div>
     <?cs if:training ?>
-      <div class="training-nav-top layout-content-col span-5" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div class="training-nav-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <a href="#" class="prev-page-link hide"
             zh-tw-lang="上一堂課"
             zh-cn-lang="上一课"
@@ -70,7 +68,7 @@ include:"header.cs" ?>
             >Get started</a>
       </div>
     <?cs elif:!page.trainingcourse ?>
-      <div class="paging-links layout-content-col span-4" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <div class="paging-links" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <a href="#" class="prev-page-link hide"
             zh-tw-lang="上一堂課"
             zh-cn-lang="上一课"
@@ -116,16 +114,18 @@ include:"header.cs" ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
         <?cs if:page.landing.image ?><?cs # use two-column layout only if there is an image ?>
-        <div class="col-6">
-          <img src="<?cs var:toroot ?><?cs var:page.landing.image ?>" alt="" />
-        </div>
-        <div class="col-6">
+        <div class="cols">
+          <div class="col-6">
+            <img src="<?cs var:toroot ?><?cs var:page.landing.image ?>" alt="" />
+          </div>
+          <div class="col-6">
         <?cs /if ?>
           <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
           <p itemprop="description"><?cs var:page.landing.intro ?></p>
 
           <p><a class="next-page-link topic-start-link"></a></p>
         <?cs if:page.landing.image ?>
+          </div>
         </div>
         <?cs /if ?>
       </div>
@@ -153,13 +153,11 @@ include:"header.cs" ?>
     <?cs call:tag_list(root.descr) ?>
     </div>
 
+    <?cs if:!fullscreen && (design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
       <div class="content-footer <?cs
-                    if:fullpage ?>wrap<?cs
-                    else ?>layout-content-row<?cs /if ?>"
+                    if:fullpage ?>wrap<?cs /if ?>"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
-        <?cs if:!fullscreen ?>
-        <div class="paging-links layout-content-col col-10">
-          <?cs if:(design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
+          <div class="paging-links">
             <a href="#" class="next-page-link hide"
                 zh-tw-lang="下一堂課"
                 zh-cn-lang="下一课"
@@ -177,15 +175,9 @@ include:"header.cs" ?>
                 es-lang="Empezar"
                 >Get started</a>
             <a href="#" class="next-class-link hide">Next class</a>
-          <?cs /if ?>
-        </div>
-        <div class="layout-content-col plus-container col-2" >
-          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
-            <div class="g-plusone" data-size="medium"></div>
-          <?cs /if ?>
-        </div>
-        <?cs /if ?>
+          </div>
       </div>
+    <?cs /if ?>
 
   </div> <!-- end jd-content -->
 
@@ -194,9 +186,9 @@ include:"header.cs" ?>
 
 <?cs include:"trailer.cs" ?>
   <script src="https://developer.android.com/ytblogger_lists_unified.js" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_lists_unified.js?v=9" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_extras.js?v=11" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_collections.js?v=12" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_lists_unified.js?v=8" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_extras.js?v=10" type="text/javascript"></script>
+  <script src="<?cs var:toroot ?>jd_collections.js?v=10" type="text/javascript"></script>
   <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=5" type="text/javascript"></script>
 
 </body>
