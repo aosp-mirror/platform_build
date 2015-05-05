@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0218a87_4e306794",
+        "filename": "core/multilib.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-05-05T17:27:24Z",
+      "side": 1,
+      "message": "there is no such variable.\nDo you mean LOCAL_IS_HOST_MODULE?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 28
+      },
+      "revId": "5b75fdf3bda2c72afa10027ae6779b3f812aca6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
