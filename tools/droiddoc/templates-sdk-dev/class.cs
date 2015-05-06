@@ -169,13 +169,15 @@ Summary:
 
 <div class="jd-descr">
 <?cs call:deprecated_warning(class) ?>
-<?cs if:subcount(class.descr) ?>
+<?cs if:subcount(class.descr) || subcount(class.annotationdocumentation) ?>
 <h2>Class Overview</h2>
-<p itemprop="articleBody"><?cs call:tag_list(class.descr) ?></p>
+<?cs if:subcount(class.descr) ?><p itemprop="articleBody"><?cs call:tag_list(class.descr) ?></p><?cs /if ?>
+<?cs if:subcount(class.annotationdocumentation) ?><?cs each:annodoc = class.annotationdocumentation?>
+<p><?cs var:annodoc.text ?></p>
+<?cs /each?><?cs /if?>
 <?cs /if ?>
 
 <?cs call:see_also_tags(class.seeAlso) ?>
-
 </div><!-- jd-descr -->
 
 
@@ -196,12 +198,12 @@ Summary:
         </td>
         <td class="jd-linkcol" width="100%"><nobr>
         <span class="sympad"><?cs call:cond_link(method.name, toroot, method.href, included) ?></span>(<?cs call:parameter_list(method.params) ?>)</nobr>
-        <?cs if:subcount(method.shortDescr) || subcount(method.deprecated) ?>
-        <div class="jd-descrdiv">
-          <?cs call:short_descr(method) ?>
-          <?cs call:show_annotations_list(method) ?>
-        </div>
-  <?cs /if ?>
+        <?cs if:subcount(method.shortDescr) || subcount(method.deprecated) || subcount(method.showAnnotations) ?>
+          <div class="jd-descrdiv">
+            <?cs if:subcount(method.shortDescr) || subcount(method.annotationdocumentation) ?><?cs call:short_descr(method)?><?cs /if?>
+            <?cs call:show_annotations_list(method) ?>
+          </div>
+        <?cs /if ?>
   </td></tr>
 <?cs set:count = count + #1 ?>
 <?cs /each ?>

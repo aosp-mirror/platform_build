@@ -1,3 +1,4 @@
+</div> <!-- end .cols --> <?cs # normally opened by header.cs ?>
 </div> <!-- end body-content --> <?cs # normally opened by header.cs ?>
 
 <?cs if:carousel ?>

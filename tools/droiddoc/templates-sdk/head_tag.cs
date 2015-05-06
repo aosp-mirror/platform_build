@@ -15,10 +15,7 @@
 ?><?cs
   # END if/else devsite ?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=<?cs
-  if:page.viewport_width ?><?cs
-    var:page.viewport_width ?><?cs
-  else ?>device-width<?cs /if ?>" />
+<meta name="viewport" content="width=device-width" />
 <?cs
   if:page.metaDescription ?>
 <meta name="Description" content="<?cs var:page.metaDescription ?>"><?cs
