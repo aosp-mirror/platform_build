@@ -22,6 +22,30 @@
       "revId": "9a38ad846502303375e4e2416185730e60a45335",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d19f971_32759978",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-05-06T17:04:32Z",
+      "side": 1,
+      "message": "It isn\u0027t :(\nhttps://android-review.googlesource.com/#/c/119847/",
+      "parentUuid": "cd24a5a6_8b19dd7b",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 5
+      },
+      "revId": "9a38ad846502303375e4e2416185730e60a45335",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
