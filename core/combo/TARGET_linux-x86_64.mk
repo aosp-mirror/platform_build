@@ -26,7 +26,7 @@ endif
 TARGET_NDK_GCC_VERSION := 4.9
 
 ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
-TARGET_GCC_VERSION := 4.8
+TARGET_GCC_VERSION := 4.9
 else
 TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
 endif
@@ -92,6 +92,10 @@ TARGET_GLOBAL_CFLAGS += \
 			-m64 \
 			-no-canonical-prefixes \
 			-fno-canonical-system-headers
+
+# Work around gcc 4.9 devirtualization bug, https://b.corp.google.com/19872411.
+TARGET_GLOBAL_CFLAGS += \
+			-fno-devirtualize \
 
 # Help catch common 32/64-bit errors.
 TARGET_GLOBAL_CFLAGS += \
