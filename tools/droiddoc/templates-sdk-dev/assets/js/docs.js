@@ -82,7 +82,7 @@ $(document).ready(function() {
          .after('<hr/>');
 
   // set up the search close button
-  $('#search-close').click(function() {
+  $('.search .close').click(function() {
     $searchInput = $('#search_autocomplete');
     $searchInput.attr('value', '');
     $(this).addClass("hide");
@@ -91,6 +91,32 @@ $(document).ready(function() {
     search_focus_changed($searchInput.get(), false);
     hideResults();
   });
+
+  // Set up quicknav
+  var quicknav_open = false;
+  $("#btn-quicknav").click(function() {
+    if (quicknav_open) {
+      $(this).removeClass('active');
+      quicknav_open = false;
+      collapse();
+    } else {
+      $(this).addClass('active');
+      quicknav_open = true;
+      expand();
+    }
+  })
+
+  var expand = function() {
+   $('#header-wrap').addClass('quicknav');
+   $('#quicknav').stop().show().animate({opacity:'1'});
+  }
+
+  var collapse = function() {
+    $('#quicknav').stop().animate({opacity:'0'}, 100, function() {
+      $(this).hide();
+      $('#header-wrap').removeClass('quicknav');
+    });
+  }
 
 
   //Set up search
@@ -154,71 +180,73 @@ $(document).ready(function() {
 
   // Highlight the header tabs...
   // highlight Design tab
-  var urlSegments = pagePathOriginal.split('/');
-  var navEl = $(".dac-nav-list");
-  var subNavEl = navEl.find(".dac-nav-secondary");
-  var parentNavEl;
-
   if ($("body").hasClass("design")) {
-    navEl.find("> li.design > a").addClass("selected");
+    $("#header li.design a").addClass("selected");
+    $("#sticky-header").addClass("design");
+
   // highlight About tabs
   } else if ($("body").hasClass("about")) {
-    if (urlSegments[1] == "about" || urlSegments[1] == "wear" || urlSegments[1] == "tv" || urlSegments[1] == "auto") {
-      navEl.find("> li.home > a").addClass('has-subnav');
-      subNavEl.find("li." + urlSegments[1] + " > a").addClass("selected");
-    } else {
-      navEl.find("> li.home > a").addClass('selected');
+    var rootDir = pagePathOriginal.substring(1,pagePathOriginal.indexOf('/', 1));
+    if (rootDir == "about") {
+      $("#nav-x li.about a").addClass("selected");
+    } else if (rootDir == "wear") {
+      $("#nav-x li.wear a").addClass("selected");
+    } else if (rootDir == "tv") {
+      $("#nav-x li.tv a").addClass("selected");
+    } else if (rootDir == "auto") {
+      $("#nav-x li.auto a").addClass("selected");
     }
   // highlight Develop tab
   } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
-    parentNavEl = navEl.find("> li.develop > a");
-    parentNavEl.addClass('has-subnav');
-
+    $("#header li.develop a").addClass("selected");
+    $("#sticky-header").addClass("develop");
     // In Develop docs, also highlight appropriate sub-tab
-    if (urlSegments[1] == "training") {
-      subNavEl.find("li.training > a").addClass("selected");
-    } else if (urlSegments[1] == "guide") {
-      subNavEl.find("li.guide > a").addClass("selected");
-    } else if (urlSegments[1] == "reference") {
+    var rootDir = pagePathOriginal.substring(1,pagePathOriginal.indexOf('/', 1));
+    if (rootDir == "training") {
+      $("#nav-x li.training a").addClass("selected");
+    } else if (rootDir == "guide") {
+      $("#nav-x li.guide a").addClass("selected");
+    } else if (rootDir == "reference") {
       // If the root is reference, but page is also part of Google Services, select Google
       if ($("body").hasClass("google")) {
-        subNavEl.find("li.google > a").addClass("selected");
+        $("#nav-x li.google a").addClass("selected");
       } else {
-        subNavEl.find("li.reference > a").addClass("selected");
+        $("#nav-x li.reference a").addClass("selected");
       }
-    } else if ((urlSegments[1] == "tools") || (urlSegments[1] == "sdk")) {
-      subNavEl.find("li.tools > a").addClass("selected");
+    } else if ((rootDir == "tools") || (rootDir == "sdk")) {
+      $("#nav-x li.tools a").addClass("selected");
     } else if ($("body").hasClass("google")) {
-      subNavEl.find("li.google > a").addClass("selected");
+      $("#nav-x li.google a").addClass("selected");
     } else if ($("body").hasClass("samples")) {
-      subNavEl.find("li.samples > a").addClass("selected");
-    } else {
-      parentNavEl.removeClass('has-subnav').addClass("selected");
+      $("#nav-x li.samples a").addClass("selected");
     }
+
   // highlight Distribute tab
   } else if ($("body").hasClass("distribute")) {
-    parentNavEl = navEl.find("> li.distribute > a");
-    parentNavEl.addClass('has-subnav');
+    $("#header li.distribute a").addClass("selected");
+    $("#sticky-header").addClass("distribute");
 
-    if (urlSegments[2] == "users") {
-      subNavEl.find("li.users > a").addClass("selected");
-    } else if (urlSegments[2] == "engage") {
-      subNavEl.find("li.engage > a").addClass("selected");
-    } else if (urlSegments[2] == "monetize") {
-      subNavEl.find("li.monetize > a").addClass("selected");
-    } else if (urlSegments[2] == "analyze") {
-      subNavEl.find("li.analyze > a").addClass("selected");
-    } else if (urlSegments[2] == "tools") {
-      subNavEl.find("li.disttools > a").addClass("selected");
-    } else if (urlSegments[2] == "stories") {
-      subNavEl.find("li.stories > a").addClass("selected");
-    } else if (urlSegments[2] == "essentials") {
-      subNavEl.find("li.essentials > a").addClass("selected");
-    } else if (urlSegments[2] == "googleplay") {
-      subNavEl.find("li.googleplay > a").addClass("selected");
-    } else {
-      parentNavEl.removeClass('has-subnav').addClass("selected");
+    var baseFrag = pagePathOriginal.indexOf('/', 1) + 1;
+    var secondFrag = pagePathOriginal.substring(baseFrag, pagePathOriginal.indexOf('/', baseFrag));
+    if (secondFrag == "users") {
+      $("#nav-x li.users a").addClass("selected");
+    } else if (secondFrag == "engage") {
+      $("#nav-x li.engage a").addClass("selected");
+    } else if (secondFrag == "monetize") {
+      $("#nav-x li.monetize a").addClass("selected");
+    } else if (secondFrag == "analyze") {
+      $("#nav-x li.analyze a").addClass("selected");
+    } else if (secondFrag == "tools") {
+      $("#nav-x li.disttools a").addClass("selected");
+    } else if (secondFrag == "stories") {
+      $("#nav-x li.stories a").addClass("selected");
+    } else if (secondFrag == "essentials") {
+      $("#nav-x li.essentials a").addClass("selected");
+    } else if (secondFrag == "googleplay") {
+      $("#nav-x li.googleplay a").addClass("selected");
     }
+  } else if ($("body").hasClass("about")) {
+    $("#sticky-header").addClass("about");
   }
 
   // set global variable so we can highlight the sidenav a bit later (such as for google reference)
@@ -364,12 +392,13 @@ false; // navigate across topic boundaries only in design docs
 
     var $olClasses  = $('<ol class="class-list"></ol>');
     var $liClass;
+    var $imgIcon;
     var $h2Title;
     var $pSummary;
     var $olLessons;
     var $liLesson;
     $classLinks.each(function(index) {
-      $liClass  = $('<li class="clearfix"></li>');
+      $liClass  = $('<li></li>');
       $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2>' + $(this).html()+'</h2><span></span></a>');
       $pSummary = $('<p class="description">' + $classDescriptions[index] + '</p>');
 
@@ -378,14 +407,18 @@ false; // navigate across topic boundaries only in design docs
       $lessons = $(this).closest('li').find('ul li a');
 
       if ($lessons.length) {
+        $imgIcon = $('<img src="'+toRoot+'assets/images/resource-tutorial.png" '
+            + ' width="64" height="64" alt=""/>');
         $lessons.each(function(index) {
           $olLessons.append('<li><a href="'+$(this).attr('href')+'">' + $(this).html()+'</a></li>');
         });
       } else {
+        $imgIcon = $('<img src="'+toRoot+'assets/images/resource-article.png" '
+            + ' width="64" height="64" alt=""/>');
         $pSummary.addClass('article');
       }
 
-      $liClass.append($h2Title).append($pSummary).append($olLessons);
+      $liClass.append($h2Title).append($imgIcon).append($pSummary).append($olLessons);
       $olClasses.append($liClass);
     });
     $('.jd-descr').append($olClasses);
@@ -471,6 +504,15 @@ false; // navigate across topic boundaries only in design docs
   po.src = 'https://apis.google.com/js/plusone.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 
+
+  // Revise the sidenav widths to make room for the scrollbar
+  // which avoids the visible width from changing each time the bar appears
+  var $sidenav = $("#side-nav");
+  var sidenav_width = parseInt($sidenav.innerWidth());
+
+  $("#devdoc-nav  #nav").css("width", sidenav_width - 4 + "px"); // 4px is scrollbar width
+
+
   $(".scroll-pane").removeAttr("tabindex"); // get rid of tabindex added by jscroller
 
   if ($(".scroll-pane").length > 1) {
@@ -543,15 +585,6 @@ false; // navigate across topic boundaries only in design docs
         startYouTubePlayer(videoId);
       });
     });
-  }
-
-  // Responsive testing
-  var responsiveParam = location.href.match(/[?&]responsive=?(|true|false)/);
-  if (responsiveParam) {
-    localStorage['test-responsive'] = ['', 'true'].indexOf(responsiveParam) > -1;
-  }
-  if (localStorage['test-responsive']) {
-    $(document.body).addClass('responsive');
   }
 });
 // END of the onload event
@@ -705,28 +738,21 @@ function initExpandableNavItems(rootTag) {
 
 /** Create the list of breadcrumb links in the sticky header */
 function buildBreadcrumbs() {
-  var $breadcrumbUl =  $(".dac-header-crumbs");
-  var primaryNavLink = ".dac-nav-list > .dac-nav-item > .dac-nav-link";
-
+  var $breadcrumbUl =  $("#sticky-header ul.breadcrumb");
   // Add the secondary horizontal nav item, if provided
-  var $selectedSecondNav = $(".dac-nav-secondary .dac-nav-link.selected").clone()
-    .attr('class', 'dac-header-crumbs-link');
-
+  var $selectedSecondNav = $("div#nav-x ul.nav-x a.selected").clone().removeClass("selected");
   if ($selectedSecondNav.length) {
-    $breadcrumbUl.prepend($('<li class="dac-header-crumbs-item">').append($selectedSecondNav));
+    $breadcrumbUl.prepend($("<li>").append($selectedSecondNav))
   }
-
   // Add the primary horizontal nav
-  var $selectedFirstNav = $(primaryNavLink + ".selected, " + primaryNavLink + ".has-subnav").clone()
-    .attr('class', 'dac-header-crumbs-link');
-
+  var $selectedFirstNav = $("div#header-wrap ul.nav-x a.selected").clone().removeClass("selected");
   // If there's no header nav item, use the logo link and title from alt text
   if ($selectedFirstNav.length < 1) {
-    $selectedFirstNav = $('<a class="dac-header-crumbs-link">')
+    $selectedFirstNav = $("<a>")
         .attr('href', $("div#header .logo a").attr('href'))
         .text($("div#header .logo img").attr('alt'));
   }
-  $breadcrumbUl.prepend($('<li class="dac-header-crumbs-item">').append($selectedFirstNav));
+  $breadcrumbUl.prepend($("<li>").append($selectedFirstNav));
 }
 
 
@@ -798,7 +824,7 @@ function setNavBarLeftPos() {
 function updateSideNavPosition() {
   var newLeft = $(window).scrollLeft() - navBarLeftPos;
   $('#devdoc-nav').css({left: -newLeft});
-  $('#devdoc-nav .totop').css({left: -(newLeft - parseInt($('#side-nav').css('padding-left')))});
+  $('#devdoc-nav .totop').css({left: -(newLeft - parseInt($('#side-nav').css('margin-left')))});
 }
 
 // TODO: use $(document).ready instead
@@ -1042,7 +1068,7 @@ var prevScrollLeft = 0; // used to compare current position to previous position
 /* Sets the vertical scoll position at which the sticky bar should appear.
    This method is called to reset the position when search results appear or hide */
 function setStickyTop() {
-  stickyTop = $('#header-wrapper').outerHeight() - $('#header > .dac-header-inner').outerHeight();
+  stickyTop = $('#header-wrapper').outerHeight() - $('#sticky-header').outerHeight();
 }
 
 /*
@@ -1052,7 +1078,8 @@ $(window).scroll(function(event) {
 
   setStickyTop();
   var hiding = false;
-  var $headerEl = $('#header');
+  var $stickyEl = $('#sticky-header');
+  var $menuEl = $('.menu-container');
   // Exit if there's no sidenav
   if ($('#side-nav').length == 0) return;
   // Exit if the mouse target is a DIV, because that means the event is coming
@@ -1093,14 +1120,16 @@ $(window).scroll(function(event) {
         .css({'width':'auto','margin':''})
         .prependTo('#side-nav');
     // delay hide the sticky
-    $headerEl.removeClass('is-sticky');
+    $menuEl.removeClass('sticky-menu');
+    $stickyEl.fadeOut(250);
     hiding = false;
 
     // update the sidenaav position for side scrolling
     updateSideNavPosition();
   } else if (!sticky && shouldBeSticky) {
     sticky = true;
-    $headerEl.addClass('is-sticky');
+    $stickyEl.fadeIn(10);
+    $menuEl.addClass('sticky-menu');
 
     // make the sidenav fixed
     var width = $('#devdoc-nav').width();
@@ -1113,7 +1142,8 @@ $(window).scroll(function(event) {
     updateSideNavPosition();
 
   } else if (hiding && top < 15) {
-    $headerEl.removeClass('is-sticky');
+    $menuEl.removeClass('sticky-menu');
+    $stickyEl.hide();
     hiding = false;
   }
   resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
@@ -1811,11 +1841,12 @@ function sync_selection_table(toroot)
     // if there are api results
     if ((gMatches.length > 0) || (gGoogleMatches.length > 0)) {
       // reveal suggestion list
+      $('.suggest-card.dummy').show();
       $('.suggest-card.reference').show();
       var listIndex = 0; // list index position
 
       // reset the lists
-      $(".suggest-card.reference li").remove();
+      $(".search_filtered_wrapper.reference li").remove();
 
       // ########### ANDROID RESULTS #############
       if (gMatches.length > 0) {
@@ -1845,12 +1876,13 @@ function sync_selection_table(toroot)
       }
     } else {
       $('.suggest-card.reference').hide();
+      $('.suggest-card.dummy').hide();
     }
 
     // ########### JD DOC RESULTS #############
     if (gDocsMatches.length > 0) {
         // reset the lists
-        $(".suggest-card:not(.reference) li").remove();
+        $(".search_filtered_wrapper.docs li").remove();
 
         // determine google results to show
         // NOTE: The order of the conditions below for the sugg.type MUST BE SPECIFIC:
@@ -1915,7 +1947,7 @@ function sync_selection_table(toroot)
         }
 
     } else {
-      $('.suggest-card:not(.reference)').hide(300);
+      $('.search_filtered_wrapper.docs .suggest-card:not(.dummy)').hide(300);
     }
 }
 
@@ -1939,14 +1971,14 @@ function search_changed(e, kd, toroot)
 
     // show/hide the close button
     if (text != '') {
-        $("#search-close").removeClass("hide");
+        $(".search .close").removeClass("hide");
     } else {
-        $("#search-close").addClass("hide");
+        $(".search .close").addClass("hide");
     }
     // 27 = esc
     if (e.keyCode == 27) {
         // close all search results
-        if (kd) $('#search-close').trigger('click');
+        if (kd) $('.search .close').trigger('click');
         return true;
     }
     // 13 = enter
@@ -2504,7 +2536,7 @@ function search_focus_changed(obj, focused)
 {
     if (!focused) {
         if(obj.value == ""){
-          $("#search-close").addClass("hide");
+          $(".search .close").addClass("hide");
         }
         $(".suggest-card").hide();
     }
@@ -2521,7 +2553,7 @@ function submit_search() {
 
 function hideResults() {
   $("#searchResults").slideUp('fast', setStickyTop);
-  $("#search-close").addClass("hide");
+  $(".search .close").addClass("hide");
   location.hash = '';
 
   $("#search_autocomplete").val("").blur();
@@ -2638,7 +2670,7 @@ google.setOnLoadCallback(function(){
   } else {
     // first time loading search results for this page
     $('#searchResults').slideDown('slow', setStickyTop);
-    $("#search-close").removeClass("hide");
+    $(".search .close").removeClass("hide");
     loadSearchResults();
   }
 }, true);
@@ -2682,7 +2714,7 @@ $(window).hashchange( function(){
   searchControl.execute(query);
   $('#searchResults').slideDown('slow', setStickyTop);
   $("#search_autocomplete").focus();
-  $("#search-close").removeClass("hide");
+  $(".search .close").removeClass("hide");
 
   updateResultTitle(query);
 });
@@ -3504,10 +3536,6 @@ function showSamples() {
   var addedPageResources = {};
 
   $(document).ready(function() {
-    // Need to initialize hero carousel before other sections for dedupe
-    // to work correctly.
-    $('[data-carousel-query]').dacCarouselQuery();
-
     $('.resource-widget').each(function() {
       initResourceWidget(this);
     });
@@ -3517,8 +3545,8 @@ function showSamples() {
     showing lines that are cut off. This works with the css ellipsis
     classes to fade last text line and apply an ellipsis char. */
 
-    //card text currently uses 20px line height.
-    var lineHeight = 20;
+    //card text currently uses 15px line height.
+    var lineHeight = 15;
     $('.card-info .text').ellipsisfade(lineHeight);
   });
 
@@ -3534,10 +3562,11 @@ function showSamples() {
         isCarousel = $widget.hasClass('resource-carousel-layout'),
         isStack = $widget.hasClass('resource-stack-layout');
 
-    // remove illegal col-x class which is not relevant anymore thanks to responsive styles.
+    // find size of widget by pulling out its class name
+    var sizeCols = 1;
     var m = $widget.get(0).className.match(/\bcol-(\d+)\b/);
-    if (m && !$widget.is('.cols > *')) {
-      $widget.removeClass('col-' + m[1]);
+    if (m) {
+      sizeCols = parseInt(m[1], 10);
     }
 
     var opts = {
@@ -3547,6 +3576,7 @@ function showSamples() {
       sortOrder: $widget.data('sortorder'),
       query: $widget.data('query'),
       section: $widget.data('section'),
+      sizeCols: sizeCols,
       /* Added by LFL 6/6/14 */
       resourceStyle: $widget.data('resourcestyle') || 'card',
       stackSort: $widget.data('stacksort') || 'true'
@@ -3574,7 +3604,7 @@ function showSamples() {
   /* Initializes a Resource Carousel Widget */
   function drawResourcesCarouselWidget($widget, opts, resources) {
     $widget.empty();
-    var plusone = false; // stop showing plusone buttons on cards
+    var plusone = true; //always show plusone on carousel
 
     $widget.addClass('resource-card slideshow-container')
       .append($('<a>').addClass('slideshow-prev').text('Prev'))
@@ -3612,7 +3642,7 @@ function showSamples() {
   function drawResourcesStackWidget($widget, opts, resources, sections) {
     // Don't empty widget, grab all items inside since they will be the first
     // items stacked, followed by the resource query
-    var plusone = false; // stop showing plusone buttons on cards
+    var plusone = true; //by default show plusone on section cards
     var cards = $widget.find('.resource-card').detach().toArray();
     var numStacks = opts.numStacks || 1;
     var $stacks = [];
@@ -3707,33 +3737,22 @@ function showSamples() {
 
     return $el;
   }
-  
-  function createResponsiveFlowColumn(cardSize) {
-    var cardWidth = parseInt(cardSize.match(/(\d+)/)[1], 10);
-    var column = $('<div>').addClass('col-' + (cardWidth / 3) + 'of6');
-    if (cardWidth < 9) {
-      column.addClass('col-tablet-1of2');
-    } else if (cardWidth > 9 && cardWidth < 18) {
-      column.addClass('col-tablet-1of1');
-    }
-    if (cardWidth < 18) {
-      column.addClass('col-mobile-1of1')
-    }
-    return column;
-  }
 
   /* Initializes a flow widget, see distribute.scss for generating accompanying css */
   function drawResourcesFlowWidget($widget, opts, resources) {
-    $widget.empty().addClass('cols');
+    $widget.empty();
     var cardSizes = opts.cardSizes || ['6x6'];
     var i = 0, j = 0;
-    var plusone = false; // stop showing plusone buttons on cards
+    var plusone = true; // by default show plusone on resource cards
 
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
-      
-      var column = createResponsiveFlowColumn(cardSize).appendTo($widget);
+      // Some card sizes do not get a plusone button, such as where space is constrained
+      // or for cards commonly embedded in docs (to improve overall page speed).
+      plusone = !((cardSize == "6x2") || (cardSize == "6x3") ||
+                  (cardSize == "9x2") || (cardSize == "9x3") ||
+                  (cardSize == "12x2") || (cardSize == "12x3"));
 
       // A stack has a third dimension which is the number of stacked items
       var isStack = cardSize.match(/(\d+)x(\d+)x(\d+)/);
@@ -3744,7 +3763,7 @@ function showSamples() {
         // Create a stack container which should have the dimensions defined
         // by the product of the items inside.
         $stackDiv = $('<div>').addClass('resource-card-stack resource-card-' + isStack[1]
-            + 'x' + isStack[2] * isStack[3]) .appendTo(column);
+            + 'x' + isStack[2] * isStack[3]) .appendTo($widget);
       }
 
       // Build each stack item or just a single item
@@ -3766,7 +3785,7 @@ function showSamples() {
           stackCount = 0;
         }
 
-        $card.appendTo($stackDiv || column);
+        $card.appendTo($stackDiv || $widget);
 
       } while (++i < resources.length && stackCount > 0);
     }
@@ -3781,10 +3800,6 @@ function showSamples() {
   }
 
   function buildResourceList(opts) {
-    return $.queryResources(opts);
-  }
-
-  $.queryResources = function(opts) {
     var maxResults = opts.maxResults || 100;
 
     var query = opts.query || '';
@@ -3833,9 +3848,8 @@ function showSamples() {
 
       // add to list of already added indices
       for (var j = 0; j < resources.length; j++) {
-        if (resources[j]) {
-          addedResourceIndices[resources[j].index] = 1;
-        }
+        // console.log(resources[j].title);
+        addedResourceIndices[resources[j].index] = 1;
       }
 
       // concat to final results list
@@ -3877,7 +3891,7 @@ function showSamples() {
 
   function getResourceNotAlreadyAddedFilter(addedResourceIndices) {
     return function(resource) {
-      return resource && !addedResourceIndices[resource.index];
+      return !addedResourceIndices[resource.index];
     };
   }
 
@@ -4141,7 +4155,7 @@ function showSamples() {
             $this.parent().siblings().each(function ()
             {
               if ($(this).is(":visible")) {
-                var h = $(this).outerHeight(true);
+                var h = $(this).height();
                 remainingHeight = remainingHeight - h;
               }
             });
@@ -4340,467 +4354,3 @@ function showSamples() {
     }
   }
 })();
-
-(function($) {
-  'use strict';
-
-  /**
-   * Toggle Floating Label state.
-   * @param {HTMLElement} el - The DOM element.
-   * @param options
-   * @constructor
-   */
-  function FloatingLabel(el, options) {
-    this.el = $(el);
-    this.options = $.extend({}, FloatingLabel.DEFAULTS_, options);
-    this.group = this.el.closest('.dac-form-input-group');
-    this.input = this.group.find('.dac-form-input');
-
-    this.checkValue_ = this.checkValue_.bind(this);
-    this.checkValue_();
-
-    this.input.on('focus', function() {
-      this.group.addClass('dac-focused');
-    }.bind(this));
-    this.input.on('blur', function() {
-      this.group.removeClass('dac-focused');
-      this.checkValue_();
-    }.bind(this));
-    this.input.on('keyup', this.checkValue_);
-  }
-
-  /**
-   * The label is moved out of the textbox when it has a value.
-   */
-  FloatingLabel.prototype.checkValue_ = function() {
-    if (this.input.val().length) {
-      this.group.addClass('dac-has-value');
-    } else {
-      this.group.removeClass('dac-has-value');
-    }
-  };
-
-  /**
-   * jQuery plugin
-   * @param  {object} options - Override default options.
-   */
-  $.fn.dacFloatingLabel = function(options) {
-    return this.each(function() {
-      new FloatingLabel(this, options);
-    });
-  };
-
-  $(document).on('ready.aranja', function() {
-    $('.dac-form-floatlabel').each(function() {
-      $(this).dacFloatingLabel($(this).data());
-    });
-  });
-})(jQuery);
-
-/* global toRoot, CAROUSEL_OVERRIDE */
-(function($) {
-  // Ordering matters
-  var TAG_MAP = [
-    {from: 'developerstory', to: 'Android Developer Story'},
-    {from: 'googleplay', to: 'Google Play'}
-  ];
-
-  function DacCarouselQuery(el) {
-    this.el = $(el);
-
-    var opts = this.el.data();
-    opts.maxResults = parseInt(opts.maxResults || '100', 10);
-    opts.query = opts.carouselQuery;
-    var resources = $.queryResources(opts);
-
-    this.el.empty();
-    $(resources).map(function() {
-      var resource = $.extend({}, this, CAROUSEL_OVERRIDE[this.url]);
-      var slide = $('<article class="dac-expand dac-hero">');
-      var image = cleanUrl(resource.heroImage || resource.image);
-      var fullBleed = image && !resource.heroColor;
-
-      // Configure background
-      slide.css({
-        backgroundImage: fullBleed ? 'url(' + image + ')' : '',
-        backgroundColor: resource.heroColor || ''
-      });
-
-      // Should copy be inverted
-      slide.toggleClass('dac-invert', resource.heroInvert || fullBleed);
-      slide.toggleClass('dac-darken', fullBleed);
-
-      var cols = $('<div class="cols dac-hero-content">');
-
-      // inline image column
-      var rightCol = $('<div class="col-1of2 col-push-1of2 dac-hero-figure">')
-        .appendTo(cols);
-
-      if (!fullBleed && image) {
-        rightCol.append($('<img>').attr('src', image));
-      }
-
-      // info column
-      $('<div class="col-1of2 col-pull-1of2">')
-        .append($('<div class="dac-hero-tag">').text(formatTag(resource)))
-        .append($('<h1 class="dac-hero-title">').text(formatTitle(resource)))
-        .append($('<p class="dac-hero-description">').text(resource.summary))
-        .append($('<a class="dac-hero-cta">')
-          .text(formatCTA(resource))
-          .attr('href', cleanUrl(resource.url))
-          .prepend($('<span class="dac-sprite dac-auto-chevron">'))
-        )
-        .appendTo(cols);
-
-      slide.append(cols.wrap('<div class="wrap">').parent());
-      return slide[0];
-    }).prependTo(this.el);
-
-    // Pagination element.
-    this.el.append('<div class="dac-hero-carousel-pagination"><div class="wrap" data-carousel-pagination>');
-
-    this.el.dacCarousel();
-  }
-
-  function cleanUrl(url) {
-    if (url && url.indexOf('//') === -1) {
-      url = toRoot + url;
-    }
-    return url;
-  }
-
-  function formatTag(resource) {
-    // Hmm, need a better more scalable solution for this.
-    for (var i = 0, mapping; mapping = TAG_MAP[i]; i++) {
-      if (resource.tags.indexOf(mapping.from) > -1) {
-        return mapping.to;
-      }
-    }
-    return resource.type;
-  }
-
-  function formatTitle(resource) {
-    return resource.title.replace(/android developer story: /i, '');
-  }
-
-  function formatCTA(resource) {
-    return resource.type === 'youtube' ? 'Watch the video' : 'Learn more';
-  }
-
-  // jQuery plugin
-  $.fn.dacCarouselQuery = function() {
-    return this.each(function() {
-      var el = $(this);
-      var data = el.data('dac.carouselQuery');
-
-      if (!data) { el.data('dac.carouselQuery', (data = new DacCarouselQuery(el))); }
-    });
-  };
-
-  // Data API
-  $(function() {
-    $('[data-carousel-query]').dacCarouselQuery();
-  });
-})(jQuery);
-
-(function($) {
-  /**
-   * A CSS based carousel, inspired by SequenceJS.
-   * @param {jQuery} el
-   * @param {object} options
-   * @constructor
-   */
-  function DacCarousel(el, options) {
-    this.el = $(el);
-    this.options = options = $.extend({}, DacCarousel.OPTIONS, this.el.data(), options || {});
-    this.frames = this.el.find(options.frameSelector);
-    this.count = this.frames.size();
-    this.current = options.start;
-
-    this.initPagination();
-    this.initEvents();
-    this.initFrame();
-  }
-
-  DacCarousel.OPTIONS = {
-    auto:      true,
-    autoTime:  10000,
-    autoMinTime: 5000,
-    btnPrev:   '[data-carousel-prev]',
-    btnNext:   '[data-carousel-next]',
-    frameSelector: 'article',
-    loop:      true,
-    start:     0,
-    pagination: '[data-carousel-pagination]'
-  };
-
-  DacCarousel.prototype.initPagination = function() {
-    this.pagination = $([]);
-    if (!this.options.pagination) { return; }
-
-    var pagination = $('<ul class="dac-pagination">');
-    var parent = this.el;
-    if (typeof this.options.pagination === 'string') { parent = this.el.find(this.options.pagination); }
-
-    if (this.count > 1) {
-      for (var i = 0; i < this.count; i++) {
-        var li = $('<li class="dac-pagination-item">').text(i);
-        if (i === this.options.start) { li.addClass('active'); }
-        li.click(this.go.bind(this, i));
-
-        pagination.append(li);
-      }
-      this.pagination = pagination.children();
-      parent.append(pagination);
-    }
-  };
-
-  DacCarousel.prototype.initEvents = function() {
-    var that = this;
-
-    this.el.hover(function() {
-      that.pauseRotateTimer();
-    }, function() {
-      that.startRotateTimer();
-    });
-
-    $(this.options.btnPrev).click(function(e) {
-      e.preventDefault();
-      that.prev();
-    });
-
-    $(this.options.btnNext).click(function(e) {
-      e.preventDefault();
-      that.next();
-    });
-  };
-
-  DacCarousel.prototype.initFrame = function() {
-    this.frames.removeClass('active').eq(this.options.start).addClass('active');
-  };
-
-  DacCarousel.prototype.startRotateTimer = function() {
-    if (!this.options.auto || this.rotateTimer) { return; }
-    this.rotateTimer = setTimeout(this.next.bind(this), this.options.autoTime);
-  };
-
-  DacCarousel.prototype.pauseRotateTimer = function() {
-    clearTimeout(this.rotateTimer);
-    this.rotateTimer = null;
-  };
-
-  DacCarousel.prototype.prev = function() {
-    this.go(this.current - 1);
-  };
-
-  DacCarousel.prototype.next = function() {
-    this.go(this.current + 1);
-  };
-
-  DacCarousel.prototype.go = function(next) {
-    // Figure out what the next slide is.
-    while (this.count > 0 && next >= this.count) { next -= this.count; }
-    while (next < 0) { next += this.count; }
-
-    // Cancel if we're already on that slide.
-    if (next === this.current) { return; }
-
-    // Prepare next slide.
-    this.frames.eq(next).removeClass('out');
-
-    // Recalculate styles before starting slide transition.
-    var that = this;
-    resolveStyles(this.el[0], function() {
-      // Update pagination
-      that.pagination.removeClass('active').eq(next).addClass('active');
-
-      // Transition out current frame
-      that.frames.eq(that.current).toggleClass('active out');
-
-      // Transition in a new frame
-      that.frames.eq(next).toggleClass('active');
-
-      that.current = next;
-    });
-  };
-
-  // Helper
-  function resolveStyles(el, callback) {
-    /*jshint expr:true*/
-    el.offsetTop;
-    callback();
-  }
-
-  // jQuery plugin
-  $.fn.dacCarousel = function() {
-    this.each(function() {
-      var $el = $(this);
-      $el.data('dac-carousel', new DacCarousel(this));
-    });
-    return this;
-  };
-
-  // Data API
-  $(function() {
-    $('[data-carousel]').dacCarousel();
-  });
-})(jQuery);
-
-(function($) {
-  'use strict';
-
-  /**
-   * Toggle the visabilty of the mobile navigation.
-   * @param {HTMLElement} el - The DOM element.
-   * @param options
-   * @constructor
-   */
-  function ToggleModal(el, options) {
-    this.el = $(el);
-    this.options = $.extend({}, ToggleModal.DEFAULTS_, options);
-    this.el.on('click', this.clickHandler_.bind(this));
-  }
-
-  ToggleModal.DEFAULTS_ = {
-    toggleClass: 'dac-modal-open'
-  };
-
-  /**
-   * The actual toggle logic.
-   * @param event
-   * @private
-   */
-  ToggleModal.prototype.clickHandler_ = function(event) {
-    event.preventDefault();
-    //TODO: Toggle a class on the modal itself
-    $('body').toggleClass(this.options.toggleClass);
-    $('.dac-modal-dimmer').toggleClass('dac-active');
-    $('.dac-modal-window').toggleClass('dac-active');
-  };
-
-  /**
-   * jQuery plugin
-   * @param  {object} options - Override default options.
-   */
-  $.fn.dacToggleModal = function(options) {
-    return this.each(function() {
-      new ToggleModal(this, options);
-    });
-  };
-
-  /**
-   * Data Attribute API
-   */
-  $(document).on('ready.aranja', function() {
-    $('[data-modal-toogle]').each(function() {
-      $(this).dacToggleModal($(this).data());
-    });
-  });
-})(jQuery);
-
-(function($) {
-  'use strict';
-
-  /**
-   * Toggle the visabilty of the mobile navigation.
-   * @param {HTMLElement} el - The DOM element.
-   * @param options
-   * @constructor
-   */
-  function ToggleNav(el, options) {
-    this.el = $(el);
-    this.options = $.extend({}, ToggleNav.DEFAULTS_, options);
-    this.options.target = [this.options.navigation];
-
-    if (this.options.body) {this.options.target.push('body')}
-    if (this.options.dimmer) {this.options.target.push(this.options.dimmer)}
-
-    this.el.on('click', this.clickHandler_.bind(this));
-  }
-
-  /**
-   * ToggleNav Default Settings
-   * @type {{body: boolean, dimmer: string, navigation: string, toggleClass: string}}
-   * @private
-   */
-  ToggleNav.DEFAULTS_ = {
-    body: true,
-    dimmer: '.dac-nav-dimmer',
-    navigation: '[data-dac-nav]',
-    toggleClass: 'dac-nav-open'
-  };
-
-  /**
-   * The actual toggle logic.
-   * @param event
-   * @private
-   */
-  ToggleNav.prototype.clickHandler_ = function(event) {
-    event.preventDefault();
-    $(this.options.target.join(', ')).toggleClass(this.options.toggleClass);
-  };
-
-  /**
-   * jQuery plugin
-   * @param  {object} options - Override default options.
-   */
-  $.fn.dacToggleMobileNav = function(options) {
-    return this.each(function() {
-      new ToggleNav(this, options);
-    });
-  };
-
-  /**
-   * Data Attribute API
-   */
-  $(window).on('load.aranja', function() {
-    $('[data-dac-toggle-nav]').each(function() {
-      $(this).dacToggleMobileNav($(this).data());
-    });
-  });
-})(jQuery);
-
-(function($) {
-  'use strict';
-
-  /**
-   * Submit the newsletter form to a Google Form.
-   * @param {HTMLElement} el - The Form DOM element.
-   * @constructor
-   */
-  function NewsletterForm(el) {
-    this.el = $(el);
-    this.url = this.el.attr('action');
-    this.el.on('submit', this.submitHandler_.bind(this));
-  }
-
-  /**
-   * Close the modal when the form is sent.
-   * @private
-   */
-  NewsletterForm.prototype.submitHandler_ = function() {
-    //TODO: Close the modal with an event and let modal.js handle this
-    $('body').removeClass('dac-modal-open');
-    $('.dac-modal-dimmer').removeClass('dac-active');
-    $('.dac-modal-window').removeClass('dac-active');
-  };
-
-  /**
-   * jQuery plugin
-   * @param  {object} options - Override default options.
-   */
-  $.fn.dacNewsletterForm = function(options) {
-    return this.each(function() {
-      new NewsletterForm(this, options);
-    });
-  };
-
-  /**
-   * Data Attribute API
-   */
-  $(document).on('ready.aranja', function() {
-    $('[data-newsletter-form]').each(function() {
-      $(this).dacNewsletterForm();
-    });
-  });
-})(jQuery);
