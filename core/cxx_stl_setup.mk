@@ -49,15 +49,11 @@ endif
 ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     my_cflags += -D_USING_LIBCXX
     my_c_includes += external/libcxx/include
-    ifeq ($(my_cxx_stl),libc++)
+
+    ifeq ($(my_link_type),dynamic)
         my_shared_libraries += libc++
     else
         my_static_libraries += libc++_static
-        ifndef LOCAL_IS_HOST_MODULE
-            ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-                my_static_libraries += libm libc libdl
-            endif
-        endif
     endif
 
     ifdef LOCAL_IS_HOST_MODULE
@@ -72,7 +68,7 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
         endif
 
         ifeq ($(my_link_type),static)
-            my_static_libraries += libdl
+            my_static_libraries += libm libc libdl
         else
             my_shared_libraries += libdl
         endif
