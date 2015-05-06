@@ -1,11 +1,10 @@
 <?cs 
 def:fullpage() ?>
   <div id="body-content">
-    <div>
 <?cs /def ?>
 <?cs 
 def:sdk_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -19,11 +18,10 @@ def:sdk_nav() ?>
 
 def:no_nav() ?>
   <div class="wrap clearfix" id="body-content">
-    <div>
 <?cs /def ?><?cs
 
 def:tools_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs 
@@ -40,7 +38,7 @@ def:tools_nav() ?>
 <?cs /def ?>
 <?cs
 def:training_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -59,7 +57,7 @@ def:training_nav() ?>
 <?cs /def ?><?cs
 
 def:googleplay_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
@@ -73,7 +71,7 @@ def:googleplay_nav() ?>
 <?cs /def ?><?cs
 
 def:essentials_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
@@ -87,7 +85,7 @@ def:essentials_nav() ?>
 <?cs /def ?><?cs
 
 def:users_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
@@ -101,7 +99,7 @@ def:users_nav() ?>
 <?cs /def ?><?cs
 
 def:engage_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
@@ -115,7 +113,7 @@ def:engage_nav() ?>
 <?cs /def ?><?cs
 
 def:analyze_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
@@ -129,7 +127,7 @@ def:analyze_nav() ?>
 <?cs /def ?><?cs
 
 def:monetize_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
@@ -143,7 +141,7 @@ def:monetize_nav() ?>
 <?cs /def ?><?cs
 
 def:disttools_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
@@ -157,7 +155,7 @@ def:disttools_nav() ?>
 <?cs /def ?><?cs
 
 def:stories_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
@@ -171,7 +169,7 @@ def:stories_nav() ?>
 <?cs /def ?><?cs
 
 def:guide_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -189,7 +187,7 @@ def:guide_nav() ?>
 <?cs /def ?>
 <?cs
 def:design_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -208,7 +206,7 @@ def:design_nav() ?>
 <?cs /def ?>
 <?cs
 def:distribute_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -227,7 +225,7 @@ def:distribute_nav() ?>
 
 <?cs
 def:samples_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -246,7 +244,7 @@ def:samples_nav() ?>
 
 <?cs
 def:google_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -269,7 +267,7 @@ def:google_nav() ?>
 
 <?cs
 def:about_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -289,7 +287,7 @@ def:about_nav() ?>
 
 <?cs
 def:wear_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 
@@ -308,7 +306,7 @@ def:wear_nav() ?>
 
 <?cs
 def:preview_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
         <?cs
@@ -327,7 +325,7 @@ def:default_left_nav() ?>
 <?cs if:reference.gcm || reference.gms ?>
   <?cs call:google_nav() ?>
 <?cs else ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
+  <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav">
       <div id="api-nav-header">
@@ -435,25 +433,78 @@ def:default_left_nav() ?>
 
 <?cs
 def:header_search_widget() ?>
-  <div class="dac-header-search" id="search-container">
-    <div class="dac-header-search-inner">
-      <div class="dac-header-search-btn" id="search-btn"></div>
-      <form class="dac-header-search-form" onsubmit="return submit_search()">
+<div class="menu-container">
+  <div class="moremenu">
+    <div id="more-btn"></div>
+  </div>
+  <div class="morehover" id="moremenu">
+    <div class="top"></div>
+    <div class="mid">
+      <div class="header">Links</div>
+      <ul>
+        <li><a href="https://play.google.com/apps/publish/" target="_googleplay">Google Play Developer Console</a></li>
+        <li><a href="http://android-developers.blogspot.com/">Android Developers Blog</a></li>
+        <li><a href="<?cs var:toroot ?>about/index.html">About Android</a></li>
+      </ul>
+      <div class="header">Android Sites</div>
+      <ul>
+        <li><a href="http://www.android.com">Android.com</a></li>
+        <li class="active"><a>Android Developers</a></li>
+        <li><a href="http://source.android.com">Android Open Source Project</a></li>
+      </ul>
+
+      <?cs # Include language switcher only in online docs ?>
+      <?cs if:android.whichdoc == "online" ?>
+        <div class="header">Language</div>
+          <div id="language" class="locales">
+            <select name="language" onChange="changeLangPref(this.value, true)">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="ru">Русский</option>
+                <option value="zh-cn">中文（简体)</option>
+                <option value="zh-tw">中文（繁體)</option>
+            </select>
+          </div>
+        <script type="text/javascript">
+          <!--
+          loadLangPref();
+            //-->
+        </script>
+      <?cs /if ?>
+      <?cs # End of lang switcher ?>
+      <br class="clearfix" />
+    </div><!-- end 'mid' -->
+    <div class="bottom"></div>
+  </div><!-- end 'moremenu' -->
+
+  <div class="search" id="search-container">
+    <div class="search-inner">
+      <div id="search-btn"></div>
+      <div class="left"></div>
+      <form onsubmit="return submit_search()">
         <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
           onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
           onkeydown="return search_changed(event, true, '<?cs var:toroot ?>')"
-          onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')"
-          class="dac-header-search-input" placeholder="Search" />
-          <a class="dac-header-search-close hide" id="search-close">close</a>
+          onkeyup="return search_changed(event, false, '<?cs var:toroot ?>')" />
       </form>
-    </div><!-- end dac-header-search-inner -->
-  </div><!-- end dac-header-search -->
+      <div class="right"></div>
+      <a class="close hide">close</a>
+      <div class="left"></div>
+      <div class="right"></div>
+    </div><!-- end search-inner -->
+  </div><!-- end search-container -->
 
-  <div class="search_filtered_wrapper">
+  <div class="search_filtered_wrapper reference">
     <div class="suggest-card reference no-display">
       <ul class="search_filtered">
       </ul>
     </div>
+  </div>
+
+  <div class="search_filtered_wrapper docs">
+    <div class="suggest-card dummy no-display">&nbsp;</div>
     <div class="suggest-card develop no-display">
       <ul class="search_filtered">
       </ul>
@@ -473,6 +524,7 @@ def:header_search_widget() ?>
       </ul>
     </div>
   </div>
+</div><!-- end menu-container (search and menu widget) -->
 <?cs /def ?>
 
 
@@ -545,12 +597,11 @@ def:custom_copyright() ?>
 
 <?cs 
 def:custom_footerlinks() ?>
-  <a href="<?cs var:toroot ?>about/index.html">About Android</a>
-  <a href="<?cs var:toroot ?>auto/index.html">Auto</a>
-  <a href="<?cs var:toroot ?>tv/index.html">TV</a>
-  <a href="<?cs var:toroot ?>wear/index.html">Wear</a>
-  <a href="<?cs var:toroot ?>legal.html">Legal</a>
-  <?cs
+  <p>
+    <a href="<?cs var:toroot ?>about/index.html">About Android</a>&nbsp;&nbsp;|&nbsp;
+    <a href="<?cs var:toroot ?>legal.html">Legal</a>&nbsp;&nbsp;|&nbsp;
+    <a href="<?cs var:toroot ?>support.html">Support</a>
+  </p><?cs 
 /def ?>
 
 <?cs # appears on the right side of the blue bar at the bottom off every page ?><?cs 
