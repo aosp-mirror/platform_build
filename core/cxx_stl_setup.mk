@@ -76,18 +76,8 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
             my_shared_libraries += libdl
         endif
     endif
-else ifneq ($(filter $(my_cxx_stl),stlport stlport_static),)
-    ifndef LOCAL_IS_HOST_MODULE
-        my_c_includes += external/stlport/stlport bionic/libstdc++/include \
-                         bionic
-        ifeq ($(my_cxx_stl),stlport)
-            my_shared_libraries += libstdc++ libstlport
-        else
-            my_static_libraries += libstdc++ libstlport_static
-        endif
-    endif
 else ifeq ($(my_cxx_stl),ndk)
-    # Using an NDK STL. Handled farther up in this file.
+    # Using an NDK STL. Handled in binary.mk.
     ifndef LOCAL_IS_HOST_MODULE
         my_system_shared_libraries += libstdc++
     endif
@@ -106,5 +96,5 @@ else ifeq ($(my_cxx_stl),none)
         my_ldlibs += $($(my_prefix)$(HOST_OS)_$(my_link_type)_gcclibs)
     endif
 else
-    $(error $(my_cxx_stl) is not a supported STL.)
+    $(error $(LOCAL_PATH): $(LOCAL_MODULE): $(my_cxx_stl) is not a supported STL.)
 endif
