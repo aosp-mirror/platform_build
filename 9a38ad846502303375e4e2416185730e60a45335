@@ -46,6 +46,30 @@
       "revId": "9a38ad846502303375e4e2416185730e60a45335",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cd24a5a6_2b42c9fe",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-05-06T17:15:12Z",
+      "side": 1,
+      "message": "OH, I forgot your that CL :-)\nHowever STLPORT_WHITELIST isn\u0027t defined yet at this point.\nIn config.mk it loads envsetup.mk (which eventually loads the product makefiles) before it defines STLPORT_WHITELIST.\nOn the other hand, we can remove libstlport from this file, and add it to specific device\u0027s makefile, such as device/asus/flo/device-common.mk. I\u0027d really like to keep the device names out of the build project.",
+      "parentUuid": "6d19f971_32759978",
+      "range": {
+        "startLine": 76,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 5
+      },
+      "revId": "9a38ad846502303375e4e2416185730e60a45335",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
