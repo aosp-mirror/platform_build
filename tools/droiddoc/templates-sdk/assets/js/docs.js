@@ -192,6 +192,8 @@ $(document).ready(function() {
       subNavEl.find("li.google > a").addClass("selected");
     } else if ($("body").hasClass("samples")) {
       subNavEl.find("li.samples > a").addClass("selected");
+    } else if ($("body").hasClass("preview")) {
+      subNavEl.find("li.preview > a").addClass("selected");
     } else {
       parentNavEl.removeClass('has-subnav').addClass("selected");
     }
@@ -2357,6 +2359,37 @@ function search_changed(e, kd, toroot)
             }
           }
 
+          // Search for Preview Guides
+          for (var i=0; i<PREVIEW_RESOURCES.length; i++) {
+            // current search comparison, with counters for tag and title,
+            // used later to improve ranking
+            var s = PREVIEW_RESOURCES[i];
+            s.matched_tag = 0;
+            s.matched_title = 0;
+            var matched = false;
+
+            // Check if query matches any tags; work backwards toward 1 to assist ranking
+            for (var j = s.keywords.length - 1; j >= 0; j--) {
+              // it matches a tag
+              if (s.keywords[j].toLowerCase().match(textRegex)) {
+                matched = true;
+                s.matched_tag = j + 1; // add 1 to index position
+              }
+            }
+            // Check if query matches the doc title, but only for current language
+            if (s.lang == currentLang) {
+              // if query matches the doc title
+              if (s.title.toLowerCase().match(textRegex)) {
+                matched = true;
+                s.matched_title = 1;
+              }
+            }
+            if (matched) {
+              gDocsMatches[matchedCountDocs] = s;
+              matchedCountDocs++;
+            }
+          }
+
           // Rank/sort all the matched pages
           rank_autocomplete_doc_results(text, gDocsMatches);
         }
@@ -3707,7 +3740,7 @@ function showSamples() {
 
     return $el;
   }
-  
+
   function createResponsiveFlowColumn(cardSize) {
     var cardWidth = parseInt(cardSize.match(/(\d+)/)[1], 10);
     var column = $('<div>').addClass('col-' + (cardWidth / 3) + 'of6');
@@ -3732,7 +3765,7 @@ function showSamples() {
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
-      
+
       var column = createResponsiveFlowColumn(cardSize).appendTo($widget);
 
       // A stack has a third dimension which is the number of stacked items
