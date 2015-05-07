@@ -1,10 +1,7 @@
 <?cs def:custom_masthead() ?>
-<?cs if:preview ?>
-  <?cs call:preview_masthead() ?>
-<?cs else ?>
 <a name="top"></a>
 
-<!-- dialog to prompt lang pref change when loaded from hardcoded URL 
+<!-- dialog to prompt lang pref change when loaded from hardcoded URL
 <div id="langMessage" style="display:none">
   <div>
     <div class="lang en">
@@ -180,6 +177,9 @@
             <a class="dac-nav-link" href="<?cs var:toroot ?>samples/index.html">Samples</a>
           </li>
           <?cs /if ?>
+          <li class="dac-nav-item preview">
+            <a class="dac-nav-link" href="<?cs var:toroot ?>preview/index.html">M Preview</a>
+          </li>
         </ul>
       </li>
       <li class="dac-nav-item distribute">
@@ -217,41 +217,9 @@
   </nav>
   <!-- end navigation-->
 <?cs /if ?><?cs # end if/else !devsite ?>
-<?cs /if ?><?cs # end if/else preview ?><?cs
-/def ?>
 
-<?cs def:preview_masthead() ?>
-<a name="top"></a>
-
-
-<!-- Header -->
-<div id="header-wrapper">
-  <div id="header"><?cs call:butter_bar() ?>
-    <div class="wrap" id="header-wrap">
-      <div class="col_3 logo landing-logo" style="width:240px">
-        <a href="<?cs var:toroot ?>preview/index.html">
-          <img src="<?cs var:toroot ?>assets/images/android.png" height="25" alt="Android"
-            style="margin:-3px 0 0" />
-        </a>
-      </div>
-      <div class="col-8" style="margin:0"><h1 style="margin: 4px 0 0 0px;padding:0;line-height:16px;
-color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
-
-      <?cs # ADD SEARCH AND MENU ?>
-      <?cs call:header_search_widget() ?>
-
-    </div><!-- end header-wrap -->
-  </div><!-- /Header -->
-
-
-  <div id="searchResults" class="wrap" style="display:none;">
-          <h2 id="searchTitle">Results</h2>
-          <div id="leftSearchControl" class="search-control">Loading...</div>
-  </div>
-</div> <!--end header-wrapper -->
-
-  <?cs
-/def ?>
+<?cs
+/def ?><?cs # end custom_masthead() ?>
 
 
 <?cs # (UN)COMMENT THE INSIDE OF THIS METHOD TO TOGGLE VISIBILITY ?>
@@ -268,6 +236,6 @@ color:#666;font-weight:100;font-size:27px;">L Developer Preview</h1></div>
       </div>
     </div>
 
-?>    
+?>
 
 <?cs /def ?>

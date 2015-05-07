@@ -4,22 +4,25 @@
 <?cs include:"head_tag.cs" ?>
 <body class="gc-documentation
 
+<?cs # add document classes for navigation header selection (and other stuff) ?>
 <?cs
-if:(google || reference.gms || reference.gcm) ?>google<?cs /if ?><?cs
-  if:(guide||develop||training||reference||tools||google||sdk||samples) ?>develop<?cs
-    if:guide ?> guide<?cs /if ?><?cs
-    if:samples ?> samples<?cs /if ?><?cs
-  elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories)
-    ?>distribute<?cs
-    if:googleplay ?> googleplay<?cs /if ?><?cs
-    if:essentials ?> essentials<?cs /if ?><?cs
-    if:users ?> users<?cs /if ?><?cs
-    if:engage ?> engage<?cs /if ?><?cs
-    if:monetize ?> monetize<?cs /if ?><?cs
-    if:disttools ?> disttools<?cs /if ?><?cs
-    if:stories ?> stories<?cs /if ?><?cs
-  elif:(about||wear||tv||auto) ?>about<?cs
-  elif:design ?>design<?cs
+if:(google || reference.gms || reference.gcm) ?>google<?cs
+/if ?><?cs
+if:(guide||develop||training||reference||tools||sdk||google||samples||preview) ?>develop<?cs
+  if:guide ?> guide<?cs /if ?><?cs
+  if:samples ?> samples<?cs /if ?><?cs
+  if:preview ?> preview<?cs /if ?><?cs
+elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories)
+  ?>distribute<?cs
+  if:googleplay ?> googleplay<?cs /if ?><?cs
+  if:essentials ?> essentials<?cs /if ?><?cs
+  if:users ?> users<?cs /if ?><?cs
+  if:engage ?> engage<?cs /if ?><?cs
+  if:monetize ?> monetize<?cs /if ?><?cs
+  if:disttools ?> disttools<?cs /if ?><?cs
+  if:stories ?> stories<?cs /if ?><?cs
+elif:(about||wear||tv||auto) ?>about<?cs
+elif:design ?>design<?cs
 /if ?><?cs
 if:page.trainingcourse ?> trainingcourse<?cs
 /if ?>" itemscope itemtype="http://schema.org/Article"><?cs
@@ -193,6 +196,3 @@ include:"header.cs" ?>
 
 </body>
 </html>
-
-
-
