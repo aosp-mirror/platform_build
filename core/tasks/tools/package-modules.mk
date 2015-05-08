@@ -41,7 +41,7 @@ define copy-tests-in-batch
 $(hide) $(foreach p, $(1),\
   $(eval pair := $(subst :,$(space),$(p)))\
   mkdir -p $(dir $(word 2,$(pair)));\
-  cp -rf $(word 1,$(pair)) $(word 2,$(pair));)
+  cp -Rf $(word 1,$(pair)) $(word 2,$(pair));)
 endef
 
 my_package_zip := $(my_staging_dir)/$(my_package_name).zip
@@ -58,5 +58,5 @@ $(my_package_zip) : $(my_built_modules)
 	$(call copy-tests-in-batch,$(wordlist 1001,1200,$(PRIVATE_COPY_PAIRS)))
 	$(call copy-tests-in-batch,$(wordlist 1201,9999,$(PRIVATE_COPY_PAIRS)))
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
-	  cp -rfL $(f) $(dir $@);)
+	  cp -RfL $(f) $(dir $@);)
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) *
