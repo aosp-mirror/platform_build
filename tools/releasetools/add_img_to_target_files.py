@@ -33,10 +33,6 @@ import os
 import tempfile
 import zipfile
 
-# missing in Python 2.4 and before
-if not hasattr(os, "SEEK_SET"):
-  os.SEEK_SET = 0
-
 import build_image
 import common
 
@@ -189,7 +185,7 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
   assert succ, "build userdata.img image failed"
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
-  output_zip.write(img.name, prefix + "userdata.img")
+  common.ZipWrite(output_zip, img.name, prefix + "userdata.img")
   img.close()
   os.rmdir(user_dir)
   os.rmdir(temp_dir)
@@ -226,7 +222,7 @@ def AddCache(output_zip, prefix="IMAGES/"):
   assert succ, "build cache.img image failed"
 
   common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
-  output_zip.write(img.name, prefix + "cache.img")
+  common.ZipWrite(output_zip, img.name, prefix + "cache.img")
   img.close()
   os.rmdir(user_dir)
   os.rmdir(temp_dir)
@@ -252,7 +248,7 @@ def AddImagesToTargetFiles(filename):
     OPTIONS.info_dict["selinux_fc"] = os.path.join(
         OPTIONS.input_tmp, "BOOT", "RAMDISK", "file_contexts")
 
-  input_zip.close()
+  common.ZipClose(input_zip)
   output_zip = zipfile.ZipFile(filename, "a",
                                compression=zipfile.ZIP_DEFLATED)
 
@@ -297,7 +293,7 @@ def AddImagesToTargetFiles(filename):
   banner("cache")
   AddCache(output_zip)
 
-  output_zip.close()
+  common.ZipClose(output_zip)
 
 def main(argv):
   def option_handler(o, _):

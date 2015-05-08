@@ -205,8 +205,8 @@ def BuildImage(in_dir, prop_dict, out_file):
   Returns:
     True iff the image is built successfully.
   """
-  # system_root_image=true: build a system.img that combines the contents of /system
-  # and the ramdisk, and can be mounted at the root of the file system.
+  # system_root_image=true: build a system.img that combines the contents of
+  # /system and the ramdisk, and can be mounted at the root of the file system.
   origin_in = in_dir
   fs_config = prop_dict.get("fs_config")
   if (prop_dict.get("system_root_image") == "true"
@@ -375,8 +375,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_size", "partition_size")
     copy_prop("system_journal_size", "journal_size")
     copy_prop("system_verity_block_device", "verity_block_device")
-    copy_prop("system_root_image","system_root_image")
-    copy_prop("ramdisk_dir","ramdisk_dir")
+    copy_prop("system_root_image", "system_root_image")
+    copy_prop("ramdisk_dir", "ramdisk_dir")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
