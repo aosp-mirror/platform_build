@@ -16,6 +16,24 @@
       "revId": "39a38083019578c10afee31295894bb45c37b0ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d6d15ec_c3b8fc54",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-05-08T20:54:04Z",
+      "side": 1,
+      "message": "Actually they were not captured by my pylint. Changed to expected_compress_type, because I was trying to explicitly pass the args to _verify() instead of the dict.",
+      "parentUuid": "4d6d15ec_1d3f37da",
+      "revId": "39a38083019578c10afee31295894bb45c37b0ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
