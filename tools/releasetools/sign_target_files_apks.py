@@ -196,23 +196,23 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if key not in common.SPECIAL_CERT_STRINGS:
         print "    signing: %-*s (%s)" % (maxsize, name, key)
         signed_data = SignApk(data, key, key_passwords[key])
-        output_tf_zip.writestr(out_info, signed_data)
+        common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
         print "NOT signing: %s" % (name,)
-        output_tf_zip.writestr(out_info, data)
+        common.ZipWriteStr(output_tf_zip, out_info, data)
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
                            "RECOVERY/RAMDISK/default.prop"):
       print "rewriting %s:" % (info.filename,)
       new_data = RewriteProps(data, misc_info)
-      output_tf_zip.writestr(out_info, new_data)
+      common.ZipWriteStr(output_tf_zip, out_info, new_data)
       if info.filename == "RECOVERY/RAMDISK/default.prop":
         write_to_temp(info.filename, info.external_attr, new_data)
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
       new_data = ReplaceCerts(data)
-      output_tf_zip.writestr(out_info, new_data)
+      common.ZipWriteStr(output_tf_zip, out_info, new_data)
     elif info.filename in ("SYSTEM/recovery-from-boot.p",
                            "SYSTEM/bin/install-recovery.sh"):
       rebuild_recovery = True
@@ -229,7 +229,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       pass
     else:
       # a non-APK file; copy it verbatim
-      output_tf_zip.writestr(out_info, data)
+      common.ZipWriteStr(output_tf_zip, out_info, data)
 
   if OPTIONS.replace_ota_keys:
     new_recovery_keys = ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
@@ -243,7 +243,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         "boot.img", "boot.img", tmpdir, "BOOT", info_dict=misc_info)
 
     def output_sink(fn, data):
-      output_tf_zip.writestr("SYSTEM/"+fn, data)
+      common.ZipWriteStr(output_tf_zip, "SYSTEM/" + fn, data)
 
     common.MakeRecoveryPatch(tmpdir, output_sink, recovery_img, boot_img,
                              info_dict=misc_info)
@@ -488,8 +488,8 @@ def main(argv):
   ProcessTargetFiles(input_zip, output_zip, misc_info,
                      apk_key_map, key_passwords)
 
-  input_zip.close()
-  output_zip.close()
+  common.ZipClose(input_zip)
+  common.ZipClose(output_zip)
 
   add_img_to_target_files.AddImagesToTargetFiles(args[1])
 
