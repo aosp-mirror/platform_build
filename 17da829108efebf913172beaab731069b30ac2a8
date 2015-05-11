@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d407d41_7c7bfeed",
+        "filename": "target/board/generic/sepolicy/qemu_props.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2015-05-11T18:24:12Z",
+      "side": 1,
+      "message": "Do we want this style?",
+      "revId": "17da829108efebf913172beaab731069b30ac2a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
