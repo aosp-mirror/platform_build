@@ -40,6 +40,11 @@
     java.lang.Object readResolve();
 }
 
+# Keep Throwable's constructor that takes a String argument.
+-keepclassmembers class * extends java.lang.Throwable {
+  <init>(java.lang.String);
+}
+
 # Please specify classes to be kept explicitly in your package's configuration.
 # -keep class * extends android.app.Activity
 # -keep class * extends android.view.View
