@@ -52,7 +52,6 @@ PRODUCT_PACKAGES += \
     libpower \
     libsigchain \
     libstdc++ \
-    libstlport \
     libsurfaceflinger \
     libsurfaceflinger_ddmconnection \
     libsysutils \
