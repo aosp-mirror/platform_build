@@ -16,6 +16,24 @@
       "revId": "bd7ed2a8ab31608a13c55d4a707f2fb8116fabc8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2dd541cf_d72c3496",
+        "filename": "target/board/generic/sepolicy/qemu_props.te",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2015-05-12T12:23:17Z",
+      "side": 1,
+      "message": "No strong preference either way.  Maybe it is more readable split up into separate rules?",
+      "parentUuid": "0d407d41_5c803a46",
+      "revId": "bd7ed2a8ab31608a13c55d4a707f2fb8116fabc8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
