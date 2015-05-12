@@ -16,6 +16,57 @@
       "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d338121_e08a771b",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-05-12T20:28:24Z",
+      "side": 1,
+      "message": "s/that//\n\nclobbered_blocks?",
+      "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad3e91ea_11436e22",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1201,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-05-12T20:28:24Z",
+      "side": 1,
+      "message": "but we still want to emit this check?",
+      "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d338121_a0fa2f86",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-05-12T20:28:24Z",
+      "side": 1,
+      "message": "a string",
+      "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
