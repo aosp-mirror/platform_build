@@ -1148,6 +1148,9 @@ class BlockDifference(object):
     self.partition = partition
     self.check_first_block = check_first_block
 
+    # Due to http://b/20939131, check_first_block is disabled temporarily.
+    assert not self.check_first_block
+
     if version is None:
       version = 1
       if OPTIONS.info_dict:
@@ -1181,18 +1184,18 @@ class BlockDifference(object):
     if not self.src:
       script.Print("Image %s will be patched unconditionally." % (partition,))
     else:
+      ranges = self.src.care_map.subtract(self.src.clobbered_blocks)
+      ranges_str = ranges.to_string_raw()
       if self.version >= 3:
         script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
                             'block_image_verify("%s", '
                             'package_extract_file("%s.transfer.list"), '
                             '"%s.new.dat", "%s.patch.dat")) then') % (
-                            self.device, self.src.care_map.to_string_raw(),
-                            self.src.TotalSha1(),
+                            self.device, ranges_str, self.src.TotalSha1(),
                             self.device, partition, partition, partition))
       else:
         script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
-            self.device, self.src.care_map.to_string_raw(),
-            self.src.TotalSha1()))
+                           self.device, ranges_str, self.src.TotalSha1()))
       script.Print('Verified %s image...' % (partition,))
       script.AppendExtra('else')
 
@@ -1240,6 +1243,9 @@ class BlockDifference(object):
 
     return ctx.hexdigest()
 
+  # TODO(tbao): Due to http://b/20939131, block 0 may be changed without
+  # remounting R/W. Will change the checking to a finer-grained way to
+  # mask off those bits.
   def _CheckFirstBlock(self, script):
     r = rangelib.RangeSet((0, 1))
     srchash = self._HashBlocks(self.src, r)
