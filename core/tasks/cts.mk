@@ -86,8 +86,7 @@ $(foreach m, $(CTS_CASE_LIST),\
     $(eval $(call copy-one-file, $(built), $(installed)))\
     $(eval CTS_CASE_LIST_APKS += $(installed))))
 
-CTS_SHARED_LIBS := \
-	$(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX)
+CTS_SHARED_LIBS :=
 
 DEFAULT_TEST_PLAN := $(cts_dir)/$(cts_name)/resource/plans
 $(cts_dir)/all_cts_files_stamp: $(CTS_CORE_CASES) $(CTS_TEST_CASES) $(CTS_CASE_LIST_APKS) $(JUNIT_HOST_JAR) $(HOSTTESTLIB_JAR) $(CTS_HOST_LIBRARY_JARS) $(TF_JAR) $(VMTESTSTF_JAR) $(CTS_TF_JAR) $(CTS_TF_EXEC_PATH) $(CTS_TF_README_PATH) $(ACP) $(CTS_TEST_JAR_FILES) $(CTS_SHARED_LIBS)
