@@ -73,6 +73,7 @@ class EmptyImage(object):
   """A zero-length image."""
   blocksize = 4096
   care_map = RangeSet()
+  clobbered_blocks = RangeSet()
   total_blocks = 0
   file_map = {}
   def ReadRangeSet(self, ranges):
@@ -105,6 +106,7 @@ class DataImage(object):
 
     self.total_blocks = len(self.data) / self.blocksize
     self.care_map = RangeSet(data=(0, self.total_blocks))
+    self.clobbered_blocks = RangeSet()
 
     zero_blocks = []
     nonzero_blocks = []
@@ -126,9 +128,9 @@ class DataImage(object):
     return [self.data[s*self.blocksize:e*self.blocksize] for (s, e) in ranges]
 
   def TotalSha1(self):
-    if not hasattr(self, "sha1"):
-      self.sha1 = sha1(self.data).hexdigest()
-    return self.sha1
+    # DataImage always carries empty clobbered_blocks.
+    assert self.clobbered_blocks.size() == 0
+    return sha1(self.data).hexdigest()
 
 
 class Transfer(object):
@@ -174,6 +176,10 @@ class Transfer(object):
 #      (Typically a domain is a file, and the key in file_map is the
 #      pathname.)
 #
+#    clobbered_blocks: a RangeSet containing which blocks contain data
+#      but may be altered by the FS. They need to be excluded when
+#      verifying the partition integrity.
+#
 #    ReadRangeSet(): a function that takes a RangeSet and returns the
 #      data contained in the image blocks of that RangeSet.  The data
 #      is returned as a list or tuple of strings; concatenating the
@@ -183,7 +189,7 @@ class Transfer(object):
 #
 #    TotalSha1(): a function that returns (as a hex string) the SHA-1
 #      hash of all the data in the image (ie, all the blocks in the
-#      care_map)
+#      care_map minus clobbered_blocks).
 #
 # When creating a BlockImageDiff, the src image may be None, in which
 # case the list of transfers produced will never read from the
@@ -766,6 +772,13 @@ class BlockImageDiff(object):
         src_ranges = self.src.file_map.get("__ZERO", empty)
         Transfer(tgt_fn, "__ZERO", tgt_ranges, src_ranges,
                  "zero", self.transfers)
+        continue
+
+      elif tgt_fn == "__COPY":
+        # "__COPY" domain includes all the blocks not contained in any
+        # file and that need to be copied unconditionally to the target.
+        print("FindTransfers: new", tgt_ranges);
+        Transfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
         continue
 
       elif tgt_fn in self.src.file_map:
