@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "cd1ae5b3_8f10fdd2",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-05-13T18:24:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d338121_e08a771b",
+      "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ad3e91ea_11436e22",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 1
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "ed2329ea_f6d50e3a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1201,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-05-13T18:24:41Z",
+      "side": 1,
+      "message": "yeah. currently check_first_block is set to false with this CL. let\u0027s re-enable the feature when we can check at a finer-grained (e.g. to exclude some mutable bits, or to only read certain bits).",
+      "parentUuid": "ad3e91ea_11436e22",
+      "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d338121_a0fa2f86",
         "filename": "tools/releasetools/sparse_img.py",
         "patchSetId": 1
@@ -64,6 +100,24 @@
       "writtenOn": "2015-05-12T20:28:24Z",
       "side": 1,
       "message": "a string",
+      "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad15b184_ae669652",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-05-13T18:24:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d338121_a0fa2f86",
       "revId": "42f18814899a3ddf36a7062e1162a5f8aaf25495",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
