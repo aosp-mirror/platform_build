@@ -1,19 +1,75 @@
-<div class="dac-modal">
-  <div class="dac-modal-dimmer" data-modal-toogle></div>
+<div class="dac-footer dac-expand">
+  <div class="wrap">
+    <div class="cols dac-footer-main">
+      <div class="col-1of2">
+        <a class="dac-footer-getnews" data-modal-toggle="newsletter" href="javascript:;">Get news &amp; tips <span
+          class="dac-fab dac-primary"><i class="dac-sprite dac-mail"></i></span></a>
+      </div>
+      <div class="col-1of2 dac-footer-reachout">
+        <div class="dac-footer-contact">
+          <a class="dac-footer-contact-link" href="http://android-developers.blogspot.com/">Blog</a>
+          <a class="dac-footer-contact-link" href="/support.html">Support</a>
+        </div>
+        <div class="dac-footer-social">
+          <a class="dac-fab dac-footer-social-link" href="https://www.youtube.com/user/androiddevelopers"><i class="dac-sprite dac-youtube"></i></a>
+          <a class="dac-fab dac-footer-social-link" href="https://plus.google.com/+AndroidDevelopers"><i class="dac-sprite dac-gplus"></i></a>
+          <a class="dac-fab dac-footer-social-link" href="https://twitter.com/AndroidDev"><i class="dac-sprite dac-twitter"></i></a>
+        </div>
+      </div>
+    </div>
 
+    <hr class="dac-footer-separator"/>
+
+    <?cs if:reference ?>
+      <p class="dac-footer-copyright">
+        <?cs call:custom_copyright() ?>
+      </p>
+      <p class="dac-footer-build">
+        <?cs call:custom_buildinfo() ?>
+      </p>
+    <?cs elif:!hide_license_footer ?>
+      <p class="dac-footer-copyright">
+        <?cs call:custom_cc_copyright() ?>
+      </p>
+    <?cs /if ?>
+
+    <p class="dac-footer-links">
+      <a href="/about/index.html">About Android</a>
+      <a href="/auto/index.html">Auto</a>
+      <a href="/tv/index.html">TV</a>
+      <a href="/wear/index.html">Wear</a>
+      <a href="/legal.html">Legal</a>
+
+      <span id="language" class="locales">
+        <select name="language" onchange="changeLangPref(this.value, true)">
+          <option value="en" selected="selected">English</option>
+          <option value="es">Español</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="ru">Русский</option>
+          <option value="zh-cn">中文（简体)</option>
+          <option value="zh-tw">中文（繁體)</option>
+        </select>
+      </span>
+    </p>
+  </div>
+</div> <!-- end footer -->
+
+<div data-modal="newsletter" data-newsletter class="dac-modal newsletter">
   <div class="dac-modal-container">
     <div class="dac-modal-window">
       <header class="dac-modal-header">
-        <button class="dac-modal-header-close" data-modal-toogle><i class="dac-sprite dac-close"></i></button>
-        <h2 class="dac-modal-header-title">Sign-up for the newsletter to get the latest Android developer news and tips that will help you find success on Google Play.</h2>
+        <button class="dac-modal-header-close" data-modal-toggle><i class="dac-sprite dac-close"></i></button>
+        <h2 class="norule dac-modal-header-title">
+          Get the latest Android developer news and tips that will help you find success on Google Play.
+        </h2>
         <p class="dac-modal-header-subtitle">&#42; Required Fields</p>
       </header>
-      <iframe src="" class="dac-modal-iframe" name="dac-modal-iframe"></iframe>
-      <form action="https://docs.google.com/forms/d/1QgnkzbEJIDu9lMEea0mxqWrXUJu0oBCLD7ar23V0Yys/formResponse" class="dac-form" method="post" target="dac-modal-iframe" data-newsletter-form>
+      <form action="https://docs.google.com/forms/d/1QgnkzbEJIDu9lMEea0mxqWrXUJu0oBCLD7ar23V0Yys/formResponse" class="dac-form" method="post" target="dac-newsletter-iframe">
         <section class="dac-modal-content">
           <fieldset class="dac-form-fieldset">
             <div class="cols">
-              <div class="col-4of8">
+              <div class="col-1of2 newsletter-leftCol">
                 <div class="dac-form-input-group">
                   <label for="newsletter-full-name" class="dac-form-floatlabel">Full name</label>
                   <input type="text" class="dac-form-input" name="entry.1357890476" id="newsletter-full-name" required>
@@ -25,7 +81,7 @@
                   <span class="dac-form-required">*</span>
                 </div>
               </div>
-              <div class="col-4of8">
+              <div class="col-1of2 newsletter-rightCol">
                 <div class="dac-form-input-group">
                   <label for="newsletter-company" class="dac-form-floatlabel">Company / developer name</label>
                   <input type="text" class="dac-form-input" name="entry.1664780309" id="newsletter-company">
@@ -40,7 +96,7 @@
           </fieldset>
           <fieldset class="dac-form-fieldset">
             <div class="cols">
-              <div class="col-4of8">
+              <div class="col-1of2 newsletter-leftCol">
                 <legend class="dac-form-legend">Which best describes your business:<span class="dac-form-required">*</span>
                 </legend>
                 <div class="dac-form-radio-group">
@@ -59,7 +115,7 @@
                   <label for="newsletter-business-type-appsgames" class="dac-form-label">Apps &amp; Games</label>
                 </div>
               </div>
-              <div class="col-4of8 newsletter-checkboxes">
+              <div class="col-1of2 newsletter-rightCol newsletter-checkboxes">
                 <div class="dac-form-radio-group">
                   <div class="dac-media">
                     <div class="dac-media-figure">
@@ -96,57 +152,4 @@
       </form>
     </div>
   </div>
-</div>
-<div class="dac-footer wrap">
-  <div class="cols dac-footer-main">
-    <div class="col-1of2">
-      <a class="dac-footer-getnews" data-modal-toogle href="javascript:;">Get news &amp; tips <span class="dac-fab dac-primary"><i class="dac-sprite dac-mail"></i></span></a>
-    </div>
-    <div class="col-1of2 dac-footer-reachout">
-      <div class="dac-footer-contact">
-        <a class="dac-footer-contact-link" href="http://android-developers.blogspot.com/">Blog</a>
-        <a class="dac-footer-contact-link" href="/support.html">Support</a>
-      </div>
-      <div class="dac-footer-social">
-        <a class="dac-fab dac-footer-social-link" href="https://www.youtube.com/user/androiddevelopers"><i class="dac-sprite dac-youtube"></i></a>
-        <a class="dac-fab dac-footer-social-link" href="https://plus.google.com/+AndroidDevelopers"><i class="dac-sprite dac-gplus"></i></a>
-        <a class="dac-fab dac-footer-social-link" href="https://twitter.com/AndroidDev"><i class="dac-sprite dac-twitter"></i></a>
-      </div>
-    </div>
-  </div>
-
-  <hr class="dac-footer-separator"/>
-
-  <?cs if:reference ?>
-    <p class="dac-footer-copyright">
-      <?cs call:custom_copyright() ?>
-    </p>
-    <p class="dac-footer-build">
-      <?cs call:custom_buildinfo() ?>
-    </p>
-  <?cs elif:!hide_license_footer ?>
-    <p class="dac-footer-copyright">
-      <?cs call:custom_cc_copyright() ?>
-    </p>
-  <?cs /if ?>
-
-  <p class="dac-footer-links">
-    <a href="/about/index.html">About Android</a>
-    <a href="/auto/index.html">Auto</a>
-    <a href="/tv/index.html">TV</a>
-    <a href="/wear/index.html">Wear</a>
-    <a href="/legal.html">Legal</a>
-
-    <span id="language" class="locales">
-      <select name="language" onchange="changeLangPref(this.value, true)">
-        <option value="en" selected="selected">English</option>
-        <option value="es">Español</option>
-        <option value="ja">日本語</option>
-        <option value="ko">한국어</option>
-        <option value="ru">Русский</option>
-        <option value="zh-cn">中文（简体)</option>
-        <option value="zh-tw">中文（繁體)</option>
-      </select>
-    </span>
-  </p>
 </div> <!-- end footer -->

@@ -6,7 +6,7 @@
 
 <?cs # add document classes for navigation header selection (and other stuff) ?>
 <?cs
-if:(google || reference.gms || reference.gcm) ?>google<?cs
+if:(google || reference.gms || reference.gcm) ?>google <?cs
 /if ?><?cs
 if:(guide||develop||training||reference||tools||sdk||google||samples||preview) ?>develop<?cs
   if:guide ?> guide<?cs /if ?><?cs

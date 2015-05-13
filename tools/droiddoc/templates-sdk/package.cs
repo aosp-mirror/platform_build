@@ -55,8 +55,9 @@
 <?cs call:class_table("Exceptions", package.exceptions) ?>
 <?cs call:class_table("Errors", package.errors) ?>
 
-<?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->
+
+<?cs include:"footer.cs" ?>
 </div><!-- doc-content -->
 
 <?cs include:"trailer.cs" ?>
