@@ -667,10 +667,9 @@ From <?cs var:cl.kind ?>
 <?cs # the next two lines must be exactly like this to be parsed by eclipse ?>
 <!-- ========= END OF CLASS DATA ========= -->
 <A NAME="navbar_top"></A>
-
-<?cs include:"footer.cs" ?>
 </div> <!-- jd-content -->
 
+<?cs include:"footer.cs" ?>
 </div><!-- end doc-content -->
 
 <?cs include:"trailer.cs" ?>
