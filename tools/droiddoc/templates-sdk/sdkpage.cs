@@ -399,9 +399,6 @@ var:sdk.linux_download
 
 
 
-</div><!-- end col-13 for lower-half content -->
-
-
 
 
 <script>
