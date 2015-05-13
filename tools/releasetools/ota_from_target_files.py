@@ -475,7 +475,13 @@ def GetImage(which, tmpdir, info_dict):
       path = add_img_to_target_files.BuildVendor(
           tmpdir, info_dict, block_list=mappath)
 
-  return sparse_img.SparseImage(path, mappath)
+  # Bug: http://b/20939131
+  # In ext4 filesystems, block 0 might be changed even being mounted
+  # R/O. We add it to clobbered_blocks so that it will be written to the
+  # target unconditionally. Note that they are still part of care_map.
+  clobbered_blocks = "0"
+
+  return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
@@ -773,7 +779,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
         OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
 
   system_diff = common.BlockDifference("system", system_tgt, system_src,
-                                       check_first_block=True,
                                        version=blockimgdiff_version)
 
   if HasVendorPartition(target_zip):
@@ -784,7 +789,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     vendor_tgt = GetImage("vendor", OPTIONS.target_tmp,
                           OPTIONS.target_info_dict)
     vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src,
-                                         check_first_block=True,
                                          version=blockimgdiff_version)
   else:
     vendor_diff = None
