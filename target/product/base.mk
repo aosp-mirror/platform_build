@@ -113,6 +113,7 @@ PRODUCT_PACKAGES += \
     services \
     settings \
     sgdisk \
+    sm \
     svc \
     tc \
     vdc \
