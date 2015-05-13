@@ -1,0 +1,5 @@
+-D sched.runner=multi-threaded
+-D sched.runner.thread.kind=fixed
+-D sched.runner.thread.fixed.count=4
+--sanity-checks off
+-D jack.reporter.level.file=error=--,warning=-
