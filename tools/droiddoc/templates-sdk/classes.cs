@@ -43,8 +43,9 @@
 </table>
 <?cs /each ?>
 
-<?cs include:"footer.cs" ?>
 </div><!-- end jd-content -->
+
+<?cs include:"footer.cs" ?>
 </div><!-- end doc-content -->
 
 <?cs include:"trailer.cs" ?>

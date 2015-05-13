@@ -56,7 +56,7 @@ $(document).ready(function() {
 
   // setup keyboard listener for search shortcut
   $('body').keyup(function(event) {
-    if (event.which == 191) {
+    if (event.which == 191 && $(event.target).is(':not(:input)')) {
       $('#search_autocomplete').focus();
     }
   });
@@ -71,15 +71,9 @@ $(document).ready(function() {
   });
 
   // initialize the divs with custom scrollbars
-  $('.scroll-pane').jScrollPane( {verticalGutter:0} );
-
-  // add HRs below all H2s (except for a few other h2 variants)
-  $('h2').not('#qv h2')
-         .not('#tb h2')
-         .not('.sidebox h2')
-         .not('#devdoc-nav h2')
-         .not('h2.norule').css({marginBottom:0})
-         .after('<hr/>');
+  if (window.innerWidth >= 720) {
+    $('.scroll-pane').jScrollPane({verticalGutter: 0});
+  }
 
   // set up the search close button
   $('#search-close').click(function() {
@@ -192,8 +186,6 @@ $(document).ready(function() {
       subNavEl.find("li.google > a").addClass("selected");
     } else if ($("body").hasClass("samples")) {
       subNavEl.find("li.samples > a").addClass("selected");
-    } else if ($("body").hasClass("preview")) {
-      subNavEl.find("li.preview > a").addClass("selected");
     } else {
       parentNavEl.removeClass('has-subnav').addClass("selected");
     }
@@ -372,7 +364,7 @@ false; // navigate across topic boundaries only in design docs
     var $liLesson;
     $classLinks.each(function(index) {
       $liClass  = $('<li class="clearfix"></li>');
-      $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2>' + $(this).html()+'</h2><span></span></a>');
+      $h2Title  = $('<a class="title" href="'+$(this).attr('href')+'"><h2 class="norule">' + $(this).html()+'</h2><span></span></a>');
       $pSummary = $('<p class="description">' + $classDescriptions[index] + '</p>');
 
       $olLessons  = $('<ol class="lesson-list"></ol>');
@@ -405,23 +397,15 @@ false; // navigate across topic boundaries only in design docs
   /* Resize nav height when window height changes */
   $(window).resize(function() {
     if ($('#side-nav').length == 0) return;
-    var stylesheet = $('link[rel="stylesheet"][class="fullscreen"]');
-    setNavBarLeftPos(); // do this even if sidenav isn't fixed because it could become fixed
+    setNavBarDimensions(); // do this even if sidenav isn't fixed because it could become fixed
     // make sidenav behave when resizing the window and side-scolling is a concern
-    if (sticky) {
-      if ((stylesheet.attr("disabled") == "disabled") || stylesheet.length == 0) {
-        updateSideNavPosition();
-      } else {
-        updateSidenavFullscreenWidth();
-      }
-    }
-    resizeNav();
+    updateSideNavDimensions();
+    checkSticky();
+    resizeNav(250);
   });
 
-
-  var navBarLeftPos;
   if ($('#devdoc-nav').length) {
-    setNavBarLeftPos();
+    setNavBarDimensions();
   }
 
 
@@ -464,7 +448,12 @@ false; // navigate across topic boundaries only in design docs
   $('h2').click(function() {
     var id = $(this).attr('id');
     if (id) {
-      document.location.hash = id;
+      if (history && history.replaceState) {
+        // Change url without scrolling.
+        history.replaceState({}, '', '#' + id);
+      } else {
+        document.location.hash = id;
+      }
     }
   });
 
@@ -545,15 +534,6 @@ false; // navigate across topic boundaries only in design docs
         startYouTubePlayer(videoId);
       });
     });
-  }
-
-  // Responsive testing
-  var responsiveParam = location.href.match(/[?&]responsive=?(|true|false)/);
-  if (responsiveParam) {
-    localStorage['test-responsive'] = ['', 'true'].indexOf(responsiveParam) > -1;
-  }
-  if (localStorage['test-responsive']) {
-    $(document.body).addClass('responsive');
   }
 });
 // END of the onload event
@@ -785,21 +765,24 @@ function toggleFullscreen(enable) {
     enabled = false;
   }
   writeCookie("fullscreen", enabled, null);
-  setNavBarLeftPos();
+  setNavBarDimensions();
   resizeNav(delay);
-  updateSideNavPosition();
+  updateSideNavDimensions();
   setTimeout(initSidenavHeightResize,delay);
 }
 
-
-function setNavBarLeftPos() {
+// TODO: Refactor into a closure.
+var navBarLeftPos;
+var navBarWidth;
+function setNavBarDimensions() {
   navBarLeftPos = $('#body-content').offset().left;
+  navBarWidth = $('#side-nav').width();
 }
 
 
-function updateSideNavPosition() {
+function updateSideNavDimensions() {
   var newLeft = $(window).scrollLeft() - navBarLeftPos;
-  $('#devdoc-nav').css({left: -newLeft});
+  $('#devdoc-nav').css({left: -newLeft, width: navBarWidth});
   $('#devdoc-nav .totop').css({left: -(newLeft - parseInt($('#side-nav').css('padding-left')))});
 }
 
@@ -834,7 +817,7 @@ $(document).ready(function() {
 
 
 
-/* ######### RESIZE THE SIDENAV HEIGHT ########## */
+/* ######### RESIZE THE SIDENAV ########## */
 
 function resizeNav(delay) {
   var $nav = $("#devdoc-nav");
@@ -850,7 +833,7 @@ function resizeNav(delay) {
 
   // get the height of space between nav and top of window.
   // Could be either margin or top position, depending on whether the nav is fixed.
-  var topMargin = (parseInt($nav.css('margin-top')) || parseInt($nav.css('top'))) + 1;
+  var topMargin = (parseInt($nav.css('top')) || 20) + 1;
   // add 1 for the #side-nav bottom margin
 
   // Depending on whether the header is visible, set the side nav's height.
@@ -865,7 +848,9 @@ function resizeNav(delay) {
 
 
   $scrollPanes = $(".scroll-pane");
-  if ($scrollPanes.length > 1) {
+  if ($window.width() < 720) {
+    $nav.css('height', '');
+  } else if ($scrollPanes.length > 1) {
     // subtract the height of the api level widget and nav swapper from the available nav height
     navHeight -= ($('#api-nav-header').outerHeight(true) + $('#nav-swap').outerHeight(true));
 
@@ -933,7 +918,7 @@ function delayedReInitScrollbars(delay) {
 function reInitScrollbars() {
   var pane = $(".scroll-pane").each(function(){
     var api = $(this).data('jsp');
-    if (!api) { setTimeout(reInitScrollbars,300); return;}
+    if (!api) {return;}
     api.reinitialise( {verticalGutter:0} );
   });
   $(".scroll-pane").removeAttr("tabindex"); // get rid of tabindex added by jscroller
@@ -969,6 +954,7 @@ function restoreHeight(packageHeight) {
 /** Scroll the jScrollPane to make the currently selected item visible
     This is called when the page finished loading. */
 function scrollIntoView(nav) {
+  return;
   var $nav = $("#"+nav);
   var element = $nav.jScrollPane({/* ...settings... */});
   var api = element.data('jsp');
@@ -1051,17 +1037,20 @@ function setStickyTop() {
  * Displays sticky nav bar on pages when dac header scrolls out of view
  */
 $(window).scroll(function(event) {
-
-  setStickyTop();
-  var hiding = false;
-  var $headerEl = $('#header');
-  // Exit if there's no sidenav
-  if ($('#side-nav').length == 0) return;
   // Exit if the mouse target is a DIV, because that means the event is coming
   // from a scrollable div and so there's no need to make adjustments to our layout
   if ($(event.target).nodeName == "DIV") {
     return;
   }
+
+  checkSticky();
+});
+
+function checkSticky() {
+  setStickyTop();
+  var $headerEl = $('#header');
+  // Exit if there's no sidenav
+  if ($('#side-nav').length == 0) return;
 
   var top = $(window).scrollTop();
   // we set the navbar fixed when the scroll position is beyond the height of the site header...
@@ -1071,11 +1060,15 @@ $(window).scroll(function(event) {
   if ($("#doc-col").height() < $("#side-nav").height()) {
     shouldBeSticky = false;
   }
+  // Nor on mobile
+  if (window.innerWidth < 720) {
+    shouldBeSticky = false;
+  }
   // Account for horizontal scroll
   var scrollLeft = $(window).scrollLeft();
   // When the sidenav is fixed and user scrolls horizontally, reposition the sidenav to match
   if (sticky && (scrollLeft != prevScrollLeft)) {
-    updateSideNavPosition();
+    updateSideNavDimensions();
     prevScrollLeft = scrollLeft;
   }
 
@@ -1088,38 +1081,29 @@ $(window).scroll(function(event) {
   // If sticky header visible and position is now near top, hide sticky
   if (sticky && !shouldBeSticky) {
     sticky = false;
-    hiding = true;
     // make the sidenav static again
     $('#devdoc-nav')
-        .removeClass('fixed')
-        .css({'width':'auto','margin':''})
-        .prependTo('#side-nav');
+      .removeClass('fixed')
+      .css({'width':'auto','margin':''});
     // delay hide the sticky
     $headerEl.removeClass('is-sticky');
-    hiding = false;
 
     // update the sidenaav position for side scrolling
-    updateSideNavPosition();
+    updateSideNavDimensions();
   } else if (!sticky && shouldBeSticky) {
     sticky = true;
     $headerEl.addClass('is-sticky');
 
     // make the sidenav fixed
-    var width = $('#devdoc-nav').width();
     $('#devdoc-nav')
-        .addClass('fixed')
-        .css({'width':width+'px'})
-        .prependTo('#body-content');
+      .addClass('fixed');
 
     // update the sidenaav position for side scrolling
-    updateSideNavPosition();
+    updateSideNavDimensions();
 
-  } else if (hiding && top < 15) {
-    $headerEl.removeClass('is-sticky');
-    hiding = false;
   }
   resizeNav(250); // pass true in order to delay the scrollbar re-initialization for performance
-});
+}
 
 /*
  * Manages secion card states and nav resize to conclude loading
@@ -1324,13 +1308,13 @@ function requestAppendHL(uri) {
 
 
 function changeNavLang(lang) {
-  var $links = $("#devdoc-nav,#header,#nav-x,.training-nav-top,.content-footer").find("a["+lang+"-lang]");
-  $links.each(function(i){ // for each link with a translation
+  if (lang === 'en') { return; }
+
+  var $links = $('a[' + lang + '-lang]');
+  $links.each(function(){ // for each link with a translation
     var $link = $(this);
-    if (lang != "en") { // No need to worry about English, because a language change invokes new request
-      // put the desired language from the attribute as the text
-      $link.text($link.attr(lang+"-lang"))
-    }
+    // put the desired language from the attribute as the text
+    $link.text($link.attr(lang + '-lang'))
   });
 }
 
@@ -3147,6 +3131,10 @@ function init_google_navtree(navtree_id, toroot, root_nodes)
   me.node = new Object();
 
   me.node.li = document.getElementById(navtree_id);
+  if (!me.node.li) {
+    return;
+  }
+
   me.node.children_data = root_nodes;
   me.node.children = new Array();
   me.node.children_ul = document.createElement("ul");
@@ -3740,7 +3728,7 @@ function showSamples() {
 
     return $el;
   }
-
+  
   function createResponsiveFlowColumn(cardSize) {
     var cardWidth = parseInt(cardSize.match(/(\d+)/)[1], 10);
     var column = $('<div>').addClass('col-' + (cardWidth / 3) + 'of6');
@@ -3765,7 +3753,7 @@ function showSamples() {
     while (i < resources.length) {
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
-
+      
       var column = createResponsiveFlowColumn(cardSize).appendTo($widget);
 
       // A stack has a third dimension which is the number of stacked items
@@ -4374,6 +4362,88 @@ function showSamples() {
   }
 })();
 
+/**
+ * Auto TOC
+ *
+ * Upgrades h2s on the page to have a rule and be toggle-able on mobile.
+ */
+(function($) {
+  var upgraded = false;
+  var h2Titles;
+
+  function initWidget() {
+    // add HRs below all H2s (except for a few other h2 variants)
+    // Consider doing this with css instead.
+    h2Titles = $('h2').not('#qv h2, #tb h2, .sidebox h2, #devdoc-nav h2, h2.norule');
+    h2Titles.css({marginBottom:0}).after('<hr/>');
+
+    // Exit early if on older browser.
+    if (!window.matchMedia) {
+      return;
+    }
+
+    // Only run logic in mobile layout.
+    var query = window.matchMedia('(max-width: 719px)');
+    if (query.matches) {
+      makeTogglable();
+    } else {
+      query.addListener(makeTogglable);
+    }
+  }
+
+  function makeTogglable() {
+    // Only run this logic once.
+    if (upgraded) { return; }
+    upgraded = true;
+
+    // Only make content h2s togglable.
+    var contentTitles = h2Titles.filter('#jd-content *');
+
+    // If there are more than 1
+    if (contentTitles.size() < 2) {
+      return;
+    }
+
+    contentTitles.each(function() {
+      // Find all the relevant nodes.
+      var $title = $(this);
+      var $hr = $title.next();
+      var $contents = $hr.nextUntil('h2, .next-docs');
+      var $section = $($title)
+        .add($hr)
+        .add($title.prev('a[name]'))
+        .add($contents);
+      var $anchor = $section.first().prev();
+      var anchorMethod = 'after';
+      if ($anchor.length === 0) {
+        $anchor = $title.parent();
+        anchorMethod = 'prepend';
+      }
+
+      // Remove from DOM before messing with it. DOM is slow!
+      $section.detach();
+
+      // Add mobile-only expand arrows.
+      $title.prepend('<span class="dac-visible-mobile-inline-block">' +
+          '<i class="dac-toggle-expand dac-sprite dac-expand-more-black"></i>' +
+          '<i class="dac-toggle-collapse dac-sprite dac-expand-less-black"></i>' +
+          '</span>')
+        .attr('data-toggle', 'section');
+
+      // Wrap in magic markup.
+      $section = $section.wrapAll('<div class="dac-toggle dac-mobile">').parent();
+      $contents.wrapAll('<div class="dac-toggle-content"><div>'); // extra div used for max-height calculation.
+
+      // Add it back to the dom.
+      $anchor[anchorMethod].call($anchor, $section);
+    });
+  }
+
+  $(function() {
+    initWidget();
+  });
+})(jQuery);
+
 (function($) {
   'use strict';
 
@@ -4642,27 +4712,26 @@ function showSamples() {
     this.frames.eq(next).removeClass('out');
 
     // Recalculate styles before starting slide transition.
-    var that = this;
-    resolveStyles(this.el[0], function() {
-      // Update pagination
-      that.pagination.removeClass('active').eq(next).addClass('active');
+    this.el.resolveStyles();
+    // Update pagination
+    this.pagination.removeClass('active').eq(next).addClass('active');
 
-      // Transition out current frame
-      that.frames.eq(that.current).toggleClass('active out');
+    // Transition out current frame
+    this.frames.eq(this.current).toggleClass('active out');
 
-      // Transition in a new frame
-      that.frames.eq(next).toggleClass('active');
+    // Transition in a new frame
+    this.frames.eq(next).toggleClass('active');
 
-      that.current = next;
-    });
+    this.current = next;
   };
 
-  // Helper
-  function resolveStyles(el, callback) {
+  // Helper which resolves new styles for an element, so it can start transitioning
+  // from the new values.
+  $.fn.resolveStyles = function() {
     /*jshint expr:true*/
-    el.offsetTop;
-    callback();
-  }
+    this[0] && this[0].offsetTop;
+    return this;
+  };
 
   // jQuery plugin
   $.fn.dacCarousel = function() {
@@ -4682,39 +4751,66 @@ function showSamples() {
 (function($) {
   'use strict';
 
-  /**
-   * Toggle the visabilty of the mobile navigation.
-   * @param {HTMLElement} el - The DOM element.
-   * @param options
-   * @constructor
-   */
+  function Modal(el, options) {
+    this.el = $(el);
+    this.options = $.extend({}, ToggleModal.DEFAULTS_, options);
+    this.isOpen = false;
+
+    this.el.on('click', function(event) {
+      if (!$.contains($('.dac-modal-window')[0], event.target)) {
+        return this.close_();
+      }
+    }.bind(this));
+
+    this.el.on('open', this.open_.bind(this));
+    this.el.on('close', this.close_.bind(this));
+    this.el.on('toggle', this.toggle_.bind(this));
+  }
+
+  Modal.prototype.toggle_ = function() {
+    if (this.isOpen) {
+      this.close_();
+    } else {
+      this.open_();
+    }
+  };
+
+  Modal.prototype.close_ = function() {
+    this.el.removeClass('dac-active');
+    $('body').removeClass('dac-modal-open');
+    this.isOpen = false;
+  };
+
+  Modal.prototype.open_ = function() {
+    this.el.addClass('dac-active');
+    $('body').addClass('dac-modal-open');
+    this.isOpen = true;
+  };
+
   function ToggleModal(el, options) {
     this.el = $(el);
     this.options = $.extend({}, ToggleModal.DEFAULTS_, options);
+    this.modal = this.options.modalToggle ? $('[data-modal="' + this.options.modalToggle + '"]') :
+      this.el.closest('[data-modal]');
+
     this.el.on('click', this.clickHandler_.bind(this));
   }
 
-  ToggleModal.DEFAULTS_ = {
-    toggleClass: 'dac-modal-open'
-  };
-
-  /**
-   * The actual toggle logic.
-   * @param event
-   * @private
-   */
   ToggleModal.prototype.clickHandler_ = function(event) {
     event.preventDefault();
-    //TODO: Toggle a class on the modal itself
-    $('body').toggleClass(this.options.toggleClass);
-    $('.dac-modal-dimmer').toggleClass('dac-active');
-    $('.dac-modal-window').toggleClass('dac-active');
+    this.modal.trigger('toggle');
   };
 
   /**
    * jQuery plugin
    * @param  {object} options - Override default options.
    */
+  $.fn.dacModal = function(options) {
+    return this.each(function() {
+      new Modal(this, options);
+    });
+  };
+
   $.fn.dacToggleModal = function(options) {
     return this.each(function() {
       new ToggleModal(this, options);
@@ -4725,7 +4821,11 @@ function showSamples() {
    * Data Attribute API
    */
   $(document).on('ready.aranja', function() {
-    $('[data-modal-toogle]').each(function() {
+    $('[data-modal]').each(function() {
+      $(this).dacModal($(this).data());
+    });
+
+    $('[data-modal-toggle]').each(function() {
       $(this).dacToggleModal($(this).data());
     });
   });
@@ -4803,8 +4903,12 @@ function showSamples() {
    */
   function NewsletterForm(el) {
     this.el = $(el);
-    this.url = this.el.attr('action');
-    this.el.on('submit', this.submitHandler_.bind(this));
+    this.form = this.el.find('form');
+    $('<iframe/>').hide()
+      .attr('name', 'dac-newsletter-iframe')
+      .attr('src', '')
+      .insertBefore(this.form);
+    this.form.on('submit', this.submitHandler_.bind(this));
   }
 
   /**
@@ -4812,10 +4916,8 @@ function showSamples() {
    * @private
    */
   NewsletterForm.prototype.submitHandler_ = function() {
-    //TODO: Close the modal with an event and let modal.js handle this
-    $('body').removeClass('dac-modal-open');
-    $('.dac-modal-dimmer').removeClass('dac-active');
-    $('.dac-modal-window').removeClass('dac-active');
+    this.form.trigger('reset');
+    this.el.trigger('close');
   };
 
   /**
@@ -4832,8 +4934,156 @@ function showSamples() {
    * Data Attribute API
    */
   $(document).on('ready.aranja', function() {
-    $('[data-newsletter-form]').each(function() {
+    $('[data-newsletter]').each(function() {
       $(this).dacNewsletterForm();
     });
   });
+})(jQuery);
+
+(function($) {
+  'use strict';
+
+  /**
+   * Smoothly scroll to location on current page.
+   * @param el
+   * @param options
+   * @constructor
+   */
+  function ScrollButton(el, options) {
+    this.el = $(el);
+    this.target = $(this.el.attr('href'));
+    this.options = $.extend({}, ScrollButton.DEFAULTS_, options);
+
+    if (typeof this.options.offset === 'string') {
+      this.options.offset = $(this.options.offset).height();
+    }
+
+    this.el.on('click', this.clickHandler_.bind(this));
+  }
+
+  /**
+   * Default options
+   * @type {{duration: number, easing: string, offset: number, scrollContainer: string}}
+   * @private
+   */
+  ScrollButton.DEFAULTS_ = {
+    duration: 300,
+    easing: 'swing',
+    offset: 0,
+    scrollContainer: 'html, body'
+  };
+
+  /**
+   * Scroll logic
+   * @param event
+   * @private
+   */
+  ScrollButton.prototype.clickHandler_ = function(event) {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+      return;
+    }
+
+    event.preventDefault();
+
+    $(this.options.scrollContainer).animate({
+      scrollTop: this.target.offset().top - this.options.offset
+    }, this.options);
+  };
+
+  /**
+   * jQuery plugin
+   * @param  {object} options - Override default options.
+   */
+  $.fn.dacScrollButton = function(options) {
+    return this.each(function() {
+      new ScrollButton(this, options);
+    });
+  };
+
+  /**
+   * Data Attribute API
+   */
+  $(document).on('ready.aranja', function() {
+    $('[data-scroll-button]').each(function() {
+      $(this).dacScrollButton($(this).data());
+    });
+  });
+})(jQuery);
+
+(function($) {
+  function Toggle(el) {
+    $(el).on('click.dac.togglesection', this.toggle);
+  }
+
+  Toggle.prototype.toggle = function() {
+    var $this = $(this);
+
+    var $parent = getParent($this);
+    var isExpanded = $parent.hasClass('is-expanded');
+
+    transitionMaxHeight($parent.find('.dac-toggle-content'), !isExpanded);
+    $parent.toggleClass('is-expanded');
+
+    return false;
+  };
+
+  function getParent($this) {
+    var selector = $this.attr('data-target');
+
+    if (!selector) {
+      selector = $this.attr('href');
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '');
+    }
+
+    var $parent = selector && $(selector);
+
+    return $parent && $parent.length ? $parent : $this.parent();
+  }
+
+  /**
+   * Runs a transition of max-height along with responsive styles which hide or expand the element.
+   * @param $el
+   * @param visible
+   */
+  function transitionMaxHeight($el, visible) {
+    // Only supports 1 child
+    var contentHeight = $el.children().outerHeight();
+    var targetHeight = visible ? contentHeight : 0;
+    var duration = $el.transitionDuration();
+
+    // If we're hiding, first set the maxHeight we're transitioning from.
+    if (!visible) {
+      $el.css('maxHeight', contentHeight + 'px')
+        .resolveStyles();
+    }
+
+    // Transition to new state
+    $el.css('maxHeight', targetHeight);
+
+    // Reset maxHeight to css value after transition.
+    setTimeout(function() {
+      $el.css('maxHeight', '');
+    }, duration);
+  }
+
+  // Utility to get the transition duration for the element.
+  $.fn.transitionDuration = function() {
+    var d = $(this).css('transitionDuration') || '0s';
+
+    return +(parseFloat(d) * (/ms/.test(d) ? 1 : 1000)).toFixed(0);
+  };
+
+  // jQuery plugin
+  $.fn.toggleSection = function(option) {
+    return this.each(function() {
+      var $this = $(this);
+      var data = $this.data('dac.togglesection');
+      if (!data) {$this.data('dac.togglesection', (data = new Toggle(this)));}
+      if (typeof option === 'string') {data[option].call($this);}
+    });
+  };
+
+  // Data api
+  $(document)
+    .on('click.toggle', '[data-toggle="section"]', Toggle.prototype.toggle);
 })(jQuery);

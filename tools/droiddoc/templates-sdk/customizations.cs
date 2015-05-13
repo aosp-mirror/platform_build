@@ -1,18 +1,24 @@
 <?cs
+def:mobile_nav_toggle() ?>
+  <div class="dac-visible-mobile-block" data-toggle="section">
+    <span class="dac-toggle-expand dac-devdoc-toggle"><i class="dac-sprite dac-expand-more-black"></i> Show navigation</span>
+    <span class="dac-toggle-collapse dac-devdoc-toggle" data-toggle-section><i class="dac-sprite dac-expand-less-black"></i> Hide navigation</span>
+  </div>
+<?cs /def ?><?cs
+
 def:fullpage() ?>
   <div id="body-content">
     <div>
 <?cs /def ?>
-<?cs
+<?cs 
 def:sdk_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
-
-
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
 <?cs /def ?><?cs
@@ -24,12 +30,12 @@ def:no_nav() ?>
 
 def:tools_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-<?cs
-        include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
-
-
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -41,14 +47,12 @@ def:tools_nav() ?>
 <?cs
 def:training_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
-
-
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -60,9 +64,12 @@ def:training_nav() ?>
 
 def:googleplay_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -73,10 +80,13 @@ def:googleplay_nav() ?>
 <?cs /def ?><?cs
 
 def:preview_nav() ?>
-  <div class="wrap clearfix" id="body-content">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+  <div class="wrap clearfix" id="body-content"><div class="cols">
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -88,9 +98,12 @@ def:preview_nav() ?>
 
 def:essentials_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -102,9 +115,12 @@ def:essentials_nav() ?>
 
 def:users_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -116,9 +132,12 @@ def:users_nav() ?>
 
 def:engage_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -130,9 +149,12 @@ def:engage_nav() ?>
 
 def:analyze_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -144,9 +166,12 @@ def:analyze_nav() ?>
 
 def:monetize_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -158,9 +183,12 @@ def:monetize_nav() ?>
 
 def:disttools_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -172,9 +200,12 @@ def:disttools_nav() ?>
 
 def:stories_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -186,13 +217,12 @@ def:stories_nav() ?>
 
 def:guide_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
-
-
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -204,14 +234,12 @@ def:guide_nav() ?>
 <?cs
 def:design_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
-
-
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -223,13 +251,12 @@ def:design_nav() ?>
 <?cs
 def:distribute_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
-
-
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -242,12 +269,12 @@ def:distribute_nav() ?>
 <?cs
 def:samples_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
-
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
+        </div>
       </div>
 
     </div> <!-- end side-nav -->
@@ -261,17 +288,16 @@ def:samples_nav() ?>
 <?cs
 def:google_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
-
-
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
+        </div>
       </div>
       <script type="text/javascript">
        showGoogleRefTree();
-
+    
       </script>
     </div> <!-- end side-nav -->
     <script>
@@ -284,13 +310,12 @@ def:google_nav() ?>
 <?cs
 def:about_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
-
-
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -304,13 +329,12 @@ def:about_nav() ?>
 <?cs
 def:wear_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <div id="devdoc-nav" class="scroll-pane">
-
-<?cs
-        include:"../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
-
-
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
+        </div>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -320,13 +344,14 @@ def:wear_nav() ?>
     </script>
 <?cs /def ?>
 
+
 <?cs # The default side navigation for the reference docs ?><?cs
 def:default_left_nav() ?>
 <?cs if:reference.gcm || reference.gms ?>
   <?cs call:google_nav() ?>
 <?cs else ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+    <div class="col-4 dac-hidden-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav">
       <div id="api-nav-header">
         <div id="api-level-toggle">
