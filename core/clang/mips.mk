@@ -14,6 +14,11 @@ CLANG_CONFIG_mips_UNKNOWN_CFLAGS := \
   -msynci \
   -mno-fused-madd
 
+# Temporary workaround for Mips clang++ problem,  creates
+#   relocated ptrs in read-only pic .gcc_exception_table;
+#   permanent fix pending at http://reviews.llvm.org/D9669
+CLANG_CONFIG_mips_UNKNOWN_CFLAGS += -Wl,--warn-shared-textrel
+
 # We don't have any mips flags to substitute yet.
 define subst-clang-incompatible-mips-flags
   $(1)
