@@ -115,7 +115,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v8/renderscript \
         v13 \
         v17/leanback \
-        design
+        design \
+        percent
 
 #
 # A list of all source roots under frameworks/multidex.
