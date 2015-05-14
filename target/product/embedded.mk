@@ -70,6 +70,7 @@ PRODUCT_PACKAGES += \
     surfaceflinger \
     toolbox \
     toybox \
+    tzdatacheck \
 
 # SELinux packages
 PRODUCT_PACKAGES += \
