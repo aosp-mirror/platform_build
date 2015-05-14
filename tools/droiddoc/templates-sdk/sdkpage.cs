@@ -116,6 +116,7 @@
     <td><?cs var:ndk.win64.legacy_bytes ?></td>
     <td><?cs var:ndk.win64.legacy_checksum ?></td>
   </tr> -->
+<!--   (this item is deprecated)
   <tr>
     <td>Mac OS X 32-bit</td>
     <td>
@@ -124,8 +125,9 @@
     </td>
     <td><?cs var:ndk.mac32_bytes ?></td>
     <td><?cs var:ndk.mac32_checksum ?></td>
-  </tr>
- <!--  <tr>
+  </tr> -->
+ <!-- (this item is deprecated)
+  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32.legacy_download ?></a>
