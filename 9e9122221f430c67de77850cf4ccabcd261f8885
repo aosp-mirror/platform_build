@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0da4fdb8_36820e03",
+        "filename": "target/product/security/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1060384
+      },
+      "writtenOn": "2015-05-15T21:32:49Z",
+      "side": 1,
+      "message": "used in developer only and",
+      "range": {
+        "startLine": 5,
+        "startChar": 36,
+        "endLine": 5,
+        "endChar": 69
+      },
+      "revId": "9e9122221f430c67de77850cf4ccabcd261f8885",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0da4fdb8_f6008605",
+        "filename": "target/product/security/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060384
+      },
+      "writtenOn": "2015-05-15T21:32:49Z",
+      "side": 1,
+      "message": "I\u0027d lose the comma and put the final phrase in parentheses. Ex. ... images (as that would open a major security hole).",
+      "range": {
+        "startLine": 6,
+        "startChar": 57,
+        "endLine": 7,
+        "endChar": 29
+      },
+      "revId": "9e9122221f430c67de77850cf4ccabcd261f8885",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eda6c9c2_43ffcf2c",
+        "filename": "target/product/security/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1060384
+      },
+      "writtenOn": "2015-05-15T21:32:49Z",
+      "side": 1,
+      "message": "don\u0027t need the comma here.",
+      "range": {
+        "startLine": 32,
+        "startChar": 5,
+        "endLine": 32,
+        "endChar": 6
+      },
+      "revId": "9e9122221f430c67de77850cf4ccabcd261f8885",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
