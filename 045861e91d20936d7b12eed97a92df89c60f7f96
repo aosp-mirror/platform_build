@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "edb169f2_b142b01b",
+        "filename": "core/combo/TARGET_linux-arm64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1059614
+      },
+      "writtenOn": "2015-05-15T15:20:33Z",
+      "side": 1,
+      "message": "If you are going to add this, you could also add\n\n-Wl,--icf\u003dsafe\n\nwhich is already being used on the arm32 side....?",
+      "range": {
+        "startLine": 118,
+        "startChar": 24,
+        "endLine": 118,
+        "endChar": 37
+      },
+      "revId": "045861e91d20936d7b12eed97a92df89c60f7f96",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
