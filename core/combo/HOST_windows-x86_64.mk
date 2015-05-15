@@ -36,7 +36,9 @@ endif # Linux
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
-HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS -D__USE_MINGW_ANSI_STDIO
+HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
+# Use C99-compliant printf functions (%zd).
+HOST_GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
 
 HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
 HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)
