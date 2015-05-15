@@ -549,7 +549,7 @@ ifneq ($(strip $(HOST_ACP_UNAVAILABLE)),)
   LOCAL_ACP_UNAVAILABLE := $(strip $(HOST_ACP_UNAVAILABLE))
 endif
 
-ifndef LOCAL_UNINSTALLABLE_MODULE
+ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Define a copy rule to install the module.
   # acp and libraries that it uses can't use acp for
   # installation;  hence, LOCAL_ACP_UNAVAILABLE.
