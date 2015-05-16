@@ -186,6 +186,8 @@ $(document).ready(function() {
       subNavEl.find("li.google > a").addClass("selected");
     } else if ($("body").hasClass("samples")) {
       subNavEl.find("li.samples > a").addClass("selected");
+    } else if ($("body").hasClass("preview")) {
+      subNavEl.find("li.preview > a").addClass("selected");
     } else {
       parentNavEl.removeClass('has-subnav').addClass("selected");
     }
