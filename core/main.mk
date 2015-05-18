@@ -735,9 +735,14 @@ endif
 #$(error filtered out
 #           $(filter-out $(modules_to_install),$(old_modules_to_install)))
 
-# Don't include any GNU targets in the SDK.  It's ok (and necessary)
-# to build the host tools, but nothing that's going to be installed
-# on the target (including static libraries).
+# Don't include any GNU General Public License shared objects or static
+# libraries in SDK images.  GPL executables (not static/dynamic libraries)
+# are okay if they don't link against any closed source libraries (directly
+# or indirectly)
+
+# It's ok (and necessary) to build the host tools, but nothing that's
+# going to be installed on the target (including static libraries).
+
 ifdef is_sdk_build
   target_gnu_MODULES := \
               $(filter \
