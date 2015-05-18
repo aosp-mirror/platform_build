@@ -4,5 +4,5 @@ type qemud_exec, exec_type, file_type;
 
 init_daemon_domain(qemud)
 
-# Access /dev/ttyS1.
+# Access /dev/ttyS1 and /dev/ttyGF1.
 allow qemud serial_device:chr_file rw_file_perms;
