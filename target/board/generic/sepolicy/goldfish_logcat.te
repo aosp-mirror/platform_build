@@ -6,5 +6,5 @@ domain_auto_trans(init, logcat_exec, goldfish_logcat)
 # Read from logd.
 read_logd(goldfish_logcat)
 
-# Write to /dev/ttyS2
+# Write to /dev/ttyS2 and /dev/ttyGF2.
 allow goldfish_logcat serial_device:chr_file { write open };
