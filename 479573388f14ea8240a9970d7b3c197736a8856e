@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4dc1956b_3a8aa1b3",
+        "filename": "target/board/generic/sepolicy/goldfish_setup.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1057369
+      },
+      "writtenOn": "2015-05-18T15:35:44Z",
+      "side": 1,
+      "message": "My mistake and a good thing to learn :) Will fix.",
+      "parentUuid": "8d70ed19_67ea2ca3",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8d70ed19_87de4805",
         "filename": "target/board/generic/sepolicy/goldfish_setup.te",
         "patchSetId": 1
@@ -47,6 +65,24 @@
       "writtenOn": "2015-05-18T14:34:31Z",
       "side": 1,
       "message": "I don\u0027t think so, as it cannot be set at runtime except on the emulator, right?  So we would never need to allow setting it in a non-emulator policy?",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4dc1956b_5a7d552b",
+        "filename": "target/board/generic/sepolicy/property.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1057369
+      },
+      "writtenOn": "2015-05-18T15:35:44Z",
+      "side": 1,
+      "message": "I think that\u0027s a very reasonable assumption. Any other thoughts from anybody else? If not, I\u0027ll remove that comment.",
+      "parentUuid": "2d9b818e_649f6462",
       "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
