@@ -103,7 +103,7 @@
         <a class="dac-nav-link dac-visible-mobile-block" href="<?cs var:toroot ?>index.html">Home</a>
         <ul class="dac-nav-secondary about">
           <li class="dac-nav-item about">
-            <a class="dac-nav-link" href="<?cs var:toroot ?>about/index.html">About</a>
+            <a class="dac-nav-link" href="<?cs var:toroot ?>about/index.html">Android</a>
           </li>
           <li class="dac-nav-item wear">
             <a class="dac-nav-link" href="<?cs var:toroot ?>wear/index.html">Wear</a>
@@ -178,7 +178,7 @@
           </li>
           <?cs /if ?>
           <li class="dac-nav-item preview">
-            <a class="dac-nav-link" href="<?cs var:toroot ?>preview/index.html">M Preview</a>
+            <a class="dac-nav-link" href="<?cs var:toroot ?>preview/index.html">Preview</a>
           </li>
         </ul>
       </li>
@@ -200,13 +200,10 @@
           <li class="dac-nav-item engage">
             <a class="dac-nav-link" href="<?cs var:toroot ?>distribute/engage/index.html">Engage &amp; Retain</a></li>
           <li class="dac-nav-item monetize">
-            <a class="dac-nav-link" href="<?cs var:toroot ?>distribute/monetize/index.html">Monetize</a>
+            <a class="dac-nav-link" href="<?cs var:toroot ?>distribute/monetize/index.html">Earn</a>
           </li>
           <li class="dac-nav-item analyze">
             <a class="dac-nav-link" href="<?cs var:toroot ?>distribute/analyze/index.html">Analyze</a>
-          </li>
-          <li class="dac-nav-item disttools">
-            <a class="dac-nav-link" href="<?cs var:toroot ?>distribute/tools/index.html">Tools</a>
           </li>
           <li class="dac-nav-item stories">
             <a class="dac-nav-link" href="<?cs var:toroot ?>distribute/stories/index.html">Stories</a>
