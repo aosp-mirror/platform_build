@@ -89,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "0da23dbf_26716208",
+        "filename": "target/board/generic/sepolicy/property.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-05-18T16:52:24Z",
+      "side": 1,
+      "message": "yes please remove the comment. Thnx.",
+      "parentUuid": "4dc1956b_5a7d552b",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2d9b818e_24a95c89",
         "filename": "target/board/generic/sepolicy/property_contexts",
         "patchSetId": 1
