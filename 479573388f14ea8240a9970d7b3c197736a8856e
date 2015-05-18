@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d70ed19_67ea2ca3",
+        "filename": "target/board/generic/sepolicy/goldfish_setup.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2015-05-18T14:34:31Z",
+      "side": 1,
+      "message": "No semicolon required after macro call; will expand to an empty statement.",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d70ed19_87de4805",
+        "filename": "target/board/generic/sepolicy/goldfish_setup.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2015-05-18T14:34:31Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d9b818e_649f6462",
+        "filename": "target/board/generic/sepolicy/property.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2015-05-18T14:34:31Z",
+      "side": 1,
+      "message": "I don\u0027t think so, as it cannot be set at runtime except on the emulator, right?  So we would never need to allow setting it in a non-emulator policy?",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d9b818e_24a95c89",
+        "filename": "target/board/generic/sepolicy/property_contexts",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1010111
+      },
+      "writtenOn": "2015-05-18T14:34:31Z",
+      "side": 1,
+      "message": "Ditto",
+      "revId": "479573388f14ea8240a9970d7b3c197736a8856e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
