@@ -31,6 +31,11 @@ backslash := $(patsubst %a,%,$(backslash))
 # only has an effect on python 2.6 and above.
 export PYTHONDONTWRITEBYTECODE := 1
 
+ifneq ($(GREP_OPTIONS),)
+$(warning The build system needs unmodified output of grep.)
+$(error Please unset your $GREP_OPTIONS.)
+endif
+
 # Standard source directories.
 SRC_DOCS:= $(TOPDIR)docs
 # TODO: Enforce some kind of layering; only add include paths
