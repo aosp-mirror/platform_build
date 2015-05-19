@@ -64,7 +64,7 @@ ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is all of the development codenames that are active.  Should be either
   # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
   # codenames after PLATFORM_VERSION_CODENAME.
-  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME)
+  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME),MNC
 endif
 
 ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
