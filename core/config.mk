@@ -450,7 +450,7 @@ endif
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
-DEFAULT_JACK_EXTRA_ARGS := -D sched.runner=multi-threaded -D  sched.runner.thread.kind=fixed -D sched.runner.thread.fixed.count=4 --sanity-checks off -D jack.reporter.level.file=error=--,warning=-
+DEFAULT_JACK_EXTRA_ARGS := @$(BUILD_SYSTEM)/jack-default.args
 endif
 # Turn off jack warnings by default.
 DEFAULT_JACK_EXTRA_ARGS += --verbose error
