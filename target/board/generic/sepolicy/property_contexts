@@ -1,1 +1,2 @@
 qemu.                   u:object_r:qemu_prop:s0
+radio.noril             u:object_r:radio_noril_prop:s0
