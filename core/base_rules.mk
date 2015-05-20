@@ -87,6 +87,7 @@ endif
 # file, tag the module as "gnu".  Search for "*_GPL*", "*_LGPL*" and "*_MPL*"
 # so that we can also find files like MODULE_LICENSE_GPL_AND_AFL
 #
+license_files := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*)
 gpl_license_file := $(call find-parent-file,$(LOCAL_PATH),MODULE_LICENSE*_GPL* MODULE_LICENSE*_MPL* MODULE_LICENSE*_LGPL*)
 ifneq ($(gpl_license_file),)
   my_module_tags += gnu
@@ -644,6 +645,21 @@ ALL_MODULES.$(my_register_name).AIDL_FILES := $(aidl_sources)
 endif
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
+
+##########################################################
+# Track module-level dependencies.
+# Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
+ALL_DEPS.MODULES := $(sort $(ALL_DEPS.MODULES) $(LOCAL_MODULE))
+ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
+  $(ALL_MODULES.$(LOCAL_MODULE).ALL_DEPS) \
+  $(LOCAL_STATIC_LIBRARIES) \
+  $(LOCAL_WHOLE_STATIC_LIBRARIES) \
+  $(LOCAL_SHARED_LIBRARIES) \
+  $(LOCAL_STATIC_JAVA_LIBRARIES) \
+  $(LOCAL_JAVA_LIBRARIES)\
+  $(LOCAL_JNI_SHARED_LIBRARIES))
+
+ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))
 
 ###########################################################
 ## Take care of my_module_tags
