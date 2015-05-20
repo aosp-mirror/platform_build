@@ -33,7 +33,7 @@ export PYTHONDONTWRITEBYTECODE := 1
 
 ifneq ($(GREP_OPTIONS),)
 $(warning The build system needs unmodified output of grep.)
-$(error Please unset your $GREP_OPTIONS.)
+$(error Please unset your $$GREP_OPTIONS.)
 endif
 
 # Standard source directories.
