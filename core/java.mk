@@ -330,6 +330,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.
@@ -369,7 +370,6 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
-$(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 $(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_compiled_jar): \
         $(java_sources) \
