@@ -447,7 +447,7 @@ ifdef TARGET_BUILD_APPS
 else
   # For platform build, we can't just raise to the "current" SDK,
   # that would break apps that use APIs removed from the current SDK.
-  my_support_library_sdk_raise := $(call java-lib-files,framework)
+  my_support_library_sdk_raise := $(call java-lib-files,$(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
 endif
 endif

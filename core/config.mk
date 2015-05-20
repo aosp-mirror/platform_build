@@ -629,6 +629,13 @@ include $(BUILD_SYSTEM)/clang/config.mk
 HISTORICAL_SDK_VERSIONS_ROOT := $(TOPDIR)prebuilts/sdk
 HISTORICAL_NDK_VERSIONS_ROOT := $(TOPDIR)prebuilts/ndk
 
+# The path where app can reference the support library resources.
+ifdef TARGET_BUILD_APPS
+SUPPORT_LIBRARY_ROOT := $(HISTORICAL_SDK_VERSIONS_ROOT)/current/support
+else
+SUPPORT_LIBRARY_ROOT := frameworks/support
+endif
+
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.
 #
