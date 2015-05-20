@@ -861,7 +861,7 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
     zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
-def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=0o644,
+def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
                 compress_type=None):
   """Wrap zipfile.writestr() function to work around the zip64 limit.
 
@@ -880,6 +880,8 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=0o644,
   if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
     zinfo = zipfile.ZipInfo(filename=zinfo_or_arcname)
     zinfo.compress_type = zip_file.compression
+    if perms is None:
+      perms = 0o644
   else:
     zinfo = zinfo_or_arcname
 
@@ -887,8 +889,11 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=0o644,
   if compress_type is not None:
     zinfo.compress_type = compress_type
 
+  # If perms is given, it has a priority.
+  if perms is not None:
+    zinfo.external_attr = perms << 16
+
   # Use a fixed timestamp so the output is repeatable.
-  zinfo.external_attr = perms << 16
   zinfo.date_time = (2009, 1, 1, 0, 0, 0)
 
   zip_file.writestr(zinfo, data)

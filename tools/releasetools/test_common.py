@@ -121,15 +121,18 @@ class CommonZipTest(unittest.TestCase):
       time.sleep(5)  # Make sure the atime/mtime will change measurably.
 
       if not isinstance(zinfo_or_arcname, zipfile.ZipInfo):
-        zinfo = zipfile.ZipInfo(filename=zinfo_or_arcname)
+        arcname = zinfo_or_arcname
+        expected_mode = extra_args.get("perms", 0o644)
       else:
-        zinfo = zinfo_or_arcname
-      arcname = zinfo.filename
+        arcname = zinfo_or_arcname.filename
+        expected_mode = extra_args.get("perms",
+                                       zinfo_or_arcname.external_attr >> 16)
 
-      common.ZipWriteStr(zip_file, zinfo, contents, **extra_args)
+      common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
       common.ZipClose(zip_file)
 
       self._verify(zip_file, zip_file_name, arcname, contents,
+                   expected_mode=expected_mode,
                    expected_compress_type=expected_compress_type)
     finally:
       os.remove(zip_file_name)
@@ -228,9 +231,10 @@ class CommonZipTest(unittest.TestCase):
     random_string = os.urandom(1024)
     # Passing arcname
     self._test_ZipWriteStr("foo", random_string, {
+        "perms": 0o700,
         "compress_type": zipfile.ZIP_DEFLATED,
     })
-    self._test_ZipWriteStr("foo", random_string, {
+    self._test_ZipWriteStr("bar", random_string, {
         "compress_type": zipfile.ZIP_STORED,
     })
 
@@ -240,6 +244,7 @@ class CommonZipTest(unittest.TestCase):
         "compress_type": zipfile.ZIP_DEFLATED,
     })
     self._test_ZipWriteStr(zinfo, random_string, {
+        "perms": 0o600,
         "compress_type": zipfile.ZIP_STORED,
     })
 
@@ -257,3 +262,36 @@ class CommonZipTest(unittest.TestCase):
     self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, "foo", "")
     zinfo = zipfile.ZipInfo(filename="foo")
     self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, "")
+
+  def test_bug21309935(self):
+    zip_file = tempfile.NamedTemporaryFile(delete=False)
+    zip_file_name = zip_file.name
+    zip_file.close()
+
+    try:
+      random_string = os.urandom(1024)
+      zip_file = zipfile.ZipFile(zip_file_name, "w")
+      # Default perms should be 0o644 when passing the filename.
+      common.ZipWriteStr(zip_file, "foo", random_string)
+      # Honor the specified perms.
+      common.ZipWriteStr(zip_file, "bar", random_string, perms=0o755)
+      # The perms in zinfo should be untouched.
+      zinfo = zipfile.ZipInfo(filename="baz")
+      zinfo.external_attr = 0o740 << 16
+      common.ZipWriteStr(zip_file, zinfo, random_string)
+      # Explicitly specified perms has the priority.
+      zinfo = zipfile.ZipInfo(filename="qux")
+      zinfo.external_attr = 0o700 << 16
+      common.ZipWriteStr(zip_file, zinfo, random_string, perms=0o400)
+      common.ZipClose(zip_file)
+
+      self._verify(zip_file, zip_file_name, "foo", random_string,
+                   expected_mode=0o644)
+      self._verify(zip_file, zip_file_name, "bar", random_string,
+                   expected_mode=0o755)
+      self._verify(zip_file, zip_file_name, "baz", random_string,
+                   expected_mode=0o740)
+      self._verify(zip_file, zip_file_name, "qux", random_string,
+                   expected_mode=0o400)
+    finally:
+      os.remove(zip_file_name)
