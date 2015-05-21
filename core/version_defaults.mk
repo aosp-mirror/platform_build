@@ -67,6 +67,23 @@ ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME)
 endif
 
+ifeq "REL" "$(PLATFORM_VERSION_CODENAME)"
+  PLATFORM_PREVIEW_SDK_VERSION := 0
+else
+  ifeq "" "$(PLATFORM_PREVIEW_SDK_VERSION)"
+    # This is the definition of a preview SDK version over and above the current
+    # platform SDK version. Unlike the platform SDK version, a higher value
+    # for preview SDK version does NOT mean that all prior preview APIs are
+    # included. Packages reading this value to determine compatibility with
+    # known APIs should check that this value is precisely equal to the preview
+    # SDK version the package was built for, otherwise it should fall back to
+    # assuming the device can only support APIs as of the previous official
+    # public release.
+    # This value will always be 0 for release builds.
+    PLATFORM_PREVIEW_SDK_VERSION := 1
+  endif
+endif
+
 ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
   # This is the default minSdkVersion and targetSdkVersion to use for
   # all .apks created by the build system.  It can be overridden by explicitly
