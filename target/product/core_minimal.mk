@@ -51,7 +51,6 @@ PRODUCT_PACKAGES += \
     ip6tables \
     iptables \
     gatekeeperd \
-    gatekeeper.default \
     keystore \
     keystore.default \
     ld.mc \
