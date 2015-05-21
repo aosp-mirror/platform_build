@@ -7438,6 +7438,10 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
   font-weight: 400;
 }
 
+.dac-header-crumbs-link.current.ndk {
+  color: #00BCD4;
+}
+
 @media (max-width: 719px) {
   .dac-header-crumbs {
     display: none;
@@ -7630,6 +7634,10 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
   padding-bottom: 11px;
 }
 
+.dac-nav-link.has-subnav.ndk, .dac-nav-link.selected.ndk {
+  border-bottom: 3px solid #00BCD4;
+}
+
 .dac-nav-secondary {
   border-bottom: 1px solid #e5e5e5;
   display: none;
@@ -7660,11 +7668,12 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
   }
 }
 
-.dac-nav-secondary .dac-nav-item:first-child .dac-nav-link {
-  padding-left: 20px;
+.dac-nav-secondary .dac-nav-link.selected {
+  border: none;
+  font-weight: 700;
 }
 
-.dac-nav-secondary .dac-nav-link.selected {
+.dac-nav-secondary .dac-nav-link.selected.ndk {
   border: none;
   font-weight: 700;
 }
@@ -7746,6 +7755,11 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
   }
 
   .dac-nav-link.has-subnav, .dac-nav-link.selected {
+    border: none;
+    padding: 0 20px;
+  }
+
+  .dac-nav-link.has-subnav.ndk, .dac-nav-link.selected.ndk {
     border: none;
     padding: 0 20px;
   }

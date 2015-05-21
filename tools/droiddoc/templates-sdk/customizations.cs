@@ -455,6 +455,28 @@ def:default_left_nav() ?>
     <?cs
 /def ?>
 
+<?cs
+def:ndk_nav() ?>
+  <div class="wrap clearfix" id="body-content"><div class="cols">
+    <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs
+if:guide ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/guides/guides_toc.cs" ?><?cs
+elif:reference ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/reference/reference_toc.cs" ?><?cs
+elif:downloads ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/downloads/downloads_toc.cs" ?><?cs
+elif:samples ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/samples/samples_toc.cs" ?><?cs
+/if ?>
+        </div>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?>
 
 <?cs
 def:header_search_widget() ?>
@@ -499,53 +521,64 @@ def:header_search_widget() ?>
 <?cs /def ?>
 
 
-
 <?cs
 def:custom_left_nav() ?><?cs
-  if:fullpage ?><?cs
-    call:fullpage() ?><?cs
-  elif:nonavpage ?><?cs
-    call:no_nav() ?><?cs
-  elif:guide ?><?cs
-    call:guide_nav() ?><?cs
-  elif:design ?><?cs
-    call:design_nav() ?><?cs
-  elif:training ?><?cs
-    call:training_nav() ?><?cs
-  elif:tools ?><?cs
-    call:tools_nav() ?><?cs
-  elif:google ?><?cs
-    call:google_nav() ?><?cs
-  elif:samples ?><?cs
-    call:samples_nav() ?><?cs
-  elif:preview ?><?cs
-    call:preview_nav() ?><?cs
-  elif:distribute ?><?cs
-    if:googleplay ?><?cs
-      call:googleplay_nav() ?><?cs
-    elif:essentials ?><?cs
-      call:essentials_nav() ?><?cs
-    elif:users ?><?cs
-      call:users_nav() ?><?cs
-    elif:engage ?><?cs
-      call:engage_nav() ?><?cs
-    elif:monetize ?><?cs
-      call:monetize_nav() ?><?cs
-    elif:analyze ?><?cs
-      call:analyze_nav() ?><?cs
-    elif:disttools ?><?cs
-      call:disttools_nav() ?><?cs
-    elif:stories ?><?cs
-      call:stories_nav() ?><?cs
+  if:ndk ?><?cs
+    if:fullpage ?><?cs
+      call:fullpage() ?><?cs
+    elif:nonavpage ?><?cs
+      call:no_nav() ?><?cs
+    elif:guide || reference || samples || downloads ?><?cs      
+      call:ndk_nav() ?><?cs
+    else ?><?cs
+      call:default_left_nav() ?> <?cs
     /if ?><?cs
-  elif:about ?><?cs
-    call:about_nav() ?><?cs
-  elif:distribute ?><?cs
-    call:distribute_nav() ?><?cs
-  elif:wear ?><?cs
-    call:wear_nav() ?><?cs
   else ?><?cs
-    call:default_left_nav() ?> <?cs
+    if:fullpage ?><?cs
+      call:fullpage() ?><?cs
+    elif:nonavpage ?><?cs
+      call:no_nav() ?><?cs
+    elif:guide ?><?cs
+      call:guide_nav() ?><?cs
+    elif:design ?><?cs
+      call:design_nav() ?><?cs
+    elif:training ?><?cs
+      call:training_nav() ?><?cs
+    elif:tools ?><?cs
+      call:tools_nav() ?><?cs
+    elif:google ?><?cs
+      call:google_nav() ?><?cs
+    elif:samples ?><?cs
+      call:samples_nav() ?><?cs
+    elif:preview ?><?cs
+      call:preview_nav() ?><?cs
+    elif:distribute ?><?cs
+      if:googleplay ?><?cs
+        call:googleplay_nav() ?><?cs
+      elif:essentials ?><?cs
+        call:essentials_nav() ?><?cs
+      elif:users ?><?cs
+        call:users_nav() ?><?cs
+      elif:engage ?><?cs
+        call:engage_nav() ?><?cs
+      elif:monetize ?><?cs
+        call:monetize_nav() ?><?cs
+      elif:analyze ?><?cs
+        call:analyze_nav() ?><?cs
+      elif:disttools ?><?cs
+        call:disttools_nav() ?><?cs
+      elif:stories ?><?cs
+        call:stories_nav() ?><?cs
+      /if ?><?cs
+    elif:about ?><?cs
+      call:about_nav() ?><?cs
+    elif:distribute ?><?cs
+      call:distribute_nav() ?><?cs
+    elif:wear ?><?cs
+      call:wear_nav() ?><?cs
+    else ?><?cs
+      call:default_left_nav() ?> <?cs
+    /if ?><?cs
   /if ?><?cs
 /def ?>
 
