@@ -247,3 +247,22 @@ ifeq "$(force_installclean)" "true"
   $(info *** Done with the cleaning, now starting the real build.)
 endif
 force_installclean :=
+
+.PHONY: clean-jack-files
+clean-jack-files: clean-dex-files
+	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
+	$(hide) find $(OUT_DIR) -type d -name "jack" | xargs rm -rf
+	@echo "All jack files have been removed."
+
+.PHONY: clean-dex-files
+clean-dex-files:
+	$(hide) find $(OUT_DIR) -name "*.dex" ! -path "*/jack-incremental/*" | xargs rm -f
+	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
+				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
+	@echo "All dex files and archives containing dex files have been removed."
+
+.PHONY: clean-jack-incremental
+clean-jack-incremental:
+	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
+	@echo "All jack incremental dirs have been removed."
+

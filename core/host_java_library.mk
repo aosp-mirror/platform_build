@@ -58,13 +58,13 @@ endif
 $(full_classes_emma_jar) : $(full_classes_compiled_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
 
-$(LOCAL_BUILT_MODULE) : $(full_classes_emma_jar)
+$(built_javalib_jar) : $(full_classes_emma_jar)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
 else # LOCAL_EMMA_INSTRUMENT
-# Directly build into LOCAL_BUILT_MODULE.
-full_classes_compiled_jar := $(LOCAL_BUILT_MODULE)
+# Directly build into $(built_javalib_jar).
+full_classes_compiled_jar := $(built_javalib_jar)
 endif # LOCAL_EMMA_INSTRUMENT
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g

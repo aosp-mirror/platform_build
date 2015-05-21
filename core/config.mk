@@ -131,6 +131,12 @@ COMMON_ANDROID_PACKAGE_SUFFIX := .apk
 # list of flags to turn specific warnings in to errors
 TARGET_ERROR_FLAGS := -Werror=return-type -Werror=non-virtual-dtor -Werror=address -Werror=sequence-point
 
+ifdef TMPDIR
+JAVA_TMPDIR_ARG := -Djava.io.tmpdir=$(TMPDIR)
+else
+JAVA_TMPDIR_ARG :=
+endif
+
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
@@ -365,6 +371,11 @@ endif
 
 # ---------------------------------------------------------------
 # Generic tools.
+JACK := $(HOST_OUT_EXECUTABLES)/jack
+JACK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jack.jar
+JACK_LAUNCHER_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jack-launcher.jar
+JILL_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jill.jar
+JACK_MULTIDEX_DEFAULT_PREPROCESSOR := frameworks/multidex/library/resources/JACK-INF/legacyMultidexInstallation.jpp
 
 LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
@@ -408,6 +419,42 @@ MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
+
+ifeq ($(ANDROID_COMPILE_WITH_JACK),true)
+DEFAULT_JACK_ENABLED:=full
+else
+DEFAULT_JACK_ENABLED:=
+endif
+ifneq ($(strip $(ANDROID_JACK_VM)),)
+JACK_VM := $(ANDROID_JACK_VM)
+else
+JACK_VM := java
+endif
+# call jack
+#
+# $(1): vm arguments
+# $(2): jack perf arguments
+ifneq (,$(strip $(filter dist,$(MAKECMDGOALS))))
+JACK_SERVER_LOG_COMMAND := mkdir -p $(DIST_DIR)/logs/; SERVER_LOG=$(DIST_DIR)/logs/jack-server.log
+endif
+define call-jack
+$(JACK_SERVER_LOG_COMMAND) JACK_VM_COMMAND="$(JACK_VM) $(1) $(JAVA_TMPDIR_ARG) -jar $(JACK_LAUNCHER_JAR) " JACK_JAR="$(JACK_JAR)" $(JACK) $(2)
+endef
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VM_ARGS := $(DEFAULT_JACK_VM_ARGS)
+ifneq ($(ANDROID_JACK_VM_ARGS),)
+DEFAULT_JACK_VM_ARGS := $(ANDROID_JACK_VM_ARGS)
+else
+DEFAULT_JACK_VM_ARGS := -Dfile.encoding=UTF-8 -Xms2560m -XX:+TieredCompilation
+endif
+ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
+DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
+else
+DEFAULT_JACK_EXTRA_ARGS := @$(BUILD_SYSTEM)/jack-default.args
+endif
+# Turn off jack warnings by default.
+DEFAULT_JACK_EXTRA_ARGS += --verbose error
+
+JILL := java -jar $(JILL_JAR)
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc$(HOST_EXECUTABLE_SUFFIX)

@@ -24,10 +24,20 @@ endif
 
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
+#################################
+include $(BUILD_SYSTEM)/configure_local_jack.mk
+#################################
+
+ifdef LOCAL_JACK_ENABLED
+ifdef LOCAL_IS_STATIC_JAVA_LIBRARY
+LOCAL_BUILT_MODULE_STEM := classes.jack
+endif
+endif
+
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 # This file will be the one that other modules should depend on.
-common_javalib.jar := $(intermediates.COMMON)/$(LOCAL_BUILT_MODULE_STEM)
+common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 LOCAL_INTERMEDIATE_TARGETS += $(common_javalib.jar)
 
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
@@ -59,7 +69,11 @@ endif
 	@echo "target Static Jar: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
 
-$(LOCAL_BUILT_MODULE): $(common_javalib.jar)
+ifdef LOCAL_JACK_ENABLED
+$(LOCAL_BUILT_MODULE) : $(full_classes_jack)
+else
+$(LOCAL_BUILT_MODULE) : $(common_javalib.jar)
+endif
 	$(copy-file-to-target)
 
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
@@ -69,8 +83,15 @@ $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(common_javalib.jar): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
+ifdef LOCAL_JACK_ENABLED
+	$(create-empty-package)
+else
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
+endif
 	$(add-dex-to-package)
+ifdef LOCAL_JACK_ENABLED
+	$(add-carried-jack-resources)
+endif
 
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar
