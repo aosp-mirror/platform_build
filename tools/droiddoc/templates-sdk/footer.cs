@@ -1,5 +1,5 @@
-<div class="dac-footer dac-expand">
-  <div class="wrap">
+<div class="wrap">
+  <div class="dac-footer<?cs if:fullpage ?> dac-landing<?cs /if ?>">
     <div class="cols dac-footer-main">
       <div class="col-1of2">
         <a class="dac-footer-getnews" data-modal-toggle="newsletter" href="javascript:;">Get news &amp; tips <span
@@ -55,101 +55,117 @@
   </div>
 </div> <!-- end footer -->
 
-<div data-modal="newsletter" data-newsletter class="dac-modal newsletter">
+<div data-modal="newsletter" data-newsletter data-swap class="dac-modal newsletter">
   <div class="dac-modal-container">
     <div class="dac-modal-window">
       <header class="dac-modal-header">
         <button class="dac-modal-header-close" data-modal-toggle><i class="dac-sprite dac-close"></i></button>
-        <h2 class="norule dac-modal-header-title">
-          Get the latest Android developer news and tips that will help you find success on Google Play.
-        </h2>
-        <p class="dac-modal-header-subtitle">&#42; Required Fields</p>
+        <div class="dac-swap" data-swap-container>
+          <section class="dac-swap-section dac-active dac-down">
+            <h2 class="norule dac-modal-header-title">Get the latest Android developer news and tips that will help you find success on Google Play.</h2>
+            <p class="dac-modal-header-subtitle">&#42; Required Fields</p>
+          </section>
+          <section class="dac-swap-section dac-up">
+            <h2 class="norule dac-modal-header-title">Hooray!</h2>
+          </section>
+        </div>
       </header>
-      <form action="https://docs.google.com/forms/d/1QgnkzbEJIDu9lMEea0mxqWrXUJu0oBCLD7ar23V0Yys/formResponse" class="dac-form" method="post" target="dac-newsletter-iframe">
-        <section class="dac-modal-content">
-          <fieldset class="dac-form-fieldset">
-            <div class="cols">
-              <div class="col-1of2 newsletter-leftCol">
-                <div class="dac-form-input-group">
-                  <label for="newsletter-full-name" class="dac-form-floatlabel">Full name</label>
-                  <input type="text" class="dac-form-input" name="entry.1357890476" id="newsletter-full-name" required>
-                  <span class="dac-form-required">*</span>
-                </div>
-                <div class="dac-form-input-group">
-                  <label for="newsletter-email" class="dac-form-floatlabel">Email address</label>
-                  <input type="email" class="dac-form-input" name="entry.472100832" id="newsletter-email" required>
-                  <span class="dac-form-required">*</span>
-                </div>
-              </div>
-              <div class="col-1of2 newsletter-rightCol">
-                <div class="dac-form-input-group">
-                  <label for="newsletter-company" class="dac-form-floatlabel">Company / developer name</label>
-                  <input type="text" class="dac-form-input" name="entry.1664780309" id="newsletter-company">
-                </div>
-                <div class="dac-form-input-group">
-                  <label for="newsletter-play-store" class="dac-form-floatlabel">One of your Play Store app URLs</label>
-                  <input type="url" class="dac-form-input" name="entry.47013838" id="newsletter-play-store" required>
-                  <span class="dac-form-required">*</span>
-                </div>
-              </div>
-            </div>
-          </fieldset>
-          <fieldset class="dac-form-fieldset">
-            <div class="cols">
-              <div class="col-1of2 newsletter-leftCol">
-                <legend class="dac-form-legend">Which best describes your business:<span class="dac-form-required">*</span>
-                </legend>
-                <div class="dac-form-radio-group">
-                  <input type="radio" value="Apps" class="dac-form-radio" name="entry.1796324055" id="newsletter-business-type-app" required>
-                  <label for="newsletter-business-type-app" class="dac-form-radio-button"></label>
-                  <label for="newsletter-business-type-app" class="dac-form-label">Apps</label>
-                </div>
-                <div class="dac-form-radio-group">
-                  <input type="radio" value="Games" class="dac-form-radio" name="entry.1796324055" id="newsletter-business-type-games" required>
-                  <label for="newsletter-business-type-games" class="dac-form-radio-button"></label>
-                  <label for="newsletter-business-type-games" class="dac-form-label">Games</label>
-                </div>
-                <div class="dac-form-radio-group">
-                  <input type="radio" value="Apps and Games" class="dac-form-radio" name="entry.1796324055" id="newsletter-business-type-appsgames" required>
-                  <label for="newsletter-business-type-appsgames" class="dac-form-radio-button"></label>
-                  <label for="newsletter-business-type-appsgames" class="dac-form-label">Apps &amp; Games</label>
-                </div>
-              </div>
-              <div class="col-1of2 newsletter-rightCol newsletter-checkboxes">
-                <div class="dac-form-radio-group">
-                  <div class="dac-media">
-                    <div class="dac-media-figure">
-                      <input type="checkbox" class="dac-form-checkbox" name="entry.732309842" id="newsletter-add" required value="Add me to the mailing list for the monthly newsletter and occasional emails about development and Google Play opportunities.">
-                      <label for="newsletter-add" class="dac-form-checkbox-button"></label>
+      <div class="dac-swap" data-swap-container>
+        <section class="dac-swap-section dac-active dac-left">
+          <form action="https://docs.google.com/forms/d/1QgnkzbEJIDu9lMEea0mxqWrXUJu0oBCLD7ar23V0Yys/formResponse" class="dac-form" method="post" target="dac-newsletter-iframe">
+            <section class="dac-modal-content">
+              <fieldset class="dac-form-fieldset">
+                <div class="cols">
+                  <div class="col-1of2 newsletter-leftCol">
+                    <div class="dac-form-input-group">
+                      <label for="newsletter-full-name" class="dac-form-floatlabel">Full name</label>
+                      <input type="text" class="dac-form-input" name="entry.1357890476" id="newsletter-full-name" required>
+                      <span class="dac-form-required">*</span>
                     </div>
-                    <div class="dac-media-body">
-                      <label for="newsletter-add" class="dac-form-label dac-form-aside">Add me to the mailing list for the monthly newsletter and occasional emails about development and Google Play opportunities.<span class="dac-form-required">*</span></label>
+                    <div class="dac-form-input-group">
+                      <label for="newsletter-email" class="dac-form-floatlabel">Email address</label>
+                      <input type="email" class="dac-form-input" name="entry.472100832" id="newsletter-email" required>
+                      <span class="dac-form-required">*</span>
+                    </div>
+                  </div>
+                  <div class="col-1of2 newsletter-rightCol">
+                    <div class="dac-form-input-group">
+                      <label for="newsletter-company" class="dac-form-floatlabel">Company / developer name</label>
+                      <input type="text" class="dac-form-input" name="entry.1664780309" id="newsletter-company">
+                    </div>
+                    <div class="dac-form-input-group">
+                      <label for="newsletter-play-store" class="dac-form-floatlabel">One of your Play Store app URLs</label>
+                      <input type="url" class="dac-form-input" name="entry.47013838" id="newsletter-play-store" required>
+                      <span class="dac-form-required">*</span>
                     </div>
                   </div>
                 </div>
-                <div class="dac-form-radio-group">
-                  <div class="dac-media">
-                    <div class="dac-media-figure">
-                      <input type="checkbox" class="dac-form-checkbox" name="entry.2045036090" id="newsletter-terms" required value="I acknowledge that the information provided in this form will be subject to Google's privacy policy (https://www.google.com/policies/privacy/).">
-                      <label for="newsletter-terms" class="dac-form-checkbox-button"></label>
+              </fieldset>
+              <fieldset class="dac-form-fieldset">
+                <div class="cols">
+                  <div class="col-1of2 newsletter-leftCol">
+                    <legend class="dac-form-legend">Which best describes your business:<span class="dac-form-required">*</span>
+                    </legend>
+                    <div class="dac-form-radio-group">
+                      <input type="radio" value="Apps" class="dac-form-radio" name="entry.1796324055" id="newsletter-business-type-app" required>
+                      <label for="newsletter-business-type-app" class="dac-form-radio-button"></label>
+                      <label for="newsletter-business-type-app" class="dac-form-label">Apps</label>
                     </div>
-                    <div class="dac-media-body">
-                      <label for="newsletter-terms" class="dac-form-label dac-form-aside">I acknowledge that the information provided in this form will be subject to <a href="https://www.google.com/policies/privacy/">Google's privacy policy</a>.<span class="dac-form-required">*</span></label>
+                    <div class="dac-form-radio-group">
+                      <input type="radio" value="Games" class="dac-form-radio" name="entry.1796324055" id="newsletter-business-type-games" required>
+                      <label for="newsletter-business-type-games" class="dac-form-radio-button"></label>
+                      <label for="newsletter-business-type-games" class="dac-form-label">Games</label>
+                    </div>
+                    <div class="dac-form-radio-group">
+                      <input type="radio" value="Apps and Games" class="dac-form-radio" name="entry.1796324055" id="newsletter-business-type-appsgames" required>
+                      <label for="newsletter-business-type-appsgames" class="dac-form-radio-button"></label>
+                      <label for="newsletter-business-type-appsgames" class="dac-form-label">Apps &amp; Games</label>
+                    </div>
+                  </div>
+                  <div class="col-1of2 newsletter-rightCol newsletter-checkboxes">
+                    <div class="dac-form-radio-group">
+                      <div class="dac-media">
+                        <div class="dac-media-figure">
+                          <input type="checkbox" class="dac-form-checkbox" name="entry.732309842" id="newsletter-add" required value="Add me to the mailing list for the monthly newsletter and occasional emails about development and Google Play opportunities.">
+                          <label for="newsletter-add" class="dac-form-checkbox-button"></label>
+                        </div>
+                        <div class="dac-media-body">
+                          <label for="newsletter-add" class="dac-form-label dac-form-aside">Add me to the mailing list for the monthly newsletter and occasional emails about development and Google Play opportunities.<span class="dac-form-required">*</span></label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="dac-form-radio-group">
+                      <div class="dac-media">
+                        <div class="dac-media-figure">
+                          <input type="checkbox" class="dac-form-checkbox" name="entry.2045036090" id="newsletter-terms" required value="I acknowledge that the information provided in this form will be subject to Google's privacy policy (https://www.google.com/policies/privacy/).">
+                          <label for="newsletter-terms" class="dac-form-checkbox-button"></label>
+                        </div>
+                        <div class="dac-media-body">
+                          <label for="newsletter-terms" class="dac-form-label dac-form-aside">I acknowledge that the information provided in this form will be subject to <a href="https://www.google.com/policies/privacy/">Google's privacy policy</a>.<span class="dac-form-required">*</span></label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </fieldset>
+            </section>
+            <footer class="dac-modal-footer">
+              <div class="cols">
+                <div class="col-2of5">
+                </div>
               </div>
-            </div>
-          </fieldset>
+              <button type="submit" value="Submit" class="dac-fab dac-primary dac-large dac-modal-action"><i class="dac-sprite dac-arrow-right"></i></button>
+            </footer>
+          </form>
         </section>
-        <footer class="dac-modal-footer">
-          <div class="cols">
-            <div class="col-2of5">
-            </div>
+        <section class="dac-swap-section dac-right">
+          <div class="dac-modal-content">
+            <p class="newsletter-success-message">
+              You have successfully signed up for the latest Android developer news and tips.
+            </p>
           </div>
-          <button type="submit" value="Submit" class="dac-fab dac-primary dac-large dac-modal-action"><i class="dac-sprite dac-arrow-right"></i></button>
-        </footer>
-      </form>
+        </section>
+      </div>
     </div>
   </div>
 </div> <!-- end footer -->
