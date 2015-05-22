@@ -36,6 +36,11 @@ if:android.whichdoc != 'online' ?>http:<?cs
 if:android.whichdoc != 'online' ?>http:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
+<?cs 
+  if:ndk ?><link rel="stylesheet" href="<?cs
+  if:android.whichdoc != 'online' ?>http:<?cs
+  /if ?>//fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" title="roboto-mono" type="text/css"><?cs
+/if ?>
 <link href="<?cs var:toroot ?>assets/css/default.css?v=5" rel="stylesheet" type="text/css">
 
 <?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
