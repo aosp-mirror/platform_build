@@ -482,7 +482,7 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/sampl
 def:header_search_widget() ?>
   <div class="dac-header-search" id="search-container">
     <div class="dac-header-search-inner">
-      <div class="dac-header-search-btn" id="search-btn"></div>
+      <div class="dac-sprite dac-search dac-header-search-btn" id="search-btn"></div>
       <form class="dac-header-search-form" onsubmit="return submit_search()">
         <input id="search_autocomplete" type="text" value="" autocomplete="off" name="q"
           onfocus="search_focus_changed(this, true)" onblur="search_focus_changed(this, false)"
