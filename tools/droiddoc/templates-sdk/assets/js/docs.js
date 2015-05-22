@@ -163,6 +163,21 @@ $(document).ready(function() {
     } else {
       navEl.find("> li.home > a").addClass('selected');
     }
+
+// highlight NDK tabs
+  } else if ($("body").hasClass("ndk")) {
+    parentNavEl = navEl.find("> li.ndk > a");
+    parentNavEl.addClass('has-subnav');
+    if ($("body").hasClass("guide")) {
+      navEl.find("> li.guides > a").addClass("selected ndk");
+    } else if ($("body").hasClass("reference")) {
+      navEl.find("> li.reference > a").addClass("selected ndk");
+    } else if ($("body").hasClass("samples")) {
+      navEl.find("> li.samples > a").addClass("selected ndk");
+    } else if ($("body").hasClass("downloads")) {
+      navEl.find("> li.downloads > a").addClass("selected ndk");
+    }
+
   // highlight Develop tab
   } else if ($("body").hasClass("develop") || $("body").hasClass("google")) {
     parentNavEl = navEl.find("> li.develop > a");
@@ -1056,7 +1071,7 @@ function checkSticky() {
 
   var top = $(window).scrollTop();
   // we set the navbar fixed when the scroll position is beyond the height of the site header...
-  var shouldBeSticky = top >= stickyTop;
+  var shouldBeSticky = top > stickyTop;
   // ... except if the document content is shorter than the sidenav height.
   // (this is necessary to avoid crazy behavior on OSX Lion due to overscroll bouncing)
   if ($("#doc-col").height() < $("#side-nav").height()) {

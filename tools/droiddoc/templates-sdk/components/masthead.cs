@@ -58,26 +58,36 @@
             <span class="dac-nav-hamburger-bot"></span>
           </span>
         </a>
-        <a class="dac-header-logo" href="<?cs var:toroot ?>index.html">
+        <?cs if:ndk ?><a class="dac-header-logo" href="<?cs var:toroot ?>ndk/index.html">
+          <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/android_logo_ndk.png"
+              srcset="<?cs var:toroot ?>assets/images/android_logo_ndk@2x.png 2x"
+              width="32" height="36" alt="Android" /> NDK
+          </a><?cs else ?><a class="dac-header-logo" href="<?cs var:toroot ?>index.html">
           <img class="dac-header-logo-image" src="<?cs var:toroot ?>assets/images/android_logo.png"
               srcset="<?cs var:toroot ?>assets/images/android_logo@2x.png 2x"
               width="32" height="36" alt="Android" /> Developers
-        </a>
+          </a><?cs /if ?>
 
         <ul class="dac-header-crumbs">
           <?cs # More <li> elements added here with javascript ?>
-          <?cs if:!section.landing ?><li class="dac-header-crumbs-item"><span class="dac-header-crumbs-link current"><?cs var:page.title ?></a></li><?cs
+          <?cs if:!section.landing ?><li class="dac-header-crumbs-item"><span class="dac-header-crumbs-link current <?cs
+            if:ndk ?>ndk<?cs /if ?>"><?cs var:page.title ?></a></li><?cs
           /if ?>
         </ul>
 
         <?cs # ADD SEARCH AND MENU ?>
+        <?cs if:!ndk ?>
         <?cs call:header_search_widget() ?>
+        <?cs /if ?>
 
-        <a class="dac-header-consoleBtn" href="https://play.google.com/apps/publish/">
+        <?cs if:ndk ?><a class="dac-header-consoleBtn" href="http://developer.android.com">
+          <span class="dac-visible-desktop-inline">Back to Android Developers</span>
+        </a><?cs else ?><a class="dac-header-consoleBtn" href="https://play.google.com/apps/publish/">
           <span class="dac-sprite dac-google-play"></span>
           <span class="dac-visible-desktop-inline">Developer</span>
           Console
-        </a>
+        </a><?cs /if ?>
+
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
 
@@ -87,6 +97,49 @@
     </div>
   </div> <!--end header-wrapper -->
 
+  <?cs if:ndk ?>
+  <!-- NDK Navigation-->
+  <nav class="dac-nav">
+    <div class="dac-nav-dimmer" data-dac-toggle-nav></div>
+
+    <ul class="dac-nav-list" data-dac-nav>
+      <li class="dac-nav-item dac-nav-head">
+        <a class="dac-nav-link dac-nav-logo" data-dac-toggle-nav href="javascript:;" title="Close navigation">
+          <img class="dac-logo-image" src="<?cs var:toroot ?>assets/images/android_logo_ndk.png"
+               srcset="<?cs var:toroot ?>assets/images/android_logo_ndk@2x.png 2x"
+               width="32" height="36" alt="Android" /> NDK
+        </a>
+      </li>
+      <li class="dac-nav-item guides">
+        <a class="dac-nav-link" href="<?cs var:toroot ?>ndk/guides/index.html"
+           zh-tw-lang="API 指南"
+           zh-cn-lang="API 指南"
+           ru-lang="Руководства по API"
+           ko-lang="API 가이드"
+           ja-lang="API ガイド"
+           es-lang="Guías de la API">Guides</a>
+      </li>
+      <li class="dac-nav-item reference">
+        <a class="dac-nav-link" href="<?cs var:toroot ?>ndk/reference/index.html"
+           zh-tw-lang="參考資源"
+           zh-cn-lang="参考"
+           ru-lang="Справочник"
+           ko-lang="참조문서"
+           ja-lang="リファレンス"
+           es-lang="Referencia">Reference</a>
+      </li>
+      <li class="dac-nav-item samples">
+        <a class="dac-nav-link" href="<?cs var:toroot ?>ndk/samples/index.html"
+           >Samples</a>
+      </li>
+      <li class="dac-nav-item downloads">
+        <a class="dac-nav-link" href="<?cs var:toroot ?>ndk/downloads/index.html"
+           >Downloads</a>
+      </li>
+    </ul>
+  </nav>
+  <!-- end NDK navigation-->
+  <?cs else ?>
   <!-- Navigation-->
   <nav class="dac-nav">
     <div class="dac-nav-dimmer" data-dac-toggle-nav></div>
@@ -213,6 +266,7 @@
     </ul>
   </nav>
   <!-- end navigation-->
+  <?cs /if ?>
 <?cs /if ?><?cs # end if/else !devsite ?>
 
 <?cs
