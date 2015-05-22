@@ -76,7 +76,7 @@ $(document).ready(function() {
   }
 
   // set up the search close button
-  $('#search-close').click(function() {
+  $('#search-close').on('click touchend', function() {
     $searchInput = $('#search_autocomplete');
     $searchInput.attr('value', '');
     $(this).addClass("hide");
@@ -91,7 +91,8 @@ $(document).ready(function() {
   $("#search_autocomplete").focus(function() {
     $("#search-container").addClass('active');
   })
-  $("#search-container").mouseover(function() {
+  $("#search-container").on('mouseover touchend', function(e) {
+    if ($(e.target).is('#search-close')) { return; }
     $("#search-container").addClass('active');
     $("#search_autocomplete").focus();
   })
@@ -3581,6 +3582,7 @@ function showSamples() {
     var opts = {
       cardSizes: ($widget.data('cardsizes') || '').split(','),
       maxResults: parseInt($widget.data('maxresults') || '100', 10),
+      initialResults: $widget.data('initialResults'),
       itemsPerPage: $widget.data('itemsperpage'),
       sortOrder: $widget.data('sortorder'),
       query: $widget.data('query'),
@@ -3764,14 +3766,30 @@ function showSamples() {
   function drawResourcesFlowWidget($widget, opts, resources) {
     $widget.empty().addClass('cols');
     var cardSizes = opts.cardSizes || ['6x6'];
+    var initialResults = opts.initialResults || resources.length;
     var i = 0, j = 0;
     var plusone = false; // stop showing plusone buttons on cards
+    var cardParent = $widget;
 
     while (i < resources.length) {
+
+      if (i === initialResults && initialResults < resources.length) {
+        // Toggle remaining cards
+        cardParent = $('<div class="dac-toggle-content clearfix">').appendTo($widget);
+        $widget.addClass('dac-toggle');
+        $('<div class="col-1of1 dac-section-links dac-text-center">')
+          .append(
+            $('<div class="dac-section-link" data-toggle="section">')
+              .append('<span class="dac-toggle-expand">More<i class="dac-sprite dac-auto-unfold-more"></i></span>')
+              .append('<span class="dac-toggle-collapse">Less<i class="dac-sprite dac-auto-unfold-less"></i></span>')
+          )
+          .appendTo($widget)
+      }
+
       var cardSize = cardSizes[j++ % cardSizes.length];
       cardSize = cardSize.replace(/^\s+|\s+$/,'');
       
-      var column = createResponsiveFlowColumn(cardSize).appendTo($widget);
+      var column = createResponsiveFlowColumn(cardSize).appendTo(cardParent);
 
       // A stack has a third dimension which is the number of stacked items
       var isStack = cardSize.match(/(\d+)x(\d+)x(\d+)/);
@@ -4042,6 +4060,12 @@ function showSamples() {
 
     if (imgUrl.indexOf('//') === -1) {
       imgUrl = toRoot + imgUrl;
+    }
+
+    if (resource.type === 'youtube') {
+      $('<div>').addClass('play-button')
+        .append($('<i class="dac-sprite dac-play-white">'))
+        .appendTo(this);
     }
 
     $('<div>').addClass('card-bg')
@@ -4437,6 +4461,11 @@ function showSamples() {
         anchorMethod = 'prepend';
       }
 
+      // Some h2s are in their own container making it pretty hard to find the end, so skip.
+      if ($contents.length === 0) {
+        return;
+      }
+
       // Remove from DOM before messing with it. DOM is slow!
       $section.detach();
 
@@ -4450,6 +4479,16 @@ function showSamples() {
       // Wrap in magic markup.
       $section = $section.wrapAll('<div class="dac-toggle dac-mobile">').parent();
       $contents.wrapAll('<div class="dac-toggle-content"><div>'); // extra div used for max-height calculation.
+
+      // Pre-expand section if requested.
+      if ($title.hasClass('is-expanded')) {
+        $section.addClass('is-expanded');
+      }
+
+      // Pre-expand section if targetted by hash.
+      if (location.hash && $section.find(location.hash).length) {
+        $section.addClass('is-expanded');
+      }
 
       // Add it back to the dom.
       $anchor[anchorMethod].call($anchor, $section);
@@ -4549,6 +4588,9 @@ function showSamples() {
       // Should copy be inverted
       slide.toggleClass('dac-invert', resource.heroInvert || fullBleed);
       slide.toggleClass('dac-darken', fullBleed);
+
+      // Should be clickable
+      slide.append($('<a class="dac-hero-carousel-action">').attr('href', cleanUrl(resource.url)));
 
       var cols = $('<div class="cols dac-hero-content">');
 
@@ -4651,6 +4693,7 @@ function showSamples() {
     frameSelector: 'article',
     loop:      true,
     start:     0,
+    swipeThreshold: 160,
     pagination: '[data-carousel-pagination]'
   };
 
@@ -4678,6 +4721,15 @@ function showSamples() {
   DacCarousel.prototype.initEvents = function() {
     var that = this;
 
+    this.touch = {
+      start: {x: 0, y: 0},
+      end:   {x: 0, y: 0}
+    };
+
+    this.el.on('touchstart', this.touchstart_.bind(this));
+    this.el.on('touchend', this.touchend_.bind(this));
+    this.el.on('touchmove', this.touchmove_.bind(this));
+
     this.el.hover(function() {
       that.pauseRotateTimer();
     }, function() {
@@ -4693,6 +4745,30 @@ function showSamples() {
       e.preventDefault();
       that.next();
     });
+  };
+
+  DacCarousel.prototype.touchstart_ = function(event) {
+    var t = event.originalEvent.touches[0];
+    this.touch.start = {x: t.screenX, y: t.screenY};
+  };
+
+  DacCarousel.prototype.touchend_ = function() {
+    var deltaX = this.touch.end.x - this.touch.start.x;
+    var deltaY = Math.abs(this.touch.end.y - this.touch.start.y);
+    var shouldSwipe = (deltaY < Math.abs(deltaX)) && (Math.abs(deltaX) >= this.options.swipeThreshold);
+
+    if (shouldSwipe) {
+      if (deltaX > 0) {
+        this.prev();
+      } else {
+        this.next();
+      }
+    }
+  };
+
+  DacCarousel.prototype.touchmove_ = function(event) {
+    var t = event.originalEvent.touches[0];
+    this.touch.end = {x: t.screenX, y: t.screenY};
   };
 
   DacCarousel.prototype.initFrame = function() {
@@ -4775,21 +4851,17 @@ function showSamples() {
 
     this.el.on('click', function(event) {
       if (!$.contains($('.dac-modal-window')[0], event.target)) {
-        return this.close_();
+        return this.el.trigger('modal-close');
       }
     }.bind(this));
 
-    this.el.on('open', this.open_.bind(this));
-    this.el.on('close', this.close_.bind(this));
-    this.el.on('toggle', this.toggle_.bind(this));
+    this.el.on('modal-open', this.open_.bind(this));
+    this.el.on('modal-close', this.close_.bind(this));
+    this.el.on('modal-toggle', this.toggle_.bind(this));
   }
 
   Modal.prototype.toggle_ = function() {
-    if (this.isOpen) {
-      this.close_();
-    } else {
-      this.open_();
-    }
+    this.el.trigger('modal-' + (this.isOpen ? 'close' : 'open'));
   };
 
   Modal.prototype.close_ = function() {
@@ -4815,7 +4887,7 @@ function showSamples() {
 
   ToggleModal.prototype.clickHandler_ = function(event) {
     event.preventDefault();
-    this.modal.trigger('toggle');
+    this.modal.trigger('modal-toggle');
   };
 
   /**
@@ -4929,12 +5001,38 @@ function showSamples() {
   }
 
   /**
-   * Close the modal when the form is sent.
+   * Milliseconds until modal has vanished after modal-close is triggered.
+   * @type {number}
+   * @private
+   */
+  NewsletterForm.CLOSE_DELAY_ = 300;
+
+  /**
+   * Switch view to display form after close.
+   * @private
+   */
+  NewsletterForm.prototype.closeHandler_ = function() {
+    setTimeout(function() {
+      this.el.trigger('swap-reset');
+    }.bind(this), NewsletterForm.CLOSE_DELAY_);
+  };
+
+  /**
+   * Reset the modal to initial state.
+   * @private
+   */
+  NewsletterForm.prototype.reset_ = function() {
+    this.form.trigger('reset');
+    this.el.one('modal-close', this.closeHandler_.bind(this));
+  };
+
+  /**
+   * Display a success view on submit.
    * @private
    */
   NewsletterForm.prototype.submitHandler_ = function() {
-    this.form.trigger('reset');
-    this.el.trigger('close');
+    this.el.one('swap-complete', this.reset_.bind(this));
+    this.el.trigger('swap-content');
   };
 
   /**
@@ -5028,6 +5126,97 @@ function showSamples() {
 })(jQuery);
 
 (function($) {
+  'use strict';
+
+  /**
+   * A component that swaps two dynamic height views with an animation.
+   * Listens for the following events:
+   * * swap-content: triggers SwapContent.swap_()
+   * * swap-reset: triggers SwapContent.reset()
+   * @param el
+   * @param options
+   * @constructor
+   */
+  function SwapContent(el, options) {
+    this.el = $(el);
+    this.options = $.extend({}, SwapContent.DEFAULTS_, options);
+    this.containers = this.el.find(this.options.container);
+    this.initiallyActive = this.containers.children('.' + this.options.activeClass).eq(0);
+    this.el.on('swap-content', this.swap.bind(this));
+    this.el.on('swap-reset', this.reset.bind(this));
+  }
+
+  /**
+   * SwapContent's default settings.
+   * @type {{activeClass: string, container: string, transitionSpeed: number}}
+   * @private
+   */
+  SwapContent.DEFAULTS_ = {
+    activeClass: 'dac-active',
+    container: '[data-swap-container]',
+    transitionSpeed: 500
+  };
+
+  /**
+   * Returns container's visible height.
+   * @param container
+   * @returns {number}
+   */
+  SwapContent.prototype.currentHeight = function(container) {
+    return container.children('.' + this.options.activeClass).outerHeight();
+  };
+
+  /**
+   * Reset to show initial content
+   */
+  SwapContent.prototype.reset = function() {
+    if (!this.initiallyActive.hasClass(this.initiallyActive)) {
+      this.containers.children().toggleClass(this.options.activeClass);
+    }
+  };
+
+  /**
+   * Complete the swap.
+   */
+  SwapContent.prototype.complete = function() {
+    this.containers.height('auto');
+    this.containers.trigger('swap-complete');
+  };
+
+  /**
+   * Perform the swap of content.
+   */
+  SwapContent.prototype.swap = function() {
+    console.log(this.containers);
+    this.containers.each(function(index, container) {
+      container = $(container);
+      container.height(this.currentHeight(container)).children().toggleClass(this.options.activeClass);
+      container.animate({height: this.currentHeight(container)}, this.options.transitionSpeed,
+        this.complete.bind(this));
+    }.bind(this));
+  };
+
+  /**
+   * jQuery plugin
+   * @param  {object} options - Override default options.
+   */
+  $.fn.dacSwapContent = function(options) {
+    return this.each(function() {
+      new SwapContent(this, options);
+    });
+  };
+
+  /**
+   * Data Attribute API
+   */
+  $(document).on('ready.aranja', function() {
+    $('[data-swap]').each(function() {
+      $(this).dacSwapContent($(this).data());
+    });
+  });
+})(jQuery);
+
+(function($) {
   function Toggle(el) {
     $(el).on('click.dac.togglesection', this.toggle);
   }
@@ -5054,7 +5243,9 @@ function showSamples() {
 
     var $parent = selector && $(selector);
 
-    return $parent && $parent.length ? $parent : $this.parent();
+    $parent = $parent && $parent.length ? $parent : $this.closest('.dac-toggle');
+
+    return $parent.length ? $parent : $this.parent();
   }
 
   /**
@@ -5063,8 +5254,7 @@ function showSamples() {
    * @param visible
    */
   function transitionMaxHeight($el, visible) {
-    // Only supports 1 child
-    var contentHeight = $el.children().outerHeight();
+    var contentHeight = $el.prop('scrollHeight');
     var targetHeight = visible ? contentHeight : 0;
     var duration = $el.transitionDuration();
 
