@@ -80,9 +80,9 @@
         <?cs call:header_search_widget() ?>
         <?cs /if ?>
 
-        <?cs if:ndk ?><a class="dac-header-consoleBtn" href="http://developer.android.com">
+        <?cs if:ndk ?><a class="dac-header-console-btn" href="http://developer.android.com">
           <span class="dac-visible-desktop-inline">Back to Android Developers</span>
-        </a><?cs else ?><a class="dac-header-consoleBtn" href="https://play.google.com/apps/publish/">
+        </a><?cs else ?><a class="dac-header-console-btn" href="https://play.google.com/apps/publish/">
           <span class="dac-sprite dac-google-play"></span>
           <span class="dac-visible-desktop-inline">Developer</span>
           Console
