@@ -221,7 +221,7 @@ $(document).ready(function() {
     } else if (urlSegments[2] == "analyze") {
       subNavEl.find("li.analyze > a").addClass("selected");
     } else if (urlSegments[2] == "tools") {
-      subNavEl.find("li.disttools > a").addClass("selected");
+      subNavEl.find("li.essentials > a").addClass("selected");
     } else if (urlSegments[2] == "stories") {
       subNavEl.find("li.stories > a").addClass("selected");
     } else if (urlSegments[2] == "essentials") {
