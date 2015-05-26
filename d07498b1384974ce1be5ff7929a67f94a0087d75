@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdf3c519_582da58e",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2015-05-26T08:00:43Z",
+      "side": 0,
+      "message": "it\u0027s not very clear why you need to remove these definitions. Maybe add a small line about it in the commit message?",
+      "revId": "d07498b1384974ce1be5ff7929a67f94a0087d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
