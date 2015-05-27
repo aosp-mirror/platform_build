@@ -544,7 +544,7 @@ def SignFile(input_name, output_name, key, password, align=None,
     raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
 
   if align:
-    p = Run(["zipalign", "-f", str(align), sign_name, output_name])
+    p = Run(["zipalign", "-f", "-p", str(align), sign_name, output_name])
     p.communicate()
     if p.returncode != 0:
       raise ExternalError("zipalign failed: return code %s" % (p.returncode,))
