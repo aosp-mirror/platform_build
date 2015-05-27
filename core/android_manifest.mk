@@ -15,6 +15,7 @@ my_full_libs_manifest_files := $(LOCAL_FULL_LIBS_MANIFEST_FILES)
 my_full_libs_manifest_deps := $(LOCAL_FULL_LIBS_MANIFEST_FILES)
 
 # Set up dependency on aar libraries
+LOCAL_STATIC_JAVA_AAR_LIBRARIES := $(strip $(LOCAL_STATIC_JAVA_AAR_LIBRARIES))
 ifdef LOCAL_STATIC_JAVA_AAR_LIBRARIES
 my_full_libs_manifest_deps += $(foreach lib, $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/aar/classes.jar)
