@@ -47,6 +47,7 @@ PRODUCT_PACKAGES += \
     vibrator.goldfish \
     power.goldfish \
     fingerprint.ranchu \
+    fingerprintd \
     sensors.ranchu
 
 
