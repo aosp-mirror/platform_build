@@ -41,7 +41,7 @@ if:android.whichdoc != 'online' ?>http:<?cs
   if:android.whichdoc != 'online' ?>http:<?cs
   /if ?>//fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" title="roboto-mono" type="text/css"><?cs
 /if ?>
-<link href="<?cs var:toroot ?>assets/css/default.css?v=5" rel="stylesheet" type="text/css">
+<link href="<?cs var:toroot ?>assets/css/default.css?v=7" rel="stylesheet" type="text/css">
 
 <?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
 <!-- FULLSCREEN STYLESHEET -->
@@ -65,7 +65,7 @@ else
   var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
-<script src="<?cs var:toroot ?>assets/js/docs.js?v=3" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js?v=5" type="text/javascript"></script>
 
 <?cs if:helpoutsWidget ?>
 <script type="text/javascript" src="https://helpouts.google.com/ps/res/embed.js" defer async
