@@ -1248,6 +1248,15 @@ scroll top left;
   .download-button:active {
     background-color: #006699; }
 
+.button.disabled,
+.button.disabled:hover,
+.button.disabled:active {
+  background:#ebebeb;
+  color:#999 !important;
+  border-color:#999;
+  cursor:default;
+}
+
 /* UI tables and other things found in Writing style and Settings pattern */
 .ui-table {
   width: 100%;
