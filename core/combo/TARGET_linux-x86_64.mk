@@ -93,10 +93,6 @@ TARGET_GLOBAL_CFLAGS += \
 			-no-canonical-prefixes \
 			-fno-canonical-system-headers
 
-# Work around gcc 4.9 devirtualization bug, https://b.corp.google.com/19872411.
-TARGET_GLOBAL_CFLAGS += \
-			-fno-devirtualize \
-
 # Help catch common 32/64-bit errors.
 TARGET_GLOBAL_CFLAGS += \
     -Werror=pointer-to-int-cast \
