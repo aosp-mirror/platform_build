@@ -97,10 +97,6 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
 
-# Work around gcc 4.9 devirtualization bug, https://b.corp.google.com/19872411.
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
-			-fno-devirtualize \
-
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
 
 ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
