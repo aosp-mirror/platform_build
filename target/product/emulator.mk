@@ -42,14 +42,12 @@ PRODUCT_PACKAGES += \
     gps.goldfish \
     fingerprint.goldfish \
     sensors.goldfish \
-    e2fsck \
     audio.primary.goldfish \
     vibrator.goldfish \
     power.goldfish \
     fingerprint.ranchu \
     fingerprintd \
     sensors.ranchu
-
 
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
