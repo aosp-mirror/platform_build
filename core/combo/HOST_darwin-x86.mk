@@ -78,12 +78,14 @@ $(hide) $(PRIVATE_CXX) \
         -o $@ \
         -install_name @rpath/$(notdir $@) \
         -Wl,-rpath,@loader_path/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
+        -Wl,-rpath,@loader_path/$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
         $(PRIVATE_LDFLAGS)
 endef
 
 define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
         -Wl,-rpath,@loader_path/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
+        -Wl,-rpath,@loader_path/$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
         -o $@ \
         -Wl,-headerpad_max_install_names \
         $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS) \
