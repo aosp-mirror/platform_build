@@ -202,7 +202,16 @@ $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml: $(CTS_CORE_XMLS
 	$(hide) mkdir -p $(CTS_TESTCASES_OUT)
 	$(call generate-core-test-description,$(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org,\
 		cts/tests/core/libcore/org/AndroidManifest.xml,\
-		$(CORETESTS_INTERMEDIATES)/javalib.jar,org,\
+		$(CORETESTS_INTERMEDIATES)/javalib.jar,\
+		org.w3c.domts:\
+		org.apache.harmony.security.tests:\
+		org.apache.harmony.nio.tests:\
+		org.apache.harmony.crypto.tests:\
+		org.apache.harmony.regex.tests:\
+		org.apache.harmony.luni.tests:\
+		org.apache.harmony.tests.internal.net.www.protocol:\
+		org.apache.harmony.tests.javax.net:\
+		org.json,\
 		$(TARGET_ARCH),libcore/expectations)
 
 $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.libcore.xml: $(CTS_CORE_XMLS_DEPS)
