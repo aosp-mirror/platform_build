@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f942104b_e3abda5c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-06-01T21:05:47Z",
+      "side": 1,
+      "message": "should this just go in the end of WriteScript?",
+      "revId": "908cac842e0437ab913cae0561b8b824fe3d5181",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
