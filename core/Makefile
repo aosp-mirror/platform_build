@@ -1290,6 +1290,7 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
 	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
+	$(hide) $(ACP) $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar $(zip_root)/framework/
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
 	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) *)
