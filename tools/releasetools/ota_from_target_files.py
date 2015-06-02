@@ -917,6 +917,7 @@ else
 
   system_diff.WriteScript(script, output_zip,
                           progress=0.8 if vendor_diff else 0.9)
+
   if vendor_diff:
     vendor_diff.WriteScript(script, output_zip, progress=0.1)
 
