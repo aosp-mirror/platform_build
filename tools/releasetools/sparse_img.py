@@ -118,11 +118,16 @@ class SparseImage(object):
   def ReadRangeSet(self, ranges):
     return [d for d in self._GetRangeData(ranges)]
 
-  def TotalSha1(self):
-    """Return the SHA-1 hash of all data in the 'care' regions but not in
-    clobbered_blocks of this image."""
+  def TotalSha1(self, include_clobbered_blocks=False):
+    """Return the SHA-1 hash of all data in the 'care' regions.
+
+    If include_clobbered_blocks is True, it returns the hash including the
+    clobbered_blocks."""
+    ranges = self.care_map
+    if not include_clobbered_blocks:
+      ranges.subtract(self.clobbered_blocks)
     h = sha1()
-    for d in self._GetRangeData(self.care_map.subtract(self.clobbered_blocks)):
+    for d in self._GetRangeData(ranges):
       h.update(d)
     return h.hexdigest()
 
