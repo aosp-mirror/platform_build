@@ -63,6 +63,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS :=
 
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
@@ -71,7 +72,6 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
-$(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS :=
 $(full_classes_compiled_jar): \
         $(java_sources) \
         $(java_resource_sources) \
