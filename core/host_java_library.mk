@@ -43,6 +43,8 @@ LOCAL_INTERMEDIATE_TARGETS += \
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS :=
+
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
@@ -78,7 +80,6 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
-$(full_classes_compiled_jar): PRIVATE_RMTYPEDEFS :=
 $(full_classes_compiled_jar): \
         $(java_sources) \
         $(java_resource_sources) \
