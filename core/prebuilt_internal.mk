@@ -197,6 +197,12 @@ include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 # Sign and align non-presigned .apks.
 
 # The embedded prebuilt jni to uncompress.
+ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
+# For PRESIGNED apks we must uncompress every .so file:
+# even if the .so file isn't for the current TARGET_ARCH,
+# we can't strip the file.
+embedded_prebuilt_jni_libs := 'lib/*.so'
+endif
 ifndef embedded_prebuilt_jni_libs
 # No LOCAL_PREBUILT_JNI_LIBS, uncompress all.
 embedded_prebuilt_jni_libs := 'lib/*.so'
@@ -205,6 +211,7 @@ $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 
 $(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
+	$(uncompress-shared-libs)
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
 ifdef LOCAL_DEX_PREOPT
@@ -214,7 +221,6 @@ endif
 endif
 	$(sign-package)
 endif
-	$(uncompress-shared-libs)
 	$(align-package)
 
 ###############################
