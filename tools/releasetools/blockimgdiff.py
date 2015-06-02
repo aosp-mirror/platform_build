@@ -74,7 +74,7 @@ class Image(object):
   def ReadRangeSet(self, ranges):
     raise NotImplementedError
 
-  def TotalSha1(self):
+  def TotalSha1(self, include_clobbered_blocks=False):
     raise NotImplementedError
 
 
@@ -87,7 +87,10 @@ class EmptyImage(Image):
   file_map = {}
   def ReadRangeSet(self, ranges):
     return ()
-  def TotalSha1(self):
+  def TotalSha1(self, include_clobbered_blocks=False):
+    # EmptyImage always carries empty clobbered_blocks, so
+    # include_clobbered_blocks can be ignored.
+    assert self.clobbered_blocks.size() == 0
     return sha1().hexdigest()
 
 
@@ -136,8 +139,9 @@ class DataImage(Image):
   def ReadRangeSet(self, ranges):
     return [self.data[s*self.blocksize:e*self.blocksize] for (s, e) in ranges]
 
-  def TotalSha1(self):
-    # DataImage always carries empty clobbered_blocks.
+  def TotalSha1(self, include_clobbered_blocks=False):
+    # DataImage always carries empty clobbered_blocks, so
+    # include_clobbered_blocks can be ignored.
     assert self.clobbered_blocks.size() == 0
     return sha1(self.data).hexdigest()
 
@@ -201,7 +205,8 @@ class Transfer(object):
 #
 #    TotalSha1(): a function that returns (as a hex string) the SHA-1
 #      hash of all the data in the image (ie, all the blocks in the
-#      care_map minus clobbered_blocks).
+#      care_map minus clobbered_blocks, or including the clobbered
+#      blocks if include_clobbered_blocks is True).
 #
 # When creating a BlockImageDiff, the src image may be None, in which
 # case the list of transfers produced will never read from the
