@@ -1798,7 +1798,6 @@ endef
 # - below we write the list of java files to java-source-list to avoid argument
 #   list length problems with Cygwin
 # - we filter out duplicate java file names because Jack doesn't like them.
-# TODO (yroussel) PRIVATE_RMTYPEDEFS
 define jack-java-to-dex
 $(hide) rm -f $@
 $(hide) rm -f $(PRIVATE_CLASSES_JACK)
@@ -1833,6 +1832,8 @@ $(call call-jack,$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
     $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
     $(if $(NO_OPTIMIZE_DX), \
         -D jack.dex.optimize="false") \
+    $(if $(PRIVATE_RMTYPEDEFS), \
+        -D jack.android.remove-typedef="true") \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
