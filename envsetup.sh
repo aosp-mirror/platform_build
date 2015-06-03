@@ -1112,7 +1112,7 @@ function sepgrep()
 
 function bgrep()
 {
-    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -name 'Blueprints' -print0 | xargs -0 grep --color -n "$@"
+    find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f \( -name 'Blueprints' -o -name '*.bp' \) -print0 | xargs -0 grep --color -n "$@"
 }
 
 case `uname -s` in
