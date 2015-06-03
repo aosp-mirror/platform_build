@@ -26,7 +26,7 @@ my_custom_image_name := $(basename $(notdir $(my_custom_imag_makefile)))
 
 intermediates := $(call intermediates-dir-for,PACKAGING,$(my_custom_image_name))
 my_built_custom_image := $(intermediates)/$(my_custom_image_name).img
-my_staging_dir := $(intermediates)/$(my_custom_image_name)
+my_staging_dir := $(intermediates)/$(CUSTOM_IMAGE_MOUNT_POINT)
 
 # Collect CUSTOM_IMAGE_MODULES's installd files and their PICKUP_FILES.
 my_built_modules :=
@@ -69,6 +69,10 @@ $(my_built_custom_image): PRIVATE_FILE_SYSTEM_TYPE := $(CUSTOM_IMAGE_FILE_SYSTEM
 $(my_built_custom_image): PRIVATE_STAGING_DIR := $(my_staging_dir)
 $(my_built_custom_image): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_built_custom_image): PRIVATE_PICKUP_FILES := $(my_pickup_files)
+$(my_built_custom_image): PRIVATE_SELINUX := $(CUSTOM_IMAGE_SELINUX)
+$(my_built_custom_image): PRIVATE_SUPPORT_VERITY := $(CUSTOM_IMAGE_SUPPORT_VERITY)
+$(my_built_custom_image): PRIVATE_VERITY_KEY := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY)
+$(my_built_custom_image): PRIVATE_VERITY_BLOCK_DEVICE := $(CUSTOM_IMAGE_VERITY_BLOCK_DEVICE)
 $(my_built_custom_image): PRIVATE_DICT_FILE := $(CUSTOM_IMAGE_DICT_FILE)
 $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_image_copy_files) \
   $(CUSTOM_IMAGE_DICT_FILE)
@@ -86,9 +90,15 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	$(hide) echo "mount_point=$(PRIVATE_MOUNT_POINT)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(hide) echo "fs_type=$(PRIVATE_FILE_SYSTEM_TYPE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(hide) echo "partition_size=$(PRIVATE_PARTITION_SIZE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
+	$(if $(PRIVATE_SELINUX),$(hide) echo "selinux_fc=$(SELINUX_FC)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
+	$(if $(PRIVATE_SUPPORT_VERITY),\
+	  $(hide) echo "verity=$(PRIVATE_SUPPORT_VERITY)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
+	    echo "verity_key=$(PRIVATE_VERITY_KEY)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
+	    echo "verity_signer_cmd=$(VERITY_SIGNER)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
+	    echo "verity_block_device=$(PRIVATE_VERITY_BLOCK_DEVICE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	$(if $(PRIVATE_DICT_FILE),\
 	  $(hide) echo "# Properties from $(PRIVATE_DICT_FILE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
-	  cat $(PRIVATE_DICT_FILE) >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
+	    cat $(PRIVATE_DICT_FILE) >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	# Generate the image.
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
 	  ./build/tools/releasetools/build_image.py \
