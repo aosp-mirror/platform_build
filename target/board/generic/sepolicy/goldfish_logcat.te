@@ -1,10 +1,9 @@
-# goldfish-logcat service:  runs logcat -Q
-type goldfish_logcat, domain;
+# goldfish-logcat service:  runs logcat -Q in logd domain
 
-domain_auto_trans(init, logcat_exec, goldfish_logcat)
+domain_auto_trans(init, logcat_exec, logd)
 
 # Read from logd.
-read_logd(goldfish_logcat)
+read_logd(logd)
 
 # Write to /dev/ttyS2 and /dev/ttyGF2.
-allow goldfish_logcat serial_device:chr_file { write open };
+allow logd serial_device:chr_file { write open };
