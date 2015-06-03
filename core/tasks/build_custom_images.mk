@@ -34,6 +34,9 @@
 #     module's LOCAL_PICKUP_FILES.
 #   - CUSTOM_IMAGE_COPY_FILES, a list of "<src>:<dest>" to be copied to the
 #     image. <dest> is relativ to the root of the image.
+#   - CUSTOM_IMAGE_SELINUX, set to "true" if the image supports selinux.
+#   - CUSTOM_IMAGE_SUPPORT_VERITY, set to "true" if the product supports verity.
+#   - CUSTOM_IMAGE_VERITY_BLOCK_DEVICE
 #
 # To build all those images, run "make custom_images".
 
@@ -48,6 +51,9 @@ custom_image_parameter_variables := \
   CUSTOM_IMAGE_DICT_FILE \
   CUSTOM_IMAGE_MODULES \
   CUSTOM_IMAGE_COPY_FILES \
+  CUSTOM_IMAGE_SELINUX \
+  CUSTOM_IMAGE_SUPPORT_VERITY \
+  CUSTOM_IMAGE_VERITY_BLOCK_DEVICE \
 
 # We don't expect product makefile to inherit/override PRODUCT_CUSTOM_IMAGE_MAKEFILES,
 # so we don't put it in the _product_var_list.
