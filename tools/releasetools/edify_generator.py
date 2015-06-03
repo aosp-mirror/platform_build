@@ -159,7 +159,7 @@ class EdifyGenerator(object):
     """Check that there's at least 'amount' space that can be made
     available on /cache."""
     self.script.append(('apply_patch_space(%d) || abort("Not enough free space '
-                        'on /system to apply patches.");') % (amount,))
+                        'on /cache to apply patches.");') % (amount,))
 
   def Mount(self, mount_point, mount_options_by_format=""):
     """Mount the partition with the given mount_point.
