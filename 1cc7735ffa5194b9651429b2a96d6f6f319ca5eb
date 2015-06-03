@@ -16,6 +16,24 @@
       "revId": "1cc7735ffa5194b9651429b2a96d6f6f319ca5eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7948e0a0_5b49a302",
+        "filename": "target/board/generic/sepolicy/goldfish_logcat.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-03T15:47:07Z",
+      "side": 1,
+      "message": "oh, in the core policy, this is wrapped in a userdebug_or_eng() macro. So technically removing this line would break emulators building for a user build target. So I guess this is fine as-is.",
+      "parentUuid": "59595c72_da0f65e3",
+      "revId": "1cc7735ffa5194b9651429b2a96d6f6f319ca5eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
