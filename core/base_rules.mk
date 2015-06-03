@@ -596,6 +596,30 @@ endif
 endif
 
 ###########################################################
+## Compatibiliy suite files.
+###########################################################
+ifdef LOCAL_COMPATIBILITY_SUITE
+ifneq ($(words $(LOCAL_COMPATIBILITY_SUITE)),1)
+$(error $(LOCAL_PATH):$(LOCAL_MODULE) LOCAL_COMPATIBILITY_SUITE can be only one name)
+endif
+
+cts_testcase_file := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(my_installed_module_stem)
+$(cts_testcase_file) : $(LOCAL_BUILT_MODULE) | $(ACP)
+	$(copy-file-to-new-target)
+
+cts_testcase_config := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).config
+$(cts_testcase_config) : $(LOCAL_PATH)/AndroidTest.xml
+	$(copy-file-to-new-target)
+
+COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
+  $(COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES) \
+  $(cts_testcase_file) $(cts_testcase_config)
+
+# Copy over the compatibility files when user runs mm/mmm.
+$(my_register_name) : $(cts_testcase_file) $(cts_testcase_config)
+endif  # LOCAL_COMPATIBILITY_SUITE
+
+###########################################################
 ## Register with ALL_MODULES
 ###########################################################
 
