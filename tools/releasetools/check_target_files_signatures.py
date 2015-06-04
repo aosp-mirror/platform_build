@@ -331,7 +331,7 @@ class TargetFiles(object):
 
     by_certpair = {}
 
-    for i in all:
+    for i in all_apks:
       if i in self.apks:
         if i in other.apks:
           # in both; should have same set of certs
