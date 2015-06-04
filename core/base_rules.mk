@@ -607,9 +607,13 @@ cts_testcase_file := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))
 $(cts_testcase_file) : $(LOCAL_BUILT_MODULE) | $(ACP)
 	$(copy-file-to-new-target)
 
+cts_testcase_config :=
+android_test_xml := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+ifdef android_test_xml
 cts_testcase_config := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).config
-$(cts_testcase_config) : $(LOCAL_PATH)/AndroidTest.xml
+$(cts_testcase_config) : $(android_test_xml)
 	$(copy-file-to-new-target)
+endif
 
 COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
   $(COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES) \
