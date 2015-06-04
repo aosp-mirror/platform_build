@@ -8,7 +8,7 @@
 #
 # Output variables:
 #   jni_shared_libraries, jni_shared_libraries_abi, jni_shared_libraries_with_abis if we are going to embed the libraries into the apk;
-#   extracted_jni_libs, if we extract jni libs from prebuilt apk.
+#   embedded_prebuilt_jni_libs, prebuilt jni libs embedded in prebuilt apk.
 #
 
 my_embed_jni :=
@@ -27,7 +27,7 @@ jni_shared_libraries :=
 jni_shared_libraries_abis :=
 # jni_shared_libraries_with_abis is a list of <abi>:<path-to-the-built-jni-lib>
 jni_shared_libraries_with_abis :=
-extracted_jni_libs :=
+embedded_prebuilt_jni_libs :=
 
 #######################################
 # For TARGET_ARCH
@@ -51,7 +51,7 @@ jni_shared_libraries += $(my_jni_shared_libraries)
 jni_shared_libraries_abis += $(my_jni_shared_libraries_abi)
 jni_shared_libraries_with_abis += $(addprefix $(my_jni_shared_libraries_abi):,\
     $(my_jni_shared_libraries))
-extracted_jni_libs += $(my_extracted_jni_libs)
+embedded_prebuilt_jni_libs += $(my_embedded_prebuilt_jni_libs)
 
 # Include RS dynamically-generated libraries as well
 # TODO: Add multilib support once RS supports generating multilib libraries.
@@ -83,11 +83,11 @@ jni_shared_libraries += $(my_jni_shared_libraries)
 jni_shared_libraries_abis += $(my_jni_shared_libraries_abi)
 jni_shared_libraries_with_abis += $(addprefix $(my_jni_shared_libraries_abi):,\
     $(my_jni_shared_libraries))
-extracted_jni_libs += $(my_extracted_jni_libs)
+embedded_prebuilt_jni_libs += $(my_embedded_prebuilt_jni_libs)
 endif  # my_add_jni
 endif  # TARGET_2ND_ARCH
 
 jni_shared_libraries := $(strip $(jni_shared_libraries))
 jni_shared_libraries_abis := $(sort $(jni_shared_libraries_abis))
 jni_shared_libraries_with_abis := $(strip $(jni_shared_libraries_with_abis))
-extracted_jni_libs := $(strip $(extracted_jni_libs))
+embedded_prebuilt_jni_libs := $(strip $(embedded_prebuilt_jni_libs))
