@@ -5129,6 +5129,69 @@ a.video-shadowbox-button.white:after {
   content:url("../images/play-circle-grey.png") url("../images/play-circle-grey_2x.png");
 }
 
+/*
+ * Responsive YouTube embeds from DevSite
+ *
+ * When applied to a <div> that wraps a video, "video-wrapper" forces the video
+ * to float right at 50% of the column width on desktop, but appear as a block
+ * element at 100% of the column width on smaller screens.
+ * "video-wrapper-full-width" works the same but is always 100% width.
+ */
+.video-wrapper,
+.video-wrapper-left {
+  float: right;
+  margin: 0 0 40px 40px;
+  padding-top: calc(((100% - 40px) / 2) / 16 * 9); /* 16:9 including margin */
+  position: relative;
+  width: calc((100% - 40px) / 2);                  /* 50% including margin */
+}
+
+/*
+ * "video-wrapper-left" forces 50% without the float
+ * This is useful for heading content when you want the video to
+ * appear next to an element that is already floated right
+ * (e.g. tb-wrapper <div>)
+ */
+.video-wrapper-left {
+  float: none;
+  margin: 16px 0 20px 0;
+}
+
+.video-wrapper-full-width {
+  margin: 16px 0;
+  padding-top: 56.25%; /* Forces div to 16:9 at 100% width */
+  position: relative;
+  width: 100%;
+}
+
+.video-wrapper embed,
+.video-wrapper iframe,
+.video-wrapper object,
+.video-wrapper-full-width embed,
+.video-wrapper-full-width iframe,
+.video-wrapper-full-width object,
+.video-wrapper-left embed,
+.video-wrapper-left iframe,
+.video-wrapper-left object {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+
+  .video-wrapper,
+  .video-wrapper-left {
+    float: none;
+    margin: 16px 0;
+    padding-top: 56.25%; /* Forces div to 16:9 at 100% width */
+    width: 100%;
+  }
+}
+
+
 /******************
 Styles for d.a.c/index:
 *******************/
