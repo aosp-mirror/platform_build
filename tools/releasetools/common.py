@@ -182,7 +182,7 @@ def LoadInfoDict(input_file):
   makeint("boot_size")
   makeint("fstab_version")
 
-  d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"])
+  d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"], d.get("system_root_image", False))
   d["build.prop"] = LoadBuildProp(read_helper)
   return d
 
@@ -205,7 +205,7 @@ def LoadDictionaryFromLines(lines):
       d[name] = value
   return d
 
-def LoadRecoveryFSTab(read_helper, fstab_version):
+def LoadRecoveryFSTab(read_helper, fstab_version, system_root_image=False):
   class Partition(object):
     def __init__(self, mount_point, fs_type, device, length, device2, context):
       self.mount_point = mount_point
@@ -297,6 +297,11 @@ def LoadRecoveryFSTab(read_helper, fstab_version):
   else:
     raise ValueError("Unknown fstab_version: \"%d\"" % (fstab_version,))
 
+  # / is used for the system mount point when the root directory is included in
+  # system. Other areas assume system is always at "/system" so point /system at /
+  if system_root_image:
+    assert not d.has_key("/system") and d.has_key("/")
+    d["/system"] = d["/"]
   return d
 
 
