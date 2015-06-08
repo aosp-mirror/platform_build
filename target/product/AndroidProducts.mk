@@ -59,7 +59,6 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/aosp_arm64.mk \
     $(LOCAL_DIR)/aosp_mips64.mk \
     $(LOCAL_DIR)/aosp_x86_64.mk \
-    $(LOCAL_DIR)/full_x86_64.mk \
     $(LOCAL_DIR)/sdk_phone_armv7.mk \
     $(LOCAL_DIR)/sdk_phone_x86.mk \
     $(LOCAL_DIR)/sdk_phone_mips.mk \
