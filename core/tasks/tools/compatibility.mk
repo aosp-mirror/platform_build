@@ -23,20 +23,21 @@
 
 out_dir := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
-hosttestlib_jar := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar
-tf_prebuilt := $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar
-host_library := $(HOST_OUT_JAVA_LIBRARIES)/compatibility-common-util-hostsidelib.jar
-tf_library := $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar
-jar := $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar
-exec := $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed)
-readme := $(test_suite_readme)
+test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-common-util-hostsidelib.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
+  $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
+  $(test_suite_readme)
 
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
-$(compatibility_zip): $(test_artifacts) $(hosttestlib_jar) $(tf_prebuilt) $(host_library) $(tf_library) $(jar) $(exec) $(readme) | $(ADB) $(ACP)
+$(compatibility_zip): PRIVATE_TOOLS := $(test_tools)
+$(compatibility_zip): $(test_artifacts) $(test_tools) | $(ADB) $(ACP)
 # Make dir structure
 	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/repository/testcases $(PRIVATE_OUT_DIR)/repository/plans
 # Copy tools
-	$(hide) $(ACP) -fp $^ $(PRIVATE_OUT_DIR)/tools
+	$(hide) $(ACP) -fp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
