@@ -22,7 +22,7 @@ CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 10
 # NOTE: This will be overridden in product_config.mk if make
 # was invoked with a PRODUCT-xxx-yyy goal.
 ifeq ($(TARGET_PRODUCT),)
-TARGET_PRODUCT := full
+TARGET_PRODUCT := aosp_arm
 endif
 
 

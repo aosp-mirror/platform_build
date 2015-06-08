@@ -347,7 +347,7 @@ function chooseproduct()
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
     else
-        default_value=full
+        default_value=aosp_arm
     fi
 
     export TARGET_PRODUCT=
@@ -594,10 +594,10 @@ function tapas()
         return
     fi
 
-    local product=full
+    local product=aosp_arm
     case $arch in
-      x86)    product=full_x86;;
-      mips)   product=full_mips;;
+      x86)    product=aosp_x86;;
+      mips)   product=aosp_mips;;
       armv5)  product=generic_armv5;;
       arm64)  product=aosp_arm64;;
       x86_64) product=aosp_x86_64;;
