@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99ce74a2_57476ecd",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1000411
+      },
+      "writtenOn": "2015-06-08T16:20:58Z",
+      "side": 1,
+      "message": "Since they are the same files, it\u0027s probably better to use a single filter as in:\n\n  ifneq (,$(filter aosp_mips64 aosp_arm64,$(TARGET_PRODUCT)))\n    PRODUCT_COPY_FILES +\u003d .....\n  endif\n\nAlso, is there any drawback in adding this file to non-ranchu builds at this point? If not it\u0027s probably easier to always add the file, so we don\u0027t have to manage the list of ranchu build products manually here.",
+      "revId": "b09fb84becf73bf2bc578ebf27910d75b79d668a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
