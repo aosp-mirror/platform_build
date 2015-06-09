@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "79c9c09b_f9b0af81",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-06-09T15:18:07Z",
+      "side": 1,
+      "message": "If this permission file is added to goldfish target build it will cause connectivity service to request startup of dhcpcd_eth0 service which is not defined in init.goldfish.rc.\nIf we define such service in init.goldfish.rc like we did in ranchu, ethernet would take priority over the RIL so all data traffic would go through ethernet interface, otherwise you\u0027ll get the message \"no such service dhcpcd_eth0\" in terminal and RIL would take over the data traffic as usual.\nWould you consider this as ok?",
+      "parentUuid": "99ce74a2_57476ecd",
+      "revId": "b09fb84becf73bf2bc578ebf27910d75b79d668a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9ab8c9c_9b92b95e",
         "filename": "target/product/emulator.mk",
         "patchSetId": 1
