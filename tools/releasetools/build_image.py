@@ -25,8 +25,11 @@ import os.path
 import subprocess
 import sys
 import commands
+import common
 import shutil
 import tempfile
+
+OPTIONS = common.OPTIONS
 
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 
@@ -55,6 +58,7 @@ def GetVerityTreeSize(partition_size):
 def GetVerityMetadataSize(partition_size):
   cmd = "system/extras/verity/build_verity_metadata.py -s %d"
   cmd %= partition_size
+
   status, output = commands.getstatusoutput(cmd)
   if status:
     print output
@@ -162,7 +166,11 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   image_size = prop_dict["partition_size"]
   block_dev = prop_dict["verity_block_device"]
   signer_key = prop_dict["verity_key"] + ".pk8"
-  signer_path = prop_dict["verity_signer_cmd"]
+  if OPTIONS.verity_signer_path is not None:
+    signer_path = OPTIONS.verity_signer_path + ' '
+    signer_path += ' '.join(OPTIONS.verity_signer_args)
+  else:
+    signer_path = prop_dict["verity_signer_cmd"]
 
   # make a tempdir
   tempdir_name = tempfile.mkdtemp(suffix="_verity_images")
@@ -240,6 +248,7 @@ def BuildImage(in_dir, prop_dict, out_file):
   # adjust the partition size to make room for the hashes if this is to be verified
   if verity_supported and is_verity_partition and fs_spans_partition:
     partition_size = int(prop_dict.get("partition_size"))
+
     adjusted_size = AdjustPartitionSizeForVerity(partition_size)
     if not adjusted_size:
       return False
