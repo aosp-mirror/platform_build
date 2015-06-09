@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3937486d_84d848e9",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-06-09T23:25:29Z",
+      "side": 1,
+      "message": "We set LOCAL_SANITIZE in one of the two builds initiated by this variable setting. Maybe we could use some build-system-internal variable to say \"build the current target with sanitizer\" and re-purpose LOCAL_SANITIZE?",
+      "parentUuid": "d9d9cc70_7f5a5002",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 28
+      },
+      "revId": "d62f03976df969b04845e7bd530b521f395fc3cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "796b8031_516ebfab",
         "filename": "core/static_library.mk",
         "patchSetId": 1
