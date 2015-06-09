@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9d9cc70_7f5a5002",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-09T01:49:09Z",
+      "side": 1,
+      "message": "Why do we need this new variable?\nIt looks like we can use just LOCAL_SANITIZE.",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 28
+      },
+      "revId": "d62f03976df969b04845e7bd530b521f395fc3cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "796b8031_516ebfab",
+        "filename": "core/static_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-09T01:49:09Z",
+      "side": 1,
+      "message": "I think the above else block can be removed, if we manipulate some variables to have the first block handle both cases.",
+      "range": {
+        "startLine": 118,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 5
+      },
+      "revId": "d62f03976df969b04845e7bd530b521f395fc3cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
