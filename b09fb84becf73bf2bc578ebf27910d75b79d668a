@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b971781d_eb9c25bc",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1057369
+      },
+      "writtenOn": "2015-06-09T01:16:16Z",
+      "side": 1,
+      "message": "I have the same question. I\u0027d prefer this file to be added for all applicable architectures, including x86 and x86_64, for which (as well as ARM) we have both ranchu and non-ranchu versions of the emulator.",
+      "parentUuid": "99ce74a2_57476ecd",
+      "revId": "b09fb84becf73bf2bc578ebf27910d75b79d668a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9ab8c9c_9b92b95e",
         "filename": "target/product/emulator.mk",
         "patchSetId": 1
