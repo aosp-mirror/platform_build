@@ -51,6 +51,9 @@ class Options(object):
     self.private_key_suffix = ".pk8"
     # use otatools built boot_signer by default
     self.boot_signer_path = "boot_signer"
+    self.boot_signer_args = []
+    self.verity_signer_path = None
+    self.verity_signer_args = []
     self.verbose = False
     self.tempfiles = []
     self.device_specific = None
@@ -362,9 +365,11 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
   if (info_dict.get("boot_signer", None) == "true" and
       info_dict.get("verity_key", None)):
     path = "/" + os.path.basename(sourcedir).lower()
-    cmd = [OPTIONS.boot_signer_path, path, img.name,
-           info_dict["verity_key"] + ".pk8",
-           info_dict["verity_key"] + ".x509.pem", img.name]
+    cmd = [OPTIONS.boot_signer_path]
+    cmd.extend(OPTIONS.boot_signer_args)
+    cmd.extend([path, img.name,
+                info_dict["verity_key"] + ".pk8",
+                info_dict["verity_key"] + ".x509.pem", img.name])
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     assert p.returncode == 0, "boot_signer of %s image failed" % path
@@ -657,7 +662,8 @@ def ParseOptions(argv,
         argv, "hvp:s:x:" + extra_opts,
         ["help", "verbose", "path=", "signapk_path=", "extra_signapk_args=",
          "java_path=", "java_args=", "public_key_suffix=",
-         "private_key_suffix=", "boot_signer_path=", "device_specific=",
+         "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
+         "verity_signer_path=", "verity_signer_args=", "device_specific=",
          "extra="] +
         list(extra_long_opts))
   except getopt.GetoptError as err:
@@ -687,6 +693,12 @@ def ParseOptions(argv,
       OPTIONS.private_key_suffix = a
     elif o in ("--boot_signer_path",):
       OPTIONS.boot_signer_path = a
+    elif o in ("--boot_signer_args",):
+      OPTIONS.boot_signer_args = shlex.split(a)
+    elif o in ("--verity_signer_path",):
+      OPTIONS.verity_signer_path = a
+    elif o in ("--verity_signer_args",):
+      OPTIONS.verity_signer_args = shlex.split(a)
     elif o in ("-s", "--device_specific"):
       OPTIONS.device_specific = a
     elif o in ("-x", "--extra"):
