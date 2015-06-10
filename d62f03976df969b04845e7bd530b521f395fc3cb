@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "d902ac8c_bb257be5",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-10T00:30:32Z",
+      "side": 1,
+      "message": "Yes, I think so.\nLOCAL_SANITIZE is supposed to be Android.mk settable. We should use an internal variable to distinguish the auto-generated module variants.",
+      "parentUuid": "3937486d_84d848e9",
+      "range": {
+        "startLine": 184,
+        "startChar": 0,
+        "endLine": 184,
+        "endChar": 28
+      },
+      "revId": "d62f03976df969b04845e7bd530b521f395fc3cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "796b8031_516ebfab",
         "filename": "core/static_library.mk",
         "patchSetId": 1
