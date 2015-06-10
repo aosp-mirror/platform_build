@@ -37,7 +37,7 @@ $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
 $(compatibility_zip): PRIVATE_TOOLS := $(test_tools)
 $(compatibility_zip): $(test_artifacts) $(test_tools) | $(ADB) $(ACP)
 # Make dir structure
-	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/repository/testcases $(PRIVATE_OUT_DIR)/repository/plans
+	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
 # Copy tools
 	$(hide) $(ACP) -fp $(PRIVATE_TOOLS) $(PRIVATE_OUT_DIR)/tools
 	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
