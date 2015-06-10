@@ -270,6 +270,7 @@ _product_stash_var_list += \
 _product_stash_var_list += \
 	GLOBAL_CFLAGS_NO_OVERRIDE \
 	GLOBAL_CPPFLAGS_NO_OVERRIDE \
+	GLOBAL_CLANG_CFLAGS_NO_OVERRIDE \
 
 #
 # Stash values of the variables in _product_stash_var_list.
