@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79254042_66ac1324",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-12T17:06:57Z",
+      "side": 0,
+      "message": "you dropped the export line here. Was that intentional?",
+      "range": {
+        "startLine": 178,
+        "startChar": 4,
+        "endLine": 178,
+        "endChar": 10
+      },
+      "revId": "1b96592aab7a8e3d357a4e09f685968edcfe05b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
