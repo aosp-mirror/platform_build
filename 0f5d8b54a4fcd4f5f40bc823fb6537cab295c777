@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "390ca8ed_0ed757eb",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T23:09:52Z",
+      "side": 1,
+      "message": "We don\u0027t need this.\nI don\u0027t think DISABLE_AUTO_INSTALLCLEAN was ever used either.",
+      "range": {
+        "startLine": 172,
+        "startChar": 4,
+        "endLine": 172,
+        "endChar": 41
+      },
+      "revId": "0f5d8b54a4fcd4f5f40bc823fb6537cab295c777",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59e07c3c_93d26344",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T23:09:52Z",
+      "side": 1,
+      "message": "# The files/dirs to delete during an objclean.",
+      "range": {
+        "startLine": 246,
+        "startChar": 0,
+        "endLine": 247,
+        "endChar": 46
+      },
+      "revId": "0f5d8b54a4fcd4f5f40bc823fb6537cab295c777",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "390ca8ed_6eb6d3c6",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T23:09:52Z",
+      "side": 1,
+      "message": "Please use $(TARGET_OUT_INTERMEDIATES) and $($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATES), to take care of both obj and obj_arm in case of multilib bulid.",
+      "range": {
+        "startLine": 249,
+        "startChar": 1,
+        "endLine": 249,
+        "endChar": 21
+      },
+      "revId": "0f5d8b54a4fcd4f5f40bc823fb6537cab295c777",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
