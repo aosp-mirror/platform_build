@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "390ca8ed_0e347708",
+        "filename": "core/bptransition.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-06-12T23:00:58Z",
+      "side": 1,
+      "message": "The rest of the build system inherits this from main.mk, but since we\u0027re a sub-make, we don\u0027t. This is needed so that if there is an error generated from androidbp, it deletes the potentially partially written Android.mk file",
+      "parentUuid": "59e07c3c_9831e2f7",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 17
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "992af412_2097df9c",
         "filename": "core/main.mk",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "992af412_46a0f47c",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-06-12T23:00:58Z",
+      "side": 1,
+      "message": "Nope, just efficiency -- i started copying the top of this file, and then discovered -rR, which appears to cover most of it.",
+      "parentUuid": "992af412_2097df9c",
+      "range": {
+        "startLine": 490,
+        "startChar": 104,
+        "endLine": 490,
+        "endChar": 107
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "190364c0_8148607e",
         "filename": "core/main.mk",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2015-06-12T22:46:50Z",
       "side": 1,
       "message": "remove this",
+      "range": {
+        "startLine": 497,
+        "startChar": 54,
+        "endLine": 497,
+        "endChar": 69
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59095cdc_54a6040f",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-06-12T23:00:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "190364c0_8148607e",
       "range": {
         "startLine": 497,
         "startChar": 54,
