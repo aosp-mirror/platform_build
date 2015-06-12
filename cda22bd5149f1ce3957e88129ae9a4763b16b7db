@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59095cdc_1d5b17ce",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-12T17:11:17Z",
+      "side": 1,
+      "message": "Nit: it might be better to avoid introducing a new variable here, since you only use it in one place.\n\nWhat about just modifying this line to read:\n\n  export ANDROID_DEV_SCRIPTS\u003d$T/development/scripts:$T/prebuilts/devtools/tools:$T/external/selinux/prebuilts/bin\n\nand dropping ANDROID_SELINUX_TOOLS?",
+      "revId": "cda22bd5149f1ce3957e88129ae9a4763b16b7db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
