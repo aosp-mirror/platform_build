@@ -38,6 +38,7 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     ime \
     input \
+    input.evdev.default \
     inputflinger \
     inputflingerhost \
     javax.obex \
