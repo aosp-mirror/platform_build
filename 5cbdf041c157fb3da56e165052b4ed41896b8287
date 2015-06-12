@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "59095cdc_6f009133",
+        "filename": "core/bptransition.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T23:14:37Z",
+      "side": 1,
+      "message": "Ah, I was thinking this behavior is on by default. I just double-checked that I was wrong.",
+      "parentUuid": "390ca8ed_0e347708",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 17
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "992af412_2097df9c",
         "filename": "core/main.mk",
         "patchSetId": 2
