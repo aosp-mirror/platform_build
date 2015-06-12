@@ -1032,8 +1032,8 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_CFLAGS) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
-	$(GLOBAL_CFLAGS_NO_OVERRIDE) \
-	$(GLOBAL_CPPFLAGS_NO_OVERRIDE) \
+	$(PRIVATE_CFLAGS_NO_OVERRIDE) \
+	$(PRIVATE_CPPFLAGS_NO_OVERRIDE) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 $(transform-d-to-p)
 endef
@@ -1070,7 +1070,7 @@ $(call transform-c-or-s-to-o-no-deps, \
     $(PRIVATE_CFLAGS) \
     $(PRIVATE_CONLYFLAGS) \
     $(PRIVATE_DEBUG_CFLAGS) \
-    $(GLOBAL_CFLAGS_NO_OVERRIDE))
+    $(PRIVATE_CFLAGS_NO_OVERRIDE))
 endef
 
 define transform-s-to-o-no-deps
@@ -1137,6 +1137,8 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_CFLAGS) \
 	$(PRIVATE_CPPFLAGS) \
 	$(PRIVATE_DEBUG_CFLAGS) \
+	$(PRIVATE_CFLAGS_NO_OVERRIDE) \
+	$(PRIVATE_CPPFLAGS_NO_OVERRIDE) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 $(transform-d-to-p)
 endef
@@ -1163,6 +1165,7 @@ $(hide) $(PRIVATE_CC) \
 	    $(PRIVATE_HOST_GLOBAL_CONLYFLAGS) \
 	 ) \
 	$(1) \
+	$(PRIVATE_CFLAGS_NO_OVERRIDE) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
 
