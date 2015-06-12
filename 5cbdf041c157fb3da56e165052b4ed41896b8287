@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59e07c3c_9831e2f7",
+        "filename": "core/bptransition.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T22:46:50Z",
+      "side": 1,
+      "message": "We need this because this is called with \"make -rR\", right?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 17
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "992af412_2097df9c",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 490,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T22:46:50Z",
+      "side": 1,
+      "message": "Any other consideration than efficiency to use -rR?",
+      "range": {
+        "startLine": 490,
+        "startChar": 104,
+        "endLine": 490,
+        "endChar": 107
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "190364c0_8148607e",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-12T22:46:50Z",
+      "side": 1,
+      "message": "remove this",
+      "range": {
+        "startLine": 497,
+        "startChar": 54,
+        "endLine": 497,
+        "endChar": 69
+      },
+      "revId": "5cbdf041c157fb3da56e165052b4ed41896b8287",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
