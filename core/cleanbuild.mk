@@ -137,15 +137,23 @@ aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG) $(PRODUCT_AAPT_PREF_CONFIG))
 
 current_build_config := \
     $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)-{$(aapt_config_list)}
+current_sanitize_target := $(strip $(SANITIZE_TARGET))
+ifeq (,$(current_sanitize_target))
+  current_sanitize_target := false
+endif
 aapt_config_list :=
 force_installclean := false
+force_objclean := false
 
 # Read the current state from the file, if present.
 # Will set PREVIOUS_BUILD_CONFIG.
 #
 PREVIOUS_BUILD_CONFIG :=
+PREVIOUS_SANITIZE_TARGET :=
 -include $(previous_build_config_file)
 PREVIOUS_BUILD_CONFIG := $(strip $(PREVIOUS_BUILD_CONFIG))
+PREVIOUS_SANITIZE_TARGET := $(strip $(PREVIOUS_SANITIZE_TARGET))
+
 ifdef PREVIOUS_BUILD_CONFIG
   ifneq "$(current_build_config)" "$(PREVIOUS_BUILD_CONFIG)"
     $(info *** Build configuration changed: "$(PREVIOUS_BUILD_CONFIG)" -> "$(current_build_config)")
@@ -158,11 +166,21 @@ ifdef PREVIOUS_BUILD_CONFIG
 endif  # else, this is the first build, so no need to clean.
 PREVIOUS_BUILD_CONFIG :=
 
+ifdef PREVIOUS_SANITIZE_TARGET
+  ifneq "$(current_sanitize_target)" "$(PREVIOUS_SANITIZE_TARGET)"
+    $(info *** SANITIZE_TARGET changed: "$(PREVIOUS_SANITIZE_TARGET)" -> "$(current_sanitize_target)")
+    force_objclean := true
+  endif
+endif  # else, this is the first build, so no need to clean.
+PREVIOUS_SANITIZE_TARGET :=
+
 # Write the new state to the file.
 #
 $(shell \
   mkdir -p $(dir $(previous_build_config_file)) && \
   echo "PREVIOUS_BUILD_CONFIG := $(current_build_config)" > \
+      $(previous_build_config_file) && \
+  echo "PREVIOUS_SANITIZE_TARGET := $(current_sanitize_target)" >> \
       $(previous_build_config_file) \
  )
 previous_build_config_file :=
@@ -221,6 +239,12 @@ dataclean_files := \
 	$(PRODUCT_OUT)/data-qemu/* \
 	$(PRODUCT_OUT)/userdata-qemu.img
 
+# The files/dirs to delete during an objclean, which removes any files
+# in the staging and emulator data partitions.
+objclean_files := \
+	$(TARGET_OUT_INTERMEDIATES) \
+	$($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATES)
+
 # make sure *_OUT is set so that we won't result in deleting random parts
 # of the filesystem.
 ifneq (2,$(words $(HOST_OUT) $(PRODUCT_OUT)))
@@ -240,6 +264,12 @@ installclean: dataclean
 	$(hide) rm -rf $(FILES)
 	@echo "Deleted images and staging directories."
 
+.PHONY: objclean
+objclean: FILES := $(objclean_files)
+objclean:
+	$(hide) rm -rf $(FILES)
+	@echo "Deleted images and staging directories."
+
 ifeq "$(force_installclean)" "true"
   $(info *** Forcing "make installclean"...)
   $(info *** rm -rf $(dataclean_files) $(installclean_files))
@@ -247,6 +277,14 @@ ifeq "$(force_installclean)" "true"
   $(info *** Done with the cleaning, now starting the real build.)
 endif
 force_installclean :=
+
+ifeq "$(force_objclean)" "true"
+  $(info *** Forcing cleanup of intermediate files...)
+  $(info *** rm -rf $(objclean_files))
+  $(shell rm -rf $(objclean_files))
+  $(info *** Done with the cleaning, now starting the real build.)
+endif
+force_objclean :=
 
 .PHONY: clean-jack-files
 clean-jack-files: clean-dex-files
