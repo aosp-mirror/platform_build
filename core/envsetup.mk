@@ -5,6 +5,11 @@
 # the bottom for the full list
 #     OUT_DIR is also set to "out" if it's not already set.
 #         this allows you to set it to somewhere else if you like
+#     SCAN_EXCLUDE_DIRS is an optional, whitespace separated list of
+#         directories that will also be excluded from full checkout tree
+#         searches for source or make files, in addition to OUT_DIR.
+#         This can be useful if you set OUT_DIR to be a different directory
+#         than other outputs of your build system.
 
 # Set up version information.
 include $(BUILD_SYSTEM)/version_defaults.mk
