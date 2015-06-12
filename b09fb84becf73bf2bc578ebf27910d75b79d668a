@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "596b1c6a_b3802ad0",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2015-06-12T14:55:14Z",
+      "side": 1,
+      "message": "probably let\u0027s just change the ranchu target for now",
+      "parentUuid": "79c9c09b_f9b0af81",
+      "revId": "b09fb84becf73bf2bc578ebf27910d75b79d668a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d9ab8c9c_9b92b95e",
         "filename": "target/product/emulator.mk",
         "patchSetId": 1
