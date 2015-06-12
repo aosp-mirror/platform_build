@@ -157,6 +157,10 @@ endif
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
+# Pruned directory options used when using findleaves.py
+# See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
+FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(OUT_DIR) $(SCAN_EXCLUDE_DIRS) .repo .git)
+
 # The build system exposes several variables for where to find the kernel
 # headers:
 #   TARGET_DEVICE_KERNEL_HEADERS is automatically created for the current
