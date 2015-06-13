@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59095cdc_0f3635a2",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-13T00:15:16Z",
+      "side": 0,
+      "message": "Moving this looks a bit awkward.",
+      "range": {
+        "startLine": 305,
+        "startChar": 0,
+        "endLine": 306,
+        "endChar": 57
+      },
+      "revId": "10b8918a072b7f604adcf4030060a6ce770f108e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

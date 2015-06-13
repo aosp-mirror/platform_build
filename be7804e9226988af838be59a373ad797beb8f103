@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "390ca8ed_c2cb7315",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-13T00:15:16Z",
+      "side": 1,
+      "message": "Let\u0027s not move TARGET_OUT_DATA.\nInstead define the new variable directly to  $(PRODUCT_OUT)/$(TARGET_COPY_OUT_DATA), something like:\nifeq ($(SANITIZE_TARGET),address)\ntarget_out_shared_libraries_base :\u003d $(PRODUCT_OUT)/$(TARGET_COPY_OUT_DATA)\nelse\ntarget_out_shared_libraries_base :\u003d $(TARGET_OUT)\nendif\n\nI changed the variable to lowercase because this variable shouldn\u0027t be used anywhere else.",
+      "range": {
+        "startLine": 279,
+        "startChar": 0,
+        "endLine": 283,
+        "endChar": 5
+      },
+      "revId": "be7804e9226988af838be59a373ad797beb8f103",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "190364c0_2c5b4bce",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-13T00:15:16Z",
+      "side": 1,
+      "message": "Don\u0027t need this.",
+      "range": {
+        "startLine": 434,
+        "startChar": 0,
+        "endLine": 442,
+        "endChar": 5
+      },
+      "revId": "be7804e9226988af838be59a373ad797beb8f103",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
