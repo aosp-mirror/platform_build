@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "597cfc56_0278ea6c",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-13T01:04:35Z",
+      "side": 1,
+      "message": "still here.",
+      "range": {
+        "startLine": 434,
+        "startChar": 19,
+        "endLine": 434,
+        "endChar": 40
+      },
+      "revId": "dfd7d2d925b06399a2bc689af33f62ba4ae394a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
