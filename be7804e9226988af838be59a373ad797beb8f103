@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "99c4b4d3_042d9649",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-06-13T00:24:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "390ca8ed_c2cb7315",
+      "range": {
+        "startLine": 279,
+        "startChar": 0,
+        "endLine": 283,
+        "endChar": 5
+      },
+      "revId": "be7804e9226988af838be59a373ad797beb8f103",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "190364c0_2c5b4bce",
         "filename": "core/main.mk",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2015-06-13T00:15:16Z",
       "side": 1,
       "message": "Don\u0027t need this.",
+      "range": {
+        "startLine": 434,
+        "startChar": 0,
+        "endLine": 442,
+        "endChar": 5
+      },
+      "revId": "be7804e9226988af838be59a373ad797beb8f103",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "190364c0_ccaa8fdf",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 442,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-06-13T00:24:42Z",
+      "side": 1,
+      "message": "yes, leftover from another approach",
+      "parentUuid": "190364c0_2c5b4bce",
       "range": {
         "startLine": 434,
         "startChar": 0,
