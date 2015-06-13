@@ -118,9 +118,14 @@ COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 COMMON_GLOBAL_CPPFLAGS:= $(COMMON_GLOBAL_CFLAGS) -Wsign-promo -std=gnu++11
 COMMON_RELEASE_CPPFLAGS:= $(COMMON_RELEASE_CFLAGS)
 
-GLOBAL_CFLAGS_NO_OVERRIDE :=  \
+GLOBAL_CFLAGS_NO_OVERRIDE := \
     -Werror=int-to-pointer-cast \
     -Werror=pointer-to-int-cast \
+
+GLOBAL_CLANG_CFLAGS_NO_OVERRIDE := \
+    -Werror=address-of-temporary \
+    -Werror=null-dereference \
+    -Werror=return-type \
 
 GLOBAL_CPPFLAGS_NO_OVERRIDE :=
 
