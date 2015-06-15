@@ -52,6 +52,24 @@
       "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "796d40b3_198cebb9",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-06-15T19:52:25Z",
+      "side": 1,
+      "message": "According to https://plus.sandbox.google.com/105487075784331805819/posts/dyKKLrW8jXb, -fsanitize-undefined-trap-on-error should be pretty fast. I don\u0027t have the numbers.",
+      "parentUuid": "b98a589d_d1309429",
+      "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
