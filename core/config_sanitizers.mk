@@ -52,12 +52,13 @@ endif
 
 ifneq ($(filter default-ub,$(my_sanitize)),)
   my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
-  my_ldlibs += -ldl
 
   ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
+    my_ldlibs += -ldl
   else
     my_cflags += -fsanitize-undefined-trap-on-error
+    my_shared_libraries += libdl
   endif
 endif
 
