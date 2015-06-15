@@ -70,6 +70,24 @@
       "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "594a3c43_382d314a",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-15T20:03:46Z",
+      "side": 1,
+      "message": "I meant the performance issues of *not* doing that. Should it be okay to use the ubsan runtime on the host, or is that going to be too much of a hit?",
+      "parentUuid": "796d40b3_198cebb9",
+      "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
