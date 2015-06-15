@@ -106,6 +106,24 @@
       "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "594a3c43_9ba0d7af",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-15T21:07:02Z",
+      "side": 1,
+      "message": "Okay. I think we\u0027ll just do this as-is for now and see if it can be improved later.\n\nnnk: could you move this block into config_sanitizers.mk? Other than that lgtm now.",
+      "parentUuid": "3968289e_1c5db9f8",
+      "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
