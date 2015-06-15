@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9733893_f8ec8d89",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 836,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2015-06-15T19:49:24Z",
+      "side": 1,
+      "message": "Is it ok to add a dependency on ART in this Makefile? Could we instead add it to modules_to_check?",
+      "range": {
+        "startLine": 836,
+        "startChar": 32,
+        "endLine": 836,
+        "endChar": 47
+      },
+      "revId": "296a12a64becedea708b86f398c1ed1892f0bad2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
