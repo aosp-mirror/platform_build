@@ -105,3 +105,13 @@ ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
   recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_RECOVER)),
   my_cflags += -fsanitize-recover=$(recover_arg)
 endif
+
+ifeq ($(strip $(LOCAL_DETECT_INTEGER_OVERFLOWS)),true)
+  ifeq ($(my_clang),true)
+    my_cflags += -fsanitize=signed-integer-overflow,unsigned-integer-overflow
+    my_cflags += -ftrap-function=abort
+    my_cflags += -fsanitize-undefined-trap-on-error
+  else
+    $(error $(LOCAL_MODULE): You must enable LOCAL_CLANG:=true to use LOCAL_DETECT_INTEGER_OVERFLOWS)
+  endif
+endif
