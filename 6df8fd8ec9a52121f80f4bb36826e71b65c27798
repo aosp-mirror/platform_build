@@ -88,6 +88,24 @@
       "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3968289e_1c5db9f8",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-06-15T20:38:03Z",
+      "side": 1,
+      "message": "I don\u0027t really know. You could try adding these checks to the asan build (that\u0027s how we often use them) and measuring build times.",
+      "parentUuid": "594a3c43_382d314a",
+      "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
