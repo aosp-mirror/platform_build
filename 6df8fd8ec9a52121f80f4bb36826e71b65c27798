@@ -16,6 +16,24 @@
       "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5965dcc2_20bfae1e",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-15T18:10:01Z",
+      "side": 1,
+      "message": "Thanks for looking into this Dan. WFIW, I\u0027m most interested in getting this working on the device, not the host.\n\nI\u0027ve also read (http://danluu.com/integer-overflow/) that using ubsan to show runtime error messages causes the generation of inefficient code. Quoting that URL:\n\n\"The current mechanism that produces nice error messages somehow causes optmizations to get screwed up in a lot of cases.\"\n\nNot sure if this is still the case...",
+      "parentUuid": "597cfc56_6993562c",
+      "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
