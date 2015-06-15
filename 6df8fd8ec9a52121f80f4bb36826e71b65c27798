@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "597cfc56_6993562c",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1032,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-15T17:50:42Z",
+      "side": 1,
+      "message": "The host can use the ubsan runtime to show error messages instead of just aborting. Also, this should probably make use of LOCAL_SANITIZE rather than doing all the configuration itself. There\u0027s a bit of cleanup that would need to happen to make that work though. I\u0027ll update this CL in a bit.",
+      "revId": "6df8fd8ec9a52121f80f4bb36826e71b65c27798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
