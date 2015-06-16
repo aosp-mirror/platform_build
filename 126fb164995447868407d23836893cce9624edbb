@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f95690ec_38a36dff",
+        "filename": "core/bptransition.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-06-16T22:35:24Z",
+      "side": 1,
+      "message": "Why is a blacklist necessary?  What happens if we just convert these to Android.mk files that never get included?",
+      "revId": "126fb164995447868407d23836893cce9624edbb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b98a589d_cbdff3f4",
+        "filename": "core/bptransition.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-06-16T22:35:24Z",
+      "side": 1,
+      "message": "Is it necessary to use a blueprint parsing tool to find Android.bp files?  find . -name Android.bp takes 1.4s on my computer with a hot cache.\n\nIf we\u0027re going to call a blueprint tool to parse all these files, maybe it should just spit out the Android.mk files as it goes.  Or add androidbp rules to the ninja file, and then call soong androidbp_to_mk so it writes out all the android.mk files and cleans up the old ones.",
+      "revId": "126fb164995447868407d23836893cce9624edbb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
