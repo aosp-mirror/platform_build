@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f95690ec_32370eed",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-06-16T17:51:43Z",
+      "side": 1,
+      "message": "are we going to move existing -ftrapv users like libpng over to this? i suspect an abort will be a lot less painful to debug that the current SIGILLs, which always end up on cferris\u0027 desk because of their non-obviousness.",
+      "revId": "99d92506acb95c908aceaf23af54f76e2800cabf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
