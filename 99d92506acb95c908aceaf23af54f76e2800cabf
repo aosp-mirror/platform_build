@@ -34,6 +34,24 @@
       "revId": "99d92506acb95c908aceaf23af54f76e2800cabf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b98a589d_1afe8ce3",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-16T17:55:58Z",
+      "side": 1,
+      "message": "What do you think of a new libc function, something like abort_integer_overflow(), which would make this crash even more obvious?",
+      "parentUuid": "796d40b3_ed592988",
+      "revId": "99d92506acb95c908aceaf23af54f76e2800cabf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
