@@ -463,10 +463,10 @@ def:ndk_nav() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
 <?cs
-if:guide ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/guides/guides_toc.cs" ?><?cs
-elif:reference ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/reference/reference_toc.cs" ?><?cs
-elif:downloads ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/downloads/downloads_toc.cs" ?><?cs
-elif:samples ?><?cs include:"../../../../frameworks/base/docs/html-ndk/ndk/samples/samples_toc.cs" ?><?cs
+if:guide ?><?cs include:"../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?><?cs
+elif:reference ?><?cs include:"../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?><?cs
+elif:downloads ?><?cs include:"../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?><?cs
+elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?><?cs
 /if ?>
         </div>
       </div>
