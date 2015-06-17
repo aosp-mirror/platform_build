@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7942a031_cb7b7572",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2015-06-17T16:51:26Z",
+      "side": 1,
+      "message": "This will mean 32-bit code on ARM64 using the generic ARM64 board config will lose LPAE optimizations, etc. cortex-a15 seems unfortunate, but generic is overly conservative. Is there a better fix?",
+      "range": {
+        "startLine": 54,
+        "startChar": 26,
+        "endLine": 54,
+        "endChar": 33
+      },
+      "revId": "bb79fe23ae6e02c8da04d501221c0e615d2e2baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
