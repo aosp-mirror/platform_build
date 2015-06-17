@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99abd4ef_c6b6e62b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-17T13:24:33Z",
+      "side": 1,
+      "message": "the only user of LOCAL_DETECT_INTEGER_OVERFLOW was reverted, so nobody is using this today. We should just delete it in this CL.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 60
+      },
+      "revId": "d51bcfdf9df6a34a79f78f80fe39b821fc542ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b99c18d9_8a9cda72",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-17T13:24:33Z",
+      "side": 1,
+      "message": "Recommend deleting LOCAL_DETECT_INTEGER_OVERFLOWS in this commit, since nobody is using it right now.",
+      "revId": "d51bcfdf9df6a34a79f78f80fe39b821fc542ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19b8c43c_255b64ce",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-06-17T13:24:33Z",
+      "side": 1,
+      "message": "This can be deleted. The flags will end up being added in lines 60-67 below.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 7
+      },
+      "revId": "d51bcfdf9df6a34a79f78f80fe39b821fc542ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
