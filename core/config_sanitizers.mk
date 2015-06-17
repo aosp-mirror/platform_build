@@ -4,17 +4,6 @@
 
 my_sanitize := $(strip $(LOCAL_SANITIZE))
 
-# Keep compatibility for LOCAL_ADDRESS_SANITIZER until all targets have moved to
-# `LOCAL_SANITIZE := address`.
-ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),true)
-  my_sanitize += address
-endif
-
-# And `LOCAL_SANITIZE := never`.
-ifeq ($(strip $(LOCAL_ADDRESS_SANITIZER)),false)
-  my_sanitize := never
-endif
-
 # Don't apply sanitizers to NDK code.
 ifdef LOCAL_SDK_VERSION
   my_sanitize := never
