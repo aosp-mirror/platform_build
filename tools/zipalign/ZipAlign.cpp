@@ -212,7 +212,7 @@ static int verify(const char* fileName, int alignment, bool verbose,
     }
 
     if (verbose)
-        printf("Verification %s\n", foundBad ? "FAILED" : "succesful");
+        printf("Verification %s\n", foundBad ? "FAILED" : "successful");
 
     return foundBad ? 1 : 0;
 }
