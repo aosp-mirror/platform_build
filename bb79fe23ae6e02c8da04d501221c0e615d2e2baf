@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5e114241_ba6f51f0",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1072549
+      },
+      "writtenOn": "2015-06-17T23:04:29Z",
+      "side": 1,
+      "message": "Ian would\u0027t this be enough? Or are you thinking about how ART does it? Other options would be declaring a new generic64 which enables the extra options, or aiding ART\u0027s infrastructure to take a look at the TARGET_ARCH too.",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 36
+      },
+      "revId": "bb79fe23ae6e02c8da04d501221c0e615d2e2baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7942a031_cb7b7572",
         "filename": "target/board/generic_arm64/BoardConfig.mk",
         "patchSetId": 2
@@ -13,6 +36,30 @@
       "writtenOn": "2015-06-17T16:51:26Z",
       "side": 1,
       "message": "This will mean 32-bit code on ARM64 using the generic ARM64 board config will lose LPAE optimizations, etc. cortex-a15 seems unfortunate, but generic is overly conservative. Is there a better fix?",
+      "range": {
+        "startLine": 54,
+        "startChar": 26,
+        "endLine": 54,
+        "endChar": 33
+      },
+      "revId": "bb79fe23ae6e02c8da04d501221c0e615d2e2baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fef4b642_7fa08fae",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1072549
+      },
+      "writtenOn": "2015-06-17T23:04:29Z",
+      "side": 1,
+      "message": "Ian please see my other comment. No we should definitely not lose these optimisations for 32bit ARMv8 builds!",
+      "parentUuid": "7942a031_cb7b7572",
       "range": {
         "startLine": 54,
         "startChar": 26,
