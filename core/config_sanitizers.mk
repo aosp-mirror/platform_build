@@ -41,14 +41,6 @@ endif
 
 ifneq ($(filter default-ub,$(my_sanitize)),)
   my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
-
-  ifdef LOCAL_IS_HOST_MODULE
-    my_cflags += -fno-sanitize-recover=all
-    my_ldlibs += -ldl
-  else
-    my_cflags += -fsanitize-undefined-trap-on-error
-    my_shared_libraries += libdl
-  endif
 endif
 
 ifneq ($(my_sanitize),)
@@ -56,7 +48,13 @@ ifneq ($(my_sanitize),)
   my_cflags += -fsanitize=$(fsanitize_arg)
 
   ifdef LOCAL_IS_HOST_MODULE
+    my_cflags += -fno-sanitize-recover=all
     my_ldflags += -fsanitize=$(fsanitize_arg)
+    my_ldlibs += -ldl
+  else
+    my_cflags += -fsanitize-undefined-trap-on-error
+    my_cflags += -ftrap-function=abort
+    my_shared_libraries += libdl
   endif
 endif
 
@@ -68,7 +66,7 @@ ifneq ($(filter address,$(my_sanitize)),)
   ifdef LOCAL_IS_HOST_MODULE
     # -nodefaultlibs (provided with libc++) prevents the driver from linking
     # libraries needed with -fsanitize=address. http://b/18650275 (WAI)
-    my_ldlibs += -lm -ldl -lpthread
+    my_ldlibs += -lm -lpthread
     my_ldflags += -Wl,--no-as-needed
   else
     # ASan runtime library must be the first in the link order.
@@ -81,27 +79,12 @@ ifneq ($(filter address,$(my_sanitize)),)
 endif
 
 ifneq ($(filter undefined,$(my_sanitize)),)
-  my_cflags += -fno-sanitize-recover=all
-
-  ifdef LOCAL_IS_HOST_MODULE
-    my_ldlibs += -ldl
-  else
+  ifndef LOCAL_IS_HOST_MODULE
     $(error ubsan is not yet supported on the target)
   endif
 endif
 
-
 ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
   recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_RECOVER)),
   my_cflags += -fsanitize-recover=$(recover_arg)
-endif
-
-ifeq ($(strip $(LOCAL_DETECT_INTEGER_OVERFLOWS)),true)
-  ifeq ($(my_clang),true)
-    my_cflags += -fsanitize=signed-integer-overflow,unsigned-integer-overflow
-    my_cflags += -ftrap-function=abort
-    my_cflags += -fsanitize-undefined-trap-on-error
-  else
-    $(error $(LOCAL_MODULE): You must enable LOCAL_CLANG:=true to use LOCAL_DETECT_INTEGER_OVERFLOWS)
-  endif
 endif
