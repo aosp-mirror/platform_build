@@ -14,9 +14,6 @@ CLANG_CONFIG_mips64_UNKNOWN_CFLAGS := \
   -msynci \
   -mno-fused-madd
 
-# Temporary workaround until GDB supports compact branches.
-CLANG_CONFIG_mips64_UNKNOWN_CFLAGS += -mcompact-branches=never
-
 # Temporary workaround for Mips clang++ problem creating
 #   relocated ptrs in read-only pic .gcc_exception_table;
 #   permanent fix pending at http://reviews.llvm.org/D9669
