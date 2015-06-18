@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e7adaa8_5a613531",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-18T19:24:33Z",
+      "side": 1,
+      "message": "Please move it up here, before inheriting from any other products.",
+      "revId": "e82d48616c5c2c5bd69ea5fa8bb4f6e8e429d473",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e67ca0f_cc7caf2f",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-18T19:24:33Z",
+      "side": 1,
+      "message": "The convention is to put the above overriding at the bottom.",
+      "revId": "e82d48616c5c2c5bd69ea5fa8bb4f6e8e429d473",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
