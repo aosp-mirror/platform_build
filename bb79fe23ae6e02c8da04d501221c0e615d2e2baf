@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3e700ec3_c87c972f",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2015-06-18T21:35:59Z",
+      "side": 1,
+      "message": "Oh ok, I follow you. Won\u0027t this break if ARM 32 is the primary architecture and ARM 64 the secondary? Do we care?",
+      "parentUuid": "5e114241_ba6f51f0",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 36
+      },
+      "revId": "bb79fe23ae6e02c8da04d501221c0e615d2e2baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7942a031_cb7b7572",
         "filename": "target/board/generic_arm64/BoardConfig.mk",
         "patchSetId": 2
