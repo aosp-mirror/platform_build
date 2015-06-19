@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9ecf3a47_efff1d2a",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-06-19T09:42:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e7adaa8_5a613531",
+      "revId": "e82d48616c5c2c5bd69ea5fa8bb4f6e8e429d473",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1e67ca0f_cc7caf2f",
         "filename": "target/product/aosp_arm64.mk",
         "patchSetId": 2
