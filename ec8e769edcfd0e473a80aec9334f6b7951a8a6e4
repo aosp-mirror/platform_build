@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e67ca0f_75999ffe",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-19T00:14:20Z",
+      "side": 1,
+      "message": "see here.",
+      "range": {
+        "startLine": 27,
+        "startChar": 36,
+        "endLine": 27,
+        "endChar": 105
+      },
+      "revId": "ec8e769edcfd0e473a80aec9334f6b7951a8a6e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e7adaa8_899f893b",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-19T00:14:20Z",
+      "side": 1,
+      "message": "This is the default now, after you have removed libstdc++ from TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES, right?",
+      "range": {
+        "startLine": 112,
+        "startChar": 34,
+        "endLine": 112,
+        "endChar": 43
+      },
+      "revId": "ec8e769edcfd0e473a80aec9334f6b7951a8a6e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
