@@ -685,7 +685,7 @@ function findmakefile()
     T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=`PWD= /bin/pwd`
-        if [ -f "$T/Android.mk" ]; then
+        if [[ -f "$T/Android.mk" || -f "$T/Android.bp" ]]; then
             echo $T/Android.mk
             \cd $HERE
             return
@@ -753,7 +753,7 @@ function mmm()
                 MODULES=all_modules
             fi
             DIR=`echo $DIR | sed -e 's/:.*//' -e 's:/$::'`
-            if [ -f $DIR/Android.mk ]; then
+            if [[ -f $DIR/Android.mk || -f $DIR/Android.bp ]]; then
                 local TO_CHOP=`(\cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
                 local TO_CHOP=`expr $TO_CHOP + 1`
                 local START=`PWD= /bin/pwd`

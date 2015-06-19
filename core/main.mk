@@ -481,7 +481,29 @@ ifeq ($(stash_product_vars),true)
   $(call stash-product-vars, __STASHED)
 endif
 
+# Rule to translate path of Android.bp file to the name of the generated Android_*.mk file
+# $1: Android.bp file
+define mk-for-bp
+$(MK_OUT_DIR)/Android_$(patsubst %_,%,$(subst /,_,$(dir $(1)))).mk
+endef
+
+# Run bootstrap.bash if necessary
+ifeq ($(wildcard $(SOONG_OUT_DIR)/soong),)
+$(shell mkdir -p $(SOONG_OUT_DIR))
+ifeq (error,$(shell cd $(SOONG_OUT_DIR) >/dev/null; $(realpath $(TOP))/bootstrap.bash >&2 || echo -n "error"))
+$(error bootstrap.bash failed)
+endif
+endif
+
+ifeq (error,$(shell $(SOONG_OUT_DIR)/soong androidmk >&2 || echo -n "error"))
+$(error Failed to generate Android.mk files)
+endif
+
 ifneq ($(ONE_SHOT_MAKEFILE),)
+# If any of the ONE_SHOT_MAKEFILE entries are actually generated from
+# Android.bp blueprints, then switch to using those
+ONE_SHOT_MAKEFILE := $(foreach m,$(ONE_SHOT_MAKEFILE),\
+	$(if $(wildcard $(m)), $(m), $(call mk-for-bp,$(m))))
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
 include $(ONE_SHOT_MAKEFILE)
@@ -514,6 +536,12 @@ ifneq ($(dont_bother),true)
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles := \
 	$(shell build/tools/findleaves.py --prune=$(OUT_DIR) --prune=.repo --prune=.git $(subdirs) Android.mk)
+
+ifeq ($(subdirs),$(TOP))
+subdir_makefiles += $(wildcard $(MK_OUT_DIR)/Android_*.mk)
+else
+subdir_makefiles += $(foreach d, $(subdirs), $(wildcard $(MK_OUT_DIR)/Android_$(subst /,_,$(d))*.mk))
+endif
 
 $(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
 
