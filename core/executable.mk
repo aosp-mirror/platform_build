@@ -6,6 +6,17 @@
 # LOCAL_MODULE_PATH_32 and LOCAL_MODULE_PATH_64 or LOCAL_MODULE_STEM_32 and
 # LOCAL_MODULE_STEM_64
 
+my_skip_this_target :=
+ifeq (address,$(strip $(SANITIZE_TARGET)))
+  ifeq (true,$(LOCAL_FORCE_STATIC_EXECUTABLE))
+    my_skip_this_target := true
+  else ifeq (false, $(LOCAL_CLANG))
+    my_skip_this_target := true
+  endif
+endif
+
+ifneq (true,$(my_skip_this_target))
+
 my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
@@ -71,3 +82,5 @@ LOCAL_2ND_ARCH_VAR_PREFIX :=
 LOCAL_NO_2ND_ARCH_MODULE_SUFFIX :=
 
 my_module_arch_supported :=
+
+endif
