@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e9c462a_471f14e8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-19T22:45:35Z",
+      "side": 1,
+      "message": "Why would you do incremental ota from a system.img created directly by make? I think you are only supposed to do it from system.img created by the ota tools from the target_files.",
+      "range": {
+        "startLine": 11,
+        "startChar": 57,
+        "endLine": 14,
+        "endChar": 7
+      },
+      "revId": "7b7cc1affb065b0f7ff45b3c3a62f1140563bd5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
