@@ -69,4 +69,4 @@ $(clang_2nd_arch_prefix)TARGET_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.p
 
 # Address sanitizer clang config
 $(clang_2nd_arch_prefix)ADDRESS_SANITIZER_RUNTIME_LIBRARY := libclang_rt.asan-arm-android
-$(clang_2nd_arch_prefix)ADDRESS_SANITIZER_RPATH := /system/lib/asan
+$(clang_2nd_arch_prefix)ADDRESS_SANITIZER_RPATH := /data/lib
