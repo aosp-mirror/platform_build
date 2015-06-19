@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "7e7526b8_b628a60f",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1072549
+      },
+      "writtenOn": "2015-06-19T14:03:14Z",
+      "side": 1,
+      "message": "Great catch! It would ... have not really thought or ARM32 primary.  Then the perfect solution is replacing \n\nifeq ($(strip $(TARGET_ARCH)),arm64)\n\nwith\n\nifneq (,$(filter $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT), $(SUPPORTED_ARMV8_CPU_VARIANTS))\n\n(defined at the top of the file)\n\nThis way all 32bit of ARMv8 CPU_VARIANTs will be picking up the correct flags. And we do not rely on the, otherwise faulty, assumption that only ARM64 targets have the extra features.",
+      "parentUuid": "3e700ec3_c87c972f",
+      "range": {
+        "startLine": 105,
+        "startChar": 0,
+        "endLine": 105,
+        "endChar": 36
+      },
+      "revId": "bb79fe23ae6e02c8da04d501221c0e615d2e2baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7942a031_cb7b7572",
         "filename": "target/board/generic_arm64/BoardConfig.mk",
         "patchSetId": 2
