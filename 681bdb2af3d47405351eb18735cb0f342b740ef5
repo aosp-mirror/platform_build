@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ef6069f_3105e883",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-22T20:00:00Z",
+      "side": 1,
+      "message": "dimitry: will your version script allow me to remove this?",
+      "revId": "681bdb2af3d47405351eb18735cb0f342b740ef5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
