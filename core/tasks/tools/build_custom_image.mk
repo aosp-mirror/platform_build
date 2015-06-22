@@ -100,6 +100,8 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	  $(hide) echo "# Properties from $(PRIVATE_DICT_FILE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
 	    cat $(PRIVATE_DICT_FILE) >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	# Generate the image.
+	$(if $(filter oem,$(PRIVATE_MOUNT_POINT)), \
+	  $(hide) echo "oem.buildnumber=$(BUILD_NUMBER)" >> $(PRIVATE_STAGING_DIR)/oem.prop)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
 	  ./build/tools/releasetools/build_image.py \
 	  $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@
