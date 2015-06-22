@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e7adaa8_cc9825cd",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2015-06-22T19:40:42Z",
+      "side": 1,
+      "message": "isn\u0027t gold the default one for arm?",
+      "revId": "f7773484b4c3cf99c287bce4baad7d265cdafbc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
