@@ -611,7 +611,7 @@ cts_testcase_config :=
 android_test_xml := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
 ifdef android_test_xml
 cts_testcase_config := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).config
-$(cts_testcase_config) : $(android_test_xml)
+$(cts_testcase_config) : $(android_test_xml) | $(ACP)
 	$(copy-file-to-new-target)
 endif
 
