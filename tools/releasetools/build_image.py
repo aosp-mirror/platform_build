@@ -255,6 +255,22 @@ def BuildImage(in_dir, prop_dict, out_file):
     prop_dict["partition_size"] = str(adjusted_size)
     prop_dict["original_partition_size"] = str(partition_size)
 
+  # Bug: 21522719, 22023465
+  # There are some reserved blocks on ext4 FS (lesser of 4096 blocks and 2%).
+  # We need to deduct those blocks from the available space, since they are
+  # not writable even with root privilege. It only affects devices using
+  # file-based OTA and a kernel version of 3.10 or greater (currently just
+  # sprout).
+  reserved_blocks = prop_dict.get("has_ext4_reserved_blocks") == "true"
+  if reserved_blocks and fs_type.startswith("ext4"):
+    partition_size = int(prop_dict.get("partition_size"))
+    block_size = int(prop_dict.get("blocksize"))
+    reserved_size = min(4096 * block_size, int(partition_size * 0.02))
+    adjusted_size = partition_size - reserved_size
+    if not prop_dict.has_key("original_partition_size"):
+      prop_dict["original_partition_size"] = str(partition_size)
+    prop_dict["partition_size"] = str(adjusted_size)
+
   if fs_type.startswith("ext"):
     build_command = ["mkuserimg.sh"]
     if "extfs_sparse_flag" in prop_dict:
@@ -386,6 +402,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image", "system_root_image")
     copy_prop("ramdisk_dir", "ramdisk_dir")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("blocksize", "blocksize")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -399,10 +417,14 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_size", "partition_size")
     copy_prop("vendor_journal_size", "journal_size")
     copy_prop("vendor_verity_block_device", "verity_block_device")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("blocksize", "blocksize")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
     copy_prop("oem_journal_size", "journal_size")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("blocksize", "blocksize")
 
   return d
 
