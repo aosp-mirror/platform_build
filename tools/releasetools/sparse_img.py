@@ -125,7 +125,7 @@ class SparseImage(object):
     clobbered_blocks."""
     ranges = self.care_map
     if not include_clobbered_blocks:
-      ranges.subtract(self.clobbered_blocks)
+      ranges = ranges.subtract(self.clobbered_blocks)
     h = sha1()
     for d in self._GetRangeData(ranges):
       h.update(d)
