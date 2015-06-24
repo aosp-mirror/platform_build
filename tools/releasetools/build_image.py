@@ -271,6 +271,10 @@ def BuildImage(in_dir, prop_dict, out_file):
     build_command.extend(["-m", prop_dict["mount_point"]])
     if "selinux_fc" in prop_dict:
       build_command.extend(["-c", prop_dict["selinux_fc"]])
+    if "squashfs_compressor" in prop_dict:
+      build_command.extend(["-z", prop_dict["squashfs_compressor"]])
+    if "squashfs_compressor_opt" in prop_dict:
+      build_command.extend(["-zo", prop_dict["squashfs_compressor_opt"]])
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["partition_size"]])
@@ -377,6 +381,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image","system_root_image")
     copy_prop("ramdisk_dir","ramdisk_dir")
+    copy_prop("system_squashfs_compressor", "squashfs_compressor")
+    copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
