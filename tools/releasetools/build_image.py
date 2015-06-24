@@ -255,6 +255,7 @@ def BuildImage(in_dir, prop_dict, out_file,
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
+    build_command.extend(["-s"])
     build_command.extend(["-m", prop_dict["mount_point"]])
     if fc_config is not None:
       build_command.extend(["-c", fc_config])
