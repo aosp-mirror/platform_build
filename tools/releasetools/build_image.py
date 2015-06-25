@@ -31,7 +31,7 @@ import tempfile
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 
 def RunCommand(cmd):
-  """ Echo and run the given command
+  """ Echo and run the given command.
 
   Args:
     cmd: the command represented as a list of strings.
