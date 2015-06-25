@@ -39,6 +39,24 @@
       "revId": "f8404891288c88231ce3970ae50645507c352cbe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e99fafb_02f46e80",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-06-25T23:55:20Z",
+      "side": 1,
+      "message": "Because in this case config_sanitizer.mk will decide not to sanitize the library.",
+      "parentUuid": "9e99fafb_42bd96b1",
+      "revId": "f8404891288c88231ce3970ae50645507c352cbe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
