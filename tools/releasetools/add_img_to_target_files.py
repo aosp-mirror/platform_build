@@ -30,6 +30,7 @@ if sys.hexversion < 0x02070000:
 
 import errno
 import os
+import shutil
 import tempfile
 import zipfile
 
@@ -153,7 +154,13 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
 
 
 def AddUserdata(output_zip, prefix="IMAGES/"):
-  """Create an empty userdata image and store it in output_zip."""
+  """Create a userdata image and store it in output_zip.
+
+  In most case we just create and store an empty userdata.img;
+  But the invoker can also request to create userdata.img with real
+  data from the target files, by setting "userdata_img_with_data=true"
+  in OPTIONS.info_dict.
+  """
 
   prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "userdata.img")
   if os.path.exists(prebuilt_path):
@@ -172,10 +179,19 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
 
   # The name of the directory it is making an image out of matters to
   # mkyaffs2image.  So we create a temp dir, and within it we create an
-  # empty dir named "data", and build the image from that.
+  # empty dir named "data", or a symlink to the DATA dir,
+  # and build the image from that.
   temp_dir = tempfile.mkdtemp()
   user_dir = os.path.join(temp_dir, "data")
-  os.mkdir(user_dir)
+  empty = (OPTIONS.info_dict.get("userdata_img_with_data") != "true")
+  if empty:
+    # Create an empty dir.
+    os.mkdir(user_dir)
+  else:
+    # Symlink to the DATA dir.
+    os.symlink(os.path.join(OPTIONS.input_tmp, "DATA"),
+               user_dir)
+
   img = tempfile.NamedTemporaryFile()
 
   fstab = OPTIONS.info_dict["fstab"]
@@ -187,8 +203,7 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
   common.ZipWrite(output_zip, img.name, prefix + "userdata.img")
   img.close()
-  os.rmdir(user_dir)
-  os.rmdir(temp_dir)
+  shutil.rmtree(temp_dir)
 
 
 def AddCache(output_zip, prefix="IMAGES/"):
