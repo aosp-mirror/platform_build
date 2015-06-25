@@ -57,6 +57,24 @@
       "revId": "f8404891288c88231ce3970ae50645507c352cbe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe6116bc_9dee2381",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-25T23:57:24Z",
+      "side": 1,
+      "message": "Then also need to check the case of `LOCAL_SANITIZE :\u003d never`, right?\n\nAlso, this should probably be in config_sanitizers.mk. I believe I already do something like this for SANITIZE_HOST.",
+      "parentUuid": "9e99fafb_02f46e80",
+      "revId": "f8404891288c88231ce3970ae50645507c352cbe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
