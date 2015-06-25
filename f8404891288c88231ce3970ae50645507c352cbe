@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e99fafb_22c08a1e",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-25T23:53:00Z",
+      "side": 1,
+      "message": "sanitized?",
+      "range": {
+        "startLine": 2,
+        "startChar": 10,
+        "endLine": 2,
+        "endChar": 11
+      },
+      "revId": "f8404891288c88231ce3970ae50645507c352cbe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e99fafb_42bd96b1",
+        "filename": "core/shared_library.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-06-25T23:53:00Z",
+      "side": 1,
+      "message": "Why?",
+      "revId": "f8404891288c88231ce3970ae50645507c352cbe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
