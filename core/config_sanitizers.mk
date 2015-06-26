@@ -34,6 +34,20 @@ ifeq ($(my_sanitize),never)
   my_sanitize :=
 endif
 
+# Undefined symbols can occur if a non-sanitized library links
+# sanitized static libraries. That's OK, because the executable
+# always depends on the ASan runtime library, which defines these
+# symbols.
+ifneq ($(strip $(SANITIZE_TARGET)),)
+  ifndef LOCAL_IS_HOST_MODULE
+    ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+      ifeq ($(my_sanitize),)
+        my_allow_undefined_symbols := true
+      endif
+    endif
+  endif
+endif
+
 # Sanitizers can only be used with clang.
 ifneq ($(my_clang),true)
   ifneq ($(my_sanitize),)
