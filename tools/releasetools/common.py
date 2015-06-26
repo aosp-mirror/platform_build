@@ -199,12 +199,13 @@ def LoadDictionaryFromLines(lines):
 
 def LoadRecoveryFSTab(read_helper, fstab_version):
   class Partition(object):
-    def __init__(self, mount_point, fs_type, device, length, device2):
+    def __init__(self, mount_point, fs_type, device, length, device2, context):
       self.mount_point = mount_point
       self.fs_type = fs_type
       self.device = device
       self.length = length
       self.device2 = device2
+      self.context = context
 
   try:
     data = read_helper("RECOVERY/RAMDISK/etc/recovery.fstab")
@@ -253,6 +254,7 @@ def LoadRecoveryFSTab(read_helper, fstab_version):
       line = line.strip()
       if not line or line.startswith("#"):
         continue
+      # <src> <mnt_point> <type> <mnt_flags and options> <fs_mgr_flags>
       pieces = line.split()
       if len(pieces) != 5:
         raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
@@ -272,9 +274,17 @@ def LoadRecoveryFSTab(read_helper, fstab_version):
           # Ignore all unknown options in the unified fstab
           continue
 
+      mount_flags = pieces[3]
+      # Honor the SELinux context if present.
+      context = None
+      for i in mount_flags.split(","):
+        if i.startswith("context="):
+          context = i
+
       mount_point = pieces[1]
       d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
-                                 device=pieces[0], length=length, device2=None)
+                                 device=pieces[0], length=length,
+                                 device2=None, context=context)
 
   else:
     raise ValueError("Unknown fstab_version: \"%d\"" % (fstab_version,))
