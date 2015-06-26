@@ -20,11 +20,15 @@ class EdifyGenerator(object):
   """Class to generate scripts in the 'edify' recovery script language
   used from donut onwards."""
 
-  def __init__(self, version, info):
+  def __init__(self, version, info, fstab=None):
     self.script = []
     self.mounts = set()
     self.version = version
     self.info = info
+    if fstab is None:
+      self.fstab = self.info.get("fstab", None)
+    else:
+      self.fstab = fstab
 
   def MakeTemporary(self):
     """Make a temporary script object whose commands can latter be
@@ -168,7 +172,7 @@ class EdifyGenerator(object):
       where option is optname[=optvalue]
       E.g. ext4=barrier=1,nodelalloc,errors=panic|f2fs=errors=recover
     """
-    fstab = self.info.get("fstab", None)
+    fstab = self.fstab
     if fstab:
       p = fstab[mount_point]
       mount_dict = {}
@@ -202,7 +206,7 @@ class EdifyGenerator(object):
     self.script.append('ui_print("%s");' % (message,))
 
   def TunePartition(self, partition, *options):
-    fstab = self.info.get("fstab", None)
+    fstab = self.fstab
     if fstab:
       p = fstab[partition]
       if p.fs_type not in ("ext2", "ext3", "ext4"):
@@ -216,7 +220,7 @@ class EdifyGenerator(object):
     """Format the given partition, specified by its mount point (eg,
     "/system")."""
 
-    fstab = self.info.get("fstab", None)
+    fstab = self.fstab
     if fstab:
       p = fstab[partition]
       self.script.append('format("%s", "%s", "%s", "%s", "%s");' %
@@ -226,7 +230,7 @@ class EdifyGenerator(object):
   def WipeBlockDevice(self, partition):
     if partition not in ("/system", "/vendor"):
       raise ValueError(("WipeBlockDevice doesn't work on %s\n") % (partition,))
-    fstab = self.info.get("fstab", None)
+    fstab = self.fstab
     size = self.info.get(partition.lstrip("/") + "_size", None)
     device = fstab[partition].device
 
@@ -271,7 +275,7 @@ class EdifyGenerator(object):
     """Write the given package file into the partition for the given
     mount point."""
 
-    fstab = self.info["fstab"]
+    fstab = self.fstab
     if fstab:
       p = fstab[mount_point]
       partition_type = common.PARTITION_TYPES[p.fs_type]

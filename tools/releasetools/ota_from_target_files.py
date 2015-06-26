@@ -486,8 +486,9 @@ def GetImage(which, tmpdir, info_dict):
 
 def WriteFullOTAPackage(input_zip, output_zip):
   # TODO: how to determine this?  We don't know what version it will
-  # be installed on top of.  For now, we expect the API just won't
-  # change very often.
+  # be installed on top of. For now, we expect the API just won't
+  # change very often. Similarly for fstab, it might have changed
+  # in the target build.
   script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
@@ -727,8 +728,9 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
            "can't install it.")
-  script = edify_generator.EdifyGenerator(source_version,
-                                          OPTIONS.target_info_dict)
+  script = edify_generator.EdifyGenerator(
+      source_version, OPTIONS.target_info_dict,
+      fstab=OPTIONS.source_info_dict["fstab"])
 
   metadata = {
       "pre-device": GetBuildProp("ro.product.device",
@@ -794,7 +796,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     vendor_diff = None
 
   oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
-  recovery_mount_options = OPTIONS.target_info_dict.get(
+  recovery_mount_options = OPTIONS.source_info_dict.get(
       "recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
@@ -1115,11 +1117,13 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if source_version == 0:
     print ("WARNING: generating edify script for a source that "
            "can't install it.")
-  script = edify_generator.EdifyGenerator(source_version,
-                                          OPTIONS.target_info_dict)
+  script = edify_generator.EdifyGenerator(
+      source_version, OPTIONS.target_info_dict,
+      fstab=OPTIONS.source_info_dict["fstab"])
 
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
-  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
+  recovery_mount_options = OPTIONS.source_info_dict.get(
+      "recovery_mount_options")
   oem_dict = None
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
