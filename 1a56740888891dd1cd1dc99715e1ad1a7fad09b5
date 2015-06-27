@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5384ddcb_8b5775d1",
+        "filename": "core/prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-06-27T00:46:48Z",
+      "side": 1,
+      "message": "With this you shouldn\u0027t be including prebuilt_internal.mk twice. It doesn\u0027t make sense to set up the prebuilt\u0027s installation rule twice.\nInstead in build/core/dex_preopt_odex_install.mk, we\u0027ll set up the rules to run dex-preopt for both 1st and 2nd arch, if \"LOCAL_MULTILIB :\u003d both\".",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 5
+      },
+      "revId": "1a56740888891dd1cd1dc99715e1ad1a7fad09b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
