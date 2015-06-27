@@ -204,8 +204,12 @@ class SparseImage(object):
           nonzero_blocks.append(b)
           nonzero_blocks.append(b+1)
 
-    out["__ZERO"] = RangeSet(data=zero_blocks)
-    out["__NONZERO"] = RangeSet(data=nonzero_blocks)
+    assert zero_blocks or nonzero_blocks
+
+    if zero_blocks:
+      out["__ZERO"] = rangelib.RangeSet(data=zero_blocks)
+    if nonzero_blocks:
+      out["__NONZERO"] = rangelib.RangeSet(data=nonzero_blocks)
 
   def ResetFileMap(self):
     """Throw away the file map and treat the entire image as
