@@ -22,6 +22,7 @@ Usage:  build_image input_directory properties_file output_image_file
 """
 import os
 import os.path
+import re
 import subprocess
 import sys
 import commands
@@ -31,17 +32,18 @@ import tempfile
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 
 def RunCommand(cmd):
-  """ Echo and run the given command.
+  """Echo and run the given command.
 
   Args:
     cmd: the command represented as a list of strings.
   Returns:
-    The exit code.
+    A tuple of the output and the exit code.
   """
   print "Running: ", " ".join(cmd)
-  p = subprocess.Popen(cmd)
-  p.communicate()
-  return p.returncode
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  output, _ = p.communicate()
+  print "%s" % (output.rstrip(),)
+  return (output, p.returncode)
 
 def GetVerityTreeSize(partition_size):
   cmd = "build_verity_tree -s %d"
@@ -142,7 +144,7 @@ def UnsparseImage(sparse_image_path, replace=True):
     else:
       return True, unsparse_image_path
   inflate_command = ["simg2img", sparse_image_path, unsparse_image_path]
-  exit_code = RunCommand(inflate_command)
+  (_, exit_code) = RunCommand(inflate_command)
   if exit_code != 0:
     os.remove(unsparse_image_path)
     return False, None
@@ -233,11 +235,12 @@ def BuildImage(in_dir, prop_dict, out_file):
 
   fs_spans_partition = True
   if fs_type.startswith("squash"):
-      fs_spans_partition = False
+    fs_spans_partition = False
 
   is_verity_partition = "verity_block_device" in prop_dict
   verity_supported = prop_dict.get("verity") == "true"
-  # adjust the partition size to make room for the hashes if this is to be verified
+  # Adjust the partition size to make room for the hashes if this is to be
+  # verified.
   if verity_supported and is_verity_partition and fs_spans_partition:
     partition_size = int(prop_dict.get("partition_size"))
     adjusted_size = AdjustPartitionSizeForVerity(partition_size)
@@ -294,8 +297,15 @@ def BuildImage(in_dir, prop_dict, out_file):
     staging_system = os.path.join(in_dir, "system")
     shutil.rmtree(staging_system, ignore_errors=True)
     shutil.copytree(origin_in, staging_system, symlinks=True)
+
+  reserved_blocks = prop_dict.get("has_ext4_reserved_blocks") == "true"
+  ext4fs_output = None
+
   try:
-    exit_code = RunCommand(build_command)
+    if reserved_blocks and fs_type.startswith("ext4"):
+      (ext4fs_output, exit_code) = RunCommand(build_command)
+    else:
+      (_, exit_code) = RunCommand(build_command)
   finally:
     if in_dir != origin_in:
       # Clean up temporary directories and files.
@@ -305,17 +315,42 @@ def BuildImage(in_dir, prop_dict, out_file):
   if exit_code != 0:
     return False
 
+  # Bug: 21522719, 22023465
+  # There are some reserved blocks on ext4 FS (lesser of 4096 blocks and 2%).
+  # We need to deduct those blocks from the available space, since they are
+  # not writable even with root privilege. It only affects devices using
+  # file-based OTA and a kernel version of 3.10 or greater (currently just
+  # sprout).
+  if reserved_blocks and fs_type.startswith("ext4"):
+    assert ext4fs_output is not None
+    ext4fs_stats = re.compile(
+        r'Created filesystem with .* (?P<used_blocks>[0-9]+)/'
+        r'(?P<total_blocks>[0-9]+) blocks')
+    m = ext4fs_stats.match(ext4fs_output.strip().split('\n')[-1])
+    used_blocks = int(m.groupdict().get('used_blocks'))
+    total_blocks = int(m.groupdict().get('total_blocks'))
+    reserved_blocks = min(4096, int(total_blocks * 0.02))
+    adjusted_blocks = total_blocks - reserved_blocks
+    if used_blocks > adjusted_blocks:
+      mount_point = prop_dict.get("mount_point")
+      print("Error: Not enough room on %s (total: %d blocks, used: %d blocks, "
+            "reserved: %d blocks, available: %d blocks)" % (
+                mount_point, total_blocks, used_blocks, reserved_blocks,
+                adjusted_blocks))
+      return False
+
   if not fs_spans_partition:
     mount_point = prop_dict.get("mount_point")
     partition_size = int(prop_dict.get("partition_size"))
     image_size = os.stat(out_file).st_size
     if image_size > partition_size:
-        print "Error: %s image size of %d is larger than partition size of %d" % (mount_point, image_size, partition_size)
-        return False
+      print("Error: %s image size of %d is larger than partition size of "
+            "%d" % (mount_point, image_size, partition_size))
+      return False
     if verity_supported and is_verity_partition:
-        if 2 * image_size - AdjustPartitionSizeForVerity(image_size) > partition_size:
-            print "Error: No more room on %s to fit verity data" % mount_point
-            return False
+      if 2 * image_size - AdjustPartitionSizeForVerity(image_size) > partition_size:
+        print "Error: No more room on %s to fit verity data" % mount_point
+        return False
     prop_dict["original_partition_size"] = prop_dict["partition_size"]
     prop_dict["partition_size"] = str(image_size)
 
@@ -331,7 +366,7 @@ def BuildImage(in_dir, prop_dict, out_file):
 
     # Run e2fsck on the inflated image file
     e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
-    exit_code = RunCommand(e2fsck_command)
+    (_, exit_code) = RunCommand(e2fsck_command)
 
     os.remove(unsparse_image)
 
@@ -378,6 +413,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image", "system_root_image")
     copy_prop("ramdisk_dir", "ramdisk_dir")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -391,10 +427,12 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_size", "partition_size")
     copy_prop("vendor_journal_size", "journal_size")
     copy_prop("vendor_verity_block_device", "verity_block_device")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
     copy_prop("oem_journal_size", "journal_size")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
 
   return d
 
@@ -424,7 +462,8 @@ def main(argv):
 
   glob_dict = LoadGlobalDict(glob_dict_file)
   if "mount_point" in glob_dict:
-    # The caller knows the mount point and provides a dictionay needed by BuildImage().
+    # The caller knows the mount point and provides a dictionay needed by
+    # BuildImage().
     image_properties = glob_dict
   else:
     image_filename = os.path.basename(out_file)
