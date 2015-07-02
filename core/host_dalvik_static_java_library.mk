@@ -48,7 +48,7 @@ endif
 $(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
         $(jar_manifest_file) $(layers_file) $(LOCAL_MODULE_MAKEFILE) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
-        $(JACK_JAR) $(JACK_LAUNCHER_JAR)
+        $(JACK)
 	@echo Building with Jack: $@
 	$(java-to-jack)
 
