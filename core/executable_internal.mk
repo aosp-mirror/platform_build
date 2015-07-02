@@ -43,9 +43,15 @@ else
 my_target_libgcc := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCC)
 endif
 my_target_libatomic := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBATOMIC)
+ifeq ($(LOCAL_NO_CRT),true)
+my_target_crtbegin_dynamic_o :=
+my_target_crtbegin_static_o :=
+my_target_crtend_o :=
+else
 my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTBEGIN_DYNAMIC_O)
 my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTBEGIN_STATIC_O)
 my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTEND_O)
+endif
 ifdef LOCAL_SDK_VERSION
 # Make sure the prebuilt NDK paths are put ahead of the TARGET_GLOBAL_LD_DIRS,
 # so we don't have race condition when the system libraries (such as libc, libstdc++) are also built in the tree.
