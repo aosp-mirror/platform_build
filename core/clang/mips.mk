@@ -12,6 +12,7 @@ CLANG_CONFIG_mips_UNKNOWN_CFLAGS := \
   -frerun-cse-after-loop \
   -frename-registers \
   -msynci \
+  -mno-synci \
   -mno-fused-madd
 
 # Temporary workaround for Mips clang++ problem,  creates
