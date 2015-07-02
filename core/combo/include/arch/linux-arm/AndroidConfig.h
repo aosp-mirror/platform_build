@@ -47,9 +47,4 @@
  */
 #define OS_PATH_SEPARATOR '/'
 
-/*
- * Define if <stdint.h> exists.
- */
-#define HAVE_STDINT_H 1
-
 #endif /* _ANDROID_CONFIG_H */
