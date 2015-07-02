@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "130345c0_98c9f522",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-02T17:38:02Z",
+      "side": 1,
+      "message": "it seems unlikely we would need these variants.\nWe can add them only when we really need them.",
+      "range": {
+        "startLine": 196,
+        "startChar": 0,
+        "endLine": 196,
+        "endChar": 32
+      },
+      "revId": "40b7e4b4ffabef7e55f66d7bc583c14c874c7757",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
