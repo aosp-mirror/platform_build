@@ -793,7 +793,6 @@ define dump-module-variables
 @echo PRIVATE_ALL_STATIC_LIBRARIES=$(PRIVATE_ALL_STATIC_LIBRARIES);
 @echo PRIVATE_ALL_WHOLE_STATIC_LIBRARIES=$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES);
 @echo PRIVATE_ALL_OBJECTS=$(PRIVATE_ALL_OBJECTS);
-@echo PRIVATE_NO_CRT=$(PRIVATE_NO_CRT);
 endef
 
 ###########################################################
@@ -1405,7 +1404,7 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--gc-sections \
 	$(if $(filter true,$(PRIVATE_CLANG)),-shared,-Wl$(comma)-shared) \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_SO_O)) \
+	$(PRIVATE_TARGET_CRTBEGIN_SO_O) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -1421,7 +1420,7 @@ $(hide) $(PRIVATE_CXX) \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_SO_O)) \
+	$(PRIVATE_TARGET_CRTEND_SO_O) \
 	$(PRIVATE_LDLIBS)
 endef
 
@@ -1478,7 +1477,7 @@ $(hide) $(PRIVATE_CXX) -pie \
 	-Wl,-z,nocopyreloc \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O)) \
+	$(PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
 	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
@@ -1494,7 +1493,7 @@ $(hide) $(PRIVATE_CXX) -pie \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O)) \
+	$(PRIVATE_TARGET_CRTEND_O) \
 	$(PRIVATE_LDLIBS)
 endef
 
@@ -1522,7 +1521,7 @@ $(hide) $(PRIVATE_CXX) \
 	-Wl,--gc-sections \
 	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTBEGIN_STATIC_O)) \
+	$(PRIVATE_TARGET_CRTBEGIN_STATIC_O) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
 	$(PRIVATE_ALL_OBJECTS) \
@@ -1539,7 +1538,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(call normalize-target-libraries,$(filter %libcompiler_rt.a,$(PRIVATE_ALL_STATIC_LIBRARIES))) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	-Wl,--end-group \
-	$(if $(filter true,$(PRIVATE_NO_CRT)),,$(PRIVATE_TARGET_CRTEND_O))
+	$(PRIVATE_TARGET_CRTEND_O)
 endef
 
 define transform-o-to-static-executable
