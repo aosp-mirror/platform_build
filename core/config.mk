@@ -486,12 +486,6 @@ DEFAULT_JACK_ENABLED:=full
 else
 DEFAULT_JACK_ENABLED:=
 endif
-# call jack
-#
-# $(1): jack perf arguments
-define call-jack
-$(JACK) $(1)
-endef
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
