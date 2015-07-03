@@ -312,6 +312,12 @@ TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
 # The pdk (Platform Development Kit) build
 include build/core/pdk_config.mk
 
+#
+# -----------------------------------------------------------------
+# Jack version configuration
+include $(TOPDIR)prebuilts/sdk/tools/jack_versions.mk
+include $(TOPDIR)prebuilts/sdk/tools/jack_for_module.mk
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
