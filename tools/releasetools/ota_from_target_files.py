@@ -722,6 +722,8 @@ def AddToKnownPaths(filename, known_paths):
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
+  # TODO(tbao): We should factor out the common parts between
+  # WriteBlockIncrementalOTAPackage() and WriteIncrementalOTAPackage().
   source_version = OPTIONS.source_info_dict["recovery_api_version"]
   target_version = OPTIONS.target_info_dict["recovery_api_version"]
 
@@ -732,9 +734,20 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       source_version, OPTIONS.target_info_dict,
       fstab=OPTIONS.source_info_dict["fstab"])
 
+  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.source_info_dict.get(
+      "recovery_mount_options")
+  oem_dict = None
+  if oem_props is not None and len(oem_props) > 0:
+    if OPTIONS.oem_source is None:
+      raise common.ExternalError("OEM source required for this build")
+    script.Mount("/oem", recovery_mount_options)
+    oem_dict = common.LoadDictionaryFromLines(
+        open(OPTIONS.oem_source).readlines())
+
   metadata = {
-      "pre-device": GetBuildProp("ro.product.device",
-                                 OPTIONS.source_info_dict),
+      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+                                   OPTIONS.source_info_dict),
       "post-timestamp": GetBuildProp("ro.build.date.utc",
                                      OPTIONS.target_info_dict),
   }
@@ -749,14 +762,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.info_dict)
 
-  # TODO: Currently this works differently from WriteIncrementalOTAPackage().
-  # This function doesn't consider thumbprints when writing
-  # metadata["pre/post-build"]. One possible reason is that the current
-  # devices with thumbprints are all using file-based OTAs. Long term we
-  # should factor out the common parts into a shared one to avoid further
-  # divergence.
-  source_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.source_info_dict)
-  target_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.target_info_dict)
+  source_fp = CalculateFingerprint(oem_props, oem_dict,
+                                   OPTIONS.source_info_dict)
+  target_fp = CalculateFingerprint(oem_props, oem_dict,
+                                   OPTIONS.target_info_dict)
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
 
@@ -794,17 +803,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
                                          version=blockimgdiff_version)
   else:
     vendor_diff = None
-
-  oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
-  recovery_mount_options = OPTIONS.source_info_dict.get(
-      "recovery_mount_options")
-  oem_dict = None
-  if oem_props is not None and len(oem_props) > 0:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem", recovery_mount_options)
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
 
   AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
   device_specific.IncrementalOTA_Assertions()
