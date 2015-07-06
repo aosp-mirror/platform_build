@@ -34,6 +34,24 @@
       "revId": "3806c231a9a229cbb6c2bb2cfb514ba25304c913",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3ba3136_8305ee47",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-06T16:31:42Z",
+      "side": 1,
+      "message": "agreed with \"if oem_props:\". i\u0027ll leave it in the refactor CL since there are multiple copies.",
+      "parentUuid": "f3ba3136_98e39953",
+      "revId": "3806c231a9a229cbb6c2bb2cfb514ba25304c913",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
