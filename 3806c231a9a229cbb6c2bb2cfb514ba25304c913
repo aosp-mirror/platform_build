@@ -16,6 +16,24 @@
       "revId": "3806c231a9a229cbb6c2bb2cfb514ba25304c913",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d31c4d21_eaddaf08",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 1072623
+      },
+      "writtenOn": "2015-07-06T16:30:08Z",
+      "side": 1,
+      "message": "Not sure about Android, but google3 style would go for Elliott\u0027s proposal.\n\nHowever, this is simply re-using what\u0027s been done for WriteIncrementalOTAPackage and WriteFullOTAPackage. The re-styling could be done in https://googleplex-android-review.git.corp.google.com/#/c/721058",
+      "parentUuid": "f3ba3136_98e39953",
+      "revId": "3806c231a9a229cbb6c2bb2cfb514ba25304c913",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
