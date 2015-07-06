@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "736d61b3_7966bfce",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-06T21:27:23Z",
+      "side": 1,
+      "message": "Just out of curiosity, it seems the symlink permission on Linux should always be 0o777 (http://man7.org/linux/man-pages/man7/symlink.7.html). Do we have any counter case somewhere?\n\n(And the other change below actually makes no difference other than the wrong comment.)",
+      "range": {
+        "startLine": 139,
+        "startChar": 50,
+        "endLine": 139,
+        "endChar": 58
+      },
+      "revId": "2ffb3147bc3e44fa76a470f181f5923fbdce9c77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
