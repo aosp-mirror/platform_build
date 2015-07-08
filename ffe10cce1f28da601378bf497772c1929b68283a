@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "534a1d43_c83d2880",
+        "filename": "tools/atree/files.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1010055
+      },
+      "writtenOn": "2015-07-08T22:04:58Z",
+      "side": 1,
+      "message": "nit: extra space",
+      "range": {
+        "startLine": 342,
+        "startChar": 15,
+        "endLine": 342,
+        "endChar": 17
+      },
+      "revId": "ffe10cce1f28da601378bf497772c1929b68283a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f356b1ec_82321ff7",
+        "filename": "tools/atree/files.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1010055
+      },
+      "writtenOn": "2015-07-08T22:04:58Z",
+      "side": 1,
+      "message": "nit: we seem to be using \u0026\u0026 everywhere else in this file",
+      "range": {
+        "startLine": 346,
+        "startChar": 42,
+        "endLine": 346,
+        "endChar": 45
+      },
+      "revId": "ffe10cce1f28da601378bf497772c1929b68283a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f356b1ec_027aaf6d",
+        "filename": "tools/atree/files.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1010055
+      },
+      "writtenOn": "2015-07-08T22:04:58Z",
+      "side": 1,
+      "message": "sorry, i don\u0027t know much about this tool, but with this change, it seems like you are looping through the vectir \"search\", but nothing changes in the loop if rec-\u003esourceName is absolute?",
+      "range": {
+        "startLine": 347,
+        "startChar": 12,
+        "endLine": 347,
+        "endChar": 34
+      },
+      "revId": "ffe10cce1f28da601378bf497772c1929b68283a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
