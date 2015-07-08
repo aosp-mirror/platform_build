@@ -16,7 +16,14 @@
 
 #
 # A central place to define mappings to paths, to avoid hard-coding
-# them in Android.mk files.
+# them in Android.mk files. Not meant for header file include directories,
+# despite the fact that it was historically used for that!
+#
+# If you want this for a library's header files, use LOCAL_EXPORT_C_INCLUDES
+# instead. Then users of the library don't have to do anything --- they'll
+# have the correct header files added to their include path automatically.
+#
+
 #
 # TODO: Allow each project to define stuff like this before the per-module
 #       Android.mk files are included, so we don't need to have a big central
@@ -30,15 +37,12 @@ pathmap_INCL := \
     camera:system/media/camera/include \
     frameworks-base:frameworks/base/include \
     frameworks-native:frameworks/native/include \
-    libc:bionic/libc/include \
     libhardware:hardware/libhardware/include \
     libhardware_legacy:hardware/libhardware_legacy/include \
     libhost:build/libs/host/include \
-    libm:bionic/libm/include \
     libnativehelper:libnativehelper/include \
     libpagemap:system/extras/libpagemap/include \
     libril:hardware/ril/include \
-    libstdc++:bionic/libstdc++/include \
     mkbootimg:system/core/mkbootimg \
     opengl-tests-includes:frameworks/native/opengl/tests/include \
     recovery:bootable/recovery \
