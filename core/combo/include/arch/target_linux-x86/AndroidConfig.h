@@ -19,11 +19,6 @@
  */
 
 /*
- * Define if we have <malloc.h> header
- */
-#define HAVE_MALLOC_H 1
-
-/*
  * Define if we're running on *our* linux on device or emulator.
  */
 #define HAVE_ANDROID_OS 1
