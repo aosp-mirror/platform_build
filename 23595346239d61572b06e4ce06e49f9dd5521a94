@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "135425e3_c228a414",
+        "filename": "core/pathmap.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-07-08T20:17:09Z",
+      "side": 1,
+      "message": "wangying: should there be a comment here suggesting people should use LOCAL_EXPORT_C_INCLUDES instead?",
+      "revId": "23595346239d61572b06e4ce06e49f9dd5521a94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
