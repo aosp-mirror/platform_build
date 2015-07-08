@@ -2101,9 +2101,8 @@ function search_changed(e, kd, toroot)
 
         // Search for matching JD docs
         if (text.length >= 2) {
-          // Regex to match only the beginning of a word
-          var textRegex = new RegExp("\\b" + text.toLowerCase(), "g");
-
+          // match only the beginning of a word
+          var queryStr = text.toLowerCase();
 
           // Search for Training classes
           for (var i=0; i<TRAINING_RESOURCES.length; i++) {
@@ -2117,7 +2116,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2127,7 +2126,7 @@ function search_changed(e, kd, toroot)
             if ((s.lang == currentLang) &&
                   (!(s.type == "training" && s.url.indexOf("index.html") == -1) || matched)) {
               // it matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2151,7 +2150,8 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
+
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2159,7 +2159,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2183,7 +2183,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+                if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2191,7 +2191,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+                if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2215,7 +2215,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2223,7 +2223,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2247,7 +2247,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2255,7 +2255,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2279,7 +2279,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2287,7 +2287,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2311,7 +2311,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2319,7 +2319,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2342,7 +2342,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2350,7 +2350,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title.t
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
@@ -2373,7 +2373,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches any tags; work backwards toward 1 to assist ranking
             for (var j = s.keywords.length - 1; j >= 0; j--) {
               // it matches a tag
-              if (s.keywords[j].toLowerCase().match(textRegex)) {
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_tag = j + 1; // add 1 to index position
               }
@@ -2381,7 +2381,7 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title
-              if (s.title.toLowerCase().match(textRegex)) {
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
               }
