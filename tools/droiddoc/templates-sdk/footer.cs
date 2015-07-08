@@ -46,6 +46,7 @@
           <option value="es">Español</option>
           <option value="ja">日本語</option>
           <option value="ko">한국어</option>
+          <option value="pt-br">Português Brasileiro</option>
           <option value="ru">Русский</option>
           <option value="zh-cn">中文（简体)</option>
           <option value="zh-tw">中文（繁體)</option>
