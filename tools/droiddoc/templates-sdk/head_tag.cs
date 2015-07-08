@@ -65,7 +65,7 @@ else
   var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
 </script>
-<script src="<?cs var:toroot ?>assets/js/docs.js?v=5" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js?v=6" type="text/javascript"></script>
 
 <?cs if:helpoutsWidget ?>
 <script type="text/javascript" src="https://helpouts.google.com/ps/res/embed.js" defer async
