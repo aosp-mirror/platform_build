@@ -43,7 +43,6 @@ pathmap_INCL := \
     libnativehelper:libnativehelper/include \
     libpagemap:system/extras/libpagemap/include \
     libril:hardware/ril/include \
-    mkbootimg:system/core/mkbootimg \
     opengl-tests-includes:frameworks/native/opengl/tests/include \
     recovery:bootable/recovery \
     system-core:system/core/include \
