@@ -95,16 +95,7 @@ def main(argv):
       # images, so build them.
       import add_img_to_target_files
 
-      OPTIONS.info_dict = common.LoadInfoDict(input_zip)
-
-      # If this image was originally labelled with SELinux contexts,
-      # make sure we also apply the labels in our new image. During
-      # building, the "file_contexts" is in the out/ directory tree,
-      # but for repacking from target-files.zip it's in the root
-      # directory of the ramdisk.
-      if "selinux_fc" in OPTIONS.info_dict:
-        OPTIONS.info_dict["selinux_fc"] = os.path.join(
-            OPTIONS.input_tmp, "BOOT", "RAMDISK", "file_contexts")
+      OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.input_tmp)
 
       boot_image = common.GetBootableImage(
           "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")

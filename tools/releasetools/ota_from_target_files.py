@@ -593,6 +593,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
 
+  # Place a copy of file_contexts into the OTA package which will be used by
+  # the recovery program.
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
@@ -1588,15 +1590,7 @@ def main(argv):
   OPTIONS.input_tmp, input_zip = common.UnzipTemp(args[0])
 
   OPTIONS.target_tmp = OPTIONS.input_tmp
-  OPTIONS.info_dict = common.LoadInfoDict(input_zip)
-
-  # If this image was originally labelled with SELinux contexts, make sure we
-  # also apply the labels in our new image. During building, the "file_contexts"
-  # is in the out/ directory tree, but for repacking from target-files.zip it's
-  # in the root directory of the ramdisk.
-  if "selinux_fc" in OPTIONS.info_dict:
-    OPTIONS.info_dict["selinux_fc"] = os.path.join(
-        OPTIONS.input_tmp, "BOOT", "RAMDISK", "file_contexts")
+  OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.target_tmp)
 
   if OPTIONS.verbose:
     print "--- target info ---"
@@ -1655,10 +1649,8 @@ def main(argv):
       OPTIONS.source_tmp, source_zip = common.UnzipTemp(
           OPTIONS.incremental_source)
       OPTIONS.target_info_dict = OPTIONS.info_dict
-      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
-      if "selinux_fc" in OPTIONS.source_info_dict:
-        OPTIONS.source_info_dict["selinux_fc"] = os.path.join(
-            OPTIONS.source_tmp, "BOOT", "RAMDISK", "file_contexts")
+      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip,
+                                                     OPTIONS.source_tmp)
       if OPTIONS.package_key is None:
         OPTIONS.package_key = OPTIONS.source_info_dict.get(
             "default_system_dev_certificate",
