@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Android config -- "CYGWIN_NT-5.1".
- *
- * Cygwin has pthreads, but GDB seems to get confused if you use it to
- * create threads.  By "confused", I mean it freezes up the first time the
- * debugged process creates a thread, even if you use CreateThread.  The
- * mere presence of pthreads linkage seems to cause problems.
- */
 #ifndef _ANDROID_CONFIG_H
 #define _ANDROID_CONFIG_H
 
@@ -54,9 +46,6 @@
 #    define __END_DECLS
 #  endif
 #endif
-
-/* TODO: replace references to this. */
-#define HAVE_WIN32_IPC
 
 #ifdef __CYGWIN__
 #error "CYGWIN is unsupported for platform builds"
