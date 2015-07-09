@@ -130,15 +130,9 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
   if not os.path.exists(fs_config):
     fs_config = None
 
-  fc_config = os.path.join(input_dir, "BOOT/RAMDISK/file_contexts")
-  if not os.path.exists(fc_config):
-    fc_config = None
-
   # Override values loaded from info_dict.
   if fs_config:
     image_props["fs_config"] = fs_config
-  if fc_config:
-    image_props["selinux_fc"] = fc_config
   if block_list:
     image_props["block_list"] = block_list
   if image_props.get("system_root_image") == "true":
@@ -167,8 +161,7 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
     print "userdata.img already exists in %s, no need to rebuild..." % (prefix,)
     return
 
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "data")
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict, "data")
   # We only allow yaffs to have a 0/missing partition_size.
   # Extfs, f2fs must have a size. Skip userdata.img if no size.
   if (not image_props.get("fs_type", "").startswith("yaffs") and
@@ -214,8 +207,7 @@ def AddCache(output_zip, prefix="IMAGES/"):
     print "cache.img already exists in %s, no need to rebuild..." % (prefix,)
     return
 
-  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict,
-                                                    "cache")
+  image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict, "cache")
   # The build system has to explicitly request for cache.img.
   if "fs_type" not in image_props:
     return
@@ -258,10 +250,7 @@ def AddImagesToTargetFiles(filename):
   except KeyError:
     has_vendor = False
 
-  OPTIONS.info_dict = common.LoadInfoDict(input_zip)
-  if "selinux_fc" in OPTIONS.info_dict:
-    OPTIONS.info_dict["selinux_fc"] = os.path.join(
-        OPTIONS.input_tmp, "BOOT", "RAMDISK", "file_contexts")
+  OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.input_tmp)
 
   common.ZipClose(input_zip)
   output_zip = zipfile.ZipFile(filename, "a",
