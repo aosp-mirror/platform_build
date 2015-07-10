@@ -94,7 +94,7 @@ def CloseInheritedPipes():
       pass
 
 
-def LoadInfoDict(input_file):
+def LoadInfoDict(input_file, input_dir=None):
   """Read and parse the META/misc_info.txt key/value pairs from the
   input target files and return a dict."""
 
@@ -144,6 +144,23 @@ def LoadInfoDict(input_file):
 
   if "fstab_version" not in d:
     d["fstab_version"] = "1"
+
+  # During building, we use the "file_contexts" in the out/ directory tree.
+  # It is no longer available when (re)generating from target_files zip. So
+  # when generating from target_files zip, we look for a copy under META/
+  # first, if not available search under BOOT/RAMDISK/. Note that we may need
+  # a different file_contexts to build images than the one running on device,
+  # such as when enabling system_root_image. In that case, we must have the
+  # one for building copied to META/.
+  if input_dir is not None:
+    fc_config = os.path.join(input_dir, "META", "file_contexts")
+    if not os.path.exists(fc_config):
+      fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", "file_contexts")
+      if not os.path.exists(fc_config):
+        fc_config = None
+
+    if fc_config:
+      d["selinux_fc"] = fc_config
 
   try:
     data = read_helper("META/imagesizes.txt")
