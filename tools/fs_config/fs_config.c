@@ -68,22 +68,26 @@ static struct selabel_handle* get_sehnd(const char* context_file) {
 }
 
 static void usage() {
-  fprintf(stderr, "Usage: fs_config [-S context_file] [-C]\n");
+  fprintf(stderr, "Usage: fs_config [-D product_out_path] [-S context_file] [-C]\n");
 }
 
 int main(int argc, char** argv) {
   char buffer[1024];
   const char* context_file = NULL;
+  const char* product_out_path = NULL;
   struct selabel_handle* sehnd = NULL;
   int print_capabilities = 0;
   int opt;
-  while((opt = getopt(argc, argv, "CS:")) != -1) {
+  while((opt = getopt(argc, argv, "CS:D:")) != -1) {
     switch(opt) {
     case 'C':
       print_capabilities = 1;
       break;
     case 'S':
       context_file = optarg;
+      break;
+    case 'D':
+      product_out_path = optarg;
       break;
     default:
       usage();
@@ -115,7 +119,7 @@ int main(int argc, char** argv) {
 
     unsigned uid = 0, gid = 0, mode = 0;
     uint64_t capabilities;
-    fs_config(buffer, is_dir, &uid, &gid, &mode, &capabilities);
+    fs_config(buffer, is_dir, product_out_path, &uid, &gid, &mode, &capabilities);
     printf("%s %d %d %o", buffer, uid, gid, mode);
 
     if (sehnd != NULL) {

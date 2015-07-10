@@ -5,8 +5,9 @@
 # $3: subdir to tar up (from $2)
 # $4: target tar name
 # $5: target tarball name (usually $(3).bz2)
+# $6: TARGET_OUT path to query device specific FS configs
 
-if [ $# -ne 5 ]; then
+if [ $# -ne 6 ]; then
     echo "Error: wrong number of arguments in cmd: $0 $* "
     exit 1
 fi
@@ -16,6 +17,7 @@ start_dir=`readlink -f $2`
 dir_to_tar=$3
 target_tar=`readlink -f $4`
 target_tarball=`readlink -f $5`
+target_out=`readlink -f $6`
 
 cd $2
 
@@ -28,7 +30,7 @@ files=`find ${dir_to_tar} \! -type d -print`
 for f in ${subdirs} ${files} ; do
     curr_perms=`stat -c 0%a $f`
     [ -d "$f" ] && is_dir=1 || is_dir=0
-    new_info=`${fs_get_stats} ${curr_perms} ${is_dir} ${f}`
+    new_info=`${fs_get_stats} ${curr_perms} ${is_dir} ${f} ${target_out}`
     new_uid=`echo ${new_info} | awk '{print $1;}'`
     new_gid=`echo ${new_info} | awk '{print $2;}'`
     new_perms=`echo ${new_info} | awk '{print $3;}'`
