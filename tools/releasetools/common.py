@@ -1240,7 +1240,23 @@ class BlockDifference(object):
     script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
                        self.device, ranges_str,
                        self.tgt.TotalSha1(include_clobbered_blocks=True)))
-    script.Print('Verified the updated %s image.' % (partition,))
+
+    # Bug: 20881595
+    # Verify that extended blocks are really zeroed out.
+    if self.tgt.extended:
+      ranges_str = self.tgt.extended.to_string_raw()
+      script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
+                         self.device, ranges_str,
+                         self._HashZeroBlocks(self.tgt.extended.size())))
+      script.Print('Verified the updated %s image.' % (partition,))
+      script.AppendExtra(
+          'else\n'
+          '  abort("%s partition has unexpected non-zero contents after OTA '
+          'update");\n'
+          'endif;' % (partition,))
+    else:
+      script.Print('Verified the updated %s image.' % (partition,))
+
     script.AppendExtra(
         'else\n'
         '  abort("%s partition has unexpected contents after OTA update");\n'
@@ -1270,6 +1286,15 @@ class BlockDifference(object):
 
     for p in data:
       ctx.update(p)
+
+    return ctx.hexdigest()
+
+  def _HashZeroBlocks(self, num_blocks): # pylint: disable=no-self-use
+    """Return the hash value for all zero blocks."""
+    zero_block = '\x00' * 4096
+    ctx = sha1()
+    for _ in range(num_blocks):
+      ctx.update(zero_block)
 
     return ctx.hexdigest()
 

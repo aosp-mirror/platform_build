@@ -83,6 +83,7 @@ class EmptyImage(Image):
   blocksize = 4096
   care_map = RangeSet()
   clobbered_blocks = RangeSet()
+  extended = RangeSet()
   total_blocks = 0
   file_map = {}
   def ReadRangeSet(self, ranges):
@@ -119,6 +120,7 @@ class DataImage(Image):
     self.total_blocks = len(self.data) / self.blocksize
     self.care_map = RangeSet(data=(0, self.total_blocks))
     self.clobbered_blocks = RangeSet()
+    self.extended = RangeSet()
 
     zero_blocks = []
     nonzero_blocks = []
@@ -411,7 +413,7 @@ class BlockImageDiff(object):
           elif self.version >= 3:
             # take into account automatic stashing of overlapping blocks
             if xf.src_ranges.overlaps(xf.tgt_ranges):
-              temp_stash_usage = stashed_blocks + xf.src_ranges.size();
+              temp_stash_usage = stashed_blocks + xf.src_ranges.size()
               if temp_stash_usage > max_stashed_blocks:
                 max_stashed_blocks = temp_stash_usage
 
@@ -435,7 +437,7 @@ class BlockImageDiff(object):
         elif self.version >= 3:
           # take into account automatic stashing of overlapping blocks
           if xf.src_ranges.overlaps(xf.tgt_ranges):
-            temp_stash_usage = stashed_blocks + xf.src_ranges.size();
+            temp_stash_usage = stashed_blocks + xf.src_ranges.size()
             if temp_stash_usage > max_stashed_blocks:
               max_stashed_blocks = temp_stash_usage
 
@@ -462,18 +464,17 @@ class BlockImageDiff(object):
       # stash space
       assert max_stashed_blocks * self.tgt.blocksize < (512 << 20)
 
+    # Zero out extended blocks as a workaround for bug 20881595.
+    if self.tgt.extended:
+      out.append("zero %s\n" % (self.tgt.extended.to_string_raw(),))
+
+    # We erase all the blocks on the partition that a) don't contain useful
+    # data in the new image and b) will not be touched by dm-verity.
     all_tgt = RangeSet(data=(0, self.tgt.total_blocks))
-    if performs_read:
-      # if some of the original data is used, then at the end we'll
-      # erase all the blocks on the partition that don't contain data
-      # in the new image.
-      new_dontcare = all_tgt.subtract(self.tgt.care_map)
-      if new_dontcare:
-        out.append("erase %s\n" % (new_dontcare.to_string_raw(),))
-    else:
-      # if nothing is read (ie, this is a full OTA), then we can start
-      # by erasing the entire partition.
-      out.insert(0, "erase %s\n" % (all_tgt.to_string_raw(),))
+    all_tgt_minus_extended = all_tgt.subtract(self.tgt.extended)
+    new_dontcare = all_tgt_minus_extended.subtract(self.tgt.care_map)
+    if new_dontcare:
+      out.append("erase %s\n" % (new_dontcare.to_string_raw(),))
 
     out.insert(0, "%d\n" % (self.version,))   # format version number
     out.insert(1, str(total) + "\n")

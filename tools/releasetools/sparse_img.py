@@ -110,6 +110,17 @@ class SparseImage(object):
     self.care_map = rangelib.RangeSet(care_data)
     self.offset_index = [i[0] for i in offset_map]
 
+    # Bug: 20881595
+    # Introduce extended blocks as a workaround for the bug. dm-verity may
+    # touch blocks that are not in the care_map due to block device
+    # read-ahead. It will fail if such blocks contain non-zeroes. We zero out
+    # the extended blocks explicitly to avoid dm-verity failures. 512 blocks
+    # are the maximum read-ahead we configure for dm-verity block devices.
+    extended = self.care_map.extend(512)
+    all_blocks = rangelib.RangeSet(data=(0, self.total_blocks))
+    extended = extended.intersect(all_blocks).subtract(self.care_map)
+    self.extended = extended
+
     if file_map_fn:
       self.LoadFileBlockMap(file_map_fn, self.clobbered_blocks)
     else:
