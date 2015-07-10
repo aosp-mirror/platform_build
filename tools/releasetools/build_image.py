@@ -204,13 +204,14 @@ def MakeVerityEnabledImage(out_file, prop_dict):
   shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
 
-def BuildImage(in_dir, prop_dict, out_file):
+def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   """Build an image to out_file from in_dir with property prop_dict.
 
   Args:
     in_dir: path of input directory.
     prop_dict: property dictionary.
     out_file: path of the output image file.
+    target_out: path of the product out directory to read device specific FS config files.
 
   Returns:
     True iff the image is built successfully.
@@ -272,6 +273,8 @@ def BuildImage(in_dir, prop_dict, out_file):
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     if fs_config:
       build_command.extend(["-C", fs_config])
+    if target_out:
+      build_command.extend(["-D", target_out])
     if "block_list" in prop_dict:
       build_command.extend(["-B", prop_dict["block_list"]])
     build_command.extend(["-L", prop_dict["mount_point"]])
@@ -282,6 +285,8 @@ def BuildImage(in_dir, prop_dict, out_file):
     build_command.extend([in_dir, out_file])
     build_command.extend(["-s"])
     build_command.extend(["-m", prop_dict["mount_point"]])
+    if target_out:
+      build_command.extend(["-d", target_out])
     if "selinux_fc" in prop_dict:
       build_command.extend(["-c", prop_dict["selinux_fc"]])
     if "squashfs_compressor" in prop_dict:
@@ -467,13 +472,14 @@ def LoadGlobalDict(filename):
 
 
 def main(argv):
-  if len(argv) != 3:
+  if len(argv) != 4:
     print __doc__
     sys.exit(1)
 
   in_dir = argv[0]
   glob_dict_file = argv[1]
   out_file = argv[2]
+  target_out = argv[3]
 
   glob_dict = LoadGlobalDict(glob_dict_file)
   if "mount_point" in glob_dict:
@@ -499,7 +505,7 @@ def main(argv):
 
     image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
 
-  if not BuildImage(in_dir, image_properties, out_file):
+  if not BuildImage(in_dir, image_properties, out_file, target_out):
     print >> sys.stderr, "error: failed to build %s from %s" % (out_file,
                                                                 in_dir)
     exit(1)
