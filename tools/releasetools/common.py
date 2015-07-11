@@ -921,7 +921,7 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
     zinfo = zipfile.ZipInfo(filename=zinfo_or_arcname)
     zinfo.compress_type = zip_file.compression
     if perms is None:
-      perms = 0o644
+      perms = 0o100644
   else:
     zinfo = zinfo_or_arcname
 
@@ -931,6 +931,9 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
 
   # If perms is given, it has a priority.
   if perms is not None:
+    # If perms doesn't set the file type, mark it as a regular file.
+    if perms & 0o770000 == 0:
+      perms |= 0o100000
     zinfo.external_attr = perms << 16
 
   # Use a fixed timestamp so the output is repeatable.
