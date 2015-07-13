@@ -22,6 +22,30 @@
       "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "78753eb8_c2e79c21",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-07-13T18:00:30Z",
+      "side": 1,
+      "message": "Without this, nothing depends on linker_asan in the first build.\nAnd we don\u0027t build the linker in the second build at all, because it should not (and can not) be build with ASan instrumentation.",
+      "parentUuid": "58d23ae8_a1192881",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
