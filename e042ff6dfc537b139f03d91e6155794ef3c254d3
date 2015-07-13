@@ -70,6 +70,30 @@
       "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "987af2a8_465ab4c6",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-07-13T18:10:14Z",
+      "side": 1,
+      "message": "OK, I\u0027ll try this approach (symlink).",
+      "parentUuid": "18dc42fc_aa56e39f",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
