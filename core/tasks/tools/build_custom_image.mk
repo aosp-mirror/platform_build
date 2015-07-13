@@ -104,7 +104,7 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	  $(hide) echo "oem.buildnumber=$(BUILD_NUMBER)" >> $(PRIVATE_STAGING_DIR)/oem.prop)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
 	  ./build/tools/releasetools/build_image.py \
-	  $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@
+	  $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@ $(TARGET_OUT)
 
 my_installed_custom_image := $(PRODUCT_OUT)/$(notdir $(my_built_custom_image))
 $(my_installed_custom_image) : $(my_built_custom_image)
