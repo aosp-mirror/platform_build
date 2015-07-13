@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58d23ae8_a1192881",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-13T17:57:20Z",
+      "side": 1,
+      "message": "You don\u0027t need this, if we rebuild the linker with name linker_asan.",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
