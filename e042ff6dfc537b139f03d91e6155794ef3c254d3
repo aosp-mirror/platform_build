@@ -46,6 +46,30 @@
       "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18dc42fc_aa56e39f",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-13T18:07:11Z",
+      "side": 1,
+      "message": "Hmm, I forgot about the fact linker is a static executable.\nOn the other hand, is it possible to make this a runtime decision? e.g. passing an option when the linker is called? or make linker_asan a symlink of linker and in the code see  if the executable is called as \"linker_asan\"?",
+      "parentUuid": "78753eb8_c2e79c21",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
