@@ -144,3 +144,18 @@ FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
     android-support-multidex \
     android-support-multidex-instrumentation
 
+#
+# A list of all documented source roots under frameworks/data-binding.
+#
+FRAMEWORKS_DATA_BINDING_SUBDIRS := \
+        baseLibrary/src/main \
+        library/src/main \
+        library/src/doc
+
+#
+# A version of FRAMEWORKS_DATA_BINDING_SUBDIRS that is expanded to full paths from
+# the root of the tree.
+#
+FRAMEWORKS_DATA_BINDING_JAVA_SRC_DIRS := \
+	$(addprefix frameworks/data-binding/,$(FRAMEWORKS_DATA_BINDING_SUBDIRS))
+
