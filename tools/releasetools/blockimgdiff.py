@@ -16,6 +16,7 @@ from __future__ import print_function
 
 from collections import deque, OrderedDict
 from hashlib import sha1
+import common
 import heapq
 import itertools
 import multiprocessing
@@ -460,9 +461,20 @@ class BlockImageDiff(object):
       if free_string:
         out.append("".join(free_string))
 
-      # sanity check: abort if we're going to need more than 512 MB if
-      # stash space
-      assert max_stashed_blocks * self.tgt.blocksize < (512 << 20)
+      if self.version >= 2:
+        # Sanity check: abort if we're going to need more stash space than
+        # the allowed size (cache_size * threshold). There are two purposes
+        # of having a threshold here. a) Part of the cache may have been
+        # occupied by some recovery logs. b) It will buy us some time to deal
+        # with the oversize issue.
+        cache_size = common.OPTIONS.cache_size
+        stash_threshold = common.OPTIONS.stash_threshold
+        max_allowed = cache_size * stash_threshold
+        assert max_stashed_blocks * self.tgt.blocksize < max_allowed, \
+               'Stash size %d (%d * %d) exceeds the limit %d (%d * %.2f)' % (
+                   max_stashed_blocks * self.tgt.blocksize, max_stashed_blocks,
+                   self.tgt.blocksize, max_allowed, cache_size,
+                   stash_threshold)
 
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
@@ -489,8 +501,11 @@ class BlockImageDiff(object):
         f.write(i)
 
     if self.version >= 2:
-      print("max stashed blocks: %d  (%d bytes)\n" % (
-          max_stashed_blocks, max_stashed_blocks * self.tgt.blocksize))
+      max_stashed_size = max_stashed_blocks * self.tgt.blocksize
+      max_allowed = common.OPTIONS.cache_size * common.OPTIONS.stash_threshold
+      print("max stashed blocks: %d  (%d bytes), limit: %d bytes (%.2f%%)\n" % (
+          max_stashed_blocks, max_stashed_size, max_allowed,
+          max_stashed_size * 100.0 / max_allowed))
 
   def ComputePatches(self, prefix):
     print("Reticulating splines...")
