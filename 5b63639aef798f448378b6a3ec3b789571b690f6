@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9870321a_0ac41f08",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-14T01:46:35Z",
+      "side": 1,
+      "message": "nit: we mixed hardcoding flags in this file, and using constants defined in the config.mk.",
+      "range": {
+        "startLine": 86,
+        "startChar": 4,
+        "endLine": 87,
+        "endChar": 36
+      },
+      "revId": "5b63639aef798f448378b6a3ec3b789571b690f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
