@@ -85,6 +85,7 @@ ifneq ($(filter address,$(my_sanitize)),)
     my_ldlibs += -lm -lpthread
     my_ldflags += -Wl,--no-as-needed
   else
+    my_cflags += -mllvm -asan-globals=0
     # ASan runtime library must be the first in the link order.
     my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
                            $(my_shared_libraries) \
