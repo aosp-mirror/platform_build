@@ -94,6 +94,30 @@
       "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "187d22ed_2e7f33d7",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-07-14T18:21:29Z",
+      "side": 1,
+      "message": "Removed.\nOh, maybe I should re-add this block with $SANITIZE_TARGET?",
+      "parentUuid": "987af2a8_465ab4c6",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 5
+      },
+      "revId": "e042ff6dfc537b139f03d91e6155794ef3c254d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
