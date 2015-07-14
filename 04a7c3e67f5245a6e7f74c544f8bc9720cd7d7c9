@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58987a8f_8b20352e",
+        "filename": "tools/releasetools/ota_from_target_files",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-14T17:54:10Z",
+      "side": 1,
+      "message": "this is incorrect. it ought to be the value after right shifting 16 bits.",
+      "range": {
+        "startLine": 106,
+        "startChar": 41,
+        "endLine": 106,
+        "endChar": 51
+      },
+      "revId": "04a7c3e67f5245a6e7f74c544f8bc9720cd7d7c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
