@@ -1472,7 +1472,7 @@ endef
 define transform-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) -pie \
 	-nostdlib -Bdynamic \
-	-Wl,-dynamic-linker,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_LINKER) \
+	-Wl,-dynamic-linker,$(PRIVATE_LINKER) \
 	-Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
 	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
