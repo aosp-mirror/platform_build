@@ -22,6 +22,30 @@
       "revId": "519c069fe41fcddac1d4604ae81a21b052ff6a1c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "183e024a_491a599d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-15T23:53:36Z",
+      "side": 1,
+      "message": "I see. It makes sense to me. Thanks!\n\n(Was trying to make it easier to delete large zip/imgs...)",
+      "parentUuid": "78f7fee1_e9831f56",
+      "range": {
+        "startLine": 10,
+        "startChar": 30,
+        "endLine": 11,
+        "endChar": 19
+      },
+      "revId": "519c069fe41fcddac1d4604ae81a21b052ff6a1c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
