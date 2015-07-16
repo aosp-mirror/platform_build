@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5834fa65_71faa2b4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-07-16T18:30:11Z",
+      "side": 1,
+      "message": "not accurate anymore. This change only ensures the console device is properly labeled. No new rules are added or removed.",
+      "revId": "8640c88a3a07d2afb1e4d045d04db68c9d0cac9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
