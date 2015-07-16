@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3837466d_f0522ee3",
+        "filename": "target/board/generic/sepolicy/file_contexts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-07-16T17:41:14Z",
+      "side": 1,
+      "message": "shouldn\u0027t this be console_device and drop the init.te change?",
+      "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
