@@ -52,6 +52,24 @@
       "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b8fdf6c1_6ec86398",
+        "filename": "target/board/generic/sepolicy/file_contexts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1050647
+      },
+      "writtenOn": "2015-07-16T18:27:25Z",
+      "side": 1,
+      "message": "Done.\n\nI guess I tried to label all of them (ttyS[0-9]*) as console_device and then broke the build. Thanks for your input about how SELinux parses this labels.",
+      "parentUuid": "f8404ed5_b9f00f8e",
+      "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
