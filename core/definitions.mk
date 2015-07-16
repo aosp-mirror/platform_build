@@ -2026,13 +2026,23 @@ $(hide) cp $(2) $(dir $@)lib/$(1)
 
 endef
 
+# For apps_only build, don't uncompress/page-align the jni libraries,
+# because the apk may be run on older platforms that don't support loading jni directly from apk.
+ifdef TARGET_BUILD_APPS
+JNI_COMPRESS_FLAGS :=
+ZIPALIGN_PAGE_ALIGN_FLAGS :=
+else
+JNI_COMPRESS_FLAGS := -0
+ZIPALIGN_PAGE_ALIGN_FLAGS := -p
+endif
+
 define add-jni-shared-libs-to-package
 $(hide) rm -rf $(dir $@)lib
 $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -r -0 $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -r $(JNI_COMPRESS_FLAGS) $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
@@ -2078,7 +2088,8 @@ endef
 define align-package
 $(hide) mv $@ $@.unaligned
 $(hide) $(ZIPALIGN) \
-    -f -p \
+    -f \
+    $(ZIPALIGN_PAGE_ALIGN_FLAGS) \
     4 \
     $@.unaligned $@.aligned
 $(hide) mv $@.aligned $@
