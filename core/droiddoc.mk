@@ -98,6 +98,7 @@ endif
 
 $(full_target): PRIVATE_OUT_DIR := $(out_dir)
 $(full_target): PRIVATE_DROIDDOC_OPTIONS := $(LOCAL_DROIDDOC_OPTIONS)
+$(full_target): PRIVATE_STUB_OUT_DIR := $(LOCAL_DROIDDOC_STUB_OUT_DIR)
 
 # Lists the input files for the doc build into a text file
 # suitable for the @ syntax of javadoc.
@@ -164,6 +165,7 @@ $(full_target): \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)
 	$(hide) mkdir -p $(dir $@)
+	$(addprefix $(hide) rm -rf ,$(PRIVATE_STUB_OUT_DIR))
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
 	$(hide) ( \
@@ -185,6 +187,7 @@ $(full_target): \
                 -d $(PRIVATE_OUT_DIR) \
                 $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
+                $(addprefix -stubs ,$(PRIVATE_STUB_OUT_DIR)) \
         && touch -f $@ \
     ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
 
