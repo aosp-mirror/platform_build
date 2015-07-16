@@ -16,6 +16,24 @@
       "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b8fdf6c1_8b615134",
+        "filename": "target/board/generic/sepolicy/file_contexts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1050647
+      },
+      "writtenOn": "2015-07-16T18:02:01Z",
+      "side": 1,
+      "message": "Well, we need the init.te change because init tries to open ttyS*, which is Goldfish TTY serial device for the emulator (external/qemu).\n\nWe can not label the ttyS* as cosole_device because it\u0027s already labeled as serial_device in external/sepolicy/file_contexts and I do not want to change that because it\u0027s common code.\n\nttyAMA* is the Ranchu emulator (aka qemu2) serial device for ARM64, and is still not triggered by the init, because there is no -shell support for Ranchu yet. This is just in preparation for the future -shell support.",
+      "parentUuid": "3837466d_f0522ee3",
+      "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
