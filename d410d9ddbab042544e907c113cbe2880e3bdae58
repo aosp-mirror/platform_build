@@ -34,6 +34,24 @@
       "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f8404ed5_b9f00f8e",
+        "filename": "target/board/generic/sepolicy/file_contexts",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-07-16T18:04:33Z",
+      "side": 1,
+      "message": "You can change it here. Just add the following line:\n\n  /dev/ttyS2  u:object_r:console_device:s0\n\nto this file. It\u0027s completely legal and permitted to do that, and will restrict this modification to the emulator only.",
+      "parentUuid": "b8fdf6c1_8b615134",
+      "revId": "d410d9ddbab042544e907c113cbe2880e3bdae58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
