@@ -800,8 +800,8 @@ endef
 ###########################################################
 
 define transform-variables
-@mkdir -p $(dir $@)
 @echo "Sed: $(if $(PRIVATE_MODULE),$(PRIVATE_MODULE),$@) <= $<"
+@mkdir -p $(dir $@)
 $(hide) sed $(foreach var,$(REPLACE_VARS),-e "s/{{$(var)}}/$(subst /,\/,$(PWD)/$($(var)))/g") $< >$@
 $(hide) if [ "$(suffix $@)" = ".sh" ]; then chmod a+rx $@; fi
 endef
@@ -828,8 +828,8 @@ endef
 ###########################################################
 
 define transform-l-to-cpp
-@mkdir -p $(dir $@)
 @echo "Lex: $(PRIVATE_MODULE) <= $<"
+@mkdir -p $(dir $@)
 $(hide) $(LEX) -o$@ $<
 endef
 
@@ -842,8 +842,8 @@ endef
 ###########################################################
 
 define transform-y-to-cpp
-@mkdir -p $(dir $@)
 @echo "Yacc: $(PRIVATE_MODULE) <= $<"
+@mkdir -p $(dir $@)
 $(YACC) $(PRIVATE_YACCFLAGS) -o $@ $<
 touch $(@:$1=$(YACC_HEADER_SUFFIX))
 echo '#ifndef '$(@F:$1=_h) > $(@:$1=.h)
@@ -959,8 +959,8 @@ endef
 ## Commands for running protoc to compile .proto into .pb.cc and .pb.h
 ######################################################################
 define transform-proto-to-cc
-@mkdir -p $(dir $@)
 @echo "Protoc: $@ <= $<"
+@mkdir -p $(dir $@)
 $(hide) $(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
 	$(PRIVATE_PROTOC_FLAGS) \
@@ -973,8 +973,8 @@ endef
 ###########################################################
 
 define transform-cpp-to-o
-@mkdir -p $(dir $@)
 @echo "target $(PRIVATE_ARM_MODE) C++: $(PRIVATE_MODULE) <= $<"
+@mkdir -p $(dir $@)
 $(hide) $(PRIVATE_CXX) \
 	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(shell cat $(PRIVATE_IMPORT_INCLUDES)) \
@@ -1080,8 +1080,8 @@ endef
 ###########################################################
 
 define transform-host-cpp-to-o
-@mkdir -p $(dir $@)
 @echo "host C++: $(PRIVATE_MODULE) <= $<"
+@mkdir -p $(dir $@)
 $(hide) $(PRIVATE_CXX) \
 	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(shell cat $(PRIVATE_IMPORT_INCLUDES)) \
@@ -1289,10 +1289,10 @@ endef
 # Explicitly delete the archive first so that ar doesn't
 # try to add to an existing archive.
 define transform-o-to-static-lib
+@echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
 @rm -f $@
 $(extract-and-include-target-whole-static-libs)
-@echo "target StaticLib: $(PRIVATE_MODULE) ($@)"
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
     $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
@@ -1338,10 +1338,10 @@ endef
 # Explicitly delete the archive first so that ar doesn't
 # try to add to an existing archive.
 define transform-host-o-to-static-lib
+@echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
 @rm -f $@
 $(extract-and-include-host-whole-static-libs)
-@echo "host StaticLib: $(PRIVATE_MODULE) ($@)"
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_ARFLAGS) \
     $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
@@ -1382,14 +1382,14 @@ endef
 endif
 
 define transform-host-o-to-shared-lib
-@mkdir -p $(dir $@)
 @echo "host SharedLib: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(transform-host-o-to-shared-lib-inner)
 endef
 
 define transform-host-o-to-package
-@mkdir -p $(dir $@)
 @echo "host Package: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(transform-host-o-to-shared-lib-inner)
 endef
 
@@ -1425,8 +1425,8 @@ $(hide) $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-shared-lib
-@mkdir -p $(dir $@)
 @echo "target SharedLib: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(transform-o-to-shared-lib-inner)
 endef
 
@@ -1441,15 +1441,15 @@ ifneq ($(TARGET_BUILD_VARIANT),user)
 endif
 
 define transform-to-stripped
-@mkdir -p $(dir $@)
 @echo "target Strip: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(hide) $(PRIVATE_STRIP) --strip-all $< -o $@ \
   $(if $(PRIVATE_NO_DEBUGLINK),,$(TARGET_STRIP_EXTRA))
 endef
 
 define transform-to-stripped-keep-symbols
-@mkdir -p $(dir $@)
 @echo "target Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(hide) $(PRIVATE_OBJCOPY) \
     `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "-R " $$2}' | xargs` \
     $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
@@ -1460,8 +1460,8 @@ endef
 ###########################################################
 
 define pack-elf-relocations
-$(copy-file-to-target)
 @echo "target Pack Relocations: $(PRIVATE_MODULE) ($@)"
+$(copy-file-to-target)
 $(hide) $(RELOCATION_PACKER) $@
 endef
 
@@ -1498,8 +1498,8 @@ $(hide) $(PRIVATE_CXX) -pie \
 endef
 
 define transform-o-to-executable
-@mkdir -p $(dir $@)
 @echo "target Executable: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(transform-o-to-executable-inner)
 endef
 
@@ -1542,8 +1542,8 @@ $(hide) $(PRIVATE_CXX) \
 endef
 
 define transform-o-to-static-executable
-@mkdir -p $(dir $@)
 @echo "target StaticExecutable: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(transform-o-to-static-executable-inner)
 endef
 
@@ -1588,8 +1588,8 @@ endef
 endif
 
 define transform-host-o-to-executable
-@mkdir -p $(dir $@)
 @echo "host Executable: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
 $(transform-host-o-to-executable-inner)
 endef
 
