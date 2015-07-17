@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "586b1a6a_04552a21",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-17T22:58:14Z",
+      "side": 1,
+      "message": "Agreed.\n\nYezhong, did you mean something like \"$(wildcard $(TARGET_DEVICE_DIR)/recovery/res*)\"?",
+      "parentUuid": "987f5221_55bc3e25",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "787a9e34_dfb36b3a",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -41,6 +65,29 @@
         "startChar": 10,
         "endLine": 847,
         "endChar": 25
+      },
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "586b1a6a_c437120b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-17T22:58:14Z",
+      "side": 1,
+      "message": "I\u0027d prefer to not put the extra white space before $(newline).\n\n\"cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))\"",
+      "range": {
+        "startLine": 848,
+        "startChar": 47,
+        "endLine": 848,
+        "endChar": 58
       },
       "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
