@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "987f5221_a069a273",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-07-17T20:51:00Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be in $PRODUCT_OUT, since it\u0027s dependent on the TARGET_PRODUCT?",
+      "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
