@@ -1664,8 +1664,8 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(addprefix -G , $(PRIVATE_PROGUARD_OPTIONS_FILE)) \
     $(addprefix --min-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-code , $(PLATFORM_SDK_VERSION))) \
-    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-name , $(PLATFORM_VERSION)-$(BUILD_NUMBER))) \
+    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
+    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR))
 endef
@@ -1788,7 +1788,7 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
 $(if $(PRIVATE_RMTYPEDEFS), $(hide) $(RMTYPEDEFS) -v $(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(if $(PRIVATE_JAR_MANIFEST), \
-    $(hide) sed -e 's/%BUILD_NUMBER%/$(BUILD_NUMBER)/' \
+    $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
         jar -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
@@ -1990,7 +1990,7 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
 $(if $(PRIVATE_RMTYPEDEFS), $(hide) $(RMTYPEDEFS) -v $(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(if $(PRIVATE_JAR_MANIFEST), \
-    $(hide) sed -e 's/%BUILD_NUMBER%/$(BUILD_NUMBER)/' \
+    $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
         jar -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
@@ -2093,8 +2093,8 @@ $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix --min-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(if $(filter --product,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --product , $(TARGET_AAPT_CHARACTERISTICS))) \
-    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-code , $(PLATFORM_SDK_VERSION))) \
-    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --version-name , $(PLATFORM_VERSION)-$(BUILD_NUMBER))) \
+    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
+    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     -F $@
