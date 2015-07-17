@@ -52,6 +52,24 @@
       "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f88e8e7f_44e24cc4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-17T22:33:30Z",
+      "side": 1,
+      "message": "Better to move to $(PRODUCT_OUT).\nWe don\u0027t rewrite if mkdb is used.",
+      "parentUuid": "386e667b_7d44bf1b",
+      "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
