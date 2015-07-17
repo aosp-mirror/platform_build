@@ -25,6 +25,47 @@
     },
     {
       "key": {
+        "uuid": "188c4286_8a46ffd2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-07-17T22:42:05Z",
+      "side": 1,
+      "message": "I found all of the ones that caused rebuilds for make \u0026\u0026 make for the aosp_arm64-eng target in aosp master, but I\u0027m sure there are more",
+      "parentUuid": "188c4286_4a27b742",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 15
+      },
+      "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38858659_050c42ad",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-07-17T22:42:05Z",
+      "side": 1,
+      "message": "whoops",
+      "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "987f5221_a069a273",
         "filename": "core/Makefile",
         "patchSetId": 1
