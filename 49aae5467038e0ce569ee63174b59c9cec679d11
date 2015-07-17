@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58823a52_0101940f",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-07-17T23:08:17Z",
+      "side": 1,
+      "message": "Maybe add something like\n\n ifneq ($(shell uname),Linux)\n $(error linux only...)\n endif\n\njust in case?",
+      "revId": "49aae5467038e0ce569ee63174b59c9cec679d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d8754a3f_cb0aca29",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-07-17T23:08:17Z",
+      "side": 1,
+      "message": "Maybe we could have $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)-$(TARGET_BUILD_TYPE) as their suffixes? Maybe something like\n\n KATI_OUTPUT_SUFFIX :\u003d $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)-$(TARGET_BUILD_TYPE)\n KATI_OUTPUTS :\u003d build-$(KATI_OUTPUT_SUFFIX).ninja ninja-$(KATI_OUTPUT_SUFFIX).sh",
+      "revId": "49aae5467038e0ce569ee63174b59c9cec679d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38858659_8554b24a",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-07-17T23:08:17Z",
+      "side": 1,
+      "message": "... and add --ninja_suffix\u003d-$(KATI_OUTPUT_SUFFIX)",
+      "revId": "49aae5467038e0ce569ee63174b59c9cec679d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
