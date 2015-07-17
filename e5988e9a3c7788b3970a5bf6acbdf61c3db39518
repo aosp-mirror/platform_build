@@ -34,6 +34,24 @@
       "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "386e667b_7d44bf1b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-07-17T22:02:54Z",
+      "side": 1,
+      "message": "Unless there are two builds of make running with different products being created under the same $OUT. This mostly works today.\n\nI guess kati/ninja would break that anyway... so not a huge deal.",
+      "parentUuid": "586b1a6a_192d9749",
+      "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
