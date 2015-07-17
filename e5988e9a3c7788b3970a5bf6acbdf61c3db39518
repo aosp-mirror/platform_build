@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "188c4286_4a27b742",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-17T22:38:49Z",
+      "side": 1,
+      "message": "Hmm, I used to see other such uses of BUILD_NUMBER (or the root of the uncertainty, \"date\")in some Android.mks, e.g to generate a unique ID and pass to the compiler as a macro.",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 15
+      },
+      "revId": "e5988e9a3c7788b3970a5bf6acbdf61c3db39518",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "987f5221_a069a273",
         "filename": "core/Makefile",
         "patchSetId": 1
