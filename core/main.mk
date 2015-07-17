@@ -93,6 +93,10 @@ include $(BUILD_SYSTEM)/help.mk
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
 
+ifeq ($(USE_NINJA),true)
+include build/core/ninja.mk
+else # !USE_NINJA
+
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
@@ -1065,3 +1069,4 @@ showcommands:
 .PHONY: nothing
 nothing:
 	@echo Successfully read the makefiles.
+endif # !USE_NINJA
