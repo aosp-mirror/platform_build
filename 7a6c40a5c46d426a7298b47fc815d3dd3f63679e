@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "987f5221_55bc3e25",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-17T18:56:24Z",
+      "side": 1,
+      "message": "But recovery_resources_private is assigned with only one directory here.",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "787a9e34_dfb36b3a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 847,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-17T18:56:24Z",
+      "side": 1,
+      "message": "Hmm, this indicates the author used to think there might be more than one items.\nI am not the original author.\n+tbao",
+      "range": {
+        "startLine": 847,
+        "startChar": 10,
+        "endLine": 847,
+        "endChar": 25
+      },
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
