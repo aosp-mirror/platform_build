@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "586b1a6a_df2effcb",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-07-18T01:55:40Z",
+      "side": 1,
+      "message": "I forgot to mention, I\u0027ve added --detect_android_echo flag and you need to specify this flag if you\u0027ll update the ckati binary.\n\nhttps://github.com/google/kati/commit/33e108b7df476e20fd7c3bbe26a75fff00e66cc6",
+      "parentUuid": "38858659_8554b24a",
+      "revId": "49aae5467038e0ce569ee63174b59c9cec679d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b8709650_a2e684a9",
         "filename": "core/ninja.mk",
         "patchSetId": 2
