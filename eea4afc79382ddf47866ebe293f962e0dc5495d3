@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8709650_56b3e5d4",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-07-18T19:15:46Z",
+      "side": 1,
+      "message": "this is over-escaped, should just be \"",
+      "range": {
+        "startLine": 135,
+        "startChar": 64,
+        "endLine": 135,
+        "endChar": 66
+      },
+      "revId": "eea4afc79382ddf47866ebe293f962e0dc5495d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
