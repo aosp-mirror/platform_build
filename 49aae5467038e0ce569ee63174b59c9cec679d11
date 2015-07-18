@@ -127,6 +127,30 @@
       "revId": "49aae5467038e0ce569ee63174b59c9cec679d11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f88e8e7f_f880c0d6",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-18T00:36:09Z",
+      "side": 1,
+      "message": "Oh, we need an intermediate target because $(KATI_OUTPUTS) includes two files.",
+      "parentUuid": "b8709650_a2e684a9",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 6
+      },
+      "revId": "49aae5467038e0ce569ee63174b59c9cec679d11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
