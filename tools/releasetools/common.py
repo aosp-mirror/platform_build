@@ -153,15 +153,20 @@ def LoadInfoDict(input_file, input_dir=None):
   if "fstab_version" not in d:
     d["fstab_version"] = "1"
 
-  # During building, we use the "file_contexts" in the out/ directory tree.
-  # It is no longer available when (re)generating from target_files zip. So
-  # when generating from target_files zip, we look for a copy under META/
-  # first, if not available search under BOOT/RAMDISK/. Note that we may need
-  # a different file_contexts to build images than the one running on device,
-  # such as when enabling system_root_image. In that case, we must have the
-  # one for building copied to META/.
+  # A few properties are stored as links to the files in the out/ directory.
+  # It works fine with the build system. However, they are no longer available
+  # when (re)generating from target_files zip. If input_dir is not None, we
+  # are doing repacking. Redirect those properties to the actual files in the
+  # unzipped directory.
   if input_dir is not None:
+    # We carry a copy of file_contexts under META/. If not available, search
+    # BOOT/RAMDISK/. Note that sometimes we may need a different file_contexts
+    # to build images than the one running on device, such as when enabling
+    # system_root_image. In that case, we must have the one for image
+    # generation copied to META/.
     fc_config = os.path.join(input_dir, "META", "file_contexts")
+    if d.get("system_root_image") == "true":
+      assert os.path.exists(fc_config)
     if not os.path.exists(fc_config):
       fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", "file_contexts")
       if not os.path.exists(fc_config):
@@ -169,6 +174,12 @@ def LoadInfoDict(input_file, input_dir=None):
 
     if fc_config:
       d["selinux_fc"] = fc_config
+
+    # Similarly we need to redirect "ramdisk_dir" and "ramdisk_fs_config".
+    if d.get("system_root_image") == "true":
+      d["ramdisk_dir"] = os.path.join(input_dir, "ROOT")
+      d["ramdisk_fs_config"] = os.path.join(
+          input_dir, "META", "root_filesystem_config.txt")
 
   try:
     data = read_helper("META/imagesizes.txt")

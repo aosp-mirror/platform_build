@@ -144,10 +144,6 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
     image_props["fs_config"] = fs_config
   if block_list:
     image_props["block_list"] = block_list
-  if image_props.get("system_root_image") == "true":
-    image_props["ramdisk_dir"] = os.path.join(input_dir, "BOOT/RAMDISK")
-    image_props["ramdisk_fs_config"] = os.path.join(
-        input_dir, "META/boot_filesystem_config.txt")
 
   succ = build_image.BuildImage(os.path.join(input_dir, what),
                                 image_props, img)
