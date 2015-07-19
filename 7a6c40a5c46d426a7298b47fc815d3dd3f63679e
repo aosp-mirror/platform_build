@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "586b1a6a_9f38878d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2015-07-19T13:41:24Z",
+      "side": 1,
+      "message": "Hi tbao \u0026 Ying,\n\"$(wildcard $(TARGET_DEVICE_DIR)/recovery/res*)\" is not enough for my case.\nAt this stage, $(recovery_resources_private) is only blabla/res, but this var can be extended by vendor makefiles later.\nSee my comments in Line #1842.",
+      "parentUuid": "586b1a6a_04552a21",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "787a9e34_dfb36b3a",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -89,6 +113,23 @@
         "endLine": 848,
         "endChar": 58
       },
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "38858659_cb5e4943",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1842,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2015-07-19T13:41:24Z",
+      "side": 1,
+      "message": "I can add makefiles like this to make $(recovery_resources_private) to be a list of directories, then I can put some other stuff into recovery image elegantly.\n\nFor example, I add this file:\nvendor/xxx/build/tasks/recovery.mk:\n...\nRECOVERY_ADDON :\u003d $(PRODUCT_OUT)/recovery_addon\nrecovery_resources_private +\u003d $(RECOVERY_ADDON)/bin\nrecovery_resources_private +\u003d $(RECOVERY_ADDON)/lib\n...",
       "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
