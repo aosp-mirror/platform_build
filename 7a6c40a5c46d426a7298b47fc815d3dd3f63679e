@@ -157,6 +157,24 @@
       "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "185442e3_f9dbab59",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1842,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-20T23:00:26Z",
+      "side": 1,
+      "message": "No, the task .mk files are not for configuration.\nIf we want to support multiple recovery resource dirs, we should expilcitly define a new board config variable, something like TARGET_RECOVERY_RESOURCE_DIRS, and have the build system respect it.",
+      "parentUuid": "38858659_cb5e4943",
+      "revId": "7a6c40a5c46d426a7298b47fc815d3dd3f63679e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
