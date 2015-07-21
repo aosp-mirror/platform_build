@@ -45,6 +45,10 @@ ifneq ($(strip $(SANITIZE_TARGET)),)
         my_allow_undefined_symbols := true
       endif
     endif
+    # Workaround for a bug in AddressSanitizer that breaks stack unwinding.
+    # https://code.google.com/p/address-sanitizer/issues/detail?id=387
+    # Revert when external/compiler-rt is updated past r236014.
+    LOCAL_PACK_MODULE_RELOCATIONS := false
   endif
 endif
 
