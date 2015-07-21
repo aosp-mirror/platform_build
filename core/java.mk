@@ -251,7 +251,7 @@ endif
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_support_io_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
-$(rs_compatibility_jni_libs): PRIVATE_CXX := $(TARGET_CXX)
+$(rs_compatibility_jni_libs): PRIVATE_CXX := $(CXX_WRAPPER) $(TARGET_CXX)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate.bc_folder)%.bc
 	$(transform-bc-to-so)
