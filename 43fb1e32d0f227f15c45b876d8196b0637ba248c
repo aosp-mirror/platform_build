@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b83896b1_dc59795d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-21T18:02:27Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we combine this with the new variable? say if no TARGET_RECOVERY_RESOURCE_DIRS is specified, use this as the default?",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
