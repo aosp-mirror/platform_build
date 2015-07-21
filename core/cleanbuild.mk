@@ -105,11 +105,10 @@ else
   _crs_new_cmd :=
   steps :=
 endif
-CURRENT_CLEAN_BUILD_VERSION :=
-CURRENT_CLEAN_STEPS :=
 
 # Write the new state to the file.
 #
+ifneq ($(CURRENT_CLEAN_BUILD_VERSION)-$(CURRENT_CLEAN_STEPS),$(INTERNAL_CLEAN_BUILD_VERSION)-$(INTERNAL_CLEAN_STEPS))
 $(shell \
   mkdir -p $(dir $(clean_steps_file)) && \
   echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
@@ -117,7 +116,10 @@ $(shell \
   echo "CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)" >> \
       $(clean_steps_file) \
  )
+endif
 
+CURRENT_CLEAN_BUILD_VERSION :=
+CURRENT_CLEAN_STEPS :=
 clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
@@ -164,7 +166,6 @@ ifdef PREVIOUS_BUILD_CONFIG
     endif
   endif
 endif  # else, this is the first build, so no need to clean.
-PREVIOUS_BUILD_CONFIG :=
 
 ifdef PREVIOUS_SANITIZE_TARGET
   ifneq "$(current_sanitize_target)" "$(PREVIOUS_SANITIZE_TARGET)"
@@ -172,10 +173,10 @@ ifdef PREVIOUS_SANITIZE_TARGET
     force_objclean := true
   endif
 endif  # else, this is the first build, so no need to clean.
-PREVIOUS_SANITIZE_TARGET :=
 
 # Write the new state to the file.
 #
+ifneq ($(PREVIOUS_BUILD_CONFIG)-$(PREVIOUS_SANITIZE_TARGET),$(current_build_config)-$(current_sanitize_target))
 $(shell \
   mkdir -p $(dir $(previous_build_config_file)) && \
   echo "PREVIOUS_BUILD_CONFIG := $(current_build_config)" > \
@@ -183,6 +184,9 @@ $(shell \
   echo "PREVIOUS_SANITIZE_TARGET := $(current_sanitize_target)" >> \
       $(previous_build_config_file) \
  )
+endif
+PREVIOUS_BUILD_CONFIG :=
+PREVIOUS_SANITIZE_TARGET :=
 previous_build_config_file :=
 current_build_config :=
 
@@ -285,3 +289,65 @@ ifeq "$(force_objclean)" "true"
   $(info *** Done with the cleaning, now starting the real build.)
 endif
 force_objclean :=
+
+###########################################################
+# Clean build tools when swithcing between prebuilt host tools (such as in
+# apps_only build) and tools built from source (platform build).
+previous_prebuilt_tools_config_file := $(HOST_OUT)/previous_prebuilt_tools_config.mk
+ifneq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
+current_prebuilt_tools := true
+else
+current_prebuilt_tools := false
+endif
+PREVIOUS_PREBUILT_TOOLS :=
+-include $(previous_prebuilt_tools_config_file)
+force_tools_clean :=
+ifdef PREVIOUS_PREBUILT_TOOLS
+ifneq ($(PREVIOUS_PREBUILT_TOOLS),$(current_prebuilt_tools))
+force_tools_clean := true
+endif
+endif # else, this is the first build, so no need to clean.
+
+# Write the new state to the file.
+ifneq ($(PREVIOUS_PREBUILT_TOOLS),$(current_prebuilt_tools))
+$(shell \
+  mkdir -p $(dir $(previous_prebuilt_tools_config_file)) && \
+  echo "PREVIOUS_PREBUILT_TOOLS:=$(current_prebuilt_tools)" > \
+    $(previous_prebuilt_tools_config_file))
+endif
+
+ifeq ($(force_tools_clean),true)
+# For this list of prebuilt tools, see prebuilts/sdk/tools/Android.mk.
+tools_clean_files := \
+  $(HOST_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/signapk_intermediates \
+  $(HOST_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/dx_intermediates \
+  $(HOST_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/shrinkedAndroid_intermediates \
+  $(HOST_OUT)/obj*/EXECUTABLES/aapt_intermediates \
+  $(HOST_OUT)/obj*/EXECUTABLES/aidl_intermediates \
+  $(HOST_OUT)/obj*/EXECUTABLES/zipalign_intermediates \
+  $(HOST_OUT)/obj*/lib/libc++$(HOST_SHLIB_SUFFIX) \
+
+$(info *** build type changed, clean host tools...)
+$(info *** rm -rf $(tools_clean_files))
+$(shell rm -rf $(tools_clean_files))
+endif
+
+###########################################################
+
+.PHONY: clean-jack-files
+clean-jack-files: clean-dex-files
+	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
+	$(hide) find $(OUT_DIR) -type d -name "jack" | xargs rm -rf
+	@echo "All jack files have been removed."
+
+.PHONY: clean-dex-files
+clean-dex-files:
+	$(hide) find $(OUT_DIR) -name "*.dex" ! -path "*/jack-incremental/*" | xargs rm -f
+	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
+				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
+	@echo "All dex files and archives containing dex files have been removed."
+
+.PHONY: clean-jack-incremental
+clean-jack-incremental:
+	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
+	@echo "All jack incremental dirs have been removed."
