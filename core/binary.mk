@@ -46,7 +46,9 @@ my_ldflags := $(LOCAL_LDFLAGS)
 my_ldlibs := $(LOCAL_LDLIBS)
 my_asflags := $(LOCAL_ASFLAGS)
 my_cc := $(LOCAL_CC)
+my_cc_wrapper := $(CC_WRAPPER)
 my_cxx := $(LOCAL_CXX)
+my_cxx_wrapper := $(CXX_WRAPPER)
 my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
@@ -229,6 +231,9 @@ ifneq ($(filter true always, $(LOCAL_FDO_SUPPORT)),)
     my_cflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_FDO_OPTIMIZE_CFLAGS)
     my_fdo_build := true
   endif
+  # Disable ccache (or other compiler wrapper).
+  my_cc_wrapper :=
+  my_cxx_wrapper :=
 endif
 
 ###########################################################
@@ -339,6 +344,7 @@ ifeq ($(strip $(my_cc)),)
   else
     my_cc := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CC)
   endif
+  my_cc := $(my_cc_wrapper) $(my_cc)
 endif
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
   my_cc := $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer $(my_syntax_arch) "$(my_cc)"
@@ -355,6 +361,7 @@ ifeq ($(strip $(my_cxx)),)
   else
     my_cxx := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CXX)
   endif
+  my_cxx := $(my_cxx_wrapper) $(my_cxx)
 endif
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
   my_cxx := $(SYNTAX_TOOLS_PREFIX)/cxx-analyzer $(my_syntax_arch) "$(my_cxx)"
