@@ -1022,8 +1022,6 @@ endif
 endif
 endif
 
-.PHONY: lintall
-
 ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
 .PHONY: samplecode
 sample_MODULES := $(sort $(call get-tagged-modules,samples))
