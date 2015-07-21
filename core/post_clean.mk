@@ -88,7 +88,7 @@ MODULES_WITH_AIDL_FILES := $(sort $(MODULES_WITH_AIDL_FILES) $(modules_with_aidl
 $(shell echo 'MODULES_WITH_AIDL_FILES := $(MODULES_WITH_AIDL_FILES)' >> $(current_aidl_config))
 
 # Now current becomes previous.
-$(shell mv -f $(current_aidl_config) $(previous_aidl_config))
+$(shell cmp $(current_aidl_config) $(previous_aidl_config) > /dev/null 2>&1 || mv -f $(current_aidl_config) $(previous_aidl_config))
 
 MODULES_WITH_AIDL_FILES :=
 modules_with_aidl_files :=
