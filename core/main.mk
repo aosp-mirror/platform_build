@@ -96,7 +96,7 @@ include $(BUILD_SYSTEM)/config.mk
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
-$(shell echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
+$(shell mkdir -p $(OUT_DIR) && echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 
 # CTS-specific config.
