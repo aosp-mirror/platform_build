@@ -257,6 +257,8 @@ combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
+include $(BUILD_SYSTEM)/ccache.mk
+
 ifdef TARGET_PREFER_32_BIT
 TARGET_PREFER_32_BIT_APPS := true
 TARGET_PREFER_32_BIT_EXECUTABLES := true
