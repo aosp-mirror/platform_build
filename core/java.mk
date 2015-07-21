@@ -619,7 +619,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
 jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
-        $(LOCAL_MODULE_MAKEFILE) $(JACK_JAR) $(JACK_LAUNCHER_JAR)
+        $(LOCAL_MODULE_MAKEFILE) $(JACK)
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(full_classes_jack): $(jack_all_deps)
