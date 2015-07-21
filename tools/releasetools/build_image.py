@@ -413,6 +413,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image", "system_root_image")
     copy_prop("ramdisk_dir", "ramdisk_dir")
+    copy_prop("ramdisk_fs_config", "ramdisk_fs_config")
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
