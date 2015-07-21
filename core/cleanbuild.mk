@@ -105,11 +105,10 @@ else
   _crs_new_cmd :=
   steps :=
 endif
-CURRENT_CLEAN_BUILD_VERSION :=
-CURRENT_CLEAN_STEPS :=
 
 # Write the new state to the file.
 #
+ifneq ($(CURRENT_CLEAN_BUILD_VERSION)-$(CURRENT_CLEAN_STEPS),$(INTERNAL_CLEAN_BUILD_VERSION)-$(INTERNAL_CLEAN_STEPS))
 $(shell \
   mkdir -p $(dir $(clean_steps_file)) && \
   echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
@@ -117,7 +116,10 @@ $(shell \
   echo "CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)" >> \
       $(clean_steps_file) \
  )
+endif
 
+CURRENT_CLEAN_BUILD_VERSION :=
+CURRENT_CLEAN_STEPS :=
 clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
@@ -164,7 +166,6 @@ ifdef PREVIOUS_BUILD_CONFIG
     endif
   endif
 endif  # else, this is the first build, so no need to clean.
-PREVIOUS_BUILD_CONFIG :=
 
 ifdef PREVIOUS_SANITIZE_TARGET
   ifneq "$(current_sanitize_target)" "$(PREVIOUS_SANITIZE_TARGET)"
@@ -172,10 +173,10 @@ ifdef PREVIOUS_SANITIZE_TARGET
     force_objclean := true
   endif
 endif  # else, this is the first build, so no need to clean.
-PREVIOUS_SANITIZE_TARGET :=
 
 # Write the new state to the file.
 #
+ifneq ($(PREVIOUS_BUILD_CONFIG)-$(PREVIOUS_SANITIZE_TARGET),$(current_build_config)-$(current_sanitize_target))
 $(shell \
   mkdir -p $(dir $(previous_build_config_file)) && \
   echo "PREVIOUS_BUILD_CONFIG := $(current_build_config)" > \
@@ -183,6 +184,9 @@ $(shell \
   echo "PREVIOUS_SANITIZE_TARGET := $(current_sanitize_target)" >> \
       $(previous_build_config_file) \
  )
+endif
+PREVIOUS_BUILD_CONFIG :=
+PREVIOUS_SANITIZE_TARGET :=
 previous_build_config_file :=
 current_build_config :=
 
@@ -305,10 +309,12 @@ endif
 endif # else, this is the first build, so no need to clean.
 
 # Write the new state to the file.
+ifneq ($(PREVIOUS_PREBUILT_TOOLS),$(current_prebuilt_tools))
 $(shell \
   mkdir -p $(dir $(previous_prebuilt_tools_config_file)) && \
   echo "PREVIOUS_PREBUILT_TOOLS:=$(current_prebuilt_tools)" > \
     $(previous_prebuilt_tools_config_file))
+endif
 
 ifeq ($(force_tools_clean),true)
 # For this list of prebuilt tools, see prebuilts/sdk/tools/Android.mk.
