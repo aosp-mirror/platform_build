@@ -22,6 +22,30 @@
       "revId": "6ca3b4043b42691a8e68bd321ca0f224ff17b36f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4dd51ace_a4912f5c",
+        "filename": "core/ninja.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-07-22T18:10:58Z",
+      "side": 1,
+      "message": "I tried that, all it takes is including defintions.mk, but kati depends on a C++ runtime.  If I use BUILD_HOST_EXECUTABLE it will insert dependencies on libcompiler-rt_extras, and probably more.  I\u0027d need to include extra makefiles from a bunch of other directories too, and that seemed less maintainable.  This ends up linking against the host C++ runtime, the same as if you built a ckati prebuilt from out of tree.",
+      "parentUuid": "2ddc66fc_99bc9fa4",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "6ca3b4043b42691a8e68bd321ca0f224ff17b36f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
