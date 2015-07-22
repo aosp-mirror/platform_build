@@ -567,39 +567,6 @@ endif
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
 
-# Dist the files that can be bundled in system.img.
-# They include the jni shared libraries and the apk with jni libraries stripped.
-ifeq ($(LOCAL_DIST_BUNDLED_BINARIES),true)
-ifneq ($(filter $(LOCAL_PACKAGE_NAME),$(TARGET_BUILD_APPS)),)
-ifneq ($(strip $(jni_shared_libraries)),)
-dist_subdir := bundled_$(LOCAL_PACKAGE_NAME)
-$(foreach f, $(jni_shared_libraries), \
-  $(call dist-for-goals, apps_only, $(f):$(dist_subdir)/$(notdir $(f))))
-
-apk_jni_stripped := $(intermediates)/jni_stripped/package.apk
-$(apk_jni_stripped): PRIVATE_JNI_SHARED_LIBRARIES := $(notdir $(jni_shared_libraries))
-$(apk_jni_stripped) : $(LOCAL_BUILT_MODULE) | $(ZIPALIGN)
-	@rm -rf $(dir $@) && mkdir -p $(dir $@)
-	$(hide) cp $< $@
-	$(hide) zip -d $@ $(foreach f,$(PRIVATE_JNI_SHARED_LIBRARIES),\*/$(f))
-	$(align-package)
-
-$(call dist-for-goals, apps_only, $(apk_jni_stripped):$(dist_subdir)/$(LOCAL_PACKAGE_NAME).apk)
-
-endif  # jni_shared_libraries
-endif  # apps_only build
-endif  # LOCAL_DIST_BUNDLED_BINARIES
-
-# Lint phony targets
-.PHONY: lint-$(LOCAL_PACKAGE_NAME)
-lint-$(LOCAL_PACKAGE_NAME): PRIVATE_PATH := $(LOCAL_PATH)
-lint-$(LOCAL_PACKAGE_NAME): PRIVATE_LINT_FLAGS := $(LOCAL_LINT_FLAGS)
-lint-$(LOCAL_PACKAGE_NAME) :
-	@echo lint $(PRIVATE_PATH)
-	$(LINT) $(PRIVATE_LINT_FLAGS) $(PRIVATE_PATH)
-
-lintall : lint-$(LOCAL_PACKAGE_NAME)
-
 endif # skip_definition
 
 # Reset internal variables.
