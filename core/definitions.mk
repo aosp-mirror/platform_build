@@ -810,42 +810,6 @@ hide :=
 endif
 
 ###########################################################
-## Dump the variables that are associated with targets
-###########################################################
-
-define dump-module-variables
-@echo all_dependencies=$^
-@echo PRIVATE_YACCFLAGS=$(PRIVATE_YACCFLAGS);
-@echo PRIVATE_CFLAGS=$(PRIVATE_CFLAGS);
-@echo PRIVATE_CPPFLAGS=$(PRIVATE_CPPFLAGS);
-@echo PRIVATE_DEBUG_CFLAGS=$(PRIVATE_DEBUG_CFLAGS);
-@echo PRIVATE_C_INCLUDES=$(PRIVATE_C_INCLUDES);
-@echo PRIVATE_LDFLAGS=$(PRIVATE_LDFLAGS);
-@echo PRIVATE_LDLIBS=$(PRIVATE_LDLIBS);
-@echo PRIVATE_ARFLAGS=$(PRIVATE_ARFLAGS);
-@echo PRIVATE_AAPT_FLAGS=$(PRIVATE_AAPT_FLAGS);
-@echo PRIVATE_DX_FLAGS=$(PRIVATE_DX_FLAGS);
-@echo PRIVATE_JAVACFLAGS=$(PRIVATE_JAVACFLAGS);
-@echo PRIVATE_JAVA_LIBRARIES=$(PRIVATE_JAVA_LIBRARIES);
-@echo PRIVATE_ALL_SHARED_LIBRARIES=$(PRIVATE_ALL_SHARED_LIBRARIES);
-@echo PRIVATE_ALL_STATIC_LIBRARIES=$(PRIVATE_ALL_STATIC_LIBRARIES);
-@echo PRIVATE_ALL_WHOLE_STATIC_LIBRARIES=$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES);
-@echo PRIVATE_ALL_OBJECTS=$(PRIVATE_ALL_OBJECTS);
-endef
-
-###########################################################
-## Commands for using sed to replace given variable values
-###########################################################
-
-define transform-variables
-@echo "Sed: $(if $(PRIVATE_MODULE),$(PRIVATE_MODULE),$@) <= $<"
-@mkdir -p $(dir $@)
-$(hide) sed $(foreach var,$(REPLACE_VARS),-e "s/{{$(var)}}/$(subst /,\/,$(PWD)/$($(var)))/g") $< >$@
-$(hide) if [ "$(suffix $@)" = ".sh" ]; then chmod a+rx $@; fi
-endef
-
-
-###########################################################
 ## Commands for munging the dependency files GCC generates
 ###########################################################
 # $(1): the input .d file
