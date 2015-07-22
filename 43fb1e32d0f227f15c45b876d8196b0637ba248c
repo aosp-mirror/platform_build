@@ -22,6 +22,76 @@
       "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad7a16a8_da70e501",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2015-07-22T03:08:34Z",
+      "side": 1,
+      "message": "(1). Strictly speaking, $(recovery_resources_private) and $(recovery_resources_common) are used for resource files(say *.png) in recovery mode.\n\n(2). What I want now is to put some misc files into recovery image, they may be additional debug binary tools and *.so files. These files are generated during android build, so it\u0027s not suitable to find files in the directory as dependency before whole android compilation.(#Line 777). The result of \"find xx -type f\" will be empty then.\n\n(3). What about naming the new var as TARGET_RECOVERY_MISC_DIRS other than TARGET_RECOVERY_RESOURCE_DIRS ?",
+      "parentUuid": "b83896b1_dc59795d",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cdc02a18_735c7854",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2015-07-22T03:08:34Z",
+      "side": 1,
+      "message": "It\u0027s a little confusing to see this \"foreach\", since multiple $(recovery_resources_private) doesn\u0027t work here.\nWhat about simplify it as :\ncp -rf $(recovery_resources_private) $(TARGET_RECOVERY_ROOT_OUT)/",
+      "range": {
+        "startLine": 847,
+        "startChar": 0,
+        "endLine": 848,
+        "endChar": 48
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ddfa2f3_f2b946c4",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 852,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2015-07-22T03:08:34Z",
+      "side": 1,
+      "message": "If opinion (3) is adopted, we can add new rule like:\n$(hide) $(foreach item,$(TARGET_RECOVERY_MISC_DIRS), \\\n    cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))",
+      "range": {
+        "startLine": 851,
+        "startChar": 0,
+        "endLine": 852,
+        "endChar": 58
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
