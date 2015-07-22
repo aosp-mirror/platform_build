@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "cdc02a18_3c7c7d5d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-22T18:36:09Z",
+      "side": 1,
+      "message": "Regarding (2): no, you can\u0027t install files built from source by just copying them to the recovery directory without establishing dependency. Why do you need extra binaries and libraries in the recovery.img but not install them to the ramdisk?\nIt seems to me by design Android only allows to customize the resources at this point. Tao has more say than I do on this.",
+      "parentUuid": "ad7a16a8_da70e501",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cdc02a18_735c7854",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -60,6 +84,30 @@
       "writtenOn": "2015-07-22T03:08:34Z",
       "side": 1,
       "message": "It\u0027s a little confusing to see this \"foreach\", since multiple $(recovery_resources_private) doesn\u0027t work here.\nWhat about simplify it as :\ncp -rf $(recovery_resources_private) $(TARGET_RECOVERY_ROOT_OUT)/",
+      "range": {
+        "startLine": 847,
+        "startChar": 0,
+        "endLine": 848,
+        "endChar": 48
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ed808ec6_df60d7af",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-22T18:36:09Z",
+      "side": 1,
+      "message": "Yes, we should remove the $(foreach) call.",
+      "parentUuid": "cdc02a18_735c7854",
       "range": {
         "startLine": 847,
         "startChar": 0,
