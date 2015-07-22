@@ -202,7 +202,8 @@ def LoadInfoDict(input_file, input_dir=None):
   makeint("boot_size")
   makeint("fstab_version")
 
-  d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"], d.get("system_root_image", False))
+  d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"],
+                                 d.get("system_root_image", False))
   d["build.prop"] = LoadBuildProp(read_helper)
   return d
 
@@ -318,7 +319,8 @@ def LoadRecoveryFSTab(read_helper, fstab_version, system_root_image=False):
     raise ValueError("Unknown fstab_version: \"%d\"" % (fstab_version,))
 
   # / is used for the system mount point when the root directory is included in
-  # system. Other areas assume system is always at "/system" so point /system at /
+  # system. Other areas assume system is always at "/system" so point /system
+  # at /.
   if system_root_image:
     assert not d.has_key("/system") and d.has_key("/")
     d["/system"] = d["/"]
@@ -330,34 +332,46 @@ def DumpInfoDict(d):
     print "%-25s = (%s) %s" % (k, type(v).__name__, v)
 
 
-def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
-  """Take a kernel, cmdline, and ramdisk directory from the input (in
-  'sourcedir'), and turn them into a boot image.  Return the image
-  data, or None if sourcedir does not appear to contains files for
-  building the requested image."""
+def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
+                        has_ramdisk=False):
+  """Build a bootable image from the specified sourcedir.
 
-  if (not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK) or
-      not os.access(os.path.join(sourcedir, "kernel"), os.F_OK)):
+  Take a kernel, cmdline, and optionally a ramdisk directory from the input (in
+  'sourcedir'), and turn them into a boot image.  Return the image data, or
+  None if sourcedir does not appear to contains files for building the
+  requested image."""
+
+  def make_ramdisk():
+    ramdisk_img = tempfile.NamedTemporaryFile()
+
+    if os.access(fs_config_file, os.F_OK):
+      cmd = ["mkbootfs", "-f", fs_config_file,
+             os.path.join(sourcedir, "RAMDISK")]
+    else:
+      cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
+    p1 = Run(cmd, stdout=subprocess.PIPE)
+    p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
+
+    p2.wait()
+    p1.wait()
+    assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
+    assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
+
+    return ramdisk_img
+
+  if not os.access(os.path.join(sourcedir, "kernel"), os.F_OK):
+    return None
+
+  if has_ramdisk and not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK):
     return None
 
   if info_dict is None:
     info_dict = OPTIONS.info_dict
 
-  ramdisk_img = tempfile.NamedTemporaryFile()
   img = tempfile.NamedTemporaryFile()
 
-  if os.access(fs_config_file, os.F_OK):
-    cmd = ["mkbootfs", "-f", fs_config_file, os.path.join(sourcedir, "RAMDISK")]
-  else:
-    cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
-  p1 = Run(cmd, stdout=subprocess.PIPE)
-  p2 = Run(["minigzip"],
-           stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
-
-  p2.wait()
-  p1.wait()
-  assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
-  assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
+  if has_ramdisk:
+    ramdisk_img = make_ramdisk()
 
   # use MKBOOTIMG from environ, or "mkbootimg" if empty or not set
   mkbootimg = os.getenv('MKBOOTIMG') or "mkbootimg"
@@ -388,14 +402,15 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
+  if has_ramdisk:
+    cmd.extend(["--ramdisk", ramdisk_img.name])
+
   img_unsigned = None
   if info_dict.get("vboot", None):
     img_unsigned = tempfile.NamedTemporaryFile()
-    cmd.extend(["--ramdisk", ramdisk_img.name,
-                "--output", img_unsigned.name])
+    cmd.extend(["--output", img_unsigned.name])
   else:
-    cmd.extend(["--ramdisk", ramdisk_img.name,
-                "--output", img.name])
+    cmd.extend(["--output", img.name])
 
   p = Run(cmd, stdout=subprocess.PIPE)
   p.communicate()
@@ -430,7 +445,8 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
   img.seek(os.SEEK_SET, 0)
   data = img.read()
 
-  ramdisk_img.close()
+  if has_ramdisk:
+    ramdisk_img.close()
   img.close()
 
   return data
@@ -438,11 +454,11 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
 
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                      info_dict=None):
-  """Return a File object (with name 'name') with the desired bootable
-  image.  Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name
-  'prebuilt_name', otherwise look for it under 'unpack_dir'/IMAGES,
-  otherwise construct it from the source files in
-  'unpack_dir'/'tree_subdir'."""
+  """Return a File object with the desired bootable image.
+
+  Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
+  otherwise look for it under 'unpack_dir'/IMAGES, otherwise construct it from
+  the source files in 'unpack_dir'/'tree_subdir'."""
 
   prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
@@ -455,10 +471,18 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     return File.FromLocalFile(name, prebuilt_path)
 
   print "building image from target_files %s..." % (tree_subdir,)
+
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # With system_root_image == "true", we don't pack ramdisk into the boot image.
+  has_ramdisk = (info_dict.get("system_root_image", None) != "true" or
+                 prebuilt_name != "boot.img")
+
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
-  data = BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
-                            os.path.join(unpack_dir, fs_config),
-                            info_dict)
+  data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
+                             os.path.join(unpack_dir, fs_config),
+                             info_dict, has_ramdisk)
   if data:
     return File(name, data)
   return None
@@ -1401,6 +1425,7 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     info_dict = OPTIONS.info_dict
 
   full_recovery_image = info_dict.get("full_recovery_image", None) == "true"
+  system_root_image = info_dict.get("system_root_image", None) == "true"
 
   if full_recovery_image:
     output_sink("etc/recovery.img", recovery_img.data)
@@ -1458,7 +1483,10 @@ fi
   # target-files expects it to be, and put it there.
   sh_location = "etc/install-recovery.sh"
   found = False
-  init_rc_dir = os.path.join(input_dir, "BOOT", "RAMDISK")
+  if system_root_image:
+    init_rc_dir = os.path.join(input_dir, "ROOT")
+  else:
+    init_rc_dir = os.path.join(input_dir, "BOOT", "RAMDISK")
   init_rc_files = os.listdir(init_rc_dir)
   for init_rc_file in init_rc_files:
     if (not init_rc_file.startswith('init.') or
