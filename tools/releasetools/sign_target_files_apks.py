@@ -175,6 +175,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     data = input_tf_zip.read(info.filename)
     out_info = copy.copy(info)
 
+    # Replace keys if requested.
     if (info.filename == "META/misc_info.txt" and
         OPTIONS.replace_verity_private_key):
       ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
@@ -184,12 +185,14 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       new_data = ReplaceVerityPublicKey(output_tf_zip,
                                         OPTIONS.replace_verity_public_key[1])
       write_to_temp(info.filename, info.external_attr, new_data)
+    # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch.
     elif (info.filename.startswith("BOOT/") or
           info.filename.startswith("RECOVERY/") or
           info.filename.startswith("META/") or
           info.filename == "SYSTEM/etc/recovery-resource.dat"):
       write_to_temp(info.filename, info.external_attr, data)
 
+    # Sign APKs.
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
       key = apk_key_map[name]
@@ -216,6 +219,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       new_data = ReplaceCerts(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
     elif info.filename in ("SYSTEM/recovery-from-boot.p",
+                           "SYSTEM/etc/recovery.img",
                            "SYSTEM/bin/install-recovery.sh"):
       rebuild_recovery = True
     elif (OPTIONS.replace_ota_keys and
