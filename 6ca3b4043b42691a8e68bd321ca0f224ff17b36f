@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ddc66fc_99bc9fa4",
+        "filename": "core/ninja.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-22T17:46:39Z",
+      "side": 1,
+      "message": "Perhaps by adjusting where ninja.mk is included in main.mk, or reordering some inclusion, we can build ckati with $(BUILD_HOST_EXECUTABLE) in Android.mk?",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "6ca3b4043b42691a8e68bd321ca0f224ff17b36f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
