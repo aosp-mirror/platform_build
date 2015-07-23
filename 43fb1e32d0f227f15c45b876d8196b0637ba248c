@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "6dd2dee8_61a580b9",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1029303
+      },
+      "writtenOn": "2015-07-23T04:45:20Z",
+      "side": 1,
+      "message": "Why I need extra files:\n(a)engineer tools like logd and debuggerd, which are helpful for engineers when something is wrong in recovery mode. They are in /system/bin/, dependent libs in /system/lib. They are not in ramdisk.\n(b)vendor binary. If vendor doesn\u0027t support kernel frame buffer driver, we need customized \"/sbin/recovery\". We are trying to bring up frame buffer driver now, but before it\u0027s ready, we still need this vendor binary.\n\nIf Android by design allow customization of other files, yes, it\u0027s a good idea to establish proper dependency then.",
+      "parentUuid": "cdc02a18_3c7c7d5d",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cdc02a18_735c7854",
         "filename": "core/Makefile",
         "patchSetId": 3
