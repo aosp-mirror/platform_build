@@ -35,7 +35,7 @@ define _dexpreopt-boot-jar-remove-classes.dex
 _dbj_jar_no_dex := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(1)_nodex.jar
 _dbj_src_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javalib.jar
 
-$$(_dbj_jar_no_dex) : $$(_dbj_src_jar) | $(ACP) $(AAPT)
+$$(_dbj_jar_no_dex) : $$(_dbj_src_jar) | $(ACP)
 	$$(call copy-file-to-target)
 ifneq ($(DEX_PREOPT_DEFAULT),nostripping)
 	$$(call dexpreopt-remove-classes.dex,$$@)
