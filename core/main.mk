@@ -885,7 +885,8 @@ ifndef BUILD_MODULES_IN_PATHS
 all_modules: $(ALL_MODULES)
 else
 # BUILD_MODULES_IN_PATHS is a list of paths relative to the top of the tree
-module_path_patterns := $(foreach p, $(BUILD_MODULES_IN_PATHS),\
+build_modules_in_paths := $(patsubst ./%,%,$(BUILD_MODULES_IN_PATHS))
+module_path_patterns := $(foreach p, $(build_modules_in_paths),\
     $(if $(filter %/,$(p)),$(p)%,$(p)/%))
 my_all_modules := $(sort $(foreach m, $(ALL_MODULES),$(if $(filter\
     $(module_path_patterns), $(addsuffix /,$(ALL_MODULES.$(m).PATH))),$(m))))
