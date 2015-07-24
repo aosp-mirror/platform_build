@@ -10,9 +10,9 @@
 #-flattenpackagehierarchy
 
 # Keep classes and methods that have the guava @VisibleForTesting annotation
--keep @com.google.common.annotations.VisibleForTesting class *
+-keep @**.VisibleForTesting class *
 -keepclassmembers class * {
-@com.google.common.annotations.VisibleForTesting *;
+@**.VisibleForTesting *;
 }
 
 -include proguard_basic_keeps.flags
