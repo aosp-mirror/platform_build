@@ -25,7 +25,7 @@ out_dir := $(HOST_OUT)/$(test_suite_name)/android-$(test_suite_name)
 test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
 test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-common-util-hostsidelib.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
