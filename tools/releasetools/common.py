@@ -1408,18 +1408,24 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
   if info_dict is None:
     info_dict = OPTIONS.info_dict
 
-  diff_program = ["imgdiff"]
-  path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
-  if os.path.exists(path):
-    diff_program.append("-b")
-    diff_program.append(path)
-    bonus_args = "-b /system/etc/recovery-resource.dat"
-  else:
-    bonus_args = ""
+  full_recovery_image = info_dict.get("full_recovery_image", None) == "true"
 
-  d = Difference(recovery_img, boot_img, diff_program=diff_program)
-  _, _, patch = d.ComputePatch()
-  output_sink("recovery-from-boot.p", patch)
+  if full_recovery_image:
+    output_sink("etc/recovery.img", recovery_img.data)
+
+  else:
+    diff_program = ["imgdiff"]
+    path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+    if os.path.exists(path):
+      diff_program.append("-b")
+      diff_program.append(path)
+      bonus_args = "-b /system/etc/recovery-resource.dat"
+    else:
+      bonus_args = ""
+
+    d = Difference(recovery_img, boot_img, diff_program=diff_program)
+    _, _, patch = d.ComputePatch()
+    output_sink("recovery-from-boot.p", patch)
 
   try:
     boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
@@ -1427,7 +1433,19 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
   except KeyError:
     return
 
-  sh = """#!/system/bin/sh
+  if full_recovery_image:
+    sh = """#!/system/bin/sh
+if ! applypatch -c %(type)s:%(device)s:%(size)d:%(sha1)s; then
+  applypatch /system/etc/recovery.img %(type)s:%(device)s %(sha1)s %(size)d && log -t recovery "Installing new recovery image: succeeded" || log -t recovery "Installing new recovery image: failed"
+else
+  log -t recovery "Recovery image already installed"
+fi
+""" % {'type': recovery_type,
+       'device': recovery_device,
+       'sha1': recovery_img.sha1,
+       'size': recovery_img.size}
+  else:
+    sh = """#!/system/bin/sh
 if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
   applypatch %(bonus_args)s %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p && log -t recovery "Installing new recovery image: succeeded" || log -t recovery "Installing new recovery image: failed"
 else
