@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "eda16e0d_147dbc8f",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-28T17:33:49Z",
+      "side": 1,
+      "message": "Move the conditional and assignment up here.",
+      "parentUuid": "ad1696fe_3780b201",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 32
+      },
+      "revId": "77333c0c937bb1909d4f3de111a0cdf6814a5d6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2db8e63c_d30fc66a",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 2
