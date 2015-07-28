@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad1696fe_3780b201",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-28T17:30:43Z",
+      "side": 1,
+      "message": "and remove this line.",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 32
+      },
+      "revId": "77333c0c937bb1909d4f3de111a0cdf6814a5d6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2db8e63c_d30fc66a",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-28T17:30:43Z",
+      "side": 1,
+      "message": "You don\u0027t need $(subst) here. It\u0027s better to write it as:\nifneq ($(USE_DEX2OAT_DEBUG), false)\nDEX2OAT :\u003d $(DEX2OATD)\nendif\nDEX2OAT_DEPENDENCY +\u003d $(DEX2OAT)",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 5
+      },
+      "revId": "77333c0c937bb1909d4f3de111a0cdf6814a5d6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
