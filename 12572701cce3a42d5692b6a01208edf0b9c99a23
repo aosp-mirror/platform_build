@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eda16e0d_d72696ea",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-28T18:53:49Z",
+      "side": 1,
+      "message": "why do we need to keep this?",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 5
+      },
+      "revId": "12572701cce3a42d5692b6a01208edf0b9c99a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
