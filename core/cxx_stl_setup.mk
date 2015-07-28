@@ -24,6 +24,18 @@ ifeq ($(strip $(LOCAL_CXX_STL)),default)
     endif
 else
     my_cxx_stl := $(strip $(LOCAL_CXX_STL))
+    ifdef LOCAL_SDK_VERSION
+        # The NDK has historically used LOCAL_NDK_STL_VARIANT to specify the
+        # STL. An Android.mk that specifies both LOCAL_CXX_STL and
+        # LOCAL_SDK_VERSION will incorrectly try (and most likely fail) to use
+        # the platform STL in an NDK binary. Emit an error to direct the user
+        # toward the correct option.
+        #
+        # Note that we could also accept LOCAL_CXX_STL as an alias for
+        # LOCAL_NDK_STL_VARIANT (and in fact soong does use the same name), but
+        # the two options use different names for the STLs.
+        $(error $(LOCAL_PATH): $(LOCAL_MODULE): Must use LOCAL_NDK_STL_VARIANT rather than LOCAL_CXX_STL for NDK binaries)
+    endif
 endif
 
 # Yes, this is actually what the clang driver does.
