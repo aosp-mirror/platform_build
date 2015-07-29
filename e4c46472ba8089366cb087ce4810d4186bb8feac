@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2af28c55_c6a47603",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-29T22:31:05Z",
+      "side": 1,
+      "message": "I am not sure if the fstab file is always named that way.\nFor example for aosp_arm, TARGET_DEVICE is generic, but we don\u0027t have fstab.generic - instead we have fstab.goldfish.\nPerhaps we should have a board config variable to specify this, if it doesn\u0027t use fstab.$(TARGET_DEVICE).",
+      "range": {
+        "startLine": 458,
+        "startChar": 28,
+        "endLine": 458,
+        "endChar": 69
+      },
+      "revId": "e4c46472ba8089366cb087ce4810d4186bb8feac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
