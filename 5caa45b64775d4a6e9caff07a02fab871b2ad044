@@ -22,6 +22,30 @@
       "revId": "5caa45b64775d4a6e9caff07a02fab871b2ad044",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a0b6c19_bbf8733e",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-29T19:17:40Z",
+      "side": 1,
+      "message": "Argh, I just tested that the command was really printed when I ran \"make showcommands\", but didn\u0027t test if it\u0027s really hidden without showcommands.\nI\u0027ll move definition of hide.",
+      "parentUuid": "8a00d8f0_9e911928",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 25,
+        "endChar": 8
+      },
+      "revId": "5caa45b64775d4a6e9caff07a02fab871b2ad044",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
