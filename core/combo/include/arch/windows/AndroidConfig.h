@@ -76,8 +76,6 @@
 #define _WIN32 1
 #define _WIN32_WINNT 0x0500     /* admit to using >= Win2K */
 
-#define HAVE_WINDOWS_PATHS      /* needed by simulator */
-
 /*
  * The default path separator for the platform
  */
