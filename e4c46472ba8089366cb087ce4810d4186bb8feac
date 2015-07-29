@@ -22,6 +22,30 @@
       "revId": "e4c46472ba8089366cb087ce4810d4186bb8feac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eafb1432_64547ea4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-07-29T22:43:27Z",
+      "side": 1,
+      "message": "Yeah, they\u0027re named after ro.hardware, which has nothing to do with $TARGET_DEVICE. In fact, there may be multiple in the same image -- see manta for a simple example.",
+      "parentUuid": "2af28c55_c6a47603",
+      "range": {
+        "startLine": 458,
+        "startChar": 28,
+        "endLine": 458,
+        "endChar": 69
+      },
+      "revId": "e4c46472ba8089366cb087ce4810d4186bb8feac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
