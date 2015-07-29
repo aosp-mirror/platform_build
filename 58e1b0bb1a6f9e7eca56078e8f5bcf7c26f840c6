@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eafb1432_dea7a505",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-07-29T18:33:19Z",
+      "side": 1,
+      "message": "ORIG or ORIGINAL, ORIGIN has a different meaning",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 6
+      },
+      "revId": "58e1b0bb1a6f9e7eca56078e8f5bcf7c26f840c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
