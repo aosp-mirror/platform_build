@@ -3,8 +3,13 @@
 #
 ####################################
 
+# Default to debug version to help find bugs.
+# Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
+ifeq ($(USE_DEX2OAT_DEBUG),false)
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
-DEX2OATD := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
+else
+DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
+endif
 
 # By default, do not run rerun dex2oat if the tool changes.
 # Comment out the | to force dex2oat to rerun on after all changes.
@@ -13,9 +18,6 @@ DEX2OAT_DEPENDENCY += art/runtime/image.cc # dependency on image version number
 DEX2OAT_DEPENDENCY += |
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
 
-DEX2OATD_DEPENDENCY := $(DEX2OAT_DEPENDENCY)
-DEX2OATD_DEPENDENCY += $(DEX2OATD)
-
 # Use the first preloaded-classes file in PRODUCT_COPY_FILES.
 PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
@@ -23,13 +25,6 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 # Use the first compiled-classes file in PRODUCT_COPY_FILES.
 COMPILED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
-
-# Default to debug version to help find bugs.
-# Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
-ifneq ($(USE_DEX2OAT_DEBUG), false)
-DEX2OAT = $(DEX2OATD)
-DEX2OAT_DEPENDENCY = $(DEX2OATD_DEPENDENCY)
-endif
 
 # start of image reserved address space
 LIBART_IMG_HOST_BASE_ADDRESS   := 0x60000000
