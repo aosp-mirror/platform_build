@@ -40,9 +40,4 @@
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE 1
 
-/*
- * The default path separator for the platform
- */
-#define OS_PATH_SEPARATOR '/'
-
 #endif /*_ANDROID_CONFIG_H*/
