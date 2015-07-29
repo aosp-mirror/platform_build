@@ -104,7 +104,7 @@ BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java
 # lines being executed, instead of a short message about
 # the kind of operation being done.
 SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
-
+hide := $(if $(SHOW_COMMANDS),,@)
 
 # ###############################################################
 # Set common values
