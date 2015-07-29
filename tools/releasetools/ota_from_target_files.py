@@ -832,9 +832,9 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   #    (allow recovery to mark itself finished and reboot)
 
   if OPTIONS.two_step:
-    if not OPTIONS.info_dict.get("multistage_support", None):
+    if not OPTIONS.source_info_dict.get("multistage_support", None):
       assert False, "two-step packages not supported by this build"
-    fs = OPTIONS.info_dict["fstab"]["/misc"]
+    fs = OPTIONS.source_info_dict["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
     bcb_dev = {"bcb_dev": fs.device}
@@ -879,7 +879,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
           GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
 
   if updating_boot:
-    boot_type, boot_device = common.GetTypeAndDevice("/boot", OPTIONS.info_dict)
+    boot_type, boot_device = common.GetTypeAndDevice(
+        "/boot", OPTIONS.source_info_dict)
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
     if d is None:
@@ -1218,9 +1219,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   #    (allow recovery to mark itself finished and reboot)
 
   if OPTIONS.two_step:
-    if not OPTIONS.info_dict.get("multistage_support", None):
+    if not OPTIONS.source_info_dict.get("multistage_support", None):
       assert False, "two-step packages not supported by this build"
-    fs = OPTIONS.info_dict["fstab"]["/misc"]
+    fs = OPTIONS.source_info_dict["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
     bcb_dev = {"bcb_dev": fs.device}
@@ -1257,7 +1258,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
-    boot_type, boot_device = common.GetTypeAndDevice("/boot", OPTIONS.info_dict)
+    boot_type, boot_device = common.GetTypeAndDevice(
+        "/boot", OPTIONS.source_info_dict)
 
     script.PatchCheck("%s:%s:%d:%s:%d:%s" %
                       (boot_type, boot_device,
