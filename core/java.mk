@@ -162,10 +162,12 @@ else
   endif  # LOCAL_SDK_VERSION is set
 endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
 
-# For 64-bit, we always have to upgrade to at least 21
-ifeq ($(TARGET_IS_64_BIT),true)
-  ifneq ($(filter $(RSCOMPAT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)
-    renderscript_target_api := 21
+# For 64-bit, we always have to upgrade to at least 21 for compat build.
+ifneq ($(LOCAL_RENDERSCRIPT_COMPATIBILITY),)
+  ifeq ($(TARGET_IS_64_BIT),true)
+    ifneq ($(filter $(RSCOMPAT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)
+      renderscript_target_api := 21
+    endif
   endif
 endif
 
