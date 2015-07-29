@@ -802,11 +802,9 @@ ifeq ($(strip $(SHOW_COMMANDS)),)
 define pretty
 @echo $1
 endef
-hide := @
 else
 define pretty
 endef
-hide :=
 endif
 
 ###########################################################
