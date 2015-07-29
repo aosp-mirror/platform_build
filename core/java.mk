@@ -148,18 +148,26 @@ renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sour
 RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
 renderscript_intermediate.COMMON := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript
 
+# Defaulting to an empty string uses the latest available platform SDK.
 renderscript_target_api :=
 
 ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
-renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+  renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
 else
-ifneq (,$(LOCAL_SDK_VERSION))
-# Set target-api for LOCAL_SDK_VERSIONs other than current.
-ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
-renderscript_target_api := $(LOCAL_SDK_VERSION)
-endif
-endif  # LOCAL_SDK_VERSION is set
+  ifneq (,$(LOCAL_SDK_VERSION))
+    # Set target-api for LOCAL_SDK_VERSIONs other than current.
+    ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
+      renderscript_target_api := $(LOCAL_SDK_VERSION)
+    endif
+  endif  # LOCAL_SDK_VERSION is set
 endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
+
+# For 64-bit, we always have to upgrade to at least 21
+ifeq ($(TARGET_IS_64_BIT),true)
+  ifneq ($(filter $(RSCOMPAT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)
+    renderscript_target_api := 21
+  endif
+endif
 
 ifeq ($(LOCAL_RENDERSCRIPT_CC),)
 LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
