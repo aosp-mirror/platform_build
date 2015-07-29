@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a142033_bcf86d3e",
+        "filename": "core/ninja.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-07-29T20:14:43Z",
+      "side": 1,
+      "message": "I also considered adding $(hide) here, but Makefile.ckati has no @echo to say it is building something.  My other thought was to put either \"@\" for !showcommands or \"@echo Building $@  $$\" for showcommands, and using \u003d instead of :\u003d to delay the evaluation of $@",
+      "range": {
+        "startLine": 43,
+        "startChar": 11,
+        "endLine": 43,
+        "endChar": 12
+      },
+      "revId": "bb1da5e614a26fb9d973c88db2c56a1f294f332d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
