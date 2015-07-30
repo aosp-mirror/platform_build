@@ -45,6 +45,30 @@
       "revId": "76320464a50d2eb6dd523e92ed4330b46980dc78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca2490af_8123eaae",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-30T23:14:11Z",
+      "side": 1,
+      "message": "The error is:\n\n $ rsync -a out/target/product/flounder/root out/target/product/flounder/recovery\ncannot delete non-empty directory: root/etc\ncould not make way for new symlink: root/etc\nrsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1183) [sender\u003d3.1.0]\n\nThis is because $(TARGET_RECOVERY_ROOT_OUT)/etc is non-empty (has recovery.fstab inside), while $(TARGET_ROOT_OUT)/etc is a symlink. rsync refuses to replace the non-empty recovery/etc with the symlink.",
+      "parentUuid": "8a2e188f_2eb8a730",
+      "range": {
+        "startLine": 848,
+        "startChar": 63,
+        "endLine": 848,
+        "endChar": 114
+      },
+      "revId": "76320464a50d2eb6dd523e92ed4330b46980dc78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
