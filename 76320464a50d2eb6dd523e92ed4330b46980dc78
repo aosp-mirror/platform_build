@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "8a2e188f_9170dcce",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 846,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-30T23:27:11Z",
+      "side": 1,
+      "message": "but it\u0027s created again here.",
+      "range": {
+        "startLine": 846,
+        "startChar": 16,
+        "endLine": 846,
+        "endChar": 50
+      },
+      "revId": "76320464a50d2eb6dd523e92ed4330b46980dc78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a2e188f_2eb8a730",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -60,6 +83,30 @@
       "side": 1,
       "message": "The error is:\n\n $ rsync -a out/target/product/flounder/root out/target/product/flounder/recovery\ncannot delete non-empty directory: root/etc\ncould not make way for new symlink: root/etc\nrsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1183) [sender\u003d3.1.0]\n\nThis is because $(TARGET_RECOVERY_ROOT_OUT)/etc is non-empty (has recovery.fstab inside), while $(TARGET_ROOT_OUT)/etc is a symlink. rsync refuses to replace the non-empty recovery/etc with the symlink.",
       "parentUuid": "8a2e188f_2eb8a730",
+      "range": {
+        "startLine": 848,
+        "startChar": 63,
+        "endLine": 848,
+        "endChar": 114
+      },
+      "revId": "76320464a50d2eb6dd523e92ed4330b46980dc78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a6260ef_52b94a65",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-30T23:27:11Z",
+      "side": 1,
+      "message": "I see. That\u0027s the error because you are trying to overwrite existing dir with symlink; while \"rsync -a\" was to fix symlink overwriting broken symlink.\n\nProbably better to write a python script to do the copy, so you can select whatever to copy.",
+      "parentUuid": "ca2490af_8123eaae",
       "range": {
         "startLine": 848,
         "startChar": 63,
