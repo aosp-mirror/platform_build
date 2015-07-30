@@ -32,9 +32,4 @@
  * comments.
  */
 
-/*
- * The default path separator for the platform
- */
-#define OS_PATH_SEPARATOR '/'
-
 #endif /*_ANDROID_CONFIG_H*/
