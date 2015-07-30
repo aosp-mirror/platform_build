@@ -77,11 +77,6 @@
 #define _WIN32_WINNT 0x0500     /* admit to using >= Win2K */
 
 /*
- * The default path separator for the platform
- */
-#define OS_PATH_SEPARATOR '\\'
-
-/*
  * Various definitions missing in MinGW
  */
 #ifdef USE_MINGW
