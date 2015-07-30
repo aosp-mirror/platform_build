@@ -58,11 +58,4 @@
 #define _WIN32 1
 #define _WIN32_WINNT 0x0500     /* admit to using >= Win2K */
 
-/*
- * Various definitions missing in MinGW
- */
-#ifdef USE_MINGW
-#define S_IRGRP 0
-#endif
-
 #endif /*_ANDROID_CONFIG_H*/
