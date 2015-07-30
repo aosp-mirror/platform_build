@@ -117,7 +117,10 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v17/leanback \
         design \
         percent \
-        recommendation
+        recommendation \
+        v7/preference \
+        v14/preference \
+        v17/preference-leanback
 
 #
 # A list of all source roots under frameworks/multidex.
