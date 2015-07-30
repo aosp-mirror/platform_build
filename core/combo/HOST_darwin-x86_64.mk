@@ -52,9 +52,6 @@ HOST_NO_UNDEFINED_LDFLAGS := -Wl,-undefined,error
 HOST_SHLIB_SUFFIX := .dylib
 HOST_JNILIB_SUFFIX := .jnilib
 
-HOST_GLOBAL_CFLAGS += \
-    -include $(call select-android-config-h,darwin-x86)
-
 HOST_GLOBAL_ARFLAGS := cqs
 
 # We Reuse the following functions with the same name from HOST_darwin-x86.mk:
