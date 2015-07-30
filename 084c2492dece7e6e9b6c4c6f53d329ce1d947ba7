@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a3980cf_373360b1",
+        "filename": "core/combo/arch/arm64/armv8-a.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2015-07-30T16:13:07Z",
+      "side": 1,
+      "message": "it\u0027d be nice to document what this value is.",
+      "range": {
+        "startLine": 15,
+        "startChar": 43,
+        "endLine": 15,
+        "endChar": 67
+      },
+      "revId": "084c2492dece7e6e9b6c4c6f53d329ce1d947ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a3980cf_776688a1",
+        "filename": "core/combo/arch/arm64/armv8-a.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2015-07-30T16:13:07Z",
+      "side": 1,
+      "message": "would it be more readable here to do the equivalent of:\n\nif (CPU_VARIANT \u003d\u003d cortex-a72) arch_variant_cflags :\u003d -mcpu\u003dcortex-a72\n\nie lose the filter.\n\nOh, I see you are basically trying to do:\n\narch_variant_cflags :\u003d -mcpu\u003d$(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT))\n\nand then hacking the cases of generic, denver64 and cortex-a72 to be something special. Perhaps do the default assignment and then override for the special cases to make this more obvious.",
+      "range": {
+        "startLine": 19,
+        "startChar": 9,
+        "endLine": 19,
+        "endChar": 16
+      },
+      "revId": "084c2492dece7e6e9b6c4c6f53d329ce1d947ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
