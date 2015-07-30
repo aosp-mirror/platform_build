@@ -86,6 +86,8 @@ ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
 endif
 
+ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
+
 # Targets that provide quick help on the build system.
 include $(BUILD_SYSTEM)/help.mk
 
