@@ -34,6 +34,18 @@ ifeq ($(my_sanitize),never)
   my_sanitize :=
 endif
 
+# TSAN is not supported on 32-bit architectures. For non-multilib cases, make
+# its use an error. For multilib cases, don't use it for the 32-bit case.
+ifneq ($(filter thread,$(my_sanitize)),)
+  ifeq ($(my_32_64_bit_suffix),32)
+    ifeq ($(my_module_multilib),both)
+        my_sanitize := $(filter-out thread,$(my_sanitize))
+    else
+        $(error $(LOCAL_PATH): $(LOCAL_MODULE): TSAN cannot be used for 32-bit modules.)
+    endif
+  endif
+endif
+
 # Undefined symbols can occur if a non-sanitized library links
 # sanitized static libraries. That's OK, because the executable
 # always depends on the ASan runtime library, which defines these
