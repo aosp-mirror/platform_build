@@ -9,7 +9,7 @@ ifndef build_mac_version
 
 build_mac_version := $(shell sw_vers -productVersion)
 
-mac_sdk_versions_supported :=  10.6 10.7 10.8 10.9
+mac_sdk_versions_supported :=  10.8 10.9 10.10
 ifneq ($(strip $(MAC_SDK_VERSION)),)
 mac_sdk_version := $(MAC_SDK_VERSION)
 ifeq ($(filter $(mac_sdk_version),$(mac_sdk_versions_supported)),)
@@ -19,7 +19,7 @@ $(warning ****************************************************************)
 $(error Stop.)
 endif
 else
-mac_sdk_versions_installed := $(shell xcodebuild -showsdks | grep macosx | sort | sed -e "s/.*macosx//g")
+mac_sdk_versions_installed := $(shell xcodebuild -showsdks | grep macosx | sed -e "s/.*macosx//g")
 mac_sdk_version := $(firstword $(filter $(mac_sdk_versions_installed), $(mac_sdk_versions_supported)))
 ifeq ($(mac_sdk_version),)
 mac_sdk_version := $(firstword $(mac_sdk_versions_supported))
