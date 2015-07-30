@@ -116,6 +116,30 @@
       "revId": "76320464a50d2eb6dd523e92ed4330b46980dc78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea295486_748d603d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-07-30T23:37:05Z",
+      "side": 1,
+      "message": "Probably because in this way we just have a generic version, regardless of SYSTEM_ROOT_IMAGE being true or not. Before rsync, it always makes sure recovery_root/etc is empty, so rsync will be happy to copy over either a directory or a symlink. And after that, we explicitly kill /etc to make it a directory.",
+      "parentUuid": "4a6260ef_52b94a65",
+      "range": {
+        "startLine": 848,
+        "startChar": 63,
+        "endLine": 848,
+        "endChar": 114
+      },
+      "revId": "76320464a50d2eb6dd523e92ed4330b46980dc78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
