@@ -37,9 +37,4 @@
  */
 #define HAVE_ANDROID_OS 1
 
-/*
- * The default path separator for the platform
- */
-#define OS_PATH_SEPARATOR '/'
-
 #endif /* _ANDROID_CONFIG_H */
