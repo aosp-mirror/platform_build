@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "ca2490af_42ae209e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:08:13Z",
+      "side": 1,
+      "message": "I suppose we could.",
+      "parentUuid": "ea295486_54b94465",
+      "range": {
+        "startLine": 577,
+        "startChar": 60,
+        "endLine": 577,
+        "endChar": 97
+      },
+      "revId": "58d5d554b1520cc3f4dd0d1834e4c1eb5f7b8a06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ca4d7087_4e2e47c7",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -59,6 +83,30 @@
       "writtenOn": "2015-07-31T00:59:07Z",
       "side": 1,
       "message": "What is this prefix for?\nI\u0027d like to keep the number of LOCAL variables as small as possible.",
+      "range": {
+        "startLine": 579,
+        "startChar": 68,
+        "endLine": 579,
+        "endChar": 104
+      },
+      "revId": "58d5d554b1520cc3f4dd0d1834e4c1eb5f7b8a06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a5f2428_d0c894ca",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:08:13Z",
+      "side": 1,
+      "message": "It is to help developers avoid header path collisions.  Without it, when I include \u003cservice1/client_lib.h\u003e and \u003cservice2/client_lib.h\u003e and each of those includes \u003cdbus-bindings/dbus_proxy.h\u003e we would worry.\n\nI guess I could just take the module name as the folder prefix.  I\u0027ll go with that unless you have objections.",
+      "parentUuid": "ca4d7087_4e2e47c7",
       "range": {
         "startLine": 579,
         "startChar": 68,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "2a59ac45_bc16197e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:08:13Z",
+      "side": 1,
+      "message": "Removed.\n\nIs that because when I express that my header depends on the host binary, that creates the dependency chain that I want?",
+      "parentUuid": "0a5ce834_8dc20527",
+      "range": {
+        "startLine": 584,
+        "startChar": 0,
+        "endLine": 585,
+        "endChar": 48
+      },
+      "revId": "58d5d554b1520cc3f4dd0d1834e4c1eb5f7b8a06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a2e188f_31bec84f",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -105,6 +177,30 @@
       "writtenOn": "2015-07-31T00:59:07Z",
       "side": 1,
       "message": "For build tools the convention is to define a const in build/core/config.mk and use the const here.\nProbably DBUS_GENERAOTR in config.mk.",
+      "range": {
+        "startLine": 586,
+        "startChar": 0,
+        "endLine": 586,
+        "endChar": 69
+      },
+      "revId": "58d5d554b1520cc3f4dd0d1834e4c1eb5f7b8a06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4a6260ef_becf2da0",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:08:13Z",
+      "side": 1,
+      "message": "Excellent.",
+      "parentUuid": "8a2e188f_31bec84f",
       "range": {
         "startLine": 586,
         "startChar": 0,
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "ea523422_7a00a13e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:08:13Z",
+      "side": 1,
+      "message": "That explains so much!!\n\nhttps://www.gnu.org/software/make/manual/html_node/Variables-in-Recipes.html\n\nThank you thank you thank you.",
+      "parentUuid": "0a5ce834_0df05588",
+      "range": {
+        "startLine": 597,
+        "startChar": 24,
+        "endLine": 597,
+        "endChar": 53
+      },
+      "revId": "58d5d554b1520cc3f4dd0d1834e4c1eb5f7b8a06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0a5ce834_cde11dbb",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -151,6 +271,30 @@
       "writtenOn": "2015-07-31T00:59:07Z",
       "side": 1,
       "message": "Probably move to a function in definitions.mk, similar to $(transform-proto-to-cc)",
+      "range": {
+        "startLine": 594,
+        "startChar": 0,
+        "endLine": 601,
+        "endChar": 33
+      },
+      "revId": "58d5d554b1520cc3f4dd0d1834e4c1eb5f7b8a06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca2490af_62059c4d",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:08:13Z",
+      "side": 1,
+      "message": "Ah, that also makes more sense.",
+      "parentUuid": "0a5ce834_cde11dbb",
       "range": {
         "startLine": 594,
         "startChar": 0,
