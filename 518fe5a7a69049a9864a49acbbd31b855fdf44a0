@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a2e188f_fa581585",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-31T22:04:13Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we check if $BOARD_BUILD_SYSTEM_ROOT_IMAGE is empty?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 64
+      },
+      "revId": "518fe5a7a69049a9864a49acbbd31b855fdf44a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
