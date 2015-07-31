@@ -18,6 +18,7 @@
 
 PRODUCT_PACKAGES += \
     apache-xml \
+    ahat \
     bouncycastle \
     cacerts \
     conscrypt \
