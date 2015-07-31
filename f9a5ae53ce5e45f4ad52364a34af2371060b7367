@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca4d7087_0e284fb5",
+        "filename": "tools/droiddoc/templates-sac/docpage.cs",
+        "patchSetId": 3
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1022179
+      },
+      "writtenOn": "2015-07-31T00:52:37Z",
+      "side": 1,
+      "message": "Is it possible to remove these whitespaces (in red)?",
+      "range": {
+        "startLine": 123,
+        "startChar": 44,
+        "endLine": 123,
+        "endChar": 45
+      },
+      "revId": "f9a5ae53ce5e45f4ad52364a34af2371060b7367",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
