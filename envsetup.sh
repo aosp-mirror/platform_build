@@ -198,6 +198,7 @@ function setpaths()
     fi
 
     export PATH=$ANDROID_BUILD_PATHS$PATH
+    export PYTHONPATH=$T/system/core:$PYTHONPATH
 
     unset ANDROID_JAVA_TOOLCHAIN
     unset ANDROID_PRE_BUILD_PATHS
