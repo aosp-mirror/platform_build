@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea523422_fac13197",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-07-31T18:28:53Z",
+      "side": 1,
+      "message": "Do you need to add the path to my_c_includes?\nIf the headers are included from $(generated_sources_dir), something like #include \"dbus-bindings/foo/adaptors.h\", then you don\u0027t, because $(generated_sources_dir) is automatically added by the build system.",
+      "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
