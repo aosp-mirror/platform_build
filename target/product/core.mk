@@ -22,7 +22,8 @@
 
 PRODUCT_PACKAGES += \
     BasicDreams \
-    Browser \
+    BookmarkProvider \
+    Browser2 \
     Calculator \
     Calendar \
     CalendarProvider \
