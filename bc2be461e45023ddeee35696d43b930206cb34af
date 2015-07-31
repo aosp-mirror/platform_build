@@ -16,6 +16,24 @@
       "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca2490af_d6bbf5a8",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-07-31T18:34:14Z",
+      "side": 1,
+      "message": "That\u0027s the include pattern I\u0027ve been intending to use.  So I guess I don\u0027t?",
+      "parentUuid": "ea523422_fac13197",
+      "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
