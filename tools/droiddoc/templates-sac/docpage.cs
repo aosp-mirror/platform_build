@@ -116,18 +116,13 @@
     <div class="jd-descr" itemprop="articleBody">
     <?cs call:tag_list(root.descr) ?>
     </div>
-      
-      <div class="content-footer <?cs 
-                    if:fullpage ?>wrap<?cs
-                    else ?>layout-content-row<?cs /if ?>" 
+
+      <div class="content-footer-test"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="layout-content-col <?cs 
                     if:fullpage ?>col-16<?cs 
                     elif:training||guide ?>col-8<?cs 
                     else ?>col-9<?cs /if ?>" style="padding-top:4px">
-          <?cs if:!page.noplus ?><?cs if:fullpage ?><style>#___plusone_0 {float:right !important;}</style><?cs /if ?>
-            <div class="g-plusone" data-size="medium"></div>
-          <?cs /if ?>
         </div>
         <?cs if:!fullscreen ?>
         <div class="paging-links layout-content-col col-4">
@@ -138,7 +133,7 @@
                 ru-lang="Предыдущий"
                 ko-lang="이전"
                 ja-lang="前へ"
-                es-lang="Anterior"               
+                es-lang="Anterior"
                 >Previous</a>
             <a href="#" class="next-page-link hide"
                 zh-TW-lang="下一堂課"

@@ -420,8 +420,12 @@ video.with-shadow {
   border-top: 1px solid #ccc;
   margin-top: 10px;
   padding-top:10px;
-  height: 30px; }
+  height: 30px;
+}
 
+.content-footer-test {
+  border-top: 1px solid #ccc;
+}
 .content-footer .col-9 {
   margin-left:0;
 }
@@ -4461,6 +4465,11 @@ a.download-sdk {
   float:right;
 }
 
+.feedback {
+  float:right !important;
+  margin: 0 0 0 10px;
+  font-size: 14px;
+}
 
 
 /************* HOME/LANDING PAGE *****************/
