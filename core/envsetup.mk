@@ -131,10 +131,6 @@ $(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
 $(error must be empty or one of: eng user userdebug)
 endif
 
-# Build host as 32-bit for SDK build.
-ifneq ($(filter $(MAKECMDGOALS),win_sdk sdk),)
-HOST_PREFER_32_BIT := true
-endif
 ifdef USE_MINGW
 # We only build sdk host tools in the MinGW windows build.
 # Build it as 32-bit as well.
