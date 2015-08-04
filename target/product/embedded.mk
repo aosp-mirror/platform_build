@@ -75,7 +75,6 @@ PRODUCT_PACKAGES += \
 # SELinux packages
 PRODUCT_PACKAGES += \
     sepolicy \
-    file_contexts \
     file_contexts.bin \
     seapp_contexts \
     property_contexts \
