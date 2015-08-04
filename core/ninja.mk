@@ -42,6 +42,11 @@ kati.intermediate: $(KATI)
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
+# Build static ckati. Unfortunately Mac OS X doesn't officially support static exectuables.
+ifeq ($(BUILD_OS),linux)
+KATI_LD += -static
+endif
+
 KATI_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/ckati_intermediates
 KATI_BIN_PATH := $(HOST_OUT_EXECUTABLES)
 include build/kati/Makefile.ckati
