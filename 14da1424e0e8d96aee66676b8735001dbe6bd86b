@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca157084_b469ceeb",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-04T18:43:17Z",
+      "side": 1,
+      "message": "This change in fact disabled the CleanSpec.mk mechanism, if you have ever run a clean build.",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 46
+      },
+      "revId": "14da1424e0e8d96aee66676b8735001dbe6bd86b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
