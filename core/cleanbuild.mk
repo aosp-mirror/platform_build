@@ -54,6 +54,7 @@ endef
 # can have permission to touch it.
 include $(BUILD_SYSTEM)/cleanspec.mk
 INTERNAL_CLEAN_BUILD_VERSION := $(strip $(INTERNAL_CLEAN_BUILD_VERSION))
+INTERNAL_CLEAN_STEPS := $(strip $(INTERNAL_CLEAN_STEPS))
 
 # If the clean_steps.mk file is missing (usually after a clean build)
 # then we won't do anything.
@@ -108,7 +109,15 @@ endif
 
 # Write the new state to the file.
 #
+rewrite_clean_steps_file :=
 ifneq ($(CURRENT_CLEAN_BUILD_VERSION)-$(CURRENT_CLEAN_STEPS),$(INTERNAL_CLEAN_BUILD_VERSION)-$(INTERNAL_CLEAN_STEPS))
+rewrite_clean_steps_file := true
+endif
+ifeq ($(wildcard $(clean_steps_file)),)
+# This is the first build.
+rewrite_clean_steps_file := true
+endif
+ifeq ($(rewrite_clean_steps_file),true)
 $(shell \
   mkdir -p $(dir $(clean_steps_file)) && \
   echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
@@ -121,6 +130,7 @@ endif
 CURRENT_CLEAN_BUILD_VERSION :=
 CURRENT_CLEAN_STEPS :=
 clean_steps_file :=
+rewrite_clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
 
