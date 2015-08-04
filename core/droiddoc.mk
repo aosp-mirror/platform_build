@@ -108,7 +108,7 @@ $(full_target): PRIVATE_STUB_OUT_DIR := $(LOCAL_DROIDDOC_STUB_OUT_DIR)
 define prepare-doc-source-list
 $(hide) mkdir -p $(dir $(1))
 $(call dump-words-to-file, $(2), $(1))
-$(hide) for d in $(3) ; do find $$d -name '*.java' >> $(1) 2> /dev/null ; done ; true
+$(hide) for d in $(3) ; do find $$d -name '*.java' -and -not -name '.*' >> $(1) 2> /dev/null ; done ; true
 endef
 
 ifeq (a,b)
