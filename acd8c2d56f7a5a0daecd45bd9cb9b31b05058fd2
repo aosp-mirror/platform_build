@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ac4207d_bf221fd8",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1438,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-05T23:34:52Z",
+      "side": 1,
+      "message": "ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)\nto be consistent with other checks of this variable.",
+      "range": {
+        "startLine": 1438,
+        "startChar": 0,
+        "endLine": 1438,
+        "endChar": 35
+      },
+      "revId": "acd8c2d56f7a5a0daecd45bd9cb9b31b05058fd2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
