@@ -57,6 +57,30 @@
       "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ea1a34b3_096b6d66",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-05T17:02:22Z",
+      "side": 1,
+      "message": "Oops.  Wish I\u0027d seen this earlier.  Patch incoming.",
+      "parentUuid": "0ad9483e_be46f0d5",
+      "range": {
+        "startLine": 972,
+        "startChar": 42,
+        "endLine": 972,
+        "endChar": 70
+      },
+      "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
