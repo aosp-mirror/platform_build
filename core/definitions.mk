@@ -967,6 +967,22 @@ $(hide) $(PROTOC) \
 	$<
 endef
 
+
+######################################################################
+## Commands for running protoc to compile .proto into .pb.cc and .pb.h
+######################################################################
+define generate-dbus-bindings
+@echo "Generating DBus bindings for $(PRIVATE_DBUS_MODULE)"
+@mkdir -p $(PRIVATE_DBUS_HEADER_DIRECTORY)
+$(hide) $(DBUS_GENERATOR) \
+	--service-config=$(PRIVATE_DBUS_SERVICE_CONFIG) \
+	--adaptor=$(PRIVATE_DBUS_ADAPTORS_HEADER) \
+	--proxy=$(PRIVATE_DBUS_PROXIES_HEADER) \
+	--method-names=$(PRIVATE_DBUS_METHOD_NAMES_HEADER) \
+	$(PRIVATE_DBUS_INTERFACE_DEFINITIONS)
+endef
+
+
 ###########################################################
 ## Commands for running gcc to compile a C++ file
 ###########################################################
