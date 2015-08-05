@@ -34,6 +34,29 @@
       "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ad9483e_be46f0d5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 1058338
+      },
+      "writtenOn": "2015-08-05T16:05:45Z",
+      "side": 1,
+      "message": "proto???",
+      "range": {
+        "startLine": 972,
+        "startChar": 42,
+        "endLine": 972,
+        "endChar": 70
+      },
+      "revId": "bc2be461e45023ddeee35696d43b930206cb34af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
