@@ -22,6 +22,30 @@
       "revId": "ec224d5072f4af2b01aa0e4f06b161246054b028",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7f64b4b_7dc1b7fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-06T23:36:24Z",
+      "side": 1,
+      "message": "From the make 3.82 release notes:\n\n https://lists.gnu.org/archive/html/info-gnu/2010-07/msg00023.html\n * WARNING: Future backward-incompatibility!\n   Wildcards are not documented as returning sorted values, but up to and\n   including this release the results have been sorted and some makefiles are\n   apparently depending on that.  In the next release of GNU make, for\n   performance reasons, we may remove that sorting.  If your makefiles\n   require sorted results from wildcard expansions, use the $(sort ...)\n   function to request it explicitly.\n\nAnd it appears that some distributions backported that change into 3.82",
+      "parentUuid": "67111f42_3a03411c",
+      "range": {
+        "startLine": 9,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "ec224d5072f4af2b01aa0e4f06b161246054b028",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
