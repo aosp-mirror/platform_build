@@ -579,7 +579,7 @@ dbus_if_sources_full_path := $(addprefix $(LOCAL_PATH)/,$(dbus_if_sources))
 dbus_service_config := $(filter %dbus-service-config.json,$(my_src_files))
 dbus_service_config_full_path := $(addprefix $(LOCAL_PATH)/,$(dbus_service_config))
 
-dbus_header_prefix := $(generated_sources_dir)/dbus-bindings/$(LOCAL_MODULE)
+dbus_header_prefix := $(generated_sources_dir)/dbus_bindings
 dbus_adaptors_header := $(dbus_header_prefix)/adaptors.h
 dbus_proxies_header := $(dbus_header_prefix)/proxies.h
 dbus_method_names_header := $(dbus_header_prefix)/method_names.h
