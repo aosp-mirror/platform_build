@@ -24,7 +24,7 @@ ifdef LOCAL_IS_HOST_MODULE
   endif
 else
   ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
-      my_system_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES)
+      my_system_shared_libraries := libc libm
   else
       my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
   endif
