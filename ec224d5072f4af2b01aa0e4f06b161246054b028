@@ -46,6 +46,30 @@
       "revId": "ec224d5072f4af2b01aa0e4f06b161246054b028",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c7f64b4b_dd2a0b30",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-06T23:48:21Z",
+      "side": 1,
+      "message": "Thanks for the information.",
+      "parentUuid": "c7f64b4b_7dc1b7fa",
+      "range": {
+        "startLine": 9,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "ec224d5072f4af2b01aa0e4f06b161246054b028",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
