@@ -34,7 +34,7 @@
             ru-lang="Предыдущий"
             ko-lang="이전"
             ja-lang="前へ"
-            es-lang="Anterior"               
+            es-lang="Anterior"
             >Previous</a>
         <a href="#" class="next-page-link hide"
             zh-TW-lang="下一堂課"
@@ -42,7 +42,7 @@
             ru-lang="Следующий"
             ko-lang="다음"
             ja-lang="次へ"
-            es-lang="Siguiente"               
+            es-lang="Siguiente"
             >Next</a>
         <a href="#" class="start-class-link hide"
             zh-TW-lang="開始上課"
@@ -50,7 +50,7 @@
             ru-lang="Начало работы"
             ko-lang="시작하기"
             ja-lang="開始する"
-            es-lang="Empezar"               
+            es-lang="Empezar"
             >Get started</a>
       </div>
     <?cs elif:!page.trainingcourse ?>
@@ -61,7 +61,7 @@
             ru-lang="Предыдущий"
             ko-lang="이전"
             ja-lang="前へ"
-            es-lang="Anterior"               
+            es-lang="Anterior"
             >Previous</a>
         <a href="#" class="next-page-link hide"
             zh-TW-lang="下一堂課"
@@ -69,7 +69,7 @@
             ru-lang="Следующий"
             ko-lang="다음"
             ja-lang="次へ"
-            es-lang="Siguiente"               
+            es-lang="Siguiente"
             >Next</a>
       </div>
     <?cs /if ?><?cs # end if training ?>
@@ -87,7 +87,6 @@
         <?cs /if ?>
           <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
           <p itemprop="description"><?cs var:page.landing.intro ?></p>
-          
           <p><a class="next-page-link topic-start-link"></a></p>
         <?cs if:page.landing.image ?>
         </div>
@@ -112,12 +111,11 @@
   <?cs # THIS IS THE MAIN DOC CONTENT ?>
   <div id="jd-content">
 
-
     <div class="jd-descr" itemprop="articleBody">
     <?cs call:tag_list(root.descr) ?>
     </div>
 
-      <div class="content-footer-test"
+      <div class="content-footer-sac"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
         <div class="layout-content-col <?cs 
                     if:fullpage ?>col-16<?cs 
@@ -141,23 +139,20 @@
                 ru-lang="Следующий"
                 ko-lang="다음"
                 ja-lang="次へ"
-                es-lang="Siguiente"               
+                es-lang="Siguiente"
                 >Next</a>
           <?cs /if ?>
         </div>
         <?cs /if ?>
       </div>
-      
       <?cs # for training classes, provide a different kind of link when the next page is a different class ?>
       <?cs if:training && !page.article ?>
       <div class="layout-content-row content-footer next-class" style="display:none" itemscope itemtype="http://schema.org/SiteNavigationElement">
           <a href="#" class="next-class-link hide">Next class: </a>
       </div>
       <?cs /if ?>
-
-  </div> <!-- end jd-content -->
-
-<?cs include:"footer.cs" ?>
+    </div> <!-- end jd-content -->
+  <?cs include:"footer.cs" ?>
 </div><!-- end doc-content -->
 
 <?cs include:"trailer.cs" ?>
