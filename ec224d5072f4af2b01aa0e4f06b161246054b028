@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67111f42_3a03411c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-06T23:29:48Z",
+      "side": 1,
+      "message": "I didn\u0027t know that.\nIt seems $(wildcard) itself doesn\u0027t sort, but its implementation calls glob() that does the sorting.\nThat means results of $(wildcard) are only locally sorted if multiple globbing patters are provided. But this doesn\u0027t matter.",
+      "range": {
+        "startLine": 9,
+        "startChar": 32,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "ec224d5072f4af2b01aa0e4f06b161246054b028",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
