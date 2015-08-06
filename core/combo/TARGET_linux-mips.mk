@@ -164,6 +164,4 @@ $(combo_2nd_arch_prefix)TARGET_CRTEND_SO_O := $($(combo_2nd_arch_prefix)TARGET_O
 
 $(combo_2nd_arch_prefix)TARGET_PACK_MODULE_RELOCATIONS := true
 
-$(combo_2nd_arch_prefix)TARGET_DEFAULT_SYSTEM_SHARED_LIBRARIES := libc libm
-
 $(combo_2nd_arch_prefix)TARGET_LINKER := /system/bin/linker
