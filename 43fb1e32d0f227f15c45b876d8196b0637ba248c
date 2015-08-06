@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "8ac9b89e_620bc82e",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 776,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-06T18:46:52Z",
+      "side": 1,
+      "message": "Actually you can install extra binaries built from source to the recovery image by setting the module\u0027s LOCAL_MODULE_PATH with:\nLOCAL_MODULE_PATH :\u003d $(TARGET_RECOVERY_ROOT_OUT)/\u003csubidr\u003e\nand add the module\u0027s name to PRODUCT_PACKAGES of the product you are building.\nThis is the most common way how modules get built into system.img and other images.",
+      "parentUuid": "6dd2dee8_61a580b9",
+      "range": {
+        "startLine": 776,
+        "startChar": 0,
+        "endLine": 776,
+        "endChar": 84
+      },
+      "revId": "43fb1e32d0f227f15c45b876d8196b0637ba248c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cdc02a18_735c7854",
         "filename": "core/Makefile",
         "patchSetId": 3
