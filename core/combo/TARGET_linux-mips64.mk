@@ -115,6 +115,9 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,--fatal-warnings \
 			$(arch_variant_ldflags)
 
+# Disable transitive dependency library symbol resolving.
+TARGET_GLOBAL_LDFLAGS += -Wl,--allow-shlib-undefined
+
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 # More flags/options can be added here
