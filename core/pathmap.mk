@@ -120,7 +120,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         recommendation \
         v7/preference \
         v14/preference \
-        v17/preference-leanback
+        v17/preference-leanback \
+        customtabs
 
 #
 # A list of all source roots under frameworks/multidex.
