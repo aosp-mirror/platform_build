@@ -180,15 +180,17 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         OPTIONS.replace_verity_private_key):
       ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
                               OPTIONS.replace_verity_private_key[1])
-    elif (info.filename == "BOOT/RAMDISK/verity_key" and
+    elif (info.filename in ("BOOT/RAMDISK/verity_key",
+                            "BOOT/verity_key") and
           OPTIONS.replace_verity_public_key):
-      new_data = ReplaceVerityPublicKey(output_tf_zip,
+      new_data = ReplaceVerityPublicKey(output_tf_zip, info.filename,
                                         OPTIONS.replace_verity_public_key[1])
       write_to_temp(info.filename, info.external_attr, new_data)
     # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch.
     elif (info.filename.startswith("BOOT/") or
           info.filename.startswith("RECOVERY/") or
           info.filename.startswith("META/") or
+          info.filename.startswith("ROOT/") or
           info.filename == "SYSTEM/etc/recovery-resource.dat"):
       write_to_temp(info.filename, info.external_attr, data)
 
@@ -229,7 +231,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
           info.filename == "META/misc_info.txt"):
       pass
     elif (OPTIONS.replace_verity_public_key and
-          info.filename == "BOOT/RAMDISK/verity_key"):
+          info.filename in ("BOOT/RAMDISK/verity_key",
+                            "BOOT/verity_key")):
       pass
     else:
       # a non-APK file; copy it verbatim
@@ -397,11 +400,11 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 
   return new_recovery_keys
 
-def ReplaceVerityPublicKey(targetfile_zip, key_path):
+def ReplaceVerityPublicKey(targetfile_zip, filename, key_path):
   print "Replacing verity public key with %s" % key_path
   with open(key_path) as f:
     data = f.read()
-  common.ZipWriteStr(targetfile_zip, "BOOT/RAMDISK/verity_key", data)
+  common.ZipWriteStr(targetfile_zip, filename, data)
   return data
 
 def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,

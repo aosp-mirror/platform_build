@@ -101,6 +101,7 @@ def main(argv):
           "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
       if boot_image:
         boot_image.AddToZip(output_zip)
+
       recovery_image = common.GetBootableImage(
           "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
       if recovery_image:
