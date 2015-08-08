@@ -62,6 +62,9 @@ class Options(object):
     self.source_info_dict = None
     self.target_info_dict = None
     self.worker_threads = None
+    # Stash size cannot exceed cache_size * threshold.
+    self.cache_size = None
+    self.stash_threshold = 0.8
 
 
 OPTIONS = Options()
