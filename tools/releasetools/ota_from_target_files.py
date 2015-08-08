@@ -125,9 +125,6 @@ OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
-# Stash size cannot exceed cache_size * threshold.
-OPTIONS.cache_size = None
-OPTIONS.stash_threshold = 0.8
 
 
 def MostPopularKey(d, default):
@@ -1594,7 +1591,7 @@ def main(argv):
 
     cache_size = OPTIONS.info_dict.get("cache_size", None)
     if cache_size is None:
-      raise RuntimeError("can't determine the cache partition size")
+      print "--- can't determine the cache partition size ---"
     OPTIONS.cache_size = cache_size
 
     if OPTIONS.incremental_source is None:
