@@ -139,7 +139,7 @@ endef
 ###########################################################
 
 define all-makefiles-under
-$(wildcard $(1)/*/Android.mk)
+$(sort $(wildcard $(1)/*/Android.mk))
 endef
 
 ###########################################################
@@ -171,7 +171,7 @@ endef
 
 # $(1): List of directories to look for under this directory
 define all-named-subdir-makefiles
-$(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1))))
+$(sort $(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1)))))
 endef
 
 ###########################################################
