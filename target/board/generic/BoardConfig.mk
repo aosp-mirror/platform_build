@@ -76,8 +76,3 @@ BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
-
-ifeq ($(TARGET_PRODUCT),sdk)
-  # include an expanded selection of fonts for the SDK.
-  EXTENDED_FONT_FOOTPRINT := true
-endif
