@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67e67f2a_3583daa8",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-08-10T18:05:59Z",
+      "side": 0,
+      "message": "Random whitespace changes?",
+      "revId": "420f95ff5d0ccf9c41683760c1b2731f6be0667e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
