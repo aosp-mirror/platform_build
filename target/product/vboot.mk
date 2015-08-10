@@ -22,3 +22,4 @@ PRODUCT_SUPPORTS_VBOOT := true
 # We expect this file to exist with the suffixes ".vbprivk" and ".vbpupk".
 # TODO: find a proper location for this
 PRODUCT_VBOOT_SIGNING_KEY := external/vboot_reference/tests/devkeys/kernel_data_key
+PRODUCT_VBOOT_SIGNING_SUBKEY := external/vboot_reference/tests/devkeys/kernel_subkey
