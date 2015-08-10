@@ -179,6 +179,22 @@ ifdef LOCAL_IS_HOST_MODULE
     endif
 endif
 
+my_cpp_std_version := -std=gnu++14
+ifdef LOCAL_SDK_VERSION
+    # The NDK handles this itself.
+    my_cpp_std_version :=
+endif
+
+ifdef LOCAL_IS_HOST_MODULE
+    ifneq ($(my_clang),true)
+        # The host GCC doesn't support C++14 (and is deprecated, so likely
+        # never will). Build these modules with C++11.
+        my_cpp_std_version := -std=gnu++11
+    endif
+endif
+
+my_cppflags := $(my_cpp_std_version) $(my_cppflags)
+
 # Add option to make clang the default for device build
 ifeq ($(USE_CLANG_PLATFORM_BUILD),true)
     ifeq ($(my_clang),)
