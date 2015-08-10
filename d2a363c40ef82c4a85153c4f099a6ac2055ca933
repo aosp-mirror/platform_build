@@ -16,6 +16,24 @@
       "revId": "d2a363c40ef82c4a85153c4f099a6ac2055ca933",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67e67f2a_75604278",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-10T18:08:40Z",
+      "side": 1,
+      "message": "Oops.",
+      "parentUuid": "07bea3e2_1a247937",
+      "revId": "d2a363c40ef82c4a85153c4f099a6ac2055ca933",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
