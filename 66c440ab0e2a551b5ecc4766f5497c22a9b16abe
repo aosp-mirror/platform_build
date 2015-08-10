@@ -22,6 +22,30 @@
       "revId": "66c440ab0e2a551b5ecc4766f5497c22a9b16abe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87c9b39e_59e323c4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-10T18:14:27Z",
+      "side": 1,
+      "message": "Oops, you are right.",
+      "parentUuid": "47e97bf9_5460a2ae",
+      "range": {
+        "startLine": 863,
+        "startChar": 46,
+        "endLine": 863,
+        "endChar": 48
+      },
+      "revId": "66c440ab0e2a551b5ecc4766f5497c22a9b16abe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
