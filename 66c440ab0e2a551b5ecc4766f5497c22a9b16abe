@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47e97bf9_5460a2ae",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-08-10T17:28:15Z",
+      "side": 1,
+      "message": "Not sure about the exact format for multiple dirs. Is it like\n\"TARGET_PRIVATE_RES_DIRS :\u003d device/x/y/res1 device/u/v/res2\"? If so, you need to put $(newline) here as in Yezhong\u0027s CL.",
+      "range": {
+        "startLine": 863,
+        "startChar": 46,
+        "endLine": 863,
+        "endChar": 48
+      },
+      "revId": "66c440ab0e2a551b5ecc4766f5497c22a9b16abe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
