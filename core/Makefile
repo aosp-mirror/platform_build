@@ -805,9 +805,11 @@ else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
 endif
 
-recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
+ifndef TARGET_PRIVATE_RES_DIRS
+TARGET_PRIVATE_RES_DIRS := $(wildcard $(TARGET_DEVICE_DIR)/recovery/res)
+endif
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
-  $(recovery_resources_private) -type f)
+  $(TARGET_PRIVATE_RES_DIRS) -type f)
 ifdef TARGET_RECOVERY_FSTAB
 recovery_fstab := $(TARGET_RECOVERY_FSTAB)
 else
@@ -823,7 +825,7 @@ else
 RECOVERY_RESOURCE_ZIP :=
 endif
 
-ifeq ($(recovery_resources_private),)
+ifeq ($(TARGET_PRIVATE_RES_DIRS),)
   $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
 endif
 
@@ -884,8 +886,8 @@ define build-recoveryimage-target
   $(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
   $(hide) cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
   $(hide) cp -f $(recovery_font) $(TARGET_RECOVERY_ROOT_OUT)/res/images/font.png
-  $(hide) $(foreach item,$(recovery_resources_private), \
-    cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/)
+  $(hide) $(foreach item,$(TARGET_PRIVATE_RES_DIRS), \
+    cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
   $(hide) $(foreach item,$(recovery_fstab), \
     cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.fstab)
   $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
