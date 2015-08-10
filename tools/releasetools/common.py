@@ -390,7 +390,9 @@ def BuildBootableImage(sourcedir, fs_config_file, info_dict=None):
     img_keyblock = tempfile.NamedTemporaryFile()
     cmd = [info_dict["vboot_signer_cmd"], info_dict["futility"],
            img_unsigned.name, info_dict["vboot_key"] + ".vbpubk",
-           info_dict["vboot_key"] + ".vbprivk", img_keyblock.name,
+           info_dict["vboot_key"] + ".vbprivk",
+           info_dict["vboot_subkey"] + ".vbprivk",
+           img_keyblock.name,
            img.name]
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
