@@ -161,6 +161,23 @@ endif
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
+# ---------------------------------------------------------------
+# Allow the C/C++ macros __DATE__ and __TIME__ to be set to the
+# build date and time, so that a build may be repeated.
+# Write the date and time to a file so that the command line
+# doesn't change every time, which would cause ninja to rebuild
+# the files.
+$(shell mkdir -p $(OUT_DIR) && \
+    $(DATE) "+%b %_d %Y" > $(OUT_DIR)/build_c_date.txt && \
+    $(DATE) +%T > $(OUT_DIR)/build_c_time.txt)
+BUILD_DATETIME_C_DATE := $$(cat $(OUT_DIR)/build_c_date.txt)
+BUILD_DATETIME_C_TIME := $$(cat $(OUT_DIR)/build_c_time.txt)
+
+ifeq ($(OVERRIDE_C_DATE_TIME),true)
+COMMON_GLOBAL_CFLAGS += -Wno-builtin-macro-redefined -D__DATE__="\"$(BUILD_DATETIME_C_DATE)\"" -D__TIME__=\"$(BUILD_DATETIME_C_TIME)\"
+COMMON_GLOBAL_CPPFLAGS += -Wno-builtin-macro-redefined -D__DATE__="\"$(BUILD_DATETIME_C_DATE)\"" -D__TIME__=\"$(BUILD_DATETIME_C_TIME)\"
+endif
+
 # The build system exposes several variables for where to find the kernel
 # headers:
 #   TARGET_DEVICE_KERNEL_HEADERS is automatically created for the current
