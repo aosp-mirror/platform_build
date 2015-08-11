@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "47e33b4a_e1ab265d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2015-08-11T16:44:13Z",
+      "side": 1,
+      "message": "Please see the bug for the reasons.",
+      "parentUuid": "a7ceb7a1_1bf23c93",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 34
+      },
+      "revId": "3123a8eaa2c0e98a265c59ccf8c9ebb85f4fb699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67091fdd_3a50a129",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e7f34f19_be0819ba",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2015-08-11T16:44:13Z",
+      "side": 1,
+      "message": "I see what you\u0027re saying. Will try it.\n\nFor clarity: It\u0027s only required when building with LOCAL_SDK_VERSION unset. When building against the android_stubs or the sdk the dependency on OkCacheContainer is absent.",
+      "parentUuid": "67091fdd_3a50a129",
+      "range": {
+        "startLine": 400,
+        "startChar": 55,
+        "endLine": 400,
+        "endChar": 135
+      },
+      "revId": "3123a8eaa2c0e98a265c59ccf8c9ebb85f4fb699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67091fdd_5a70f5ca",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2015-08-11T16:15:05Z",
       "side": 1,
       "message": "How about jack?",
+      "range": {
+        "startLine": 713,
+        "startChar": 71,
+        "endLine": 713,
+        "endChar": 105
+      },
+      "revId": "3123a8eaa2c0e98a265c59ccf8c9ebb85f4fb699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "271727da_7ba83b10",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 713,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2015-08-11T16:44:13Z",
+      "side": 1,
+      "message": "AFAIK, not required unless Jack changes its behavior like javac did.",
+      "parentUuid": "67091fdd_5a70f5ca",
       "range": {
         "startLine": 713,
         "startChar": 71,
