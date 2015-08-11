@@ -80,7 +80,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 3
+    PLATFORM_PREVIEW_SDK_VERSION := 4
   endif
 endif
 
