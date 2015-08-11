@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "a7ceb7a1_1bf23c93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-11T16:22:26Z",
+      "side": 1,
+      "message": "oh, this should be a class from framework.jar, not core-libart.jar.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 34
+      },
+      "revId": "3123a8eaa2c0e98a265c59ccf8c9ebb85f4fb699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67091fdd_3a50a129",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-11T16:22:26Z",
+      "side": 1,
+      "message": "In libcore/JavaLibrary.mk I don\u0027t see core-libart has dependency on okhttp. How can core-libart reference okhttp classes without the dependency?\nOh, it\u0027s framework.jar, not core-libart that references okhttp. Anyway you can\u0027t just change the -bootclasspath without establishing dependency on okhttp.jar.\nSounds like we should add okhttp to TARGET_DEFAULT_JAVA_LIBRARIES in build/core/config.mk, instead of modifying the bootclasspath?",
+      "range": {
+        "startLine": 400,
+        "startChar": 55,
+        "endLine": 400,
+        "endChar": 135
+      },
+      "revId": "3123a8eaa2c0e98a265c59ccf8c9ebb85f4fb699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "67091fdd_5a70f5ca",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
