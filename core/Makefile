@@ -1284,7 +1284,8 @@ endif
 # -----------------------------------------------------------------
 # host tools needed to build dist and OTA packages
 
-DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
+OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
+  $(HOST_OUT_EXECUTABLES)/aapt \
   $(HOST_OUT_EXECUTABLES)/mkbootfs \
   $(HOST_OUT_EXECUTABLES)/mkbootimg \
   $(HOST_OUT_EXECUTABLES)/fs_config \
@@ -1305,7 +1306,7 @@ DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/boot_signer
 
 # Shared libraries.
-DISTTOOLS += \
+OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/liblog$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcutils$(HOST_SHLIB_SUFFIX) \
@@ -1318,9 +1319,6 @@ DISTTOOLS += \
   $(HOST_LIBRARY_PATH)/libext2_profile_host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2_quota_host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2_uuid_host$(HOST_SHLIB_SUFFIX)
-
-OTATOOLS := $(DISTTOOLS) \
-  $(HOST_OUT_EXECUTABLES)/aapt
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
@@ -1553,12 +1551,27 @@ ifneq ($(filter $(MAKECMDGOALS),target-files-package),)
 $(call dist-for-goals, target-files-package, $(BUILT_TARGET_FILES_PACKAGE))
 endif
 
-ifneq ($(SANITIZE_TARGET),address)
-ifneq ($(TARGET_PRODUCT),sdk)
-ifeq ($(filter generic%,$(TARGET_DEVICE)),)
-ifneq ($(TARGET_NO_KERNEL),true)
-ifneq ($(recovery_fstab),)
+build_ota_package := true
+ifeq ($(BUILD_OS),darwin)
+build_ota_package := false
+endif
+ifeq ($(SANITIZE_TARGET),address)
+build_ota_package := false
+endif
+ifeq ($(TARGET_PRODUCT),sdk)
+build_ota_package := false
+endif
+ifneq ($(filter generic%,$(TARGET_DEVICE)),)
+build_ota_package := false
+endif
+ifeq ($(TARGET_NO_KERNEL),true)
+build_ota_package := false
+endif
+ifeq ($(recovery_fstab),)
+build_ota_package := false
+endif
 
+ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
 # OTA update package
 
@@ -1572,7 +1585,7 @@ INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 	@echo "Package OTA: $@"
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	   ./build/tools/releasetools/ota_from_target_files -v \
@@ -1585,11 +1598,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 
-endif    # recovery_fstab is defined
-endif    # TARGET_NO_KERNEL != true
-endif    # TARGET_DEVICE != generic*
-endif    # TARGET_PRODUCT != sdk
-endif    # SANITIZE_TARGET != address
+endif    # build_ota_package
 
 # -----------------------------------------------------------------
 # The update package
@@ -1602,7 +1611,7 @@ name := $(name)-img-$(FILE_NAME_TAG)
 
 INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE)
 	@echo "Package: $@"
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	   ./build/tools/releasetools/img_from_target_files -v \
