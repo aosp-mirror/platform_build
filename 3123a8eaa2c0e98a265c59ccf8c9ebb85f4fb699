@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67091fdd_5a70f5ca",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 713,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-11T16:15:05Z",
+      "side": 1,
+      "message": "How about jack?",
+      "range": {
+        "startLine": 713,
+        "startChar": 71,
+        "endLine": 713,
+        "endChar": 105
+      },
+      "revId": "3123a8eaa2c0e98a265c59ccf8c9ebb85f4fb699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
