@@ -21,7 +21,7 @@ PRODUCT_PACKAGES := \
     CarrierConfig \
     Dialer \
     CallLogBackup \
-    messaging \
+    Mms \
     rild
 
 PRODUCT_COPY_FILES := \
