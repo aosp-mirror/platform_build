@@ -34,6 +34,24 @@
       "revId": "df3fd1d12823e3241df52b9ad48d5e1f5de21262",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a41eb557_0ee71fd3",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1132,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-12T22:07:32Z",
+      "side": 1,
+      "message": "For the record the motivation is that there *was* a user.",
+      "parentUuid": "04f5c13c_f9acb774",
+      "revId": "df3fd1d12823e3241df52b9ad48d5e1f5de21262",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
