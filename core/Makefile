@@ -80,8 +80,8 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) echo "#" >> $@; \
 	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
 	        echo "#" >> $@;
-	$(hide) echo ro.bootimage.build.date=`date`>>$@
-	$(hide) echo ro.bootimage.build.date.utc=`date +%s`>>$@
+	$(hide) echo ro.bootimage.build.date=`date -d "$(BUILD_DATETIME_FROM_FILE)"`>>$@
+	$(hide) echo ro.bootimage.build.date.utc=`date -d "$(BUILD_DATETIME_FROM_FILE)" +%s`>>$@
 	$(hide) echo ro.bootimage.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
 	$(hide) build/tools/post_process_props.py $@
 
@@ -122,7 +122,7 @@ ifeq (,$(strip $(BUILD_FINGERPRINT)))
   ifneq ($(filter eng.%,$(BUILD_NUMBER)),)
     # Trim down BUILD_FINGERPRINT: the default BUILD_NUMBER makes it easily exceed
     # the Android system property length limit (PROPERTY_VALUE_MAX=92).
-    BF_BUILD_NUMBER := $(USER)$(shell date +%m%d%H%M)
+    BF_BUILD_NUMBER := $(USER)$(shell date -d "$(BUILD_DATETIME)" +%m%d%H%M)
   else
     BF_BUILD_NUMBER := $(BUILD_NUMBER)
   endif
@@ -205,6 +205,7 @@ endif
 			PRIVATE_BUILD_DESC="$(PRIVATE_BUILD_DESC)" \
 			BUILD_ID="$(BUILD_ID)" \
 			BUILD_DISPLAY_ID="$(BUILD_DISPLAY_ID)" \
+			BUILD_DATETIME="$(BUILD_DATETIME_FROM_FILE)" \
 			BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
 			BOARD_BUILD_SYSTEM_ROOT_IMAGE="$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)" \
 			PLATFORM_VERSION="$(PLATFORM_VERSION)" \
@@ -268,8 +269,8 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
-	$(hide) echo ro.vendor.build.date=`date`>>$@
-	$(hide) echo ro.vendor.build.date.utc=`date +%s`>>$@
+	$(hide) echo ro.vendor.build.date=`date -d "$(BUILD_DATETIME_FROM_FILE)"`>>$@
+	$(hide) echo ro.vendor.build.date.utc=`date -d "$(BUILD_DATETIME_FROM_FILE)" +%s`>>$@
 	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
 endif
 
