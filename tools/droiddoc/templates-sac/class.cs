@@ -123,7 +123,6 @@ Summary:
   <?cs /if ?>
   <?cs set:colspan = colspan-1 ?>
 <?cs /each ?>
-<?cs call:show_annotations_list(class, "<span class='annotation-message'>", "</span><span class='annotation-message'>", "</span>") ?>
 
 </div><!-- end header -->
 
@@ -211,10 +210,7 @@ Summary:
           <?cs var:field.final ?>
           <?cs call:type_link(field.type) ?></nobr></td>
           <td class="jd-linkcol"><?cs call:cond_link(field.name, toroot, field.href, included) ?></td>
-          <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?>
-              <?cs each:anno = field.showAnnotations ?>
-                  <?cs call:show_annotations_list(field, "<span class='annotation-message'>", "</span><span class='annotation-message'>", "</span>") ?>
-              <?cs /each ?></td>
+          <td class="jd-descrcol" width="100%"><?cs call:short_descr(field) ?></td>
       </tr>
       <?cs set:count = count + #1 ?>
     <?cs /each ?>
