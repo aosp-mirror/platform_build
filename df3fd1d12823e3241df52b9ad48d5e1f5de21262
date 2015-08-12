@@ -16,6 +16,24 @@
       "revId": "df3fd1d12823e3241df52b9ad48d5e1f5de21262",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04f5c13c_f9acb774",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1132,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-12T22:01:24Z",
+      "side": 1,
+      "message": "There currently are no users (according to code search).",
+      "parentUuid": "c4f6494b_11e73cd3",
+      "revId": "df3fd1d12823e3241df52b9ad48d5e1f5de21262",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
