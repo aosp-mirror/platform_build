@@ -35,7 +35,6 @@ PRODUCT_PACKAGES += \
     MagicSmokeWallpapers \
     NoiseField \
     PhaseBeam \
-    VisualizationWallpapers \
     PhotoTable
 
 # Additional settings used in all AOSP builds
