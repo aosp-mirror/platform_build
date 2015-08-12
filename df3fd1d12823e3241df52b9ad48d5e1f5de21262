@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4f6494b_11e73cd3",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1132,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-08-12T21:59:35Z",
+      "side": 1,
+      "message": "You should potentially log that this is being stripped from their build too (in BIG LETTERS). Should it be an error perhaps? I don\u0027t really know how pervasive this is/was.",
+      "revId": "df3fd1d12823e3241df52b9ad48d5e1f5de21262",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
