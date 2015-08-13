@@ -8787,3 +8787,69 @@ $spritesheet: width height image $spritesheet-sprites;
   position: absolute;
   top: -4px;
 }
+
+/* CHANGE EXISTING SELECTOR FOR ANDROID M HERO ONLY
+   REMOVE THE BELOW STYLES WHEN THE ANDROID M CAROUSEL
+   GRAPHIC ON THE MAIN LANDING IS TAKEN DOWN */
+.dac-hero.mprev {
+  background-color: #fff;
+  background-position: 50% 53%;
+  background-size: cover;
+  background-image: url(../../assets/images/home/android_m_hero_1200.jpg);
+  box-sizing: border-box;
+  font-size: 16px;
+  min-height: 550px;
+  padding-top: 88px;
+}
+.dac-hero.dac-darken.mprev::before {
+  background: rgba(0, 0, 0, 0.3);
+  bottom: 0;
+  content: '';
+  display: block;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.dac-hero.dac-darken.mprev::before {
+  background: -webkit-linear-gradient(top, rgba(0, 0, 0, .05), rgba(0, 0, 0, .05), #000 950px);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, .05), rgba(0, 0, 0, 0.05), #000 950px);
+}
+
+@media (max-width: 719px) {
+
+  .dac-hero.dac-darken.mprev {
+    background-size: auto 600px;
+    background-position: 55% 0;
+    background-repeat: no-repeat;
+  }
+
+  .dac-hero-figure.mprev {
+    height: 10px;
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 719px) {
+
+  .dac-hero.dac-darken.mprev {
+    background-size: auto 600px;
+    background-position: 55% 0;
+    background-repeat: no-repeat;
+  }
+
+  .dac-hero-figure.mprev {
+    height: 10px;
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 1200px) {
+
+  .dac-hero.dac-darken.mprev {
+    background-size: auto 600px;
+    background-position: 55% 0;
+    background-repeat: no-repeat;
+  }
+}
