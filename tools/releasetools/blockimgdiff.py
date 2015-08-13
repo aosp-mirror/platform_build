@@ -350,6 +350,12 @@ class BlockImageDiff(object):
           mapped_stashes.append(sr)
           if self.version == 2:
             src_str.append("%d:%s" % (sid, sr.to_string_raw()))
+            # A stash will be used only once. We need to free the stash
+            # immediately after the use, instead of waiting for the automatic
+            # clean-up at the end. Because otherwise it may take up extra space
+            # and lead to OTA failures.
+            # Bug: 23119955
+            free_string.append("free %d\n" % (sid,))
           else:
             assert sh in stashes
             src_str.append("%s:%s" % (sh, sr.to_string_raw()))
