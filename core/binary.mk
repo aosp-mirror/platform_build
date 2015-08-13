@@ -1147,6 +1147,15 @@ ifeq ($(my_fdo_build), true)
   my_cflags := $(filter-out $(fdo_incompatible_flags),$(my_cflags))
 endif
 
+# No one should ever use this flag. On GCC it's mere presence will disable all
+# warnings, even those that are specified after it (contrary to typical warning
+# flag behavior). This circumvents CFLAGS_NO_OVERRIDE from forcibly enabling the
+# warnings that are *always* bugs.
+my_illegal_flags := -w
+my_cflags := $(filter-out $(my_illegal_flags),$(my_cflags))
+my_cppflags := $(filter-out $(my_illegal_flags),$(my_cppflags))
+my_conlyflags := $(filter-out $(my_illegal_flags),$(my_conlyflags))
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASFLAGS := $(my_asflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CONLYFLAGS := $(my_conlyflags)
