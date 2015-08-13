@@ -111,7 +111,6 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         annotations \
         v4 \
         v7/gridlayout \
-        v7/appcompat \
         v7/cardview \
         v7/mediarouter \
         v7/palette \
@@ -140,6 +139,7 @@ FRAMEWORKS_MULTIDEX_SUBDIRS := \
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
 	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)) \
+	frameworks/support/v7/appcompat/src \
 	frameworks/support/v7/recyclerview/src
 
 #
@@ -147,6 +147,7 @@ FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 #
 FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
     $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir))) \
+    android-support-v7-appcompat \
     android-support-v7-recyclerview \
     android-support-multidex \
     android-support-multidex-instrumentation
