@@ -157,16 +157,16 @@ def LoadInfoDict(input_file, input_dir=None):
   # are doing repacking. Redirect those properties to the actual files in the
   # unzipped directory.
   if input_dir is not None:
-    # We carry a copy of file_contexts under META/. If not available, search
-    # BOOT/RAMDISK/. Note that sometimes we may need a different file_contexts
+    # We carry a copy of file_contexts.bin under META/. If not available,
+    # search BOOT/RAMDISK/. Note that sometimes we may need a different file
     # to build images than the one running on device, such as when enabling
     # system_root_image. In that case, we must have the one for image
     # generation copied to META/.
-    fc_config = os.path.join(input_dir, "META", "file_contexts")
+    fc_config = os.path.join(input_dir, "META", "file_contexts.bin")
     if d.get("system_root_image") == "true":
       assert os.path.exists(fc_config)
     if not os.path.exists(fc_config):
-      fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", "file_contexts")
+      fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", "file_contexts.bin")
       if not os.path.exists(fc_config):
         fc_config = None
 
