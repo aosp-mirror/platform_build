@@ -10,7 +10,7 @@ ifeq ($(strip $(LOCAL_MODULE_CLASS)),)
 LOCAL_MODULE_CLASS := EXECUTABLES
 endif
 ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
-LOCAL_MODULE_SUFFIX := $(HOST_EXECUTABLE_SUFFIX)
+LOCAL_MODULE_SUFFIX := $($(my_prefix)EXECUTABLE_SUFFIX)
 endif
 
 $(call host-executable-hook)
@@ -27,7 +27,7 @@ ifndef skip_build_from_source
 
 include $(BUILD_SYSTEM)/binary.mk
 
-my_host_libprofile_rt := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_LIBPROFILE_RT)
+my_host_libprofile_rt := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
 $(LOCAL_BUILT_MODULE): PRIVATE_HOST_LIBPROFILE_RT := $(my_host_libprofile_rt)
 
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)

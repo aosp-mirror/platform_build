@@ -48,7 +48,3 @@ CLANG_CONFIG_x86_LINUX_HOST_EXTRA_LDFLAGS := \
   -L$($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/lib32/
 endif
 endif  # Linux
-
-ifeq ($(HOST_OS),windows)
-# nothing required here yet
-endif
