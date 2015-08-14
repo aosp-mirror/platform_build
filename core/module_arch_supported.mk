@@ -8,6 +8,8 @@
 ## LOCAL_MODULE_$(my_prefix)ARCH_WARN
 ## LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH
 ## LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH_WARN
+## LOCAL_IS_HOST_MODULE
+## LOCAL_MODULE_HOST_OS
 ##
 ## Inputs from build system:
 ## $(my_prefix)IS_64_BIT
@@ -57,4 +59,15 @@ endif
 ifneq (,$(filter $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),$(LOCAL_MODULE_UNSUPPORTED_$(my_prefix)ARCH_WARN)))
 my_module_arch_supported := false
 $(warning $(LOCAL_MODULE): architecture $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) unsupported)
+endif
+
+ifdef LOCAL_IS_HOST_MODULE
+ifneq (,$(LOCAL_MODULE_HOST_OS))
+  ifeq (,$(filter $($(my_prefix)OS),$(LOCAL_MODULE_HOST_OS)))
+    my_module_arch_supported := false
+  endif
+else ifeq ($($(my_prefix)OS),windows)
+  # If LOCAL_MODULE_HOST_OS is empty, only linux and darwin are supported
+  my_module_arch_supported := false
+endif
 endif
