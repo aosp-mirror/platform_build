@@ -82,7 +82,7 @@ ifneq ($(my_sanitize),)
   ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
     my_ldflags += -fsanitize=$(fsanitize_arg)
-    my_ldlibs += -ldl
+    my_ldlibs += -lrt -ldl
   else
     my_cflags += -fsanitize-undefined-trap-on-error
     my_cflags += -ftrap-function=abort
