@@ -1,15 +1,10 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
-LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 
 LOCAL_SRC_FILES:= \
     CopyFile.c
 
-ifeq ($(HOST_OS),darwin)
-LOCAL_CFLAGS += -DMACOSX_RSRC
-endif
-ifeq ($(HOST_OS),linux)
-endif
+LOCAL_CFLAGS_darwin += -DMACOSX_RSRC
 
 LOCAL_MODULE:= libhost
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
