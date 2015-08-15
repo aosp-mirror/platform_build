@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a9e95f_5a2141a7",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-15T00:50:58Z",
+      "side": 1,
+      "message": "This prefix allows us to namespace the installed headers, without depending on the name of the module.  This is important when a target wants to consume headers from multiple client libraries.",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
