@@ -462,6 +462,20 @@ renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sour
 RenderScript_file_stamp := $(intermediates)/RenderScriptCPP.stamp
 renderscript_intermediate := $(intermediates)/renderscript
 
+renderscript_target_api :=
+
+ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
+renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+else
+ifneq (,$(LOCAL_SDK_VERSION))
+# Set target-api for LOCAL_SDK_VERSIONs other than current.
+ifneq (,$(filter-out current system_current, $(LOCAL_SDK_VERSION)))
+renderscript_target_api := $(LOCAL_SDK_VERSION)
+endif
+endif  # LOCAL_SDK_VERSION is set
+endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
+
+
 ifeq ($(LOCAL_RENDERSCRIPT_CC),)
 LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
 endif
@@ -490,6 +504,7 @@ $(RenderScript_file_stamp): PRIVATE_RS_CC := $(LOCAL_RENDERSCRIPT_CC)
 $(RenderScript_file_stamp): PRIVATE_RS_FLAGS := $(renderscript_flags)
 $(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
 $(RenderScript_file_stamp): PRIVATE_RS_OUTPUT_DIR := $(renderscript_intermediate)
+$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
 $(RenderScript_file_stamp): PRIVATE_DEP_FILES := $(bc_dep_files)
 $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
 	$(transform-renderscripts-to-cpp-and-bc)

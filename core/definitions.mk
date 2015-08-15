@@ -903,6 +903,7 @@ $(hide) $(PRIVATE_RS_CC) \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
   -a $@ -MD \
   -reflect-c++ \
+  $(addprefix -target-api , $(PRIVATE_RS_TARGET_API)) \
   $(PRIVATE_RS_FLAGS) \
   $(addprefix -I , $(PRIVATE_RS_INCLUDES)) \
   $(PRIVATE_RS_SOURCE_FILES)
