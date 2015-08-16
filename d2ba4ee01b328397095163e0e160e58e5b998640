@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "a4fb1585_bb61b3b6",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-16T07:43:14Z",
+      "side": 1,
+      "message": "This could be written so more logic is shared:\n\n ifdef LOCAL_DBUS_PROXY_PREFIX\n dbus_created_dir :\u003d $(dbus_header_prefix)/include/$(LOCAL_DBUS_PROXY_PREFIX)\n dbus_headers :\u003d dbus-proxies.h\n else\n dbus_created_dir :\u003d $(dbus_header_prefix)\n dbus_headers :\u003d $(patsubst %.dbus.xml,%.h,$(notdir $(dbus_if_sources)))\n endif  # $(LOCAL_DBUS_PROXY_PREFIX)\n dbus_generated_headers :\u003d $(addprefix $(dbus_created_dir),$(dbus_headers))\n\nThereafter, replace dbus_proxy_header with dbus_generated_headers.",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a9e95f_5a2141a7",
         "filename": "core/clear_vars.mk",
         "patchSetId": 1
