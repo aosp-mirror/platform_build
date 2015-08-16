@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "04b861a5_f0bdb1ae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-16T07:49:03Z",
+      "side": 1,
+      "message": "To complete the picture, it\u0027ll be useful to show how DBus proxies are consumed by a client (both Android.mk and #includes directives).",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4fb1585_bb61b3b6",
         "filename": "core/binary.mk",
         "patchSetId": 1
