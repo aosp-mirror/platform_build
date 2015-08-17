@@ -8848,8 +8848,12 @@ $spritesheet: width height image $spritesheet-sprites;
 @media (max-width: 1200px) {
 
   .dac-hero.dac-darken.mprev {
-    background-size: auto 600px;
+    background-size: auto 700px;
     background-position: 55% 0;
     background-repeat: no-repeat;
+  }
+
+  .dac-hero-cta.mprev {
+  white-space:nowrap;
   }
 }
