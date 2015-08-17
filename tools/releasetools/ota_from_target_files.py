@@ -42,6 +42,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       radio image. This option is only meaningful when -i is specified,
       because a full radio is always included in a full OTA if applicable.
 
+  --full_bootloader
+      Similar to --full_radio. When generating an incremental OTA, always
+      include a full copy of bootloader image.
+
   -v  (--verify)
       Remount and verify the checksums of the files written to the
       system and vendor (if used) partitions.  Incremental builds only.
@@ -125,6 +129,7 @@ OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
+OPTIONS.full_bootloader = False
 
 
 def MostPopularKey(d, default):
@@ -1479,6 +1484,8 @@ def main(argv):
       OPTIONS.incremental_source = a
     elif o == "--full_radio":
       OPTIONS.full_radio = True
+    elif o == "--full_bootloader":
+      OPTIONS.full_bootloader = True
     elif o in ("-w", "--wipe_user_data"):
       OPTIONS.wipe_user_data = True
     elif o in ("-n", "--no_prereq"):
@@ -1527,6 +1534,7 @@ def main(argv):
                                  "package_key=",
                                  "incremental_from=",
                                  "full_radio",
+                                 "full_bootloader",
                                  "wipe_user_data",
                                  "no_prereq",
                                  "extra_script=",
