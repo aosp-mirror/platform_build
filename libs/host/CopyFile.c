@@ -24,11 +24,8 @@
 #include <errno.h>
 #include <assert.h>
 
-#ifdef HAVE_MS_C_RUNTIME
-#  define  mkdir(path,mode)   _mkdir(path)
-#endif
-
 #if defined(_WIN32)
+#  define mkdir(path,mode)   _mkdir(path)
 #  define S_ISLNK(s) 0
 #  define lstat stat
 #  ifndef EACCESS   /* seems to be missing from the Mingw headers */
@@ -183,7 +180,7 @@ static int setPermissions(const char* dst, const struct stat* pSrcStat, unsigned
             DBUG(("---   unable to set perms on '%s' to 0%o: %s\n",
                 dst, pSrcStat->st_mode & ~(S_IFMT), strerror(errno)));
         }
-#ifndef HAVE_MS_C_RUNTIME
+#ifndef _WIN32
         /*
          * Set the owner.
          */
@@ -261,7 +258,7 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
         /* if "force" is set, try removing the destination file and retry */
         if (options & COPY_FORCE) {
             if (unlink(dst) != 0) {
-#ifdef HAVE_MS_C_RUNTIME
+#ifdef _WIN32
 				/* MSVCRT.DLL unlink will fail with EACCESS if the file is set read-only */
 				/* so try to change its mode, and unlink again                           */
 				if (errno == EACCESS) {
@@ -274,7 +271,7 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
                 (void) close(srcFd);
                 return -1;
             }
-#ifdef HAVE_MS_C_RUNTIME
+#ifdef _WIN32
         Open_File:
 #endif			
             dstFd = open(dst, O_CREAT | O_TRUNC | O_WRONLY | O_BINARY, 0644);
