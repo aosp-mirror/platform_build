@@ -508,12 +508,7 @@ ANDROID_MANIFEST_MERGER := java -classpath prebuilts/devtools/tools/lib/manifest
 
 YACC_HEADER_SUFFIX:= .hpp
 
-# Don't use column under Windows, cygwin or not
-ifeq ($(HOST_OS),windows)
-COLUMN:= cat
-else
 COLUMN:= column
-endif
 
 HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
 
