@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a9e95f_33fa6a36",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-18T22:24:37Z",
+      "side": 1,
+      "message": "adb and fastboot both have this logic in their Android.mk files",
+      "revId": "a96e9832d0f771f36b79ab586094eb4970af0d41",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
