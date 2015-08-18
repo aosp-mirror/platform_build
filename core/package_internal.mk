@@ -304,6 +304,7 @@ $(noshrob_classes_jack): $(R_file_stamp)
 endif
 ifneq ($(full_classes_jack),)
 $(full_classes_jack): $(R_file_stamp)
+$(jack_check_timestamp): $(R_file_stamp)
 endif
 endif # LOCAL_JACK_ENABLED
 
