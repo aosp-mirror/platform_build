@@ -174,6 +174,12 @@ class Transfer(object):
     return (sum(sr.size() for (_, sr) in self.stash_before) -
             sum(sr.size() for (_, sr) in self.use_stash))
 
+  def ConvertToNew(self):
+    assert self.style != "new"
+    self.use_stash = []
+    self.style = "new"
+    self.src_ranges = RangeSet()
+
   def __str__(self):
     return (str(self.id) + ": <" + str(self.src_ranges) + " " + self.style +
             " to " + str(self.tgt_ranges) + ">")
@@ -267,6 +273,10 @@ class BlockImageDiff(object):
     else:
       self.ReverseBackwardEdges()
       self.ImproveVertexSequence()
+
+    # Ensure the runtime stash size is under the limit.
+    if self.version >= 2 and common.OPTIONS.cache_size is not None:
+      self.ReviseStashSize()
 
     # Double-check our work.
     self.AssertSequenceGood()
@@ -518,6 +528,73 @@ class BlockImageDiff(object):
       else:
         print("max stashed blocks: %d  (%d bytes), limit: <unknown>\n" % (
               max_stashed_blocks, max_stashed_size))
+
+  def ReviseStashSize(self):
+    print("Revising stash size...")
+    stashes = {}
+
+    # Create the map between a stash and its def/use points. For example, for a
+    # given stash of (idx, sr), stashes[idx] = (sr, def_cmd, use_cmd).
+    for xf in self.transfers:
+      # Command xf defines (stores) all the stashes in stash_before.
+      for idx, sr in xf.stash_before:
+        stashes[idx] = (sr, xf)
+
+      # Record all the stashes command xf uses.
+      for idx, _ in xf.use_stash:
+        stashes[idx] += (xf,)
+
+    # Compute the maximum blocks available for stash based on /cache size and
+    # the threshold.
+    cache_size = common.OPTIONS.cache_size
+    stash_threshold = common.OPTIONS.stash_threshold
+    max_allowed = cache_size * stash_threshold / self.tgt.blocksize
+
+    stashed_blocks = 0
+
+    # Now go through all the commands. Compute the required stash size on the
+    # fly. If a command requires excess stash than available, it deletes the
+    # stash by replacing the command that uses the stash with a "new" command
+    # instead.
+    for xf in self.transfers:
+      replaced_cmds = []
+
+      # xf.stash_before generates explicit stash commands.
+      for idx, sr in xf.stash_before:
+        if stashed_blocks + sr.size() > max_allowed:
+          # We cannot stash this one for a later command. Find out the command
+          # that will use this stash and replace the command with "new".
+          use_cmd = stashes[idx][2]
+          replaced_cmds.append(use_cmd)
+          print("  %s replaced due to an explicit stash of %d blocks." % (
+              use_cmd, sr.size()))
+        else:
+          stashed_blocks += sr.size()
+
+      # xf.use_stash generates free commands.
+      for _, sr in xf.use_stash:
+        stashed_blocks -= sr.size()
+
+      # "move" and "diff" may introduce implicit stashes in BBOTA v3. Prior to
+      # ComputePatches(), they both have the style of "diff".
+      if xf.style == "diff" and self.version >= 3:
+        assert xf.tgt_ranges and xf.src_ranges
+        if xf.src_ranges.overlaps(xf.tgt_ranges):
+          if stashed_blocks + xf.src_ranges.size() > max_allowed:
+            replaced_cmds.append(xf)
+            print("  %s replaced due to an implicit stash of %d blocks." % (
+                xf, xf.src_ranges.size()))
+
+      # Replace the commands in replaced_cmds with "new"s.
+      for cmd in replaced_cmds:
+        # It no longer uses any commands in "use_stash". Remove the def points
+        # for all those stashes.
+        for idx, sr in cmd.use_stash:
+          def_cmd = stashes[idx][1]
+          assert (idx, sr) in def_cmd.stash_before
+          def_cmd.stash_before.remove((idx, sr))
+
+        cmd.ConvertToNew()
 
   def ComputePatches(self, prefix):
     print("Reticulating splines...")
