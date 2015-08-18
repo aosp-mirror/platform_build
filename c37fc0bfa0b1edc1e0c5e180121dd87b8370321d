@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4a8755c_9f3b1d86",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 639,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T22:38:26Z",
+      "side": 1,
+      "message": "To use static pattern rule, I added the source path (relative to LOCAL_PATH) to the generated headers in this case.",
+      "range": {
+        "startLine": 639,
+        "startChar": 16,
+        "endLine": 639,
+        "endChar": 61
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_3f52f7b6",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T22:38:26Z",
+      "side": 1,
+      "message": "then added their dir to the include path here.\nDoes this work for you?",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 49
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
