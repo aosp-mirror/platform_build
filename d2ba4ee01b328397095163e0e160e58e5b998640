@@ -245,6 +245,24 @@
       "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_1fb0db29",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-18T21:06:50Z",
+      "side": 1,
+      "message": "Doing it this way serves two purposes:\n\n1) It lets Android.mk authors declare whether they intend to generate proxies or adaptors.\n\n2) It lets Android.mk authors explicitly control the include path of proxies independent of target names.  While I don\u0027t feel too strongly about it, it was pointed out that the path we put these proxies at is encoded into the source code:\n\n#include \u003cVALUE_OF_PROXY_PREFIX/dbus-proxies.h\u003e\n\nand that it seems odd to have that source code depend on the name of the module.  This is doubly annoying for code that has to compile on ChromeOS and Android, because that path has to make sense on both platforms.\n\nWhat do you think?",
+      "parentUuid": "a4a8755c_90bb115d",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
