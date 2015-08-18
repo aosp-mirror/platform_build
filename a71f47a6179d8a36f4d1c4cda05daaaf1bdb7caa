@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04b861a5_993b3986",
+        "filename": "core/binary.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 637,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-18T21:26:59Z",
+      "side": 1,
+      "message": "Seems more natural the break the line before $(eval .",
+      "revId": "a71f47a6179d8a36f4d1c4cda05daaaf1bdb7caa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
