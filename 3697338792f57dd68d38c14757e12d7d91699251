@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04b861a5_b9cf1d57",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-18T20:45:39Z",
+      "side": 1,
+      "message": "Why not embed $(dbus_header_dir) and $(dbus_header_dependencies) in lieu of $(1) and $(3) in DBUS_ADAPTOR_BUILD_TEMPLATE?",
+      "revId": "3697338792f57dd68d38c14757e12d7d91699251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
