@@ -123,6 +123,7 @@ endif
 full_classes_jack := $(intermediates.COMMON)/classes.jack
 # intermediate Jack library without shrink and obfuscation
 noshrob_classes_jack := $(intermediates.COMMON)/classes.noshrob.jack
+jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
@@ -133,6 +134,7 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(built_dex_intermediate) \
     $(full_classes_jack) \
     $(noshrob_classes_jack) \
+    $(jack_check_timestamp) \
     $(built_dex) \
     $(full_classes_stubs_jar)
 
@@ -329,7 +331,11 @@ endif
 # command line.
 ifndef LOCAL_CHECKED_MODULE
 ifdef full_classes_jar
+ifdef LOCAL_JACK_ENABLED
+LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
+else
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+endif
 endif
 endif
 
@@ -636,9 +642,13 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 ifeq ($(LOCAL_JACK_ENABLED),incremental)
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
+$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-noshrob-incremental
+$(jack_check_timestamp): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-check-incremental
 else
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_JACK_INCREMENTAL_DIR :=
+$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR :=
+$(jack_check_timestamp): PRIVATE_JACK_INCREMENTAL_DIR :=
 endif
 
 ifdef full_classes_jar
@@ -670,6 +680,10 @@ jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
         $(JACK)
+
+$(jack_check_timestamp): $(jack_all_deps)
+	@echo Checking build with Jack: $@
+	$(jack-check-java)
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(full_classes_jack): $(jack_all_deps) | setup-jack-server
@@ -708,11 +722,6 @@ $(call define-dex-to-toc-rule, $(intermediates.COMMON))
 endif #LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
-ifeq ($(LOCAL_JACK_ENABLED),incremental)
-$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-noshrob-incremental
-else
-$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR :=
-endif
 $(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
 $(noshrob_classes_jack): $(jack_all_deps) | setup-jack-server
 	@echo Building with Jack: $@

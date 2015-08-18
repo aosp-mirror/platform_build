@@ -35,6 +35,7 @@ full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_jack := $(intermediates.COMMON)/classes.jack
+jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 built_dex := $(intermediates.COMMON)/classes.dex
 
 LOCAL_INTERMEDIATE_TARGETS += \
@@ -42,11 +43,16 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_jarjar_jar) \
     $(full_classes_jack) \
     $(full_classes_jar) \
+    $(jack_check_timestamp) \
     $(built_dex)
 
 # See comment in java.mk
 ifndef LOCAL_CHECKED_MODULE
+ifdef LOCAL_JACK_ENABLED
+LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
+else
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+endif
 endif
 
 #######################################
@@ -119,15 +125,20 @@ else
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_JACK_INCREMENTAL_DIR :=
 endif
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
 
-$(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
-$(built_dex): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
-$(built_dex): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
-$(built_dex): $(java_sources) $(java_resource_sources) $(full_jack_deps) \
+jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(proto_java_sources_file_stamp) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK) | setup-jack-server
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK)
+$(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
+$(built_dex): $(jack_all_deps) | setup-jack-server
 	@echo Building with Jack: $@
 	$(jack-java-to-dex)
+
+$(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
+	@echo Checking build with Jack: $@
+	$(jack-check-java)
 
 # $(full_classes_jack) is just by-product of $(built_dex).
 # The dummy command was added because, without it, make misses the fact the $(built_dex) also
