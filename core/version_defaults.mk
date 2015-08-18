@@ -24,6 +24,7 @@
 #     DEFAULT_APP_TARGET_SDK
 #     BUILD_ID
 #     BUILD_NUMBER
+#     BUILD_DATETIME
 #     SECURITY_PATCH
 #
 
@@ -123,6 +124,18 @@ ifeq "" "$(BUILD_ID)"
   BUILD_ID := UNKNOWN
 endif
 
+ifeq "" "$(BUILD_DATETIME)"
+  # Used to reproduce builds by setting the same time. Must be the number
+  # of seconds since the Epoch.
+  BUILD_DATETIME := $(shell date +%s)
+endif
+
+ifneq (,$(findstring Darwin,$(shell uname -sm)))
+DATE := date -r $(BUILD_DATETIME)
+else
+DATE := date -d @$(BUILD_DATETIME)
+endif
+
 ifeq "" "$(BUILD_NUMBER)"
   # BUILD_NUMBER should be set to the source control value that
   # represents the current state of the source code.  E.g., a
@@ -133,5 +146,5 @@ ifeq "" "$(BUILD_NUMBER)"
   # If no BUILD_NUMBER is set, create a useful "I am an engineering build
   # from this date/time" value.  Make it start with a non-digit so that
   # anyone trying to parse it as an integer will probably get "0".
-  BUILD_NUMBER := eng.$(USER).$(shell date +%Y%m%d.%H%M%S)
+  BUILD_NUMBER := eng.$(USER).$(shell $(DATE) +%Y%m%d.%H%M%S)
 endif
