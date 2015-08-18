@@ -16,6 +16,24 @@
       "revId": "3697338792f57dd68d38c14757e12d7d91699251",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a8755c_7c73cf5c",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 640,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-18T21:02:13Z",
+      "side": 1,
+      "message": "I can do that.",
+      "parentUuid": "04b861a5_b9cf1d57",
+      "revId": "3697338792f57dd68d38c14757e12d7d91699251",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
