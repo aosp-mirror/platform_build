@@ -53,9 +53,6 @@ endif
 ifneq (,$(findstring Macintosh,$(UNAME)))
   HOST_OS := darwin
 endif
-ifneq (,$(findstring CYGWIN,$(UNAME)))
-  HOST_OS := windows
-endif
 
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
