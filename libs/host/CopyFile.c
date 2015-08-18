@@ -543,57 +543,6 @@ static int copyFileRecursive(const char* src, const char* dst, bool isCmdLine, u
         statResult = stat(src, &srcStat);
     statErrno = errno;        /* preserve across .exe attempt */
 
-#ifdef WIN32_EXE
-    /*
-     * Here's the interesting part.  Under Cygwin, if you have a file
-     * called "foo.exe", stat("foo", ...) will succeed, but open("foo", ...)
-     * will fail.  We need to figure out what its name is supposed to be
-     * so we can create the correct destination file.
-     *
-     * If we don't have the "-e" flag set, we want "acp foo bar" to fail,
-     * not automatically find "foo.exe".  That way, if we really were
-     * trying to copy "foo", it doesn't grab something we don't want.
-     */
-    if (isCmdLine && statResult == 0) {
-        int tmpFd;
-        tmpFd = open(src, O_RDONLY | O_BINARY, 0);
-        if (tmpFd < 0) {
-            statResult = -1;
-            statErrno = ENOENT;
-        } else {
-            (void) close(tmpFd);
-        }
-    }
-
-    /*
-     * If we didn't find the file, try it again with ".exe".
-     */
-    if (isCmdLine && statResult < 0 && statErrno == ENOENT && (options & COPY_TRY_EXE)) {
-        srcExe = malloc(strlen(src) + 4 +1);
-        strcpy(srcExe, src);
-        strcat(srcExe, ".exe");
-
-        if (options & COPY_NO_DEREFERENCE)
-            statResult = lstat(srcExe, &srcStat);
-        else
-            statResult = stat(srcExe, &srcStat);
-
-        if (statResult == 0 && !S_ISREG(srcStat.st_mode))
-            statResult = -1;        /* fail, use original statErrno below */
-
-        if (statResult == 0) {
-            /* found a .exe, copy that instead */
-            dstExe = malloc(strlen(dst) + 4 +1);
-            strcpy(dstExe, dst);
-            strcat(dstExe, ".exe");
-
-            src = srcExe;
-            dst = dstExe;
-        } else {
-            DBUG(("---  couldn't find '%s' either\n", srcExe));
-        }
-    }
-#endif
     if (statResult < 0) {
         if (statErrno == ENOENT)
             fprintf(stderr, "acp: file '%s' does not exist\n", src);
