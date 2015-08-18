@@ -36,6 +36,93 @@
     },
     {
       "key": {
+        "uuid": "04b861a5_9f8a3ef6",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T02:02:44Z",
+      "side": 1,
+      "message": "I agree.",
+      "parentUuid": "a4fb1585_bb61b3b6",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_6e9e83e9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T02:02:44Z",
+      "side": 1,
+      "message": "this variable is unnecessary.\nYou can get it with $(dir $@) in the build recipe.",
+      "range": {
+        "startLine": 621,
+        "startChar": 28,
+        "endLine": 621,
+        "endChar": 52
+      },
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a8755c_905231b5",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T02:02:44Z",
+      "side": 1,
+      "message": "this doesn\u0027t work if we have more than one .dbus.xml file.\nIf you have multiple .dbus.xml files, a single .h file should depend on only the corresponding .dbus.xml file, right?\nIn that case you should use static pattern rule, similar to the .pb.h rule:\n$(proto_generated_headers): $(proto_generated_sources_dir)/%.pb.h: $(proto_generated_sources_dir)/%.pb$(my_proto_source_suffix)",
+      "range": {
+        "startLine": 623,
+        "startChar": 28,
+        "endLine": 623,
+        "endChar": 94
+      },
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64591d73_102c1198",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T02:02:44Z",
+      "side": 1,
+      "message": "should be my_export_c_include_dirs .",
+      "range": {
+        "startLine": 630,
+        "startChar": 1,
+        "endLine": 630,
+        "endChar": 27
+      },
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a9e95f_5a2141a7",
         "filename": "core/clear_vars.mk",
         "patchSetId": 1
@@ -47,6 +134,24 @@
       "writtenOn": "2015-08-15T00:50:58Z",
       "side": 1,
       "message": "This prefix allows us to namespace the installed headers, without depending on the name of the module.  This is important when a target wants to consume headers from multiple client libraries.",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a8755c_90bb115d",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T02:02:44Z",
+      "side": 1,
+      "message": "I don\u0027t understand: why using the module name as your LOCAL_DBUS_PROXY_PREFIX doesn\u0027t work?",
+      "parentUuid": "c4a9e95f_5a2141a7",
       "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
