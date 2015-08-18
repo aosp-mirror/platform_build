@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "a4fb1585_27c80149",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-18T19:45:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04b861a5_9f8a3ef6",
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c471e91c_6e9e83e9",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -65,6 +83,30 @@
       "writtenOn": "2015-08-18T02:02:44Z",
       "side": 1,
       "message": "this variable is unnecessary.\nYou can get it with $(dir $@) in the build recipe.",
+      "range": {
+        "startLine": 621,
+        "startChar": 28,
+        "endLine": 621,
+        "endChar": 52
+      },
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_d90f43e9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-18T19:45:16Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "c471e91c_6e9e83e9",
       "range": {
         "startLine": 621,
         "startChar": 28,
@@ -100,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "a4a8755c_191f4d94",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-18T19:45:16Z",
+      "side": 1,
+      "message": "There are two cases here.\n\nFor proxies, we depend on all listed .dbus.xml files and generate a single C++ header file.  For adaptors, the correspondence is 1:1.\n\nFor adaptors, we have 1:1 dependency between .dbus.xml files and generated header files.  However, the .dbus.xml files may be anywhere in the source directory, and I have a hard time writing a simple pattern matching rule that expresses that:\n\n$(output_prefix)/%.h : $(some_variable_prefix)/%.dbus.xml\n\nI can do this, but I\u0027m going to need to eval() a template to get that right.  Update incoming.\n\nGiven how rare it is to actually change these .dbus.xml files and the amount of overhead it is to generate the corresponding header files, I judged it reasonable to simplify the build logic by depending generously.",
+      "parentUuid": "a4a8755c_905231b5",
+      "range": {
+        "startLine": 623,
+        "startChar": 28,
+        "endLine": 623,
+        "endChar": 94
+      },
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64591d73_102c1198",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -111,6 +177,30 @@
       "writtenOn": "2015-08-18T02:02:44Z",
       "side": 1,
       "message": "should be my_export_c_include_dirs .",
+      "range": {
+        "startLine": 630,
+        "startChar": 1,
+        "endLine": 630,
+        "endChar": 27
+      },
+      "revId": "d2ba4ee01b328397095163e0e160e58e5b998640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4434d7f_afe9732e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-18T19:45:16Z",
+      "side": 1,
+      "message": "There is no my_export_c_include_dirs.  Instead, it seems that various places in this file have been editing LOCAL_EXPORT_C_INCLUDE_DIRS directly.  I was unsure why this was the case.\n\nWith your permission, I\u0027m going to keep this as is, and do the refactor to add a my_export_c_include_dirs in a following patch?",
+      "parentUuid": "64591d73_102c1198",
       "range": {
         "startLine": 630,
         "startChar": 1,
