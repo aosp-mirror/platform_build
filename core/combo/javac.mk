@@ -26,12 +26,7 @@ ifdef JAVAC_WRAPPER
 endif
 
 # Whatever compiler is on this system.
-ifeq ($(BUILD_OS), windows)
-    COMMON_JAVAC := development/host/windows/prebuilt/javawrap.exe -J-Xmx256m \
-        $(common_jdk_flags)
-else
-    COMMON_JAVAC := $(JAVACC) -J-Xmx1024M $(common_jdk_flags)
-endif
+COMMON_JAVAC := $(JAVACC) -J-Xmx1024M $(common_jdk_flags)
 
 # Eclipse.
 ifeq ($(CUSTOM_JAVA_COMPILER), eclipse)

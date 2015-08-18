@@ -1645,11 +1645,7 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR))
 endef
 
-ifeq ($(HOST_OS),windows)
-xlint_unchecked :=
-else
 xlint_unchecked := -Xlint:unchecked
-endif
 
 ifeq (true, $(ENABLE_INCREMENTALJAVAC))
 incremental_dex := --incremental
@@ -1988,13 +1984,12 @@ endef
 
 #TODO: use a smaller -Xmx value for most libraries;
 #      only core.jar and framework.jar need a heap this big.
-# Avoid the memory arguments on Windows, dx fails to load for some reason with them.
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex
 $(hide) $(DX) \
-    $(if $(findstring windows,$(HOST_OS)),,-JXms16M -JXmx2048M) \
+    -JXms16M -JXmx2048M \
     --dex --output=$(dir $@) \
     $(incremental_dex) \
     $(if $(NO_OPTIMIZE_DX), \

@@ -38,8 +38,6 @@ endif
 #endif
 
 # Check for broken versions of make.
-# (Allow any version under Cygwin since we don't actually build the platform there.)
-ifeq (,$(findstring CYGWIN,$(shell uname -sm)))
 ifneq (1,$(strip $(shell expr $(MAKE_VERSION) \>= 3.81)))
 $(warning ********************************************************************************)
 $(warning *  You are using version $(MAKE_VERSION) of make.)
@@ -47,7 +45,6 @@ $(warning *  Android can only be built by versions 3.81 and higher.)
 $(warning *  see https://source.android.com/source/download.html)
 $(warning ********************************************************************************)
 $(error stopping)
-endif
 endif
 
 # Absolute path of the present working direcotry.
@@ -131,7 +128,6 @@ ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
 
 $(info Checking build tools versions...)
 
-ifneq ($(HOST_OS),windows)
 # check for a case sensitive file system
 ifneq (a,$(shell mkdir -p $(OUT_DIR) ; \
                 echo a > $(OUT_DIR)/casecheck.txt; \
@@ -142,7 +138,6 @@ $(warning You are building on a case-insensitive filesystem.)
 $(warning Please move your source tree to a case-sensitive filesystem.)
 $(warning ************************************************************)
 $(error Case-insensitive filesystems not supported)
-endif
 endif
 
 # Make sure that there are no spaces in the absolute path; the
@@ -478,11 +473,6 @@ endif
 ifeq ($(SDK_ONLY),true)
 include $(TOPDIR)sdk/build/windows_sdk_whitelist.mk
 include $(TOPDIR)development/build/windows_sdk_whitelist.mk
-
-# Exclude tools/acp when cross-compiling windows under linux
-ifeq ($(findstring Linux,$(UNAME)),)
-subdirs += build/tools/acp
-endif
 
 else	# !SDK_ONLY
 #
