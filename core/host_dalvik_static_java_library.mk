@@ -34,8 +34,9 @@ LOCAL_INTERMEDIATE_TARGETS += \
 include $(BUILD_SYSTEM)/host_java_library.mk
 # proguard is not supported
 # *.proto files are not supported
-$(full_classes_jack): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
-$(full_classes_jack): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
+
 $(full_classes_jack): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jack): \
 	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
