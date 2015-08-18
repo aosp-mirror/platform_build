@@ -102,8 +102,16 @@ else # !USE_NINJA
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
-$(shell mkdir -p $(OUT_DIR) && echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
+$(shell mkdir -p $(OUT_DIR) && \
+    echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt && \
+    echo -n $(BUILD_DATETIME) > $(OUT_DIR)/build_date.txt)
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
+BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
+ifeq ($(HOST_OS),darwin)
+DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
+else
+DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
+endif
 
 # CTS-specific config.
 -include cts/build/config.mk
