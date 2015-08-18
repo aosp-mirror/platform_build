@@ -919,7 +919,7 @@ $(hide) touch $@
 endef
 
 ######################################################################
-## Commands for running protoc to compile .proto into .pb.cc and .pb.h
+## Commands for running protoc to compile .proto into .pb.cc (or.pb.c) and .pb.h
 ######################################################################
 define transform-proto-to-cc
 @echo "Protoc: $@ <= $<"
@@ -927,7 +927,7 @@ define transform-proto-to-cc
 $(hide) $(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
 	$(PRIVATE_PROTOC_FLAGS) \
-	--cpp_out=$(PRIVATE_PROTO_CC_OUTPUT_DIR) $<
+	$<
 endef
 
 
