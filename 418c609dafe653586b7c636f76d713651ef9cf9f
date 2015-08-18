@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04806112_d0baadb4",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-18T21:53:47Z",
+      "side": 1,
+      "message": "static pattern rule is just for such cases.\nI\u0027ll upload a new patchset.",
+      "range": {
+        "startLine": 630,
+        "startChar": 0,
+        "endLine": 638,
+        "endChar": 57
+      },
+      "revId": "418c609dafe653586b7c636f76d713651ef9cf9f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
