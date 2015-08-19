@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a9e95f_592b8506",
+        "filename": "core/module_arch_supported.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-19T04:18:07Z",
+      "side": 1,
+      "message": "Isn\u0027t there a whitelist of which modules are supported for windows somewhere in development/sdk? Is that going to go away in favor of this? I would prefer that because it keeps this knowledge with the module, but if that\u0027s the case we should default to having modules be unsupported for Windows.",
+      "revId": "a5672cf1deb7c500cb092b2f552a56214682de6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
