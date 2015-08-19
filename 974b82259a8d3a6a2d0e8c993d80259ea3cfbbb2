@@ -46,6 +46,30 @@
       "revId": "974b82259a8d3a6a2d0e8c993d80259ea3cfbbb2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_84d9db20",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T21:04:40Z",
+      "side": 1,
+      "message": "You are right - $^ still includes everything.",
+      "parentUuid": "04b861a5_b342d666",
+      "range": {
+        "startLine": 993,
+        "startChar": 1,
+        "endLine": 993,
+        "endChar": 24
+      },
+      "revId": "974b82259a8d3a6a2d0e8c993d80259ea3cfbbb2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
