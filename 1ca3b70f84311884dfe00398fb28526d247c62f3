@@ -16,6 +16,24 @@
       "revId": "1ca3b70f84311884dfe00398fb28526d247c62f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4a9e95f_b936396d",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T04:18:24Z",
+      "side": 1,
+      "message": "I don\u0027t disagree, but this is what we\u0027re effectively doing for adb and fastboot today.\n\n  ifneq ($(HOST_OS),windows)\n    LOCAL_CXX_STL :\u003d libc++_static\n  endif\n\nWhich does default back to libstdc++ on windows with the above code.",
+      "parentUuid": "a4a8755c_25fa1a36",
+      "revId": "1ca3b70f84311884dfe00398fb28526d247c62f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
