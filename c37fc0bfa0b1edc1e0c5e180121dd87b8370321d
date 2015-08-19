@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "64591d73_9cf2f78e",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T17:36:46Z",
+      "side": 1,
+      "message": "But we don\u0027t do this for the adaptor headers, do we? I\u0027m fine either way, just pointing out.",
+      "parentUuid": "04806112_e90fcce8",
+      "range": {
+        "startLine": 635,
+        "startChar": 35,
+        "endLine": 635,
+        "endChar": 42
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e4aeed64_3419f204",
         "filename": "core/binary.mk",
         "patchSetId": 7
@@ -78,6 +102,24 @@
       "side": 1,
       "message": "Right now, a given target cannot generate both adaptors and proxies.  I don\u0027t see how we could end up with overlap.",
       "parentUuid": "e4aeed64_3419f204",
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a8755c_509912fe",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T17:36:46Z",
+      "side": 1,
+      "message": "You are right and I keep forgetting that generated artifacts are scoped within their target\u0027s intermediates dir. That said, for the sake of clarity, I think the distinction between $(dbus_gen_dir)/proxies/... and $(dbus_gen_dir)/adaptors/... is useful. Again, just a preference.",
+      "parentUuid": "64591d73_dc4d8f94",
       "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -225,6 +267,30 @@
       "side": 1,
       "message": "I think I\u0027d like to include the folder structure inside the repository as part of the header namespacing.  So if a project had sources dbus_bindings/example/org.chromium.Example.dbus.xml, they would write\n\n#include \u003cdbus_bindings/example/org.chromium.Example.h\u003e\n\nI think that this gives better hints to authors where the code is coming from than:\n\n#include \u003corg.chromium.Example.h\u003e\n\nIn practice, most projects keep their binding definitions in a directory called dbus_bindings in the root of their project, so the include statement would look like:\n\n#include \u003cdbus_bindings/org.chromium.Buffet.Manager.h\u003e\n\nWe should be able to massage the gyp files to match this pattern.",
       "parentUuid": "243ac5f6_56dfa985",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 49
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04806112_891730d4",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T17:36:46Z",
+      "side": 1,
+      "message": "This makes sense to me. my_c_includes +\u003d $(dbus_header_dir) then? Do we need my_export_c_include_dirs, too?",
+      "parentUuid": "c4a9e95f_fcc6dfad",
       "range": {
         "startLine": 661,
         "startChar": 0,
