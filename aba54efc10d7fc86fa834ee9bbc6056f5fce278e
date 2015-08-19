@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "e4aeed64_fd57bd9e",
+        "filename": "core/init_rc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T23:53:44Z",
+      "side": 1,
+      "message": "ah, true. it is still possible to cause problems, but luckily they all go away with soong",
+      "parentUuid": "04b861a5_2e6f5d21",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "243ac5f6_12d40ab6",
         "filename": "core/tasks/tools/build_custom_image.mk",
         "patchSetId": 1
@@ -113,6 +131,24 @@
       "side": 1,
       "message": "no, shared libraries are recorded separately in variables *_DEPENDENCIES_ON_SHARED_LIBRARIES.",
       "parentUuid": "243ac5f6_12d40ab6",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4a9e95f_6d947798",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T23:53:44Z",
+      "side": 1,
+      "message": "but the contents of *_DEPENDENCIES_ON_SHARED_LIBRARIES is added back into .REQUIRED in main.mk before this file is included",
+      "parentUuid": "e4434d7f_8c9abac3",
       "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
