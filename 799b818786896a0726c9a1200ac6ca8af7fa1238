@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4a8755c_80cad914",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-19T21:58:36Z",
+      "side": 1,
+      "message": "I don\u0027t think you can do this. If a test is checked in with `LOCAL_SANITIZE :\u003d thread` then you\u0027re guaranteeing that we can\u0027t build with SANITIZE_(HOST|TARGET).",
+      "revId": "799b818786896a0726c9a1200ac6ca8af7fa1238",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_e481af9f",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-19T21:58:36Z",
+      "side": 1,
+      "message": "If either",
+      "revId": "799b818786896a0726c9a1200ac6ca8af7fa1238",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
