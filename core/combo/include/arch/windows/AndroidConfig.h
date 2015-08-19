@@ -34,11 +34,6 @@
 #endif
 
 /*
- * Define this if you build against MSVCRT.DLL
- */
-#define HAVE_MS_C_RUNTIME
-
-/*
  * We need to choose between 32-bit and 64-bit off_t.  All of our code should
  * agree on the same size.  For desktop systems, use 64-bit values,
  * because some of our libraries (e.g. wxWidgets) expect to be built that way.
