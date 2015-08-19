@@ -990,7 +990,7 @@ define generate-dbus-proxies
 $(hide) $(DBUS_GENERATOR) \
 	--service-config=$(PRIVATE_DBUS_SERVICE_CONFIG) \
 	--proxy=$@ \
-	$<
+	$(filter %.dbus.xml,$^)
 endef
 
 
