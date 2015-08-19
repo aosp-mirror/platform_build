@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4a9e95f_8dda1395",
+        "filename": "core/init_rc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T23:43:39Z",
+      "side": 1,
+      "message": "We should likely change this based on LOCAL_PROPRIETARY_MODULE / LOCAL_OEM_MODULE / LOCAL_ODM_MODULE to always put this in the right partition",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a8755c_33aa5d09",
+        "filename": "core/init_rc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T23:43:39Z",
+      "side": 1,
+      "message": "These should just go in clear_vars.mk, shouldn\u0027t they?",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "243ac5f6_12d40ab6",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T23:43:39Z",
+      "side": 1,
+      "message": "Won\u0027t this pick up all the shared library dependencies and install them too? That\u0027s probably not desired.",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
