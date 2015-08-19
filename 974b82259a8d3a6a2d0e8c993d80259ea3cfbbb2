@@ -22,6 +22,30 @@
       "revId": "974b82259a8d3a6a2d0e8c993d80259ea3cfbbb2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04b861a5_b342d666",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-19T21:01:04Z",
+      "side": 1,
+      "message": "What about this line:\n $(dbus_generated_headers) : $(dbus_service_config_path) $(DBUS_GENERATOR)\n\nWouldn\u0027t that add the service config and the generator to the dependencies?\n\nIn practice, I see that they are listed in $^.",
+      "parentUuid": "a4a8755c_fdf01606",
+      "range": {
+        "startLine": 993,
+        "startChar": 1,
+        "endLine": 993,
+        "endChar": 24
+      },
+      "revId": "974b82259a8d3a6a2d0e8c993d80259ea3cfbbb2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
