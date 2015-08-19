@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4a8755c_25fa1a36",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-19T04:06:46Z",
+      "side": 1,
+      "message": "Should just make this an error. There\u0027s no need to manually set LOCAL_CXX_STL :\u003d libc++ any more, and if they\u0027ve set it to libc++_static but we\u0027re giving them the shared mingw libstdc++ it isn\u0027t what they want.",
+      "revId": "1ca3b70f84311884dfe00398fb28526d247c62f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
