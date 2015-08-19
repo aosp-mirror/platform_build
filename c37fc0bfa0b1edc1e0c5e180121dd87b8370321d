@@ -208,6 +208,24 @@
     },
     {
       "key": {
+        "uuid": "e4434d7f_b3f8b98a",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T18:03:32Z",
+      "side": 1,
+      "message": "Yes, that\u0027s the convention in the Android build system.",
+      "parentUuid": "c471e91c_2eac86f7",
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c471e91c_3f52f7b6",
         "filename": "core/binary.mk",
         "patchSetId": 7
@@ -315,6 +333,30 @@
       "side": 1,
       "message": "I suppose it can\u0027t hurt.  There exist patterns where we compile 95% of a daemon into a common library for the purposes of running unittests against it.  It would be a hassle to have to reason about hiding the headers for generated code.",
       "parentUuid": "04806112_891730d4",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 49
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4a9e95f_07836412",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T18:03:32Z",
+      "side": 1,
+      "message": "sounds good. I\u0027ll update.",
+      "parentUuid": "c4a9e95f_e7fc08a9",
       "range": {
         "startLine": 661,
         "startChar": 0,
