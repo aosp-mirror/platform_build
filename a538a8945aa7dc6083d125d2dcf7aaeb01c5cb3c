@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "64591d73_5ca4df37",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-19T18:13:29Z",
+      "side": 1,
+      "message": "I see. So the goal for \"build all supported windows modules\" would still be winsdk-tools?",
+      "parentUuid": "e4434d7f_13bb6dba",
+      "revId": "a538a8945aa7dc6083d125d2dcf7aaeb01c5cb3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a9e95f_79e9a12b",
         "filename": "core/envsetup.mk",
         "patchSetId": 2
