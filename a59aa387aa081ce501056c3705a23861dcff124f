@@ -96,6 +96,23 @@
     },
     {
       "key": {
+        "uuid": "449df96e_5437a209",
+        "filename": "core/goma.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-08-19T08:31:03Z",
+      "side": 1,
+      "message": "Sorry, this was wrong without USE_CCACHE. If USE_CCACHE isn\u0027t defined yet, CC_WRAPPER will be a recursive variable, but we are clearing goma_cc.",
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a9e95f_59b065f8",
         "filename": "core/goma.mk",
         "patchSetId": 3
