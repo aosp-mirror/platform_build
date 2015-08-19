@@ -34,6 +34,24 @@
       "revId": "1ca3b70f84311884dfe00398fb28526d247c62f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4434d7f_86129c15",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-08-19T04:23:58Z",
+      "side": 1,
+      "message": "Ack. My concern is more about users that would set this thinking they\u0027d get a static STL. Then again, the users of a static STL on the host should be very few and far between (probably won\u0027t go beyond adb and fastboot), so maybe this isn\u0027t much of an issue.\n\nWindows support for libc++ should be available in the near future, so maybe that\u0027s yet another reason to not worry about this.",
+      "parentUuid": "c4a9e95f_b936396d",
+      "revId": "1ca3b70f84311884dfe00398fb28526d247c62f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
