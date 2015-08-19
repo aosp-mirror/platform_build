@@ -615,12 +615,20 @@ $(cts_testcase_config) : $(android_test_xml) | $(ACP)
 	$(copy-file-to-new-target)
 endif
 
+cts_testcase_dynamic :=
+dynamic_config_xml := $(wildcard $(LOCAL_PATH)/DynamicConfig.xml)
+ifdef dynamic_config_xml
+cts_testcase_dynamic := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).dynamic
+$(cts_testcase_dynamic) : $(dynamic_config_xml) | $(ACP)
+	$(copy-file-to-new-target)
+endif
+
 COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
   $(COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES) \
-  $(cts_testcase_file) $(cts_testcase_config)
+  $(cts_testcase_file) $(cts_testcase_config) $(cts_testcase_dynamic)
 
 # Copy over the compatibility files when user runs mm/mmm.
-$(my_register_name) : $(cts_testcase_file) $(cts_testcase_config)
+$(my_register_name) : $(cts_testcase_file) $(cts_testcase_config) $(cts_testcase_dynamic)
 endif  # LOCAL_COMPATIBILITY_SUITE
 
 ###########################################################
