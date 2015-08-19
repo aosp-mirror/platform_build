@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "64591d73_a5acf7f8",
+        "filename": "core/init_rc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T23:50:46Z",
+      "side": 1,
+      "message": "good idea!",
+      "parentUuid": "c4a9e95f_8dda1395",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4a8755c_33aa5d09",
         "filename": "core/init_rc.mk",
         "patchSetId": 1
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "04b861a5_2e6f5d21",
+        "filename": "core/init_rc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T23:50:46Z",
+      "side": 1,
+      "message": "That would make this file a little bit more complicated, because we \"include $(CLEAR_VARS)\" in this file.\nAlso I\u0027d like to avoid that: these variables are really only for this file and it\u0027s unnecessary to be reset every time you define other kind of modules.",
+      "parentUuid": "a4a8755c_33aa5d09",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "243ac5f6_12d40ab6",
         "filename": "core/tasks/tools/build_custom_image.mk",
         "patchSetId": 1
@@ -53,6 +95,24 @@
       "writtenOn": "2015-08-19T23:43:39Z",
       "side": 1,
       "message": "Won\u0027t this pick up all the shared library dependencies and install them too? That\u0027s probably not desired.",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4434d7f_8c9abac3",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T23:50:46Z",
+      "side": 1,
+      "message": "no, shared libraries are recorded separately in variables *_DEPENDENCIES_ON_SHARED_LIBRARIES.",
+      "parentUuid": "243ac5f6_12d40ab6",
       "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
