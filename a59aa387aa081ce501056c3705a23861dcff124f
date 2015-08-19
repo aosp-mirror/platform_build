@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c4dac934_4630c821",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-08-19T08:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4434d7f_e6f280d5",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 45
+      },
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4a8755c_0a5b6d7f",
         "filename": "core/goma.mk",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "649afd79_b5644a15",
+        "filename": "core/goma.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-08-19T08:17:13Z",
+      "side": 1,
+      "message": "Done. Unfortunately, there isn\u0027t a good pointer, I think (and a current goma-team member agrees with me).\n\nhttps://code.google.com/p/chromium/wiki/LinuxFasterBuilds#Use_goma\n\nsays something, but doesn\u0027t provide a lot of info.\n\nThere is an externally available detailed slide (https://docs.google.com/viewer?a\u003dv\u0026pid\u003dsites\u0026srcid\u003dZGVmYXVsdGRvbWFpbnxnZGQxMWphcGFufGd4OjNlMTJiYTNlOTlmZWVjZWU) but this is written in Japanese, because this slide was used in DevRel-ish event held in Japan.",
+      "parentUuid": "a4a8755c_0a5b6d7f",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a9e95f_59b065f8",
         "filename": "core/goma.mk",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2015-08-19T01:17:45Z",
       "side": 1,
       "message": "I couldn\u0027t find where this variable is used.",
+      "range": {
+        "startLine": 38,
+        "startChar": 2,
+        "endLine": 38,
+        "endChar": 21
+      },
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4dfcd21_c1f92442",
+        "filename": "core/goma.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-08-19T08:17:13Z",
+      "side": 1,
+      "message": "I have introduced this variable in ckati (https://github.com/google/kati/commit/4cb8a6f4f7c23271cf58141d938a35c95c217b82) but I think this was a bad idea. We probably want to pass this value more explicitly. I have introduced --remote_num_jobs flag to ckati (https://github.com/google/kati/commit/de5846149595437b94f03e5d3cb47e093f64bd1c) and changed this variable and ninja.mk.",
+      "parentUuid": "c4a9e95f_59b065f8",
       "range": {
         "startLine": 38,
         "startChar": 2,
