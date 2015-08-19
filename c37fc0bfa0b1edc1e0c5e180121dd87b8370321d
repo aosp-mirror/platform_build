@@ -2,6 +2,46 @@
   "comments": [
     {
       "key": {
+        "uuid": "a4fb1585_21ee2a2a",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T14:24:59Z",
+      "side": 1,
+      "message": "For clarity, this could just be \u0027proxies\u0027 (see below).",
+      "range": {
+        "startLine": 635,
+        "startChar": 35,
+        "endLine": 635,
+        "endChar": 42
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4aeed64_3419f204",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T14:24:59Z",
+      "side": 1,
+      "message": "We might want to append another directory to $(dbus_gen_dir) in this case to ensure there\u0027s no possible overlap between the two cases, e.g. $(dbus_gen_dir)/adaptors .",
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4a8755c_9f3b1d86",
         "filename": "core/binary.mk",
         "patchSetId": 7
@@ -25,6 +65,23 @@
     },
     {
       "key": {
+        "uuid": "e4aeed64_9408e6b8",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T14:24:59Z",
+      "side": 1,
+      "message": "Is there a reason for the different spacing around \u0027:\u0027 between variable assignment and dependencies?",
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c471e91c_3f52f7b6",
         "filename": "core/binary.mk",
         "patchSetId": 7
@@ -36,6 +93,30 @@
       "writtenOn": "2015-08-18T22:38:26Z",
       "side": 1,
       "message": "then added their dir to the include path here.\nDoes this work for you?",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 49
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "243ac5f6_56dfa985",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1076344
+      },
+      "writtenOn": "2015-08-19T14:24:59Z",
+      "side": 1,
+      "message": "I think this would work (but curious what wiley says ;-) ).\n\nWe should probably add these to my_export_c_include_dirs as well, in case these get generated in a separate rule.",
+      "parentUuid": "c471e91c_3f52f7b6",
       "range": {
         "startLine": 661,
         "startChar": 0,
