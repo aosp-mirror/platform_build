@@ -300,6 +300,30 @@
       "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4a9e95f_e7fc08a9",
+        "filename": "core/binary.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1057759
+      },
+      "writtenOn": "2015-08-19T17:47:55Z",
+      "side": 1,
+      "message": "I suppose it can\u0027t hurt.  There exist patterns where we compile 95% of a daemon into a common library for the purposes of running unittests against it.  It would be a hassle to have to reason about hiding the headers for generated code.",
+      "parentUuid": "04806112_891730d4",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 49
+      },
+      "revId": "c37fc0bfa0b1edc1e0c5e180121dd87b8370321d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
