@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4434d7f_e6f280d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T01:17:45Z",
+      "side": 1,
+      "message": "Check this in goma.mk?",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 45
+      },
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4a8755c_0a5b6d7f",
+        "filename": "core/goma.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T01:17:45Z",
+      "side": 1,
+      "message": "Perhaps change to \"this works only with Google\u0027s Goma build infrastructure\" and give pointer to Goma if any is publically available.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 44
+      },
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4a9e95f_59b065f8",
+        "filename": "core/goma.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T01:17:45Z",
+      "side": 1,
+      "message": "I couldn\u0027t find where this variable is used.",
+      "range": {
+        "startLine": 38,
+        "startChar": 2,
+        "endLine": 38,
+        "endChar": 21
+      },
+      "revId": "a59aa387aa081ce501056c3705a23861dcff124f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
