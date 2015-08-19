@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4a8755c_fdf01606",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-19T20:55:48Z",
+      "side": 1,
+      "message": "Hmm, you don\u0027t need to call $(filter) here.\nThe PRIVATE variable was removed by me, because I changed the dependency to :\n$(dbus_generated_headers) : $(dbus_definition_paths)\nwhich makes $^ be only the .dbus.xml files.",
+      "range": {
+        "startLine": 993,
+        "startChar": 1,
+        "endLine": 993,
+        "endChar": 24
+      },
+      "revId": "974b82259a8d3a6a2d0e8c993d80259ea3cfbbb2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
