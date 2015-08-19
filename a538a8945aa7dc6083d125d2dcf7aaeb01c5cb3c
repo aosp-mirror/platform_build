@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e4434d7f_13bb6dba",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T18:07:27Z",
+      "side": 1,
+      "message": "Mainly because most targets don\u0027t support windows builds. We could remove this if we switched the default to windows not supported.",
+      "parentUuid": "04806112_06232f33",
+      "revId": "a538a8945aa7dc6083d125d2dcf7aaeb01c5cb3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4a9e95f_79e9a12b",
         "filename": "core/envsetup.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-08-19T05:56:38Z",
       "side": 1,
       "message": "There\u0027s also a winsdk-tools goal.",
+      "revId": "a538a8945aa7dc6083d125d2dcf7aaeb01c5cb3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64591d73_7c4d6317",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-19T18:07:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4a9e95f_79e9a12b",
       "revId": "a538a8945aa7dc6083d125d2dcf7aaeb01c5cb3c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
