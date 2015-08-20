@@ -565,8 +565,25 @@ $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	$(copy-file-to-target-with-cp)
 endif
 
-endif # !LOCAL_UNINSTALLABLE_MODULE
+# Rule to install the module's companion init.rc.
+my_init_rc := $(LOCAL_INIT_RC_$(my_32_64_bit_suffix))
+my_init_rc_src :=
+my_init_rc_installed :=
+ifndef my_init_rc
+my_init_rc := $(LOCAL_INIT_RC)
+# Make sure we don't define the rule twice in multilib module.
+LOCAL_INIT_RC :=
+endif
+ifdef my_init_rc
+my_init_rc_src := $(LOCAL_PATH)/$(my_init_rc)
+my_init_rc_installed := $(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(my_init_rc_src))
+$(my_init_rc_installed) : $(my_init_rc_src) | $(ACP)
+	@echo "Install: $@"
+	$(copy-file-to-new-target)
 
+$(my_register_name) : $(my_init_rc_installed)
+endif # my_init_rc
+endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
 ## CHECK_BUILD goals
@@ -651,9 +668,12 @@ ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
-    $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) $(LOCAL_INSTALLED_MODULE))
+    $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
+    $(LOCAL_INSTALLED_MODULE) $(my_init_rc_installed))
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
-    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE))
+    $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
+    $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
+    $(addprefix $(my_init_rc_src):,$(my_init_rc_installed)))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
