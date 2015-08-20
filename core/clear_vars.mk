@@ -181,6 +181,7 @@ LOCAL_DPI_FILE_STEM:=
 LOCAL_SANITIZE:=
 LOCAL_SANITIZE_RECOVER:=
 LOCAL_DBUS_PROXY_PREFIX:=
+LOCAL_INIT_RC:=
 
 # arch specific variables
 LOCAL_SRC_FILES_$(TARGET_ARCH):=
@@ -288,6 +289,8 @@ LOCAL_MODULE_STEM_32:=
 LOCAL_MODULE_STEM_64:=
 LOCAL_CLANG_32:=
 LOCAL_CLANG_64:=
+LOCAL_INIT_RC_32:=
+LOCAL_INIT_RC_64:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
