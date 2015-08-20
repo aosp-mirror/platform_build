@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64591d73_14f7d300",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1065256
+      },
+      "writtenOn": "2015-08-20T01:13:09Z",
+      "side": 0,
+      "message": "Don\u0027t we need these to map stat to 64-bit stat and related? Or do you guys have some other design around 64-bit file sizes/offsets? adb isn\u0027t totally 64-bit size/offset clean (due to file_sync_service.h being 32-bit), but I have read that people are using adb to push \u003e4GB files on Windows.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
