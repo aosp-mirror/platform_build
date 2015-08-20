@@ -4,33 +4,33 @@
 
 my_sanitize := $(strip $(LOCAL_SANITIZE))
 
+# SANITIZE_HOST is only in effect if the module is already using clang (host
+# modules that haven't set `LOCAL_CLANG := false` and device modules that
+# have set `LOCAL_CLANG := true`.
+my_global_sanitize :=
+ifeq ($(my_clang),true)
+  ifdef LOCAL_IS_HOST_MODULE
+    my_global_sanitize := $(strip $(SANITIZE_HOST))
+
+    # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+    my_global_sanitize := $(subst true,address,$(my_global_sanitize))
+  else
+    my_global_sanitize := $(strip $(SANITIZE_TARGET))
+  endif
+endif
+
+# The sanitizer specified by the environment wins over the module.
+ifneq ($(my_global_sanitize),)
+  my_sanitize := $(my_global_sanitize)
+endif
+
 # Don't apply sanitizers to NDK code.
 ifdef LOCAL_SDK_VERSION
-  my_sanitize := never
+  my_sanitize :=
 endif
 
-# Configure SANITIZE_HOST / SANITIZE_TARGET.
-ifeq ($(my_sanitize),)
-  ifdef LOCAL_IS_HOST_MODULE
-    my_sanitize := $(strip $(SANITIZE_HOST))
-  else
-    my_sanitize := $(strip $(SANITIZE_TARGET))
-  endif
-
-  # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
-  ifeq ($(my_sanitize),true)
-    my_sanitize := address
-  endif
-
-  # SANITIZE_HOST is only in effect if the module is already using clang (host
-  # modules that haven't set `LOCAL_CLANG := false` and device modules that
-  # have set `LOCAL_CLANG := true`.
-  ifneq ($(my_clang),true)
-    my_sanitize :=
-  endif
-endif
-
-ifeq ($(my_sanitize),never)
+# Never always wins.
+ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize :=
 endif
 
