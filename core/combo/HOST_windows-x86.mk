@@ -33,13 +33,15 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_LD_DIRS += -Lprebuilts/gcc/linux-x86/host/x8
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
 # Use C99-compliant printf functions (%zd).
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
+# Admit to using >= Win2K.
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0500
+# Get 64-bit off_t and related functions.
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64
 
 $(combo_2nd_arch_prefix)HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
 $(combo_2nd_arch_prefix)HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)
 $(combo_2nd_arch_prefix)HOST_AR := $(TOOLS_PREFIX)ar$(TOOLS_EXE_SUFFIX)
 
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += \
-    -include $(call select-android-config-h,windows)
 $(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += \
     --enable-stdcall-fixup
 
