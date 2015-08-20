@@ -152,6 +152,24 @@
       "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c471e91c_42d99368",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-20T00:00:23Z",
+      "side": 1,
+      "message": "Ah, I missed that and I didn\u0027t test this feature.\nI need to think more about this.",
+      "parentUuid": "c4a9e95f_6d947798",
+      "revId": "aba54efc10d7fc86fa834ee9bbc6056f5fce278e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
