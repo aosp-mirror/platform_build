@@ -22,6 +22,30 @@
       "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4aeed64_a8ab418e",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-08-20T01:30:18Z",
+      "side": 0,
+      "message": "we don\u0027t need the latter; if we did, code wouldn\u0027t compile now i\u0027ve removed it.\n\nthe former is harder to tell statically, but there are certainly no references to off_t (or off64_t!) in adb.\n\n(from my exploration of the sync code in my WIP patch to speed up sync by using larger packet sizes i can tell you that no one is transferring \u003e 4GiB files on any platform because adb uses \"unsigned\" to represent file sizes.)",
+      "parentUuid": "64591d73_14f7d300",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
