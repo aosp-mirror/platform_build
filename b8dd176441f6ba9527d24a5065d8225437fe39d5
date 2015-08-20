@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4485f957_f7dd3855",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1065256
+      },
+      "writtenOn": "2015-08-20T21:00:07Z",
+      "side": 1,
+      "message": "I\u0027m kind of curious: what actually broke without this? Earlier I did a search for this through the headers and didn\u0027t see much interesting.",
+      "range": {
+        "startLine": 39,
+        "startChar": 69,
+        "endLine": 39,
+        "endChar": 90
+      },
+      "revId": "b8dd176441f6ba9527d24a5065d8225437fe39d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
