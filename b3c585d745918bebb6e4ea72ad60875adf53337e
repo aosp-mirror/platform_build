@@ -46,6 +46,30 @@
       "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4434d7f_473c0b47",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1065256
+      },
+      "writtenOn": "2015-08-20T01:57:16Z",
+      "side": 0,
+      "message": "I think adb uses \u0027stat\u0027 which sys/stat.h maps to a 64-bit api \u0026 structure if _FILE_OFFSET_BITS\u003d\u003d64. I checked and sizeof(((struct stat*)0)-\u003est_size) \u003d\u003d 8 in Windows builds. Some references to st_size just (incorrectly) truncate to 32-bit, but it seems like some may use it correctly (as a param to pm install-create, which might be broken by this change?).\n\nHere\u0027s a user that is adb pull\u0027ing \u003e4GiB files: https://productforums.google.com/d/msg/nexus/stu63KZzXb8/ki8KOh72AnIJ\n\nI think the reason that the code works in practice is because the sync code only uses the size in determining if a file is different, it doesn\u0027t use it for determining how much to read/write.",
+      "parentUuid": "e4aeed64_a8ab418e",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
