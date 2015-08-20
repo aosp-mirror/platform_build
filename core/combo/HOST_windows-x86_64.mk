@@ -31,12 +31,13 @@ HOST_GLOBAL_LD_DIRS += -L/usr/amd64-mingw32msvc/lib
 HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
 # Use C99-compliant printf functions (%zd).
 HOST_GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
+# Admit to using >= Win2K.
+HOST_GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0500
 
 HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
 HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)
 HOST_AR := $(TOOLS_PREFIX)ar$(TOOLS_EXE_SUFFIX)
 
-HOST_GLOBAL_CFLAGS += -include $(call select-android-config-h,windows)
 HOST_GLOBAL_LDFLAGS += --enable-stdcall-fixup
 ifneq ($(strip $(BUILD_HOST_static)),)
 # Statically-linked binaries are desirable for sandboxed environment
