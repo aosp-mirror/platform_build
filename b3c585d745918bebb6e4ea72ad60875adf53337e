@@ -70,6 +70,30 @@
       "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4fb1585_e8b07efa",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-08-20T02:40:51Z",
+      "side": 0,
+      "message": "(checks.) yeah, you\u0027re right. it works because they only use the size to show progress. (as far as i can tell, sync doesn\u0027t even use the size in deciding what to copy.)\n\nokay, i\u0027ll add this to the combo .mk and dream wistfully of the day when all Windows is 64-bit...",
+      "parentUuid": "e4434d7f_473c0b47",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
