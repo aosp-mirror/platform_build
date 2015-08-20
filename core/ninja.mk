@@ -38,7 +38,7 @@ $(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
 kati.intermediate: $(KATI)
 	@echo Running kati to generate build.ninja...
 	@#TODO: use separate ninja file for mm or single target build
-	$(hide) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(ANDROID_TARGETS) USE_NINJA=false
+	$(hide) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(ANDROID_TARGETS) USE_NINJA=false
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
