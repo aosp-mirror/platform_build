@@ -94,6 +94,30 @@
       "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04806112_158a6fa1",
+        "filename": "core/combo/include/arch/windows/AndroidConfig.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1065256
+      },
+      "writtenOn": "2015-08-20T02:48:25Z",
+      "side": 0,
+      "message": "See copy_local_dir_remote() where it does \"if(size \u003d\u003d ci-\u003esize) {\" to see how sync checks for file size/timestamp differences. Yes, it is wrong for \u003e4GiB because the protocol only returns a 32-bit size.\n\nI found this when trying to get adb to compile with Visual Studio (whose headers don\u0027t support _FILE_OFFSET_BITS and _LARGEFILE_SOURCE) -- it gave a truncation warning about local_build_list() truncating a 64-bit st_size to 32-bits (which is a red herring since the protocol is the real thing that needs to be fixed to begin with).",
+      "parentUuid": "a4fb1585_e8b07efa",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 27
+      },
+      "revId": "b3c585d745918bebb6e4ea72ad60875adf53337e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
