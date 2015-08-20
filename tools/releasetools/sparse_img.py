@@ -210,6 +210,16 @@ class SparseImage(object):
     nonzero_blocks = []
     reference = '\0' * self.blocksize
 
+    # Workaround for bug 23227672. For squashfs, we don't have a system.map. So
+    # the whole system image will be treated as a single file. But for some
+    # unknown bug, the updater will be killed due to OOM when writing back the
+    # patched image to flash (observed on lenok-userdebug MEA49). Prior to
+    # getting a real fix, we evenly divide the non-zero blocks into smaller
+    # groups (currently 1024 blocks or 4MB per group).
+    # Bug: 23227672
+    MAX_BLOCKS_PER_GROUP = 1024
+    nonzero_groups = []
+
     f = self.simg_f
     for s, e in remaining:
       for b in range(s, e):
@@ -232,12 +242,22 @@ class SparseImage(object):
           nonzero_blocks.append(b)
           nonzero_blocks.append(b+1)
 
-    assert zero_blocks or nonzero_blocks or clobbered_blocks
+          if len(nonzero_blocks) >= MAX_BLOCKS_PER_GROUP:
+            nonzero_groups.append(nonzero_blocks)
+            # Clear the list.
+            nonzero_blocks = []
+
+    if nonzero_blocks:
+      nonzero_groups.append(nonzero_blocks)
+      nonzero_blocks = []
+
+    assert zero_blocks or nonzero_groups or clobbered_blocks
 
     if zero_blocks:
       out["__ZERO"] = rangelib.RangeSet(data=zero_blocks)
-    if nonzero_blocks:
-      out["__NONZERO"] = rangelib.RangeSet(data=nonzero_blocks)
+    if nonzero_groups:
+      for i, blocks in enumerate(nonzero_groups):
+        out["__NONZERO-%d" % i] = rangelib.RangeSet(data=blocks)
     if clobbered_blocks:
       out["__COPY"] = clobbered_blocks
 
