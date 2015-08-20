@@ -37,9 +37,6 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0500
 # Get 64-bit off_t and related functions.
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1
-# An Android-specific hack in llvm currently uses WIN32 rather than _WIN32.
-# Until we know whether there are more of these, unconditionally define WIN32.
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -DWIN32
 
 $(combo_2nd_arch_prefix)HOST_CC := $(TOOLS_PREFIX)gcc$(TOOLS_EXE_SUFFIX)
 $(combo_2nd_arch_prefix)HOST_CXX := $(TOOLS_PREFIX)g++$(TOOLS_EXE_SUFFIX)
