@@ -46,6 +46,10 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURC
 # See bug 12708004.
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
 
+# We build a 32-bit host art, and right now that also means building *all* host libraries
+# both 32- and 64-bit (whether art uses them or not --- 9d59f417767991246848c3e101cb27d2dfea5988).
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1
+
 $(combo_2nd_arch_prefix)HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 ############################################################
