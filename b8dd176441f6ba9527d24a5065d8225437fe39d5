@@ -22,6 +22,30 @@
       "revId": "b8dd176441f6ba9527d24a5065d8225437fe39d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84253145_39c727ac",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-08-20T21:03:43Z",
+      "side": 1,
+      "message": "nothing. this wasn\u0027t actually the problem. the WIN32 was. srhines has a hack in llvm that uses WIN32 rather than _WIN32. one question is: \"should we fix that to _WIN32 and remove the hack in the build system?\" but a deeper question is \"why did srhines need that llvm hack in the first place? is it because we polluted his environment with _FILE_OFFSET_BITS\u003d64? in which case, should we stop doing that and just add it explicitly to adb and fastboot?\"\n\n(plus: when will 32-bit Windows die so we can get past all this crap?!)",
+      "parentUuid": "4485f957_f7dd3855",
+      "range": {
+        "startLine": 39,
+        "startChar": 69,
+        "endLine": 39,
+        "endChar": 90
+      },
+      "revId": "b8dd176441f6ba9527d24a5065d8225437fe39d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
