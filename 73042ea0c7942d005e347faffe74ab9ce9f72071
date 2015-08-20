@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "248c8586_e4bfc278",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-08-20T21:23:56Z",
+      "side": 1,
+      "message": "like i say, the rest of this line is pretty questionable because it appears to break llvm, but that can wait until we\u0027ve talked to someone who owns llvm/win32 about whether llvm _should_ build like that or not.",
+      "revId": "73042ea0c7942d005e347faffe74ab9ce9f72071",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
