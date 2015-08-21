@@ -277,6 +277,7 @@ include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
 include $(BUILD_SYSTEM)/ccache.mk
+include $(BUILD_SYSTEM)/goma.mk
 
 ifdef TARGET_PREFER_32_BIT
 TARGET_PREFER_32_BIT_APPS := true
