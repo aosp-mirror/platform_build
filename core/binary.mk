@@ -621,9 +621,9 @@ endif
 endif  # $(proto_sources) non-empty
 
 ###########################################################
-## Compile the .dbus.xml files to c++ headers
+## Compile the .dbus-xml files to c++ headers
 ###########################################################
-dbus_definitions := $(filter %.dbus.xml,$(my_src_files))
+dbus_definitions := $(filter %.dbus-xml,$(my_src_files))
 dbus_generated_headers :=
 ifneq ($(dbus_definitions),)
 
@@ -638,7 +638,7 @@ dbus_header_dir := $(dbus_gen_dir)/include/$(LOCAL_DBUS_PROXY_PREFIX)
 dbus_headers := dbus-proxies.h
 else
 dbus_header_dir := $(dbus_gen_dir)
-dbus_headers := $(patsubst %.dbus.xml,%.h,$(dbus_definitions))
+dbus_headers := $(patsubst %.dbus-xml,%.h,$(dbus_definitions))
 endif
 dbus_generated_headers := $(addprefix $(dbus_header_dir)/,$(dbus_headers))
 
@@ -657,7 +657,7 @@ $(dbus_generated_headers) : $(dbus_definition_paths)
 my_export_c_include_dirs += $(dbus_gen_dir)/include
 my_c_includes += $(dbus_gen_dir)/include
 else
-$(dbus_generated_headers) : $(dbus_header_dir)/%.h : $(LOCAL_PATH)/%.dbus.xml
+$(dbus_generated_headers) : $(dbus_header_dir)/%.h : $(LOCAL_PATH)/%.dbus-xml
 	$(generate-dbus-adaptors)
 
 my_export_c_include_dirs += $(dbus_header_dir)
