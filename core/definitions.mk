@@ -932,7 +932,7 @@ endef
 
 
 ######################################################################
-## Commands for generating DBus adaptors from .dbus.xml files.
+## Commands for generating DBus adaptors from .dbus-xml files.
 ######################################################################
 define generate-dbus-adaptors
 @echo "Generating DBus adaptors for $(PRIVATE_MODULE)"
@@ -944,7 +944,7 @@ $(hide) $(DBUS_GENERATOR) \
 endef
 
 ######################################################################
-## Commands for generating DBus proxies from .dbus.xml files.
+## Commands for generating DBus proxies from .dbus-xml files.
 ######################################################################
 define generate-dbus-proxies
 @echo "Generating DBus proxies for $(PRIVATE_MODULE)"
@@ -952,7 +952,7 @@ define generate-dbus-proxies
 $(hide) $(DBUS_GENERATOR) \
 	--service-config=$(PRIVATE_DBUS_SERVICE_CONFIG) \
 	--proxy=$@ \
-	$(filter %.dbus.xml,$^)
+	$(filter %.dbus-xml,$^)
 endef
 
 
