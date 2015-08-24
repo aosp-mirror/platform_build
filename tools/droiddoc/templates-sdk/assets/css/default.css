@@ -6362,7 +6362,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 .dac-button.dac-raised.dac-primary, .landing-secondary, .button {
   background-color: #039bef; }
   .dac-button.dac-raised.dac-primary:hover, .landing-secondary:hover, .button:hover {
-    background-color: #0288d1; }
+    background-color: #0288d1; color:#fff; }
   .dac-button.dac-raised.dac-primary:active, .landing-secondary:active, .button:active {
     background-color: #0277bd; }
 
