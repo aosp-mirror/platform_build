@@ -234,7 +234,6 @@ _product_stash_var_list := $(_product_var_list) \
 	TARGET_NO_RECOVERY \
 	TARGET_NO_RADIOIMAGE \
 	TARGET_HARDWARE_3D \
-	TARGET_PROVIDES_INIT_RC \
 	TARGET_CPU_ABI \
 	TARGET_CPU_ABI2 \
 
