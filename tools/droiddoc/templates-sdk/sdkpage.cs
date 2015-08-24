@@ -404,6 +404,7 @@ var:sdk.linux_download
 
 
 <script>
+
   if (location.hash == "#Requirements") {
     $('.reqs').show();
   } else if (location.hash == "#ExistingIDE") {
@@ -434,7 +435,7 @@ var:sdk.linux_download
     $('#not-supported').hide();
 
     /* set up primary Android Studio download button */
-    $('.download-bundle-button').append(" <br/><span class='small'>for " + os + "</span>");
+    $('.download-bundle-button > .small').html(" for " + os);
     $('.download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
   }
 
@@ -501,9 +502,6 @@ var:sdk.linux_download
       ga('send', 'event', 'SDK', 'IDE and Tools', $("#downloadForRealz").html());
       return true;
     } else {
-      $("label#agreeLabel").parent().stop().animate({color: "#258AAF"}, 200,
-        function() {$("label#agreeLabel").parent().stop().animate({color: "#222"}, 200)}
-      );
       return false;
     }
   }
