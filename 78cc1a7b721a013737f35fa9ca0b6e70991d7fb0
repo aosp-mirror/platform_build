@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "248c8586_ac23ce31",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "I was mostly trying to be safe, in case someone manages to bypass the places that I\u0027ve explicitly set LOCAL_HOST_PREFIX. But that would break rather obviously.\n\nDone.",
+      "parentUuid": "c42ba915_239a89c6",
+      "range": {
+        "startLine": 37,
+        "startChar": 2,
+        "endLine": 45,
+        "endChar": 7
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "248c8586_173b0488",
         "filename": "core/base_rules.mk",
         "patchSetId": 4
@@ -59,6 +83,30 @@
       "writtenOn": "2015-08-25T21:07:58Z",
       "side": 1,
       "message": "this isn\u0027t necessary.",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 26
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "048f817d_a49a0e79",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "248c8586_173b0488",
       "range": {
         "startLine": 54,
         "startChar": 0,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "248c8586_cc5bb27d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "248c8586_b70318c8",
+      "range": {
+        "startLine": 180,
+        "startChar": 78,
+        "endLine": 180,
+        "endChar": 116
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "048f817d_a168c0e8",
         "filename": "core/base_rules.mk",
         "patchSetId": 4
@@ -105,6 +177,30 @@
       "writtenOn": "2015-08-25T21:07:58Z",
       "side": 1,
       "message": "ditto",
+      "range": {
+        "startLine": 618,
+        "startChar": 0,
+        "endLine": 618,
+        "endChar": 26
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4750d3f_cbfcffe5",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "048f817d_a168c0e8",
       "range": {
         "startLine": 618,
         "startChar": 0,
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "048f817d_a483ee10",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a42a3512_ac5be97d",
+      "range": {
+        "startLine": 1015,
+        "startChar": 111,
+        "endLine": 1015,
+        "endChar": 149
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "248c8586_f739a08b",
         "filename": "core/envsetup.mk",
         "patchSetId": 4
@@ -151,6 +271,30 @@
       "writtenOn": "2015-08-25T21:07:58Z",
       "side": 1,
       "message": "where is the dependency setup of this target?",
+      "range": {
+        "startLine": 62,
+        "startChar": 8,
+        "endLine": 62,
+        "endChar": 20
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4700952_8061fb7e",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "There isn\u0027t anything -- this was mostly as a temporary modifier to allow the building of windows code, but it could be useful later too. The use case would be:\n\n  cd system/core/adb; mm buildwindows\n\nThough there are some places where I\u0027d need to filter this out of the MAKECMDGOALS, just like showcommands.",
+      "parentUuid": "248c8586_f739a08b",
       "range": {
         "startLine": 62,
         "startChar": 8,
@@ -186,6 +330,30 @@
     },
     {
       "key": {
+        "uuid": "a47f9520_47948649",
+        "filename": "core/host_executable.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "Yeah, I moved that to a LOCAL_REQUIRED_MODULE_windows locally (I haven\u0027t pushed all of the changes to the makefiles related to these changes until we get the API down).\n\nBut most of the cases of LOCAL_INSTALLED_MODULE and LOCAL_BUILT_MODULE that I\u0027ve found are already questionable, and probably should be removed. Especially with shared libraries, most of them are wrong due to multilib.",
+      "parentUuid": "e4750d3f_f08c4a8a",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 57
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "84253145_4b423b6a",
         "filename": "core/host_shared_library.mk",
         "patchSetId": 4
@@ -197,6 +365,30 @@
       "writtenOn": "2015-08-25T21:07:58Z",
       "side": 1,
       "message": "Why in executables.mk we save both LOCAL_INSTALLED_MODULE and LOCAL_BUILT_MODULE, but here only LOCAL_INSTALLED_MODULE?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 57
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4750d3f_eb653b3a",
+        "filename": "core/host_shared_library.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T22:56:20Z",
+      "side": 1,
+      "message": "I found things using LOCAL_BUILT_MODULE for executables, but I didn\u0027t run into any issues with shared libraries. I can add it here too if you want.",
+      "parentUuid": "84253145_4b423b6a",
       "range": {
         "startLine": 48,
         "startChar": 0,
