@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "248c8586_ff6df679",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T23:21:07Z",
+      "side": 1,
+      "message": "That\u0027s just to prevent more changes with the introduction of HOST_CROSS_ as a valid prefix in the HOST_CROSS_OS change.",
+      "parentUuid": "e4750d3f_02075a59",
+      "range": {
+        "startLine": 157,
+        "startChar": 36,
+        "endLine": 157,
+        "endChar": 48
+      },
+      "revId": "e7d8ff1413d9e6f8f158075a3758c54975197e4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4700952_b629eebe",
         "filename": "core/host_test_internal.mk",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2015-08-20T23:23:59Z",
       "side": 1,
       "message": "It may not be a big deal, but LOCAL_CFLAGS_windows will be repeatedly appended with this and unused, when we are building non-windows :-)",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 42
+      },
+      "revId": "e7d8ff1413d9e6f8f158075a3758c54975197e4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "248c8586_df75923e",
+        "filename": "core/host_test_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-25T23:21:07Z",
+      "side": 1,
+      "message": "Hmm, that\u0027s the case with all the _linux/_darwin variables too.\n\nAnd it\u0027s the case with LOCAL_CFLAGS_mips / etc as well, since we only clear the current configurations in clear_vars.mk.",
+      "parentUuid": "c4700952_b629eebe",
       "range": {
         "startLine": 5,
         "startChar": 0,
