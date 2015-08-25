@@ -93,6 +93,30 @@
       "revId": "e7d8ff1413d9e6f8f158075a3758c54975197e4b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c42ba915_6645ee19",
+        "filename": "core/host_test_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T23:57:06Z",
+      "side": 1,
+      "message": "Yeah, but we don\u0027t have things like \"LOCAL_CFLAGS_mips +\u003d\" in the core build system, in which it\u0027s repeatedly applied when the file is included.\nThis is one reason I prefer to use \":\u003d\" instead of \"+\u003d\" in Android.mk when setting such variables.\n\nI don\u0027t see an easy fix without causing other overhead.\nAgain, this isn\u0027t a big deal, since this file isn\u0027t included that much.",
+      "parentUuid": "248c8586_df75923e",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 42
+      },
+      "revId": "e7d8ff1413d9e6f8f158075a3758c54975197e4b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
