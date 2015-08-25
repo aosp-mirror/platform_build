@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4485f957_e91f9061",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "we don\u0027t set it to HOST_.",
+      "range": {
+        "startLine": 39,
+        "startChar": 7,
+        "endLine": 39,
+        "endChar": 40
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c42ba915_239a89c6",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "Looks like we can simply use:\nifeq ($(LOCAL_HOST_PREFIX),)\nmy_prefix :\u003d HOST_\nelse\nmy_prefix :\u003d $(LOCAL_HOST_PREFIX)\nendif",
+      "range": {
+        "startLine": 37,
+        "startChar": 2,
+        "endLine": 45,
+        "endChar": 7
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "248c8586_173b0488",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "this isn\u0027t necessary.",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 26
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "248c8586_b70318c8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "If we define a variable in base_rules.mk, we can reference it in binary.mk",
+      "range": {
+        "startLine": 180,
+        "startChar": 78,
+        "endLine": 180,
+        "endChar": 116
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "048f817d_a168c0e8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 618,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 618,
+        "startChar": 0,
+        "endLine": 618,
+        "endChar": 26
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a42a3512_ac5be97d",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1015,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "It seems we don\u0027t need the complex streq here. Also we can factor this out, something like:\nmy_host_cross :\u003d $(filter HOST_CROSS_,$(my_prefix))",
+      "range": {
+        "startLine": 1015,
+        "startChar": 111,
+        "endLine": 1015,
+        "endChar": 149
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "248c8586_f739a08b",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "where is the dependency setup of this target?",
+      "range": {
+        "startLine": 62,
+        "startChar": 8,
+        "endLine": 62,
+        "endChar": 20
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e4750d3f_f08c4a8a",
+        "filename": "core/host_executable.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "In system/core/fastboot/Android.mk, we have\nifeq ($(HOST_OS),windows)\n$(LOCAL_INSTALLED_MODULE): $(HOST_OUT_EXECUTABLES)/AdbWinApi.dll\nendif\n\nIn which we need LOCAL_INSTALLED_MODULE to be the windows one.\nOr perhaps we should remove all the use of LOCAL_INSTALLED_MODULE and LOCAL_BUILT_MODULE in Android.mks.",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 57
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84253145_4b423b6a",
+        "filename": "core/host_shared_library.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-25T21:07:58Z",
+      "side": 1,
+      "message": "Why in executables.mk we save both LOCAL_INSTALLED_MODULE and LOCAL_BUILT_MODULE, but here only LOCAL_INSTALLED_MODULE?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 57
+      },
+      "revId": "78cc1a7b721a013737f35fa9ca0b6e70991d7fb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
