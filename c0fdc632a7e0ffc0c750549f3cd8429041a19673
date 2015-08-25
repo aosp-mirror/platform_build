@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "248c8586_5fa1a27e",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 954,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-08-25T23:03:27Z",
+      "side": 1,
+      "message": "s/for/to/",
+      "revId": "c0fdc632a7e0ffc0c750549f3cd8429041a19673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
