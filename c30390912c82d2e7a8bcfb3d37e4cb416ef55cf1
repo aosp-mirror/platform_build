@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "845371c9_c9017546",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 988,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2015-08-26T08:57:17Z",
+      "side": 1,
+      "message": "Use MAX_BLOCKS_PER_DIFF_TRANSFER instead of 1024?",
+      "range": {
+        "startLine": 988,
+        "startChar": 37,
+        "endLine": 988,
+        "endChar": 41
+      },
+      "revId": "c30390912c82d2e7a8bcfb3d37e4cb416ef55cf1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
