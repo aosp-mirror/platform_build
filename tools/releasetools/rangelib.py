@@ -24,6 +24,7 @@ class RangeSet(object):
   lots of runs."""
 
   def __init__(self, data=None):
+    # TODO(tbao): monotonic is broken when passing in a tuple.
     self.monotonic = False
     if isinstance(data, str):
       self._parse_internal(data)
@@ -259,6 +260,38 @@ class RangeSet(object):
       e1 = e + n
       out = out.union(RangeSet(str(s1) + "-" + str(e1-1)))
     return out
+
+  def first(self, n):
+    """Return the RangeSet that contains at most the first 'n' integers.
+
+    >>> RangeSet("0-9").first(1)
+    <RangeSet("0")>
+    >>> RangeSet("10-19").first(5)
+    <RangeSet("10-14")>
+    >>> RangeSet("10-19").first(15)
+    <RangeSet("10-19")>
+    >>> RangeSet("10-19 30-39").first(3)
+    <RangeSet("10-12")>
+    >>> RangeSet("10-19 30-39").first(15)
+    <RangeSet("10-19 30-34")>
+    >>> RangeSet("10-19 30-39").first(30)
+    <RangeSet("10-19 30-39")>
+    >>> RangeSet("0-9").first(0)
+    <RangeSet("")>
+    """
+
+    if self.size() <= n:
+      return self
+
+    out = []
+    for s, e in self:
+      if e - s >= n:
+        out += (s, s+n)
+        break
+      else:
+        out += (s, e)
+        n -= e - s
+    return RangeSet(data=out)
 
 
 if __name__ == "__main__":
