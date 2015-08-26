@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "849451c2_e136a20c",
+        "filename": "core/clang/HOST_CROSS_windows.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-26T22:01:00Z",
+      "side": 1,
+      "message": "Now this function isn\u0027t called anywhere.\nPreviously this function is called in the following definitions of CLANG_HOST_GLOBAL_*FLAGS, and also in binary.mk (search for \"convert-to\").",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 38
+      },
+      "revId": "44d0836fafec3d045e83e9c6d1845418226417ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84253145_fa8d0b3d",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-08-26T22:01:00Z",
+      "side": 1,
+      "message": "Look at how tools_notice_file gets packaged in build/core/Makefile, those host_cross notice files will go nowhere.\nIn the existing system, we don\u0027t collect the windows notice files. So I think this is fine.",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 90
+      },
+      "revId": "44d0836fafec3d045e83e9c6d1845418226417ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
