@@ -44,6 +44,7 @@ class RangeSetTest(unittest.TestCase):
 
   def test_size(self):
     self.assertEqual(RangeSet("10-19 30-34").size(), 15)
+    self.assertEqual(RangeSet("").size(), 0)
 
   def test_map_within(self):
     self.assertEqual(RangeSet("0-9").map_within(RangeSet("3-4")),
@@ -74,3 +75,51 @@ class RangeSetTest(unittest.TestCase):
     self.assertEqual(RangeSet("10-19 30-39").extend(4), RangeSet("6-23 26-43"))
     self.assertEqual(RangeSet("10-19 30-39").extend(10), RangeSet("0-49"))
 
+  def test_equality(self):
+    self.assertTrue(RangeSet("") == RangeSet(""))
+    self.assertTrue(RangeSet("3") == RangeSet("3"))
+    self.assertTrue(RangeSet("3 5") == RangeSet("5 3"))
+    self.assertTrue(
+        RangeSet("10-19 30-39") == RangeSet("30-32 10-14 33-39 15-19"))
+    self.assertTrue(RangeSet("") != RangeSet("3"))
+    self.assertTrue(RangeSet("10-19") != RangeSet("10-19 20"))
+
+    self.assertFalse(RangeSet(""))
+    self.assertTrue(RangeSet("3"))
+
+  def test_init(self):
+    self.assertIsNotNone(RangeSet(""))
+    self.assertIsNotNone(RangeSet("3"))
+    self.assertIsNotNone(RangeSet("3 5"))
+    self.assertIsNotNone(RangeSet("10 19 30-39"))
+
+    with self.assertRaises(AssertionError):
+      RangeSet(data=[0])
+
+  def test_str(self):
+    self.assertEqual(str(RangeSet("0-9")), "0-9")
+    self.assertEqual(str(RangeSet("2-10 12")), "2-10 12")
+    self.assertEqual(str(RangeSet("11 2-10 12 1 0")), "0-12")
+    self.assertEqual(str(RangeSet("")), "empty")
+
+  def test_to_string_raw(self):
+    self.assertEqual(RangeSet("0-9").to_string_raw(), "2,0,10")
+    self.assertEqual(RangeSet("2-10 12").to_string_raw(), "4,2,11,12,13")
+    self.assertEqual(RangeSet("11 2-10 12 1 0").to_string_raw(), "2,0,13")
+
+    with self.assertRaises(AssertionError):
+      RangeSet("").to_string_raw()
+
+  def test_monotonic(self):
+    self.assertTrue(RangeSet("0-9").monotonic)
+    self.assertTrue(RangeSet("2-9").monotonic)
+    self.assertTrue(RangeSet("2-9 30 31 35").monotonic)
+    self.assertTrue(RangeSet("").monotonic)
+    self.assertTrue(RangeSet("0-4 5-9").monotonic)
+    self.assertFalse(RangeSet("5-9 0-4").monotonic)
+
+    self.assertTrue(RangeSet(data=[0, 10]).monotonic)
+    self.assertTrue(RangeSet(data=[0, 10, 15, 20]).monotonic)
+    self.assertTrue(RangeSet(data=[2, 9, 30, 31, 31, 32, 35, 36]).monotonic)
+    self.assertTrue(RangeSet(data=[0, 5, 5, 10]).monotonic)
+    self.assertFalse(RangeSet(data=[5, 10, 0, 5]).monotonic)
