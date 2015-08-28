@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "048f817d_cf039ec7",
+        "filename": "core/combo/TARGET_linux-arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-08-28T17:37:08Z",
+      "side": 1,
+      "message": "one day we should go through all these flags and remove the ancient cruft.",
+      "revId": "43146118aab8e15e8ed4f859106d8ddccc06d21b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
