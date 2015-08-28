@@ -75,8 +75,6 @@ KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-x86 # x86 covers both x86 and x86_64.
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
-android_config_h := $(call select-android-config-h,target_linux-x86)
-
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-O2 \
 			-Wa,--noexecstack \
@@ -94,8 +92,6 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-m32 \
 			-no-canonical-prefixes \
 			-fno-canonical-system-headers \
-			-include $(android_config_h) \
-			-I $(dir $(android_config_h))
 
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
 

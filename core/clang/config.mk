@@ -33,7 +33,8 @@ CLANG_CONFIG_EXTRA_CFLAGS += \
   -Werror=int-conversion
 
 # Disable overly aggressive warning for macros defined with a leading underscore
-# This happens in AndroidConfig.h, which is included nearly everywhere.
+# This used to happen in AndroidConfig.h, which was included everywhere.
+# TODO: can we remove this now?
 CLANG_CONFIG_EXTRA_CFLAGS += \
   -Wno-reserved-id-macro
 

@@ -20,8 +20,7 @@
 # You can set TARGET_ARCH_VARIANT to use an arch version other
 # than mips64r6. Each value should correspond to a file named
 # $(BUILD_COMBOS)/arch/<name>.mk which must contain
-# makefile variable definitions similar to the preprocessor
-# defines in build/core/combo/include/arch/<combo>/AndroidConfig.h. Their
+# makefile variable definitions. Their
 # purpose is to allow module Android.mk files to selectively compile
 # different versions of code based upon the funtionality and
 # instructions available in a given architecture version.
@@ -79,8 +78,6 @@ ifeq ($(FORCE_MIPS_DEBUGGING),true)
   TARGET_mips_CFLAGS += -fno-omit-frame-pointer
 endif
 
-android_config_h := $(call select-android-config-h,linux-mips64)
-
 TARGET_GLOBAL_CFLAGS += \
 			$(TARGET_mips_CFLAGS) \
 			-U__unix -U__unix__ -Umips \
@@ -93,8 +90,6 @@ TARGET_GLOBAL_CFLAGS += \
 			-no-canonical-prefixes \
 			-fno-canonical-system-headers \
 			$(arch_variant_cflags) \
-			-include $(android_config_h) \
-			-I $(dir $(android_config_h))
 
 # Help catch common 32/64-bit errors.
 TARGET_GLOBAL_CFLAGS += \
