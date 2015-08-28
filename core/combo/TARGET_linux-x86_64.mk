@@ -99,10 +99,6 @@ TARGET_GLOBAL_CFLAGS += \
     -Werror=int-to-pointer-cast \
     -Werror=implicit-function-declaration \
 
-android_config_h := $(call select-android-config-h,target_linux-x86)
-TARGET_ANDROID_CONFIG_CFLAGS := -include $(android_config_h) -I $(dir $(android_config_h))
-TARGET_GLOBAL_CFLAGS += $(TARGET_ANDROID_CONFIG_CFLAGS)
-
 TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
 
 ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!

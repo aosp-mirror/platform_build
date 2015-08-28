@@ -20,8 +20,7 @@
 # You can set TARGET_ARCH_VARIANT to use an arch version other
 # than ARMv5TE. Each value should correspond to a file named
 # $(BUILD_COMBOS)/arch/<name>.mk which must contain
-# makefile variable definitions similar to the preprocessor
-# defines in build/core/combo/include/arch/<combo>/AndroidConfig.h. Their
+# makefile variable definitions. Their
 # purpose is to allow module Android.mk files to selectively compile
 # different versions of code based upon the funtionality and
 # instructions available in a given architecture version.
@@ -92,8 +91,6 @@ ifeq ($(FORCE_ARM_DEBUGGING),true)
   $(combo_2nd_arch_prefix)TARGET_thumb_CFLAGS += -marm -fno-omit-frame-pointer
 endif
 
-android_config_h := $(call select-android-config-h,linux-arm)
-
 $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-msoft-float \
 			-ffunction-sections \
@@ -107,8 +104,6 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-no-canonical-prefixes \
 			-fno-canonical-system-headers \
 			$(arch_variant_cflags) \
-			-include $(android_config_h) \
-			-I $(dir $(android_config_h))
 
 # The "-Wunused-but-set-variable" option often breaks projects that enable
 # "-Wall -Werror" due to a commom idiom "ALOGV(mesg)" where ALOGV is turned
