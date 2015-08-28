@@ -645,9 +645,13 @@ ifdef LOCAL_PICKUP_FILES
 ALL_MODULES.$(my_register_name).PICKUP_FILES := \
     $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
 endif
+my_required_modules := $(LOCAL_REQUIRED_MODULES) \
+    $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+ifdef LOCAL_IS_HOST_MODULE
+my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
+endif
 ALL_MODULES.$(my_register_name).REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(LOCAL_REQUIRED_MODULES) \
-      $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
+    $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
