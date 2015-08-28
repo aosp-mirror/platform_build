@@ -159,11 +159,12 @@ def LoadInfoDict(input_file, input_dir=None):
     # to build images than the one running on device, such as when enabling
     # system_root_image. In that case, we must have the one for image
     # generation copied to META/.
-    fc_config = os.path.join(input_dir, "META", "file_contexts.bin")
+    fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
+    fc_config = os.path.join(input_dir, "META", fc_basename)
     if d.get("system_root_image") == "true":
       assert os.path.exists(fc_config)
     if not os.path.exists(fc_config):
-      fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", "file_contexts.bin")
+      fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", fc_basename)
       if not os.path.exists(fc_config):
         fc_config = None
 
