@@ -246,11 +246,6 @@ ifeq ($(TARGET_CPU_ABI),)
 endif
 TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
 
-# $(1): os/arch
-define select-android-config-h
-build/core/combo/include/arch/$(1)/AndroidConfig.h
-endef
-
 combo_target := HOST_
 combo_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/combo/select.mk
