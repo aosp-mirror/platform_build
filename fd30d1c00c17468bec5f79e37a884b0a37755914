@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c42ba915_208d9184",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-08-29T00:04:04Z",
+      "side": 1,
+      "message": "This only applied to java.mk before this change. Now it also applies to host java libraries (though it\u0027s cleared by host_dalvik_java_library).",
+      "range": {
+        "startLine": 127,
+        "startChar": 0,
+        "endLine": 127,
+        "endChar": 72
+      },
+      "revId": "fd30d1c00c17468bec5f79e37a884b0a37755914",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
