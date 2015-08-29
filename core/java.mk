@@ -1,3 +1,4 @@
+# Target Java.
 # Requires:
 # LOCAL_MODULE_SUFFIX
 # LOCAL_MODULE_CLASS
@@ -265,6 +266,64 @@ LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
 LOCAL_RESOURCE_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript/res $(LOCAL_RESOURCE_DIR)
 endif
 
+
+###########################################################
+## AIDL: Compile .aidl files to .java
+###########################################################
+aidl_sources := $(filter %.aidl,$(LOCAL_SRC_FILES))
+
+ifneq ($(strip $(aidl_sources)),)
+aidl_java_sources := $(patsubst %.aidl,%.java,$(addprefix $(intermediates.COMMON)/src/, $(aidl_sources)))
+aidl_sources := $(addprefix $(LOCAL_PATH)/, $(aidl_sources))
+
+aidl_preprocess_import :=
+ifdef LOCAL_SDK_VERSION
+ifneq ($(filter current system_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
+  # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
+  aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
+else
+  aidl_preprocess_import := $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/framework.aidl
+endif # not current or system_current
+else
+# build against the platform.
+LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
+endif # LOCAL_SDK_VERSION
+$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
+
+$(aidl_java_sources): $(intermediates.COMMON)/src/%.java: \
+        $(LOCAL_PATH)/%.aidl \
+        $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+        $(AIDL) \
+        $(aidl_preprocess_import)
+	$(transform-aidl-to-java)
+-include $(aidl_java_sources:%.java=%.P)
+
+else
+aidl_java_sources :=
+endif
+
+###########################################################
+## logtags: Add .logtags files to global list, emit java source
+###########################################################
+logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES))
+
+ifneq ($(strip $(logtags_sources)),)
+event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
+
+logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
+logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
+
+$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
+	$(transform-logtags-to-java)
+
+else
+logtags_java_sources :=
+event_log_tags :=
+endif
+
+##########################################
+
 # All of the rules after full_classes_compiled_jar are very unlikely
 # to fail except for bugs in their respective tools.  If you would
 # like to run these rules, add the "all" modifier goal to the make
@@ -275,16 +334,19 @@ else
 java_alternative_checked_module :=
 endif
 
-# TODO: It looks like the only thing we need from base_rules is
-# all_java_sources.  See if we can get that by adding a
-# common_java.mk, and moving the include of base_rules.mk to
-# after all the declarations.
-
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
 java_alternative_checked_module :=
+
+
+##########################################
+java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) $(aidl_java_sources) $(logtags_java_sources) \
+                $(filter %.java,$(LOCAL_GENERATED_SOURCES))
+all_java_sources := $(java_sources) $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
+
+include $(BUILD_SYSTEM)/java_common.mk
 
 #######################################
 # defines built_odex along with rule to install odex
@@ -319,16 +381,6 @@ $(installed_rs_compatibility_jni_libs) : $(TARGET_OUT_SHARED_LIBRARIES)/lib%.so 
 $(LOCAL_INSTALLED_MODULE) : $(installed_rs_compatibility_jni_libs)
 endif
 endif
-
-# We use intermediates.COMMON because the classes.jar/.dex files will be
-# common even if LOCAL_BUILT_MODULE isn't.
-#
-# Override some target variables that base_rules set up for us.
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.
