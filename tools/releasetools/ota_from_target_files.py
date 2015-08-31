@@ -130,6 +130,9 @@ OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
 OPTIONS.full_bootloader = False
+# Stash size cannot exceed cache_size * threshold.
+OPTIONS.cache_size = None
+OPTIONS.stash_threshold = 0.8
 
 
 def MostPopularKey(d, default):
