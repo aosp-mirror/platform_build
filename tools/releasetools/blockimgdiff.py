@@ -16,6 +16,7 @@ from __future__ import print_function
 
 from collections import deque, OrderedDict
 from hashlib import sha1
+import common
 import heapq
 import itertools
 import multiprocessing
@@ -173,6 +174,12 @@ class Transfer(object):
     return (sum(sr.size() for (_, sr) in self.stash_before) -
             sum(sr.size() for (_, sr) in self.use_stash))
 
+  def ConvertToNew(self):
+    assert self.style != "new"
+    self.use_stash = []
+    self.style = "new"
+    self.src_ranges = RangeSet()
+
   def __str__(self):
     return (str(self.id) + ": <" + str(self.src_ranges) + " " + self.style +
             " to " + str(self.tgt_ranges) + ">")
@@ -267,6 +274,10 @@ class BlockImageDiff(object):
       self.ReverseBackwardEdges()
       self.ImproveVertexSequence()
 
+    # Ensure the runtime stash size is under the limit.
+    if self.version >= 2 and common.OPTIONS.cache_size is not None:
+      self.ReviseStashSize()
+
     # Double-check our work.
     self.AssertSequenceGood()
 
@@ -286,7 +297,6 @@ class BlockImageDiff(object):
     out = []
 
     total = 0
-    performs_read = False
 
     stashes = {}
     stashed_blocks = 0
@@ -398,7 +408,6 @@ class BlockImageDiff(object):
         out.append("%s %s\n" % (xf.style, xf.tgt_ranges.to_string_raw()))
         total += tgt_size
       elif xf.style == "move":
-        performs_read = True
         assert xf.tgt_ranges
         assert xf.src_ranges.size() == tgt_size
         if xf.src_ranges != xf.tgt_ranges:
@@ -423,7 +432,6 @@ class BlockImageDiff(object):
                 xf.tgt_ranges.to_string_raw(), src_str))
           total += tgt_size
       elif xf.style in ("bsdiff", "imgdiff"):
-        performs_read = True
         assert xf.tgt_ranges
         assert xf.src_ranges
         if self.version == 1:
@@ -460,9 +468,20 @@ class BlockImageDiff(object):
       if free_string:
         out.append("".join(free_string))
 
-      # sanity check: abort if we're going to need more than 512 MB if
-      # stash space
-      assert max_stashed_blocks * self.tgt.blocksize < (512 << 20)
+      if self.version >= 2:
+        # Sanity check: abort if we're going to need more stash space than
+        # the allowed size (cache_size * threshold). There are two purposes
+        # of having a threshold here. a) Part of the cache may have been
+        # occupied by some recovery logs. b) It will buy us some time to deal
+        # with the oversize issue.
+        cache_size = common.OPTIONS.cache_size
+        stash_threshold = common.OPTIONS.stash_threshold
+        max_allowed = cache_size * stash_threshold
+        assert max_stashed_blocks * self.tgt.blocksize < max_allowed, \
+               'Stash size %d (%d * %d) exceeds the limit %d (%d * %.2f)' % (
+                   max_stashed_blocks * self.tgt.blocksize, max_stashed_blocks,
+                   self.tgt.blocksize, max_allowed, cache_size,
+                   stash_threshold)
 
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
@@ -489,8 +508,81 @@ class BlockImageDiff(object):
         f.write(i)
 
     if self.version >= 2:
-      print("max stashed blocks: %d  (%d bytes)\n" % (
-          max_stashed_blocks, max_stashed_blocks * self.tgt.blocksize))
+      max_stashed_size = max_stashed_blocks * self.tgt.blocksize
+      max_allowed = common.OPTIONS.cache_size * common.OPTIONS.stash_threshold
+      print("max stashed blocks: %d  (%d bytes), limit: %d bytes (%.2f%%)\n" % (
+          max_stashed_blocks, max_stashed_size, max_allowed,
+          max_stashed_size * 100.0 / max_allowed))
+
+  def ReviseStashSize(self):
+    print("Revising stash size...")
+    stashes = {}
+
+    # Create the map between a stash and its def/use points. For example, for a
+    # given stash of (idx, sr), stashes[idx] = (sr, def_cmd, use_cmd).
+    for xf in self.transfers:
+      # Command xf defines (stores) all the stashes in stash_before.
+      for idx, sr in xf.stash_before:
+        stashes[idx] = (sr, xf)
+
+      # Record all the stashes command xf uses.
+      for idx, _ in xf.use_stash:
+        stashes[idx] += (xf,)
+
+    # Compute the maximum blocks available for stash based on /cache size and
+    # the threshold.
+    cache_size = common.OPTIONS.cache_size
+    stash_threshold = common.OPTIONS.stash_threshold
+    max_allowed = cache_size * stash_threshold / self.tgt.blocksize
+
+    stashed_blocks = 0
+    new_blocks = 0
+
+    # Now go through all the commands. Compute the required stash size on the
+    # fly. If a command requires excess stash than available, it deletes the
+    # stash by replacing the command that uses the stash with a "new" command
+    # instead.
+    for xf in self.transfers:
+      replaced_cmds = []
+
+      # xf.stash_before generates explicit stash commands.
+      for idx, sr in xf.stash_before:
+        if stashed_blocks + sr.size() > max_allowed:
+          # We cannot stash this one for a later command. Find out the command
+          # that will use this stash and replace the command with "new".
+          use_cmd = stashes[idx][2]
+          replaced_cmds.append(use_cmd)
+          print("%10d  %9s  %s" % (sr.size(), "explicit", use_cmd))
+        else:
+          stashed_blocks += sr.size()
+
+      # xf.use_stash generates free commands.
+      for _, sr in xf.use_stash:
+        stashed_blocks -= sr.size()
+
+      # "move" and "diff" may introduce implicit stashes in BBOTA v3. Prior to
+      # ComputePatches(), they both have the style of "diff".
+      if xf.style == "diff" and self.version >= 3:
+        assert xf.tgt_ranges and xf.src_ranges
+        if xf.src_ranges.overlaps(xf.tgt_ranges):
+          if stashed_blocks + xf.src_ranges.size() > max_allowed:
+            replaced_cmds.append(xf)
+            print("%10d  %9s  %s" % (xf.src_ranges.size(), "implicit", xf))
+
+      # Replace the commands in replaced_cmds with "new"s.
+      for cmd in replaced_cmds:
+        # It no longer uses any commands in "use_stash". Remove the def points
+        # for all those stashes.
+        for idx, sr in cmd.use_stash:
+          def_cmd = stashes[idx][1]
+          assert (idx, sr) in def_cmd.stash_before
+          def_cmd.stash_before.remove((idx, sr))
+          new_blocks += sr.size()
+
+        cmd.ConvertToNew()
+
+    print("  Total %d blocks are packed as new blocks due to insufficient "
+          "cache size." % (new_blocks,))
 
   def ComputePatches(self, prefix):
     print("Reticulating splines...")
@@ -847,6 +939,57 @@ class BlockImageDiff(object):
           a.goes_after[b] = size
 
   def FindTransfers(self):
+    """Parse the file_map to generate all the transfers."""
+
+    def AddTransfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id,
+                    split=False):
+      """Wrapper function for adding a Transfer().
+
+      For BBOTA v3, we need to stash source blocks for resumable feature.
+      However, with the growth of file size and the shrink of the cache
+      partition source blocks are too large to be stashed. If a file occupies
+      too many blocks (greater than MAX_BLOCKS_PER_DIFF_TRANSFER), we split it
+      into smaller pieces by getting multiple Transfer()s.
+
+      The downside is that after splitting, we can no longer use imgdiff but
+      only bsdiff."""
+
+      MAX_BLOCKS_PER_DIFF_TRANSFER = 1024
+
+      # We care about diff transfers only.
+      if style != "diff" or not split:
+        Transfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
+        return
+
+      # Change nothing for small files.
+      if (tgt_ranges.size() <= MAX_BLOCKS_PER_DIFF_TRANSFER and
+          src_ranges.size() <= MAX_BLOCKS_PER_DIFF_TRANSFER):
+        Transfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
+        return
+
+      pieces = 0
+      while (tgt_ranges.size() > MAX_BLOCKS_PER_DIFF_TRANSFER and
+             src_ranges.size() > MAX_BLOCKS_PER_DIFF_TRANSFER):
+        tgt_split_name = "%s-%d" % (tgt_name, pieces)
+        src_split_name = "%s-%d" % (src_name, pieces)
+        tgt_first = tgt_ranges.first(MAX_BLOCKS_PER_DIFF_TRANSFER)
+        src_first = src_ranges.first(MAX_BLOCKS_PER_DIFF_TRANSFER)
+        Transfer(tgt_split_name, src_split_name, tgt_first, src_first, style,
+                 by_id)
+
+        tgt_ranges = tgt_ranges.subtract(tgt_first)
+        src_ranges = src_ranges.subtract(src_first)
+        pieces += 1
+
+      # Handle remaining blocks.
+      if tgt_ranges.size() or src_ranges.size():
+        # Must be both non-empty.
+        assert tgt_ranges.size() and src_ranges.size()
+        tgt_split_name = "%s-%d" % (tgt_name, pieces)
+        src_split_name = "%s-%d" % (src_name, pieces)
+        Transfer(tgt_split_name, src_split_name, tgt_ranges, src_ranges, style,
+                 by_id)
+
     empty = RangeSet()
     for tgt_fn, tgt_ranges in self.tgt.file_map.items():
       if tgt_fn == "__ZERO":
@@ -854,28 +997,28 @@ class BlockImageDiff(object):
         # in any file and that are filled with zeros.  We have a
         # special transfer style for zero blocks.
         src_ranges = self.src.file_map.get("__ZERO", empty)
-        Transfer(tgt_fn, "__ZERO", tgt_ranges, src_ranges,
-                 "zero", self.transfers)
+        AddTransfer(tgt_fn, "__ZERO", tgt_ranges, src_ranges,
+                    "zero", self.transfers)
         continue
 
       elif tgt_fn == "__COPY":
         # "__COPY" domain includes all the blocks not contained in any
         # file and that need to be copied unconditionally to the target.
-        Transfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
+        AddTransfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
         continue
 
       elif tgt_fn in self.src.file_map:
         # Look for an exact pathname match in the source.
-        Transfer(tgt_fn, tgt_fn, tgt_ranges, self.src.file_map[tgt_fn],
-                 "diff", self.transfers)
+        AddTransfer(tgt_fn, tgt_fn, tgt_ranges, self.src.file_map[tgt_fn],
+                    "diff", self.transfers, self.version >= 3)
         continue
 
       b = os.path.basename(tgt_fn)
       if b in self.src_basenames:
         # Look for an exact basename match in the source.
         src_fn = self.src_basenames[b]
-        Transfer(tgt_fn, src_fn, tgt_ranges, self.src.file_map[src_fn],
-                 "diff", self.transfers)
+        AddTransfer(tgt_fn, src_fn, tgt_ranges, self.src.file_map[src_fn],
+                    "diff", self.transfers, self.version >= 3)
         continue
 
       b = re.sub("[0-9]+", "#", b)
@@ -885,11 +1028,11 @@ class BlockImageDiff(object):
         # for .so files that contain version numbers in the filename
         # that get bumped.)
         src_fn = self.src_numpatterns[b]
-        Transfer(tgt_fn, src_fn, tgt_ranges, self.src.file_map[src_fn],
-                 "diff", self.transfers)
+        AddTransfer(tgt_fn, src_fn, tgt_ranges, self.src.file_map[src_fn],
+                    "diff", self.transfers, self.version >= 3)
         continue
 
-      Transfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
+      AddTransfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
 
   def AbbreviateSourceNames(self):
     for k in self.src.file_map.keys():
