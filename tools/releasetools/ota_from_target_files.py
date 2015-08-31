@@ -84,6 +84,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Specifies the number of worker-threads that will be used when
       generating patches for incremental updates (defaults to 3).
 
+  --stash_threshold <float>
+      Specifies the threshold that will be used to compute the maximum
+      allowed stash size (defaults to 0.8).
 """
 
 import sys
@@ -122,6 +125,10 @@ OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
+# Stash size cannot exceed cache_size * threshold.
+OPTIONS.cache_size = None
+OPTIONS.stash_threshold = 0.8
+
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -1505,6 +1512,12 @@ def main(argv):
       OPTIONS.updater_binary = a
     elif o in ("--no_fallback_to_full",):
       OPTIONS.fallback_to_full = False
+    elif o == "--stash_threshold":
+      try:
+        OPTIONS.stash_threshold = float(a)
+      except ValueError:
+        raise ValueError("Cannot parse value %r for option %r - expecting "
+                         "a float" % (a, o))
     else:
       return False
     return True
@@ -1528,6 +1541,7 @@ def main(argv):
                                  "oem_settings=",
                                  "verify",
                                  "no_fallback_to_full",
+                                 "stash_threshold=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1584,6 +1598,11 @@ def main(argv):
       temp_zip_file = tempfile.NamedTemporaryFile()
       output_zip = zipfile.ZipFile(temp_zip_file, "w",
                                    compression=zipfile.ZIP_DEFLATED)
+
+    cache_size = OPTIONS.info_dict.get("cache_size", None)
+    if cache_size is None:
+      raise RuntimeError("can't determine the cache partition size")
+    OPTIONS.cache_size = cache_size
 
     if OPTIONS.incremental_source is None:
       WriteFullOTAPackage(input_zip, output_zip)
