@@ -25,6 +25,16 @@ ifneq ($(USE_GOMA),)
     $(error USE_GOMA=true works only with USE_NINJA=true)
   endif
 
+  # Goma requires a lot of processes and file descriptors.
+  ifeq ($(shell echo $$(($$(ulimit -u) < 2500 || $$(ulimit -n) < 16000))),1)
+    $(warning Max user processes and/or open files are insufficient)
+    ifeq ($(shell uname),Darwin)
+      $(error See go/ma/how-to-use-goma/how-to-use-goma-for-android to relax the limit)
+    else
+      $(error Adjust the limit by ulimit -u and ulimit -n)
+    endif
+  endif
+
   ifdef GOMA_DIR
     goma_dir := $(GOMA_DIR)
   else
