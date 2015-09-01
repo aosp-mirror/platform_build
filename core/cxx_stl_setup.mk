@@ -14,7 +14,7 @@ ifeq ($(strip $(LOCAL_CXX_STL)),default)
                 my_cxx_stl := libc++_static
             endif
 
-            ifdef USE_MINGW
+            ifeq ($($(my_prefix)OS),windows)
                 # libc++ is not supported on mingw.
                 my_cxx_stl := libstdc++
             endif
@@ -35,6 +35,14 @@ else
         # LOCAL_NDK_STL_VARIANT (and in fact soong does use the same name), but
         # the two options use different names for the STLs.
         $(error $(LOCAL_PATH): $(LOCAL_MODULE): Must use LOCAL_NDK_STL_VARIANT rather than LOCAL_CXX_STL for NDK binaries)
+    endif
+    ifdef LOCAL_IS_HOST_MODULE
+        ifeq ($($(my_prefix)OS),windows)
+            ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
+                # libc++ is not supported on mingw.
+                my_cxx_stl := libstdc++
+            endif
+        endif
     endif
 endif
 
