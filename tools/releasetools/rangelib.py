@@ -24,6 +24,7 @@ class RangeSet(object):
   lots of runs."""
 
   def __init__(self, data=None):
+    # TODO(tbao): monotonic is broken when passing in a tuple.
     self.monotonic = False
     if isinstance(data, str):
       self._parse_internal(data)
