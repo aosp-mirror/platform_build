@@ -22,6 +22,30 @@
       "revId": "0cb841d2e7ef971de71d9551c377f0023fde8f9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "244806a0_bbc2676c",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-09-01T22:39:27Z",
+      "side": 1,
+      "message": "Oh :) Please discuss with Ying then, I\u0027m OK with either way. I uploaded PS1 with $(sort) as PS3.",
+      "parentUuid": "6424bead_62859cf8",
+      "range": {
+        "startLine": 10,
+        "startChar": 99,
+        "endLine": 10,
+        "endChar": 105
+      },
+      "revId": "0cb841d2e7ef971de71d9551c377f0023fde8f9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
