@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "644d9e85_ce7a3784",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-01T18:05:23Z",
+      "side": 1,
+      "message": "Actually there are tons of variables can be passed in as environmental variables that affect the build rules.\nBut kati will regenerate the build.ninja and I think probably that\u0027s fine.",
+      "range": {
+        "startLine": 12,
+        "startChar": 9,
+        "endLine": 12,
+        "endChar": 26
+      },
+      "revId": "876f4020d422486acd40a362568c4677079de74d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e486eed4_108ab20e",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-01T18:05:23Z",
+      "side": 1,
+      "message": "Perhaps we calculate md5sum of the normalized (sorting the targets) string as the suffix?\nIn mkdb we calculate a checksum on the normalized make command line and a list of environmental variables/values.",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 5
+      },
+      "revId": "876f4020d422486acd40a362568c4677079de74d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "84529221_c07e82ef",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-01T18:05:23Z",
+      "side": 1,
+      "message": "Ah, I didn\u0027t know kati has this support.",
+      "range": {
+        "startLine": 53,
+        "startChar": 53,
+        "endLine": 53,
+        "endChar": 66
+      },
+      "revId": "876f4020d422486acd40a362568c4677079de74d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
