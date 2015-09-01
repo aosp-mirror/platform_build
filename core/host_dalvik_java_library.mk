@@ -50,6 +50,11 @@ java_alternative_checked_module := $(full_classes_compiled_jar)
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) \
+                $(filter %.java,$(LOCAL_GENERATED_SOURCES))
+all_java_sources := $(java_sources)
+
+include $(BUILD_SYSTEM)/java_common.mk
 
 $(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 
@@ -58,12 +63,6 @@ java_alternative_checked_module :=
 # The layers file allows you to enforce a layering between java packages.
 # Run build/tools/java-layers.py for more details.
 layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
-
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS :=
 
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
