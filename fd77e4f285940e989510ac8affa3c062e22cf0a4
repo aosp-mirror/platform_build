@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4072a51_d04bbc46",
+        "filename": "core/clang/TARGET_x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-09-02T18:26:52Z",
+      "side": 1,
+      "message": "this target does not use 2nd_prefix",
+      "revId": "fd77e4f285940e989510ac8affa3c062e22cf0a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
