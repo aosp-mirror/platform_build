@@ -1734,7 +1734,6 @@ $(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
     | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     $(1) -encoding UTF-8 \
-    $(strip $(PRIVATE_JAVAC_DEBUG_FLAGS)) \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(2) \
     $(addprefix -classpath ,$(strip \
@@ -1813,7 +1812,6 @@ else \
 fi; \
 $(call call-jack,$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
     $(strip $(PRIVATE_JACK_FLAGS)) \
-    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
     $(if $(NO_OPTIMIZE_DX), \
         -D jack.dex.optimize="false") \
     $(if $(PRIVATE_RMTYPEDEFS), \
@@ -1893,7 +1891,6 @@ else \
 fi; \
 $(call call-jack,$(PRIVATE_JACK_VM_ARGS),$(PRIVATE_JACK_EXTRA_ARGS)) \
     $(strip $(PRIVATE_JACK_FLAGS)) \
-    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
     $(if $(NO_OPTIMIZE_DX), \
         -D jack.dex.optimize="false") \
     $(addprefix --classpath ,$(strip \
