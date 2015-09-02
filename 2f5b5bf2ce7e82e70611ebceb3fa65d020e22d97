@@ -45,6 +45,30 @@
       "revId": "2f5b5bf2ce7e82e70611ebceb3fa65d020e22d97",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a40a365b_7255b639",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-09-02T20:54:39Z",
+      "side": 1,
+      "message": "emm. since the zip implementation may change, we should take a safer approach, like:\n\nsha1_check(dest, \"xyz\") || delete(dest)",
+      "parentUuid": "c4580a44_110cee7a",
+      "range": {
+        "startLine": 1401,
+        "startChar": 23,
+        "endLine": 1401,
+        "endChar": 56
+      },
+      "revId": "2f5b5bf2ce7e82e70611ebceb3fa65d020e22d97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
