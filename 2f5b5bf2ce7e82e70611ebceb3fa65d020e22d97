@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44a17a5d_c5525075",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1398,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-09-02T19:53:49Z",
+      "side": 1,
+      "message": "verbatim",
+      "range": {
+        "startLine": 1398,
+        "startChar": 36,
+        "endLine": 1398,
+        "endChar": 46
+      },
+      "revId": "2f5b5bf2ce7e82e70611ebceb3fa65d020e22d97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4580a44_110cee7a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-09-02T19:53:49Z",
+      "side": 1,
+      "message": "we know this code is correct? we don\u0027t need to worry about it following the symlink?",
+      "range": {
+        "startLine": 1401,
+        "startChar": 23,
+        "endLine": 1401,
+        "endChar": 56
+      },
+      "revId": "2f5b5bf2ce7e82e70611ebceb3fa65d020e22d97",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
