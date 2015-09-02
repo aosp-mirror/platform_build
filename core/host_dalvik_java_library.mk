@@ -45,7 +45,9 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(built_dex)
 
 # See comment in java.mk
-java_alternative_checked_module := $(full_classes_compiled_jar)
+ifndef LOCAL_CHECKED_MODULE
+LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+endif
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -56,10 +58,6 @@ all_java_sources := $(java_sources)
 
 include $(BUILD_SYSTEM)/java_common.mk
 
-$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
-
-java_alternative_checked_module :=
-
 # The layers file allows you to enforce a layering between java packages.
 # Run build/tools/java-layers.py for more details.
 layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
@@ -67,7 +65,7 @@ layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
-$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
@@ -122,10 +120,9 @@ else
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_JACK_INCREMENTAL_DIR :=
 endif
-$(LOCAL_INTERMEDIATE_TARGETS):  PRIVATE_JACK_DEBUG_FLAGS := -g
 
 $(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
-$(built_dex): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
+$(built_dex): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
 $(built_dex): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
         $(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_MODULE_MAKEFILE) \
         $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK)

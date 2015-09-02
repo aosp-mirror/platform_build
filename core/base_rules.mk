@@ -279,8 +279,6 @@ my_checked_module :=
 # checked modules, use LOCAL_BUILT_MODULE.
 ifdef LOCAL_CHECKED_MODULE
   my_checked_module := $(LOCAL_CHECKED_MODULE)
-else ifdef java_alternative_checked_module
-  my_checked_module := $(java_alternative_checked_module)
 else
   my_checked_module := $(LOCAL_BUILT_MODULE)
 endif

@@ -340,18 +340,15 @@ endif
 # to fail except for bugs in their respective tools.  If you would
 # like to run these rules, add the "all" modifier goal to the make
 # command line.
+ifndef LOCAL_CHECKED_MODULE
 ifdef full_classes_jar
-java_alternative_checked_module := $(full_classes_compiled_jar)
-else
-java_alternative_checked_module :=
+LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+endif
 endif
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
-
-java_alternative_checked_module :=
-
 
 ##########################################
 java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) $(aidl_java_sources) $(logtags_java_sources) \
@@ -428,7 +425,7 @@ endif
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
-$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS)
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
@@ -444,8 +441,6 @@ $(full_classes_compiled_jar): \
         $(LOCAL_MODULE_MAKEFILE) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
-
-$(full_classes_compiled_jar): PRIVATE_JAVAC_DEBUG_FLAGS := -g
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
@@ -659,8 +654,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 endif
 
 ifdef full_classes_jar
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_DEBUG_FLAGS := -g
-
 ifdef LOCAL_PROGUARD_ENABLED
 
 ifndef LOCAL_JACK_PROGUARD_FLAGS
@@ -676,7 +669,7 @@ else  # LOCAL_PROGUARD_ENABLED not defined
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS :=
 endif # LOCAL_PROGUARD_ENABLED defined
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(LOCAL_JACK_FLAGS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
 
 jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
