@@ -1397,11 +1397,36 @@ else
   # Delete all the symlinks in source that aren't in target.  This
   # needs to happen before verbatim files are unpacked, in case a
   # symlink in the source is replaced by a real file in the target.
-  to_delete = []
+
+  # If a symlink in the source will be replaced by a regular file, we cannot
+  # delete the symlink/file in case the package gets applied again. For such
+  # a symlink, we prepend a sha1_check() to detect if it has been updated.
+  # (Bug: 23646151)
+  replaced_symlinks = dict()
+  if system_diff:
+    for i in system_diff.verbatim_targets:
+      replaced_symlinks["/%s" % (i[0],)] = i[2]
+  if vendor_diff:
+    for i in vendor_diff.verbatim_targets:
+      replaced_symlinks["/%s" % (i[0],)] = i[2]
+
+  if system_diff:
+    for tf in system_diff.renames.values():
+      replaced_symlinks["/%s" % (tf.name,)] = tf.sha1
+  if vendor_diff:
+    for tf in vendor_diff.renames.values():
+      replaced_symlinks["/%s" % (tf.name,)] = tf.sha1
+
+  always_delete = []
+  may_delete = []
   for dest, link in source_symlinks:
     if link not in target_symlinks_d:
-      to_delete.append(link)
-  script.DeleteFiles(to_delete)
+      if link in replaced_symlinks:
+        may_delete.append((link, replaced_symlinks[link]))
+      else:
+        always_delete.append(link)
+  script.DeleteFiles(always_delete)
+  script.DeleteFilesIfNotMatching(may_delete)
 
   if system_diff.verbatim_targets:
     script.Print("Unpacking new system files...")
