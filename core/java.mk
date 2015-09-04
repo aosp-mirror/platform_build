@@ -303,25 +303,6 @@ else
 aidl_java_sources :=
 endif
 
-###########################################################
-## logtags: Add .logtags files to global list, emit java source
-###########################################################
-logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES))
-
-ifneq ($(strip $(logtags_sources)),)
-event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
-
-logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
-logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
-
-$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
-	$(transform-logtags-to-java)
-
-else
-logtags_java_sources :=
-event_log_tags :=
-endif
-
 ##########################################
 
 # All of the rules after full_classes_compiled_jar are very unlikely
@@ -337,6 +318,21 @@ endif
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
+
+###########################################################
+## logtags: emit java source
+###########################################################
+ifneq ($(strip $(logtags_sources)),)
+
+logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
+logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
+
+$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
+	$(transform-logtags-to-java)
+
+else
+logtags_java_sources :=
+endif
 
 ##########################################
 java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) $(aidl_java_sources) $(logtags_java_sources) \
