@@ -7,6 +7,7 @@ LOCAL_SRC_FILES:= \
 LOCAL_CFLAGS_darwin += -DMACOSX_RSRC
 
 LOCAL_MODULE:= libhost
+LOCAL_MODULE_HOST_OS := darwin linux windows
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_CXX_STL := none
 
