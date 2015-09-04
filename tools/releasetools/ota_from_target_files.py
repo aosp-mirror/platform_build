@@ -1075,11 +1075,13 @@ class FileDifference(object):
       script.FileCheck(tf.name, tf.sha1)
 
   def RemoveUnneededFiles(self, script, extras=()):
-    script.DeleteFiles(
-        ["/" + i[0] for i in self.verbatim_targets] +
-        ["/" + i for i in sorted(self.source_data)
-         if i not in self.target_data and i not in self.renames] +
-        list(extras))
+    file_list = ["/" + i[0] for i in self.verbatim_targets]
+    file_list += ["/" + i for i in self.source_data
+                  if i not in self.target_data and i not in self.renames]
+    file_list += list(extras)
+    # Sort the list in descending order, which removes all the files first
+    # before attempting to remove the folder. (Bug: 22960996)
+    script.DeleteFiles(sorted(file_list, reverse=True))
 
   def TotalPatchSize(self):
     return sum(i[1].size for i in self.patch_list)
