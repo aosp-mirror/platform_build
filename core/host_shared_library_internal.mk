@@ -7,8 +7,6 @@
 ## LOCAL_MODULE_SUFFIX will be set for you.
 ###########################################################
 
-LOCAL_IS_HOST_MODULE := true
-
 ifeq ($(strip $(LOCAL_MODULE_CLASS)),)
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 endif
