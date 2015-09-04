@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0484e2ca_a454d8c8",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-04T17:44:09Z",
+      "side": 1,
+      "message": "same here.",
+      "range": {
+        "startLine": 13,
+        "startChar": 46,
+        "endLine": 13,
+        "endChar": 87
+      },
+      "revId": "ed8d7ffb5647e5f2fe02fa627883f8d04166ac7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64159e82_9fb94b52",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-04T17:44:09Z",
+      "side": 1,
+      "message": "it can be more than one paths.\nWe need to replace $(space) too.",
+      "range": {
+        "startLine": 16,
+        "startChar": 47,
+        "endLine": 16,
+        "endChar": 94
+      },
+      "revId": "ed8d7ffb5647e5f2fe02fa627883f8d04166ac7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
