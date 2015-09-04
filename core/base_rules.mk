@@ -194,6 +194,17 @@ endif
 # Assemble the list of targets to create PRIVATE_ variables for.
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 
+###########################################################
+## logtags: Add .logtags files to global list
+###########################################################
+
+logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES))
+
+ifneq ($(strip $(logtags_sources)),)
+event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
+else
+event_log_tags :=
+endif
 
 ###########################################################
 ## make clean- targets
@@ -336,6 +347,8 @@ my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
 ALL_MODULES.$(my_register_name).REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
+ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
+    $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \
     $(ALL_MODULES.$(my_register_name).MAKEFILE) $(LOCAL_MODULE_MAKEFILE)
 ifdef LOCAL_MODULE_OWNER
