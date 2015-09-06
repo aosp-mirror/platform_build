@@ -18,8 +18,6 @@ $(error $(LOCAL_PATH): Cannot set module stem for a library)
 endif
 LOCAL_UNINSTALLABLE_MODULE := true
 
-LOCAL_IS_HOST_MODULE := true
-
 include $(BUILD_SYSTEM)/binary.mk
 
 $(LOCAL_BUILT_MODULE): $(built_whole_libraries)

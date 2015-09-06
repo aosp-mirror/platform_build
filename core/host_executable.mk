@@ -1,4 +1,4 @@
-
+LOCAL_IS_HOST_MODULE := true
 my_prefix := HOST_
 include $(BUILD_SYSTEM)/multilib.mk
 
