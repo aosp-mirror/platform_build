@@ -5,12 +5,19 @@ NINJA_GOALS := fastincremental generateonly droid showcommands
 
 ANDROID_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(ORIGINAL_MAKECMDGOALS))
 
+define replace_space_and_slash
+$(subst /,_,$(subst $(space),_,$(sort $1)))
+endef
+
 KATI_NINJA_SUFFIX :=
 ifneq ($(ANDROID_TARGETS),)
-KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-$(subst $(space),_,$(sort $(ANDROID_TARGETS)))
+KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-$(call replace_space_and_slash,$(ANDROID_TARGETS))
 endif
 ifneq ($(ONE_SHOT_MAKEFILE),)
-KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-mmm-$(subst /,_,$(strip $(ONE_SHOT_MAKEFILE)))
+KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-mmm-$(call replace_space_and_slash,$(ONE_SHOT_MAKEFILE))
+endif
+ifneq ($(BUILD_MODULES_IN_PATHS),)
+KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-mmma-$(call replace_space_and_slash,$(BUILD_MODULES_IN_PATHS))
 endif
 
 KATI_BUILD_NINJA := $(PRODUCT_OUT)/build$(KATI_NINJA_SUFFIX).ninja
