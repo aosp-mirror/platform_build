@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04c1426c_fa3789c6",
+        "filename": "tools/makeparallel/makeparallel.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-09-08T19:43:53Z",
+      "side": 1,
+      "message": "shouldn\u0027t there be an else case here that prints out a warning that we couldn\u0027t find a jobserver, and will run the command with -j1?",
+      "revId": "45edafa242495cda450cdf964246fc3954189bfe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
