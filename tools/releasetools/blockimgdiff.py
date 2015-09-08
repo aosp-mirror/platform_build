@@ -106,11 +106,13 @@ class DataImage(Image):
     assert not (trim and pad)
 
     partial = len(self.data) % self.blocksize
+    padded = False
     if partial > 0:
       if trim:
         self.data = self.data[:-partial]
       elif pad:
         self.data += '\0' * (self.blocksize - partial)
+        padded = True
       else:
         raise ValueError(("data for DataImage must be multiple of %d bytes "
                           "unless trim or pad is specified") %
@@ -120,14 +122,23 @@ class DataImage(Image):
 
     self.total_blocks = len(self.data) / self.blocksize
     self.care_map = RangeSet(data=(0, self.total_blocks))
-    self.clobbered_blocks = RangeSet()
+    # When the last block is padded, we always write the whole block even for
+    # incremental OTAs. Because otherwise the last block may get skipped if
+    # unchanged for an incremental, but would fail the post-install
+    # verification if it has non-zero contents in the padding bytes.
+    # Bug: 23828506
+    if padded:
+      self.clobbered_blocks = RangeSet(
+          data=(self.total_blocks-1, self.total_blocks))
+    else:
+      self.clobbered_blocks = RangeSet()
     self.extended = RangeSet()
 
     zero_blocks = []
     nonzero_blocks = []
     reference = '\0' * self.blocksize
 
-    for i in range(self.total_blocks):
+    for i in range(self.total_blocks-1 if padded else self.total_blocks):
       d = self.data[i*self.blocksize : (i+1)*self.blocksize]
       if d == reference:
         zero_blocks.append(i)
@@ -139,14 +150,18 @@ class DataImage(Image):
     self.file_map = {"__ZERO": RangeSet(zero_blocks),
                      "__NONZERO": RangeSet(nonzero_blocks)}
 
+    if self.clobbered_blocks:
+      self.file_map["__COPY"] = self.clobbered_blocks
+
   def ReadRangeSet(self, ranges):
     return [self.data[s*self.blocksize:e*self.blocksize] for (s, e) in ranges]
 
   def TotalSha1(self, include_clobbered_blocks=False):
-    # DataImage always carries empty clobbered_blocks, so
-    # include_clobbered_blocks can be ignored.
-    assert self.clobbered_blocks.size() == 0
-    return sha1(self.data).hexdigest()
+    if not include_clobbered_blocks:
+      ranges = self.care_map.subtract(self.clobbered_blocks)
+      return sha1(self.ReadRangeSet(ranges)).hexdigest()
+    else:
+      return sha1(self.data).hexdigest()
 
 
 class Transfer(object):
