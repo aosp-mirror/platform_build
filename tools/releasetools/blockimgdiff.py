@@ -128,10 +128,10 @@ class DataImage(Image):
     # verification if it has non-zero contents in the padding bytes.
     # Bug: 23828506
     if padded:
-      self.clobbered_blocks = RangeSet(
-          data=(self.total_blocks-1, self.total_blocks))
+      clobbered_blocks = [self.total_blocks-1, self.total_blocks]
     else:
-      self.clobbered_blocks = RangeSet()
+      clobbered_blocks = []
+    self.clobbered_blocks = clobbered_blocks
     self.extended = RangeSet()
 
     zero_blocks = []
@@ -147,11 +147,15 @@ class DataImage(Image):
         nonzero_blocks.append(i)
         nonzero_blocks.append(i+1)
 
-    self.file_map = {"__ZERO": RangeSet(zero_blocks),
-                     "__NONZERO": RangeSet(nonzero_blocks)}
+    assert zero_blocks or nonzero_blocks or clobbered_blocks
 
-    if self.clobbered_blocks:
-      self.file_map["__COPY"] = self.clobbered_blocks
+    self.file_map = dict()
+    if zero_blocks:
+      self.file_map["__ZERO"] = RangeSet(data=zero_blocks)
+    if nonzero_blocks:
+      self.file_map["__NONZERO"] = RangeSet(data=nonzero_blocks)
+    if clobbered_blocks:
+      self.file_map["__COPY"] = RangeSet(data=clobbered_blocks)
 
   def ReadRangeSet(self, ranges):
     return [self.data[s*self.blocksize:e*self.blocksize] for (s, e) in ranges]
