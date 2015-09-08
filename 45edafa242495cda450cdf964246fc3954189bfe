@@ -16,6 +16,24 @@
       "revId": "45edafa242495cda450cdf964246fc3954189bfe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24c9e69c_b3a2589b",
+        "filename": "tools/makeparallel/makeparallel.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-09-08T19:48:29Z",
+      "side": 1,
+      "message": "If GetJobserver returns false then there was no --jobserver in MAKEFLAGS, which implies the top level make was run with -j1 or no -j argument.  Tokens is initialized to zero, so this falls through and passes -j1 to the wrapped command.",
+      "parentUuid": "04c1426c_fa3789c6",
+      "revId": "45edafa242495cda450cdf964246fc3954189bfe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
