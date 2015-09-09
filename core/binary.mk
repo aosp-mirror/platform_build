@@ -620,13 +620,13 @@ else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c)
     my_static_libraries += libprotobuf-c-nano
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
     ifdef LOCAL_SDK_VERSION
-        my_static_libraries += libprotobuf-cpp-full
+        my_static_libraries += libprotobuf-cpp-full-ndk
     else
         my_shared_libraries += libprotobuf-cpp-full
     endif
 else
     ifdef LOCAL_SDK_VERSION
-        my_static_libraries += libprotobuf-cpp-lite
+        my_static_libraries += libprotobuf-cpp-lite-ndk
     else
         my_shared_libraries += libprotobuf-cpp-lite
     endif
