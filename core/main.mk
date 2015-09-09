@@ -449,24 +449,12 @@ ifeq ($(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS)),)
 $(INTERNAL_MODIFIER_TARGETS): $(DEFAULT_GOAL)
 endif
 
-# Bring in all modules that need to be built.
-ifeq ($(HOST_OS),windows)
-SDK_ONLY := true
-endif
-
-ifeq ($(SDK_ONLY),true)
-include $(TOPDIR)sdk/build/windows_sdk_whitelist.mk
-include $(TOPDIR)development/build/windows_sdk_whitelist.mk
-
-else	# !SDK_ONLY
 #
 # Typical build; include any Android.mk files we can find.
 #
 subdirs := $(TOP)
 
 FULL_BUILD := true
-
-endif	# !SDK_ONLY
 
 # Before we go and include all of the module makefiles, stash away
 # the PRODUCT_* values so that later we can verify they are not modified.
@@ -579,6 +567,8 @@ $(strip $(foreach m,$(1),\
     $(m))))
 endef
 
+# If a module is for a cross host os, the required modules must be for
+# that OS too.
 # If a module is built for 32-bit, the required modules must be 32-bit too;
 # Otherwise if the module is an exectuable or shared library,
 #   the required modules must be 64-bit;
@@ -586,6 +576,8 @@ endef
 $(foreach m,$(ALL_MODULES),\
   $(eval r := $(ALL_MODULES.$(m).REQUIRED))\
   $(if $(r),\
+    $(if $(ALL_MODULES.$(m).FOR_HOST_CROSS),\
+      $(eval r := $(addprefix host_cross_,$(r))))\
     $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),\
       $(eval r_r := $(call get-32-bit-modules-if-we-can,$(r))),\
       $(if $(filter EXECUTABLES SHARED_LIBRARIES,$(ALL_MODULES.$(m).CLASS)),\
@@ -608,32 +600,40 @@ $(foreach m,$(ALL_MODULES), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval t_m := $(filter $(TARGET_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval h_m := $(filter $(HOST_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval hc_m := $(filter $(HOST_CROSS_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
     $(eval h_r := $(filter $(HOST_OUT_ROOT)/%, $(r))) \
+    $(eval hc_r := $(filter $(HOST_CROSS_OUT_ROOT)/%, $(r))) \
     $(eval t_m := $(filter-out $(t_r), $(t_m))) \
     $(eval h_m := $(filter-out $(h_r), $(h_m))) \
+    $(eval hc_m := $(filter-out $(hc_r), $(hc_m))) \
     $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
     $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
+    $(if $(hc_m), $(eval $(call add-required-deps, $(hc_m),$(hc_r)))) \
    ) \
  )
 
 t_m :=
 h_m :=
+hc_m :=
 t_r :=
 h_r :=
+hc_r :=
 
 # Establish the dependecies on the shared libraries.
 # It also adds the shared library module names to ALL_MODULES.$(m).REQUIRED,
 # so they can be expanded to product_MODULES later.
-# $(1): TARGET_ or HOST_.
+# $(1): TARGET_ or HOST_ or HOST_CROSS_.
 # $(2): non-empty for 2nd arch.
+# $(3): non-empty for host cross compile.
 define resolve-shared-libs-depes
 $(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LIBRARIES),\
   $(eval p := $(subst :,$(space),$(m)))\
   $(eval mod := $(firstword $(p)))\
   $(eval deps := $(subst $(comma),$(space),$(lastword $(p))))\
   $(if $(2),$(eval deps := $(addsuffix $($(1)2ND_ARCH_MODULE_SUFFIX),$(deps))))\
-  $(eval r := $(filter $($(1)OUT_ROOT)/%,$(call module-installed-files,\
+  $(if $(3),$(eval deps := $(addprefix host_cross_,$(deps))))\
+  $(eval r := $(filter $($(1)OUT)/%,$(call module-installed-files,\
     $(deps))))\
   $(eval $(call add-required-deps,$(word 2,$(p)),$(r)))\
   $(eval ALL_MODULES.$(mod).REQUIRED += $(deps)))
@@ -646,6 +646,9 @@ endif
 $(call resolve-shared-libs-depes,HOST_)
 ifdef HOST_2ND_ARCH
 $(call resolve-shared-libs-depes,HOST_,true)
+endif
+ifdef HOST_CROSS_OS
+$(call resolve-shared-libs-depes,HOST_CROSS_,,true)
 endif
 
 m :=

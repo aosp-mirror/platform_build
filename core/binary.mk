@@ -145,7 +145,7 @@ endif
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
 # all code is position independent, and then those warnings get promoted to
 # errors.
-ifndef USE_MINGW
+ifneq ($($(my_prefix)OS),windows)
 ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
 my_cflags += -fpie
 else
@@ -186,7 +186,7 @@ endif
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($(HOST_OS),windows)
+    ifneq ($($(my_prefix)OS),windows)
     ifeq ($(my_clang),)
         my_clang := true
     endif
@@ -307,17 +307,17 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_glob
 else # LOCAL_IS_HOST_MODULE
 
 ifeq ($(my_clang),true)
-my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_HOST_GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_HOST_GLOBAL_CONLYFLAGS)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_HOST_GLOBAL_CPPFLAGS)
-my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_HOST_GLOBAL_LDFLAGS)
-my_host_c_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_C_INCLUDES)
+my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
+my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS)
+my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS)
+my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+my_host_c_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
 else
-my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_CONLYFLAGS)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_CPPFLAGS)
-my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LDFLAGS)
-my_host_c_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)HOST_C_INCLUDES)
+my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
+my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS)
+my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS)
+my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
+my_host_c_includes := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
 endif # my_clang
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_C_INCLUDES := $(my_host_c_includes)
@@ -1015,9 +1015,9 @@ endif
 import_includes := $(intermediates)/import_includes
 import_includes_deps := $(strip \
     $(foreach l, $(installed_shared_library_module_names), \
-      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/export_includes) \
+      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
     $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
-      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/export_includes))
+      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 $(import_includes): PRIVATE_IMPORT_EXPORT_INCLUDES := $(import_includes_deps)
 $(import_includes) : $(LOCAL_MODULE_MAKEFILE) $(import_includes_deps)
 	@echo Import includes file: $@
@@ -1122,7 +1122,7 @@ endif
 built_static_libraries := \
     $(foreach lib,$(my_static_libraries), \
       $(call intermediates-dir-for, \
-        STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/$(lib)$(a_suffix))
+        STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
 
 ifdef LOCAL_SDK_VERSION
 built_static_libraries += $(my_ndk_stl_static_lib)
@@ -1131,7 +1131,7 @@ endif
 built_whole_libraries := \
     $(foreach lib,$(my_whole_static_libraries), \
       $(call intermediates-dir-for, \
-        STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/$(lib)$(a_suffix))
+        STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
 
 # We don't care about installed static libraries, since the
 # libraries have already been linked into the module at that point.
