@@ -191,6 +191,15 @@ ifdef LOCAL_IS_HOST_MODULE
         my_clang := true
     endif
     endif
+# Add option to make clang the default for device build
+else ifeq ($(USE_CLANG_PLATFORM_BUILD),true)
+    ifeq ($(my_clang),)
+        my_clang := true
+    endif
+endif
+
+ifeq ($(strip $($(LOCAL_2ND_ARCH_VAR_PREFIX)WITHOUT_$(my_prefix)CLANG)),true)
+  my_clang :=
 endif
 
 my_cpp_std_version := -std=gnu++14
@@ -209,12 +218,6 @@ endif
 
 my_cppflags := $(my_cpp_std_version) $(my_cppflags)
 
-# Add option to make clang the default for device build
-ifeq ($(USE_CLANG_PLATFORM_BUILD),true)
-    ifeq ($(my_clang),)
-        my_clang := true
-    endif
-endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
 my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_static_libraries)
@@ -234,10 +237,6 @@ endif
 my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LINKER)
 
 include $(BUILD_SYSTEM)/config_sanitizers.mk
-
-ifeq ($(strip $($(LOCAL_2ND_ARCH_VAR_PREFIX)WITHOUT_$(my_prefix)CLANG)),true)
-  my_clang :=
-endif
 
 # Add in libcompiler_rt for all regular device builds
 ifeq (,$(LOCAL_SDK_VERSION)$(WITHOUT_LIBCOMPILER_RT))
