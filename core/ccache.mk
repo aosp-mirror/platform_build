@@ -37,11 +37,6 @@ ifneq ($(USE_CCACHE),)
   export CCACHE_CPP2 := true
 
   CCACHE_HOST_TAG := $(HOST_PREBUILT_TAG)
-  # If we are cross-compiling Windows binaries on Linux
-  # then use the linux ccache binary instead.
-  ifeq ($(HOST_OS)-$(BUILD_OS),windows-linux)
-    CCACHE_HOST_TAG := linux-$(HOST_PREBUILT_ARCH)
-  endif
   ccache := prebuilts/misc/$(CCACHE_HOST_TAG)/ccache/ccache
   # Check that the executable is here.
   ccache := $(strip $(wildcard $(ccache)))

@@ -1,6 +1,6 @@
 #############################################################
 ## Set up flags based on LOCAL_CXX_STL.
-## Input variables: LOCAL_CXX_STL
+## Input variables: LOCAL_CXX_STL, my_prefix
 ## Output variables: My_cflags, my_c_includes, my_shared_libraries, etc.
 #############################################################
 
