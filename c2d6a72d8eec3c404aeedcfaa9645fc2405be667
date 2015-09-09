@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64cf5e9f_dee83477",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-09T22:58:10Z",
+      "side": 1,
+      "message": "probably restrict it to target only.\nThe host case has been handled in lines 186-194.",
+      "range": {
+        "startLine": 212,
+        "startChar": 2,
+        "endLine": 212,
+        "endChar": 55
+      },
+      "revId": "c2d6a72d8eec3c404aeedcfaa9645fc2405be667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64cf5e9f_3e116819",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-09T22:58:10Z",
+      "side": 1,
+      "message": "better move this up to line 195, before $(my_clang) is referenced.",
+      "range": {
+        "startLine": 213,
+        "startChar": 0,
+        "endLine": 219,
+        "endChar": 5
+      },
+      "revId": "c2d6a72d8eec3c404aeedcfaa9645fc2405be667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64cf5e9f_be3b389a",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-09T22:58:10Z",
+      "side": 1,
+      "message": "Move this forward too.",
+      "range": {
+        "startLine": 240,
+        "startChar": 0,
+        "endLine": 242,
+        "endChar": 5
+      },
+      "revId": "c2d6a72d8eec3c404aeedcfaa9645fc2405be667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
