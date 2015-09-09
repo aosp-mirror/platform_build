@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a4ecf63c_a5664aaf",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-09-09T23:12:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64cf5e9f_dee83477",
+      "range": {
+        "startLine": 212,
+        "startChar": 2,
+        "endLine": 212,
+        "endChar": 55
+      },
+      "revId": "c2d6a72d8eec3c404aeedcfaa9645fc2405be667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64cf5e9f_3e116819",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "c4ef2afe_958022eb",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-09-09T23:12:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64cf5e9f_3e116819",
+      "range": {
+        "startLine": 213,
+        "startChar": 0,
+        "endLine": 219,
+        "endChar": 5
+      },
+      "revId": "c2d6a72d8eec3c404aeedcfaa9645fc2405be667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64cf5e9f_be3b389a",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2015-09-09T22:58:10Z",
       "side": 1,
       "message": "Move this forward too.",
+      "range": {
+        "startLine": 240,
+        "startChar": 0,
+        "endLine": 242,
+        "endChar": 5
+      },
+      "revId": "c2d6a72d8eec3c404aeedcfaa9645fc2405be667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "244c8613_241cd871",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-09-09T23:12:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64cf5e9f_be3b389a",
       "range": {
         "startLine": 240,
         "startChar": 0,
