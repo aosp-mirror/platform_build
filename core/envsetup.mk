@@ -57,12 +57,11 @@ endif
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
 
-# Under Linux, if USE_MINGW is set, we change HOST_OS to Windows to build the
-# Windows SDK. Only a subset of tools and SDK will manage to build properly.
+HOST_CROSS_OS :=
+# We can cross-build Windows binaries on Linux
 ifeq ($(HOST_OS),linux)
-ifdef USE_MINGW
-  HOST_OS := windows
-endif
+HOST_CROSS_OS := windows
+HOST_CROSS_ARCH := x86
 endif
 
 ifeq ($(HOST_OS),)
@@ -133,11 +132,6 @@ $(warning bad TARGET_BUILD_VARIANT: $(TARGET_BUILD_VARIANT))
 $(error must be empty or one of: eng user userdebug)
 endif
 
-ifdef USE_MINGW
-# We only build sdk host tools in the MinGW windows build.
-# Build it as 32-bit as well.
-HOST_PREFER_32_BIT := true
-endif
 SDK_HOST_ARCH := x86
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
@@ -218,8 +212,12 @@ HOST_OUT_ROOT := $(HOST_OUT_ROOT_$(HOST_BUILD_TYPE))
 HOST_OUT_release := $(HOST_OUT_ROOT_release)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 HOST_OUT_debug := $(HOST_OUT_ROOT_debug)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 HOST_OUT := $(HOST_OUT_$(HOST_BUILD_TYPE))
+# TODO: remove
+BUILD_OUT := $(HOST_OUT)
 
-BUILD_OUT := $(OUT_DIR)/host/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)
+HOST_CROSS_OUT_release := $(HOST_OUT_ROOT_release)/windows-$(HOST_PREBUILT_ARCH)
+HOST_CROSS_OUT_debug := $(HOST_OUT_ROOT_debug)/windows-$(HOST_PREBUILT_ARCH)
+HOST_CROSS_OUT := $(HOST_CROSS_OUT_$(HOST_BUILD_TYPE))
 
 TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
 
@@ -237,6 +235,9 @@ HOST_OUT_SHARED_LIBRARIES := $(HOST_OUT)/lib64
 HOST_OUT_JAVA_LIBRARIES := $(HOST_OUT)/framework
 HOST_OUT_SDK_ADDON := $(HOST_OUT)/sdk_addon
 
+HOST_CROSS_OUT_EXECUTABLES := $(HOST_CROSS_OUT)/bin
+HOST_CROSS_OUT_SHARED_LIBRARIES := $(HOST_CROSS_OUT)/lib
+
 HOST_OUT_INTERMEDIATES := $(HOST_OUT)/obj
 HOST_OUT_HEADERS := $(HOST_OUT_INTERMEDIATES)/include
 HOST_OUT_INTERMEDIATE_LIBRARIES := $(HOST_OUT_INTERMEDIATES)/lib
@@ -244,8 +245,15 @@ HOST_OUT_NOTICE_FILES := $(HOST_OUT_INTERMEDIATES)/NOTICE_FILES
 HOST_OUT_COMMON_INTERMEDIATES := $(HOST_COMMON_OUT_ROOT)/obj
 HOST_OUT_FAKE := $(HOST_OUT)/fake_packages
 
+HOST_CROSS_OUT_INTERMEDIATES := $(HOST_CROSS_OUT)/obj
+HOST_CROSS_OUT_HEADERS := $(HOST_CROSS_OUT_INTERMEDIATES)/include
+HOST_CROSS_OUT_INTERMEDIATE_LIBRARIES := $(HOST_CROSS_OUT_INTERMEDIATES)/lib
+HOST_CROSS_OUT_NOTICE_FILES := $(HOST_CROSS_OUT_INTERMEDIATES)/NOTICE_FILES
+
 HOST_OUT_GEN := $(HOST_OUT)/gen
 HOST_OUT_COMMON_GEN := $(HOST_COMMON_OUT_ROOT)/gen
+
+HOST_CROSS_OUT_GEN := $(HOST_CROSS_OUT)/gen
 
 # Out for HOST_2ND_ARCH
 HOST_2ND_ARCH_VAR_PREFIX := 2ND_

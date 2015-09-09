@@ -14,6 +14,7 @@ ifeq ($(LOCAL_MODULE_CLASS),NOTICE_FILES)
 # so my_prefix is not set at this point.
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
   my_prefix := HOST_
+  LOCAL_HOST_PREFIX :=
 else
   my_prefix := TARGET_
 endif
@@ -56,6 +57,7 @@ endif
 
 # In case it's actually a host file
 module_installed_filename := $(patsubst $(HOST_OUT)%,%,$(module_installed_filename))
+module_installed_filename := $(patsubst $(HOST_CROSS_OUT)%,%,$(module_installed_filename))
 
 installed_notice_file := $($(my_prefix)OUT_NOTICE_FILES)/src/$(module_installed_filename).txt
 

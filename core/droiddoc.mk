@@ -23,6 +23,7 @@
 LOCAL_IS_HOST_MODULE := $(call true-or-empty,$(LOCAL_IS_HOST_MODULE))
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
 my_prefix := HOST_
+LOCAL_HOST_PREFIX :=
 else
 my_prefix := TARGET_
 endif
