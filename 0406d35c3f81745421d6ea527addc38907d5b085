@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a4b156f3_3a883de9",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-09-09T06:55:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "44cedaa4_b406c05a",
+      "range": {
+        "startLine": 5,
+        "startChar": 31,
+        "endLine": 5,
+        "endChar": 37
+      },
+      "revId": "0406d35c3f81745421d6ea527addc38907d5b085",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64cf5e9f_b554803e",
         "filename": "core/ninja.mk",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2015-09-08T19:12:43Z",
       "side": 1,
       "message": "Probably a more descriptive variable name?",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 18
+      },
+      "revId": "0406d35c3f81745421d6ea527addc38907d5b085",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "444dfaad_657f9ca7",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-09-09T06:55:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64cf5e9f_b554803e",
       "range": {
         "startLine": 6,
         "startChar": 0,
