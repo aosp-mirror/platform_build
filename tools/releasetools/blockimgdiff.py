@@ -511,6 +511,7 @@ class BlockImageDiff(object):
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
       out.append("zero %s\n" % (self.tgt.extended.to_string_raw(),))
+      total += self.tgt.extended.size()
 
     # We erase all the blocks on the partition that a) don't contain useful
     # data in the new image and b) will not be touched by dm-verity.
@@ -521,7 +522,7 @@ class BlockImageDiff(object):
       out.append("erase %s\n" % (new_dontcare.to_string_raw(),))
 
     out.insert(0, "%d\n" % (self.version,))   # format version number
-    out.insert(1, str(total) + "\n")
+    out.insert(1, "%d\n" % (total,))
     if self.version >= 2:
       # version 2 only: after the total block count, we give the number
       # of stash slots needed, and the maximum size needed (in blocks)
