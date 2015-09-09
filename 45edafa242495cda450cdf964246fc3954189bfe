@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "244c8613_6452e0aa",
+        "filename": "tools/makeparallel/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-09-09T23:50:52Z",
+      "side": 1,
+      "message": "It\u0027s deterministic as long as the makeparallel rule is the only one running.  For wrapping ninja, the ninja rule depends on all the other rules so it will always be the only one running and always get the same -j value passed to make.\n\nI missed the local_pool implementation in kati, I can change the next patch to pass -j to kati instead of to ninja.  It\u0027s a little unfortunate that the -j value ends up in the build.ninja file, as that means the file needs to be regenerated every time a different -j value is passed.  Maybe for non-goma I should pass it to ninja, and kati should not use local_pool at all?",
+      "parentUuid": "44cedaa4_fa98a16e",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 40
+      },
+      "revId": "45edafa242495cda450cdf964246fc3954189bfe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "04c1426c_fa3789c6",
         "filename": "tools/makeparallel/makeparallel.cpp",
         "patchSetId": 1
