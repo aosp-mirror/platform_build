@@ -585,7 +585,7 @@ def:custom_left_nav() ?><?cs
 <?cs # appears at the bottom of every page ?><?cs
 def:custom_cc_copyright() ?>
   Except as noted, this content is
-  licensed under <a href="http://creativecommons.org/licenses/by/2.5/">
+  licensed under <a href="//creativecommons.org/licenses/by/2.5/">
   Creative Commons Attribution 2.5</a>. For details and
   restrictions, see the <a href="<?cs var:toroot ?>license.html">Content
   License</a>.<?cs
@@ -594,7 +594,7 @@ def:custom_cc_copyright() ?>
 <?cs
 def:custom_copyright() ?>
   Except as noted, this content is licensed under <a
-  href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
+  href="//www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
   For details and restrictions, see the <a href="<?cs var:toroot ?>license.html">
   Content License</a>.<?cs
 /def ?>
