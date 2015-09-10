@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04c1426c_ef6ea1c9",
+        "filename": "core/build-system.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-09-10T00:08:37Z",
+      "side": 1,
+      "message": "Isn\u0027t this false? I thought the llvm/clang Android.mk updates used this with only windows for the non-FORCE_BUILD_LLVM_COMPONENTS builds.",
+      "range": {
+        "startLine": 838,
+        "startChar": 21,
+        "endLine": 838,
+        "endChar": 47
+      },
+      "revId": "82dbc959a9023d418a308b02a97836844c1a155d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24c9e69c_48fb4bb0",
+        "filename": "core/build-system.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 934,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-09-10T00:08:37Z",
+      "side": 1,
+      "message": "to",
+      "range": {
+        "startLine": 934,
+        "startChar": 10,
+        "endLine": 934,
+        "endChar": 13
+      },
+      "revId": "82dbc959a9023d418a308b02a97836844c1a155d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
