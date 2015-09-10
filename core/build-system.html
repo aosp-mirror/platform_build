@@ -462,26 +462,17 @@ LOCAL_GENERATED_SOURCES += $(GEN)
 <p>Sometimes you need to set flags specifically for different platforms.  Here
 is a list of which values the different build-system defined variables will be
 set to and some examples.</p>
-<p>For a device build, <code>TARGET_OS</code> is <code>linux</code> (we're using
-linux!), and <code>TARGET_ARCH</code> is <code>arm</code>.</p>
-<p>For a simulator build, <code>TARGET_OS</code> and <code>TARGET_ARCH</code>
-are set to the same as <code>HOST_OS</code> and <code>HOST_ARCH</code> are
-on your platform.  <code>TARGET_PRODUCT</code> is the name of the target
-hardware/product you are building for.  The value <code>sim</code> is used
-for the simulator.  We haven't thought through the full extent of customization
-that will happen here, but likely there will be additional UI configurations
-specified here as well.</p>
 <table cellspacing=25>
 <tr>
     <td valign=top align=center>
         <b>HOST_OS</b><br/>
         linux<br/>
-        darwin<br/>
-        (cygwin)
+        darwin
     </td>
     <td valign=top align=center>
         <b>HOST_ARCH</b><br/>
-        x86
+        x86<br/>
+        x86_64
     </td>
     <td valign=top align=center>
         <b>HOST_BUILD_TYPE</b><br/>
@@ -491,42 +482,40 @@ specified here as well.</p>
 </tr>
 <tr>
     <td valign=top align=center>
-        <b>TARGET_OS</b><br/>
-        linux<br/>
-        darwin<br/>
-        (cygwin)
-    </td>
-    <td valign=top align=center>
         <b>TARGET_ARCH</b><br/>
         arm<br/>
-        x86
+        arm64<br/>
+        mips<br/>
+        mips64<br/>
+        x86<br/>
+        x86_64
     </td>
     <td valign=top align=center>
         <b>TARGET_BUILD_TYPE</b><br/>
         release<br/>
         debug
     </td>
-    <td valign=top align=center>
-        <b>TARGET_PRODUCT</b><br/>
-        sim<br/>
-        dream<br/>
-        sooner
-    </td>
 </tr>
 </table>
+
+<p>There are also special variables to use instead of conditionals. Many of the
+normal variables (LOCAL_SRC_FILES, LOCAL_CFLAGS, etc) can be conditionally added
+to with _{arch} _{32|64}, and for the host, _{os}.</p>
 
 <h4>Some Examples</h4>
 <pre>ifeq ($(TARGET_BUILD_TYPE),release)
 LOCAL_CFLAGS += -DNDEBUG=1
 endif
 
+LOCAL_CFLAGS_arm += -DTARGET_IS_ARM
+
+LOCAL_CFLAGS_64 += -DBIG_POINTER
+
 # from libutils
-ifeq ($(TARGET_OS),linux)
 # Use the futex based mutex and condition variable
 # implementation from android-arm because it's shared mem safe
-LOCAL_SRC_FILES += futex_synchro.c
-LOCAL_LDLIBS += -lrt -ldl
-endif
+LOCAL_SRC_FILES_linux += futex_synchro.c
+LOCAL_LDLIBS_linux += -lrt -ldl
 
 </pre>
 
@@ -554,7 +543,7 @@ LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
 the unstripped executables so GDB can find the symbols.
 <code>LOCAL_UNSTRIPPED_PATH</code> is not necessary if you only specified
 <code>LOCAL_MODULE_RELATIVE_PATH</code>.</p>
-<p>Look in <code>config/envsetup.make</code> for all of the variables defining
+<p>Look in <code>core/envsetup.mk</code> for all of the variables defining
 places to build things.</p>
 <p>FYI: If you're installing an executable to /sbin, you probably also want to
 set <code>LOCAL_FORCE_STATIC_EXCUTABLE := true</code> in your Android.mk, which
@@ -586,6 +575,11 @@ alphabetically.</p>
     <li><b>HOST_</b> and <b>TARGET_</b> - These contain the directories
     and definitions that are specific to either the host or the target builds.
     Do not set variables that start with HOST_ or TARGET_ in your makefiles.
+    </li>
+    <li><b>HOST_CROSS_</b> - These contain the directories and definitions that
+    are specific to cross-building host binaries. The common case is building
+    windows host tools on linux. Do not set variables that start with
+    HOST_CROSS_ in your makefiles.
     </li>
     <li><b>BUILD_</b> and <b>CLEAR_VARS</b> - These contain the names of
     well-defined template makefiles to include.  Some examples are CLEAR_VARS
@@ -773,13 +767,13 @@ LOCAL_POST_PROCESS_COMMAND := /Developer/Tools/Rez -d __DARWIN__ -t APPL\<br/>
 </code></p>
 
 <h4>LOCAL_PREBUILT_EXECUTABLES</h4>
-<p>When including $(BUILD_PREBUILT) or $(BUILD_HOST_PREBUILT), set these to
-executables that you want copied.  They're located automatically into the
+<p>When including $(BUILD_MULTI_PREBUILT) or $(BUILD_HOST_PREBUILT), set these
+to executables that you want copied.  They're located automatically into the
 right bin directory.</p>
 
 <h4>LOCAL_PREBUILT_LIBS</h4>
-<p>When including $(BUILD_PREBUILT) or $(BUILD_HOST_PREBUILT), set these to
-libraries that you want copied.  They're located automatically into the
+<p>When including $(BUILD_MULTI_PREBUILT) or $(BUILD_HOST_PREBUILT), set these
+to libraries that you want copied.  They're located automatically into the
 right lib directory.</p>
 
 <h4>LOCAL_SHARED_LIBRARIES</h4>
@@ -836,6 +830,16 @@ set <code>LOCAL_UNSTRIPPED_PATH</code>, the unstripped binaries will also use
 the relative path.</p>
 <p>See <a href="#moving-modules">Putting modules elsewhere</a> for more.</p>
 
+<h4>LOCAL_MODULE_HOST_OS</h4>
+<p>This specifies which OSes are supported by this host module. It is not used
+for target builds. The accepted values here are combinations of
+<code>linux</code>, <code>darwin</code>, and <code>windows</code>. By default,
+linux and darwin(MacOS) are considered to be supported. If a module should
+build under windows, you must specify windows, and any others to be supported.
+Some examples:</p>
+<p><code>LOCAL_MODULE_HOST_OS := linux<br/>
+LOCAL_MODULE_HOST_OS := darwin linux windows</code></p>
+
 <h4>LOCAL_UNSTRIPPED_PATH</h4>
 <p>Instructs the build system to put the unstripped version of the module
 somewhere other than what's normal for its type.  Usually, you override this
@@ -878,10 +882,10 @@ system expects, it fails printing an error message explaining what happened.
 If you make a change that requires an update, you need to update two places
 so this message will be printed.
 <ul>
-    <li>In config/envsetup.make, increment the
+    <li>In core/envsetup.mk, increment the
         CORRECT_BUILD_ENV_SEQUENCE_NUMBER definition.</li>
     <li>In buildspec.mk.default, update the BUILD_ENV_SEQUENCE_DUMBER
-        definition to match the one in config/envsetup.make</li>
+        definition to match the one in core/envsetup.mk</li>
 </ul>
 The scripts automatically get the value from the build system, so they will
 trigger the warning as well.
@@ -900,53 +904,39 @@ isn't actually built in to it, you can add those make targets to
 for some other dependency that isn't created automatically.</p>
 
 <h4>LOCAL_BUILT_MODULE</h4>
+<p class=warning>This should not be used, since multiple binaries are now
+created from a single module defintiion.</p>
 <p>When a module is built, the module is created in an intermediate
 directory then copied to its final location.  LOCAL_BUILT_MODULE is
 the full path to the intermediate file.  See LOCAL_INSTALLED_MODULE
 for the path to the final installed location of the module.</p>
 
-<h4>LOCAL_HOST</h4>
-<p>Set by the host_xxx.make includes to tell base_rules.make and the other
-includes that we're building for the host.  Kenneth did this as part of
-openbinder, and I would like to clean it up so the rules, includes and
-definitions aren't duplicated for host and target.</p>
+<h4>LOCAL_IS_HOST_MODULE</h4>
+<p>Set by the host_xxx.mk includes to tell base_rules.mk and the other
+includes that we're building for the host.</p>
 
 <h4>LOCAL_INSTALLED_MODULE</h4>
+<p class=warning>This should not be used, since multiple binaries are now
+created from a single module defintiion.</p>
 <p>The fully qualified path name of the final location of the module.
 See LOCAL_BUILT_MODULE for the location of the intermediate file that
 the make rules should actually be constructing.</p>
 
-<h4>LOCAL_REPLACE_VARS</h4>
-<p>Used in some stuff remaining from the openbinder for building scripts
-with particular values set,</p>
-
-<h4>LOCAL_SCRIPTS</h4>
-<p>Used in some stuff remaining from the openbinder build system that we
-might find handy some day.</p>
-
 <h4>LOCAL_MODULE_CLASS</h4>
 <p>Which kind of module this is.  This variable is used to construct other
-variable names used to locate the modules.  See base_rules.make and
-envsetup.make.</p>
-
-<h4>LOCAL_MODULE_NAME</h4>
-<p>Set to the leaf name of the LOCAL_BUILT_MODULE.  I'm not sure,
-but it looks like it's just used in the WHO_AM_I variable to identify
-in the pretty printing what's being built.</p>
+variable names used to locate the modules.  See base_rules.mk and
+envsetup.mk.</p>
 
 <h4>LOCAL_MODULE_SUFFIX</h4>
 <p>The suffix that will be appended to <code>LOCAL_MODULE</code> to form
 <code>LOCAL_MODULE_NAME</code>.  For example, .so, .a, .dylib.</p>
 
 <h4>LOCAL_STRIP_MODULE</h4>
-<p>Calculated in base_rules.make to determine if this module should actually
-be stripped or not, based on whether <code>LOCAL_STRIPPABLE_MODULE</code>
-is set, and whether the combo is configured to ever strip modules.  With
-Iliyan's stripping tool, this might change.</p>
-
-<h4>LOCAL_STRIPPABLE_MODULE</h4>
-<p>Set by the include makefiles if that type of module is strippable. 
-Executables and shared libraries are.</p>
+<p>If set to true (the default), the binary will be stripped and a debug
+link will be set up so that GDB will still work. If set to no_debuglink,
+the binary will be stripped, but no debug link will be added. If set to
+keep_symbols, it will strip the debug information, but keep the symbol table.
+Any other value will prevent stripping.</p>
 
 <h4>LOCAL_SYSTEM_SHARED_LIBRARIES</h4>
 <p>Used while building the base libraries: libc, libm, libdl.  Usually
