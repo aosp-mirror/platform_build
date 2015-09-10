@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "64cf5e9f_54976536",
+        "filename": "core/build-system.html",
+        "patchSetId": 2
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-09-10T00:41:49Z",
+      "side": 1,
+      "message": "Yes, the new version is better. I actually now see that you can read this a second way (how you are reading it), and that way makes sense. It would just be confusing, though, so I am glad for the updated wording.",
+      "parentUuid": "e4c34e74_f36c5043",
+      "range": {
+        "startLine": 838,
+        "startChar": 21,
+        "endLine": 838,
+        "endChar": 47
+      },
+      "revId": "82dbc959a9023d418a308b02a97836844c1a155d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "24c9e69c_48fb4bb0",
         "filename": "core/build-system.html",
         "patchSetId": 2
