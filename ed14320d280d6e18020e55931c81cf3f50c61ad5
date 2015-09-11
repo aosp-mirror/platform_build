@@ -16,6 +16,24 @@
       "revId": "ed14320d280d6e18020e55931c81cf3f50c61ad5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44ab3af0_af99f5ba",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-11T19:00:08Z",
+      "side": 1,
+      "message": "my_prefix can be:\nTARGET_\nHOST_\nHOST_CROSS_\n\nso you can write $($(my_prefix)OS) .",
+      "parentUuid": "e4b0ae55_71a898c1",
+      "revId": "ed14320d280d6e18020e55931c81cf3f50c61ad5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
