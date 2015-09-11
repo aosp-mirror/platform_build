@@ -49,6 +49,53 @@
     },
     {
       "key": {
+        "uuid": "24c9e69c_f5666bb0",
+        "filename": "tools/makeparallel/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-11T01:26:59Z",
+      "side": 1,
+      "message": "Sounds good to me. Shinichiro?\nthough I still don\u0027t get why we need to pass -j to ninja, which supposedly enables running jobs in parallel by default.",
+      "parentUuid": "244c8613_6452e0aa",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 40
+      },
+      "revId": "45edafa242495cda450cdf964246fc3954189bfe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44fdfae7_85ca282c",
+        "filename": "tools/makeparallel/makeparallel.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-11T01:26:59Z",
+      "side": 1,
+      "message": "we don\u0027t return the tokens in this function.",
+      "range": {
+        "startLine": 174,
+        "startChar": 11,
+        "endLine": 174,
+        "endChar": 60
+      },
+      "revId": "45edafa242495cda450cdf964246fc3954189bfe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "04c1426c_fa3789c6",
         "filename": "tools/makeparallel/makeparallel.cpp",
         "patchSetId": 1
