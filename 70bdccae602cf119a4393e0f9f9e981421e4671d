@@ -22,6 +22,30 @@
       "revId": "70bdccae602cf119a4393e0f9f9e981421e4671d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a46156bd_f730201f",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-09-11T20:38:14Z",
+      "side": 1,
+      "message": "Oops. Done.",
+      "parentUuid": "848ff2ac_def0a5a0",
+      "range": {
+        "startLine": 123,
+        "startChar": 7,
+        "endLine": 123,
+        "endChar": 63
+      },
+      "revId": "70bdccae602cf119a4393e0f9f9e981421e4671d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
