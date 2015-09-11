@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "e4c34e74_f8e9c82a",
+        "filename": "tools/makeparallel/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-09-11T01:28:46Z",
+      "side": 1,
+      "message": "Because I\u0027d like it to be configurable. Cores + 2 isn\u0027t a good default when running ART tests, for example (yes, even when niced).",
+      "parentUuid": "24c9e69c_f5666bb0",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 40
+      },
+      "revId": "45edafa242495cda450cdf964246fc3954189bfe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "44fdfae7_85ca282c",
         "filename": "tools/makeparallel/makeparallel.cpp",
         "patchSetId": 1
