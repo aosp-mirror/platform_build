@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e4b0ae55_71a898c1",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-09-11T18:41:12Z",
+      "side": 1,
+      "message": "This is definitely not correct (making the same change on L93 breaks the system/core build, this probably breaks something), but I don\u0027t know the right way to do this in our new Windows set up.",
+      "revId": "ed14320d280d6e18020e55931c81cf3f50c61ad5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
