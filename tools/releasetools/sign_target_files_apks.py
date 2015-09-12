@@ -203,11 +203,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         common.ZipWriteStr(output_tf_zip, out_info, data)
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
+                           "BOOT/RAMDISK/default.prop",
                            "RECOVERY/RAMDISK/default.prop"):
       print "rewriting %s:" % (info.filename,)
       new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
-      if info.filename == "RECOVERY/RAMDISK/default.prop":
+      if info.filename in ("BOOT/RAMDISK/default.prop",
+                           "RECOVERY/RAMDISK/default.prop"):
         write_to_temp(info.filename, info.external_attr, new_data)
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
@@ -307,6 +309,10 @@ def RewriteProps(data, misc_info):
         value = "/".join(pieces)
       elif (key in ("ro.build.thumbprint", "ro.vendor.build.thumbprint")
             and misc_info.get("oem_fingerprint_properties") is not None):
+        pieces = value.split("/")
+        pieces[-1] = EditTags(pieces[-1])
+        value = "/".join(pieces)
+      elif key == "ro.bootimage.build.fingerprint":
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
