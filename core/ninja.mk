@@ -54,6 +54,7 @@ PARSE_TIME_MAKE_GOALS := \
 -include vendor/google/build/ninja_config.mk
 
 ANDROID_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(ORIGINAL_MAKECMDGOALS))
+EXTRA_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(filter-out $(ORIGINAL_MAKECMDGOALS),$(MAKECMDGOALS)))
 KATI_TARGETS := $(if $(filter $(PARSE_TIME_MAKE_GOALS),$(ANDROID_TARGETS)),$(ANDROID_TARGETS),)
 
 define replace_space_and_slash
@@ -86,7 +87,7 @@ showcommands: droid
 endif
 
 ifeq (,$(filter generateonly,$(ORIGINAL_MAKECMDGOALS)))
-fastincremental droid $(ANDROID_TARGETS): ninja.intermediate
+fastincremental droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): ninja.intermediate
 	@#empty
 
 .INTERMEDIATE: ninja.intermediate
@@ -94,7 +95,7 @@ ninja.intermediate: $(KATI_OUTPUTS)
 	@echo Starting build with ninja
 	$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(KATI_NINJA_SH) -C $(TOP) $(NINJA_ARGS) $(ANDROID_TARGETS)
 else
-generateonly droid $(ANDROID_TARGETS): $(KATI_OUTPUTS)
+generateonly droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): $(KATI_OUTPUTS)
 	@#empty
 endif
 
