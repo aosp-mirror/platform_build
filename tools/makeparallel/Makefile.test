@@ -1,0 +1,5 @@
+MAKEPARALLEL ?= ./makeparallel
+
+.PHONY: test
+test:
+	+if [ "$$($(MAKEPARALLEL) echo)" = "-j1234" ]; then echo SUCCESS; else echo FAILED; fi
