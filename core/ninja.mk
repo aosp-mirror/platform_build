@@ -1,4 +1,5 @@
 KATI ?= $(HOST_OUT_EXECUTABLES)/ckati
+MAKEPARALLEL ?= $(HOST_OUT_EXECUTABLES)/makeparallel
 
 KATI_OUTPUT_PATTERNS := $(PRODUCT_OUT)/build%.ninja $(PRODUCT_OUT)/ninja%.sh
 NINJA_GOALS := fastincremental generateonly droid showcommands
@@ -85,14 +86,20 @@ PHONY: showcommands
 showcommands: droid
 endif
 
+ifdef KATI_REMOTE_NUM_JOBS_FLAG
+KATI_MAKEPARALLEL := $(MAKEPARALLEL)
+else
+NINJA_MAKEPARALLEL := $(MAKEPARALLEL)
+endif
+
 ifeq (,$(filter generateonly,$(ORIGINAL_MAKECMDGOALS)))
 fastincremental droid $(ANDROID_TARGETS): ninja.intermediate
 	@#empty
 
 .INTERMEDIATE: ninja.intermediate
-ninja.intermediate: $(KATI_OUTPUTS)
+ninja.intermediate: $(KATI_OUTPUTS) $(MAKEPARALLEL)
 	@echo Starting build with ninja
-	$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(KATI_NINJA_SH) -C $(TOP) $(NINJA_ARGS) $(ANDROID_TARGETS)
+	+$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(NINJA_MAKEPARALLEL) $(KATI_NINJA_SH) -C $(TOP) $(NINJA_ARGS) $(ANDROID_TARGETS)
 else
 generateonly droid $(ANDROID_TARGETS): $(KATI_OUTPUTS)
 	@#empty
@@ -105,10 +112,10 @@ endif
 $(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
 
 .INTERMEDIATE: kati.intermediate
-kati.intermediate: $(KATI)
+kati.intermediate: $(KATI) $(MAKEPARALLEL)
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
 	@#TODO: use separate ninja file for mm or single target build
-	$(hide) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator $(KATI_REMOTE_NUM_JOBS_FLAG) -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
+	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator $(KATI_REMOTE_NUM_JOBS_FLAG) -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
@@ -120,6 +127,17 @@ endif
 KATI_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/ckati_intermediates
 KATI_BIN_PATH := $(HOST_OUT_EXECUTABLES)
 include build/kati/Makefile.ckati
+
+MAKEPARALLEL_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CPPFLAGS)
+MAKEPARALLEL_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
+# Build static makeparallel. Unfortunately Mac OS X doesn't officially support static exectuables.
+ifeq ($(BUILD_OS),linux)
+MAKEPARALLEL_LD += -static
+endif
+
+MAKEPARALLEL_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/makeparallel_intermediates
+MAKEPARALLEL_BIN_PATH := $(HOST_OUT_EXECUTABLES)
+include build/tools/makeparallel/Makefile
 
 .PHONY: FORCE
 FORCE:
