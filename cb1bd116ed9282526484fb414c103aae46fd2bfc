@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6473de94_4428381a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-15T00:09:16Z",
+      "side": 1,
+      "message": "Ah yes, with \"make PRODUCT-sdk-win_sdk\" (I don\u0027t know why we had to support such things in the first place), in build/core/product_config.mk we added the unknown variant \"win_sdk\" to MAKECMDGOALS, and have PRODUCT-sdk-win_sdk depend on $(MAKECMDGOALS).\nWithout this change, the outer make build would fail because the win_sdk rule isn\u0027t visible to it.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 61
+      },
+      "revId": "cb1bd116ed9282526484fb414c103aae46fd2bfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
