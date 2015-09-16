@@ -1,11 +1,5 @@
 ## Clang configurations.
 
-# WITHOUT_CLANG covers both HOST and TARGET
-ifeq ($(WITHOUT_CLANG),true)
-WITHOUT_TARGET_CLANG := true
-WITHOUT_HOST_CLANG := true
-endif
-
 LLVM_PREBUILTS_VERSION := 3.6
 LLVM_PREBUILTS_PATH := prebuilts/clang/$(BUILD_OS)-x86/host/$(LLVM_PREBUILTS_VERSION)/bin
 LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib/clang/$(LLVM_PREBUILTS_VERSION)/lib/linux/
