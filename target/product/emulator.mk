@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     sensors.ranchu
 
 PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.ethernet.xml:system/etc/permissions/android.hardware.ethernet.xml \
     device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
     device/generic/goldfish/init.goldfish.rc:root/init.goldfish.rc \
     device/generic/goldfish/init.goldfish.sh:system/etc/init.goldfish.sh \
