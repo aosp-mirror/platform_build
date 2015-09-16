@@ -93,8 +93,14 @@ include $(BUILD_SYSTEM)/help.mk
 include $(BUILD_SYSTEM)/config.mk
 
 ifeq ($(USE_NINJA),true)
+# Mark this is a ninja build.
+$(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
 else # !USE_NINJA
+ifeq ($(MAKELEVEL),0)
+# Remove ninja build mark if it exists.
+$(shell rm -f $(OUT_DIR)/ninja_build)
+endif
 
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
