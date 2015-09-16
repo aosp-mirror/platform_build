@@ -198,10 +198,6 @@ else ifeq ($(USE_CLANG_PLATFORM_BUILD),true)
     endif
 endif
 
-ifeq ($(strip $($(LOCAL_2ND_ARCH_VAR_PREFIX)WITHOUT_$(my_prefix)CLANG)),true)
-  my_clang :=
-endif
-
 my_cpp_std_version := -std=gnu++14
 ifdef LOCAL_SDK_VERSION
     # The NDK handles this itself.
