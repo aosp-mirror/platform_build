@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "246d66b4_b93cd7ac",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-09-16T22:43:32Z",
+      "side": 1,
+      "message": "does this need to be in DIST_DIR?",
+      "revId": "eb1e18e68904287058644867cb4304a9e7c58a2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e93887ce_250b2665",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-09-16T22:43:32Z",
+      "side": 1,
+      "message": "maybe just put the rm just above the ifeq ($(USE_NINJA),true)?",
+      "revId": "eb1e18e68904287058644867cb4304a9e7c58a2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
