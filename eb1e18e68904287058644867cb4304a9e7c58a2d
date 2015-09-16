@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "64383eb1_368c5eb9",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-16T22:57:44Z",
+      "side": 1,
+      "message": "no.\nThere is no DIST_DIR if you don\u0027t run \"make dist\".",
+      "parentUuid": "246d66b4_b93cd7ac",
+      "revId": "eb1e18e68904287058644867cb4304a9e7c58a2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e93887ce_250b2665",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-09-16T22:43:32Z",
       "side": 1,
       "message": "maybe just put the rm just above the ifeq ($(USE_NINJA),true)?",
+      "revId": "eb1e18e68904287058644867cb4304a9e7c58a2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "843d32a1_cb360a1b",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-16T22:57:44Z",
+      "side": 1,
+      "message": "The Kati pass would remove the file written by the outer make in that case.",
+      "parentUuid": "e93887ce_250b2665",
       "revId": "eb1e18e68904287058644867cb4304a9e7c58a2d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
