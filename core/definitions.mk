@@ -1198,6 +1198,14 @@ $(transform-host-m-to-o-no-deps)
 $(transform-d-to-p)
 endef
 
+###########################################################
+## Commands for running gcc to compile a host Objective-C++ file
+###########################################################
+
+define transform-host-mm-to-o
+$(transform-host-cpp-to-o)
+endef
+
 
 ###########################################################
 ## Rules to compile a single C/C++ source with ../ in the path
