@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "099a3b78_5295f479",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-17T22:32:52Z",
+      "side": 1,
+      "message": "Can we just add this flag to TARGET_GLOBAL_LDFLAGS?",
+      "range": {
+        "startLine": 418,
+        "startChar": 0,
+        "endLine": 420,
+        "endChar": 5
+      },
+      "revId": "4bb5cc0a91991be80e8769e78a8191b2aeea235b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
