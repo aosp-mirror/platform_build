@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "099a3b78_95f9068a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1116,
+      "author": {
+        "id": 1068428
+      },
+      "writtenOn": "2015-09-17T22:53:01Z",
+      "side": 1,
+      "message": "I\u0027d rather not remove a rule someone else might be relying on since I can\u0027t test build for them",
+      "parentUuid": "29bd3fca_1307ece4",
+      "range": {
+        "startLine": 1102,
+        "startChar": 0,
+        "endLine": 1116,
+        "endChar": 5
+      },
+      "revId": "f405af4b8bd768273c596d296b64a191314f0393",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "099a3b78_b292a016",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2015-09-17T22:08:22Z",
       "side": 1,
       "message": "No need. Please remove.",
+      "range": {
+        "startLine": 1118,
+        "startChar": 0,
+        "endLine": 1137,
+        "endChar": 5
+      },
+      "revId": "f405af4b8bd768273c596d296b64a191314f0393",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "69c3b75a_5bd17b35",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1137,
+      "author": {
+        "id": 1068428
+      },
+      "writtenOn": "2015-09-17T22:53:01Z",
+      "side": 1,
+      "message": "removed from CL",
+      "parentUuid": "099a3b78_b292a016",
       "range": {
         "startLine": 1118,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "099a3b78_b5f60a97",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 1068428
+      },
+      "writtenOn": "2015-09-17T22:53:01Z",
+      "side": 1,
+      "message": "right, just pretty output",
+      "parentUuid": "c9ae6393_5895fd79",
+      "range": {
+        "startLine": 1239,
+        "startChar": 35,
+        "endLine": 1239,
+        "endChar": 41
+      },
+      "revId": "f405af4b8bd768273c596d296b64a191314f0393",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c9a3c3b1_30e228bf",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2015-09-17T22:08:22Z",
       "side": 1,
       "message": "I\u0027d probably just write it here as:\n$(transform-host-cpp-to-o)\nOr just call $(transform-host-cpp-to-o) in binary.mk",
+      "range": {
+        "startLine": 1249,
+        "startChar": 0,
+        "endLine": 1250,
+        "endChar": 19
+      },
+      "revId": "f405af4b8bd768273c596d296b64a191314f0393",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e99c0776_d4039217",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1250,
+      "author": {
+        "id": 1068428
+      },
+      "writtenOn": "2015-09-17T22:53:01Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "c9a3c3b1_30e228bf",
       "range": {
         "startLine": 1249,
         "startChar": 0,
