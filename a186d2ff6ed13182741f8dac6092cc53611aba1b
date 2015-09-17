@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "096ddbec_234f7832",
+        "filename": "core/host_fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-09-17T18:36:16Z",
+      "side": 1,
+      "message": "Why not LOCAL_SANITIZE:\u003dcoverage?\nHow does this work if ASan is not enabled?",
+      "revId": "a186d2ff6ed13182741f8dac6092cc53611aba1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
