@@ -586,6 +586,11 @@ HOST_GLOBAL_CPPFLAGS += $(HOST_RELEASE_CPPFLAGS)
 TARGET_GLOBAL_CFLAGS += $(TARGET_RELEASE_CFLAGS)
 TARGET_GLOBAL_CPPFLAGS += $(TARGET_RELEASE_CPPFLAGS)
 
+# Target modules shouldn't re-export libgcc.a because we don't want other
+# binaries importing them when they should be getting their own copy of the
+# builtins.
+TARGET_GLOBAL_LDFLAGS += -Wl,--exclude-libs,libgcc.a
+
 ifdef TARGET_2ND_ARCH
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS += $(COMMON_GLOBAL_CFLAGS)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_RELEASE_CFLAGS += $(COMMON_RELEASE_CFLAGS)
