@@ -16,6 +16,24 @@
       "revId": "a186d2ff6ed13182741f8dac6092cc53611aba1b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29753fb9_761bee07",
+        "filename": "core/host_fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1062643
+      },
+      "writtenOn": "2015-09-17T18:43:13Z",
+      "side": 1,
+      "message": "If ASan is not enabled, these flags are ignored, I think.\nAs for LOCAL_SANITIZE:\u003dcoverage -- it could be a good idea, but it\u0027s out of the scope for this CL.",
+      "parentUuid": "096ddbec_234f7832",
+      "revId": "a186d2ff6ed13182741f8dac6092cc53611aba1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
