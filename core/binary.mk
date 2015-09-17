@@ -927,6 +927,20 @@ $(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $
 endif
 
 ###########################################################
+## ObjC++: Compile .mm files to .o
+###########################################################
+
+objcpp_sources := $(filter %.mm,$(my_src_files))
+objcpp_objects := $(addprefix $(intermediates)/,$(objcpp_sources:.mm=.o))
+
+ifneq ($(strip $(objcpp_objects)),)
+$(objcpp_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.mm $(yacc_cpps) $(proto_generated_headers) \
+    $(my_additional_dependencies)
+	$(transform-$(PRIVATE_HOST)mm-to-o)
+-include $(objcpp_objects:%.o=%.P)
+endif
+
+###########################################################
 ## AS: Compile .S files to .o.
 ###########################################################
 
@@ -1039,6 +1053,7 @@ normal_objects := \
     $(c_objects) \
     $(gen_c_objects) \
     $(objc_objects) \
+    $(objcpp_objects) \
     $(yacc_objects) \
     $(lex_objects) \
     $(proto_generated_objects) \
