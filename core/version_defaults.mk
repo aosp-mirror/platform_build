@@ -24,6 +24,7 @@
 #     DEFAULT_APP_TARGET_SDK
 #     BUILD_ID
 #     BUILD_NUMBER
+#     SECURITY_PATCH
 #
 
 # Look for an optional file containing overrides of the defaults,
@@ -60,6 +61,22 @@ ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
   PLATFORM_VERSION_CODENAME := REL
+endif
+
+ifeq "" "$(PLATFORM_SECURITY_PATCH)"
+  # Used to indicate the security patch that has been applied to the device.
+  # Can be an arbitrary string, but must be a single word.
+  #
+  # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
+  PLATFORM_SECURITY_PATCH := 2015-11-01
+endif
+
+ifeq "" "$(PLATFORM_BASE_OS)"
+  # Used to indicate the base os applied to the device.
+  # Can be an arbitrary string, but must be a single word.
+  #
+  # If there is no $PLATFORM_BASE_OS set, keep it empty.
+  PLATFORM_BASE_OS :=
 endif
 
 ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
