@@ -75,6 +75,14 @@ ifneq ($(filter default-ub,$(my_sanitize)),)
   my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
 endif
 
+ifneq ($(filter coverage,$(my_sanitize)),)
+  ifeq ($(filter address,$(my_sanitize)),)
+    $(error $(LOCAL_PATH): $(LOCAL_MODULE): Use of 'coverage' also requires 'address')
+  endif
+  my_cflags += -fsanitize-coverage=edge,indirect-calls,8bit-counters,trace-cmp
+  my_sanitize := $(filter-out coverage,$(my_sanitize))
+endif
+
 ifneq ($(my_sanitize),)
   fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize)),
   my_cflags += -fsanitize=$(fsanitize_arg)

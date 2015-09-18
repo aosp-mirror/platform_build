@@ -1383,7 +1383,7 @@ built_ota_tools := \
     $(call intermediates-dir-for,EXECUTABLES,sqlite3,,,$(TARGET_PREFER_32_BIT))/sqlite3
 
 # We can't build static executables when SANITIZE_TARGET=address
-ifneq (address,$(SANITIZE_TARGET))
+ifeq ($(strip $(SANITIZE_TARGET)),)
 built_ota_tools += \
     $(call intermediates-dir-for,EXECUTABLES,check_prereq,,,$(TARGET_PREFER_32_BIT))/check_prereq \
     $(call intermediates-dir-for,EXECUTABLES,applypatch_static,,,$(TARGET_PREFER_32_BIT))/applypatch_static \
@@ -1526,7 +1526,7 @@ ifneq ($(OEM_THUMBPRINT_PROPERTIES),)
 	# OTA scripts are only interested in fingerprint related properties
 	$(hide) echo "oem_fingerprint_properties=$(OEM_THUMBPRINT_PROPERTIES)" >> $(zip_root)/META/misc_info.txt
 endif
-ifeq ($(SANITIZE_TARGET),address)
+ifneq ($(strip $(SANITIZE_TARGET)),)
 	# We need to create userdata.img with real data because the instrumented libraries are in userdata.img.
 	$(hide) echo "userdata_img_with_data=true" >> $(zip_root)/META/misc_info.txt
 endif
@@ -1565,7 +1565,7 @@ build_ota_package := true
 ifeq ($(BUILD_OS),darwin)
 build_ota_package := false
 endif
-ifeq ($(SANITIZE_TARGET),address)
+ifneq ($(strip $(SANITIZE_TARGET)),)
 build_ota_package := false
 endif
 ifeq ($(TARGET_PRODUCT),sdk)
