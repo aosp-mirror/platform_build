@@ -276,7 +276,7 @@ TARGET_OUT_GEN := $(PRODUCT_OUT)/gen
 TARGET_OUT_COMMON_GEN := $(TARGET_COMMON_OUT_ROOT)/gen
 
 TARGET_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM)
-ifeq ($(SANITIZE_TARGET),address)
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
 target_out_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_DATA)
 else
 target_out_shared_libraries_base := $(TARGET_OUT)
@@ -333,7 +333,7 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_DATA_NATIVE_TESTS := $(TARGET_OUT_DATA)/
 TARGET_OUT_CACHE := $(PRODUCT_OUT)/cache
 
 TARGET_OUT_VENDOR := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)
-ifeq ($(SANITIZE_TARGET),address)
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
 target_out_vendor_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_DATA)/vendor
 else
 target_out_vendor_shared_libraries_base := $(TARGET_OUT_VENDOR)
