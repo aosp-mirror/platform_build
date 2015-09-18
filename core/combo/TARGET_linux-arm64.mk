@@ -137,6 +137,7 @@ TARGET_LIBGCOV := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 	-print-file-name=libgcov.a)
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
+KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
