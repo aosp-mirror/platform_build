@@ -7,7 +7,7 @@
 # LOCAL_MODULE_STEM_64
 
 my_skip_this_target :=
-ifeq (address,$(strip $(SANITIZE_TARGET)))
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
   ifeq (true,$(LOCAL_FORCE_STATIC_EXECUTABLE))
     my_skip_this_target := true
   else ifeq (false, $(LOCAL_CLANG))
