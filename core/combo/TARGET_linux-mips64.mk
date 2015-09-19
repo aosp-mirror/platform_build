@@ -146,6 +146,7 @@ TARGET_LIBGCOV := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 endif
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
+KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-mips
 # TODO: perhaps use $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH) instead of asm-mips ?
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
