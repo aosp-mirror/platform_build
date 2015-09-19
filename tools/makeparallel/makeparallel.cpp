@@ -19,6 +19,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <poll.h>
 #include <signal.h>
 #include <stdio.h>
@@ -55,41 +56,108 @@ static void CheckFd(int fd) {
   }
 }
 
-// Extract --jobserver-fds= argument from MAKEFLAGS environment variable.
-static int GetJobserver(int* in_fd, int* out_fd) {
+// Extract flags from MAKEFLAGS that need to be propagated to subproccess
+static std::vector<std::string> ReadMakeflags() {
+  std::vector<std::string> args;
+
   const char* makeflags_env = getenv("MAKEFLAGS");
   if (makeflags_env == nullptr) {
-    return false;
+    return args;
   }
+
+  // The MAKEFLAGS format is pretty useless.  The first argument might be empty
+  // (starts with a leading space), or it might be a set of one-character flags
+  // merged together with no leading space, or it might be a variable
+  // definition.
 
   std::string makeflags = makeflags_env;
 
-  const std::string jobserver_fds_arg = "--jobserver-fds=";
-  size_t start = makeflags.find(jobserver_fds_arg);
+  // Split makeflags into individual args on spaces.  Multiple spaces are
+  // elided, but an initial space will result in a blank arg.
+  size_t base = 0;
+  size_t found;
+  do {
+    found = makeflags.find_first_of(" ", base);
+    args.push_back(makeflags.substr(base, found - base));
+    base = found + 1;
+  } while (found != makeflags.npos);
 
-  if (start == std::string::npos) {
-    return false;
+  // Drop the first argument if it is empty
+  while (args.size() > 0 && args[0].size() == 0) {
+	  args.erase(args.begin());
   }
 
-  start += jobserver_fds_arg.size();
-
-  std::string::size_type end = makeflags.find(' ', start);
-
-  std::string::size_type len;
-  if (end == std::string::npos) {
-    len = std::string::npos;
-  } else {
-    len = end - start;
+  // Prepend a - to the first argument if it does not have one and is not a
+  // variable definition
+  if (args.size() > 0 && args[0][0] != '-') {
+    if (args[0].find('=') == makeflags.npos) {
+      args[0] = '-' + args[0];
+    }
   }
 
-  std::string jobserver_fds = makeflags.substr(start, len);
+  return args;
+}
 
-  if (sscanf(jobserver_fds.c_str(), "%d,%d", in_fd, out_fd) != 2) {
-    return false;
+static bool ParseMakeflags(std::vector<std::string>& args,
+    int* in_fd, int* out_fd, bool* parallel, bool* keep_going) {
+
+  std::vector<char*> getopt_argv;
+  // getopt starts reading at argv[1]
+  getopt_argv.reserve(args.size() + 1);
+  getopt_argv.push_back(strdup(""));
+  for (std::string& v : args) {
+    getopt_argv.push_back(strdup(v.c_str()));
   }
 
-  CheckFd(*in_fd);
-  CheckFd(*out_fd);
+  opterr = 0;
+  optind = 1;
+  while (1) {
+    const static option longopts[] = {
+        {"jobserver-fds", required_argument, 0, 0},
+        {0, 0, 0, 0},
+    };
+    int longopt_index = 0;
+
+    int c = getopt_long(getopt_argv.size(), getopt_argv.data(), "kj",
+        longopts, &longopt_index);
+
+    if (c == -1) {
+      break;
+    }
+
+    switch (c) {
+    case 0:
+      switch (longopt_index) {
+      case 0:
+      {
+        // jobserver-fds
+        if (sscanf(optarg, "%d,%d", in_fd, out_fd) != 2) {
+          error(EXIT_FAILURE, 0, "incorrect format for --jobserver-fds: %s", optarg);
+        }
+        // TODO: propagate in_fd, out_fd
+        break;
+      }
+      default:
+        abort();
+      }
+      break;
+    case 'j':
+      *parallel = true;
+      break;
+    case 'k':
+      *keep_going = true;
+      break;
+    case '?':
+      // ignore unknown arguments
+      break;
+    default:
+      abort();
+    }
+  }
+
+  for (char *v : getopt_argv) {
+    free(v);
+  }
 
   return true;
 }
@@ -219,20 +287,47 @@ static void PutJobserverTokens(int out_fd, int tokens) {
 int main(int argc, char* argv[]) {
   int in_fd = -1;
   int out_fd = -1;
+  bool parallel = false;
+  bool keep_going = false;
+  bool ninja = false;
   int tokens = 0;
+
+  if (argc > 1 && strcmp(argv[1], "--ninja") == 0) {
+    ninja = true;
+    argv++;
+    argc--;
+  }
 
   const char* path = argv[1];
   std::vector<char*> args(&argv[1], &argv[argc]);
 
-  if (GetJobserver(&in_fd, &out_fd)) {
-    fcntl(in_fd, F_SETFD, FD_CLOEXEC);
-    fcntl(out_fd, F_SETFD, FD_CLOEXEC);
-
-    tokens = GetJobserverTokens(in_fd);
+  std::vector<std::string> makeflags = ReadMakeflags();
+  if (ParseMakeflags(makeflags, &in_fd, &out_fd, &parallel, &keep_going)) {
+    if (in_fd >= 0 && out_fd >= 0) {
+      CheckFd(in_fd);
+      CheckFd(out_fd);
+      fcntl(in_fd, F_SETFD, FD_CLOEXEC);
+      fcntl(out_fd, F_SETFD, FD_CLOEXEC);
+      tokens = GetJobserverTokens(in_fd);
+    }
   }
 
   std::string jarg = "-j" + std::to_string(tokens + 1);
-  args.push_back(strdup(jarg.c_str()));
+
+  if (ninja) {
+    if (!parallel) {
+      // ninja is parallel by default, pass -j1 to disable parallelism if make wasn't parallel
+      args.push_back(strdup("-j1"));
+    } else if (tokens > 0) {
+      args.push_back(strdup(jarg.c_str()));
+    }
+    if (keep_going) {
+      args.push_back(strdup("-k0"));
+    }
+  } else {
+    args.push_back(strdup(jarg.c_str()));
+  }
+
   args.push_back(nullptr);
 
   pid_t pid = fork();

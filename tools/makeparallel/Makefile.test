@@ -2,4 +2,11 @@ MAKEPARALLEL ?= ./makeparallel
 
 .PHONY: test
 test:
-	+if [ "$$($(MAKEPARALLEL) echo)" = "-j1234" ]; then echo SUCCESS; else echo FAILED; fi
+	@+echo MAKEFLAGS=$${MAKEFLAGS};              \
+	result=$$($(MAKEPARALLEL) echo);             \
+	echo result: $${result};                     \
+	if [ "$${result}" = "$(EXPECTED)" ]; then    \
+	  echo SUCCESS && echo;                      \
+	else                                         \
+	  echo FAILED expected $(EXPECTED) && false; \
+	fi
