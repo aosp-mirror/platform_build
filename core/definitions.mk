@@ -1640,6 +1640,13 @@ endef
 ## Commands for running javac to make .class files
 ###########################################################
 
+# Add BUILD_NUMBER to apps default version name if it's unbundled build.
+ifdef TARGET_BUILD_APPS
+APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
+else
+APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
+endif
+
 # TODO: Right now we generate the asset resources twice, first as part
 # of generating the Java classes, then at the end when packaging the final
 # assets.  This should be changed to do one of two things: (1) Don't generate
@@ -1666,7 +1673,7 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(addprefix --min-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
-    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)) \
+    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     --skip-symbols-without-default-localization
@@ -2007,7 +2014,7 @@ $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(if $(filter --product,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --product , $(TARGET_AAPT_CHARACTERISTICS))) \
     $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
-    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)) \
+    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     --skip-symbols-without-default-localization \
