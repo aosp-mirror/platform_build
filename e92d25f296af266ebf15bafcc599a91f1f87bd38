@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9e887f8_d4b5b250",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-21T23:12:58Z",
+      "side": 1,
+      "message": "I missed this one: you also add the flag to \n$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS for multilib build.\nOn the other hand you can add the flag separately to TARGET_GLOBAL_LDFLAGS in all the build/core/combon/TARGET_linux-*.mk.",
+      "revId": "e92d25f296af266ebf15bafcc599a91f1f87bd38",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
