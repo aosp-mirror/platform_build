@@ -23,6 +23,10 @@ define newline
 
 
 endef
+# The pound character "#"
+define pound
+#
+endef
 # Unfortunately you can't simply define backslash as \ or \\.
 backslash := \a
 backslash := $(patsubst %a,%,$(backslash))
