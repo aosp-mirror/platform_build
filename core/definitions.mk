@@ -187,10 +187,10 @@ endef
 ###########################################################
 
 define all-java-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "*.java" -and -not -name ".*") \
- )
+ ))
 endef
 
 ###########################################################
@@ -209,10 +209,10 @@ endef
 ###########################################################
 
 define all-c-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "*.c" -and -not -name ".*") \
- )
+ ))
 endef
 
 ###########################################################
@@ -231,10 +231,10 @@ endef
 ###########################################################
 
 define all-Iaidl-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "I*.aidl" -and -not -name ".*") \
- )
+ ))
 endef
 
 ###########################################################
@@ -252,10 +252,10 @@ endef
 ###########################################################
 
 define all-logtags-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "*.logtags" -and -not -name ".*") \
-  )
+  ))
 endef
 
 ###########################################################
@@ -265,10 +265,10 @@ endef
 ###########################################################
 
 define all-proto-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "*.proto" -and -not -name ".*") \
-  )
+  ))
 endef
 
 ###########################################################
@@ -278,10 +278,10 @@ endef
 ###########################################################
 
 define all-renderscript-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) \( -name "*.rs" -or -name "*.fs" \) -and -not -name ".*") \
-  )
+  ))
 endef
 
 ###########################################################
@@ -291,10 +291,10 @@ endef
 ###########################################################
 
 define all-S-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "*.S" -and -not -name ".*") \
- )
+ ))
 endef
 
 ###########################################################
@@ -304,10 +304,10 @@ endef
 ###########################################################
 
 define all-html-files-under
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(LOCAL_PATH) ; \
           find -L $(1) -name "*.html" -and -not -name ".*") \
- )
+ ))
 endef
 
 ###########################################################
@@ -325,7 +325,7 @@ endef
 ###########################################################
 
 define find-subdir-files
-$(patsubst ./%,%,$(shell cd $(LOCAL_PATH) ; find -L $(1)))
+$(sort $(patsubst ./%,%,$(shell cd $(LOCAL_PATH) ; find -L $(1))))
 endef
 
 ###########################################################
@@ -337,8 +337,8 @@ endef
 ###########################################################
 
 define find-subdir-subdir-files
-$(filter-out $(patsubst %,$(1)/%,$(3)),$(patsubst ./%,%,$(shell cd \
-            $(LOCAL_PATH) ; find -L $(1) -maxdepth 1 -name $(2))))
+$(sort $(filter-out $(patsubst %,$(1)/%,$(3)),$(patsubst ./%,%,$(shell cd \
+            $(LOCAL_PATH) ; find -L $(1) -maxdepth 1 -name $(2)))))
 endef
 
 ###########################################################
@@ -347,10 +347,10 @@ endef
 ###########################################################
 
 define find-subdir-assets
-$(if $(1),$(patsubst ./%,%, \
+$(sort $(if $(1),$(patsubst ./%,%, \
 	$(shell if [ -d $(1) ] ; then cd $(1) ; find ./ -not -name '.*' -and -type f -and -not -type l ; fi)), \
 	$(warning Empty argument supplied to find-subdir-assets) \
-)
+))
 endef
 
 ###########################################################
@@ -375,10 +375,10 @@ endef
 ###########################################################
 
 define find-files-in-subdirs
-$(patsubst ./%,%, \
+$(sort $(patsubst ./%,%, \
   $(shell cd $(1) ; \
           find -L $(3) -name $(2) -and -not -name ".*") \
- )
+ ))
 endef
 
 ###########################################################
