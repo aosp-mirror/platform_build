@@ -16,6 +16,24 @@
       "revId": "207e4832771d8636be49e2abea9855ca36ea28d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "891c6b20_b66a08b5",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-22T23:17:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9a3c3b1_3a691e32",
+      "revId": "207e4832771d8636be49e2abea9855ca36ea28d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
