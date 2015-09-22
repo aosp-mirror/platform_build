@@ -1292,6 +1292,30 @@ endif
 # -----------------------------------------------------------------
 # host tools needed to build dist and OTA packages
 
+build_ota_package := true
+ifeq ($(TARGET_SKIP_OTA_PACKAGE),true)
+build_ota_package := false
+endif
+ifeq ($(BUILD_OS),darwin)
+build_ota_package := false
+endif
+ifneq ($(strip $(SANITIZE_TARGET)),)
+build_ota_package := false
+endif
+ifeq ($(TARGET_PRODUCT),sdk)
+build_ota_package := false
+endif
+ifneq ($(filter generic%,$(TARGET_DEVICE)),)
+build_ota_package := false
+endif
+ifeq ($(TARGET_NO_KERNEL),true)
+build_ota_package := false
+endif
+ifeq ($(recovery_fstab),)
+build_ota_package := false
+endif
+
+ifeq ($(build_ota_package),true)
 OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/aapt \
   $(HOST_OUT_EXECUTABLES)/mkbootfs \
@@ -1350,6 +1374,7 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
 
+endif # build_ota_package
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
@@ -1559,26 +1584,6 @@ target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
 ifneq ($(filter $(MAKECMDGOALS),target-files-package),)
 $(call dist-for-goals, target-files-package, $(BUILT_TARGET_FILES_PACKAGE))
-endif
-
-build_ota_package := true
-ifeq ($(BUILD_OS),darwin)
-build_ota_package := false
-endif
-ifneq ($(strip $(SANITIZE_TARGET)),)
-build_ota_package := false
-endif
-ifeq ($(TARGET_PRODUCT),sdk)
-build_ota_package := false
-endif
-ifneq ($(filter generic%,$(TARGET_DEVICE)),)
-build_ota_package := false
-endif
-ifeq ($(TARGET_NO_KERNEL),true)
-build_ota_package := false
-endif
-ifeq ($(recovery_fstab),)
-build_ota_package := false
 endif
 
 ifeq ($(build_ota_package),true)
