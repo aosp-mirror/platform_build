@@ -92,7 +92,7 @@ include $(BUILD_SYSTEM)/help.mk
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
 
-ifeq ($(USE_NINJA),true)
+ifneq ($(USE_NINJA),false)
 # Mark this is a ninja build.
 $(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
