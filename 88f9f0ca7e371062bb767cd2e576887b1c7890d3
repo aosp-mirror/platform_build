@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49fc33c5_0d6c59f9",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-22T00:09:58Z",
+      "side": 1,
+      "message": "s/n/N",
+      "range": {
+        "startLine": 605,
+        "startChar": 10,
+        "endLine": 605,
+        "endChar": 11
+      },
+      "revId": "88f9f0ca7e371062bb767cd2e576887b1c7890d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
