@@ -73,8 +73,26 @@ ifneq ($(BUILD_MODULES_IN_PATHS),)
 KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-mmma-$(call replace_space_and_slash,$(BUILD_MODULES_IN_PATHS))
 endif
 
+my_checksum_suffix :=
+ifneq ($(KATI_NINJA_SUFFIX),)
+my_ninja_suffix_too_long := $(filter 1, $(shell v='$(KATI_NINJA_SUFFIX)' && echo $$(($${$(pound)v} > 64))))
+ifneq ($(my_ninja_suffix_too_long),)
+# Replace the suffix with a checksum if it gets too long.
+my_checksum_suffix := $(KATI_NINJA_SUFFIX)
+KATI_NINJA_SUFFIX := -$(word 1, $(shell echo $(my_checksum_suffix) | $(MD5SUM)))
+endif
+endif
+
 KATI_BUILD_NINJA := $(PRODUCT_OUT)/build$(KATI_NINJA_SUFFIX).ninja
 KATI_NINJA_SH := $(PRODUCT_OUT)/ninja$(KATI_NINJA_SUFFIX).sh
+
+# Write out a file mapping checksum to the real suffix.
+ifneq ($(my_checksum_suffix),)
+my_ninja_suffix_file := $(basename $(KATI_BUILD_NINJA)).suf
+$(shell mkdir -p $(dir $(my_ninja_suffix_file)) && \
+    echo $(my_checksum_suffix) > $(my_ninja_suffix_file))
+endif
+
 KATI_OUTPUTS := $(KATI_BUILD_NINJA) $(KATI_NINJA_SH)
 
 ifeq (,$(NINJA_STATUS))
@@ -115,7 +133,6 @@ $(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
 .INTERMEDIATE: kati.intermediate
 kati.intermediate: $(KATI) $(MAKEPARALLEL)
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
-	@#TODO: use separate ninja file for mm or single target build
 	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator $(KATI_REMOTE_NUM_JOBS_FLAG) -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CPPFLAGS)
