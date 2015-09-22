@@ -10,7 +10,7 @@ def:fullpage() ?>
   <div id="body-content">
     <div>
 <?cs /def ?>
-<?cs 
+<?cs
 def:sdk_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
     <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -69,23 +69,6 @@ def:googleplay_nav() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
 <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
-        </div>
-      </div>
-    </div> <!-- end side-nav -->
-    <script>
-      $(document).ready(function() {
-        scrollIntoView("devdoc-nav");
-        });
-    </script>
-<?cs /def ?><?cs
-
-def:preview_nav() ?>
-  <div class="wrap clearfix" id="body-content"><div class="cols">
-    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
-      <?cs call:mobile_nav_toggle() ?>
-      <div class="dac-toggle-content" id="devdoc-nav">
-        <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -297,7 +280,7 @@ def:google_nav() ?>
       </div>
       <script type="text/javascript">
        showGoogleRefTree();
-    
+
       </script>
     </div> <!-- end side-nav -->
     <script>
@@ -528,7 +511,7 @@ def:custom_left_nav() ?><?cs
       call:fullpage() ?><?cs
     elif:nonavpage ?><?cs
       call:no_nav() ?><?cs
-    elif:guide || reference || samples || downloads ?><?cs      
+    elif:guide || reference || samples || downloads ?><?cs
       call:ndk_nav() ?><?cs
     else ?><?cs
       call:default_left_nav() ?> <?cs
@@ -550,8 +533,6 @@ def:custom_left_nav() ?><?cs
       call:google_nav() ?><?cs
     elif:samples ?><?cs
       call:samples_nav() ?><?cs
-    elif:preview ?><?cs
-      call:preview_nav() ?><?cs
     elif:distribute ?><?cs
       if:googleplay ?><?cs
         call:googleplay_nav() ?><?cs

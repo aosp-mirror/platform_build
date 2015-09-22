@@ -13,10 +13,9 @@
     if:reference ?> reference<?cs /if ?><?cs
     if:downloads ?> downloads<?cs /if ?><?cs
   else ?><?cs
-    if:(guide||develop||training||reference||tools||sdk||google||samples||preview) ?>develop<?cs
+    if:(guide||develop||training||reference||tools||sdk||google||samples) ?>develop<?cs
       if:guide ?> guide<?cs /if ?><?cs
       if:samples ?> samples<?cs /if ?><?cs
-      if:preview ?> preview<?cs /if ?><?cs
     elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       if:googleplay ?> googleplay<?cs /if ?><?cs
       if:essentials ?> essentials<?cs /if ?><?cs
