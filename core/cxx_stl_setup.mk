@@ -72,7 +72,6 @@ endif
 
 ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     my_cflags += -D_USING_LIBCXX
-    my_c_includes += external/libcxx/include
 
     # Note that the structure of this means that LOCAL_CXX_STL := libc++ will
     # use the static libc++ for static executables.
