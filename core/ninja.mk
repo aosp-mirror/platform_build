@@ -56,7 +56,7 @@ PARSE_TIME_MAKE_GOALS := \
 
 ANDROID_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(ORIGINAL_MAKECMDGOALS))
 EXTRA_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(filter-out $(ORIGINAL_MAKECMDGOALS),$(MAKECMDGOALS)))
-KATI_TARGETS := $(filter $(PARSE_TIME_MAKE_GOALS),$(ANDROID_TARGETS))
+KATI_TARGETS := $(if $(filter $(PARSE_TIME_MAKE_GOALS),$(ANDROID_TARGETS)),$(ANDROID_TARGETS),)
 
 define replace_space_and_slash
 $(subst /,_,$(subst $(space),_,$(sort $1)))
