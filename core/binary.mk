@@ -419,8 +419,10 @@ endif
 # Unfortunately --exclude-libs always overrides all other attempts to make a
 # symbol visible, and libc needs to make sure some of these symbols are
 # available for binary compatibility, so libc needs a way to disable this.
-ifneq ($(strip $(LOCAL_NO_EXCLUDE_LIBS)),true)
-  my_ldflags += -Wl,--exclude-libs,libgcc.a
+ifndef LOCAL_IS_HOST_MODULE
+  ifneq ($(strip $(LOCAL_NO_EXCLUDE_LIBS)),true)
+    my_ldflags += -Wl,--exclude-libs,libgcc.a
+  endif
 endif
 
 ifeq (true,$(LOCAL_GROUP_STATIC_LIBRARIES))
