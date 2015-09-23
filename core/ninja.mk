@@ -116,6 +116,10 @@ ifneq (,$(filter showcommands,$(ORIGINAL_MAKECMDGOALS)))
 NINJA_ARGS += "-v"
 endif
 
+# Make multiple rules to generate the same target an error instead of
+# proceeding with undefined behavior.
+NINJA_ARGS += -w dupbuild=err
+
 ifdef USE_GOMA
 KATI_MAKEPARALLEL := $(MAKEPARALLEL)
 # Ninja runs remote jobs (i.e., commands which contain gomacc) with
