@@ -412,17 +412,6 @@ ifeq ($(my_allow_undefined_symbols),)
 endif
 endif
 
-# Target modules shouldn't re-export libgcc.a because we don't want other
-# binaries importing them when they should be getting their own copy of the
-# builtins.
-#
-# Unfortunately --exclude-libs always overrides all other attempts to make a
-# symbol visible, and libc needs to make sure some of these symbols are
-# available for binary compatibility, so libc needs a way to disable this.
-ifneq ($(strip $(LOCAL_NO_EXCLUDE_LIBS)),true)
-  my_ldflags += -Wl,--exclude-libs,libgcc.a
-endif
-
 ifeq (true,$(LOCAL_GROUP_STATIC_LIBRARIES))
 $(LOCAL_BUILT_MODULE): PRIVATE_GROUP_STATIC_LIBRARIES := true
 else
