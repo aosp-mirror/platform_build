@@ -70,6 +70,30 @@
       "revId": "a2fa77fa9696fb582607cf2c85a396e1c59b750f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce582944_d778868b",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T23:50:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee86cdd4_6a6a2b2b",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 100,
+        "endChar": 45
+      },
+      "revId": "a2fa77fa9696fb582607cf2c85a396e1c59b750f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
