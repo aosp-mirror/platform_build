@@ -22,6 +22,30 @@
       "revId": "a2fa77fa9696fb582607cf2c85a396e1c59b750f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e470569_78e545df",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T23:28:21Z",
+      "side": 1,
+      "message": "No.  It generates \"$@.sym\".  Breakpad\u0027s dump_syms program outputs to stdout, so this just redirects it to $@.sym.  So for example if its processing the file \"/system/bin/test_prog\", then this will output $(PRODUCT_OUT)/breakpad/system/bin/test_prog.sym.  Would it be preferable if instead, breakpad_out was defined to the *.sym path, and drop the \".sym\" from this line?\n\nbreakpad_output :\u003d $(my_breakpad_path)/$(my_installed_module_stem).sym\n\nNow that I look at it again, with the clean line added below, I\u0027m guessing that the sym file would actually get orphaned with this current code...",
+      "parentUuid": "ce582944_574ed6b1",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 100,
+        "endChar": 45
+      },
+      "revId": "a2fa77fa9696fb582607cf2c85a396e1c59b750f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
