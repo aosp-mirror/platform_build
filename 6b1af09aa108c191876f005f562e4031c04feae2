@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "4e9999f8_3cbef1e6",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1040868
+      },
+      "writtenOn": "2015-09-24T21:26:53Z",
+      "side": 1,
+      "message": "i wrote \"BREAKPAD_GENERATE_SYMBOLS\" which i think you read as \"BREAKPAD_DUMP_SYMS\" ...",
+      "parentUuid": "ee86cdd4_e75d1688",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4efd19e8_3ce891ec",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
