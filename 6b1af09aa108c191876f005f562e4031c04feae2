@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ee86cdd4_e75d1688",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T21:24:04Z",
+      "side": 1,
+      "message": "Setting it to false I don\u0027t think works, because I have $(BREAKPAD_DUMP_SYMS) as an order-only prerequisite target of $(breakpad_output).  To my knowledge, this is the only way of having a generated tool thats required for the build to be built before everything else.  Setting it to false would cause the build to look for a \u0027false\u0027 target, and then the build fails since it can\u0027t find a rule to make it.",
+      "parentUuid": "cee9092d_40f3eed6",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4efd19e8_3ce891ec",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
