@@ -16,13 +16,14 @@
 
 # Notice: this works only with Google's Goma build infrastructure.
 ifneq ($(USE_GOMA),)
-  # Check if USE_NINJA is defined because GNU make won't work well
-  # with goma. Note this file is evaluated twice, once with
-  # USE_NINJA=true by GNU make and once with USE_NINJA=false by kati
-  # which is invoked by GNU make. So, we cannot test the value of
-  # USE_NINJA.
-  ifndef USE_NINJA
-    $(error USE_GOMA=true works only with USE_NINJA=true)
+  # Check if USE_NINJA is not false because GNU make won't work well
+  # with goma. Note this file is evaluated twice, once by GNU make and
+  # once by kati with USE_NINJA=false. We do this check in the former
+  # pass.
+  ifndef KATI
+    ifeq ($(USE_NINJA),false)
+      $(error USE_GOMA=true is not compatible with USE_NINJA=false)
+    endif
   endif
 
   ifdef GOMA_DIR
