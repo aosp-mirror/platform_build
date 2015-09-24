@@ -9,13 +9,13 @@ endif
 ifeq ($(my_module_multilib),both)
 ifneq ($(LOCAL_MODULE_PATH),)
 ifneq ($(TARGET_2ND_ARCH),)
-$(warning $(LOCAL_MODULE): LOCAL_MODULE_PATH for shared libraries is unsupported in multiarch builds, use LOCAL_MODULE_RELATIVE_PATH instead)
+$(error $(LOCAL_MODULE): LOCAL_MODULE_PATH for shared libraries is unsupported in multiarch builds, use LOCAL_MODULE_RELATIVE_PATH instead)
 endif
 endif
 
 ifneq ($(LOCAL_UNSTRIPPED_PATH),)
 ifneq ($(TARGET_2ND_ARCH),)
-$(warning $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsupported in multiarch builds)
+$(error $(LOCAL_MODULE): LOCAL_UNSTRIPPED_PATH for shared libraries is unsupported in multiarch builds)
 endif
 endif
 endif # my_module_multilib == both
