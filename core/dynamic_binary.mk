@@ -86,6 +86,20 @@ $(symbolic_output) : $(symbolic_input) | $(ACP)
 	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
 
+###########################################################
+## Store breakpad symbols
+###########################################################
+
+ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
+my_breakpad_path := $(PRODUCT_OUT)/breakpad/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+breakpad_input := $(relocation_packer_output)
+breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
+$(breakpad_output) : $(breakpad_input) | $(BREAKPAD_DUMP_SYMS)
+	@echo "target breakpad: $(PRIVATE_MODULE) ($@)"
+	@mkdir -p $(dir $@)
+	$(hide) $(BREAKPAD_DUMP_SYMS) -c $< > $@
+$(LOCAL_BUILT_MODULE) : $(breakpad_output)
+endif
 
 ###########################################################
 ## Strip
@@ -143,5 +157,6 @@ endif # my_strip_module
 
 $(cleantarget): PRIVATE_CLEAN_FILES += \
     $(linked_module) \
+    $(breakpad_output) \
     $(symbolic_output) \
     $(strip_output)

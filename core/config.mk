@@ -423,6 +423,12 @@ YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 DOXYGEN:= doxygen
 AAPT := $(HOST_OUT_EXECUTABLES)/aapt$(HOST_EXECUTABLE_SUFFIX)
 AIDL := $(HOST_OUT_EXECUTABLES)/aidl$(HOST_EXECUTABLE_SUFFIX)
+ifeq ($(HOST_OS),linux)
+BREAKPAD_DUMP_SYMS := $(HOST_OUT_EXECUTABLES)/dump_syms
+else
+# For non-supported hosts, do not generate breakpad symbols.
+BREAKPAD_GENERATE_SYMBOLS := false
+endif
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
 DBUS_GENERATOR := $(HOST_OUT_EXECUTABLES)/dbus-binding-generator
 SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
