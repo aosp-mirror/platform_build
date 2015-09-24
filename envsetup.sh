@@ -751,7 +751,7 @@ function mmm()
                 MAKEFILE="$MAKEFILE $MFILE"
             else
                 case $DIR in
-                  showcommands | snod | dist | incrementaljavac | *=*) ARGS="$ARGS $DIR";;
+                  showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
                   GET-INSTALL-PATH) GET_INSTALL_PATH=$DIR;;
                   *) echo "No Android.mk in $DIR."; return 1;;
                 esac
@@ -780,7 +780,7 @@ function mma()
       return 1
     fi
     local MY_PWD=`PWD= /bin/pwd|sed 's:'$T'/::'`
-    $DRV make -C $T -f build/core/main.mk $@ all_modules BUILD_MODULES_IN_PATHS="$MY_PWD"
+    $DRV make -C $T -f build/core/main.mk $@ MODULES-IN/$MY_PWD
   fi
 }
 
@@ -798,23 +798,25 @@ function mmma()
       MY_PWD=`echo $MY_PWD|sed 's:'$T'/::'`
     fi
     local DIR=
-    local MODULE_PATHS=
+    local MODULES_IN_PATHS=
     local ARGS=
     for DIR in $DIRS ; do
       if [ -d $DIR ]; then
-        if [ "$MY_PWD" = "" ]; then
-          MODULE_PATHS="$MODULE_PATHS $DIR"
-        else
-          MODULE_PATHS="$MODULE_PATHS $MY_PWD/$DIR"
+        # Remove the leading ./ and trailing / if any exists.
+        DIR=${DIR#./}
+        DIR=${DIR%/}
+        if [ "$MY_PWD" != "" ]; then
+          DIR=$MY_PWD/$DIR
         fi
+        MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN/$DIR"
       else
         case $DIR in
-          showcommands | snod | dist | incrementaljavac | *=*) ARGS="$ARGS $DIR";;
+          showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
           *) echo "Couldn't find directory $DIR"; return 1;;
         esac
       fi
     done
-    $DRV make -C $T -f build/core/main.mk $DASH_ARGS $ARGS all_modules BUILD_MODULES_IN_PATHS="$MODULE_PATHS"
+    $DRV make -C $T -f build/core/main.mk $DASH_ARGS $ARGS $MODULES_IN_PATHS
   else
     echo "Couldn't locate the top of the tree.  Try setting TOP."
     return 1
