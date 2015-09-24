@@ -22,6 +22,30 @@
       "revId": "9dc553beaedece71a91a2abf74aa0af36021b985",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae5bf53d_16d3c23c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-24T19:11:36Z",
+      "side": 1,
+      "message": "OK, at least we can still use Goma\u0027s remote build workers.",
+      "parentUuid": "0e5fa128_d3ed3e85",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 44
+      },
+      "revId": "9dc553beaedece71a91a2abf74aa0af36021b985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
