@@ -105,8 +105,13 @@ PHONY: showcommands
 showcommands: droid
 endif
 
-ifdef KATI_REMOTE_NUM_JOBS_FLAG
+ifdef USE_GOMA
 KATI_MAKEPARALLEL := $(MAKEPARALLEL)
+# Ninja runs remote jobs (i.e., commands which contain gomacc) with
+# this parallelism. Note the parallelism of all other jobs is still
+# limited by the -j flag passed to GNU make.
+NINJA_REMOTE_NUM_JOBS ?= 500
+NINJA_ARGS += -j$(NINJA_REMOTE_NUM_JOBS)
 else
 NINJA_MAKEPARALLEL := $(MAKEPARALLEL) --ninja
 endif
@@ -133,7 +138,7 @@ $(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
 .INTERMEDIATE: kati.intermediate
 kati.intermediate: $(KATI) $(MAKEPARALLEL)
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
-	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator $(KATI_REMOTE_NUM_JOBS_FLAG) -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
+	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
