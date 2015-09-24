@@ -260,7 +260,7 @@ $(my_register_name): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
 my_path_components := $(subst /,$(space),$(LOCAL_PATH))
 my_path_prefix := MODULES-IN
 $(foreach c, $(my_path_components),\
-  $(eval my_path_prefix := $(my_path_prefix)/$(c))\
+  $(eval my_path_prefix := $(my_path_prefix)-$(c))\
   $(eval .PHONY : $(my_path_prefix))\
   $(eval $(my_path_prefix) : $(my_register_name)))
 
