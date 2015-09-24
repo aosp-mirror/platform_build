@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cee9092d_40f3eed6",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1040868
+      },
+      "writtenOn": "2015-09-24T19:28:41Z",
+      "side": 1,
+      "message": "how about setting BREAKPAD_GENERATE_SYMBOLS to false ?  then you don\u0027t have to check two knobs",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4efd19e8_3ce891ec",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1040868
+      },
+      "writtenOn": "2015-09-24T19:28:41Z",
+      "side": 1,
+      "message": "should have $(hide) in front of it",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
