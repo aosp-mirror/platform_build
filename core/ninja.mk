@@ -7,7 +7,7 @@ NINJA_GOALS := fastincremental generateonly droid showcommands
 PARSE_TIME_MAKE_GOALS := \
 	$(PARSE_TIME_MAKE_GOALS) \
 	$(dont_bother_goals) \
-	%tests \
+	tests \
 	APP-% \
 	DUMP_% \
 	ECLIPSE-% \
