@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "0e5fa128_be9611c7",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T21:34:14Z",
+      "side": 1,
+      "message": "Ah, sorry... I should have paid closer attention.  Thought you meant so that it would silently not fail by calling \"false -c $\u003c \u003e $@.sym\" when the tool didn\u0027t exist for other hosts.  Sure, that should work.  Eventually this entire if case will be going away once all our tools and build is supported on the other hosts.",
+      "parentUuid": "4e9999f8_3cbef1e6",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4efd19e8_3ce891ec",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
