@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "6e4d7d85_94ffb268",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T22:39:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e5fa128_be9611c7",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4efd19e8_3ce891ec",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
@@ -84,6 +102,24 @@
       "writtenOn": "2015-09-24T19:28:41Z",
       "side": 1,
       "message": "should have $(hide) in front of it",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae5bf53d_c180c62f",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T22:39:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4efd19e8_3ce891ec",
       "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -113,6 +149,30 @@
     },
     {
       "key": {
+        "uuid": "ae5bf53d_a17dd2f1",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T22:39:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e4d7d85_59d05388",
+      "range": {
+        "startLine": 127,
+        "startChar": 31,
+        "endLine": 127,
+        "endChar": 50
+      },
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e2e2591_34ceb698",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
@@ -124,6 +184,24 @@
       "writtenOn": "2015-09-24T19:40:34Z",
       "side": 1,
       "message": "breakpad_output should be added to this list too",
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae5bf53d_816ace27",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-09-24T22:39:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e2e2591_34ceb698",
       "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
