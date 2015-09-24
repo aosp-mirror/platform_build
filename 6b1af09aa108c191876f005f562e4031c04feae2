@@ -90,6 +90,29 @@
     },
     {
       "key": {
+        "uuid": "6e4d7d85_59d05388",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-24T21:46:51Z",
+      "side": 1,
+      "message": "You don\u0027t need add this dependency and the followings.\nJust add to its own black:\n$(LOCAL_BUILT_MODULE) : $(breakpad_output)",
+      "range": {
+        "startLine": 127,
+        "startChar": 31,
+        "endLine": 127,
+        "endChar": 50
+      },
+      "revId": "6b1af09aa108c191876f005f562e4031c04feae2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e2e2591_34ceb698",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 2
