@@ -7,7 +7,6 @@ NINJA_GOALS := fastincremental generateonly droid showcommands
 PARSE_TIME_MAKE_GOALS := \
 	$(PARSE_TIME_MAKE_GOALS) \
 	$(dont_bother_goals) \
-	tests \
 	APP-% \
 	DUMP_% \
 	ECLIPSE-% \
@@ -16,7 +15,6 @@ PARSE_TIME_MAKE_GOALS := \
 	btnod \
 	build-art% \
 	build_kernel-nodeps \
-	checkbuild \
 	clean-oat% \
 	continuous_instrumentation_tests \
 	continuous_native_tests \
