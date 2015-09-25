@@ -56,7 +56,7 @@ PARSE_TIME_MAKE_GOALS := \
 
 ANDROID_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(ORIGINAL_MAKECMDGOALS))
 EXTRA_TARGETS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(NINJA_GOALS),$(filter-out $(ORIGINAL_MAKECMDGOALS),$(MAKECMDGOALS)))
-KATI_TARGETS := $(if $(filter $(PARSE_TIME_MAKE_GOALS),$(ANDROID_TARGETS)),$(ANDROID_TARGETS),)
+KATI_TARGETS := $(filter $(PARSE_TIME_MAKE_GOALS),$(ANDROID_TARGETS))
 
 define replace_space_and_slash
 $(subst /,_,$(subst $(space),_,$(sort $1)))
@@ -138,7 +138,7 @@ $(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
 .INTERMEDIATE: kati.intermediate
 kati.intermediate: $(KATI) $(MAKEPARALLEL)
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
-	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
+	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(KATI_TARGETS) --gen_all_phony_targets USE_NINJA=false
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
