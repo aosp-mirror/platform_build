@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     egl.cfg \
     gralloc.goldfish \
+    gralloc.ranchu \
     libGLESv1_CM_emulation \
     lib_renderControl_enc \
     libEGL_emulation \
