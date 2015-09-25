@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ec8f176_16cb5ce2",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2015-09-25T12:56:14Z",
+      "side": 1,
+      "message": "This is inconsistent with other definitions in that file, but maybe that\u0027s ok? Or would using eg a CUSTOM_LINKER environment variable be cleaner?",
+      "range": {
+        "startLine": 189,
+        "startChar": 38,
+        "endLine": 189,
+        "endChar": 40
+      },
+      "revId": "8e90a79b292490d5c158bbbc0a62840af1d37bf4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
