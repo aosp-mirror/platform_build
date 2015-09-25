@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e470569_c0467fe9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1569,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-25T17:23:13Z",
+      "side": 1,
+      "message": "why do you need to add it to target_files.zip? it\u0027s not needed by system.img, right?\nYou should create a separate zip and just store that zip on the build server $(call dist-files-for-goals).",
+      "range": {
+        "startLine": 1566,
+        "startChar": 0,
+        "endLine": 1569,
+        "endChar": 5
+      },
+      "revId": "c0ca0dd15380f7f78c2a2023c2051b5dd168a723",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
