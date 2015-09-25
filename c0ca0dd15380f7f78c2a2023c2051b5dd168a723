@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ae5bf53d_da02e415",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1568,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-25T23:32:48Z",
+      "side": 1,
+      "message": "Probably it\u0027s better to define a global variable something like TARGET_OUT_BREAKPAD and reference it here and dynamic_binary.mk.\nSee how TARGET_OUT_UNSTRIPPED is defined and used.",
+      "range": {
+        "startLine": 1568,
+        "startChar": 19,
+        "endLine": 1568,
+        "endChar": 42
+      },
+      "revId": "c0ca0dd15380f7f78c2a2023c2051b5dd168a723",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e470569_c0467fe9",
         "filename": "core/Makefile",
         "patchSetId": 1
