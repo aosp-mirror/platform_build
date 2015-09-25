@@ -780,7 +780,10 @@ function mma()
       return 1
     fi
     local MY_PWD=`PWD= /bin/pwd|sed 's:'$T'/::'`
-    $DRV make -C $T -f build/core/main.mk $@ MODULES-IN/$MY_PWD
+    local MODULES_IN_PATHS=MODULES-IN-$MY_PWD
+    # Convert "/" to "-".
+    MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
+    $DRV make -C $T -f build/core/main.mk $@ $MODULES_IN_PATHS
   fi
 }
 
@@ -808,7 +811,7 @@ function mmma()
         if [ "$MY_PWD" != "" ]; then
           DIR=$MY_PWD/$DIR
         fi
-        MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN/$DIR"
+        MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$DIR"
       else
         case $DIR in
           showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
@@ -816,6 +819,8 @@ function mmma()
         esac
       fi
     done
+    # Convert "/" to "-".
+    MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
     $DRV make -C $T -f build/core/main.mk $DASH_ARGS $ARGS $MODULES_IN_PATHS
   else
     echo "Couldn't locate the top of the tree.  Try setting TOP."
