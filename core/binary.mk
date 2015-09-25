@@ -230,7 +230,11 @@ $(foreach lib, $(LOCAL_HAL_STATIC_LIBRARIES), \
 b_lib :=
 endif
 
-my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LINKER)
+ifneq ($(strip $(CUSTOM_$(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)LINKER)),)
+  my_linker := $(CUSTOM_$(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)LINKER)
+else
+  my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LINKER)
+endif
 
 include $(BUILD_SYSTEM)/config_sanitizers.mk
 
