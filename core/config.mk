@@ -120,6 +120,10 @@ hide := $(if $(SHOW_COMMANDS),,@)
 COMMON_GLOBAL_CFLAGS:= -DANDROID -fmessage-length=0 -W -Wall -Wno-unused -Winit-self -Wpointer-arith
 COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
+# Force gcc to always output color diagnostics.  Ninja will strip the ANSI
+# color codes if it is not running in a terminal.
+COMMON_GLOBAL_CFLAGS += -fdiagnostics-color
+
 COMMON_GLOBAL_CPPFLAGS:= -Wsign-promo
 COMMON_RELEASE_CPPFLAGS:=
 
