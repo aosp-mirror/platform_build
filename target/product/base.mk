@@ -102,6 +102,7 @@ PRODUCT_PACKAGES += \
     media \
     media_cmd \
     mediaserver \
+    mediaextractor \
     monkey \
     mtpd \
     ndc \
