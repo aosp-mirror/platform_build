@@ -10,11 +10,6 @@ ifneq (,$(filter krait,$(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
   CLANG_CONFIG_arm_EXTRA_CFLAGS += -mcpu=krait -mfpu=neon-vfpv4
 endif
 
-ifeq ($(HOST_OS),darwin)
-  # Darwin is really bad at dealing with idiv/sdiv. Don't use krait on Darwin.
-  CLANG_CONFIG_arm_EXTRA_CFLAGS += -mcpu=cortex-a9
-endif
-
 CLANG_CONFIG_arm_EXTRA_CPPFLAGS :=
 
 CLANG_CONFIG_arm_EXTRA_LDFLAGS :=
