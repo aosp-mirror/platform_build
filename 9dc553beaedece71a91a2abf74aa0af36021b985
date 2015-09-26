@@ -46,6 +46,30 @@
       "revId": "9dc553beaedece71a91a2abf74aa0af36021b985",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e971102_011d8c6d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-09-26T03:03:26Z",
+      "side": 1,
+      "message": "Goma uses the checksum of all input files, including the profile result, as the key of the distributed cache. If the same profile result is used twice, goma backend returns the cached result for the latter build.",
+      "parentUuid": "ae5bf53d_16d3c23c",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 44
+      },
+      "revId": "9dc553beaedece71a91a2abf74aa0af36021b985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
