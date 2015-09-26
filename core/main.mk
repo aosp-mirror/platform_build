@@ -60,7 +60,10 @@ BUILD_SYSTEM := $(TOPDIR)build/core
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
 DEFAULT_GOAL := droid
-$(DEFAULT_GOAL):
+$(DEFAULT_GOAL): droid_targets
+
+.PHONY: droid_targets
+droid_targets:
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -842,12 +845,9 @@ files: prebuilt \
 # -------------------------------------------------------------------
 
 .PHONY: checkbuild
-checkbuild: $(modules_to_check)
-ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT)$(filter $(MAKECMDGOALS),checkbuild))
+checkbuild: $(modules_to_check) droid_targets
+ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT))
 droid: checkbuild
-else
-# ANDROID_BUILD_EVERYTHING_BY_DEFAULT not set, or checkbuild is one of the cmd goals.
-checkbuild: droid
 endif
 
 .PHONY: ramdisk
@@ -945,7 +945,7 @@ ifneq ($(TARGET_BUILD_APPS),)
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
-droid: apps_only
+droid_targets: apps_only
 
 # Combine the NOTICE files for a apps_only build
 $(eval $(call combine-notice-files, \
@@ -991,7 +991,7 @@ else # TARGET_BUILD_APPS
   endif
 
 # Building a full system-- the default is to build droidcore
-droid: droidcore dist_files
+droid_targets: droidcore dist_files
 
 endif # TARGET_BUILD_APPS
 
