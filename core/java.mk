@@ -353,28 +353,6 @@ $(error $(LOCAL_PATH): Target java module does not define any source or resource
 endif
 endif
 
-# Install the RS compatibility libraries to /system/lib/ if necessary
-ifdef rs_compatibility_jni_libs
-installed_rs_compatibility_jni_libs := $(addprefix $(TARGET_OUT_SHARED_LIBRARIES)/,\
-    $(notdir $(rs_compatibility_jni_libs)))
-# Provide a way to skip sources included in multiple projects.
-ifdef LOCAL_RENDERSCRIPT_SKIP_INSTALL
-skip_install_rs_libs := $(patsubst %.rs,%.so, \
-    $(addprefix $(TARGET_OUT_SHARED_LIBRARIES)/librs., \
-    $(notdir $(LOCAL_RENDERSCRIPT_SKIP_INSTALL))))
-installed_rs_compatibility_jni_libs := \
-    $(filter-out $(skip_install_rs_libs),$(installed_rs_compatibility_jni_libs))
-endif
-ifneq (,$(strip $(installed_rs_compatibility_jni_libs)))
-$(installed_rs_compatibility_jni_libs) : $(TARGET_OUT_SHARED_LIBRARIES)/lib%.so : \
-    $(renderscript_intermediate)/lib%.so
-	$(hide) mkdir -p $(dir $@) && cp -f $< $@
-
-# Install them only if the current module is installed.
-$(LOCAL_INSTALLED_MODULE) : $(installed_rs_compatibility_jni_libs)
-endif
-endif
-
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
