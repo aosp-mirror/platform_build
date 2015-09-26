@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e470569_956fa238",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 986,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-09-26T01:23:18Z",
+      "side": 1,
+      "message": "If you run mgrep \"droid *:\" in the internal tree, you\u0027ll find more dependency in the vendor tree (bad idea!).\nWith this change \"make checkbuild\" won\u0027t build them. Not a big deal though.",
+      "range": {
+        "startLine": 986,
+        "startChar": 0,
+        "endLine": 986,
+        "endChar": 35
+      },
+      "revId": "c53d6b90b30ad148313010779463e3494fbd014d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
