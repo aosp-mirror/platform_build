@@ -95,12 +95,19 @@ include $(BUILD_SYSTEM)/help.mk
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
 
+relaunch_with_ninja :=
 ifneq ($(USE_NINJA),false)
+ifndef BUILDING_WITH_NINJA
+relaunch_with_ninja := true
+endif
+endif
+
+ifeq ($(relaunch_with_ninja),true)
 # Mark this is a ninja build.
 $(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
-else # !USE_NINJA
-ifeq ($(MAKELEVEL),0)
+else # !relaunch_with_ninja
+ifndef BUILDING_WITH_NINJA
 # Remove ninja build mark if it exists.
 $(shell rm -f $(OUT_DIR)/ninja_build)
 endif
@@ -1074,4 +1081,4 @@ showcommands:
 .PHONY: nothing
 nothing:
 	@echo Successfully read the makefiles.
-endif # !USE_NINJA
+endif # !relaunch_with_ninja
