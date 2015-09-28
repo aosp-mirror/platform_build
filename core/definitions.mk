@@ -1290,7 +1290,6 @@ endef
 
 # $(1): the full path of the source static library.
 define _extract-and-include-single-target-whole-static-lib
-@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(strip $(1))]"
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
@@ -1318,7 +1317,6 @@ endef
 # $(1): the full path of the source static library.
 define extract-and-include-whole-static-libs-first
 $(if $(strip $(1)),
-@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(strip $(1))]"
 $(hide) cp $(1) $@)
 endef
 
@@ -1346,7 +1344,6 @@ endef
 
 # $(1): the full path of the source static library.
 define _extract-and-include-single-host-whole-static-lib
-@echo "preparing StaticLib: $(PRIVATE_MODULE) [including $(strip $(1))]"
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
     mkdir -p $$ldir; \
