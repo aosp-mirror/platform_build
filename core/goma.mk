@@ -42,7 +42,7 @@ ifneq ($(USE_GOMA),)
     goma_dir := $(HOME)/goma
   endif
   goma_ctl := $(goma_dir)/goma_ctl.py
-  goma_cc := $(goma_dir)/gomacc
+  GOMA_CC := $(goma_dir)/gomacc
 
   $(if $(wildcard $(goma_ctl)),, \
    $(warning You should have goma in $$GOMA_DIR or $(HOME)/goma) \
@@ -50,15 +50,14 @@ ifneq ($(USE_GOMA),)
 
   # Append gomacc to existing *_WRAPPER variables so it's possible to
   # use both ccache and gomacc.
-  CC_WRAPPER := $(strip $(CC_WRAPPER) $(goma_cc))
-  CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(goma_cc))
+  CC_WRAPPER := $(strip $(CC_WRAPPER) $(GOMA_CC))
+  CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(GOMA_CC))
 
   # gomacc can start goma client's daemon process automatically, but
   # it is safer and faster to start up it beforehand. We run this as a
   # background process so this won't slow down the build.
   $(shell $(goma_ctl) ensure_start &> /dev/null &)
 
-  goma_cc :=
   goma_ctl :=
   goma_dir :=
 endif
