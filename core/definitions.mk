@@ -132,6 +132,7 @@ endef
 define my-dir
 $(strip \
   $(eval LOCAL_MODULE_MAKEFILE := $$(lastword $$(MAKEFILE_LIST))) \
+  $(eval LOCAL_MODULE_MAKEFILE_DEP := $(if $(BUILDING_WITH_NINJA),,$$(LOCAL_MODULE_MAKEFILE))) \
   $(if $(filter $(BUILD_SYSTEM)/% $(OUT_DIR)/%,$(LOCAL_MODULE_MAKEFILE)), \
     $(error my-dir must be called before including any other makefile.) \
    , \

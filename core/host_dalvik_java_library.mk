@@ -75,7 +75,7 @@ $(full_classes_compiled_jar): \
         $(full_java_lib_deps) \
         $(jar_manifest_file) \
         $(proto_java_sources_file_stamp) \
-        $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
 
@@ -124,8 +124,8 @@ endif
 $(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
 $(built_dex): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
 $(built_dex): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
-        $(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_MODULE_MAKEFILE) \
-        $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK_JAR) $(JACK_LAUNCHER_JAR)
+        $(jar_manifest_file) $(proto_java_sources_file_stamp) $(LOCAL_MODULE_MAKEFILE_DEP) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK_JAR) $(JACK_LAUNCHER_JAR)
 	@echo Building with Jack: $@
 	$(jack-java-to-dex)
 

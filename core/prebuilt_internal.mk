@@ -88,7 +88,7 @@ else  # LOCAL_STRIP_MODULE and LOCAL_PACK_MODULE_RELOCATIONS not true
 ifdef prebuilt_module_is_a_library
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE)
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
@@ -304,12 +304,12 @@ endif # TARGET JAVA_LIBRARIES
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 $(intermediates.COMMON)/classes.jack : PRIVATE_JILL_FLAGS:=$(LOCAL_JILL_FLAGS)
-$(intermediates.COMMON)/classes.jack : $(my_prebuilt_src_file) $(LOCAL_MODULE_MAKEFILE) \
+$(intermediates.COMMON)/classes.jack : $(my_prebuilt_src_file) $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR) $(JACK_JAR) $(JACK_LAUNCHER_JAR)
 	$(transform-jar-to-jack)
 
 endif # JAVA_LIBRARIES
 
-$(built_module) : $(LOCAL_MODULE_MAKEFILE) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(built_module) : $(LOCAL_MODULE_MAKEFILE_DEP) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=

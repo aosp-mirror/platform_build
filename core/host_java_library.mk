@@ -88,6 +88,6 @@ $(full_classes_compiled_jar): \
         $(full_java_lib_deps) \
         $(jar_manifest_file) \
         $(proto_java_sources_file_stamp) \
-        $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
