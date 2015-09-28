@@ -91,7 +91,7 @@ $(symbolic_output) : $(symbolic_input) | $(ACP)
 ###########################################################
 
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
-my_breakpad_path := $(PRODUCT_OUT)/breakpad/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
 breakpad_input := $(relocation_packer_output)
 breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
 $(breakpad_output) : $(breakpad_input) | $(BREAKPAD_DUMP_SYMS)
