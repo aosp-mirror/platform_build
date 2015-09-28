@@ -2042,7 +2042,7 @@ $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -r $(JNI_COMPRESS_FLAGS) $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -qr $(JNI_COMPRESS_FLAGS) $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
