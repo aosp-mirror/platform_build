@@ -20,6 +20,7 @@ Build image output_image_file from input_directory and properties_file.
 Usage:  build_image input_directory properties_file output_image_file
 
 """
+import datetime
 import os
 import os.path
 import re
@@ -385,10 +386,12 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     mount_point: such as "system", "data" etc.
   """
   d = {}
-  if "build.prop" in glob_dict:
-    bp = glob_dict["build.prop"]
-    if "ro.build.date.utc" in bp:
-      d["timestamp"] = bp["ro.build.date.utc"]
+
+  # Use a fixed timestamp (01/01/2009) for all the files in an image.
+  # Bug: 24377993
+  epoch = datetime.datetime.fromtimestamp(0)
+  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
+  d["timestamp"] = int(timestamp)
 
   def copy_prop(src_p, dest_p):
     if src_p in glob_dict:
