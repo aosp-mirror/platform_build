@@ -136,7 +136,7 @@ $(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
 .INTERMEDIATE: kati.intermediate
 kati.intermediate: $(KATI) $(MAKEPARALLEL)
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
-	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) USE_NINJA=false
+	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(PRODUCT_OUT) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(or $(KATI_TARGETS),--gen_all_phony_targets) BUILDING_WITH_NINJA=true
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
