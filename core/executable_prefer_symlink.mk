@@ -39,7 +39,7 @@ $(my_symlink): PRIVATE_SRC_BINARY_NAME := $(LOCAL_MODULE_STEM_32)
   endif
 endif
 
-$(my_symlink): $(LOCAL_INSTALLED_MODULE) $(LOCAL_MODULE_MAKEFILE)
+$(my_symlink): $(LOCAL_INSTALLED_MODULE) $(LOCAL_MODULE_MAKEFILE_DEP)
 	@echo "Symlink: $@ -> $(PRIVATE_SRC_BINARY_NAME)"
 	@mkdir -p $(dir $@)
 	@rm -rf $@
