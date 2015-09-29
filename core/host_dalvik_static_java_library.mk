@@ -46,7 +46,7 @@ $(full_classes_jack): \
 	PRIVATE_JACK_INCREMENTAL_DIR :=
 endif
 $(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
-        $(jar_manifest_file) $(layers_file) $(LOCAL_MODULE_MAKEFILE) \
+        $(jar_manifest_file) $(layers_file) $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
         $(JACK_JAR) $(JACK_LAUNCHER_JAR)
 	@echo Building with Jack: $@
