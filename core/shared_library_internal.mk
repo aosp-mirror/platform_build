@@ -80,7 +80,7 @@ $(linked_module): \
         $(all_libraries) \
         $(my_target_crtbegin_so_o) \
         $(my_target_crtend_so_o) \
-        $(LOCAL_MODULE_MAKEFILE) \
+        $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-o-to-shared-lib)
 
