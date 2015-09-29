@@ -219,6 +219,29 @@ $(call all-c-files-under,.)
 endef
 
 ###########################################################
+## Find all of the cpp files under the named directories.
+## LOCAL_CPP_EXTENSION is respected if set.
+## Meant to be used like:
+##    SRC_FILES := $(call all-cpp-files-under,src tests)
+###########################################################
+
+define all-cpp-files-under
+$(sort $(patsubst ./%,%, \
+  $(shell cd $(LOCAL_PATH) ; \
+          find -L $(1) -name "*$(or $(LOCAL_CPP_EXTENSION),.cpp)" -and -not -name ".*") \
+ ))
+endef
+
+###########################################################
+## Find all of the cpp files from here.  Meant to be used like:
+##    SRC_FILES := $(call all-subdir-cpp-files)
+###########################################################
+
+define all-subdir-cpp-files
+$(call all-cpp-files-under,.)
+endef
+
+###########################################################
 ## Find all files named "I*.aidl" under the named directories,
 ## which must be relative to $(LOCAL_PATH).  The returned list
 ## is relative to $(LOCAL_PATH).
