@@ -56,6 +56,16 @@ ifeq ($(my_host_cross),true)
   my_module_tags :=
 endif
 
+ifdef BUILDING_WITH_NINJA
+# Ninja has an implicit dependency on the command being run, and kati will
+# regenerate the ninja manifest if any read makefile changes, so there is no
+# need to have dependencies on makefiles.
+# This won't catch all the cases where LOCAL_ADDITIONAL_DEPENDENCIES contains
+# a .mk file, because a few users of LOCAL_ADDITIONAL_DEPENDENCIES don't include
+# base_rules.mk, but it will fix the most common ones.
+LOCAL_ADDITIONAL_DEPENDENCIES := $(filter-out %.mk,$(LOCAL_ADDITIONAL_DEPENDENCIES))
+endif
+
 ###########################################################
 ## Validate and define fallbacks for input LOCAL_* variables.
 ###########################################################
