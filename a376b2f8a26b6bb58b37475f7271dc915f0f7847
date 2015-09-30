@@ -22,6 +22,30 @@
       "revId": "a376b2f8a26b6bb58b37475f7271dc915f0f7847",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "953c86f3_228ab00d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1569,
+      "author": {
+        "id": 1077068
+      },
+      "writtenOn": "2015-09-30T16:55:20Z",
+      "side": 1,
+      "message": "Done here and below.",
+      "parentUuid": "953c86f3_7ffd6f29",
+      "range": {
+        "startLine": 1569,
+        "startChar": 1,
+        "endLine": 1569,
+        "endChar": 2
+      },
+      "revId": "a376b2f8a26b6bb58b37475f7271dc915f0f7847",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
