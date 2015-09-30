@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "953c86f3_7ffd6f29",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1569,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-09-30T06:21:06Z",
+      "side": 1,
+      "message": "nit: might be better with \"@# blabla\" to avoid dumping the comment to the output.",
+      "range": {
+        "startLine": 1569,
+        "startChar": 1,
+        "endLine": 1569,
+        "endChar": 2
+      },
+      "revId": "a376b2f8a26b6bb58b37475f7271dc915f0f7847",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
