@@ -149,7 +149,7 @@ KATI_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/ckati_intermedi
 KATI_BIN_PATH := $(HOST_OUT_EXECUTABLES)
 include build/kati/Makefile.ckati
 
-MAKEPARALLEL_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CPPFLAGS)
+MAKEPARALLEL_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 MAKEPARALLEL_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
 # Build static makeparallel. Unfortunately Mac OS X doesn't officially support static exectuables.
 ifeq ($(BUILD_OS),linux)
