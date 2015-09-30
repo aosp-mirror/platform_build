@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d55b5e6b_593c03a5",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-09-30T04:48:14Z",
+      "side": 1,
+      "message": "I am having a hard time understanding this part of the command. Is this matching the first thing in $(OUT_DIR)? If not, where does it get its match from? I just wondered because you moved the new file directly into $(OUT_DIR).",
+      "range": {
+        "startLine": 139,
+        "startChar": 114,
+        "endLine": 139,
+        "endChar": 141
+      },
+      "revId": "b414a13fb370d750df4982bac388f36c1fc46b90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
