@@ -399,6 +399,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     mount_point: such as "system", "data" etc.
   """
   d = {}
+
   if "build.prop" in glob_dict:
     bp = glob_dict["build.prop"]
     if "ro.build.date.utc" in bp:
