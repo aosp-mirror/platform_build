@@ -1594,8 +1594,12 @@ ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    ./build/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
 endif
+ifeq ($(AB_OTA_UPDATER),true)
+	@# When using the A/B updater, include the updater config files in the zip.
+	$(hide) $(ACP) $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
+endif
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
-	# If breakpad symbols have been generated, add them to the zip.
+	@# If breakpad symbols have been generated, add them to the zip.
 	$(hide) $(ACP) -r $(TARGET_OUT_BREAKPAD) $(zip_root)/BREAKPAD
 endif
 	@# Zip everything up, preserving symlinks
