@@ -1,24 +1,25 @@
 function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
-- lunch:   lunch <product_name>-<build_variant>
-- tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
-- croot:   Changes directory to the top of the tree.
-- m:       Makes from the top of the tree.
-- mm:      Builds all of the modules in the current directory, but not their dependencies.
-- mmm:     Builds all of the modules in the supplied directories, but not their dependencies.
-           To limit the modules being built use the syntax: mmm dir/:target1,target2.
-- mma:     Builds all of the modules in the current directory, and their dependencies.
-- mmma:    Builds all of the modules in the supplied directories, and their dependencies.
-- cgrep:   Greps on all local C/C++ files.
-- ggrep:   Greps on all local Gradle files.
-- jgrep:   Greps on all local Java files.
-- resgrep: Greps on all local res/*.xml files.
-- mangrep: Greps on all local AndroidManifest.xml files.
-- mgrep:   Greps on all local Makefiles files.
-- sepgrep: Greps on all local sepolicy files.
-- sgrep:   Greps on all local source files.
-- godir:   Go to the directory containing a file.
+- lunch:     lunch <product_name>-<build_variant>
+- tapas:     tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
+- croot:     Changes directory to the top of the tree.
+- m:         Makes from the top of the tree.
+- mm:        Builds all of the modules in the current directory, but not their dependencies.
+- mmm:       Builds all of the modules in the supplied directories, but not their dependencies.
+             To limit the modules being built use the syntax: mmm dir/:target1,target2.
+- mma:       Builds all of the modules in the current directory, and their dependencies.
+- mmma:      Builds all of the modules in the supplied directories, and their dependencies.
+- provision: Flash device with all required partitions. Options will be passed on to fastboot.
+- cgrep:     Greps on all local C/C++ files.
+- ggrep:     Greps on all local Gradle files.
+- jgrep:     Greps on all local Java files.
+- resgrep:   Greps on all local res/*.xml files.
+- mangrep:   Greps on all local AndroidManifest.xml files.
+- mgrep:     Greps on all local Makefiles files.
+- sepgrep:   Greps on all local sepolicy files.
+- sgrep:     Greps on all local source files.
+- godir:     Go to the directory containing a file.
 
 Environemnt options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
@@ -1473,6 +1474,34 @@ function make()
     echo " ####${color_reset}"
     echo
     return $ret
+}
+
+function provision()
+{
+    if [ ! "$ANDROID_PRODUCT_OUT" ]; then
+        echo "Couldn't locate output files.  Try running 'lunch' first." >&2
+        return 1
+    fi
+    if [ ! -e "$ANDROID_PRODUCT_OUT/provision-device" ]; then
+        echo "There is no provisioning script for the device." >&2
+        return 1
+    fi
+
+    # Check if user really wants to do this.
+    if [ "$1" = "--no-confirmation" ]; then
+        shift 1
+    else
+        echo "This action will reflash your device."
+        echo ""
+        echo "ALL DATA ON THE DEVICE WILL BE IRREVOCABLY ERASED."
+        echo ""
+        read -p "Are you sure you want to do this (yes/no)? "
+        if [[ "${REPLY}" != "yes" ]] ; then
+            echo "Not taking any action. Exiting." >&2
+            return 1
+        fi
+    fi
+    "$ANDROID_PRODUCT_OUT/provision-device" "$@"
 }
 
 if [ "x$SHELL" != "x/bin/bash" ]; then
