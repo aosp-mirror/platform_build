@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15925666_2bdf19d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-10-01T07:54:55Z",
+      "side": 1,
+      "message": "Thanks for this investigation. I hate GNU make\u0027s target specific variables :( I think I can make a fix for this issue in kati. I think --gen_all_targets should not treat all targets as root targets. Instead, it should only use targets with no parent nodes.\n\nAnyway, please go a head with this patch.",
+      "range": {
+        "startLine": 14,
+        "startChar": 41,
+        "endLine": 14,
+        "endChar": 62
+      },
+      "revId": "b4a4278595884f427c7e65961d93b225612139d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
