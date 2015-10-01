@@ -22,68 +22,11 @@
 # to add any new such module in the system
 
 GRANDFATHERED_ALL_PREBUILT := \
-	akmd2 \
-	ap_gain.bin \
-	AVRCP.kl \
-	batch \
-	bitmap_size.txt \
 	bmgr \
-	bp.img \
-	brcm_guci_drv \
-	bypassfactory \
-	cdt.bin \
-	chat-ril \
-	cpcap-key.kl \
-	egl.cfg \
-	firmware_error.565 \
-	firmware_install.565 \
-	ftmipcd \
-	gps.conf \
-	gpsconfig.xml \
-	gps.stingray.so \
-	gralloc.omap3.so \
-	gralloc.tegra.so \
-	hwcomposer.tegra.so \
 	ime \
-	init.goldfish.rc \
-	init.goldfish.sh \
-	init.olympus.rc \
-	init.sholes.rc \
-	init.stingray.rc \
 	input \
-	kernel \
-	lbl \
-	libEGL_POWERVR_SGX530_121.so \
-	libEGL_tegra.so \
-	libGLESv1_CM_POWERVR_SGX530_121.so \
-	libGLESv1_CM_tegra.so \
-	libGLESv2_POWERVR_SGX530_121.so \
-	libGLESv2_tegra.so \
-	libmoto_ril.so \
-	libpppd_plugin-ril.so \
-	libril_rds.so \
-	location \
-	location.cfg \
-	main.conf \
-	mbm.bin \
-	mbm_consumer.bin \
-	mdm_panicd \
 	monkey \
 	pm \
-	pppd-ril \
-	pppd-ril.options \
-	qwerty.kl \
-	radio.img \
-	rdl.bin \
 	RFFspeed_501.bmd \
 	RFFstd_501.bmd \
-	savebpver \
-	sholes-keypad.kl \
-	suplcerts.bks \
-	svc \
-	tcmd \
-	ueventd.goldfish.rc \
-	ueventd.olympus.rc \
-	ueventd.stingray.rc \
-	vold.fstab \
-	wl1271.bin
+	svc
