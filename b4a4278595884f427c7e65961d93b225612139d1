@@ -22,6 +22,30 @@
       "revId": "b4a4278595884f427c7e65961d93b225612139d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1548969f_d04e2a06",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-10-01T19:47:30Z",
+      "side": 1,
+      "message": "targets with no parents sounds reasonable",
+      "parentUuid": "15925666_2bdf19d1",
+      "range": {
+        "startLine": 14,
+        "startChar": 41,
+        "endLine": 14,
+        "endChar": 62
+      },
+      "revId": "b4a4278595884f427c7e65961d93b225612139d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
