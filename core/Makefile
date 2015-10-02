@@ -1557,6 +1557,9 @@ endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) $(ACP) $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
+	$(hide) for part in $(UPDATE_AB_PARTITIONS); do \
+	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
+	done
 endif
 	@# Zip everything up, preserving symlinks
 	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
