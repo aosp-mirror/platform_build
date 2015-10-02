@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5d50a02_e3d38c65",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1444,
+      "author": {
+        "id": 1077068
+      },
+      "writtenOn": "2015-10-02T09:27:13Z",
+      "side": 1,
+      "message": "This dependency can also be removed, so you don\u0027t build them.\nAlso, I don\u0027t get why here we depend on \"built_ota_tools\" but then we use PRIVATE_OTA_TOOLS that is indeed assigned to built_ota_tools earlier.",
+      "range": {
+        "startLine": 1444,
+        "startChar": 4,
+        "endLine": 1444,
+        "endChar": 19
+      },
+      "revId": "b4cb663a4ee87910d31fddb9ca6b00c37eab512b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
