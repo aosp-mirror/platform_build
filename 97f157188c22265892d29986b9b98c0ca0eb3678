@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5526a4f_75d29f3f",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-10-02T22:34:48Z",
+      "side": 1,
+      "message": "what about HOST_2ND_ARCH?\n\nand is there a reason this shouldn\u0027t be with the \"Set up final options\" section that deals with cflags below?",
+      "revId": "97f157188c22265892d29986b9b98c0ca0eb3678",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
