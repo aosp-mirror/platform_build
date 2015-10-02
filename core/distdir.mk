@@ -22,11 +22,6 @@ dist: ;
 
 dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
-ifeq (,$(strip $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))))
-# The commandline was something like "make dist" or "make dist showcommands".
-# Add a dependency on a real target.
-dist: $(DEFAULT_GOAL)
-endif
 
 ifdef dist_goal
 
