@@ -22,6 +22,30 @@
       "revId": "b4cb663a4ee87910d31fddb9ca6b00c37eab512b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5b4e2df_00586a97",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1444,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-10-02T10:08:18Z",
+      "side": 1,
+      "message": "Done.  I couldn\u0027t put an ifdef in the middle of the dependency list, so I ifdef\u0027d the definition of the variable above, so in AB builds, this will just be a blank continuation line.",
+      "parentUuid": "b5d50a02_e3d38c65",
+      "range": {
+        "startLine": 1444,
+        "startChar": 4,
+        "endLine": 1444,
+        "endChar": 19
+      },
+      "revId": "b4cb663a4ee87910d31fddb9ca6b00c37eab512b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
