@@ -46,6 +46,30 @@
       "revId": "b4cb663a4ee87910d31fddb9ca6b00c37eab512b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5526a4f_ff221063",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1444,
+      "author": {
+        "id": 1077068
+      },
+      "writtenOn": "2015-10-02T18:58:21Z",
+      "side": 1,
+      "message": "Dependencies don\u0027t need to be all in the same place. You can set the dependency early.\n\n  ifneq($(AB_OTA_UPDATER,true)\n  $(BUILT_TARGET_FILES_PACKAGE): $(build_ota_tools)\n  endif\n\nor merge that with the new ifneq you added in patch #2. Anyway just a nit",
+      "parentUuid": "f5b4e2df_00586a97",
+      "range": {
+        "startLine": 1444,
+        "startChar": 4,
+        "endLine": 1444,
+        "endChar": 19
+      },
+      "revId": "b4cb663a4ee87910d31fddb9ca6b00c37eab512b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
