@@ -122,10 +122,7 @@ COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
 # Force gcc to always output color diagnostics.  Ninja will strip the ANSI
 # color codes if it is not running in a terminal.
-# Use host and target GLOBAL_CFLAGS so it doesn't apply to HOST_CROSS, the windows
-# toolchain is still 4.8 and doesn't support color.
-HOST_GLOBAL_CFLAGS += -fdiagnostics-color
-TARGET_GLOBAL_CFLAGS += -fdiagnostics-color
+COMMON_GLOBAL_CFLAGS += -fdiagnostics-color
 
 COMMON_GLOBAL_CPPFLAGS:= -Wsign-promo
 COMMON_RELEASE_CPPFLAGS:=
@@ -625,7 +622,7 @@ $(HOST_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_CPPFLAGS += $($(HOST_2ND_ARCH_VAR_PREFIX)
 endif
 
 ifdef HOST_CROSS_OS
-HOST_CROSS_GLOBAL_CFLAGS += $(COMMON_GLOBAL_CFLAGS)
+HOST_CROSS_GLOBAL_CFLAGS += $(filter-out $(HOST_CROSS_UNKNOWN_CFLAGS),$(COMMON_GLOBAL_CFLAGS))
 HOST_CROSS_RELEASE_CFLAGS += $(COMMON_RELEASE_CFLAGS)
 HOST_CROSS_GLOBAL_CPPFLAGS += $(COMMON_GLOBAL_CPPFLAGS)
 HOST_CROSS_RELEASE_CPPFLAGS += $(COMMON_RELEASE_CPPFLAGS)
