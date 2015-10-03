@@ -53,3 +53,6 @@ $(combo_var_prefix)SHLIB_SUFFIX := .dll
 $(combo_var_prefix)EXECUTABLE_SUFFIX := .exe
 
 $(combo_var_prefix)IS_64_BIT :=
+
+# The mingw gcc is 4.8, 4.9 is required for color diagnostics
+$(combo_var_prefix)UNKNOWN_CFLAGS := -fdiagnostics-color
