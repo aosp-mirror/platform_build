@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5526a4f_f59fcfc7",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1319,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-03T00:16:01Z",
+      "side": 1,
+      "message": "I have some concern with this change. Currently otatools.zip package is needed by the OTA server to generate incremental OTA packages. We can define \"TARGET_SKIP_OTA_PACKAGE :\u003d true\" for a device that doesn\u0027t need the otatools.zip. But for future A/B updater, we may still want to do that (just to pack a different set of tools instead). So can we remove L1317-1319 but add \"TARGET_SKIP_OTA_PACKAGE :\u003d true\" to board config file?",
+      "range": {
+        "startLine": 1317,
+        "startChar": 0,
+        "endLine": 1319,
+        "endChar": 5
+      },
+      "revId": "e39f63daea0918a4ef59b482c89759e2ce0fc5af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
