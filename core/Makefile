@@ -1429,6 +1429,11 @@ else
 $(BUILT_TARGET_FILES_PACKAGE): tool_extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
 endif
 
+# Build OTA tools if not using the AB Updater.
+ifneq ($(AB_OTA_UPDATER),true)
+$(BUILT_TARGET_FILES_PACKAGE): $(built_ota_tools)
+endif
+
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
@@ -1441,7 +1446,6 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 		$(SELINUX_FC) \
-		$(built_ota_tools) \
 		$(APKCERTS_FILE) \
 		$(HOST_OUT_EXECUTABLES)/fs_config \
 		| $(ACP)
@@ -1509,9 +1513,12 @@ ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 		$(TARGET_OUT_VENDOR),$(zip_root)/VENDOR)
 endif
 	@# Extra contents of the OTA package
-	$(hide) mkdir -p $(zip_root)/OTA/bin
+	$(hide) mkdir -p $(zip_root)/OTA
 	$(hide) $(ACP) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
+ifneq ($(AB_OTA_UPDATER),true)
+	$(hide) mkdir -p $(zip_root)/OTA/bin
 	$(hide) $(ACP) $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
+endif
 	@# Files that do not end up in any images, but are necessary to
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
