@@ -22,6 +22,30 @@
       "revId": "e39f63daea0918a4ef59b482c89759e2ce0fc5af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5526a4f_f5450fe1",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1319,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-10-03T00:25:54Z",
+      "side": 1,
+      "message": "Done.  I\u0027ve added TARGET_SKIP_OTA_PACKAGE to our base mk with http://ag/#/c/783580/.  If future A/B updater requires some set of ota tools installed, we can remove it from there easily.",
+      "parentUuid": "b5526a4f_f59fcfc7",
+      "range": {
+        "startLine": 1317,
+        "startChar": 0,
+        "endLine": 1319,
+        "endChar": 5
+      },
+      "revId": "e39f63daea0918a4ef59b482c89759e2ce0fc5af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
