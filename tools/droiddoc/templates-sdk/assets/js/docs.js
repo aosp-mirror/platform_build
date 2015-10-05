@@ -1326,7 +1326,7 @@ function requestAppendHL(uri) {
 function changeNavLang(lang) {
   if (lang === 'en') { return; }
 
-  var $links = $('a[' + lang + '-lang]');
+  var $links = $("a[" + lang + "-lang],p[" + lang + "-lang]");
   $links.each(function(){ // for each link with a translation
     var $link = $(this);
     // put the desired language from the attribute as the text
