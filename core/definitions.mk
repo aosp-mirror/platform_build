@@ -1710,6 +1710,7 @@ endef
 # dump-words-to-file, <word list>, <output file>
 define dump-words-to-file
         @rm -f $(2)
+        @touch $(2)
         @$(call emit-line,$(wordlist 1,200,$(1)),$(2))
         @$(call emit-line,$(wordlist 201,400,$(1)),$(2))
         @$(call emit-line,$(wordlist 401,600,$(1)),$(2))
