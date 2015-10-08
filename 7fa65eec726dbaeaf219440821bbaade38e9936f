@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "300f6db3_8afdcb26",
+        "filename": "target/product/core_tiny.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1002563
+      },
+      "writtenOn": "2015-10-08T07:15:33Z",
+      "side": 1,
+      "message": "already defined",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 14
+      },
+      "revId": "7fa65eec726dbaeaf219440821bbaade38e9936f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
