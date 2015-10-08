@@ -111,6 +111,7 @@ PRODUCT_PACKAGES += \
     run-as \
     schedtest \
     sdcard \
+    secdiscard \
     services \
     settings \
     sgdisk \
