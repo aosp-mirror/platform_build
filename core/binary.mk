@@ -346,6 +346,14 @@ else
     my_native_coverage := false
 endif
 
+ifeq ($(my_clang),true)
+    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBPROFILE_RT)
+else
+    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCOV)
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
+
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types
 ###########################################################
