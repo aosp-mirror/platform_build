@@ -36,6 +36,10 @@ HOST_TOOLCHAIN_PREFIX := $(HOST_TOOLCHAIN_ROOT)/bin/i686-apple-darwin$(gcc_darwi
 HOST_CC  := $(HOST_TOOLCHAIN_PREFIX)-gcc
 HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)-g++
 
+define $(combo_var_prefix)transform-shared-lib-to-toc
+$(call _gen_toc_command_for_macho,$(1),$(2))
+endef
+
 # gcc location for clang; to be updated when clang is updated
 # HOST_TOOLCHAIN_ROOT is a Darwin-specific define
 HOST_TOOLCHAIN_FOR_CLANG := $(HOST_TOOLCHAIN_ROOT)

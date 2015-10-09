@@ -1516,7 +1516,6 @@ define transform-o-to-shared-lib
 $(transform-o-to-shared-lib-inner)
 endef
 
-
 ###########################################################
 ## Commands for filtering a target executable or library
 ###########################################################
