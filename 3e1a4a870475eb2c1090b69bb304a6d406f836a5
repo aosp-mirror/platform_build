@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cab73eb4_274f9aa3",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-10-09T05:46:31Z",
+      "side": 1,
+      "message": "Not sure this is the best place, but I couldn\u0027t find a common code path used by (host_|)_shared_library.mk and prebuilt.mk",
+      "revId": "3e1a4a870475eb2c1090b69bb304a6d406f836a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
