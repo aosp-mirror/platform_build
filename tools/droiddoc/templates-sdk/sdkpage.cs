@@ -353,7 +353,7 @@ var:sdk.linux_download
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="return onDownload(this,false,true)"
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-notools"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
     ><?cs var:studio.win_notools_exe_download ?></a><br>(No SDK tools included)
     </td>
@@ -364,7 +364,7 @@ var:sdk.linux_download
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="return onDownload(this,false,true)"
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-zip"
     href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
     ><?cs var:studio.win_bundle_download ?></a>
     </td>
