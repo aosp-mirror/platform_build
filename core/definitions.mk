@@ -182,16 +182,53 @@ $(sort $(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1)))))
 endef
 
 ###########################################################
+## Find all of the directories under the named directories with
+## the specified name.
+## Meant to be used like:
+##    INC_DIRS := $(call all-named-dirs-under,inc,.)
+###########################################################
+
+define all-named-dirs-under
+$(call find-subdir-files,$(2) -type d -name "$(1)")
+endef
+
+###########################################################
+## Find all the directories under the current directory that
+## haves name that match $(1)
+###########################################################
+
+define all-subdir-named-dirs
+$(call all-named-dirs-under,$(1),.)
+endef
+
+###########################################################
+## Find all of the files under the named directories with
+## the specified name.
+## Meant to be used like:
+##    SRC_FILES := $(call all-named-files-under,*.h,src tests)
+###########################################################
+
+define all-named-files-under
+$(call find-files-in-subdirs,$(LOCAL_PATH),"$(1)",$(2))
+endef
+
+###########################################################
+## Find all of the files under the current directory with
+## the specified name.
+###########################################################
+
+define all-subdir-named-files
+$(call all-named-files-under,$(1),.)
+endef
+
+###########################################################
 ## Find all of the java files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-java-files-under,src tests)
 ###########################################################
 
 define all-java-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.java" -and -not -name ".*") \
- ))
+$(call all-named-files-under,*.java,$(1))
 endef
 
 ###########################################################
@@ -210,10 +247,7 @@ endef
 ###########################################################
 
 define all-c-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.c" -and -not -name ".*") \
- ))
+$(call all-named-files-under,*.c,$(1))
 endef
 
 ###########################################################
@@ -255,10 +289,7 @@ endef
 ###########################################################
 
 define all-Iaidl-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "I*.aidl" -and -not -name ".*") \
- ))
+$(call all-named-files-under,I*.aidl,$(1))
 endef
 
 ###########################################################
@@ -276,10 +307,7 @@ endef
 ###########################################################
 
 define all-logtags-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.logtags" -and -not -name ".*") \
-  ))
+$(call all-named-files-under,*.logtags,$(1))
 endef
 
 ###########################################################
@@ -289,10 +317,7 @@ endef
 ###########################################################
 
 define all-proto-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.proto" -and -not -name ".*") \
-  ))
+$(call all-named-files-under,*.proto,$(1))
 endef
 
 ###########################################################
@@ -302,10 +327,7 @@ endef
 ###########################################################
 
 define all-renderscript-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) \( -name "*.rs" -or -name "*.fs" \) -and -not -name ".*") \
-  ))
+$(call find-subdir-files,$(1) \( -name "*.rs" -or -name "*.fs" \) -and -not -name ".*")
 endef
 
 ###########################################################
@@ -315,10 +337,7 @@ endef
 ###########################################################
 
 define all-S-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.S" -and -not -name ".*") \
- ))
+$(call all-named-files-under,*.S,$(1))
 endef
 
 ###########################################################
@@ -328,10 +347,7 @@ endef
 ###########################################################
 
 define all-html-files-under
-$(sort $(patsubst ./%,%, \
-  $(shell cd $(LOCAL_PATH) ; \
-          find -L $(1) -name "*.html" -and -not -name ".*") \
- ))
+$(call all-named-files-under,*.html,$(1))
 endef
 
 ###########################################################
@@ -382,11 +398,11 @@ endef
 ###########################################################
 
 define find-other-java-files
-	$(call find-subdir-files,$(1) -name "*.java" -and -not -name ".*")
+$(call all-java-files-under,$(1))
 endef
 
 define find-other-html-files
-	$(call find-subdir-files,$(1) -name "*.html" -and -not -name ".*")
+$(call all-html-files-under,$(1))
 endef
 
 ###########################################################
