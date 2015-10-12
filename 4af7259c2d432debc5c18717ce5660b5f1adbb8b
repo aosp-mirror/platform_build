@@ -16,6 +16,24 @@
       "revId": "4af7259c2d432debc5c18717ce5660b5f1adbb8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f30ba11_8512a49c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1610,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-12T18:03:17Z",
+      "side": 1,
+      "message": "the system.img dependency covers the dependency.",
+      "parentUuid": "3fa3be81_63926299",
+      "revId": "4af7259c2d432debc5c18717ce5660b5f1adbb8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
