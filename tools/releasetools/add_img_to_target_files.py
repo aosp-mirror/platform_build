@@ -28,6 +28,7 @@ if sys.hexversion < 0x02070000:
   print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
+import datetime
 import errno
 import os
 import tempfile
@@ -122,6 +123,12 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
   if fstab:
     image_props["fs_type"] = fstab["/" + what].fs_type
 
+  # Use a fixed timestamp (01/01/2009) when packaging the image.
+  # Bug: 24377993
+  epoch = datetime.datetime.fromtimestamp(0)
+  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
+  image_props["timestamp"] = int(timestamp)
+
   if what == "system":
     fs_config_prefix = ""
   else:
@@ -173,6 +180,12 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
 
   print "creating userdata.img..."
 
+  # Use a fixed timestamp (01/01/2009) when packaging the image.
+  # Bug: 24377993
+  epoch = datetime.datetime.fromtimestamp(0)
+  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
+  image_props["timestamp"] = int(timestamp)
+
   # The name of the directory it is making an image out of matters to
   # mkyaffs2image.  So we create a temp dir, and within it we create an
   # empty dir named "data", and build the image from that.
@@ -209,6 +222,12 @@ def AddCache(output_zip, prefix="IMAGES/"):
     return
 
   print "creating cache.img..."
+
+  # Use a fixed timestamp (01/01/2009) when packaging the image.
+  # Bug: 24377993
+  epoch = datetime.datetime.fromtimestamp(0)
+  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
+  image_props["timestamp"] = int(timestamp)
 
   # The name of the directory it is making an image out of matters to
   # mkyaffs2image.  So we create a temp dir, and within it we create an
