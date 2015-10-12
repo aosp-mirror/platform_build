@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3fa3be81_63926299",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1610,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-10-12T17:54:21Z",
+      "side": 1,
+      "message": "Looking at this again... do we need to add $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/product_version to the list of make dependencies, similar to how built_ota_tools is treated above in line 1462?  I\u0027d imagine with the way the rule is set up, it would likely get generated anyway by one of the existing image dependencies, but can\u0027t necessarily gaurentee that in the future.",
+      "revId": "4af7259c2d432debc5c18717ce5660b5f1adbb8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
