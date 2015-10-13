@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f2b7617_7b0b57f7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2500,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-13T21:14:02Z",
+      "side": 1,
+      "message": "Please add a comment about the empty input case.",
+      "range": {
+        "startLine": 2499,
+        "startChar": 0,
+        "endLine": 2500,
+        "endChar": 27
+      },
+      "revId": "e8685959de6019d83689d7f370b5e738a30eb554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfb462b2_529e0134",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2504,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-13T21:14:02Z",
+      "side": 1,
+      "message": "This makes it consistent with LOCAL_MODULE_TARGET_ARCH: empty input means it matches any arch.",
+      "range": {
+        "startLine": 2504,
+        "startChar": 60,
+        "endLine": 2504,
+        "endChar": 78
+      },
+      "revId": "e8685959de6019d83689d7f370b5e738a30eb554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
