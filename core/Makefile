@@ -1606,6 +1606,9 @@ ifeq ($(AB_OTA_UPDATER),true)
 	$(hide) for part in $(UPDATE_AB_PARTITIONS); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
+ifdef OSRELEASED_DIRECTORY
+	$(hide) $(ACP) $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/product_version $(zip_root)/META/product_version.txt
+endif
 endif
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	@# If breakpad symbols have been generated, add them to the zip.
