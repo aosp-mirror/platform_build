@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7fa9b65d_c7bf9535",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1021775
+      },
+      "writtenOn": "2015-10-14T00:36:12Z",
+      "side": 1,
+      "message": "is there any chance that these two will use source path?\n\nin another words, if we use source path for these two partitions today, will be any problems?",
+      "revId": "6f0b219ac551710c724e3f344023943178cdc217",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
