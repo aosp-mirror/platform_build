@@ -222,46 +222,6 @@ $(call all-named-files-under,$(1),.)
 endef
 
 ###########################################################
-## Find all of the directories under the named directories with
-## the specified name.
-## Meant to be used like:
-##    INC_DIRS := $(call all-named-dirs-under,inc,.)
-###########################################################
-
-define all-named-dirs-under
-$(call find-subdir-files,$(2) -type d -name "$(1)")
-endef
-
-###########################################################
-## Find all the directories under the current directory that
-## haves name that match $(1)
-###########################################################
-
-define all-subdir-named-dirs
-$(call all-named-dirs-under,$(1),.)
-endef
-
-###########################################################
-## Find all of the files under the named directories with
-## the specified name.
-## Meant to be used like:
-##    SRC_FILES := $(call all-named-files-under,*.h,src tests)
-###########################################################
-
-define all-named-files-under
-$(call find-files-in-subdirs,$(LOCAL_PATH),"$(1)",$(2))
-endef
-
-###########################################################
-## Find all of the files under the current directory with
-## the specified name.
-###########################################################
-
-define all-subdir-named-files
-$(call all-named-files-under,$(1),.)
-endef
-
-###########################################################
 ## Find all of the java files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-java-files-under,src tests)
