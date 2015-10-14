@@ -16,6 +16,24 @@
       "revId": "6f0b219ac551710c724e3f344023943178cdc217",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff32061b_6074a700",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-14T00:39:12Z",
+      "side": 1,
+      "message": "first one no. second one yes.\n\nthese two lines must use the info_dict in the target build. because the script will only be executed in the updated system.",
+      "parentUuid": "7fa9b65d_c7bf9535",
+      "revId": "6f0b219ac551710c724e3f344023943178cdc217",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
