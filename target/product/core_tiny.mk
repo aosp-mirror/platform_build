@@ -36,9 +36,6 @@ PRODUCT_PACKAGES += \
     power.default
 
 PRODUCT_PACKAGES += \
-    local_time.default
-
-PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
     DefaultContainerService \
     SettingsProvider \
