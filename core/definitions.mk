@@ -2105,11 +2105,11 @@ endef
 #
 define add-carried-jack-resources
  $(hide) if [ -d $(PRIVATE_JACK_INTERMEDIATES_DIR) ] ; then \
-    jack_res_jar_flags=$$(find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f \
-        | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C $(PRIVATE_JACK_INTERMEDIATES_DIR) ?"); \
-    if [ -n "$$jack_res_jar_flags" ] ; then \
-        echo $$jack_res_jar_flags >$(dir $@)jack_res_jar_flags; \
-        jar uf $@ $$jack_res_jar_flags; \
+    find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f \
+        | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C \"$(PRIVATE_JACK_INTERMEDIATES_DIR)\" \"?" -e "s/$$/\"/" \
+        > $(dir $@)jack_res_jar_flags; \
+    if [ -s $(dir $@)jack_res_jar_flags ] ; then \
+        jar uf $@ @$(dir $@)jack_res_jar_flags; \
     fi; \
 fi
 endef
