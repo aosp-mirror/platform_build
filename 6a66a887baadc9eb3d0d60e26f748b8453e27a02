@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ff32061b_0fb98354",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-15T01:08:43Z",
+      "side": 1,
+      "message": "+Dehao\nIs there a way to not take the working directory when calculating the build-id?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 72
+      },
+      "revId": "6a66a887baadc9eb3d0d60e26f748b8453e27a02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1f30ba11_d3e3cb87",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
