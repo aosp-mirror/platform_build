@@ -973,6 +973,14 @@ $(hide) $(AIDL) -d$(patsubst %.java,%.P,$@) $(PRIVATE_AIDL_FLAGS) $< $@
 endef
 #$(AIDL) $(PRIVATE_AIDL_FLAGS) $< - | indent -nut -br -npcs -l1000 > $@
 
+define transform-aidl-to-cpp
+@mkdir -p $(dir $@)
+@mkdir -p $(PRIVATE_HEADER_OUTPUT_DIR)
+@echo "Generating C++ from AIDL: $(PRIVATE_MODULE) <= $<"
+$(hide) $(AIDL_CPP) -d$(basename $@).P $(PRIVATE_AIDL_FLAGS) \
+    $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
+endef
+
 
 ###########################################################
 ## Commands for running java-event-log-tags.py
