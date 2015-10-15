@@ -1772,6 +1772,13 @@ define unzip-jar-files
   $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,;rm -rf $(2)/META-INF)
 endef
 
+# Call jack
+#
+# $(1): jack extra arguments
+define call-jack
+ JACK_VERSION=$(PRIVATE_JACK_VERSION) $(JACK) $(1)
+endef
+
 # Common definition to invoke javac on the host and target.
 #
 # Some historical notes:
