@@ -1608,6 +1608,7 @@ ifeq ($(AB_OTA_UPDATER),true)
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
 ifdef OSRELEASED_DIRECTORY
+	$(hide) $(ACP) $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/product_id $(zip_root)/META/product_id.txt
 	$(hide) $(ACP) $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/product_version $(zip_root)/META/product_version.txt
 endif
 endif
