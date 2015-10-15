@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f30ba11_d3e3cb87",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-10-15T00:34:58Z",
+      "side": 1,
+      "message": "Should we change the gdbclient script to add $ANDROID_BUILD_TOP to the source names now?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 52
+      },
+      "revId": "6a66a887baadc9eb3d0d60e26f748b8453e27a02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
