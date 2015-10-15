@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9943ea80_870aac35",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-15T18:33:25Z",
+      "side": 1,
+      "message": "Why do you need an empty res dir in that case?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 55
+      },
+      "revId": "8c95a5d2d5f3d878bc998584de6c1dec2aee32f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1959ba73_5d54ef36",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-15T18:33:25Z",
+      "side": 1,
+      "message": "Move \"mkdir -p $(dir $@)\" here:\n@rm -rf $@ \u0026\u0026 mkdir -p $(dir $@)",
+      "range": {
+        "startLine": 244,
+        "startChar": 1,
+        "endLine": 244,
+        "endChar": 10
+      },
+      "revId": "8c95a5d2d5f3d878bc998584de6c1dec2aee32f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39611e20_b369f826",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-15T18:33:25Z",
+      "side": 1,
+      "message": "Add a comment why you need to touch.",
+      "range": {
+        "startLine": 261,
+        "startChar": 1,
+        "endLine": 261,
+        "endChar": 17
+      },
+      "revId": "8c95a5d2d5f3d878bc998584de6c1dec2aee32f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
