@@ -665,18 +665,20 @@ $(dbus_generated_headers) : $(dbus_service_config_path) $(DBUS_GENERATOR)
 ifdef LOCAL_DBUS_PROXY_PREFIX
 $(dbus_generated_headers) : $(dbus_definition_paths)
 	$(generate-dbus-proxies)
+else
+$(dbus_generated_headers) : $(dbus_header_dir)/%.h : $(LOCAL_PATH)/%.dbus-xml
+	$(generate-dbus-adaptors)
+endif  # $(LOCAL_DBUS_PROXY_PREFIX)
+endif  # $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_dbus_bindings_defined
 
+ifdef LOCAL_DBUS_PROXY_PREFIX
 # Auto-export the generated dbus proxy directory.
 my_export_c_include_dirs += $(dbus_gen_dir)/include
 my_c_includes += $(dbus_gen_dir)/include
 else
-$(dbus_generated_headers) : $(dbus_header_dir)/%.h : $(LOCAL_PATH)/%.dbus-xml
-	$(generate-dbus-adaptors)
-
 my_export_c_include_dirs += $(dbus_header_dir)
 my_c_includes += $(dbus_header_dir)
 endif  # $(LOCAL_DBUS_PROXY_PREFIX)
-endif  # $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_dbus_bindings_defined
 
 my_generated_sources += $(dbus_generated_headers)
 
