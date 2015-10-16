@@ -16,6 +16,24 @@
       "revId": "3d1ffa87eaa6ca8029f38941da169ebd4a0b8ee9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9550e3b_8bfd9d9b",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-16T00:50:40Z",
+      "side": 1,
+      "message": "Yes, I missed that :)",
+      "parentUuid": "9943ea80_2dfd7922",
+      "revId": "3d1ffa87eaa6ca8029f38941da169ebd4a0b8ee9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
