@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9943ea80_2dfd7922",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-10-16T00:40:13Z",
+      "side": 1,
+      "message": "Here too, in case the prebuilts are updated?",
+      "revId": "3d1ffa87eaa6ca8029f38941da169ebd4a0b8ee9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
