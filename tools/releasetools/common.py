@@ -1261,8 +1261,11 @@ class BlockDifference(object):
     self.path = os.path.join(tmpdir, partition)
     b.Compute(self.path)
 
-    _, self.device = GetTypeAndDevice("/" + partition,
-                                      OPTIONS.source_info_dict)
+    if src is None:
+      _, self.device = GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
+    else:
+      _, self.device = GetTypeAndDevice("/" + partition,
+                                        OPTIONS.source_info_dict)
 
   def WriteScript(self, script, output_zip, progress=None):
     if not self.src:
