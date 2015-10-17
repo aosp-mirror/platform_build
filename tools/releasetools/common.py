@@ -59,6 +59,8 @@ class Options(object):
     self.device_specific = None
     self.extras = {}
     self.info_dict = None
+    self.source_info_dict = None
+    self.target_info_dict = None
     self.worker_threads = None
 
 
@@ -1195,7 +1197,11 @@ class BlockDifference(object):
     self.path = os.path.join(tmpdir, partition)
     b.Compute(self.path)
 
-    _, self.device = GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
+    if src is None:
+      _, self.device = GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
+    else:
+      _, self.device = GetTypeAndDevice("/" + partition,
+                                        OPTIONS.source_info_dict)
 
   def WriteScript(self, script, output_zip, progress=None):
     if not self.src:
@@ -1393,6 +1399,8 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
   output_sink("recovery-from-boot.p", patch)
 
   try:
+    # The following GetTypeAndDevice()s need to use the path in the target
+    # info_dict instead of source_info_dict.
     boot_type, boot_device = GetTypeAndDevice("/boot", info_dict)
     recovery_type, recovery_device = GetTypeAndDevice("/recovery", info_dict)
   except KeyError:
