@@ -759,7 +759,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       output_zip=output_zip,
       script=script,
       metadata=metadata,
-      info_dict=OPTIONS.info_dict)
+      info_dict=OPTIONS.source_info_dict)
 
   # TODO: Currently this works differently from WriteIncrementalOTAPackage().
   # This function doesn't consider thumbprints when writing
@@ -1159,7 +1159,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       output_zip=output_zip,
       script=script,
       metadata=metadata,
-      info_dict=OPTIONS.info_dict)
+      info_dict=OPTIONS.source_info_dict)
 
   system_diff = FileDifference("system", source_zip, target_zip, output_zip)
   script.Mount("/system", recovery_mount_options)
