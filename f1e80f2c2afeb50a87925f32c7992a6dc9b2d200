@@ -22,6 +22,30 @@
       "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f936a66e_81d35ae5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2015-10-19T17:09:08Z",
+      "side": 1,
+      "message": "Makes sense. Which would you recommend?",
+      "parentUuid": "f91146d4_9e83c999",
+      "range": {
+        "startLine": 1287,
+        "startChar": 22,
+        "endLine": 1287,
+        "endChar": 26
+      },
+      "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
