@@ -21,6 +21,7 @@ user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 ifneq (,$(user_variant))
     PRODUCT_SUPPORTS_BOOT_SIGNER := true
     PRODUCT_SUPPORTS_VERITY := true
+    PRODUCT_SUPPORTS_VERITY_FEC := true
 
     # The dev key is used to sign boot and recovery images, and the verity
     # metadata table. Actual product deliverables will be re-signed by hand.
