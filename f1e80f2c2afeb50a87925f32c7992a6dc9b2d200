@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f91146d4_9e83c999",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-19T17:07:28Z",
+      "side": 1,
+      "message": "There\u0027d be an issue here with our Auto OTA server. We need to provide backward compatibility for the OTA script. So we need to either bump up the self.version (like to 4), or introduce extra flag to enable the EC feature.",
+      "range": {
+        "startLine": 1287,
+        "startChar": 22,
+        "endLine": 1287,
+        "endChar": 26
+      },
+      "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
