@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d90802ae_02c77ed1",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 757,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-19T18:55:15Z",
+      "side": 1,
+      "message": "You won\u0027t reach here with your change, because these targets aren\u0027t directory.",
+      "range": {
+        "startLine": 756,
+        "startChar": 21,
+        "endLine": 757,
+        "endChar": 63
+      },
+      "revId": "82a8b40b46589d8055e642880a930deb374ffcd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
