@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79fd56bf_f48e6674",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 703,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-19T18:37:33Z",
+      "side": 1,
+      "message": "You are generating the .cc files to $(intermediates) instead of $(generated_sources_dir). That\u0027s fine. The upside of this approach is that you can use the general generated cpp compilation rule and don\u0027t need to set up your own.\nHowever for 64-bit multilib build, the 32-bit and 64-bit modules share the same $(generated_sources_dir), but they have different $(intermediates). That means you\u0027ll need to generate two copies of the .cc files separately.",
+      "range": {
+        "startLine": 703,
+        "startChar": 0,
+        "endLine": 703,
+        "endChar": 46
+      },
+      "revId": "5f2b40ae952d2a9e839c878d529e10f13639ab7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d90802ae_820c8e11",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-19T18:37:33Z",
+      "side": 1,
+      "message": "seems we can just hardcode .cc (or .cpp if you like it).",
+      "range": {
+        "startLine": 706,
+        "startChar": 35,
+        "endLine": 706,
+        "endChar": 57
+      },
+      "revId": "5f2b40ae952d2a9e839c878d529e10f13639ab7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79fd56bf_74839649",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-19T18:37:33Z",
+      "side": 1,
+      "message": "Remove this conditional: Because you generate the .cc files into $(intermediates), we need to generate them separately for 32-bit and 64-bit modules in multilib build.",
+      "range": {
+        "startLine": 716,
+        "startChar": 0,
+        "endLine": 718,
+        "endChar": 81
+      },
+      "revId": "5f2b40ae952d2a9e839c878d529e10f13639ab7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f91146d4_12758d51",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 980,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-19T18:37:33Z",
+      "side": 1,
+      "message": "$(basename $@).P\nthen you don\u0027t need PRIVATE_CPP_EXTENSION.",
+      "range": {
+        "startLine": 980,
+        "startChar": 22,
+        "endLine": 980,
+        "endChar": 67
+      },
+      "revId": "5f2b40ae952d2a9e839c878d529e10f13639ab7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
