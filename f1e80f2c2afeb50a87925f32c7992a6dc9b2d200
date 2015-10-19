@@ -46,6 +46,30 @@
       "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9ec2e3d_a2792050",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-19T17:50:00Z",
+      "side": 1,
+      "message": "Let\u0027s bump up the version number so we can land more changes. (I can prepare the CL if you prefer).",
+      "parentUuid": "f936a66e_81d35ae5",
+      "range": {
+        "startLine": 1287,
+        "startChar": 22,
+        "endLine": 1287,
+        "endChar": 26
+      },
+      "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
