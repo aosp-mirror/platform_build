@@ -754,7 +754,12 @@ function mmm()
                 case $DIR in
                   showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
                   GET-INSTALL-PATH) GET_INSTALL_PATH=$DIR;;
-                  *) echo "No Android.mk in $DIR."; return 1;;
+                  *) if [ -d $DIR ]; then
+                         echo "No Android.mk in $DIR.";
+                     else
+                         echo "Couldn't locate the directory $DIR";
+                     fi
+                     return 1;;
                 esac
             fi
         done
