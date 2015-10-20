@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79d47637_caf74286",
+        "filename": "tools/releasetools/edify_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-20T19:07:09Z",
+      "side": 1,
+      "message": "We actually have self.WordWrap in L42. It was changed from _WordWrap to WordWrap in commit 8b72aefb5a8ed4da28c6f83854e8babf53b9cb53 (https://android-review.googlesource.com/#/c/143532/). Did you accidentally mess up your local copy?",
+      "range": {
+        "startLine": 253,
+        "startChar": 30,
+        "endLine": 253,
+        "endChar": 39
+      },
+      "revId": "c46c810c15162ee4d979ec8f44a0cb99a645a9ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
