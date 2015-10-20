@@ -182,6 +182,19 @@ include $(BUILD_SYSTEM)/envsetup.mk
 FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(OUT_DIR) $(SCAN_EXCLUDE_DIRS) .repo .git)
 
 # ---------------------------------------------------------------
+# We run gcc/clang with PWD=/proc/self/cwd to remove the $TOP
+# from the debug output. That way two builds in two different
+# directories will create the same output.
+# /proc doesn't exist on Darwin.
+ifeq ($(HOST_OS),linux)
+RELATIVE_PWD := PWD=/proc/self/cwd
+# Remove this useless prefix from the debug output.
+COMMON_GLOBAL_CFLAGS += -fdebug-prefix-map=/proc/self/cwd=
+else
+RELATIVE_PWD :=
+endif
+
+# ---------------------------------------------------------------
 # Allow the C/C++ macros __DATE__ and __TIME__ to be set to the
 # build date and time, so that a build may be repeated.
 # Write the date and time to a file so that the command line

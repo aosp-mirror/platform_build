@@ -1057,7 +1057,7 @@ endef
 define transform-cpp-to-o
 @echo "target $(PRIVATE_ARM_MODE) C++: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CXX) \
 	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(shell cat $(PRIVATE_IMPORT_INCLUDES)) \
 	$(addprefix -isystem ,\
@@ -1089,7 +1089,7 @@ endef
 # $(1): extra flags
 define transform-c-or-s-to-o-no-deps
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_CC) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
 	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(shell cat $(PRIVATE_IMPORT_INCLUDES)) \
 	$(addprefix -isystem ,\
@@ -1164,7 +1164,7 @@ endef
 define transform-host-cpp-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) C++: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CXX) \
 	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(shell cat $(PRIVATE_IMPORT_INCLUDES)) \
 	$(addprefix -isystem ,\
@@ -1194,7 +1194,7 @@ endef
 # $(1): extra flags
 define transform-host-c-or-s-to-o-no-deps
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_CC) \
+$(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
 	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 	$(shell cat $(PRIVATE_IMPORT_INCLUDES)) \
 	$(addprefix -isystem ,\
