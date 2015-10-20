@@ -298,8 +298,12 @@ int main(int argc, char* argv[]) {
     argc--;
   }
 
+  if (argc < 2) {
+    error(EXIT_FAILURE, 0, "expected command to run");
+  }
+
   const char* path = argv[1];
-  std::vector<char*> args(&argv[1], &argv[argc]);
+  std::vector<char*> args({argv[1]});
 
   std::vector<std::string> makeflags = ReadMakeflags();
   if (ParseMakeflags(makeflags, &in_fd, &out_fd, &parallel, &keep_going)) {
@@ -327,6 +331,8 @@ int main(int argc, char* argv[]) {
   } else {
     args.push_back(strdup(jarg.c_str()));
   }
+
+  args.insert(args.end(), &argv[2], &argv[argc]);
 
   args.push_back(nullptr);
 
