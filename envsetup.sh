@@ -21,7 +21,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - sgrep:     Greps on all local source files.
 - godir:     Go to the directory containing a file.
 
-Environemnt options:
+Environment options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
                  ASAN_OPTIONS=detect_leaks=0 will be set by default until the
                  build is leak-check clean.
@@ -920,7 +920,7 @@ function coredump_setup()
 	adb root;
 	adb wait-for-device;
 
-	echo "Remounting root parition read-write...";
+	echo "Remounting root partition read-write...";
 	adb shell mount -w -o remount -t rootfs rootfs;
 	sleep 1;
 	adb wait-for-device;
