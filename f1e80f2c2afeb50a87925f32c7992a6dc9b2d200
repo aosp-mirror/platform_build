@@ -70,6 +70,30 @@
       "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19345a65_2595b837",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1287,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2015-10-20T09:25:07Z",
+      "side": 1,
+      "message": "Sure, that would be great. Thanks.",
+      "parentUuid": "b9ec2e3d_a2792050",
+      "range": {
+        "startLine": 1287,
+        "startChar": 22,
+        "endLine": 1287,
+        "endChar": 26
+      },
+      "revId": "f1e80f2c2afeb50a87925f32c7992a6dc9b2d200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
