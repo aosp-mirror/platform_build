@@ -382,8 +382,8 @@ def:sac_left_nav() ?>
     <?cs call:compatibility_nav() ?>
   <?cs elif:source ?>
     <?cs call:source_nav() ?>
-  <?cs elif:accessories ?>
-    <?cs call:accessories_nav() ?>
+  <?cs elif:security ?>
+    <?cs call:security_nav() ?>
   <?cs elif:reference ?>
     <?cs call:default_left_nav() ?>
   <?cs /if ?>
@@ -450,14 +450,14 @@ def:source_nav() ?>
 <?cs /def ?>
 
 <?cs
-def:accessories_nav() ?>
+def:security_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <a class="totop" href="#top" data-g-event="left-nav-top">to top</a>
 
 <?cs 
-        include:"../../../../docs/source.android.com/src/accessories/accessories_toc.cs" ?>
+        include:"../../../../docs/source.android.com/src/security/security_toc.cs" ?>
 
       </div>
     </div> <!-- end side-nav -->
