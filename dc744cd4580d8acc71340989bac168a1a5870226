@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99784a71_7967a39d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-21T20:18:32Z",
+      "side": 1,
+      "message": "I agree this is a bug in our script for BBOTA v3. I also noticed it before. Since it\u0027s only overly approximating the use of stashed blocks (less likely to fail the update), I didn\u0027t fix at that time and forgot to come back to it.",
+      "range": {
+        "startLine": 350,
+        "startChar": 12,
+        "endLine": 350,
+        "endChar": 39
+      },
+      "revId": "dc744cd4580d8acc71340989bac168a1a5870226",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99784a71_5c1e5576",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-21T20:18:32Z",
+      "side": 1,
+      "message": "Although it won\u0027t cause real trouble (since being protected by free_string), it feels better to move this def to the outer level near L356. And can you rename it to something like \"free_size\" to be consistent with \"free_string\" there?",
+      "range": {
+        "startLine": 373,
+        "startChar": 8,
+        "endLine": 373,
+        "endChar": 19
+      },
+      "revId": "dc744cd4580d8acc71340989bac168a1a5870226",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "194a9a42_98e8ddae",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 497,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-21T20:18:32Z",
+      "side": 1,
+      "message": "Not needed. (It won\u0027t solve the undefined var issue, if that\u0027s the intention.)",
+      "range": {
+        "startLine": 497,
+        "startChar": 8,
+        "endLine": 497,
+        "endChar": 19
+      },
+      "revId": "dc744cd4580d8acc71340989bac168a1a5870226",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

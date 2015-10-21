@@ -16,6 +16,24 @@
       "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "99784a71_d9435709",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-21T20:18:32Z",
+      "side": 0,
+      "message": "I thought about this part some time ago. Although it\u0027s not writing the \"free\" commands immediately here, the effect should be negligible. Because the only command that will be emitted prior to the \"free\" would be the current command in xf (new/move/bsdiff/imgdiff/zero and etc). The \"free\" command will be written right after the current command. We are not using stashed_blocks anywhere in-between.",
+      "parentUuid": "761f2555_95ba24f2",
+      "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
