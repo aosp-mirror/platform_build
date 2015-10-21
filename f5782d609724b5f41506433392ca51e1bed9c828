@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "761f2555_95ba24f2",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1073563
+      },
+      "writtenOn": "2015-10-21T07:34:45Z",
+      "side": 0,
+      "message": "stashed_blocks is used to calculate the max stash size later. I don\u0027t think it can be deducted here because they are not actually freed. The free commands are just collected but not appended to the output buffer here.",
+      "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
