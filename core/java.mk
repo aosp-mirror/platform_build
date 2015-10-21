@@ -591,13 +591,13 @@ ifneq ($(GENERATE_DEX_DEBUG),)
 endif
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
-$(findbugs_xml) : PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \
-								$(call normalize-path-list,$(filter %.jar,\
-										$(full_java_libs)))))
-$(findbugs_xml) : $(full_classes_jar)
+$(findbugs_xml): PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \
+    $(call normalize-path-list,$(filter %.jar,$(full_java_libs)))))
+$(findbugs_xml): PRIVATE_FINDBUGS_FLAGS := $(LOCAL_FINDBUGS_FLAGS)
+$(findbugs_xml) : $(full_classes_jar) $(filter %.xml, $(LOCAL_FINDBUGS_FLAGS))
 	@echo Findbugs: $@
 	$(hide) $(FINDBUGS) -textui -effort:min -xml:withMessages \
-		$(PRIVATE_AUXCLASSPATH) \
+		$(PRIVATE_AUXCLASSPATH) $(PRIVATE_FINDBUGS_FLAGS) \
 		$< \
 		> $@
 
