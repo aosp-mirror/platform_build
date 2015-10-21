@@ -547,7 +547,7 @@ $(my_register_name): $(installed_apk_splits)
 
 ifdef LOCAL_COMPATIBILITY_SUITE
 cts_testcase_file := $(foreach s,$(my_split_suffixes),$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_$(s).apk)
-$(cts_testcase_file) : $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_$(s).apk : $(built_module_path)/package_%.apk | $(ACP)
+$(cts_testcase_file) : $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
 	$(copy-file-to-new-target)
 
 COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
