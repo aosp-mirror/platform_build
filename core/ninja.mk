@@ -121,7 +121,7 @@ fastincremental droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): ninja.intermediate
 .INTERMEDIATE: ninja.intermediate
 ninja.intermediate: $(KATI_OUTPUTS) $(MAKEPARALLEL)
 	@echo Starting build with ninja
-	+$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(NINJA_MAKEPARALLEL) $(KATI_NINJA_SH) -C $(TOP) $(NINJA_ARGS) $(filter-out dist,$(ANDROID_TARGETS))
+	+$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(NINJA_MAKEPARALLEL) $(KATI_NINJA_SH) $(filter-out dist,$(ANDROID_TARGETS)) -C $(TOP) $(NINJA_ARGS)
 else
 generateonly droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): $(KATI_OUTPUTS)
 	@#empty
