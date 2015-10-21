@@ -352,16 +352,20 @@ ifneq ($(words $(LOCAL_COMPATIBILITY_SUITE)),1)
 $(error $(LOCAL_PATH):$(LOCAL_MODULE) LOCAL_COMPATIBILITY_SUITE can be only one name)
 endif
 
+# The module itself.
+my_compat_dist := \
+  $(LOCAL_BUILT_MODULE):$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(my_installed_module_stem)
+
+# Make sure we only add the files once for multilib modules.
+ifndef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
+$(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files := true
+
 # LOCAL_COMPATIBILITY_SUPPORT_FILES is a list of <src>[:<dest>].
-my_compat_dist := $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES),\
+my_compat_dist += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES),\
   $(eval p := $(subst :,$(space),$(f)))\
   $(eval s := $(LOCAL_PATH)/$(word 1,$(p)))\
   $(eval d := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(or $(word 2,$(p)),(word 1,$(p))))\
   $(s):$(d))
-
-# The module itself.
-my_compat_dist += \
-  $(LOCAL_BUILT_MODULE):$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(my_installed_module_stem)
 
 ifneq (,$(wildcard $(LOCAL_PATH)/AndroidTest.xml))
 my_compat_dist += \
@@ -372,6 +376,7 @@ ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
 my_compat_dist += \
   $(LOCAL_PATH)/DynamicConfig.xml:$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).dynamic
 endif
+endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 
 my_compat_files := $(call copy-many-files, $(my_compat_dist))
 
