@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9f26ee4_0c4b2646",
+        "filename": "core/combo/HOST_windows-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1065256
+      },
+      "writtenOn": "2015-10-21T02:52:29Z",
+      "side": 1,
+      "message": "FYI, I have come to learn that defining _WIN32_WINNT alone is not sufficient. One needs to also define WINVER (to the same value) otherwise _mingw.h (which is included by windows.h) will #define WINVER 0x0502, which makes things inconsistent.\n\nThere\u0027s no need to fix anything right now, but something to keep in mind when increasing the version in the future.",
+      "range": {
+        "startLine": 37,
+        "startChar": 46,
+        "endLine": 37,
+        "endChar": 67
+      },
+      "revId": "f8241b41d560c776a38fd8ff94815f5d84dc2b8f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
