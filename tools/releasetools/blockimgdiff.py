@@ -355,7 +355,7 @@ class BlockImageDiff(object):
       free_string = []
 
       if self.version == 1:
-        src_str = xf.src_ranges.to_string_raw()
+        src_str = xf.src_ranges.to_string_raw() if xf.src_ranges else ""
       elif self.version >= 2:
 
         #   <# blocks> <src ranges>
