@@ -52,6 +52,24 @@
       "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f935c6bb_c330aa23",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-10-22T18:12:57Z",
+      "side": 0,
+      "message": "Yes, makes sense. Thanks for the fix!",
+      "parentUuid": "f6ea355e_812d3ace",
+      "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
