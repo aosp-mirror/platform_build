@@ -34,6 +34,24 @@
       "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6ea355e_812d3ace",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1073563
+      },
+      "writtenOn": "2015-10-22T01:29:27Z",
+      "side": 0,
+      "message": "When making a \u0027move\u0027 or a \u0027diff\u0027, stashed_blocks will be used to calculate the max_stashed_blocks like line 450. If the unfreed blocks are deducted in advance, the temp_stash_usage could be smaller than what it is supposed to be, couldn\u0027t it? My test result shows no difference of max_stashed_blocks with or without this patch. But I guess this is because the wrong temp_stash_usage does not exceed the right max_stashed_blocks.",
+      "parentUuid": "99784a71_d9435709",
+      "revId": "f5782d609724b5f41506433392ca51e1bed9c828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

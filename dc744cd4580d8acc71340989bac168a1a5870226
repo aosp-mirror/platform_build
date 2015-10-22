@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "d60a9113_b805192d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 1073563
+      },
+      "writtenOn": "2015-10-22T01:29:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99784a71_5c1e5576",
+      "range": {
+        "startLine": 373,
+        "startChar": 8,
+        "endLine": 373,
+        "endChar": 19
+      },
+      "revId": "dc744cd4580d8acc71340989bac168a1a5870226",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "993daaa1_d439546e",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 6
@@ -59,6 +83,24 @@
       "writtenOn": "2015-10-21T20:26:25Z",
       "side": 1,
       "message": "missing \"to_free +\u003d sr.size()\" here?",
+      "revId": "dc744cd4580d8acc71340989bac168a1a5870226",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16118942_7a96594d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1073563
+      },
+      "writtenOn": "2015-10-22T01:29:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "993daaa1_d439546e",
       "revId": "dc744cd4580d8acc71340989bac168a1a5870226",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
