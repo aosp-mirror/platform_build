@@ -16,5 +16,5 @@ else
         LSLINE=$(ls -l "$JAVAC")
         JAVAC=$(echo -n "$LSLINE" | sed -e "s/.* -> //")
     done
-    echo $JAVAC | sed -e "s:\(.*\)/bin/javac.*:\\1/lib/tools.jar:"
+    echo $JAVAC | sed -e 's:\(.*\)/javac$:\1/../lib/tools.jar:'
 fi
