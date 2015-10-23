@@ -1589,7 +1589,7 @@ endif
 	$(hide) echo "use_set_metadata=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "multistage_support=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "update_rename_support=1" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "blockimgdiff_versions=1,2,3" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "blockimgdiff_versions=1,2,3,4" >> $(zip_root)/META/misc_info.txt
 ifneq ($(OEM_THUMBPRINT_PROPERTIES),)
 	# OTA scripts are only interested in fingerprint related properties
 	$(hide) echo "oem_fingerprint_properties=$(OEM_THUMBPRINT_PROPERTIES)" >> $(zip_root)/META/misc_info.txt
