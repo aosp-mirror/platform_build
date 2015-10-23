@@ -287,7 +287,7 @@ $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
-	@rm -f $@
+	@rm -rf $@ && mkdir -p $(dir $@)
 	$(create-resource-java-files)
 	$(hide) for GENERATED_MANIFEST_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
 					-name Manifest.java 2> /dev/null`; do \
@@ -302,7 +302,10 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 		$(ACP) -fp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
 			|| exit 31; \
 		$(ACP) -fp $$GENERATED_R_FILE $@ || exit 32; \
-	done; \
+	done;
+	@# Ensure that the target file is always created, i.e. also in case we did not
+	@# enter the GENERATED_R_FILE-loop above. This avoids unnecessary rebuilding.
+	$(hide) touch $@
 
 $(proguard_options_file): $(R_file_stamp)
 
