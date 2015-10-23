@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "96c57926_eed39fe4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1002951
+      },
+      "writtenOn": "2015-10-23T16:21:35Z",
+      "side": 1,
+      "message": "It is sometimes needed due to issues with proguard.\n\nWhen building without res-directory, the argument \"-include proguard_options\" is not added when starting ProGuard.\nIt is not added because \"need_compile_res\" is not true (in package_internal.mk), which in turn is because \"all_resources\" is empty.\n\"all_resources\" is empty as there are no resources.\nI.e. when there are no resources, \"-include proguard_options\" should not be added when starting proguard.\n\nproguard_options contain classes that should be kept when running ProGuard: \"-keep class \u003csomeclass\u003e { \u003cinit\u003e(...); }\"\nIt gets the classes from AndroidManifest.xml.\nSince proguard_options is no longer an argument, our classes are no longer kept.\n\nHence ProGuard fails during build because of:\n\"Error: The output jar is empty. Did you specify the proper \u0027-keep\u0027 options?\"",
+      "parentUuid": "9943ea80_870aac35",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 55
+      },
+      "revId": "8c95a5d2d5f3d878bc998584de6c1dec2aee32f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1959ba73_5d54ef36",
         "filename": "core/package_internal.mk",
         "patchSetId": 1
