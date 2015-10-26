@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6d8bd3b_aee3278c",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-10-26T18:15:13Z",
+      "side": 1,
+      "message": "an",
+      "revId": "e3378db5e2d2a665f90f1940a7c1e8cb39576dfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
