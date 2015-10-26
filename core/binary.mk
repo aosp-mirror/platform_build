@@ -203,6 +203,14 @@ else ifeq ($(USE_CLANG_PLATFORM_BUILD),true)
 endif
 
 my_cpp_std_version := -std=gnu++14
+
+ifneq ($(my_clang),true)
+    # GCC uses an invalid C++14 ABI (emits calls to
+    # __cxa_throw_bad_array_length, which is not a valid C++ RT ABI).
+    # http://b/25022512
+    my_cpp_std_version := -std=gnu++11
+endif
+
 ifdef LOCAL_SDK_VERSION
     # The NDK handles this itself.
     my_cpp_std_version :=
