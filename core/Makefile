@@ -666,12 +666,18 @@ $(kernel_notice_file): \
 #
 # This rule adds to ALL_DEFAULT_INSTALLED_MODULES, so it needs to come
 # before the rules that use that variable to build the image.
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/otacerts.zip
-$(TARGET_OUT_ETC)/security/otacerts.zip: KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
-$(TARGET_OUT_ETC)/security/otacerts.zip: $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR))
+OTACERTS_ZIP_BUILT := $(call intermediates-dir-for,PACKAGING,otacerts)/otacerts.zip
+OTACERTS_ZIP := $(TARGET_OUT_ETC)/security/otacerts.zip
+ALL_DEFAULT_INSTALLED_MODULES += $(OTACERTS_ZIP)
+
+$(OTACERTS_ZIP_BUILT): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
+$(OTACERTS_ZIP_BUILT): $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR)) | $(ZIPALIGN)
 	$(hide) rm -f $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) zip -qj $@ $<
+	$(hide) zip -qjX $@ $<
+	$(remove-timestamps-from-package)
+
+$(eval $(call copy-one-file,$(OTACERTS_ZIP_BUILT),$(OTACERTS_ZIP)))
 
 .PHONY: otacerts
 otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
@@ -928,9 +934,13 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(call build-recoveryimage-target, $@)
 
 ifneq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
-$(RECOVERY_RESOURCE_ZIP): $(INSTALLED_RECOVERYIMAGE_TARGET)
+RECOVERY_RESOURCE_ZIP_BUILT := $(call intermediates-dir-for,PACKAGING,recovery_resource)/recovery_resource.zip
+$(RECOVERY_RESOURCE_ZIP_BUILT): $(INSTALLED_RECOVERYIMAGE_TARGET) | $(ZIPALIGN)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) find $(TARGET_RECOVERY_ROOT_OUT)/res -type f | sort | zip -0qrj $@ -@
+	$(hide) find $(TARGET_RECOVERY_ROOT_OUT)/res -type f | sort | zip -0qrjX $@ -@
+	$(remove-timestamps-from-package)
+
+$(eval $(call copy-one-file,$(RECOVERY_RESOURCE_ZIP_BUILT),$(RECOVERY_RESOURCE_ZIP)))
 endif
 
 .PHONY: recoveryimage-nodeps
@@ -1121,19 +1131,19 @@ INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
 	$(hide) rm -f $@
-	$(hide) cd $(dir $@) && zip -qry $(notdir $@) \
+	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
 		$(TARGET_COPY_OUT_SYSTEM) \
 		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES)) \
 		$(addprefix symbols/,$(PDK_SYMBOL_FILES_LIST))
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qry $(notdir $@) \
+	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
 		$(TARGET_COPY_OUT_VENDOR)
 endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
-	$(hide) cd $(OUT_DIR) && zip -qry $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
+	$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
 endif
 ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
-	$(hide) zip -qry $@ $(PDK_PLATFORM_ZIP_PRODUCT_BINARIES)
+	$(hide) zip -qryX $@ $(PDK_PLATFORM_ZIP_PRODUCT_BINARIES)
 endif
 
 .PHONY: platform
@@ -1402,9 +1412,9 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	$(hide) $(ACP) -p system/extras/verity/build_verity_metadata.py $(zip_root)/system/extras/verity/
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
-	$(hide) (cd $(zip_root) && zip -qry $(abspath $@) *)
-	$(hide) zip -qry $(abspath $@) build/target/product/security/
-	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem -o -name oem.prop | xargs zip -qry $(abspath $@)>/dev/null || true
+	$(hide) (cd $(zip_root) && zip -qryX $(abspath $@) *)
+	$(hide) zip -qryX $(abspath $@) build/target/product/security/
+	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem -o -name oem.prop | xargs zip -qryX $(abspath $@)>/dev/null || true
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
@@ -1626,7 +1636,7 @@ ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	$(hide) $(ACP) -r $(TARGET_OUT_BREAKPAD) $(zip_root)/BREAKPAD
 endif
 	@# Zip everything up, preserving symlinks
-	$(hide) (cd $(zip_root) && zip -qry ../$(notdir $@) .)
+	$(hide) (cd $(zip_root) && zip -qryX ../$(notdir $@) .)
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
 	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="SYSTEM/" } /^SYSTEM\// {print "system/" $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) > $(zip_root)/META/filesystem_config.txt
@@ -1639,7 +1649,7 @@ endif
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) > $(zip_root)/META/recovery_filesystem_config.txt
 endif
-	$(hide) (cd $(zip_root) && zip -q ../$(notdir $@) META/*filesystem_config.txt)
+	$(hide) (cd $(zip_root) && zip -qX ../$(notdir $@) META/*filesystem_config.txt)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    ./build/tools/releasetools/add_img_to_target_files -v -p $(HOST_OUT) $@
 
@@ -1719,7 +1729,7 @@ $(SYMBOLS_ZIP):
 	@echo "Package symbols: $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@) $(TARGET_OUT_UNSTRIPPED)
-	$(hide) zip -qr $@ $(TARGET_OUT_UNSTRIPPED)
+	$(hide) zip -qrX $@ $(TARGET_OUT_UNSTRIPPED)
 
 # -----------------------------------------------------------------
 # A zip of the Android Apps. Not keeping full path so that we don't
@@ -1736,7 +1746,7 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
 	@echo "Package apps: $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) zip -qj $@ $(TARGET_OUT_APPS)/*/*.apk $(TARGET_OUT_APPS_PRIVILEGED)/*/*.apk
+	$(hide) zip -qjX $@ $(TARGET_OUT_APPS)/*/*.apk $(TARGET_OUT_APPS_PRIVILEGED)/*/*.apk
 
 
 #------------------------------------------------------------------
@@ -1749,7 +1759,7 @@ EMMA_META_ZIP := $(PRODUCT_OUT)/emma_meta.zip
 $(EMMA_META_ZIP) :
 	@echo "Collecting Emma coverage meta files."
 	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "coverage.em" | \
-		zip -@ -q $@
+		zip -@ -qX $@
 
 endif # EMMA_INSTRUMENT=true
 
@@ -1765,7 +1775,7 @@ $(PROGUARD_DICT_ZIP) :
 	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary`; \
 		if [ -n "$$dict_files" ]; then \
 		  unobfuscated_jars=$${dict_files//proguard_dictionary/classes.jar}; \
-		  zip -q $@ $$dict_files $$unobfuscated_jars; \
+		  zip -qX $@ $$dict_files $$unobfuscated_jars; \
 		else \
 		  touch $(dir $@)/zipdummy; \
 		  (cd $(dir $@) && zip -q $(notdir $@) zipdummy); \
@@ -1796,7 +1806,7 @@ INTERNAL_EMULATOR_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
 $(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES)
 	@echo "Package: $@"
-	$(hide) zip -qj $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
+	$(hide) zip -qjX $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
 
 endif
 # -----------------------------------------------------------------
@@ -1931,7 +1941,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 		HOST_OUT_EXECUTABLES=$(HOST_OUT_EXECUTABLES) HOST_OS=$(HOST_OS) \
 			development/build/tools/sdk_clean.sh $(PRIVATE_DIR) && \
 		chmod -R ug+rwX $(PRIVATE_DIR) && \
-		cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME) \
+		cd $(dir $@) && zip -rqX $(notdir $@) $(PRIVATE_NAME) \
 	) || ( rm -rf $(PRIVATE_DIR) $@ && exit 44 )
 
 
