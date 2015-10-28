@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "d6d0d18a_4ebb27f8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2097,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-10-28T22:39:22Z",
+      "side": 1,
+      "message": "Added -- I went and investigated this case, and it was needed.",
+      "parentUuid": "7642c5df_a3f3fe0c",
+      "range": {
+        "startLine": 2097,
+        "startChar": 25,
+        "endLine": 2097,
+        "endChar": 33
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d63d314e_06d51ea5",
         "filename": "core/definitions.mk",
         "patchSetId": 3
@@ -179,6 +203,30 @@
       "side": 1,
       "message": "We may need it here, because for presigned apk we do run this function but without re-signing it with SignApk.",
       "parentUuid": "d63d314e_e6403ad3",
+      "range": {
+        "startLine": 2168,
+        "startChar": 36,
+        "endLine": 2168,
+        "endChar": 48
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96cad9dc_afb9f9b7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2168,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-10-28T22:39:22Z",
+      "side": 1,
+      "message": "Yep, added.",
+      "parentUuid": "d63d314e_e99fad8c",
       "range": {
         "startLine": 2168,
         "startChar": 36,
