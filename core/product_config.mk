@@ -213,7 +213,19 @@ _cpm_word2 :=
 current_product_makefile := $(strip $(current_product_makefile))
 all_product_makefiles := $(strip $(all_product_makefiles))
 
-ifneq (,$(filter product-graph dump-products, $(MAKECMDGOALS)))
+load_all_product_makefiles :=
+ifneq (,$(filter product-graph, $(MAKECMDGOALS)))
+ifeq ($(ANDROID_PRODUCT_GRAPH),--all)
+load_all_product_makefiles := true
+endif
+endif
+ifneq (,$(filter dump-products,$(MAKECMDGOALS)))
+ifeq ($(ANDROID_DUMP_PRODUCTS),all)
+load_all_product_makefiles := true
+endif
+endif
+
+ifeq ($(load_all_product_makefiles),true)
 # Import all product makefiles.
 $(call import-products, $(all_product_makefiles))
 else
