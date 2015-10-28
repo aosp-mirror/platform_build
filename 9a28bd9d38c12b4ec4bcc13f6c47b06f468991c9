@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "565141a7_8287de13",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 678,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-28T00:50:55Z",
+      "side": 1,
+      "message": "why do we call this given that \"-X\" has been passed to zip?",
+      "range": {
+        "startLine": 678,
+        "startChar": 1,
+        "endLine": 678,
+        "endChar": 34
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f636b56e_44b0002c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2097,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-28T00:50:55Z",
+      "side": 1,
+      "message": "-X?",
+      "range": {
+        "startLine": 2097,
+        "startChar": 25,
+        "endLine": 2097,
+        "endChar": 33
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d63d314e_06d51ea5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2168,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-28T00:50:55Z",
+      "side": 1,
+      "message": "-X?",
+      "range": {
+        "startLine": 2168,
+        "startChar": 36,
+        "endLine": 2168,
+        "endChar": 48
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
