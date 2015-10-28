@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "7642c5df_a3f3fe0c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2097,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-28T02:12:15Z",
+      "side": 1,
+      "message": "Does SignApk take care of the uid/gid, universal timestamp stuff too?",
+      "parentUuid": "b68efd7e_6f873115",
+      "range": {
+        "startLine": 2097,
+        "startChar": 25,
+        "endLine": 2097,
+        "endChar": 33
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d63d314e_06d51ea5",
         "filename": "core/definitions.mk",
         "patchSetId": 3
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "Same here, I\u0027ll test.",
       "parentUuid": "d63d314e_06d51ea5",
+      "range": {
+        "startLine": 2168,
+        "startChar": 36,
+        "endLine": 2168,
+        "endChar": 48
+      },
+      "revId": "9a28bd9d38c12b4ec4bcc13f6c47b06f468991c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d63d314e_e99fad8c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2168,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-28T02:12:15Z",
+      "side": 1,
+      "message": "We may need it here, because for presigned apk we do run this function but without re-signing it with SignApk.",
+      "parentUuid": "d63d314e_e6403ad3",
       "range": {
         "startLine": 2168,
         "startChar": 36,
