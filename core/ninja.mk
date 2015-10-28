@@ -2,7 +2,7 @@ KATI ?= $(HOST_OUT_EXECUTABLES)/ckati
 MAKEPARALLEL ?= $(HOST_OUT_EXECUTABLES)/makeparallel
 
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
-NINJA_GOALS := fastincremental generateonly droid showcommands
+NINJA_GOALS := droid showcommands
 # A list of goals which affect parsing of make.
 PARSE_TIME_MAKE_GOALS := \
 	$(PARSE_TIME_MAKE_GOALS) \
@@ -91,8 +91,6 @@ $(shell mkdir -p $(dir $(my_ninja_suffix_file)) && \
     echo $(my_checksum_suffix) > $(my_ninja_suffix_file))
 endif
 
-KATI_OUTPUTS := $(KATI_BUILD_NINJA) $(KATI_NINJA_SH)
-
 ifeq (,$(NINJA_STATUS))
 NINJA_STATUS := [%p %s/%t]$(space)
 endif
@@ -114,27 +112,15 @@ else
 NINJA_MAKEPARALLEL := $(MAKEPARALLEL) --ninja
 endif
 
-ifeq (,$(filter generateonly,$(ORIGINAL_MAKECMDGOALS)))
-fastincremental droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): ninja.intermediate
+droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): ninja_wrapper
 	@#empty
 
-.INTERMEDIATE: ninja.intermediate
-ninja.intermediate: $(KATI_OUTPUTS) $(MAKEPARALLEL)
+.PHONY: ninja_wrapper
+ninja_wrapper: $(KATI_BUILD_NINJA) $(MAKEPARALLEL)
 	@echo Starting build with ninja
 	+$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(NINJA_MAKEPARALLEL) $(KATI_NINJA_SH) $(filter-out dist,$(ANDROID_TARGETS)) -C $(TOP) $(NINJA_ARGS)
-else
-generateonly droid $(ANDROID_TARGETS) $(EXTRA_TARGETS): $(KATI_OUTPUTS)
-	@#empty
-endif
 
-ifeq (,$(filter fastincremental,$(ORIGINAL_MAKECMDGOALS)))
-KATI_FORCE := FORCE
-endif
-
-$(KATI_OUTPUTS): kati.intermediate $(KATI_FORCE)
-
-.INTERMEDIATE: kati.intermediate
-kati.intermediate: $(KATI) $(MAKEPARALLEL)
+$(KATI_BUILD_NINJA): $(KATI) $(MAKEPARALLEL) FORCE
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
 	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(KATI_TARGETS) --gen_all_targets BUILDING_WITH_NINJA=true
 
