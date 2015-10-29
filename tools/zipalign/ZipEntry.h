@@ -186,6 +186,12 @@ protected:
     void setModWhen(time_t when);
 
     /*
+     * Set a static modification date. This only affects the standard
+     * zip modification date, not the universal time extra field.
+     */
+    void removeTimestamps();
+
+    /*
      * Return the offset of the local file header.
      */
     off_t getLFHOffset(void) const { return mCDE.mLocalHeaderRelOffset; }
