@@ -274,6 +274,8 @@ def AddImagesToTargetFiles(filename):
   output_zip = zipfile.ZipFile(filename, "a",
                                compression=zipfile.ZIP_DEFLATED)
 
+  has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
+
   def banner(s):
     print "\n\n++++ " + s + " ++++\n\n"
 
@@ -291,19 +293,21 @@ def AddImagesToTargetFiles(filename):
     if boot_image:
       boot_image.AddToZip(output_zip)
 
-  banner("recovery")
   recovery_image = None
-  prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", "recovery.img")
-  if os.path.exists(prebuilt_path):
-    print "recovery.img already exists in IMAGES/, no need to rebuild..."
-    if OPTIONS.rebuild_recovery:
+  if has_recovery:
+    banner("recovery")
+    prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", "recovery.img")
+    if os.path.exists(prebuilt_path):
+      print "recovery.img already exists in IMAGES/, no need to rebuild..."
+      if OPTIONS.rebuild_recovery:
+        recovery_image = common.GetBootableImage(
+            "IMAGES/recovery.img", "recovery.img", OPTIONS.input_tmp,
+            "RECOVERY")
+    else:
       recovery_image = common.GetBootableImage(
           "IMAGES/recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
-  else:
-    recovery_image = common.GetBootableImage(
-        "IMAGES/recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
-    if recovery_image:
-      recovery_image.AddToZip(output_zip)
+      if recovery_image:
+        recovery_image.AddToZip(output_zip)
 
   banner("system")
   AddSystem(output_zip, recovery_img=recovery_image, boot_img=boot_image)
