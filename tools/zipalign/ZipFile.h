@@ -77,17 +77,17 @@ public:
      *
      * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
      */
-    status_t add(const char* fileName, int compressionMethod, bool removeTime,
+    status_t add(const char* fileName, int compressionMethod,
         ZipEntry** ppEntry)
     {
-        return add(fileName, fileName, compressionMethod, removeTime, ppEntry);
+        return add(fileName, fileName, compressionMethod, ppEntry);
     }
     status_t add(const char* fileName, const char* storageName,
-        int compressionMethod, bool removeTime, ZipEntry** ppEntry)
+        int compressionMethod, ZipEntry** ppEntry)
     {
         return addCommon(fileName, NULL, 0, storageName,
                          ZipEntry::kCompressStored,
-                         compressionMethod, removeTime, ppEntry);
+                         compressionMethod, ppEntry);
     }
 
     /*
@@ -96,12 +96,11 @@ public:
      * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
      */
     status_t addGzip(const char* fileName, const char* storageName,
-        bool removeTime, ZipEntry** ppEntry)
+        ZipEntry** ppEntry)
     {
         return addCommon(fileName, NULL, 0, storageName,
                          ZipEntry::kCompressDeflated,
-                         ZipEntry::kCompressDeflated,
-                         removeTime, ppEntry);
+                         ZipEntry::kCompressDeflated, ppEntry);
     }
 
     /*
@@ -110,11 +109,11 @@ public:
      * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
      */
     status_t add(const void* data, size_t size, const char* storageName,
-        int compressionMethod, bool removeTime, ZipEntry** ppEntry)
+        int compressionMethod, ZipEntry** ppEntry)
     {
         return addCommon(NULL, data, size, storageName,
                          ZipEntry::kCompressStored,
-                         compressionMethod, removeTime, ppEntry);
+                         compressionMethod, ppEntry);
     }
 
     /*
@@ -125,7 +124,7 @@ public:
      * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
      */
     status_t add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
-        int padding, bool removeTime, ZipEntry** ppEntry);
+        int padding, ZipEntry** ppEntry);
 
     /*
      * Add an entry by copying it from another zip file, recompressing with
@@ -134,7 +133,7 @@ public:
      * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
      */
     status_t addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
-        bool removeTime, ZipEntry** ppEntry);
+        ZipEntry** ppEntry);
 
     /*
      * Mark an entry as having been removed.  It is not actually deleted
@@ -233,7 +232,7 @@ private:
     /* common handler for all "add" functions */
     status_t addCommon(const char* fileName, const void* data, size_t size,
         const char* storageName, int sourceType, int compressionMethod,
-        bool removeTime, ZipEntry** ppEntry);
+        ZipEntry** ppEntry);
 
     /* copy all of "srcFp" into "dstFp" */
     status_t copyFpToFp(FILE* dstFp, FILE* srcFp, unsigned long* pCRC32);
