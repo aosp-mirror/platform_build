@@ -34,6 +34,24 @@
       "revId": "21ec03d1867091e7e5d7d14c11400e6d34402a58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6d35d95_dbca33a5",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-29T17:56:25Z",
+      "side": 1,
+      "message": "In that case do we need to distinguish those builds by the value of SANITIZE_TARGET?\nCan we set ro.build.flavor to something like shamu-userdebug_asan_address?\nGuang?",
+      "parentUuid": "f6d955b5_5e32b1d5",
+      "revId": "21ec03d1867091e7e5d7d14c11400e6d34402a58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
