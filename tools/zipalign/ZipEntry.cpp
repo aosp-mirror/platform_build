@@ -386,6 +386,14 @@ void ZipEntry::setModWhen(time_t when)
     mCDE.mLastModFileDate = mLFH.mLastModFileDate = zdate;
 }
 
+/*
+ * Set static timestamps
+ */
+void ZipEntry::removeTimestamps()
+{
+    mCDE.mLastModFileTime = mLFH.mLastModFileTime = 0;
+    mCDE.mLastModFileDate = mLFH.mLastModFileDate = 28 << 9 | 1 << 5 | 1;
+}
 
 /*
  * ===========================================================================
