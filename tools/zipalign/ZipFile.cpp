@@ -359,7 +359,7 @@ bail:
  */
 status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
     const char* storageName, int sourceType, int compressionMethod,
-    ZipEntry** ppEntry)
+    bool removeTime, ZipEntry** ppEntry)
 {
     ZipEntry* pEntry = NULL;
     status_t result = NO_ERROR;
@@ -499,8 +499,12 @@ status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
      */
     pEntry->setDataInfo(uncompressedLen, endPosn - startPosn, crc,
         compressionMethod);
-    modWhen = getModTime(inputFp ? fileno(inputFp) : fileno(mZipFp));
-    pEntry->setModWhen(modWhen);
+    if (removeTime) {
+        pEntry->removeTimestamps();
+    } else {
+        modWhen = getModTime(inputFp ? fileno(inputFp) : fileno(mZipFp));
+        pEntry->setModWhen(modWhen);
+    }
     pEntry->setLFHOffset(lfhPosn);
     mEOCD.mNumEntries++;
     mEOCD.mTotalNumEntries++;
@@ -539,7 +543,7 @@ bail:
  * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
  */
 status_t ZipFile::add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
-    int padding, ZipEntry** ppEntry)
+    int padding, bool removeTime, ZipEntry** ppEntry)
 {
     ZipEntry* pEntry = NULL;
     status_t result;
@@ -571,6 +575,8 @@ status_t ZipFile::add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
         if (result != NO_ERROR)
             goto bail;
     }
+    if (removeTime)
+        pEntry->removeTimestamps();
 
     /*
      * From here on out, failures are more interesting.
@@ -646,7 +652,7 @@ bail:
  * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
  */
 status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
-    ZipEntry** ppEntry)
+    bool removeTime, ZipEntry** ppEntry)
 {
     ZipEntry* pEntry = NULL;
     status_t result;
@@ -673,6 +679,9 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
     result = pEntry->initFromExternal(pSourceZip, pSourceEntry);
     if (result != NO_ERROR)
         goto bail;
+
+    if (removeTime)
+        pEntry->removeTimestamps();
 
     /*
      * From here on out, failures are more interesting.
