@@ -52,6 +52,24 @@
       "revId": "21ec03d1867091e7e5d7d14c11400e6d34402a58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b6143e34_1913eba6",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1072369
+      },
+      "writtenOn": "2015-10-29T19:29:55Z",
+      "side": 1,
+      "message": "Yes these builds will need to be distinguished. Since each will have to report results via smoke tests, etc (like asan build can be broken, but msan is fine). This is fine for now, we can change it later in future.",
+      "parentUuid": "b6d35d95_dbca33a5",
+      "revId": "21ec03d1867091e7e5d7d14c11400e6d34402a58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
