@@ -241,7 +241,7 @@ $(out_zip): $(full_target)
 	@echo Package docs: $@
 	@rm -f $@
 	@mkdir -p $(dir $@)
-	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_DOCS_DIR) && zip -rqX $$F * )
+	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_DOCS_DIR) && zip -rq $$F * )
 
 $(LOCAL_MODULE)-docs.zip : $(out_zip)
 

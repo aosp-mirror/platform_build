@@ -387,7 +387,7 @@ $(INTERNAL_CTS_TARGET): PRIVATE_DIR := $(cts_dir)/$(cts_name)
 $(INTERNAL_CTS_TARGET): TMP_DIR := $(cts_dir)/temp
 $(INTERNAL_CTS_TARGET): $(cts_dir)/all_cts_files_stamp $(DEFAULT_TEST_PLAN)
 	$(hide) echo "Package CTS: $@"
-	$(hide) cd $(dir $@) && zip -rqX $(notdir $@) $(PRIVATE_NAME)
+	$(hide) cd $(dir $@) && zip -rq $(notdir $@) $(PRIVATE_NAME)
 
 .PHONY: cts
 cts: $(INTERNAL_CTS_TARGET) adb
