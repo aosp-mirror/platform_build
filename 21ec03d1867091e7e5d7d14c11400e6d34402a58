@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6d0d18a_fc4d71ae",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 1072369
+      },
+      "writtenOn": "2015-10-29T04:35:07Z",
+      "side": 1,
+      "message": "This is ok for now, but might not be future proof, a check like https://cs.corp.google.com/#android/system/core/rootdir/Android.mk\u0026l\u003d16 looks more accurate to actually parse SANITIZE_TARGET",
+      "revId": "21ec03d1867091e7e5d7d14c11400e6d34402a58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
