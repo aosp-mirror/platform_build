@@ -102,10 +102,11 @@ def main(argv):
       if boot_image:
         boot_image.AddToZip(output_zip)
 
-      recovery_image = common.GetBootableImage(
-          "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
-      if recovery_image:
-        recovery_image.AddToZip(output_zip)
+      if OPTIONS.info_dict.get("no_recovery") != "true":
+        recovery_image = common.GetBootableImage(
+            "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
+        if recovery_image:
+          recovery_image.AddToZip(output_zip)
 
       def banner(s):
         print "\n\n++++ " + s + " ++++\n\n"
