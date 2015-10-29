@@ -134,11 +134,14 @@ endef
 #  3. Records that we've visited this node, in ALL_PRODUCTS
 #
 define inherit-product
+  $(if $(findstring ../,$(1)),\
+    $(eval np := $(call normalize-paths,$(1))),\
+    $(eval np := $(strip $(1))))\
   $(foreach v,$(_product_var_list), \
-      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(strip $(1)))) \
+      $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
   $(eval inherit_var := \
       PRODUCTS.$(strip $(word 1,$(_include_stack))).INHERITS_FROM) \
-  $(eval $(inherit_var) := $(sort $($(inherit_var)) $(strip $(1)))) \
+  $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
   $(eval inherit_var:=) \
   $(eval ALL_PRODUCTS := $(sort $(ALL_PRODUCTS) $(word 1,$(_include_stack))))
 endef

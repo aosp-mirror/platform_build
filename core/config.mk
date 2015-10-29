@@ -118,6 +118,16 @@ BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java
 SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
 hide := $(if $(SHOW_COMMANDS),,@)
 
+################################################################
+# Tools needed in product configuration makefiles.
+################################################################
+NORMALIZE_PATH := build/tools/normalize_path.py
+
+# $(1): the paths to be normalized
+define normalize-paths
+$(if $(1),$(shell $(NORMALIZE_PATH) $(1)))
+endef
+
 # ###############################################################
 # Set common values
 # ###############################################################
@@ -555,8 +565,6 @@ MD5SUM:=md5 -q
 else
 MD5SUM:=md5sum
 endif
-
-NORMALIZE_PATH := build/tools/normalize_path.py
 
 APICHECK_CLASSPATH := $(HOST_JDK_TOOLS_JAR)
 APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
