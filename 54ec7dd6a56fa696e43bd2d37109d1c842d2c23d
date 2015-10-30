@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "161fca56_08d71742",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:04:09Z",
+      "side": 1,
+      "message": "Make doesn\u0027t have the restat feature. If the .toc file doesn\u0027t have a new timestamp after its build recipe was executed, make always tries to rebuild it whenenver you run make.\nSo we should use the .toc files as dependencies only if BUILDING_WITH_NINJA\u003dtrue .",
+      "range": {
+        "startLine": 12,
+        "startChar": 29,
+        "endLine": 14,
+        "endChar": 26
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "760e462a_fdb37f56",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:04:09Z",
+      "side": 1,
+      "message": "$(LOCAL_BUILT_MODULE).toc",
+      "range": {
+        "startLine": 227,
+        "startChar": 30,
+        "endLine": 227,
+        "endChar": 51
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d63612de_6127e0f6",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:04:09Z",
+      "side": 1,
+      "message": "built_shared_library_tocs :\u003d $(adddsuffix .toc, $(built_shared_libraries)",
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "562a227b_174a9ea8",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:04:09Z",
+      "side": 1,
+      "message": "built_shared_library_tocs :\u003d",
+      "range": {
+        "startLine": 1191,
+        "startChar": 0,
+        "endLine": 1191,
+        "endChar": 38
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "161fca56_a8ddc35f",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1193,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:04:09Z",
+      "side": 1,
+      "message": "No filter-out.",
+      "range": {
+        "startLine": 1193,
+        "startChar": 0,
+        "endLine": 1193,
+        "endChar": 125
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d63612de_c101ec48",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1523,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:04:09Z",
+      "side": 1,
+      "message": "The host machine readelf and nm doesn\u0027t work on Mac with those flags.\nProbably we should use the prebuilt toolchain tools, such as prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-readelf",
+      "range": {
+        "startLine": 1523,
+        "startChar": 2,
+        "endLine": 1523,
+        "endChar": 9
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
