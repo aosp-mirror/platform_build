@@ -30,15 +30,15 @@
 <!-- STYLESHEETS -->
 <link rel="stylesheet"
 href="<?cs
-if:android.whichdoc != 'online' ?>http:<?cs
+if:android.whichdoc != 'online' ?>https:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto+Condensed">
 <link rel="stylesheet" href="<?cs
-if:android.whichdoc != 'online' ?>http:<?cs
+if:android.whichdoc != 'online' ?>https:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
 <?cs 
   if:ndk ?><link rel="stylesheet" href="<?cs
-  if:android.whichdoc != 'online' ?>http:<?cs
+  if:android.whichdoc != 'online' ?>https:<?cs
   /if ?>//fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" title="roboto-mono" type="text/css"><?cs
 /if ?>
 <link href="<?cs var:toroot ?>assets/css/default.css?v=7" rel="stylesheet" type="text/css">
@@ -50,7 +50,7 @@ type="text/css">
 <?cs /if ?>
 
 <!-- JAVASCRIPT -->
-<script src="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//www.google.com/jsapi" type="text/javascript"></script>
+<script src="<?cs if:android.whichdoc != 'online' ?>https:<?cs /if ?>//www.google.com/jsapi" type="text/javascript"></script>
 <?cs
 if:devsite
   ?><script src="<?cs var:toroot ?>_static/js/android_3p-bundle.js" type="text/javascript"></script><?cs

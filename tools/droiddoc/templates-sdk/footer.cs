@@ -7,7 +7,7 @@
       </div>
       <div class="col-1of2 dac-footer-reachout">
         <div class="dac-footer-contact">
-          <a class="dac-footer-contact-link" href="http://android-developers.blogspot.com/">Blog</a>
+          <a class="dac-footer-contact-link" href="//android-developers.blogspot.com/">Blog</a>
           <a class="dac-footer-contact-link" href="/support.html">Support</a>
         </div>
         <div class="dac-footer-social">
