@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7643a650_8391ae79",
+        "filename": "core/distdir.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-10-30T18:21:32Z",
+      "side": 0,
+      "message": "This changed the \"USE_NINJA\u003dfalse\" build behavior in unfavorable way.\nLooks like we don\u0027t necessarily need to remove this if we never pass \"dist\" to ninja?",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 5
+      },
+      "revId": "8f9f01bbc3968be4e99fbd9bb2ba38314875e8dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
