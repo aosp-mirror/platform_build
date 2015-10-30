@@ -22,6 +22,30 @@
       "revId": "8f9f01bbc3968be4e99fbd9bb2ba38314875e8dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "765c8636_67c37287",
+        "filename": "core/distdir.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-10-30T18:23:44Z",
+      "side": 0,
+      "message": "Hm, true.\n\nWe are rapidly approaching the time where USE_NINJA\u003dfalse will no longer be supported once we build bionic with soong, do you think it is too early to take out USE_NINJA\u003dfalse support?",
+      "parentUuid": "7643a650_8391ae79",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 5
+      },
+      "revId": "8f9f01bbc3968be4e99fbd9bb2ba38314875e8dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
