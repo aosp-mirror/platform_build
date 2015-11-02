@@ -49,6 +49,54 @@
     },
     {
       "key": {
+        "uuid": "f6195673_7cd1a8d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "Good point. I\u0027d like to keep USE_NINJA\u003dfalse build close to USE_NINJA\u003dtrue build. So, I modified definitions.mk so it always updates the timestamp of .toc files. This would make USE_NINJA\u003dfalse build slower, but it\u0027s OK because now USE_NINJA\u003dfalse is almost only for debugging?",
+      "parentUuid": "161fca56_08d71742",
+      "range": {
+        "startLine": 12,
+        "startChar": 29,
+        "endLine": 14,
+        "endChar": 26
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7643a650_bb8df2e5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "I think ninja doesn\u0027t believe timestamps of files. Instead it uses out/.ninja_log file. For example:\n\n $ m\n $ m  # no work to do\n $ touch bionic/libc/stdio/stdio.c\n $ m  # build 85 targets\n $ ls -l out/target/product/generic/obj/lib/libc.so*\n -rwxr-x--- 1 hamaji eng 766052 Nov  2 19:20 out/target/product/generic/obj/lib/libc.so*\n -rw-r----- 1 hamaji eng  19677 Nov  2 18:19 out/target/product/generic/obj/lib/libc.so.toc\n $ m  # no work to do\n\nNotice libc.so.toc is older than libc.so, but the last build was a null build.",
+      "parentUuid": "5625c29e_9f7c7f4f",
+      "range": {
+        "startLine": 12,
+        "startChar": 29,
+        "endLine": 14,
+        "endChar": 26
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "760e462a_fdb37f56",
         "filename": "core/base_rules.mk",
         "patchSetId": 2
@@ -60,6 +108,30 @@
       "writtenOn": "2015-10-30T18:04:09Z",
       "side": 1,
       "message": "$(LOCAL_BUILT_MODULE).toc",
+      "range": {
+        "startLine": 227,
+        "startChar": 30,
+        "endLine": 227,
+        "endChar": 51
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96401a44_bf6723f8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "Oops. Thanks for catching this!",
+      "parentUuid": "760e462a_fdb37f56",
       "range": {
         "startLine": 227,
         "startChar": 30,
@@ -89,6 +161,24 @@
     },
     {
       "key": {
+        "uuid": "562a227b_3dffbbd1",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1178,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d63612de_6127e0f6",
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "562a227b_174a9ea8",
         "filename": "core/binary.mk",
         "patchSetId": 2
@@ -100,6 +190,30 @@
       "writtenOn": "2015-10-30T18:04:09Z",
       "side": 1,
       "message": "built_shared_library_tocs :\u003d",
+      "range": {
+        "startLine": 1191,
+        "startChar": 0,
+        "endLine": 1191,
+        "endChar": 38
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5625c29e_f0ba80fb",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1191,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "This should be $(addsuffix .toc, $(built_shared_libraries)). Anyway, I think two $(addsuffix) would be better than $(addsuffix) and $(filter-out).",
+      "parentUuid": "562a227b_174a9ea8",
       "range": {
         "startLine": 1191,
         "startChar": 0,
@@ -135,6 +249,30 @@
     },
     {
       "key": {
+        "uuid": "765c8636_966452f4",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1193,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "161fca56_a8ddc35f",
+      "range": {
+        "startLine": 1193,
+        "startChar": 0,
+        "endLine": 1193,
+        "endChar": 125
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d63612de_c101ec48",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -146,6 +284,30 @@
       "writtenOn": "2015-10-30T18:04:09Z",
       "side": 1,
       "message": "The host machine readelf and nm doesn\u0027t work on Mac with those flags.\nProbably we should use the prebuilt toolchain tools, such as prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-readelf",
+      "range": {
+        "startLine": 1523,
+        "startChar": 2,
+        "endLine": 1523,
+        "endChar": 9
+      },
+      "revId": "54ec7dd6a56fa696e43bd2d37109d1c842d2c23d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96401a44_9f645ff4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1523,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-02T10:30:54Z",
+      "side": 1,
+      "message": "Ah yes. Sorry this patch was incomplete. I added XXX_GEN_TOC.",
+      "parentUuid": "d63612de_c101ec48",
       "range": {
         "startLine": 1523,
         "startChar": 2,
