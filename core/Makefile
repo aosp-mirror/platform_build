@@ -1972,9 +1972,11 @@ ifneq ($(dont_bother),true)
 include $(sort $(wildcard $(BUILD_SYSTEM)/tasks/*.mk))
 -include $(sort $(wildcard vendor/*/build/tasks/*.mk))
 -include $(sort $(wildcard device/*/build/tasks/*.mk))
+-include $(sort $(wildcard product/*/build/tasks/*.mk))
 # Also the project-specific tasks
 -include $(sort $(wildcard vendor/*/*/build/tasks/*.mk))
 -include $(sort $(wildcard device/*/*/build/tasks/*.mk))
+-include $(sort $(wildcard product/*/*/build/tasks/*.mk))
 endif
 
 include $(BUILD_SYSTEM)/product-graph.mk
