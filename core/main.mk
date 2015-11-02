@@ -80,7 +80,8 @@ dont_bother_goals := clean clobber dataclean installclean \
     vendorimage-nodeps \
     ramdisk-nodeps \
     bootimage-nodeps \
-    recoveryimage-nodeps
+    recoveryimage-nodeps \
+    product-graph dump-products
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
