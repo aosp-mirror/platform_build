@@ -22,6 +22,30 @@
       "revId": "974a352686144ff17f861bd0a87c0cdb648b46de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "765c8636_f0327132",
+        "filename": "tools/ziptime/ZipFile.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-11-02T23:07:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36204e91_f73153e7",
+      "range": {
+        "startLine": 72,
+        "startChar": 18,
+        "endLine": 72,
+        "endChar": 32
+      },
+      "revId": "974a352686144ff17f861bd0a87c0cdb648b46de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
