@@ -120,9 +120,13 @@ ninja_wrapper: $(KATI_BUILD_NINJA) $(MAKEPARALLEL)
 	@echo Starting build with ninja
 	+$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(NINJA_MAKEPARALLEL) $(KATI_NINJA_SH) $(filter-out dist,$(ANDROID_TARGETS)) -C $(TOP) $(NINJA_ARGS)
 
+KATI_FIND_EMULATOR := --use_find_emulator
+ifeq ($(KATI_EMULATE_FIND),false)
+  KATI_FIND_EMULATOR :=
+endif
 $(KATI_BUILD_NINJA): $(KATI) $(MAKEPARALLEL) FORCE
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
-	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo --use_find_emulator -f build/core/main.mk $(KATI_TARGETS) --gen_all_targets BUILDING_WITH_NINJA=true
+	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo $(KATI_FIND_EMULATOR) -f build/core/main.mk $(KATI_TARGETS) --gen_all_targets BUILDING_WITH_NINJA=true
 
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
