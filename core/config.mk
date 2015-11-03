@@ -539,6 +539,8 @@ YACC_HEADER_SUFFIX:= .hpp
 
 COLUMN:= column
 
+# We may not have the right JAVA_HOME/PATH set up yet when this is run from envsetup.sh.
+ifneq ($(CALLED_FROM_SETUP),true)
 HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
 
 ifneq ($(HOST_JDK_TOOLS_JAR),)
@@ -552,6 +554,7 @@ HOST_JDK_IS_64BIT_VERSION :=
 ifneq ($(filter 64-Bit, $(shell java -version 2>&1)),)
 HOST_JDK_IS_64BIT_VERSION := true
 endif
+endif  # CALLED_FROM_SETUP not true
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
