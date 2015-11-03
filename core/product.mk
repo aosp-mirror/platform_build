@@ -30,6 +30,7 @@
 define _find-android-products-files
 $(sort $(shell test -d device && find device -maxdepth 6 -name AndroidProducts.mk)) \
   $(sort $(shell test -d vendor && find vendor -maxdepth 6 -name AndroidProducts.mk)) \
+  $(sort $(shell test -d product && find product -maxdepth 6 -name AndroidProducts.mk)) \
   $(SRC_TARGET_DIR)/product/AndroidProducts.mk
 endef
 
