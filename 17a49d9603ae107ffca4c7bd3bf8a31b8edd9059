@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6195673_fc7938d8",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-03T03:23:36Z",
+      "side": 1,
+      "message": "Do we still need this? I thought I have fixed the issue and the new version of kati in build/kati.\n\nhttps://github.com/google/kati/issues/30",
+      "revId": "17a49d9603ae107ffca4c7bd3bf8a31b8edd9059",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
