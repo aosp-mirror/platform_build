@@ -2094,13 +2094,13 @@ $(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -qr $(JNI_COMPRESS_FLAGS) $(notdir $@) lib)
+$(hide) (cd $(dir $@) && zip -qrX $(JNI_COMPRESS_FLAGS) $(notdir $@) lib)
 $(hide) rm -rf $(dir $@)lib
 endef
 
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) zip -qj $@ $(dir $(PRIVATE_DEX_FILE))classes*.dex
+$(hide) zip -qjX $@ $(dir $(PRIVATE_DEX_FILE))classes*.dex
 endef
 
 # Add java resources added by the current module.
@@ -2147,6 +2147,12 @@ $(hide) $(ZIPALIGN) \
 $(hide) mv $@.aligned $@
 endef
 
+# Remove dynamic timestamps from packages
+#
+define remove-timestamps-from-package
+$(hide) $(ZIPTIME) $@
+endef
+
 # Uncompress shared libraries embedded in an apk.
 #
 define uncompress-shared-libs
@@ -2154,7 +2160,7 @@ $(hide) if unzip -l $@ $(PRIVATE_EMBEDDED_JNI_LIBS) >/dev/null ; then \
   rm -rf $(dir $@)uncompressedlibs && mkdir $(dir $@)uncompressedlibs; \
   unzip $@ $(PRIVATE_EMBEDDED_JNI_LIBS) -d $(dir $@)uncompressedlibs && \
   zip -d $@ 'lib/*.so' && \
-  ( cd $(dir $@)uncompressedlibs && zip -D -r -0 ../$(notdir $@) lib ) && \
+  ( cd $(dir $@)uncompressedlibs && zip -D -r -X -0 ../$(notdir $@) lib ) && \
   rm -rf $(dir $@)uncompressedlibs; \
   fi
 endef
