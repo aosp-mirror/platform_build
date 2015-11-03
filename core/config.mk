@@ -530,6 +530,7 @@ ACP := $(BUILD_OUT_EXECUTABLES)/acp$(BUILD_EXECUTABLE_SUFFIX)
 # dx is java behind a shell script; no .exe necessary.
 DX := $(HOST_OUT_EXECUTABLES)/dx
 ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign$(HOST_EXECUTABLE_SUFFIX)
+ZIPTIME := $(HOST_OUT_EXECUTABLES)/ziptime$(HOST_EXECUTABLE_SUFFIX)
 
 # relocation packer
 RELOCATION_PACKER := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/relocation_packer/relocation_packer
