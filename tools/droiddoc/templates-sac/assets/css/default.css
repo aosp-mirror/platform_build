@@ -1511,7 +1511,7 @@ Header, Login, Nav-X, Search
 .devices a.selected {
     color: #F80;
 }
-.accessories a.selected {
+.security a.selected {
     color: #9C0;
 }
 .compatibility a.selected {
