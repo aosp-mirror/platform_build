@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "568ea242_17ed1ee7",
+        "filename": "tools/zipalign/ZipEntry.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-04T23:47:07Z",
+      "side": 1,
+      "message": "uint32_t?",
+      "range": {
+        "startLine": 199,
+        "startChar": 38,
+        "endLine": 199,
+        "endChar": 42
+      },
+      "revId": "e347177b3bf3afe6669b5f41218e5973c7ee40aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
