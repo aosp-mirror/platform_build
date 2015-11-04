@@ -237,12 +237,11 @@ ifeq ($(strip $(LOCAL_UNINSTALLABLE_MODULE)),)
 # Define a rule to create a zip of these docs.
 out_zip := $(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip
 $(out_zip): PRIVATE_DOCS_DIR := $(out_dir)
-$(out_zip): $(full_target) | $(ZIPTIME)
+$(out_zip): $(full_target)
 	@echo Package docs: $@
 	@rm -f $@
 	@mkdir -p $(dir $@)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_DOCS_DIR) && zip -rqX $$F * )
-	$(remove-timestamps-from-package)
 
 $(LOCAL_MODULE)-docs.zip : $(out_zip)
 
