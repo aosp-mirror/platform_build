@@ -47,7 +47,7 @@ endef
 my_package_zip := $(my_staging_dir)/$(my_package_name).zip
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
-$(my_package_zip) : $(my_built_modules) | $(ZIPTIME)
+$(my_package_zip) : $(my_built_modules)
 	@echo "Package $@"
 	@rm -rf $(dir $@) && mkdir -p $(dir $@)
 	$(call copy-tests-in-batch,$(wordlist 1,200,$(PRIVATE_COPY_PAIRS)))
@@ -60,4 +60,3 @@ $(my_package_zip) : $(my_built_modules) | $(ZIPTIME)
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
 	  cp -RfL $(f) $(dir $@);)
 	$(hide) cd $(dir $@) && zip -rqX $(notdir $@) *
-	$(remove-timestamps-from-package)
