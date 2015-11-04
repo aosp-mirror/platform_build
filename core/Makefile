@@ -1131,7 +1131,7 @@ stnod: systemtarball-nodeps
 ## Files under out dir will be rejected to prevent possible conflicts with other rules.
 PDK_PLATFORM_ZIP_PRODUCT_BINARIES := $(filter-out $(OUT_DIR)/%,$(PDK_PLATFORM_ZIP_PRODUCT_BINARIES))
 INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) | $(ZIPTIME)
+$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
 	$(hide) rm -f $@
 	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
@@ -1148,7 +1148,6 @@ endif
 ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
 	$(hide) zip -qryX $@ $(PDK_PLATFORM_ZIP_PRODUCT_BINARIES)
 endif
-	$(remove-timestamps-from-package)
 
 .PHONY: platform
 platform: $(INSTALLED_PLATFORM_ZIP)
@@ -1407,7 +1406,7 @@ otatools: $(OTATOOLS)
 BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
 $(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
 
-$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP) $(ZIPTIME)
+$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	@echo "Package OTA tools: $@"
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools $(zip_root)/system/extras/verity
@@ -1419,7 +1418,6 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP) $(ZIPTIME)
 	$(hide) (cd $(zip_root) && zip -qryX $(abspath $@) *)
 	$(hide) zip -qryX $(abspath $@) build/target/product/security/
 	$(hide) find device vendor -name \*.pk8 -o -name \*.x509.pem -o -name oem.prop | xargs zip -qryX $(abspath $@)>/dev/null || true
-	$(remove-timestamps-from-package)
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
@@ -1496,7 +1494,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(SELINUX_FC) \
 		$(APKCERTS_FILE) \
 		$(HOST_OUT_EXECUTABLES)/fs_config \
-		| $(ACP) $(ZIPTIME)
+		| $(ACP)
 	@echo "Package target files: $@"
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
@@ -1657,7 +1655,6 @@ endif
 	$(hide) (cd $(zip_root) && zip -qX ../$(notdir $@) META/*filesystem_config.txt)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    ./build/tools/releasetools/add_img_to_target_files -v -p $(HOST_OUT) $@
-	$(remove-timestamps-from-package)
 
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
@@ -1731,12 +1728,11 @@ SYMBOLS_ZIP := $(PRODUCT_OUT)/$(name).zip
 ifndef TARGET_BUILD_APPS
 $(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) $(INSTALLED_BOOTIMAGE_TARGET)
 endif
-$(SYMBOLS_ZIP): | $(ZIPTIME)
+$(SYMBOLS_ZIP):
 	@echo "Package symbols: $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@) $(TARGET_OUT_UNSTRIPPED)
 	$(hide) zip -qrX $@ $(TARGET_OUT_UNSTRIPPED)
-	$(remove-timestamps-from-package)
 
 # -----------------------------------------------------------------
 # A zip of the Android Apps. Not keeping full path so that we don't
@@ -1749,7 +1745,7 @@ endif
 name := $(name)-apps-$(FILE_NAME_TAG)
 
 APPS_ZIP := $(PRODUCT_OUT)/$(name).zip
-$(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE) | $(ZIPTIME)
+$(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
 	@echo "Package apps: $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@)
@@ -1760,7 +1756,6 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE) | $(ZIPTIME)
 	else \
 		zip -qjX $@ $$apps_to_zip; \
 	fi
-	$(remove-timestamps-from-package)
 
 #------------------------------------------------------------------
 # A zip of emma code coverage meta files. Generated for fully emma
@@ -1769,12 +1764,10 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE) | $(ZIPTIME)
 ifeq (true,$(EMMA_INSTRUMENT))
 EMMA_META_ZIP := $(PRODUCT_OUT)/emma_meta.zip
 # the dependency will be set up later in build/core/main.mk.
-$(EMMA_META_ZIP): | $(ZIPTIME)
 $(EMMA_META_ZIP) :
 	@echo "Collecting Emma coverage meta files."
 	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "coverage.em" | \
 		zip -@ -qX $@
-	$(remove-timestamps-from-package)
 
 endif # EMMA_INSTRUMENT=true
 
@@ -1785,7 +1778,6 @@ endif # EMMA_INSTRUMENT=true
 ifdef TARGET_BUILD_APPS
 PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-$(FILE_NAME_TAG).zip
 # the dependency will be set up later in build/core/main.mk.
-$(PROGUARD_DICT_ZIP): | $(ZIPTIME)
 $(PROGUARD_DICT_ZIP) :
 	@echo "Packaging Proguard obfuscation dictionary files."
 	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary`; \
@@ -1798,7 +1790,6 @@ $(PROGUARD_DICT_ZIP) :
 		  zip -qd $@ zipdummy; \
 		  rm $(dir $@)/zipdummy; \
 		fi
-	$(remove-timestamps-from-package)
 
 endif # TARGET_BUILD_APPS
 
@@ -1821,10 +1812,9 @@ name := $(TARGET_PRODUCT)-emulator-$(FILE_NAME_TAG)
 
 INTERNAL_EMULATOR_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
-$(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES) | $(ZIPTIME)
+$(INTERNAL_EMULATOR_PACKAGE_TARGET): $(INTERNAL_EMULATOR_PACKAGE_FILES)
 	@echo "Package: $@"
 	$(hide) zip -qjX $@ $(INTERNAL_EMULATOR_PACKAGE_FILES)
-	$(remove-timestamps-from-package)
 
 endif
 # -----------------------------------------------------------------
@@ -1924,7 +1914,7 @@ $(INTERNAL_SDK_TARGET): PRIVATE_INPUT_FILES := $(sdk_atree_files)
 #
 #SDK_GNU_ERROR := true
 
-$(INTERNAL_SDK_TARGET): $(deps) | $(ZIPTIME)
+$(INTERNAL_SDK_TARGET): $(deps)
 	@echo "Package SDK: $@"
 	$(hide) rm -rf $(PRIVATE_DIR) $@
 	$(hide) for f in $(target_gnu_MODULES); do \
@@ -1961,7 +1951,6 @@ $(INTERNAL_SDK_TARGET): $(deps) | $(ZIPTIME)
 		chmod -R ug+rwX $(PRIVATE_DIR) && \
 		cd $(dir $@) && zip -rqX $(notdir $@) $(PRIVATE_NAME) \
 	) || ( rm -rf $(PRIVATE_DIR) $@ && exit 44 )
-	$(remove-timestamps-from-package)
 
 
 # Is a Windows SDK requested? If so, we need some definitions from here
