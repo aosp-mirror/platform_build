@@ -1871,9 +1871,9 @@ function loadSearchResults() {
   devicesSearcher.setUserDefinedLabel("Devices");
   devicesSearcher.setSiteRestriction("http://source.android.com/devices/");
 
-  accessoriesSearcher = new google.search.WebSearch();
-  accessoriesSearcher.setUserDefinedLabel("Accessories");
-  accessoriesSearcher.setSiteRestriction("http://source.android.com/accessories/");
+  securitySearcher = new google.search.WebSearch();
+  securitySearcher.setUserDefinedLabel("Security");
+  securitySearcher.setSiteRestriction("http://source.android.com/security/");
 
   compatibilitySearcher = new google.search.WebSearch();
   compatibilitySearcher.setUserDefinedLabel("Compatibility");
@@ -1883,7 +1883,7 @@ function loadSearchResults() {
   searchControl.addSearcher(sacSiteSearcher, searchOptions);
   searchControl.addSearcher(sourceSearcher, searchOptions);
   searchControl.addSearcher(devicesSearcher, searchOptions);
-  searchControl.addSearcher(accessoriesSearcher, searchOptions);
+  searchControl.addSearcher(securitySearcher, searchOptions);
   searchControl.addSearcher(compatibilitySearcher, searchOptions);
 
 
