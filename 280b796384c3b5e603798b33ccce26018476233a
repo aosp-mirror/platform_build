@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6a3167e_835bded2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-04T00:57:18Z",
+      "side": 1,
+      "message": "not necessary.",
+      "range": {
+        "startLine": 228,
+        "startChar": 0,
+        "endLine": 230,
+        "endChar": 5
+      },
+      "revId": "280b796384c3b5e603798b33ccce26018476233a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5625c29e_9327d35e",
+        "filename": "core/combo/HOST_CROSS_windows-x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-04T00:57:18Z",
+      "side": 1,
+      "message": "I think we can remove the use of this by using makefile arguments. Probably Makefile arguments are more readable in this case.\nAlso it\u0027s better to split the subcommands, so that if the objdump command fails, it fails the build.",
+      "range": {
+        "startLine": 45,
+        "startChar": 30,
+        "endLine": 45,
+        "endChar": 37
+      },
+      "revId": "280b796384c3b5e603798b33ccce26018476233a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6bb729e_aa06ef9d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1530,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-04T00:57:18Z",
+      "side": 1,
+      "message": "We can make it a makefile parse-time decision (\"if..else..\" statement) instead of execute-time decision ($(if) call).",
+      "range": {
+        "startLine": 1530,
+        "startChar": 1,
+        "endLine": 1530,
+        "endChar": 28
+      },
+      "revId": "280b796384c3b5e603798b33ccce26018476233a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
