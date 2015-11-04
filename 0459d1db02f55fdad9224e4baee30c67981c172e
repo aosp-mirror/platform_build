@@ -22,6 +22,30 @@
       "revId": "0459d1db02f55fdad9224e4baee30c67981c172e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76a726c0_8f849533",
+        "filename": "tools/ziptime/ZipEntry.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-11-04T19:58:03Z",
+      "side": 1,
+      "message": "agree. i was digging this because i was concerned about zip64 issue, where OTA scripts would also fail on that. please feel free to replace the CL with better fixes for ziptime/zipalign tools.",
+      "parentUuid": "76a726c0_ef58c1d7",
+      "range": {
+        "startLine": 59,
+        "startChar": 18,
+        "endLine": 59,
+        "endChar": 31
+      },
+      "revId": "0459d1db02f55fdad9224e4baee30c67981c172e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
