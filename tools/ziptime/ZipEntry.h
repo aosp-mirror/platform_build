@@ -23,6 +23,7 @@
 #define __LIBS_ZIPENTRY_H
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 
 typedef int status_t;
@@ -49,15 +50,15 @@ public:
      * Some basic functions for raw data manipulation.  "LE" means
      * Little Endian.
      */
-    static inline unsigned short getShortLE(const unsigned char* buf) {
+    static inline uint16_t getShortLE(const uint8_t* buf) {
         return buf[0] | (buf[1] << 8);
     }
-    static inline unsigned long getLongLE(const unsigned char* buf) {
+    static inline uint32_t getLongLE(const uint8_t* buf) {
         return buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
     }
-    static inline void putShortLE(unsigned char* buf, short val) {
-        buf[0] = (unsigned char) val;
-        buf[1] = (unsigned char) (val >> 8);
+    static inline void putShortLE(uint8_t* buf, uint16_t val) {
+        buf[0] = (uint8_t) val;
+        buf[1] = (uint8_t) (val >> 8);
     }
 
 protected:
@@ -99,7 +100,7 @@ private:
 
         status_t rewrite(FILE* fp);
 
-        unsigned long   mLocalHeaderRelOffset;
+        uint32_t mLocalHeaderRelOffset;
 
         enum {
             kSignature      = 0x02014b50,
