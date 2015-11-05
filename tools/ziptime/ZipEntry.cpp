@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <inttypes.h>
 
 using namespace android;
 
@@ -55,7 +56,7 @@ status_t ZipEntry::initAndRewriteFromCDE(FILE* fp)
     /* using the info in the CDE, go load up the LFH */
     posn = ftell(fp);
     if (fseek(fp, mCDE.mLocalHeaderRelOffset, SEEK_SET) != 0) {
-        LOG("local header seek failed (%ld)\n",
+        LOG("local header seek failed (%" PRIu32 ")\n",
             mCDE.mLocalHeaderRelOffset);
         return -1;
     }
@@ -86,7 +87,7 @@ status_t ZipEntry::initAndRewriteFromCDE(FILE* fp)
 status_t ZipEntry::LocalFileHeader::rewrite(FILE* fp)
 {
     status_t result = 0;
-    unsigned char buf[kLFHLen];
+    uint8_t buf[kLFHLen];
 
     if (fread(buf, 1, kLFHLen, fp) != kLFHLen)
         return -1;
@@ -124,8 +125,8 @@ status_t ZipEntry::LocalFileHeader::rewrite(FILE* fp)
 status_t ZipEntry::CentralDirEntry::rewrite(FILE* fp)
 {
     status_t result = 0;
-    unsigned char buf[kCDELen];
-    unsigned short fileNameLength, extraFieldLength, fileCommentLength;
+    uint8_t buf[kCDELen];
+    uint16_t fileNameLength, extraFieldLength, fileCommentLength;
 
     if (fread(buf, 1, kCDELen, fp) != kCDELen)
         return -1;

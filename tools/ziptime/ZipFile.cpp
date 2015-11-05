@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <assert.h>
+#include <inttypes.h>
 
 using namespace android;
 
@@ -72,7 +73,7 @@ status_t ZipFile::rewrite(const char* zipFileName)
 status_t ZipFile::rewriteCentralDir(void)
 {
     status_t result = 0;
-    unsigned char* buf = NULL;
+    uint8_t* buf = NULL;
     off_t fileLength, seekStart;
     long readAmount;
     int i;
@@ -88,7 +89,7 @@ status_t ZipFile::rewriteCentralDir(void)
         goto bail;
     }
 
-    buf = new unsigned char[EndOfCentralDir::kMaxEOCDSearch];
+    buf = new uint8_t[EndOfCentralDir::kMaxEOCDSearch];
     if (buf == NULL) {
         LOG("Failure allocating %d bytes for EOCD search",
              EndOfCentralDir::kMaxEOCDSearch);
@@ -152,7 +153,7 @@ status_t ZipFile::rewriteCentralDir(void)
      * we're hoping to preserve.
      */
     if (fseek(mZipFp, mEOCD.mCentralDirOffset, SEEK_SET) != 0) {
-        LOG("Failure seeking to central dir offset %ld\n",
+        LOG("Failure seeking to central dir offset %" PRIu32 "\n",
              mEOCD.mCentralDirOffset);
         result = -1;
         goto bail;
@@ -179,7 +180,7 @@ status_t ZipFile::rewriteCentralDir(void)
     /*
      * If all went well, we should now be back at the EOCD.
      */
-    unsigned char checkBuf[4];
+    uint8_t checkBuf[4];
     if (fread(checkBuf, 1, 4, mZipFp) != 4) {
         LOG("EOCD check read failed\n");
         result = -1;
@@ -208,9 +209,9 @@ bail:
  * "buf" should be positioned at the EOCD signature, and should contain
  * the entire EOCD area including the comment.
  */
-status_t ZipFile::EndOfCentralDir::readBuf(const unsigned char* buf, int len)
+status_t ZipFile::EndOfCentralDir::readBuf(const uint8_t* buf, int len)
 {
-    unsigned short diskNumber, diskWithCentralDir, numEntries;
+    uint16_t diskNumber, diskWithCentralDir, numEntries;
 
     if (len < kEOCDLen) {
         /* looks like ZIP file got truncated */
