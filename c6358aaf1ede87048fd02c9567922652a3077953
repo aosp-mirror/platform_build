@@ -94,6 +94,30 @@
       "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d683721b_de156527",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-11-05T20:30:39Z",
+      "side": 1,
+      "message": "Sure, I can append it instead to the misc_info.txt file.  Should I still keep it ifdef\u0027d to the AB_OTA_UPDATER?  Or would it be ok to just add it for all builds?\n\nRegarding removing the /SYSTEM folder, thats just something we unofficially talked about, we don\u0027t yet even have a bug open for looking into that.  If we do come back to that, we\u0027ll keep the signing and release-keys in mind and discuss it properly before taking any action.  At least for now, though, adding the value to misc_info.txt can allow our server to unify the metadata lookup to only the META folder.",
+      "parentUuid": "b69d1e72_8515521b",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1634,
+        "endChar": 73
+      },
+      "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
