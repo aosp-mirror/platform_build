@@ -40,6 +40,13 @@ $(combo_var_prefix)GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64
 $(combo_var_prefix)CC := $(TOOLS_PREFIX)gcc
 $(combo_var_prefix)CXX := $(TOOLS_PREFIX)g++
 $(combo_var_prefix)AR := $(TOOLS_PREFIX)ar
+$(combo_var_prefix)NM := $(TOOLS_PREFIX)nm
+$(combo_var_prefix)OBJDUMP := $(TOOLS_PREFIX)objdump
+
+define $(combo_var_prefix)transform-shared-lib-to-toc
+$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OBJDUMP) -x $(1) | grep "^Name" | cut -f3 -d" " > $(2)
+$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)NM) -g -f p $(1) | cut -f1-2 -d" " >> $(2)
+endef
 
 $(combo_var_prefix)GLOBAL_LDFLAGS += \
     --enable-stdcall-fixup

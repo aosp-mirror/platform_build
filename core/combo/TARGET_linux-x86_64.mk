@@ -56,6 +56,11 @@ TARGET_OBJCOPY := $(TARGET_TOOLS_PREFIX)objcopy
 TARGET_LD := $(TARGET_TOOLS_PREFIX)ld
 TARGET_READELF := $(TARGET_TOOLS_PREFIX)readelf
 TARGET_STRIP := $(TARGET_TOOLS_PREFIX)strip
+TARGET_NM := $(TARGET_TOOLS_PREFIX)nm
+
+define $(combo_var_prefix)transform-shared-lib-to-toc
+$(call _gen_toc_command_for_elf,$(1),$(2))
+endef
 
 ifneq ($(wildcard $(TARGET_CC)),)
 TARGET_LIBGCC := \
