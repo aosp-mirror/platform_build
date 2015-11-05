@@ -415,7 +415,6 @@ ifndef is_sdk_build
   # Don't verify or compile apps on eng builds to speed startup.
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=verify-at-runtime
 endif
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.usejit=true
 endif
 
 ## sdk ##
