@@ -22,6 +22,30 @@
       "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "568ea242_28d9d7a8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-11-05T18:48:54Z",
+      "side": 1,
+      "message": "Yea, this was called out in the bug.  However it was suggested that redundantly adding it to META would be better for us.  The only things the AB updater is dependent on is the META and IMAGES folders of the zip, so in the future we may remove the SYSTEM folder in zip packages that we want developers uploading to the server to reduce storage and bandwidth.  We\u0027d also like to go with the convention that any fields the server may need for processing the zip package would be in the META folder.",
+      "parentUuid": "36892e3b_01ff9a83",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1634,
+        "endChar": 73
+      },
+      "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
