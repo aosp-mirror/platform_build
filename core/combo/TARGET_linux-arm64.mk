@@ -110,6 +110,8 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-maarch64linux \
 			-Wl,--hash-style=gnu \
 			-Wl,--fix-cortex-a53-843419 \
+			-fuse-ld=gold \
+			-Wl,--icf=safe \
 			$(arch_variant_ldflags)
 
 # Disable transitive dependency library symbol resolving.
