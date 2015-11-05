@@ -46,6 +46,30 @@
       "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d69a9277_6c7db796",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-05T19:18:57Z",
+      "side": 1,
+      "message": "Then can we put it in misc_info.txt?\nOr just make a copy of build.prop in the META folder? I don\u0027t see why the build variant is special and needs its own file.\nI don\u0027t have strong opinion. If it\u0027s ok with Tao, it\u0027s fine with me.",
+      "parentUuid": "568ea242_28d9d7a8",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1634,
+        "endChar": 73
+      },
+      "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
