@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "36892e3b_01ff9a83",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-05T17:32:06Z",
+      "side": 1,
+      "message": "You can get these information from $(zip_root)/SYSTEM/build.prop.",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1634,
+        "endChar": 73
+      },
+      "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
