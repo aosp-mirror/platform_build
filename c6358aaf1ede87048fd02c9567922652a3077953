@@ -118,6 +118,30 @@
       "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96a49abb_8ae63fd6",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-11-05T21:55:06Z",
+      "side": 1,
+      "message": "Let\u0027s still get it ifdef\u0027d to avoid unintended side effects to the current script.",
+      "parentUuid": "d683721b_de156527",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1634,
+        "endChar": 73
+      },
+      "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
