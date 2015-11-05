@@ -288,7 +288,7 @@ TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
 
 # Commands to generate .toc file common to ELF .so files.
 define _gen_toc_command_for_elf
-$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)READELF) -d $(1) | grep SONAME > $(2)
+$(hide) ($($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)READELF) -d $(1) | grep SONAME || echo "No SONAME for $1") > $(2)
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)NM) -gD -f p $(1) | cut -f1-2 -d" " >> $(2)
 endef
 
