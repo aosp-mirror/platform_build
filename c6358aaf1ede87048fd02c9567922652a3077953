@@ -70,6 +70,30 @@
       "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b69d1e72_8515521b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1634,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-11-05T19:43:33Z",
+      "side": 1,
+      "message": "\u003e \"so in the future we may remove the SYSTEM folder in zip packages that we want developers uploading to the server to reduce storage and bandwidth.\"\n\nThis may not be true for devices other than Brillo. We still need files under /SYSTEM or /BOOT when signing apks with release-keys.\n\nI don\u0027t know how the server processes the TF file. It feels like we probably don\u0027t need individual files for each property? Shall we make them (or even the ab_partitions above) into one meta file? (It\u0027s fine to get another file other than META/misc_info.txt, because Brillo can then kill this misc_info.txt when removing SYSTEM folders.)",
+      "parentUuid": "568ea242_28d9d7a8",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1634,
+        "endChar": 73
+      },
+      "revId": "c6358aaf1ede87048fd02c9567922652a3077953",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
