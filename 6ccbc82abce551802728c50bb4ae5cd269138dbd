@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d69a9277_e82d0c6b",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-06T22:38:57Z",
+      "side": 1,
+      "message": "No error message even if it really fails?\nProbably you need to add some flag like \"-q\" to the tool.",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 100,
+        "endChar": 54
+      },
+      "revId": "6ccbc82abce551802728c50bb4ae5cd269138dbd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
