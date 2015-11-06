@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "96a49abb_add6ba42",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1067,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-06T21:22:37Z",
+      "side": 0,
+      "message": "I am afraid some partners/vendors are already relying on this to override bionic header files. I\u0027ll forward you an email asking about this from the auto team.",
+      "range": {
+        "startLine": 1066,
+        "startChar": 13,
+        "endLine": 1067,
+        "endChar": 46
+      },
+      "revId": "53a6fd649817e5d9909d9aaca0369c19840f8613",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
