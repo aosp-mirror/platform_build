@@ -176,7 +176,7 @@ endif # LOCAL_JACK_ENABLED
 ifeq (true,$(EMMA_INSTRUMENT))
 ifndef LOCAL_EMMA_INSTRUMENT
 # No emma for test apks.
-ifeq (,$(filer tests,$(LOCAL_MODULE_TAGS))$(LOCAL_INSTRUMENTATION_FOR))
+ifeq (,$(LOCAL_INSTRUMENTATION_FOR))
 LOCAL_EMMA_INSTRUMENT := true
 endif # No test apk
 endif # LOCAL_EMMA_INSTRUMENT is not set
