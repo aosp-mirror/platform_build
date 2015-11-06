@@ -194,18 +194,18 @@ private:
             delete[] mComment;
         }
 
-        status_t readBuf(const unsigned char* buf, int len);
+        status_t readBuf(const uint8_t* buf, int len);
         status_t write(FILE* fp);
 
-        //unsigned long   mSignature;
-        unsigned short  mDiskNumber;
-        unsigned short  mDiskWithCentralDir;
-        unsigned short  mNumEntries;
-        unsigned short  mTotalNumEntries;
-        unsigned long   mCentralDirSize;
-        unsigned long   mCentralDirOffset;      // offset from first disk
-        unsigned short  mCommentLen;
-        unsigned char*  mComment;
+        //uint32_t mSignature;
+        uint16_t mDiskNumber;
+        uint16_t mDiskWithCentralDir;
+        uint16_t mNumEntries;
+        uint16_t mTotalNumEntries;
+        uint32_t mCentralDirSize;
+        uint32_t mCentralDirOffset;      // offset from first disk
+        uint16_t mCommentLen;
+        uint8_t* mComment;
 
         enum {
             kSignature      = 0x06054b50,
@@ -235,18 +235,18 @@ private:
         ZipEntry** ppEntry);
 
     /* copy all of "srcFp" into "dstFp" */
-    status_t copyFpToFp(FILE* dstFp, FILE* srcFp, unsigned long* pCRC32);
+    status_t copyFpToFp(FILE* dstFp, FILE* srcFp, uint32_t* pCRC32);
     /* copy all of "data" into "dstFp" */
     status_t copyDataToFp(FILE* dstFp,
-        const void* data, size_t size, unsigned long* pCRC32);
+        const void* data, size_t size, uint32_t* pCRC32);
     /* copy some of "srcFp" into "dstFp" */
     status_t copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
-        unsigned long* pCRC32);
+        uint32_t* pCRC32);
     /* like memmove(), but on parts of a single file */
     status_t filemove(FILE* fp, off_t dest, off_t src, size_t n);
     /* compress all of "srcFp" into "dstFp", using Deflate */
     status_t compressFpToFp(FILE* dstFp, FILE* srcFp,
-        const void* data, size_t size, unsigned long* pCRC32);
+        const void* data, size_t size, uint32_t* pCRC32);
 
     /* get modification date from a file descriptor */
     time_t getModTime(int fd);

@@ -51,10 +51,10 @@ private:
     public:
         EndOfCentralDir(void) : mTotalNumEntries(0), mCentralDirOffset(0) {}
 
-        status_t readBuf(const unsigned char* buf, int len);
+        status_t readBuf(const uint8_t* buf, int len);
 
-        unsigned short  mTotalNumEntries;
-        unsigned long   mCentralDirOffset;      // offset from first disk
+        uint16_t mTotalNumEntries;
+        uint32_t mCentralDirOffset;      // offset from first disk
 
         enum {
             kSignature      = 0x06054b50,
