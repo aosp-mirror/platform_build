@@ -145,9 +145,11 @@ ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
 my_bootclasspath := $(call java-lib-files,android_stubs_current)
 else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
 my_bootclasspath := $(call java-lib-files,android_system_stubs_current)
+else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
+my_bootclasspath := $(call java-lib-files,android_test_stubs_current)
 else
 my_bootclasspath := $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION))
-endif # current or system_current
+endif # current, system_current, or test_current
 endif # LOCAL_SDK_VERSION
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
@@ -284,9 +286,11 @@ ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
 my_bootclasspath := $(call jack-lib-files,android_stubs_current)
 else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
 my_bootclasspath := $(call jack-lib-files,android_system_stubs_current)
+else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
+my_bootclasspath := $(call jack-lib-files,android_test_stubs_current)
 else
 my_bootclasspath :=$(call jack-lib-files,sdk_v$(LOCAL_SDK_VERSION))
-endif # current or system_current
+endif # current, system_current, or test_current
 endif # LOCAL_SDK_VERSION
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_bootclasspath)
 
