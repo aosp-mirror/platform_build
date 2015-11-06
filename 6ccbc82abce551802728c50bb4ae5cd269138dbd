@@ -22,6 +22,30 @@
       "revId": "6ccbc82abce551802728c50bb4ae5cd269138dbd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36892e3b_9904dea4",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1076778
+      },
+      "writtenOn": "2015-11-06T23:03:47Z",
+      "side": 1,
+      "message": "Hm, I\u0027ll have to take a look into the feasibliity of adding that next week.  The warnings that we see a lot are actually coming from a core breakpad library call that fprintf\u0027s directy to stderr, not from the dump_syms tool code.  So at a glance it didn\u0027t look like a trivial change to add a flag to dump_syms for these warnings.  And I uploaded this CL quickly as we have movers right now getting ready to move us to a different building, so I had to quickly upload this before shutting down my build machine for the weekend.",
+      "parentUuid": "d69a9277_e82d0c6b",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 100,
+        "endChar": 54
+      },
+      "revId": "6ccbc82abce551802728c50bb4ae5cd269138dbd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
