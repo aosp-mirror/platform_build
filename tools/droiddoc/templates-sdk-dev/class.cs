@@ -14,8 +14,6 @@
   <a name="top"></a>
 <?cs include:"header.cs" ?>
 
-<div class="col-12"  id="doc-col">
-
 <div id="api-info-block">
 
 <?cs # are there inherited members ?>
@@ -670,7 +668,6 @@ From <?cs var:cl.kind ?>
 </div> <!-- jd-content -->
 
 <?cs include:"footer.cs" ?>
-</div><!-- end doc-content -->
 
 <?cs include:"trailer.cs" ?>
 

@@ -75,6 +75,7 @@ else
   var toRoot = "<?cs var:toroot ?>";
   var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
+  var useUpdatedTemplates = <?cs if:useUpdatedTemplates ?>true<?cs else ?>false<?cs /if ?>;
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js?v=17" type="text/javascript"></script>
 

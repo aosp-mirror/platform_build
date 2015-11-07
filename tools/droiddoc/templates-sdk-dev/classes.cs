@@ -13,8 +13,6 @@
   <a name="top"></a>
 <?cs include:"header.cs" ?>
 
-<div class="col-12" id="doc-col">
-
 <div id="jd-header">
 <h1><?cs var:page.title ?></h1>
 </div>
@@ -46,7 +44,6 @@
 </div><!-- end jd-content -->
 
 <?cs include:"footer.cs" ?>
-</div><!-- end doc-content -->
 
 <?cs include:"trailer.cs" ?>
 

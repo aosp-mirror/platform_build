@@ -15,8 +15,6 @@
   <a name="top"></a>
 <?cs include:"header.cs" ?>
 
-<div class="col-12" id="doc-col">
-
 <div id="api-info-block">
 <div class="api-level">
   <?cs call:since_tags(package) ?>
@@ -58,7 +56,6 @@
 </div><!-- end jd-content -->
 
 <?cs include:"footer.cs" ?>
-</div><!-- doc-content -->
 
 <?cs include:"trailer.cs" ?>
 

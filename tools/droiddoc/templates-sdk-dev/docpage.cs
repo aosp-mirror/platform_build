@@ -25,27 +25,38 @@
       if:disttools ?> disttools<?cs /if ?><?cs
       if:stories ?> stories<?cs /if ?><?cs
       if:analyze ?> analyze<?cs /if ?><?cs
-    elif:(about||wear||tv||auto) ?>about<?cs
-    elif:design ?>design<?cs
+    elif:(design||vision||material||patterns||devices||designdownloads) ?> design<?cs
+      if:vision ?> vision<?cs /if ?><?cs
+      if:material ?> material<?cs /if ?><?cs
+      if:patterns ?> patterns<?cs /if ?><?cs
+      if:devices ?> devices<?cs /if ?><?cs
+      if:designdownloads ?> designdownloads<?cs /if ?><?cs
+    elif:(about||versions||wear||tv||auto) ?> about<?cs
+      if:versions ?> versions<?cs /if ?><?cs
+      if:wear ?> wear<?cs /if ?><?cs
+      if:tv ?> tv<?cs /if ?><?cs
+      if:auto ?> auto<?cs /if ?><?cs
     /if ?><?cs
     if:page.trainingcourse ?> trainingcourse<?cs /if ?><?cs
 /if ?>" itemscope itemtype="http://schema.org/Article"><?cs
 include:"header.cs" ?>
 
-<div <?cs
-  if:fullpage
-    ?>class="fullpage"<?cs
-  elif:(design||tools||about||sdk||googleplay||essentials||users||engage||monetize||disttools||stories) && !nonavpage
-    ?>class="col-13" id="doc-col"<?cs
-  elif:!nonavpage
-    ?>class="col-12" id="doc-col"<?cs /if ?> >
-
-<?cs if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs # header logic for docs that provide previous/next buttons ?>
-  <?cs if:header.hide ?>
+<?cs if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs
+# header logic for docs that provide previous/next buttons ?>
+  <?cs if:(header.hide||devsite) ?>
   <?cs else ?>
   <div class="content-header <?cs if:header.justLinks ?>just-links<?cs /if ?>">
       <?cs if:header.justLinks ?>&nbsp;
-      <?cs else ?><h1 itemprop="name"><?cs var:page.title ?></h1>
+      <?cs else ?>
+        <ul class="dac-header-crumbs">
+          <?cs # More <li> elements added here with javascript ?>
+        </ul>
+
+        <!-- Breadcrumb Setup -->
+        <script>$('.dac-nav-list').dacCurrentPage().dacCrumbs();</script>
+
+        <h1 itemprop="name"><?cs var:page.title ?>
+      </h1>
       <?cs /if ?>
     <?cs if:training ?>
       <div class="training-nav-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -75,7 +86,7 @@ include:"header.cs" ?>
             >Get started</a>
       </div>
     <?cs elif:!page.trainingcourse ?>
-      <div class="paging-links" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs # <div class="paging-linkss" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <a href="#" class="prev-page-link hide"
             zh-tw-lang="上一堂課"
             zh-cn-lang="上一课"
@@ -92,7 +103,7 @@ include:"header.cs" ?>
             ja-lang="次へ"
             es-lang="Siguiente"
             >Next</a>
-      </div>
+      </div> ?>
     <?cs /if ?><?cs # end if training ?>
   </div>
   <?cs /if ?><?cs # end if header.hide ?>
@@ -117,7 +128,7 @@ include:"header.cs" ?>
 </style>
   <?cs /if ?>
 
-  <?cs if:(!fullpage && !header.hide) ?>
+  <?cs if:(!fullpage && !header.hide && !devsite) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
         <?cs if:page.landing.image ?><?cs # use two-column layout only if there is an image ?>
@@ -138,6 +149,13 @@ include:"header.cs" ?>
       </div>
     <?cs else ?>
       <?cs if:tab1 ?><div id="title-tabs-wrapper"><?cs /if ?>
+        <ul class="dac-header-crumbs">
+          <?cs # More <li> elements added here with javascript ?>
+        </ul>
+
+        <!-- Breadcrumb Setup -->
+        <p><script>$('.dac-nav-list').dacCurrentPage().dacCrumbs();</script></p>
+
         <h1 itemprop="name" <?cs if:tab1 ?>class="with-title-tabs"<?cs /if ?>><?cs var:page.title ?></h1><?cs
           if:tab1 ?><ul id="title-tabs">
               <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
@@ -154,17 +172,47 @@ include:"header.cs" ?>
 
   <?cs # THIS IS THE MAIN DOC CONTENT ?>
   <div id="jd-content">
-
-
     <div class="jd-descr" itemprop="articleBody">
+    <?cs if:(!fullpage && !header.hide && devsite) ?>
+      <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
+        <div class="landing-banner">
+          <?cs if:page.landing.image ?><?cs # use two-column layout only if there is an image ?>
+          <div class="cols">
+            <div class="col-6">
+              <img src="<?cs var:toroot ?><?cs var:page.landing.image ?>" alt="" />
+            </div>
+            <div class="col-6">
+          <?cs /if ?>
+            <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
+            <p itemprop="description"><?cs var:page.landing.intro ?></p>
+
+            <p><a class="next-page-link topic-start-link"></a></p>
+          <?cs if:page.landing.image ?>
+            </div>
+          </div>
+          <?cs /if ?>
+        </div>
+      <?cs /if ?>
+    <?cs /if ?>
+
     <?cs call:tag_list(root.descr) ?>
     </div>
 
-    <?cs if:!fullscreen && (design||training||walkthru) && !page.landing && !page.trainingcourse && !footer.hide ?>
+    <?cs if:!fullscreen && (design||training||walkthru) && !page.landing && !page.trainingcourse
+      && !footer.hide && !devsite?>
       <div class="content-footer <?cs
                     if:fullpage ?>wrap<?cs /if ?>"
                     itemscope itemtype="http://schema.org/SiteNavigationElement">
           <div class="paging-links">
+            <a href="#" class="prev-page-link hide"
+              zh-tw-lang="上一堂課"
+              zh-cn-lang="上一课"
+              ru-lang="Предыдущий"
+              ko-lang="이전"
+              ja-lang="前へ"
+              es-lang="Anterior"
+              ><span class="page-link-caption">Previous</span>
+            </a>
             <a href="#" class="next-page-link hide"
                 zh-tw-lang="下一堂課"
                 zh-cn-lang="下一课"
@@ -172,7 +220,8 @@ include:"header.cs" ?>
                 ko-lang="다음"
                 ja-lang="次へ"
                 es-lang="Siguiente"
-                >Next</a>
+                ><span class="page-link-caption">Next</span>
+            </a>
             <a href="#" class="start-class-link hide"
                 zh-tw-lang="開始上課"
                 zh-cn-lang="开始"
@@ -181,22 +230,18 @@ include:"header.cs" ?>
                 ja-lang="開始する"
                 es-lang="Empezar"
                 >Get started</a>
-            <a href="#" class="next-class-link hide">Next class</a>
+            <a href="#" class="next-class-link hide">
+              <span class="page-link-caption">Next class</span>
+            </a>
           </div>
       </div>
     <?cs /if ?>
 
   </div> <!-- end jd-content -->
 
+<?cs if:!devsite ?>
 <?cs include:"footer.cs" ?>
-</div><!-- end doc-content -->
-
 <?cs include:"trailer.cs" ?>
-  <script src="https://developer.android.com/ytblogger_lists_unified.js?v=17" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_lists_unified.js?v=17" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_extras.js?v=17" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_collections.js?v=17" type="text/javascript"></script>
-  <script src="<?cs var:toroot ?>jd_tag_helpers.js?v=17" type="text/javascript"></script>
-
+<?cs /if ?>
 </body>
 </html>

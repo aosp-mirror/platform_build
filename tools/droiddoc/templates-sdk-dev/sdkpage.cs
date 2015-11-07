@@ -11,18 +11,15 @@
 <?cs else ?>
   <?cs include:"head_tag.cs" ?>
 <?cs /if ?>
-<body class="gc-documentation
-  <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
-  elif:design ?>design<?cs
-  elif:distribute ?>distribute<?cs
+<body class="gc-documentation <?cs
+  if:(guide||develop||training||reference||tools||sdk) ?> develop<?cs
+  elif:design ?> design<?cs
+  elif:distribute ?> distribute<?cs
+  elif:ndk ?> ndk<?cs
+    if:downloads ?> downloads<?cs /if ?><?cs
   /if ?>" itemscope itemtype="http://schema.org/CreativeWork">
   <a name="top"></a>
 <?cs include:"header.cs" ?>
-
-
-<div <?cs if:fullpage
-?><?cs else
-?>class="col-13" id="doc-col"<?cs /if ?> >
 
 <?cs if:sdk.redirect ?>
 
@@ -43,7 +40,15 @@
 # The following is for SDK/NDK pages
 #
 #
-?>
+?><?cs
+if:ndk ?>
+  <ul class="dac-header-crumbs">
+    <?cs # More <li> elements added here with javascript ?>
+  </ul>
+
+  <!-- Breadcrumb Setup -->
+  <p><script>$('.dac-nav-list').dacCurrentPage().dacCrumbs();</script></p><?cs
+/if ?>
 
 <?cs if:header.hide ?><?cs else ?>
 <h1 itemprop="name"><?cs var:page.title ?></h1>
@@ -567,9 +572,9 @@ var:sdk.linux_download
 <?cs /if ?>
 
 </div><!-- end g-unit -->
-
+<?cs if:!devsite ?>
 <?cs include:"trailer.cs" ?>
-
+<?cs /if ?>
 <!-- Start of Tag -->
 <script type="text/javascript">
 var axel = Math.random() + "";

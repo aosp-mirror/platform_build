@@ -42,10 +42,6 @@
       <?cs elif:header.title ?><h2><?cs var:header.title ?></h2>
                    <?cs else ?><h2><?cs var:page.title ?></h2>
     <?cs /if ?>
-  <div class="paging-links" itemscope itemtype="http://schema.org/SiteNavigationElement">
-    <a href="#" class="prev-page-link">Previous</a>
-    <a href="#" class="next-page-link">Next</a>
-  </div>
 </div>
 <?cs /if ?>
 

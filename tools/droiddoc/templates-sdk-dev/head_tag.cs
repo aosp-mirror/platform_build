@@ -1,26 +1,92 @@
 <head>
 <?cs
   ####### If building devsite, add some meta data needed for when generating the top nav ######### ?>
-<?cs
-  if:devsite ?><?cs
-    if:guide||develop||training||reference||tools||sdk||google||samples
-      ?><meta name="top_category" value="develop" /><?cs
-    elif:google
-      ?><meta name="top_category" value="google" /><?cs
-    elif:reference && !(reference.gms || reference.gcm)
-      ?><meta name="top_category" value="css-fullscreen" /><?cs
-    /if ?>
   <?cs
-  /if
-?><?cs
-  # END if/else devsite ?>
+    if:devsite ?>
+    <meta name="top_category" value="<?cs
+      if:ndk ?>ndk<?cs
+      elif:(google || referensce.gms || reference.gcm) ?>google<?cs
+      elif:(guide||develop||training||reference||tools||sdk||google||samples) ?>develop<?cs
+      elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
+      elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
+      elif:(about||versions||wear||tv||auto) ?>about<?cs
+      else ?>none<?cs
+      /if ?>" />
+    <meta name="subcategory" value="<?cs
+      if:ndk ?><?cs
+        if:guide ?>guide<?cs
+        elif:samples ?>samples<?cs
+        elif:reference ?>reference<?cs
+        elif:downloads ?>downloads<?cs
+        else ?>none<?cs /if ?><?cs
+      else ?><?cs
+        if:(guide||develop||training||reference||tools||sdk||google||samples) ?><?cs
+          if:guide ?>guide<?cs
+          elif:training ?><?cs
+            if:page.trainingcourse ?>trainingcourse<?cs
+            else ?>training<?cs /if ?><?cs
+          elif:reference ?>reference<?cs
+          elif:tools ?>tools<?cs
+          elif:sdk ?>sdk<?cs
+          elif:samples ?>samples<?cs
+          else ?>none<?cs /if ?><?cs
+        elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
+          if:googleplay ?>googleplay<?cs
+          elif:essentials ?>essentials<?cs
+          elif:users ?>users<?cs
+          elif:engage ?>engage<?cs
+          elif:monetize ?>monetize<?cs
+          elif:disttools ?>disttools<?cs
+          elif:stories ?>stories<?cs
+          elif:analyze ?>analyze<?cs
+          else ?>none<?cs /if ?><?cs
+        elif:(about||versions||wear||tv||auto) ?><?cs
+          if:versions ?>about<?cs
+          elif:wear ?>wear<?cs
+          elif:tv ?>tv<?cs
+          elif:auto ?>auto<?cs
+          else ?>none<?cs /if ?><?cs
+        elif:design ?><?cs
+          if:vision ?>vision<?cs
+          elif:material ?>material<?cs
+          elif:patterns ?>patterns<?cs
+          elif:devices ?>devices<?cs
+          elif:designdownloads ?>designdownloads<?cs
+          else ?>none<?cs /if ?><?cs
+        elif:training ?><?cs
+          if:page.trainingcourse ?>trainingcourse<?cs
+          else ?>training<?cs /if ?><?cs
+        elif:walkthru ?>walkthru<?cs
+        else ?>none<?cs /if ?><?cs
+      /if ?>" />
+
+    <?cs if:page.tags && page.tags != "" ?>
+      <meta name="keywords" value='<?cs var:page.tags ?>' />
+    <?cs /if ?>
+
+    <?cs if:meta.tags && meta.tags != "" ?>
+      <meta name="meta_tags" value='<?cs var:meta.tags ?>' />
+    <?cs /if ?>
+
+    <?cs if:fullpage ?>
+      <meta name="full_width" value="True" />
+    <?cs /if ?>
+
+    <?cs if:page.landing ?>
+      <meta name="page_type" value="landing" />
+    <?cs /if ?>
+
+    <?cs if:page.article ?>
+      <meta name="page_type" value="article" />
+    <?cs /if ?>
+
+    <?cs /if ?><?cs
+    # END if/else devsite ?>
+<?cs
+  if:!devsite ?>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
 <meta content="IE=edge" http-equiv="X-UA-Compatible">
-<?cs
-  if:page.metaDescription ?>
-<meta name="Description" content="<?cs var:page.metaDescription ?>"><?cs
-  /if ?>
 <link rel="shortcut icon" type="image/x-icon" href="<?cs var:toroot ?>favicon.ico" />
 <link rel="alternate" href="http://developer.android.com/<?cs var:path.canonical ?>" hreflang="en" />
 <link rel="alternate" href="http://developer.android.com/intl/es/<?cs var:path.canonical ?>" hreflang="es" />
@@ -32,12 +98,27 @@
 <link rel="alternate" href="http://developer.android.com/intl/vi/<?cs var:path.canonical ?>" hreflang="vi" />
 <link rel="alternate" href="http://developer.android.com/intl/zh-cn/<?cs var:path.canonical ?>" hreflang="zh-cn" />
 <link rel="alternate" href="http://developer.android.com/intl/zh-tw/<?cs var:path.canonical ?>" hreflang="zh-tw" />
+<?cs /if ?><?cs
+# END if/else !devsite ?>
 
 <title><?cs
+if:devsite ?><?cs
+  if:page.title ?><?cs
+    var:page.title ?><?cs
+  else ?>Android Developers<?cs
+  /if ?><?cs
+else ?><?cs
   if:page.title ?><?cs
     var:page.title ?> | <?cs
-  /if ?>Android Developers</title>
-
+  /if ?>Android Developers
+<?cs /if ?><?cs
+# END if/else devsite ?></title>
+<?cs
+  if:page.metaDescription ?>
+<meta name="description" content="<?cs var:page.metaDescription ?>"><?cs
+  /if ?>
+<?cs
+  if:!devsite ?>
 <!-- STYLESHEETS -->
 <link rel="stylesheet"
 href="<?cs
@@ -47,27 +128,16 @@ if:android.whichdoc != 'online' ?>http:<?cs
 if:android.whichdoc != 'online' ?>http:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
-<?cs 
+<?cs
   if:ndk ?><link rel="stylesheet" href="<?cs
   if:android.whichdoc != 'online' ?>http:<?cs
   /if ?>//fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" title="roboto-mono" type="text/css"><?cs
 /if ?>
-<link href="<?cs var:toroot ?>assets/css/default.css?v=17" rel="stylesheet" type="text/css">
-
-<?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
-<!-- FULLSCREEN STYLESHEET -->
-<link href="<?cs var:toroot ?>assets/css/fullscreen.css" rel="stylesheet" class="fullscreen"
-type="text/css">
-<?cs /if ?>
+<link href="<?cs var:toroot ?>assets/css/default.css?v=16" rel="stylesheet" type="text/css">
 
 <!-- JAVASCRIPT -->
 <script src="<?cs if:android.whichdoc != 'online' ?>http:<?cs /if ?>//www.google.com/jsapi" type="text/javascript"></script>
-<?cs
-if:devsite
-  ?><script src="<?cs var:toroot ?>_static/js/android_3p-bundle.js" type="text/javascript"></script><?cs
-else
-  ?><script src="<?cs var:toroot ?>assets/js/android_3p-bundle.js" type="text/javascript"></script><?cs
-/if ?><?cs
+<script src="<?cs var:toroot ?>assets/js/android_3p-bundle.js" type="text/javascript"></script><?cs
   if:page.customHeadTag ?>
 <?cs var:page.customHeadTag ?><?cs
   /if ?>
@@ -75,15 +145,9 @@ else
   var toRoot = "<?cs var:toroot ?>";
   var metaTags = [<?cs var:meta.tags ?>];
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
+  var useUpdatedTemplates = <?cs if:useUpdatedTemplates ?>true<?cs else ?>false<?cs /if ?>;
 </script>
 <script src="<?cs var:toroot ?>assets/js/docs.js?v=17" type="text/javascript"></script>
-
-<?cs if:helpoutsWidget ?>
-<script type="text/javascript" src="https://helpouts.google.com/ps/res/embed.js" defer async
-    data-helpouts-embed data-helpouts-vertical="programming"
-    data-helpouts-tags="<?cs var:page.tags ?>" data-helpouts-prefix="android"
-    data-helpouts-standalone="true"></script>
-<?cs /if ?>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -96,5 +160,6 @@ else
   ga('send', 'pageview');
   ga('universal.send', 'pageview'); // Send page view for new tracker.
 </script>
-
+<?cs /if ?><?cs
+# END if/else !devsite ?>
 </head>

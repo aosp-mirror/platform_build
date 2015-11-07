@@ -6362,9 +6362,13 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 .dac-button.dac-raised.dac-primary, .landing-secondary, .button {
   background-color: #039bef; }
   .dac-button.dac-raised.dac-primary:hover, .landing-secondary:hover, .button:hover {
-    background-color: #0288d1; color:#fff; }
+    background-color: #0288d1; 
+    color:#fff; }
   .dac-button.dac-raised.dac-primary:active, .landing-secondary:active, .button:active {
-    background-color: #0277bd; }
+    background-color: #0277bd;
+    color:#fff; }
+  .dac-button.dac-raised.dac-primary.disabled, .button.disabled {
+    background-color: #bbb; }
 
 .dac-button.dac-raised.dac-red, .landing-primary {
   background-color: #bf3722; }
@@ -8801,11 +8805,6 @@ $spritesheet: width height image $spritesheet-sprites;
   min-height: 550px;
   padding-top: 88px;
 }
-
-.dac-hero.summit {
-  background-image: url(../../images/ads_hero_17@2x.jpg);
-}
-
 .dac-hero.dac-darken.mprev::before {
   background: rgba(0, 0, 0, 0.3);
   bottom: 0;

@@ -983,7 +983,7 @@ function scrollIntoView(nav) {
     }
     // get the selected item's offset from its container nav by measuring the item's offset
     // relative to the document then subtract the container nav's offset relative to the document
-    var selectedOffset = $selected.offset().top - $nav.offset().top;
+    var selectedOffset = $selected.offset().top - $nav.offset().top + 60;
     if (selectedOffset > $nav.height() * .8) { // multiply nav height by .8 so we move up the item
                                                // if it's more than 80% down the nav
       // scroll the item up by an amount equal to 80% the container nav's height
