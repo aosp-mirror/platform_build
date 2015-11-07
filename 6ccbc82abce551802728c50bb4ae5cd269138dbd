@@ -46,6 +46,30 @@
       "revId": "6ccbc82abce551802728c50bb4ae5cd269138dbd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36a76ed3_637ab6ce",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1040868
+      },
+      "writtenOn": "2015-11-07T18:22:41Z",
+      "side": 1,
+      "message": "the breakpad tools are generally hostile.  you could do something like:\n\n $(hide)if ! $(BREAKPAD_DUMP_SYMS) -c $\u003c \u003e $@ 2\u003e$@.log; then cat $@.log \u003e\u00262; false; fi",
+      "parentUuid": "36892e3b_9904dea4",
+      "range": {
+        "startLine": 100,
+        "startChar": 1,
+        "endLine": 100,
+        "endChar": 54
+      },
+      "revId": "6ccbc82abce551802728c50bb4ae5cd269138dbd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
