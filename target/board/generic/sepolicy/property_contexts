@@ -1,3 +1,5 @@
 qemu.                   u:object_r:qemu_prop:s0
+emu.                    u:object_r:qemu_prop:s0
+emulator.               u:object_r:qemu_prop:s0
 radio.noril             u:object_r:radio_noril_prop:s0
 opengles.               u:object_r:opengles_prop:s0
