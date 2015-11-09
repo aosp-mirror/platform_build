@@ -1,5 +1,6 @@
 KATI ?= $(HOST_OUT_EXECUTABLES)/ckati
 MAKEPARALLEL ?= $(HOST_OUT_EXECUTABLES)/makeparallel
+NINJA ?= prebuilts/ninja/$(HOST_PREBUILT_TAG)/ninja
 
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
 
@@ -89,7 +90,7 @@ KATI_NINJA_SUFFIX := -$(word 1, $(shell echo $(my_checksum_suffix) | $(MD5SUM)))
 endif
 
 KATI_BUILD_NINJA := $(OUT_DIR)/build$(KATI_NINJA_SUFFIX).ninja
-KATI_NINJA_SH := $(OUT_DIR)/ninja$(KATI_NINJA_SUFFIX).sh
+KATI_ENV_SH := $(OUT_DIR)/env$(KATI_NINJA_SUFFIX).sh
 
 # Write out a file mapping checksum to the real suffix.
 ifneq ($(my_checksum_suffix),)
@@ -123,7 +124,7 @@ $(sort $(DEFAULT_GOAL) $(ANDROID_GOALS)) : ninja_wrapper
 .PHONY: ninja_wrapper
 ninja_wrapper: $(KATI_BUILD_NINJA) $(MAKEPARALLEL)
 	@echo Starting build with ninja
-	+$(hide) PATH=prebuilts/ninja/$(HOST_PREBUILT_TAG)/:$$PATH NINJA_STATUS="$(NINJA_STATUS)" $(NINJA_MAKEPARALLEL) $(KATI_NINJA_SH) $(NINJA_GOALS) -C $(TOP) $(NINJA_ARGS)
+	+$(hide) export NINJA_STATUS="$(NINJA_STATUS)" && source $(KATI_ENV_SH) && $(NINJA_MAKEPARALLEL) $(NINJA) $(NINJA_GOALS) -C $(TOP) -f $(KATI_BUILD_NINJA) $(NINJA_ARGS)
 
 KATI_FIND_EMULATOR := --use_find_emulator
 ifeq ($(KATI_EMULATE_FIND),false)
