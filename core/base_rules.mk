@@ -223,25 +223,15 @@ LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 ###########################################################
 ## Create .toc files from shared objects to reduce unnecessary rebuild
 # .toc files have the list of external dynamic symbols without their addresses.
-# For ninja build, .toc files will be updated only when the content of .toc
-# files are changed. As .KATI_RESTAT is specified to .toc files, dependent
-# binaries of a .toc file will be rebuilt only when the content of
+# As .KATI_RESTAT is specified to .toc files and commit-change-for-toc is used,
+# dependent binaries of a .toc file will be rebuilt only when the content of
 # the .toc file is changed.
 ###########################################################
 ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE).toc
 $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
-ifeq ($(BUILDING_WITH_NINJA),true)
 	$(call $(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)transform-shared-lib-to-toc,$<,$@.tmp)
-	$(hide) if cmp -s $@.tmp $@ ; then \
-		  rm $@.tmp ; \
-		else \
-		  mv $@.tmp $@ ; \
-		fi
-else
-	@# make doesn't support restat. We always update .toc files so the dependents will always be updated too.
-	$(call $(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)transform-shared-lib-to-toc,$<,$@)
-endif
+	$(call commit-change-for-toc,$@)
 
 # Kati adds restat=1 to ninja. GNU make does nothing for this.
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
