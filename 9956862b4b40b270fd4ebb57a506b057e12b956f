@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "96d1fa8e_08d76718",
+        "filename": "tools/target_files_diff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-09T22:30:31Z",
+      "side": 1,
+      "message": "Sorry, never used this kind of things before: will the temporary file be deleted when diff() gets its name?\nHmm, I guess not because newfp.close() is executed only after the controlflow comes back from diff.",
+      "range": {
+        "startLine": 132,
+        "startChar": 4,
+        "endLine": 136,
+        "endChar": 22
+      },
+      "revId": "9956862b4b40b270fd4ebb57a506b057e12b956f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
