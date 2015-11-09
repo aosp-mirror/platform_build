@@ -310,6 +310,8 @@ $(common_classes_jar) : $(my_src_jar) | $(ACP)
 $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
 	$(transform-prebuilt-to-target)
 
+$(call define-jar-to-toc-rule, $(common_classes_jar))
+
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
