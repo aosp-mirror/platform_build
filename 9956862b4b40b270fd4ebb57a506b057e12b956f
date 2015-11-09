@@ -22,6 +22,30 @@
       "revId": "9956862b4b40b270fd4ebb57a506b057e12b956f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16ac2a06_acfd8362",
+        "filename": "tools/target_files_diff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-11-09T22:36:32Z",
+      "side": 1,
+      "message": "The temporary file will be deleted after leaving the \u0027with\u0027 scope in diff.  That\u0027s what the contextmanager decoration and the yield statement are doing -- it allows this function to wrap the code inside the with.",
+      "parentUuid": "96d1fa8e_08d76718",
+      "range": {
+        "startLine": 132,
+        "startChar": 4,
+        "endLine": 136,
+        "endChar": 22
+      },
+      "revId": "9956862b4b40b270fd4ebb57a506b057e12b956f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
