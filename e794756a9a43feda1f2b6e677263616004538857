@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "96173ad8_f85e9127",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 1015381
+      },
+      "writtenOn": "2015-11-09T11:15:30Z",
+      "side": 1,
+      "message": "nit full_jack_deps now there are not only lib here?",
+      "range": {
+        "startLine": 533,
+        "startChar": 0,
+        "endLine": 533,
+        "endChar": 18
+      },
+      "revId": "e794756a9a43feda1f2b6e677263616004538857",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
