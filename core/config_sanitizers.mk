@@ -84,7 +84,7 @@ ifneq ($(filter coverage,$(my_sanitize)),)
 endif
 
 ifneq ($(my_sanitize),)
-  fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize)),
+  fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize))
   my_cflags += -fsanitize=$(fsanitize_arg)
 
   ifdef LOCAL_IS_HOST_MODULE
@@ -92,8 +92,10 @@ ifneq ($(my_sanitize),)
     my_ldflags += -fsanitize=$(fsanitize_arg)
     my_ldlibs += -lrt -ldl
   else
-    my_cflags += -fsanitize-undefined-trap-on-error
-    my_cflags += -ftrap-function=abort
+    ifeq ($(filter address,$(my_sanitize)),)
+      my_cflags += -fsanitize-trap=all
+      my_cflags += -ftrap-function=abort
+    endif
     my_shared_libraries += libdl
   endif
 endif
