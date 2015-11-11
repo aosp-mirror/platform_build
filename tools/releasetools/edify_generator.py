@@ -152,6 +152,15 @@ class EdifyGenerator(object):
         "".join([', "%s"' % (i,) for i in sha1]) +
         ') || abort("\\"%s\\" has unexpected contents.");' % (filename,))
 
+  def Verify(self, filename):
+    """Check that the given file (or MTD reference) has one of the
+    given hashes (encoded in the filename)."""
+    self.script.append(
+        'apply_patch_check("{filename}") && '
+        'ui_print("    Verified.") || '
+        'ui_print("\\"{filename}\\" has unexpected contents.");'.format(
+            filename=filename))
+
   def FileCheck(self, filename, *sha1):
     """Check that the given file (or MTD reference) has one of the
     given *sha1 hashes."""
