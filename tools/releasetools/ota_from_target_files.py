@@ -1618,57 +1618,57 @@ def main(argv):
     raise common.ExternalError(
         "--- target build has specified no recovery ---")
 
-  while True:
+  # Use the default key to sign the package if not specified with package_key.
+  if not OPTIONS.no_signing:
+    if OPTIONS.package_key is None:
+      OPTIONS.package_key = OPTIONS.info_dict.get(
+          "default_system_dev_certificate",
+          "build/target/product/security/testkey")
 
-    if OPTIONS.no_signing:
-      if os.path.exists(args[1]):
-        os.unlink(args[1])
-      output_zip = zipfile.ZipFile(args[1], "w",
-                                   compression=zipfile.ZIP_DEFLATED)
-    else:
-      temp_zip_file = tempfile.NamedTemporaryFile()
-      output_zip = zipfile.ZipFile(temp_zip_file, "w",
-                                   compression=zipfile.ZIP_DEFLATED)
+  # Set up the output zip. Create a temporary zip file if signing is needed.
+  if OPTIONS.no_signing:
+    if os.path.exists(args[1]):
+      os.unlink(args[1])
+    output_zip = zipfile.ZipFile(args[1], "w",
+                                 compression=zipfile.ZIP_DEFLATED)
+  else:
+    temp_zip_file = tempfile.NamedTemporaryFile()
+    output_zip = zipfile.ZipFile(temp_zip_file, "w",
+                                 compression=zipfile.ZIP_DEFLATED)
 
-    cache_size = OPTIONS.info_dict.get("cache_size", None)
-    if cache_size is None:
-      print "--- can't determine the cache partition size ---"
-    OPTIONS.cache_size = cache_size
+  cache_size = OPTIONS.info_dict.get("cache_size", None)
+  if cache_size is None:
+    print "--- can't determine the cache partition size ---"
+  OPTIONS.cache_size = cache_size
 
-    if OPTIONS.incremental_source is None:
+  # Generate a full OTA.
+  if OPTIONS.incremental_source is None:
+    WriteFullOTAPackage(input_zip, output_zip)
+
+  # Generate an incremental OTA. It will fall back to generate a full OTA on
+  # failure unless no_fallback_to_full is specified.
+  else:
+    print "unzipping source target-files..."
+    OPTIONS.source_tmp, source_zip = common.UnzipTemp(
+        OPTIONS.incremental_source)
+    OPTIONS.target_info_dict = OPTIONS.info_dict
+    OPTIONS.source_info_dict = common.LoadInfoDict(source_zip,
+                                                   OPTIONS.source_tmp)
+    if OPTIONS.verbose:
+      print "--- source info ---"
+      common.DumpInfoDict(OPTIONS.source_info_dict)
+    try:
+      WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+    except ValueError:
+      if not OPTIONS.fallback_to_full:
+        raise
+      print "--- failed to build incremental; falling back to full ---"
+      OPTIONS.incremental_source = None
       WriteFullOTAPackage(input_zip, output_zip)
-      if OPTIONS.package_key is None:
-        OPTIONS.package_key = OPTIONS.info_dict.get(
-            "default_system_dev_certificate",
-            "build/target/product/security/testkey")
-      common.ZipClose(output_zip)
-      break
 
-    else:
-      print "unzipping source target-files..."
-      OPTIONS.source_tmp, source_zip = common.UnzipTemp(
-          OPTIONS.incremental_source)
-      OPTIONS.target_info_dict = OPTIONS.info_dict
-      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip,
-                                                     OPTIONS.source_tmp)
-      if OPTIONS.package_key is None:
-        OPTIONS.package_key = OPTIONS.source_info_dict.get(
-            "default_system_dev_certificate",
-            "build/target/product/security/testkey")
-      if OPTIONS.verbose:
-        print "--- source info ---"
-        common.DumpInfoDict(OPTIONS.source_info_dict)
-      try:
-        WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
-        common.ZipClose(output_zip)
-        break
-      except ValueError:
-        if not OPTIONS.fallback_to_full:
-          raise
-        print "--- failed to build incremental; falling back to full ---"
-        OPTIONS.incremental_source = None
-        common.ZipClose(output_zip)
+  common.ZipClose(output_zip)
 
+  # Sign the generated zip package unless no_signing is specified.
   if not OPTIONS.no_signing:
     SignOutput(temp_zip_file.name, args[1])
     temp_zip_file.close()
