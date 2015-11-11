@@ -1520,7 +1520,8 @@ function provision()
         echo ""
         echo "ALL DATA ON THE DEVICE WILL BE IRREVOCABLY ERASED."
         echo ""
-        read -p "Are you sure you want to do this (yes/no)? "
+        echo -n "Are you sure you want to do this (yes/no)? "
+        read
         if [[ "${REPLY}" != "yes" ]] ; then
             echo "Not taking any action. Exiting." >&2
             return 1
