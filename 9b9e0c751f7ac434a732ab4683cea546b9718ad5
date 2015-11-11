@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56cb02e2_c126c1f8",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 356,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-11T19:14:40Z",
+      "side": 1,
+      "message": "+ctate\nI am not sure if the framework treats /vedor/priv-app as install path for privileged apps.",
+      "range": {
+        "startLine": 356,
+        "startChar": 0,
+        "endLine": 356,
+        "endChar": 66
+      },
+      "revId": "9b9e0c751f7ac434a732ab4683cea546b9718ad5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
