@@ -1085,6 +1085,9 @@ class DeviceSpecificParams(object):
     processor."""
     return self._DoCall("IncrementalOTA_InstallEnd")
 
+  def VerifyOTA_Assertions(self):
+    return self._DoCall("VerifyOTA_Assertions")
+
 class File(object):
   def __init__(self, name, data):
     self.name = name
@@ -1278,6 +1281,25 @@ class BlockDifference(object):
       script.ShowProgress(progress, 0)
     self._WriteUpdate(script, output_zip)
     self._WritePostInstallVerifyScript(script)
+
+  def WriteStrictVerifyScript(self, script):
+    """Verify all the blocks in the care_map, including clobbered blocks.
+
+    This differs from the WriteVerifyScript() function: a) it prints different
+    error messages; b) it doesn't allow half-way updated images to pass the
+    verification."""
+
+    partition = self.partition
+    script.Print("Verifying %s..." % (partition,))
+    ranges = self.tgt.care_map
+    ranges_str = ranges.to_string_raw()
+    script.AppendExtra('range_sha1("%s", "%s") == "%s" && '
+                       'ui_print("    Verified.") || '
+                       'ui_print("\\"%s\\" has unexpected contents.");' % (
+                       self.device, ranges_str,
+                       self.tgt.TotalSha1(include_clobbered_blocks=True),
+                       self.device))
+    script.AppendExtra("")
 
   def WriteVerifyScript(self, script):
     partition = self.partition
