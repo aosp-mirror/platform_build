@@ -2161,7 +2161,7 @@ $(hide) if unzip -l $@ $(PRIVATE_EMBEDDED_JNI_LIBS) >/dev/null ; then \
   rm -rf $(dir $@)uncompressedlibs && mkdir $(dir $@)uncompressedlibs; \
   unzip $@ $(PRIVATE_EMBEDDED_JNI_LIBS) -d $(dir $@)uncompressedlibs && \
   zip -d $@ 'lib/*.so' && \
-  ( cd $(dir $@)uncompressedlibs && zip -D -r -X -0 ../$(notdir $@) lib ) && \
+  ( cd $(dir $@)uncompressedlibs && find lib -type f | sort | zip -D -X -0 ../$(notdir $@) -@ ) && \
   rm -rf $(dir $@)uncompressedlibs; \
   fi
 endef
