@@ -2100,7 +2100,7 @@ endef
 
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) zip -qjX $@ $(dir $(PRIVATE_DEX_FILE))classes*.dex
+$(hide) find $(dir $(PRIVATE_DEX_FILE)) -maxdepth 1 -name "classes*.dex" | sort | xargs zip -qjX $@
 endef
 
 # Add java resources added by the current module.
@@ -2116,7 +2116,7 @@ endef
 #
 define add-carried-jack-resources
  $(hide) if [ -d $(PRIVATE_JACK_INTERMEDIATES_DIR) ] ; then \
-    find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f \
+    find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f | sort \
         | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C \"$(PRIVATE_JACK_INTERMEDIATES_DIR)\" \"?" -e "s/$$/\"/" \
         > $(dir $@)jack_res_jar_flags; \
     if [ -s $(dir $@)jack_res_jar_flags ] ; then \
