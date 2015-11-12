@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2597a9_9308e403",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-11-12T21:34:24Z",
+      "side": 1,
+      "message": "(...because spencer told me to.)",
+      "revId": "cf1c15c975dec2ff15210047ffae52143364e89c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
