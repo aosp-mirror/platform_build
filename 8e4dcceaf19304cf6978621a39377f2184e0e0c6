@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dbe8fb67_e2e40640",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1951,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-13T08:15:22Z",
+      "side": 1,
+      "message": "This function is a bit complicated due to double-dollars, though this allows me to implement define-jar-to-toc-rule which defines two rules at once (so callers look clean). Please let me know if there\u0027s a better way.",
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
