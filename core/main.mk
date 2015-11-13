@@ -316,8 +316,8 @@ include build/core/pdk_config.mk
 #
 # -----------------------------------------------------------------
 # Jack version configuration
-include $(TOPDIR)prebuilts/sdk/tools/jack_versions.mk
-include $(TOPDIR)prebuilts/sdk/tools/jack_for_module.mk
+-include $(TOPDIR)prebuilts/sdk/tools/jack_versions.mk
+-include $(TOPDIR)prebuilts/sdk/tools/jack_for_module.mk
 
 # -----------------------------------------------------------------
 ###
