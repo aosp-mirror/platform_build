@@ -56,7 +56,11 @@ ifneq ($(USE_GOMA),)
   # gomacc can start goma client's daemon process automatically, but
   # it is safer and faster to start up it beforehand. We run this as a
   # background process so this won't slow down the build.
-  $(shell $(goma_ctl) ensure_start &> /dev/null &)
+  # We use "ensure_start" command when the compiler_proxy is already
+  # running and uses GOMA_HERMETIC=error flag. The compiler_proxy will
+  # restart otherwise.
+  # TODO(hamaji): Remove this condition after http://b/25676777 is fixed.
+  $(shell ( if ( curl http://localhost:$$($(GOMA_CC) port)/flagz | grep GOMA_HERMETIC=error ); then cmd=ensure_start; else cmd=restart; fi; GOMA_HERMETIC=error $(goma_ctl) $${cmd} ) &> /dev/null &)
 
   goma_ctl :=
   goma_dir :=
