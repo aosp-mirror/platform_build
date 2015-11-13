@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6da7ea7_e02656f8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1633,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-11-13T03:07:48Z",
+      "side": 1,
+      "message": "nit: replace the second tab with space to be consistent with L1630?",
+      "range": {
+        "startLine": 1633,
+        "startChar": 1,
+        "endLine": 1633,
+        "endChar": 2
+      },
+      "revId": "c649fb7aa61f5a8358bf2ab0892522dfde1a4350",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
