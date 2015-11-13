@@ -1628,6 +1628,9 @@ ifeq ($(AB_OTA_UPDATER),true)
 	$(hide) for part in $(AB_OTA_PARTITIONS); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
+	$(hide) for conf in $(AB_OTA_POSTINSTALL_CONFIG); do \
+	  echo "$${conf}" >> $(zip_root)/META/postinstall_config.txt; \
+	done
 	@# Include the build type in META/misc_info.txt so the server can easily differentiate production builds.
 	$(hide) echo "build_type=$(TARGET_BUILD_VARIANT)" >> $(zip_root)/META/misc_info.txt
 ifdef OSRELEASED_DIRECTORY
