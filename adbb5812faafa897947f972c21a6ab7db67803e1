@@ -16,6 +16,24 @@
       "revId": "adbb5812faafa897947f972c21a6ab7db67803e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bf75749_fd6ca74f",
+        "filename": "core/goma.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-13T06:55:01Z",
+      "side": 1,
+      "message": "Good point. Fixed. As ensure_start is much faster than restart, I added a condition to check if the compiler_proxy runs with this option. We should be able to remove this condition after http://b/25676777 is fixed.",
+      "parentUuid": "5b25eb9e_2bfbe9a2",
+      "revId": "adbb5812faafa897947f972c21a6ab7db67803e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
