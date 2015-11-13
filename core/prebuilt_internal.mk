@@ -48,6 +48,10 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
     # Do not pack relocations by default
     LOCAL_PACK_MODULE_RELOCATIONS := false
   endif
+
+  ifeq ($(DISABLE_RELOCATION_PACKER),true)
+    LOCAL_PACK_MODULE_RELOCATIONS := false
+  endif
 endif
 
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
