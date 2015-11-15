@@ -42,7 +42,7 @@ ifeq "" "$(PLATFORM_VERSION)"
   # which is the version that we reveal to the end user.
   # Update this value when the platform version changes (rather
   # than overriding it somewhere else).  Can be an arbitrary string.
-  PLATFORM_VERSION := 6.0
+  PLATFORM_VERSION := 6.0.1
 endif
 
 ifeq "" "$(PLATFORM_SDK_VERSION)"
@@ -103,7 +103,7 @@ ifeq "" "$(PLATFORM_SECURITY_PATCH)"
   # Can be an arbitrary string, but must be a single word.
   #
   # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-  PLATFORM_SECURITY_PATCH := 2015-11-01
+  PLATFORM_SECURITY_PATCH := 2015-12-01
 endif
 
 ifeq "" "$(PLATFORM_BASE_OS)"
