@@ -22,6 +22,30 @@
       "revId": "df152a5ebf2075b06506eef3e990e7049c4c75c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b532b27_00593a0b",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2015-11-16T18:27:15Z",
+      "side": 1,
+      "message": "Is this tool used for creating APKs to be run on JB MR1 or older? My understanding is that this tool is only used to sign APKs built from the current branch and to sign OTA update ZIPs built from the current branch. If there are branches which build \"unbundled\" APKs (those to be run on older versions of Android) they should be using Android SDK tools to sign. Is that not the case?",
+      "parentUuid": "5b25eb9e_d6d53968",
+      "range": {
+        "startLine": 258,
+        "startChar": 31,
+        "endLine": 258,
+        "endChar": 45
+      },
+      "revId": "df152a5ebf2075b06506eef3e990e7049c4c75c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
