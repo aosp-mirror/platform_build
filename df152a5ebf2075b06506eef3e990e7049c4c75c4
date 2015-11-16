@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b25eb9e_d6d53968",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2015-11-16T18:20:31Z",
+      "side": 1,
+      "message": "This will not work on pre-JB-MR2:\nhttps://android.googlesource.com/platform/libcore/+/jb-mr1-release/luni/src/main/java/java/util/jar/JarVerifier.java#193",
+      "range": {
+        "startLine": 258,
+        "startChar": 31,
+        "endLine": 258,
+        "endChar": 45
+      },
+      "revId": "df152a5ebf2075b06506eef3e990e7049c4c75c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
