@@ -22,6 +22,29 @@
       "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db847bce_49309296",
+        "filename": "core/soong.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-11-17T20:17:54Z",
+      "side": 1,
+      "message": "Does this work when OUT_DIR is not under $TOP?",
+      "range": {
+        "startLine": 45,
+        "startChar": 18,
+        "endLine": 45,
+        "endChar": 27
+      },
+      "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
