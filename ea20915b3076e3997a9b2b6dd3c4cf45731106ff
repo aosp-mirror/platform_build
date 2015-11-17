@@ -22,6 +22,30 @@
       "revId": "ea20915b3076e3997a9b2b6dd3c4cf45731106ff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b2597a9_61cc703b",
+        "filename": "core/ninja.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T21:25:35Z",
+      "side": 1,
+      "message": "Kati\u0027s build.sh runs ninja, a kati patch split the part we need out to env.sh, and above we only use env.sh and not build.sh.",
+      "parentUuid": "3b2597a9_e1b860ea",
+      "range": {
+        "startLine": 135,
+        "startChar": 1,
+        "endLine": 135,
+        "endChar": 305
+      },
+      "revId": "ea20915b3076e3997a9b2b6dd3c4cf45731106ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
