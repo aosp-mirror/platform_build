@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b3453db_c1ffa657",
+        "filename": "core/soong.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T20:17:11Z",
+      "side": 1,
+      "message": "How about putting all soong output files in a subdir?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 25
+      },
+      "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
