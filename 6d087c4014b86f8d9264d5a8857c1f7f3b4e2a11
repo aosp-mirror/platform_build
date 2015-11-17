@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b816bc7_5fab67b2",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T23:55:45Z",
+      "side": 1,
+      "message": "$(SOONG_ANDROID_MK)",
+      "range": {
+        "startLine": 524,
+        "startChar": 20,
+        "endLine": 524,
+        "endChar": 53
+      },
+      "revId": "6d087c4014b86f8d9264d5a8857c1f7f3b4e2a11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b25eb9e_0a449df7",
+        "filename": "core/ninja.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T23:55:45Z",
+      "side": 1,
+      "message": "pass from here: SOONG_ANDROID_MK\u003d$(SOONG_ANDROID_MK)",
+      "range": {
+        "startLine": 148,
+        "startChar": 318,
+        "endLine": 148,
+        "endChar": 319
+      },
+      "revId": "6d087c4014b86f8d9264d5a8857c1f7f3b4e2a11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
