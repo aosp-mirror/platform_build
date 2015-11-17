@@ -45,6 +45,30 @@
       "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b3453db_21be6a80",
+        "filename": "core/soong.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T20:21:34Z",
+      "side": 1,
+      "message": "$(TOP) is always \".\". Looks unnecessary here.",
+      "parentUuid": "db847bce_49309296",
+      "range": {
+        "startLine": 45,
+        "startChar": 18,
+        "endLine": 45,
+        "endChar": 27
+      },
+      "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
