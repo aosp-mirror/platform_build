@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "76d4867d_631386a6",
+        "filename": "core/soong.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T21:33:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b3453db_c1ffa657",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 25
+      },
+      "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "db847bce_49309296",
         "filename": "core/soong.mk",
         "patchSetId": 3
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "$(TOP) is always \".\". Looks unnecessary here.",
       "parentUuid": "db847bce_49309296",
+      "range": {
+        "startLine": 45,
+        "startChar": 18,
+        "endLine": 45,
+        "endChar": 27
+      },
+      "revId": "7f157ecad36ffe10b9fda7a295f0ee99c448e463",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db847bce_ec13b440",
+        "filename": "core/soong.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T21:33:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b3453db_21be6a80",
       "range": {
         "startLine": 45,
         "startChar": 18,
