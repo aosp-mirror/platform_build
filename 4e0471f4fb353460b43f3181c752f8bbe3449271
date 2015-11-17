@@ -117,6 +117,30 @@
       "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b3453db_a4226834",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T23:29:45Z",
+      "side": 1,
+      "message": "Oh, I forgot I made COMBINED_BUILD_NINJA vary based on KATI_NINJA_SUFFIX.\n\nThis file still might need to change if I added a line or something, but I suppose the dependency on KATI_BUILD_NINJA and SOONG_ANDROID_MK is likely to regenerate it anyways, and if it was critical I could add a dependency on $(lastword $(MAKEFILE_LIST))",
+      "parentUuid": "3b2597a9_44650222",
+      "range": {
+        "startLine": 126,
+        "startChar": 65,
+        "endLine": 126,
+        "endChar": 70
+      },
+      "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
