@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2597a9_feb8ff02",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-11-17T20:07:16Z",
+      "side": 1,
+      "message": "I\u0027d use \u0027source\u0027 instead of the \u0027.\u0027 shortcut to make it clear what\u0027s happening.\n\nAlso, maybe move the \u0026\u0026 down to the rule so that it\u0027s clear that these are separate commands and not wrappers?",
+      "revId": "eeb60cf72f3ee28a9b957999229c8df90d51c24b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
