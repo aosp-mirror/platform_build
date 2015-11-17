@@ -69,6 +69,30 @@
       "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb75bfb9_7c2bcd29",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T22:26:22Z",
+      "side": 1,
+      "message": "It is necessary in case the path to KATI_BUILD_NINJA changes, for example when changing target products.",
+      "parentUuid": "76d4867d_83931a3e",
+      "range": {
+        "startLine": 126,
+        "startChar": 65,
+        "endLine": 126,
+        "endChar": 70
+      },
+      "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
