@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7b6aafda_66a4a07b",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T22:25:40Z",
+      "side": 1,
+      "message": "oh, that\u0027s why i had SOONG_OUT_DIR defined in envsetup.mk before.",
+      "parentUuid": "3b2597a9_013eccb6",
+      "range": {
+        "startLine": 524,
+        "startChar": 31,
+        "endLine": 524,
+        "endChar": 52
+      },
+      "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76d4867d_83931a3e",
         "filename": "core/ninja.mk",
         "patchSetId": 4
