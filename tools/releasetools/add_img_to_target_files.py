@@ -319,6 +319,23 @@ def AddImagesToTargetFiles(filename):
   banner("cache")
   AddCache(output_zip)
 
+  # For devices using A/B update, copy over images from RADIO/ to IMAGES/ and
+  # make sure we have all the needed images ready under IMAGES/.
+  ab_partitions = os.path.join(OPTIONS.input_tmp, "META", "ab_partitions.txt")
+  if os.path.exists(ab_partitions):
+    with open(ab_partitions, 'r') as f:
+      lines = f.readlines()
+    for line in lines:
+      img_name = line.strip() + ".img"
+      img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
+      if os.path.exists(img_radio_path):
+        common.ZipWrite(output_zip, img_radio_path,
+                        os.path.join("IMAGES", img_name))
+
+      # Zip spec says: All slashes MUST be forward slashes.
+      img_path = 'IMAGES/' + img_name
+      assert img_path in output_zip.namelist(), "cannot find " + img_name
+
   common.ZipClose(output_zip)
 
 def main(argv):
