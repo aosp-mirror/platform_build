@@ -93,6 +93,30 @@
       "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b2597a9_44650222",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T23:15:18Z",
+      "side": 1,
+      "message": "But COMBINED_BUILD_NINJA is 1:1 mapped to KATI_BUILD_NINJA.",
+      "parentUuid": "fb75bfb9_7c2bcd29",
+      "range": {
+        "startLine": 126,
+        "startChar": 65,
+        "endLine": 126,
+        "endChar": 70
+      },
+      "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
