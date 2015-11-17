@@ -46,6 +46,30 @@
       "revId": "56d35c93343baae5351ebfd73845200d4d304285",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b2a4b7b_df82e1e3",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T19:51:23Z",
+      "side": 1,
+      "message": "I thought that would be the case, but when I tested it it worked fine.  Turns out I have NINJA_STATUS in my .bashrc.\n\nI moved it out of the command because setting an environment variable doesn\u0027t work with non-simple commands like the \u0026\u0026 I added, I\u0027ll have to find another solution.",
+      "parentUuid": "5b816bc7_7660d0e5",
+      "range": {
+        "startLine": 127,
+        "startChar": 1,
+        "endLine": 127,
+        "endChar": 46
+      },
+      "revId": "56d35c93343baae5351ebfd73845200d4d304285",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
