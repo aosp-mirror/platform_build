@@ -16,6 +16,24 @@
       "revId": "eeb60cf72f3ee28a9b957999229c8df90d51c24b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b6aafda_4bc6456e",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2015-11-17T20:09:03Z",
+      "side": 1,
+      "message": "I had the \u0026\u0026 because at least the SOONG_ENV one is optional and might be empty for !USE_SOONG, but it turns out the SOONG_ENV one is unnecessary for the ninja stage, and didn\u0027t do anything because it uses A\u003dB and not export A\u003dB.  I\u0027ll just put them all back in the make recipe.",
+      "parentUuid": "3b2597a9_feb8ff02",
+      "revId": "eeb60cf72f3ee28a9b957999229c8df90d51c24b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
