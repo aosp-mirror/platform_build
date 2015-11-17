@@ -2,7 +2,7 @@
 # Each line is interpreted as a regular expression.
 
 ###################################################
-# core-libart.jar
+# core-libart.jar & core-oj.jar
 java\.awt\.font
 java\.beans
 java\.io
@@ -13,6 +13,9 @@ java\.lang\.reflect
 java\.math
 java\.net
 java\.nio
+java\.nio\.file
+java\.nio\.file\.spi
+java\.nio\.file\.attribute
 java\.nio\.channels
 java\.nio\.channels\.spi
 java\.nio\.charset
@@ -24,6 +27,7 @@ java\.security\.interfaces
 java\.security\.spec
 java\.sql
 java\.text
+java\.text\.spi
 java\.util
 java\.util\.concurrent
 java\.util\.concurrent\.atomic
@@ -32,6 +36,7 @@ java\.util\.jar
 java\.util\.logging
 java\.util\.prefs
 java\.util\.regex
+java\.util\.spi
 java\.util\.zip
 javax\.crypto
 javax\.crypto\.interfaces
@@ -54,10 +59,18 @@ javax\.xml\.transform\.sax
 javax\.xml\.transform\.stream
 javax\.xml\.validation
 javax\.xml\.xpath
-sun\.misc
 org\.w3c\.dom
 org\.w3c\.dom\.ls
 org\.w3c\.dom\.traversal
+# OpenJdk internal implementation.
+sun\.misc
+sun\.util.*
+sun\.text.*
+sun\.security.*
+sun\.reflect.*
+sun\.nio.*
+sun\.net.*
+com\.sun\..*
 
 # TODO: Move these internal org.apache.harmony classes to libcore.*
 org\.apache\.harmony\.crypto\.internal
