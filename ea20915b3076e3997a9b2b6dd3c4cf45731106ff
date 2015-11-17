@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2597a9_e1b860ea",
+        "filename": "core/ninja.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T20:19:49Z",
+      "side": 1,
+      "message": "Don\u0027t we need to tell kati to not run ninja in the KATI_ENV_SH?",
+      "range": {
+        "startLine": 135,
+        "startChar": 1,
+        "endLine": 135,
+        "endChar": 305
+      },
+      "revId": "ea20915b3076e3997a9b2b6dd3c4cf45731106ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
