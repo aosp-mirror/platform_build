@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2597a9_013eccb6",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T21:45:33Z",
+      "side": 1,
+      "message": "Update this: maybe we can pass in from the kati command line.",
+      "range": {
+        "startLine": 524,
+        "startChar": 31,
+        "endLine": 524,
+        "endChar": 52
+      },
+      "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76d4867d_83931a3e",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-17T21:45:33Z",
+      "side": 1,
+      "message": "Looks unnecessary.",
+      "range": {
+        "startLine": 126,
+        "startChar": 65,
+        "endLine": 126,
+        "endChar": 70
+      },
+      "revId": "4e0471f4fb353460b43f3181c752f8bbe3449271",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
