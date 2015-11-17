@@ -22,6 +22,30 @@
       "revId": "56d35c93343baae5351ebfd73845200d4d304285",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b816bc7_7660d0e5",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-11-17T03:03:24Z",
+      "side": 1,
+      "message": "Good point, that should be more than theory, since we don\u0027t use ONESHELL",
+      "parentUuid": "b6da7ea7_8abe8cef",
+      "range": {
+        "startLine": 127,
+        "startChar": 1,
+        "endLine": 127,
+        "endChar": 46
+      },
+      "revId": "56d35c93343baae5351ebfd73845200d4d304285",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
