@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     LatinIME \
     Launcher2 \
     ManagedProvisioning \
+    MtpDocumentsProvider \
     PicoTts \
     PacProcessor \
     libpac \
