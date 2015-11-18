@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb75bfb9_5c1cccf4",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 530,
+        "startChar": 0,
+        "endLine": 530,
+        "endChar": 25
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb75bfb9_3fa8e29a",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "In the previous implementation, we don\u0027t have proguard_dictionary as a dependency target. Instead we establish the dependency directly on $(link_instr_intermediates_dir.COMMON)/proguard.classes.jar.\n\nJack can also go that way.",
+      "range": {
+        "startLine": 533,
+        "startChar": 0,
+        "endLine": 533,
+        "endChar": 72
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b25eb9e_5ecc973a",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "see here.",
+      "range": {
+        "startLine": 540,
+        "startChar": 0,
+        "endLine": 541,
+        "endChar": 89
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db847bce_b0c2da81",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "Though I don\u0027t think we have any such cases in the source tree for now, but if it\u0027s a static Java library, it should be\n$(jack_dictionary) : $(full_classes_jack)\n\nFollowing the existing approach, we can also establish the dependency as: \n$(built_dex_intermediate) : $(link_instr_intermediates_dir.COMMON)/classes.dex",
+      "range": {
+        "startLine": 645,
+        "startChar": 20,
+        "endLine": 645,
+        "endChar": 45
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b816bc7_8bf9bdec",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "I found a problem here:\nfull_shared_jack_libs are the proguarded .jack files.\nWon\u0027t that cause compilation error if a library is obfuscated? because the symbol references in the current module\u0027s source are original unobfuscated one.\nThat\u0027s why when jack is disabled, we link against the classes.jar, the file before Proguard processing.",
+      "range": {
+        "startLine": 284,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 87
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b816bc7_2bfe69d3",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "similar here.",
+      "range": {
+        "startLine": 301,
+        "startChar": 8,
+        "endLine": 302,
+        "endChar": 48
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b6aafda_966a3d94",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-18T22:18:59Z",
+      "side": 1,
+      "message": "this is correct.",
+      "range": {
+        "startLine": 315,
+        "startChar": 3,
+        "endLine": 315,
+        "endChar": 89
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
