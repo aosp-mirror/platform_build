@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "56278298_efcaf11f",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-19T11:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fb75bfb9_5c1cccf4",
+      "range": {
+        "startLine": 530,
+        "startChar": 0,
+        "endLine": 530,
+        "endChar": 25
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fb75bfb9_3fa8e29a",
         "filename": "core/java.mk",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2015-11-18T22:18:59Z",
       "side": 1,
       "message": "In the previous implementation, we don\u0027t have proguard_dictionary as a dependency target. Instead we establish the dependency directly on $(link_instr_intermediates_dir.COMMON)/proguard.classes.jar.\n\nJack can also go that way.",
+      "range": {
+        "startLine": 533,
+        "startChar": 0,
+        "endLine": 533,
+        "endChar": 72
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "569062ca_07363c91",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-19T11:09:55Z",
+      "side": 1,
+      "message": "Ok I see the lack of coherency there. I feel more comfortable to depend on the used file instead of depending on the file known to be built at the same time. So maybe I could modify the legacy rules to align them on that. What do you think?",
+      "parentUuid": "fb75bfb9_3fa8e29a",
       "range": {
         "startLine": 533,
         "startChar": 0,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "3b4e7783_2ef66bbc",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 645,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-19T11:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "db847bce_b0c2da81",
+      "range": {
+        "startLine": 645,
+        "startChar": 20,
+        "endLine": 645,
+        "endChar": 45
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b816bc7_8bf9bdec",
         "filename": "core/java_common.mk",
         "patchSetId": 3
@@ -105,6 +177,30 @@
       "writtenOn": "2015-11-18T22:18:59Z",
       "side": 1,
       "message": "I found a problem here:\nfull_shared_jack_libs are the proguarded .jack files.\nWon\u0027t that cause compilation error if a library is obfuscated? because the symbol references in the current module\u0027s source are original unobfuscated one.\nThat\u0027s why when jack is disabled, we link against the classes.jar, the file before Proguard processing.",
+      "range": {
+        "startLine": 284,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 87
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b4e7783_8e543f4b",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-19T11:09:55Z",
+      "side": 1,
+      "message": "I agree, obfuscated library will cause compilation error here. But won\u0027t they cause runtime failure if we compile against the unobfuscated .jack? I mean we handle no other mapping/dictionary than the one given by LOCAL_INSTRUMENTATION_FOR, so nothing to handle an eventual obfuscated LOCAL_JAVA_LIBRARIES.",
+      "parentUuid": "5b816bc7_8bf9bdec",
       "range": {
         "startLine": 284,
         "startChar": 0,

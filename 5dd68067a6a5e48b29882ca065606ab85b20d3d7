@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56278298_0fc02dfd",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-19T11:09:55Z",
+      "side": 0,
+      "message": "@Ying: Do you remember if there was a reason why you had proguard do the obfuscation of the application again and output the result in an unused jar?",
+      "range": {
+        "startLine": 525,
+        "startChar": 0,
+        "endLine": 526,
+        "endChar": 70
+      },
+      "revId": "5dd68067a6a5e48b29882ca065606ab85b20d3d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
