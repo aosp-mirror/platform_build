@@ -1302,7 +1302,10 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
 # Make sure .pb.h are already generated before any dependent source files get compiled.
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(proto_generated_headers) $(dbus_generated_headers)
+# Similarly, the generated DBus headers need to exist before we export their location.
+# People are not going to consume the aidl generated cpp file, but the cpp file is
+# generated after the headers, so this is a convenient way to ensure the headers exist.
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef my_export_c_include_dirs
