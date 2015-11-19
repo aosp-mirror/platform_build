@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "7b6aafda_99c7ce92",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "Yeah, the jack team is talking about discontinuing javac/dx toolchain support soon, and this will be more true.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 36
+      },
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96d1fa8e_ab3c38be",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1950,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "Since this is only used inside define-jar-to-toc-rule, we can \"internalize\" by appending \"_\" to the function name.",
+      "range": {
+        "startLine": 1950,
+        "startChar": 7,
+        "endLine": 1950,
+        "endChar": 27
+      },
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dbe8fb67_e2e40640",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -13,6 +59,116 @@
       "writtenOn": "2015-11-13T08:15:22Z",
       "side": 1,
       "message": "This function is a bit complicated due to double-dollars, though this allows me to implement define-jar-to-toc-rule which defines two rules at once (so callers look clean). Please let me know if there\u0027s a better way.",
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db847bce_f657fa4d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1951,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "$$ is fine. Just put a note that it must be called with $(eval). (there are many such cases in this file)",
+      "parentUuid": "dbe8fb67_e2e40640",
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76d4867d_f82d59d0",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1951,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "$(IJAR) as order-only depependency: | $(IJAR)",
+      "range": {
+        "startLine": 1951,
+        "startChar": 21,
+        "endLine": 1951,
+        "endChar": 28
+      },
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b2597a9_471a9f58",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1958,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "Unnecessary.",
+      "range": {
+        "startLine": 1958,
+        "startChar": 0,
+        "endLine": 1958,
+        "endChar": 7
+      },
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b2a4b7b_83aabba9",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "From java_common.java: full_java_lib_deps :\u003d $(full_java_lib_deps) $(full_static_java_libs) $(LOCAL_CLASSPATH)\n\nFor static Java libraries, whose class files will be packaged into the current module, using the toc file probably is incorrect. Static libraries are part of the app that use them and their implementation matters.",
+      "range": {
+        "startLine": 404,
+        "startChar": 44,
+        "endLine": 404,
+        "endChar": 66
+      },
+      "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b816bc7_bda72029",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T00:37:12Z",
+      "side": 1,
+      "message": "Looks like unnecessary to generate .toc for all the jar files. I think only the jars used as dependencies by other modules need .toc. They are classes.jar for target Java library and javalib.jar for host Java library. See _java-lib-full-dep in definitions.mk .",
+      "range": {
+        "startLine": 457,
+        "startChar": 0,
+        "endLine": 457,
+        "endChar": 75
+      },
       "revId": "8e4dcceaf19304cf6978621a39377f2184e0e0c6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
