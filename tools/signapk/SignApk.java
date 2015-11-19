@@ -135,7 +135,6 @@ class SignApk {
 
     /** Returns the expected signature algorithm for this key type. */
     private static String getSignatureAlgorithm(X509Certificate cert) {
-        String sigAlg = cert.getSigAlgName().toUpperCase(Locale.US);
         String keyType = cert.getPublicKey().getAlgorithm().toUpperCase(Locale.US);
         if ("RSA".equalsIgnoreCase(keyType)) {
             if (getDigestAlgorithm(cert) == USE_SHA256) {
@@ -246,8 +245,11 @@ class SignApk {
              * Now it's in a PKCS#8 PrivateKeyInfo structure. Read its Algorithm
              * OID and use that to construct a KeyFactory.
              */
-            ASN1InputStream bIn = new ASN1InputStream(new ByteArrayInputStream(spec.getEncoded()));
-            PrivateKeyInfo pki = PrivateKeyInfo.getInstance(bIn.readObject());
+            PrivateKeyInfo pki;
+            try (ASN1InputStream bIn =
+                    new ASN1InputStream(new ByteArrayInputStream(spec.getEncoded()))) {
+                pki = PrivateKeyInfo.getInstance(bIn.readObject());
+            }
             String algOid = pki.getPrivateKeyAlgorithm().getAlgorithm().getId();
 
             return KeyFactory.getInstance(algOid).generatePrivate(spec);
@@ -461,9 +463,10 @@ class SignApk {
         gen.addCertificates(certs);
         CMSSignedData sigData = gen.generate(data, false);
 
-        ASN1InputStream asn1 = new ASN1InputStream(sigData.getEncoded());
-        DEROutputStream dos = new DEROutputStream(out);
-        dos.writeObject(asn1.readObject());
+        try (ASN1InputStream asn1 = new ASN1InputStream(sigData.getEncoded())) {
+            DEROutputStream dos = new DEROutputStream(out);
+            dos.writeObject(asn1.readObject());
+        }
     }
 
     /**
@@ -616,7 +619,6 @@ class SignApk {
         private File publicKeyFile;
         private X509Certificate publicKey;
         private PrivateKey privateKey;
-        private String outputFile;
         private OutputStream outputStream;
         private final ASN1ObjectIdentifier type;
         private WholeFileSignerOutputStream signer;
@@ -636,14 +638,17 @@ class SignApk {
          * This should actually return byte[] or something similar, but nothing
          * actually checks it currently.
          */
+        @Override
         public Object getContent() {
             return this;
         }
 
+        @Override
         public ASN1ObjectIdentifier getContentType() {
             return type;
         }
 
+        @Override
         public void write(OutputStream out) throws IOException {
             try {
                 signer = new WholeFileSignerOutputStream(out, outputStream);
@@ -658,7 +663,7 @@ class SignApk {
                 copyFiles(manifest, inputJar, outputJar, timestamp, 0);
                 addOtacert(outputJar, publicKeyFile, timestamp, manifest, hash);
 
-                signFile(manifest, inputJar,
+                signFile(manifest,
                          new X509Certificate[]{ publicKey },
                          new PrivateKey[]{ privateKey },
                          outputJar);
@@ -753,7 +758,7 @@ class SignApk {
         temp.writeTo(outputStream);
     }
 
-    private static void signFile(Manifest manifest, JarFile inputJar,
+    private static void signFile(Manifest manifest,
                                  X509Certificate[] publicKey, PrivateKey[] privateKey,
                                  JarOutputStream outputJar)
         throws Exception {
@@ -860,7 +865,6 @@ class SignApk {
 
         boolean signWholeFile = false;
         String providerClass = null;
-        String providerArg = null;
         int alignment = 4;
 
         int argstart = 0;
@@ -944,7 +948,7 @@ class SignApk {
 
                 Manifest manifest = addDigestsToManifest(inputJar, hashes);
                 copyFiles(manifest, inputJar, outputJar, timestamp, alignment);
-                signFile(manifest, inputJar, publicKey, privateKey, outputJar);
+                signFile(manifest, publicKey, privateKey, outputJar);
                 outputJar.close();
             }
         } catch (Exception e) {
