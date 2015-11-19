@@ -275,8 +275,13 @@ ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target-strip-comments)
 else
+ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
 $(built_module) : $(my_prebuilt_src_file) | $(ACP)
 	$(transform-prebuilt-to-target)
+else
+$(built_module) : $(my_prebuilt_src_file)
+	$(copy-file-to-target-with-cp)
+endif
 endif
 endif # LOCAL_MODULE_CLASS != APPS
 
