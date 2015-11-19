@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b25eb9e_d98a013b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T02:08:15Z",
+      "side": 1,
+      "message": "How did you pass in the variables in you test?\nIn makefile by default you can\u0027t override a command line makefile variable, but you can override an environmental variable.\nSo \"make LLVM_PREBUILTS_VERSION\u003d3.9\" works but \"LLVM_PREBUILTS_VERSION\u003d3.9 make\" doesn\u0027t.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 29
+      },
+      "revId": "2d6d5c6e536384fa750fc2d5bd7e7baf6c826ac4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
