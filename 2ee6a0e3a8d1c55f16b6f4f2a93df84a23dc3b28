@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2597a9_b87602e3",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T18:15:51Z",
+      "side": 1,
+      "message": "like this",
+      "range": {
+        "startLine": 699,
+        "startChar": 0,
+        "endLine": 699,
+        "endChar": 46
+      },
+      "revId": "2ee6a0e3a8d1c55f16b6f4f2a93df84a23dc3b28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb75bfb9_3081f121",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 734,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T18:15:51Z",
+      "side": 1,
+      "message": "why not also auto-export the aidl_gen_include_root? so any module linking against the current library will get it automatically.",
+      "range": {
+        "startLine": 734,
+        "startChar": 0,
+        "endLine": 734,
+        "endChar": 41
+      },
+      "revId": "2ee6a0e3a8d1c55f16b6f4f2a93df84a23dc3b28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
