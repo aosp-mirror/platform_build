@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b816bc7_7679a512",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1307,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T22:00:22Z",
+      "side": 1,
+      "message": "I am fine with this approach.\nAlternatively we can have a \"touch\" rule to generate the headers from the $(aidl_gen_cpp). See rule of proto_generated_headers. But you need to know the path and file name of the header files.",
+      "range": {
+        "startLine": 1306,
+        "startChar": 0,
+        "endLine": 1307,
+        "endChar": 87
+      },
+      "revId": "2d91c61ef09b07cf6a77a11eac4ba0425d9f5b05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
