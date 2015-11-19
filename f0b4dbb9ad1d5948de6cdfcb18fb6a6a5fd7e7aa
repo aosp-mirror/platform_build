@@ -22,6 +22,30 @@
       "revId": "f0b4dbb9ad1d5948de6cdfcb18fb6a6a5fd7e7aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d67c5259_ab90f974",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 1087743
+      },
+      "writtenOn": "2015-11-19T19:02:46Z",
+      "side": 1,
+      "message": "I can explain.\n\nI have $JAVA_HOME variable. And this variable contains path to Java 6 home folder. set_java_home function is called in lunch function. We don\u0027t have $ANDROID_SET_JAVA_HOME variable and don\u0027t enter this \"if\" condition (because of \"-n\").\n\nSo we don\u0027t enter second \"if\" condition (because $JAVA_HOME variable is not null) and don\u0027t set $JAVA_HOME variable to proper value.\n\nActually I don\u0027t see a reason for $ANDROID_SET_JAVA_HOME variable, because we use it only in this function.",
+      "parentUuid": "3b2597a9_f8092a3f",
+      "range": {
+        "startLine": 1422,
+        "startChar": 4,
+        "endLine": 1427,
+        "endChar": 45
+      },
+      "revId": "f0b4dbb9ad1d5948de6cdfcb18fb6a6a5fd7e7aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
