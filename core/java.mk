@@ -495,7 +495,11 @@ common_proguard_flags :=  \
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
+ifdef LOCAL_JACK_ENABLED
+common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
+else
 common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
+endif # LOCAL_JACK_ENABLED
 endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
@@ -665,6 +669,15 @@ $(built_dex).toc: $(full_classes_jack)
 
 else #LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
+
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
+$(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS := \
+    -D jack.coverage="true" \
+    -D jack.coverage.metadata.file=$(intermediates.COMMON)/coverage.em \
+    -D jack.coverage.jacoco.package=$(JACOCO_PACKAGE_NAME)
+else
+$(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
+endif
 
 $(built_dex_intermediate): $(jack_all_deps) | setup-jack-server
 	@echo Building with Jack: $@
