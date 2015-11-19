@@ -730,8 +730,9 @@ $(aidl_gen_cpp) : $(aidl_gen_cpp_root)/%$(LOCAL_CPP_EXTENSION) : $(LOCAL_PATH)/%
 	$(transform-aidl-to-cpp)
 -include $(addsuffix .P,$(basename $(aidl_gen_cpp)))
 
-# Add generated headers to include path.
+# Add generated headers to include paths.
 my_c_includes += $(aidl_gen_include_root)
+my_export_c_include_dirs += $(aidl_gen_include_root)
 # Pick up the generated C++ files later for transformation to .o files.
 my_generated_sources += $(aidl_gen_cpp)
 
