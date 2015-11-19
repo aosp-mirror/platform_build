@@ -213,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "5b25eb9e_a44a7556",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-19T23:55:53Z",
+      "side": 1,
+      "message": "Yes, we need to make sure the dependent uses the library\u0027s dictionary, not hard by setting up the dependency and LOCAL_PROGUARD_FLAGS in the dependent\u0027s Android.mk.\nNo existing use case for now. But I remember Narayan asked me for this kind of thing not long time ago.\n\nIf we have dependency on classes.noshrob.jack, that means we\u0027ll be also building all library\u0027s classes.noshrob.jack, which we don\u0027t build previously, in addition to classes.jack.\n\nIt\u0027s fine to leave it as is now. But probably put a note here.",
+      "parentUuid": "3b4e7783_8e543f4b",
+      "range": {
+        "startLine": 284,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 87
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b816bc7_2bfe69d3",
         "filename": "core/java_common.mk",
         "patchSetId": 3
