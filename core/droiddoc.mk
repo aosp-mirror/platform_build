@@ -173,7 +173,7 @@ $(full_target): \
 		javadoc \
                 -encoding UTF-8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
-                -J-Xmx1280m \
+                -J-Xmx1600m \
                 -XDignore.symbol.file \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 -quiet \
