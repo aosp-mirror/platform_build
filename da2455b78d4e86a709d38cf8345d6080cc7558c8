@@ -16,6 +16,24 @@
       "revId": "da2455b78d4e86a709d38cf8345d6080cc7558c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fbf69f9c_0b607de4",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2015-11-20T19:58:54Z",
+      "side": 1,
+      "message": "Clang knows how to link shared asan library.\nMaybe that was something in the way android prebuilt toolchains are layed out? I think asan runtime library was not found in the prebuilt toolchain at all and was built on the fly some time ago.",
+      "parentUuid": "5b2a4b7b_4d6f5cd3",
+      "revId": "da2455b78d4e86a709d38cf8345d6080cc7558c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
