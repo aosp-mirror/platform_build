@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b2a4b7b_4d6f5cd3",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2015-11-20T05:20:21Z",
+      "side": 1,
+      "message": "Do you need to add the shared library for tsan here? Or is the clang driver doing that for us? (I didn\u0027t think the driver knew how to use the shared libraries, only static.)",
+      "revId": "da2455b78d4e86a709d38cf8345d6080cc7558c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
