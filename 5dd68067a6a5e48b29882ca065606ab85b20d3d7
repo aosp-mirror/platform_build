@@ -22,6 +22,30 @@
       "revId": "5dd68067a6a5e48b29882ca065606ab85b20d3d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b2a4b7b_92556305",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-20T00:28:54Z",
+      "side": 0,
+      "message": "IIRC, to use the main app\u0027s dictionary, Proguard requires the main app\u0027s classes.jar to be passed as -injars, not as -libraryjars, as the comment says.\nAs far as I know, if you don\u0027t pass the main app\u0027s classes.jar as -injars, the test app\u0027s references to symbols of the main app won\u0027t be rewritten with the obfuscated one: Proguard obfuscates only the -injars\u0027 symbols, not symbols it references from a library.\n\nYes, the output proguard.$(LOCAL_INSTRUMENTATION_FOR).jar is unused and probably we can remove that -outjars flag, if Proguard allows it.",
+      "parentUuid": "56278298_0fc02dfd",
+      "range": {
+        "startLine": 525,
+        "startChar": 0,
+        "endLine": 526,
+        "endChar": 70
+      },
+      "revId": "5dd68067a6a5e48b29882ca065606ab85b20d3d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "5b816bc7_2cd8bc45",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-20T00:28:54Z",
+      "side": 1,
+      "message": "I don\u0027t have strong opinion. I prefer the legacy setup: it\u0027s simpler.",
+      "parentUuid": "569062ca_07363c91",
+      "range": {
+        "startLine": 533,
+        "startChar": 0,
+        "endLine": 533,
+        "endChar": 72
+      },
+      "revId": "b64389c5f9d026ea55b63cae78453bb75a14d218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b25eb9e_5ecc973a",
         "filename": "core/java.mk",
         "patchSetId": 3
