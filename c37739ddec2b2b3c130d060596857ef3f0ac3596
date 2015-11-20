@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2597a9_8e73fc32",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 527,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-20T00:30:59Z",
+      "side": 1,
+      "message": "This doesn\u0027t work. See my comment in patchset 3.",
+      "range": {
+        "startLine": 524,
+        "startChar": 0,
+        "endLine": 527,
+        "endChar": 66
+      },
+      "revId": "c37739ddec2b2b3c130d060596857ef3f0ac3596",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
