@@ -211,8 +211,11 @@ def LoadInfoDict(input_file, input_dir=None):
   makeint("boot_size")
   makeint("fstab_version")
 
-  d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"],
-                                 d.get("system_root_image", False))
+  if d.get("no_recovery", False) == "true":
+    d["fstab"] = None
+  else:
+    d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"],
+                                   d.get("system_root_image", False))
   d["build.prop"] = LoadBuildProp(read_helper)
   return d
 
