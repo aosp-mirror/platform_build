@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db11db43_0e303bc3",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-20T17:38:46Z",
+      "side": 1,
+      "message": "I\u0027m finally not so sure about this comment, it gives only little information and this is probably something we\u0027ll find quickly if we want to add support for library obfuscation. Are you sure you want it?",
+      "range": {
+        "startLine": 284,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 79
+      },
+      "revId": "25108f14030449e6c3896bca9c26f2416b0e2652",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
