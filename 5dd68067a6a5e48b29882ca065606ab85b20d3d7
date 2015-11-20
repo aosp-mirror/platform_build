@@ -46,6 +46,30 @@
       "revId": "5dd68067a6a5e48b29882ca065606ab85b20d3d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b8e83ee_1462a41a",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-11-20T17:35:13Z",
+      "side": 0,
+      "message": "Proguard is renaming the references to obfuscated symbol of the application in the test classes even for -libraryjars, we did test that before. In doubt I tried to execute some tests and you\u0027re right it\u0027s failing. Looks like it\u0027s because Proguard is renaming the tests classes with name conflicting with the application classes.",
+      "parentUuid": "5b2a4b7b_92556305",
+      "range": {
+        "startLine": 525,
+        "startChar": 0,
+        "endLine": 526,
+        "endChar": 70
+      },
+      "revId": "5dd68067a6a5e48b29882ca065606ab85b20d3d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
