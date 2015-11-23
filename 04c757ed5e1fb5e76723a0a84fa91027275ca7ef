@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "7bd9cf3d_3fdd8793",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1669,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2015-11-23T19:43:19Z",
+      "side": 1,
+      "message": "I don\u0027t think this is going to scale, e.g. we\u0027d have to add content here for each and every board.\n\nI\u0027d instead expect that we list the files in e.g. device/qcom/dragonboard/BoardConfig.mk for dragonboard, device/intel/edison/BoardConfig.mk for edison and so on. To be honest I\u0027m not sure which location is the best - for example, there\u0027s also vendor/ and hardware/ directories it could go in. I\u0027m adding leecam@ to the Cc to get his opinion.\n\nI\u0027d also expect that we\u0027d manually list all files instead of assuming they all have the .bin extension.",
+      "revId": "04c757ed5e1fb5e76723a0a84fa91027275ca7ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1b153384_f88fb9da",
         "filename": "tools/releasetools/add_vendor_partition_to_target_files.py",
         "patchSetId": 1
