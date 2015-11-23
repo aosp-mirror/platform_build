@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b153384_f88fb9da",
+        "filename": "tools/releasetools/add_vendor_partition_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-23T19:42:42Z",
+      "side": 1,
+      "message": "will add another arg here, the path to the target_files\u0027s zip file.",
+      "range": {
+        "startLine": 21,
+        "startChar": 44,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "04c757ed5e1fb5e76723a0a84fa91027275ca7ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b153384_d88c7de9",
+        "filename": "tools/releasetools/add_vendor_partition_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-23T19:42:42Z",
+      "side": 1,
+      "message": "will cleanup unused imports.",
+      "revId": "04c757ed5e1fb5e76723a0a84fa91027275ca7ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bed97ca_c12f7261",
+        "filename": "tools/releasetools/add_vendor_partition_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-23T19:42:42Z",
+      "side": 1,
+      "message": "do we need these, as none of them are used here.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 33
+      },
+      "revId": "04c757ed5e1fb5e76723a0a84fa91027275ca7ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
