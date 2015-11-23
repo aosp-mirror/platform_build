@@ -28,8 +28,7 @@ include $(BUILD_SYSTEM)/host_java_library_common.mk
 #######################################
 
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  LOCAL_JAVA_LIBRARIES +=  core-oj-hostdex
-  LOCAL_JAVA_LIBRARIES +=  core-libart-hostdex
+  LOCAL_JAVA_LIBRARIES += core-oj-hostdex core-libart-hostdex
 endif
 
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
