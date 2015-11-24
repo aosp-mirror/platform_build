@@ -34,6 +34,24 @@
       "revId": "da2455b78d4e86a709d38cf8345d6080cc7558c8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bed97ca_42ec20ea",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2015-11-24T03:51:09Z",
+      "side": 1,
+      "message": "currently I don\u0027t build shared tsan library, and to link static tsan libraries, -fsanitize\u003dthread is enough to notify clang to add needed static libraries. If we want to link shared tsan library, we might need to wait for a long time until compiler-rt is updated.",
+      "parentUuid": "fbf69f9c_0b607de4",
+      "revId": "da2455b78d4e86a709d38cf8345d6080cc7558c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
