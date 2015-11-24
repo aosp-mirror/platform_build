@@ -1761,7 +1761,8 @@ define dump-words-to-file
 endef
 
 # For a list of jar files, unzip them to a specified directory,
-# but make sure that no META-INF files come along for the ride.
+# but make sure that no META-INF files come along for the ride,
+# unless PRIVATE_DONT_DELETE_JAR_META_INF is set.
 #
 # $(1): files to unzip
 # $(2): destination directory
@@ -1773,8 +1774,8 @@ define unzip-jar-files
       exit 1; \
     fi; \
     unzip -qo $$f -d $(2); \
-  done \
-  $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,;rm -rf $(2)/META-INF)
+  done
+  $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(2)/META-INF)
 endef
 
 # Call jack
@@ -1876,7 +1877,7 @@ $(if $(PRIVATE_EXTRA_JAR_ARGS),
     $(hide) mkdir -p $@.res.tmp
     $(hide) $(call create-empty-package-at,$@.res.tmp.zip)
     $(hide) $(call add-java-resources-to,$@.res.tmp.zip)
-    $(hide) $(call unzip-jar-files,$@.res.tmp.zip,$@.res.tmp)
+    $(hide) unzip -qo $@.res.tmp.zip -d $@.res.tmp
     $(hide) rm $@.res.tmp.zip)
 $(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
@@ -1916,7 +1917,7 @@ define transform-jar-to-jack
 	$(hide) mkdir -p $(dir $@)
 	$(JILL) $(PRIVATE_JILL_FLAGS) --output $@.tmpjill.jack $<
 	$(hide) mkdir -p $@.tmpjill.res
-	$(hide) $(call unzip-jar-files,$<,$@.tmpjill.res)
+	$(hide) unzip -qo $< -d @.tmpjill.res
 	$(hide) find $@.tmpjill.res -iname "*.class" -delete
 	$(hide) $(call call-jack) \
         -D jack.import.resource.policy=keep-first \
