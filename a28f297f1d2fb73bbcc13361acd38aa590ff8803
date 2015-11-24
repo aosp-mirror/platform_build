@@ -22,6 +22,30 @@
       "revId": "a28f297f1d2fb73bbcc13361acd38aa590ff8803",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5b1b2bb8_83557105",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2015-11-24T17:28:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fbbdbfca_d624828f",
+      "range": {
+        "startLine": 248,
+        "startChar": 12,
+        "endLine": 248,
+        "endChar": 94
+      },
+      "revId": "a28f297f1d2fb73bbcc13361acd38aa590ff8803",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
