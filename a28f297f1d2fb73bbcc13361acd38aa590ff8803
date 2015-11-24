@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fbbdbfca_d624828f",
+        "filename": "tools/signapk/SignApk.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-11-24T16:54:36Z",
+      "side": 1,
+      "message": "it\u0027s more readable to just close it - especially when using Java7 try-with-resources.",
+      "range": {
+        "startLine": 248,
+        "startChar": 12,
+        "endLine": 248,
+        "endChar": 94
+      },
+      "revId": "a28f297f1d2fb73bbcc13361acd38aa590ff8803",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
