@@ -1916,7 +1916,7 @@ define transform-jar-to-jack
 	$(hide) mkdir -p $(dir $@)
 	$(JILL) $(PRIVATE_JILL_FLAGS) --output $@.tmpjill.jack $<
 	$(hide) mkdir -p $@.tmpjill.res
-	$(hide) unzip -qo $< -d @.tmpjill.res
+	$(hide) unzip -qo $< -d $@.tmpjill.res
 	$(hide) find $@.tmpjill.res -iname "*.class" -delete
 	$(hide) $(call call-jack) \
         -D jack.import.resource.policy=keep-first \
