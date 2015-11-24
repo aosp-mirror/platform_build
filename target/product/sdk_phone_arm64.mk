@@ -24,7 +24,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
 
 # Overrides
-PRODUCT_BRAND := generic_arm64
+PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_MODEL := Android SDK built for arm64
