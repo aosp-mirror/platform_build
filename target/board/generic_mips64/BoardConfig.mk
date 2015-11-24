@@ -75,3 +75,5 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 
 DEX_PREOPT_DEFAULT := nostripping
+
+USE_CLANG_PLATFORM_BUILD := true
