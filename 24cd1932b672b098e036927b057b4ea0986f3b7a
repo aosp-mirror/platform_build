@@ -19,6 +19,23 @@
     },
     {
       "key": {
+        "uuid": "bb2a67bd_a827ae91",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1688,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-11-25T03:22:26Z",
+      "side": 1,
+      "message": "Why aren\u0027t you just using zip here? do we actually need to use the python zipfile implementation for some reason?",
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5bd5eb28_56109467",
         "filename": "tools/releasetools/add_files_to_zip.py",
         "patchSetId": 2
