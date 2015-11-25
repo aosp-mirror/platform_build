@@ -26,6 +26,7 @@ import contextlib
 import os
 import re
 import subprocess
+import sys
 import tempfile
 
 def ignore(name):
@@ -94,14 +95,16 @@ def rewrite_build_property(original, new):
 
 def trim_install_recovery(original, new):
   """
-  Rewrite the install-recovery script to remove the hash of the recovery partition.
+  Rewrite the install-recovery script to remove the hash of the recovery
+  partition.
   """
   for line in original:
     new.write(re.sub(r'[0-9a-f]{40}', '0'*40, line))
 
 def sort_file(original, new):
   """
-  Sort the file. Some OTA metadata files are not in a deterministic order currently.
+  Sort the file. Some OTA metadata files are not in a deterministic order
+  currently.
   """
   lines = original.readlines()
   lines.sort()
@@ -126,7 +129,8 @@ REWRITE_RULES = {
 @contextlib.contextmanager
 def preprocess(name, filename):
   """
-  Optionally rewrite files before diffing them, to remove known-variable information.
+  Optionally rewrite files before diffing them, to remove known-variable
+  information.
   """
   if name in REWRITE_RULES:
     with tempfile.NamedTemporaryFile() as newfp:
@@ -137,24 +141,25 @@ def preprocess(name, filename):
   else:
     yield filename
 
-def diff(name, file1, file2):
+def diff(name, file1, file2, out_file):
   """
   Diff a file pair with diff, running preprocess() on the arguments first.
   """
   with preprocess(name, file1) as f1:
     with preprocess(name, file2) as f2:
-      proc = subprocess.Popen(['diff', f1, f2], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-      (stdout, ignore) = proc.communicate()
+      proc = subprocess.Popen(['diff', f1, f2], stdout=subprocess.PIPE,
+                              stderr=subprocess.STDOUT)
+      (stdout, _) = proc.communicate()
       if proc.returncode == 0:
         return
       stdout = stdout.strip()
       if stdout == 'Binary files %s and %s differ' % (f1, f2):
-        print("%s: Binary files differ" % name)
+        print("%s: Binary files differ" % name, file=out_file)
       else:
         for line in stdout.strip().split('\n'):
-          print("%s: %s" % (name, line))
+          print("%s: %s" % (name, line), file=out_file)
 
-def recursiveDiff(prefix, dir1, dir2):
+def recursiveDiff(prefix, dir1, dir2, out_file):
   """
   Recursively diff two directories, checking metadata then calling diff()
   """
@@ -175,31 +180,34 @@ def recursiveDiff(prefix, dir1, dir2):
           link1 = os.readlink(name1)
           link2 = os.readlink(name2)
           if link1 != link2:
-            print("%s: Symlinks differ: %s vs %s" % (name, link1, link2))
+            print("%s: Symlinks differ: %s vs %s" % (name, link1, link2),
+                  file=out_file)
         else:
-          print("%s: File types differ, skipping compare" % name)
+          print("%s: File types differ, skipping compare" % name,
+                file=out_file)
         continue
 
       stat1 = os.stat(name1)
       stat2 = os.stat(name2)
-      type1 = stat1.st_mode & ~0777
-      type2 = stat2.st_mode & ~0777
+      type1 = stat1.st_mode & ~0o777
+      type2 = stat2.st_mode & ~0o777
 
       if type1 != type2:
-        print("%s: File types differ, skipping compare" % name)
+        print("%s: File types differ, skipping compare" % name, file=out_file)
         continue
 
       if stat1.st_mode != stat2.st_mode:
-        print("%s: Modes differ: %o vs %o" % (name, stat1.st_mode, stat2.st_mode))
+        print("%s: Modes differ: %o vs %o" %
+            (name, stat1.st_mode, stat2.st_mode), file=out_file)
 
       if os.path.isdir(name1):
-        recursiveDiff(name, name1, name2)
+        recursiveDiff(name, name1, name2, out_file)
       elif os.path.isfile(name1):
-        diff(name, name1, name2)
+        diff(name, name1, name2, out_file)
       else:
-        print("%s: Unknown file type, skipping compare" % name)
+        print("%s: Unknown file type, skipping compare" % name, file=out_file)
     else:
-      print("%s: Only in base package" % name)
+      print("%s: Only in base package" % name, file=out_file)
 
   for entry in list2:
     name = os.path.join(prefix, entry)
@@ -210,15 +218,25 @@ def recursiveDiff(prefix, dir1, dir2):
       continue
 
     if entry not in list1:
-      print("%s: Only in new package" % name)
+      print("%s: Only in new package" % name, file=out_file)
 
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('dir1', help='The base target files package (extracted)')
   parser.add_argument('dir2', help='The new target files package (extracted)')
+  parser.add_argument('--output',
+      help='The output file, otherwise it prints to stdout')
   args = parser.parse_args()
 
-  recursiveDiff('', args.dir1, args.dir2)
+  if args.output:
+    out_file = open(args.output, 'w')
+  else:
+    out_file = sys.stdout
+
+  recursiveDiff('', args.dir1, args.dir2, out_file)
+
+  if args.output:
+    out_file.close()
 
 if __name__ == '__main__':
   main()
