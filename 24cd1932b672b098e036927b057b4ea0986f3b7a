@@ -90,6 +90,30 @@
     },
     {
       "key": {
+        "uuid": "bb2a67bd_ab616817",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1673,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-25T17:55:29Z",
+      "side": 1,
+      "message": "YOu can\u0027t put it in a product makefile like brillo_base.mk. You should put it in an Android.mk, such as device/generic/birllo/Android.mk",
+      "parentUuid": "5b1b2bb8_548faea1",
+      "range": {
+        "startLine": 1672,
+        "startChar": 0,
+        "endLine": 1673,
+        "endChar": 30
+      },
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bb2a67bd_a827ae91",
         "filename": "core/Makefile",
         "patchSetId": 2
