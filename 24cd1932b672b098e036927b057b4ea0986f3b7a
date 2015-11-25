@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fbb05f0b_84bee77d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1485,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-25T02:44:04Z",
+      "side": 1,
+      "message": "will undo this later.",
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5bd5eb28_56109467",
+        "filename": "tools/releasetools/add_files_to_zip.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-25T02:44:04Z",
+      "side": 1,
+      "message": "need to flip the args.",
+      "range": {
+        "startLine": 20,
+        "startChar": 25,
+        "endLine": 20,
+        "endChar": 39
+      },
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bed97ca_ec2d3ed0",
+        "filename": "tools/releasetools/add_files_to_zip.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-25T02:44:04Z",
+      "side": 1,
+      "message": "do we need these?",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 33
+      },
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
