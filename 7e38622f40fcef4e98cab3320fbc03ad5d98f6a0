@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b153384_41cd3539",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-11-25T02:18:54Z",
+      "side": 1,
+      "message": "How is this file being used?\nI am not sure if this is still needed.",
+      "range": {
+        "startLine": 322,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 54
+      },
+      "revId": "7e38622f40fcef4e98cab3320fbc03ad5d98f6a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
