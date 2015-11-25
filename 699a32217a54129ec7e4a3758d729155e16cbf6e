@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b77ab0e_8ce90ba8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-11-25T17:54:22Z",
+      "side": 1,
+      "message": "nit: should be GEN",
+      "range": {
+        "startLine": 14,
+        "startChar": 18,
+        "endLine": 14,
+        "endChar": 21
+      },
+      "revId": "699a32217a54129ec7e4a3758d729155e16cbf6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
