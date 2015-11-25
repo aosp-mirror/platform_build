@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "5b1b2bb8_548faea1",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1673,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-25T07:47:18Z",
+      "side": 1,
+      "message": "I tried device/generic/brillo/brillo_base.mk, that is called before the actual device mk file.\n\nDavid,\ndo you know which mk file is common to all brillo devices, and called after the device-specific inplementation?",
+      "parentUuid": "5bd5eb28_96cbcc23",
+      "range": {
+        "startLine": 1672,
+        "startChar": 0,
+        "endLine": 1673,
+        "endChar": 30
+      },
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bb2a67bd_a827ae91",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -53,6 +77,24 @@
       "writtenOn": "2015-11-25T03:22:26Z",
       "side": 1,
       "message": "Why aren\u0027t you just using zip here? do we actually need to use the python zipfile implementation for some reason?",
+      "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b167790_040ceb16",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1688,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2015-11-25T07:47:18Z",
+      "side": 1,
+      "message": "will do. That python module was doing some file lookup. As now we only need to zip up a list of files, we can just use zip.",
+      "parentUuid": "bb2a67bd_a827ae91",
       "revId": "24cd1932b672b098e036927b057b4ea0986f3b7a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
