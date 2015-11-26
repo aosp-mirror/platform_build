@@ -6,9 +6,10 @@
 LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_CPP_EXTENSION := cc
+LOCAL_CPP_EXTENSION := .cc
 LOCAL_SRC_FILES := classfile.cc ijar.cc zip.cc
 LOCAL_CFLAGS += -Wall
 LOCAL_SHARED_LIBRARIES := libz-host
 LOCAL_MODULE := ijar
+LOCAL_CXX_STL := libstdc++
 include $(BUILD_HOST_EXECUTABLE)
