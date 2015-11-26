@@ -530,7 +530,7 @@ $(strip \
         $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
     $(eval _idfPrefix := $(if $(strip $(3)),HOST,TARGET)) \
     $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
-        $(eval _idfIntBase := $($(_idfPrefix)_OUT_GEN_COMMON)) \
+        $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_GEN)) \
       , \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_GEN)) \
      ) \
