@@ -456,6 +456,8 @@ $(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
+$(call define-jar-to-toc-rule, $(full_classes_jar))
+
 # Run proguard if necessary, otherwise just copy the file.
 ifdef LOCAL_PROGUARD_ENABLED
 ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
