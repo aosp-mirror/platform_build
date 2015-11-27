@@ -27,6 +27,6 @@ endif # PDK
 
 else # TARGET_BUILD_APPS
 
-include $(LOCAL_PATH)/apicheck/Android.mk $(LOCAL_PATH)/ijar/Android.mk
+include $(LOCAL_PATH)/apicheck/Android.mk
 
 endif
