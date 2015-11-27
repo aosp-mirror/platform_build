@@ -1928,42 +1928,6 @@ define transform-jar-to-jack
 	$(hide) rm $@.tmpjill.jack
 endef
 
-# Moves $1.tmp to $1 if necessary. This is designed to be used with
-# .KATI_RESTAT. For kati, this function doesn't update the timestamp
-# of $1 when $1.tmp is identical to $1 so that ninja won't rebuild
-# targets which depend on $1. For GNU make, this function simply
-# copies $1.tmp to $1.
-ifeq ($(BUILDING_WITH_NINJA),true)
-define commit-change-for-toc
-$(hide) if cmp -s $1.tmp $1 ; then \
- rm $1.tmp ; \
-else \
- mv $1.tmp $1 ; \
-fi
-endef
-else
-define commit-change-for-toc
-@# make doesn't support restat. We always update .toc files so the dependents will always be updated too.
-$(hide) mv $1.tmp $1
-endef
-endif
-
-## Rule to creates a table of contents from a .jar file.
-## Must be called with $(eval).
-# $1: A .jar file
-define _transform-jar-to-toc
-$1.toc: $1 | $(IJAR)
-	@echo Generating TOC: $$@
-	$(hide) $(IJAR) $$< $$@.tmp
-	$$(call commit-change-for-toc,$$@)
-endef
-
-## Define a rule which generates .jar.toc and mark it as .KATI_RESTAT.
-define define-jar-to-toc-rule
-$(eval $(call _transform-jar-to-toc,$1))
-$(eval .KATI_RESTAT: $1.toc)
-endef
-
 
 # Invoke Jack to compile java from source to jack files without shrink or obfuscation.
 #
