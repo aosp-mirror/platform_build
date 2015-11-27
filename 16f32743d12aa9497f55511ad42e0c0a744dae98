@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ba54fc6_d310342d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-27T07:38:21Z",
+      "side": 1,
+      "message": "I\u0027m not sure if you like this change, as EncodedStaticFieldValueIterator seems to be designed as more private interface than DexFile. Suggestions are welcomed.",
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ba757d3_43bc5add",
+        "filename": "tools/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-27T07:38:21Z",
+      "side": 1,
+      "message": "I\u0027ll remove this comment before I land this patch. I guess this issue will be resolved during the review.",
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1b71b31c_c743e0ef",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-27T07:38:21Z",
+      "side": 1,
+      "message": "This is what I understand from the behavior of jack. IIUC, .dex files have the initial values of non-static final fields as bytecode of constructors, not as data. It\u0027s interesting .dex file format seems to not follow Java language\u0027s spec (3 of https://docs.oracle.com/javase/specs/jls/se8/html/jls-13.html#jls-13.1). Please correct me if I\u0027m wrong here.",
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb6bff2e_e63aa0c0",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-11-27T07:38:21Z",
+      "side": 1,
+      "message": "runtime/dex_file.cc handles kType but I couldn\u0027t create a .dex file which contains this information. It seemed all .dex files built in AOSP tree didn\u0027t have this type.",
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
