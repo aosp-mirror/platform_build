@@ -36,6 +36,52 @@
     },
     {
       "key": {
+        "uuid": "3bd59733_ada77dcc",
+        "filename": "tools/dextoc/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "Wrong year. And add the full blurb.",
+      "range": {
+        "startLine": 1,
+        "startChar": 12,
+        "endLine": 1,
+        "endChar": 16
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bd59733_8dacc1af",
+        "filename": "tools/dextoc/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "Anything in ART should have -Werror.",
+      "range": {
+        "startLine": 11,
+        "startChar": 16,
+        "endLine": 11,
+        "endChar": 21
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7b80ef13_1088ca08",
         "filename": "tools/dextoc/Android.mk",
         "patchSetId": 3
@@ -76,6 +122,52 @@
     },
     {
       "key": {
+        "uuid": "3bd59733_edc6a56e",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "Please use ART logging (base/logging.h)",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 22
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb1267d6_69b2a50f",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "I\u0027d be OK putting this into the art namespace...",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 9
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fb6bff2e_e63aa0c0",
         "filename": "tools/dextoc/dextoc.cc",
         "patchSetId": 3
@@ -87,6 +179,75 @@
       "writtenOn": "2015-11-27T07:38:21Z",
       "side": 1,
       "message": "runtime/dex_file.cc handles kType but I couldn\u0027t create a .dex file which contains this information. It seemed all .dex files built in AOSP tree didn\u0027t have this type.",
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b0923b2_68b2a30f",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "ART style for this is LOG(FATAL) \u003c\u003c ...",
+      "range": {
+        "startLine": 94,
+        "startChar": 8,
+        "endLine": 94,
+        "endChar": 24
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb1267d6_e99d757c",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "ART style is to use CHECK macros,",
+      "range": {
+        "startLine": 126,
+        "startChar": 2,
+        "endLine": 126,
+        "endChar": 21
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb1267d6_49afe1a1",
+        "filename": "tools/dextoc/dextoc.cc",
+        "patchSetId": 3
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2015-11-30T16:45:49Z",
+      "side": 1,
+      "message": "ART style is to use CHECK(...) \u003c\u003c ...",
+      "range": {
+        "startLine": 126,
+        "startChar": 2,
+        "endLine": 126,
+        "endChar": 21
+      },
       "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
