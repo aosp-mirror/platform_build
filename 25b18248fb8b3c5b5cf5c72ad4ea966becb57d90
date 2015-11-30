@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bbe987fc_f1fe885b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-11-30T17:54:57Z",
+      "side": 1,
+      "message": "s/dictates/shows/ or lists or something. (\"dictates\" would mean \"sets\".)",
+      "revId": "25b18248fb8b3c5b5cf5c72ad4ea966becb57d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
