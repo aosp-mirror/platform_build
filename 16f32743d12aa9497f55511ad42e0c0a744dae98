@@ -36,6 +36,29 @@
     },
     {
       "key": {
+        "uuid": "7b80ef13_1088ca08",
+        "filename": "tools/dextoc/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2015-11-30T14:33:50Z",
+      "side": 1,
+      "message": "did you test on Mac? libart isn\u0027t always portable there. we are trying to make sure the dex subset works for tools like this but be aware...",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 32
+      },
+      "revId": "16f32743d12aa9497f55511ad42e0c0a744dae98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1b71b31c_c743e0ef",
         "filename": "tools/dextoc/dextoc.cc",
         "patchSetId": 3
