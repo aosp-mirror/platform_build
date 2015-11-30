@@ -94,6 +94,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
   --gen_verify
       Generate an OTA package that verifies the partitions.
+
+  --log_diff <file>
+      Generate a log file that shows the differences in the source and target
+      builds for an incremental package. This option is only meaningful when
+      -i is specified.
 """
 
 import sys
@@ -137,6 +142,7 @@ OPTIONS.full_bootloader = False
 OPTIONS.cache_size = None
 OPTIONS.stash_threshold = 0.8
 OPTIONS.gen_verify = False
+OPTIONS.log_diff = None
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -1631,6 +1637,8 @@ def main(argv):
                          "a float" % (a, o))
     elif o == "--gen_verify":
       OPTIONS.gen_verify = True
+    elif o == "--log_diff":
+      OPTIONS.log_diff = a
     else:
       return False
     return True
@@ -1656,7 +1664,8 @@ def main(argv):
                                  "verify",
                                  "no_fallback_to_full",
                                  "stash_threshold=",
-                                 "gen_verify"
+                                 "gen_verify",
+                                 "log_diff=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1743,6 +1752,14 @@ def main(argv):
       common.DumpInfoDict(OPTIONS.source_info_dict)
     try:
       WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
+      if OPTIONS.log_diff:
+        out_file = open(OPTIONS.log_diff, 'w')
+        import target_files_diff
+        target_files_diff.recursiveDiff('',
+                                        OPTIONS.source_tmp,
+                                        OPTIONS.input_tmp,
+                                        out_file)
+        out_file.close()
     except ValueError:
       if not OPTIONS.fallback_to_full:
         raise
