@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb1267d6_5dd8bb46",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-01T18:07:23Z",
+      "side": 1,
+      "message": "Looks good to me.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 65
+      },
+      "revId": "a0f7dfa9cf7d605f1f2603f70dd0e6877482eb8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbe987fc_c5f73a46",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-01T18:07:23Z",
+      "side": 1,
+      "message": "We can simply use bash substring operation:\necho $${USER:0:6}",
+      "range": {
+        "startLine": 125,
+        "startChar": 31,
+        "endLine": 125,
+        "endChar": 59
+      },
+      "revId": "a0f7dfa9cf7d605f1f2603f70dd0e6877482eb8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
