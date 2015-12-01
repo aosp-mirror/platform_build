@@ -483,12 +483,12 @@ struct InnerClassesAttribute : Attribute {
     // We keep an entry if the constant referring to the inner class is already
     // kept. Then we mark its outer class and its class name as kept, too, then
     // iterate until a fixed point is reached.
-    int entry_count;
+    size_t entry_count;
     int iteration = 0;
 
     do {
       entry_count = kept_entries.size();
-      for (int i_entry = 0; i_entry < entries_.size(); ++i_entry) {
+      for (size_t i_entry = 0; i_entry < entries_.size(); ++i_entry) {
         Entry* entry = entries_[i_entry];
         if (entry->inner_class_info->Kept() ||
             used_class_names.find(entry->inner_class_info->Display())
@@ -632,7 +632,7 @@ struct ArrayTypeElementValue : ElementValue {
   }
 
   virtual void ExtractClassNames() {
-    for (int i = 0; i < values_.size(); i++) {
+    for (size_t i = 0; i < values_.size(); i++) {
       values_[i]->ExtractClassNames();
     }
   }
@@ -800,8 +800,8 @@ struct TypeAnnotation {
   };
 
   struct EmptyInfo : TargetInfo {
-    void Write(u1 *&p) {}
-    static EmptyInfo *Read(const u1 *&p) {
+    void Write(u1 *&) {}
+    static EmptyInfo *Read(const u1 *&) {
       return new EmptyInfo;
     }
   };
@@ -1007,7 +1007,7 @@ struct SignatureAttribute : Attribute {
 // compiler to generate warning messages.
 struct DeprecatedAttribute : Attribute {
 
-  static DeprecatedAttribute* Read(const u1 *&p, Constant *attribute_name) {
+  static DeprecatedAttribute* Read(const u1 *&, Constant *attribute_name) {
     DeprecatedAttribute *attr = new DeprecatedAttribute;
     attr->attribute_name_ = attribute_name;
     return attr;
@@ -1041,7 +1041,7 @@ struct AnnotationsAttribute : Attribute {
   }
 
   virtual void ExtractClassNames() {
-    for (int i = 0; i < annotations_.size(); i++) {
+    for (size_t i = 0; i < annotations_.size(); i++) {
       annotations_[i]->ExtractClassNames();
     }
   }
@@ -1112,7 +1112,7 @@ struct ParameterAnnotationsAttribute : Attribute {
 // and RuntimeInvisibleTypeAnnotations.
 struct TypeAnnotationsAttribute : Attribute {
   static TypeAnnotationsAttribute* Read(const u1 *&p, Constant *attribute_name,
-                                        u4 attribute_length) {
+                                        u4) {
     auto attr = new TypeAnnotationsAttribute;
     attr->attribute_name_ = attribute_name;
     u2 num_annotations = get_u2be(p);
@@ -1124,7 +1124,7 @@ struct TypeAnnotationsAttribute : Attribute {
   }
 
   virtual void ExtractClassNames() {
-    for (int i = 0; i < type_annotations_.size(); i++) {
+    for (size_t i = 0; i < type_annotations_.size(); i++) {
       type_annotations_[i]->ExtractClassNames();
     }
   }
@@ -1181,7 +1181,7 @@ struct HasAttrs {
   }
 
   void ExtractClassNames() {
-    for (int i = 0; i < attributes.size(); i++) {
+    for (size_t i = 0; i < attributes.size(); i++) {
       attributes[i]->ExtractClassNames();
     }
   }
@@ -1739,7 +1739,7 @@ void ClassFile::WriteClass(u1 *&p) {
   members.insert(members.end(), fields.begin(), fields.end());
   members.insert(members.end(), methods.begin(), methods.end());
   ExtractClassNames();
-  for (int i = 0; i < members.size(); i++) {
+  for (size_t i = 0; i < members.size(); i++) {
     Member *member = members[i];
     size_t idx = 0;
     devtools_ijar::ExtractClassNames(member->descriptor->Display(), &idx);
