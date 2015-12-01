@@ -1134,7 +1134,11 @@ endif
 # that custom build rules which generate .o files don't consume other generated
 # sources as input (or if they do they take care of that dependency themselves).
 $(normal_objects) : | $(my_generated_sources)
+ifeq ($(BUILDING_WITH_NINJA),true)
+$(all_objects) : $(import_includes)
+else
 $(all_objects) : | $(import_includes)
+endif
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 
@@ -1307,14 +1311,26 @@ $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
 # generated after the headers, so this is a convenient way to ensure the headers exist.
 $(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp)
 	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp
 ifdef my_export_c_include_dirs
 	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
-	        echo "-I $$d" >> $@; \
+	        echo "-I $$d" >> $@.tmp; \
 	        done
 else
-	$(hide) touch $@
+	$(hide) touch $@.tmp
 endif
+ifeq ($(BUILDING_WITH_NINJA),true)
+	$(hide) if cmp -s $@.tmp $@ ; then \
+	  rm $@.tmp ; \
+	else \
+	  mv $@.tmp $@ ; \
+	fi
+else
+	mv $@.tmp $@ ;
+endif
+
+# Kati adds restat=1 to ninja. GNU make does nothing for this.
+.KATI_RESTAT: $(export_includes)
 
 # Make sure export_includes gets generated when you are running mm/mmm
 $(LOCAL_BUILT_MODULE) : | $(export_includes)
