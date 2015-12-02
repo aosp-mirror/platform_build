@@ -284,8 +284,8 @@ class EdifyGenerator(object):
     cmd = ['apply_patch("%s",\0"%s",\0%s,\0%d'
            % (srcfile, tgtfile, tgtsha1, tgtsize)]
     for i in range(0, len(patchpairs), 2):
-      cmd.append(',\0%s, package_extract_file("%s")' % patchpairs[i:i+2])
-    cmd.append(');')
+      cmd.append(',\0%s,\0package_extract_file("%s")' % patchpairs[i:i+2])
+    cmd.append(') ||\n    abort("Failed to apply patch to %s");' % (srcfile,))
     cmd = "".join(cmd)
     self.script.append(self.WordWrap(cmd))
 
