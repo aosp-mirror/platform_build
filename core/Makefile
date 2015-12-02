@@ -122,7 +122,7 @@ ifeq (,$(strip $(BUILD_FINGERPRINT)))
   ifneq ($(filter eng.%,$(BUILD_NUMBER)),)
     # Trim down BUILD_FINGERPRINT: the default BUILD_NUMBER makes it easily exceed
     # the Android system property length limit (PROPERTY_VALUE_MAX=92).
-    BF_BUILD_NUMBER := $(USER)$(shell $(DATE) +%m%d%H%M)
+    BF_BUILD_NUMBER := $(shell echo $${USER:0:6})$(shell $(DATE) +%m%d%H%M)
   else
     BF_BUILD_NUMBER := $(BUILD_NUMBER)
   endif
