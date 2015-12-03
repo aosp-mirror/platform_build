@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ba24b12_eb9806eb",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-03T01:11:53Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 474,
+        "startChar": 54,
+        "endLine": 474,
+        "endChar": 59
+      },
+      "revId": "f4edabc4359edfceae4266e9011c9dac38c43917",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
