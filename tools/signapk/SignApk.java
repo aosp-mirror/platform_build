@@ -476,7 +476,7 @@ class SignApk {
      * more efficient.
      */
     private static void copyFiles(Manifest manifest, JarFile in, JarOutputStream out,
-                                  long timestamp, int alignment) throws IOException {
+                                  long timestamp, int defaultAlignment) throws IOException {
         byte[] buffer = new byte[4096];
         int num;
 
@@ -515,6 +515,7 @@ class SignApk {
                 offset += 4;
                 firstEntry = false;
             }
+            int alignment = getStoredEntryDataAlignment(name, defaultAlignment);
             if (alignment > 0 && (offset % alignment != 0)) {
                 // Set the "extra data" of the entry to between 1 and
                 // alignment-1 bytes, to make the file data begin at
@@ -552,6 +553,24 @@ class SignApk {
                 out.write(buffer, 0, num);
             }
             out.flush();
+        }
+    }
+
+    /**
+     * Returns the multiple (in bytes) at which the provided {@code STORED} entry's data must start
+     * relative to start of file or {@code 0} if alignment of this entry's data is not important.
+     */
+    private static int getStoredEntryDataAlignment(String entryName, int defaultAlignment) {
+        if (defaultAlignment <= 0) {
+            return 0;
+        }
+
+        if (entryName.endsWith(".so")) {
+            // Align .so contents to memory page boundary to enable memory-mapped
+            // execution.
+            return 4096;
+        } else {
+            return defaultAlignment;
         }
     }
 
