@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c0148835_99a13b67",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-03T18:31:58Z",
+      "side": 1,
+      "message": "why do we need this if we run jack-admin directly from the source directory.",
+      "range": {
+        "startLine": 322,
+        "startChar": 19,
+        "endLine": 322,
+        "endChar": 26
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e0118c43_fa3269c9",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-03T18:31:58Z",
+      "side": 1,
+      "message": "Declare it as phony:\n.PHONY : start-jack-server",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 17
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2006440b_9c8b65d2",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-03T18:31:58Z",
+      "side": 1,
+      "message": "This command hangs on my clean checkout of the master tree:\nmaster3$ prebuilts/sdk/tools/jack-admin start-server 2\u003e\u00261\nLaunching Jack server java -Djava.io.tmpdir\u003d/tmp -Dfile.encoding\u003dUTF-8 -XX:+TieredCompilation -cp /usr/local/google/home/wangying/.jack-server/launcher.jar com.android.jack.launcher.ServerLauncher\n\u003cit hangs\u003e\n\nDo you have any idea what it\u0027s doing?",
+      "range": {
+        "startLine": 324,
+        "startChar": 1,
+        "endLine": 324,
+        "endChar": 50
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
