@@ -322,7 +322,7 @@ endif # TARGET JAVA_LIBRARIES
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 $(intermediates.COMMON)/classes.jack : PRIVATE_JILL_FLAGS:=$(LOCAL_JILL_FLAGS)
 $(intermediates.COMMON)/classes.jack : $(my_src_jar) $(LOCAL_MODULE_MAKEFILE_DEP) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR) $(JACK)
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR) $(JACK) | setup-jack-server
 	$(transform-jar-to-jack)
 
 endif # JAVA_LIBRARIES

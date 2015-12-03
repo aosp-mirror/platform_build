@@ -319,6 +319,11 @@ include build/core/pdk_config.mk
 -include $(TOPDIR)prebuilts/sdk/tools/jack_versions.mk
 -include $(TOPDIR)prebuilts/sdk/tools/jack_for_module.mk
 
+#
+# -----------------------------------------------------------------
+# Install and start Jack server
+-include $(TOPDIR)prebuilts/sdk/tools/jack_server_setup.mk
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
