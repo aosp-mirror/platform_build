@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "c0eba861_61c6b699",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-12-03T20:36:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0118c43_fa3269c9",
+      "range": {
+        "startLine": 321,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 17
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db339bd5_adf2c956",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-12-03T20:36:20Z",
+      "side": 1,
+      "message": "I just wanted to ensure that this target wouldn\u0027t be run concurrently with $(JACK) that is also doing a start-server. (It should be fine to run them concurrently but I still prefer to avoid it)",
+      "parentUuid": "c0148835_99a13b67",
+      "range": {
+        "startLine": 322,
+        "startChar": 19,
+        "endLine": 322,
+        "endChar": 26
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2006440b_9c8b65d2",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2015-12-03T18:31:58Z",
       "side": 1,
       "message": "This command hangs on my clean checkout of the master tree:\nmaster3$ prebuilts/sdk/tools/jack-admin start-server 2\u003e\u00261\nLaunching Jack server java -Djava.io.tmpdir\u003d/tmp -Dfile.encoding\u003dUTF-8 -XX:+TieredCompilation -cp /usr/local/google/home/wangying/.jack-server/launcher.jar com.android.jack.launcher.ServerLauncher\n\u003cit hangs\u003e\n\nDo you have any idea what it\u0027s doing?",
+      "range": {
+        "startLine": 324,
+        "startChar": 1,
+        "endLine": 324,
+        "endChar": 50
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b2da379_8bd5f1de",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2015-12-03T20:36:20Z",
+      "side": 1,
+      "message": "Looks like it was not installed on your computer, right? Looks like in this case it\u0027s waiting for the huge connection timeout we had to put for the build server :-(\n\nI\u0027ll fix that.",
+      "parentUuid": "2006440b_9c8b65d2",
       "range": {
         "startLine": 324,
         "startChar": 1,
