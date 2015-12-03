@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60259c9f_d6242491",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-03T18:36:05Z",
+      "side": 1,
+      "message": "But if you don\u0027t uncompress the library, you won\u0027t be able to load it at run time.",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 30
+      },
+      "revId": "b8c2df56299f53ad83abdcd8b909f094897405af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
