@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b1deb19_a553e8bf",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2015-12-03T00:45:26Z",
+      "side": 1,
+      "message": "build OS always \u003d\u003d host OS now, and HOST_EXECUTABLE_SUFFIX is unnecessary too (windows has moved to HOST_CROSS_...)",
+      "revId": "88307cefbf8a2d4432d67398317c55bbca9be7cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
