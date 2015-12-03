@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "00486077_e3bbd2fd",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-03T20:53:33Z",
+      "side": 1,
+      "message": "With this change, looks like we don\u0027t need to start the jackserver when we install $(JACK) any more.",
+      "parentUuid": "db339bd5_adf2c956",
+      "range": {
+        "startLine": 322,
+        "startChar": 19,
+        "endLine": 322,
+        "endChar": 26
+      },
+      "revId": "2a1bdb818d277e1b0a42b6c3a50672a5caf0cf13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2006440b_9c8b65d2",
         "filename": "core/main.mk",
         "patchSetId": 3
