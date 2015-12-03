@@ -1572,13 +1572,13 @@ endif;
   if OPTIONS.verify and system_diff:
     script.Print("Remounting and verifying system partition files...")
     script.Unmount("/system")
-    script.Mount("/system")
+    script.Mount("/system", recovery_mount_options)
     system_diff.EmitExplicitTargetVerification(script)
 
   if OPTIONS.verify and vendor_diff:
     script.Print("Remounting and verifying vendor partition files...")
     script.Unmount("/vendor")
-    script.Mount("/vendor")
+    script.Mount("/vendor", recovery_mount_options)
     vendor_diff.EmitExplicitTargetVerification(script)
   script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
 
