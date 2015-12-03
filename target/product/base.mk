@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
     blkid \
     bmgr \
     bugreport \
+    cameraserver \
     content \
     dhcpcd \
     dhcpcd-run-hooks \
