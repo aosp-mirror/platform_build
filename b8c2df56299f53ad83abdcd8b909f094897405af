@@ -22,6 +22,30 @@
       "revId": "b8c2df56299f53ad83abdcd8b909f094897405af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "00cb003e_6ba241c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1069065
+      },
+      "writtenOn": "2015-12-03T23:39:04Z",
+      "side": 1,
+      "message": "You\u0027re right. but the app on system partition is only applied in this case.\nThis flag should be used only app that is installed on the data partition. \u0027uncompress-shared-libs\u0027 is to increase the size of the apk. some apps determine whether or not hack into app size.",
+      "parentUuid": "60259c9f_d6242491",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 30
+      },
+      "revId": "b8c2df56299f53ad83abdcd8b909f094897405af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
