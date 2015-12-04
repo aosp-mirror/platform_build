@@ -185,7 +185,6 @@ Summary:
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:method.since ?>" >
         <td class="jd-typecol"><nobr>
             <?cs var:method.abstract ?>
-            <?cs var:method.synchronized ?>
             <?cs var:method.final ?>
             <?cs var:method.static ?>
             <?cs call:type_link(method.generic) ?>
@@ -539,7 +538,6 @@ From <?cs var:cl.kind ?>
         <?cs var:method.static ?> 
         <?cs var:method.final ?> 
         <?cs var:method.abstract ?> 
-        <?cs var:method.synchronized ?> 
         <?cs call:type_link(method.returnType) ?>
       </span>
       <span class="sympad"><?cs var:method.name ?></span>
