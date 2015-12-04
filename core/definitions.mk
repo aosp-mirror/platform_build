@@ -1726,6 +1726,78 @@ $(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     --skip-symbols-without-default-localization
 endef
 
+# Search for generated R.java/Manifest.java, copy the found R.java as $@.
+# Also copy them to a central 'R' directory to make it easier to add the files to an IDE.
+define find-generated-R.java
+$(hide) for GENERATED_MANIFEST_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
+  -name Manifest.java 2> /dev/null`; do \
+    dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_MANIFEST_FILE`; \
+    mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
+    $(ACP) -fp $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
+  done;
+$(hide) for GENERATED_R_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
+  -name R.java 2> /dev/null`; do \
+    dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_R_FILE`; \
+    mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
+    $(ACP) -fp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
+      || exit 31; \
+    $(ACP) -fp $$GENERATED_R_FILE $@ || exit 32; \
+  done;
+@# Ensure that the target file is always created, i.e. also in case we did not
+@# enter the GENERATED_R_FILE-loop above. This avoids unnecessary rebuilding.
+$(hide) touch $@
+endef
+
+###########################################################
+# AAPT2 compilation and link
+###########################################################
+define aapt2-compile-one-resource-file
+@mkdir -p $(dir $@)
+$(hide) $(AAPT2) compile -o $(dir $@) $(PRIVATE_AAPT2_CFLAGS) --legacy $<
+endef
+
+define aapt2-compile-one-resource-dir
+@mkdir -p $(dir $@)
+$(hide) $(AAPT2) compile -o $@ --dir $(PRIVATE_SOURCE_RES_DIR) \
+  $(PRIVATE_AAPT2_CFLAGS) --legacy
+endef
+
+# Set up rule to compile one resource file with aapt2.
+# Must be called with $(eval).
+# $(1): the source file
+# $(2): the output file
+define aapt2-compile-one-resource-file-rule
+$(2) : $(1) $(AAPT2)
+	@echo "AAPT2 compile $$@ <- $$<"
+	$$(call aapt2-compile-one-resource-file)
+endef
+
+# Convert input resource file path to output file path.
+# values-[config]/<file>.xml -> values-[config]_<file>.arsc.flat;
+# For other resource file, just replace the last "/" with "_" and
+# add .flat extension.
+#
+# $(1): the input resource file path
+# $(2): the base dir of the output file path
+# Returns: the compiled output file path
+define aapt2-compiled-resource-out-file
+$(eval _p_w := $(strip $(subst /,$(space),$(dir $(1)))))$(2)/$(subst $(space),/,$(_p_w))_$(if $(filter values%,$(lastword $(_p_w))),$(patsubst %.xml,%.arsc,$(notdir $(1))),$(notdir $(1))).flat
+endef
+
+define aapt2-link
+$(hide) $(AAPT2) link -o $@ \
+  $(PRIVATE_AAPT_FLAGS) \
+  $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
+  $(addprefix -I ,$(PRIVATE_AAPT_INCLUDES)) \
+  $(addprefix --java ,$(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
+  $(addprefix --proguard ,$(PRIVATE_PROGUARD_OPTIONS_FILE)) \
+  $(addprefix --min-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
+  $(addprefix --target-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
+  $(addprefix -R , $(PRIVATE_OVERLAY_FLAT)) \
+  $(PRIVATE_RES_FLAT)
+endef
+
+###########################################################
 xlint_unchecked := -Xlint:unchecked
 
 # emit-line, <word list>, <output file>

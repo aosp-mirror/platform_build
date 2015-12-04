@@ -296,11 +296,12 @@ common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
 $(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
 
-ifneq ($(filter %.aar, $(my_prebuilt_src_file)),)
+my_src_aar := $(filter %.aar, $(my_prebuilt_src_file))
+ifneq ($(my_src_aar),)
 # This is .aar file, archive of classes.jar and Android resources.
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
 
-$(my_src_jar) : $(my_prebuilt_src_file)
+$(my_src_jar) : $(my_src_aar)
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
@@ -318,6 +319,26 @@ $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
 
 $(call define-jar-to-toc-rule, $(common_classes_jar))
 
+ifdef USE_AAPT2
+my_library_resources := $(intermediates.COMMON)/library-res.flata
+ifneq ($(my_src_aar),)
+# Compile the AAR resources to a .flata.
+$(my_library_resources): PRIVATE_SOURCE_RES_DIR := $(intermediates.COMMON)/aar/res
+$(my_library_resources) : $(my_src_jar)
+	@echo "AAPT2 compile AAR $@ <- $(PRIVATE_SOURCE_RES_DIR)"
+	$(call aapt2-compile-one-resource-dir)
+else  # $(my_src_aar)
+# Create an empty packag for prebuilt static Java library.
+# TODO: support compiled resources inside a prebuilt static Java library.
+$(my_library_resources): PRIVATE_RES_DIR := $(intermediates.COMMON)/flat-res/res
+$(my_library_resources) :
+	@echo "Create empty library resources $@"
+	@rm -rf $@ && mkdir -p $(dir $@) $(PRIVATE_RES_DIR)
+	$(hide) cd $(dir $(PRIVATE_RES_DIR)) && zip -qrX $(abspath $@) $(notdir $(PRIVATE_RES_DIR))
+endif  # $(my_src_aar)
+# Make sure my_library_resources is created when you run mm/mmm.
+$(built_module) : $(my_library_resources)
+endif  # USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
