@@ -94,7 +94,7 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
 			-fstrict-aliasing \
 			-funswitch-loops \
 			-funwind-tables \
-			-fstack-protector \
+			-fstack-protector-strong \
 			-m32 \
 			-no-canonical-prefixes \
 			-fno-canonical-system-headers \
