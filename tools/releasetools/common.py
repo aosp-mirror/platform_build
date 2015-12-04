@@ -588,28 +588,15 @@ def GetKeyPasswords(keylist):
   return key_passwords
 
 
-def SignFile(input_name, output_name, key, password, align=None,
-             whole_file=False):
+def SignFile(input_name, output_name, key, password, whole_file=False):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
-
-  If align is an integer > 1, zipalign is run to align stored files in
-  the output zip on 'align'-byte boundaries.
 
   If whole_file is true, use the "-w" option to SignApk to embed a
   signature that covers the whole file in the archive comment of the
   zip file.
   """
-
-  if align == 0 or align == 1:
-    align = None
-
-  if align:
-    temp = tempfile.NamedTemporaryFile()
-    sign_name = temp.name
-  else:
-    sign_name = output_name
 
   cmd = [OPTIONS.java_path, OPTIONS.java_args, "-jar",
          os.path.join(OPTIONS.search_path, OPTIONS.signapk_path)]
@@ -618,7 +605,7 @@ def SignFile(input_name, output_name, key, password, align=None,
     cmd.append("-w")
   cmd.extend([key + OPTIONS.public_key_suffix,
               key + OPTIONS.private_key_suffix,
-              input_name, sign_name])
+              input_name, output_name])
 
   p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
   if password is not None:
@@ -626,13 +613,6 @@ def SignFile(input_name, output_name, key, password, align=None,
   p.communicate(password)
   if p.returncode != 0:
     raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
-
-  if align:
-    p = Run(["zipalign", "-f", "-p", str(align), sign_name, output_name])
-    p.communicate()
-    if p.returncode != 0:
-      raise ExternalError("zipalign failed: return code %s" % (p.returncode,))
-    temp.close()
 
 
 def CheckSize(data, target, info_dict):
