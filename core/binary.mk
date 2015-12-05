@@ -177,6 +177,11 @@ my_asflags += $(LOCAL_ASFLAGS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $
 my_c_includes += $(LOCAL_C_INCLUDES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_C_INCLUDES_$(my_32_64_bit_suffix))
 my_generated_sources += $(LOCAL_GENERATED_SOURCES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_GENERATED_SOURCES_$(my_32_64_bit_suffix))
 
+my_missing_exclude_files := $(filter-out $(my_src_files),$(my_src_files_exclude))
+ifneq ($(my_missing_exclude_files),)
+$(warning Files are listed in LOCAL_SRC_FILES_EXCLUDE but not LOCAL_SRC_FILES)
+$(error $(my_missing_exclude_files))
+endif
 my_src_files := $(filter-out $(my_src_files_exclude),$(my_src_files))
 
 my_clang := $(strip $(LOCAL_CLANG))
