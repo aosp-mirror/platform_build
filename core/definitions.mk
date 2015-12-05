@@ -1960,7 +1960,7 @@ endef
 
 ## Define a rule which generates .jar.toc and mark it as .KATI_RESTAT.
 define define-jar-to-toc-rule
-$(eval $(call _transform-jar-to-toc,$1))
+$(eval $(call _transform-jar-to-toc,$1))\
 $(eval .KATI_RESTAT: $1.toc)
 endef
 
