@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0af948e_98ea350c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-12-07T18:56:05Z",
+      "side": 1,
+      "message": "is it better to use PRIVATE_OTA_TOOLS instead?",
+      "range": {
+        "startLine": 1564,
+        "startChar": 9,
+        "endLine": 1564,
+        "endChar": 24
+      },
+      "revId": "03b6e8b6c4ad1d423256269b738a87e307ce5d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
