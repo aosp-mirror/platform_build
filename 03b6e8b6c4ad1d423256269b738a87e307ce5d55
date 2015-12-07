@@ -22,6 +22,30 @@
       "revId": "03b6e8b6c4ad1d423256269b738a87e307ce5d55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "60e03ce1_61a770cf",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-07T18:59:39Z",
+      "side": 1,
+      "message": "You cannot use PRIVATE_OTA_TOOLS in ifneq() here, because it\u0027s not available in the global context.\nBut we can use something like $(if $(RIVATE_OTA_TOOLS),$(hide) ...), but that way it will be evaluated only when the build recipe is executed.\nI prefer ifneq() so it can be evaluated earlier at makefile parse time.",
+      "parentUuid": "a0af948e_98ea350c",
+      "range": {
+        "startLine": 1564,
+        "startChar": 9,
+        "endLine": 1564,
+        "endChar": 24
+      },
+      "revId": "03b6e8b6c4ad1d423256269b738a87e307ce5d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
