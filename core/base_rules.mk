@@ -381,7 +381,7 @@ $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files := true
 my_compat_dist += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES),\
   $(eval p := $(subst :,$(space),$(f)))\
   $(eval s := $(LOCAL_PATH)/$(word 1,$(p)))\
-  $(eval d := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(or $(word 2,$(p)),(word 1,$(p))))\
+  $(eval d := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(or $(word 2,$(p)),$(word 1,$(p))))\
   $(s):$(d))
 
 ifneq (,$(wildcard $(LOCAL_PATH)/AndroidTest.xml))
