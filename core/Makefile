@@ -1562,8 +1562,10 @@ endif
 	$(hide) mkdir -p $(zip_root)/OTA
 	$(hide) $(ACP) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
 ifneq ($(AB_OTA_UPDATER),true)
+ifneq ($(built_ota_tools),)
 	$(hide) mkdir -p $(zip_root)/OTA/bin
 	$(hide) $(ACP) $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
+endif
 endif
 	@# Files that do not end up in any images, but are necessary to
 	@# build them.
