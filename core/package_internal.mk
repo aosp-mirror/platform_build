@@ -436,7 +436,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
     $(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
 
 # Define the rule to build the actual package.
-$(LOCAL_BUILT_MODULE): $(AAPT) | $(ZIPALIGN)
+$(LOCAL_BUILT_MODULE): $(AAPT)
 # PRIVATE_JNI_SHARED_LIBRARIES is a list of <abi>:<path_of_built_lib>.
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
 # PRIVATE_JNI_SHARED_LIBRARIES_ABI is a list of ABI names.
@@ -485,8 +485,6 @@ ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 endif
 endif
 	$(sign-package)
-	@# Alignment must happen after all other zip operations.
-	$(align-package)
 
 ###############################
 ## Build dpi-specific apks, if it's apps_only build.
@@ -521,7 +519,7 @@ built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/packag
 installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
 # The splits should have been built in the same command building the base apk.
-# This rule just runs signing and zipalign etc.
+# This rule just runs signing.
 # Note that we explicily check the existence of the split apk and remove the
 # built base apk if the split apk isn't there.
 # That way the build system will rerun the aapt after the user changes the splitting parameters.
@@ -533,7 +531,6 @@ $(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
 	  rm $<; exit 1; \
 	fi
 	$(sign-package)
-	$(align-package)
 
 # Rules to install the splits
 $(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
