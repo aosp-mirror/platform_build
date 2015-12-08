@@ -224,8 +224,10 @@ ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 endif
 endif
 	$(sign-package)
-endif
+	# No need for align-package because sign-package takes care of alignment
+else
 	$(align-package)
+endif
 
 ###############################
 ## Rule to build the odex file
@@ -241,7 +243,7 @@ ifdef LOCAL_PACKAGE_SPLITS
 built_apk_splits := $(addprefix $(built_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
 installed_apk_splits := $(addprefix $(my_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
 
-# Rules to sign and zipalign the split apks.
+# Rules to sign the split apks.
 my_src_dir := $(sort $(dir $(LOCAL_PACKAGE_SPLITS)))
 ifneq (1,$(words $(my_src_dir)))
 $(error You must put all the split source apks in the same folder: $(LOCAL_PACKAGE_SPLITS))
@@ -253,7 +255,6 @@ $(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 $(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(ACP)
 	$(copy-file-to-new-target)
 	$(sign-package)
-	$(align-package)
 
 # Rules to install the split apks.
 $(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk | $(ACP)
