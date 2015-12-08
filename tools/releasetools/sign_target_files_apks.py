@@ -134,7 +134,7 @@ def SignApk(data, keyname, pw):
 
   signed = tempfile.NamedTemporaryFile()
 
-  common.SignFile(unsigned.name, signed.name, keyname, pw, align=4)
+  common.SignFile(unsigned.name, signed.name, keyname, pw)
 
   data = signed.read()
   unsigned.close()
