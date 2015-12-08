@@ -116,6 +116,7 @@
     <td><?cs var:ndk.win64.legacy_bytes ?></td>
     <td><?cs var:ndk.win64.legacy_checksum ?></td>
   </tr> -->
+<!--   (this item is deprecated)
   <tr>
     <td>Mac OS X 32-bit</td>
     <td>
@@ -124,8 +125,9 @@
     </td>
     <td><?cs var:ndk.mac32_bytes ?></td>
     <td><?cs var:ndk.mac32_checksum ?></td>
-  </tr>
- <!--  <tr>
+  </tr> -->
+ <!-- (this item is deprecated)
+  <tr>
     <td>
   <a onClick="return onDownload(this)"
      href="http://dl.google.com/android/ndk/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32.legacy_download ?></a>
@@ -340,7 +342,7 @@ var:sdk.linux_download
   <tr>
     <td rowspan="3">Windows</td>
     <td>
-  <a onclick="return onDownload(this)" id="win-bundle"
+  <a onclick="return onDownload(this,false,true)" id="win-bundle"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_exe_download ?>"
     ><?cs var:studio.win_bundle_exe_download ?></a><br>(Recommended)
     </td>
@@ -351,7 +353,7 @@ var:sdk.linux_download
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="return onDownload(this)"
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-notools"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
     ><?cs var:studio.win_notools_exe_download ?></a><br>(No SDK tools included)
     </td>
@@ -362,7 +364,7 @@ var:sdk.linux_download
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="return onDownload(this)"
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-zip"
     href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
     ><?cs var:studio.win_bundle_download ?></a>
     </td>
@@ -373,7 +375,7 @@ var:sdk.linux_download
   <tr>
     <td><nobr>Mac OS X</nobr></td>
     <td>
-  <a onclick="return onDownload(this)" id="mac-bundle"
+  <a onclick="return onDownload(this,false,true)" id="mac-bundle"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.mac_bundle_download ?>"
     ><?cs var:studio.mac_bundle_download ?></a>
     </td>
@@ -384,7 +386,7 @@ var:sdk.linux_download
   <tr>
     <td>Linux</td>
     <td>
-  <a onclick="return onDownload(this)" id="linux-bundle"
+  <a onclick="return onDownload(this,false,true)" id="linux-bundle"
     href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.linux_bundle_download ?>"
     ><?cs var:studio.linux_bundle_download ?></a>
     </td>
@@ -399,12 +401,10 @@ var:sdk.linux_download
 
 
 
-</div><!-- end col-13 for lower-half content -->
-
-
 
 
 <script>
+
   if (location.hash == "#Requirements") {
     $('.reqs').show();
   } else if (location.hash == "#ExistingIDE") {
@@ -435,7 +435,7 @@ var:sdk.linux_download
     $('#not-supported').hide();
 
     /* set up primary Android Studio download button */
-    $('.download-bundle-button').append(" <br/><span class='small'>for " + os + "</span>");
+    $('.download-bundle-button > .small').html(" for " + os);
     $('.download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
   }
 
@@ -450,7 +450,11 @@ var:sdk.linux_download
     }
 
     $("#downloadForRealz").attr('bundle', bundle);
-    $("a#downloadForRealz").attr("name", $(link).attr('href'));
+    if (bundle && !button) {
+      $("a#downloadForRealz").attr("name", "#" + $(link).attr('id'));
+    } else {
+      $("a#downloadForRealz").attr("name", $(link).attr('href'));
+    }
 
     $("#tos").show();
     $("#landing").hide();
@@ -502,9 +506,6 @@ var:sdk.linux_download
       ga('send', 'event', 'SDK', 'IDE and Tools', $("#downloadForRealz").html());
       return true;
     } else {
-      $("label#agreeLabel").parent().stop().animate({color: "#258AAF"}, 200,
-        function() {$("label#agreeLabel").parent().stop().animate({color: "#222"}, 200)}
-      );
       return false;
     }
   }
