@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05487277_e39bd2e0",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-09T18:25:41Z",
+      "side": 1,
+      "message": "Use \"-include\" the same way as the above jack config. We may have branches that don\u0027t have prebuilts/sdk in their manifest.",
+      "range": {
+        "startLine": 325,
+        "startChar": 0,
+        "endLine": 325,
+        "endChar": 57
+      },
+      "revId": "0efc8e5fcbd06c0d69fbf993bf3f1bb225063dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
