@@ -328,6 +328,11 @@ $(intermediates.COMMON)/classes.jack : $(my_src_jar) $(LOCAL_MODULE_MAKEFILE_DEP
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR) $(JACK)
 	$(transform-jar-to-jack)
 
+# Update timestamps of .toc files for prebuilts so dependents will be
+# always rebuilt.
+$(intermediates.COMMON)/classes.dex.toc: $(intermediates.COMMON)/classes.jack
+	touch $@
+
 endif # JAVA_LIBRARIES
 
 $(built_module) : $(LOCAL_MODULE_MAKEFILE_DEP) $(LOCAL_ADDITIONAL_DEPENDENCIES)
