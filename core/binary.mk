@@ -85,11 +85,12 @@ ifdef LOCAL_SDK_VERSION
 
   # The bionic linker now has support for packed relocations and gnu style
   # hashes (which are much faster!), but shipping to older devices requires
-  # the old style hash and disabling packed relocations.
-  #ifeq ($(shell expr $(LOCAL_SDK_VERSION) >= FIRST_SUPPORTED_VERSION),0)
-    my_ldflags += -Wl,--hash-style=sysv
-    LOCAL_PACK_MODULE_RELOCATIONS := false
-  #endif
+  # the old style hash. Fortunately, we can build with both and it'll work
+  # anywhere.
+  my_ldflags += -Wl,--hash-style=both
+
+  # We don't want to expose the relocation packer to the NDK just yet.
+  LOCAL_PACK_MODULE_RELOCATIONS := false
 
   # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
   # See ndk/docs/CPLUSPLUS-SUPPORT.html
