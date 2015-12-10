@@ -104,9 +104,6 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     endif
 else ifeq ($(my_cxx_stl),ndk)
     # Using an NDK STL. Handled in binary.mk.
-    ifndef LOCAL_IS_HOST_MODULE
-        my_system_shared_libraries += libstdc++
-    endif
 else ifeq ($(my_cxx_stl),libstdc++)
     # Using bionic's basic libstdc++. Not actually an STL. Only around until the
     # tree is in good enough shape to not need it.
