@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6553ee27_8d9c427f",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 477,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-10T22:09:00Z",
+      "side": 1,
+      "message": "This is incorrect. What bitness to use is decided by the JDK\u0027s bitness, not how we build the host binaries. There is a build system variable HOST_JDK_IS_64BIT_VERSION for this. But I don\u0027t think we need to care about 32-bit JDK any more at this point. So we can just remove the 32bit support here.",
+      "range": {
+        "startLine": 473,
+        "startChar": 0,
+        "endLine": 477,
+        "endChar": 5
+      },
+      "revId": "cc9658d31297286cce7b459711a38801114dc580",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
