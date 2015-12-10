@@ -82,6 +82,29 @@
     },
     {
       "key": {
+        "uuid": "a567a60d_acf13b8e",
+        "filename": "target/board/generic/sepolicy/netd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2015-12-10T18:27:41Z",
+      "side": 1,
+      "message": "dontaudit",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 5
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e55fde25_84241a5e",
         "filename": "target/board/generic/sepolicy/platform_app.te",
         "patchSetId": 1
