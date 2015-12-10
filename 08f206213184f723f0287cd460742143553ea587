@@ -22,6 +22,30 @@
       "revId": "08f206213184f723f0287cd460742143553ea587",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "253496db_8192c879",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2015-12-10T22:43:48Z",
+      "side": 1,
+      "message": "Fixed. Move the new default setting to else part of LOCAL_IS_HOST_MODULE.",
+      "parentUuid": "a567a60d_07828070",
+      "range": {
+        "startLine": 207,
+        "startChar": 0,
+        "endLine": 211,
+        "endChar": 9
+      },
+      "revId": "08f206213184f723f0287cd460742143553ea587",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
