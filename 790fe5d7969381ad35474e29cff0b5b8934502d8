@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8057f0e8_8f65f5c9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-12-10T09:41:46Z",
+      "side": 1,
+      "message": "I\u0027m not sure what we should ideally do for static java libraries. To be honest, I don\u0027t understand what \"static java library\" is. But I\u0027m guessing current implementation is OK anyway.",
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "050152f3_7bd41fdf",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1980,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-12-10T09:41:46Z",
+      "side": 1,
+      "message": "Currently, we have only one caller for this but I defined this function because this is consistent with jar-to-toc and we may add more callers in future.",
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
