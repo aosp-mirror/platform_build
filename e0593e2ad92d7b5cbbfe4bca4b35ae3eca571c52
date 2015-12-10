@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a567a60d_67701cbf",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 1002975
+      },
+      "writtenOn": "2015-12-10T21:49:34Z",
+      "side": 1,
+      "message": "Seems like this should be HOST_IS_64_BIT, but I don\u0027t know if that exists.",
+      "range": {
+        "startLine": 473,
+        "startChar": 8,
+        "endLine": 473,
+        "endChar": 24
+      },
+      "revId": "e0593e2ad92d7b5cbbfe4bca4b35ae3eca571c52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
