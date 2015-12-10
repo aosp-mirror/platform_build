@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "254d7687_f94b7baa",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1688,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2015-12-10T22:47:13Z",
+      "side": 1,
+      "message": "No, the default \"lib64/libconscrypt...\" is automaticaly appended to the path specified in the -p argument and everything works fine. It\u0027s the same reason why the relative path of signapk.jar is not overridden here either.",
+      "parentUuid": "a5596647_a215d225",
+      "range": {
+        "startLine": 1688,
+        "startChar": 4,
+        "endLine": 1688,
+        "endChar": 53
+      },
+      "revId": "cc9658d31297286cce7b459711a38801114dc580",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "855c6237_015b7e03",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2015-12-10T22:25:37Z",
       "side": 1,
       "message": "I\u0027d suggest to rename it to SIGAPK_JNI_LIBRARY_PATH .",
+      "range": {
+        "startLine": 456,
+        "startChar": 0,
+        "endLine": 456,
+        "endChar": 24
+      },
+      "revId": "cc9658d31297286cce7b459711a38801114dc580",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "454eea83_7492f67c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2015-12-10T22:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "855c6237_015b7e03",
       "range": {
         "startLine": 456,
         "startChar": 0,
@@ -106,6 +154,30 @@
       "writtenOn": "2015-12-10T22:25:37Z",
       "side": 1,
       "message": "Same here. We don\u0027t need to support 32-bit JDK.",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 50,
+        "endChar": 46
+      },
+      "revId": "cc9658d31297286cce7b459711a38801114dc580",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05487277_985da155",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2015-12-10T22:47:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a567a60d_a73b94a3",
       "range": {
         "startLine": 47,
         "startChar": 4,
