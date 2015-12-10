@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "855c6237_fbbc97f7",
+        "filename": "target/board/generic/sepolicy/adbd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T19:19:25Z",
+      "side": 1,
+      "message": "This is fixed in https://android-review.googlesource.com/186433",
+      "parentUuid": "254d7687_f3839abb",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 47
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "855c6237_bb185f5c",
         "filename": "target/board/generic/sepolicy/goldfish_setup.te",
         "patchSetId": 1
