@@ -22,6 +22,30 @@
       "revId": "e0593e2ad92d7b5cbbfe4bca4b35ae3eca571c52",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05487277_7dc0977c",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2015-12-10T21:52:23Z",
+      "side": 1,
+      "message": "Done. HOST_IS_64_BIT exists and is exactly what we want here.",
+      "parentUuid": "a567a60d_67701cbf",
+      "range": {
+        "startLine": 473,
+        "startChar": 8,
+        "endLine": 473,
+        "endChar": 24
+      },
+      "revId": "e0593e2ad92d7b5cbbfe4bca4b35ae3eca571c52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
