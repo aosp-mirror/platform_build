@@ -1,0 +1,192 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "254d7687_f3839abb",
+        "filename": "target/board/generic/sepolicy/adbd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "these are not specific to the emulator. This needs to be fixed in core policy. I\u0027m working on this.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 47
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "855c6237_bb185f5c",
+        "filename": "target/board/generic/sepolicy/goldfish_setup.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "Why does goldfish_setup need to access the network? Even if this is necessary, this is the wrong approach. You should be adding the following line:\n\n  net_domain(goldfish_setup)\n\nwhich adds these rules.",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 47
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5596647_9c659564",
+        "filename": "target/board/generic/sepolicy/mediaserver.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "This should be written as:\n\n  get_prop(mediaserver, qemu_prop)\n\nHowever, it would be better to just grant this in domain.te instead:\n\n  get_prop(domain, qemu_prop)\n\nwhich will allow everyone to read this property.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e55fde25_c4b0d24a",
+        "filename": "target/board/generic/sepolicy/netd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "netd does not load kernel modules. This is unnecessary and is an artifact of a different kernel bug.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e55fde25_84241a5e",
+        "filename": "target/board/generic/sepolicy/platform_app.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "ptrace access for platform_app was deliberately removed in https://android-review.googlesource.com/175786 . This should not be necessary. What bug are you seeing here?",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "855c6237_5bf16350",
+        "filename": "target/board/generic/sepolicy/radio.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "ptrace was deliberately removed. What problem are you seeing?",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e55fde25_24332ea2",
+        "filename": "target/board/generic/sepolicy/shell.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "should be fixed in core policy, just like adbd.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 56
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "254d7687_b36642fe",
+        "filename": "target/board/generic/sepolicy/surfaceflinger.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "please see comment in mediaserver.te. This should be a domain.te rule.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "454eea83_3911179d",
+        "filename": "target/board/generic/sepolicy/system_server.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "please see comment in mediaserver.te. This should be a domain.te rule.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05487277_7267a6d2",
+        "filename": "target/board/generic/sepolicy/zygote.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T18:25:31Z",
+      "side": 1,
+      "message": "please see comment in mediaserver.te. This should be a domain.te rule.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
