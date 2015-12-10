@@ -1393,13 +1393,13 @@ OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libcrypto-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libdivsufsort$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libdivsufsort64$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2fs_host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_blkid_host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_com_err_host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_e2p_host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_profile_host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_quota_host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_uuid_host$(HOST_SHLIB_SUFFIX)
+  $(HOST_LIBRARY_PATH)/libext2fs-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libext2_blkid-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libext2_com_err-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libext2_e2p-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libext2_profile-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libext2_quota-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libext2_uuid-host$(HOST_SHLIB_SUFFIX)
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
