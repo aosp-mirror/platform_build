@@ -87,7 +87,11 @@ ifdef LOCAL_SDK_VERSION
   # hashes (which are much faster!), but shipping to older devices requires
   # the old style hash. Fortunately, we can build with both and it'll work
   # anywhere.
-  my_ldflags += -Wl,--hash-style=both
+  #
+  # This is not currently supported on MIPS architectures.
+  ifeq (,$(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
+    my_ldflags += -Wl,--hash-style=both
+  endif
 
   # We don't want to expose the relocation packer to the NDK just yet.
   LOCAL_PACK_MODULE_RELOCATIONS := false
