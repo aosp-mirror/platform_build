@@ -146,6 +146,24 @@
     },
     {
       "key": {
+        "uuid": "6553ee27_a03ee661",
+        "filename": "target/board/generic/sepolicy/platform_app.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2015-12-10T19:26:32Z",
+      "side": 1,
+      "message": "Most likely this is due to the emulators missing the following kernel patch: https://android-review.googlesource.com/186250",
+      "parentUuid": "e55fde25_84241a5e",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "855c6237_5bf16350",
         "filename": "target/board/generic/sepolicy/radio.te",
         "patchSetId": 1
