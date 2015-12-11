@@ -107,6 +107,7 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += \
 			-Wl,--build-id=md5 \
 			-Wl,--warn-shared-textrel \
 			-Wl,--fatal-warnings \
+			-Wl,--no-undefined-version \
 			$(arch_variant_ldflags)
 
 # Disable transitive dependency library symbol resolving.
