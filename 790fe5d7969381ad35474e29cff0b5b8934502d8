@@ -19,6 +19,47 @@
     },
     {
       "key": {
+        "uuid": "e5cc3e7f_02a14a65",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-11T21:59:19Z",
+      "side": 1,
+      "message": "Static java library and (shared) java library have the same link format at build time, just that they differ in how the they end up on the device:\nFor a shared Java library, we transform it to dex and install the dex to /system/framework/\u003clib\u003e.jar, which is shared by all apks;\nFor a static Java library, we don\u0027t build dex file; instead any apk/jar linking against it will merge the static library\u0027s class files into its own .jar/.jack and then transformed to dex; that said every app gets its own copy of the static library.\nSometimes we want to compile a module against a static java library, but we don\u0027t want to merge the library\u0027s classes (we know the classes will be available by other means at runtime), so we link the static library as LOCAL_JAVA_LIBRARIES as opposed to LOCAL_STATIC_JAVA_LIBRARIES. That\u0027s totally fine with the current build system.\nI think how you handle the static library here is correct.",
+      "parentUuid": "8057f0e8_8f65f5c9",
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "65e04ee1_9e0a1d67",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1906,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-11T21:59:19Z",
+      "side": 1,
+      "message": "See here",
+      "range": {
+        "startLine": 1906,
+        "startChar": 52,
+        "endLine": 1906,
+        "endChar": 53
+      },
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "050152f3_7bd41fdf",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -30,6 +71,75 @@
       "writtenOn": "2015-12-10T09:41:46Z",
       "side": 1,
       "message": "Currently, we have only one caller for this but I defined this function because this is consistent with jar-to-toc and we may add more callers in future.",
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85d9c240_df601b15",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-11T21:59:19Z",
+      "side": 1,
+      "message": "See also here.",
+      "range": {
+        "startLine": 2165,
+        "startChar": 59,
+        "endLine": 2165,
+        "endChar": 71
+      },
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05107294_4358a636",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 590,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-11T21:59:19Z",
+      "side": 1,
+      "message": "See here.",
+      "range": {
+        "startLine": 589,
+        "startChar": 1,
+        "endLine": 590,
+        "endChar": 52
+      },
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e5cc3e7f_82e39ac9",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-11T21:59:19Z",
+      "side": 1,
+      "message": "We need to take multidex into account here.\nIf we generate multiple dex files for a module (for example in out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/), jack actually output multiple dex files: classes.dex, classes2.dex, ... \nBut the build system uses only classes.dex as dependency, and use wildcard classes*.dex to collect all the generated dex files in the build recipe.",
+      "range": {
+        "startLine": 679,
+        "startChar": 0,
+        "endLine": 679,
+        "endChar": 44
+      },
       "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
