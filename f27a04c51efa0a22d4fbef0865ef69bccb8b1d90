@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0576b2c5_d3e9b418",
+        "filename": "target/board/generic/sepolicy/adbd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Yes, that patch fixes those issues, so I removed changes for sysfs_devices_system_cpu in PS2. Thanks!",
+      "parentUuid": "855c6237_fbbc97f7",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 47
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "855c6237_bb185f5c",
         "filename": "target/board/generic/sepolicy/goldfish_setup.te",
         "patchSetId": 1
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "c5701ac6_7c1c35b5",
+        "filename": "target/board/generic/sepolicy/goldfish_setup.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "goldfish_setup is a service in both init.ranchu.rc and init.goldfish.rc, and it runs a shell script init.goldfish.sh\n\n(https://android.googlesource.com/device/generic/goldfish/+/master/init.goldfish.sh)\n\nwhich sets up networking.",
+      "parentUuid": "855c6237_bb185f5c",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 47
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a5596647_9c659564",
         "filename": "target/board/generic/sepolicy/mediaserver.te",
         "patchSetId": 1
@@ -83,6 +131,24 @@
       "writtenOn": "2015-12-10T18:25:31Z",
       "side": 1,
       "message": "This should be written as:\n\n  get_prop(mediaserver, qemu_prop)\n\nHowever, it would be better to just grant this in domain.te instead:\n\n  get_prop(domain, qemu_prop)\n\nwhich will allow everyone to read this property.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5701ac6_1c11799c",
+        "filename": "target/board/generic/sepolicy/mediaserver.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a5596647_9c659564",
       "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -117,6 +183,30 @@
       "writtenOn": "2015-12-10T18:27:41Z",
       "side": 1,
       "message": "dontaudit",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 5
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5f24653_c35a28cc",
+        "filename": "target/board/generic/sepolicy/netd.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a567a60d_acf13b8e",
       "range": {
         "startLine": 1,
         "startChar": 0,
@@ -164,6 +254,24 @@
     },
     {
       "key": {
+        "uuid": "c03648c7_0c8597bf",
+        "filename": "target/board/generic/sepolicy/platform_app.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Yes, this patch was missing for the kernel. It\u0027s uploaded here: https://android-review.googlesource.com/#/c/186946/ Thanks!",
+      "parentUuid": "6553ee27_a03ee661",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "855c6237_5bf16350",
         "filename": "target/board/generic/sepolicy/radio.te",
         "patchSetId": 1
@@ -175,6 +283,24 @@
       "writtenOn": "2015-12-10T18:25:31Z",
       "side": 1,
       "message": "ptrace was deliberately removed. What problem are you seeing?",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e5d27ee6_b2a2e018",
+        "filename": "target/board/generic/sepolicy/radio.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Solved with kernel patch: https://android-review.googlesource.com/#/c/186946/",
+      "parentUuid": "855c6237_5bf16350",
       "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -204,6 +330,30 @@
     },
     {
       "key": {
+        "uuid": "2506560b_1f51870b",
+        "filename": "target/board/generic/sepolicy/shell.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Please see comment in adbd.te.",
+      "parentUuid": "e55fde25_24332ea2",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 56
+      },
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "254d7687_b36642fe",
         "filename": "target/board/generic/sepolicy/surfaceflinger.te",
         "patchSetId": 1
@@ -215,6 +365,24 @@
       "writtenOn": "2015-12-10T18:25:31Z",
       "side": 1,
       "message": "please see comment in mediaserver.te. This should be a domain.te rule.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5701ac6_fc07e55e",
+        "filename": "target/board/generic/sepolicy/surfaceflinger.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "254d7687_b36642fe",
       "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -238,6 +406,24 @@
     },
     {
       "key": {
+        "uuid": "e5d27ee6_7276b874",
+        "filename": "target/board/generic/sepolicy/system_server.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "454eea83_3911179d",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "05487277_7267a6d2",
         "filename": "target/board/generic/sepolicy/zygote.te",
         "patchSetId": 1
@@ -249,6 +435,24 @@
       "writtenOn": "2015-12-10T18:25:31Z",
       "side": 1,
       "message": "please see comment in mediaserver.te. This should be a domain.te rule.",
+      "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c03648c7_cc4c5f79",
+        "filename": "target/board/generic/sepolicy/zygote.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1072780
+      },
+      "writtenOn": "2015-12-11T15:53:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "05487277_7267a6d2",
       "revId": "f27a04c51efa0a22d4fbef0865ef69bccb8b1d90",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
