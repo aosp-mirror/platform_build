@@ -34,6 +34,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.bouncycastle.util.encoders.Base64;
+import org.conscrypt.OpenSSLProvider;
 
 import java.io.Console;
 import java.io.BufferedReader;
@@ -109,8 +110,6 @@ class SignApk {
     private static final String CERT_SIG_MULTI_NAME = "META-INF/CERT%d.%s";
 
     private static final String OTACERT_NAME = "META-INF/com/android/otacert";
-
-    private static Provider sBouncyCastleProvider;
 
     // bitmasks for which hash algorithms we need the manifest to include.
     private static final int USE_SHA1 = 1;
@@ -451,12 +450,10 @@ class SignApk {
 
         CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
         ContentSigner signer = new JcaContentSignerBuilder(getSignatureAlgorithm(publicKey))
-            .setProvider(sBouncyCastleProvider)
             .build(privateKey);
         gen.addSignerInfoGenerator(
             new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder()
-                .setProvider(sBouncyCastleProvider)
                 .build())
             .setDirectSignature(true)
             .build(signer, publicKey));
@@ -879,8 +876,13 @@ class SignApk {
     public static void main(String[] args) {
         if (args.length < 4) usage();
 
-        sBouncyCastleProvider = new BouncyCastleProvider();
-        Security.addProvider(sBouncyCastleProvider);
+        // Install Conscrypt as the highest-priority provider. Its crypto primitives are faster than
+        // the standard or Bouncy Castle ones.
+        Security.insertProviderAt(new OpenSSLProvider(), 1);
+        // Install Bouncy Castle (as the lowest-priority provider) because Conscrypt does not offer
+        // DSA which may still be needed.
+        // TODO: Stop installing Bouncy Castle provider once DSA is no longer needed.
+        Security.addProvider(new BouncyCastleProvider());
 
         boolean signWholeFile = false;
         String providerClass = null;

@@ -2166,7 +2166,7 @@ endef
 #
 define sign-package
 $(hide) mv $@ $@.unsigned
-$(hide) java -jar $(SIGNAPK_JAR) \
+$(hide) java -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) -jar $(SIGNAPK_JAR) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
     $(PRIVATE_ADDITIONAL_CERTIFICATES) $@.unsigned $@.signed
 $(hide) mv $@.signed $@
