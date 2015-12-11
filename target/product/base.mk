@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += \
     android.test.runner \
     app_process \
     applypatch \
+    audioserver \
     blkid \
     bmgr \
     bugreport \
