@@ -3,6 +3,7 @@ SOONG := $(SOONG_OUT_DIR)/soong
 SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
+SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
 
 ifeq (,$(filter /%,$(SOONG_OUT_DIR)))
 SOONG_TOP_RELPATH := $(shell python -c "import os; print os.path.relpath('$(TOP)', '$(SOONG_OUT_DIR)')")
@@ -50,6 +51,11 @@ $(SOONG_VARIABLES): FORCE
 	  rm $(SOONG_VARIABLES_TMP); \
 	fi
 
+# Tell soong that it is embedded in make
+$(SOONG_IN_MAKE):
+	$(hide) mkdir -p $(dir $@)
+	$(hide) touch $@
+
 # Build an Android.mk listing all soong outputs as prebuilts
-$(SOONG_ANDROID_MK): $(SOONG) $(SOONG_VARIABLES) FORCE
+$(SOONG_ANDROID_MK): $(SOONG) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
 	$(hide) $(SOONG) $(SOONG_BUILD_NINJA) $(NINJA_ARGS)
