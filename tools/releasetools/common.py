@@ -44,6 +44,7 @@ class Options(object):
 
     self.search_path = platform_search_path.get(sys.platform, None)
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
+    self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
     self.java_path = "java"  # Use the one on the path by default.
     self.java_args = "-Xmx2048m" # JVM Args
@@ -598,7 +599,12 @@ def SignFile(input_name, output_name, key, password, whole_file=False):
   zip file.
   """
 
-  cmd = [OPTIONS.java_path, OPTIONS.java_args, "-jar",
+  java_library_path = os.path.join(
+      OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
+
+  cmd = [OPTIONS.java_path, OPTIONS.java_args,
+         "-Djava.library.path=" + java_library_path,
+         "-jar",
          os.path.join(OPTIONS.search_path, OPTIONS.signapk_path)]
   cmd.extend(OPTIONS.extra_signapk_args)
   if whole_file:
@@ -718,7 +724,8 @@ def ParseOptions(argv,
   try:
     opts, args = getopt.getopt(
         argv, "hvp:s:x:" + extra_opts,
-        ["help", "verbose", "path=", "signapk_path=", "extra_signapk_args=",
+        ["help", "verbose", "path=", "signapk_path=",
+         "signapk_shared_library_path=", "extra_signapk_args=",
          "java_path=", "java_args=", "public_key_suffix=",
          "private_key_suffix=", "boot_signer_path=", "boot_signer_args=",
          "verity_signer_path=", "verity_signer_args=", "device_specific=",
@@ -739,6 +746,8 @@ def ParseOptions(argv,
       OPTIONS.search_path = a
     elif o in ("--signapk_path",):
       OPTIONS.signapk_path = a
+    elif o in ("--signapk_shared_library_path",):
+      OPTIONS.signapk_shared_library_path = a
     elif o in ("--extra_signapk_args",):
       OPTIONS.extra_signapk_args = shlex.split(a)
     elif o in ("--java_path",):
