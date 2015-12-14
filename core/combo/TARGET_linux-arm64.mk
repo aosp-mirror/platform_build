@@ -75,7 +75,7 @@ TARGET_GLOBAL_CFLAGS += \
     -fno-strict-aliasing \
 
 TARGET_GLOBAL_CFLAGS += \
-			-fstack-protector \
+			-fstack-protector-strong \
 			-ffunction-sections \
 			-fdata-sections \
 			-funwind-tables \
