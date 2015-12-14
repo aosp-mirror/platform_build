@@ -16,6 +16,24 @@
       "revId": "7abad39b78225d2517bc46dff3192ea001184947",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0593126b_91667c30",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2015-12-14T21:41:53Z",
+      "side": 0,
+      "message": "yeah, i tested with showcommands.\n\ni did try to use the filtering to remove -fstack-protector but (a) my first guess didn\u0027t work and (b) i felt slightly weird doing that anyway, in case someone has a legit(-ish) need to (presumably temporarily) downgrade a project to -fstack-protector instead of -fstack-protector-strong. i\u0027d certainly prefer our failure fallback be -fstack-protector than nothing.\n\nin parallel i\u0027m working on killing GCC 4.8 for the host. if we\u0027re lucky, i can revert this change later this week...",
+      "parentUuid": "65f20ea9_d4a0d463",
+      "revId": "7abad39b78225d2517bc46dff3192ea001184947",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
