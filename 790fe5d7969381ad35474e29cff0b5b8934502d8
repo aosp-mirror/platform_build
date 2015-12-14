@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "c501fa3e_71f6584b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-12-14T10:11:23Z",
+      "side": 1,
+      "message": "Thanks for the detailed answer!",
+      "parentUuid": "e5cc3e7f_02a14a65",
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65e04ee1_9e0a1d67",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -134,6 +152,30 @@
       "writtenOn": "2015-12-11T21:59:19Z",
       "side": 1,
       "message": "We need to take multidex into account here.\nIf we generate multiple dex files for a module (for example in out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/), jack actually output multiple dex files: classes.dex, classes2.dex, ... \nBut the build system uses only classes.dex as dependency, and use wildcard classes*.dex to collect all the generated dex files in the build recipe.",
+      "range": {
+        "startLine": 679,
+        "startChar": 0,
+        "endLine": 679,
+        "endChar": 44
+      },
+      "revId": "790fe5d7969381ad35474e29cff0b5b8934502d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5088664_d0073c2d",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-12-14T10:11:23Z",
+      "side": 1,
+      "message": "Done. I\u0027m not sure if passing $(intermediates.COMMON) is a great idea, but maybe we can change arguments if we need to add callers of this function?",
+      "parentUuid": "e5cc3e7f_82e39ac9",
       "range": {
         "startLine": 679,
         "startChar": 0,
