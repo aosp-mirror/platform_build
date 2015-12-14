@@ -45,7 +45,7 @@ endif # BUILD_HOST_static
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -fPIC \
   -no-canonical-prefixes \
 
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector
+$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
