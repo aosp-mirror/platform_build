@@ -6,6 +6,8 @@ CLANG_CONFIG_x86_DARWIN_HOST_EXTRA_ASFLAGS := \
 
 CLANG_CONFIG_x86_DARWIN_HOST_EXTRA_CFLAGS := \
   -integrated-as
+
+CLANG_CONFIG_x86_DARWIN_HOST_EXTRA_CFLAGS += -fstack-protector-strong
 endif
 
 ifeq ($(HOST_OS),linux)
@@ -15,6 +17,8 @@ CLANG_CONFIG_x86_LINUX_HOST_EXTRA_ASFLAGS := \
 
 CLANG_CONFIG_x86_LINUX_HOST_EXTRA_CFLAGS := \
   --gcc-toolchain=$($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)
+
+CLANG_CONFIG_x86_LINUX_HOST_EXTRA_CFLAGS += -fstack-protector-strong
 
 ifneq ($(strip $($(clang_2nd_arch_prefix)HOST_IS_64_BIT)),)
 CLANG_CONFIG_x86_LINUX_HOST_EXTRA_CPPFLAGS := \
