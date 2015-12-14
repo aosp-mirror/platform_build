@@ -19,13 +19,6 @@ DEXPREOPT_BOOT_JAR_DIR_FULL_PATH := $(DEXPREOPT_PRODUCT_DIR_FULL_PATH)/$(DEXPREO
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
 
-# The default values for pre-opting: always preopt PIC.
-# Conditional to building on linux, as dex2oat currently does not work on darwin.
-ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT_PIC ?= true
-  WITH_DEXPREOPT ?= true
-endif
-
 # $(1): the .jar or .apk to remove classes.dex
 define dexpreopt-remove-classes.dex
 $(hide) zip --quiet --delete $(1) classes.dex; \
