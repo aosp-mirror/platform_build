@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65f20ea9_d4a0d463",
+        "filename": "core/combo/HOST_linux-x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2015-12-14T21:32:03Z",
+      "side": 0,
+      "message": "I guess my only concern (which you have probably already verified) is to make sure that this line gets applied before your new Clang-related .mk update (i.e. -strong takes precedence by being later on the command line).",
+      "revId": "7abad39b78225d2517bc46dff3192ea001184947",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
