@@ -1630,7 +1630,10 @@ function search_changed(e, kd, toroot)
             } else {
               // otherwise, results are already showing, so allow ajax to auto refresh the results
               // and ignore this Enter press to avoid the reload.
-              return false;
+              // return false;
+              //
+              // For now, we're not using AJAX so we respond to every Enter.
+              return true;
             }
         } else if (kd && gSelectedIndex >= 0) {
             window.location = $("a",$('#search_filtered li')[gSelectedIndex]).attr("href");
@@ -1691,6 +1694,11 @@ function search_changed(e, kd, toroot)
 
 
         // Search for Google matches
+        /*
+         *  Commented this out because GOOGLE_DATA not defined for us and code
+         *  causes an error.  This probably has to do with the missing
+         *  gms_lists.js file in SAC. TODO figure it all out.
+         *
         for (var i=0; i<GOOGLE_DATA.length; i++) {
             var s = GOOGLE_DATA[i];
             if (text.length != 0 &&
@@ -1703,6 +1711,7 @@ function search_changed(e, kd, toroot)
         for (var i=0; i<gGoogleMatches.length; i++) {
             var s = gGoogleMatches[i];
         }
+        */
 
         highlight_autocomplete_result_labels(text);
         sync_selection_table(toroot);
@@ -1830,81 +1839,138 @@ function hideResults() {
   $("#search_autocomplete").val("").blur();
 
   // reset the ajax search callback to nothing, so results don't appear unless ENTER
-  searchControl.setSearchStartingCallback(this, function(control, searcher, query) {});
+  //  searchControl.setSearchStartingCallback(this, function(control, searcher, query) {});
   return false;
 }
-
 
 
 /* ########################################################## */
 /* ################  CUSTOM SEARCH ENGINE  ################## */
 /* ########################################################## */
 
-google.load('search', '1');
-var searchControl;
+// TODO, add localized search.
+function getLangPref() {
+  return "en";
+}
+
+// Package of functions that does custom search, from DAC redesign.
+(function($) {
+  var LANG;
+
+  function getSearchLang() {
+    if (!LANG) {
+      LANG = getLangPref();
+
+      // Fix zh-cn to be zh-CN.
+      LANG = LANG.replace(/-\w+/, function(m) { return m.toUpperCase(); });
+    }
+    return LANG;
+  }
+
+  function customSearch(query, start) {
+    var searchParams = {
+      // Keys for SAC
+      cx:'016258643462168859875:qqpm8fiwgc0',
+      key: 'AIzaSyBOWHD3JAF6Q9LIJ4NiahGAF70W7iDAI9M',
+
+      // Keys for DAC
+      // cx: '000521750095050289010:zpcpi1ea4s8',
+      // key: 'AIzaSyCFhbGnjW06dYwvRCU8h_zjdpS4PYYbEe8',
+
+      q: query,
+      start: start || 1,
+      num: 6,
+      hl: getSearchLang(),
+      fields: 'queries,items(pagemap,link,title,htmlSnippet,formattedUrl)'
+    };
+
+    return $.get('https://content.googleapis.com/customsearch/v1?' +  $.param(searchParams));
+  }
+
+  function renderResults(el, results) {
+    if (!results.items) {
+      el.append($('<div>').text('No results'));
+      return;
+    }
+
+    for (var i = 0; i < results.items.length; i++) {
+      var item = results.items[i];
+      // No thumbnail images in SAC.
+      // var hasImage = item.pagemap && item.pagemap.cse_thumbnail;
+      var sectionMatch = item.link.match(/source\.android\.com\/(\w*)/);
+      var section = (sectionMatch && sectionMatch[1]) || 'blog';
+
+      var entry = $('<div>').addClass('dac-custom-search-entry cols');
+
+// No thumbnail images in SAC.
+//      if (hasImage) {
+//        var image = item.pagemap.cse_thumbnail[0];
+//        entry.append($('<div>').addClass('col-1of6')
+//          .append($('<div>').addClass('dac-custom-search-image').css('background-image', 'url(' + image.src + ')')));
+//      }
+// entry.append($('<div>').addClass(hasImage ? 'col-5of6' : 'col-6of6')
+      entry.append($('<div>')
+        .append($('<p>').addClass('dac-custom-search-section').text(section))
+        .append(
+          $('<a>').text(item.title).attr('href', item.link).wrap('<h2>').parent().addClass('dac-custom-search-title')
+        )
+        .append($('<p>').addClass('dac-custom-search-snippet').html(item.htmlSnippet.replace(/<br>/g, '')))
+        .append($('<a>').addClass('dac-custom-search-link').text(item.formattedUrl).attr('href', item.link)));
+
+      el.append(entry);
+    }
+
+    if (results.queries.nextPage) {
+      var loadMoreButton = $('<button id="dac-custom-search-load-more">')
+        .addClass('dac-custom-search-load-more')
+        .text('Load more')
+        .click(function() {
+          loadMoreResults(el, results);
+        });
+
+      el.append(loadMoreButton);
+    }
+  }
+
+  function loadMoreResults(el, results) {
+    var query = results.queries.request.searchTerms;
+    var start = results.queries.nextPage.startIndex;
+    var loadMoreButton = el.find('#dac-custom-search-load-more');
+
+    loadMoreButton.text('Loading more...');
+
+    customSearch(query, start).then(function(results) {
+      loadMoreButton.remove();
+      renderResults(el, results);
+    });
+  }
+
+  $.fn.customSearch = function(query) {
+    var el = $(this);
+
+    customSearch(query).then(function(results) {
+      el.empty();
+      renderResults(el, results);
+    });
+  };
+})(jQuery);
+
 
 function loadSearchResults() {
-  document.getElementById("search_autocomplete").style.color = "#000";
 
-  // create search control
-  searchControl = new google.search.SearchControl();
-
-  // use our existing search form and use tabs when multiple searchers are used
-  drawOptions = new google.search.DrawOptions();
-  drawOptions.setDrawMode(google.search.SearchControl.DRAW_MODE_TABBED);
-  drawOptions.setInput(document.getElementById("search_autocomplete"));
-
-  // configure search result options
-  searchOptions = new google.search.SearcherOptions();
-  searchOptions.setExpandMode(GSearchControl.EXPAND_MODE_OPEN);
-
-  // Configure s.a.c searchers
-  sacSiteSearcher = new google.search.WebSearch();
-  sacSiteSearcher.setUserDefinedLabel("All");
-  sacSiteSearcher.setSiteRestriction("http://source.android.com/");
-
-  sourceSearcher = new google.search.WebSearch();
-  sourceSearcher.setUserDefinedLabel("Source");
-  sourceSearcher.setSiteRestriction("http://source.android.com/source/");
-
-  devicesSearcher = new google.search.WebSearch();
-  devicesSearcher.setUserDefinedLabel("Devices");
-  devicesSearcher.setSiteRestriction("http://source.android.com/devices/");
-
-  securitySearcher = new google.search.WebSearch();
-  securitySearcher.setUserDefinedLabel("Security");
-  securitySearcher.setSiteRestriction("http://source.android.com/security/");
-
-  compatibilitySearcher = new google.search.WebSearch();
-  compatibilitySearcher.setUserDefinedLabel("Compatibility");
-  compatibilitySearcher.setSiteRestriction("http://source.android.com/compatibility/");
-
-  // add each searcher to the search control
-  searchControl.addSearcher(sacSiteSearcher, searchOptions);
-  searchControl.addSearcher(sourceSearcher, searchOptions);
-  searchControl.addSearcher(devicesSearcher, searchOptions);
-  searchControl.addSearcher(securitySearcher, searchOptions);
-  searchControl.addSearcher(compatibilitySearcher, searchOptions);
+  // Draw the search results box
+  //searchControl.draw(document.getElementById("leftSearchControl"), drawOptions);
+  $(searchResults).append('<div class="leftSearchControl"></div>');
 
 
-  // configure result options
-  searchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
-  searchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);
-  searchControl.setTimeoutInterval(google.search.SearchControl.TIMEOUT_SHORT);
-  searchControl.setNoResultsString(google.search.SearchControl.NO_RESULTS_DEFAULT_STRING);
-
-  // upon ajax search, refresh the url and search title
-  searchControl.setSearchStartingCallback(this, function(control, searcher, query) {
-    updateResultTitle(query);
-    var query = document.getElementById('search_autocomplete').value;
-    location.hash = 'q=' + query;
-  });
-
-  // draw the search results box
-  searchControl.draw(document.getElementById("leftSearchControl"), drawOptions);
+  // Refresh the url and search title
+  var query = document.getElementById('search_autocomplete').value || getQuery(location.hash);
+  updateResultTitle(query);
+  location.hash = 'q=' + query;
 
   // get query and execute the search
-  searchControl.execute(decodeURI(getQuery(location.hash)));
+  //searchControl.execute(decodeURI(getQuery(location.hash)));
+  $(leftSearchControl).customSearch(getQuery(location.hash));
 
   document.getElementById("search_autocomplete").focus();
   addTabListeners();
@@ -1912,7 +1978,9 @@ function loadSearchResults() {
 // End of loadSearchResults
 
 google.setOnLoadCallback(function(){
-  if (location.hash.indexOf("q=") == -1) {
+
+  var query = decodeURI(getQuery(location.hash));
+  if (location.hash.indexOf("q=") == -1 || query == '') {
     // if there's no query in the url, don't search and make sure results are hidden
     $('#searchResults').hide();
     return;
@@ -1937,7 +2005,8 @@ $(window).hashchange( function(){
 
   // Otherwise, we have a search to do
   var query = decodeURI(getQuery(location.hash));
-  searchControl.execute(query);
+  //searchControl.execute(query);
+  $('#leftSearchControl').customSearch(query);
   $('#searchResults').slideDown('slow');
   $("#search_autocomplete").focus();
   $(".search .close").removeClass("hide");
@@ -1946,7 +2015,10 @@ $(window).hashchange( function(){
 });
 
 function updateResultTitle(query) {
-  $("#searchTitle").html("Results for <em>" + escapeHTML(query) + "</em>");
+  $("#searchTitle").html("Results for <em>" + (query) + "</em>");
+// For some reason, the escapeHTML function wasn't working for me.  TODO fix
+// this by copying in a comparable library function.
+//  $("#searchTitle").html("Results for <em>" + escapeHTML(query) + "</em>");
 }
 
 // forcefully regain key-up event control (previously jacked by search api)
@@ -1989,11 +2061,6 @@ function escapeHTML(string) {
   return string.replace(/</g,"&lt;")
                 .replace(/>/g,"&gt;");
 }
-
-
-
-
-
 
 
 /* ######################################################## */
@@ -2077,7 +2144,9 @@ function buildApiLevelSelector() {
 
   // get the DOM element and use setAttribute cuz IE6 fails when using jquery .attr('selected',true)
   var selectedLevelItem = $("#apiLevelSelector option[value='"+userApiLevel+"']").get(0);
-  selectedLevelItem.setAttribute('selected',true);
+//  Another piece of functionality that we don't use that produces an error.
+//  TODO figure it all out.
+//  selectedLevelItem.setAttribute('selected',true);
 }
 
 function changeApiLevel() {
