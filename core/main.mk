@@ -368,18 +368,6 @@ ifneq (,$(user_variant))
     enable_target_debugging :=
   endif
 
-  # Turn on Dalvik preoptimization for user builds, but only if not
-  # explicitly disabled and the build is running on Linux (since host
-  # Dalvik isn't built for non-Linux hosts).
-  ifeq (,$(WITH_DEXPREOPT))
-    ifeq ($(user_variant),user)
-      ifeq ($(HOST_OS),linux)
-        # TODO: turn on WITH_DEXPREOPT for libart user builds.
-        # WITH_DEXPREOPT := true
-      endif
-    endif
-  endif
-
   # Disallow mock locations by default for user builds
   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=0
 
@@ -415,10 +403,8 @@ ifneq ($(filter ro.setupwizard.mode=ENABLED, $(call collapse-pairs, $(ADDITIONAL
           ro.setupwizard.mode=OPTIONAL
 endif
 ifndef is_sdk_build
-  # Don't verify or compile the image on eng builds to speed startup.
+  # To speedup startup of non-preopted builds, don't verify or compile the boot image.
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.image-dex2oat-filter=verify-at-runtime
-  # Don't verify or compile apps on eng builds to speed startup.
-  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.dex2oat-filter=verify-at-runtime
 endif
 endif
 
