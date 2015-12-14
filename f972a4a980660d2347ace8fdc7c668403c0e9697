@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25c3b65c_14a6f485",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1953,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2015-12-14T10:12:30Z",
+      "side": 1,
+      "message": "I also changed the format of comments so they are more consistent with other comments.",
+      "revId": "f972a4a980660d2347ace8fdc7c668403c0e9697",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
