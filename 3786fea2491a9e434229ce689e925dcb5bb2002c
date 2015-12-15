@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25157684_bed36952",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-15T19:04:36Z",
+      "side": 1,
+      "message": "This doesn\u0027t work. The substring operation works only in bash script.\n\nAlso I\u0027d like to combine the change to trim down BF_BUILD_NUMBER in build/core/Makefile with this.",
+      "range": {
+        "startLine": 149,
+        "startChar": 22,
+        "endLine": 149,
+        "endChar": 34
+      },
+      "revId": "3786fea2491a9e434229ce689e925dcb5bb2002c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
