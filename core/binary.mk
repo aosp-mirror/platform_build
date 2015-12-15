@@ -1202,7 +1202,7 @@ built_shared_libraries := \
     $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(my_shared_libraries)))
-built_shared_library_tocs := $(addsuffix .toc, $(built_shared_libraries))
+built_shared_library_deps := $(addsuffix .toc, $(built_shared_libraries))
 
 # Add the NDK libraries to the built module dependency
 my_system_shared_libraries_fullpath := \
@@ -1216,7 +1216,13 @@ built_shared_libraries := \
     $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(installed_shared_library_module_names)))
-built_shared_library_tocs := $(addsuffix .toc, $(built_shared_libraries))
+ifdef LOCAL_IS_HOST_MODULE
+# Disable .toc optimization for host modules: we may run the host binaries during the build process
+# and the libraries' implementation matters.
+built_shared_library_deps := $(built_shared_libraries)
+else
+built_shared_library_deps := $(addsuffix .toc, $(built_shared_libraries))
+endif
 my_system_shared_libraries_fullpath :=
 endif
 
@@ -1312,7 +1318,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_OBJECTS := $(all_objects)
 ###########################################################
 # all_libraries is used for the dependencies on LOCAL_BUILT_MODULE.
 all_libraries := \
-    $(built_shared_library_tocs) \
+    $(built_shared_library_deps) \
     $(my_system_shared_libraries_fullpath) \
     $(built_static_libraries) \
     $(built_whole_libraries)
