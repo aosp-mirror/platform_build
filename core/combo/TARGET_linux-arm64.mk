@@ -115,6 +115,8 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-maarch64linux \
 			-Wl,--hash-style=gnu \
 			-Wl,--fix-cortex-a53-843419 \
+			-fuse-ld=gold \
+			-Wl,--icf=safe \
 			-Wl,--no-undefined-version \
 			$(arch_variant_ldflags)
 
