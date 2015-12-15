@@ -11,11 +11,6 @@ else
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 endif
 
-# By default, do not run rerun dex2oat if the tool changes.
-# Comment out the | to force dex2oat to rerun on after all changes.
-DEX2OAT_DEPENDENCY := art/runtime/oat.cc # dependency on oat version number
-DEX2OAT_DEPENDENCY += art/runtime/image.cc # dependency on image version number
-DEX2OAT_DEPENDENCY += |
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
 
 # Use the first preloaded-classes file in PRODUCT_COPY_FILES.

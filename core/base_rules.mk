@@ -227,6 +227,9 @@ LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 # dependent binaries of a .toc file will be rebuilt only when the content of
 # the .toc file is changed.
 ###########################################################
+ifndef LOCAL_IS_HOST_MODULE
+# Disable .toc optimization for host modules: we may run the host binaries during the build process
+# and the libraries' implementation matters.
 ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE).toc
 $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
@@ -235,6 +238,7 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 
 # Kati adds restat=1 to ninja. GNU make does nothing for this.
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
+endif
 endif
 
 ###########################################################
