@@ -297,6 +297,10 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_boot
 
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+# Turn off .toc optimization for apps build as we cannot build dexdump.
+ifeq (,$(TARGET_BUILD_APPS))
+full_jack_lib_deps := $(patsubst %.jack, %.dex.toc, $(full_jack_lib_deps))
+endif
 
 else # LOCAL_IS_HOST_MODULE
 
