@@ -510,6 +510,9 @@ ifneq ($(dont_bother),true)
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles := \
 	$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) $(subdirs) Android.mk)
+ifeq ($(USE_SOONG),true)
+subdir_makefiles := $(SOONG_ANDROID_MK) $(subdir_makefiles)
+endif
 
 $(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
 
@@ -851,6 +854,9 @@ files: prebuilt \
 
 .PHONY: checkbuild
 checkbuild: $(modules_to_check) droid_targets
+ifeq ($(USE_SOONG),true)
+checkbuild: checkbuild-soong
+endif
 ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT))
 droid: checkbuild
 endif
