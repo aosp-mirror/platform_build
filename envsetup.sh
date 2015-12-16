@@ -1427,6 +1427,9 @@ function set_java_home() {
 
     if [ ! "$JAVA_HOME" ]; then
       if [ ! "$EXPERIMENTAL_USE_JAVA8" ]; then
+        echo JDK 8 will soon become the default. Please install it now.
+        echo Also: \"export EXPERIMENTAL_USE_JAVA8=true\"
+        echo See http://go/android-jdk8-discuss
         case `uname -s` in
             Darwin)
                 export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
