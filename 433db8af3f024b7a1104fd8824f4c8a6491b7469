@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5d1668e_68bd437f",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-16T22:16:19Z",
+      "side": 1,
+      "message": "__ANDROID__",
+      "range": {
+        "startLine": 192,
+        "startChar": 2,
+        "endLine": 192,
+        "endChar": 12
+      },
+      "revId": "433db8af3f024b7a1104fd8824f4c8a6491b7469",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
