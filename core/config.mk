@@ -192,15 +192,6 @@ include $(BUILD_SYSTEM)/envsetup.mk
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
 FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(OUT_DIR) $(SCAN_EXCLUDE_DIRS) .repo .git)
 
-ifdef BRILLO
-# Add a C define that identifies Brillo targets. __BRILLO__ should only be used
-# to differentiate between Brillo and non-Brillo-but-Android environments. Use
-# __ANDROID__ instead to test if something is being built in an Android-derived
-# environment (including Brillo) as opposed to an entirely different
-# environment (e.g. Chrome OS).
-COMMON_GLOBAL_CFLAGS += -D__BRILLO__
-endif
-
 # ---------------------------------------------------------------
 # We run gcc/clang with PWD=/proc/self/cwd to remove the $TOP
 # from the debug output. That way two builds in two different
@@ -706,6 +697,18 @@ HOST_CROSS_GLOBAL_LD_DIRS += -L$(HOST_CROSS_OUT_INTERMEDIATE_LIBRARIES)
 HOST_CROSS_PROJECT_INCLUDES:= $(SRC_HEADERS) $(SRC_HOST_HEADERS) $(HOST_CROSS_OUT_HEADERS)
 HOST_CROSS_GLOBAL_CFLAGS += $(HOST_CROSS_RELEASE_CFLAGS)
 HOST_CROSS_GLOBAL_CPPFLAGS += $(HOST_CROSS_RELEASE_CPPFLAGS)
+endif
+
+ifdef BRILLO
+# Add a C define that identifies Brillo targets. __BRILLO__ should only be used
+# to differentiate between Brillo and non-Brillo-but-Android environments. Use
+# __ANDROID__ instead to test if something is being built in an Android-derived
+# environment (including Brillo) as opposed to an entirely different
+# environment (e.g. Chrome OS).
+TARGET_GLOBAL_CFLAGS += -D__BRILLO__
+ifdef TARGET_2ND_ARCH
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS += -D__BRILLO__
+endif
 endif
 
 # allow overriding default Java libraries on a per-target basis
