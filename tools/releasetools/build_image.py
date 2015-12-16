@@ -350,7 +350,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   elif fs_type.startswith("squash"):
     build_command = ["mksquashfsimage.sh"]
     build_command.extend([in_dir, out_file])
-    build_command.extend(["-s"])
+    if "squashfs_sparse_flag" in prop_dict:
+      build_command.extend([prop_dict["squashfs_sparse_flag"]])
     build_command.extend(["-m", prop_dict["mount_point"]])
     if target_out:
       build_command.extend(["-d", target_out])
@@ -478,6 +479,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
 
   common_props = (
       "extfs_sparse_flag",
+      "squashfs_sparse_flag",
       "mkyaffs2_extra_flags",
       "selinux_fc",
       "skip_fsck",
