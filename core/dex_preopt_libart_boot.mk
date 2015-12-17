@@ -42,8 +42,8 @@ endif
 
 # The rule to install boot.art and boot.oat
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP)
-	$(call copy-file-to-target)
-	$(hide) $(ACP) -fp $(patsubst %.art,%.oat,$<) $(patsubst %.art,%.oat,$@)
+	$(hide) $(ACP) -fp $(dir $<)/*.art $(dir $@)
+	$(hide) $(ACP) -fp $(dir $<)/*.oat $(dir $@)
 
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 # Use dex2oat debug version for better error reporting
@@ -51,6 +51,9 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
+	@rm -f $(dir $@)/*.art $(dir $@)/*.oat
+	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art
+	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.oat
 	$(hide) $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) --runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
 		--image-classes=$(PRELOADED_CLASSES) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
@@ -63,4 +66,5 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--instruction-set-variant=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT) \
 		--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 		--android-root=$(PRODUCT_OUT)/system --include-patch-information --runtime-arg -Xnorelocate --no-generate-debug-info \
+		--multi-image --no-inline-from=core-oj.jar \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(COMPILED_CLASSES_FLAGS)
