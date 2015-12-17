@@ -14,6 +14,7 @@
 
 test_suite_name := cts_v2
 test_suite_tradefed := cts-tradefed_v2
+test_suite_dynamic_config := cts/tools/cts-tradefed/DynamicConfig.xml
 test_suite_readme := cts/tools/cts-tradefed/README
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
