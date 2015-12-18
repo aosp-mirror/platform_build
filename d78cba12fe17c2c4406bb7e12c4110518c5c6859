@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a2f9f8d_5f795bce",
+        "filename": "core/ccache.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-18T19:31:13Z",
+      "side": 1,
+      "message": "This changes the behaviour when USE_CCACHE is not set.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 42
+      },
+      "revId": "d78cba12fe17c2c4406bb7e12c4110518c5c6859",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
