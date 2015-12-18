@@ -19,7 +19,7 @@ LOCAL_PATH := $(call my-dir)
 # ============================================================
 include $(CLEAR_VARS)
 LOCAL_MODULE := signapk
-LOCAL_SRC_FILES := SignApk.java
+LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_JAR_MANIFEST := SignApk.mf
 LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle-host bouncycastle-bcpkix-host conscrypt-host
 LOCAL_REQUIRED_MODULES := libconscrypt_openjdk_jni
