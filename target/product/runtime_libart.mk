@@ -41,6 +41,7 @@ PRODUCT_PACKAGES += \
     libicuuc \
     libjavacore \
     libopenjdk \
+    libopenjdkjvm \
     libnativehelper \
     libssl \
     libz \
