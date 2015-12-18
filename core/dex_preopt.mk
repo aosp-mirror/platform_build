@@ -21,9 +21,13 @@ DEX_PREOPT_DEFAULT ?= true
 
 # The default values for pre-opting: always preopt PIC.
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
-ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT_PIC ?= true
-  WITH_DEXPREOPT ?= true
+# Conditional to building a non-eng build, as it currently negatively affects
+# some development workflows.
+ifneq ($(TARGET_BUILD_VARIANT),eng)
+  ifeq ($(HOST_OS),linux)
+    WITH_DEXPREOPT_PIC ?= true
+    WITH_DEXPREOPT ?= true
+  endif
 endif
 
 # $(1): the .jar or .apk to remove classes.dex
