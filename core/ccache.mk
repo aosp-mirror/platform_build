@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-ifneq ($(USE_CCACHE),)
+ifneq ($(filter-out false,$(USE_CCACHE)),)
   # The default check uses size and modification time, causing false misses
   # since the mtime depends when the repo was checked out
   export CCACHE_COMPILERCHECK := content

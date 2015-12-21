@@ -15,7 +15,7 @@
 #
 
 # Notice: this works only with Google's Goma build infrastructure.
-ifneq ($(USE_GOMA),)
+ifneq ($(filter-out false,$(USE_GOMA)),)
   # Check if USE_NINJA is not false because GNU make won't work well
   # with goma. Note this file is evaluated twice, once by GNU make and
   # once by kati with USE_NINJA=false. We do this check in the former
