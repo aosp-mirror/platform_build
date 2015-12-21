@@ -1896,7 +1896,6 @@ $(call call-jack) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
     --output-jack $(PRIVATE_CLASSES_JACK) \
-    -D jack.java.source.version=1.7 \
     $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
     --output-dex $(PRIVATE_JACK_INTERMEDIATES_DIR) \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
@@ -2037,7 +2036,6 @@ $(call call-jack) \
     $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
-    -D jack.java.source.version=1.7 \
     $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
     --output-jack $@ \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
