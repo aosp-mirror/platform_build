@@ -1703,7 +1703,9 @@ def main(argv):
   if OPTIONS.device_specific is not None:
     OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
 
-  if OPTIONS.info_dict.get("no_recovery") == "true":
+  ab_update = OPTIONS.info_dict.get("ab_update") == "true"
+
+  if OPTIONS.info_dict.get("no_recovery") == "true" and not ab_update:
     raise common.ExternalError(
         "--- target build has specified no recovery ---")
 
@@ -1725,8 +1727,9 @@ def main(argv):
     output_zip = zipfile.ZipFile(temp_zip_file, "w",
                                  compression=zipfile.ZIP_DEFLATED)
 
+  # Non A/B OTAs rely on /cache partition to store temporary files.
   cache_size = OPTIONS.info_dict.get("cache_size", None)
-  if cache_size is None:
+  if cache_size is None and not ab_update:
     print "--- can't determine the cache partition size ---"
   OPTIONS.cache_size = cache_size
 
@@ -1736,7 +1739,11 @@ def main(argv):
 
   # Generate a full OTA.
   elif OPTIONS.incremental_source is None:
-    WriteFullOTAPackage(input_zip, output_zip)
+    if ab_update:
+      # TODO: Pending for b/25715402.
+      pass
+    else:
+      WriteFullOTAPackage(input_zip, output_zip)
 
   # Generate an incremental OTA. It will fall back to generate a full OTA on
   # failure unless no_fallback_to_full is specified.
