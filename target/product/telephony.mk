@@ -21,6 +21,7 @@ PRODUCT_PACKAGES := \
     CarrierConfig \
     Dialer \
     CallLogBackup \
+    CellBroadcastReceiver \
     rild
 
 PRODUCT_COPY_FILES := \
