@@ -494,8 +494,11 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
     info_dict = OPTIONS.info_dict
 
   # With system_root_image == "true", we don't pack ramdisk into the boot image.
-  has_ramdisk = (info_dict.get("system_root_image", None) != "true" or
-                 prebuilt_name != "boot.img")
+  # Unless "recovery_as_boot" is specified, in which case we carry the ramdisk
+  # for recovery.
+  has_ramdisk = (info_dict.get("system_root_image") != "true" or
+                 prebuilt_name != "boot.img" or
+                 info_dict.get("recovery_as_boot") == "true")
 
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
   data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
