@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea5fab25_7ec77997",
+        "filename": "tools/generate-notice-files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1086523
+      },
+      "writtenOn": "2015-12-21T17:48:58Z",
+      "side": 1,
+      "message": "Should we say \"Android\" here?",
+      "range": {
+        "startLine": 114,
+        "startChar": 43,
+        "endLine": 114,
+        "endChar": 50
+      },
+      "revId": "cc60db5ea27d48b1541eb208e28af0497d70f8f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
