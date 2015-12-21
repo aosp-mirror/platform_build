@@ -67,5 +67,4 @@ TARGET_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-aarch64-android.a
 
 # Address sanitizer clang config
 ADDRESS_SANITIZER_RUNTIME_LIBRARY := libclang_rt.asan-aarch64-android
-ADDRESS_SANITIZER_RPATH := /data/vendor/lib64:/$(TARGET_COPY_OUT_VENDOR)/lib64:/data/lib64
 ADDRESS_SANITIZER_LINKER := /system/bin/linker_asan64

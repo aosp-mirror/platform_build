@@ -117,7 +117,6 @@ ifneq ($(filter address,$(my_sanitize)),)
                            $(my_shared_libraries) \
                            $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES)
     my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
-    my_ldflags += -Wl,-rpath,$($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RPATH)
 
     my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_LINKER)
     # Make sure linker_asan get installed.
