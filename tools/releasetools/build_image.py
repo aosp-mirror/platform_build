@@ -129,8 +129,8 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
 
 AdjustPartitionSizeForVerity.results = {}
 
-def BuildVerityFEC(sparse_image_path, verity_fec_path, prop_dict):
-  cmd = "fec -e %s %s" % (sparse_image_path, verity_fec_path)
+def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path):
+  cmd = "fec -e %s %s %s" % (sparse_image_path, verity_path, verity_fec_path)
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -192,10 +192,21 @@ def Append(target, file_to_append, error_message):
   return True
 
 def BuildVerifiedImage(data_image_path, verity_image_path,
-                       verity_metadata_path):
+                       verity_metadata_path, verity_fec_path,
+                       fec_supported):
   if not Append(verity_image_path, verity_metadata_path,
                 "Could not append verity metadata!"):
     return False
+
+  if fec_supported:
+    # build FEC for the entire partition, including metadata
+    if not BuildVerityFEC(data_image_path, verity_image_path,
+                          verity_fec_path):
+      return False
+
+    if not Append(verity_image_path, verity_fec_path, "Could not append FEC!"):
+      return False
+
   if not Append2Simg(data_image_path, verity_image_path,
                      "Could not append verity data!"):
     return False
@@ -261,19 +272,11 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   # build the full verified image
   if not BuildVerifiedImage(out_file,
                             verity_image_path,
-                            verity_metadata_path):
+                            verity_metadata_path,
+                            verity_fec_path,
+                            fec_supported):
     shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
-
-  if fec_supported:
-    # build FEC for the entire partition, including metadata
-    if not BuildVerityFEC(out_file, verity_fec_path, prop_dict):
-      shutil.rmtree(tempdir_name, ignore_errors=True)
-      return False
-
-    if not Append2Simg(out_file, verity_fec_path, "Could not append FEC!"):
-      shutil.rmtree(tempdir_name, ignore_errors=True)
-      return False
 
   shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
