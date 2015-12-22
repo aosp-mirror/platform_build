@@ -22,6 +22,30 @@
       "revId": "781b7b20d41cfe80472707aec46d0eac5473bfc5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4aed17c9_f0f07e87",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 985,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2015-12-22T19:10:58Z",
+      "side": 0,
+      "message": "in that case the next line will be expanded to \": \u003cdeps\u003e\". Probably make would just ignores such rules. It looks better to guard with \"ifdef RECOVERY_RESOUCE_ZIP\".",
+      "parentUuid": "2afc637c_cceb2f07",
+      "range": {
+        "startLine": 985,
+        "startChar": 0,
+        "endLine": 985,
+        "endChar": 4
+      },
+      "revId": "781b7b20d41cfe80472707aec46d0eac5473bfc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
