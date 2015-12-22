@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2afc637c_cceb2f07",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 985,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2015-12-22T17:56:56Z",
+      "side": 0,
+      "message": "Because of L868, it seems we don\u0027t even need any condition checking here. RECOVERY_RESOUCE_ZIP must be empty if \"ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS_BOOT)))\" holds.",
+      "range": {
+        "startLine": 985,
+        "startChar": 0,
+        "endLine": 985,
+        "endChar": 4
+      },
+      "revId": "781b7b20d41cfe80472707aec46d0eac5473bfc5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
