@@ -2,7 +2,11 @@
 ## Track NOTICE files
 ###########################################################
 
+ifneq ($(LOCAL_NOTICE_FILE),)
+notice_file:=$(strip $(LOCAL_NOTICE_FILE))
+else
 notice_file:=$(strip $(wildcard $(LOCAL_PATH)/NOTICE))
+endif
 
 ifeq ($(LOCAL_MODULE_CLASS),GYP)
   # We ignore NOTICE files for modules of type GYP.
