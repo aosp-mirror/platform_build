@@ -136,6 +136,19 @@ ifeq ($(LOCAL_SDK_VERSION),)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
 my_bootclasspath := ""
+
+# Temporary HACK to fix the classpath for bouncycastle / nist-pkix-tests.
+# Will be reverted shortly.
+ifeq ($(LOCAL_MODULE),bouncycastle)
+LOCAL_JAVA_LIBRARIES += core-oj
+endif
+ifeq ($(LOCAL_MODULE),nist-pkix-tests)
+LOCAL_JAVA_LIBRARIES += core-oj
+endif
+ifeq ($(LOCAL_MODULE),bouncycastle-nojarjar)
+LOCAL_JAVA_LIBRARIES += core-oj
+endif
+
 else  # LOCAL_NO_STANDARD_LIBRARIES
 my_bootclasspath := $(call java-lib-files,core-oj):$(call java-lib-files,core-libart)
 endif  # LOCAL_NO_STANDARD_LIBRARIES
