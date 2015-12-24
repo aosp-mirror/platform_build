@@ -97,5 +97,6 @@ $(hide) $(DEX2OAT) \
 	--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 	--include-patch-information --runtime-arg -Xnorelocate --no-generate-debug-info \
 	--abort-on-hard-verifier-error \
+	--no-inline-from=core-oj.jar \
 	$(PRIVATE_DEX_PREOPT_FLAGS)
 endef
