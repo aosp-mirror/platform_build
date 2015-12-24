@@ -58,6 +58,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
   target/common/obj/JAVA_LIBRARIES/bouncycastle_intermediates \
   target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates \
+  target/common/obj/JAVA_LIBRARIES/core-oj_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-junit_intermediates \
   target/common/obj/JAVA_LIBRARIES/ext_intermediates \

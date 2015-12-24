@@ -80,6 +80,7 @@ PRODUCT_PACKAGES += \
 
 # The order matters
 PRODUCT_BOOT_JARS := \
+    core-oj \
     core-libart \
     conscrypt \
     okhttp \

@@ -136,8 +136,21 @@ ifeq ($(LOCAL_SDK_VERSION),)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
 my_bootclasspath := ""
+
+# Temporary HACK to fix the classpath for bouncycastle / nist-pkix-tests.
+# Will be reverted shortly.
+ifeq ($(LOCAL_MODULE),bouncycastle)
+LOCAL_JAVA_LIBRARIES += core-oj
+endif
+ifeq ($(LOCAL_MODULE),nist-pkix-tests)
+LOCAL_JAVA_LIBRARIES += core-oj
+endif
+ifeq ($(LOCAL_MODULE),bouncycastle-nojarjar)
+LOCAL_JAVA_LIBRARIES += core-oj
+endif
+
 else  # LOCAL_NO_STANDARD_LIBRARIES
-my_bootclasspath := $(call java-lib-files,core-libart)
+my_bootclasspath := $(call java-lib-files,core-oj):$(call java-lib-files,core-libart)
 endif  # LOCAL_NO_STANDARD_LIBRARIES
 else
 ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
@@ -161,7 +174,7 @@ ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 my_bootclasspath := ""
 else
-my_bootclasspath := $(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+my_bootclasspath := $(call java-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
@@ -277,7 +290,7 @@ ifeq ($(LOCAL_SDK_VERSION),)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 my_bootclasspath :=
 else
-my_bootclasspath := $(call jack-lib-files,core-libart)
+my_bootclasspath :=  $(call jack-lib-files,core-oj):$(call jack-lib-files,core-libart)
 endif
 else  # LOCAL_SDK_VERSION
 ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
@@ -304,7 +317,7 @@ ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 my_bootclasspath :=
 else
-my_bootclasspath := $(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+my_bootclasspath := $(call jack-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_bootclasspath)
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))

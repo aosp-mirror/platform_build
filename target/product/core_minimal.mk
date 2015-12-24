@@ -83,6 +83,7 @@ PRODUCT_COPY_FILES += \
 
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
+    core-oj \
     core-libart \
     conscrypt \
     okhttp \
