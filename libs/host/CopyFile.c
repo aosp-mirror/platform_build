@@ -83,6 +83,9 @@ static bool isHiresMtime(const struct stat* pSrcStat)
 static bool isSameFile(const struct stat* pSrcStat, const struct stat* pDstStat)
 {
 #ifndef HAVE_VALID_STAT_ST_INO
+  /* TODO: suspicious, we hit this case even when compiling for linux: b/26355387 */
+  (void)pSrcStat;
+  (void)pDstStat;
     /* with MSVCRT.DLL, stat always sets st_ino to 0, and there is no simple way to */
 	/* get the equivalent information with Win32 (Cygwin does some weird stuff in   */
 	/* its winsup/cygwin/fhandler_disk_file.cc to emulate this, too complex for us) */
@@ -100,6 +103,7 @@ static void printCopyMsg(const char* src, const char* dst, unsigned int options)
 
 static void printNotNewerMsg(const char* src, const char* dst, unsigned int options)
 {
+    (void)src;
     if ((options & COPY_VERBOSE_MASK) > 1)
         printf("    '%s' is up-to-date\n", dst);
 }
@@ -533,6 +537,7 @@ static int copyFileRecursive(const char* src, const char* dst, bool isCmdLine, u
     struct stat srcStat;
     int retVal = 0;
     int statResult, statErrno;
+    (void)isCmdLine;
 
     /*
      * Stat the source file.  If it doesn't exist, fail.
