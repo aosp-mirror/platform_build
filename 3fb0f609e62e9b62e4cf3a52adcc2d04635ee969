@@ -46,6 +46,30 @@
       "revId": "3fb0f609e62e9b62e4cf3a52adcc2d04635ee969",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ab15f0d_7b725fba",
+        "filename": "libs/host/CopyFile.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2015-12-30T18:58:14Z",
+      "side": 1,
+      "message": "I meant that we should have a bug open so that one of us investigates whether the reference to HAVE_VALID_STAT_ST_INO makes sense and whether this code can be removed altogether.",
+      "parentUuid": "eafecb6e_a1bea8ea",
+      "range": {
+        "startLine": 85,
+        "startChar": 8,
+        "endLine": 85,
+        "endChar": 30
+      },
+      "revId": "3fb0f609e62e9b62e4cf3a52adcc2d04635ee969",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
