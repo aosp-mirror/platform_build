@@ -587,7 +587,9 @@ COMMON_RELEASE_CFLAGS:= -DNDEBUG -UDEBUG
 
 # Force gcc to always output color diagnostics.  Ninja will strip the ANSI
 # color codes if it is not running in a terminal.
+ifdef BUILDING_WITH_NINJA
 COMMON_GLOBAL_CFLAGS += -fdiagnostics-color
+endif
 
 COMMON_GLOBAL_CPPFLAGS:= -Wsign-promo
 COMMON_RELEASE_CPPFLAGS:=

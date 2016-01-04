@@ -50,8 +50,10 @@ CLANG_CONFIG_EXTRA_CPPFLAGS += \
 
 # Force clang to always output color diagnostics.  Ninja will strip the ANSI
 # color codes if it is not running in a terminal.
+ifdef BUILDING_WITH_NINJA
 CLANG_CONFIG_EXTRA_CFLAGS += \
   -fcolor-diagnostics
+endif
 
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -finline-functions \
