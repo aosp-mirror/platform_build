@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a0b8f60_69a4a9d3",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-04T19:18:54Z",
+      "side": 1,
+      "message": "this is unlikely to be correct -- this line is run both for linux and darwin hosts",
+      "range": {
+        "startLine": 165,
+        "startChar": 143,
+        "endLine": 165,
+        "endChar": 152
+      },
+      "revId": "6baf6e81418dc186ba2e30f40f492da9068ecfb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
