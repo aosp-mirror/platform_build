@@ -25,6 +25,7 @@
 #include <assert.h>
 
 #if defined(_WIN32)
+#include <direct.h>  /* For _mkdir() */
 #  define mkdir(path,mode)   _mkdir(path)
 #  define S_ISLNK(s) 0
 #  define lstat stat
