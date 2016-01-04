@@ -1424,7 +1424,11 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/append2simg \
   $(HOST_OUT_EXECUTABLES)/img2simg \
   $(HOST_OUT_EXECUTABLES)/boot_signer \
-  $(HOST_OUT_EXECUTABLES)/fec
+  $(HOST_OUT_EXECUTABLES)/fec \
+  $(HOST_OUT_EXECUTABLES)/delta_generator
+
+OTATOOLS += \
+  system/update_engine/scripts/brillo_update_payload
 
 # Shared libraries.
 OTATOOLS += \
@@ -1442,7 +1446,16 @@ OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libext2_profile-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2_quota-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2_uuid-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libconscrypt_openjdk_jni$(HOST_SHLIB_SUFFIX)
+  $(HOST_LIBRARY_PATH)/libconscrypt_openjdk_jni$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libbrillo$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libbrillo-stream$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libbrillo-http$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libchrome$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libcurl-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libevent-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libprotobuf-cpp-lite-rtti$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libssl-host$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libz-host$(HOST_SHLIB_SUFFIX)
 
 .PHONY: otatools
 otatools: $(OTATOOLS)
