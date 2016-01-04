@@ -22,6 +22,30 @@
       "revId": "6baf6e81418dc186ba2e30f40f492da9068ecfb9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eafecb6e_67d6904b",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1021775
+      },
+      "writtenOn": "2016-01-04T19:23:43Z",
+      "side": 1,
+      "message": "Can you please suggest how to fix it?\n\nDo we need to import binary for mac? or make it linux specific?\n\nFrom my prospective, I only build on linux.",
+      "parentUuid": "8a0b8f60_69a4a9d3",
+      "range": {
+        "startLine": 165,
+        "startChar": 143,
+        "endLine": 165,
+        "endChar": 152
+      },
+      "revId": "6baf6e81418dc186ba2e30f40f492da9068ecfb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
