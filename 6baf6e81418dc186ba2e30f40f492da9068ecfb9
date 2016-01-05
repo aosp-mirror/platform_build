@@ -118,6 +118,30 @@
       "revId": "6baf6e81418dc186ba2e30f40f492da9068ecfb9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a1aaf01_5adbf171",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-05T23:13:11Z",
+      "side": 1,
+      "message": "Doesn\u0027t look like brillo is supporting mac builds right now anyways, so I\u0027d suggest only adding it to ANDROID_BUILD_PATHS if we\u0027re on linux",
+      "parentUuid": "aa2133e4_7df3bbc6",
+      "range": {
+        "startLine": 165,
+        "startChar": 143,
+        "endLine": 165,
+        "endChar": 152
+      },
+      "revId": "6baf6e81418dc186ba2e30f40f492da9068ecfb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
