@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa3e9347_03a6707d",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1019050
+      },
+      "writtenOn": "2016-01-05T21:05:19Z",
+      "side": 1,
+      "message": "I think this isn\u0027t quite right since it\u0027s still looking for dlmalloc.",
+      "range": {
+        "startLine": 27,
+        "startChar": 49,
+        "endLine": 27,
+        "endChar": 57
+      },
+      "revId": "034a59ddddf1161c6860f68fde448b49ccb6217e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
