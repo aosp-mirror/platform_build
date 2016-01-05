@@ -67,7 +67,7 @@ static bool isSourceNewer(const struct stat* pSrcStat, const struct stat* pDstSt
  */
 static bool isHiresMtime(const struct stat* pSrcStat)
 {
-#if defined(__CYGWIN__) || defined(__MINGW32__)
+#if defined(_WIN32)
   return 0;
 #elif defined(MACOSX_RSRC)
     return pSrcStat->st_mtimespec.tv_nsec > 0;
@@ -83,8 +83,7 @@ static bool isHiresMtime(const struct stat* pSrcStat)
  */
 static bool isSameFile(const struct stat* pSrcStat, const struct stat* pDstStat)
 {
-#ifndef HAVE_VALID_STAT_ST_INO
-  /* TODO: suspicious, we hit this case even when compiling for linux: b/26355387 */
+#if defined(_WIN32)
   (void)pSrcStat;
   (void)pDstStat;
     /* with MSVCRT.DLL, stat always sets st_ino to 0, and there is no simple way to */
