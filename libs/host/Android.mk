@@ -5,11 +5,11 @@ LOCAL_SRC_FILES:= \
     CopyFile.c
 
 LOCAL_CFLAGS := -Werror -Wall
-LOCAL_CFLAGS_darwin += -DMACOSX_RSRC
 
 LOCAL_MODULE:= libhost
 LOCAL_MODULE_HOST_OS := darwin linux windows
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_CXX_STL := none
 
 # acp uses libhost, so we can't use

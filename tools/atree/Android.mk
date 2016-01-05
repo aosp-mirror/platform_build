@@ -12,7 +12,6 @@ LOCAL_SRC_FILES := \
 
 LOCAL_STATIC_LIBRARIES := \
 	libhost
-LOCAL_C_INCLUDES := build/libs/host/include
 
 LOCAL_MODULE := atree
 
