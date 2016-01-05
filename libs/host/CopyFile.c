@@ -68,8 +68,8 @@ static bool isSourceNewer(const struct stat* pSrcStat, const struct stat* pDstSt
 static bool isHiresMtime(const struct stat* pSrcStat)
 {
 #if defined(_WIN32)
-  return 0;
-#elif defined(MACOSX_RSRC)
+    return 0;
+#elif defined(__APPLE__)
     return pSrcStat->st_mtimespec.tv_nsec > 0;
 #else
     return pSrcStat->st_mtim.tv_nsec > 0;
@@ -295,7 +295,8 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
     if (copyResult != 0)
         return -1;
 
-#ifdef MACOSX_RSRC
+#if defined(__APPLE__)
+    // Copy Mac OS X resource forks too.
     {
         char* srcRsrcName = NULL;
         char* dstRsrcName = NULL;
