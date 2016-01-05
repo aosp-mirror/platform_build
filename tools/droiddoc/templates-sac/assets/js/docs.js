@@ -2015,10 +2015,7 @@ $(window).hashchange( function(){
 });
 
 function updateResultTitle(query) {
-  $("#searchTitle").html("Results for <em>" + (query) + "</em>");
-// For some reason, the escapeHTML function wasn't working for me.  TODO fix
-// this by copying in a comparable library function.
-//  $("#searchTitle").html("Results for <em>" + escapeHTML(query) + "</em>");
+  $("#searchTitle").html("Results for <em>" + encodeURIComponent(query) + "</em>");
 }
 
 // forcefully regain key-up event control (previously jacked by search api)
@@ -2053,13 +2050,6 @@ function addTabListeners() {
 function getQuery(hash) {
   var queryParts = hash.split('=');
   return queryParts[1];
-}
-
-/* returns the given string with all HTML brackets converted to entities
-    TODO: move this to the site's JS library */
-function escapeHTML(string) {
-  return string.replace(/</g,"&lt;")
-                .replace(/>/g,"&gt;");
 }
 
 
