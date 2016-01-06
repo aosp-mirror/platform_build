@@ -95,7 +95,7 @@ else  # LOCAL_STRIP_MODULE and LOCAL_PACK_MODULE_RELOCATIONS not true
 ifdef prebuilt_module_is_a_library
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP)
+$(export_includes) :
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
@@ -330,7 +330,7 @@ endif
 
 # We may be building classes.jack from a host jar for host dalvik Java library.
 $(intermediates.COMMON)/classes.jack : PRIVATE_JACK_FLAGS:=$(LOCAL_JACK_FLAGS)
-$(intermediates.COMMON)/classes.jack : $(my_src_jar) $(LOCAL_MODULE_MAKEFILE_DEP) \
+$(intermediates.COMMON)/classes.jack : $(my_src_jar) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK) | setup-jack-server
 	$(transform-jar-to-jack)
 
@@ -341,6 +341,6 @@ $(intermediates.COMMON)/classes.dex.toc: $(intermediates.COMMON)/classes.jack
 
 endif # JAVA_LIBRARIES
 
-$(built_module) : $(LOCAL_MODULE_MAKEFILE_DEP) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=

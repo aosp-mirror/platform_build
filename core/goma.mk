@@ -16,16 +16,6 @@
 
 # Notice: this works only with Google's Goma build infrastructure.
 ifneq ($(filter-out false,$(USE_GOMA)),)
-  # Check if USE_NINJA is not false because GNU make won't work well
-  # with goma. Note this file is evaluated twice, once by GNU make and
-  # once by kati with USE_NINJA=false. We do this check in the former
-  # pass.
-  ifndef KATI
-    ifeq ($(USE_NINJA),false)
-      $(error USE_GOMA=true is not compatible with USE_NINJA=false)
-    endif
-  endif
-
   # Goma requires a lot of processes and file descriptors.
   ifeq ($(shell echo $$(($$(ulimit -u) < 2500 || $$(ulimit -n) < 16000))),1)
     $(warning Max user processes and/or open files are insufficient)
