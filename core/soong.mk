@@ -23,8 +23,8 @@ $(SOONG_VARIABLES): FORCE
 	$(hide) mkdir -p $(dir $@)
 	$(hide) (\
 	echo '{'; \
-	echo '    "Device_uses_jemalloc": $(if $(filter dlmalloc,$(MALLOC_IMPL)),false,true),'; \
-	echo '    "Device_uses_dlmalloc": $(if $(filter dlmalloc,$(MALLOC_IMPL)),true,false),'; \
+	echo '    "Device_uses_jemalloc": $(if $(filter true,$(MALLOC_SVELTE)),false,true),'; \
+	echo '    "Device_uses_dlmalloc": $(if $(filter true,$(MALLOC_SVELTE)),true,false),'; \
 	echo '    $(if $(BOARD_MALLOC_ALIGNMENT),"Dlmalloc_alignment": $(BOARD_MALLOC_ALIGNMENT)$(comma),)'; \
 	echo '    "Platform_sdk_version": $(PLATFORM_SDK_VERSION),'; \
 	echo '    "Unbundled_build": $(if $(TARGET_BUILD_APPS),true,false),'; \
