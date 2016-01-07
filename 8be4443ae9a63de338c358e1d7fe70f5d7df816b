@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea1debf7_f70f777d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-07T16:55:43Z",
+      "side": 1,
+      "message": "more git projects?\nin theory build/soong should be the only additional project to build kati/makeparallel, right?",
+      "range": {
+        "startLine": 10,
+        "startChar": 13,
+        "endLine": 10,
+        "endChar": 22
+      },
+      "revId": "8be4443ae9a63de338c358e1d7fe70f5d7df816b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a1aaf01_0cff8355",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-07T16:55:43Z",
+      "side": 1,
+      "message": "why do we need USE_SOONG_FOR_KATI instead of just USE_SOONG?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 12
+      },
+      "revId": "8be4443ae9a63de338c358e1d7fe70f5d7df816b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
