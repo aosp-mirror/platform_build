@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aa1773d7_a250df5b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-07T20:58:51Z",
+      "side": 1,
+      "message": "I think we added soong/blueprint everywhere when kati was added.\n\nThe libraries I\u0027m talking about here are libc++ and friends. Kati \u0026 makeparallel are currently using the system headers and libraries for these.",
+      "parentUuid": "ea1debf7_f70f777d",
+      "range": {
+        "startLine": 10,
+        "startChar": 13,
+        "endLine": 10,
+        "endChar": 22
+      },
+      "revId": "8be4443ae9a63de338c358e1d7fe70f5d7df816b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8a1aaf01_0cff8355",
         "filename": "core/ninja.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-01-07T16:55:43Z",
       "side": 1,
       "message": "why do we need USE_SOONG_FOR_KATI instead of just USE_SOONG?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 12
+      },
+      "revId": "8be4443ae9a63de338c358e1d7fe70f5d7df816b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a481bfe_858b61d7",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-07T20:58:51Z",
+      "side": 1,
+      "message": "I just wanted a separate flag in case we wanted to turn on building kati/makeparallel before we were ready to include the soong-built Android.mk.\n\nI supposed I could make USE_SOONG imply USE_SOONG_FOR_KATI, that would simplify the usecases.",
+      "parentUuid": "8a1aaf01_0cff8355",
       "range": {
         "startLine": 8,
         "startChar": 0,
