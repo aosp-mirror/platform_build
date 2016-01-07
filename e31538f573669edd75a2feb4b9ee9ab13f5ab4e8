@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a4357e2_9f6dee47",
+        "filename": "core/ninja.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-01-07T23:45:46Z",
+      "side": 1,
+      "message": "This does the opposite of what you said - USE_SOONG_FOR_KATI implies USE_SOONG, which doesn\u0027t seem right",
+      "revId": "e31538f573669edd75a2feb4b9ee9ab13f5ab4e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
