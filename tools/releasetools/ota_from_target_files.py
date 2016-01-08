@@ -811,7 +811,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
         int(i) for i in
         OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
 
+  # Check first block of system partition for remount R/W only if
+  # disk type is ext4
+  system_partition = OPTIONS.source_info_dict["fstab"]["/system"]
+  check_first_block = system_partition.fs_type=="ext4"
   system_diff = common.BlockDifference("system", system_tgt, system_src,
+                                       check_first_block,
                                        version=blockimgdiff_version)
 
   if HasVendorPartition(target_zip):
@@ -821,7 +826,13 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
                           OPTIONS.source_info_dict)
     vendor_tgt = GetImage("vendor", OPTIONS.target_tmp,
                           OPTIONS.target_info_dict)
+
+    # Check first block of vendor partition for remount R/W only if
+    # disk type is ext4
+    vendor_partition = OPTIONS.source_info_dict["fstab"]["/vendor"]
+    check_first_block = vendor_partition.fs_type=="ext4"
     vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src,
+                                         check_first_block,
                                          version=blockimgdiff_version)
   else:
     vendor_diff = None
