@@ -1241,9 +1241,6 @@ class BlockDifference(object):
     self.partition = partition
     self.check_first_block = check_first_block
 
-    # Due to http://b/20939131, check_first_block is disabled temporarily.
-    assert not self.check_first_block
-
     if version is None:
       version = 1
       if OPTIONS.info_dict:
@@ -1307,14 +1304,8 @@ class BlockDifference(object):
         script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
                             'block_image_verify("%s", '
                             'package_extract_file("%s.transfer.list"), '
-                            '"%s.new.dat", "%s.patch.dat") || '
-                            '(block_image_recover("%s", "%s") && '
-                            'block_image_verify("%s", '
-                            'package_extract_file("%s.transfer.list"), '
-                            '"%s.new.dat", "%s.patch.dat"))) then') % (
+                            '"%s.new.dat", "%s.patch.dat")) then') % (
                             self.device, ranges_str, self.src.TotalSha1(),
-                            self.device, partition, partition, partition,
-                            self.device, ranges_str,
                             self.device, partition, partition, partition))
       elif self.version == 3:
         script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
@@ -1329,22 +1320,36 @@ class BlockDifference(object):
       script.Print('Verified %s image...' % (partition,))
       script.AppendExtra('else')
 
-      # When generating incrementals for the system and vendor partitions,
-      # explicitly check the first block (which contains the superblock) of
-      # the partition to see if it's what we expect. If this check fails,
-      # give an explicit log message about the partition having been
-      # remounted R/W (the most likely explanation) and the need to flash to
-      # get OTAs working again.
-      if self.check_first_block:
-        self._CheckFirstBlock(script)
+      if self.version >= 4:
+
+        # Bug: 21124327
+        # When generating incrementals for the system and vendor partitions in
+        # version 4 or newer, explicitly check the first block (which contains
+        # the superblock) of the partition to see if it's what we expect. If
+        # this check fails, give an explicit log message about the partition
+        # having been remounted R/W (the most likely explanation).
+        if self.check_first_block:
+          script.AppendExtra('check_first_block("%s");' % (self.device,))
+
+        # If version >= 4, try block recovery before abort update
+        script.AppendExtra((
+            'ifelse (block_image_recover("{device}", "{ranges}") && '
+            'block_image_verify("{device}", '
+            'package_extract_file("{partition}.transfer.list"), '
+            '"{partition}.new.dat", "{partition}.patch.dat"), '
+            'ui_print("{partition} recovered successfully."), '
+            'abort("{partition} partition fails to recover"));\n'
+            'endif;').format(device=self.device, ranges=ranges_str,
+                             partition=partition))
 
       # Abort the OTA update. Note that the incremental OTA cannot be applied
       # even if it may match the checksum of the target partition.
       # a) If version < 3, operations like move and erase will make changes
       #    unconditionally and damage the partition.
       # b) If version >= 3, it won't even reach here.
-      script.AppendExtra(('abort("%s partition has unexpected contents");\n'
-                          'endif;') % (partition,))
+      else:
+        script.AppendExtra(('abort("%s partition has unexpected contents");\n'
+                            'endif;') % (partition,))
 
   def _WritePostInstallVerifyScript(self, script):
     partition = self.partition
@@ -1413,21 +1418,8 @@ class BlockDifference(object):
 
     return ctx.hexdigest()
 
-  # TODO(tbao): Due to http://b/20939131, block 0 may be changed without
-  # remounting R/W. Will change the checking to a finer-grained way to
-  # mask off those bits.
-  def _CheckFirstBlock(self, script):
-    r = rangelib.RangeSet((0, 1))
-    srchash = self._HashBlocks(self.src, r)
-
-    script.AppendExtra(('(range_sha1("%s", "%s") == "%s") || '
-                        'abort("%s has been remounted R/W; '
-                        'reflash device to reenable OTA updates");')
-                       % (self.device, r.to_string_raw(), srchash,
-                          self.device))
 
 DataImage = blockimgdiff.DataImage
-
 
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {
