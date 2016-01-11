@@ -59,3 +59,5 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
     device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc
+
+PRODUCT_CHARACTERISTICS := emulator
