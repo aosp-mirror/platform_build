@@ -61,7 +61,6 @@ PRODUCT_PACKAGES += \
     libfilterfw \
     libgatekeeper \
     libkeystore \
-    libsqlite_jni \
     libwilhelm \
     libdrmframework_jni \
     libdrmframework \
