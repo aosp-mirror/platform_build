@@ -343,7 +343,7 @@ int main(int argc, char* argv[]) {
     // child
     int ret = execvp(path, args.data());
     if (ret < 0) {
-      error(errno, errno, "exec failed");
+      error(errno, errno, "exec %s failed", path);
     }
     abort();
   }
