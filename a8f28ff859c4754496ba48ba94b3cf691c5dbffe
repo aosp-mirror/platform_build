@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c701023f_11c8ac7b",
+        "filename": "core/static_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-01-11T23:08:42Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we move the endif here instead?",
+      "revId": "a8f28ff859c4754496ba48ba94b3cf691c5dbffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27fc9e7c_6ca4bbc5",
+        "filename": "core/static_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-01-11T23:08:42Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we move this instead?",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 27
+      },
+      "revId": "a8f28ff859c4754496ba48ba94b3cf691c5dbffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
