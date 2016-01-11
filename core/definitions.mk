@@ -142,11 +142,27 @@ $(strip \
 endef
 
 ###########################################################
+## Remove any makefiles that are being handled by soong
+###########################################################
+ifeq ($(USE_SOONG),true)
+define filter-soong-makefiles
+$(foreach mk,$(1),\
+  $(if $(wildcard $(patsubst %/Android.mk,%/Android.bp,$(mk))),\
+    $(info skipping $(mk) ...),\
+    $(mk)))
+endef
+else
+define filter-soong-makefiles
+$(1)
+endef
+endif
+
+###########################################################
 ## Retrieve a list of all makefiles immediately below some directory
 ###########################################################
 
 define all-makefiles-under
-$(sort $(wildcard $(1)/*/Android.mk))
+$(sort $(call filter-soong-makefiles,$(wildcard $(1)/*/Android.mk)))
 endef
 
 ###########################################################
@@ -157,8 +173,9 @@ endef
 # $(1): directory to search under
 # Ignores $(1)/Android.mk
 define first-makefiles-under
-$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) \
-        --mindepth=2 $(1) Android.mk)
+$(call filter-soong-makefiles,\
+  $(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) \
+        --mindepth=2 $(1) Android.mk))
 endef
 
 ###########################################################
@@ -178,7 +195,8 @@ endef
 
 # $(1): List of directories to look for under this directory
 define all-named-subdir-makefiles
-$(sort $(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1)))))
+$(sort $(call filter-soong-makefiles,\
+  $(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1))))))
 endef
 
 ###########################################################
