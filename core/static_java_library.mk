@@ -23,6 +23,10 @@ LOCAL_UNINSTALLABLE_MODULE := true
 LOCAL_IS_STATIC_JAVA_LIBRARY := true
 LOCAL_MODULE_CLASS := JAVA_LIBRARIES
 
+#################################
+include $(BUILD_SYSTEM)/configure_local_jack.mk
+#################################
+
 # Hack to build static Java library with Android resource
 # See bug 5714516
 all_resources :=
@@ -58,10 +62,6 @@ ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
 endif
 
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
-
-#################################
-include $(BUILD_SYSTEM)/configure_local_jack.mk
-#################################
 
 ifdef LOCAL_JACK_ENABLED
 ifndef LOCAL_JACK_PROGUARD_FLAGS
