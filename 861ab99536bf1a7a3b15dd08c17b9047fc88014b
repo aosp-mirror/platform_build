@@ -16,6 +16,24 @@
       "revId": "861ab99536bf1a7a3b15dd08c17b9047fc88014b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4768b202_fbed071d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-01-12T01:34:54Z",
+      "side": 1,
+      "message": "I think I\u0027ll leave that for a follow-up patch.  We should make mm into mma for USE_SOONG\u003dtrue, but we don\u0027t have mma support either.",
+      "parentUuid": "e759a674_60d5c63d",
+      "revId": "861ab99536bf1a7a3b15dd08c17b9047fc88014b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
