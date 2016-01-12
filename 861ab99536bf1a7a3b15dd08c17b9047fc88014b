@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e759a674_60d5c63d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-12T01:19:26Z",
+      "side": 1,
+      "message": "What about this case? Should we deprecate ONE_SHOT_MAKEFILE with USE_SOONG?\n\nIt will hopefully cause a duplicate module error in make, so it shouldn\u0027t actually try to build both, but that still doesn\u0027t feel nice.",
+      "revId": "861ab99536bf1a7a3b15dd08c17b9047fc88014b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
