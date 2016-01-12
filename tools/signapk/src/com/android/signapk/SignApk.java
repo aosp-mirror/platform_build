@@ -418,7 +418,7 @@ class SignApk {
             print.flush();
 
             Attributes sfAttr = new Attributes();
-            sfAttr.putValue(hash == USE_SHA256 ? "SHA-256-Digest" : "SHA1-Digest-Manifest",
+            sfAttr.putValue(hash == USE_SHA256 ? "SHA-256-Digest" : "SHA1-Digest",
                             new String(Base64.encode(md.digest()), "ASCII"));
             sf.getEntries().put(entry.getKey(), sfAttr);
         }
