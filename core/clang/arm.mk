@@ -29,8 +29,7 @@ CLANG_CONFIG_arm_UNKNOWN_CFLAGS := \
   -fno-partial-inlining \
   -fno-strict-volatile-bitfields \
   -fno-tree-copy-prop \
-  -fno-tree-loop-optimize \
-  -Wa,--noexecstack
+  -fno-tree-loop-optimize
 
 define subst-clang-incompatible-arm-flags
   $(subst -march=armv5te,-march=armv5t,\
