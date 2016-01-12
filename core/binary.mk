@@ -449,7 +449,6 @@ LOCAL_CPP_EXTENSION := $(strip $(LOCAL_CPP_EXTENSION))
 ifeq ($(LOCAL_CPP_EXTENSION),)
   LOCAL_CPP_EXTENSION := .cpp
 endif
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CPP_EXTENSION := $(LOCAL_CPP_EXTENSION)
 
 # Certain modules like libdl have to have symbols resolved at runtime and blow
 # up if --no-undefined is passed to the linker.
@@ -761,79 +760,57 @@ my_generated_sources += $(aidl_gen_cpp)
 endif  # $(aidl_src) non-empty
 
 ###########################################################
-## YACC: Compile .y and .yy files to .cpp and the to .o.
+## YACC: Compile .y/.yy files to .c/.cpp and then to .o.
 ###########################################################
 
 y_yacc_sources := $(filter %.y,$(my_src_files))
-y_yacc_cpps := $(addprefix \
-    $(intermediates)/,$(y_yacc_sources:.y=$(LOCAL_CPP_EXTENSION)))
+y_yacc_cs := $(addprefix \
+    $(intermediates)/,$(y_yacc_sources:.y=.c))
+ifneq ($(y_yacc_cs),)
+$(y_yacc_cs): $(intermediates)/%.c: \
+    $(TOPDIR)$(LOCAL_PATH)/%.y \
+    $(my_additional_dependencies)
+	$(call transform-y-to-c-or-cpp)
+
+my_generated_sources += $(y_yacc_cs)
+endif
 
 yy_yacc_sources := $(filter %.yy,$(my_src_files))
 yy_yacc_cpps := $(addprefix \
     $(intermediates)/,$(yy_yacc_sources:.yy=$(LOCAL_CPP_EXTENSION)))
-
-yacc_cpps := $(y_yacc_cpps) $(yy_yacc_cpps)
-yacc_headers := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.h)
-yacc_objects := $(yacc_cpps:$(LOCAL_CPP_EXTENSION)=.o)
-
-ifneq ($(strip $(y_yacc_cpps)),)
-$(y_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
-    $(TOPDIR)$(LOCAL_PATH)/%.y \
-    $(lex_cpps) $(my_additional_dependencies)
-	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
-$(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
-endif
-
-ifneq ($(strip $(yy_yacc_cpps)),)
+ifneq ($(yy_yacc_cpps),)
 $(yy_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.yy \
-    $(lex_cpps) $(my_additional_dependencies)
-	$(call transform-y-to-cpp,$(PRIVATE_CPP_EXTENSION))
-$(yacc_headers): $(intermediates)/%.h: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
-endif
+    $(my_additional_dependencies)
+	$(call transform-y-to-c-or-cpp)
 
-ifneq ($(strip $(yacc_cpps)),)
-$(yacc_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(yacc_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(yacc_objects): $(intermediates)/%.o: $(intermediates)/%$(LOCAL_CPP_EXTENSION)
-	$(transform-$(PRIVATE_HOST)cpp-to-o)
+my_generated_sources += $(yy_yacc_cpps)
 endif
 
 ###########################################################
-## LEX: Compile .l and .ll files to .cpp and then to .o.
+## LEX: Compile .l/.ll files to .c/.cpp and then to .o.
 ###########################################################
 
 l_lex_sources := $(filter %.l,$(my_src_files))
-l_lex_cpps := $(addprefix \
-    $(intermediates)/,$(l_lex_sources:.l=$(LOCAL_CPP_EXTENSION)))
+l_lex_cs := $(addprefix \
+    $(intermediates)/,$(l_lex_sources:.l=.c))
+ifneq ($(l_lex_cs),)
+$(l_lex_cs): $(intermediates)/%.c: \
+    $(TOPDIR)$(LOCAL_PATH)/%.l
+	$(transform-l-to-c-or-cpp)
+
+my_generated_sources += $(l_lex_cs)
+endif
 
 ll_lex_sources := $(filter %.ll,$(my_src_files))
 ll_lex_cpps := $(addprefix \
     $(intermediates)/,$(ll_lex_sources:.ll=$(LOCAL_CPP_EXTENSION)))
-
-lex_cpps := $(l_lex_cpps) $(ll_lex_cpps)
-lex_objects := $(lex_cpps:$(LOCAL_CPP_EXTENSION)=.o)
-
-ifneq ($(strip $(l_lex_cpps)),)
-$(l_lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
-    $(TOPDIR)$(LOCAL_PATH)/%.l
-	$(transform-l-to-cpp)
-endif
-
-ifneq ($(strip $(ll_lex_cpps)),)
+ifneq ($(ll_lex_cpps),)
 $(ll_lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.ll
-	$(transform-l-to-cpp)
-endif
+	$(transform-l-to-c-or-cpp)
 
-ifneq ($(strip $(lex_cpps)),)
-$(lex_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(lex_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-$(lex_objects): $(intermediates)/%.o: \
-    $(intermediates)/%$(LOCAL_CPP_EXTENSION) \
-    $(my_additional_dependencies) \
-    $(yacc_headers)
-	$(transform-$(PRIVATE_HOST)cpp-to-o)
+my_generated_sources += $(ll_lex_cpps)
 endif
 
 ###########################################################
@@ -1138,8 +1115,6 @@ normal_objects := \
     $(gen_c_objects) \
     $(objc_objects) \
     $(objcpp_objects) \
-    $(yacc_objects) \
-    $(lex_objects) \
     $(proto_generated_objects) \
     $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 

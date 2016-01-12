@@ -875,7 +875,7 @@ endef
 ## Commands for running lex
 ###########################################################
 
-define transform-l-to-cpp
+define transform-l-to-c-or-cpp
 @echo "Lex: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
 $(hide) $(LEX) -o$@ $<
@@ -884,20 +884,14 @@ endef
 ###########################################################
 ## Commands for running yacc
 ##
-## Because the extension of c++ files can change, the
-## extension must be specified in $1.
-## E.g, "$(call transform-y-to-cpp,.cpp)"
 ###########################################################
 
-define transform-y-to-cpp
+define transform-y-to-c-or-cpp
 @echo "Yacc: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
-$(YACC) $(PRIVATE_YACCFLAGS) -o $@ $<
-touch $(@:$1=$(YACC_HEADER_SUFFIX))
-echo '#ifndef '$(@F:$1=_h) > $(@:$1=.h)
-echo '#define '$(@F:$1=_h) >> $(@:$1=.h)
-cat $(@:$1=$(YACC_HEADER_SUFFIX)) >> $(@:$1=.h)
-echo '#endif' >> $(@:$1=.h)
+$(YACC) $(PRIVATE_YACCFLAGS) \
+  --defines=$(basename $@).h \
+  -o $@ $<
 endef
 
 ###########################################################
