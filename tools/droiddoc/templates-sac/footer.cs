@@ -2,7 +2,7 @@
   <style>.feedback { float: right !Important }</style>
   <div class="feedback">
     <a href="#" class="button" onclick=" try {
-      userfeedback.api.startFeedback({'productId':'715571','authuser':'1'});return false;}catch(e){}">Feedback on Site</a>
+      userfeedback.api.startFeedback({'productId':'715571','authuser':'1'});return false;}catch(e){}">Site Feedback</a>
   </div>
   <div id="copyright">
     <?cs call:custom_cc_copyright() ?>
