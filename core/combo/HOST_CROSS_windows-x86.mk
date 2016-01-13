@@ -32,8 +32,8 @@ $(combo_var_prefix)GLOBAL_LD_DIRS += -Lprebuilts/gcc/linux-x86/host/x86_64-w64-m
 $(combo_var_prefix)GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
 # Use C99-compliant printf functions (%zd).
 $(combo_var_prefix)GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
-# Admit to using >= Win2K. Both are needed because of <_mingw.h>.
-$(combo_var_prefix)GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0500 -DWINVER=0x0500
+# Admit to using >= Vista. Both are needed because of <_mingw.h>.
+$(combo_var_prefix)GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0600 -DWINVER=0x0600
 # Get 64-bit off_t and related functions.
 $(combo_var_prefix)GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64
 
