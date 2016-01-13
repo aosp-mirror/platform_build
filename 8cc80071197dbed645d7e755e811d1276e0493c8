@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27673e34_9e779a1b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2191,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-13T23:56:07Z",
+      "side": 1,
+      "message": "You don\u0027t need to to call $(shell) here: the build recipe itself is shell script. Use shell construct $$(...) instead.",
+      "range": {
+        "startLine": 2191,
+        "startChar": 0,
+        "endLine": 2191,
+        "endChar": 7
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "676db610_91530b1a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-13T23:56:07Z",
+      "side": 1,
+      "message": "For platform build (system.img), shouldn\u0027t we always use $(PLATFORM_SDK_VERSION)?\nLooks to me we only need the apk\u0027s minSdkVersion if the apk is about to be installed in older system, right?\nIn that case, we only need the dumped sdkVersion for unbundled build. You can write it as:\n\nifdef TARGET_BUILD_APPS\n# Unbundled build\ndefine get-package-min-sdk-version-int\n$$($(AAPT) dump badging $(1) 2\u003e\u00261 | grep \u0027^sdkVersion\u0027 | cut -d\"\u0027\" -f2 | \\\n    sed -e s/^$(PLATFORM_VERSION_CODENAME)$$/$(PLATFORM_SDK_VERSION)/)\nendef\nelse\n# Platform build\ndefine get-package-min-sdk-version-int\n$(PLATFORM_SDK_VERSION)\nendef\nendif",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "678e9643_1560b30a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2200,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-13T23:56:07Z",
+      "side": 1,
+      "message": "For platform build (system.img), shouldn\u0027t we always use $(PLATFORM_SDK_VERSION)?\nLooks to me we only need the apk\u0027s minSdkVersion if the apk is about to be installed in older system, right?\nIn that case, we only need the dumped sdkVersion for unbundled build.",
+      "range": {
+        "startLine": 2200,
+        "startChar": 4,
+        "endLine": 2200,
+        "endChar": 75
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
