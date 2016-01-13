@@ -56,3 +56,4 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.dex2oat-Xmx=512m \
     ro.dalvik.vm.native.bridge=0 \
     dalvik.vm.usejit=true \
+    dalvik.vm.usejitprofiles=true
