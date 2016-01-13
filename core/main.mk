@@ -534,11 +534,12 @@ ifneq ($(dont_bother),true)
 # --mindepth=2 makes the prunes not work.
 subdir_makefiles := \
 	$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) $(subdirs) Android.mk)
+
 ifeq ($(USE_SOONG),true)
-subdir_makefiles := $(SOONG_ANDROID_MK) $(subdir_makefiles)
+subdir_makefiles := $(SOONG_ANDROID_MK) $(call filter-soong-makefiles,$(subdir_makefiles))
 endif
 
-$(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
+$(foreach mk, $(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
 
 endif # dont_bother
 
