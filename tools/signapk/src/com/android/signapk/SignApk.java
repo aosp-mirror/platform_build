@@ -67,6 +67,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -116,14 +117,24 @@ class SignApk {
     private static final int USE_SHA256 = 2;
 
     /**
+     * Minimum Android SDK API Level which accepts JAR signatures which use SHA-256. Older platform
+     * versions accept only SHA-1 signatures.
+     */
+    private static final int MIN_API_LEVEL_FOR_SHA256_JAR_SIGNATURES = 18;
+
+    /**
      * Return one of USE_SHA1 or USE_SHA256 according to the signature
      * algorithm specified in the cert.
      */
-    private static int getDigestAlgorithm(X509Certificate cert) {
+    private static int getDigestAlgorithm(X509Certificate cert, int minSdkVersion) {
         String sigAlg = cert.getSigAlgName().toUpperCase(Locale.US);
-        if ("SHA1WITHRSA".equals(sigAlg) ||
-            "MD5WITHRSA".equals(sigAlg)) {     // see "HISTORICAL NOTE" above.
-            return USE_SHA1;
+        if ("SHA1WITHRSA".equals(sigAlg) || "MD5WITHRSA".equals(sigAlg)) {
+            // see "HISTORICAL NOTE" above.
+            if (minSdkVersion < MIN_API_LEVEL_FOR_SHA256_JAR_SIGNATURES) {
+                return USE_SHA1;
+            } else {
+                return USE_SHA256;
+            }
         } else if (sigAlg.startsWith("SHA256WITH")) {
             return USE_SHA256;
         } else {
@@ -133,10 +144,11 @@ class SignApk {
     }
 
     /** Returns the expected signature algorithm for this key type. */
-    private static String getSignatureAlgorithm(X509Certificate cert) {
+    private static String getSignatureAlgorithm(X509Certificate cert, int minSdkVersion) {
         String keyType = cert.getPublicKey().getAlgorithm().toUpperCase(Locale.US);
         if ("RSA".equalsIgnoreCase(keyType)) {
-            if (getDigestAlgorithm(cert) == USE_SHA256) {
+            if ((minSdkVersion >= MIN_API_LEVEL_FOR_SHA256_JAR_SIGNATURES)
+                    || (getDigestAlgorithm(cert, minSdkVersion) == USE_SHA256)) {
                 return "SHA256withRSA";
             } else {
                 return "SHA1withRSA";
@@ -309,10 +321,24 @@ class SignApk {
                 Attributes attr = null;
                 if (input != null) attr = input.getAttributes(name);
                 attr = attr != null ? new Attributes(attr) : new Attributes();
+                // Remove any previously computed digests from this entry's attributes.
+                for (Iterator<Object> i = attr.keySet().iterator(); i.hasNext();) {
+                    Object key = i.next();
+                    if (!(key instanceof Attributes.Name)) {
+                        continue;
+                    }
+                    String attributeNameLowerCase =
+                            ((Attributes.Name) key).toString().toLowerCase(Locale.US);
+                    if (attributeNameLowerCase.endsWith("-digest")) {
+                        i.remove();
+                    }
+                }
+                // Add SHA-1 digest if requested
                 if (md_sha1 != null) {
                     attr.putValue("SHA1-Digest",
                                   new String(Base64.encode(md_sha1.digest()), "ASCII"));
                 }
+                // Add SHA-256 digest if requested
                 if (md_sha256 != null) {
                     attr.putValue("SHA-256-Digest",
                                   new String(Base64.encode(md_sha256.digest()), "ASCII"));
@@ -438,7 +464,7 @@ class SignApk {
 
     /** Sign data and write the digital signature to 'out'. */
     private static void writeSignatureBlock(
-        CMSTypedData data, X509Certificate publicKey, PrivateKey privateKey,
+        CMSTypedData data, X509Certificate publicKey, PrivateKey privateKey, int minSdkVersion,
         OutputStream out)
         throws IOException,
                CertificateEncodingException,
@@ -449,8 +475,9 @@ class SignApk {
         JcaCertStore certs = new JcaCertStore(certList);
 
         CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
-        ContentSigner signer = new JcaContentSignerBuilder(getSignatureAlgorithm(publicKey))
-            .build(privateKey);
+        ContentSigner signer =
+                new JcaContentSignerBuilder(getSignatureAlgorithm(publicKey, minSdkVersion))
+                        .build(privateKey);
         gen.addSignerInfoGenerator(
             new JcaSignerInfoGeneratorBuilder(
                 new JcaDigestCalculatorProviderBuilder()
@@ -631,21 +658,23 @@ class SignApk {
     }
 
     private static class CMSSigner implements CMSTypedData {
-        private JarFile inputJar;
-        private File publicKeyFile;
-        private X509Certificate publicKey;
-        private PrivateKey privateKey;
-        private OutputStream outputStream;
+        private final JarFile inputJar;
+        private final File publicKeyFile;
+        private final X509Certificate publicKey;
+        private final PrivateKey privateKey;
+        private final int minSdkVersion;
+        private final OutputStream outputStream;
         private final ASN1ObjectIdentifier type;
         private WholeFileSignerOutputStream signer;
 
         public CMSSigner(JarFile inputJar, File publicKeyFile,
-                         X509Certificate publicKey, PrivateKey privateKey,
+                         X509Certificate publicKey, PrivateKey privateKey, int minSdkVersion,
                          OutputStream outputStream) {
             this.inputJar = inputJar;
             this.publicKeyFile = publicKeyFile;
             this.publicKey = publicKey;
             this.privateKey = privateKey;
+            this.minSdkVersion = minSdkVersion;
             this.outputStream = outputStream;
             this.type = new ASN1ObjectIdentifier(CMSObjectIdentifiers.data.getId());
         }
@@ -670,7 +699,7 @@ class SignApk {
                 signer = new WholeFileSignerOutputStream(out, outputStream);
                 JarOutputStream outputJar = new JarOutputStream(signer);
 
-                int hash = getDigestAlgorithm(publicKey);
+                int hash = getDigestAlgorithm(publicKey, minSdkVersion);
 
                 // Assume the certificate is valid for at least an hour.
                 long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
@@ -682,6 +711,7 @@ class SignApk {
                 signFile(manifest,
                          new X509Certificate[]{ publicKey },
                          new PrivateKey[]{ privateKey },
+                         minSdkVersion,
                          outputJar);
 
                 signer.notifyClosing();
@@ -698,7 +728,7 @@ class SignApk {
                    CertificateEncodingException,
                    OperatorCreationException,
                    CMSException {
-            SignApk.writeSignatureBlock(this, publicKey, privateKey, temp);
+            SignApk.writeSignatureBlock(this, publicKey, privateKey, minSdkVersion, temp);
         }
 
         public WholeFileSignerOutputStream getSigner() {
@@ -708,9 +738,10 @@ class SignApk {
 
     private static void signWholeFile(JarFile inputJar, File publicKeyFile,
                                       X509Certificate publicKey, PrivateKey privateKey,
+                                      int minSdkVersion,
                                       OutputStream outputStream) throws Exception {
         CMSSigner cmsOut = new CMSSigner(inputJar, publicKeyFile,
-                                         publicKey, privateKey, outputStream);
+                                         publicKey, privateKey, minSdkVersion, outputStream);
 
         ByteArrayOutputStream temp = new ByteArrayOutputStream();
 
@@ -776,6 +807,7 @@ class SignApk {
 
     private static void signFile(Manifest manifest,
                                  X509Certificate[] publicKey, PrivateKey[] privateKey,
+                                 int minSdkVersion,
                                  JarOutputStream outputJar)
         throws Exception {
         // Assume the certificate is valid for at least an hour.
@@ -795,7 +827,7 @@ class SignApk {
             je.setTime(timestamp);
             outputJar.putNextEntry(je);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            writeSignatureFile(manifest, baos, getDigestAlgorithm(publicKey[k]));
+            writeSignatureFile(manifest, baos, getDigestAlgorithm(publicKey[k], minSdkVersion));
             byte[] signedData = baos.toByteArray();
             outputJar.write(signedData);
 
@@ -807,7 +839,7 @@ class SignApk {
             je.setTime(timestamp);
             outputJar.putNextEntry(je);
             writeSignatureBlock(new CMSProcessableByteArray(signedData),
-                                publicKey[k], privateKey[k], outputJar);
+                                publicKey[k], privateKey[k], minSdkVersion, outputJar);
         }
     }
 
@@ -887,6 +919,7 @@ class SignApk {
         boolean signWholeFile = false;
         String providerClass = null;
         int alignment = 4;
+        int minSdkVersion = 0;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -901,6 +934,15 @@ class SignApk {
                 ++argstart;
             } else if ("-a".equals(args[argstart])) {
                 alignment = Integer.parseInt(args[++argstart]);
+                ++argstart;
+            } else if ("--min-sdk-version".equals(args[argstart])) {
+                String minSdkVersionString = args[++argstart];
+                try {
+                    minSdkVersion = Integer.parseInt(minSdkVersionString);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(
+                            "min-sdk-version must be a decimal number: " + minSdkVersionString);
+                }
                 ++argstart;
             } else {
                 usage();
@@ -931,7 +973,7 @@ class SignApk {
                 for (int i = 0; i < numKeys; ++i) {
                     int argNum = argstart + i*2;
                     publicKey[i] = readPublicKey(new File(args[argNum]));
-                    hashes |= getDigestAlgorithm(publicKey[i]);
+                    hashes |= getDigestAlgorithm(publicKey[i], minSdkVersion);
                 }
             } catch (IllegalArgumentException e) {
                 System.err.println(e);
@@ -955,7 +997,7 @@ class SignApk {
 
             if (signWholeFile) {
                 SignApk.signWholeFile(inputJar, firstPublicKeyFile,
-                                      publicKey[0], privateKey[0], outputFile);
+                                      publicKey[0], privateKey[0], minSdkVersion, outputFile);
             } else {
                 JarOutputStream outputJar = new JarOutputStream(outputFile);
 
@@ -969,7 +1011,7 @@ class SignApk {
 
                 Manifest manifest = addDigestsToManifest(inputJar, hashes);
                 copyFiles(manifest, inputJar, outputJar, timestamp, alignment);
-                signFile(manifest, publicKey, privateKey, outputJar);
+                signFile(manifest, publicKey, privateKey, minSdkVersion, outputJar);
                 outputJar.close();
             }
         } catch (Exception e) {
