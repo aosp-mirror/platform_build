@@ -592,7 +592,46 @@ def GetKeyPasswords(keylist):
   return key_passwords
 
 
-def SignFile(input_name, output_name, key, password, whole_file=False):
+def GetMinSdkVersion(apk_name):
+  """Get the minSdkVersion delared in the APK. This can be both a decimal number
+  (API Level) or a codename.
+  """
+
+  p = Run(["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE)
+  output, err = p.communicate()
+  if err:
+    raise ExternalError("Failed to obtain minSdkVersion: aapt return code %s"
+        % (p.returncode,))
+
+  for line in output.split("\n"):
+    # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'
+    m = re.match(r'sdkVersion:\'([^\']*)\'', line)
+    if m:
+      return m.group(1)
+  raise ExternalError("No minSdkVersion returned by aapt")
+
+
+def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
+  """Get the minSdkVersion declared in the APK as a number (API Level). If
+  minSdkVersion is set to a codename, it is translated to a number using the
+  provided map.
+  """
+
+  version = GetMinSdkVersion(apk_name)
+  try:
+    return int(version)
+  except ValueError:
+    # Not a decimal number. Codename?
+    if version in codename_to_api_level_map:
+      return codename_to_api_level_map[version]
+    else:
+      raise ExternalError("Unknown minSdkVersion: '%s'. Known codenames: %s"
+                          % (version, codename_to_api_level_map))
+
+
+def SignFile(input_name, output_name, key, password, min_api_level=None,
+    codename_to_api_level_map=dict(),
+    whole_file=False):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
@@ -600,6 +639,13 @@ def SignFile(input_name, output_name, key, password, whole_file=False):
   If whole_file is true, use the "-w" option to SignApk to embed a
   signature that covers the whole file in the archive comment of the
   zip file.
+
+  min_api_level is the API Level (int) of the oldest platform this file may end
+  up on. If not specified for an APK, the API Level is obtained by interpreting
+  the minSdkVersion attribute of the APK's AndroidManifest.xml.
+
+  codename_to_api_level_map is needed to translate the codename which may be
+  encountered as the APK's minSdkVersion.
   """
 
   java_library_path = os.path.join(
@@ -612,6 +658,15 @@ def SignFile(input_name, output_name, key, password, whole_file=False):
   cmd.extend(OPTIONS.extra_signapk_args)
   if whole_file:
     cmd.append("-w")
+
+  min_sdk_version = min_api_level
+  if min_sdk_version is None:
+    if not whole_file:
+      min_sdk_version = GetMinSdkVersionInt(
+          input_name, codename_to_api_level_map)
+  if min_sdk_version is not None:
+    cmd.extend(["--min-sdk-version", str(min_sdk_version)])
+
   cmd.extend([key + OPTIONS.public_key_suffix,
               key + OPTIONS.private_key_suffix,
               input_name, output_name])
