@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "676db610_2c09fc43",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-01-14T01:48:45Z",
+      "side": 1,
+      "message": "For platform builds, is it actually guaranteed that nobody takes the APK the build produces and then reuse them elsewhere? I\u0027m simply trying to be conservative/cautious here. If this is not a concern, then, indeed, we can ignore APK\u0027s minSdkVersion and instead use $(PLATFORM_SDK_VERSION).\n\nA similar concern applies to the sign target files Python script (also in this change). Right now, I\u0027m being conservative there and relying on each APK\u0027s minSdkVersion. However, since we\u0027re signing a build there, we know which platform version / API Level these APKs will be pre-installed on and thus can use that platform\u0027s API Level instead. Again, this is only OK if nobody extracts APKs from those signed ZIP files and reuses them elsewhere.\n\nWhich approach do you and Baligh suggest?",
+      "parentUuid": "676db610_91530b1a",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "678e9643_1560b30a",
         "filename": "core/definitions.mk",
         "patchSetId": 3
