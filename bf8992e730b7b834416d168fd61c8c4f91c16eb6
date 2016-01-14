@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c75ca266_db2bde50",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-01-14T01:21:42Z",
+      "side": 1,
+      "message": "should we always be setting --enable-new-dtags for device builds?",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
