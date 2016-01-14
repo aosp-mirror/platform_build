@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "27673e34_0fe19617",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-01-14T21:46:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c75ca266_7b60d2af",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "274e5eac_f787d739",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -48,6 +66,24 @@
       "side": 1,
       "message": "We already use relative rpath in the host binaries, see transform-host-o-to-executable-inner in build/core/definitions.mk:\n-Wl,-rpath,\\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES))",
       "parentUuid": "274e5eac_f787d739",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "274e5eac_92e141be",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-01-14T21:46:04Z",
+      "side": 1,
+      "message": "This is primarily targeted at tests, which have fairly unpredictable install paths relative to $OUT/system/lib*.  I could use something like:\nsystem/lib/\n../system/lib/\n../../system/lib/\n../../../system/lib/\nDan pointed out it needs vendor/lib as well, so another 4 rpath entries.  Since executables still need an absolute path to the linker, I think it makes more sense to keep an absolute path in both places rather than try to come up with a set of relative paths that will work everywhere, but I can do relative if you prefer.",
+      "parentUuid": "274e5eac_722755f4",
       "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
