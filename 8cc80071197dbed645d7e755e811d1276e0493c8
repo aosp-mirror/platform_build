@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "4768b202_689abe89",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-01-14T02:40:48Z",
+      "side": 1,
+      "message": "If somebody extracts such a minSdkVersion 15 APK from, say, an M or N target files ZIP and then installs it on a platform with, say, API Level 16, that platform won\u0027t be able to verify the APK signatures (because it doesn\u0027t support APKs signed using SHA-256) and thus will refuse to install/upgrade the APK.\n\nI\u0027m happy to make our life simpler and ignore minSdkVersion in this CL, if Baligh agrees. To be fair, in the past, APKs from target files ZIP couldn\u0027t be used outside of the system partition anyway because they might have been missing classes.dex or .so files. Not sure whether this is the case these days...\n\nP. S. If we do go for the simpler solution, I\u0027d also love to add the \"Serious players shouldn\u0027t be doing that\" quote to the relevant bit of the scripts, with your permission of course. :)",
+      "parentUuid": "07495aa4_5a7d14fb",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "678e9643_1560b30a",
         "filename": "core/definitions.mk",
         "patchSetId": 3
