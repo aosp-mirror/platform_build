@@ -987,29 +987,36 @@ class BlockImageDiff(object):
       too many blocks (greater than MAX_BLOCKS_PER_DIFF_TRANSFER), we split it
       into smaller pieces by getting multiple Transfer()s.
 
-      The downside is that after splitting, we can no longer use imgdiff but
-      only bsdiff."""
-
-      MAX_BLOCKS_PER_DIFF_TRANSFER = 1024
+      The downside is that after splitting, we may increase the package size
+      since the split pieces don't align well. According to our experiments,
+      1/8 of the cache size as the per-piece limit appears to be optimal.
+      Compared to the fixed 1024-block limit, it reduces the overall package
+      size by 30% volantis, and 20% for angler and bullhead."""
 
       # We care about diff transfers only.
       if style != "diff" or not split:
         Transfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
         return
 
+      pieces = 0
+      cache_size = common.OPTIONS.cache_size
+      split_threshold = 0.125
+      max_blocks_per_transfer = int(cache_size * split_threshold /
+                                    self.tgt.blocksize)
+
       # Change nothing for small files.
-      if (tgt_ranges.size() <= MAX_BLOCKS_PER_DIFF_TRANSFER and
-          src_ranges.size() <= MAX_BLOCKS_PER_DIFF_TRANSFER):
+      if (tgt_ranges.size() <= max_blocks_per_transfer and
+          src_ranges.size() <= max_blocks_per_transfer):
         Transfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
         return
 
-      pieces = 0
-      while (tgt_ranges.size() > MAX_BLOCKS_PER_DIFF_TRANSFER and
-             src_ranges.size() > MAX_BLOCKS_PER_DIFF_TRANSFER):
+      while (tgt_ranges.size() > max_blocks_per_transfer and
+             src_ranges.size() > max_blocks_per_transfer):
         tgt_split_name = "%s-%d" % (tgt_name, pieces)
         src_split_name = "%s-%d" % (src_name, pieces)
-        tgt_first = tgt_ranges.first(MAX_BLOCKS_PER_DIFF_TRANSFER)
-        src_first = src_ranges.first(MAX_BLOCKS_PER_DIFF_TRANSFER)
+        tgt_first = tgt_ranges.first(max_blocks_per_transfer)
+        src_first = src_ranges.first(max_blocks_per_transfer)
+
         Transfer(tgt_split_name, src_split_name, tgt_first, src_first, style,
                  by_id)
 
