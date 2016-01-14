@@ -16,6 +16,24 @@
       "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c75ca266_db547edb",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2016-01-14T01:24:53Z",
+      "side": 1,
+      "message": "makes sense - android linker does not support \"old-dtags\"",
+      "parentUuid": "c75ca266_db2bde50",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
