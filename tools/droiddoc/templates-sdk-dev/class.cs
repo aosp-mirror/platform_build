@@ -190,8 +190,9 @@ Summary:
     <tr class="<?cs if:count % #2 ?>alt-color<?cs /if ?> api apilevel-<?cs var:method.since ?>" >
         <td class="jd-typecol"><nobr>
             <?cs var:method.abstract ?>
-            <?cs var:method.final ?>
+            <?cs var:method.default ?>
             <?cs var:method.static ?>
+            <?cs var:method.final ?>
             <?cs call:type_link(method.generic) ?>
             <?cs call:type_link(method.returnType) ?></nobr>
         </td>
@@ -555,10 +556,11 @@ From <?cs var:cl.kind ?>
 <div class="jd-details api apilevel-<?cs var:method.since ?>"> 
     <h4 class="jd-details-title">
       <span class="normal">
-        <?cs var:method.scope ?> 
-        <?cs var:method.static ?> 
-        <?cs var:method.final ?> 
-        <?cs var:method.abstract ?> 
+        <?cs var:method.scope ?>
+        <?cs var:method.abstract ?>
+        <?cs var:method.default ?>
+        <?cs var:method.static ?>
+        <?cs var:method.final ?>
         <?cs call:type_link(method.returnType) ?>
       </span>
       <span class="sympad"><?cs var:method.name ?></span>
