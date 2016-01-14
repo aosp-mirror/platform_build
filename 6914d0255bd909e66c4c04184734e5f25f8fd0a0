@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27673e34_efd9ba78",
+        "filename": "tools/signapk/src/com/android/signapk/ApkSignerV2.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1022895
+      },
+      "writtenOn": "2016-01-14T23:15:31Z",
+      "side": 1,
+      "message": "Add a comment that this doesn\u0027t actually clear the ByteBuffer but just resets the position",
+      "range": {
+        "startLine": 296,
+        "startChar": 0,
+        "endLine": 296,
+        "endChar": 34
+      },
+      "revId": "6914d0255bd909e66c4c04184734e5f25f8fd0a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
