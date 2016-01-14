@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "274e5eac_8853d419",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1018026
+      },
+      "writtenOn": "2016-01-14T20:05:12Z",
+      "side": 1,
+      "message": "but, if the requirement is that APK minSDK version is needed to evaluate whether we use SHA1 vs SHA256, how will using PLATFORM_SDK_VERSION help ?  Isn\u0027t Platform_SDK_version almost always higher than min_SDK.\n\nSorry I don\u0027t understand - so asking.",
+      "parentUuid": "4768b202_689abe89",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "678e9643_1560b30a",
         "filename": "core/definitions.mk",
         "patchSetId": 3
