@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "676db610_6416689e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-14T21:50:33Z",
+      "side": 1,
+      "message": "Yeah, if the linker path is absolute, I\u0027ve got no problems with this being absolute.",
+      "parentUuid": "274e5eac_92e141be",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c75ca266_db2bde50",
         "filename": "core/binary.mk",
         "patchSetId": 1
