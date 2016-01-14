@@ -144,6 +144,30 @@
     },
     {
       "key": {
+        "uuid": "c75ca266_cc4e82bd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-01-14T20:31:30Z",
+      "side": 1,
+      "message": "The finer point is that it depends only on the platform\u0027s API Level whether SHA-256 signatures can be verified by the platform. An APK\u0027s minSdkVersion (as long as its equal to or lower than platform\u0027s API Level) is irrelevant for the verification.\n\nThus, if we\u0027re signing APKs for a platform with API Level 23, we know for a fact that SHA-256 signatures will be verified just fine by that platform. It doesn\u0027t matter whether an APK says that its minSdkVersion is, say, 15.\n\nThe catch is that somebody could take such a signed APKs and attempt to install it on older platforms. In this hypothetical example, the APK itself says it\u0027s fine to install it on platforms with API Level 15 or newer. However, if it\u0027s signed with SHA-256, then it\u0027ll fail to install on anything older than API Level 18. Thus, I was trying to be very conservative here and use SHA-256 only if the APK being signed declares minSdkVersion 18 or higher.\n\nIf we don\u0027t need that level of conservatism, we can indeed ignore APKs\u0027 minSdkVersion and simply rely on API Level of the platform for which we\u0027re signing APKs. If the build is unbundled, then we\u0027d still need to rely on minSdkVersion instead (exactly as Ying proposed in his code snippet earlier in this thread).",
+      "parentUuid": "274e5eac_8853d419",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "678e9643_1560b30a",
         "filename": "core/definitions.mk",
         "patchSetId": 3
