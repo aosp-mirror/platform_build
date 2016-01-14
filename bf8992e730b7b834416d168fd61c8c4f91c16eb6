@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "c75ca266_7b60d2af",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-14T01:28:11Z",
+      "side": 1,
+      "message": "shouldn\u0027t this also check LOCAL_IS_HOST_MODULE?\n\nand a global sanity check somewhere to make sure that this is only enabled on linux/x86/x86_64?",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "274e5eac_f787d739",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-14T01:28:11Z",
+      "side": 1,
+      "message": "do relative paths work? it would be nice if this was relative, but i guess we\u0027d need to compute that based on the install path, which could get complicated. maybe in soong?",
+      "revId": "bf8992e730b7b834416d168fd61c8c4f91c16eb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c75ca266_db2bde50",
         "filename": "core/binary.mk",
         "patchSetId": 1
