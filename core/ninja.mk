@@ -1,6 +1,15 @@
+NINJA ?= prebuilts/ninja/$(HOST_PREBUILT_TAG)/ninja
+
+ifeq ($(USE_SOONG),true)
+USE_SOONG_FOR_KATI := true
+endif
+
+ifeq ($(USE_SOONG_FOR_KATI),true)
+include $(BUILD_SYSTEM)/soong.mk
+else
 KATI ?= $(HOST_OUT_EXECUTABLES)/ckati
 MAKEPARALLEL ?= $(HOST_OUT_EXECUTABLES)/makeparallel
-NINJA ?= prebuilts/ninja/$(HOST_PREBUILT_TAG)/ninja
+endif
 
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
 
@@ -119,8 +128,6 @@ NINJA_MAKEPARALLEL := $(MAKEPARALLEL) --ninja
 endif
 
 ifeq ($(USE_SOONG),true)
-include $(BUILD_SYSTEM)/soong.mk
-
 COMBINED_BUILD_NINJA := $(OUT_DIR)/combined$(KATI_NINJA_SUFFIX).ninja
 
 $(COMBINED_BUILD_NINJA): $(KATI_BUILD_NINJA) $(SOONG_ANDROID_MK)
@@ -147,6 +154,7 @@ $(KATI_BUILD_NINJA): $(KATI) $(MAKEPARALLEL) $(SOONG_ANDROID_MK) FORCE
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
 	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --no_ignore_dirty=$(SOONG_ANDROID_MK) --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo $(KATI_FIND_EMULATOR) -f build/core/main.mk $(KATI_GOALS) --gen_all_targets BUILDING_WITH_NINJA=true SOONG_ANDROID_MK=$(SOONG_ANDROID_MK)
 
+ifneq ($(USE_SOONG_FOR_KATI),true)
 KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
 # Build static ckati. Unfortunately Mac OS X doesn't officially support static exectuables.
@@ -168,6 +176,7 @@ endif
 MAKEPARALLEL_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/makeparallel_intermediates
 MAKEPARALLEL_BIN_PATH := $(HOST_OUT_EXECUTABLES)
 include build/tools/makeparallel/Makefile
+endif
 
 .PHONY: FORCE
 FORCE:
