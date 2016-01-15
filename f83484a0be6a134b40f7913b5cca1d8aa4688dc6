@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2752dead_3fedc3aa",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-15T02:21:05Z",
+      "side": 1,
+      "message": "nit: give it an extra space before \u0027(\u0027",
+      "range": {
+        "startLine": 624,
+        "startChar": 28,
+        "endLine": 624,
+        "endChar": 29
+      },
+      "revId": "f83484a0be6a134b40f7913b5cca1d8aa4688dc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "27673e34_c5877d81",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1007,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-15T02:21:05Z",
+      "side": 1,
+      "message": "looks like unintentional change?",
+      "range": {
+        "startLine": 1007,
+        "startChar": 24,
+        "endLine": 1007,
+        "endChar": 28
+      },
+      "revId": "f83484a0be6a134b40f7913b5cca1d8aa4688dc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
