@@ -613,12 +613,15 @@ class BlockImageDiff(object):
           def_cmd = stashes[idx][1]
           assert (idx, sr) in def_cmd.stash_before
           def_cmd.stash_before.remove((idx, sr))
-          new_blocks += sr.size()
 
+        # Add up blocks that violates space limit and print total number to
+        # screen later.
+        new_blocks += cmd.tgt_ranges.size()
         cmd.ConvertToNew()
 
-    print("  Total %d blocks are packed as new blocks due to insufficient "
-          "cache size." % (new_blocks,))
+    num_of_bytes = new_blocks * self.tgt.blocksize
+    print("  Total %d blocks (%d bytes) are packed as new blocks due to "
+          "insufficient cache size." % (new_blocks, num_of_bytes))
 
   def ComputePatches(self, prefix):
     print("Reticulating splines...")
