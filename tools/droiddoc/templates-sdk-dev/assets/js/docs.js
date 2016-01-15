@@ -3370,7 +3370,7 @@ window.changeLangPref = changeLangPref;
    * Current locale.
    */
   var locale = (function() {
-    var lang = window.readCookie('pref_lang');
+    var lang = window.devsite ? window.devsiteLang : window.readCookie('pref_lang');
     if (lang === 0 || LANGUAGES.indexOf(lang) === -1) {
       lang = 'en';
     }
