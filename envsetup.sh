@@ -1426,10 +1426,8 @@ function set_java_home() {
     fi
 
     if [ ! "$JAVA_HOME" ]; then
-      if [ ! "$EXPERIMENTAL_USE_JAVA8" ]; then
-        echo JDK 8 will soon become the default. Please install it now.
-        echo Also: \"export EXPERIMENTAL_USE_JAVA8=true\"
-        echo See http://go/android-jdk8-discuss
+      if [ -n "$LEGACY_USE_JAVA7" ]; then
+        echo Warning: Support for JDK 7 will be dropped. Switch to JDK 8.
         case `uname -s` in
             Darwin)
                 export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
