@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07495aa4_09d7c873",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 593,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-15T02:37:55Z",
+      "side": 1,
+      "message": "on a second thought, this looks wrong.\n\nwe actually pack all the blocks in \"use_cmd\" as new blocks, and \"sr\" here could be just part of them. think about the case that \"use_cmd\" need to read multiple stashed blocks. once \"use_cmd\" gets converted, more blocks than sr.size() will be added to the package.",
+      "range": {
+        "startLine": 593,
+        "startChar": 10,
+        "endLine": 593,
+        "endChar": 33
+      },
+      "revId": "a08e335641108a16aca9d1400722ffd3f593201f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2752dead_1fb7a7a0",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 609,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-15T02:37:55Z",
+      "side": 1,
+      "message": "and here we don\u0027t even have any \"sr\" defined",
+      "range": {
+        "startLine": 609,
+        "startChar": 26,
+        "endLine": 609,
+        "endChar": 28
+      },
+      "revId": "a08e335641108a16aca9d1400722ffd3f593201f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e759a674_bcdc1b0b",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-15T02:37:55Z",
+      "side": 1,
+      "message": "it should be changed right here:\nnew_blocks +\u003d cmd.tgt_ranges.size()\nyou can figure out the right indentation :)",
+      "revId": "a08e335641108a16aca9d1400722ffd3f593201f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
