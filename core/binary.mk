@@ -905,6 +905,7 @@ $(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s \
 endif
 
 gen_asm_objects := $(gen_S_objects) $(gen_s_objects)
+$(gen_asm_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 ###########################################################
 ## o: Include generated .o files in output.
@@ -1041,6 +1042,7 @@ $(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s \
 endif
 
 asm_objects := $(dotdot_objects_S) $(dotdot_objects_s) $(asm_objects_S) $(asm_objects_s)
+$(asm_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 
 # .asm for x86/x86_64 needs to be compiled with yasm.
