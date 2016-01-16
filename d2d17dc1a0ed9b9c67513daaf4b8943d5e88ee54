@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e759a674_726d87d3",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-16T04:10:12Z",
+      "side": 1,
+      "message": "This should happen for the generate assembly file case too. I\u0027ll test and upload a patch later",
+      "revId": "d2d17dc1a0ed9b9c67513daaf4b8943d5e88ee54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
