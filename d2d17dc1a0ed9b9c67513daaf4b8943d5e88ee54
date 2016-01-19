@@ -16,6 +16,23 @@
       "revId": "d2d17dc1a0ed9b9c67513daaf4b8943d5e88ee54",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07495aa4_67ce703b",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1048,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-19T19:56:02Z",
+      "side": 1,
+      "message": "Probably $(asm_objects) : PRIVATE_ARM_CFLAGS :\u003d $(normal_objects_cflags)\n\nSo we don\u0027t need to set it everywhere the rule is set up.",
+      "revId": "d2d17dc1a0ed9b9c67513daaf4b8943d5e88ee54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
