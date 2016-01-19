@@ -426,3 +426,7 @@ endif
 ifeq ($(PRINT_BUILD_CONFIG),)
 PRINT_BUILD_CONFIG := true
 endif
+
+ifeq ($(USE_CLANG_PLATFORM_BUILD),)
+USE_CLANG_PLATFORM_BUILD := true
+endif
