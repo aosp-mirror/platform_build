@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07495aa4_e2d6ee47",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1134,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-19T23:48:45Z",
+      "side": 1,
+      "message": "PS3 fixes one missing parameter when generating incremental updates.",
+      "range": {
+        "startLine": 1133,
+        "startChar": 0,
+        "endLine": 1134,
+        "endChar": 47
+      },
+      "revId": "c098e9efd989a46d5d1aa625bc899536de15eaaa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
