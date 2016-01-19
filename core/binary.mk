@@ -733,23 +733,19 @@ aidl_src := $(strip $(filter %.aidl,$(my_src_files)))
 aidl_gen_cpp :=
 ifneq ($(aidl_src),)
 
+# Use the intermediates directory to avoid writing our own .cpp -> .o rules.
 aidl_gen_cpp_root := $(intermediates)/aidl-generated/src
 aidl_gen_include_root := $(intermediates)/aidl-generated/include
 
-aidl_gen_cpp := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(aidl_src))
-aidl_gen_cpp := $(addprefix $(aidl_gen_cpp_root)/,$(aidl_gen_cpp))
+# Multi-architecture builds have distinct intermediates directories.
+# Thus we'll actually generate source for each architecture.
+$(foreach s,$(aidl_src),\
+    $(eval $(call define-aidl-cpp-rule,$(s),$(aidl_gen_cpp_root),aidl_gen_cpp)))
+-include $(addsuffix .P,$(basename $(aidl_gen_cpp)))
 
-# TODO(wiley): we could pass down a flag here to only generate the server or
-#              client side of the binder interface.
 $(aidl_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
 $(aidl_gen_cpp) : PRIVATE_HEADER_OUTPUT_DIR := $(aidl_gen_include_root)
 $(aidl_gen_cpp) : PRIVATE_AIDL_FLAGS := $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
-
-# Multi-architecture builds have distinct intermediates directories.
-# Define rules for both architectures.
-$(aidl_gen_cpp) : $(aidl_gen_cpp_root)/%$(LOCAL_CPP_EXTENSION) : $(LOCAL_PATH)/%.aidl $(AIDL_CPP)
-	$(transform-aidl-to-cpp)
--include $(addsuffix .P,$(basename $(aidl_gen_cpp)))
 
 # Add generated headers to include paths.
 my_c_includes += $(aidl_gen_include_root)
