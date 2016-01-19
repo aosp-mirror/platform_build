@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "274e5eac_9543e199",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-19T20:33:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e759a674_726d87d3",
+      "revId": "d2d17dc1a0ed9b9c67513daaf4b8943d5e88ee54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07495aa4_67ce703b",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-01-19T19:56:02Z",
       "side": 1,
       "message": "Probably $(asm_objects) : PRIVATE_ARM_CFLAGS :\u003d $(normal_objects_cflags)\n\nSo we don\u0027t need to set it everywhere the rule is set up.",
+      "revId": "d2d17dc1a0ed9b9c67513daaf4b8943d5e88ee54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07495aa4_878e1ca9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1048,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-19T20:33:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "07495aa4_67ce703b",
       "revId": "d2d17dc1a0ed9b9c67513daaf4b8943d5e88ee54",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
