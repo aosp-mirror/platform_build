@@ -1425,10 +1425,9 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/img2simg \
   $(HOST_OUT_EXECUTABLES)/boot_signer \
   $(HOST_OUT_EXECUTABLES)/fec \
+  $(HOST_OUT_EXECUTABLES)/brillo_update_payload \
+  $(HOST_OUT_EXECUTABLES)/lib/shflags/shflags \
   $(HOST_OUT_EXECUTABLES)/delta_generator
-
-OTATOOLS += \
-  system/update_engine/scripts/brillo_update_payload
 
 # Shared libraries.
 OTATOOLS += \
