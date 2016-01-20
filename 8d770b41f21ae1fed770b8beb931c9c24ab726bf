@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c70ca2f0_d9753363",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-20T18:31:57Z",
+      "side": 1,
+      "message": "Another case.\nThe problem here is, the single target $(RenderScript_file_stamp) may generate multiple depfiles. Looks like Ninja\u0027s depfile attribute has to be one file?",
+      "range": {
+        "startLine": 564,
+        "startChar": 0,
+        "endLine": 565,
+        "endChar": 32
+      },
+      "revId": "8d770b41f21ae1fed770b8beb931c9c24ab726bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07123a0e_d3aeb452",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-20T18:31:57Z",
+      "side": 1,
+      "message": "Two more cases in java.mk:\n-include $(bc_dep_files:%.d\u003d%.P)\n-include $(aidl_java_sources:%.java\u003d%.P)",
+      "revId": "8d770b41f21ae1fed770b8beb931c9c24ab726bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07123a0e_33bd6880",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 754,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-20T18:31:57Z",
+      "side": 1,
+      "message": "I was wondering why not just have something like \".KATI_DEPFILE : $(addsuffix .P,$(basename $(aidl_gen_cpp)))\"?\nIn Ninja you have to associate the depfile with the target file, probably because so that Ninja can load the depfile right after the build recipe is executed?",
+      "range": {
+        "startLine": 753,
+        "startChar": 0,
+        "endLine": 754,
+        "endChar": 71
+      },
+      "revId": "8d770b41f21ae1fed770b8beb931c9c24ab726bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
