@@ -168,6 +168,30 @@
     },
     {
       "key": {
+        "uuid": "07123a0e_569bb235",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-20T21:16:06Z",
+      "side": 1,
+      "message": "OK. I am fine to be cautious here. Running aapt on each apk shouldn\u0027t be a high cost for platform build.",
+      "parentUuid": "c75ca266_cc4e82bd",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "678e9643_1560b30a",
         "filename": "core/definitions.mk",
         "patchSetId": 3
