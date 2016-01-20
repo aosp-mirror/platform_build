@@ -154,8 +154,8 @@ FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
 #
 FRAMEWORKS_DATA_BINDING_SUBDIRS := \
         baseLibrary/src/main \
-        library/src/main \
-        library/src/doc
+        extensions/library/src/main \
+        extensions/library/src/doc
 
 #
 # A version of FRAMEWORKS_DATA_BINDING_SUBDIRS that is expanded to full paths from
