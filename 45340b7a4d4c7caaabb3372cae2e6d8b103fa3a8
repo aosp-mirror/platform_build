@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "274e5eac_38dac46c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-20T00:25:18Z",
+      "side": 1,
+      "message": "Better to not call this function again for each source file here.\nJust have this function return the generated cpp file, then you can collect all the generated cpp file in binary.mk, and then set up the PRIVATE variables.",
+      "range": {
+        "startLine": 1008,
+        "startChar": 6,
+        "endLine": 1008,
+        "endChar": 29
+      },
+      "revId": "45340b7a4d4c7caaabb3372cae2e6d8b103fa3a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
