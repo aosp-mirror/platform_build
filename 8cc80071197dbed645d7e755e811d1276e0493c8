@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "07f95afe_9e3c39a0",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2191,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-01-20T21:47:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "27673e34_9e779a1b",
+      "range": {
+        "startLine": 2191,
+        "startChar": 0,
+        "endLine": 2191,
+        "endChar": 7
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "676db610_91530b1a",
         "filename": "core/definitions.mk",
         "patchSetId": 3
@@ -180,6 +204,30 @@
       "side": 1,
       "message": "OK. I am fine to be cautious here. Running aapt on each apk shouldn\u0027t be a high cost for platform build.",
       "parentUuid": "c75ca266_cc4e82bd",
+      "range": {
+        "startLine": 2193,
+        "startChar": 0,
+        "endLine": 2193,
+        "endChar": 5
+      },
+      "revId": "8cc80071197dbed645d7e755e811d1276e0493c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07f95afe_fe41fd21",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2193,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-01-20T21:47:25Z",
+      "side": 1,
+      "message": "OK. Leaving the approach as is: use the APK\u0027s minSdkVersion instead of the API Level of the platform for which the APK is being built.",
+      "parentUuid": "07123a0e_569bb235",
       "range": {
         "startLine": 2193,
         "startChar": 0,
