@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2752dead_b20c9d55",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-20T00:27:16Z",
+      "side": 1,
+      "message": ".aidl ?",
+      "range": {
+        "startLine": 752,
+        "startChar": 21,
+        "endLine": 752,
+        "endChar": 25
+      },
+      "revId": "ec4f1b62ff9a6b813b79e72817f4e0b14fccf336",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
