@@ -26,11 +26,14 @@ ifdef LOCAL_PREBUILT_MODULE_FILE
 else
   ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
     my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+    LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) :=
   else
     ifdef LOCAL_SRC_FILES_$(my_32_64_bit_suffix)
       my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
+      LOCAL_SRC_FILES_$(my_32_64_bit_suffix) :=
     else
       my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+      LOCAL_SRC_FILES :=
     endif
   endif
 endif
