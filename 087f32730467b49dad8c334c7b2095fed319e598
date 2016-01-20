@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27fe5ee6_e2c322af",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-01-20T23:34:50Z",
+      "side": 1,
+      "message": "Can we make this a function in definitions.mk instead of spreading BUILDING_WITH_NINJA around everywhere?",
+      "revId": "087f32730467b49dad8c334c7b2095fed319e598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
