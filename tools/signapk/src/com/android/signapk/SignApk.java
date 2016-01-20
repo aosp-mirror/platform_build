@@ -899,6 +899,8 @@ class SignApk {
         System.err.println("Usage: signapk [-w] " +
                            "[-a <alignment>] " +
                            "[-providerClass <className>] " +
+                           "[--min-sdk-version <n>] " +
+                           "[--disable-v2] " +
                            "publickey.x509[.pem] privatekey.pk8 " +
                            "[publickey2.x509[.pem] privatekey2.pk8 ...] " +
                            "input.jar output.jar");
@@ -941,8 +943,10 @@ class SignApk {
                     minSdkVersion = Integer.parseInt(minSdkVersionString);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(
-                            "min-sdk-version must be a decimal number: " + minSdkVersionString);
+                            "--min-sdk-version must be a decimal number: " + minSdkVersionString);
                 }
+                ++argstart;
+            } else if ("--disable-v2".equals(args[argstart])) {
                 ++argstart;
             } else {
                 usage();
