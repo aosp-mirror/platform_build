@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "141a6a67_9935bbad",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 707,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-21T21:58:38Z",
+      "side": 1,
+      "message": "I don\u0027t have a Mac to verify at this point... Did you try it on a Mac?",
+      "range": {
+        "startLine": 707,
+        "startChar": 9,
+        "endLine": 707,
+        "endChar": 48
+      },
+      "revId": "38812d684b73b4e2bbd2a4277fd9b0d8b3c7a810",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
