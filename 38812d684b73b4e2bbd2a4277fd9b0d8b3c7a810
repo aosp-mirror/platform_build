@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f4115643_2e61bfb4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 1077068
+      },
+      "writtenOn": "2016-01-21T22:23:38Z",
+      "side": 1,
+      "message": "update_engine expects the key (if any) at /etc/update_engine/update-payload-key.pub.pem\n\nShouldn\u0027t you remove this \"security/\" part?",
+      "range": {
+        "startLine": 704,
+        "startChar": 18,
+        "endLine": 704,
+        "endChar": 26
+      },
+      "revId": "38812d684b73b4e2bbd2a4277fd9b0d8b3c7a810",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "141a6a67_9935bbad",
         "filename": "core/Makefile",
         "patchSetId": 1
