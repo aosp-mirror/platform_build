@@ -22,6 +22,30 @@
       "revId": "38812d684b73b4e2bbd2a4277fd9b0d8b3c7a810",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "940e5a27_bdf067f4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 707,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-01-21T22:20:59Z",
+      "side": 1,
+      "message": "I tried the same command on my macbook and it worked fine. I\u0027ll keep an eye on build status.",
+      "parentUuid": "141a6a67_9935bbad",
+      "range": {
+        "startLine": 707,
+        "startChar": 9,
+        "endLine": 707,
+        "endChar": 48
+      },
+      "revId": "38812d684b73b4e2bbd2a4277fd9b0d8b3c7a810",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
