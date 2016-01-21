@@ -696,6 +696,19 @@ $(TARGET_OUT_ETC)/security/otacerts.zip: $(addsuffix .x509.pem,$(DEFAULT_KEY_CER
 	$(hide) zip -qjX $@ $<
 	$(remove-timestamps-from-package)
 
+# Carry the public key for update_engine if it's a non-Brillo target that
+# uses the AB updater. We use the same key as otacerts but in RSA public key
+# format.
+ifeq ($(AB_OTA_UPDATER),true)
+ifeq ($(BRILLO),)
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/update_engine/update-payload-key.pub.pem
+$(TARGET_OUT_ETC)/security/update_engine/update-payload-key.pub.pem: $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR))
+	$(hide) rm -f $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) openssl x509 -pubkey -noout -in $< > $@
+endif
+endif
+
 .PHONY: otacerts
 otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
 
