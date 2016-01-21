@@ -743,7 +743,13 @@ aidl_gen_include_root := $(intermediates)/aidl-generated/include
 # Thus we'll actually generate source for each architecture.
 $(foreach s,$(aidl_src),\
     $(eval $(call define-aidl-cpp-rule,$(s),$(aidl_gen_cpp_root),aidl_gen_cpp)))
--include $(addsuffix .P,$(basename $(aidl_gen_cpp)))
+ifeq ($(BUILDING_WITH_NINJA),true)
+$(foreach cpp,$(aidl_gen_cpp), \
+    $(eval $(cpp) : .KATI_DEPFILE := $(addsuffix .aidl.P,$(basename $(cpp)))))
+else
+  -include $(addsuffix .aidl.P,$(basename $(aidl_gen_cpp)))
+endif
+
 
 $(aidl_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
 $(aidl_gen_cpp) : PRIVATE_HEADER_OUTPUT_DIR := $(aidl_gen_include_root)
