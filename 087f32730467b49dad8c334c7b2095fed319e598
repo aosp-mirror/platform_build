@@ -16,6 +16,24 @@
       "revId": "087f32730467b49dad8c334c7b2095fed319e598",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "071cfa50_4363e619",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-01-21T05:08:16Z",
+      "side": 1,
+      "message": "Ying pointed out there are some more depfile patterns kati isn\u0027t handling properly. I\u0027ll make this a function when I\u0027ll fix them. So, please feel free to leave this to me.",
+      "parentUuid": "27fe5ee6_e2c322af",
+      "revId": "087f32730467b49dad8c334c7b2095fed319e598",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
