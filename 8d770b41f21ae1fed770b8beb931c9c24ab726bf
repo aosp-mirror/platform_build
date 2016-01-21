@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "74fc862b_fedee12e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-01-21T05:05:48Z",
+      "side": 1,
+      "message": "Hmm this comment seems to be wrong.\n\nhttps://github.com/google/kati/blob/master/ninja.cc#L130\n\nI\u0027ll look into this. I think this case should be handled by .KATI_DEPFILE. Yeah, I guess we need to combine all depfiles into a single file.",
+      "parentUuid": "c70ca2f0_d9753363",
+      "range": {
+        "startLine": 564,
+        "startChar": 0,
+        "endLine": 565,
+        "endChar": 32
+      },
+      "revId": "8d770b41f21ae1fed770b8beb931c9c24ab726bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07123a0e_d3aeb452",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "7425669f_7612f0a7",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 566,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-01-21T05:05:48Z",
+      "side": 1,
+      "message": "I\u0027ll look into this, too.",
+      "parentUuid": "07123a0e_d3aeb452",
+      "revId": "8d770b41f21ae1fed770b8beb931c9c24ab726bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "07123a0e_33bd6880",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -53,6 +95,30 @@
       "writtenOn": "2016-01-20T18:31:57Z",
       "side": 1,
       "message": "I was wondering why not just have something like \".KATI_DEPFILE : $(addsuffix .P,$(basename $(aidl_gen_cpp)))\"?\nIn Ninja you have to associate the depfile with the target file, probably because so that Ninja can load the depfile right after the build recipe is executed?",
+      "range": {
+        "startLine": 753,
+        "startChar": 0,
+        "endLine": 754,
+        "endChar": 71
+      },
+      "revId": "8d770b41f21ae1fed770b8beb931c9c24ab726bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7425669f_360c788a",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 754,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-01-21T05:05:48Z",
+      "side": 1,
+      "message": "Yes, I think we need foreach+eval to generate multiple assignments. A mitigation would be introducing a make function as Colin suggested in a different CL.",
+      "parentUuid": "07123a0e_33bd6880",
       "range": {
         "startLine": 753,
         "startChar": 0,
