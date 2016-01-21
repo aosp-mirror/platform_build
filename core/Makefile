@@ -700,8 +700,8 @@ $(TARGET_OUT_ETC)/security/otacerts.zip: $(addsuffix .x509.pem,$(DEFAULT_KEY_CER
 # format.
 ifeq ($(AB_OTA_UPDATER),true)
 ifeq ($(BRILLO),)
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/update_engine/update-payload-key.pub.pem
-$(TARGET_OUT_ETC)/security/update_engine/update-payload-key.pub.pem: $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR))
+ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem
+$(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem: $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR))
 	$(hide) rm -f $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) openssl x509 -pubkey -noout -in $< > $@
