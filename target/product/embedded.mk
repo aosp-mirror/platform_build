@@ -22,6 +22,7 @@ PRODUCT_PACKAGES += \
     adbd \
     atrace \
     bootanimation \
+    bootstat \
     cmd \
     debuggerd \
     dumpstate \
