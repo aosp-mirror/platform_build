@@ -51,13 +51,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
 import java.security.DigestOutputStream;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.PublicKey;
 import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
@@ -68,6 +71,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -102,7 +106,8 @@ import javax.crypto.spec.PBEKeySpec;
 /**
  * Command line tool to sign JAR files (including APKs and OTA updates) in a way
  * compatible with the mincrypt verifier, using EC or RSA keys and SHA1 or
- * SHA-256 (see historical note).
+ * SHA-256 (see historical note). The tool can additionally sign APKs using
+ * APK Signature Scheme v2.
  */
 class SignApk {
     private static final String CERT_SF_NAME = "META-INF/CERT.SF";
@@ -115,6 +120,9 @@ class SignApk {
     // bitmasks for which hash algorithms we need the manifest to include.
     private static final int USE_SHA1 = 1;
     private static final int USE_SHA256 = 2;
+
+    /** Digest algorithm used when signing the APK using APK Signature Scheme v2. */
+    private static final String APK_SIG_SCHEME_V2_DIGEST_ALGORITHM = "SHA-256";
 
     /**
      * Minimum Android SDK API Level which accepts JAR signatures which use SHA-256. Older platform
@@ -414,12 +422,22 @@ class SignApk {
 
     /** Write a .SF file with a digest of the specified manifest. */
     private static void writeSignatureFile(Manifest manifest, OutputStream out,
-                                           int hash)
+            int hash, boolean additionallySignedUsingAnApkSignatureScheme)
         throws IOException, GeneralSecurityException {
         Manifest sf = new Manifest();
         Attributes main = sf.getMainAttributes();
         main.putValue("Signature-Version", "1.0");
         main.putValue("Created-By", "1.0 (Android SignApk)");
+        if (additionallySignedUsingAnApkSignatureScheme) {
+            // Add APK Signature Scheme v2 signature stripping protection.
+            // This attribute indicates that this APK is supposed to have been signed using one or
+            // more APK-specific signature schemes in addition to the standard JAR signature scheme
+            // used by this code. APK signature verifier should reject the APK if it does not
+            // contain a signature for the signature scheme the verifier prefers out of this set.
+            main.putValue(
+                    ApkSignerV2.SF_ATTRIBUTE_ANDROID_APK_SIGNED_NAME,
+                    ApkSignerV2.SF_ATTRIBUTE_ANDROID_APK_SIGNED_VALUE);
+        }
 
         MessageDigest md = MessageDigest.getInstance(
             hash == USE_SHA256 ? "SHA256" : "SHA1");
@@ -712,6 +730,7 @@ class SignApk {
                          new X509Certificate[]{ publicKey },
                          new PrivateKey[]{ privateKey },
                          minSdkVersion,
+                         false, // Don't sign using APK Signature Scheme v2
                          outputJar);
 
                 signer.notifyClosing();
@@ -808,6 +827,7 @@ class SignApk {
     private static void signFile(Manifest manifest,
                                  X509Certificate[] publicKey, PrivateKey[] privateKey,
                                  int minSdkVersion,
+                                 boolean additionallySignedUsingAnApkSignatureScheme,
                                  JarOutputStream outputJar)
         throws Exception {
         // Assume the certificate is valid for at least an hour.
@@ -827,7 +847,11 @@ class SignApk {
             je.setTime(timestamp);
             outputJar.putNextEntry(je);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            writeSignatureFile(manifest, baos, getDigestAlgorithm(publicKey[k], minSdkVersion));
+            writeSignatureFile(
+                    manifest,
+                    baos,
+                    getDigestAlgorithm(publicKey[k], minSdkVersion),
+                    additionallySignedUsingAnApkSignatureScheme);
             byte[] signedData = baos.toByteArray();
             outputJar.write(signedData);
 
@@ -895,6 +919,83 @@ class SignApk {
         Security.insertProviderAt((Provider) o, 1);
     }
 
+    /**
+     * Converts the provided lists of private keys, their X.509 certificates, and digest algorithms
+     * into a list of APK Signature Scheme v2 {@code SignerConfig} instances.
+     */
+    public static List<ApkSignerV2.SignerConfig> createV2SignerConfigs(
+            PrivateKey[] privateKeys, X509Certificate[] certificates, String[] digestAlgorithms)
+                    throws InvalidKeyException {
+        if (privateKeys.length != certificates.length) {
+            throw new IllegalArgumentException(
+                    "The number of private keys must match the number of certificates: "
+                            + privateKeys.length + " vs" + certificates.length);
+        }
+        List<ApkSignerV2.SignerConfig> result = new ArrayList<>(privateKeys.length);
+        for (int i = 0; i < privateKeys.length; i++) {
+            PrivateKey privateKey = privateKeys[i];
+            X509Certificate certificate = certificates[i];
+            PublicKey publicKey = certificate.getPublicKey();
+            String keyAlgorithm = privateKey.getAlgorithm();
+            if (!keyAlgorithm.equalsIgnoreCase(publicKey.getAlgorithm())) {
+                throw new InvalidKeyException(
+                        "Key algorithm of private key #" + (i + 1) + " does not match key"
+                        + " algorithm of public key #" + (i + 1) + ": " + keyAlgorithm
+                        + " vs " + publicKey.getAlgorithm());
+            }
+            ApkSignerV2.SignerConfig signerConfig = new ApkSignerV2.SignerConfig();
+            signerConfig.privateKey = privateKey;
+            signerConfig.certificates = Collections.singletonList(certificate);
+            List<Integer> signatureAlgorithms = new ArrayList<>(digestAlgorithms.length);
+            for (String digestAlgorithm : digestAlgorithms) {
+                try {
+                    signatureAlgorithms.add(
+                            getV2SignatureAlgorithm(keyAlgorithm, digestAlgorithm));
+                } catch (IllegalArgumentException e) {
+                    throw new InvalidKeyException(
+                            "Unsupported key and digest algorithm combination for signer #"
+                                    + (i + 1),
+                            e);
+                }
+            }
+            signerConfig.signatureAlgorithms = signatureAlgorithms;
+            result.add(signerConfig);
+        }
+        return result;
+    }
+
+    private static int getV2SignatureAlgorithm(String keyAlgorithm, String digestAlgorithm) {
+        if ("SHA-256".equalsIgnoreCase(digestAlgorithm)) {
+            if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+                // Use RSASSA-PKCS1-v1_5 signature scheme instead of RSASSA-PSS to guarantee
+                // deterministic signatures which make life easier for OTA updates (fewer files
+                // changed when deterministic signature schemes are used).
+                return ApkSignerV2.SIGNATURE_RSA_PKCS1_V1_5_WITH_SHA256;
+            } else if ("EC".equalsIgnoreCase(keyAlgorithm)) {
+                return ApkSignerV2.SIGNATURE_ECDSA_WITH_SHA256;
+            } else if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
+                return ApkSignerV2.SIGNATURE_DSA_WITH_SHA256;
+            } else {
+                throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
+            }
+        } else if ("SHA-512".equalsIgnoreCase(digestAlgorithm)) {
+            if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+                // Use RSASSA-PKCS1-v1_5 signature scheme instead of RSASSA-PSS to guarantee
+                // deterministic signatures which make life easier for OTA updates (fewer files
+                // changed when deterministic signature schemes are used).
+                return ApkSignerV2.SIGNATURE_RSA_PKCS1_V1_5_WITH_SHA512;
+            } else if ("EC".equalsIgnoreCase(keyAlgorithm)) {
+                return ApkSignerV2.SIGNATURE_ECDSA_WITH_SHA512;
+            } else if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
+                return ApkSignerV2.SIGNATURE_DSA_WITH_SHA512;
+            } else {
+                throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported digest algorithm: " + digestAlgorithm);
+        }
+    }
+
     private static void usage() {
         System.err.println("Usage: signapk [-w] " +
                            "[-a <alignment>] " +
@@ -922,6 +1023,7 @@ class SignApk {
         String providerClass = null;
         int alignment = 4;
         int minSdkVersion = 0;
+        boolean signUsingApkSignatureSchemeV2 = true;
 
         int argstart = 0;
         while (argstart < args.length && args[argstart].startsWith("-")) {
@@ -947,6 +1049,7 @@ class SignApk {
                 }
                 ++argstart;
             } else if ("--disable-v2".equals(args[argstart])) {
+                signUsingApkSignatureSchemeV2 = false;
                 ++argstart;
             } else {
                 usage();
@@ -998,25 +1101,56 @@ class SignApk {
 
             outputFile = new FileOutputStream(outputFilename);
 
-
+            // NOTE: Signing currently recompresses any compressed entries using Deflate (default
+            // compression level for OTA update files and maximum compession level for APKs).
             if (signWholeFile) {
                 SignApk.signWholeFile(inputJar, firstPublicKeyFile,
                                       publicKey[0], privateKey[0], minSdkVersion, outputFile);
             } else {
-                JarOutputStream outputJar = new JarOutputStream(outputFile);
-
-                // For signing .apks, use the maximum compression to make
-                // them as small as possible (since they live forever on
-                // the system partition).  For OTA packages, use the
-                // default compression level, which is much much faster
-                // and produces output that is only a tiny bit larger
-                // (~0.1% on full OTA packages I tested).
+                // Generate, in memory, an APK signed using standard JAR Signature Scheme.
+                ByteArrayOutputStream v1SignedApkBuf = new ByteArrayOutputStream();
+                JarOutputStream outputJar = new JarOutputStream(v1SignedApkBuf);
+                // Use maximum compression for compressed entries because the APK lives forever on
+                // the system partition.
                 outputJar.setLevel(9);
-
                 Manifest manifest = addDigestsToManifest(inputJar, hashes);
                 copyFiles(manifest, inputJar, outputJar, timestamp, alignment);
-                signFile(manifest, publicKey, privateKey, minSdkVersion, outputJar);
+                signFile(
+                        manifest,
+                        publicKey, privateKey, minSdkVersion, signUsingApkSignatureSchemeV2,
+                        outputJar);
                 outputJar.close();
+                ByteBuffer v1SignedApk = ByteBuffer.wrap(v1SignedApkBuf.toByteArray());
+                v1SignedApkBuf.reset();
+
+                ByteBuffer[] outputChunks;
+                if (signUsingApkSignatureSchemeV2) {
+                    // Additionally sign the APK using the APK Signature Scheme v2.
+                    ByteBuffer apkContents = v1SignedApk;
+                    List<ApkSignerV2.SignerConfig> signerConfigs =
+                            createV2SignerConfigs(
+                                    privateKey,
+                                    publicKey,
+                                    new String[] {APK_SIG_SCHEME_V2_DIGEST_ALGORITHM});
+                    outputChunks = ApkSignerV2.sign(apkContents, signerConfigs);
+                } else {
+                    // Output the JAR-signed APK as is.
+                    outputChunks = new ByteBuffer[] {v1SignedApk};
+                }
+
+                // This assumes outputChunks are array-backed. To avoid this assumption, the
+                // code could be rewritten to use FileChannel.
+                for (ByteBuffer outputChunk : outputChunks) {
+                    outputFile.write(
+                            outputChunk.array(),
+                            outputChunk.arrayOffset() + outputChunk.position(),
+                            outputChunk.remaining());
+                    outputChunk.position(outputChunk.limit());
+                }
+
+                outputFile.close();
+                outputFile = null;
+                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
