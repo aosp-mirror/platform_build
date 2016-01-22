@@ -371,6 +371,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/build.prop)
 
+# $(PRODUCT_OUT)/recovery/root/sdcard goes from symlink to folder.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/sdcard)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
