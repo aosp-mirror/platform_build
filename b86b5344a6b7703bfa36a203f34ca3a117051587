@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4afde8e_183b85a8",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 744,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-01-25T20:57:03Z",
+      "side": 0,
+      "message": "Is this actually related? I guess I am not sure why/how .aidl.P is related to RS.",
+      "revId": "b86b5344a6b7703bfa36a203f34ca3a117051587",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

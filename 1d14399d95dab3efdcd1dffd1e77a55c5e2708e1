@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4afde8e_1810e52c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-01-25T20:57:03Z",
+      "side": 1,
+      "message": "This isn\u0027t GCC-specific, so maybe \"the compiler\" is more appropriate.",
+      "range": {
+        "startLine": 893,
+        "startChar": 47,
+        "endLine": 893,
+        "endChar": 50
+      },
+      "revId": "1d14399d95dab3efdcd1dffd1e77a55c5e2708e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "14beeac6_5356c411",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 973,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-01-25T20:57:03Z",
+      "side": 1,
+      "message": "Remove \"a\"",
+      "range": {
+        "startLine": 973,
+        "startChar": 53,
+        "endLine": 973,
+        "endChar": 55
+      },
+      "revId": "1d14399d95dab3efdcd1dffd1e77a55c5e2708e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
