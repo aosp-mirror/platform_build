@@ -145,6 +145,7 @@ renderscript_sources := $(filter %.rs %.fs,$(LOCAL_SRC_FILES))
 # Because names of the java files from RenderScript are unknown until the
 # .rs file(s) are compiled, we have to depend on a timestamp file.
 RenderScript_file_stamp :=
+rs_generated_res_dir :=
 rs_compatibility_jni_libs :=
 ifneq ($(renderscript_sources),)
 renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sources))
@@ -277,7 +278,8 @@ endif
 
 LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
 # Make sure the generated resource will be added to the apk.
-LOCAL_RESOURCE_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript/res $(LOCAL_RESOURCE_DIR)
+rs_generated_res_dir := $(renderscript_intermediate.COMMON)/res
+LOCAL_RESOURCE_DIR := $(rs_generated_res_dir) $(LOCAL_RESOURCE_DIR)
 endif
 
 
