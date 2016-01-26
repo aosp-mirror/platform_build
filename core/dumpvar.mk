@@ -84,5 +84,10 @@ $(info   HOST_CROSS_OS=$(HOST_CROSS_OS))
 $(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
 $(info   BUILD_ID=$(BUILD_ID))
 $(info   OUT_DIR=$(OUT_DIR))
+ifeq ($(TARGET_BUILD_PDK),true)
+$(info   TARGET_BUILD_PDK=$(TARGET_BUILD_PDK))
+$(info   PDK_FUSION_PLATFORM_ZIP=$(PDK_FUSION_PLATFORM_ZIP))
+endif
+
 $(info ============================================)
 endif
