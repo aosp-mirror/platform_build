@@ -38,7 +38,7 @@ my_generated_resources_flata += $(rs_gen_resource_flata)
 endif
 
 $(my_res_resources_flat) $(my_overlay_resources_flat) $(my_generated_resources_flata): \
-  PRIVATE_AAPT2_CFLAGS := $(addprefix --product ,$(my_aapt_characteristics))
+  PRIVATE_AAPT2_CFLAGS := $(addprefix --product ,$(my_aapt_characteristics)) $(PRODUCT_AAPT2_CFLAGS)
 
 # Link the static library resource packages.
 my_static_library_resources := $(foreach l, $(LOCAL_STATIC_JAVA_LIBRARIES),\
