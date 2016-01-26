@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "940c9ac1_47aa2e92",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1151,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-26T00:56:19Z",
+      "side": 1,
+      "message": "Maybe just fixed the cases where .logtags are added to LOCAL_SRC_FILES since we don\u0027t support them in generating native code yet?",
+      "range": {
+        "startLine": 1151,
+        "startChar": 36,
+        "endLine": 1151,
+        "endChar": 54
+      },
+      "revId": "2fd40a307d210811cb3b0ee1f4b84e2a56ea5d73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54fea2bd_85a702c9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-01-26T00:56:19Z",
+      "side": 1,
+      "message": "it\u0027s unfortunate we have to use recursion in makefile in such cases. I am wondering how much this CL adds to the makefile parse time?",
+      "range": {
+        "startLine": 901,
+        "startChar": 2,
+        "endLine": 901,
+        "endChar": 27
+      },
+      "revId": "2fd40a307d210811cb3b0ee1f4b84e2a56ea5d73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
