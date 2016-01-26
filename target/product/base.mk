@@ -54,7 +54,6 @@ PRODUCT_PACKAGES += \
     libbundlewrapper \
     libcamera_client \
     libcameraservice \
-    libcamera2ndk \
     libdl \
     libdrmclearkeyplugin \
     libeffectproxy \
