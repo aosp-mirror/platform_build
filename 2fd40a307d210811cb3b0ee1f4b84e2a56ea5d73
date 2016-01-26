@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "94b2daf4_3d4cb77b",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1151,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-26T01:53:13Z",
+      "side": 1,
+      "message": "We don\u0027t generate native code, but we do store the list of logtags in ALL_MODULES.\u003cname\u003e.EVENT_LOG_TAGS for later merging. So we cannot remove them from LOCAL_SRC_FILES.",
+      "parentUuid": "940c9ac1_47aa2e92",
+      "range": {
+        "startLine": 1151,
+        "startChar": 36,
+        "endLine": 1151,
+        "endChar": 54
+      },
+      "revId": "2fd40a307d210811cb3b0ee1f4b84e2a56ea5d73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "54fea2bd_85a702c9",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-01-26T00:56:19Z",
       "side": 1,
       "message": "it\u0027s unfortunate we have to use recursion in makefile in such cases. I am wondering how much this CL adds to the makefile parse time?",
+      "range": {
+        "startLine": 901,
+        "startChar": 2,
+        "endLine": 901,
+        "endChar": 27
+      },
+      "revId": "2fd40a307d210811cb3b0ee1f4b84e2a56ea5d73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b4afde8e_7ed4693f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-26T01:53:13Z",
+      "side": 1,
+      "message": "Yeah... I tried a few different ways of doing this, but every way ended up using recursion for some part of the operations.\n\nFor an aosp/master aosp_flounder-eng no-op build (with kati reading the makefiles):\nwithout this change: 33.4s\nwith this change: 37.4s\n\nInternal builds seem to increase by about the same amount (4.1s), even though the total time is longer.",
+      "parentUuid": "54fea2bd_85a702c9",
       "range": {
         "startLine": 901,
         "startChar": 2,
