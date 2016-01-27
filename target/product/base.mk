@@ -100,6 +100,7 @@ PRODUCT_PACKAGES += \
     libvisualizer \
     libvorbisidec \
     libmediandk \
+    libvulkan \
     libwifi-service \
     media \
     media_cmd \
