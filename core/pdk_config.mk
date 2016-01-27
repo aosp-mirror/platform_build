@@ -79,7 +79,9 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
 	$(PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR)
 
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
-    $(lib_dir)/classes.jack $(lib_dir)/classes.jar $(lib_dir)/javalib.jar)
+    $(lib_dir)/classes.jack $(lib_dir)/classes.jar $(lib_dir)/classes.jar.toc \
+    $(lib_dir)/javalib.jar  $(lib_dir)/classes*.dex \
+    $(lib_dir)/classes.dex.toc )
 
 # check and override java support level
 ifneq ($(TARGET_BUILD_PDK)$(PDK_FUSION_PLATFORM_ZIP),)
@@ -151,7 +153,7 @@ endif
 
 define JAVA_dependency_template
 $(PDK_FUSION_OUT_DIR)/$(strip $(1)): $(_pdk_fusion_intermediates)/$(strip $(1)) \
-  $(PDK_FUSION_OUT_DIR)/$(strip $(2)) $(_pdk_fusion_stamp)
+  $(foreach d,$(2),$(PDK_FUSION_OUT_DIR)/$(d)) $(_pdk_fusion_stamp)
 	@mkdir -p $$(dir $$@)
 	$(hide) cp -fpPR $$< $$@
 endef
@@ -165,6 +167,14 @@ target/common/obj/APPS/framework-res_intermediates/package-export.apk))
 $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
 $(eval $(call JAVA_dependency_template,$(lib_dir)/javalib.jar,\
 $(lib_dir)/classes.jar)))
+
+# pull .jack and .dex files
+$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
+  $(eval $(call JAVA_dependency_template,$(lib_dir)/classes.jar.toc,\
+    $(lib_dir)/classes.jar $(lib_dir)/classes.jack)))
+$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
+  $(eval $(call JAVA_dependency_template,$(lib_dir)/classes.dex.toc,\
+    $(filter $(lib_dir)/classes%.dex, $(_pdk_fusion_java_file_list)))))
 
 # implicit rules for all other target files
 $(TARGET_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/target/common/% $(_pdk_fusion_stamp)
