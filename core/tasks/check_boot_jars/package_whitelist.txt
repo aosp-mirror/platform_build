@@ -32,6 +32,7 @@ java\.util
 java\.util\.concurrent
 java\.util\.concurrent\.atomic
 java\.util\.concurrent\.locks
+java\.util\.function
 java\.util\.jar
 java\.util\.logging
 java\.util\.prefs
