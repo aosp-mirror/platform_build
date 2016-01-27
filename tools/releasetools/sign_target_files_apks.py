@@ -127,14 +127,34 @@ def CheckAllApksSigned(input_tf_zip, apk_key_map):
     sys.exit(1)
 
 
-def SignApk(data, keyname, pw):
+def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map):
   unsigned = tempfile.NamedTemporaryFile()
   unsigned.write(data)
   unsigned.flush()
 
   signed = tempfile.NamedTemporaryFile()
 
-  common.SignFile(unsigned.name, signed.name, keyname, pw)
+  # For pre-N builds, don't upgrade to SHA-256 JAR signatures based on the APK's
+  # minSdkVersion to avoid increasing incremental OTA update sizes. If an APK
+  # didn't change, we don't want its signature to change due to the switch
+  # from SHA-1 to SHA-256.
+  # By default, APK signer chooses SHA-256 signatures if the APK's minSdkVersion
+  # is 18 or higher. For pre-N builds we disable this mechanism by pretending
+  # that the APK's minSdkVersion is 1.
+  # For N+ builds, we let APK signer rely on the APK's minSdkVersion to
+  # determine whether to use SHA-256.
+  min_api_level = None
+  if platform_api_level > 23:
+    # Let APK signer choose whether to use SHA-1 or SHA-256, based on the APK's
+    # minSdkVersion attribute
+    min_api_level = None
+  else:
+    # Force APK signer to use SHA-1
+    min_api_level = 1
+
+  common.SignFile(unsigned.name, signed.name, keyname, pw,
+      min_api_level=min_api_level,
+      codename_to_api_level_map=codename_to_api_level_map)
 
   data = signed.read()
   unsigned.close()
@@ -144,7 +164,8 @@ def SignApk(data, keyname, pw):
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
-                       apk_key_map, key_passwords):
+                       apk_key_map, key_passwords, platform_api_level,
+                       codename_to_api_level_map):
 
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
@@ -200,7 +221,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       key = apk_key_map[name]
       if key not in common.SPECIAL_CERT_STRINGS:
         print "    signing: %-*s (%s)" % (maxsize, name, key)
-        signed_data = SignApk(data, key, key_passwords[key])
+        signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
+            codename_to_api_level_map)
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
@@ -440,6 +462,57 @@ def BuildKeyMap(misc_info, key_mapping_options):
       OPTIONS.key_map[s] = d
 
 
+def GetApiLevelAndCodename(input_tf_zip):
+  data = input_tf_zip.read("SYSTEM/build.prop")
+  api_level = None
+  codename = None
+  for line in data.split("\n"):
+    line = line.strip()
+    original_line = line
+    if line and line[0] != '#' and "=" in line:
+      key, value = line.split("=", 1)
+      key = key.strip()
+      if key == "ro.build.version.sdk":
+        api_level = int(value.strip())
+      elif key == "ro.build.version.codename":
+        codename = value.strip()
+
+  if api_level is None:
+    raise ValueError("No ro.build.version.sdk in SYSTEM/build.prop")
+  if codename is None:
+    raise ValueError("No ro.build.version.codename in SYSTEM/build.prop")
+
+  return (api_level, codename)
+
+
+def GetCodenameToApiLevelMap(input_tf_zip):
+  data = input_tf_zip.read("SYSTEM/build.prop")
+  api_level = None
+  codenames = None
+  for line in data.split("\n"):
+    line = line.strip()
+    original_line = line
+    if line and line[0] != '#' and "=" in line:
+      key, value = line.split("=", 1)
+      key = key.strip()
+      if key == "ro.build.version.sdk":
+        api_level = int(value.strip())
+      elif key == "ro.build.version.all_codenames":
+        codenames = value.strip().split(",")
+
+  if api_level is None:
+    raise ValueError("No ro.build.version.sdk in SYSTEM/build.prop")
+  if codenames is None:
+    raise ValueError("No ro.build.version.all_codenames in SYSTEM/build.prop")
+
+  result = dict()
+  for codename in codenames:
+    codename = codename.strip()
+    if len(codename) > 0:
+      result[codename] = api_level
+  return result
+
+
 def main(argv):
 
   key_mapping_options = []
@@ -498,8 +571,17 @@ def main(argv):
   CheckAllApksSigned(input_zip, apk_key_map)
 
   key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
+  platform_api_level, platform_codename = GetApiLevelAndCodename(input_zip)
+  codename_to_api_level_map = GetCodenameToApiLevelMap(input_zip)
+  # Android N will be API Level 24, but isn't yet.
+  # TODO: Remove this workaround once Android N is officially API Level 24.
+  if platform_api_level == 23 and platform_codename == "N":
+    platform_api_level = 24
+
   ProcessTargetFiles(input_zip, output_zip, misc_info,
-                     apk_key_map, key_passwords)
+                     apk_key_map, key_passwords,
+                     platform_api_level,
+                     codename_to_api_level_map)
 
   common.ZipClose(input_zip)
   common.ZipClose(output_zip)
