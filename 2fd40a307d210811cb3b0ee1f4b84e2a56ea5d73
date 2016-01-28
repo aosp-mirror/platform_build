@@ -93,6 +93,30 @@
       "revId": "2fd40a307d210811cb3b0ee1f4b84e2a56ea5d73",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "542ce22d_d547dcfe",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-28T01:13:48Z",
+      "side": 1,
+      "message": "The latest patch removes the recursion by adding a counter using $(words).\n\nTiming just running ckati:\n\n30.9s on HEAD\n34.6s with PS1\n33.3s with PS2\n\n32.8s with PS2 - new object order lookup/checks (but still with the unused src file checks)",
+      "parentUuid": "b4afde8e_7ed4693f",
+      "range": {
+        "startLine": 901,
+        "startChar": 2,
+        "endLine": 901,
+        "endChar": 27
+      },
+      "revId": "2fd40a307d210811cb3b0ee1f4b84e2a56ea5d73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
