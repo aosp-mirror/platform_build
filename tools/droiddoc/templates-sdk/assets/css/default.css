@@ -7787,6 +7787,20 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
   text-align: center;
 }
 
+/* Android Studio download page */
+section#features {
+  padding-top:0;
+}
+.wrap.feature {
+  margin:80px auto;
+}
+.dac-section-links.feature-more {
+  margin-top:-20px;
+}
+.dac-toggle-content .wrap.feature {
+  margin-top:0;
+}
+
 @media (max-width: 719px) {
   .dac-hero-figure {
     height: 150px;
@@ -7795,6 +7809,17 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 
   .dac-hero-figure img {
     max-height: 150px;
+  }
+
+  /* Android Studio download page */
+  .feature .dac-hero-figure,
+  .feature .dac-hero-figure img {
+    height:auto;
+    max-height:none;
+  }
+  .feature .dac-hero-figure img {
+    width:90%;
+    margin:0 auto;
   }
 }
 

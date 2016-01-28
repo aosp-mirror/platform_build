@@ -3891,6 +3891,11 @@ switch (window.getLangPref()) {
     this.el.removeClass('dac-active');
     $('body').removeClass('dac-modal-open');
     this.isOpen = false;
+    // When closing the modal for Android Studio downloads, reload the page
+    // because otherwise we might get stuck with post-download dialog state
+    if ($("[data-modal='studio_tos']").length) {
+      location.reload();
+    }
   };
 
   Modal.prototype.open_ = function() {
