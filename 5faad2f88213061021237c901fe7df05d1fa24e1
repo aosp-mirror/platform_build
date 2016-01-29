@@ -34,6 +34,24 @@
       "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "749006cb_f2bf5017",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-29T21:04:53Z",
+      "side": 1,
+      "message": "Ah, I forgot how late this check was. In that case, we need to explicitly initialize JAVA_NOT_REQUIRED sometime before the envsetup.mk so that the environment variable isn\u0027t read on non-brillo builds.\n\n(brillo_base.mk is a product makefile, it\u0027s not allowed to set any variables other than the ones listed in _product_var_list in product.mk. It needs to be moved to the brillo-common BoardConfig.mk)\n\nWe should still fail out in java related calls so that actually get a build break on the builders if brillo happens to use java. If brillo does happen to use java somewhere still, this check should stay until that\u0027s not the case.",
+      "parentUuid": "749006cb_b2dea891",
+      "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
