@@ -52,6 +52,24 @@
       "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9462dabe_c07a74c2",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1052976
+      },
+      "writtenOn": "2016-01-29T21:10:44Z",
+      "side": 1,
+      "message": "Brillo doesn\u0027t have a makefile common to all boards but even I make one and set JAVA_NOT_REQUIRED there, doesn\u0027t this CL still stand?\n\nWe can put an extra check around the javac tools if you want. I think that would be a separate CL though.",
+      "parentUuid": "749006cb_f2bf5017",
+      "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
