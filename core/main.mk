@@ -57,6 +57,9 @@ TOPDIR :=
 
 BUILD_SYSTEM := $(TOPDIR)build/core
 
+# Ensure JAVA_NOT_REQUIRED is not set externally.
+JAVA_NOT_REQUIRED := false
+
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
 DEFAULT_GOAL := droid
@@ -172,6 +175,7 @@ $(warning ************************************************************)
 $(error Directory names containing spaces not supported)
 endif
 
+ifeq ($(JAVA_NOT_REQUIRED), false)
 java_version_str := $(shell unset _JAVA_OPTIONS && java -version 2>&1)
 javac_version_str := $(shell unset _JAVA_OPTIONS && javac -version 2>&1)
 
@@ -251,6 +255,7 @@ $(info ************************************************************)
 $(error stop)
 endif
 
+endif # if JAVA_NOT_REQUIRED
 
 ifndef BUILD_EMULATOR
   # Emulator binaries are now provided under prebuilts/android-emulator/
