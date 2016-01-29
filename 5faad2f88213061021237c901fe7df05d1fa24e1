@@ -70,6 +70,24 @@
       "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "749006cb_adf72979",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-29T22:56:49Z",
+      "side": 1,
+      "message": "The brillo_base.mk discussion can happen elsewhere -- that product file is already broken for many other variables.\n\nI do want \"JAVA_NOT_REQUIRED :\u003d \" somewhere between the start of this makefile and us loading the product makefiles, to ensure that we\u0027re not reading an environment variable here.\n\nWhat I really don\u0027t want to see is the build depending on java, but us not checking to see if the java we\u0027re running is supported. Maybe we should just make sure that the brillo build servers don\u0027t have any java installed, because I don\u0027t know how we could prevent all instances of this otherwise. There\u0027s nothing stopping someone from writing more host tools in java right now.",
+      "parentUuid": "9462dabe_c07a74c2",
+      "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
