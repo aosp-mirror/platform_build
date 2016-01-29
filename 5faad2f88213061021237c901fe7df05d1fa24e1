@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "349a0eef_36ad28a9",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-01-29T20:53:41Z",
+      "side": 1,
+      "message": "Is this some random environment variable? I assume yes.\n\nWe need a check later in the build (once we know whether BRILLO is set) that errors out if this is set and BRILLO isn\u0027t.\n\nWe should make the places that use java/javac fail early if this is set, even if java is available.",
+      "revId": "5faad2f88213061021237c901fe7df05d1fa24e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
