@@ -74,6 +74,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -680,18 +681,20 @@ class SignApk {
         private final File publicKeyFile;
         private final X509Certificate publicKey;
         private final PrivateKey privateKey;
+        private final long timestamp;
         private final int minSdkVersion;
         private final OutputStream outputStream;
         private final ASN1ObjectIdentifier type;
         private WholeFileSignerOutputStream signer;
 
         public CMSSigner(JarFile inputJar, File publicKeyFile,
-                         X509Certificate publicKey, PrivateKey privateKey, int minSdkVersion,
-                         OutputStream outputStream) {
+                         X509Certificate publicKey, PrivateKey privateKey, long timestamp,
+                         int minSdkVersion, OutputStream outputStream) {
             this.inputJar = inputJar;
             this.publicKeyFile = publicKeyFile;
             this.publicKey = publicKey;
             this.privateKey = privateKey;
+            this.timestamp = timestamp;
             this.minSdkVersion = minSdkVersion;
             this.outputStream = outputStream;
             this.type = new ASN1ObjectIdentifier(CMSObjectIdentifiers.data.getId());
@@ -729,6 +732,7 @@ class SignApk {
                 signFile(manifest,
                          new X509Certificate[]{ publicKey },
                          new PrivateKey[]{ privateKey },
+                         timestamp,
                          minSdkVersion,
                          false, // Don't sign using APK Signature Scheme v2
                          outputJar);
@@ -757,10 +761,10 @@ class SignApk {
 
     private static void signWholeFile(JarFile inputJar, File publicKeyFile,
                                       X509Certificate publicKey, PrivateKey privateKey,
-                                      int minSdkVersion,
+                                      long timestamp, int minSdkVersion,
                                       OutputStream outputStream) throws Exception {
         CMSSigner cmsOut = new CMSSigner(inputJar, publicKeyFile,
-                                         publicKey, privateKey, minSdkVersion, outputStream);
+                publicKey, privateKey, timestamp, minSdkVersion, outputStream);
 
         ByteArrayOutputStream temp = new ByteArrayOutputStream();
 
@@ -826,12 +830,11 @@ class SignApk {
 
     private static void signFile(Manifest manifest,
                                  X509Certificate[] publicKey, PrivateKey[] privateKey,
+                                 long timestamp,
                                  int minSdkVersion,
                                  boolean additionallySignedUsingAnApkSignatureScheme,
                                  JarOutputStream outputJar)
         throws Exception {
-        // Assume the certificate is valid for at least an hour.
-        long timestamp = publicKey[0].getNotBefore().getTime() + 3600L * 1000;
 
         // MANIFEST.MF
         JarEntry je = new JarEntry(JarFile.MANIFEST_NAME);
@@ -1087,10 +1090,12 @@ class SignApk {
                 System.exit(1);
             }
 
-            // Set the ZIP file timestamp to the starting valid time
-            // of the 0th certificate plus one hour (to match what
-            // we've historically done).
-            long timestamp = publicKey[0].getNotBefore().getTime() + 3600L * 1000;
+            // Set all ZIP file timestamps to Jan 1 2009 00:00:00.
+            long timestamp = 1230768000000L;
+            // The Java ZipEntry API we're using converts milliseconds since epoch into MS-DOS
+            // timestamp using the current timezone. We thus adjust the milliseconds since epoch
+            // value to end up with MS-DOS timestamp of Jan 1 2009 00:00:00.
+            timestamp -= TimeZone.getDefault().getOffset(timestamp);
 
             PrivateKey[] privateKey = new PrivateKey[numKeys];
             for (int i = 0; i < numKeys; ++i) {
@@ -1105,7 +1110,9 @@ class SignApk {
             // compression level for OTA update files and maximum compession level for APKs).
             if (signWholeFile) {
                 SignApk.signWholeFile(inputJar, firstPublicKeyFile,
-                                      publicKey[0], privateKey[0], minSdkVersion, outputFile);
+                                      publicKey[0], privateKey[0],
+                                      timestamp, minSdkVersion,
+                                      outputFile);
             } else {
                 // Generate, in memory, an APK signed using standard JAR Signature Scheme.
                 ByteArrayOutputStream v1SignedApkBuf = new ByteArrayOutputStream();
@@ -1117,7 +1124,8 @@ class SignApk {
                 copyFiles(manifest, inputJar, outputJar, timestamp, alignment);
                 signFile(
                         manifest,
-                        publicKey, privateKey, minSdkVersion, signUsingApkSignatureSchemeV2,
+                        publicKey, privateKey,
+                        timestamp, minSdkVersion, signUsingApkSignatureSchemeV2,
                         outputJar);
                 outputJar.close();
                 ByteBuffer v1SignedApk = ByteBuffer.wrap(v1SignedApkBuf.toByteArray());
