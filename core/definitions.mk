@@ -887,6 +887,42 @@ endef
 endif
 
 ###########################################################
+## Track source files compiled to objects
+###########################################################
+# $(1): list of sources
+# $(2): list of matching objects
+define track-src-file-obj
+$(eval $(call _track-src-file-obj,$(1)))
+endef
+define _track-src-file-obj
+i := w
+$(foreach s,$(1),
+my_tracked_src_files += $(s)
+my_src_file_obj_$(s) := $$(word $$(words $$(i)),$$(2))
+i += w)
+endef
+
+# $(1): list of sources
+# $(2): list of matching generated sources
+define track-src-file-gen
+$(eval $(call _track-src-file-gen,$(2)))
+endef
+define _track-src-file-gen
+i := w
+$(foreach s,$(1),
+my_tracked_gen_files += $(s)
+my_src_file_gen_$(s) := $$(word $$(words $$(i)),$$(1))
+i += w)
+endef
+
+# $(1): list of generated sources
+# $(2): list of matching objects
+define track-gen-file-obj
+$(call track-src-file-obj,$(foreach f,$(1),\
+  $(or $(my_src_file_gen_$(f)),$(f))),$(2))
+endef
+
+###########################################################
 ## Commands for running lex
 ###########################################################
 

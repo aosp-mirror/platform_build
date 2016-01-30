@@ -505,6 +505,34 @@ else
 endif
 
 ####################################################
+## Keep track of src -> obj mapping
+####################################################
+
+my_tracked_gen_files :=
+my_tracked_src_files :=
+
+###########################################################
+## Stuff source generated from one-off tools
+###########################################################
+$(my_generated_sources): PRIVATE_MODULE := $(my_register_name)
+
+my_gen_sources_copy := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%,$(filter $(generated_sources_dir)/%,$(my_generated_sources)))
+
+$(my_gen_sources_copy): $(intermediates)/% : $(generated_sources_dir)/% | $(ACP)
+	@echo "Copy: $@"
+	$(copy-file-to-target)
+
+my_generated_sources := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%,$(my_generated_sources))
+
+# Generated sources that will actually produce object files.
+# Other files (like headers) are allowed in LOCAL_GENERATED_SOURCES,
+# since other compiled sources may depend on them, and we set up
+# the dependencies.
+my_gen_src_files := $(filter %.c %$(LOCAL_CPP_EXTENSION) %.S %.s %.o,$(my_generated_sources))
+
+ALL_GENERATED_SOURCES += $(my_generated_sources)
+
+####################################################
 ## Compile RenderScript with reflected C++
 ####################################################
 
@@ -572,6 +600,8 @@ rs_generated_cpps := $(addprefix \
     $(renderscript_intermediate)/ScriptC_,$(patsubst %.fs,%.cpp, $(patsubst %.rs,%.cpp, \
     $(notdir $(renderscript_sources)))))
 
+$(call track-src-file-gen,$(renderscript_sources),$(rs_generated_cpps))
+
 # This is just a dummy rule to make sure gmake doesn't skip updating the dependents.
 $(rs_generated_cpps) : $(RenderScript_file_stamp)
 	@echo "Updated RS generated cpp file $@."
@@ -582,21 +612,6 @@ my_generated_sources += $(rs_generated_cpps)
 
 endif
 
-
-###########################################################
-## Stuff source generated from one-off tools
-###########################################################
-$(my_generated_sources): PRIVATE_MODULE := $(my_register_name)
-
-my_gen_sources_copy := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%,$(filter $(generated_sources_dir)/%,$(my_generated_sources)))
-
-$(my_gen_sources_copy): $(intermediates)/% : $(generated_sources_dir)/% | $(ACP)
-	@echo "Copy: $@"
-	$(copy-file-to-target)
-
-my_generated_sources := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%,$(my_generated_sources))
-
-ALL_GENERATED_SOURCES += $(my_generated_sources)
 
 ###########################################################
 ## Compile the .proto files to .cc (or .c) and then to .o
@@ -627,6 +642,7 @@ proto_generated_sources := $(addprefix $(proto_generated_sources_dir)/, \
 proto_generated_headers := $(patsubst %.pb$(my_proto_source_suffix),%.pb.h, $(proto_generated_sources))
 proto_generated_objects := $(addprefix $(proto_generated_obj_dir)/, \
     $(patsubst %.proto,%.pb.o,$(proto_sources_fullpath)))
+$(call track-src-file-obj,$(proto_sources),$(proto_generated_objects))
 
 # Ensure the transform-proto-to-cc rule is only defined once in multilib build.
 ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
@@ -687,6 +703,9 @@ dbus_definition_paths := $(addprefix $(LOCAL_PATH)/,$(dbus_definitions))
 dbus_service_config := $(filter %dbus-service-config.json,$(my_src_files))
 dbus_service_config_path := $(addprefix $(LOCAL_PATH)/,$(dbus_service_config))
 
+# Mark these source files as not producing objects
+$(call track-src-file-obj,$(dbus_definitions) $(dbus_service_config),)
+
 dbus_gen_dir := $(generated_sources_dir)/dbus_bindings
 
 ifdef LOCAL_DBUS_PROXY_PREFIX
@@ -745,7 +764,7 @@ $(foreach s,$(aidl_src),\
     $(eval $(call define-aidl-cpp-rule,$(s),$(aidl_gen_cpp_root),aidl_gen_cpp)))
 $(foreach cpp,$(aidl_gen_cpp), \
     $(call include-depfile,$(addsuffix .aidl.P,$(basename $(cpp))),$(cpp)))
-
+$(call track-src-file-gen,$(aidl_src),$(aidl_gen_cpp))
 
 $(aidl_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
 $(aidl_gen_cpp) : PRIVATE_HEADER_OUTPUT_DIR := $(aidl_gen_include_root)
@@ -771,6 +790,7 @@ $(y_yacc_cs): $(intermediates)/%.c: \
     $(TOPDIR)$(LOCAL_PATH)/%.y \
     $(my_additional_dependencies)
 	$(call transform-y-to-c-or-cpp)
+$(call track-src-file-gen,$(y_yacc_sources),$(y_yacc_cs))
 
 my_generated_sources += $(y_yacc_cs)
 endif
@@ -783,6 +803,7 @@ $(yy_yacc_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.yy \
     $(my_additional_dependencies)
 	$(call transform-y-to-c-or-cpp)
+$(call track-src-file-gen,$(yy_yacc_sources),$(yy_yacc_cpps))
 
 my_generated_sources += $(yy_yacc_cpps)
 endif
@@ -798,6 +819,7 @@ ifneq ($(l_lex_cs),)
 $(l_lex_cs): $(intermediates)/%.c: \
     $(TOPDIR)$(LOCAL_PATH)/%.l
 	$(transform-l-to-c-or-cpp)
+$(call track-src-file-gen,$(l_lex_sources),$(l_lex_cs))
 
 my_generated_sources += $(l_lex_cs)
 endif
@@ -809,6 +831,7 @@ ifneq ($(ll_lex_cpps),)
 $(ll_lex_cpps): $(intermediates)/%$(LOCAL_CPP_EXTENSION): \
     $(TOPDIR)$(LOCAL_PATH)/%.ll
 	$(transform-l-to-c-or-cpp)
+$(call track-src-file-gen,$(ll_lex_sources),$(ll_lex_cpps))
 
 my_generated_sources += $(ll_lex_cpps)
 endif
@@ -823,6 +846,7 @@ cpp_arm_sources := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION
 dotdot_arm_sources := $(filter ../%,$(cpp_arm_sources))
 cpp_arm_sources := $(filter-out ../%,$(cpp_arm_sources))
 cpp_arm_objects := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))
+$(call track-src-file-obj,$(patsubst %,%.arm,$(cpp_arm_sources)),$(cpp_arm_objects))
 
 # For source files starting with ../, we remove all the ../ in the object file path,
 # to avoid object file escaping the intermediate directory.
@@ -831,6 +855,7 @@ $(foreach s,$(dotdot_arm_sources),\
   $(eval $(call compile-dotdot-cpp-file,$(s),\
   $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
   dotdot_arm_objects)))
+$(call track-src-file-obj,$(patsubst %,%.arm,$(dotdot_arm_sources)),$(dotdot_arm_objects))
 
 dotdot_sources := $(filter ../%$(LOCAL_CPP_EXTENSION),$(my_src_files))
 dotdot_objects :=
@@ -838,9 +863,11 @@ $(foreach s,$(dotdot_sources),\
   $(eval $(call compile-dotdot-cpp-file,$(s),\
     $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
     dotdot_objects)))
+$(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects))
 
 cpp_normal_sources := $(filter-out ../%,$(filter %$(LOCAL_CPP_EXTENSION),$(my_src_files)))
 cpp_normal_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
+$(call track-src-file-obj,$(cpp_normal_sources),$(cpp_normal_objects))
 
 $(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
 $(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
@@ -866,6 +893,7 @@ cpp_objects += $(dotdot_arm_objects) $(dotdot_objects)
 
 gen_cpp_sources := $(filter %$(LOCAL_CPP_EXTENSION),$(my_generated_sources))
 gen_cpp_objects := $(gen_cpp_sources:%$(LOCAL_CPP_EXTENSION)=%.o)
+$(call track-gen-file-obj,$(gen_cpp_sources),$(gen_cpp_objects))
 
 ifneq ($(strip $(gen_cpp_objects)),)
 # Compile all generated files as thumb.
@@ -886,6 +914,7 @@ endif
 
 gen_S_sources := $(filter %.S,$(my_generated_sources))
 gen_S_objects := $(gen_S_sources:%.S=%.o)
+$(call track-gen-file-obj,$(gen_S_sources),$(gen_S_objects))
 
 ifneq ($(strip $(gen_S_sources)),)
 $(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S \
@@ -896,6 +925,7 @@ endif
 
 gen_s_sources := $(filter %.s,$(my_generated_sources))
 gen_s_objects := $(gen_s_sources:%.s=%.o)
+$(call track-gen-file-obj,$(gen_s_sources),$(gen_s_objects))
 
 ifneq ($(strip $(gen_s_objects)),)
 $(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s \
@@ -921,6 +951,7 @@ c_arm_sources := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(my_src_files)))
 dotdot_arm_sources := $(filter ../%,$(c_arm_sources))
 c_arm_sources := $(filter-out ../%,$(c_arm_sources))
 c_arm_objects := $(addprefix $(intermediates)/,$(c_arm_sources:.c=.o))
+$(call track-src-file-obj,$(patsubst %,%.arm,$(c_arm_sources)),$(c_arm_objects))
 
 # For source files starting with ../, we remove all the ../ in the object file path,
 # to avoid object file escaping the intermediate directory.
@@ -929,6 +960,7 @@ $(foreach s,$(dotdot_arm_sources),\
   $(eval $(call compile-dotdot-c-file,$(s),\
     $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
     dotdot_arm_objects)))
+$(call track-src-file-obj,$(patsubst %,%.arm,$(dotdot_arm_sources)),$(dotdot_arm_objects))
 
 dotdot_sources := $(filter ../%.c, $(my_src_files))
 dotdot_objects :=
@@ -936,9 +968,11 @@ $(foreach s, $(dotdot_sources),\
   $(eval $(call compile-dotdot-c-file,$(s),\
     $(yacc_cpps) $(proto_generated_headers) $(my_additional_dependencies),\
     dotdot_objects)))
+$(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects))
 
 c_normal_sources := $(filter-out ../%,$(filter %.c,$(my_src_files)))
 c_normal_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
+$(call track-src-file-obj,$(c_normal_sources),$(c_normal_objects))
 
 $(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
 $(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
@@ -962,6 +996,7 @@ c_objects += $(dotdot_arm_objects) $(dotdot_objects)
 
 gen_c_sources := $(filter %.c,$(my_generated_sources))
 gen_c_objects := $(gen_c_sources:%.c=%.o)
+$(call track-gen-file-obj,$(gen_c_sources),$(gen_c_objects))
 
 ifneq ($(strip $(gen_c_objects)),)
 # Compile all generated files as thumb.
@@ -1010,12 +1045,14 @@ asm_sources_S := $(filter %.S,$(my_src_files))
 dotdot_sources := $(filter ../%,$(asm_sources_S))
 asm_sources_S := $(filter-out ../%,$(asm_sources_S))
 asm_objects_S := $(addprefix $(intermediates)/,$(asm_sources_S:.S=.o))
+$(call track-src-file-obj,$(asm_sources_S),$(asm_objects_S))
 
 dotdot_objects_S :=
 $(foreach s,$(dotdot_sources),\
   $(eval $(call compile-dotdot-s-file,$(s),\
     $(my_additional_dependencies),\
     dotdot_objects_S)))
+$(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects_S))
 
 ifneq ($(strip $(asm_objects_S)),)
 $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
@@ -1028,12 +1065,14 @@ asm_sources_s := $(filter %.s,$(my_src_files))
 dotdot_sources := $(filter ../%,$(asm_sources_s))
 asm_sources_s := $(filter-out ../%,$(asm_sources_s))
 asm_objects_s := $(addprefix $(intermediates)/,$(asm_sources_s:.s=.o))
+$(call track-src-file-obj,$(asm_sources_s),$(asm_objects_s))
 
 dotdot_objects_s :=
 $(foreach s,$(dotdot_sources),\
   $(eval $(call compile-dotdot-s-file-no-deps,$(s),\
     $(my_additional_dependencies),\
     dotdot_objects_s)))
+$(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects_s))
 
 ifneq ($(strip $(asm_objects_s)),)
 $(asm_objects_s): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.s \
@@ -1052,6 +1091,7 @@ asm_objects_asm := $(addprefix $(intermediates)/,$(asm_sources_asm:.asm=.o))
 $(asm_objects_asm): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.asm \
     $(my_additional_dependencies)
 	$(transform-asm-to-o)
+$(call track-src-file-obj,$(asm_sources_asm),$(asm_objects_asm))
 
 asm_objects += $(asm_objects_asm)
 endif
@@ -1106,6 +1146,11 @@ endif
 ## Common object handling.
 ###########################################################
 
+my_unused_src_files := $(filter-out $(logtags_sources) $(my_tracked_src_files),$(my_src_files) $(my_gen_src_files))
+ifneq ($(my_unused_src_files),)
+  $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Unused source files: $(my_unused_src_files))
+endif
+
 # some rules depend on asm_objects being first.  If your code depends on
 # being first, it's reasonable to require it to be assembly
 normal_objects := \
@@ -1117,10 +1162,30 @@ normal_objects := \
     $(gen_c_objects) \
     $(objc_objects) \
     $(objcpp_objects) \
-    $(proto_generated_objects) \
-    $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
+    $(proto_generated_objects)
+
+new_order_normal_objects := $(foreach f,$(my_src_files),$(my_src_file_obj_$(f)))
+new_order_normal_objects += $(foreach f,$(my_gen_src_files),$(my_src_file_obj_$(f)))
+
+ifneq ($(sort $(normal_objects)),$(sort $(new_order_normal_objects)))
+$(warning $(LOCAL_MODULE_MAKEFILE) Internal build system warning: New object list does not match old)
+$(info Only in old: $(filter-out $(new_order_normal_objects),$(sort $(normal_objects))))
+$(info Only in new: $(filter-out $(normal_objects),$(sort $(new_order_normal_objects))))
+endif
+
+ifeq ($(BINARY_OBJECTS_ORDER),soong)
+normal_objects := $(new_order_normal_objects)
+endif
+
+normal_objects += $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 
 all_objects := $(normal_objects) $(gen_o_objects)
+
+# Cleanup file tracking
+$(foreach f,$(my_tracked_gen_files),$(eval my_src_file_gen_$(s):=))
+my_tracked_gen_files :=
+$(foreach f,$(my_tracked_src_files),$(eval my_src_file_obj_$(s):=))
+my_tracked_src_files :=
 
 my_c_includes += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(generated_sources_dir)
 
