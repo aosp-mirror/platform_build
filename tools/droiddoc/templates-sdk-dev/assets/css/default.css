@@ -1854,10 +1854,11 @@ a:visited {
   -webkit-appearance: none;
   background: transparent url(../images/arrows-up-down.png) 23px 5px no-repeat;
   color: #222;
-  height: 19px;
-  line-height: 19px;
+  /* remove the lines below after xp testing
+     height: 19px;
+     line-height: 19px; */
   padding: 0;
-  margin:1px 0 0 0;
+  margin: .5px 0 0 0;
   width:150%;
   font-size:13px;
   vertical-align:top;

@@ -4166,13 +4166,12 @@ switch (window.getLangPref()) {
       views.addClass('dac-active');
     } else {
       // Activate back button and tier 2 nav.
-      var langAttr = window.getLangPref();
-      console.log("langAttr is " + langAttr);
       views.slice(0, 2).addClass('dac-active');
       var selectedNav = views.eq(2).find('.selected').after(forwardLink);
-      //select the localized text if available else the selectedNav value
-      if (langAttr!='en') {
-        $('.dac-nav-back-title').text(selectedNav.attr(langAttr + '-lang'));
+      var langAttr = selectedNav.attr(window.getLangPref() + '-lang');
+      //form the label from locale attr if possible, else set to selectedNav text value
+      if ((typeof langAttr !== typeof undefined &&  langAttr !== false) && (langAttr !== '')) {
+        $('.dac-nav-back-title').text(langAttr);
       } else {
         $('.dac-nav-back-title').text(selectedNav.text());
       }
