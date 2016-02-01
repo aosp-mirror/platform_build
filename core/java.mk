@@ -313,7 +313,8 @@ $(aidl_java_sources): $(intermediates.COMMON)/src/%.java: \
         $(AIDL) \
         $(aidl_preprocess_import)
 	$(transform-aidl-to-java)
--include $(aidl_java_sources:%.java=%.P)
+$(foreach java,$(aidl_java_sources), \
+    $(call include-depfile,$(java:%.java=%.P),$(java)))
 
 else
 aidl_java_sources :=
