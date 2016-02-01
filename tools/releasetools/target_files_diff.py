@@ -51,9 +51,6 @@ def ignore(name):
               'RECOVERY/RAMDISK/selinux_version']:
     return True
 
-  # b/24201956 .art/.oat/.odex files are different with every build
-  if name.endswith('.art') or name.endswith('.oat') or name.endswith('.odex'):
-    return True
   # b/25348136 libpac.so changes with every build
   if name in ['SYSTEM/lib/libpac.so',
               'SYSTEM/lib64/libpac.so']:
@@ -76,6 +73,7 @@ def rewrite_build_property(original, new):
              'ro.build.date=',
              'ro.build.date.utc=',
              'ro.build.host=',
+             'ro.build.user=',
              'ro.build.description=',
              'ro.build.fingerprint=',
              'ro.expect.recovery_id=',
