@@ -14,7 +14,7 @@ ifndef ANDROID_COMPILE_WITH_JACK
 ANDROID_COMPILE_WITH_JACK := true
 endif
 
-common_jdk_flags := -source 1.7 -target 1.7 -Xmaxerrs 9999999
+common_jdk_flags := -Xmaxerrs 9999999
 
 # Use the indexer wrapper to index the codebase instead of the javac compiler
 ifeq ($(ALTERNATE_JAVAC),)

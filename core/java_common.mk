@@ -1,6 +1,14 @@
 # Common to host and target Java modules.
 
 ###########################################################
+## Java version
+###########################################################
+ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
+  LOCAL_JAVA_LANGUAGE_VERSION := 1.7
+endif
+LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
+
+###########################################################
 ## .proto files: Compile proto files to .java
 ###########################################################
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
@@ -266,6 +274,8 @@ ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
 ###########################################################
 ifdef LOCAL_JACK_ENABLED
 ifdef need_compile_java
+
+LOCAL_JACK_FLAGS += -D jack.java.source.version=$(LOCAL_JAVA_LANGUAGE_VERSION)
 
 full_static_jack_libs := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
