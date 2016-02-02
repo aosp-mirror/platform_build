@@ -334,6 +334,11 @@ include build/core/pdk_config.mk
 # Install and start Jack server
 -include $(TOPDIR)prebuilts/sdk/tools/jack_server_setup.mk
 
+#
+# -----------------------------------------------------------------
+# Jacoco package name for Jack
+-include $(TOPDIR)external/jacoco/config.mk
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different

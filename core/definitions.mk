@@ -2033,6 +2033,7 @@ else \
 fi; \
 $(call call-jack) \
     $(strip $(PRIVATE_JACK_FLAGS)) \
+    $(strip $(PRIVATE_JACK_COVERAGE_OPTIONS)) \
     $(if $(NO_OPTIMIZE_DX), \
         -D jack.dex.optimize="false") \
     $(if $(PRIVATE_RMTYPEDEFS), \
