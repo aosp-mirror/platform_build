@@ -390,6 +390,55 @@ endif
 endif
 endif
 
+# Set up PDK so we can use TARGET_BUILD_PDK to select prebuilt tools below
+.PHONY: pdk fusion
+pdk fusion: $(DEFAULT_GOAL)
+
+# What to build:
+# pdk fusion if:
+# 1) PDK_FUSION_PLATFORM_ZIP is passed in from the environment
+# or
+# 2) the platform.zip exists in the default location
+# or
+# 3) fusion is a command line build goal,
+#    PDK_FUSION_PLATFORM_ZIP is needed anyway, then do we need the 'fusion' goal?
+# otherwise pdk only if:
+# 1) pdk is a command line build goal
+# or
+# 2) TARGET_BUILD_PDK is passed in from the environment
+
+# if PDK_FUSION_PLATFORM_ZIP is specified, do not override.
+ifndef PDK_FUSION_PLATFORM_ZIP
+# Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
+# but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
+# with vendor/pdk/TARGET_PRODUCT.
+_pdk_fusion_default_platform_zip = $(strip \
+  $(wildcard vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
+  $(wildcard vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
+  $(wildcard vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
+  $(wildcard vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip))
+ifneq (,$(_pdk_fusion_default_platform_zip))
+PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
+TARGET_BUILD_PDK := true
+endif # _pdk_fusion_default_platform_zip
+endif # !PDK_FUSION_PLATFORM_ZIP
+
+ifneq (,$(filter pdk fusion, $(MAKECMDGOALS)))
+TARGET_BUILD_PDK := true
+ifneq (,$(filter fusion, $(MAKECMDGOALS)))
+ifndef PDK_FUSION_PLATFORM_ZIP
+  $(error Specify PDK_FUSION_PLATFORM_ZIP to do a PDK fusion.)
+endif
+endif  # fusion
+endif  # pdk or fusion
+
+ifdef PDK_FUSION_PLATFORM_ZIP
+TARGET_BUILD_PDK := true
+ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_ZIP)))
+  $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
+endif
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
