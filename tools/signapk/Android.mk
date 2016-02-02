@@ -25,7 +25,9 @@ LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle-host bouncycastle-bcpkix-host
 include $(BUILD_HOST_JAVA_LIBRARY)
 
 ifeq ($(TARGET_BUILD_APPS),)
+ifeq ($(BRILLO),)
 # The post-build signing tools need signapk.jar, but we don't
 # need this if we're just doing unbundled apps.
 $(call dist-for-goals,droidcore,$(LOCAL_INSTALLED_MODULE))
+endif
 endif
