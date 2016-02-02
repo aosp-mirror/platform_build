@@ -186,12 +186,22 @@ endif # EMMA_INSTRUMENT is true
 
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
+ifdef LOCAL_JACK_ENABLED
+# Jack supports coverage with Jacoco
+LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+else
 LOCAL_STATIC_JAVA_LIBRARIES += emma
+endif # LOCAL_JACK_ENABLED
 else
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
 # In unbundled build merge the emma library into the apk.
+ifdef LOCAL_JACK_ENABLED
+# Jack supports coverage with Jacoco
+LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+else
 LOCAL_STATIC_JAVA_LIBRARIES += emma
+endif # LOCAL_JACK_ENABLED
 else
 # If build against the SDK in full build, core.jar is not used,
 # we have to use prebiult emma.jar to make Proguard happy;
