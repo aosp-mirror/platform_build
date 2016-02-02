@@ -19,7 +19,7 @@
 
 $(combo_var_prefix)GLOBAL_CFLAGS += -DUSE_MINGW -DWIN32_LEAN_AND_MEAN
 $(combo_var_prefix)GLOBAL_CFLAGS += -Wno-unused-parameter
-$(combo_var_prefix)GLOBAL_CFLAGS += --sysroot=prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
+$(combo_var_prefix)GLOBAL_CFLAGS += --sysroot prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
 $(combo_var_prefix)GLOBAL_CFLAGS += -m64
 $(combo_var_prefix)GLOBAL_LDFLAGS += -m64
 TOOLS_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/bin/x86_64-w64-mingw32-

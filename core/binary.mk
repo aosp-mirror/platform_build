@@ -402,6 +402,12 @@ ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
   LOCAL_NO_STATIC_ANALYZER := true
 endif
 
+# Clang does not recognize all gcc flags.
+# Use static analyzer only if clang is used.
+ifneq ($(my_clang),true)
+  LOCAL_NO_STATIC_ANALYZER := true
+endif
+
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
   my_syntax_arch := host
 else
@@ -416,13 +422,16 @@ ifeq ($(strip $(my_cc)),)
   endif
   my_cc := $(my_cc_wrapper) $(my_cc)
 endif
+
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
-  my_cc := $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer $(my_syntax_arch) "$(my_cc)"
+  my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
+           $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
 else
 ifneq ($(LOCAL_NO_SYNTAX_CHECK),true)
-  my_cc := $(SYNTAX_TOOLS_PREFIX)/ccc-syntax $(my_syntax_arch) "$(my_cc)"
+  my_cc := $(my_cc) -fsyntax-only
 endif
 endif
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
 
 ifeq ($(strip $(my_cxx)),)
@@ -433,13 +442,16 @@ ifeq ($(strip $(my_cxx)),)
   endif
   my_cxx := $(my_cxx_wrapper) $(my_cxx)
 endif
+
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
-  my_cxx := $(SYNTAX_TOOLS_PREFIX)/cxx-analyzer $(my_syntax_arch) "$(my_cxx)"
+  my_cxx := CCC_CXX=$(CLANG_CXX) CLANG_CXX=$(CLANG_CXX) \
+            $(SYNTAX_TOOLS_PREFIX)/c++-analyzer
 else
 ifneq ($(LOCAL_NO_SYNTAX_CHECK),true)
-  my_cxx := $(SYNTAX_TOOLS_PREFIX)/cxx-syntax $(my_syntax_arch) "$(my_cxx)"
+  my_cxx := $(my_cxx) -fsyntax-only
 endif
 endif
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLANG := $(my_clang)
