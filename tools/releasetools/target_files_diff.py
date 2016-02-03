@@ -51,9 +51,8 @@ def ignore(name):
               'RECOVERY/RAMDISK/selinux_version']:
     return True
 
-  # b/25348136 libpac.so changes with every build
-  if name in ['SYSTEM/lib/libpac.so',
-              'SYSTEM/lib64/libpac.so']:
+  # b/26956807 .odex files are not deterministic
+  if name.endswith('.odex'):
     return True
 
   return False
