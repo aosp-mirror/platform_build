@@ -5870,6 +5870,10 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   .dac-fullscreen-mode .wrap {
     max-width: none; }
 
+.dac-full-screen-mode .dac-search-open .wrap {
+  max-width: 940px;
+}
+
 .cols {
   margin-left: -10px;
   margin-right: -10px;
@@ -8868,7 +8872,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .dac-gray-dark.dac-hero, .dac-gray-dark.dac-section {
-   background-color: #b0bec5; 
+   background-color: #b0bec5;
 }
 
 .dac-dark.dac-hero, .dac-dark.dac-section {
