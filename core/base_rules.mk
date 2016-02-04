@@ -238,6 +238,8 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 
 # Kati adds restat=1 to ninja. GNU make does nothing for this.
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
+# Build .toc file when using mm, mma, or make $(my_register_name)
+$(my_register_name): $(LOCAL_BUILT_MODULE).toc
 endif
 endif
 
