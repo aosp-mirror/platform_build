@@ -251,6 +251,7 @@ class BlockImageDiff(object):
     self.transfers = []
     self.src_basenames = {}
     self.src_numpatterns = {}
+    self._max_stashed_size = 0
 
     assert version in (1, 2, 3, 4)
 
@@ -267,6 +268,10 @@ class BlockImageDiff(object):
     # the care map.
     self.AssertPartition(src.care_map, src.file_map.values())
     self.AssertPartition(tgt.care_map, tgt.file_map.values())
+
+  @property
+  def max_stashed_size(self):
+    return self._max_stashed_size
 
   def Compute(self, prefix):
     # When looking for a source file to use as the diff input for a
@@ -538,17 +543,17 @@ class BlockImageDiff(object):
         f.write(i)
 
     if self.version >= 2:
-      max_stashed_size = max_stashed_blocks * self.tgt.blocksize
+      self._max_stashed_size = max_stashed_blocks * self.tgt.blocksize
       OPTIONS = common.OPTIONS
       if OPTIONS.cache_size is not None:
         max_allowed = OPTIONS.cache_size * OPTIONS.stash_threshold
         print("max stashed blocks: %d  (%d bytes), "
               "limit: %d bytes (%.2f%%)\n" % (
-              max_stashed_blocks, max_stashed_size, max_allowed,
-              max_stashed_size * 100.0 / max_allowed))
+              max_stashed_blocks, self._max_stashed_size, max_allowed,
+              self._max_stashed_size * 100.0 / max_allowed))
       else:
         print("max stashed blocks: %d  (%d bytes), limit: <unknown>\n" % (
-              max_stashed_blocks, max_stashed_size))
+              max_stashed_blocks, self._max_stashed_size))
 
   def ReviseStashSize(self):
     print("Revising stash size...")
