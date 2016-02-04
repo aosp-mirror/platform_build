@@ -81,5 +81,3 @@ ifeq ($(TARGET_PRODUCT),sdk)
   # include an expanded selection of fonts for the SDK.
   EXTENDED_FONT_FOOTPRINT := true
 endif
-
-USE_CLANG_PLATFORM_BUILD := true
