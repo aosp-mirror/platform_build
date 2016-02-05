@@ -526,7 +526,7 @@ my_generated_sources := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%
 # Other files (like headers) are allowed in LOCAL_GENERATED_SOURCES,
 # since other compiled sources may depend on them, and we set up
 # the dependencies.
-my_gen_src_files := $(filter %.c %$(LOCAL_CPP_EXTENSION) %.S %.s %.o,$(my_generated_sources))
+my_gen_src_files := $(filter %.c %$(LOCAL_CPP_EXTENSION) %.S %.s,$(my_generated_sources))
 
 ALL_GENERATED_SOURCES += $(my_generated_sources)
 
