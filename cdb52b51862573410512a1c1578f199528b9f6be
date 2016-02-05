@@ -16,6 +16,24 @@
       "revId": "cdb52b51862573410512a1c1578f199528b9f6be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31fce07c_984672aa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-02-05T01:13:09Z",
+      "side": 1,
+      "message": "Do you have NATIVE_COVERAGE defined in your environment for some reason? That is the only way that these variables are even used.",
+      "parentUuid": "31fce07c_d8abda92",
+      "revId": "cdb52b51862573410512a1c1578f199528b9f6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
