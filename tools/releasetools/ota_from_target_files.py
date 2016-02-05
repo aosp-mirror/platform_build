@@ -1186,7 +1186,18 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   p1.wait()
   assert p1.returncode == 0, "brillo_update_payload sign failed"
 
-  # Add the signed payload file into the zip.
+  # 4. Dump the signed payload properties.
+  properties_file = common.MakeTempFile(prefix="payload-properties-",
+                                        suffix=".txt")
+  cmd = ["brillo_update_payload", "properties",
+         "--payload", signed_payload_file,
+         "--properties_file", properties_file]
+  p1 = common.Run(cmd, stdout=subprocess.PIPE)
+  p1.wait()
+  assert p1.returncode == 0, "brillo_update_payload properties failed"
+
+  # Add the signed payload file and properties into the zip.
+  common.ZipWrite(output_zip, properties_file, arcname="payload_properties.txt")
   common.ZipWrite(output_zip, signed_payload_file, arcname="payload.bin",
                   compress_type=zipfile.ZIP_STORED)
   WriteMetadata(metadata, output_zip)
