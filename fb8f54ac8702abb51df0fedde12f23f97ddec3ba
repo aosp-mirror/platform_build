@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "918f4c7c_2f628917",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 681,
+      "author": {
+        "id": 1015381
+      },
+      "writtenOn": "2016-02-05T14:28:08Z",
+      "side": 1,
+      "message": "Modulo default behavior in Jack.",
+      "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
