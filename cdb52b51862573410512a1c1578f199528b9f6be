@@ -34,6 +34,24 @@
       "revId": "cdb52b51862573410512a1c1578f199528b9f6be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11f7dc9a_5db23923",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-02-05T01:14:39Z",
+      "side": 1,
+      "message": "huh. apparently i do:\n\n  local lunch_target\u003d$1\n  local device_serial\u003d$2\n  source build/envsetup.sh\n  setpaths\n  lunch $lunch_target\n  export NATIVE_COVERAGE\u003dtrue\n  export ANDROID_SERIAL\u003d$device_serial\n  export ANDROID_PRINTF_LOG\u003dthreadtime\n\noops.\n\noh well, i can confirm that removing the symlink workaround everything works for me with this patch.",
+      "parentUuid": "31fce07c_984672aa",
+      "revId": "cdb52b51862573410512a1c1578f199528b9f6be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
