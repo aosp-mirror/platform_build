@@ -224,6 +224,14 @@ h5, h6 {
   margin: 0;
   padding: 4px 0 8px;
 }
+th>h3 {
+  font-size:inherit;
+  line-height:inherit;
+  font-weight:inherit;
+  margin:0;
+  padding:0;
+  color:inherit;
+}
 hr { /* applied to the bottom of h2 elements */
   height: 1px;
   margin: 7px 0 12px;
@@ -291,11 +299,6 @@ pre, code {
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-osx-font-smoothing: auto;
 }
-code {
-  background-color: #f7f7f7;
-  padding: 3px 5px;
-}
-
 legend {
   display: none;
 }
@@ -1680,6 +1683,46 @@ pre {
   border: solid 1px #ddd;
   background: #f7f7f7;
 }
+
+p.package-name {
+  margin:1em 0;
+}
+
+h1.api-title {
+  padding-bottom:0;
+}
+
+h2.api-section {
+  margin: 60px 0 0;
+}
+
+h2.api-section+hr {
+  margin-bottom: 30px;
+}
+
+h3.api-name {
+  margin: 80px 0 12px;
+  padding: 0;
+}
+
+/* remove top padding when this h3 (visibly) follows an h2.
+   This accounts for the variation in structure,
+   including the collapsed mobile headings */
+h2+hr+div>div>a+div>h3.api-name,
+h2+hr+a+div>h3.api-name,
+h2+hr+a+h3.api-name {
+  margin-top: 0;
+}
+
+pre.api-signature,
+code.api-signature {
+  color:inherit;
+  padding:0;
+  margin:1em 0;
+  border:0;
+  background:transparent;
+}
+
 .str { color: #800; } /* Code string */
 .kwd { color: #008; }
 .typ { color: #606; }
@@ -2612,7 +2655,7 @@ div#naMessage div {
   z-index:99;
   width:450px;
   position:fixed;
-  margin:50px 0;
+  margin:80px 0;
   padding:4em 4em 3em;
   background:#FFF;
   border:1px solid #999;
@@ -2877,19 +2920,6 @@ Page-Specific Styles
   padding:0 0 0 4px;
 }
 
-#jd-header {
-  padding: 0 0 12px;
-  margin: 20px 0 12px;
-  font-size:12px;
-  padding-bottom:12px;
-  border-bottom:solid 1px #ccc;
-}
-
-#jd-header h1 {
-  margin:0;
-  padding:0 0 6px 0;
-}
-
 /* not sure if this is needed in the ref docs, disabling for now
 .jd-descr h2 {
   margin:16px 0;
@@ -2910,12 +2940,11 @@ links to summary tables) */
 #api-info-block {
   font-size:12px;
   margin:20px 0 0;
-  padding:0 10px 6px;
   font-weight:normal;
   float:right;
   text-align:right;
   color:#999;
-  max-width:80%;
+  max-width:300px;
   font-size: 12px;
   line-height:14px;
 }
@@ -2930,12 +2959,17 @@ links to summary tables) */
 }
 
 /* inheritance table */
+table.inhtable>tbody>tr>td {
+  padding-left:0;
+}
+table.inhtable>tbody>tr>td div:first-of-type {
+  padding-left:12px;
+}
+
 .jd-inheritance-table {
   border-spacing:0;
-  margin:0;
+  margin:1em 0;
   padding:0;
-  font-size:12px;
-  line-height:14px;
   background-color:transparent;
 }
 .jd-inheritance-table tr td {
@@ -2945,22 +2979,12 @@ links to summary tables) */
   background-color:transparent;
 }
 .jd-inheritance-table .jd-inheritance-space {
-  font-weight:bold;
-  width:1em;
+  width:2em;
 }
 .jd-inheritance-table .jd-inheritance-interface-cell {
   padding-left: 17px;
 }
 
-
-
-.jd-sumtable a {
-  text-decoration:none;
-}
-
-.jd-sumtable a:hover {
-  text-decoration:underline;
-}
 
 /* the link inside a sumtable for "Show All/Hide All" */
 .toggle-all {
@@ -2971,21 +2995,15 @@ links to summary tables) */
 }
 
 /* adjustments for in/direct subclasses tables */
-.jd-sumtable.jd-sumtable-subclasses {
+.jd-sumtable-subclasses {
   margin: 1em 0 0 0;
   max-width:968px;
   background-color:transparent;
-  font-size:13px;
 }
 
 /* extra space between end of method name and open-paren */
 .sympad {
   margin-right: 2px;
-}
-
-/* right alignment for the return type in sumtable */
-.jd-sumtable .jd-typecol {
-  text-align:right;
 }
 
 /* adjustments for the expando table-in-table */
@@ -3008,7 +3026,9 @@ links to summary tables) */
 
 .jd-sumtable-subclasses div#subclasses-direct,
 .jd-sumtable-subclasses div#subclasses-indirect {
-  margin:0 0 0 13px;
+  /* left margin matches width of the toggle image,
+     so this section aligns with the text above */
+  margin:0 0 0 34px;
 }
 
 
@@ -3077,10 +3097,6 @@ body.google h4.jd-details-title {
   padding-top:5px;
   border-top: 1px solid #ccc;
 }
-body.google table.jd-sumtable th {
-  background-color: #FFF;
-  color:#000;
-}
 
 h4.jd-tagtitle {
   padding:0;
@@ -3124,7 +3140,7 @@ div.api-level {
   color:#999;
   float:right;
   padding:0 8px 0;
-  margin-top:-30px;
+  margin-top:-35px;
 }
 
 table.jd-tagtable td,

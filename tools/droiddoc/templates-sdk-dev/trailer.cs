@@ -1,3 +1,7 @@
+<?cs
+# Other, non-visible things needed at the end of the page,
+# because not every page needs footer content, but does need other stuff
+?>
 </div> <!-- end body-content --> <?cs # normally opened by header.cs ?>
 
 <?cs if:carousel ?>

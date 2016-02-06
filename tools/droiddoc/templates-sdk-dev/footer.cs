@@ -1,3 +1,4 @@
+<?cs # page footer content ?>
 <div class="wrap">
   <div class="dac-footer<?cs if:fullpage ?> dac-landing<?cs /if ?>">
     <div class="cols dac-footer-main">

@@ -875,8 +875,7 @@ function changeApiLevel() {
   writeCookie(API_LEVEL_COOKIE, selectedLevel, null);
 
   if (selectedLevel < minLevel) {
-    var thing = ($("#jd-header").html().indexOf("package") != -1) ? "package" : "class";
-    $("#naMessage").show().html("<div><p><strong>This " + thing +
+    $("#naMessage").show().html("<div><p><strong>This API" +
               " requires API level " + minLevel + " or higher.</strong></p>" +
               "<p>This document is hidden because your selected API level for the documentation is " +
               selectedLevel + ". You can change the documentation API level with the selector " +
@@ -1104,13 +1103,13 @@ function toggleInherited(linkObj, expand) {
   if ((expand == null && a.hasClass("closed")) || expand) {
     list.style.display = "none";
     summary.style.display = "block";
-    trigger.src = toRoot + "assets/images/triangle-opened.png";
+    trigger.src = toRoot + "assets/images/styles/disclosure_up.png";
     a.removeClass("closed");
     a.addClass("opened");
   } else if ((expand == null && a.hasClass("opened")) || (expand == false)) {
     list.style.display = "block";
     summary.style.display = "none";
-    trigger.src = toRoot + "assets/images/triangle-closed.png";
+    trigger.src = toRoot + "assets/images/styles/disclosure_down.png";
     a.removeClass("opened");
     a.addClass("closed");
   }
@@ -4379,9 +4378,9 @@ $.fn.scrollIntoView = function(target) {
         selected = navEl.find('> li.guides > a').addClass('selected');
       } else if (body.hasClass('reference')) {
         selected = navEl.find('> li.reference > a').addClass('selected');
-      } else if (body.hasClass('samples')) { 
+      } else if (body.hasClass('samples')) {
         selected = navEl.find('> li.samples > a').addClass('selected');
-      } else if (body.hasClass('downloads')) { 
+      } else if (body.hasClass('downloads')) {
         selected = navEl.find('> li.downloads > a').addClass('selected');
       }
     } else if (body.hasClass('design')) {
@@ -4986,7 +4985,7 @@ window.metadata.search = (function() {
       var noBoundaries = (NO_BOUNDARY_LANGUAGES.indexOf(window.getLangPref()) !== -1);
       var exprBoundary = (!isAsciiOnly && noBoundaries) ? '' : '(?:^|\\s)';
       var queryRegex = new RegExp(exprBoundary + query.toLowerCase(), 'g');
-        
+
       var all = METADATA.all;
       for (var i = 0; i < all.length; i++) {
         // current search comparison, with counters for tag and title,
