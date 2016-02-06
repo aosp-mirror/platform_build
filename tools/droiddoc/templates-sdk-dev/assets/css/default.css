@@ -7419,7 +7419,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 }
 
 .dac-reference-nav-toggle::before {
-  background: transparent url(../images/styles/disclosure_down.png) no-repeat center center;
+  background: transparent url(../images/styles/disclosure_up.png) no-repeat center center;
   content: '';
   display: block;
   height: 19px;
