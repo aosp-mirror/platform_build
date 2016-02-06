@@ -37,20 +37,20 @@ CLANG_CONFIG_x86_HOST_CROSS_EXTRA_LDFLAGS := \
   $(CLANG_CONFIG_x86_HOST_CROSS_COMBO_EXTRA_LDFLAGS) \
   -target $(CLANG_CONFIG_x86_HOST_CROSS_TRIPLE)
 
-CLANG_HOST_CROSS_GLOBAL_CFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_CROSS_GLOBAL_CFLAGS)) \
+$(clang_2nd_arch_prefix)CLANG_HOST_CROSS_GLOBAL_CFLAGS := \
+  $(call convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_CROSS_GLOBAL_CFLAGS)) \
   $(CLANG_CONFIG_x86_HOST_CROSS_EXTRA_CFLAGS)
 
-CLANG_HOST_CROSS_GLOBAL_CONLYFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_CROSS_GLOBAL_CONLYFLAGS)) \
+$(clang_2nd_arch_prefix)CLANG_HOST_CROSS_GLOBAL_CONLYFLAGS := \
+  $(call convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_CROSS_GLOBAL_CONLYFLAGS)) \
   $(CLANG_CONFIG_x86_HOST_CROSS_EXTRA_CONLYFLAGS)
 
-CLANG_HOST_CROSS_GLOBAL_CPPFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_CROSS_GLOBAL_CPPFLAGS)) \
+$(clang_2nd_arch_prefix)CLANG_HOST_CROSS_GLOBAL_CPPFLAGS := \
+  $(call convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_CROSS_GLOBAL_CPPFLAGS)) \
   $(CLANG_CONFIG_x86_HOST_CROSS_EXTRA_CPPFLAGS)
 
-CLANG_HOST_CROSS_GLOBAL_LDFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_CROSS_GLOBAL_LDFLAGS)) \
+$(clang_2nd_arch_prefix)CLANG_HOST_CROSS_GLOBAL_LDFLAGS := \
+  $(call convert-to-host-clang-flags,$($(clang_2nd_arch_prefix)HOST_CROSS_GLOBAL_LDFLAGS)) \
   $(CLANG_CONFIG_x86_HOST_CROSS_EXTRA_LDFLAGS)
 
-HOST_CROSS_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-i686.a
+$(clang_2nd_arch_prefix)HOST_CROSS_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-i686.a
