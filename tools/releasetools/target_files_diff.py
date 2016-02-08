@@ -51,10 +51,6 @@ def ignore(name):
               'RECOVERY/RAMDISK/selinux_version']:
     return True
 
-  # b/26956807 .odex files are not deterministic
-  if name.endswith('.odex'):
-    return True
-
   return False
 
 
