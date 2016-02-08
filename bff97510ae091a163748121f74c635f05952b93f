@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9162ecbe_00c0ec54",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 1060547
+      },
+      "writtenOn": "2016-02-08T18:35:14Z",
+      "side": 1,
+      "message": "can you please put prefix: ota- as ota-required-cache?",
+      "range": {
+        "startLine": 1140,
+        "startChar": 7,
+        "endLine": 1140,
+        "endChar": 15
+      },
+      "revId": "bff97510ae091a163748121f74c635f05952b93f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7179f872_5cdc9593",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1141,
+      "author": {
+        "id": 1060547
+      },
+      "writtenOn": "2016-02-08T18:35:14Z",
+      "side": 1,
+      "message": "the same for ota-type",
+      "revId": "bff97510ae091a163748121f74c635f05952b93f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
