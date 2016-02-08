@@ -16,6 +16,24 @@
       "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3148604f_2cbc1380",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 681,
+      "author": {
+        "id": 1029223
+      },
+      "writtenOn": "2016-02-08T11:39:12Z",
+      "side": 1,
+      "message": "Yes, Jack will exclude them by default. We can remove them from the build so we don\u0027t pass the exclude property by default (if there is no LOCAL_EMMA_COVERAGE_FILTER in the current module being compiled)",
+      "parentUuid": "918f4c7c_2f628917",
+      "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
