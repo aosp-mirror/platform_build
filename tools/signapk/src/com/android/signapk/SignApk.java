@@ -722,9 +722,6 @@ class SignApk {
 
                 int hash = getDigestAlgorithm(publicKey, minSdkVersion);
 
-                // Assume the certificate is valid for at least an hour.
-                long timestamp = publicKey.getNotBefore().getTime() + 3600L * 1000;
-
                 Manifest manifest = addDigestsToManifest(inputJar, hash);
                 copyFiles(manifest, inputJar, outputJar, timestamp, 0);
                 addOtacert(outputJar, publicKeyFile, timestamp, manifest, hash);
