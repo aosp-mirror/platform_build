@@ -57,9 +57,6 @@ TOPDIR :=
 
 BUILD_SYSTEM := $(TOPDIR)build/core
 
-# Ensure JAVA_NOT_REQUIRED is not set externally.
-JAVA_NOT_REQUIRED := false
-
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
 DEFAULT_GOAL := droid
@@ -148,8 +145,9 @@ include $(BUILD_SYSTEM)/cleanbuild.mk
 -include vendor/google/build/config.mk
 
 VERSION_CHECK_SEQUENCE_NUMBER := 6
+JAVA_NOT_REQUIRED_CHECKED :=
 -include $(OUT_DIR)/versions_checked.mk
-ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER),$(VERSIONS_CHECKED))
+ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER)$(JAVA_NOT_REQUIRED),$(VERSIONS_CHECKED)$(JAVA_NOT_REQUIRED_CHECKED))
 
 $(info Checking build tools versions...)
 
@@ -180,7 +178,7 @@ $(warning ************************************************************)
 $(error Directory names containing spaces not supported)
 endif
 
-ifeq ($(JAVA_NOT_REQUIRED), false)
+ifneq ($(JAVA_NOT_REQUIRED),true)
 java_version_str := $(shell unset _JAVA_OPTIONS && java -version 2>&1)
 javac_version_str := $(shell unset _JAVA_OPTIONS && javac -version 2>&1)
 
@@ -270,6 +268,8 @@ endif
 $(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
         > $(OUT_DIR)/versions_checked.mk)
 $(shell echo 'BUILD_EMULATOR ?= $(BUILD_EMULATOR)' \
+        >> $(OUT_DIR)/versions_checked.mk)
+$(shell echo 'JAVA_NOT_REQUIRED_CHECKED := $(JAVA_NOT_REQUIRED)' \
         >> $(OUT_DIR)/versions_checked.mk)
 endif
 
