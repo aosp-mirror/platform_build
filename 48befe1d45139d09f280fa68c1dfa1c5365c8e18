@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1d89b03a_3685be31",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-09T23:52:40Z",
+      "side": 1,
+      "message": "That doesn\u0027t work. \"export\" will export the environment variable to *every* build rule in the entire system, not just this one. We\u0027ve implemented \"export\" in kati by having kati write out a file out/env-\u003ctarget\u003e.sh with a list of the name-value pairs and we source that into the environment before running ninja.\n\nIf you need to set an environment variable for a specific rule, you\u0027ve got to set it in the command line of that rule (see https://android.googlesource.com/platform/build/+/master/core/ninja.mk#147 )",
+      "parentUuid": "bd83441c_133536c0",
+      "range": {
+        "startLine": 427,
+        "startChar": 2,
+        "endLine": 427,
+        "endChar": 24
+      },
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fdc21c56_ba20c991",
         "filename": "core/binary.mk",
         "patchSetId": 2
