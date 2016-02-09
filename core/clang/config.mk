@@ -149,8 +149,13 @@ clang_2nd_arch_prefix := $(HOST_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/clang/HOST_$(HOST_2ND_ARCH).mk
 endif
 
-ifdef HOST_CROSS_OS
-include $(BUILD_SYSTEM)/clang/HOST_CROSS_$(HOST_CROSS_OS).mk
+ifdef HOST_CROSS_ARCH
+clang_2nd_arch_prefix :=
+include $(BUILD_SYSTEM)/clang/HOST_CROSS_$(HOST_CROSS_ARCH).mk
+ifdef HOST_CROSS_2ND_ARCH
+clang_2nd_arch_prefix := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/clang/HOST_CROSS_$(HOST_CROSS_2ND_ARCH).mk
+endif
 endif
 
 # TARGET config
