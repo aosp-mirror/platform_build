@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bd83441c_133536c0",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-09T23:48:25Z",
+      "side": 1,
+      "message": "Although not working with gcc or other my_cc setting yet, we can eventually let ccc-analyzer call different compilers depending on each module\u0027s local setting. So it is necessary to export  CCC_CC for every module. For now, I move it to the if statement at line 405, to export CCC_CC and CCC_CXX for clang compiler only.",
+      "parentUuid": "5da7a8bf_58b8b1ee",
+      "range": {
+        "startLine": 427,
+        "startChar": 2,
+        "endLine": 427,
+        "endChar": 24
+      },
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fdc21c56_ba20c991",
         "filename": "core/binary.mk",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "ddbd58cb_f6933e7f",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-09T23:48:25Z",
+      "side": 1,
+      "message": "Moved, similarly to CCC_CC.",
+      "parentUuid": "fdc21c56_ba20c991",
+      "range": {
+        "startLine": 450,
+        "startChar": 2,
+        "endLine": 450,
+        "endChar": 29
+      },
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bd9a6476_98ff7d7d",
         "filename": "core/combo/HOST_CROSS_windows-x86.mk",
         "patchSetId": 2
@@ -59,6 +107,24 @@
       "writtenOn": "2016-02-09T20:55:45Z",
       "side": 1,
       "message": "I\u0027ve added HOST_CROSS_windows-x86_64.mk now too: https://android-review.googlesource.com/#/c/201400/\n\nWe don\u0027t support clang for windows crossbuilds yet, so I\u0027m not sure this matters until that happens.",
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddbd58cb_f92faf66",
+        "filename": "core/combo/HOST_CROSS_windows-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-09T23:48:25Z",
+      "side": 1,
+      "message": "Thanks. Now I changed that file too.",
+      "parentUuid": "bd9a6476_98ff7d7d",
       "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
