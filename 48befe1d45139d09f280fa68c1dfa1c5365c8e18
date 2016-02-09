@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5da7a8bf_58b8b1ee",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-09T20:55:45Z",
+      "side": 1,
+      "message": "Using \u0027export\u0027 here applies globally to the entire build -- if this is your intention, it should be done once, not for every module.",
+      "range": {
+        "startLine": 427,
+        "startChar": 2,
+        "endLine": 427,
+        "endChar": 24
+      },
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fdc21c56_ba20c991",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-09T20:55:45Z",
+      "side": 1,
+      "message": "Same as above",
+      "range": {
+        "startLine": 450,
+        "startChar": 2,
+        "endLine": 450,
+        "endChar": 29
+      },
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd9a6476_98ff7d7d",
+        "filename": "core/combo/HOST_CROSS_windows-x86.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-09T20:55:45Z",
+      "side": 1,
+      "message": "I\u0027ve added HOST_CROSS_windows-x86_64.mk now too: https://android-review.googlesource.com/#/c/201400/\n\nWe don\u0027t support clang for windows crossbuilds yet, so I\u0027m not sure this matters until that happens.",
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
