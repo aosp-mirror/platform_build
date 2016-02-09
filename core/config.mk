@@ -844,4 +844,12 @@ endif
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
 RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
 
+ifeq ($(JAVA_NOT_REQUIRED),true)
+# Remove java and tools from our path so that we make sure nobody uses them.
+unexport ANDROID_JAVA_HOME
+unexport JAVA_HOME
+export ANDROID_BUILD_PATHS:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(ANDROID_BUILD_PATHS)
+export PATH:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(PATH)
+endif
+
 include $(BUILD_SYSTEM)/dumpvar.mk
