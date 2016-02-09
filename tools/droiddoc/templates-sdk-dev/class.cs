@@ -7,20 +7,6 @@
 # FIRST, THE FUNCTIONS FOR THE SUMMARY AT THE TOP OF THE PAGE
 ####################
 ?>
-<?cs
-# Prints a comma separated list of parameters with optional line breaks
-?><?cs
-def:parameter_list(params, linebreaks) ?><?cs
-  each:param = params ?><?cs
-      call:simple_type_link(param.type)?> <?cs
-      var:param.name ?><?cs
-      if: name(param)!=subcount(params)-1
-        ?>, <?cs if:linebreaks
-?>
-                <?cs /if ?><?cs
-      /if ?><?cs
-  /each ?><?cs
-/def ?>
 
 <?cs
 # Prints the table cells for the summary of methods.
