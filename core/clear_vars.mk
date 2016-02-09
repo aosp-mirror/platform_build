@@ -340,6 +340,7 @@ LOCAL_CLANG_32:=
 LOCAL_CLANG_64:=
 LOCAL_INIT_RC_32:=
 LOCAL_INIT_RC_64:=
+LOCAL_JAVA_LANGUAGE_VERSION:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
