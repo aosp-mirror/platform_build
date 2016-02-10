@@ -106,6 +106,7 @@ PRODUCT_PACKAGES += \
     media \
     media_cmd \
     mediaserver \
+    mediacodec \
     mediaextractor \
     monkey \
     mtpd \
