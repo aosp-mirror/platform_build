@@ -28,6 +28,7 @@ import sys
 import commands
 import common
 import shutil
+import sparse_img
 import tempfile
 
 OPTIONS = common.OPTIONS
@@ -90,6 +91,16 @@ def GetVeritySize(partition_size, fec_supported):
       return 0
     return verity_size + fec_size
   return verity_size
+
+def GetSimgSize(image_file):
+  simg = sparse_img.SparseImage(image_file, build_map=False)
+  return simg.blocksize * simg.total_blocks
+
+def ZeroPadSimg(image_file, pad_size):
+  blocks = pad_size // BLOCK_SIZE
+  print("Padding %d blocks (%d bytes)" % (blocks, pad_size))
+  simg = sparse_img.SparseImage(image_file, mode="r+b", build_map=False)
+  simg.AppendFillChunk(0, blocks)
 
 def AdjustPartitionSizeForVerity(partition_size, fec_supported):
   """Modifies the provided partition size to account for the verity metadata.
@@ -329,7 +340,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   # Adjust the partition size to make room for the hashes if this is to be
   # verified.
-  if verity_supported and is_verity_partition and fs_spans_partition:
+  if verity_supported and is_verity_partition:
     partition_size = int(prop_dict.get("partition_size"))
     adjusted_size = AdjustPartitionSizeForVerity(partition_size,
                                                  verity_fec_supported)
@@ -440,17 +451,13 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if not fs_spans_partition:
     mount_point = prop_dict.get("mount_point")
     partition_size = int(prop_dict.get("partition_size"))
-    image_size = os.stat(out_file).st_size
+    image_size = GetSimgSize(out_file)
     if image_size > partition_size:
       print("Error: %s image size of %d is larger than partition size of "
             "%d" % (mount_point, image_size, partition_size))
       return False
     if verity_supported and is_verity_partition:
-      if 2 * image_size - AdjustPartitionSizeForVerity(image_size, verity_fec_supported) > partition_size:
-        print "Error: No more room on %s to fit verity data" % mount_point
-        return False
-    prop_dict["original_partition_size"] = prop_dict["partition_size"]
-    prop_dict["partition_size"] = str(image_size)
+      ZeroPadSimg(out_file, partition_size - image_size)
 
   # create the verified image if this is to be verified
   if verity_supported and is_verity_partition:
