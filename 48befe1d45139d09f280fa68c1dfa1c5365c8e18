@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "bd9a6476_66087609",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 427,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-10T01:02:02Z",
+      "side": 1,
+      "message": "I see. Please take a look of PS4. Thanks.",
+      "parentUuid": "1d89b03a_3685be31",
+      "range": {
+        "startLine": 427,
+        "startChar": 2,
+        "endLine": 427,
+        "endChar": 24
+      },
+      "revId": "48befe1d45139d09f280fa68c1dfa1c5365c8e18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fdc21c56_ba20c991",
         "filename": "core/binary.mk",
         "patchSetId": 2
