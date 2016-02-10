@@ -22,6 +22,30 @@
       "revId": "d9185dfb0cedbb6ef158686da0911515f0f4d766",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7dbb8cf2_3ee971fd",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2016-02-10T18:00:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fdb5bcf8_a20b1abc",
+      "range": {
+        "startLine": 104,
+        "startChar": 2,
+        "endLine": 104,
+        "endChar": 13
+      },
+      "revId": "d9185dfb0cedbb6ef158686da0911515f0f4d766",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
