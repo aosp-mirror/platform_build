@@ -45,7 +45,11 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "DeviceSecondaryAbi": ["$(TARGET_2ND_CPU_ABI)", "$(TARGET_2ND_CPU_ABI2)"],'; \
 	echo ''; \
 	echo '    "HostArch": "$(HOST_ARCH)",'; \
-	echo '    "HostSecondaryArch": "$(HOST_2ND_ARCH)"'; \
+	echo '    "HostSecondaryArch": "$(HOST_2ND_ARCH)",'; \
+	echo ''; \
+	echo '    "CrossHost": "$(HOST_CROSS_OS)",'; \
+	echo '    "CrossHostArch": "$(HOST_CROSS_ARCH)",'; \
+	echo '    "CrossHostSecondaryArch": "$(HOST_CROSS_2ND_ARCH)"'; \
 	echo '}') > $(SOONG_VARIABLES_TMP); \
 	if ! cmp -s $(SOONG_VARIABLES_TMP) $(SOONG_VARIABLES); then \
 	  mv $(SOONG_VARIABLES_TMP) $(SOONG_VARIABLES); \
