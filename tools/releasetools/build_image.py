@@ -532,6 +532,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_journal_size", "journal_size")
     copy_prop("vendor_verity_block_device", "verity_block_device")
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
+    copy_prop("vendor_squashfs_compressor_opt", "squashfs_compressor_opt")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
