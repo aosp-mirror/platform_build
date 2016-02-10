@@ -2284,11 +2284,23 @@ define add-carried-jack-resources
 fi
 endef
 
+# Returns the minSdkVersion of the specified APK as a decimal number. If the
+# version is a codename, returns the current platform SDK version (always a
+# decimal number) instead. If the APK does not specify a minSdkVersion, returns
+# 0 to match how the Android platform interprets this situation at runtime.
+#
+define get-package-min-sdk-version-int
+$$(($(AAPT) dump badging $(1) 2>&1 | grep '^sdkVersion' || echo "sdkVersion:'0'") \
+    | cut -d"'" -f2 | \
+    sed -e s/^$(PLATFORM_VERSION_CODENAME)$$/$(PLATFORM_SDK_VERSION)/)
+endef
+
 # Sign a package using the specified key/cert.
 #
 define sign-package
 $(hide) mv $@ $@.unsigned
 $(hide) java -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) -jar $(SIGNAPK_JAR) \
+    --min-sdk-version $(call get-package-min-sdk-version-int,$@.unsigned) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
     $(PRIVATE_ADDITIONAL_CERTIFICATES) $@.unsigned $@.signed
 $(hide) mv $@.signed $@
