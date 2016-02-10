@@ -31,8 +31,9 @@ class SparseImage(object):
   the form of a string like "0" or "0 1-5 8".
   """
 
-  def __init__(self, simg_fn, file_map_fn=None, clobbered_blocks=None):
-    self.simg_f = f = open(simg_fn, "rb")
+  def __init__(self, simg_fn, file_map_fn=None, clobbered_blocks=None,
+               mode="rb", build_map=True):
+    self.simg_f = f = open(simg_fn, mode)
 
     header_bin = f.read(28)
     header = struct.unpack("<I4H4I", header_bin)
@@ -44,7 +45,7 @@ class SparseImage(object):
     chunk_hdr_sz = header[4]
     self.blocksize = blk_sz = header[5]
     self.total_blocks = total_blks = header[6]
-    total_chunks = header[7]
+    self.total_chunks = total_chunks = header[7]
 
     if magic != 0xED26FF3A:
       raise ValueError("Magic should be 0xED26FF3A but is 0x%08X" % (magic,))
@@ -60,6 +61,9 @@ class SparseImage(object):
 
     print("Total of %u %u-byte output blocks in %u input chunks."
           % (total_blks, blk_sz, total_chunks))
+
+    if not build_map:
+      return
 
     pos = 0   # in blocks
     care_data = []
@@ -125,6 +129,20 @@ class SparseImage(object):
       self.LoadFileBlockMap(file_map_fn, self.clobbered_blocks)
     else:
       self.file_map = {"__DATA": self.care_map}
+
+  def AppendFillChunk(self, data, blocks):
+    f = self.simg_f
+
+    # Append a fill chunk
+    f.seek(0, os.SEEK_END)
+    f.write(struct.pack("<2H3I", 0xCAC2, 0, blocks, 16, data))
+
+    # Update the sparse header
+    self.total_blocks += blocks
+    self.total_chunks += 1
+
+    f.seek(16, os.SEEK_SET)
+    f.write(struct.pack("<2I", self.total_blocks, self.total_chunks))
 
   def ReadRangeSet(self, ranges):
     return [d for d in self._GetRangeData(ranges)]
