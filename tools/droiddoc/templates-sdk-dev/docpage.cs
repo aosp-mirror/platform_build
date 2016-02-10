@@ -36,6 +36,7 @@
       if:wear ?> wear<?cs /if ?><?cs
       if:tv ?> tv<?cs /if ?><?cs
       if:auto ?> auto<?cs /if ?><?cs
+    elif:(preview) ?> preview<?cs
     /if ?><?cs
     if:page.trainingcourse ?> trainingcourse<?cs /if ?><?cs
 /if ?>" itemscope itemtype="http://schema.org/Article"><?cs

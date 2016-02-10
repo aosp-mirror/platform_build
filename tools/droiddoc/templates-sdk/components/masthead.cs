@@ -228,8 +228,10 @@
           <?cs if:android.hasSamples ?>
           <li class="dac-nav-item samples">
             <a class="dac-nav-link" href="<?cs var:toroot ?>samples/index.html">Samples</a>
+          </li><?cs /if ?>
+          <li class="dac-nav-item preview">
+            <a class="dac-nav-link" href="<?cs var:toroot ?>preview/index.html">Preview</a>
           </li>
-          <?cs /if ?>
         </ul>
       </li>
       <li class="dac-nav-item distribute">

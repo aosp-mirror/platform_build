@@ -79,6 +79,23 @@ def:googleplay_nav() ?>
     </script>
 <?cs /def ?><?cs
 
+def:preview_nav() ?>
+  <div class="wrap clearfix" id="body-content"><div class="cols">
+    <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+      <?cs call:mobile_nav_toggle() ?>
+      <div class="dac-toggle-content" id="devdoc-nav">
+        <div class="scroll-pane">
+<?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+        </div>
+      </div>
+    </div> <!-- end side-nav -->
+    <script>
+      $(document).ready(function() {
+        scrollIntoView("devdoc-nav");
+        });
+    </script>
+<?cs /def ?><?cs
+
 def:essentials_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
     <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -533,6 +550,8 @@ def:custom_left_nav() ?><?cs
       call:google_nav() ?><?cs
     elif:samples ?><?cs
       call:samples_nav() ?><?cs
+    elif:preview ?><?cs
+      call:preview_nav() ?><?cs
     elif:distribute ?><?cs
       if:googleplay ?><?cs
         call:googleplay_nav() ?><?cs

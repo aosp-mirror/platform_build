@@ -4447,6 +4447,8 @@ $.fn.scrollIntoView = function(target) {
       } else {
         selected = parentNavEl.removeClass('has-subnav').addClass('selected');
       }
+    } else if (body.hasClass('preview')) {
+      selected = navEl.find('> li.preview > a').addClass('selected');
     }
     return $(selected);
   };

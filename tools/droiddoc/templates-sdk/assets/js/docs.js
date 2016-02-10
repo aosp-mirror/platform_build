@@ -202,6 +202,8 @@ $(document).ready(function() {
       subNavEl.find("li.google > a").addClass("selected");
     } else if ($("body").hasClass("samples")) {
       subNavEl.find("li.samples > a").addClass("selected");
+    } else if ($("body").hasClass("preview")) {
+      subNavEl.find("li.preview > a").addClass("selected");
     } else {
       parentNavEl.removeClass('has-subnav').addClass("selected");
     }
@@ -2348,6 +2350,37 @@ function search_changed(e, kd, toroot)
             // Check if query matches the doc title, but only for current language
             if (s.lang == currentLang) {
               // if query matches the doc title.t
+              if (s.title.toLowerCase().indexOf(queryStr) == 0) {
+                matched = true;
+                s.matched_title = 1;
+              }
+            }
+            if (matched) {
+              gDocsMatches[matchedCountDocs] = s;
+              matchedCountDocs++;
+            }
+          }
+
+          // Search for Preview Guides
+          for (var i=0; i<_RESOURCES.length; i++) {
+            // current search comparison, with counters for tag and title,
+            // used later to improve ranking
+            var s = _RESOURCES[i];
+            s.matched_tag = 0;
+            s.matched_title = 0;
+            var matched = false;
+
+            // Check if query matches any tags; work backwards toward 1 to assist ranking
+            for (var j = s.keywords.length - 1; j >= 0; j--) {
+              // it matches a tag
+              if (s.keywords[j].toLowerCase().indexOf(queryStr) == 0) {
+                matched = true;
+                s.matched_tag = j + 1; // add 1 to index position
+              }
+            }
+            // Check if query matches the doc title, but only for current language
+            if (s.lang == currentLang) {
+              // if query matches the doc title
               if (s.title.toLowerCase().indexOf(queryStr) == 0) {
                 matched = true;
                 s.matched_title = 1;
