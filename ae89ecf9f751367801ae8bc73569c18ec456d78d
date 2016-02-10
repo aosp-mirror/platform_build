@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7dbb8cf2_1bf8ffd8",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1014,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-02-10T04:45:06Z",
+      "side": 1,
+      "message": "there\u0027s a catch here: we may have multiple transfers that use the same source. maybe change to list to keep all the \"b\"s?",
+      "range": {
+        "startLine": 1014,
+        "startChar": 10,
+        "endLine": 1014,
+        "endChar": 23
+      },
+      "revId": "ae89ecf9f751367801ae8bc73569c18ec456d78d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
