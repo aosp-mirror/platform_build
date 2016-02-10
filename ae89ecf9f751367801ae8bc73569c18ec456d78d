@@ -22,6 +22,30 @@
       "revId": "ae89ecf9f751367801ae8bc73569c18ec456d78d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fdb5bcf8_6273d2b8",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1014,
+      "author": {
+        "id": 1002268
+      },
+      "writtenOn": "2016-02-10T15:46:33Z",
+      "side": 1,
+      "message": "Whoops, fixed.  (The filesystem images I\u0027m using this with can\u0027t ever use the same source twice, so I never encountered that.)\n\nI tested it building an incremental for a pair of fugu images, but that didn\u0027t encounter a problem.  What images did you use to test?",
+      "parentUuid": "7dbb8cf2_1bf8ffd8",
+      "range": {
+        "startLine": 1014,
+        "startChar": 10,
+        "endLine": 1014,
+        "endChar": 23
+      },
+      "revId": "ae89ecf9f751367801ae8bc73569c18ec456d78d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
