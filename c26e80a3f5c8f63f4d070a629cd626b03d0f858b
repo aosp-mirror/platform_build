@@ -22,6 +22,30 @@
       "revId": "c26e80a3f5c8f63f4d070a629cd626b03d0f858b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7df0ecdc_84749610",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-11T18:33:45Z",
+      "side": 1,
+      "message": "core/clang/config.mk is included later in this file.\nI will try to include it earlier before this line.\nIf that works, I will upload a new patch.",
+      "parentUuid": "bde6e426_9b8997e6",
+      "range": {
+        "startLine": 353,
+        "startChar": 66,
+        "endLine": 353,
+        "endChar": 73
+      },
+      "revId": "c26e80a3f5c8f63f4d070a629cd626b03d0f858b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
