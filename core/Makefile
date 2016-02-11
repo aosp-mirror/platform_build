@@ -1468,7 +1468,7 @@ OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libchrome$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcurl-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libevent-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libprotobuf-cpp-lite-rtti$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libprotobuf-cpp-lite$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libssl-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libz-host$(HOST_SHLIB_SUFFIX)
 
