@@ -326,9 +326,14 @@ $(built_module) : $(common_javalib_jar)
 endif # TARGET JAVA_LIBRARIES
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
-$(intermediates.COMMON)/classes.jack : PRIVATE_JILL_FLAGS:=$(LOCAL_JILL_FLAGS)
+
+ifneq ($(LOCAL_JILL_FLAGS),)
+$(error LOCAL_JILL_FLAGS is not supported any more, please use jack options in LOCAL_JACK_FLAGS instead)
+endif
+
+$(intermediates.COMMON)/classes.jack : PRIVATE_JACK_FLAGS:=$(LOCAL_JACK_FLAGS)
 $(intermediates.COMMON)/classes.jack : $(my_src_jar) $(LOCAL_MODULE_MAKEFILE_DEP) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JILL_JAR) $(JACK) | setup-jack-server
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK) | setup-jack-server
 	$(transform-jar-to-jack)
 
 # Update timestamps of .toc files for prebuilts so dependents will be
