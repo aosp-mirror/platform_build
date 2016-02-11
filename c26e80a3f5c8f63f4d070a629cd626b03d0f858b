@@ -46,6 +46,30 @@
       "revId": "c26e80a3f5c8f63f4d070a629cd626b03d0f858b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddde385a_ee48df5c",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-11T21:57:53Z",
+      "side": 1,
+      "message": "Including core/clang/config.mk before this line does not work, because other files included by clang/config.mk will need *GLOBAL_CFLAGS defined after this line.\n\nI suppose moving many lines here or in clang/config.mk would be messy. How about moving LLVM_PREBUILTS_BASE and its required macros out of clang/config.mk, put them in a new .mk file to be included here?\nOr just keep this SYNTAX_TOOLS_PREFIX as is here?",
+      "parentUuid": "7df0ecdc_84749610",
+      "range": {
+        "startLine": 353,
+        "startChar": 66,
+        "endLine": 353,
+        "endChar": 73
+      },
+      "revId": "c26e80a3f5c8f63f4d070a629cd626b03d0f858b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
