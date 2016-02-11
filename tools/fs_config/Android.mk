@@ -37,6 +37,13 @@ include $(BUILD_HOST_EXECUTABLE)
 ANDROID_FS_CONFIG_H := android_filesystem_config.h
 
 ifneq ($(TARGET_ANDROID_FILESYSTEM_CONFIG_H),)
+
+# One and only one file can be specified.
+ifneq ($(words $(TARGET_ANDROID_FILESYSTEM_CONFIG_H)),1)
+$(error Multiple fs_config files specified, \
+ see "$(TARGET_ANDROID_FILESYSTEM_CONFIG_H)".)
+endif
+
 ifeq ($(filter %/$(ANDROID_FS_CONFIG_H),$(TARGET_ANDROID_FILESYSTEM_CONFIG_H)),)
 $(error TARGET_ANDROID_FILESYSTEM_CONFIG_H file name must be $(ANDROID_FS_CONFIG_H), \
  see "$(notdir $(TARGET_ANDROID_FILESYSTEM_CONFIG_H))".)
