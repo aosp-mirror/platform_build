@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bde6e426_9b8997e6",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-02-11T02:47:20Z",
+      "side": 1,
+      "message": "We really shouldn\u0027t be hardcoding this value here. Can we pull it (or define this variable) from core/clang/config.mk instead?",
+      "range": {
+        "startLine": 353,
+        "startChar": 66,
+        "endLine": 353,
+        "endChar": 73
+      },
+      "revId": "c26e80a3f5c8f63f4d070a629cd626b03d0f858b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
