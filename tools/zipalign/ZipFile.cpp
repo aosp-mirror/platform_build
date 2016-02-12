@@ -566,7 +566,7 @@ status_t ZipFile::add(const ZipFile* pSourceZip, const ZipEntry* pSourceEntry,
         goto bail;
     }
 
-    result = pEntry->initFromExternal(pSourceZip, pSourceEntry);
+    result = pEntry->initFromExternal(pSourceEntry);
     if (result != NO_ERROR)
         goto bail;
     if (padding != 0) {
@@ -673,7 +673,7 @@ status_t ZipFile::addRecompress(const ZipFile* pSourceZip, const ZipEntry* pSour
         goto bail;
     }
 
-    result = pEntry->initFromExternal(pSourceZip, pSourceEntry);
+    result = pEntry->initFromExternal(pSourceEntry);
     if (result != NO_ERROR)
         goto bail;
 

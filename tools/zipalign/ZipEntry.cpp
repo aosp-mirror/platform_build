@@ -142,8 +142,7 @@ void ZipEntry::initNew(const char* fileName, const char* comment)
  *
  * Initializes the CDE and the LFH.
  */
-status_t ZipEntry::initFromExternal(const ZipFile* pZipFile,
-    const ZipEntry* pEntry)
+status_t ZipEntry::initFromExternal(const ZipEntry* pEntry)
 {
     /*
      * Copy everything in the CDE over, then fix up the hairy bits.
