@@ -79,7 +79,6 @@ LOCAL_2ND_ARCH_VAR_PREFIX := $($(my_prefix)2ND_ARCH_VAR_PREFIX)
 LOCAL_HOST_PREFIX := $(my_prefix)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
-$(warning $(LOCAL_MODULE) $(LOCAL_2ND_ARCH_VAR_PREFIX))
 OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
