@@ -349,18 +349,16 @@ ifeq ($(strip $(WITH_SYNTAX_CHECK)),0)
   WITH_SYNTAX_CHECK :=
 endif
 
+# define clang/llvm versions and base directory.
+include $(BUILD_SYSTEM)/clang/versions.mk
+
 # Disable WITH_STATIC_ANALYZER and WITH_SYNTAX_CHECK if tool can't be found
-SYNTAX_TOOLS_PREFIX := prebuilts/misc/$(HOST_PREBUILT_TAG)/analyzer/bin
+SYNTAX_TOOLS_PREFIX := \
+    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/tools/scan-build/libexec
 ifneq ($(strip $(WITH_STATIC_ANALYZER)),)
   ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer),)
     $(warning *** Disable WITH_STATIC_ANALYZER because $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer does not exist)
     WITH_STATIC_ANALYZER :=
-  endif
-endif
-ifneq ($(strip $(WITH_SYNTAX_CHECK)),)
-  ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-syntax),)
-    $(warning *** Disable WITH_SYNTAX_CHECK because $(SYNTAX_TOOLS_PREFIX)/ccc-syntax does not exist)
-    WITH_SYNTAX_CHECK :=
   endif
 endif
 
