@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9dc4c07e_25d4b9be",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-13T06:58:57Z",
+      "side": 1,
+      "message": "I\u0027d argue that they shouldn\u0027t be marked as shared libraries, since they don\u0027t match the build system\u0027s definition of a shared library. AFAICT, the only thing it\u0027s giving you is the install path, and we could define the install path for a different class too.\n\nMaybe this should be moved to dynamic_binary.mk now that we don\u0027t support host modules. That file definitely shouldn\u0027t be used except for elf files.",
+      "revId": "3de85fff96d0113d70f1b5e7abde1b29889c81be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
