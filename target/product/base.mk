@@ -105,6 +105,7 @@ PRODUCT_PACKAGES += \
     libwifi-service \
     media \
     media_cmd \
+    mediadrmserver \
     mediaserver \
     mediacodec \
     mediaextractor \
