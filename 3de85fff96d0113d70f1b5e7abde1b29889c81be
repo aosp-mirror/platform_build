@@ -16,6 +16,24 @@
       "revId": "3de85fff96d0113d70f1b5e7abde1b29889c81be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1da7f0d2_868cabf2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-13T08:26:20Z",
+      "side": 1,
+      "message": "We can\u0027t move this to dynamic_binary.mk -- then there\u0027s a path through BUILD_PREBUILT for shared libraries that wouldn\u0027t get this.",
+      "parentUuid": "9dc4c07e_25d4b9be",
+      "revId": "3de85fff96d0113d70f1b5e7abde1b29889c81be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
