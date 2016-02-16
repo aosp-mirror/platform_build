@@ -85,8 +85,7 @@ public abstract class ApkSignerV2 {
      * <p>The attribute contains a comma-separated set of signature scheme IDs.
      */
     public static final String SF_ATTRIBUTE_ANDROID_APK_SIGNED_NAME = "X-Android-APK-Signed";
-    // TODO: Adjust the value when signing scheme finalized.
-    public static final String SF_ATTRIBUTE_ANDROID_APK_SIGNED_VALUE = "1234567890";
+    public static final String SF_ATTRIBUTE_ANDROID_APK_SIGNED_VALUE = "2";
 
     private static final int CONTENT_DIGEST_CHUNKED_SHA256 = 0;
     private static final int CONTENT_DIGEST_CHUNKED_SHA512 = 1;
