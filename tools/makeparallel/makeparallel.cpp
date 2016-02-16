@@ -341,6 +341,8 @@ int main(int argc, char* argv[]) {
     error(errno, errno, "fork failed");
   } else if (pid == 0) {
     // child
+    unsetenv("MAKEFLAGS");
+    unsetenv("MAKELEVEL");
     int ret = execvp(path, args.data());
     if (ret < 0) {
       error(errno, errno, "exec %s failed", path);
