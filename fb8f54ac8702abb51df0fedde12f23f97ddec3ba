@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5da5e8c5_333080c8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1967,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-02-17T09:43:23Z",
+      "side": 1,
+      "message": "Nit: Other such removing substitutions I found in build are all without $(empty) they just use $(subst ...,,...)",
+      "range": {
+        "startLine": 1967,
+        "startChar": 56,
+        "endLine": 1967,
+        "endChar": 64
+      },
+      "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "918f4c7c_2f628917",
         "filename": "core/java.mk",
         "patchSetId": 3
