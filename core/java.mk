@@ -466,6 +466,7 @@ ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
+jack_dictionary := $(intermediates.COMMON)/jack_dictionary
 
 # Hack: see b/20667396
 # When an app's LOCAL_SDK_VERSION is lower than the support library's LOCAL_SDK_VERSION,
@@ -489,9 +490,11 @@ endif
 
 # jack already has the libraries in its classpath and doesn't support jars
 legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) $(full_shared_java_libs))
-common_proguard_flags :=  \
-                  -forceprocessing \
-                  -printmapping $(proguard_dictionary)
+
+legacy_proguard_flags += -printmapping $(proguard_dictionary)
+jack_proguard_flags := -printmapping $(jack_dictionary)
+
+common_proguard_flags := -forceprocessing
 
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
@@ -534,9 +537,9 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
     -verbose \
     $(legacy_proguard_flags)
-# not supported with jack
 ifdef LOCAL_JACK_ENABLED
-    $(error $(LOCAL_MODULE): Build with jack of instrumentation when obfuscating is not yet supported)
+jack_proguard_flags += -applymapping $(link_instr_intermediates_dir.COMMON)/jack_dictionary
+full_jack_deps += $(link_instr_intermediates_dir.COMMON)/jack_dictionary
 endif
 
 # Sometimes (test + main app) uses different keep rules from the main app -
@@ -645,7 +648,13 @@ ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
     $(error $(LOCAL_MODULE): Build with jack when LOCAL_TEST_MODULE_TO_PROGUARD_WITH is defined is not yet implemented)
 endif
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS := $(common_proguard_flags) $(LOCAL_JACK_PROGUARD_FLAGS)
+# $(jack_dictionary) is just by-product of $(built_dex_intermediate).
+# The dummy command was added because, without it, make misses the fact the $(built_dex) also
+# change $(jack_dictionary).
+$(jack_dictionary): $(full_classes_jack)
+	$(hide) touch $@
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS := $(common_proguard_flags) $(jack_proguard_flags) $(LOCAL_JACK_PROGUARD_FLAGS)
 else  # LOCAL_PROGUARD_ENABLED not defined
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS :=
 endif # LOCAL_PROGUARD_ENABLED defined
@@ -653,7 +662,7 @@ endif # LOCAL_PROGUARD_ENABLED defined
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
 
-jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_lib_deps) \
+jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
         $(LOCAL_MODULE_MAKEFILE_DEP) $(JACK)

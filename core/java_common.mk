@@ -302,10 +302,10 @@ endif # LOCAL_SDK_VERSION
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_bootclasspath)
 
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_jack_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 # Turn off .toc optimization for apps build as we cannot build dexdump.
 ifeq (,$(TARGET_BUILD_APPS))
-full_jack_lib_deps := $(patsubst %.jack, %.dex.toc, $(full_jack_lib_deps))
+full_jack_deps := $(patsubst %.jack, %.dex.toc, $(full_jack_deps))
 endif
 
 else # LOCAL_IS_HOST_MODULE
@@ -317,16 +317,18 @@ else
 my_bootclasspath := $(call jack-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_bootclasspath)
+# Compiling against the final jack library. If we want to add support for obfuscated library
+# we'll need to change that to compile against the not obfuscated jack library.
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_lib_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_jack_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES :=
 full_shared_jack_libs := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_lib_deps := $(full_shared_jack_libs)
+full_jack_deps := $(full_shared_jack_libs)
 endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 full_jack_libs := $(full_shared_jack_libs) $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
-full_jack_lib_deps += $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
+full_jack_deps += $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
 
 ifndef LOCAL_IS_HOST_MODULE
 # This is set by packages that are linking to other packages that export
@@ -340,7 +342,7 @@ ifneq ($(apk_libraries),)
   # link against the jar with full original names (before proguard processing).
   full_shared_jack_libs += $(link_apk_jack_libraries)
   full_jack_libs += $(link_apk_jack_libraries)
-  full_jack_lib_deps += $(link_apk_jack_libraries)
+  full_jack_deps += $(link_apk_jack_libraries)
 endif
 
 # This is set by packages that contain instrumentation, allowing them to
@@ -350,7 +352,7 @@ ifdef LOCAL_INSTRUMENTATION_FOR
    # link against the jar with full original names (before proguard processing).
    link_instr_classes_jack := $(link_instr_intermediates_dir.COMMON)/classes.noshrob.jack
    full_jack_libs += $(link_instr_classes_jack)
-   full_jack_lib_deps += $(link_instr_classes_jack)
+   full_jack_deps += $(link_instr_classes_jack)
 endif  # LOCAL_INSTRUMENTATION_FOR
 endif  # !LOCAL_IS_HOST_MODULE
 
