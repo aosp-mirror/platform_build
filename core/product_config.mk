@@ -117,7 +117,7 @@ ifdef product_goals
   # which really means TARGET_PRODUCT=dream make installclean.
   ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
     MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
-    TARGET_BUILD_VARIANT := eng
+    TARGET_BUILD_VARIANT := userdebug
     default_goal_substitution :=
   else
     default_goal_substitution := $(DEFAULT_GOAL)

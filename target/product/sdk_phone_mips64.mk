@@ -23,7 +23,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
 
 # Overrides
-PRODUCT_BRAND := generic_mips64
+PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_mips64
 PRODUCT_DEVICE := generic_mips64
 PRODUCT_MODEL := Android SDK built for mips64

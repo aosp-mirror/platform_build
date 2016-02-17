@@ -22,7 +22,7 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
 
 # Overrides
-PRODUCT_BRAND := generic_mips
+PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_mips
 PRODUCT_DEVICE := generic_mips
 PRODUCT_MODEL := Android SDK for Mips
