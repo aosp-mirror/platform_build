@@ -25,6 +25,76 @@
     },
     {
       "key": {
+        "uuid": "9d6840a0_799ec7db",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1967,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-02-18T00:29:25Z",
+      "side": 1,
+      "message": "they are the same in this case.",
+      "parentUuid": "5da5e8c5_333080c8",
+      "range": {
+        "startLine": 1967,
+        "startChar": 56,
+        "endLine": 1967,
+        "endChar": 64
+      },
+      "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd993cfa_3c67d192",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1968,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-02-18T00:29:25Z",
+      "side": 1,
+      "message": "I would remove the use of temp var list_, with:\n$(call transform-to-jack-filter-list,\\\n  $(call split-emma-filter-list,$(subst +,$(empty),$(1))))",
+      "range": {
+        "startLine": 1968,
+        "startChar": 0,
+        "endLine": 1968,
+        "endChar": 63
+      },
+      "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d9034ca_de3ee5a2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1976,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-02-18T00:29:25Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 1975,
+        "startChar": 0,
+        "endLine": 1976,
+        "endChar": 76
+      },
+      "revId": "fb8f54ac8702abb51df0fedde12f23f97ddec3ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "918f4c7c_2f628917",
         "filename": "core/java.mk",
         "patchSetId": 3
