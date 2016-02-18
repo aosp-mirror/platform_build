@@ -1,6 +1,13 @@
+# goldfish
 /dev/block/mtdblock0         u:object_r:system_block_device:s0
 /dev/block/mtdblock1         u:object_r:userdata_block_device:s0
 /dev/block/mtdblock2         u:object_r:cache_block_device:s0
+
+# ranchu
+/dev/block/vda               u:object_r:system_block_device:s0
+/dev/block/vdb               u:object_r:cache_block_device:s0
+/dev/block/vdc               u:object_r:userdata_block_device:s0
+
 /dev/goldfish_pipe           u:object_r:qemu_device:s0
 /dev/qemu_.*                 u:object_r:qemu_device:s0
 /dev/socket/qemud            u:object_r:qemud_socket:s0
