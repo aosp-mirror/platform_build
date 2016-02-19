@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c23655de_f86a6959",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 547,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-02-19T00:11:34Z",
+      "side": 1,
+      "message": "nit: move to 564?",
+      "range": {
+        "startLine": 547,
+        "startChar": 0,
+        "endLine": 547,
+        "endChar": 73
+      },
+      "revId": "8894e91ccf14e200cd37b732e2dd9bd66cd49db6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
