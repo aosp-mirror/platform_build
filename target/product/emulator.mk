@@ -39,6 +39,8 @@ PRODUCT_PACKAGES += \
     qemud \
     camera.goldfish \
     camera.goldfish.jpeg \
+    camera.ranchu \
+    camera.ranchu.jpeg \
     lights.goldfish \
     gps.goldfish \
     fingerprint.goldfish \
