@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     camera.ranchu.jpeg \
     lights.goldfish \
     gps.goldfish \
+    gps.ranchu \
     fingerprint.goldfish \
     sensors.goldfish \
     audio.primary.goldfish \
