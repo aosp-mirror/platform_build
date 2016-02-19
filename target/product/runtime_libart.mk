@@ -47,7 +47,8 @@ PRODUCT_PACKAGES += \
     libz \
     oatdump \
     okhttp \
-    patchoat
+    patchoat \
+    profman
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.image-dex2oat-Xms=64m \
