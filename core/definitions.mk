@@ -320,6 +320,24 @@ $(call all-Iaidl-files-under,.)
 endef
 
 ###########################################################
+## Find all files named "*.vts" under the named directories,
+## which must be relative to $(LOCAL_PATH).  The returned list
+## is relative to $(LOCAL_PATH).
+###########################################################
+
+define all-vts-files-under
+$(call all-named-files-under,*.vts,$(1))
+endef
+
+###########################################################
+## Find all of the "*.vts" files under $(LOCAL_PATH).
+###########################################################
+
+define all-subdir-vts-files
+$(call all-vts-files-under,.)
+endef
+
+###########################################################
 ## Find all of the logtags files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-logtags-files-under,src)
@@ -1084,6 +1102,31 @@ define-aidl-cpp-rule-src := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(subst ..
 $$(define-aidl-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(AIDL_CPP)
 	$$(transform-aidl-to-cpp)
 $(3) += $$(define-aidl-cpp-rule-src)
+endef
+
+###########################################################
+## Commands for running vts
+###########################################################
+
+define transform-vts-to-cpp
+@mkdir -p $(dir $@)
+@mkdir -p $(PRIVATE_HEADER_OUTPUT_DIR)
+@echo "Generating C++ from VTS: $(PRIVATE_MODULE) <= $<"
+$(hide) $(VTSC) -d$(basename $@).vts.P $(PRIVATE_VTS_FLAGS) \
+    $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
+endef
+
+## Given a .vts file path generate the rule to compile it a .cpp file.
+# $(1): a .vts source file
+# $(2): a directory to place the generated .cpp files in
+# $(3): name of a variable to add the path to the generated source file to
+#
+# You must call this with $(eval).
+define define-vts-cpp-rule
+define-vts-cpp-rule-src := $(patsubst %.vts,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define-vts-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(VTSC)
+	$$(transform-vts-to-cpp)
+$(3) += $$(define-vts-cpp-rule-src)
 endef
 
 ###########################################################
