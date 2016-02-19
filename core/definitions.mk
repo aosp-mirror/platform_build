@@ -482,7 +482,7 @@ $(strip \
     $(eval _idf2ndArchPrefix := $(if $(strip $(5)),$(TARGET_2ND_ARCH_VAR_PREFIX))) \
     $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_INTERMEDIATES)) \
-      ,$(if $(filter $(_idfClass),SHARED_LIBRARIES STATIC_LIBRARIES EXECUTABLES GYP),\
+      ,$(if $(filter $(_idfClass),$(PER_ARCH_MODULE_CLASSES)),\
           $(eval _idfIntBase := $($(_idf2ndArchPrefix)$(_idfPrefix)_OUT_INTERMEDIATES)) \
        ,$(eval _idfIntBase := $($(_idfPrefix)_OUT_INTERMEDIATES)) \
        ) \
