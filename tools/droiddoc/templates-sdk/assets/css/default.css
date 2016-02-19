@@ -3330,7 +3330,7 @@ attrs, methods, etc. */
 h4.jd-details-title {
   font-size:1.15em;
   background-color: #E2E2E2;
-  margin:1.5em 0 .6em;
+  margin:4em 0 .6em;
   padding:3px 95px 3px 3px; /* room for api-level */
 }
 body.google h4.jd-details-title {
