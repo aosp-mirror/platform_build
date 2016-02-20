@@ -16,6 +16,9 @@
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
 
+PRODUCT_PACKAGES += \
+    messaging
+
 # Overrides
 PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_armv7
