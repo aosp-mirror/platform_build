@@ -47,6 +47,20 @@ unique_product_copy_files_pairs :=
 unique_product_copy_files_destinations :=
 
 # -----------------------------------------------------------------
+# Define rules to copy headers defined in copy_headers.mk
+# If more than one makefile declared a header, print a warning,
+# then copy the last one defined. This matches the previous make
+# behavior.
+$(foreach dest,$(ALL_COPIED_HEADERS), \
+    $(eval _srcs := $(ALL_COPIED_HEADERS.$(dest).SRC)) \
+    $(eval _src := $(word $(words $(_srcs)),$(_srcs))) \
+    $(if $(call streq,$(_src),$(_srcs)),, \
+        $(warning Duplicate header copy: $(dest)) \
+	$(warning Defined in: $(ALL_COPIED_HEADERS.$(dest).MAKEFILE))) \
+    $(eval $(call copy-one-header,$(_src),$(dest))))
+all_copied_headers: $(ALL_COPIED_HEADERS)
+
+# -----------------------------------------------------------------
 # docs/index.html
 ifeq (,$(TARGET_BUILD_APPS))
 gen := $(OUT_DOCS)/index.html
@@ -469,7 +483,6 @@ endif
 # the ramdisk
 INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 	$(ALL_PREBUILT) \
-	$(ALL_COPIED_HEADERS) \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
@@ -1033,7 +1046,6 @@ PDK_FUSION_SYSIMG_FILES := \
 
 INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
     $(ALL_PREBUILT) \
-    $(ALL_COPIED_HEADERS) \
     $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(PDK_FUSION_SYSIMG_FILES) \
@@ -1950,7 +1962,6 @@ ATREE_FILES :=
 ifeq ($(strip $(ATREE_FILES)),)
 ATREE_FILES := \
 	$(ALL_PREBUILT) \
-	$(ALL_COPIED_HEADERS) \
 	$(ALL_DEFAULT_INSTALLED_MODULES) \
 	$(INSTALLED_RAMDISK_TARGET) \
 	$(ALL_DOCS) \
