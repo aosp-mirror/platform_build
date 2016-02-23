@@ -4,7 +4,7 @@
 ## Java version
 ###########################################################
 ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
-  LOCAL_JAVA_LANGUAGE_VERSION := 1.7
+  LOCAL_JAVA_LANGUAGE_VERSION := 1.8
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
 
