@@ -5,8 +5,7 @@
     if:devsite ?>
     <meta name="top_category" value="<?cs
       if:ndk ?>ndk<?cs
-      elif:(google || referensce.gms || reference.gcm) ?>google<?cs
-      elif:(guide||develop||training||reference||tools||sdk||google||samples) ?>develop<?cs
+      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples) ?>develop<?cs
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
       elif:(about||versions||wear||tv||auto) ?>about<?cs
@@ -20,7 +19,7 @@
         elif:downloads ?>downloads<?cs
         else ?>none<?cs /if ?><?cs
       else ?><?cs
-        if:(guide||develop||training||reference||tools||sdk||google||samples) ?><?cs
+        if:(guide||develop||training||reference||tools||sdk||samples) ?><?cs
           if:guide ?>guide<?cs
           elif:training ?><?cs
             if:page.trainingcourse ?>trainingcourse<?cs
@@ -30,6 +29,7 @@
           elif:sdk ?>sdk<?cs
           elif:samples ?>samples<?cs
           else ?>none<?cs /if ?><?cs
+        elif:(google||reference.gms||reference.gcm) ?>google<?cs
         elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
           if:googleplay ?>googleplay<?cs
           elif:essentials ?>essentials<?cs
@@ -40,25 +40,15 @@
           elif:stories ?>stories<?cs
           elif:analyze ?>analyze<?cs
           else ?>none<?cs /if ?><?cs
-        elif:(about||versions||wear||tv||auto) ?><?cs
-          if:versions ?>about<?cs
-          elif:wear ?>wear<?cs
-          elif:tv ?>tv<?cs
-          elif:auto ?>auto<?cs
-          else ?>none<?cs /if ?><?cs
-        elif:design ?><?cs
-          if:vision ?>vision<?cs
-          elif:material ?>material<?cs
-          elif:patterns ?>patterns<?cs
-          elif:devices ?>devices<?cs
-          elif:designdownloads ?>designdownloads<?cs
-          else ?>none<?cs /if ?><?cs
-        elif:training ?><?cs
-          if:page.trainingcourse ?>trainingcourse<?cs
-          else ?>training<?cs /if ?><?cs
+        elif:(about||versions||wear||tv||auto) ?>about<?cs
+        elif:design ?>design<?cs
         elif:walkthru ?>walkthru<?cs
         else ?>none<?cs /if ?><?cs
       /if ?>" />
+
+    <?cs if:nonavpage ?>
+      <meta name="hidetoc" value='True' />
+    <?cs /if ?>
 
     <?cs if:page.tags && page.tags != "" ?>
       <meta name="keywords" value='<?cs var:page.tags ?>' />
