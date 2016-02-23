@@ -289,7 +289,9 @@ endif
 endif
 endif # LOCAL_MODULE_CLASS != APPS
 
-ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+my_src_jar := $(my_prebuilt_src_file)
+ifeq ($(LOCAL_IS_HOST_MODULE),)
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
 # while the deps should be in the common dir, so we make a copy in the common dir.
 # For nonstatic library, $(common_javalib_jar) is the dependency file,
@@ -310,9 +312,6 @@ $(my_src_jar) : $(my_src_aar)
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
 
-else
-# This is jar file.
-my_src_jar := $(my_prebuilt_src_file)
 endif
 $(common_classes_jar) : $(my_src_jar) | $(ACP)
 	$(transform-prebuilt-to-target)
@@ -344,14 +343,13 @@ $(built_module) : $(my_library_resources)
 endif  # USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
-endif # TARGET JAVA_LIBRARIES
-
-ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+endif # LOCAL_IS_HOST_MODULE is not set
 
 ifneq ($(LOCAL_JILL_FLAGS),)
 $(error LOCAL_JILL_FLAGS is not supported any more, please use jack options in LOCAL_JACK_FLAGS instead)
 endif
 
+# We may be building classes.jack from a host jar for host dalvik Java library.
 $(intermediates.COMMON)/classes.jack : PRIVATE_JACK_FLAGS:=$(LOCAL_JACK_FLAGS)
 $(intermediates.COMMON)/classes.jack : $(my_src_jar) $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK) | setup-jack-server
