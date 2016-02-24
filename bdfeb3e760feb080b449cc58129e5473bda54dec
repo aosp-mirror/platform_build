@@ -22,6 +22,30 @@
       "revId": "bdfeb3e760feb080b449cc58129e5473bda54dec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62a5a9c6_9ace2fcf",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1047769
+      },
+      "writtenOn": "2016-02-24T23:02:49Z",
+      "side": 1,
+      "message": "The current behavior is to collapse several TARGET_$(combo...)CPU_VARIANTs down into a single one. I don\u0027t really know if this is required or not but I don\u0027t really want to make such a change in this CL.",
+      "parentUuid": "e2def959_66a40614",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 0
+      },
+      "revId": "bdfeb3e760feb080b449cc58129e5473bda54dec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
