@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "02e4ed24_9dc7447f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 802,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-02-24T19:32:44Z",
+      "side": 1,
+      "message": "wanted to keep this path to allow getting a package, since the script user can still manually change the \"post-timestamp\" line in the generated package. otherwise with \"--downgrade\", we will enforce a data wipe in the generated script. PS3 added some code comments.\n\n(the thought is to only raise an error if you explicitly tell me to do downgrade but i found that\u0027s not true.)",
+      "parentUuid": "22d0113b_496903f9",
+      "range": {
+        "startLine": 802,
+        "startChar": 11,
+        "endLine": 802,
+        "endChar": 56
+      },
+      "revId": "2d08b94b71abdb2e92a215636ff8ee2658fe8215",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62be89e4_4c259145",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-02-24T19:15:59Z",
       "side": 1,
       "message": "post_timestamp?",
+      "range": {
+        "startLine": 804,
+        "startChar": 33,
+        "endLine": 805,
+        "endChar": 71
+      },
+      "revId": "2d08b94b71abdb2e92a215636ff8ee2658fe8215",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2c1f56d_dcfca15f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 805,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-02-24T19:32:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62be89e4_4c259145",
       "range": {
         "startLine": 804,
         "startChar": 33,
