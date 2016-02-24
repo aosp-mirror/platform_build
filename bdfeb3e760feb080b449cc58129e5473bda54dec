@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2def959_66a40614",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2016-02-24T22:56:16Z",
+      "side": 1,
+      "message": "sorry to be a PITA. I wonder if this wouldn\u0027t be better by getting rid of the large if-then-else and having:\n\narch_variants_cflags :\u003d -mcpu\u003d$(TARGET_$(combo...))\n\nlocal_arch_arm_has_lpae :\u003d $(filter cortex-a15 krait denver cortex-a7 cortex-a53 cortex-a53.57,$(TARGET_$(combo...))\nifneq (,$local_arch_arm_has_lpae)\n   # ....\n   arch_variant_cflags +\u003d -D__ARM_FEATURE_LPAE\u003d1\nendif\nlocal_arch_arm_has_lpae :\u003d\n\nlocal_arch_arm_is_non_buggy_cortex_a8 \u003d $(filter cortex-a15 krait denver cortex-a7 cortex-a53 cortex-a53.57,$(TARGET_$(combo...))\nifneq (,$local_arch_arm_is_non_buggy_cortex_a8)\n    arch_variant_ldflags :\u003d -Wl,--no-fix-cortex-a8\nelse\n    arch_variant_ldflags :\u003d -Wl,--fix-cortex-a8\nendif\nlocal_arch_arm_is_non_buggy_cortex_a8 :\u003d\n\nThe code is something of a spaghetti mess currently (not aided by the proposed change) and the end result is that there\u0027s bit rot in areas like -mcpu.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 0
+      },
+      "revId": "bdfeb3e760feb080b449cc58129e5473bda54dec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
