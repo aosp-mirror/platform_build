@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82bb7df1_c5716be9",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2016-02-24T21:36:47Z",
+      "side": 1,
+      "message": "I believe this is TO-DONE:\nhttps://android.googlesource.com/platform/external/llvm/+/master/lib/Target/ARM/ARM.td#284\nand so this should be:\n-mcpu\u003dkrait",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 27
+      },
+      "revId": "9714296822396d194264b1f0e9ac2c875600aeeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "82bb7df1_857b73c5",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2016-02-24T21:36:47Z",
+      "side": 1,
+      "message": "Perhaps define a local_arch_has_lpae\u003dtrue and then add the fake cflag below with this comment. It looks odd that this comment differs from that on line 16.",
+      "range": {
+        "startLine": 32,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 49
+      },
+      "revId": "9714296822396d194264b1f0e9ac2c875600aeeb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
