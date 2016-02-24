@@ -3,8 +3,11 @@
 # Input variables:
 # full_android_manifest,
 # my_res_resources, my_overlay_resources, my_aapt_characteristics,
-# my_compiled_res_base_dir, rs_generated_res_dir, my_res_package,
+# my_compiled_res_base_dir, my_res_package,
 # R_file_stamp, proguard_options_file
+# my_generated_res_dirs: Resources generated during the build process and we have to compile them in a single run of aapt2.
+# my_generated_res_dirs_deps: the dependency to use for my_generated_res_dirs.
+#
 # Output variables:
 # my_res_resources_flat, my_overlay_resources_flat,
 # my_generated_resources_flata
@@ -27,39 +30,45 @@ my_overlay_resources_flat := \
 
 my_generated_resources_flata :=
 # Compile generated resources
-ifneq ($(rs_generated_res_dir),)
-rs_gen_resource_flata := $(my_compiled_res_base_dir)/renderscript_gen_res.flata
-$(rs_gen_resource_flata): PRIVATE_SOURCE_RES_DIR := $(rs_generated_res_dir)
-$(rs_gen_resource_flata) : $(RenderScript_file_stamp)
-	@echo "AAPT2 compile $@ <- $(PRIVATE_SOURCE_RES_DIR)"
-	$(call aapt2-compile-one-resource-dir)
+ifneq ($(my_generated_res_dirs),)
+my_generated_resources_flata := $(my_compiled_res_base_dir)/gen_res.flata
+$(my_generated_resources_flata): PRIVATE_SOURCE_RES_DIRS := $(my_generated_res_dirs)
+$(my_generated_resources_flata) : $(my_generated_res_dirs_deps)
+	@echo "AAPT2 compile $@ <- $(PRIVATE_SOURCE_RES_DIRS)"
+	$(call aapt2-compile-resource-dirs)
 
-my_generated_resources_flata += $(rs_gen_resource_flata)
+my_generated_resources_flata += $(my_generated_resources_flata)
 endif
 
 $(my_res_resources_flat) $(my_overlay_resources_flat) $(my_generated_resources_flata): \
   PRIVATE_AAPT2_CFLAGS := $(addprefix --product ,$(my_aapt_characteristics)) $(PRODUCT_AAPT2_CFLAGS)
 
-# Link the static library resource packages.
-my_static_library_resources := $(foreach l, $(LOCAL_STATIC_JAVA_LIBRARIES),\
-  $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/library-res.flata)
+my_static_library_resources := $(foreach l, $(LOCAL_STATIC_ANDROID_LIBRARIES),\
+  $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
+my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
+  $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
 
 $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
 $(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_overlay_resources_flat) $(my_generated_resources_flata) $(my_static_library_resources)
+$(my_res_package): PRIVATE_SHARED_ANDROID_LIBRARIES := $(my_shared_library_resources)
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
-$(my_res_package) : $(full_android_manifest)
+$(my_res_package) : $(full_android_manifest) $(my_static_library_resources) $(my_shared_library_resources)
 $(my_res_package) : $(my_res_resources_flat) $(my_overlay_resources_flat) \
   $(my_generated_resources_flata) $(my_static_library_resources) \
   $(AAPT2)
 	@echo "AAPT2 link $@"
 	$(call aapt2-link)
 
+ifdef R_file_stamp
 $(R_file_stamp) : $(my_res_package) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
 	$(call find-generated-R.java)
+endif
 
+ifdef proguard_options_file
 $(proguard_options_file) : $(my_res_package)
+endif
 
 resource_export_package :=
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
