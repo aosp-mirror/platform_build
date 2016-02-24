@@ -22,6 +22,30 @@
       "revId": "d8d4dbc14db1c28e1c4ccd8869c358b4fe22a57e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02e4ed24_fd6768f4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-02-24T18:35:55Z",
+      "side": 1,
+      "message": "done. here and L1430.",
+      "parentUuid": "c2c1f56d_8f4dd4b4",
+      "range": {
+        "startLine": 797,
+        "startChar": 6,
+        "endLine": 797,
+        "endChar": 11
+      },
+      "revId": "d8d4dbc14db1c28e1c4ccd8869c358b4fe22a57e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
