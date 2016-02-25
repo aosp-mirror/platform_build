@@ -70,6 +70,30 @@
       "revId": "d996af24957eb72bad27ed3f3586e2dc023b2108",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2981592_ae1bfc93",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-25T01:25:33Z",
+      "side": 1,
+      "message": "get_build_var works. Thanks.",
+      "parentUuid": "02e4ed24_649520f5",
+      "range": {
+        "startLine": 652,
+        "startChar": 65,
+        "endLine": 652,
+        "endChar": 72
+      },
+      "revId": "d996af24957eb72bad27ed3f3586e2dc023b2108",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
