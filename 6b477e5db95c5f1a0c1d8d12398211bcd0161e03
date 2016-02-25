@@ -22,6 +22,30 @@
       "revId": "6b477e5db95c5f1a0c1d8d12398211bcd0161e03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e2b0b90b_b88ea0e8",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-02-25T03:21:36Z",
+      "side": 1,
+      "message": "I think it will work for darwin-x86, but have not tested it yet.\nPTAL PS3.",
+      "parentUuid": "c2981592_6e13b4ec",
+      "range": {
+        "startLine": 653,
+        "startChar": 49,
+        "endLine": 653,
+        "endChar": 58
+      },
+      "revId": "6b477e5db95c5f1a0c1d8d12398211bcd0161e03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
