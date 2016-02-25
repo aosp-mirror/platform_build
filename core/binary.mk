@@ -1348,6 +1348,21 @@ my_cflags := $(filter-out $(my_illegal_flags),$(my_cflags))
 my_cppflags := $(filter-out $(my_illegal_flags),$(my_cppflags))
 my_conlyflags := $(filter-out $(my_illegal_flags),$(my_conlyflags))
 
+# We can enforce some rules more strictly in the code we own. my_strict
+# indicates if this is code that we can be stricter with. If we have rules that
+# we want to apply to *our* code (but maybe can't for vendor/device specific
+# things), we could extend this to be a ternary value.
+my_strict := true
+ifneq ($(filter external/%,$(LOCAL_PATH)),)
+    my_strict := false
+endif
+
+# Can be used to make some annotations stricter for code we can fix (such as
+# when we mark functions as deprecated).
+ifeq ($(my_strict),true)
+    my_cflags += -DANDROID_STRICT
+endif
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASFLAGS := $(my_asflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CONLYFLAGS := $(my_conlyflags)
