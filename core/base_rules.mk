@@ -323,23 +323,22 @@ $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 endif
 
 # Rule to install the module's companion init.rc.
-my_init_rc := $(LOCAL_INIT_RC_$(my_32_64_bit_suffix))
-my_init_rc_src :=
 my_init_rc_installed :=
-ifndef my_init_rc
-my_init_rc := $(LOCAL_INIT_RC)
+my_init_rc_pairs :=
+my_init_rc := $(LOCAL_INIT_RC_$(my_32_64_bit_suffix))
+ifneq ($(my_init_rc),)
+my_init_rc_pairs += $(LOCAL_PATH)/$(my_init_rc):$(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(my_init_rc))
+endif
+ifneq ($(LOCAL_INIT_RC),)
+my_init_rc_pairs += $(LOCAL_PATH)/$(LOCAL_INIT_RC):$(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(LOCAL_INIT_RC))
 # Make sure we don't define the rule twice in multilib module.
 LOCAL_INIT_RC :=
 endif
-ifdef my_init_rc
-my_init_rc_src := $(LOCAL_PATH)/$(my_init_rc)
-my_init_rc_installed := $(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(my_init_rc_src))
-$(my_init_rc_installed) : $(my_init_rc_src) | $(ACP)
-	@echo "Install: $@"
-	$(copy-file-to-new-target)
+ifneq ($(my_init_rc_pairs),)
+my_init_rc_installed := $(call copy-many-files,$(my_init_rc_pairs))
 
 $(my_register_name) : $(my_init_rc_installed)
-endif # my_init_rc
+endif # my_init_rc_pairs
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
@@ -436,7 +435,7 @@ ALL_MODULES.$(my_register_name).INSTALLED := \
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
-    $(addprefix $(my_init_rc_src):,$(my_init_rc_installed)))
+    $(my_init_rc_pairs))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
