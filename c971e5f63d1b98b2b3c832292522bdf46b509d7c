@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a29b218c_430b16bc",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1357,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-02-25T18:32:38Z",
+      "side": 1,
+      "message": "ifneq ($(filter external/%,$(LOCAL_PATH)),)\n  my_strict :\u003d false\nendif",
+      "range": {
+        "startLine": 1354,
+        "startChar": 0,
+        "endLine": 1357,
+        "endChar": 5
+      },
+      "revId": "c971e5f63d1b98b2b3c832292522bdf46b509d7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
