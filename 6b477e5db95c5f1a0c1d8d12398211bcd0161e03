@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2981592_6e13b4ec",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-02-25T02:49:19Z",
+      "side": 1,
+      "message": "Oh, I didn\u0027t notice this on the first look here. We should be able to support darwin as well, right? That is easy to determine and use (based on $OSTYPE).",
+      "range": {
+        "startLine": 653,
+        "startChar": 49,
+        "endLine": 653,
+        "endChar": 58
+      },
+      "revId": "6b477e5db95c5f1a0c1d8d12398211bcd0161e03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
