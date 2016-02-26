@@ -1825,9 +1825,9 @@ define aapt2-compile-one-resource-file
 $(hide) $(AAPT2) compile -o $(dir $@) $(PRIVATE_AAPT2_CFLAGS) --legacy $<
 endef
 
-define aapt2-compile-one-resource-dir
+define aapt2-compile-resource-dirs
 @mkdir -p $(dir $@)
-$(hide) $(AAPT2) compile -o $@ --dir $(PRIVATE_SOURCE_RES_DIR) \
+$(hide) $(AAPT2) compile -o $@ $(addprefix --dir ,$(PRIVATE_SOURCE_RES_DIRS)) \
   $(PRIVATE_AAPT2_CFLAGS) --legacy
 endef
 
@@ -1856,8 +1856,10 @@ endef
 define aapt2-link
 $(hide) $(AAPT2) link -o $@ \
   $(PRIVATE_AAPT_FLAGS) \
+  --auto-add-overlay \
   $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
   $(addprefix -I ,$(PRIVATE_AAPT_INCLUDES)) \
+  $(addprefix -I ,$(PRIVATE_SHARED_ANDROID_LIBRARIES)) \
   $(addprefix --java ,$(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
   $(addprefix --proguard ,$(PRIVATE_PROGUARD_OPTIONS_FILE)) \
   $(addprefix --min-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \

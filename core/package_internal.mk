@@ -115,7 +115,7 @@ ifneq ($(all_assets),)
 need_compile_asset := true
 endif
 
-ifdef USE_AAPT2
+ifdef LOCAL_USE_AAPT2
 # In aapt2 the last takes precedence.
 my_resource_dirs := $(call reverse-list,$(LOCAL_RESOURCE_DIR))
 my_res_resources :=
@@ -140,7 +140,7 @@ LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 # Always run aapt2
 need_compile_res := true
 
-else  # USE_AAPT2
+else  # LOCAL_USE_AAPT2
 all_resources := $(strip \
     $(foreach dir, $(LOCAL_RESOURCE_DIR), \
       $(addprefix $(dir)/, \
@@ -150,7 +150,7 @@ all_resources := $(strip \
        ) \
      ))
 
-endif  # USE_AAPT2
+endif  # LOCAL_USE_AAPT2
 
 ifneq ($(all_resources),)
   need_compile_res := true
@@ -312,11 +312,16 @@ $(built_dex_intermediate) : $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
 ifeq ($(need_compile_res),true)
-ifdef USE_AAPT2
-my_aapt_characteristics := $(TARGET_AAPT_CHARACTERISTICS)
+ifdef LOCAL_USE_AAPT2
+# my_aapt_characteristics := $(TARGET_AAPT_CHARACTERISTICS)
+my_aapt_characteristics :=
 my_compiled_res_base_dir := $(intermediates)/flat-res
+my_generated_res_dirs := $(rs_generated_res_dir)
+my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+# Add AAPT2 specific flags.
+$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
 include $(BUILD_SYSTEM)/aapt2.mk
-else  # USE_AAPT2
+else  # LOCAL_USE_AAPT2
 
 # Since we don't know where the real R.java file is going to end up,
 # we need to use another file to stand in its place.  We'll just
@@ -356,7 +361,7 @@ $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderS
 	$(add-assets-to-package)
 endif
 
-endif  # USE_AAPT2
+endif  # LOCAL_USE_AAPT2
 
 # Other modules should depend on the BUILT module if
 # they want to use this module's R.java file.
@@ -419,7 +424,7 @@ $(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 
-ifdef USE_AAPT2
+ifdef LOCAL_USE_AAPT2
 $(my_res_package) : $(all_library_res_package_export_deps)
 endif
 endif # LOCAL_NO_STANDARD_LIBRARIES
@@ -491,14 +496,14 @@ endif
 endif
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
-ifdef USE_AAPT2
+ifdef LOCAL_USE_AAPT2
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
 $(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT)
 endif
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-ifdef USE_AAPT2
+ifdef LOCAL_USE_AAPT2
 ifdef LOCAL_JACK_ENABLED
 	$(call copy-file-to-new-target)
 else
@@ -507,7 +512,7 @@ else
 	  $(call merge-two-packages,$(PRIVATE_RES_PACKAGE) $(PRIVATE_SOURCE_ARCHIVE),$@),
 	  $(call copy-file-to-new-target))
 endif
-else  # USE_AAPT2
+else  # LOCAL_USE_AAPT2
 ifdef LOCAL_JACK_ENABLED
 	$(create-empty-package)
 else
@@ -516,7 +521,7 @@ else
 	  $(create-empty-package))
 endif
 	$(add-assets-to-package)
-endif  # USE_AAPT2
+endif  # LOCAL_USE_AAPT2
 ifneq ($(jni_shared_libraries),)
 	$(add-jni-shared-libs-to-package)
 endif
