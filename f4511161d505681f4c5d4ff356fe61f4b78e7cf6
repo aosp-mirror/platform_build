@@ -22,6 +22,30 @@
       "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "620cc9c0_2a65bf88",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-02-26T19:44:24Z",
+      "side": 1,
+      "message": "For dynamically linked ckati, we don\u0027t need the --whole-archive and -ldl. These flags are necessary only when -static is specified. So having these flags without -static would be somewhat confusing.\n\nIf you are suggesting we should move all flags including -static to Makefile.ckati, it would be an option. But I\u0027d like to keep using dynamically linked ckati for development as some debugging tools for C++ work poorly for statically linked binaries.",
+      "parentUuid": "c2981592_9f686162",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 76
+      },
+      "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
