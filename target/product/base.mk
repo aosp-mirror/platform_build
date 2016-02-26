@@ -32,8 +32,6 @@ PRODUCT_PACKAGES += \
     bugreport \
     cameraserver \
     content \
-    dhcpcd \
-    dhcpcd-run-hooks \
     dnsmasq \
     dpm \
     framework \
