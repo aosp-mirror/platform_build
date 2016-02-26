@@ -321,26 +321,34 @@ $(common_javalib_jar) : $(common_classes_jar) | $(ACP)
 
 $(call define-jar-to-toc-rule, $(common_classes_jar))
 
-ifdef USE_AAPT2
-my_library_resources := $(intermediates.COMMON)/library-res.flata
+ifdef LOCAL_USE_AAPT2
 ifneq ($(my_src_aar),)
-# Compile the AAR resources to a .flata.
-$(my_library_resources): PRIVATE_SOURCE_RES_DIR := $(intermediates.COMMON)/aar/res
-$(my_library_resources) : $(my_src_jar)
-	@echo "AAPT2 compile AAR $@ <- $(PRIVATE_SOURCE_RES_DIR)"
-	$(call aapt2-compile-one-resource-dir)
-else  # $(my_src_aar)
-# Create an empty packag for prebuilt static Java library.
-# TODO: support compiled resources inside a prebuilt static Java library.
-$(my_library_resources): PRIVATE_RES_DIR := $(intermediates.COMMON)/flat-res/res
-$(my_library_resources) :
-	@echo "Create empty library resources $@"
-	@rm -rf $@ && mkdir -p $(dir $@) $(PRIVATE_RES_DIR)
-	$(hide) cd $(dir $(PRIVATE_RES_DIR)) && zip -qrX $(abspath $@) $(notdir $(PRIVATE_RES_DIR))
+my_res_package := $(intermediates.COMMON)/package-res.apk
+
+# We needed only very few PRIVATE variables and aapt2.mk input variables. Reset the unnecessary ones.
+$(my_res_package): PRIVATE_AAPT2_CFLAGS :=
+$(my_res_package): PRIVATE_ANDROID_MANIFEST := $(intermediates.COMMON)/aar/AndroidManifest.xml
+$(my_res_package): PRIVATE_AAPT_INCLUDES :=
+$(my_res_package): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
+$(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE :=
+$(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
+$(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
+
+full_android_manifest :=
+my_res_resources :=
+my_overlay_resources :=
+my_aapt_characteristics :=
+my_compiled_res_base_dir :=
+R_file_stamp :=
+proguard_options_file :=
+my_generated_res_dirs := $(intermediates.COMMON)/aar/res
+my_generated_res_dirs_deps := $(my_src_jar)
+include $(BUILD_SYSTEM)/aapt2.mk
+
+# Make sure my_res_package is created when you run mm/mmm.
+$(built_module) : $(my_res_package)
 endif  # $(my_src_aar)
-# Make sure my_library_resources is created when you run mm/mmm.
-$(built_module) : $(my_library_resources)
-endif  # USE_AAPT2
+endif  # LOCAL_USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
 endif # LOCAL_IS_HOST_MODULE is not set
