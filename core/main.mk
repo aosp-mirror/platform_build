@@ -137,6 +137,8 @@ endif
 
 # CTS-specific config.
 -include cts/build/config.mk
+# VTS-specific config.
+-include test/vts/tools/vts-tradefed/build/config.mk
 
 # This allows us to force a clean build - included after the config.mk
 # environment setup is done, but before we generate any dependencies.  This
