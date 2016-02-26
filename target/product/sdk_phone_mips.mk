@@ -21,6 +21,9 @@
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
 
+# AOSP emulator images build the AOSP messaging app.
+# Google API images override with the Google API app.
+# See vendor/google/products/sdk_google_phone_*.mk
 PRODUCT_PACKAGES += \
     messaging
 
