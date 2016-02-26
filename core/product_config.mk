@@ -302,11 +302,8 @@ PRODUCT_AAPT_FLAGS :=
 PRODUCT_AAPT2_CFLAGS :=
 ifneq ($(filter en_XA ar_XB,$(PRODUCT_LOCALES)),)
   # Force generating resources for pseudo-locales.
-  ifdef USE_AAPT2
-    PRODUCT_AAPT2_CFLAGS += --pseudo-localize
-  else
-    PRODUCT_AAPT_FLAGS += --pseudo-localize
-  endif
+  PRODUCT_AAPT2_CFLAGS += --pseudo-localize
+  PRODUCT_AAPT_FLAGS += --pseudo-localize
 endif
 
 PRODUCT_BRAND := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BRAND))
