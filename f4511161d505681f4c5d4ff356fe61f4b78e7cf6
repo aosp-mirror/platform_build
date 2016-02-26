@@ -46,6 +46,30 @@
       "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02e4ed24_9eaa9047",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-26T20:17:42Z",
+      "side": 1,
+      "message": "I\u0027m not too concerned about keeping this clean. Once we turn on Soong, this won\u0027t be used, and we\u0027ll be building Kati as a dynamic binary with Soong.",
+      "parentUuid": "620cc9c0_2a65bf88",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 76
+      },
+      "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
