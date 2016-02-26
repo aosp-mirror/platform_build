@@ -2,7 +2,7 @@
 # Compile resource with AAPT2
 # Input variables:
 # full_android_manifest,
-# my_res_resources, my_overlay_resources, my_aapt_characteristics,
+# my_res_resources, my_overlay_resources,
 # my_compiled_res_base_dir, my_res_package,
 # R_file_stamp, proguard_options_file
 # my_generated_res_dirs: Resources generated during the build process and we have to compile them in a single run of aapt2.
@@ -41,15 +41,15 @@ my_generated_resources_flata += $(my_generated_resources_flata)
 endif
 
 $(my_res_resources_flat) $(my_overlay_resources_flat) $(my_generated_resources_flata): \
-  PRIVATE_AAPT2_CFLAGS := $(addprefix --product ,$(my_aapt_characteristics)) $(PRODUCT_AAPT2_CFLAGS)
+  PRIVATE_AAPT2_CFLAGS := $(PRODUCT_AAPT2_CFLAGS)
 
-my_static_library_resources := $(foreach l, $(LOCAL_STATIC_ANDROID_LIBRARIES),\
+my_static_library_resources := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES)),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
 my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
 
 $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
-$(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_overlay_resources_flat) $(my_generated_resources_flata) $(my_static_library_resources)
+$(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_static_library_resources) $(my_generated_resources_flata) $(my_overlay_resources_flat)
 $(my_res_package): PRIVATE_SHARED_ANDROID_LIBRARIES := $(my_shared_library_resources)
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(my_res_package) : $(full_android_manifest) $(my_static_library_resources) $(my_shared_library_resources)

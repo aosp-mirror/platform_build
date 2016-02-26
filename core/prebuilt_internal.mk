@@ -333,11 +333,13 @@ $(my_res_package): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE :=
 $(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
 $(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
+$(my_res_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
+$(my_res_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
+$(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
 
 full_android_manifest :=
 my_res_resources :=
 my_overlay_resources :=
-my_aapt_characteristics :=
 my_compiled_res_base_dir :=
 R_file_stamp :=
 proguard_options_file :=
