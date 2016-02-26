@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c2981592_9f686162",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-02-26T18:19:05Z",
+      "side": 1,
+      "message": "Should this be in build/kati/Makefile.ckati instead?",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 76
+      },
+      "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
