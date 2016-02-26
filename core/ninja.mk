@@ -160,7 +160,8 @@ KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAG
 KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
 # Build static ckati. Unfortunately Mac OS X doesn't officially support static exectuables.
 ifeq ($(BUILD_OS),linux)
-KATI_LD += -static
+# We need everything in libpthread.a otherwise C++11's threading library will be disabled.
+KATI_LD += -static -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -ldl
 endif
 
 KATI_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/ckati_intermediates
