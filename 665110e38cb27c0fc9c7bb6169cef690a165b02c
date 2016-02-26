@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4276e54b_82710aea",
+        "filename": "tools/brillo-clang-format",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1076863
+      },
+      "writtenOn": "2016-02-26T20:06:41Z",
+      "side": 1,
+      "message": "Why is this \"false\"?\n\nIf I remember correctly, we always used each parameter on separate line when defining functions but we pack arguments (when calling functions).",
+      "range": {
+        "startLine": 32,
+        "startChar": 18,
+        "endLine": 32,
+        "endChar": 23
+      },
+      "revId": "665110e38cb27c0fc9c7bb6169cef690a165b02c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
