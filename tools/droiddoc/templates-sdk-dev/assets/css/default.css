@@ -8771,10 +8771,22 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   color: #333;
   display: block;
   font-size: 0.81em;
-  line-height: 1.2em;
+  line-height: 1.5em;
   padding: 0 12px 5px 12px;
   width: 100%;
   white-space: nowrap;
+}
+
+ul.dac-search-results-reference {
+list-style: none;
+}
+
+ul.dac-search-results-reference li[data-toggle="show-more"] {
+  cursor:pointer;
+}
+
+ul.dac-search-results-reference.is-expanded li[data-toggle="show-more"] {
+  display:none;
 }
 
 .dac-search-results-reference-entry a:hover {
