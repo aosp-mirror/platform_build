@@ -246,15 +246,7 @@ installclean_files := \
 	$(PRODUCT_OUT)/oem \
 	$(PRODUCT_OUT)/dex_bootjars \
 	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES \
-	$(PRODUCT_OUT)/obj/FAKE \
-	$(PRODUCT_OUT)/obj/EXECUTABLES/adbd_intermediates \
-	$(PRODUCT_OUT)/obj/EXECUTABLES/logd_intermediates \
-	$(PRODUCT_OUT)/obj/STATIC_LIBRARIES/libfs_mgr_intermediates \
-	$(PRODUCT_OUT)/obj/EXECUTABLES/init_intermediates \
-	$(PRODUCT_OUT)/obj/ETC/mac_permissions.xml_intermediates \
-	$(PRODUCT_OUT)/obj/ETC/sepolicy_intermediates \
-	$(PRODUCT_OUT)/obj/ETC/sepolicy.recovery_intermediates \
-	$(PRODUCT_OUT)/obj/ETC/init.environ.rc_intermediates
+	$(PRODUCT_OUT)/obj/FAKE
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.
