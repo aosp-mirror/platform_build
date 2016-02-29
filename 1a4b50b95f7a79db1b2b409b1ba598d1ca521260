@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e27a7932_036999f9",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1077847
+      },
+      "writtenOn": "2016-02-29T21:52:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22ef3134_06daa092",
+      "revId": "1a4b50b95f7a79db1b2b409b1ba598d1ca521260",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "22ef3134_a6bdac30",
         "filename": "core/tasks/brillo_tests.mk",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "e27a7932_236e1502",
+        "filename": "core/tasks/brillo_tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1077847
+      },
+      "writtenOn": "2016-02-29T21:52:54Z",
+      "side": 1,
+      "message": "Nope. Ying had suggested it, and I didn\u0027t realize there were task directories under device/. Done.",
+      "parentUuid": "22ef3134_a6bdac30",
+      "revId": "1a4b50b95f7a79db1b2b409b1ba598d1ca521260",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2e32149_35d0a817",
         "filename": "core/tasks/brillo_tests.mk",
         "patchSetId": 1
@@ -47,6 +83,30 @@
       "writtenOn": "2016-02-29T21:25:47Z",
       "side": 1,
       "message": "Why is this defined in a task, and not in device/generic/brillo/Android.mk?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "1a4b50b95f7a79db1b2b409b1ba598d1ca521260",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e27a7932_835d8951",
+        "filename": "core/tasks/brillo_tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1077847
+      },
+      "writtenOn": "2016-02-29T21:52:54Z",
+      "side": 1,
+      "message": "put in device/generic/brillo/build/Android.mk",
+      "parentUuid": "a2e32149_35d0a817",
       "range": {
         "startLine": 20,
         "startChar": 0,
