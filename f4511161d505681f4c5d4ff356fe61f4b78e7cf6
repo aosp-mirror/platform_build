@@ -94,6 +94,30 @@
       "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "02cf8da0_fbbd402f",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-02-29T11:05:06Z",
+      "side": 1,
+      "message": "Good news!",
+      "parentUuid": "02e4ed24_9eaa9047",
+      "range": {
+        "startLine": 162,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 76
+      },
+      "revId": "f4511161d505681f4c5d4ff356fe61f4b78e7cf6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
