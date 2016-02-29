@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22ef3134_06daa092",
+        "filename": "core/ninja.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-29T21:25:47Z",
+      "side": 1,
+      "message": "I\u0027m not convinced this needs to be protected against BRILLO.",
+      "revId": "1a4b50b95f7a79db1b2b409b1ba598d1ca521260",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22ef3134_a6bdac30",
+        "filename": "core/tasks/brillo_tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-29T21:25:47Z",
+      "side": 1,
+      "message": "This could be in device/generic/brillo/build/tasks/... -- any particular reason to put it here?",
+      "revId": "1a4b50b95f7a79db1b2b409b1ba598d1ca521260",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a2e32149_35d0a817",
+        "filename": "core/tasks/brillo_tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-02-29T21:25:47Z",
+      "side": 1,
+      "message": "Why is this defined in a task, and not in device/generic/brillo/Android.mk?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 30
+      },
+      "revId": "1a4b50b95f7a79db1b2b409b1ba598d1ca521260",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
