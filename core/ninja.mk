@@ -27,6 +27,7 @@ PARSE_TIME_MAKE_GOALS := \
 	ECLIPSE-% \
 	PRODUCT-% \
 	boottarball-nodeps \
+	brillo_tests \
 	btnod \
 	build-art% \
 	build_kernel-nodeps \
