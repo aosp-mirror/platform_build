@@ -133,7 +133,6 @@ endef
 define my-dir
 $(strip \
   $(eval LOCAL_MODULE_MAKEFILE := $$(lastword $$(MAKEFILE_LIST))) \
-  $(eval LOCAL_MODULE_MAKEFILE_DEP := $(if $(BUILDING_WITH_NINJA),,$$(LOCAL_MODULE_MAKEFILE))) \
   $(if $(filter $(BUILD_SYSTEM)/% $(OUT_DIR)/%,$(LOCAL_MODULE_MAKEFILE)), \
     $(error my-dir must be called before including any other makefile.) \
    , \
@@ -895,15 +894,9 @@ endef
 ###########################################################
 # $(1): the .P file
 # $(2): the main build target
-ifeq ($(BUILDING_WITH_NINJA),true)
 define include-depfile
 $(eval $(2) : .KATI_DEPFILE := $1)
 endef
-else
-define include-depfile
-$(eval -include $1)
-endef
-endif
 
 ###########################################################
 ## Track source files compiled to objects
@@ -2025,9 +2018,7 @@ endef
 # Moves $1.tmp to $1 if necessary. This is designed to be used with
 # .KATI_RESTAT. For kati, this function doesn't update the timestamp
 # of $1 when $1.tmp is identical to $1 so that ninja won't rebuild
-# targets which depend on $1. For GNU make, this function simply
-# copies $1.tmp to $1.
-ifeq ($(BUILDING_WITH_NINJA),true)
+# targets which depend on $1.
 define commit-change-for-toc
 $(hide) if cmp -s $1.tmp $1 ; then \
  rm $1.tmp ; \
@@ -2035,12 +2026,6 @@ else \
  mv $1.tmp $1 ; \
 fi
 endef
-else
-define commit-change-for-toc
-@# make doesn't support restat. We always update .toc files so the dependents will always be updated too.
-$(hide) mv $1.tmp $1
-endef
-endif
 
 ## Rule to create a table of contents from a .jar file.
 ## Must be called with $(eval).
