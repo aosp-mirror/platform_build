@@ -144,18 +144,9 @@ endif
 else
 # Don't strip the binary, just copy it.  We can't skip this step
 # because a copy of the binary must appear at LOCAL_BUILT_MODULE.
-#
-# If the binary we're copying is acp or a prerequisite,
-# use cp(1) instead.
-ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
 $(strip_output): $(strip_input)
 	@echo "target Unstripped: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
-else
-$(strip_output): $(strip_input)
-	@echo "target Unstripped: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target-with-cp)
-endif
 endif # my_strip_module
 
 $(cleantarget): PRIVATE_CLEAN_FILES += \
