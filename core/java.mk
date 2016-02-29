@@ -310,7 +310,6 @@ $(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_
 
 $(aidl_java_sources): $(intermediates.COMMON)/src/%.java: \
         $(LOCAL_PATH)/%.aidl \
-        $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) \
         $(AIDL) \
         $(aidl_preprocess_import)
@@ -419,7 +418,6 @@ $(full_classes_compiled_jar): \
         $(layers_file) \
         $(RenderScript_file_stamp) \
         $(proto_java_sources_file_stamp) \
-        $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
 
@@ -671,7 +669,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
 jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
-        $(LOCAL_MODULE_MAKEFILE_DEP) $(JACK)
+        $(JACK)
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(full_classes_jack): $(jack_all_deps) | setup-jack-server

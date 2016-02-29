@@ -44,7 +44,6 @@ $(LOCAL_BUILD_MODULE): PRIVATE_HOST_LIBPROFILE_RT := $(my_host_libprofile_rt)
 $(LOCAL_BUILT_MODULE): \
         $(all_objects) \
         $(all_libraries) \
-        $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-o-to-shared-lib)
 
