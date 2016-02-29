@@ -2363,7 +2363,7 @@ endef
 # $(1): source file
 # $(2): destination file
 define copy-one-file
-$(2): $(1) | $(ACP)
+$(2): $(1)
 	@echo "Copy: $$@"
 	$$(copy-file-to-target)
 endef
@@ -2399,13 +2399,15 @@ endef
 # Copy a single file from one place to another,
 # preserving permissions and overwriting any existing
 # file.
-# We disable the "-t" option for acp cannot handle
-# high resolution timestamp correctly on file systems like ext4.
-# Therefore copy-file-to-target is the same as copy-file-to-new-target.
+# When we used acp, it could not handle high resolution timestamps
+# on file systems like ext4. Because of that, '-t' option was disabled
+# and copy-file-to-target was identical to copy-file-to-new-target.
+# Keep the behavior until we audit and ensure that switching this back
+# won't break anything.
 define copy-file-to-target
 @mkdir -p $(dir $@)
 $(hide) rm -f $@
-$(hide) $(ACP) -p $< $@
+$(hide) cp $< $@
 endef
 
 # The same as copy-file-to-target, but use the local
@@ -2436,7 +2438,7 @@ endef
 define copy-file-to-new-target
 @mkdir -p $(dir $@)
 $(hide) rm -f $@
-$(hide) $(ACP) -p $< $@
+$(hide) cp $< $@
 endef
 
 # The same as copy-file-to-new-target, but use the local
