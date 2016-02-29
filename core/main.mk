@@ -96,22 +96,15 @@ include $(BUILD_SYSTEM)/help.mk
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
 
-relaunch_with_ninja :=
-ifneq ($(USE_NINJA),false)
-ifndef BUILDING_WITH_NINJA
-relaunch_with_ninja := true
-endif
+ifndef KATI
+ifdef USE_NINJA
+$(warning USE_NINJA is ignored. Ninja is always used.)
 endif
 
-ifeq ($(relaunch_with_ninja),true)
 # Mark this is a ninja build.
 $(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
-else # !relaunch_with_ninja
-ifndef BUILDING_WITH_NINJA
-# Remove ninja build mark if it exists.
-$(shell rm -f $(OUT_DIR)/ninja_build)
-endif
+else # KATI
 
 # With these files findleaves.py won't be unnecessarily slower even if
 # there is a user creates a copy of $(OUT_DIR).
@@ -1120,4 +1113,4 @@ showcommands:
 .PHONY: nothing
 nothing:
 	@echo Successfully read the makefiles.
-endif # !relaunch_with_ninja
+endif # KATI
