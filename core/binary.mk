@@ -53,7 +53,7 @@ my_cxx_wrapper := $(CXX_WRAPPER)
 my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
-my_additional_dependencies := $(LOCAL_MODULE_MAKEFILE_DEP) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+my_additional_dependencies := $(LOCAL_ADDITIONAL_DEPENDENCIES)
 my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
 
 ifdef LOCAL_IS_HOST_MODULE
@@ -1145,7 +1145,7 @@ import_includes_deps := $(strip \
     $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
       $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 $(import_includes): PRIVATE_IMPORT_EXPORT_INCLUDES := $(import_includes_deps)
-$(import_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(import_includes_deps)
+$(import_includes) : $(import_includes_deps)
 	@echo Import includes file: $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 ifdef import_includes_deps
@@ -1212,11 +1212,7 @@ endif
 # that custom build rules which generate .o files don't consume other generated
 # sources as input (or if they do they take care of that dependency themselves).
 $(normal_objects) : | $(my_generated_sources)
-ifeq ($(BUILDING_WITH_NINJA),true)
 $(all_objects) : $(import_includes)
-else
-$(all_objects) : | $(import_includes)
-endif
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 
@@ -1408,7 +1404,7 @@ $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
 # Similarly, the generated DBus headers need to exist before we export their location.
 # People are not going to consume the aidl generated cpp file, but the cpp file is
 # generated after the headers, so this is a convenient way to ensure the headers exist.
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp)
+$(export_includes) : $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp
 ifdef my_export_c_include_dirs
@@ -1418,15 +1414,11 @@ ifdef my_export_c_include_dirs
 else
 	$(hide) touch $@.tmp
 endif
-ifeq ($(BUILDING_WITH_NINJA),true)
 	$(hide) if cmp -s $@.tmp $@ ; then \
 	  rm $@.tmp ; \
 	else \
 	  mv $@.tmp $@ ; \
 	fi
-else
-	mv $@.tmp $@ ;
-endif
 
 # Kati adds restat=1 to ninja. GNU make does nothing for this.
 .KATI_RESTAT: $(export_includes)
