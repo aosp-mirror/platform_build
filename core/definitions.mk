@@ -1850,7 +1850,6 @@ endef
 define aapt2-link
 $(hide) $(AAPT2) link -o $@ \
   $(PRIVATE_AAPT_FLAGS) \
-  --auto-add-overlay \
   $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
   $(addprefix -I ,$(PRIVATE_AAPT_INCLUDES)) \
   $(addprefix -I ,$(PRIVATE_SHARED_ANDROID_LIBRARIES)) \
@@ -1858,6 +1857,13 @@ $(hide) $(AAPT2) link -o $@ \
   $(addprefix --proguard ,$(PRIVATE_PROGUARD_OPTIONS_FILE)) \
   $(addprefix --min-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
   $(addprefix --target-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
+  $(if $(filter --product,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --product ,$(PRIVATE_TARGET_AAPT_CHARACTERISTICS))) \
+  $(addprefix -c ,$(PRIVATE_PRODUCT_AAPT_CONFIG)) \
+  $(addprefix --preferred-density ,$(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
+  $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
+  $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
+  $(addprefix --rename-manifest-package ,$(PRIVATE_MANIFEST_PACKAGE_NAME)) \
+  $(addprefix --rename-instrumentation-target-package ,$(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
   $(addprefix -R , $(PRIVATE_OVERLAY_FLAT)) \
   $(PRIVATE_RES_FLAT)
 endef
@@ -2260,7 +2266,7 @@ $(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
     $(addprefix --min-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    $(if $(filter --product,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --product , $(TARGET_AAPT_CHARACTERISTICS))) \
+    $(if $(filter --product,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --product , $(PRIVATE_TARGET_AAPT_CHARACTERISTICS))) \
     $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
     $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \

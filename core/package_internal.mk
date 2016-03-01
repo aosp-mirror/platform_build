@@ -115,18 +115,31 @@ ifneq ($(all_assets),)
 need_compile_asset := true
 endif
 
+my_res_package :=
 ifdef LOCAL_USE_AAPT2
 # In aapt2 the last takes precedence.
 my_resource_dirs := $(call reverse-list,$(LOCAL_RESOURCE_DIR))
-my_res_resources :=
-my_overlay_resources :=
-# Treat all but the first directory as overlays.
+my_res_dir :=
+my_overlay_res_dirs :=
+
+ifneq ($(LOCAL_STATIC_ANDROID_LIBRARIES),)
+# If we are using static android libraries, every source file becomes an overlay.
+# This is to emulate old AAPT behavior which simulated library support.
+my_res_dir :=
+my_overlay_res_dirs := $(my_resource_dirs)
+else
+# Without static libraries, the first directory is our directory, which can then be
+# overlaid by the rest. (First directory in my_resource_dirs is last directory in
+# $(LOCAL_RESOURCE_DIR) due to it being reversed.
+my_res_dir := $(firstword $(my_resource_dirs))
+my_overlay_res_dirs := $(wordlist 2,999,$(my_resource_dirs))
+endif
+
 my_overlay_resources := $(strip \
-  $(foreach d,$(wordlist 2,999,$(my_resource_dirs)),\
+  $(foreach d,$(my_overlay_res_dirs),\
     $(addprefix $(d)/, \
         $(call find-subdir-assets,$(d)))))
 
-my_res_dir := $(firstword $(my_resource_dirs))
 my_res_resources := $(strip \
     $(addprefix $(my_res_dir)/, \
         $(call find-subdir-assets,$(my_res_dir))))
@@ -313,13 +326,12 @@ endif  # LOCAL_DATA_BINDING
 
 ifeq ($(need_compile_res),true)
 ifdef LOCAL_USE_AAPT2
-# my_aapt_characteristics := $(TARGET_AAPT_CHARACTERISTICS)
-my_aapt_characteristics :=
 my_compiled_res_base_dir := $(intermediates)/flat-res
 my_generated_res_dirs := $(rs_generated_res_dir)
 my_generated_res_dirs_deps := $(RenderScript_file_stamp)
-# Add AAPT2 specific flags.
-$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
+# Add AAPT2 link specific flags.
+$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
+$(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
 include $(BUILD_SYSTEM)/aapt2.mk
 else  # LOCAL_USE_AAPT2
 
@@ -484,14 +496,14 @@ ifneq ($(TARGET_BUILD_APPS),)
     LOCAL_AAPT_INCLUDE_ALL_RESOURCES := true
 endif
 ifeq ($(LOCAL_AAPT_INCLUDE_ALL_RESOURCES),true)
-    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG :=
-    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
+    $(my_res_package) $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG :=
+    $(my_res_package) $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 else
-    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG := $(PRODUCT_AAPT_CONFIG)
+    $(my_res_package) $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_CONFIG := $(PRODUCT_AAPT_CONFIG)
 ifdef LOCAL_PACKAGE_SPLITS
-    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
+    $(my_res_package) $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 else
-    $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG := $(PRODUCT_AAPT_PREF_CONFIG)
+    $(my_res_package) $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG := $(PRODUCT_AAPT_PREF_CONFIG)
 endif
 endif
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
