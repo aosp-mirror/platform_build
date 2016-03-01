@@ -20,12 +20,12 @@
 $(combo_var_prefix)GLOBAL_CFLAGS += -DUSE_MINGW -DWIN32_LEAN_AND_MEAN
 $(combo_var_prefix)GLOBAL_CFLAGS += -Wno-unused-parameter
 $(combo_var_prefix)GLOBAL_CFLAGS += --sysroot prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
-$(combo_var_prefix)GLOBAL_CFLAGS += -m32
-$(combo_var_prefix)GLOBAL_LDFLAGS += -m32
+$(combo_var_prefix)GLOBAL_CFLAGS += -m64
+$(combo_var_prefix)GLOBAL_LDFLAGS += -m64
 TOOLS_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/bin/x86_64-w64-mingw32-
 $(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/include
 $(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/lib/gcc/x86_64-w64-mingw32/4.8.3/include
-$(combo_var_prefix)GLOBAL_LD_DIRS += -Lprebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/lib32
+$(combo_var_prefix)GLOBAL_LD_DIRS += -Lprebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/lib64
 
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
@@ -59,7 +59,7 @@ endif # BUILD_HOST_static
 $(combo_var_prefix)SHLIB_SUFFIX := .dll
 $(combo_var_prefix)EXECUTABLE_SUFFIX := .exe
 
-$(combo_var_prefix)IS_64_BIT :=
+$(combo_var_prefix)IS_64_BIT := true
 
 # The mingw gcc is 4.8, 4.9 is required for color diagnostics
 $(combo_var_prefix)UNKNOWN_CFLAGS := -fdiagnostics-color

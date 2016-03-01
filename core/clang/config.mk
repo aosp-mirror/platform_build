@@ -1,8 +1,5 @@
 ## Clang configurations.
 
-LLVM_RELEASE_VERSION := 3.8
-LLVM_PREBUILTS_VERSION ?= clang-2577113
-LLVM_PREBUILTS_BASE ?= prebuilts/clang/host
 LLVM_PREBUILTS_PATH := $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/bin
 LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)/lib/linux/
 
@@ -149,8 +146,13 @@ clang_2nd_arch_prefix := $(HOST_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/clang/HOST_$(HOST_2ND_ARCH).mk
 endif
 
-ifdef HOST_CROSS_OS
-include $(BUILD_SYSTEM)/clang/HOST_CROSS_$(HOST_CROSS_OS).mk
+ifdef HOST_CROSS_ARCH
+clang_2nd_arch_prefix :=
+include $(BUILD_SYSTEM)/clang/HOST_CROSS_$(HOST_CROSS_ARCH).mk
+ifdef HOST_CROSS_2ND_ARCH
+clang_2nd_arch_prefix := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
+include $(BUILD_SYSTEM)/clang/HOST_CROSS_$(HOST_CROSS_2ND_ARCH).mk
+endif
 endif
 
 # TARGET config
