@@ -83,11 +83,17 @@ class EdifyGenerator(object):
       raise ValueError("must specify an OEM property")
     if not value:
       raise ValueError("must specify the OEM value")
-    cmd = ('file_getprop("/oem/oem.prop", "{name}") == "{value}" || '
-           'abort("This package expects the value \\"{value}\\" for '
-           '\\"{name}\\" on the OEM partition; this has value \\"" + '
-           'file_getprop("/oem/oem.prop", "{name}") + "\\".");').format(
-               name=name, value=value)
+    if common.OPTIONS.oem_no_mount:
+      cmd = ('getprop("{name}") == "{value}" || '
+             'abort("This package expects the value \\"{value}\\" for '
+             '\\"{name}\\"; this has value \\"" + '
+             'getprop("{name}") + "\\".");').format(name=name, value=value)
+    else:
+      cmd = ('file_getprop("/oem/oem.prop", "{name}") == "{value}" || '
+             'abort("This package expects the value \\"{value}\\" for '
+             '\\"{name}\\" on the OEM partition; this has value \\"" + '
+             'file_getprop("/oem/oem.prop", "{name}") + "\\".");').format(
+                 name=name, value=value)
     self.script.append(cmd)
 
   def AssertSomeFingerprint(self, *fp):
