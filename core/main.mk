@@ -341,6 +341,14 @@ include build/core/pdk_config.mk
 # Jacoco package name for Jack
 -include $(TOPDIR)external/jacoco/config.mk
 
+#
+# -----------------------------------------------------------------
+# Enable dynamic linker developer warnings for all builds except
+# final release.
+ifneq ($(PLATFORM_VERSION_CODENAME),REL)
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+endif
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
