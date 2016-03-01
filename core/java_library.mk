@@ -103,7 +103,7 @@ ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar
 # boot jar's rules are defined in dex_preopt.mk
 dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
-$(LOCAL_BUILT_MODULE) : $(dexpreopted_boot_jar) | $(ACP)
+$(LOCAL_BUILT_MODULE) : $(dexpreopted_boot_jar)
 	$(call copy-file-to-target)
 
 # For libart boot jars, we don't have .odex files.
@@ -114,7 +114,7 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
 	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
 	$(call dexpreopt-one-file,$<,$@)
 
-$(LOCAL_BUILT_MODULE) : $(common_javalib.jar) | $(ACP)
+$(LOCAL_BUILT_MODULE) : $(common_javalib.jar)
 	$(call copy-file-to-target)
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
@@ -123,7 +123,7 @@ endif
 endif # ! boot jar
 
 else # LOCAL_DEX_PREOPT
-$(LOCAL_BUILT_MODULE) : $(common_javalib.jar) | $(ACP)
+$(LOCAL_BUILT_MODULE) : $(common_javalib.jar)
 	$(call copy-file-to-target)
 
 endif # LOCAL_DEX_PREOPT

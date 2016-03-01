@@ -12,10 +12,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(LOCAL_PATH)/include
 LOCAL_CXX_STL := none
 
-# acp uses libhost, so we can't use
-# acp to install libhost.
-LOCAL_ACP_UNAVAILABLE:= true
-
 include $(BUILD_HOST_STATIC_LIBRARY)
 
 # Include toolchain prebuilt modules if they exist.
