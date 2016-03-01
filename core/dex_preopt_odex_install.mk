@@ -106,8 +106,7 @@ $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 # Use pattern rule - we may have multiple installed odex files.
 # Ugly syntax - See the definition get-odex-file-path.
 $(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(installed_odex))) \
-                  : $(dir $(LOCAL_BUILT_MODULE))%$(notdir $(word 1,$(built_odex))) \
-    | $(ACP)
+                  : $(dir $(LOCAL_BUILT_MODULE))%$(notdir $(word 1,$(built_odex)))
 	@echo "Install: $@"
 	$(copy-file-to-target)
 endif

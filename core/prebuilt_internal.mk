@@ -216,7 +216,7 @@ embedded_prebuilt_jni_libs := 'lib/*.so'
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 
-$(built_module) : $(my_prebuilt_src_file) | $(ACP) $(ZIPALIGN) $(SIGNAPK_JAR) $(AAPT)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR) $(AAPT)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
@@ -255,12 +255,12 @@ my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
 
 $(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
 $(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
-$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(ACP) $(AAPT)
+$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(AAPT)
 	$(copy-file-to-new-target)
 	$(sign-package)
 
 # Rules to install the split apks.
-$(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk | $(ACP)
+$(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk
 	@echo "Install: $@"
 	$(copy-file-to-new-target)
 
@@ -279,13 +279,8 @@ ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target-strip-comments)
 else
-ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
-$(built_module) : $(my_prebuilt_src_file) | $(ACP)
-	$(transform-prebuilt-to-target)
-else
 $(built_module) : $(my_prebuilt_src_file)
-	$(copy-file-to-target-with-cp)
-endif
+	$(transform-prebuilt-to-target)
 endif
 endif # LOCAL_MODULE_CLASS != APPS
 
@@ -313,10 +308,10 @@ $(my_src_jar) : $(my_src_aar)
 	$(hide) touch $@
 
 endif
-$(common_classes_jar) : $(my_src_jar) | $(ACP)
+$(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
-$(common_javalib_jar) : $(common_classes_jar) | $(ACP)
+$(common_javalib_jar) : $(common_classes_jar)
 	$(transform-prebuilt-to-target)
 
 $(call define-jar-to-toc-rule, $(common_classes_jar))
