@@ -150,7 +150,7 @@ all_resources := $(strip $(my_res_resources) $(my_overlay_resources))
 my_res_package := $(intermediates)/package-res.apk
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 
-# Always run aapt2
+# Always run aapt2, because we need to at least compile the AndroidManifest.xml.
 need_compile_res := true
 
 else  # LOCAL_USE_AAPT2
