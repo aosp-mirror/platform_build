@@ -299,26 +299,12 @@ $(foreach c, $(my_path_components),\
 ## Module installation rule
 ###########################################################
 
-# Some hosts do not have ACP; override the LOCAL version if that's the case.
-ifneq ($(strip $(HOST_ACP_UNAVAILABLE)),)
-  LOCAL_ACP_UNAVAILABLE := $(strip $(HOST_ACP_UNAVAILABLE))
-endif
-
 ifndef LOCAL_UNINSTALLABLE_MODULE
-  # Define a copy rule to install the module.
-  # acp and libraries that it uses can't use acp for
-  # installation;  hence, LOCAL_ACP_UNAVAILABLE.
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
-ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
-$(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE) | $(ACP)
+$(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
 	$(copy-file-to-new-target)
 	$(PRIVATE_POST_INSTALL_CMD)
-else
-$(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
-	@echo "Install: $@"
-	$(copy-file-to-target-with-cp)
-endif
 
 # Rule to install the module's companion init.rc.
 my_init_rc_installed :=
