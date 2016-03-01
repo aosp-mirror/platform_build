@@ -528,7 +528,7 @@ $(my_generated_sources): PRIVATE_MODULE := $(my_register_name)
 
 my_gen_sources_copy := $(patsubst $(generated_sources_dir)/%,$(intermediates)/%,$(filter $(generated_sources_dir)/%,$(my_generated_sources)))
 
-$(my_gen_sources_copy): $(intermediates)/% : $(generated_sources_dir)/% | $(ACP)
+$(my_gen_sources_copy): $(intermediates)/% : $(generated_sources_dir)/%
 	@echo "Copy: $@"
 	$(copy-file-to-target)
 
