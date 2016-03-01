@@ -55,6 +55,12 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Use the file to specify the expected OEM-specific properties
       on the OEM partition of the intended device.
 
+  --oem_no_mount
+      For devices with OEM-specific properties but without an OEM partition,
+      do not mount the OEM partition in the updater-script. This should be
+      very rarely used, since it's expected to have a dedicated OEM partition
+      for OEM-specific properties. Only meaningful when -o is specified.
+
   -w  (--wipe_user_data)
       Generate an OTA package that will wipe the user data partition
       when installed.
@@ -128,6 +134,7 @@ OPTIONS.no_signing = False
 OPTIONS.block_based = False
 OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
+OPTIONS.oem_no_mount = False
 OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
 OPTIONS.full_bootloader = False
@@ -509,7 +516,8 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem", recovery_mount_options)
+    if not OPTIONS.oem_no_mount:
+      script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(
         open(OPTIONS.oem_source).readlines())
 
@@ -743,6 +751,18 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   script = edify_generator.EdifyGenerator(
       source_version, OPTIONS.target_info_dict,
       fstab=OPTIONS.source_info_dict["fstab"])
+
+  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
+  recovery_mount_options = OPTIONS.source_info_dict.get(
+      "recovery_mount_options")
+  oem_dict = None
+  if oem_props is not None and len(oem_props) > 0:
+    if OPTIONS.oem_source is None:
+      raise common.ExternalError("OEM source required for this build")
+    if not OPTIONS.oem_no_mount:
+      script.Mount("/oem", recovery_mount_options)
+    oem_dict = common.LoadDictionaryFromLines(
+        open(OPTIONS.oem_source).readlines())
 
   metadata = {
       "pre-device": GetBuildProp("ro.product.device",
@@ -1519,6 +1539,8 @@ def main(argv):
       OPTIONS.omit_prereq = True
     elif o in ("-o", "--oem_settings"):
       OPTIONS.oem_source = a
+    elif o == "--oem_no_mount":
+      OPTIONS.oem_no_mount = True
     elif o in ("-e", "--extra_script"):
       OPTIONS.extra_script = a
     elif o in ("-a", "--aslr_mode"):
@@ -1572,6 +1594,7 @@ def main(argv):
                                  "block",
                                  "binary=",
                                  "oem_settings=",
+                                 "oem_no_mount",
                                  "verify",
                                  "no_fallback_to_full",
                                  "stash_threshold=",
