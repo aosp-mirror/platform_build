@@ -2460,19 +2460,22 @@ endef
 # Therefore copy-file-to-target is the same as copy-file-to-new-target.
 define copy-file-to-target
 @mkdir -p $(dir $@)
-$(hide) $(ACP) -fp $< $@
+$(hide) rm -f $@
+$(hide) $(ACP) -p $< $@
 endef
 
 # The same as copy-file-to-target, but use the local
 # cp command instead of acp.
 define copy-file-to-target-with-cp
 @mkdir -p $(dir $@)
-$(hide) cp -fp $< $@
+$(hide) rm -f $@
+$(hide) cp -p $< $@
 endef
 
 # The same as copy-file-to-target, but use the zipalign tool to do so.
 define copy-file-to-target-with-zipalign
 @mkdir -p $(dir $@)
+$(hide) rm -f $@
 $(hide) $(ZIPALIGN) -f 4 $< $@
 endef
 
@@ -2480,6 +2483,7 @@ endef
 # comments (for config files and such).
 define copy-file-to-target-strip-comments
 @mkdir -p $(dir $@)
+$(hide) rm -f $@
 $(hide) sed -e 's/#.*$$//' -e 's/[ \t]*$$//' -e '/^$$/d' < $< > $@
 endef
 
@@ -2487,14 +2491,16 @@ endef
 # the old modification time.
 define copy-file-to-new-target
 @mkdir -p $(dir $@)
-$(hide) $(ACP) -fp $< $@
+$(hide) rm -f $@
+$(hide) $(ACP) -p $< $@
 endef
 
 # The same as copy-file-to-new-target, but use the local
 # cp command instead of acp.
 define copy-file-to-new-target-with-cp
 @mkdir -p $(dir $@)
-$(hide) cp -f $< $@
+$(hide) rm -f $@
+$(hide) cp $< $@
 endef
 
 # Copy a prebuilt file to a target location.
