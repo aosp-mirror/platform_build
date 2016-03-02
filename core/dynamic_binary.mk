@@ -46,7 +46,9 @@ relocation_packer_output := $(intermediates)/PACKED/$(my_built_module_stem)
 
 my_pack_module_relocations := false
 ifneq ($(DISABLE_RELOCATION_PACKER),true)
-    my_pack_module_relocations := $(LOCAL_PACK_MODULE_RELOCATIONS)
+    my_pack_module_relocations := $(firstword \
+      $(LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
+      $(LOCAL_PACK_MODULE_RELOCATIONS))
 endif
 
 ifeq ($(my_pack_module_relocations),)
@@ -110,7 +112,9 @@ endif
 strip_input := $(symbolic_output)
 strip_output := $(LOCAL_BUILT_MODULE)
 
-my_strip_module := $(LOCAL_STRIP_MODULE)
+my_strip_module := $(firstword \
+  $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
+  $(LOCAL_STRIP_MODULE))
 ifeq ($(my_strip_module),)
   my_strip_module := true
 endif
