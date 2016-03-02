@@ -38,22 +38,29 @@ else
   endif
 endif
 
+my_strip_module := $(firstword \
+  $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
+  $(LOCAL_STRIP_MODULE))
+my_pack_module_relocations := $(firstword \
+  $(LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
+  $(LOCAL_PACK_MODULE_RELOCATIONS))
+
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # Put the built targets of all shared libraries in a common directory
   # to simplify the link line.
   OVERRIDE_BUILT_MODULE_PATH := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
-  ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_STRIP_MODULE),)
+  ifeq ($(LOCAL_IS_HOST_MODULE)$(my_strip_module),)
     # Strip but not try to add debuglink
-    LOCAL_STRIP_MODULE := no_debuglink
+    my_strip_module := no_debuglink
   endif
 
-  ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_PACK_MODULE_RELOCATIONS),)
+  ifeq ($(LOCAL_IS_HOST_MODULE)$(my_pack_module_relocations),)
     # Do not pack relocations by default
-    LOCAL_PACK_MODULE_RELOCATIONS := false
+    my_pack_module_relocations := false
   endif
 
   ifeq ($(DISABLE_RELOCATION_PACKER),true)
-    LOCAL_PACK_MODULE_RELOCATIONS := false
+    my_pack_module_relocations := false
   endif
 endif
 
@@ -75,7 +82,7 @@ LOCAL_BUILT_MODULE_STEM := package.apk
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
 endif
 
-ifneq ($(filter true no_debuglink,$(LOCAL_STRIP_MODULE) $(LOCAL_PACK_MODULE_RELOCATIONS)),)
+ifneq ($(filter true no_debuglink,$(my_strip_module) $(my_pack_module_relocations)),)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
   endif
@@ -85,10 +92,13 @@ ifneq ($(filter true no_debuglink,$(LOCAL_STRIP_MODULE) $(LOCAL_PACK_MODULE_RELO
   ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
     $(error Cannot strip/pack scripts LOCAL_PATH=$(LOCAL_PATH))
   endif
+  # Set the arch-specific variables to set up the strip/pack rules.
+  LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_strip_module)
+  LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_pack_module_relocations)
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
 
-else  # LOCAL_STRIP_MODULE and LOCAL_PACK_MODULE_RELOCATIONS not true
+else  # my_strip_module and my_pack_module_relocations not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
 
@@ -130,8 +140,8 @@ endif
 endif
 
 # We need to enclose the above export_includes and my_built_shared_libraries in
-# "LOCAL_STRIP_MODULE not true" because otherwise the rules are defined in dynamic_binary.mk.
-endif  # LOCAL_STRIP_MODULE not true
+# "my_strip_module not true" because otherwise the rules are defined in dynamic_binary.mk.
+endif  # my_strip_module not true
 
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
