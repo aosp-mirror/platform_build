@@ -46,6 +46,8 @@ $(proto_java_sources_file_stamp) : $(proto_sources_fullpath) $(PROTOC)
 	$(call transform-proto-to-java)
 
 #TODO: protoc should output the dependencies introduced by imports.
+
+ALL_MODULES.$(my_register_name).PROTO_FILES := $(proto_sources_fullpath)
 endif # proto_sources
 
 #########################################
@@ -265,6 +267,9 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_
 
 ifdef aidl_sources
 ALL_MODULES.$(my_register_name).AIDL_FILES := $(aidl_sources)
+endif
+ifdef renderscript_sources
+ALL_MODULES.$(my_register_name).RS_FILES := $(renderscript_sources_fullpath)
 endif
 endif  # !LOCAL_IS_HOST_MODULE
 
