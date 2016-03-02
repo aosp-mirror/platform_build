@@ -2062,6 +2062,38 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLU
 $(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
 endef
 
+# Invoke Jack to compile java source just to check it compiles correctly.
+#
+# Some historical notes:
+# - below we write the list of java files to java-source-list to avoid argument
+#   list length problems with Cygwin
+# - we filter out duplicate java file names because Jack doesn't like them.
+define jack-check-java
+$(hide) rm -f $@
+$(hide) rm -f $@.java-source-list
+$(hide) rm -f $@.java-source-list-uniq
+$(hide) mkdir -p $(dir $@)
+$(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
+$(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$@.java-source-list)
+$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+          find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $@.java-source-list; \
+fi
+$(hide) tr ' ' '\n' < $@.java-source-list \
+    | sort -u > $@.java-source-list-uniq
+$(hide) if [ -s $@.java-source-list-uniq ] ; then \
+	$(call call-jack,$(PRIVATE_JACK_EXTRA_ARGS)) \
+	    $(strip $(PRIVATE_JACK_FLAGS)) \
+	    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
+	    $(addprefix --classpath ,$(strip \
+	        $(call normalize-path-list,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES)) $(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
+	    -D jack.import.resource.policy=keep-first \
+	    -D jack.import.type.policy=keep-first \
+	    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
+	    @$@.java-source-list-uniq; \
+fi
+touch $@
+endef
+
 define transform-jar-to-jack
 	$(hide) mkdir -p $(dir $@)
 	$(hide) mkdir -p $@.tmpjill.res
