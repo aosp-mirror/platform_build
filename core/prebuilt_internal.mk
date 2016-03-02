@@ -275,13 +275,17 @@ $(my_register_name): $(installed_apk_splits)
 endif # LOCAL_PACKAGE_SPLITS
 
 else # LOCAL_MODULE_CLASS != APPS
-ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
+
 $(built_module) : $(my_prebuilt_src_file)
+ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 	$(transform-prebuilt-to-target-strip-comments)
 else
-$(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target)
 endif
+ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+	$(hide) chmod +x $@
+endif
+
 endif # LOCAL_MODULE_CLASS != APPS
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
