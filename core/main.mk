@@ -646,7 +646,7 @@ $(foreach m,$(ALL_MODULES),\
       $(eval r := $(addprefix host_cross_,$(r))))\
     $(if $(ALL_MODULES.$(m).FOR_2ND_ARCH),\
       $(eval r_r := $(call get-32-bit-modules-if-we-can,$(r))),\
-      $(if $(filter EXECUTABLES SHARED_LIBRARIES,$(ALL_MODULES.$(m).CLASS)),\
+      $(if $(filter EXECUTABLES SHARED_LIBRARIES NATIVE_TESTS,$(ALL_MODULES.$(m).CLASS)),\
         $(eval r_r := $(r)),\
         $(eval r_r := $(r) $(call get-32-bit-modules,$(r)))\
        )\

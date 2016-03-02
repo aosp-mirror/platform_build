@@ -29,6 +29,14 @@ include $(BUILD_SYSTEM)/binary.mk
 my_host_libprofile_rt := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
 $(LOCAL_BUILT_MODULE): PRIVATE_HOST_LIBPROFILE_RT := $(my_host_libprofile_rt)
 
+my_libdir := $(notdir $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))
+ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
+$(LOCAL_BUILT_MODULE): PRIVATE_RPATHS := ../../$(my_libdir)
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_RPATHS := ../$(my_libdir) $(my_libdir)
+endif
+my_libdir :=
+
 $(LOCAL_BUILT_MODULE): $(all_objects) $(all_libraries)
 	$(transform-host-o-to-executable)
 

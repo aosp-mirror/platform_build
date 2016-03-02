@@ -156,6 +156,8 @@ ifeq ($(my_module_path),)
     partition_tag := _OEM
   else ifeq (true,$(LOCAL_ODM_MODULE))
     partition_tag := _ODM
+  else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
+    partition_tag := _DATA
   else
     # The definition of should-install-to-system will be different depending
     # on which goal (e.g., sdk or just droid) is being built.
@@ -457,7 +459,7 @@ $(foreach tag,$(my_module_tags),\
 ## umbrella targets used to verify builds
 ###########################################################
 j_or_n :=
-ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)))
+ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)))
 j_or_n := native
 else
 ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
