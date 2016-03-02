@@ -22,3 +22,6 @@ include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 .PHONY: cts
 cts: $(compatibility_zip)
 $(call dist-for-goals, cts, $(compatibility_zip))
+
+.PHONY: cts_v2
+cts_v2: cts
