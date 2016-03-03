@@ -38,7 +38,14 @@ need_compile_res :=
 # A static Java library needs to explicily set LOCAL_RESOURCE_DIR.
 ifdef LOCAL_RESOURCE_DIR
 need_compile_res := true
+endif
+ifdef LOCAL_USE_AAPT2
+ifneq ($(LOCAL_STATIC_ANDROID_LIBRARIES),)
+need_compile_res := true
+endif
+endif
 
+ifeq ($(need_compile_res),true)
 all_resources := $(strip \
     $(foreach dir, $(LOCAL_RESOURCE_DIR), \
       $(addprefix $(dir)/, \
