@@ -48,6 +48,10 @@ my_static_library_resources := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_A
 my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
 
+ifneq ($(my_static_library_resources),)
+$(my_res_package): PRIVATE_AAPT_FLAGS += --auto-add-overlay
+endif
+
 $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
 $(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_static_library_resources) $(my_generated_resources_flata) $(my_overlay_resources_flat)
 $(my_res_package): PRIVATE_SHARED_ANDROID_LIBRARIES := $(my_shared_library_resources)
