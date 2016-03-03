@@ -2362,7 +2362,7 @@ function search_changed(e, kd, toroot)
           }
 
           // Search for Preview Guides
-          for (var i=0; i<_RESOURCES.length; i++) {
+          for (var i=0; i<PREVIEW_RESOURCES.length; i++) {
             // current search comparison, with counters for tag and title,
             // used later to improve ranking
             var s = _RESOURCES[i];
