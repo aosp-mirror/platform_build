@@ -22,6 +22,30 @@
       "revId": "4037c4225a484130a5510671e788794d23204262",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e2b0b90b_df325fd3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-03T20:46:39Z",
+      "side": 1,
+      "message": "Because they get stored in .ninja_deps in a binary format to speed up loading: https://ninja-build.org/manual.html#_deps So they\u0027re no longer necessary",
+      "parentUuid": "22ef3134_c8f8ac93",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 17
+      },
+      "revId": "4037c4225a484130a5510671e788794d23204262",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
