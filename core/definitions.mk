@@ -910,6 +910,11 @@ $(eval -include $1)
 endef
 endif
 
+# $(1): object files
+define include-depfiles-for-objs
+$(foreach obj, $(1), $(call include-depfile, $(obj:%.o=%.P), $(obj)))
+endef
+
 ###########################################################
 ## Track source files compiled to objects
 ###########################################################
