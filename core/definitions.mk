@@ -898,6 +898,11 @@ define include-depfile
 $(eval $(2) : .KATI_DEPFILE := $1)
 endef
 
+# $(1): object files
+define include-depfiles-for-objs
+$(foreach obj, $(1), $(call include-depfile, $(obj:%.o=%.P), $(obj)))
+endef
+
 ###########################################################
 ## Track source files compiled to objects
 ###########################################################
