@@ -292,6 +292,18 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
 
+def ConvertBlockMapToBaseFs(block_map_file):
+  fd, base_fs_file = tempfile.mkstemp(prefix="script_gen_",
+                                      suffix=".base_fs")
+  os.close(fd)
+
+  convert_command = ["blk_alloc_to_base_fs", block_map_file, base_fs_file]
+  (_, exit_code) = RunCommand(convert_command)
+  if exit_code != 0:
+    os.remove(base_fs_file)
+    return None
+  return base_fs_file
+
 def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   """Build an image to out_file from in_dir with property prop_dict.
 
@@ -308,6 +320,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # /system and the ramdisk, and can be mounted at the root of the file system.
   origin_in = in_dir
   fs_config = prop_dict.get("fs_config")
+  base_fs_file = None
   if (prop_dict.get("system_root_image") == "true"
       and prop_dict["mount_point"] == "system"):
     in_dir = tempfile.mkdtemp()
@@ -367,6 +380,11 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-D", target_out])
     if "block_list" in prop_dict:
       build_command.extend(["-B", prop_dict["block_list"]])
+    if "base_fs_file" in prop_dict:
+      base_fs_file = ConvertBlockMapToBaseFs(prop_dict["base_fs_file"])
+      if base_fs_file is None:
+        return False
+      build_command.extend(["-d", base_fs_file])
     build_command.extend(["-L", prop_dict["mount_point"]])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
@@ -421,6 +439,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       shutil.rmtree(in_dir, ignore_errors=True)
       if fs_config:
         os.remove(fs_config)
+    if base_fs_file is not None:
+      os.remove(base_fs_file)
   if exit_code != 0:
     return False
 
@@ -525,6 +545,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("system_base_fs_file", "base_fs_file")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -541,6 +562,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
     copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
     copy_prop("vendor_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("vendor_base_fs_file", "base_fs_file")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
