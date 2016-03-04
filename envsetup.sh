@@ -37,9 +37,62 @@ EOF
     echo $A
 }
 
+# Get all the build variables needed by this script in a single call to the build system.
+function build_build_var_cache()
+{
+    T=$(gettop)
+    # Grep out the variable names from the script.
+    cached_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
+    cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
+    # Call the build system to dump the "<val>=<value>" pairs as a shell script.
+    build_dicts_script=`\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
+                        command make --no-print-directory -f build/core/config.mk \
+                        dump-many-vars \
+                        DUMP_MANY_VARS="$cached_vars" \
+                        DUMP_MANY_ABS_VARS="$cached_abs_vars" \
+                        DUMP_VAR_PREFIX="var_cache_" \
+                        DUMP_ABS_VAR_PREFIX="abs_var_cache_"`
+    local ret=$?
+    if [ $ret -ne 0 ]
+    then
+        unset build_dicts_script
+        return $ret
+    fi
+    # Excute the script to store the "<val>=<value>" pairs as shell variables.
+    eval "$build_dicts_script"
+    unset build_dicts_script
+    ret=$?
+    if [ $ret -ne 0 ]
+    then
+        return $ret
+    fi
+    BUILD_VAR_CACHE_READY="true"
+}
+
+# Delete the build cache, so that we can still call into the build system
+# to get build variables not listed in this script.
+function destroy_build_var_cache()
+{
+    unset BUILD_VAR_CACHE_READY
+    for v in $cached_vars; do
+      unset var_cache_$v
+    done
+    unset cached_vars
+    for v in $cached_abs_vars; do
+      unset abs_var_cache_$v
+    done
+    unset cached_abs_vars
+}
+
 # Get the value of a build variable as an absolute path.
 function get_abs_build_var()
 {
+    if [ "$BUILD_VAR_CACHE_READY" = "true" ]
+    then
+        eval echo \"\${abs_var_cache_$1}\"
+    return
+    fi
+
     T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
@@ -52,6 +105,12 @@ function get_abs_build_var()
 # Get the exact value of a build variable.
 function get_build_var()
 {
+    if [ "$BUILD_VAR_CACHE_READY" = "true" ]
+    then
+        eval echo \"\${var_cache_$1}\"
+    return
+    fi
+
     T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
@@ -321,7 +380,9 @@ function choosetype()
         fi
     done
 
+    build_build_var_cache
     set_stuff_for_environment
+    destroy_build_var_cache
 }
 
 #
@@ -338,6 +399,7 @@ function chooseproduct()
         default_value=aosp_arm
     fi
 
+    export TARGET_BUILD_APPS=
     export TARGET_PRODUCT=
     local ANSWER
     while [ -z "$TARGET_PRODUCT" ]
@@ -365,7 +427,9 @@ function chooseproduct()
         fi
     done
 
+    build_build_var_cache
     set_stuff_for_environment
+    destroy_build_var_cache
 }
 
 function choosevariant()
@@ -428,8 +492,10 @@ function choosecombo()
     choosevariant $3
 
     echo
+    build_build_var_cache
     set_stuff_for_environment
     printconfig
+    destroy_build_var_cache
 }
 
 # Clear this variable.  It will be built up again when the vendorsetup.sh
@@ -511,16 +577,6 @@ function lunch()
 
     export TARGET_BUILD_APPS=
 
-    local product=$(echo -n $selection | sed -e "s/-.*$//")
-    check_product $product
-    if [ $? -ne 0 ]
-    then
-        echo
-        echo "** Don't have a product spec for: '$product'"
-        echo "** Do you have the right repo manifest?"
-        product=
-    fi
-
     local variant=$(echo -n $selection | sed -e "s/^[^\-]*-//")
     check_variant $variant
     if [ $? -ne 0 ]
@@ -529,6 +585,18 @@ function lunch()
         echo "** Invalid variant: '$variant'"
         echo "** Must be one of ${VARIANT_CHOICES[@]}"
         variant=
+    fi
+
+    local product=$(echo -n $selection | sed -e "s/-.*$//")
+    TARGET_PRODUCT=$product \
+    TARGET_BUILD_VARIANT=$variant \
+    build_build_var_cache
+    if [ $? -ne 0 ]
+    then
+        echo
+        echo "** Don't have a product spec for: '$product'"
+        echo "** Do you have the right repo manifest?"
+        product=
     fi
 
     if [ -z "$product" -o -z "$variant" ]
@@ -545,6 +613,7 @@ function lunch()
 
     set_stuff_for_environment
     printconfig
+    destroy_build_var_cache
 }
 
 # Tab completion for lunch.
@@ -607,8 +676,10 @@ function tapas()
     export TARGET_BUILD_TYPE=release
     export TARGET_BUILD_APPS=$apps
 
+    build_build_var_cache
     set_stuff_for_environment
     printconfig
+    destroy_build_var_cache
 }
 
 function gettop
@@ -871,18 +942,18 @@ function qpid() {
         append='$'
         shift
     elif [ "$1" = "--help" -o "$1" = "-h" ]; then
-		echo "usage: qpid [[--exact] <process name|pid>"
-		return 255
-	fi
+        echo "usage: qpid [[--exact] <process name|pid>"
+        return 255
+    fi
 
     local EXE="$1"
     if [ "$EXE" ] ; then
-		qpid | \grep "$prepend$EXE$append"
-	else
-		adb shell ps \
-			| tr -d '\r' \
-			| sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
-	fi
+        qpid | \grep "$prepend$EXE$append"
+    else
+        adb shell ps \
+            | tr -d '\r' \
+            | sed -e 1d -e 's/^[^ ]* *\([0-9]*\).* \([^ ]*\)$/\1 \2/'
+    fi
 }
 
 function pid()
@@ -903,7 +974,7 @@ function pid()
         echo "$PID"
     else
         echo "usage: pid [--exact] <process name>"
-		return 255
+        return 255
     fi
 }
 
@@ -916,25 +987,25 @@ function pid()
 
 function coredump_setup()
 {
-	echo "Getting root...";
-	adb root;
-	adb wait-for-device;
+    echo "Getting root...";
+    adb root;
+    adb wait-for-device;
 
-	echo "Remounting root partition read-write...";
-	adb shell mount -w -o remount -t rootfs rootfs;
-	sleep 1;
-	adb wait-for-device;
-	adb shell mkdir -p /cores;
-	adb shell mount -t tmpfs tmpfs /cores;
-	adb shell chmod 0777 /cores;
+    echo "Remounting root partition read-write...";
+    adb shell mount -w -o remount -t rootfs rootfs;
+    sleep 1;
+    adb wait-for-device;
+    adb shell mkdir -p /cores;
+    adb shell mount -t tmpfs tmpfs /cores;
+    adb shell chmod 0777 /cores;
 
-	echo "Granting SELinux permission to dump in /cores...";
-	adb shell restorecon -R /cores;
+    echo "Granting SELinux permission to dump in /cores...";
+    adb shell restorecon -R /cores;
 
-	echo "Set core pattern.";
-	adb shell 'echo /cores/core.%p > /proc/sys/kernel/core_pattern';
+    echo "Set core pattern.";
+    adb shell 'echo /cores/core.%p > /proc/sys/kernel/core_pattern';
 
-	echo "Done."
+    echo "Done."
 }
 
 # coredump_enable - enable core dumps for the specified process
@@ -945,13 +1016,13 @@ function coredump_setup()
 
 function coredump_enable()
 {
-	local PID=$1;
-	if [ -z "$PID" ]; then
-		printf "Expecting a PID!\n";
-		return;
-	fi;
-	echo "Setting core limit for $PID to infinite...";
-	adb shell prlimit $PID 4 -1 -1
+    local PID=$1;
+    if [ -z "$PID" ]; then
+        printf "Expecting a PID!\n";
+        return;
+    fi;
+    echo "Setting core limit for $PID to infinite...";
+    adb shell prlimit $PID 4 -1 -1
 }
 
 # core - send SIGV and pull the core for process
@@ -962,28 +1033,28 @@ function coredump_enable()
 
 function core()
 {
-	local PID=$1;
+    local PID=$1;
 
-	if [ -z "$PID" ]; then
-		printf "Expecting a PID!\n";
-		return;
-	fi;
+    if [ -z "$PID" ]; then
+        printf "Expecting a PID!\n";
+        return;
+    fi;
 
-	local CORENAME=core.$PID;
-	local COREPATH=/cores/$CORENAME;
-	local SIG=SEGV;
+    local CORENAME=core.$PID;
+    local COREPATH=/cores/$CORENAME;
+    local SIG=SEGV;
 
-	coredump_enable $1;
+    coredump_enable $1;
 
-	local done=0;
-	while [ $(adb shell "[ -d /proc/$PID ] && echo -n yes") ]; do
-		printf "\tSending SIG%s to %d...\n" $SIG $PID;
-		adb shell kill -$SIG $PID;
-		sleep 1;
-	done;
+    local done=0;
+    while [ $(adb shell "[ -d /proc/$PID ] && echo -n yes") ]; do
+        printf "\tSending SIG%s to %d...\n" $SIG $PID;
+        adb shell kill -$SIG $PID;
+        sleep 1;
+    done;
 
-	adb shell "while [ ! -f $COREPATH ] ; do echo waiting for $COREPATH to be generated; sleep 1; done"
-	echo "Done: core is under $COREPATH on device.";
+    adb shell "while [ ! -f $COREPATH ] ; do echo waiting for $COREPATH to be generated; sleep 1; done"
+    echo "Done: core is under $COREPATH on device.";
 }
 
 # systemstack - dump the current stack trace of all threads in the system process
