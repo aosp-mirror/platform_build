@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82ea9d1e_035c33c5",
+        "filename": "core/native_benchmark.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-03-04T21:41:19Z",
+      "side": 1,
+      "message": "guangzhu: should we have a separate directory for native benchmarks?",
+      "range": {
+        "startLine": 9,
+        "startChar": 23,
+        "endLine": 9,
+        "endChar": 51
+      },
+      "revId": "577f8407e915fd278d089968bdafdad171f8c3d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
