@@ -414,6 +414,10 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
+  args = info_dict.get("mkbootimg_version_args", None)
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+
   if has_ramdisk:
     cmd.extend(["--ramdisk", ramdisk_img.name])
 
