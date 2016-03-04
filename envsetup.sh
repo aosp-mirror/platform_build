@@ -60,8 +60,8 @@ function build_build_var_cache()
     fi
     # Excute the script to store the "<val>=<value>" pairs as shell variables.
     eval "$build_dicts_script"
-    unset build_dicts_script
     ret=$?
+    unset build_dicts_script
     if [ $ret -ne 0 ]
     then
         return $ret
@@ -69,7 +69,7 @@ function build_build_var_cache()
     BUILD_VAR_CACHE_READY="true"
 }
 
-# Delete the build cache, so that we can still call into the build system
+# Delete the build var cache, so that we can still call into the build system
 # to get build variables not listed in this script.
 function destroy_build_var_cache()
 {
