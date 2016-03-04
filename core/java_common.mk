@@ -3,8 +3,24 @@
 ###########################################################
 ## Java version
 ###########################################################
+# Use the LOCAL_JAVA_LANGUAGE_VERSION if it is set, otherwise
+# use one based on the LOCAL_SDK_VERSION. If it is < 24
+# pass "1.7" to the tools, if it is unset, >= 24 or "current"
+# pass "1.8".
+#
+# The LOCAL_SDK_VERSION behavior is to ensure that, by default,
+# code that is expected to run on older releases of Android
+# does not use any 1.8 language features that are not supported
+# on earlier runtimes (like default / static interface methods).
+# Modules can override this logic by specifying
+# LOCAL_JAVA_LANGUAGE_VERSION explicitly.
 ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
-  LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+  private_sdk_versions_without_any_java_18_support := 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(private_sdk_versions_without_any_java_18_support)))
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.7
+  else
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+  endif
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
 
