@@ -654,25 +654,36 @@ endef
 # $(1): library name
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-full-classes.jar
-$(call _java-lib-dir,$(1),$(2))/classes$(COMMON_JAVA_PACKAGE_SUFFIX)
+$(call _java-lib-dir,$(1),$(2))/$(if $(2),javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX)
 endef
 
+# Get the jar files (you can pass to "javac -classpath") of static or shared
+# Java libraries that you want to link against.
 # $(1): library name list
 # $(2): Non-empty if IS_HOST_MODULE
 define java-lib-files
 $(foreach lib,$(1),$(call _java-lib-full-classes.jar,$(lib),$(2)))
 endef
 
-# $(1): library name
-# $(2): Non-empty if IS_HOST_MODULE
-define _java-lib-full-dep
-$(call _java-lib-dir,$(1),$(2))/$(if $(2),javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX)
-endef
-
+# Get the dependency files (you can put on the right side of "|" of a build rule)
+# of the Java libraries.
 # $(1): library name list
 # $(2): Non-empty if IS_HOST_MODULE
+# Historically for target Java libraries we used a different file (javalib.jar)
+# as the dependency.
+# Now we can use classes.jar as dependency, so java-lib-deps is the same
+# as java-lib-files.
 define java-lib-deps
-$(foreach lib,$(1),$(call _java-lib-full-dep,$(lib),$(2)))
+$(call java-lib-files,$(1),$(2))
+endef
+
+# Get the jar files (you can pass to "javac -classpath") of host dalvik Java libraries.
+# You can also use them as dependency files.
+# A host dalvik Java library is different from a host Java library in that
+# the java lib file is classes.jar, not javalib.jar.
+# $(1): library name list
+define host-dex-java-lib-files
+$(foreach lib,$(1),$(call _java-lib-dir,$(lib),true)/classes.jar)
 endef
 
 ###########################################################
@@ -693,16 +704,10 @@ define jack-lib-files
 $(foreach lib,$(1),$(call _jack-lib-full-classes,$(lib),$(2)))
 endef
 
-# $(1): library name
-# $(2): Non-empty if IS_HOST_MODULE
-define _jack-lib-full-dep
-$(call _jack-lib-full-classes,$(1),$(2))
-endef
-
 # $(1): library name list
 # $(2): Non-empty if IS_HOST_MODULE
 define jack-lib-deps
-$(foreach lib,$(1),$(call _jack-lib-full-dep,$(lib),$(2)))
+$(call jack-lib-files,$(1),$(2))
 endef
 
 ###########################################################
