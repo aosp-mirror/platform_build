@@ -175,14 +175,13 @@ ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 my_bootclasspath := ""
 else
-my_bootclasspath := $(call java-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call java-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
+my_bootclasspath := $(call normalize-path-list,$(call host-dex-java-lib-files,core-oj-hostdex core-libart-hostdex))
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
-full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE)) \
-    $(full_shared_java_libs)
-else
+full_shared_java_libs := $(call host-dex-java-lib-files,$(LOCAL_JAVA_LIBRARIES))
+full_java_lib_deps := $(full_shared_java_libs)
+else # !USE_CORE_LIB_BOOTCLASSPATH
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 
 full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
