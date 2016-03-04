@@ -54,6 +54,8 @@ ifneq (,$(findstring Macintosh,$(UNAME)))
   HOST_OS := darwin
 endif
 
+HOST_OS_EXTRA:=$(shell python -c "import platform; print(platform.platform())")
+
 # BUILD_OS is the real host doing the build.
 BUILD_OS := $(HOST_OS)
 
