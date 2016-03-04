@@ -62,4 +62,6 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
     device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc
 
+PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
+
 PRODUCT_CHARACTERISTICS := emulator
