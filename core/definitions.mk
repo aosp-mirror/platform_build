@@ -1295,13 +1295,12 @@ $(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
 	    $(PRIVATE_HOST_GLOBAL_CONLYFLAGS) \
 	 ) \
 	$(1) \
-	$(PRIVATE_CFLAGS_NO_OVERRIDE) \
 	-MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
 endef
 
 define transform-host-c-to-o-no-deps
 @echo "$($(PRIVATE_PREFIX)DISPLAY) C: $(PRIVATE_MODULE) <= $<"
-$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_CONLYFLAGS) $(PRIVATE_DEBUG_CFLAGS))
+$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_CONLYFLAGS) $(PRIVATE_DEBUG_CFLAGS) $(PRIVATE_CFLAGS_NO_OVERRIDE))
 endef
 
 define transform-host-s-to-o-no-deps
@@ -1325,7 +1324,7 @@ endef
 
 define transform-host-m-to-o-no-deps
 @echo "$($(PRIVATE_PREFIX)DISPLAY) ObjC: $(PRIVATE_MODULE) <= $<"
-$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
+$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS) $(PRIVATE_CFLAGS_NO_OVERRIDE))
 endef
 
 define transform-host-m-to-o
