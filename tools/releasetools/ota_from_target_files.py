@@ -1424,7 +1424,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem", recovery_mount_options)
+    if not OPTIONS.oem_no_mount:
+      script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(
         open(OPTIONS.oem_source).readlines())
 
