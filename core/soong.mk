@@ -26,11 +26,10 @@ $(SOONG_VARIABLES): FORCE
 	$(hide) mkdir -p $(dir $@)
 	$(hide) (\
 	echo '{'; \
-	echo '    "Device_uses_jemalloc": $(if $(filter true,$(MALLOC_SVELTE)),false,true),'; \
-	echo '    "Device_uses_dlmalloc": $(if $(filter true,$(MALLOC_SVELTE)),true,false),'; \
 	echo '    "Platform_sdk_version": $(PLATFORM_SDK_VERSION),'; \
 	echo '    "Unbundled_build": $(if $(TARGET_BUILD_APPS),true,false),'; \
 	echo '    "Brillo": $(if $(BRILLO),true,false),'; \
+	echo '    "Malloc_not_svelte": $(if $(filter true,$(MALLOC_SVELTE)),false,true),'; \
 	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
