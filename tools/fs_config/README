@@ -1,0 +1,116 @@
+ _____  _____  _____  _____  __  __  _____
+/  _  \/   __\/  _  \|  _  \/  \/  \/   __\
+|  _  <|   __||  _  ||  |  ||  \/  ||   __|
+\__|\_/\_____/\__|__/|_____/\__ \__/\_____/
+
+
+Generating the android_filesystem_config.h
+
+To generate the android_filesystem_config.h file, one can choose from
+one of two methods. The first method, is to declare
+TARGET_ANDROID_FILESYSTEM_CONFIG_H in the device BoardConfig.mk file. This
+variable can only have one item in it, and it is used directly as the
+android_filesystem_config.h header when building
+fs_config_generate_$(TARGET_DEVICE) which is used to generate fs_config_files
+and fs_config_dirs target executable.
+
+The limitation with this, is that it can only be set once, thus if the device
+has a make hierarchy, then each device needs its own file, and cannot share
+from a common source or that common source needs to include everything from
+both devices.
+
+The other way is to set TARGET_FS_CONFIG_GEN, which can be a list of
+intermediate fs configuration files. It is a build error on any one
+these conditions:
+ * Specify TARGET_FS_CONFIG_GEN and TARGET_ANDROID_FILESYSTEM_CONFIG_H
+ * Specify TARGET_FS_CONFIG_GEN and provide
+   $(TARGET_DEVICE_DIR)/android_filesystem_config.h
+
+The parsing of the config file follows the Python ConfigParser specification,
+with the sections and fields as defined below. There are two types of sections,
+both sections require all options to be specified. The first section type is
+the "caps" section.
+
+The "caps" section follows the following syntax:
+
+[path]
+mode: Octal file mode
+user: AID_<user>
+group: AID_<group>
+caps: cap*
+
+Where:
+
+[path]
+  The filesystem path to configure. A path ending in / is considered a dir,
+  else its a file.
+
+mode:
+  A valid octal file mode of at least 3 digits. If 3 is specified, it is
+  prefixed with a 0, else mode is used as is.
+
+user:
+  The exact, C define for a valid AID. Note custom AIDs can be defined in the
+  AID section documented below.
+
+group:
+  The exact, C define for a valid AID. Note custom AIDs can be defined in the
+  AID section documented below.
+
+caps:
+  The name as declared in
+  system/core/include/private/android_filesystem_capability.h without the
+  leading CAP_. Mixed case is allowed. Caps can also be the raw:
+   * binary (0b0101)
+   * octal (0455)
+   * int (42)
+   * hex (0xFF)
+  For multiple caps, just separate by whitespace.
+
+It is an error to specify multiple sections with the same [path]. Per the ini
+specifications enforced by Pythons ConfigParser.
+
+
+The next section type is the "AID" section, for specifying OEM specific AIDS.
+
+The AID section follows the following syntax:
+
+[AID_<name>]
+value: <number>
+
+Where:
+
+[AID_<name>]
+  The <name> can be any valid character for a #define identifier in C.
+
+value:
+  A valid C style number string. Hex, octal, binary and decimal are supported. See "caps"
+  above for more details on number formatting.
+
+It is an error to specify multiple sections with the same [AID_<name>]. Per the ini
+specifications enforced by Pythons ConfigParser. It is also an error to specify
+multiple sections with the same value option. It is also an error to specify a value
+that is outside of the OEM range AID_OEM_RESERVED_START(2900) and AID_OEM_RESERVED_END(2999)
+as defined by system/core/include/private/android_filesystem_config.h.
+
+Ordering within the TARGET_FS_CONFIG_GEN files is not relevant. The paths for files are sorted
+like so within their respective array definition:
+ * specified path before prefix match
+ ** ie foo before f*
+ * lexicographical less than before other
+ ** ie boo before foo
+
+Given these paths:
+
+paths=['ac', 'a', 'acd', 'an', 'a*', 'aa', 'ac*']
+
+The sort order would be:
+paths=['a', 'aa', 'ac', 'acd', 'an', 'ac*', 'a*']
+
+Thus the fs_config tools will match on specified paths before attempting prefix, and match on the
+longest matching prefix.
+
+The declared AIDS are sorted in ascending numerical order based on the option "value". The string
+representation of value is preserved. Both choices were made for maximum readability of the generated
+file and to line up files. Sync lines are placed with the source file as comments in the generated
+header file.
