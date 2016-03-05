@@ -20,14 +20,6 @@ endif
 
 include $(BUILD_SYSTEM)/binary.mk
 
-ifeq ($(LOCAL_RAW_STATIC_LIBRARY),true)
-LOCAL_RAW_STATIC_LIBRARY:=
-$(all_objects) : PRIVATE_TARGET_PROJECT_INCLUDES :=
-$(all_objects) : PRIVATE_TARGET_C_INCLUDES :=
-$(all_objects) : PRIVATE_TARGET_GLOBAL_CFLAGS :=
-$(all_objects) : PRIVATE_TARGET_GLOBAL_CPPFLAGS :=
-endif
-
 $(LOCAL_BUILT_MODULE) : $(built_whole_libraries)
 $(LOCAL_BUILT_MODULE) : $(all_objects)
 	$(transform-o-to-static-lib)
