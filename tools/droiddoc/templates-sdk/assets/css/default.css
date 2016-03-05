@@ -2628,6 +2628,20 @@ div.note.distribute {
   margin-bottom:0;
 }
 
+.summary-table {
+  background-color:#e1e4e6;
+  padding:1em;
+  margin-bottom:1.5em;
+}
+.summary-table p {
+  font-size:.98em;
+}
+
+.summary-table h5 {
+  line-height:1em;
+  font-size:.98em;
+}
+
 body.about blockquote {
   display:block;
   float:right;

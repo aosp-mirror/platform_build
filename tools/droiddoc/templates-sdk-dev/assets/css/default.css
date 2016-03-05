@@ -2411,6 +2411,17 @@ div.note.distribute {
   margin-bottom:0;
 }
 
+.summary-table {
+  background-color:#eceff1;
+  padding:1em;
+  margin-bottom:1.5em;
+}
+
+.summary-table h5 {
+  line-height:1em;
+  font-size:.98em;
+}
+
 body.about blockquote {
   display:block;
   float:right;
