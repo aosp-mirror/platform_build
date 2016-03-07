@@ -16,6 +16,29 @@
       "revId": "220946752ddff8469e3690d4dee717dde80c5747",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37af7563_c6f242fa",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-03-07T21:53:31Z",
+      "side": 1,
+      "message": "Does not allow a per-device introduction of custom AID (except by using the first method).\n\ne.g.:\n\nuser: AID_INTEL_UDEVMAX\ngroup: AID_INTEL_DMSTUFFER(2903)\n\nFirst one gets an unique value from 2900-2999 (not sure I like this since each build could conceivably come up with a different value), second one gets 2903 reserved for it?",
+      "range": {
+        "startLine": 50,
+        "startChar": 2,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "220946752ddff8469e3690d4dee717dde80c5747",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
