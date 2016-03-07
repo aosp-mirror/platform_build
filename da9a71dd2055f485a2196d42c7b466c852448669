@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "978741d1_4146322f",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T18:43:01Z",
+      "side": 1,
+      "message": "Why isn\u0027t this implemented as a standard generated header file in this module?",
+      "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
