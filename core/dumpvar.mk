@@ -70,11 +70,7 @@ ifdef dumpvar_goals
   absolute_dumpvar := $(strip $(filter abs-%,$(dumpvar_goals)))
   ifdef absolute_dumpvar
     dumpvar_goals := $(patsubst abs-%,%,$(dumpvar_goals))
-    ifneq ($(filter /%,$($(dumpvar_goals))),)
-      DUMPVAR_VALUE := $($(dumpvar_goals))
-    else
-      DUMPVAR_VALUE := $(PWD)/$($(dumpvar_goals))
-    endif
+    DUMPVAR_VALUE := $(abspath $($(dumpvar_goals)))
     dumpvar_target := dumpvar-abs-$(dumpvar_goals)
   else
     DUMPVAR_VALUE := $($(dumpvar_goals))
@@ -115,7 +111,7 @@ ifneq ($(filter report_config, $(DUMP_MANY_VARS)),)
 	@echo "$(DUMP_VAR_PREFIX)report_config=\`$(report_config_sh)\`"
 endif
 	@$(foreach v, $(sort $(DUMP_MANY_ABS_VARS)),\
-	  echo "$(DUMP_ABS_VAR_PREFIX)$(v)='$(PWD)/$($(v))'";)
+	  echo "$(DUMP_ABS_VAR_PREFIX)$(v)='$(abspath $($(v)))'";)
 
 endif # CALLED_FROM_SETUP
 
