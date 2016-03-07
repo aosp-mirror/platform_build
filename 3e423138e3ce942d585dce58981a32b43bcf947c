@@ -16,6 +16,24 @@
       "revId": "3e423138e3ce942d585dce58981a32b43bcf947c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "977021c5_99611b80",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T20:44:39Z",
+      "side": 1,
+      "message": "It would still be required -- it\u0027s inconsistent because there\u0027s no ordering guarantee unless there is a dependency. (It\u0027s automatically handled with LOCAL_GENERATED_SOURCES)",
+      "parentUuid": "17c19119_4d951959",
+      "revId": "3e423138e3ce942d585dce58981a32b43bcf947c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
