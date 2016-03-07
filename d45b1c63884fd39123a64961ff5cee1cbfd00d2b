@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "773acdf7_206f4a02",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T21:25:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77b56dab_a87d9bb9",
+      "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b7bb659f_ca76c3de",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 5
@@ -54,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "77b56dab_6811e333",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T21:25:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7bb659f_ca76c3de",
+      "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "77b56dab_68e243c1",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 5
@@ -65,6 +101,30 @@
       "writtenOn": "2016-03-07T21:03:15Z",
       "side": 1,
       "message": "This shouldn\u0027t be needed anymore, right?",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 44
+      },
+      "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97d581d1_1155ecef",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T21:25:53Z",
+      "side": 1,
+      "message": "No we need this as far as I can tell. With out it, it uses the default under (set on line 72) : $(LOCAL_PATH)/default/$(ANDROID_FS_CONFIG_H",
+      "parentUuid": "77b56dab_68e243c1",
       "range": {
         "startLine": 90,
         "startChar": 0,
