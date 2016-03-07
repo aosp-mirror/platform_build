@@ -771,7 +771,10 @@ class BlockImageDiff(object):
           x = x.subtract(sr)
 
       for s, e in x:
-        for i in range(s, e):
+        # Source image could be larger. Don't check the blocks that are in the
+        # source image only. Since they are not in 'touched', and won't ever
+        # be touched.
+        for i in range(s, min(e, self.tgt.total_blocks)):
           assert touched[i] == 0
 
       # Check that the output blocks for this transfer haven't yet
