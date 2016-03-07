@@ -52,6 +52,24 @@
       "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7bb659f_8ac9ab74",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T20:44:39Z",
+      "side": 1,
+      "message": "Yes, using LOCAL_GENERATED_SOURCES:\n\n  LOCAL_MODULE_CLASS :\u003d EXECUTABLES\n  ifneq ($(TARGET_FS_CONFIG_GEN),)\n  gen :\u003d $(local-generated-sources-dir)/android_filesystem_config.h\n  $(gen): PRIVATE_LOCAL_PATH :\u003d $(LOCAL_PATH)\n  $(gen): PRIVATE_TARGET_FS_CONFIG_GEN :\u003d $(TARGET_FS_CONFIG_GEN)\n  $(gen): PRIVATE_CUSTOM_TOOL \u003d $(PRIVATE_LOCAL_PATH)/fs_config_generator.py $(PRIVATE_TARGET_FS_CONFIG_GEN) \u003e $@\n  $(gen): $(TARGET_FS_CONFIG_GEN) $(LOCAL_PATH)/fs_config_generator\n  \t$(transform-generated-source)\n  LOCAL_GENERATED_SOURCES :\u003d $(gen)\n  endif\n\nThere\u0027s some documentation under build/core/build-system.html, but parts are not up to date.",
+      "parentUuid": "977021c5_3931efe6",
+      "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
