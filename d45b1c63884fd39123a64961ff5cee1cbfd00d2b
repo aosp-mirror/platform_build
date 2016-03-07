@@ -16,6 +16,64 @@
       "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77b56dab_a87d9bb9",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T21:03:15Z",
+      "side": 1,
+      "message": "No, this works. The other variable just works better when you need to generate more than one source file (and it\u0027s a bit shorter to read on every line)",
+      "parentUuid": "773acdf7_80b616ff",
+      "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7bb659f_ca76c3de",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T21:03:15Z",
+      "side": 1,
+      "message": "Using $(transform-generated-source) is preferred here, it prints a clean header and handles showcommands for you.",
+      "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77b56dab_68e243c1",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T21:03:15Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be needed anymore, right?",
+      "range": {
+        "startLine": 90,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 44
+      },
+      "revId": "d45b1c63884fd39123a64961ff5cee1cbfd00d2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
