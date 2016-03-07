@@ -34,6 +34,24 @@
       "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "977021c5_3931efe6",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T19:49:02Z",
+      "side": 1,
+      "message": "Are you saying I should be using LOCAL_GENERATED_SOURCES?",
+      "parentUuid": "f7331df3_0fa4c9cf",
+      "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
