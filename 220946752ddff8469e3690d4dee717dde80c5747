@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "773acdf7_c03e5ebf",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-03-07T21:55:39Z",
+      "side": 1,
+      "message": "We will have to update the corresponding documentation. Alas, once documented externally we have a long road to deprecation :-(",
+      "parentUuid": "77b56dab_08414715",
+      "revId": "220946752ddff8469e3690d4dee717dde80c5747",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37af7563_c6f242fa",
         "filename": "tools/fs_config/README",
         "patchSetId": 6
