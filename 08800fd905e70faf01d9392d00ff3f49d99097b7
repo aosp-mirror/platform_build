@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2239f1b4_b3e860ce",
+        "filename": "core/dumpvar.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-07T19:04:17Z",
+      "side": 1,
+      "message": "Yeah, this won\u0027t work with absolute OUT_DIRs, $(abspath $($(v))) should be used instead",
+      "range": {
+        "startLine": 118,
+        "startChar": 37,
+        "endLine": 118,
+        "endChar": 51
+      },
+      "revId": "08800fd905e70faf01d9392d00ff3f49d99097b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
