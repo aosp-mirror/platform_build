@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77b56dab_08414715",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T21:28:00Z",
+      "side": 1,
+      "message": "I can upload a change that makes this method print a warning that its deprecated and then have another change make it an error and remove this way.",
+      "revId": "220946752ddff8469e3690d4dee717dde80c5747",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
