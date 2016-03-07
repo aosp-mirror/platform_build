@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17c19119_4d951959",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T20:33:31Z",
+      "side": 1,
+      "message": "I initially added the LOCAL_ADDITIONAL_DEPENDENCIES when I hit a build error on no dependency to make the header file. However, I can no longer reproduce that error, so I dropped it.\n\nI was confident I encountered it before when executing:\n$ make -j8 fs_config_files\n\nOn angler and shamu it works without this, but on bullhead it dies. Weird I am seeing inconsistencies between them.",
+      "revId": "3e423138e3ce942d585dce58981a32b43bcf947c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
