@@ -16,6 +16,24 @@
       "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7331df3_0fa4c9cf",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-07T18:53:41Z",
+      "side": 1,
+      "message": "Im not really an expert on Android makefiles, is their some documentation or example you can point me to so I can understand your comment better?",
+      "parentUuid": "978741d1_4146322f",
+      "revId": "da9a71dd2055f485a2196d42c7b466c852448669",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
