@@ -3,7 +3,7 @@
 ## Common flags for native benchmarks are added.
 ###########################################
 
-LOCAL_STATIC_LIBRARIES += libbenchmark libbase
+LOCAL_STATIC_LIBRARIES += libgoogle-benchmark
 
 ifndef LOCAL_MODULE_PATH
 LOCAL_MODULE_PATH := $(TARGET_OUT_DATA_NATIVE_TESTS)/$(LOCAL_MODULE)
