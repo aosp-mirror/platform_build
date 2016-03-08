@@ -41,10 +41,4 @@ $(warning *****************************************************)
 $(error Stop.)
 endif
 
-ifeq ($(mac_sdk_version),10.6)
-  gcc_darwin_version := 10
-else
-  gcc_darwin_version := 11
-endif
-
 endif  # ifndef build_mac_version
