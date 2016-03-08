@@ -22,6 +22,30 @@
       "revId": "b35ea36c58e0bbbcbd21c642db53f61b4e924218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d748d9a2_5bbb63e8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1724,
+      "author": {
+        "id": 1077068
+      },
+      "writtenOn": "2016-03-08T03:18:53Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/#/c/205756/\n\nTao, do you prefer to generate it here? We need to check that the delta_generator built for this version does actually support its own version.",
+      "parentUuid": "2239f1b4_f60bb671",
+      "range": {
+        "startLine": 1724,
+        "startChar": 34,
+        "endLine": 1724,
+        "endChar": 50
+      },
+      "revId": "b35ea36c58e0bbbcbd21c642db53f61b4e924218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
