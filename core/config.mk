@@ -442,6 +442,8 @@ endif
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
+prebuilt_sdk_tools := prebuilts/sdk/tools
+prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
 ACP := $(HOST_OUT_EXECUTABLES)/acp
 AIDL := $(HOST_OUT_EXECUTABLES)/aidl
@@ -455,13 +457,14 @@ BCC_COMPAT := $(HOST_OUT_EXECUTABLES)/bcc_compat
 DX := $(HOST_OUT_EXECUTABLES)/dx
 MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 
+# Always use prebuilts for ckati and makeparallel
+CKATI := $(prebuilt_sdk_tools_bin)/ckati
+MAKEPARALLEL := $(prebuilt_sdk_tools_bin)/makeparallel
+
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
 # Override the definitions above for unbundled and PDK builds
 ifneq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
-prebuilt_sdk_tools := prebuilts/sdk/tools
-prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
-
 ACP := $(prebuilt_sdk_tools_bin)/acp
 AIDL := $(prebuilt_sdk_tools_bin)/aidl
 AAPT := $(prebuilt_sdk_tools_bin)/aapt
@@ -479,6 +482,8 @@ LLVM_RS_CC := $(prebuilt_sdk_tools_bin)/llvm-rs-cc
 BCC_COMPAT := $(prebuilt_sdk_tools_bin)/bcc_compat
 endif # TARGET_BUILD_PDK
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
+prebuilt_sdk_tools :=
+prebuilt_sdk_tools_bin :=
 
 
 # ---------------------------------------------------------------
