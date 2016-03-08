@@ -70,6 +70,30 @@
       "revId": "b35ea36c58e0bbbcbd21c642db53f61b4e924218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "979d8172_14e7da01",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1724,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2016-03-08T19:32:56Z",
+      "side": 1,
+      "message": "We have a unit test that checks if the current version is compatible, and unit test runs on the device...\nI\u0027m trying to see if I can change zlib_fingerprint to a host module and copy the file when building unit test, but it seems HOST_OUT_ETC don\u0027t exist, and I have to change LOCAL_MODULE_CLASS to EXECUTABLES, do you have a better way to do this?",
+      "parentUuid": "2274917a_49fe9180",
+      "range": {
+        "startLine": 1724,
+        "startChar": 34,
+        "endLine": 1724,
+        "endChar": 50
+      },
+      "revId": "b35ea36c58e0bbbcbd21c642db53f61b4e924218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
