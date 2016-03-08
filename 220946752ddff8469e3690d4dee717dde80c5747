@@ -105,6 +105,30 @@
       "revId": "220946752ddff8469e3690d4dee717dde80c5747",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97be618f_46b64302",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-03-08T17:11:18Z",
+      "side": 1,
+      "message": "Just ideas.\n\nIMHO with a simple KISS extension of the current format? AID_* without slashes must _always_ be prefixed, \u0027value:\u0027 field aids the context/syntax of the specification (just in case someone decided to make a root directory file AID_ME ;-/)\n\n[AID_BILL]\nvalue: 0x2901\n\n[system/bin/qmuxd]\n...\n\nRegardless, I have the expectation that new AIDs need construct-time uniqueness checking (we may get that from a compilation error of the constructed android_filesystem_config.h file if not, harder to figure out _who_ created the problem?), but multiple files can specify the _exact_ _same_ AID I would expect without harm. Range checking for sure, let\u0027s start with the OEM range, we can open it up later if we need to.\n\nIMHO JSON barfs too easily on bad syntax, format may be too rigid for human composure? Explaining the JSON format in the README might be more complicated, we want to make things easier on all without having them require a reading of a wiki page to enter. But there are so many support libraries for it that the developer can use to compose them...",
+      "parentUuid": "97be618f_5d2dbb47",
+      "range": {
+        "startLine": 50,
+        "startChar": 2,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "220946752ddff8469e3690d4dee717dde80c5747",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
