@@ -67,6 +67,13 @@ LIBART_TARGET_BOOT_JARS := $(patsubst core, core-libart,$(DEXPREOPT_BOOT_JARS_MO
 LIBART_TARGET_BOOT_DEX_LOCATIONS := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),/$(DEXPREOPT_BOOT_JAR_DIR)/$(jar).jar)
 LIBART_TARGET_BOOT_DEX_FILES := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),$(call intermediates-dir-for,JAVA_LIBRARIES,$(jar),,COMMON)/javalib.jar)
 
+# dex preopt on the bootclasspath produces multiple files.  The first dex file
+# is converted into to boot.art (to match the legacy assumption that boot.art
+# exists), and the rest are converted to boot-<name>.art.
+# In addition, each .art file has an associated .oat file.
+LIBART_TARGET_BOOT_ART_EXTRA_FILES := $(foreach jar,$(wordlist 2,999,$(LIBART_TARGET_BOOT_JARS)),boot-$(jar).art)
+LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat $(patsubst %.art,%.oat,$(LIBART_TARGET_BOOT_ART_EXTRA_FILES))
+
 my_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
 
