@@ -46,6 +46,30 @@
       "revId": "b35ea36c58e0bbbcbd21c642db53f61b4e924218",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2274917a_49fe9180",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1724,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-03-08T05:33:02Z",
+      "side": 1,
+      "message": "Do we need to read the string on device? I\u0027m thinking why it should go into $(TARGET_OUT_ETC).",
+      "parentUuid": "d748d9a2_5bbb63e8",
+      "range": {
+        "startLine": 1724,
+        "startChar": 34,
+        "endLine": 1724,
+        "endChar": 50
+      },
+      "revId": "b35ea36c58e0bbbcbd21c642db53f61b4e924218",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
