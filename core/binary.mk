@@ -1398,19 +1398,26 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 ###########################################################
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
+export_include_deps := $(strip \
+   $(foreach l,$(my_whole_static_libraries), \
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+$(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
 # Make sure .pb.h are already generated before any dependent source files get compiled.
 # Similarly, the generated DBus headers need to exist before we export their location.
 # People are not going to consume the aidl generated cpp file, but the cpp file is
 # generated after the headers, so this is a convenient way to ensure the headers exist.
-$(export_includes) : $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp)
+$(export_includes) : $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp) $(export_include_deps)
 	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp
+	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp && touch $@.tmp
 ifdef my_export_c_include_dirs
 	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
 	        echo "-I $$d" >> $@.tmp; \
 	        done
-else
-	$(hide) touch $@.tmp
+endif
+ifdef export_include_deps
+	$(hide) for f in $(PRIVATE_REEXPORTED_INCLUDES); do \
+		cat $$f >> $@.tmp; \
+		done
 endif
 	$(hide) if cmp -s $@.tmp $@ ; then \
 	  rm $@.tmp ; \
