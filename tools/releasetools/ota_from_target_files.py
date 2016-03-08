@@ -70,6 +70,13 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       the build scripts (used for developer OTA packages which
       legitimately need to go back and forth).
 
+  --downgrade
+      Intentionally generate an incremental OTA that updates from a newer
+      build to an older one (based on timestamp comparison). "post-timestamp"
+      will be replaced by "ota-downgrade=yes" in the metadata file. A data
+      wipe will always be enforced, so "ota-wipe=yes" will also be included in
+      the metadata file.
+
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
 
@@ -124,6 +131,7 @@ OPTIONS.prohibit_verbatim = set(("system/build.prop",))
 OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
+OPTIONS.downgrade = False
 OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = multiprocessing.cpu_count() // 2
@@ -693,6 +701,8 @@ reboot_now("%(bcb_dev)s", "");
 endif;
 endif;
 """ % bcb_dev)
+
+  script.SetProgress(1)
   script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
@@ -765,11 +775,31 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
         open(OPTIONS.oem_source).readlines())
 
   metadata = {
-      "pre-device": GetBuildProp("ro.product.device",
-                                 OPTIONS.source_info_dict),
-      "post-timestamp": GetBuildProp("ro.build.date.utc",
-                                     OPTIONS.target_info_dict),
+      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+                                   OPTIONS.source_info_dict),
+      "ota-type": "BLOCK",
   }
+
+  post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
+  pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
+  is_downgrade = long(post_timestamp) < long(pre_timestamp)
+
+  if OPTIONS.downgrade:
+    metadata["ota-downgrade"] = "yes"
+    if not is_downgrade:
+      raise RuntimeError("--downgrade specified but no downgrade detected: "
+                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+  else:
+    if is_downgrade:
+      # Non-fatal here to allow generating such a package which may require
+      # manual work to adjust the post-timestamp. A legit use case is that we
+      # cut a new build C (after having A and B), but want to enfore the
+      # update path of A -> C -> B. Specifying --downgrade may not help since
+      # that would enforce a data wipe for C -> B update.
+      print("\nWARNING: downgrade detected: pre: %s, post: %s.\n"
+            "The package may not be deployed properly. "
+            "Try --downgrade?\n" % (pre_timestamp, post_timestamp))
+    metadata["post-timestamp"] = post_timestamp
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -781,14 +811,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.source_info_dict)
 
-  # TODO: Currently this works differently from WriteIncrementalOTAPackage().
-  # This function doesn't consider thumbprints when writing
-  # metadata["pre/post-build"]. One possible reason is that the current
-  # devices with thumbprints are all using file-based OTAs. Long term we
-  # should factor out the common parts into a shared one to avoid further
-  # divergence.
-  source_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.source_info_dict)
-  target_fp = GetBuildProp("ro.build.fingerprint", OPTIONS.target_info_dict)
+  target_fp = CalculateFingerprint(oem_props, oem_dict,
+                                   OPTIONS.target_info_dict)
+  source_fp = CalculateFingerprint(oem_props, oem_dict,
+                                   OPTIONS.source_info_dict)
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
 
@@ -826,17 +852,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
                                          version=blockimgdiff_version)
   else:
     vendor_diff = None
-
-  oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
-  recovery_mount_options = OPTIONS.source_info_dict.get(
-      "recovery_mount_options")
-  oem_dict = None
-  if oem_props is not None and len(oem_props) > 0:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem", recovery_mount_options)
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
 
   AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
   device_specific.IncrementalOTA_Assertions()
@@ -992,6 +1007,7 @@ else
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
     script.FormatPartition("/data")
+    metadata["ota-wipe"] = "yes"
 
   if OPTIONS.two_step:
     script.AppendExtra("""
@@ -1160,16 +1176,37 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if oem_props is not None and len(oem_props) > 0:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
-    script.Mount("/oem", recovery_mount_options)
+    if not OPTIONS.oem_no_mount:
+      script.Mount("/oem", recovery_mount_options)
     oem_dict = common.LoadDictionaryFromLines(
         open(OPTIONS.oem_source).readlines())
 
   metadata = {
       "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
                                    OPTIONS.source_info_dict),
-      "post-timestamp": GetBuildProp("ro.build.date.utc",
-                                     OPTIONS.target_info_dict),
+      "ota-type": "FILE",
   }
+
+  post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
+  pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
+  is_downgrade = long(post_timestamp) < long(pre_timestamp)
+
+  if OPTIONS.downgrade:
+    metadata["ota-downgrade"] = "yes"
+    if not is_downgrade:
+      raise RuntimeError("--downgrade specified but no downgrade detected: "
+                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+  else:
+    if is_downgrade:
+      # Non-fatal here to allow generating such a package which may require
+      # manual work to adjust the post-timestamp. A legit use case is that we
+      # cut a new build C (after having A and B), but want to enfore the
+      # update path of A -> C -> B. Specifying --downgrade may not help since
+      # that would enforce a data wipe for C -> B update.
+      print("\nWARNING: downgrade detected: pre: %s, post: %s.\n"
+            "The package may not be deployed properly. "
+            "Try --downgrade?\n" % (pre_timestamp, post_timestamp))
+    metadata["post-timestamp"] = post_timestamp
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -1496,6 +1533,7 @@ else
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
     script.FormatPartition("/data")
+    metadata["ota-wipe"] = "yes"
 
   if OPTIONS.two_step:
     script.AppendExtra("""
@@ -1537,6 +1575,9 @@ def main(argv):
       OPTIONS.wipe_user_data = True
     elif o in ("-n", "--no_prereq"):
       OPTIONS.omit_prereq = True
+    elif o == "--downgrade":
+      OPTIONS.downgrade = True
+      OPTIONS.wipe_user_data = True
     elif o in ("-o", "--oem_settings"):
       OPTIONS.oem_source = a
     elif o == "--oem_no_mount":
@@ -1586,6 +1627,7 @@ def main(argv):
                                  "full_bootloader",
                                  "wipe_user_data",
                                  "no_prereq",
+                                 "downgrade",
                                  "extra_script=",
                                  "worker_threads=",
                                  "aslr_mode=",
@@ -1603,6 +1645,18 @@ def main(argv):
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
+
+  if OPTIONS.downgrade:
+    # Sanity check to enforce a data wipe.
+    if not OPTIONS.wipe_user_data:
+      raise ValueError("Cannot downgrade without a data wipe")
+
+    # We should only allow downgrading incrementals (as opposed to full).
+    # Otherwise the device may go back from arbitrary build with this full
+    # OTA package.
+    if OPTIONS.incremental_source is None:
+      raise ValueError("Cannot generate downgradable full OTAs - consider"
+                       "using --omit_prereq?")
 
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
