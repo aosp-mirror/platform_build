@@ -47,7 +47,6 @@ HOST_TOOLCHAIN_FOR_CLANG := $(HOST_TOOLCHAIN_ROOT)
 HOST_AR := $(AR)
 
 HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version) -DMACOSX_DEPLOYMENT_TARGET=$(mac_sdk_version)
-HOST_GLOBAL_CPPFLAGS += -isystem $(mac_sdk_path)/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1
 HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -Wl,-syslibroot,$(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
 
 HOST_GLOBAL_CFLAGS += -fPIC -funwind-tables
@@ -57,6 +56,10 @@ HOST_SHLIB_SUFFIX := .dylib
 HOST_JNILIB_SUFFIX := .jnilib
 
 HOST_GLOBAL_ARFLAGS := cqs
+
+# Use Darwin's libc++, as Darwin's libstdc++ is old and does not support C++11
+HOST_SYSTEMCPP_CPPFLAGS := -isystem $(mac_sdk_path)/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1
+HOST_SYSTEMCPP_LDFLAGS := -stdlib=libc++
 
 # We Reuse the following functions with the same name from HOST_darwin-x86.mk:
 # transform-host-o-to-shared-lib-inner
