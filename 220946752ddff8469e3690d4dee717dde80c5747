@@ -153,6 +153,30 @@
       "revId": "220946752ddff8469e3690d4dee717dde80c5747",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97be618f_666907f9",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-03-08T17:44:25Z",
+      "side": 1,
+      "message": "I can live with not being able to specify multiple identical AID_* references, I viewed it as a convenience for the lazy ;-} SGTM",
+      "parentUuid": "97be618f_0677ebdb",
+      "range": {
+        "startLine": 50,
+        "startChar": 2,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "220946752ddff8469e3690d4dee717dde80c5747",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
