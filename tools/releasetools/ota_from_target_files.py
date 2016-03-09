@@ -75,7 +75,8 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       build to an older one (based on timestamp comparison). "post-timestamp"
       will be replaced by "ota-downgrade=yes" in the metadata file. A data
       wipe will always be enforced, so "ota-wipe=yes" will also be included in
-      the metadata file.
+      the metadata file. The update-binary in the source build will be used in
+      the OTA package, unless --binary flag is specified.
 
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
@@ -1017,7 +1018,12 @@ endif;
 """ % bcb_dev)
 
   script.SetProgress(1)
-  script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
+  # For downgrade OTAs, we prefer to use the update-binary in the source
+  # build that is actually newer than the one in the target build.
+  if OPTIONS.downgrade:
+    script.AddToZip(source_zip, output_zip, input_path=OPTIONS.updater_binary)
+  else:
+    script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   WriteMetadata(metadata, output_zip)
 
 
@@ -1553,7 +1559,13 @@ endif;
     script.Unmount("/vendor")
     script.Mount("/vendor")
     vendor_diff.EmitExplicitTargetVerification(script)
-  script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
+
+  # For downgrade OTAs, we prefer to use the update-binary in the source
+  # build that is actually newer than the one in the target build.
+  if OPTIONS.downgrade:
+    script.AddToZip(source_zip, output_zip, input_path=OPTIONS.updater_binary)
+  else:
+    script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
 
   WriteMetadata(metadata, output_zip)
 
