@@ -128,6 +128,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(PLATFORM_JACK_MIN_SDK_VERSION)
 
 jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(proto_java_sources_file_stamp) \
