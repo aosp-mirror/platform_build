@@ -2056,6 +2056,7 @@ $(call call-jack) \
         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
     $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
+    -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
     --output-jack $(PRIVATE_CLASSES_JACK) \
@@ -2099,6 +2100,7 @@ $(hide) if [ -s $@.java-source-list-uniq ] ; then \
 	    $(addprefix --classpath ,$(strip \
 	        $(call normalize-path-list,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES)) $(PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES) $(PRIVATE_ALL_JACK_LIBRARIES)))) \
 	    -D jack.import.resource.policy=keep-first \
+	    -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
 	    -D jack.import.type.policy=keep-first \
 	    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
 	    @$@.java-source-list-uniq; \
@@ -2115,6 +2117,7 @@ define transform-jar-to-jack
 	    $(PRIVATE_JACK_FLAGS) \
         -D jack.import.resource.policy=keep-first \
         -D jack.import.type.policy=keep-first \
+        -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
 	    --import $< \
 	    --import-resource $@.tmpjill.res \
 	    --output-jack $@
@@ -2230,6 +2233,7 @@ $(call call-jack) \
     $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
+    -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
     $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
     --output-jack $@ \
     $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
