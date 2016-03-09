@@ -1593,10 +1593,10 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
-	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
-	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
+	-o $@ \
 	$(PRIVATE_TARGET_CRTEND_SO_O) \
 	$(PRIVATE_LDLIBS)
 endef
@@ -1664,10 +1664,10 @@ $(hide) $(PRIVATE_CXX) -pie \
 	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
-	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
-	-o $@ \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
+	-o $@ \
 	$(PRIVATE_TARGET_CRTEND_O) \
 	$(PRIVATE_LDLIBS)
 endef
