@@ -110,8 +110,11 @@ else ifeq ($(my_cxx_stl),libstdc++)
     ifndef LOCAL_IS_HOST_MODULE
         my_c_includes += bionic/libstdc++/include
         my_system_shared_libraries += libstdc++
+    else
+        # Host builds will use the system C++. libc++ on Darwin, GNU libstdc++ everywhere else
+        my_cppflags += $($(my_prefix)SYSTEMCPP_CPPFLAGS)
+        my_ldflags += $($(my_prefix)SYSTEMCPP_LDFLAGS)
     endif
-    # Host builds will use GNU libstdc++.
 else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
