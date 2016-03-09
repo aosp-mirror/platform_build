@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3776954b_0ea8ebe9",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-09T16:37:08Z",
+      "side": 1,
+      "message": "I had a little doubt here: is it possible that current would be sometimes the same version as one available from its number? I suppose the answer to this question is yes. So that means this line would switch to N+1 as soon as sdk_vN is imported. That would be probably too soon.",
+      "revId": "a9b0bfb72908856982f36624f12b7c5562079d93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3776954b_2ea5a710",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-09T16:37:08Z",
+      "side": 1,
+      "message": "No that\u0027s dangerous, the library could be imported in an app compiling against an older SDK.",
+      "range": {
+        "startLine": 342,
+        "startChar": 66,
+        "endLine": 342,
+        "endChar": 88
+      },
+      "revId": "a9b0bfb72908856982f36624f12b7c5562079d93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
