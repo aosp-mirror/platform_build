@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "979d8172_4537eadd",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-03-09T15:57:14Z",
+      "side": 1,
+      "message": "Could just use v here.",
+      "revId": "a7a4dbab8335ca2816bff72e695843f43db08d71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
