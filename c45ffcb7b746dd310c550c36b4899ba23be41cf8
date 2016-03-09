@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7de195a_ba61eda3",
+        "filename": "core/combo/mac_version.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-09T02:23:35Z",
+      "side": 1,
+      "message": "$(firstword $(mac_sdk_versions_supported))",
+      "range": {
+        "startLine": 48,
+        "startChar": 19,
+        "endLine": 48,
+        "endChar": 23
+      },
+      "revId": "c45ffcb7b746dd310c550c36b4899ba23be41cf8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7de195a_5a79e954",
+        "filename": "core/combo/mac_version.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-09T02:23:35Z",
+      "side": 1,
+      "message": "I am not familiar with this, but looks like we don\u0027t need this because we already have \"-mmacosx-version-min\u003d$(mac_sdk_version)\" in HOST_GLOBAL_CFLAGS. See http://stackoverflow.com/questions/25352389/difference-between-macosx-deployment-target-and-mmacosx-version-min-compiler-op",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 50
+      },
+      "revId": "c45ffcb7b746dd310c550c36b4899ba23be41cf8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
