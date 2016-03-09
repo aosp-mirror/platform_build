@@ -16,6 +16,24 @@
       "revId": "6a3b755ab9faa07e3afb9783a175f8afb736ad03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17719153_8db38160",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-09T17:26:32Z",
+      "side": 1,
+      "message": "Renamed instead.",
+      "parentUuid": "57686970_678af2da",
+      "revId": "6a3b755ab9faa07e3afb9783a175f8afb736ad03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
