@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d7de195a_25fa82d1",
+        "filename": "core/combo/mac_version.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-09T04:31:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7de195a_ba61eda3",
+      "range": {
+        "startLine": 48,
+        "startChar": 19,
+        "endLine": 48,
+        "endChar": 23
+      },
+      "revId": "c45ffcb7b746dd310c550c36b4899ba23be41cf8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d7de195a_5a79e954",
         "filename": "core/combo/mac_version.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-09T02:23:35Z",
       "side": 1,
       "message": "I am not familiar with this, but looks like we don\u0027t need this because we already have \"-mmacosx-version-min\u003d$(mac_sdk_version)\" in HOST_GLOBAL_CFLAGS. See http://stackoverflow.com/questions/25352389/difference-between-macosx-deployment-target-and-mmacosx-version-min-compiler-op",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 50
+      },
+      "revId": "c45ffcb7b746dd310c550c36b4899ba23be41cf8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7de195a_e5b47a1a",
+        "filename": "core/combo/mac_version.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-09T04:31:48Z",
+      "side": 1,
+      "message": "They are mostly the same, but I\u0027ve found some references to the linker not getting forwarded the argument in some versions. But since the latest reference I found was with 10.6, and we aren\u0027t using the platform compiler, this should be safe to remove. I\u0027ll do that with the next patch after verifying.\n\nWe\u0027re setting -DMACOSX_DEPLOYMENT_TARGET too, and I\u0027ve found no reference to that in any documentation.",
+      "parentUuid": "d7de195a_5a79e954",
       "range": {
         "startLine": 50,
         "startChar": 0,
