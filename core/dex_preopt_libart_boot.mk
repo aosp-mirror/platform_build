@@ -28,6 +28,8 @@ $(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME := /$(DEXPREOPT_BOOT_JAR_DIR)/$(
 $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_OAT_UNSTRIPPED := $(TARGET_OUT_UNSTRIPPED)$(patsubst %.art,%.oat,$($(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME))
 
 $(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE := $(PRODUCT_OUT)$($(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME)
+$(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES := $(addprefix $(dir $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)),\
+    $(LIBART_TARGET_BOOT_ART_EXTRA_FILES))
 
 # Compile boot.oat as position-independent code if WITH_DEXPREOPT_PIC=true
 ifeq (true,$(WITH_DEXPREOPT_PIC))
@@ -40,10 +42,18 @@ ifneq ($(COMPILED_CLASSES),)
   COMPILED_CLASSES_FLAGS := --compiled-classes=$(COMPILED_CLASSES)
 endif
 
-# The rule to install boot.art and boot.oat
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP)
-	$(hide) $(ACP) -fp $(dir $<)/*.art $(dir $@)
-	$(hide) $(ACP) -fp $(dir $<)/*.oat $(dir $@)
+# The rule to install boot.art
+# Depends on installed boot.oat, boot-*.art, boot-*.oat
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP) $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES)
+	@echo "Install: $@"
+	$(copy-file-to-target)
+
+# The rule to install boot.oat, boot-*.art, boot-*.oat
+# Depends on built-but-not-installed boot.art
+$($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)  | $(ACP)
+	@echo "Install: $@"
+	@mkdir -p $(dir $@)
+	$(hide) $(ACP) -fp $(dir $<)$(notdir $@) $@
 
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 # Use dex2oat debug version for better error reporting
