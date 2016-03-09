@@ -5,6 +5,13 @@
 #   mac_sdk_root
 #   gcc_darwin_version
 
+# You can no longer install older SDKs in newer xcode versions, so it appears
+# to be expected to use the newer SDKs, but set command line flags in order to
+# target older Mac OS X versions.
+#
+# We'll use the oldest SDK we can find, and then use the -mmacosx-version-min
+# and MACOSX_DEPLOYMENT_TARGET flags to set our minimum version.
+
 ifndef build_mac_version
 
 build_mac_version := $(shell sw_vers -productVersion)
@@ -36,5 +43,8 @@ $(warning * Can not find SDK $(mac_sdk_version) at $(mac_sdk_root))
 $(warning *****************************************************)
 $(error Stop.)
 endif
+
+# Set to the minimum version of OS X that we want to run on.
+mac_sdk_version := $(firstword $(mac_sdk_versions_supported))
 
 endif  # ifndef build_mac_version
