@@ -8515,12 +8515,12 @@ At the bottom of this section, we provide information about the spritesheet itse
 $spritesheet: width height image $spritesheet-sprites;
 */
 .dac-sprite, #tb li:before, #qv li:before {
-  background-image: url(/assets/images/sprite.png);
+  background-image: url(../../assets/images/sprite.png);
   display: inline-block;
   vertical-align: middle; }
   @media screen and (min-device-pixel-ratio: 1.5) {
     .dac-sprite, #tb li:before, #qv li:before {
-      background-image: url(/assets/images/sprite-2x.png);
+      background-image: url(../../assets/images/sprite-2x.png);
       background-size: 50% 50%; } }
 
 .dac-sprite.dac-auto-chevron {
