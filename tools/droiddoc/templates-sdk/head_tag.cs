@@ -47,12 +47,12 @@ if:android.whichdoc != 'online' ?>http:<?cs
 if:android.whichdoc != 'online' ?>http:<?cs
 /if ?>//fonts.googleapis.com/css?family=Roboto:light,regular,medium,thin,italic,mediumitalic,bold"
   title="roboto">
-<?cs 
+<?cs
   if:ndk ?><link rel="stylesheet" href="<?cs
   if:android.whichdoc != 'online' ?>http:<?cs
   /if ?>//fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" title="roboto-mono" type="text/css"><?cs
 /if ?>
-<link href="<?cs var:toroot ?>assets/css/default.css?v=17" rel="stylesheet" type="text/css">
+<link href="<?cs var:toroot ?>assets/css/default.css?v=18" rel="stylesheet" type="text/css">
 
 <?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
 <!-- FULLSCREEN STYLESHEET -->
@@ -77,7 +77,7 @@ else
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
   var useUpdatedTemplates = <?cs if:useUpdatedTemplates ?>true<?cs else ?>false<?cs /if ?>;
 </script>
-<script src="<?cs var:toroot ?>assets/js/docs.js?v=17" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js?v=18" type="text/javascript"></script>
 
 <?cs if:helpoutsWidget ?>
 <script type="text/javascript" src="https://helpouts.google.com/ps/res/embed.js" defer async
