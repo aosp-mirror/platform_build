@@ -160,8 +160,8 @@ $(KATI_BUILD_NINJA): $(KATI) $(MAKEPARALLEL) $(SOONG_ANDROID_MK) FORCE
 	+$(hide) $(KATI_MAKEPARALLEL) $(KATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --no_ignore_dirty=$(SOONG_ANDROID_MK) --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo $(KATI_FIND_EMULATOR) -f build/core/main.mk $(KATI_GOALS) --gen_all_targets BUILDING_WITH_NINJA=true SOONG_ANDROID_MK=$(SOONG_ANDROID_MK)
 
 ifneq ($(USE_SOONG_FOR_KATI),true)
-KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
-KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
+KATI_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS) $(HOST_SYSTEMCPP_CPPFLAGS)
+KATI_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS) $(HOST_SYSTEMCPP_LDFLAGS)
 # Build static ckati. Unfortunately Mac OS X doesn't officially support static exectuables.
 ifeq ($(BUILD_OS),linux)
 # We need everything in libpthread.a otherwise C++11's threading library will be disabled.
@@ -172,8 +172,8 @@ KATI_INTERMEDIATES_PATH := $(HOST_OUT_INTERMEDIATES)/EXECUTABLES/ckati_intermedi
 KATI_BIN_PATH := $(HOST_OUT_EXECUTABLES)
 include build/kati/Makefile.ckati
 
-MAKEPARALLEL_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS)
-MAKEPARALLEL_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS)
+MAKEPARALLEL_CXX := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_CFLAGS) $(CLANG_HOST_GLOBAL_CPPFLAGS) $(HOST_SYSTEMCPP_CPPFLAGS)
+MAKEPARALLEL_LD := $(CLANG_CXX) $(CLANG_HOST_GLOBAL_LDFLAGS) $(HOST_SYSTEMCPP_LDFLAGS)
 # Build static makeparallel. Unfortunately Mac OS X doesn't officially support static exectuables.
 ifeq ($(BUILD_OS),linux)
 MAKEPARALLEL_LD += -static
