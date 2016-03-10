@@ -16,9 +16,14 @@ endif
 
 SOONG := $(SOONG_OUT_DIR)/soong
 SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
-SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
+
+# Only include the Soong-generated Android.mk if we're merging the
+# Soong-defined binaries with Kati-defined binaries.
+ifeq ($(USE_SOONG),true)
+SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
+endif
 
 # Bootstrap soong.  Run only the first time for clean builds
 $(SOONG):
@@ -67,6 +72,8 @@ $(SOONG_IN_MAKE):
 	$(hide) mkdir -p $(dir $@)
 	$(hide) touch $@
 
-# Build an Android.mk listing all soong outputs as prebuilts
-$(SOONG_ANDROID_MK): $(SOONG) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
+# Run Soong, this implicitly create an Android.mk listing all soong outputs as
+# prebuilts.
+.PHONY: run_soong
+run_soong: $(SOONG) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
 	$(hide) $(SOONG) $(SOONG_BUILD_NINJA) $(NINJA_ARGS)
