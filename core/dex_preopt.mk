@@ -24,6 +24,11 @@ DEX_PREOPT_DEFAULT ?= true
 ifeq ($(HOST_OS),linux)
   WITH_DEXPREOPT_PIC ?= true
   WITH_DEXPREOPT ?= true
+# For an eng build only pre-opt the boot image. This gives reasonable performance and still
+# allows a simple workflow: building in frameworks/base and syncing.
+  ifeq (eng,$(TARGET_BUILD_VARIANT))
+    WITH_DEXPREOPT_BOOT_IMG_ONLY ?= true
+  endif
 endif
 
 # $(1): the .jar or .apk to remove classes.dex
