@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7de195a_37bce6e1",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-10T01:38:15Z",
+      "side": 1,
+      "message": "I was thinking to put the prebuilts in prebuilts/misc, because kati/makeparallel aren\u0027t really SDK tools. But that would still need to update most of the unbundled branch manifests. So I am ok to put it in prebuilts/sdk.",
+      "range": {
+        "startLine": 445,
+        "startChar": 22,
+        "endLine": 445,
+        "endChar": 41
+      },
+      "revId": "1487f31d8343998e4410c94c3451f9d10298128d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
