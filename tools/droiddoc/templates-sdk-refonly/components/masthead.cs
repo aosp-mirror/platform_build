@@ -141,8 +141,14 @@
         es-lang="Referencia">API Reference</a>
       <div class="dac-nav-secondary develop">
         <h1 style="font-size: 20px; line-height: 24px; margin: 20px; color:#444"
-          >Android <?cs var:sdk.version ?> r<?cs var:sdk.rel.id ?>
-        </h1>
+          ><?cs
+          if:sdk.preview
+            ?>Android <?cs var:sdk.codename ?>
+              Preview <?cs var:sdk.preview.version ?><?cs
+          else
+            ?>Android <?cs var:sdk.version ?>
+              r<?cs var:sdk.rel.id ?><?cs
+          /if ?></h1>
       </div>
       </li>
     </ul>
