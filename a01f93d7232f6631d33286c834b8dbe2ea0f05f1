@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "976e6179_8c8aa79a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1989,
+      "author": {
+        "id": 1015381
+      },
+      "writtenOn": "2016-03-10T14:58:10Z",
+      "side": 1,
+      "message": "The flag in Jack drives how the dex is generated. For now, this will only emit an error on default/static methods if target is \u003c 24. We plan to add other specific warnings/errors/code-variants to avoid bugs or use future opcodes. It is why we really need the current sdk version, and not the previous one like PLATFORM_SDK_VERSION (IIUC).\n\nYes, the LOCAL_SDK_VERSION of a library doesn\u0027t matter here, because a Jack library is target independent. This is really the final generated dex which is impacted by this flag, despite how are build their dependencies.",
+      "parentUuid": "d7de195a_57ce52d3",
+      "range": {
+        "startLine": 1989,
+        "startChar": 4,
+        "endLine": 1989,
+        "endChar": 60
+      },
+      "revId": "a01f93d7232f6631d33286c834b8dbe2ea0f05f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d7de195a_b72b3661",
         "filename": "core/java.mk",
         "patchSetId": 3
