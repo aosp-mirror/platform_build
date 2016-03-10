@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7de195a_1759ead5",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 831,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-10T02:07:42Z",
+      "side": 1,
+      "message": "When and who will we update this number?\nCan\u0027t we just use PLATFORM_SDK_VERSION?",
+      "range": {
+        "startLine": 831,
+        "startChar": 36,
+        "endLine": 831,
+        "endChar": 38
+      },
+      "revId": "a01f93d7232f6631d33286c834b8dbe2ea0f05f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7de195a_57ce52d3",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1989,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-10T02:07:42Z",
+      "side": 1,
+      "message": "I am wondering how this min api level is used by Jack.\nNote that A module with lower LOCAL_SDK_VERSION may import a static library with higher LOCAL_SDK_VERSION.\nFor example, android-support-v4 (with LOCAL_SDK_VERSION :\u003d 4) imports android-support-v4-api24 (with LOCAL_SDK_VERSION :\u003d current, 24 for N). android-support-v4 will be included by apps that target platform with API level 4. Is that OK?\n\nThis is similar to how we want to enable Java 8 language feature based on LOCAL_SDK_VERSION. See ag/879640.",
+      "range": {
+        "startLine": 1989,
+        "startChar": 4,
+        "endLine": 1989,
+        "endChar": 60
+      },
+      "revId": "a01f93d7232f6631d33286c834b8dbe2ea0f05f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7de195a_b72b3661",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-10T02:07:42Z",
+      "side": 1,
+      "message": "this isn\u0027t a LOCAL variable that can be set by Android.mk.\nPlease use something like my_min_sdk_version.",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 29
+      },
+      "revId": "a01f93d7232f6631d33286c834b8dbe2ea0f05f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
