@@ -80,7 +80,7 @@
       <th>Platform</th>
       <th>Package</th>
       <th style="white-space:nowrap">Size (Bytes)</th>
-      <th>MD5 Checksum</th>
+      <th>SHA1 Checksum</th>
   </tr>
   <tr>
     <td>Windows 32-bit</td>
