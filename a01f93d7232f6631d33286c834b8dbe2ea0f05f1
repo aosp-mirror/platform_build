@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f7723d90_b41220a8",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 831,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-11T11:39:33Z",
+      "side": 1,
+      "message": "I suppose the jack-team will have to do it when a bump is required during development or it will have to be bump at least when PLATFORM_SDK_VERSION is bumped.\n\nI didn\u0027t know about PLATFORM_SDK_VERSION. We can\u0027t use this one since it\u0027s still at 23 (See Jean-Philippe response in definitions.mk). I renamed this variable and moved its definition close to PLATFORM_SDK_VERSION\u0027s.",
+      "parentUuid": "d7de195a_1759ead5",
+      "range": {
+        "startLine": 831,
+        "startChar": 36,
+        "endLine": 831,
+        "endChar": 38
+      },
+      "revId": "a01f93d7232f6631d33286c834b8dbe2ea0f05f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d7de195a_57ce52d3",
         "filename": "core/definitions.mk",
         "patchSetId": 3
@@ -83,6 +107,30 @@
       "writtenOn": "2016-03-10T02:07:42Z",
       "side": 1,
       "message": "this isn\u0027t a LOCAL variable that can be set by Android.mk.\nPlease use something like my_min_sdk_version.",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 29
+      },
+      "revId": "a01f93d7232f6631d33286c834b8dbe2ea0f05f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "974d815c_71c7d85d",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-11T11:39:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d7de195a_b72b3661",
       "range": {
         "startLine": 32,
         "startChar": 8,
