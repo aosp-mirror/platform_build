@@ -1,18 +1,27 @@
 SOONG_OUT_DIR := $(OUT_DIR)/soong
+SOONG_HOST_EXECUTABLES := $(SOONG_OUT_DIR)/host/$(HOST_PREBUILT_TAG)/bin
+KATI := $(SOONG_HOST_EXECUTABLES)/ckati
+MAKEPARALLEL := $(SOONG_HOST_EXECUTABLES)/makeparallel
+
+# This needs to exist before the realpath checks below
+$(shell mkdir -p $(SOONG_OUT_DIR))
+
+ifeq (,$(filter /%,$(SOONG_OUT_DIR)))
+SOONG_TOP_RELPATH := $(shell python -c "import os; print os.path.relpath('$(TOP)', '$(SOONG_OUT_DIR)')")
+# Protect against out being a symlink and relative paths not working
+ifneq ($(realpath $(SOONG_OUT_DIR)/$(SOONG_TOP_RELPATH)),$(realpath $(TOP)))
+SOONG_OUT_DIR := $(abspath $(SOONG_OUT_DIR))
+SOONG_TOP_RELPATH := $(abspath $(TOP))
+endif
+else
+SOONG_TOP_RELPATH := $(abspath $(TOP))
+endif
+
 SOONG := $(SOONG_OUT_DIR)/soong
 SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
-SOONG_HOST_EXECUTABLES := $(SOONG_OUT_DIR)/host/$(HOST_PREBUILT_TAG)/bin
-KATI := $(SOONG_HOST_EXECUTABLES)/ckati
-MAKEPARALLEL := $(SOONG_HOST_EXECUTABLES)/makeparallel
-
-ifeq (,$(filter /%,$(SOONG_OUT_DIR)))
-SOONG_TOP_RELPATH := $(shell python -c "import os; print os.path.relpath('$(TOP)', '$(SOONG_OUT_DIR)')")
-else
-SOONG_TOP_RELPATH := $(realpath $(TOP))
-endif
 
 # Bootstrap soong.  Run only the first time for clean builds
 $(SOONG):
