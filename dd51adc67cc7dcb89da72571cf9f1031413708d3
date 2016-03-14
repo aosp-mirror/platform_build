@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57bb093b_9ffebf4f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-03-14T18:57:32Z",
+      "side": 1,
+      "message": "although may be no-op, should these lines be guarded with BOARD_BVB_ENABLE flag?",
+      "revId": "dd51adc67cc7dcb89da72571cf9f1031413708d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
