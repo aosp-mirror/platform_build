@@ -142,6 +142,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_ff00abe6",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-03-14T19:09:06Z",
+      "side": 1,
+      "message": "Right, but this change adds libasan as a dependency to LOCAL_SANITIZE:\u003dnever targets.",
+      "parentUuid": "57bb093b_bfa0e36b",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
