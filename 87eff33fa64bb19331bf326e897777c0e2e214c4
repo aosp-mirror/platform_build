@@ -196,6 +196,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_c5d87a38",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-14T21:01:29Z",
+      "side": 1,
+      "message": "libasan depends on libc, but libc does not depend on libasan.\nAlthough this patch adds libasan.a to link with libc.so, it was linked with -Wl,--no-whole-archive, so code in libasan.a does not get into libc.so. Later it is still possible to use the libc.so without libasan.",
+      "parentUuid": "57bb093b_fa739971",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
