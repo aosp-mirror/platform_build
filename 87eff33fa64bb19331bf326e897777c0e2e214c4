@@ -106,6 +106,42 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_bfa0e36b",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-14T19:00:28Z",
+      "side": 1,
+      "message": "I don\u0027t see circular dependency between libc and libasan now.\nMaybe that\u0027s one reason libc is built with LOCAL_SANITIZE :\u003d never.",
+      "parentUuid": "57bb093b_dfd04718",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_dfca0719",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-14T19:00:28Z",
+      "side": 1,
+      "message": "Okay, i am going to remove ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES in my next upload.",
+      "parentUuid": "57bb093b_14bf56f2",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
