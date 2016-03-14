@@ -70,6 +70,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_14bf56f2",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-03-14T18:38:08Z",
+      "side": 1,
+      "message": "It used to contain libdl https://android-review.git.corp.google.com/#/c/155082/\n\nDon\u0027t think we need it any more.",
+      "parentUuid": "57bb093b_94586602",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
