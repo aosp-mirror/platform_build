@@ -232,6 +232,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_259a2696",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-14T21:47:08Z",
+      "side": 1,
+      "message": "Ah, that\u0027s true. I am not sure yet if that circular dependency between .so files would cause real runtime problem.\nProbably we should add -Wl,--as-needed here, but now I don\u0027t understand the need of -Wl,--no-as-needed at line 110, for LOCAL_IS_HOST_MODULE case. Dan?",
+      "parentUuid": "57bb093b_052442f3",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
