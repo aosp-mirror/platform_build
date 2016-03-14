@@ -16,6 +16,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_349a5a8b",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-14T18:03:39Z",
+      "side": 1,
+      "message": "Although $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES) is empty now, I think it is safer to check it too here.\nmake complains about recursive dependency if $(my_shared_libraries) contains current $(LOCAL_MODULE).",
+      "parentUuid": "57bb093b_aeeefba5",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
