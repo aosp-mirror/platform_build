@@ -214,6 +214,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_052442f3",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-03-14T21:05:09Z",
+      "side": 1,
+      "message": "But this patch also adds libclang_rt.asan-arm-android.so to libc deps, which is a shared library.",
+      "parentUuid": "57bb093b_c5d87a38",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
