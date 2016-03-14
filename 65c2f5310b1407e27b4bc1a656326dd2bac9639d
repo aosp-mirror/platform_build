@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57bb093b_9465018d",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-14T23:00:16Z",
+      "side": 1,
+      "message": "You need to add $(BVBTOOL) as dependency of system.img.",
+      "range": {
+        "startLine": 1155,
+        "startChar": 0,
+        "endLine": 1155,
+        "endChar": 112
+      },
+      "revId": "65c2f5310b1407e27b4bc1a656326dd2bac9639d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
