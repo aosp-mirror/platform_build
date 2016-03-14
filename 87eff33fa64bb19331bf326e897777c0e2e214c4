@@ -250,6 +250,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_9417c1d4",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-03-14T23:01:54Z",
+      "side": 1,
+      "message": "--as-needed would not work for sanitize\u003dnever executables - they don\u0027t \"need\" ASan runtime, but we still want them to link it.\n\nMaybe limit this new functionality (ASan linking of sanitize\u003dnever) to executables? This is getting more and more complicated...",
+      "parentUuid": "57bb093b_259a2696",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
