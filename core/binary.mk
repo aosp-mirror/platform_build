@@ -679,7 +679,7 @@ ifeq ($(my_proto_source_suffix),.c)
 else
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
 endif
--include $(proto_generated_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(proto_generated_objects))
 
 my_c_includes += $(my_proto_c_includes)
 # Auto-export the generated proto source dir.
@@ -894,7 +894,7 @@ $(cpp_objects): $(intermediates)/%.o: \
     $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
--include $(cpp_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(cpp_objects))
 endif
 
 cpp_objects += $(dotdot_arm_objects) $(dotdot_objects)
@@ -917,7 +917,7 @@ $(gen_cpp_objects): $(intermediates)/%.o: \
     $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)cpp-to-o)
--include $(gen_cpp_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(gen_cpp_objects))
 endif
 
 ###########################################################
@@ -932,7 +932,7 @@ ifneq ($(strip $(gen_S_sources)),)
 $(gen_S_objects): $(intermediates)/%.o: $(intermediates)/%.S \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o)
--include $(gen_S_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(gen_S_objects))
 endif
 
 gen_s_sources := $(filter %.s,$(my_generated_sources))
@@ -943,7 +943,6 @@ ifneq ($(strip $(gen_s_objects)),)
 $(gen_s_objects): $(intermediates)/%.o: $(intermediates)/%.s \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o-no-deps)
--include $(gen_s_objects:%.o=%.P)
 endif
 
 gen_asm_objects := $(gen_S_objects) $(gen_s_objects)
@@ -997,7 +996,7 @@ ifneq ($(strip $(c_objects)),)
 $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
--include $(c_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(c_objects))
 endif
 
 c_objects += $(dotdot_arm_objects) $(dotdot_objects)
@@ -1018,7 +1017,7 @@ $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)c-to-o)
--include $(gen_c_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(gen_c_objects))
 endif
 
 ###########################################################
@@ -1033,7 +1032,7 @@ ifneq ($(strip $(objc_objects)),)
 $(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)m-to-o)
--include $(objc_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(objc_objects))
 endif
 
 ###########################################################
@@ -1048,7 +1047,7 @@ ifneq ($(strip $(objcpp_objects)),)
 $(objcpp_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.mm $(yacc_cpps) $(proto_generated_headers) \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)mm-to-o)
--include $(objcpp_objects:%.o=%.P)
+$(call include-depfiles-for-objs, $(objcpp_objects))
 endif
 
 ###########################################################
@@ -1072,7 +1071,7 @@ ifneq ($(strip $(asm_objects_S)),)
 $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o)
--include $(asm_objects_S:%.o=%.P)
+$(call include-depfiles-for-objs, $(asm_objects))
 endif
 
 asm_sources_s := $(filter %.s,$(my_src_files))
