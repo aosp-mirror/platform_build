@@ -34,6 +34,24 @@
       "revId": "dd51adc67cc7dcb89da72571cf9f1031413708d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17c6f1d9_c8a9cfbb",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-14T19:04:20Z",
+      "side": 1,
+      "message": "Although, it gets really messy later on when we add to it (lines 531 and 540) since we\u0027d also need the same guard in those places. So I\u0027d prefer not to.. unless you insist :-)",
+      "parentUuid": "17c6f1d9_889fd789",
+      "revId": "dd51adc67cc7dcb89da72571cf9f1031413708d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
