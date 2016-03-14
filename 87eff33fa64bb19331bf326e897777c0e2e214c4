@@ -52,6 +52,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_94586602",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-14T18:27:21Z",
+      "side": 1,
+      "message": "$(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES) is libasan, which we should check to avoid recursive dependency.\nI guess ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES  is there, although empty now, for the future in case we need something like libasan as shared library.\nI think Dan added those two variables.\nI will check it with him.",
+      "parentUuid": "57bb093b_f4f9f294",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
