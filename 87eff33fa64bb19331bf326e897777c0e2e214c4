@@ -34,6 +34,24 @@
       "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57bb093b_f4f9f294",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-03-14T18:08:02Z",
+      "side": 1,
+      "message": "If it\u0027s empty in all configurations, it\u0027s better to just remove it. An explicit check against ...RUNTIME_LIBRARY is a lot less confusing, and you can also move the my_static_libraries line below (line 121) under this check, too.",
+      "parentUuid": "57bb093b_349a5a8b",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
