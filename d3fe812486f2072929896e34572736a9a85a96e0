@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57bb093b_d4b02909",
+        "filename": "core/ninja.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-14T22:28:43Z",
+      "side": 1,
+      "message": "$(SOONG_ANDROID_MK) has been taken out of the dependency graph.",
+      "range": {
+        "startLine": 129,
+        "startChar": 45,
+        "endLine": 129,
+        "endChar": 64
+      },
+      "revId": "d3fe812486f2072929896e34572736a9a85a96e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
