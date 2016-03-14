@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57bb093b_aeeefba5",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-03-14T16:17:36Z",
+      "side": 1,
+      "message": "Maybe compare directly with $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) ?",
+      "revId": "87eff33fa64bb19331bf326e897777c0e2e214c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
