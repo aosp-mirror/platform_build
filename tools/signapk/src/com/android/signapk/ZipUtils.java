@@ -37,7 +37,7 @@ public abstract class ZipUtils {
     private static final int ZIP64_EOCD_LOCATOR_SIZE = 20;
     private static final int ZIP64_EOCD_LOCATOR_SIG = 0x07064b50;
 
-    private static final int UINT32_MAX_VALUE = 0xffff;
+    private static final int UINT16_MAX_VALUE = 0xffff;
 
     /**
      * Returns the position at which ZIP End of Central Directory record starts in the provided
@@ -56,14 +56,13 @@ public abstract class ZipUtils {
         // end of the buffer for the EOCD record signature. Whenever we find a signature, we check
         // the candidate record's comment length is such that the remainder of the record takes up
         // exactly the remaining bytes in the buffer. The search is bounded because the maximum
-        // size of the comment field is 65535 bytes because the field is an unsigned 32-bit number.
+        // size of the comment field is 65535 bytes because the field is an unsigned 16-bit number.
 
         int archiveSize = zipContents.capacity();
         if (archiveSize < ZIP_EOCD_REC_MIN_SIZE) {
-            System.out.println("File size smaller than EOCD min size");
             return -1;
         }
-        int maxCommentLength = Math.min(archiveSize - ZIP_EOCD_REC_MIN_SIZE, UINT32_MAX_VALUE);
+        int maxCommentLength = Math.min(archiveSize - ZIP_EOCD_REC_MIN_SIZE, UINT16_MAX_VALUE);
         int eocdWithEmptyCommentStartPosition = archiveSize - ZIP_EOCD_REC_MIN_SIZE;
         for (int expectedCommentLength = 0; expectedCommentLength < maxCommentLength;
                 expectedCommentLength++) {
