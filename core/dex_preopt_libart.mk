@@ -105,6 +105,5 @@ $(hide) ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
 	--include-patch-information --runtime-arg -Xnorelocate --no-generate-debug-info \
 	--abort-on-hard-verifier-error \
 	--no-inline-from=core-oj.jar \
-	$(PRIVATE_DEX_PREOPT_FLAGS) \
-	$(GLOBAL_DEXPREOPT_FLAGS)
+	$(PRIVATE_DEX_PREOPT_FLAGS)
 endef

@@ -31,6 +31,11 @@ $(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE := $(PRODUCT_OUT)$($(my_
 $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES := $(addprefix $(dir $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)),\
     $(LIBART_TARGET_BOOT_ART_EXTRA_FILES))
 
+# Compile boot.oat as position-independent code if WITH_DEXPREOPT_PIC=true
+ifeq (true,$(WITH_DEXPREOPT_PIC))
+  PRODUCT_DEX_PREOPT_BOOT_FLAGS += --compile-pic
+endif
+
 # If we have a compiled-classes file, create a parameter.
 COMPILED_CLASSES_FLAGS :=
 ifneq ($(COMPILED_CLASSES),)
@@ -72,4 +77,4 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 		--android-root=$(PRODUCT_OUT)/system --include-patch-information --runtime-arg -Xnorelocate --no-generate-debug-info \
 		--multi-image --no-inline-from=core-oj.jar \
-		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(COMPILED_CLASSES_FLAGS)
+		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(COMPILED_CLASSES_FLAGS)

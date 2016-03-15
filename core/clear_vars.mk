@@ -195,9 +195,6 @@ LOCAL_NOTICE_FILE:=
 LOCAL_USE_AAPT2:=$(USE_AAPT2)
 LOCAL_STATIC_ANDROID_LIBRARIES:=
 LOCAL_SHARED_ANDROID_LIBRARIES:=
-# Used to replace the installed file of a presigned prebuilt apk in PDK fusion build,
-# to avoid installing the presigned apks with classes.dex unstripped.
-LOCAL_REPLACE_PREBUILT_APK_INSTALLED:=
 
 # arch specific variables
 LOCAL_SRC_FILES_$(TARGET_ARCH):=
