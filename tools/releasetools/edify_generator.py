@@ -118,6 +118,17 @@ class EdifyGenerator(object):
                " or ".join(fp))
     self.script.append(cmd)
 
+  def AssertFingerprintOrThumbprint(self, fp, tp):
+    """Assert that the current recovery build fingerprint is fp, or thumbprint
+       is tp."""
+    cmd = ('getprop("ro.build.fingerprint") == "{fp}" ||\n'
+           '    getprop("ro.build.thumbprint") == "{tp}" ||\n'
+           '    abort("Package expects build fingerprint of {fp} or '
+           'thumbprint of {tp}; this device has a fingerprint of " '
+           '+ getprop("ro.build.fingerprint") and a thumbprint of " '
+           '+ getprop("ro.build.thumbprint") + ".");').format(fp=fp, tp=tp)
+    self.script.append(cmd)
+
   def AssertOlderBuild(self, timestamp, timestamp_text):
     """Assert that the build on the device is older (or the same as)
     the given timestamp."""
