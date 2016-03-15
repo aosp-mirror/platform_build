@@ -29,14 +29,18 @@ ifneq ($(LOCAL_SDK_VERSION),)
       ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
         # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
         LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
+        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
       else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
         LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
+        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
       else
         LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+        my_jack_min_sdk_version := $(LOCAL_SDK_VERSION)
       endif
     endif
   endif
 else
+  my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
     LOCAL_JAVA_LIBRARIES := $(TARGET_DEFAULT_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES)
   endif
@@ -370,6 +374,9 @@ ifndef need_compile_java
 $(error $(LOCAL_PATH): Target java module does not define any source or resource files)
 endif
 endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(my_jack_min_sdk_version)
+my_jack_min_sdk_version :=
 
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.

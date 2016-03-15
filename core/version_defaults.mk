@@ -58,6 +58,15 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   PLATFORM_SDK_VERSION := 23
 endif
 
+ifeq "" "$(PLATFORM_JACK_MIN_SDK_VERSION)"
+  # This is definition of the min SDK version given to Jack for the current
+  # platform. For released version it should be the same as
+  # PLATFORM_SDK_VERSION. During development, this number may be incremented
+  # before PLATFORM_SDK_VERSION if the plateform starts to add new java
+  # language supports.
+  PLATFORM_JACK_MIN_SDK_VERSION := 24
+endif
+
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
