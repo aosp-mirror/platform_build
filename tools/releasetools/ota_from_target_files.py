@@ -439,7 +439,7 @@ def SignOutput(temp_zip_name, output_zip_name):
 
 def AppendAssertions(script, info_dict, oem_dict=None):
   oem_props = info_dict.get("oem_fingerprint_properties")
-  if oem_props is None or len(oem_props) == 0:
+  if not oem_props:
     device = GetBuildProp("ro.product.device", info_dict)
     script.AssertDevice(device)
   else:
@@ -528,10 +528,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   # in the target build.
   script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
 
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
+  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   oem_dict = None
-  if oem_props is not None and len(oem_props) > 0:
+  if oem_props:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     if not OPTIONS.oem_no_mount:
@@ -539,9 +539,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
     oem_dict = common.LoadDictionaryFromLines(
         open(OPTIONS.oem_source).readlines())
 
+  target_fp = CalculateFingerprint(oem_props, oem_dict, OPTIONS.info_dict)
   metadata = {
-      "post-build": CalculateFingerprint(oem_props, oem_dict,
-                                         OPTIONS.info_dict),
+      "post-build": target_fp,
       "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
                                    OPTIONS.info_dict),
       "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
@@ -610,8 +610,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
 
   # Dump fingerprints
-  script.Print("Target: %s" % CalculateFingerprint(
-      oem_props, oem_dict, OPTIONS.info_dict))
+  script.Print("Target: %s" % target_fp)
 
   device_specific.FullOTA_InstallBegin()
 
@@ -773,17 +772,18 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_version = OPTIONS.target_info_dict["recovery_api_version"]
 
   if source_version == 0:
-    print ("WARNING: generating edify script for a source that "
-           "can't install it.")
+    print("WARNING: generating edify script for a source that "
+          "can't install it.")
   script = edify_generator.EdifyGenerator(
       source_version, OPTIONS.target_info_dict,
       fstab=OPTIONS.source_info_dict["fstab"])
 
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   recovery_mount_options = OPTIONS.source_info_dict.get(
       "recovery_mount_options")
+  source_oem_props = OPTIONS.source_info_dict.get("oem_fingerprint_properties")
+  target_oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
   oem_dict = None
-  if oem_props is not None and len(oem_props) > 0:
+  if source_oem_props or target_oem_props:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     if not OPTIONS.oem_no_mount:
@@ -792,8 +792,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
         open(OPTIONS.oem_source).readlines())
 
   metadata = {
-      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
-                                   OPTIONS.source_info_dict),
+      "pre-device": GetOemProperty("ro.product.device", source_oem_props,
+                                   oem_dict, OPTIONS.source_info_dict),
       "ota-type": "BLOCK",
   }
 
@@ -828,9 +828,9 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.source_info_dict)
 
-  source_fp = CalculateFingerprint(oem_props, oem_dict,
+  source_fp = CalculateFingerprint(source_oem_props, oem_dict,
                                    OPTIONS.source_info_dict)
-  target_fp = CalculateFingerprint(oem_props, oem_dict,
+  target_fp = CalculateFingerprint(target_oem_props, oem_dict,
                                    OPTIONS.target_info_dict)
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
@@ -926,31 +926,38 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
 
   # Dump fingerprints
-  script.Print("Source: %s" % CalculateFingerprint(
-      oem_props, oem_dict, OPTIONS.source_info_dict))
-  script.Print("Target: %s" % CalculateFingerprint(
-      oem_props, oem_dict, OPTIONS.target_info_dict))
+  script.Print(source_fp)
+  script.Print(target_fp)
 
   script.Print("Verifying current system...")
 
   device_specific.IncrementalOTA_VerifyBegin()
 
-  if oem_props is None:
-    # When blockimgdiff version is less than 3 (non-resumable block-based OTA),
-    # patching on a device that's already on the target build will damage the
-    # system. Because operations like move don't check the block state, they
-    # always apply the changes unconditionally.
-    if blockimgdiff_version <= 2:
+  # When blockimgdiff version is less than 3 (non-resumable block-based OTA),
+  # patching on a device that's already on the target build will damage the
+  # system. Because operations like move don't check the block state, they
+  # always apply the changes unconditionally.
+  if blockimgdiff_version <= 2:
+    if source_oem_props is None:
       script.AssertSomeFingerprint(source_fp)
     else:
-      script.AssertSomeFingerprint(source_fp, target_fp)
-  else:
-    if blockimgdiff_version <= 2:
       script.AssertSomeThumbprint(
           GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
-    else:
+
+  else: # blockimgdiff_version > 2
+    if source_oem_props is None and target_oem_props is None:
+      script.AssertSomeFingerprint(source_fp, target_fp)
+    elif source_oem_props is not None and target_oem_props is not None:
       script.AssertSomeThumbprint(
           GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
+          GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+    elif source_oem_props is None and target_oem_props is not None:
+      script.AssertFingerprintOrThumbprint(
+          source_fp,
+          GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict))
+    else:
+      script.AssertFingerprintOrThumbprint(
+          target_fp,
           GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
 
   # Check the required cache size (i.e. stashed blocks).
@@ -1074,7 +1081,7 @@ def WriteVerifyPackage(input_zip, output_zip):
   recovery_mount_options = OPTIONS.info_dict.get(
       "recovery_mount_options")
   oem_dict = None
-  if oem_props is not None and len(oem_props) > 0:
+  if oem_props:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     if not OPTIONS.oem_no_mount:
@@ -1417,17 +1424,18 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_version = OPTIONS.target_info_dict["recovery_api_version"]
 
   if source_version == 0:
-    print ("WARNING: generating edify script for a source that "
-           "can't install it.")
+    print("WARNING: generating edify script for a source that "
+          "can't install it.")
   script = edify_generator.EdifyGenerator(
       source_version, OPTIONS.target_info_dict,
       fstab=OPTIONS.source_info_dict["fstab"])
 
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   recovery_mount_options = OPTIONS.source_info_dict.get(
       "recovery_mount_options")
+  source_oem_props = OPTIONS.source_info_dict.get("oem_fingerprint_properties")
+  target_oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
   oem_dict = None
-  if oem_props is not None and len(oem_props) > 0:
+  if source_oem_props or target_oem_props:
     if OPTIONS.oem_source is None:
       raise common.ExternalError("OEM source required for this build")
     if not OPTIONS.oem_no_mount:
@@ -1436,8 +1444,8 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
         open(OPTIONS.oem_source).readlines())
 
   metadata = {
-      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
-                                   OPTIONS.source_info_dict),
+      "pre-device": GetOemProperty("ro.product.device", source_oem_props,
+                                   oem_dict, OPTIONS.source_info_dict),
       "ota-type": "FILE",
   }
 
@@ -1480,16 +1488,24 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     vendor_diff = None
 
-  target_fp = CalculateFingerprint(oem_props, oem_dict,
+  target_fp = CalculateFingerprint(target_oem_props, oem_dict,
                                    OPTIONS.target_info_dict)
-  source_fp = CalculateFingerprint(oem_props, oem_dict,
+  source_fp = CalculateFingerprint(source_oem_props, oem_dict,
                                    OPTIONS.source_info_dict)
 
-  if oem_props is None:
+  if source_oem_props is None and target_oem_props is None:
     script.AssertSomeFingerprint(source_fp, target_fp)
-  else:
+  elif source_oem_props is not None and target_oem_props is not None:
     script.AssertSomeThumbprint(
         GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
+        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+  elif source_oem_props is None and target_oem_props is not None:
+    script.AssertFingerprintOrThumbprint(
+        source_fp,
+        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict))
+  else:
+    script.AssertFingerprintOrThumbprint(
+        target_fp,
         GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
 
   metadata["pre-build"] = source_fp
