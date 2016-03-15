@@ -1366,7 +1366,7 @@ define compile-dotdot-cpp-file
 o := $(intermediates)/$(patsubst %$(LOCAL_CPP_EXTENSION),%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
 	$$(transform-$$(PRIVATE_HOST)cpp-to-o)
--include $$(o:%.o=%.P)
+$$(call include-depfiles-for-objs, $$(o))
 $(3) += $$(o)
 endef
 
@@ -1379,7 +1379,7 @@ define compile-dotdot-c-file
 o := $(intermediates)/$(patsubst %.c,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
 	$$(transform-$$(PRIVATE_HOST)c-to-o)
--include $$(o:%.o=%.P)
+$$(call include-depfiles-for-objs, $$(o))
 $(3) += $$(o)
 endef
 
@@ -1392,7 +1392,7 @@ define compile-dotdot-s-file
 o := $(intermediates)/$(patsubst %.S,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
 	$$(transform-$$(PRIVATE_HOST)s-to-o)
--include $$(o:%.o=%.P)
+$$(call include-depfiles-for-objs, $$(o))
 $(3) += $$(o)
 endef
 
