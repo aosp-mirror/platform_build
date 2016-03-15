@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17c6f1d9_cef3974e",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 542,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-03-15T20:31:13Z",
+      "side": 1,
+      "message": "was wrongly using \"target_info_dict\" due to copy-paste error and didn\u0027t capture that by verifying the incremental OTA path only.",
+      "range": {
+        "startLine": 542,
+        "startChar": 64,
+        "endLine": 542,
+        "endChar": 73
+      },
+      "revId": "3e30d97dde42416a1762c161ed7217d4e7ebf2c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
