@@ -449,6 +449,8 @@ ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_ZIP)))
 endif
 endif
 
+BUILD_PLATFORM_ZIP := $(filter platform platform-java,$(MAKECMDGOALS))
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
