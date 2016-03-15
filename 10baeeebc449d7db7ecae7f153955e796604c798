@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "373e959c_3142aa88",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 835,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-15T10:12:18Z",
+      "side": 0,
+      "message": "This was introduce by mistake in https://android-review.googlesource.com/#/c/207351/4/core/config.mk",
+      "revId": "10baeeebc449d7db7ecae7f153955e796604c798",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
