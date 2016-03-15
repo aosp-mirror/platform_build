@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57bb093b_f9143ed1",
+        "filename": "core/ccache.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-15T17:19:14Z",
+      "side": 1,
+      "message": "You can use pure makefile as:\nexport CCACHE_COMPILERCHECK ?\u003d content",
+      "range": {
+        "startLine": 20,
+        "startChar": 2,
+        "endLine": 20,
+        "endChar": 80
+      },
+      "revId": "2220ec10a0a3964050b4376404bae6839a6ee6ad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
