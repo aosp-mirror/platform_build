@@ -2346,7 +2346,12 @@ endef
 
 #TODO: update the manifest to point to the dex file
 define add-dex-to-package
-$(hide) find $(dir $(PRIVATE_DEX_FILE)) -maxdepth 1 -name "classes*.dex" | sort | xargs zip -qjX $@
+$(call add-dex-to-package-arg,$@)
+endef
+
+# $(1): the package file.
+define add-dex-to-package-arg
+$(hide) find $(dir $(PRIVATE_DEX_FILE)) -maxdepth 1 -name "classes*.dex" | sort | xargs zip -qjX $(1)
 endef
 
 # Add java resources added by the current module.
@@ -2385,12 +2390,17 @@ endef
 # Sign a package using the specified key/cert.
 #
 define sign-package
-$(hide) mv $@ $@.unsigned
+$(call sign-package-arg,$@)
+endef
+
+# $(1): the package file we are signing.
+define sign-package-arg
+$(hide) mv $(1) $(1).unsigned
 $(hide) java -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) -jar $(SIGNAPK_JAR) \
     --min-sdk-version $(call get-package-min-sdk-version-int,$@.unsigned) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
-    $(PRIVATE_ADDITIONAL_CERTIFICATES) $@.unsigned $@.signed
-$(hide) mv $@.signed $@
+    $(PRIVATE_ADDITIONAL_CERTIFICATES) $(1).unsigned $(1).signed
+$(hide) mv $(1).signed $(1)
 endef
 
 # Align STORED entries of a package on 4-byte boundaries to make them easier to mmap.
