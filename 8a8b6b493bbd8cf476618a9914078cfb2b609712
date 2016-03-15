@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17c6f1d9_79998fa0",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-03-15T23:14:13Z",
+      "side": 1,
+      "message": "Move LOCAL_ARM_MODE to the linker section above, it helps with ASan stack unwinding, even if the library itself is not instrumented.",
+      "revId": "8a8b6b493bbd8cf476618a9914078cfb2b609712",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
