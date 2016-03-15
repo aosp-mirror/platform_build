@@ -1071,7 +1071,7 @@ ifneq ($(strip $(asm_objects_S)),)
 $(asm_objects_S): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.S \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)s-to-o)
-$(call include-depfiles-for-objs, $(asm_objects))
+$(call include-depfiles-for-objs, $(asm_objects_S))
 endif
 
 asm_sources_s := $(filter %.s,$(my_src_files))
