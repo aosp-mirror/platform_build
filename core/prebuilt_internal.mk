@@ -77,6 +77,12 @@ ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
 endif
 endif
 
+ifeq (JAVA_LIBRARIES,$(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS)$(filter true,$(LOCAL_UNINSTALLABLE_MODULE)))
+  prebuilt_module_is_dex_javalib := true
+else
+  prebuilt_module_is_dex_javalib :=
+endif
+
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 LOCAL_BUILT_MODULE_STEM := package.apk
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
@@ -203,16 +209,23 @@ else
 endif
 
 # Disable dex-preopt of prebuilts to save space, if requested.
+ifndef LOCAL_DEX_PREOPT
 ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
 LOCAL_DEX_PREOPT := false
+endif
 endif
 
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 #######################################
-# Sign and align non-presigned .apks.
+ifneq ($(LOCAL_REPLACE_PREBUILT_APK_INSTALLED),)
+# There is a replacement for the prebuilt .apk we can install without any processing.
+$(built_module) : $(LOCAL_REPLACE_PREBUILT_APK_INSTALLED)
+	$(transform-prebuilt-to-target)
 
+else  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
+# Sign and align non-presigned .apks.
 # The embedded prebuilt jni to uncompress.
 ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
 # For PRESIGNED apks we must uncompress every .so file:
@@ -229,18 +242,25 @@ $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR) $(AAPT)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
+ifdef LOCAL_DEX_PREOPT
+ifneq ($(BUILD_PLATFORM_ZIP),)
+	@# Keep a copy of apk with classes.dex unstripped
+	$(hide) cp -f $@ $(dir $@)package.dex.apk
+endif  # BUILD_PLATFORM_ZIP
+endif  # LOCAL_DEX_PREOPT
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
-endif
-endif
+endif  # LOCAL_DEX_PREOPT != nostripping
+endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
-else
+else  # LOCAL_CERTIFICATE == PRESIGNED
 	$(align-package)
-endif
+endif  # LOCAL_CERTIFICATE
+endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
 ###############################
 ## Rule to build the odex file
@@ -285,7 +305,40 @@ $(my_register_name): $(installed_apk_splits)
 endif # LOCAL_PACKAGE_SPLITS
 
 else # LOCAL_MODULE_CLASS != APPS
+ifeq ($(prebuilt_module_is_dex_javalib),true)
+# This is a target shared library, i.e. a jar with classes.dex.
+#######################################
+# defines built_odex along with rule to install odex
+include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+#######################################
+ifdef LOCAL_DEX_PREOPT
+ifneq ($(dexpreopt_boot_jar_module),) # boot jar
+# boot jar's rules are defined in dex_preopt.mk
+dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
+$(built_module) : $(dexpreopted_boot_jar)
+	$(call copy-file-to-target)
 
+# For libart boot jars, we don't have .odex files.
+else # ! boot jar
+$(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
+# Use pattern rule - we may have multiple built odex files.
+$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(my_prebuilt_src_file)
+	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
+	$(call dexpreopt-one-file,$<,$@)
+
+$(built_module) : $(my_prebuilt_src_file)
+	$(call copy-file-to-target)
+ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+	$(call dexpreopt-remove-classes.dex,$@)
+endif
+endif # boot jar
+else # ! LOCAL_DEX_PREOPT
+$(built_module) : $(my_prebuilt_src_file)
+	$(call copy-file-to-target)
+endif # LOCAL_DEX_PREOPT
+
+else  # ! prebuilt_module_is_dex_javalib
+ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 	$(transform-prebuilt-to-target-strip-comments)
@@ -295,7 +348,7 @@ endif
 ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
 	$(hide) chmod +x $@
 endif
-
+endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_MODULE_CLASS != APPS
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
@@ -303,12 +356,17 @@ my_src_jar := $(my_prebuilt_src_file)
 ifeq ($(LOCAL_IS_HOST_MODULE),)
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
 # while the deps should be in the common dir, so we make a copy in the common dir.
-# For nonstatic library, $(common_javalib_jar) is the dependency file,
-# while $(common_classes_jar) is used to link.
 common_classes_jar := $(intermediates.COMMON)/classes.jar
 common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
 $(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+
+ifeq ($(prebuilt_module_is_dex_javalib),true)
+# For prebuilt shared Java library we don't have classes.jar.
+$(common_javalib_jar) : $(my_src_jar)
+	$(transform-prebuilt-to-target)
+
+else  # ! prebuilt_module_is_dex_javalib
 
 my_src_aar := $(filter %.aar, $(my_prebuilt_src_file))
 ifneq ($(my_src_aar),)
@@ -322,6 +380,7 @@ $(my_src_jar) : $(my_src_aar)
 	$(hide) touch $@
 
 endif
+
 $(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
@@ -362,8 +421,11 @@ endif  # $(my_src_aar)
 endif  # LOCAL_USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
+
+endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_IS_HOST_MODULE is not set
 
+ifneq ($(prebuilt_module_is_dex_javalib),true)
 ifneq ($(LOCAL_JILL_FLAGS),)
 $(error LOCAL_JILL_FLAGS is not supported any more, please use jack options in LOCAL_JACK_FLAGS instead)
 endif
@@ -379,6 +441,7 @@ $(intermediates.COMMON)/classes.jack : $(my_src_jar) \
 $(intermediates.COMMON)/classes.dex.toc: $(intermediates.COMMON)/classes.jack
 	touch $@
 
+endif # ! prebuilt_module_is_dex_javalib
 endif # JAVA_LIBRARIES
 
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
