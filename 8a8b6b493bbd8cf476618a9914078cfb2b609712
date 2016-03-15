@@ -34,6 +34,24 @@
       "revId": "8a8b6b493bbd8cf476618a9914078cfb2b609712",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17c6f1d9_b4314eec",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-15T23:57:59Z",
+      "side": 1,
+      "message": "I need to revert to my PS4. PS5 does not work.\n\nLOCAL_ARM_MODE:\u003darm should be set only if\nLOCAL_SANITIZE does not overwrite SANITIZE_TARGET.\nIn other words, only when $(my_sanitize) has address,\nwe will set my_cflags and LOCAL_ARM_MODE.\n\nsystem/extras/tests/memtest/Android.mk\nhas LOCAL_SANITIZE:\u003dnever to avoid\nLOCAL_ARM_MODE:\u003darm because its inline assembly\ncode must be compiled in thumb2 mode.",
+      "parentUuid": "17c6f1d9_1415c25c",
+      "revId": "8a8b6b493bbd8cf476618a9914078cfb2b609712",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
