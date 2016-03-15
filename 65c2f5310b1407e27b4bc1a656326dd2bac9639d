@@ -22,6 +22,30 @@
       "revId": "65c2f5310b1407e27b4bc1a656326dd2bac9639d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17c6f1d9_4b0039e5",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1155,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-15T15:56:50Z",
+      "side": 1,
+      "message": "Looks like I can just conditionally add it to FULL_SYSTEMIMAGE_DEPS - stay tuned for a new PS.",
+      "parentUuid": "57bb093b_9465018d",
+      "range": {
+        "startLine": 1155,
+        "startChar": 0,
+        "endLine": 1155,
+        "endChar": 112
+      },
+      "revId": "65c2f5310b1407e27b4bc1a656326dd2bac9639d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
