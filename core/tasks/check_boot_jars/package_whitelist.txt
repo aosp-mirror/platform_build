@@ -38,6 +38,7 @@ java\.util\.logging
 java\.util\.prefs
 java\.util\.regex
 java\.util\.spi
+java\.util\.stream
 java\.util\.zip
 javax\.crypto
 javax\.crypto\.interfaces
