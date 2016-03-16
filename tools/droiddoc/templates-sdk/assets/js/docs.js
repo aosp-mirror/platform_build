@@ -1386,7 +1386,7 @@ function toggleContent(obj) {
     $(".toggle-content-text:eq(0)", obj).toggle();
     div.removeClass("closed").addClass("open");
     $(".toggle-content-img:eq(0)", div).attr("title", "hide").attr("src", toRoot
-                  + "assets/images/triangle-opened.png");
+                  + "assets/images/styles/disclosure_up.png");
   } else { // if it's open, close it
     toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
       $(".toggle-content-text:eq(0)", obj).toggle();
@@ -1394,7 +1394,7 @@ function toggleContent(obj) {
       div.find(".toggle-content").removeClass("open").addClass("closed")
               .find(".toggle-content-toggleme").hide();
       $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot
-                  + "assets/images/triangle-closed.png");
+                  + "assets/images/styles/disclosure_down.png");
     });
   }
   return false;
@@ -3371,13 +3371,13 @@ function toggleInherited(linkObj, expand) {
     if ( (expand == null && a.hasClass("closed")) || expand ) {
         list.style.display = "none";
         summary.style.display = "block";
-        trigger.src = toRoot + "assets/images/triangle-opened.png";
+        trigger.src = toRoot + "assets/images/styles/disclosure_up.png";
         a.removeClass("closed");
         a.addClass("opened");
     } else if ( (expand == null && a.hasClass("opened")) || (expand == false) ) {
         list.style.display = "block";
         summary.style.display = "none";
-        trigger.src = toRoot + "assets/images/triangle-closed.png";
+        trigger.src = toRoot + "assets/images/styles/disclosure_down.png";
         a.removeClass("opened");
         a.addClass("closed");
     }
