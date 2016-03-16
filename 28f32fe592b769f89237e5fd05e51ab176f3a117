@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c6a4eda_5d612be3",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-16T18:53:42Z",
+      "side": 1,
+      "message": "Change to a less specific variable something like SOONG_SKIP_DEPENDENCY_CHECK?\nI believe there are be more cases we can\u0027t have the complete dependency in the tree.",
+      "range": {
+        "startLine": 36,
+        "startChar": 72,
+        "endLine": 36,
+        "endChar": 94
+      },
+      "revId": "28f32fe592b769f89237e5fd05e51ab176f3a117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
