@@ -16,6 +16,24 @@
       "revId": "83d51c8ad1cb43cd5e0542830cf39fc9758b4480",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c6a4eda_e002d858",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-16T19:37:12Z",
+      "side": 1,
+      "message": "This warning is from clang static analyzer.\nIt\u0027s rare and I have not checked all output from all targets yet.\nI saw two at:\nexternal/sqlite/dist/sqlite3.c:72822:3: warning: Address of stack memory associated with local variable \u0027zBase\u0027 returned to caller\nexternal/sqlite/dist/sqlite3.c:108799:3: warning: Address of stack memory associated with local variable \u0027standin\u0027 returned to caller",
+      "parentUuid": "5c6a4eda_7db66f24",
+      "revId": "83d51c8ad1cb43cd5e0542830cf39fc9758b4480",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
