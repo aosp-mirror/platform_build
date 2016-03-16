@@ -22,6 +22,30 @@
       "revId": "28f32fe592b769f89237e5fd05e51ab176f3a117",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c6a4eda_a02620fe",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-16T19:44:08Z",
+      "side": 1,
+      "message": "Done. I also piped it through as a separate option into Soong, since \"Unbundled\" does change some other logic too.",
+      "parentUuid": "5c6a4eda_5d612be3",
+      "range": {
+        "startLine": 36,
+        "startChar": 72,
+        "endLine": 36,
+        "endChar": 94
+      },
+      "revId": "28f32fe592b769f89237e5fd05e51ab176f3a117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
