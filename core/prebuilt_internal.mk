@@ -304,8 +304,7 @@ $(my_register_name): $(installed_apk_splits)
 
 endif # LOCAL_PACKAGE_SPLITS
 
-else # LOCAL_MODULE_CLASS != APPS
-ifeq ($(prebuilt_module_is_dex_javalib),true)
+else ifeq ($(prebuilt_module_is_dex_javalib),true)  # ! LOCAL_MODULE_CLASS != APPS
 # This is a target shared library, i.e. a jar with classes.dex.
 #######################################
 # defines built_odex along with rule to install odex
@@ -338,7 +337,6 @@ $(built_module) : $(my_prebuilt_src_file)
 endif # LOCAL_DEX_PREOPT
 
 else  # ! prebuilt_module_is_dex_javalib
-ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 	$(transform-prebuilt-to-target-strip-comments)
@@ -349,7 +347,6 @@ ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
 	$(hide) chmod +x $@
 endif
 endif # ! prebuilt_module_is_dex_javalib
-endif # LOCAL_MODULE_CLASS != APPS
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 my_src_jar := $(my_prebuilt_src_file)
