@@ -8601,11 +8601,26 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 .dac-custom-search-entry {
   margin-bottom: 36px;
   margin-top: 24px;
+  margin-left:10px;
+}
+
+.dac-custom-search-entry.cols:after {
+    clear: none; }
+
+.dac-custom-search-image-wrapper {
+  float: left;
+  position: relative;
 }
 
 .dac-custom-search-image {
   background-size: cover;
   height: 112px;
+  width:150px;
+  margin-right:15px;
+}
+
+.dac-custom-search-text-wrapper {
+  position: relative;
 }
 
 .dac-custom-search-title {
@@ -8614,6 +8629,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   font-weight: 700;
   line-height: 24px;
   padding: 0;
+  clear:none;
 }
 
 .dac-custom-search-title a {
@@ -8732,11 +8748,21 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   padding-bottom: 40px;
 }
 
+#dac-search-results-reference {
+  float:right;
+  z-index:999;
+}
+
+@media (max-width: 719px) {
+  #dac-search-results-reference {
+    float:none;
+  }
+}
+
 .dac-search-results-reference {
   background: white;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.21);
   margin: 0 0 20px 0;
-  height: 340px;
   overflow: hidden;
   padding: 6px 0 4px;
 }

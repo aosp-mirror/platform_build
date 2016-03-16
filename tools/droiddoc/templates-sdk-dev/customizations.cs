@@ -136,23 +136,16 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
         <div id="dac-search-results-hero"></div>
 
         <div class="dac-search-results-hero cols">
-          <div id="dac-search-results-reference" class="col-2of6 col-tablet-1of2 col-mobile-1of1">
+          <div id="dac-search-results-reference" class="col-3of6 col-tablet-1of2 col-mobile-1of1">
             <div class="suggest-card reference no-display">
               <ul class="dac-search-results-reference">
               </ul>
             </div>
           </div>
-
-          <div id="dac-custom-search" class="dac-custom-search">
-            <div class="wrap dac-offset-parent">
-              <a class="dac-fab dac-scroll-button" data-scroll-button="" data-scroll-container="#search-results" href="#dac-custom-search">
-                <i class="dac-sprite dac-arrow-down-gray"></i>
-              </a>
-            </div>
-          </div>
-
+          <div id="dac-custom-search-results"></div>
         </div>
       </div>
+
     </div>
   </div>
 <?cs /def ?>
