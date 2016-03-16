@@ -52,6 +52,24 @@
       "revId": "83d51c8ad1cb43cd5e0542830cf39fc9758b4480",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5c6a4eda_abfcc184",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-16T21:01:17Z",
+      "side": 1,
+      "message": "Yes, sometime static analyzer\u0027s warning is wrong because it does not see assert or some function used by ASSERT or CHECK.",
+      "parentUuid": "5c6a4eda_e075f8d3",
+      "revId": "83d51c8ad1cb43cd5e0542830cf39fc9758b4480",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
