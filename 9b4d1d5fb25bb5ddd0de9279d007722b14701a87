@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c21d2e1_7c3aa11d",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-17T20:07:00Z",
+      "side": 1,
+      "message": "missing )",
+      "range": {
+        "startLine": 109,
+        "startChar": 85,
+        "endLine": 109,
+        "endChar": 86
+      },
+      "revId": "9b4d1d5fb25bb5ddd0de9279d007722b14701a87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
