@@ -2050,6 +2050,7 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-v "TARGET_CPU_ABI=$(TARGET_CPU_ABI)" \
 			-v "DLL_EXTENSION=$(HOST_SHLIB_SUFFIX)" \
 			-v "FONT_OUT=$(SDK_FONT_TEMP)" \
+			-v "JACK_SDKTOOL_VERSION=$(JACK_SDKTOOL_VERSION)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \
