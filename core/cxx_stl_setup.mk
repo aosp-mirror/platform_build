@@ -105,11 +105,8 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
 else ifeq ($(my_cxx_stl),ndk)
     # Using an NDK STL. Handled in binary.mk.
 else ifeq ($(my_cxx_stl),libstdc++)
-    # Using bionic's basic libstdc++. Not actually an STL. Only around until the
-    # tree is in good enough shape to not need it.
     ifndef LOCAL_IS_HOST_MODULE
-        my_c_includes += bionic/libstdc++/include
-        my_system_shared_libraries += libstdc++
+        $(error $(LOCAL_PATH): $(LOCAL_MODULE): libstdc++ is not supported for device modules)
     else
         # Host builds will use the system C++. libc++ on Darwin, GNU libstdc++ everywhere else
         my_cppflags += $($(my_prefix)SYSTEMCPP_CPPFLAGS)
