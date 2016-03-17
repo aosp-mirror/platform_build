@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c21d2e1_280d8b1c",
+        "filename": "target/product/core_minimal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-17T17:08:02Z",
+      "side": 1,
+      "message": "Unfortunately this does not work:\nThe build system loads the the product makefiles first. It uses the PRODUCT_DEVICE to figure out the board name and then load the BoardConfig.mk. So you can\u0027t use board config variable in product makefiles.",
+      "range": {
+        "startLine": 80,
+        "startChar": 8,
+        "endLine": 80,
+        "endChar": 39
+      },
+      "revId": "8989b5ef2bbe83f863fa20275d6925e364a96baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
