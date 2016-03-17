@@ -100,10 +100,8 @@ ifneq ($(my_sanitize),)
   endif
 endif
 
-ifneq ($(filter address,$(my_sanitize)),)
-  # Frame pointer based unwinder in ASan requires ARM frame setup.
-  LOCAL_ARM_MODE := arm
-  my_cflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+# If local or global modules need ASAN, add linker flags.
+ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
   my_ldflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS)
   ifdef LOCAL_IS_HOST_MODULE
     # -nodefaultlibs (provided with libc++) prevents the driver from linking
@@ -111,16 +109,34 @@ ifneq ($(filter address,$(my_sanitize)),)
     my_ldlibs += -lm -lpthread
     my_ldflags += -Wl,--no-as-needed
   else
-    my_cflags += -mllvm -asan-globals=0
+    # Add asan libraries unless LOCAL_MODULE is the asan library.
     # ASan runtime library must be the first in the link order.
-    my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
-                           $(my_shared_libraries) \
-                           $(ADDRESS_SANITIZER_CONFIG_EXTRA_SHARED_LIBRARIES)
-    my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
+    ifeq (,$(filter $(LOCAL_MODULE),$($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY)))
+      my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
+                             $(my_shared_libraries)
+    endif
+    ifeq (,$(filter $(LOCAL_MODULE),$(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)))
+      my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
+    endif
+
+    # Do not add unnecessary dependency in shared libraries.
+    ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+      my_ldflags += -Wl,--as-needed
+    endif
 
     my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_LINKER)
     # Make sure linker_asan get installed.
     $(LOCAL_INSTALLED_MODULE) : | $(PRODUCT_OUT)$($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_LINKER)
+  endif
+endif
+
+# If local module needs ASAN, add compiler flags.
+ifneq ($(filter address,$(my_sanitize)),)
+  # Frame pointer based unwinder in ASan requires ARM frame setup.
+  LOCAL_ARM_MODE := arm
+  my_cflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+  ifndef LOCAL_IS_HOST_MODULE
+    my_cflags += -mllvm -asan-globals=0
   endif
 endif
 
