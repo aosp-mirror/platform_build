@@ -22,6 +22,30 @@
       "revId": "8989b5ef2bbe83f863fa20275d6925e364a96baf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_88abd7e6",
+        "filename": "target/product/core_minimal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-17T17:15:26Z",
+      "side": 1,
+      "message": "But you can use board config variable in Android.mks. You can use LOCAL_REQUIRED_MODULES to pull in these two modules.\nLet\u0027s say it\u0027s called by the recovery exectuable, then you can write in recovery\u0027s module definition:\nifeq ($(BOARD_CACHEIMAGE_PARTITION_SIZE),)\nLOCAL_REQUIRED_MODULES :\u003d recovery-persisit recovery-refresh\nendif",
+      "parentUuid": "7c21d2e1_280d8b1c",
+      "range": {
+        "startLine": 80,
+        "startChar": 8,
+        "endLine": 80,
+        "endChar": 39
+      },
+      "revId": "8989b5ef2bbe83f863fa20275d6925e364a96baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
