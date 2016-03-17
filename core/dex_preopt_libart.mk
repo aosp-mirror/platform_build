@@ -77,10 +77,12 @@ LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat
 my_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
 
+ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 ifdef TARGET_2ND_ARCH
 my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
 my_2nd_arch_prefix :=
+endif
 endif
 
 
