@@ -114,5 +114,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
