@@ -290,7 +290,7 @@ private:
             mExtraField(NULL),
             mFileComment(NULL)
         {}
-        virtual ~CentralDirEntry(void) {
+        ~CentralDirEntry(void) {
             delete[] mFileName;
             delete[] mExtraField;
             delete[] mFileComment;
