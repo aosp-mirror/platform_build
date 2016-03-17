@@ -110,7 +110,7 @@ endif
 
 ifeq "" "$(PLATFORM_SECURITY_PATCH)"
   # Used to indicate the security patch that has been applied to the device.
-  # Can be an arbitrary string, but must be a single word.
+  # Must be of the form "YYYY-MM-DD" on production devices.
   #
   # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
   PLATFORM_SECURITY_PATCH := 2016-05-01
