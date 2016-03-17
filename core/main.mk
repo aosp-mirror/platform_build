@@ -582,19 +582,33 @@ CUSTOM_MODULES := \
 #
 # Resolve the required module name to 32-bit or 64-bit variant.
 # Get a list of corresponding 32-bit module names, if one exists.
+ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 define get-32-bit-modules
-$(strip $(foreach m,$(1),\
+$(sort $(foreach m,$(1),\
   $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX))))
+    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX))\
+  $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(m)$(HOST_2ND_ARCH_MODULE_SUFFIX))\
+    ))
 endef
 # Get a list of corresponding 32-bit module names, if one exists;
 # otherwise return the original module name
 define get-32-bit-modules-if-we-can
-$(strip $(foreach m,$(1),\
-  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX),
-    $(m))))
+$(sort $(foreach m,$(1),\
+  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS)$(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX)) \
+    $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX)),\
+  $(m))))
 endef
+else  # TARGET_TRANSLATE_2ND_ARCH
+# For binary translation config, by default only install the first arch.
+define get-32-bit-modules
+endef
+
+define get-32-bit-modules-if-we-can
+$(strip $(1))
+endef
+endif  # TARGET_TRANSLATE_2ND_ARCH
 
 # If a module is for a cross host os, the required modules must be for
 # that OS too.
