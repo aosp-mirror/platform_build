@@ -22,6 +22,30 @@
       "revId": "c38c3c0b937026558f85144b4772ecb732cee61c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_2010f06a",
+        "filename": "core/product_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-18T19:29:22Z",
+      "side": 1,
+      "message": "Ah, I missed those usecases. If I\u0027m going to clean up the build server configs, what do you think about removing the default goal substitution entirely, and require \u0027droid\u0027 to be passed if that\u0027s what is desired?",
+      "parentUuid": "7c21d2e1_fa9327d1",
+      "range": {
+        "startLine": 119,
+        "startChar": 4,
+        "endLine": 119,
+        "endChar": 59
+      },
+      "revId": "c38c3c0b937026558f85144b4772ecb732cee61c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
