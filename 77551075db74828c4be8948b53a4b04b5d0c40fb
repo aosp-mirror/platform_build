@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9c86862c_cc585f5e",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1761,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-18T19:23:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c21d2e1_a2d6b208",
+      "range": {
+        "startLine": 1761,
+        "startChar": 0,
+        "endLine": 1761,
+        "endChar": 22
+      },
+      "revId": "77551075db74828c4be8948b53a4b04b5d0c40fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c21d2e1_9765ae8e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-17T21:14:56Z",
       "side": 1,
       "message": "(hello C programmer)",
+      "range": {
+        "startLine": 78,
+        "startChar": 59,
+        "endLine": 78,
+        "endChar": 60
+      },
+      "revId": "77551075db74828c4be8948b53a4b04b5d0c40fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c86862c_2ce1fbbb",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-18T19:23:34Z",
+      "side": 1,
+      "message": "Oops - fixing :-)",
+      "parentUuid": "7c21d2e1_9765ae8e",
       "range": {
         "startLine": 78,
         "startChar": 59,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9c86862c_0caef764",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-18T19:23:34Z",
+      "side": 1,
+      "message": "I\u0027ve added asserts for a) through d).\n\nFor has_vendor, I suppose we can drop that restriction in the future by adding verity-hashes to vendor.img and adding/modifying a /vendor entry in /fstab.\u003cro_hardware\u003e such that it has the root-hash and salt. Therefore, I\u0027ve made the assert read \"VENDOR images currently incompatible with bvb\". OK?",
+      "parentUuid": "7c21d2e1_77a47ae3",
+      "range": {
+        "startLine": 308,
+        "startChar": 7,
+        "endLine": 308,
+        "endChar": 65
+      },
+      "revId": "77551075db74828c4be8948b53a4b04b5d0c40fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c21d2e1_22ebe2cc",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 6
@@ -82,6 +154,30 @@
       "writtenOn": "2016-03-17T21:14:56Z",
       "side": 1,
       "message": "we would never call this script outside the building process, right? for android, we need to pack this binary into otatools.zip, because we won\u0027t build host tools again when signing for release or generating OTA packages.\n\nsimilar thing for L557. but if we will only call this at build time, just ignore my concern.",
+      "range": {
+        "startLine": 516,
+        "startChar": 36,
+        "endLine": 516,
+        "endChar": 45
+      },
+      "revId": "77551075db74828c4be8948b53a4b04b5d0c40fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c86862c_6cbdb392",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-18T19:23:34Z",
+      "side": 1,
+      "message": "I\u0027m not sure how to answer this but I suspect the answer is no and here\u0027s why: For Brillo, we expect the developer to run \u0027m dist\u0027 and then upload the resulting target_files.zip to the cloud (Brillo Developer Console)... the developer is expected to have the right keys set with BOARD_BVB_ALGORITHM, BOARD_BVB_KEY_PATH before running \u0027m dist\u0027 and no resigning or anything is expected.",
+      "parentUuid": "7c21d2e1_22ebe2cc",
       "range": {
         "startLine": 516,
         "startChar": 36,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9c86862c_8ca10773",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-18T19:23:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c21d2e1_7708fac1",
+      "range": {
+        "startLine": 526,
+        "startChar": 61,
+        "endLine": 526,
+        "endChar": 62
+      },
+      "revId": "77551075db74828c4be8948b53a4b04b5d0c40fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c21d2e1_97ee4e16",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 6
@@ -128,6 +248,30 @@
       "writtenOn": "2016-03-17T21:14:56Z",
       "side": 1,
       "message": "same",
+      "range": {
+        "startLine": 531,
+        "startChar": 55,
+        "endLine": 531,
+        "endChar": 56
+      },
+      "revId": "77551075db74828c4be8948b53a4b04b5d0c40fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9c86862c_ac9ecb27",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 531,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-03-18T19:23:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c21d2e1_97ee4e16",
       "range": {
         "startLine": 531,
         "startChar": 55,
