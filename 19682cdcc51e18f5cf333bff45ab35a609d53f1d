@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7c21d2e1_037dfdb6",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2016-03-18T04:16:33Z",
+      "side": 1,
+      "message": "I\u0027m not sure how you compete for a dependency, the point of reusing compile-java is to avoid reinventing its logic. Is executing 2 recipes in the same shell simultaneously the issue?",
+      "parentUuid": "7c21d2e1_857d75f6",
+      "range": {
+        "startLine": 721,
+        "startChar": 1,
+        "endLine": 721,
+        "endChar": 67
+      },
+      "revId": "19682cdcc51e18f5cf333bff45ab35a609d53f1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c21d2e1_e5f6f17b",
         "filename": "core/java.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-18T00:44:46Z",
       "side": 1,
       "message": "Can we just inject the new flags to the full_classes_compiled_jar rule if user asks for running error check, instead of setting up a new intermediate target?",
+      "range": {
+        "startLine": 685,
+        "startChar": 1,
+        "endLine": 722,
+        "endChar": 14
+      },
+      "revId": "19682cdcc51e18f5cf333bff45ab35a609d53f1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_636b19f5",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 722,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2016-03-18T04:16:33Z",
+      "side": 1,
+      "message": "Let\u0027s discuss this in the bug.",
+      "parentUuid": "7c21d2e1_e5f6f17b",
       "range": {
         "startLine": 685,
         "startChar": 1,
