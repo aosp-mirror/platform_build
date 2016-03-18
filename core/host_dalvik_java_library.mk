@@ -101,10 +101,6 @@ $(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
 	$(hide) $(ACP) -fp $< $@
 
 ifndef LOCAL_JACK_ENABLED
-$(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
-$(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(built_dex): $(full_classes_jar) $(DX)
-	$(transform-classes.jar-to-dex)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
