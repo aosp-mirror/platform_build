@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "7c21d2e1_857d75f6",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-18T01:26:46Z",
+      "side": 1,
+      "message": "You cannot call compile-java here: now $(error_prone_classes_compiled_jar) and $(full_classes_compiled_jar) are competing for intermediate files like $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list. See definition of compile-java in bulid/core/definitions.mk.\nMy build fails due to this kind of errors.",
+      "range": {
+        "startLine": 721,
+        "startChar": 1,
+        "endLine": 721,
+        "endChar": 67
+      },
+      "revId": "19682cdcc51e18f5cf333bff45ab35a609d53f1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c21d2e1_e5f6f17b",
         "filename": "core/java.mk",
         "patchSetId": 2
