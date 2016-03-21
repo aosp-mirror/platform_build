@@ -507,8 +507,28 @@ INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
 	--kernel $(INSTALLED_KERNEL_TARGET)
 
+INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS := \
+	--kernel $(INSTALLED_KERNEL_TARGET) \
+	--rootfs_with_hashes $(PRODUCT_OUT)/system.img
+
+ifdef BOARD_BVB_ROLLBACK_INDEX
+INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS += \
+	--rollback_index $(BOARD_BVB_ROLLBACK_INDEX)
+endif
+
+ifndef BOARD_BVB_KEY_PATH
+# If key path isn't specified, use the 4096-bit test key.
+INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS := --algorithm SHA256_RSA4096 \
+	--key system/bvb/test/testkey_rsa4096.pem
+else
+INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS := \
+	--algorithm $(BOARD_BVB_ALGORITHM) --key $(BOARD_BVB_KEY_PATH)
+endif
+
+
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
+INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS += --initrd $(INSTALLED_RAMDISK_TARGET)
 endif
 
 INTERNAL_BOOTIMAGE_FILES := $(filter-out --%,$(INTERNAL_BOOTIMAGE_ARGS))
@@ -516,6 +536,7 @@ INTERNAL_BOOTIMAGE_FILES := $(filter-out --%,$(INTERNAL_BOOTIMAGE_ARGS))
 BOARD_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE))
 ifdef BOARD_KERNEL_CMDLINE
   INTERNAL_BOOTIMAGE_ARGS += --cmdline "$(BOARD_KERNEL_CMDLINE)"
+  INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS += --kernel_cmdline "$(BOARD_KERNEL_CMDLINE)"
 endif
 
 BOARD_KERNEL_BASE := $(strip $(BOARD_KERNEL_BASE))
@@ -540,6 +561,23 @@ ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
   $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE must be enabled for BOARD_USES_RECOVERY_AS_BOOT.)
 endif
 endif
+
+ifeq ($(BOARD_BVB_ENABLE),true)
+
+$(INSTALLED_BOOTIMAGE_TARGET): $(BVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(PRODUCT_OUT)/system.img
+	$(call pretty,"Target boot image: $@")
+	$(hide) $(BVBTOOL) make_boot_image $(INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS) $(BOARD_BVB_MAKE_BOOT_IMAGE_ARGS) --output $@
+	$(hide) $(BVBTOOL) sign_boot_image $(INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS) $(BOARD_BVB_SIGN_BOOT_IMAGE_ARGS) --image $@
+	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+
+.PHONY: bootimage-nodeps
+bootimage-nodeps: $(BVBTOOL)
+	@echo "make $@: ignoring dependencies"
+	$(hide) $(BVBTOOL) make_boot_image $(INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS) $(BOARD_BVB_MAKE_BOOT_IMAGE_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
+	$(hide) $(BVBTOOL) sign_boot_image $(INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS) $(BOARD_BVB_SIGN_BOOT_IMAGE_ARGS) --image $(INSTALLED_BOOTIMAGE_TARGET)
+	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+
+else # BOARD_BVB_ENABLE
 
 # We build recovery as boot image if BOARD_USES_RECOVERY_AS_BOOT is true.
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
@@ -590,6 +628,7 @@ bootimage-nodeps: $(MKBOOTIMG)
 
 endif # TARGET_BOOTIMAGE_USE_EXT2
 endif # BOARD_USES_RECOVERY_AS_BOOT
+endif # BOARD_BVB_ENABLE
 
 else	# TARGET_NO_KERNEL
 # HACK: The top-level targets depend on the bootimage.  Not all targets
@@ -1128,7 +1167,12 @@ define build-systemimage-target
            fi; \
            mkdir -p $(DIST_DIR); cp $(INSTALLED_FILES_FILE) $(DIST_DIR)/installed-files-rescued.txt; \
            exit 1 )
+  $(if $(BOARD_BVB_ENABLE), $(hide) $(BVBTOOL) add_image_hashes $(BOARD_BVB_ADD_IMAGE_HASHES_ARGS) --image $(1))
 endef
+
+ifeq ($(BOARD_BVB_ENABLE),true)
+FULL_SYSTEMIMAGE_DEPS += $(BVBTOOL)
+endif
 
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)
@@ -1772,6 +1816,15 @@ ifneq ($(strip $(SANITIZE_TARGET)),)
 endif
 ifeq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
 	$(hide) echo "full_recovery_image=true" >> $(zip_root)/META/misc_info.txt
+endif
+ifeq ($(BOARD_BVB_ENABLE),true)
+	$(hide) echo "board_bvb_enable=true" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bvb_make_boot_image_args=$(BOARD_BVB_MAKE_BOOT_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bvb_sign_boot_image_args=$(BOARD_BVB_SIGN_BOOT_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bvb_algorithm=$(BOARD_BVB_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bvb_key_path=$(BOARD_BVB_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bvb_rollback_index=$(BOARD_BVB_ROLLBACK_INDEX)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bvb_add_image_hashes_args=$(BOARD_BVB_ADD_IMAGE_HASHES_ARGS)" >> $(zip_root)/META/misc_info.txt
 endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
