@@ -31,7 +31,9 @@ if sys.hexversion < 0x02070000:
 import datetime
 import errno
 import os
+import shlex
 import shutil
+import subprocess
 import tempfile
 import zipfile
 
@@ -48,12 +50,12 @@ OPTIONS.verity_signer_path = None
 
 def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
   """Turn the contents of SYSTEM into a system image and store it in
-  output_zip."""
+  output_zip. Returns the name of the system image file."""
 
   prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "system.img")
   if os.path.exists(prebuilt_path):
     print "system.img already exists in %s, no need to rebuild..." % (prefix,)
-    return
+    return prebuilt_path
 
   def output_sink(fn, data):
     ofile = open(os.path.join(OPTIONS.input_tmp, "SYSTEM", fn), "w")
@@ -68,8 +70,23 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
   block_list = common.MakeTempFile(prefix="system-blocklist-", suffix=".map")
   imgname = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict,
                         block_list=block_list)
+
+  # If requested, calculate and add dm-verity integrity hashes and
+  # metadata to system.img.
+  if OPTIONS.info_dict.get("board_bvb_enable", None) == "true":
+    bvbtool = os.getenv('BVBTOOL') or "bvbtool"
+    cmd = [bvbtool, "add_image_hashes", "--image", imgname]
+    args = OPTIONS.info_dict.get("board_bvb_add_image_hashes_args", None)
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    p = common.Run(cmd, stdout=subprocess.PIPE)
+    p.communicate()
+    assert p.returncode == 0, "bvbtool add_image_hashes of %s image failed" % (
+      os.path.basename(OPTIONS.input_tmp),)
+
   common.ZipWrite(output_zip, imgname, prefix + "system.img")
   common.ZipWrite(output_zip, block_list, prefix + "system.map")
+  return imgname
 
 
 def BuildSystem(input_dir, info_dict, block_list=None):
@@ -275,23 +292,40 @@ def AddImagesToTargetFiles(filename):
                                compression=zipfile.ZIP_DEFLATED)
 
   has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
+  system_root_image = (OPTIONS.info_dict.get("system_root_image", None) == "true")
+  board_bvb_enable = (OPTIONS.info_dict.get("board_bvb_enable", None) == "true")
+
+  # Brillo Verified Boot is incompatible with certain
+  # configurations. Explicitly check for these.
+  if board_bvb_enable:
+    assert not has_recovery, "has_recovery incompatible with bvb"
+    assert not system_root_image, "system_root_image incompatible with bvb"
+    assert not OPTIONS.rebuild_recovery, "rebuild_recovery incompatible with bvb"
+    assert not has_vendor, "VENDOR images currently incompatible with bvb"
 
   def banner(s):
     print "\n\n++++ " + s + " ++++\n\n"
 
-  banner("boot")
   prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", "boot.img")
   boot_image = None
   if os.path.exists(prebuilt_path):
+    banner("boot")
     print "boot.img already exists in IMAGES/, no need to rebuild..."
     if OPTIONS.rebuild_recovery:
       boot_image = common.GetBootableImage(
           "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
   else:
-    boot_image = common.GetBootableImage(
+    if board_bvb_enable:
+      # With Brillo Verified Boot, we need to build system.img before
+      # boot.img since the latter includes the dm-verity root hash and
+      # salt for the former.
+      pass
+    else:
+      banner("boot")
+      boot_image = common.GetBootableImage(
         "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-    if boot_image:
-      boot_image.AddToZip(output_zip)
+      if boot_image:
+        boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:
@@ -310,7 +344,17 @@ def AddImagesToTargetFiles(filename):
         recovery_image.AddToZip(output_zip)
 
   banner("system")
-  AddSystem(output_zip, recovery_img=recovery_image, boot_img=boot_image)
+  system_img_path = AddSystem(
+    output_zip, recovery_img=recovery_image, boot_img=boot_image)
+  if OPTIONS.info_dict.get("board_bvb_enable", None) == "true":
+    # If we're using Brillo Verified Boot, we can now build boot.img
+    # given that we have system.img.
+    banner("boot")
+    boot_image = common.GetBootableImage(
+      "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT",
+      system_img_path=system_img_path)
+    if boot_image:
+      boot_image.AddToZip(output_zip)
   if has_vendor:
     banner("vendor")
     AddVendor(output_zip)
