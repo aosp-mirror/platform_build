@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c21d2e1_106076af",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-22T22:23:36Z",
+      "side": 1,
+      "message": "My only problem with this change is that we aren\u0027t regenerating out/soong/.soong.bootstrap for any affected users, since we only run this target if out/soong/soong doesn\u0027t exist, which it will.\n\nCleanSpec.mk won\u0027t help, since we don\u0027t get that far.\n\nI could change this rule to make $(SOONG_OUT_DIR)/.soong.bootstrap depend on bootstrap.bash, so that anytime bootstrap.bash is updated, then we re-run bootstrap, but that\u0027s not strictly necessary. And ideally, we\u0027d want to re-run it any time SOONG_OUT_DIR changes.",
+      "revId": "68dd6afa6f00d6da8cc02be4be787e7e947e429c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
