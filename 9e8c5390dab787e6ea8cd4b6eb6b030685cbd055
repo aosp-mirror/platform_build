@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7c21d2e1_dad606c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-22T16:30:44Z",
+      "side": 1,
+      "message": "I didn\u0027t know the http://b/ version, but now i found a few commits with this syntax. I will try it in this commit.",
+      "parentUuid": "7c21d2e1_7ffa6c61",
+      "revId": "9e8c5390dab787e6ea8cd4b6eb6b030685cbd055",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c21d2e1_5ff7a878",
         "filename": "tools/warn.py",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-03-22T07:43:20Z",
       "side": 1,
       "message": "Is there a patch for this in upstream yet? It would be a nice thing to quickly fix there.",
+      "revId": "9e8c5390dab787e6ea8cd4b6eb6b030685cbd055",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_7afa7a61",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-03-22T16:30:44Z",
+      "side": 1,
+      "message": "Nop. I will try to get it fixed upstream.",
+      "parentUuid": "7c21d2e1_5ff7a878",
       "revId": "9e8c5390dab787e6ea8cd4b6eb6b030685cbd055",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
