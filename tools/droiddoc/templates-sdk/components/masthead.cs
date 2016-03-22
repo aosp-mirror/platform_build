@@ -159,7 +159,7 @@
       <li class="dac-nav-item develop">
         <a class="dac-nav-link has-subnav" href="<?cs var:toroot ?>reference/packages.html" zh-tw-lang="參考資源"
         zh-cn-lang="参考" ru-lang="Справочник" ko-lang="참조문서" ja-lang="リファレンス"
-        es-lang="Referencia">API Reference!!</a>
+        es-lang="Referencia">API Reference</a>
       <div class="dac-nav-secondary develop">
         <h1 style="font-size: 20px; line-height: 24px; margin: 20px; color:#444"
           ><?cs
