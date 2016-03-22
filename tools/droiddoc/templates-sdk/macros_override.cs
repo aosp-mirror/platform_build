@@ -34,3 +34,11 @@
     <?cs /each ?>
   </table>
 <?cs /def ?>
+
+<?cs def:doc_root_override() ?><?cs
+  if:referenceonly
+    ?>https://developer.android.com/<?cs
+  else ?><?cs
+    var:toroot ?><?cs
+  /if ?><?cs
+/def ?>
