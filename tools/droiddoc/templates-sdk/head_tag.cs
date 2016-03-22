@@ -77,7 +77,7 @@ else
   var devsite = <?cs if:devsite ?>true<?cs else ?>false<?cs /if ?>;
   var useUpdatedTemplates = <?cs if:useUpdatedTemplates ?>true<?cs else ?>false<?cs /if ?>;
 </script>
-<script src="<?cs var:toroot ?>assets/js/docs.js?v=18" type="text/javascript"></script>
+<script src="<?cs var:toroot ?>assets/js/docs.js?v=19" type="text/javascript"></script>
 
 <?cs if:helpoutsWidget ?>
 <script type="text/javascript" src="https://helpouts.google.com/ps/res/embed.js" defer async
