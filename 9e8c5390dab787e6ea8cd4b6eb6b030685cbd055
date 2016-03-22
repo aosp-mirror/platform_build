@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c21d2e1_7ffa6c61",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-03-22T07:43:20Z",
+      "side": 1,
+      "message": "I generally use the \"http://b/\" prefixed version, instead of just the bug number here, so that the links work everywhere in gerrit (and also when copy/pasting).",
+      "revId": "9e8c5390dab787e6ea8cd4b6eb6b030685cbd055",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_5ff7a878",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-03-22T07:43:20Z",
+      "side": 1,
+      "message": "Is there a patch for this in upstream yet? It would be a nice thing to quickly fix there.",
+      "revId": "9e8c5390dab787e6ea8cd4b6eb6b030685cbd055",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
