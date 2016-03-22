@@ -16,6 +16,24 @@
       "revId": "68dd6afa6f00d6da8cc02be4be787e7e947e429c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_bd598261",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-22T23:31:38Z",
+      "side": 1,
+      "message": "I don\u0027t know anyone would encounter such issue in reality.\nIf we really care we can use a variable dependency file like:\nsoong_out_dir_dep :\u003d $(OUT_DIR)/$(subst /,-,$(SOONG_OUT_DIR)).soong_out_dir_dep\n$(soong_out_dir_dep) :\n  $(hide) mkdir -p $(dir $@) \u0026\u0026 rm -f $(dir $@)*.soong_out_dir_dep \u0026\u0026 touch $@\n$(SOONG): $(soong_out_dir_dep)\n  \u003cthe recipe\u003e",
+      "parentUuid": "7c21d2e1_106076af",
+      "revId": "68dd6afa6f00d6da8cc02be4be787e7e947e429c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
