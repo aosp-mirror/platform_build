@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c21d2e1_ffff7c4a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-03-22T07:52:11Z",
+      "side": 1,
+      "message": "warning",
+      "range": {
+        "startLine": 9,
+        "startChar": 15,
+        "endLine": 9,
+        "endChar": 21
+      },
+      "revId": "4f83d9ec1a424eebdff3772c0015bb448e2df222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_df043838",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-03-22T07:52:11Z",
+      "side": 1,
+      "message": "Critical",
+      "range": {
+        "startLine": 38,
+        "startChar": 16,
+        "endLine": 38,
+        "endChar": 23
+      },
+      "revId": "4f83d9ec1a424eebdff3772c0015bb448e2df222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_3f19149a",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-03-22T07:52:11Z",
+      "side": 1,
+      "message": "Do you really intend \u0027grey\u0027 here? Why not something like \"Unhandled warnings\" (or Unsupported)?",
+      "range": {
+        "startLine": 49,
+        "startChar": 11,
+        "endLine": 49,
+        "endChar": 17
+      },
+      "revId": "4f83d9ec1a424eebdff3772c0015bb448e2df222",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
