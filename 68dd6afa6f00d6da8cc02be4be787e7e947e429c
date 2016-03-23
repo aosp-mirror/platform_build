@@ -34,6 +34,24 @@
       "revId": "68dd6afa6f00d6da8cc02be4be787e7e947e429c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c21d2e1_3def5268",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-23T02:38:09Z",
+      "side": 1,
+      "message": "We can\u0027t add file dependencies to SOONG right now, since we\u0027re creating a symlink, and make will read the timestamp of build/soong/soong.bash instead of when we created the symlink. So to add a dependency on bootstrap.bash, I\u0027m moving the target here to be $(SOONG_OUT_DIR)/.soong.bootstrap, which is a normal file created by bootstrap.bash.\n\nColin gave the suggestion that we should just compare the current SOONG_OUT_DIR against the ones stored in the $(SOONG_OUT_DIR)/.soong.bootstrap file, and rerun bootstrap if necessary. I\u0027m doing that now.\n\nIt turns out that even if the $(SOONG_OUT_DIR) doesn\u0027t change, if you do:\n\n  mv out ~/out\n  ln -s ~/out out\n\nit would fail because out/soong/soong would be a dangling symlink (hopefully, but could be pointing to a different tree), and we aren\u0027t checking that anymore with a make target. So we also need to validate the relative path reversing that bootstrap.bash is doing. In order to do that here, I\u0027m refactoring the (duplicated) bootstrap path code into a python script that we can call from here (and test).",
+      "parentUuid": "7c21d2e1_bd598261",
+      "revId": "68dd6afa6f00d6da8cc02be4be787e7e947e429c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
