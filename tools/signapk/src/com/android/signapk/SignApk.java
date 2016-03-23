@@ -544,6 +544,11 @@ class SignApk {
             // Preserve the STORED method of the input entry.
             outEntry = new JarEntry(inEntry);
             outEntry.setTime(timestamp);
+            // Discard comment and extra fields of this entry to
+            // simplify alignment logic below and for consistency with
+            // how compressed entries are handled later.
+            outEntry.setComment(null);
+            outEntry.setExtra(null);
 
             // 'offset' is the offset into the file at which we expect
             // the file data to begin.  This is the value we need to
