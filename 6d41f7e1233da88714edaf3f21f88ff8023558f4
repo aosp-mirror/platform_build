@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c21d2e1_f7d5c7fe",
+        "filename": "core/legacy_prebuilts.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-23T23:12:27Z",
+      "side": 0,
+      "message": "Verified on AOSP and internal master that clearing this list produces no errors.",
+      "revId": "6d41f7e1233da88714edaf3f21f88ff8023558f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
