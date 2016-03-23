@@ -286,6 +286,12 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MODULE:= $(my_register_name)
 .PHONY: $(my_register_name)
 $(my_register_name): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
 
+ifneq ($(my_register_name),$(LOCAL_MODULE))
+# $(LOCAL_MODULE) covers all the multilib targets.
+.PHONY: $(LOCAL_MODULE)
+$(LOCAL_MODULE) : $(my_register_name)
+endif
+
 # Set up phony targets that covers all modules under the given paths.
 # This allows us to build everything in given paths by running mmma/mma.
 my_path_components := $(subst /,$(space),$(LOCAL_PATH))
