@@ -1500,6 +1500,23 @@ $(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
     $(call _extract-and-include-single-host-whole-static-lib, $(lib)))
 endef
 
+ifeq ($(HOST_OS),darwin)
+# On Darwin the host ar fails if there is nothing to add to .a at all.
+# We work around by adding a dummy.o and then deleting it.
+define create-dummy.o-if-no-objs
+$(if $(PRIVATE_ALL_OBJECTS),,$(hide) touch $(dir $@)dummy.o)
+endef
+
+define get-dummy.o-if-no-objs
+$(if $(PRIVATE_ALL_OBJECTS),,$(dir $@)dummy.o)
+endef
+
+define delete-dummy.o-if-no-objs
+$(if $(PRIVATE_ALL_OBJECTS),,$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) d $@ $(dir $@)dummy.o \
+  && rm -f $(dir $@)dummy.o)
+endef
+endif  # HOST_OS is darwin
+
 # Explicitly delete the archive first so that ar doesn't
 # try to add to an existing archive.
 define transform-host-o-to-static-lib
@@ -1507,9 +1524,11 @@ define transform-host-o-to-static-lib
 @mkdir -p $(dir $@)
 @rm -f $@
 $(extract-and-include-host-whole-static-libs)
+$(create-dummy.o-if-no-objs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
+    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS) $(get-dummy.o-if-no-objs))
+$(delete-dummy.o-if-no-objs)
 endef
 
 
