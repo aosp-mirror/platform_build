@@ -482,7 +482,6 @@ endif
 # -----------------------------------------------------------------
 # the ramdisk
 INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
-	$(ALL_PREBUILT) \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
@@ -1088,7 +1087,6 @@ PDK_FUSION_SYSIMG_FILES := \
         $(ALL_PDK_FUSION_FILES))
 
 INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
-    $(ALL_PREBUILT) \
     $(ALL_GENERATED_SOURCES) \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(PDK_FUSION_SYSIMG_FILES) \
@@ -2023,7 +2021,6 @@ ATREE_FILES :=
 # if we don't have a real list, then use "everything"
 ifeq ($(strip $(ATREE_FILES)),)
 ATREE_FILES := \
-	$(ALL_PREBUILT) \
 	$(ALL_DEFAULT_INSTALLED_MODULES) \
 	$(INSTALLED_RAMDISK_TARGET) \
 	$(ALL_DOCS) \

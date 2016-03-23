@@ -55,10 +55,6 @@ ALL_MODULE_TAGS:=
 # its sub-variables.)
 ALL_MODULE_NAME_TAGS:=
 
-# Full paths to all prebuilt files that will be copied
-# (used to make the dependency on acp)
-ALL_PREBUILT:=
-
 # Full path to all files that are made by some tool
 ALL_GENERATED_SOURCES:=
 
