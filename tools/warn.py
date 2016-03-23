@@ -30,8 +30,23 @@ def colorforseverity(sev):
     if sev == severity.HARMLESS:
         return 'limegreen'
     if sev == severity.UNKNOWN:
-        return 'blue'
+        return 'lightblue'
     return 'grey'
+
+def headerforseverity(sev):
+    if sev == severity.FIXMENOW:
+        return 'Critical warnings, fix me now'
+    if sev == severity.HIGH:
+        return 'High severity warnings'
+    if sev == severity.MEDIUM:
+        return 'Medium severity warnings'
+    if sev == severity.LOW:
+        return 'Low severity warnings'
+    if sev == severity.HARMLESS:
+        return 'Harmless warnings'
+    if sev == severity.UNKNOWN:
+        return 'Unknown warnings'
+    return 'Unhandled warnings'
 
 warnpatterns = [
     { 'category':'make',    'severity':severity.MEDIUM,   'members':[], 'option':'',
@@ -623,16 +638,21 @@ def tablerow(text):
     output(text,)
     output('</td></tr>')
 
-def begintable(text, backgroundcolor):
+def begintable(text, backgroundcolor, extraanchor):
     global anchor
     output('<table border="1" rules="cols" frame="box" width="100%" bgcolor="black"><tr bgcolor="' +
-        backgroundcolor + '"><a name="anchor' + str(anchor) + '"><td>')
+        backgroundcolor + '"><a name="anchor' + str(anchor) + '">')
+    if extraanchor:
+        output('<a name="' + extraanchor + '">')
+    output('<td>')
     output(htmlbig(text[0]) + '<br>')
     for i in text[1:]:
         output(i + '<br>')
     output('</td>')
-    output('<td width="100" bgcolor="grey"><a align="right" href="#anchor' + str(anchor-1) +
-        '">previous</a><br><a align="right" href="#anchor' + str(anchor+1) + '">next</a>')
+    output('<td width="100" bgcolor="grey">' +
+           '<a align="right" href="#WarningTOC">top</a><br>' +
+           '<a align="right" href="#anchor' + str(anchor-1) + '">previous</a><br>' +
+           '<a align="right" href="#anchor' + str(anchor+1) + '">next</a>')
     output('</td></a></tr>')
     anchor += 1
 
@@ -650,13 +670,43 @@ def dumpstats():
             unknown += len(i['members'])
         elif i['severity'] != severity.SKIP:
             known += len(i['members'])
-    output('Number of classified warnings: <b>' + str(known) + '</b><br>' )
-    output('Number of unclassified warnings: <b>' + str(unknown) + '</b><br>')
+    output('\nNumber of classified warnings: <b>' + str(known) + '</b><br>' )
+    output('\nNumber of unclassified warnings: <b>' + str(unknown) + '</b><br>')
     total = unknown + known
-    output('Total number of warnings: <b>' + str(total) + '</b>')
+    output('\nTotal number of warnings: <b>' + str(total) + '</b>')
     if total < 1000:
         output('(low count may indicate incremental build)')
-    output('<p>')
+    output('\n<p>\n')
+
+# dump count of warnings of a given severity in TOC
+def dumpcount(sev):
+    first = True
+    for i in warnpatterns:
+      if i['severity'] == sev and len(i['members']) > 0:
+          if first:
+              output(headerforseverity(sev) + ':\n<blockquote>' +
+                     '<table border="1" frame="box" width="100%">')
+          output('<tr bgcolor="' + colorforseverity(sev) + '">' +
+                 '<td><a href="#' + i['anchor'] + '">' + descriptionfor(i) +
+                 ' (' + str(len(i['members'])) + ')</a></td></tr>\n')
+          first = False
+    if not first:
+        output('</table></blockquote>\n')
+
+# dump table of content, list of all warning patterns
+def dumptoc():
+    n = 1
+    output('<a name="WarningTOC"><blockquote>\n')
+    for i in warnpatterns:
+        i['anchor'] = 'Warning' + str(n)
+        n += 1
+    dumpcount(severity.FIXMENOW)
+    dumpcount(severity.HIGH)
+    dumpcount(severity.MEDIUM)
+    dumpcount(severity.LOW)
+    dumpcount(severity.HARMLESS)
+    dumpcount(severity.UNKNOWN)
+    output('</blockquote>\n<p>\n')
 
 def allpatterns(cat):
     pats = ''
@@ -678,7 +728,7 @@ def dumpfixed():
         if len(i['members']) == 0 and i['severity'] != severity.SKIP:
             if tablestarted == False:
                 tablestarted = True
-                begintable(['Fixed warnings', 'No more occurences. Please consider turning these in to errors if possible, before they are reintroduced in to the build'], 'blue')
+                begintable(['Fixed warnings', 'No more occurences. Please consider turning these in to errors if possible, before they are reintroduced in to the build'], 'blue', '')
             tablerow(i['description'] + ' (' + allpatterns(i) + ') ' + i['option'])
     if tablestarted:
         endtable()
@@ -690,7 +740,7 @@ def dumpcategory(cat):
         header = [descriptionfor(cat),str(len(cat['members'])) + ' occurences:']
         if cat['option'] != '':
             header[1:1] = [' (related option: ' + cat['option'] +')']
-        begintable(header, colorforseverity(cat['severity']))
+        begintable(header, colorforseverity(cat['severity']), cat['anchor'])
         for i in cat['members']:
             tablerow(i)
         endtable()
@@ -761,6 +811,7 @@ for line in infile:
 # dump the html output to stdout
 dumphtmlprologue('Warnings for ' + platformversion + ' - ' + targetproduct + ' - ' + targetvariant)
 dumpstats()
+dumptoc()
 dumpseverity(severity.FIXMENOW)
 dumpseverity(severity.HIGH)
 dumpseverity(severity.MEDIUM)
