@@ -554,22 +554,6 @@ ifeq ($(stash_product_vars),true)
   $(call assert-product-vars, __STASHED)
 endif
 
-include $(BUILD_SYSTEM)/legacy_prebuilts.mk
-ifneq ($(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),)
-  $(warning *** Some files have been added to ALL_PREBUILT.)
-  $(warning *)
-  $(warning * ALL_PREBUILT is a deprecated mechanism that)
-  $(warning * should not be used for new files.)
-  $(warning * As an alternative, use PRODUCT_COPY_FILES in)
-  $(warning * the appropriate product definition.)
-  $(warning * build/target/product/core.mk is the product)
-  $(warning * definition used in all products.)
-  $(warning *)
-  $(foreach bad_prebuilt,$(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),$(warning * unexpected $(bad_prebuilt) in ALL_PREBUILT))
-  $(warning *)
-  $(error ALL_PREBUILT contains unexpected files)
-endif
-
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
@@ -860,9 +844,6 @@ modules_to_check := $(sort $(modules_to_check))
 # This is used to to get the ordering right, you can also use these,
 # but they're considered undocumented, so don't complain if their
 # behavior changes.
-.PHONY: prebuilt
-prebuilt: $(ALL_PREBUILT)
-
 # An internal target that depends on all copied headers
 # (see copy_headers.make).  Other targets that need the
 # headers to be copied first can depend on this target.
@@ -873,9 +854,8 @@ $(ALL_C_CPP_ETC_OBJECTS): | all_copied_headers
 
 # All the droid stuff, in directories
 .PHONY: files
-files: prebuilt \
-        $(modules_to_install) \
-        $(INSTALLED_ANDROID_INFO_TXT_TARGET)
+files: $(modules_to_install) \
+       $(INSTALLED_ANDROID_INFO_TXT_TARGET)
 
 # -------------------------------------------------------------------
 
@@ -1078,7 +1058,7 @@ sample_APKS_COLLECTION := \
 $(foreach module,$(sample_MODULES),$(eval $(call \
         copy-one-file,$(module),$(sample_APKS_DEST_PATH)/$(notdir $(module)))))
 sample_ADDITIONAL_INSTALLED := \
-        $(filter-out $(modules_to_install) $(modules_to_check) $(ALL_PREBUILT),$(sample_MODULES))
+        $(filter-out $(modules_to_install) $(modules_to_check),$(sample_MODULES))
 samplecode: $(sample_APKS_COLLECTION)
 	@echo "Collect sample code apks: $^"
 	# remove apks that are not intended to be installed.
