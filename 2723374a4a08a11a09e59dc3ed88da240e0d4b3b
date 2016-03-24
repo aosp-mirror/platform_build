@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ca2fa11_3419d89a",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1044,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-24T18:08:21Z",
+      "side": 1,
+      "message": "This implies to me that this target actually changes the behavior of the java compiles from jack to javac. Maybe \"that use\" instead of \"with\"?",
+      "range": {
+        "startLine": 1044,
+        "startChar": 44,
+        "endLine": 1044,
+        "endChar": 48
+      },
+      "revId": "2723374a4a08a11a09e59dc3ed88da240e0d4b3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
