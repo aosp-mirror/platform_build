@@ -1040,6 +1040,9 @@ target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests : host-tests target-tests
 
+# Phony target to run all java compilations that use javac instead of jack.
+.PHONY: javac-check
+
 # To catch more build breakage, check build tests modules in eng and userdebug builds.
 ifneq ($(ANDROID_NO_TEST_CHECK),true)
 ifneq ($(TARGET_BUILD_PDK),true)
