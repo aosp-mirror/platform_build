@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ca2fa11_17181e04",
+        "filename": "core/host_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-24T19:49:08Z",
+      "side": 1,
+      "message": "Shouldn\u0027t we be moving this ifneq around the entire block (the rule definition above, jarjar/emma below) if we know it\u0027s not going to work?",
+      "revId": "5029ca0601dc506f09669a25f13a80a77e2fd88d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
