@@ -142,11 +142,18 @@ ninja_wrapper: $(COMBINED_BUILD_NINJA) $(MAKEPARALLEL)
 	@echo Starting build with ninja
 	+$(hide) export NINJA_STATUS="$(NINJA_STATUS)" && source $(KATI_ENV_SH) && $(NINJA_MAKEPARALLEL) $(NINJA) -d keepdepfile $(NINJA_GOALS) -C $(TOP) -f $(COMBINED_BUILD_NINJA) $(NINJA_ARGS)
 
+# Dummy Android.mk and CleanSpec.mk files so that kati won't recurse into the
+# out directory
+DUMMY_OUT_MKS := $(OUT_DIR)/Android.mk $(OUT_DIR)/CleanSpec.mk
+$(DUMMY_OUT_MKS):
+	@mkdir -p $(dir $@)
+	$(hide) echo '# This file prevents findleaves.py from traversing this directory further' >$@
+
 KATI_FIND_EMULATOR := --use_find_emulator
 ifeq ($(KATI_EMULATE_FIND),false)
   KATI_FIND_EMULATOR :=
 endif
-$(KATI_BUILD_NINJA): $(CKATI) $(MAKEPARALLEL) run_soong FORCE
+$(KATI_BUILD_NINJA): $(CKATI) $(MAKEPARALLEL) $(DUMMY_OUT_MKS) run_soong FORCE
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
 	+$(hide) $(KATI_MAKEPARALLEL) $(CKATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --no_ignore_dirty=$(SOONG_ANDROID_MK) --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo $(KATI_FIND_EMULATOR) -f build/core/main.mk $(KATI_GOALS) --gen_all_targets BUILDING_WITH_NINJA=true SOONG_ANDROID_MK=$(SOONG_ANDROID_MK)
 

@@ -106,11 +106,6 @@ $(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
 else # KATI
 
-# With these files findleaves.py won't be unnecessarily slower even if
-# there is a user creates a copy of $(OUT_DIR).
-$(shell echo '# This file prevents findleaves.py from traversing this directory further' > $(OUT_DIR)/Android.mk)
-$(shell echo '# This file prevents findleaves.py from traversing this directory further' > $(OUT_DIR)/CleanSpec.mk)
-
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
