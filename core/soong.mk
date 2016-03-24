@@ -1,23 +1,9 @@
 SOONG_OUT_DIR := $(OUT_DIR)/soong
-
-# This needs to exist before the realpath checks below
-$(shell mkdir -p $(SOONG_OUT_DIR))
-
-ifeq (,$(filter /%,$(SOONG_OUT_DIR)))
-SOONG_TOP_RELPATH := $(shell python -c "import os; print os.path.relpath('$(TOP)', '$(SOONG_OUT_DIR)')")
-# Protect against out being a symlink and relative paths not working
-ifneq ($(realpath $(SOONG_OUT_DIR)/$(SOONG_TOP_RELPATH)),$(realpath $(TOP)))
-SOONG_OUT_DIR := $(abspath $(SOONG_OUT_DIR))
-SOONG_TOP_RELPATH := $(abspath $(TOP))
-endif
-else
-SOONG_TOP_RELPATH := $(abspath $(TOP))
-endif
-
 SOONG := $(SOONG_OUT_DIR)/soong
+SOONG_BOOTSTRAP := $(SOONG_OUT_DIR)/.soong.bootstrap
 SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 
 # Only include the Soong-generated Android.mk if we're merging the
 # Soong-defined binaries with Kati-defined binaries.
@@ -25,10 +11,24 @@ ifeq ($(USE_SOONG),true)
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
 endif
 
-# Bootstrap soong.  Run only the first time for clean builds
-$(SOONG):
+# We need to rebootstrap soong if SOONG_OUT_DIR or the reverse path from
+# SOONG_OUT_DIR to TOP changes
+SOONG_NEEDS_REBOOTSTRAP :=
+ifneq ($(wildcard $(SOONG_BOOTSTRAP)),)
+  ifneq ($(SOONG_OUT_DIR),$(strip $(shell source $(SOONG_BOOTSTRAP); echo $$BUILDDIR)))
+    SOONG_NEEDS_REBOOTSTRAP := FORCE
+    $(warning soong_out_dir changed)
+  endif
+  ifneq ($(strip $(shell build/soong/reverse_path.py $(SOONG_OUT_DIR))),$(strip $(shell source $(SOONG_BOOTSTRAP); echo $$SRCDIR_FROM_BUILDDIR)))
+    SOONG_NEEDS_REBOOTSTRAP := FORCE
+    $(warning reverse path changed)
+  endif
+endif
+
+# Bootstrap soong.
+$(SOONG_BOOTSTRAP): bootstrap.bash $(SOONG_NEEDS_REBOOTSTRAP)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) cd $(dir $@) && $(SOONG_TOP_RELPATH)/bootstrap.bash
+	$(hide) BUILDDIR=$(SOONG_OUT_DIR) ./bootstrap.bash
 
 # Create soong.variables with copies of makefile settings.  Runs every build,
 # but only updates soong.variables if it changes
@@ -76,5 +76,5 @@ $(SOONG_IN_MAKE):
 # Run Soong, this implicitly create an Android.mk listing all soong outputs as
 # prebuilts.
 .PHONY: run_soong
-run_soong: $(SOONG) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
+run_soong: $(SOONG_BOOTSTRAP) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
 	$(hide) $(SOONG) $(SOONG_BUILD_NINJA) $(NINJA_ARGS)
