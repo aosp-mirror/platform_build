@@ -16,6 +16,24 @@
       "revId": "5029ca0601dc506f09669a25f13a80a77e2fd88d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ca2fa11_1d9f9f26",
+        "filename": "core/host_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-24T21:11:20Z",
+      "side": 1,
+      "message": "yeah, we can do that.\nActually host_dalvik_static_java_library.mk doesn\u0027t need to include this file. I\u0027ll upload change to clean that (and other LOCAL_JACK_ENABLED stuff) up.",
+      "parentUuid": "3ca2fa11_17181e04",
+      "revId": "5029ca0601dc506f09669a25f13a80a77e2fd88d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
