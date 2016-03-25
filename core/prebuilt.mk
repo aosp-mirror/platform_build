@@ -11,6 +11,10 @@ ifdef LOCAL_IS_HOST_MODULE
   LOCAL_HOST_PREFIX :=
 else
   my_prefix := TARGET_
+
+  ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+    LOCAL_MULTILIB := first
+  endif
 endif
 
 include $(BUILD_SYSTEM)/multilib.mk
