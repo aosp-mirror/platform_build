@@ -39,6 +39,9 @@ $(3) $(11) : $(_pdk_fusion_stamp)
 	$(hide) touch $$@
 endef
 
+# We don't have a LOCAL_PATH for the auto-generated modules, so let it be the $(BUILD_SYSTEM).
+LOCAL_PATH := $(BUILD_SYSTEM)
+
 ##### Java libraries.
 # Only set up rules for modules that aren't built from source.
 pdk_prebuilt_libraries := $(foreach l,$(PDK.DEXPREOPT.JAVA_LIBRARIES),\
