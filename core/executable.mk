@@ -17,6 +17,10 @@ endif
 
 ifneq (true,$(my_skip_this_target))
 
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+LOCAL_MULTILIB := first
+endif
+
 my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
