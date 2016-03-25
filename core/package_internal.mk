@@ -438,13 +438,17 @@ endif
 ifeq ($(full_classes_jar),)
 # We don't build jar, need to add the Java resources here.
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
-else
+else  # full_classes_jar
 	$(add-dex-to-package)
-endif
+endif  # full_classes_jar
 ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
 endif
 ifdef LOCAL_DEX_PREOPT
+ifneq ($(BUILD_PLATFORM_ZIP),)
+	@# Keep a copy of apk with classes.dex unstripped
+	$(hide) cp -f $@ $(dir $@)package.dex.apk
+endif  # BUILD_PLATFORM_ZIP
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif

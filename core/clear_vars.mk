@@ -187,6 +187,9 @@ LOCAL_DBUS_PROXY_PREFIX:=
 LOCAL_INIT_RC:=
 LOCAL_MODULE_HOST_OS:=
 LOCAL_NOTICE_FILE:=
+# Used to replace the installed file of a presigned prebuilt apk in PDK fusion build,
+# to avoid installing the presigned apks with classes.dex unstripped.
+LOCAL_REPLACE_PREBUILT_APK_INSTALLED:=
 
 # arch specific variables
 LOCAL_SRC_FILES_$(TARGET_ARCH):=

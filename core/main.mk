@@ -539,6 +539,11 @@ endif
 
 $(foreach mk, $(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
 
+ifdef PDK_FUSION_PLATFORM_ZIP
+# Bring in the PDK platform.zip modules.
+include $(BUILD_SYSTEM)/pdk_fusion_modules.mk
+endif # PDK_FUSION_PLATFORM_ZIP
+
 endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
@@ -766,7 +771,7 @@ overridden_packages := $(call get-package-overrides,$(modules_to_install))
 ifdef overridden_packages
 #  old_modules_to_install := $(modules_to_install)
   modules_to_install := \
-      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk), \
+      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex), \
           $(modules_to_install))
 endif
 #$(error filtered out
