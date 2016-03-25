@@ -2,6 +2,10 @@
 # TARGET_ARCH and TARGET_2ND_ARCH.
 # To build it for TARGET_2ND_ARCH in a 64bit product, use "LOCAL_MULTILIB := 32".
 
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+LOCAL_MULTILIB := first
+endif
+
 my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
