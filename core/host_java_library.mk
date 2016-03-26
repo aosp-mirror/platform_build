@@ -98,12 +98,12 @@ endif
 $(full_classes_emma_jar) : $(full_classes_jarjar_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
 
-$(built_javalib_jar) : $(full_classes_emma_jar)
+$(LOCAL_BUILT_MODULE) : $(full_classes_emma_jar)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
 else # LOCAL_EMMA_INSTRUMENT
-$(built_javalib_jar): $(full_classes_jarjar_jar) | $(ACP)
+$(LOCAL_BUILT_MODULE) : $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 endif # LOCAL_EMMA_INSTRUMENT
