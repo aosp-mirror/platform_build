@@ -231,7 +231,10 @@ ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 ifdef LOCAL_JACK_ENABLED
 # Jack supports coverage with Jacoco
+ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
+# Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+endif # Contains java code
 else
 LOCAL_STATIC_JAVA_LIBRARIES += emma
 endif # LOCAL_JACK_ENABLED
@@ -241,7 +244,10 @@ ifdef TARGET_BUILD_APPS
 # In unbundled build merge the emma library into the apk.
 ifdef LOCAL_JACK_ENABLED
 # Jack supports coverage with Jacoco
+ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
+# Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+endif # Contains java code
 else
 LOCAL_STATIC_JAVA_LIBRARIES += emma
 endif # LOCAL_JACK_ENABLED
