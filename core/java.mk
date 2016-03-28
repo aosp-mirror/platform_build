@@ -354,7 +354,8 @@ ifneq ($(strip $(logtags_sources)),)
 logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
 logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
 
-$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
+$(logtags_java_sources): PRIVATE_MERGED_TAG := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
+$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/tools/event_log_tags.py
 	$(transform-logtags-to-java)
 
 else
