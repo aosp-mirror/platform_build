@@ -109,6 +109,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Different dexopt types for different package update/install times.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    pm.dexopt.first-boot=interpret-only \
     pm.dexopt.boot=verify-profile \
     pm.dexopt.install=interpret-only \
     pm.dexopt.bg-dexopt=speed-profile \
