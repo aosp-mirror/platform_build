@@ -214,10 +214,15 @@ endif
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($($(my_prefix)OS),windows)
-    ifeq ($(my_clang),)
-        my_clang := true
-    endif
+    ifeq ($($(my_prefix)OS),windows)
+        ifeq ($(my_clang),true)
+            $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Clang is not yet supported for windows binaries)
+        endif
+        my_clang := false
+    else
+        ifeq ($(my_clang),)
+            my_clang := true
+        endif
     endif
 # Add option to make clang the default for device build
 else ifeq ($(USE_CLANG_PLATFORM_BUILD),true)
