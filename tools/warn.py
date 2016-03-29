@@ -16,7 +16,8 @@ class severity:
     HIGH=2
     MEDIUM=3
     LOW=4
-    HARMLESS=5
+    TIDY=5
+    HARMLESS=6
 
 def colorforseverity(sev):
     if sev == severity.FIXMENOW:
@@ -27,6 +28,8 @@ def colorforseverity(sev):
         return 'orange'
     if sev == severity.LOW:
         return 'yellow'
+    if sev == severity.TIDY:
+        return 'peachpuff'
     if sev == severity.HARMLESS:
         return 'limegreen'
     if sev == severity.UNKNOWN:
@@ -44,6 +47,8 @@ def headerforseverity(sev):
         return 'Low severity warnings'
     if sev == severity.HARMLESS:
         return 'Harmless warnings'
+    if sev == severity.TIDY:
+        return 'Clang-Tidy warnings'
     if sev == severity.UNKNOWN:
         return 'Unknown warnings'
     return 'Unhandled warnings'
@@ -106,10 +111,15 @@ warnpatterns = [
         'description':'Unused function, variable or label',
         'patterns':[r".*: warning: '.+' defined but not used",
                     r".*: warning: unused function '.+'",
+                    r".*: warning: private field '.+' is not used",
                     r".*: warning: unused variable '.+'"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wunused-value',
-        'description':'Statement with no effect',
-        'patterns':[r".*: warning: statement with no effect"] },
+        'description':'Statement with no effect or result unused',
+        'patterns':[r".*: warning: statement with no effect",
+                    r".*: warning: expression result unused"] },
+    { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wunused-result',
+        'description':'Ignoreing return value of function',
+        'patterns':[r".*: warning: ignoring return value of function .+Wunused-result"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wmissing-field-initializers',
         'description':'Missing initializer',
         'patterns':[r".*: warning: missing initializer"] },
@@ -405,6 +415,9 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.LOW,      'members':[], 'option':'-Wdeprecated-declarations',
         'description':'Deprecated declarations',
         'patterns':[r".*: warning: .+ is deprecated.+deprecated-declarations"] },
+    { 'category':'C/C++',   'severity':severity.LOW,      'members':[], 'option':'-Wdeprecated-register',
+        'description':'Deprecated register',
+        'patterns':[r".*: warning: 'register' storage class specifier is deprecated"] },
     { 'category':'C/C++',   'severity':severity.LOW,      'members':[], 'option':'-Wpointer-sign',
         'description':'Converts between pointers to integer types with different sign',
         'patterns':[r".*: warning: .+ converts between pointers to integer types with different sign"] },
@@ -465,9 +478,12 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.LOW,     'members':[], 'option':'',
         'description':'Useless specifier',
         'patterns':[r".*: warning: useless storage class specifier in empty declaration"] },
+    { 'category':'C/C++',   'severity':severity.LOW,     'members':[], 'option':'-Wduplicate-decl-specifier',
+        'description':'Duplicate declaration specifier',
+        'patterns':[r".*: warning: duplicate '.+' declaration specifier"] },
     { 'category':'logtags',   'severity':severity.LOW,     'members':[], 'option':'',
         'description':'Duplicate logtag',
-        'patterns':[r".*: warning: tag "".+"" \(None\) duplicated in .+"] },
+        'patterns':[r".*: warning: tag \".+\" \(.+\) duplicated in .+"] },
     { 'category':'logtags',   'severity':severity.LOW,     'members':[], 'option':'typedef-redefinition',
         'description':'Typedef redefinition',
         'patterns':[r".*: warning: redefinition of typedef '.+' is a C11 feature"] },
@@ -521,6 +537,9 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.LOW,     'members':[], 'option':'',
         'description':'Refers to implicitly defined namespace',
         'patterns':[r".*: warning: using directive refers to implicitly-defined namespace .+"] },
+    { 'category':'C/C++',   'severity':severity.LOW,     'members':[], 'option':'-Winvalid-pp-token',
+        'description':'Invalid pp token',
+        'patterns':[r".*: warning: missing .+Winvalid-pp-token"] },
 
     { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
         'description':'Operator new returns NULL',
@@ -610,6 +629,42 @@ warnpatterns = [
         'description':'',
         'patterns':[r".*: warning: In file included from .+,"] },
 
+    # warnings from clang-tidy
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy readability',
+        'patterns':[r".*: .+\[readability-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy c++ core guidelines',
+        'patterns':[r".*: .+\[cppcoreguidelines-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy google-runtime',
+        'patterns':[r".*: .+\[google-runtime-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy google-build',
+        'patterns':[r".*: .+\[google-build-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy google-explicit',
+        'patterns':[r".*: .+\[google-explicit-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy modernize',
+        'patterns':[r".*: .+\[modernize-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy misc',
+        'patterns':[r".*: .+\[misc-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy CERT',
+        'patterns':[r".*: .+\[cert-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy llvm',
+        'patterns':[r".*: .+\[llvm-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy clang-diagnostic',
+        'patterns':[r".*: .+\[clang-diagnostic-.+\]$"] },
+    { 'category':'C/C++',   'severity':severity.TIDY,     'members':[], 'option':'',
+        'description':'clang-tidy clang-analyzer',
+        'patterns':[r".*: .+\[clang-analyzer-.+\]$",
+                    r".*: Call Path : .+$"] },
+
     # catch-all for warnings this script doesn't know about yet
     { 'category':'C/C++',   'severity':severity.UNKNOWN,  'members':[], 'option':'',
         'description':'Unclassified/unrecognized warnings',
@@ -628,6 +683,7 @@ def htmlbig(param):
 
 def dumphtmlprologue(title):
     output('<html>\n<head>\n<title>' + title + '</title>\n<body>\n')
+    output('<a name="PageTop">')
     output(htmlbig(title))
     output('<p>\n')
 
@@ -650,7 +706,7 @@ def begintable(text, backgroundcolor, extraanchor):
         output(i + '<br>')
     output('</td>')
     output('<td width="100" bgcolor="grey">' +
-           '<a align="right" href="#WarningTOC">top</a><br>' +
+           '<a align="right" href="#PageTop">top</a><br>' +
            '<a align="right" href="#anchor' + str(anchor-1) + '">previous</a><br>' +
            '<a align="right" href="#anchor' + str(anchor+1) + '">next</a>')
     output('</td></a></tr>')
@@ -696,7 +752,7 @@ def dumpcount(sev):
 # dump table of content, list of all warning patterns
 def dumptoc():
     n = 1
-    output('<a name="WarningTOC"><blockquote>\n')
+    output('<blockquote>\n')
     for i in warnpatterns:
         i['anchor'] = 'Warning' + str(n)
         n += 1
@@ -704,6 +760,7 @@ def dumptoc():
     dumpcount(severity.HIGH)
     dumpcount(severity.MEDIUM)
     dumpcount(severity.LOW)
+    dumpcount(severity.TIDY)
     dumpcount(severity.HARMLESS)
     dumpcount(severity.UNKNOWN)
     output('</blockquote>\n<p>\n')
@@ -816,6 +873,7 @@ dumpseverity(severity.FIXMENOW)
 dumpseverity(severity.HIGH)
 dumpseverity(severity.MEDIUM)
 dumpseverity(severity.LOW)
+dumpseverity(severity.TIDY)
 dumpseverity(severity.HARMLESS)
 dumpseverity(severity.UNKNOWN)
 dumpfixed()
