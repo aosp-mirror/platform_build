@@ -331,7 +331,6 @@ my_generated_res_dirs := $(rs_generated_res_dir)
 my_generated_res_dirs_deps := $(RenderScript_file_stamp)
 # Add AAPT2 link specific flags.
 $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
-$(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
 include $(BUILD_SYSTEM)/aapt2.mk
 else  # LOCAL_USE_AAPT2
 
