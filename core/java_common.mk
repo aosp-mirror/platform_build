@@ -295,7 +295,6 @@ ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
 ###########################################################
 # JACK
 ###########################################################
-ifdef LOCAL_JACK_ENABLED
 ifdef need_compile_java
 
 LOCAL_JACK_FLAGS += -D jack.java.source.version=$(LOCAL_JAVA_LANGUAGE_VERSION)
@@ -386,4 +385,3 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_ALL_JACK_LIBRARIES:= $(full_jack_libs)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 
 endif  # need_compile_java
-endif # LOCAL_JACK_ENABLED
