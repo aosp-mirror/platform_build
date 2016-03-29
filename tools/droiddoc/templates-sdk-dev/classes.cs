@@ -36,7 +36,9 @@
 </table>
 <?cs /each ?>
 
+<?cs if:!devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs include:"trailer.cs" ?>
+<?cs /if ?>
 </body>
 </html>

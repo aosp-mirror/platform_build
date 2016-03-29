@@ -25,7 +25,7 @@
 <div id="pathCrumb">
 <?cs each:item = parentdirs ?>
   <?cs if:LinkifyPathCrumb
-    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> / 
+    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> /
   <?cs else
     ?><?cs var:item.Name ?> / <?cs /if ?>
 <?cs /each ?>
@@ -130,16 +130,10 @@
 
   </div> <!-- end jd-content -->
 
-<?cs include:"footer.cs" ?>
-
-<?cs include:"trailer.cs" ?>
+  <?cs if:!devsite ?>
+  <?cs include:"footer.cs" ?>
+  <?cs include:"trailer.cs" ?>
+  <?cs /if ?>
 
 </body>
 </html>
-
-
-
-
-
-
-

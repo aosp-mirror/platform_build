@@ -9,15 +9,17 @@
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
       elif:(about||versions||wear||tv||auto) ?>about<?cs
+      elif:preview ?>preview<?cs
       else ?>none<?cs
       /if ?>" />
+    <?cs set:dac_subcategory_set = #1 ?>
     <meta name="subcategory" value="<?cs
       if:ndk ?><?cs
         if:guide ?>guide<?cs
         elif:samples ?>samples<?cs
         elif:reference ?>reference<?cs
         elif:downloads ?>downloads<?cs
-        else ?>none<?cs /if ?><?cs
+        else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
       else ?><?cs
         if:(guide||develop||training||reference||tools||sdk||samples) ?><?cs
           if:guide ?>guide<?cs
@@ -28,7 +30,7 @@
           elif:tools ?>tools<?cs
           elif:sdk ?>sdk<?cs
           elif:samples ?>samples<?cs
-          else ?>none<?cs /if ?><?cs
+          else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(google||reference.gms||reference.gcm) ?>google<?cs
         elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
           if:googleplay ?>googleplay<?cs
@@ -39,15 +41,46 @@
           elif:disttools ?>disttools<?cs
           elif:stories ?>stories<?cs
           elif:analyze ?>analyze<?cs
-          else ?>none<?cs /if ?><?cs
+          else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(about||versions||wear||tv||auto) ?>about<?cs
+        elif:preview ?>preview<?cs
         elif:design ?>design<?cs
         elif:walkthru ?>walkthru<?cs
-        else ?>none<?cs /if ?><?cs
+        else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
       /if ?>" />
 
     <?cs if:nonavpage ?>
-      <meta name="hidetoc" value='True' />
+      <meta name="hide_toc" value='True' />
+    <?cs elif: !nonavpage && dac_subcategory_set ?>
+      <meta name="book_path" value="<?cs
+        if:ndk ?>/ndk<?cs
+          if:guide ?>/guides<?cs
+          elif:samples ?>/samples<?cs
+          elif:reference ?>/reference<?cs
+          elif:downloads ?>/downloads<?cs /if ?><?cs
+        else ?><?cs
+          if:(guide||develop||training||reference||tools||sdk||samples) ?><?cs
+            if:guide ?>/guide<?cs
+            elif:training ?>/training<?cs
+            elif:reference ?>/reference<?cs
+            elif:tools ?>/tools<?cs
+            elif:sdk ?>/tools<?cs
+            elif:samples ?>/samples<?cs /if ?><?cs
+          elif:(google||reference.gms||reference.gcm) ?>/google<?cs
+          elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>/distribute<?cs
+            if:googleplay ?>/googleplay<?cs
+            elif:essentials ?>/essentials<?cs
+            elif:users ?>/users<?cs
+            elif:engage ?>/engage<?cs
+            elif:monetize ?>/monetize<?cs
+            elif:disttools ?>/disttools<?cs
+            elif:stories ?>/stories<?cs
+            elif:analyze ?>/analyze<?cs /if ?><?cs
+          elif:(about||versions||wear||tv||auto) ?>/about<?cs
+          elif:preview ?>/preview<?cs
+          elif:design ?>/design<?cs
+          elif:walkthru ?>/walkthru<?cs /if ?><?cs
+        /if ?>/_book.yaml" />
     <?cs /if ?>
 
     <?cs if:page.tags && page.tags != "" ?>

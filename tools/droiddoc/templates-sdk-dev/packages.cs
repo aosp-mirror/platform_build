@@ -21,7 +21,9 @@ See all <a href="classes.html">API classes</a>.</p>
 <?cs /each ?>
 </table>
 
+<?cs if:!devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs include:"trailer.cs" ?>
+<?cs /if ?>
 </body>
 </html>
