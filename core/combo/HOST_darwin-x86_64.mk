@@ -44,7 +44,7 @@ endef
 # HOST_TOOLCHAIN_ROOT is a Darwin-specific define
 HOST_TOOLCHAIN_FOR_CLANG := $(HOST_TOOLCHAIN_ROOT)
 
-HOST_AR := $(AR)
+HOST_AR := $(mac_sdk_path)/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
 
 HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version) -DMACOSX_DEPLOYMENT_TARGET=$(mac_sdk_version)
 HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -Wl,-syslibroot,$(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
