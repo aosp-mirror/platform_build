@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "0e1fbc56_f4a5d8c7",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-30T17:56:44Z",
+      "side": 1,
+      "message": "Sorry I commented the wrong variable, I meant to comment full_classes_proguard_jar.\n\nIf you want to keep the rules what about just removing it from the dependency chain (see my other comments in java_library.mk, and I suppose others but I didn\u0027t find them) ?",
+      "parentUuid": "b168d59f_1c169970",
+      "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7141fdd6_3f794752",
         "filename": "core/java.mk",
         "patchSetId": 3
@@ -84,6 +102,52 @@
       "side": 1,
       "message": "It predated my life in the Android team :)\nLooks like it was used to collect all the dex files (and debug helper files) to a central place.\nI\u0027ll remove it.",
       "parentUuid": "7141fdd6_3f794752",
+      "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e1fbc56_b4af60a4",
+        "filename": "core/java_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-30T17:56:44Z",
+      "side": 1,
+      "message": "What about removing that?",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 4
+      },
+      "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e1fbc56_94ac64b0",
+        "filename": "core/java_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-30T17:56:44Z",
+      "side": 1,
+      "message": "And keep only this one?",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 43
+      },
       "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
