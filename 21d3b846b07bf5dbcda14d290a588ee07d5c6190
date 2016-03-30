@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b168d59f_2d66c592",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-30T18:55:07Z",
+      "side": 1,
+      "message": "Yohann, do you think no-local/with-local still makes sense for Jack?\nIf no probably we can just rename them to something like dex-dir.",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 5
+      },
+      "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
