@@ -84,7 +84,7 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
 endif
 
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.emma.ignore
+$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
 ifdef LOCAL_EMMA_COVERAGE_FILTER
 $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := $(LOCAL_EMMA_COVERAGE_FILTER)
