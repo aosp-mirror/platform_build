@@ -1,23 +1,33 @@
 SOONG_OUT_DIR := $(OUT_DIR)/soong
-SOONG := $(SOONG_OUT_DIR)/soong
-SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
-SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
-SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
-SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
 SOONG_HOST_EXECUTABLES := $(SOONG_OUT_DIR)/host/$(HOST_PREBUILT_TAG)/bin
 KATI := $(SOONG_HOST_EXECUTABLES)/ckati
 MAKEPARALLEL := $(SOONG_HOST_EXECUTABLES)/makeparallel
 
-ifeq (,$(filter /%,$(SOONG_OUT_DIR)))
-SOONG_TOP_RELPATH := $(shell python -c "import os; print os.path.relpath('$(TOP)', '$(SOONG_OUT_DIR)')")
-else
-SOONG_TOP_RELPATH := $(realpath $(TOP))
+SOONG := $(SOONG_OUT_DIR)/soong
+SOONG_BOOTSTRAP := $(SOONG_OUT_DIR)/.soong.bootstrap
+SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
+SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
+SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
+SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
+
+# We need to rebootstrap soong if SOONG_OUT_DIR or the reverse path from
+# SOONG_OUT_DIR to TOP changes
+SOONG_NEEDS_REBOOTSTRAP :=
+ifneq ($(wildcard $(SOONG_BOOTSTRAP)),)
+  ifneq ($(SOONG_OUT_DIR),$(strip $(shell source $(SOONG_BOOTSTRAP); echo $$BUILDDIR)))
+    SOONG_NEEDS_REBOOTSTRAP := FORCE
+    $(warning soong_out_dir changed)
+  endif
+  ifneq ($(strip $(shell build/soong/reverse_path.py $(SOONG_OUT_DIR))),$(strip $(shell source $(SOONG_BOOTSTRAP); echo $$SRCDIR_FROM_BUILDDIR)))
+    SOONG_NEEDS_REBOOTSTRAP := FORCE
+    $(warning reverse path changed)
+  endif
 endif
 
-# Bootstrap soong.  Run only the first time for clean builds
-$(SOONG):
+# Bootstrap soong.
+$(SOONG_BOOTSTRAP): bootstrap.bash $(SOONG_NEEDS_REBOOTSTRAP)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) cd $(dir $@) && $(SOONG_TOP_RELPATH)/bootstrap.bash
+	$(hide) BUILDDIR=$(SOONG_OUT_DIR) ./bootstrap.bash
 
 # Create soong.variables with copies of makefile settings.  Runs every build,
 # but only updates soong.variables if it changes
@@ -63,7 +73,7 @@ $(SOONG_IN_MAKE):
 	$(hide) touch $@
 
 # Build an Android.mk listing all soong outputs as prebuilts
-$(SOONG_ANDROID_MK): $(SOONG) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
+$(SOONG_ANDROID_MK): $(SOONG_BOOTSTRAP) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
 	$(hide) $(SOONG) $(KATI) $(MAKEPARALLEL) $(NINJA_ARGS)
 
 $(KATI): $(SOONG_ANDROID_MK)
