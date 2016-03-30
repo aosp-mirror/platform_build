@@ -70,6 +70,30 @@
       "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e25349f_96ac6cb0",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-03-30T19:34:00Z",
+      "side": 1,
+      "message": "It\u0027s OK for me to always name it dex-dir as you suggested.",
+      "parentUuid": "b168d59f_b336b836",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 5
+      },
+      "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
