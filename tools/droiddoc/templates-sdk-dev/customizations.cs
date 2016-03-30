@@ -142,24 +142,15 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
               </ul>
             </div>
           </div>
-          <div id="search-resources"
-            class="dac-search-results-resources resource-flow-layout"
-            data-maxresults="10"
-            data-cardsizes="6x2">
+
+          <div id="dac-custom-search" class="dac-custom-search">
+            <div class="wrap dac-offset-parent">
+              <a class="dac-fab dac-scroll-button" data-scroll-button="" data-scroll-container="#search-results" href="#dac-custom-search">
+                <i class="dac-sprite dac-arrow-down-gray"></i>
+              </a>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div id="dac-custom-search" class="dac-custom-search">
-        <div class="wrap dac-offset-parent">
-          <a class="dac-fab dac-scroll-button" data-scroll-button="" data-scroll-container="#search-results" href="#dac-custom-search">
-            <i class="dac-sprite dac-arrow-down-gray"></i>
-          </a>
-        </div>
-
-        <div class="wrap">
-          <h2 class="dac-custom-search-section-title">More results</h2>
-          <div id="dac-custom-search-results"></div>
         </div>
       </div>
     </div>

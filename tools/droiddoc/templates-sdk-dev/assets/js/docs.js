@@ -3370,7 +3370,7 @@ window.changeLangPref = changeLangPref;
    * Current locale.
    */
   var locale = (function() {
-    var lang = window.devsite ? window.devsiteLang : window.readCookie('pref_lang');
+    var lang = window.readCookie('pref_lang');
     if (lang === 0 || LANGUAGES.indexOf(lang) === -1) {
       lang = 'en';
     }
@@ -5437,7 +5437,7 @@ window.metadata.search = (function() {
     renderResults(referenceCard, results, query, false);
   };
 
-  var ROW_COUNT_COLLAPSED = 7;
+  var ROW_COUNT_COLLAPSED = 10;
   var ROW_COUNT_EXPANDED = 33;
   var ROW_COUNT_GOOGLE_COLLAPSED = 1;
   var ROW_COUNT_GOOGLE_EXPANDED = 8;
@@ -5463,11 +5463,12 @@ window.metadata.search = (function() {
     var link = $('<a>').attr('href', window.toRoot + match.link);
 
     var label = match.label;
+    console.log("labeld:" +classNameStart);
     var classNameStart = label.match(/[A-Z]/) ? label.search(/[A-Z]/) : label.lastIndexOf('.') + 1;
-
+        console.log("label:" +label.substr(0, classNameStart));
     var newLink = '<span class="namespace">' +
       label.substr(0, classNameStart) +
-      '</span><br />' +
+      '</span>' +
       label.substr(classNameStart, label.length);
 
     link.html(newLink);
@@ -5492,7 +5493,7 @@ window.metadata.search = (function() {
   function renderAndroidResults(list, gMatches, query) {
     list.empty();
 
-    var header = $('<li class="dac-search-results-reference-header">Reference</li>');
+    var header = $('<li class="dac-search-results-reference-header">android</li>');
     list.append(header);
 
     if (gMatches.length > 0) {
@@ -5500,7 +5501,6 @@ window.metadata.search = (function() {
 
       var resources = buildResults(gMatches, query);
       list.append(resources);
-
       return true;
     } else {
       list.append('<li class="dac-search-results-reference-entry-empty">No results</li>');
@@ -5540,6 +5540,10 @@ window.metadata.search = (function() {
       // Reserve space for "No reference results"
       googleCount--;
     }
+      var nn = results.android.length;
+      var showing = androidCount;
+        console.log('ac ' + androidCount);
+      console.log('res ' + results.android.length);
 
     renderAndroidResults(list, results.android.slice(0, androidCount), query);
     renderGoogleDocsResults(list, results.docs.slice(0, googleCount - 1), query);
@@ -5551,6 +5555,15 @@ window.metadata.search = (function() {
 
     // Tweak see more logic to account for references.
     var hasMore = totalResults > ROW_COUNT_COLLAPSED && !util.matchesMedia('mobile');
+
+    if (hasMore) {
+      // We can't actually show all matches, only as many as the expanded list
+      // will fit, so we actually lie if the total results count is more
+      var moreCount = Math.min(totalResults, ROW_COUNT_EXPANDED + ROW_COUNT_GOOGLE_EXPANDED);
+      var $moreLink = $('<li class="dac-search-results-reference-entry-empty " data-toggle="show-more">and '
+        + moreCount +' more matches</li>');
+      list.append($moreLink.on('click', onToggleMore));
+    }
     var searchEl = $('#search-resources');
     searchEl.toggleClass('dac-has-more', searchEl.hasClass('dac-has-more') || (hasMore && !expanded));
     searchEl.toggleClass('dac-has-less', searchEl.hasClass('dac-has-less') || (hasMore && expanded));
