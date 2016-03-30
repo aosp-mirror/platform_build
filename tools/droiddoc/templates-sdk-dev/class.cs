@@ -611,7 +611,9 @@ if:subcount(class.subclasses.direct) && !class.subclasses.hidden ?>
 <!-- ========= END OF CLASS DATA ========= -->
 
 </div><!-- end jd-content -->
+<?cs if:!devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs include:"trailer.cs" ?>
+<?cs /if ?>
 </body>
 </html>

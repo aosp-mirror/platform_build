@@ -171,6 +171,20 @@ include:"header.cs" ?>
   <?cs /if ?>
 <?cs /if ?><?cs # end if design ?>
 
+  <?cs if devsite ?>
+    <?cs if:tab1 ?>
+    <div id="title-tabs-wrapper">
+      <ul id="title-tabs">
+        <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
+        <?cs if:tab2 ?>
+        <li><a href="<?cs var:tab2.link ?>"><?cs var:tab2 ?></a></li><?cs /if ?>
+        <?cs if:tab3 ?>
+        <li><a href="<?cs var:tab3.link ?>"><?cs var:tab3 ?></a></li><?cs /if ?>
+      </ul>
+    </div><!-- end tab-wrapper -->
+    <?cs /if ?>
+  <?cs /if ?>
+
   <?cs # THIS IS THE MAIN DOC CONTENT ?>
   <div id="jd-content">
     <div class="jd-descr" itemprop="articleBody">

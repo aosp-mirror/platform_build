@@ -31,7 +31,9 @@
 <?cs call:class_table("Errors", package.errors) ?>
 
 </div><!-- end apilevel -->
+<?cs if:!devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs include:"trailer.cs" ?>
+<?cs /if ?>
 </body>
 </html>
