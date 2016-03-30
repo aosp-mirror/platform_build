@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "b168d59f_2dfc0584",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-30T18:53:00Z",
+      "side": 1,
+      "message": "That\u0027s the only place in the dependency chain I believe.",
+      "parentUuid": "0e1fbc56_f4a5d8c7",
+      "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7141fdd6_3f794752",
         "filename": "core/java.mk",
         "patchSetId": 3
@@ -131,6 +149,30 @@
     },
     {
       "key": {
+        "uuid": "b168d59f_6ddfdd23",
+        "filename": "core/java_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-30T18:53:00Z",
+      "side": 1,
+      "message": "Sounds good.\n(We don\u0027t really need Proguard on a static Java library anyway.)",
+      "parentUuid": "0e1fbc56_b4af60a4",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 4
+      },
+      "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0e1fbc56_94ac64b0",
         "filename": "core/java_library.mk",
         "patchSetId": 3
@@ -142,6 +184,30 @@
       "writtenOn": "2016-03-30T17:56:44Z",
       "side": 1,
       "message": "And keep only this one?",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 43
+      },
+      "revId": "856cd256454e0af1edf844cc9a882b345abdbfe6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b168d59f_cd0c6994",
+        "filename": "core/java_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-30T18:53:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e1fbc56_94ac64b0",
       "range": {
         "startLine": 66,
         "startChar": 0,
