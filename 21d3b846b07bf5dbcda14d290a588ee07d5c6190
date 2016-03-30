@@ -46,6 +46,30 @@
       "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b168d59f_b336b836",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-03-30T19:31:17Z",
+      "side": 1,
+      "message": "We don\u0027t need to keep them separately. with ninja the classes.dex will be automatically rebuilt if the jack command line changes.",
+      "parentUuid": "8e0bac17_18ef65d1",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 5
+      },
+      "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
