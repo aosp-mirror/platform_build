@@ -5336,7 +5336,7 @@ window.metadata.search = (function() {
       key: 'AIzaSyCFhbGnjW06dYwvRCU8h_zjdpS4PYYbEe8',
       q: query,
       start: start || 1,
-      num: 6,
+      num: 9,
       hl: getSearchLang(),
       fields: 'queries,items(pagemap,link,title,htmlSnippet,formattedUrl)'
     };
@@ -5360,11 +5360,11 @@ window.metadata.search = (function() {
 
       if (hasImage) {
         var image = item.pagemap.cse_thumbnail[0];
-        entry.append($('<div>').addClass('col-1of6')
+        entry.append($('<div>').addClass('dac-custom-search-image-wrapper')
           .append($('<div>').addClass('dac-custom-search-image').css('background-image', 'url(' + image.src + ')')));
       }
 
-      entry.append($('<div>').addClass(hasImage ? 'col-5of6' : 'col-6of6')
+      entry.append($('<div>').addClass('dac-custom-search-text-wrapper')
         .append($('<p>').addClass('dac-custom-search-section').text(section))
         .append(
           $('<a>').text(item.title).attr('href', item.link).wrap('<h2>').parent().addClass('dac-custom-search-title')
@@ -5437,8 +5437,8 @@ window.metadata.search = (function() {
     renderResults(referenceCard, results, query, false);
   };
 
-  var ROW_COUNT_COLLAPSED = 10;
-  var ROW_COUNT_EXPANDED = 33;
+  var ROW_COUNT_COLLAPSED = 20;
+  var ROW_COUNT_EXPANDED = 40;
   var ROW_COUNT_GOOGLE_COLLAPSED = 1;
   var ROW_COUNT_GOOGLE_EXPANDED = 8;
 
@@ -5463,9 +5463,7 @@ window.metadata.search = (function() {
     var link = $('<a>').attr('href', window.toRoot + match.link);
 
     var label = match.label;
-    console.log("labeld:" +classNameStart);
     var classNameStart = label.match(/[A-Z]/) ? label.search(/[A-Z]/) : label.lastIndexOf('.') + 1;
-        console.log("label:" +label.substr(0, classNameStart));
     var newLink = '<span class="namespace">' +
       label.substr(0, classNameStart) +
       '</span>' +
@@ -5540,10 +5538,6 @@ window.metadata.search = (function() {
       // Reserve space for "No reference results"
       googleCount--;
     }
-      var nn = results.android.length;
-      var showing = androidCount;
-        console.log('ac ' + androidCount);
-      console.log('res ' + results.android.length);
 
     renderAndroidResults(list, results.android.slice(0, androidCount), query);
     renderGoogleDocsResults(list, results.docs.slice(0, googleCount - 1), query);
@@ -5555,13 +5549,11 @@ window.metadata.search = (function() {
 
     // Tweak see more logic to account for references.
     var hasMore = totalResults > ROW_COUNT_COLLAPSED && !util.matchesMedia('mobile');
-
     if (hasMore) {
       // We can't actually show all matches, only as many as the expanded list
       // will fit, so we actually lie if the total results count is more
       var moreCount = Math.min(totalResults, ROW_COUNT_EXPANDED + ROW_COUNT_GOOGLE_EXPANDED);
-      var $moreLink = $('<li class="dac-search-results-reference-entry-empty " data-toggle="show-more">and '
-        + moreCount +' more matches</li>');
+      var $moreLink = $('<li class="dac-search-results-reference-entry-empty " data-toggle="show-more">see more matches</li>');
       list.append($moreLink.on('click', onToggleMore));
     }
     var searchEl = $('#search-resources');
