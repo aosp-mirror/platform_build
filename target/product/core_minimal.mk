@@ -118,9 +118,17 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
 
 # Different dexopt types for different package update/install times.
+# On eng builds, make "boot" reasons do pure JIT for faster turnaround.
+ifeq (eng,$(TARGET_BUILD_VARIANT))
+    PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+        pm.dexopt.first-boot=verify-at-runtime \
+        pm.dexopt.boot=verify-at-runtime
+else
+    PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+        pm.dexopt.first-boot=interpret-only \
+        pm.dexopt.boot=verify-profile
+endif
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    pm.dexopt.first-boot=interpret-only \
-    pm.dexopt.boot=verify-profile \
     pm.dexopt.install=interpret-only \
     pm.dexopt.bg-dexopt=speed-profile \
     pm.dexopt.ab-ota=speed-profile \
