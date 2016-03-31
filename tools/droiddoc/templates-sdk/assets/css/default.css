@@ -732,7 +732,7 @@ a.back-link {
     text-align:center;
     width: 50%;
   }
-  
+
   .training-nav-top a.prev-page-link {
     padding-left: 15px;
     text-align: left;
@@ -840,7 +840,7 @@ a.back-link {
     margin: 0 0 6px;
     line-height: 16px;
   }
-  
+
   /* Class colors */
   ol.class-list li:nth-child(10n+1) .title {
     background: #00bcd4;
@@ -872,7 +872,7 @@ a.back-link {
   ol.class-list li:nth-child(10n+10) .title {
     background: #7e57c2;
   }
-  
+
   @media (max-width: 719px) {
     ol.class-list ol,
     ol.class-list .description {
@@ -6376,7 +6376,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 .dac-button.dac-raised.dac-primary, .landing-secondary, .button {
   background-color: #039bef; }
   .dac-button.dac-raised.dac-primary:hover, .landing-secondary:hover, .button:hover {
-    background-color: #0288d1; 
+    background-color: #0288d1;
     color:#fff; }
   .dac-button.dac-raised.dac-primary:active, .landing-secondary:active, .button:active {
     background-color: #0277bd;
@@ -8874,4 +8874,85 @@ $spritesheet: width height image $spritesheet-sprites;
   .dac-hero-cta.mprev {
   white-space:nowrap;
   }
+}
+
+/** Custom search API styles */
+.dac-custom-search {
+  background: #fff;
+  margin: 0 -10px;
+  padding: 20px 10px;
+  z-index: 1;
+}
+
+.dac-custom-search-section-title {
+  color: #505050;
+}
+
+.dac-custom-search-entry {
+  margin-bottom: 36px;
+  margin-top: 24px;
+}
+
+.dac-custom-search-image {
+  background-size: cover;
+  height: 112px;
+}
+
+@media (max-width: 719px) {
+  .dac-custom-search-image {
+    display: none;
+  }
+}
+
+.dac-custom-search-title {
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.dac-custom-search-title a {
+  color: inherit;
+}
+
+.dac-custom-search-section {
+  color: #999;
+  font-size: 16px;
+  font-variant: small-caps;
+  font-weight: 700;
+  margin: -5px 0 0 0;
+}
+
+.dac-custom-search-snippet {
+  color: #666;
+  margin: 0;
+}
+
+.dac-custom-search-link {
+  font-weight: 500;
+  word-wrap: break-word;
+  width: 100%;
+}
+
+.dac-custom-search-load-more {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 75px auto;
+  outline: none;
+  padding: 10px;
+}
+
+.dac-custom-search-load-more:hover {
+  opacity: 0.7;
+}
+
+.dac-custom-search-no-results {
+  color: #999;
 }
