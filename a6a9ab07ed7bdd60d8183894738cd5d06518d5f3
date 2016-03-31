@@ -22,6 +22,30 @@
       "revId": "a6a9ab07ed7bdd60d8183894738cd5d06518d5f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e59ec47_28342b8e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2568,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-03-31T02:16:49Z",
+      "side": 1,
+      "message": "This is running into the whitelist for pure math shell commands: https://github.com/google/kati/blob/master/func.cc#L481\n\nI\u0027m pretty sure this function isn\u0027t necessary with eMMC, but I don\u0027t know if we\u0027re saying no to NAND in the build system.",
+      "parentUuid": "8e59ec47_28ec2b6b",
+      "range": {
+        "startLine": 2568,
+        "startChar": 34,
+        "endLine": 2568,
+        "endChar": 46
+      },
+      "revId": "a6a9ab07ed7bdd60d8183894738cd5d06518d5f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
