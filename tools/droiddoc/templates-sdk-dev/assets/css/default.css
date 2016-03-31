@@ -9887,3 +9887,33 @@ a.video-shadowbox-button.white:hover::after {
   position: absolute;
   top: -4px;
 }
+
+/** CSS Fixes for DevSite (akassay@) */
+.dac-button-social,
+.dac-fab:not('.dac-scroll-button') {
+  position: relative;
+}
+
+.dac-button-social .dac-sprite,
+.dac-fab .dac-sprite,
+.play-button .dac-sprite {
+  margin-top: -7px;
+  position: relative;
+  top: 50%;
+}
+
+.dac-fab .dac-sprite.dac-arrow-down-gray {
+  margin-top: -3px;
+}
+
+.dac-button-social .dac-sprite.dac-gplus {
+  margin-top: -17px;
+}
+
+.play-button .dac-sprite {
+  margin-top: -10px;
+}
+
+.dac-nav-link-forward {
+  padding: 9px 0;
+}

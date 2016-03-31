@@ -15,7 +15,8 @@ $.ajaxSetup({
 $(document).ready(function() {
 
   // prep nav expandos
-  var pagePath = document.location.pathname;
+  var pagePath = devsite ?
+      location.href.replace(location.hash, '') : document.location.pathname;
   // account for intl docs by removing the intl/*/ path
   if (pagePath.indexOf("/intl/") == 0) {
     pagePath = pagePath.substr(pagePath.indexOf("/", 6)); // start after intl/ to get last /
@@ -3378,12 +3379,22 @@ window.changeLangPref = changeLangPref;
   })();
   var localeTarget = (function() {
     var localeTarget = locale;
-    if (location.pathname.substring(0,6) == "/intl/") {
-      var target = location.pathname.split('/')[2];
-      if (!(target === 0) || (LANGUAGES.indexOf(target) === -1)) {
-        localeTarget = target;
+    if (window.devsite) {
+      if (getQueryVariable('hl')) {
+        var target = getQueryVariable('hl');
+        if (!(target === 0) || (LANGUAGES.indexOf(target) === -1)) {
+          localeTarget = target;
+        }
+      }
+    } else {
+      if (location.pathname.substring(0,6) == "/intl/") {
+        var target = location.pathname.split('/')[2];
+        if (!(target === 0) || (LANGUAGES.indexOf(target) === -1)) {
+          localeTarget = target;
+        }
       }
     }
+
     return localeTarget;
   })();
 
@@ -5357,7 +5368,8 @@ window.metadata.search = (function() {
     return $.get('https://content.googleapis.com/customsearch/v1?' +  $.param(searchParams));
   }
 
-  function renderResults(el, results) {
+  function renderResults(el, results, searchAppliance) {
+    var referenceResults = searchAppliance.getReferenceResults();
     if (!results.items) {
       el.append($('<div>').text('No results'));
       return;
@@ -5365,27 +5377,37 @@ window.metadata.search = (function() {
 
     for (var i = 0; i < results.items.length; i++) {
       var item = results.items[i];
-      var hasImage = item.pagemap && item.pagemap.cse_thumbnail;
-      var sectionMatch = item.link.match(/developer\.android\.com\/(\w*)/);
-      var section = (sectionMatch && sectionMatch[1]) || 'blog';
+      var isDuplicate = false;
+      $(referenceResults.android).each(function(index, result) {
+        if (item.link.indexOf(result.link) > -1) {
+          isDuplicate = true;
+          return false;
+        }
+      });
 
-      var entry = $('<div>').addClass('dac-custom-search-entry cols');
+      if (!isDuplicate) {
+        var hasImage = item.pagemap && item.pagemap.cse_thumbnail;
+        var sectionMatch = item.link.match(/developer\.android\.com\/(\w*)/);
+        var section = (sectionMatch && sectionMatch[1]) || 'blog';
 
-      if (hasImage) {
-        var image = item.pagemap.cse_thumbnail[0];
-        entry.append($('<div>').addClass('dac-custom-search-image-wrapper')
-          .append($('<div>').addClass('dac-custom-search-image').css('background-image', 'url(' + image.src + ')')));
+        var entry = $('<div>').addClass('dac-custom-search-entry cols');
+
+        if (hasImage) {
+          var image = item.pagemap.cse_thumbnail[0];
+          entry.append($('<div>').addClass('dac-custom-search-image-wrapper')
+            .append($('<div>').addClass('dac-custom-search-image').css('background-image', 'url(' + image.src + ')')));
+        }
+
+        entry.append($('<div>').addClass('dac-custom-search-text-wrapper')
+          .append($('<p>').addClass('dac-custom-search-section').text(section))
+          .append(
+            $('<a>').text(item.title).attr('href', item.link).wrap('<h2>').parent().addClass('dac-custom-search-title')
+          )
+          .append($('<p>').addClass('dac-custom-search-snippet').html(item.htmlSnippet.replace(/<br>/g, '')))
+          .append($('<a>').addClass('dac-custom-search-link').text(item.formattedUrl).attr('href', item.link)));
+
+        el.append(entry);
       }
-
-      entry.append($('<div>').addClass('dac-custom-search-text-wrapper')
-        .append($('<p>').addClass('dac-custom-search-section').text(section))
-        .append(
-          $('<a>').text(item.title).attr('href', item.link).wrap('<h2>').parent().addClass('dac-custom-search-title')
-        )
-        .append($('<p>').addClass('dac-custom-search-snippet').html(item.htmlSnippet.replace(/<br>/g, '')))
-        .append($('<a>').addClass('dac-custom-search-link').text(item.formattedUrl).attr('href', item.link)));
-
-      el.append(entry);
     }
 
     if (results.queries.nextPage) {
@@ -5393,32 +5415,32 @@ window.metadata.search = (function() {
         .addClass('dac-custom-search-load-more')
         .text('Load more')
         .click(function() {
-          loadMoreResults(el, results);
+          loadMoreResults(el, results, searchAppliance);
         });
 
       el.append(loadMoreButton);
     }
-  }
+  };
 
-  function loadMoreResults(el, results) {
-    var query = results.queries.request.searchTerms;
-    var start = results.queries.nextPage.startIndex;
+  function loadMoreResults(el, results, searchAppliance) {
+    var query = results.queries.request[0].searchTerms;
+    var start = results.queries.nextPage[0].startIndex;
     var loadMoreButton = el.find('#dac-custom-search-load-more');
 
     loadMoreButton.text('Loading more...');
 
     customSearch(query, start).then(function(results) {
       loadMoreButton.remove();
-      renderResults(el, results);
+      renderResults(el, results, searchAppliance);
     });
   }
 
-  $.fn.customSearch = function(query) {
+  $.fn.customSearch = function(query, searchAppliance) {
     var el = $(this);
 
     customSearch(query).then(function(results) {
       el.empty();
-      renderResults(el, results);
+      renderResults(el, results, searchAppliance);
     });
   };
 })(jQuery);
@@ -5625,10 +5647,11 @@ window.metadata.search = (function() {
     this.searchResultsHero = $('#dac-search-results-hero');
     this.searchResultsReference = $('#dac-search-results-reference');
     this.searchHeader = $('[data-search]').data('search-input.dac');
+    this.currQueryReferenceResults = {};
   }
 
   Search.prototype.init = function() {
-    if (this.checkRedirectToIndex()) { return; }
+    if (!devsite && this.checkRedirectToIndex()) { return; }
 
     this.searchHistory = window.dacStore('search-history');
 
@@ -5639,9 +5662,8 @@ window.metadata.search = (function() {
     this.searchClose.click(this.close.bind(this));
 
     this.customSearch = $.fn.debounce(function(query) {
-      $('#dac-custom-search-results').customSearch(query);
-    }, 1000);
-
+      $('#dac-custom-search-results').customSearch(query, this);
+    }.bind(this), 1000);
     // Start search shortcut (/)
     $('body').keyup(function(event) {
       if (event.which === 191 && $(event.target).is(':not(:input)')) {
@@ -5764,6 +5786,10 @@ window.metadata.search = (function() {
     return this.searchInput.val().replace(/(^ +)|( +$)/g, '');
   };
 
+  Search.prototype.getReferenceResults = function() {
+    return this.currQueryReferenceResults;
+  };
+
   Search.prototype.onSearchChanged = function() {
     var query = this.getQuery();
 
@@ -5780,10 +5806,19 @@ window.metadata.search = (function() {
 
     this.lastQuery = query;
     this.searchResultsFor.text(query);
+
+    // CSE results lag behind the metadata/reference results. We need to empty
+    // the CSE results and add 'Loading' text so user's aren't looking at two
+    // different sets of search results at one time.
+    var $loadingEl =
+        $('<div class="loadingCustomSearchResults">Loading Results...</div>');
+    $('#dac-custom-search-results').empty().prepend($loadingEl);
+
     this.customSearch(query);
     var metadataResults = metadata.search(query);
     this.searchResultsResources.dacSearchRenderResources(metadataResults.resources, query);
     this.searchResultsReference.dacSearchRenderReferences(metadataResults, query);
+    this.currQueryReferenceResults = metadataResults;
     var hasHero = this.searchResultsHero.dacSearchRenderHero(metadataResults.resources, query);
     var hasQuery = !!query;
 
@@ -6502,3 +6537,22 @@ window.dacStore = (function(window) {
     initWideTable();
   });
 })(jQuery);
+
+/** Utilities */
+
+/* returns the given string with all HTML brackets converted to entities
+    TODO: move this to the site's JS library */
+function escapeHTML(string) {
+  return string.replace(/</g,"&lt;")
+                .replace(/>/g,"&gt;");
+};
+
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1);
+  var vars = query.split("&");
+  for (var i=0;i<vars.length;i++) {
+    var pair = vars[i].split("=");
+    if(pair[0] == variable){return pair[1];}
+  }
+  return(false);
+};
