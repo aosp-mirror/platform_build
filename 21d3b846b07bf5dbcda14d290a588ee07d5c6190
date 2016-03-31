@@ -94,6 +94,54 @@
       "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e1fbc56_74a8a851",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1029223
+      },
+      "writtenOn": "2016-03-31T07:13:16Z",
+      "side": 1,
+      "message": "I confirm the \u0027no-local\u0027 vs \u0027with-local\u0027 split is not necessary with Jack.\n\nIIRC EMMA was messing up with debug info when instrumenting a jar file so we used to remove debug info for code coverage (thus use separate dirs to reflect that).\n\nJack does not have this problem so it\u0027s OK to use one directory.",
+      "parentUuid": "4e25349f_96ac6cb0",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 5
+      },
+      "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e1fbc56_940d8459",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1029223
+      },
+      "writtenOn": "2016-03-31T07:13:16Z",
+      "side": 1,
+      "message": "I confirm we do not need to distinguish no-local vs with-local with Jack. This was necessary for EMMA because it was messing up with debug info when instrumenting a jar file. We do not have this issue in Jack.",
+      "parentUuid": "4e25349f_96ac6cb0",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 94,
+        "endChar": 5
+      },
+      "revId": "21d3b846b07bf5dbcda14d290a588ee07d5c6190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
