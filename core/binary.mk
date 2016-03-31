@@ -66,14 +66,11 @@ my_ndk_sysroot :=
 my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
 ifdef LOCAL_SDK_VERSION
-  ifdef LOCAL_NDK_VERSION
-    $(error $(LOCAL_PATH): LOCAL_NDK_VERSION is now retired.)
-  endif
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
   endif
-  my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/sources
-  my_ndk_sysroot := $(HISTORICAL_NDK_VERSIONS_ROOT)/current/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
+  my_ndk_sysroot := $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
   my_ndk_sysroot_include := $(my_ndk_sysroot)/usr/include
 
   # x86_64 and and mips64 are both multilib toolchains, so their libraries are
