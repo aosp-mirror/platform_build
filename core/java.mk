@@ -86,34 +86,14 @@ endif
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
-# Choose leaf name for the compiled jar file.
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-full_classes_compiled_jar_leaf := classes-no-debug-var.jar
-built_dex_intermediate_leaf := no-local
-else
-full_classes_compiled_jar_leaf := classes-full-debug.jar
-built_dex_intermediate_leaf := with-local
-endif
-
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
 
-ifdef LOCAL_PROGUARD_ENABLED
-proguard_jar_leaf := proguard.classes.jar
-else
-proguard_jar_leaf := noproguard.classes.jar
-endif
-
-full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
-jarjar_leaf := classes-jarjar.jar
-full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
-emma_intermediates_dir := $(intermediates.COMMON)/emma_out
-# emma is hardcoded to use the leaf name of its input for the output file --
-# only the output directory can be changed
-full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
-full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
-built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
+full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
+full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
+full_classes_proguard_jar := $(intermediates.COMMON)/proguard.classes.jar
+built_dex_intermediate := $(intermediates.COMMON)/dex-dir/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 
 ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
@@ -133,7 +113,6 @@ jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_jarjar_jar) \
-    $(full_classes_emma_jar) \
     $(full_classes_jar) \
     $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
@@ -334,11 +313,7 @@ endif
 # command line.
 ifndef LOCAL_CHECKED_MODULE
 ifdef full_classes_jar
-ifdef LOCAL_JACK_ENABLED
 LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
-else
-LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
-endif
 endif
 endif
 
@@ -444,31 +419,8 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
 	$(hide) $(ACP) -fp $< $@
 endif
 
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.emma.ignore
-$(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
-# module level coverage filter can be defined using LOCAL_EMMA_COVERAGE_FILTER
-# in Android.mk
-ifdef LOCAL_EMMA_COVERAGE_FILTER
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := $(LOCAL_EMMA_COVERAGE_FILTER)
-else
-# by default, avoid applying emma instrumentation onto emma classes itself,
-# otherwise there will be exceptions thrown
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := *,-emma,-emmarun,-com.vladium.*
-endif
-# this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
-# $(full_classes_emma_jar)
-$(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(EMMA_JAR)
-	$(transform-classes.jar-to-emma)
-
-else
-$(full_classes_emma_jar): $(full_classes_jarjar_jar)
-	@echo Copying: $@
-	$(copy-file-to-target)
-endif
-
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
+$(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
@@ -514,11 +466,7 @@ common_proguard_flags := -forceprocessing
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-ifdef LOCAL_JACK_ENABLED
 common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
-else
-common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
-endif # LOCAL_JACK_ENABLED
 endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
@@ -552,10 +500,9 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
     -verbose \
     $(legacy_proguard_flags)
-ifdef LOCAL_JACK_ENABLED
+
 jack_proguard_flags += -applymapping $(link_instr_intermediates_dir.COMMON)/jack_dictionary
 full_jack_deps += $(link_instr_intermediates_dir.COMMON)/jack_dictionary
-endif
 
 # Sometimes (test + main app) uses different keep rules from the main app -
 # apply the main app's dictionary anyway.
@@ -588,30 +535,11 @@ $(full_classes_proguard_jar) : $(full_classes_jar) | $(ACP)
 
 endif # LOCAL_PROGUARD_ENABLED defined
 
-ifndef LOCAL_JACK_ENABLED
-# Override PRIVATE_INTERMEDIATES_DIR so that install-dex-debug
-# will work even when intermediates != intermediates.COMMON.
-$(built_dex_intermediate): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
-$(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-# If you instrument class files that have local variable debug information in
-# them emma does not correctly maintain the local variable table.
-# This will cause an error when you try to convert the class files for Android.
-# The workaround here is to build different dex file here based on emma switch
-# then later copy into classes.dex. When emma is on, dx is run with --no-locals
-# option to remove local variable information
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
-endif
-endif # LOCAL_JACK_ENABLED is disabled
-
 $(built_dex): $(built_dex_intermediate) | $(ACP)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
 	$(hide) $(ACP) -fp $(dir $<)/classes*.dex $(dir $@)
-ifneq ($(GENERATE_DEX_DEBUG),)
-	$(install-dex-debug)
-endif
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
 $(findbugs_xml) : PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \
@@ -639,7 +567,6 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-ifdef LOCAL_JACK_ENABLED
 $(LOCAL_INTERMEDIATE_TARGETS): \
 	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
 ifeq ($(LOCAL_JACK_ENABLED),incremental)
@@ -730,4 +657,3 @@ $(noshrob_classes_jack): $(jack_all_deps) | setup-jack-server
 	@echo Building with Jack: $@
 	$(java-to-jack)
 endif  # full_classes_jar is defined
-endif # LOCAL_JACK_ENABLED

@@ -21,15 +21,8 @@ endif
 LOCAL_JACK_ENABLED := $(strip $(LOCAL_JACK_ENABLED))
 LOCAL_MODULE := $(strip $(LOCAL_MODULE))
 
-ifneq ($(LOCAL_JACK_ENABLED),full)
-ifneq ($(LOCAL_JACK_ENABLED),incremental)
-ifdef LOCAL_JACK_ENABLED
-ifneq ($(LOCAL_JACK_ENABLED),disabled)
+ifeq ($(filter full incremental,$(LOCAL_JACK_ENABLED)),)
 $(error $(LOCAL_PATH): invalid LOCAL_JACK_ENABLED "$(LOCAL_JACK_ENABLED)" for $(LOCAL_MODULE))
-endif
-endif
-LOCAL_JACK_ENABLED :=
-endif
 endif
 
 ifdef $(LOCAL_MODULE).JACK_VERSION
