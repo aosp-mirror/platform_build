@@ -392,9 +392,6 @@ endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_IS_HOST_MODULE is not set
 
 ifneq ($(prebuilt_module_is_dex_javalib),true)
-ifneq ($(LOCAL_JILL_FLAGS),)
-$(error LOCAL_JILL_FLAGS is not supported any more, please use jack options in LOCAL_JACK_FLAGS instead)
-endif
 
 # We may be building classes.jack from a host jar for host dalvik Java library.
 $(intermediates.COMMON)/classes.jack : PRIVATE_JACK_FLAGS:=$(LOCAL_JACK_FLAGS)
