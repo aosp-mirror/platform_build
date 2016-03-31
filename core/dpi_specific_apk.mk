@@ -30,15 +30,9 @@ $(built_dpi_apk): PRIVATE_CERTIFICATE := $(certificate)
 $(built_dpi_apk): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
     $(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
 
-$(built_dpi_apk): PRIVATE_SOURCE_ARCHIVE :=
 ifneq ($(full_classes_jar),)
-$(built_dpi_apk): PRIVATE_DEX_FILE := $(built_dex)
-ifndef LOCAL_JACK_ENABLED
-# Use the jarjar processed arhive as the initial package file.
-$(built_dpi_apk): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
-else
 $(built_dpi_apk): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
-endif # LOCAL_JACK_ENABLED
+$(built_dpi_apk): PRIVATE_DEX_FILE := $(built_dex)
 $(built_dpi_apk): $(built_dex)
 else
 $(built_dpi_apk): PRIVATE_DEX_FILE :=
@@ -51,9 +45,7 @@ $(built_dpi_apk) : $(private_key) $(certificate) $(SIGNAPK_JAR)
 $(built_dpi_apk) : $(AAPT)
 $(built_dpi_apk) : $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-	$(if $(PRIVATE_SOURCE_ARCHIVE),\
-	  $(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@),\
-	  $(create-empty-package))
+	$(create-empty-package)
 	$(add-assets-to-package)
 ifneq ($(jni_shared_libraries),)
 	$(add-jni-shared-libs-to-package)
@@ -63,9 +55,7 @@ ifeq ($(full_classes_jar),)
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else
 	$(add-dex-to-package)
-ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
-endif
 endif
 	$(sign-package)
 
