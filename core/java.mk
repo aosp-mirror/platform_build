@@ -456,7 +456,7 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
 endif
 
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
+$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.emma.ignore
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
 # module level coverage filter can be defined using LOCAL_EMMA_COVERAGE_FILTER
 # in Android.mk
