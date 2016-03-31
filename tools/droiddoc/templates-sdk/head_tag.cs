@@ -52,7 +52,7 @@ if:android.whichdoc != 'online' ?>http:<?cs
   if:android.whichdoc != 'online' ?>http:<?cs
   /if ?>//fonts.googleapis.com/css?family=Roboto+Mono:400,500,700" title="roboto-mono" type="text/css"><?cs
 /if ?>
-<link href="<?cs var:toroot ?>assets/css/default.css?v=18" rel="stylesheet" type="text/css">
+<link href="<?cs var:toroot ?>assets/css/default.css?v=19" rel="stylesheet" type="text/css">
 
 <?cs if:reference && !(reference.gms || reference.gcm || preview) ?>
 <!-- FULLSCREEN STYLESHEET -->
