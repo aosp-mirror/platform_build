@@ -22,6 +22,30 @@
       "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ec1e019_6c1faea9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1402,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-01T23:16:05Z",
+      "side": 1,
+      "message": "Like the static analyzer, it\u0027s difficult to run clang-tidy without normal compilation rules. I tried a separate tidy output file as a target but had the exact problem of generating required include files. That approach also requires a lot of cloning existing rules.\n\nWhat works so far is to run a complete normal build first, or a normal build plus WITH_TIDY\u003d1. Then run incremental builds \u0027mm\u0027 or \u0027mma\u0027 in a project directory repeatedly with WITH_TIDY\u003d1 WITH_TIDY_ONLY\u003d1 to fix tidy warnings. The .o files could be reused.\n\nWithout a complete set of .o files, I can run \"mma -k\" plus WITH_TIDY_ONLY\u003d1 to get clang-tidy warnings and ignore all link errors.\n\nI can experiment other ideas, e.g., adding a wrapper script. The current patch adds an optional call to clang-tidy in definitions.mk. It looks heavier but actually runs faster and I think also easier to maintain than the wrapper approach used by WITH_STATIC_ANALYZER\u003d1.",
+      "parentUuid": "2ec1e019_22569404",
+      "range": {
+        "startLine": 1398,
+        "startChar": 0,
+        "endLine": 1402,
+        "endChar": 5
+      },
+      "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
