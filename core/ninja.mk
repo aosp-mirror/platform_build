@@ -63,6 +63,7 @@ PARSE_TIME_MAKE_GOALS := \
 	userdataimage \
 	userdebug \
 	valgrind-test-art% \
+	vts \
 	win_sdk \
 	winsdk-tools
 
