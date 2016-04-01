@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ec1e019_22569404",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1402,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-01T22:26:57Z",
+      "side": 1,
+      "message": "This really doesn\u0027t work at all -- the object file that is supposed to be generated doesn\u0027t get generated, which will cause everything downstream to fail.\n\nMy first suggestion was to split it into a different rule -- one to create a .o file, and another to create another (empty) timestamp file that would trigger the checks. Then the normal build could use both files, and the tidy-only build could just pull in the timestamp files.\n\nBut this doesn\u0027t work for incremental builds -- we don\u0027t get dependency information from clang-tidy, so you\u0027re relying on the fact that the \"real\" compile step is exporting all of the necessary dependencies. So that doesn\u0027t work unless clang-tidy doesn\u0027t read any of the include files, but that doesn\u0027t appear to be the case.",
+      "range": {
+        "startLine": 1398,
+        "startChar": 0,
+        "endLine": 1402,
+        "endChar": 5
+      },
+      "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
