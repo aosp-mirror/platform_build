@@ -46,6 +46,30 @@
       "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ec1e019_f1bb64e6",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1402,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-04T20:15:24Z",
+      "side": 1,
+      "message": "The .o files will be reused (at least for now), but it\u0027s undefined what dependencies you will have after a WITH_TIDY_ONLY\u003d1 run, since you didn\u0027t generate a new dependency file. It may work today, but is not guaranteed to work in the future.\n\nIt would be great if these tools generated real dependency files so that they could be properly be used within build systems.",
+      "parentUuid": "2ec1e019_6c1faea9",
+      "range": {
+        "startLine": 1398,
+        "startChar": 0,
+        "endLine": 1402,
+        "endChar": 5
+      },
+      "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
