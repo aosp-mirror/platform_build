@@ -74,7 +74,6 @@ endif
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 libc_root := bionic/libc
-libm_root := bionic/libm
 
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
@@ -144,8 +143,6 @@ TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86_64/include \
 	$(libc_root)/include \
 	$(KERNEL_HEADERS) \
-	$(libm_root)/include \
-	$(libm_root)/include/amd64 \
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o

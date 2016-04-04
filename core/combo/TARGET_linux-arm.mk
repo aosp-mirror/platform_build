@@ -155,7 +155,6 @@ $(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS := \
 			-frename-registers
 
 libc_root := bionic/libc
-libm_root := bionic/libm
 
 
 ## on some hosts, the target cross-compiler is not available so do not run this command
@@ -180,8 +179,6 @@ $(combo_2nd_arch_prefix)TARGET_C_INCLUDES := \
 	$(libc_root)/arch-arm/include \
 	$(libc_root)/include \
 	$(KERNEL_HEADERS) \
-	$(libm_root)/include \
-	$(libm_root)/include/arm \
 
 $(combo_2nd_arch_prefix)TARGET_CRTBEGIN_STATIC_O := $($(combo_2nd_arch_prefix)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 $(combo_2nd_arch_prefix)TARGET_CRTBEGIN_DYNAMIC_O := $($(combo_2nd_arch_prefix)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
