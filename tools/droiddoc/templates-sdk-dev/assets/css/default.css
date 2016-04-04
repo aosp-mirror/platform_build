@@ -6573,6 +6573,10 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   background: #00bcd4;
 }
 
+.dac-studio {
+  background: #424242;
+}
+
 .dac-search-mode .dac-header {
   background: #b0bec5;
   -webkit-transition: background 200ms;
@@ -6712,6 +6716,18 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   outline: 0;
 }
 
+.dac-studio .dac-header-console-btn {
+  color:#fff;
+  background:rgba(255, 255, 255, 0.3);
+}
+.dac-studio .dac-header-console-btn:hover {
+  background:rgba(255, 255, 255, 0.5);
+}
+.dac-studio .dac-header-console-btn:focus {
+  background:rgba(255, 255, 255, 0.7);
+  color:#000;
+}
+
 @media (max-width: 719px) {
   .dac-header {
     text-align: center;
@@ -6823,6 +6839,10 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
     transform-origin: right center;
     width: 64px;
   }
+  .dac-studio .dac-header-search-inner::after {
+    background: -webkit-linear-gradient(right, #424242, rgba(66, 66, 66, 0));
+    background: linear-gradient(to left, #424242, rgba(66, 66, 66, 0));
+  }
 
   .dac-search-mode .dac-header-search-inner::after {
     opacity: 0;
@@ -6852,6 +6872,13 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   -webkit-transition: background 200ms, color 200ms;
   transition: background 200ms, color 200ms;
   width: 100%;
+}
+
+.dac-studio .dac-header-search {
+  right:150px;
+}
+.dac-studio .dac-header-search-input {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .dac-header-search-close, .dac-header-search-clear {
@@ -7265,6 +7292,12 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   margin: 3px 0 0;
   opacity: .5;
   width: 100%;
+}
+
+.dac-studio .dac-nav-hamburger-top,
+.dac-studio .dac-nav-hamburger-mid,
+.dac-studio .dac-nav-hamburger-bot {
+  background: rgba(256, 256, 256, 0.4);
 }
 
 .dac-nav-animating .dac-nav-hamburger-top, .dac-nav-animating .dac-nav-hamburger-mid, .dac-nav-animating .dac-nav-hamburger-bot {
