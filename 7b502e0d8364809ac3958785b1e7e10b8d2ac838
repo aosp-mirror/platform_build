@@ -70,6 +70,30 @@
       "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ec1e019_a564b28a",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1402,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-04T22:41:25Z",
+      "side": 1,
+      "message": "I checked current clang-tidy, and it now just ignored the -MD and -MF flags. So, my current CL does not pass -MD and -MF to clang-tidy.",
+      "parentUuid": "2ec1e019_f1bb64e6",
+      "range": {
+        "startLine": 1398,
+        "startChar": 0,
+        "endLine": 1402,
+        "endChar": 5
+      },
+      "revId": "7b502e0d8364809ac3958785b1e7e10b8d2ac838",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
