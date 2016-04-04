@@ -217,7 +217,7 @@
            location.reload();
         }, 3000);
       });
-      ga('send', 'event', 'NDK', 'IDE and Tools', $("#downloadForRealz").html());
+      ga('send', 'event', 'SDK', 'NDK tools', $("#downloadForRealz").html());
       return true;
     } else {
       return false;
