@@ -135,7 +135,6 @@ TARGET_RELEASE_CFLAGS := \
 			-frename-registers
 
 libc_root := bionic/libc
-libm_root := bionic/libm
 
 TARGET_LIBGCC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
 	-print-libgcc-file-name)
@@ -153,8 +152,6 @@ TARGET_C_INCLUDES := \
 	$(libc_root)/arch-arm64/include \
 	$(libc_root)/include \
 	$(KERNEL_HEADERS) \
-	$(libm_root)/include \
-	$(libm_root)/include/arm64 \
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
