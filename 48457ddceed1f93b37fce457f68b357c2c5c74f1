@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ec1e019_34cbf66e",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-05T19:20:35Z",
+      "side": 1,
+      "message": "nit: define them in config.mk as global constant.",
+      "range": {
+        "startLine": 816,
+        "startChar": 13,
+        "endLine": 816,
+        "endChar": 71
+      },
+      "revId": "48457ddceed1f93b37fce457f68b357c2c5c74f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
