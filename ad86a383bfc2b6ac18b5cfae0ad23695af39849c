@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ec1e019_995a23ff",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-05T19:12:30Z",
+      "side": 1,
+      "message": "You need to reset jack_jacoco_includes and jack_jacoco_excludes here",
+      "revId": "ad86a383bfc2b6ac18b5cfae0ad23695af39849c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ec1e019_d923cb97",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 638,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-05T19:12:30Z",
+      "side": 1,
+      "message": "You mean LOCAL_EMMA_COVERAGE_FILTER, right?",
+      "range": {
+        "startLine": 638,
+        "startChar": 10,
+        "endLine": 638,
+        "endChar": 31
+      },
+      "revId": "ad86a383bfc2b6ac18b5cfae0ad23695af39849c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ec1e019_d948ab09",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-05T19:12:30Z",
+      "side": 1,
+      "message": "Can we just fix all the cases (only about ~15 in master) in the source tree and remove LOCAL_EMMA_COVERAGE_FILTER? Also send out annoucement to android-eng so engineers know how to do it in the new Jack way.",
+      "range": {
+        "startLine": 641,
+        "startChar": 0,
+        "endLine": 641,
+        "endChar": 34
+      },
+      "revId": "ad86a383bfc2b6ac18b5cfae0ad23695af39849c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ec1e019_194e333f",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 648,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-05T19:12:30Z",
+      "side": 1,
+      "message": "Otherwise you may get obsolete values set by other modules.",
+      "range": {
+        "startLine": 647,
+        "startChar": 4,
+        "endLine": 648,
+        "endChar": 89
+      },
+      "revId": "ad86a383bfc2b6ac18b5cfae0ad23695af39849c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
