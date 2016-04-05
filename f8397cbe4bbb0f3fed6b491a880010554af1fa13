@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ec1e019_39752f08",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-05T19:19:27Z",
+      "side": 1,
+      "message": "Nit: move this to config.mk as a global constant.",
+      "range": {
+        "startLine": 657,
+        "startChar": 18,
+        "endLine": 661,
+        "endChar": 47
+      },
+      "revId": "f8397cbe4bbb0f3fed6b491a880010554af1fa13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
