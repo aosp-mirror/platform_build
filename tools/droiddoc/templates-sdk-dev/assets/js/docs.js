@@ -4388,6 +4388,14 @@ $.fn.scrollIntoView = function(target) {
       } else if (body.hasClass('downloads')) {
         selected = navEl.find('> li.downloads > a').addClass('selected');
       }
+    } else if (body.hasClass('studio')) {
+      if (body.hasClass('features')) {
+        selected = navEl.find('> li.features > a').addClass('selected');
+      } else if (body.hasClass('guide')) {
+        selected = navEl.find('> li.guide > a').addClass('selected');
+      } else if (body.hasClass('preview')) {
+        selected = navEl.find('> li.preview > a').addClass('selected');
+      }
     } else if (body.hasClass('design')) {
       selected = navEl.find('> li.design > a').addClass('selected');
       // highlight Home nav
