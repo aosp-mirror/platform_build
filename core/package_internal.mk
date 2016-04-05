@@ -191,8 +191,21 @@ LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
 else  # ! EMMA_INSTRUMENT_STATIC
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
+# In unbundled build, merge the coverage library into the apk.
 # Jack supports coverage with Jacoco
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+# Exclude jacoco classes from proguard
+LOCAL_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
+LOCAL_JACK_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
+else # ! TARGET_BUILD_APPS
+# If build against the SDK in full build, core.jar is not used
+# so coverage classes are not present.
+# Jack needs jacoco on the classpath but we do not want it to be in
+# the final apk. While it is a static library, we add it to the
+# LOCAL_JAVA_LIBRARIES which are only present on the classpath.
+# Note: we have nothing to do for proguard since jacoco will be
+# on the classpath only, thus not modified during the compilation.
+LOCAL_JAVA_LIBRARIES += jacocoagent
 endif # TARGET_BUILD_APPS
 endif # LOCAL_SDK_VERSION
 endif # ! EMMA_INSTRUMENT_STATIC
