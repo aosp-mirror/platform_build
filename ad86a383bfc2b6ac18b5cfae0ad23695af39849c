@@ -65,6 +65,30 @@
     },
     {
       "key": {
+        "uuid": "2ec48060_5b8edb21",
+        "filename": "core/java.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1029223
+      },
+      "writtenOn": "2016-04-05T19:24:29Z",
+      "side": 1,
+      "message": "That was my plan as a next step. I thought we might want a transition to fix the few build breakages linked to those filters, then update them one by one with the new filtering way.\n\nIf you think we should directly move on to replace LOCAL_EMMA_COVERAGE_FILTER with LOCAL_JACK_FLAGS in each project, I can start that tomorrow.",
+      "parentUuid": "2ec1e019_d948ab09",
+      "range": {
+        "startLine": 641,
+        "startChar": 0,
+        "endLine": 641,
+        "endChar": 34
+      },
+      "revId": "ad86a383bfc2b6ac18b5cfae0ad23695af39849c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2ec1e019_194e333f",
         "filename": "core/java.mk",
         "patchSetId": 5
