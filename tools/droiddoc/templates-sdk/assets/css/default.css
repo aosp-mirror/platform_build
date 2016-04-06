@@ -732,7 +732,7 @@ a.back-link {
     text-align:center;
     width: 50%;
   }
-  
+
   .training-nav-top a.prev-page-link {
     padding-left: 15px;
     text-align: left;
@@ -840,7 +840,7 @@ a.back-link {
     margin: 0 0 6px;
     line-height: 16px;
   }
-  
+
   /* Class colors */
   ol.class-list li:nth-child(10n+1) .title {
     background: #00bcd4;
@@ -872,7 +872,7 @@ a.back-link {
   ol.class-list li:nth-child(10n+10) .title {
     background: #7e57c2;
   }
-  
+
   @media (max-width: 719px) {
     ol.class-list ol,
     ol.class-list .description {
@@ -2628,6 +2628,20 @@ div.note.distribute {
   margin-bottom:0;
 }
 
+.summary-table {
+  background-color:#e1e4e6;
+  padding:1em;
+  margin-bottom:1.5em;
+}
+.summary-table p {
+  font-size:.98em;
+}
+
+.summary-table h5 {
+  line-height:1em;
+  font-size:.98em;
+}
+
 body.about blockquote {
   display:block;
   float:right;
@@ -3330,7 +3344,7 @@ attrs, methods, etc. */
 h4.jd-details-title {
   font-size:1.15em;
   background-color: #E2E2E2;
-  margin:1.5em 0 .6em;
+  margin:4em 0 .6em;
   padding:3px 95px 3px 3px; /* room for api-level */
 }
 body.google h4.jd-details-title {
@@ -6362,9 +6376,13 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 .dac-button.dac-raised.dac-primary, .landing-secondary, .button {
   background-color: #039bef; }
   .dac-button.dac-raised.dac-primary:hover, .landing-secondary:hover, .button:hover {
-    background-color: #0288d1; color:#fff; }
+    background-color: #0288d1;
+    color:#fff; }
   .dac-button.dac-raised.dac-primary:active, .landing-secondary:active, .button:active {
-    background-color: #0277bd; }
+    background-color: #0277bd;
+    color:#fff; }
+  .dac-button.dac-raised.dac-primary.disabled, .button.disabled {
+    background-color: #bbb; }
 
 .dac-button.dac-raised.dac-red, .landing-primary {
   background-color: #bf3722; }
@@ -7769,6 +7787,20 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
   text-align: center;
 }
 
+/* Android Studio download page */
+section#features {
+  padding-top:0;
+}
+.wrap.feature {
+  margin:80px auto;
+}
+.dac-section-links.feature-more {
+  margin-top:-20px;
+}
+.dac-toggle-content .wrap.feature {
+  margin-top:0;
+}
+
 @media (max-width: 719px) {
   .dac-hero-figure {
     height: 150px;
@@ -7777,6 +7809,17 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 
   .dac-hero-figure img {
     max-height: 150px;
+  }
+
+  /* Android Studio download page */
+  .feature .dac-hero-figure,
+  .feature .dac-hero-figure img {
+    height:auto;
+    max-height:none;
+  }
+  .feature .dac-hero-figure img {
+    width:90%;
+    margin:0 auto;
   }
 }
 
@@ -8497,12 +8540,12 @@ At the bottom of this section, we provide information about the spritesheet itse
 $spritesheet: width height image $spritesheet-sprites;
 */
 .dac-sprite, #tb li:before, #qv li:before {
-  background-image: url(/assets/images/sprite.png);
+  background-image: url(../../assets/images/sprite.png);
   display: inline-block;
   vertical-align: middle; }
   @media screen and (min-device-pixel-ratio: 1.5) {
     .dac-sprite, #tb li:before, #qv li:before {
-      background-image: url(/assets/images/sprite-2x.png);
+      background-image: url(../../assets/images/sprite-2x.png);
       background-size: 50% 50%; } }
 
 .dac-sprite.dac-auto-chevron {
@@ -8856,4 +8899,85 @@ $spritesheet: width height image $spritesheet-sprites;
   .dac-hero-cta.mprev {
   white-space:nowrap;
   }
+}
+
+/** Custom search API styles */
+.dac-custom-search {
+  background: #fff;
+  margin: 0 -10px;
+  padding: 20px 10px;
+  z-index: 1;
+}
+
+.dac-custom-search-section-title {
+  color: #505050;
+}
+
+.dac-custom-search-entry {
+  margin-bottom: 36px;
+  margin-top: 24px;
+}
+
+.dac-custom-search-image {
+  background-size: cover;
+  height: 112px;
+}
+
+@media (max-width: 719px) {
+  .dac-custom-search-image {
+    display: none;
+  }
+}
+
+.dac-custom-search-title {
+  color: #333;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.dac-custom-search-title a {
+  color: inherit;
+}
+
+.dac-custom-search-section {
+  color: #999;
+  font-size: 16px;
+  font-variant: small-caps;
+  font-weight: 700;
+  margin: -5px 0 0 0;
+}
+
+.dac-custom-search-snippet {
+  color: #666;
+  margin: 0;
+}
+
+.dac-custom-search-link {
+  font-weight: 500;
+  word-wrap: break-word;
+  width: 100%;
+}
+
+.dac-custom-search-load-more {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 75px auto;
+  outline: none;
+  padding: 10px;
+}
+
+.dac-custom-search-load-more:hover {
+  opacity: 0.7;
+}
+
+.dac-custom-search-no-results {
+  color: #999;
 }
