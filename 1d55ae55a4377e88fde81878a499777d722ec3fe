@@ -22,6 +22,30 @@
       "revId": "1d55ae55a4377e88fde81878a499777d722ec3fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ea2ccbd_cd475c99",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-04-06T22:28:11Z",
+      "side": 1,
+      "message": "Yep, found that out the hard way :) ps2 has the fix",
+      "parentUuid": "8ea2ccbd_724cab71",
+      "range": {
+        "startLine": 108,
+        "startChar": 2,
+        "endLine": 109,
+        "endChar": 21
+      },
+      "revId": "1d55ae55a4377e88fde81878a499777d722ec3fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
