@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ea2ccbd_724cab71",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-06T22:04:42Z",
+      "side": 1,
+      "message": "You need to move this outside the \"ifdef LOCAL_SDK_VERSION\" above. Otherwise it may get value set by previous modules in executable_internal.mk.",
+      "range": {
+        "startLine": 108,
+        "startChar": 2,
+        "endLine": 109,
+        "endChar": 21
+      },
+      "revId": "1d55ae55a4377e88fde81878a499777d722ec3fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
