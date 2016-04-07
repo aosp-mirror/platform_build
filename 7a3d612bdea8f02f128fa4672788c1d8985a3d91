@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e172cd8_db7dc78c",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-04-07T08:49:22Z",
+      "side": 1,
+      "message": "Nit:\nI don\u0027t think this one is necessary. Make is already stripping the start of values when they are assigned:\n\nA :\u003d B\n\u003c$A\u003e is \u003cB\u003e\n\nonly\nA :\u003d \" B\"\nwould not lead to starting space not stripped: \u003c$A\u003e is \u003c B\u003e but in this case I\u0027d say it\u0027s intentional and does not require striping.\n\n$(strip ...) is still necessary in the ifneq (,...) because make is not striping the end of variable assignations:\nA :\u003d B # A comment\n\u003c$A\u003e is \u003cB \u003e",
+      "range": {
+        "startLine": 635,
+        "startChar": 62,
+        "endLine": 635,
+        "endChar": 67
+      },
+      "revId": "7a3d612bdea8f02f128fa4672788c1d8985a3d91",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
