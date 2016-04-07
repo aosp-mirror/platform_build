@@ -386,20 +386,6 @@ ifneq (,$(TARGET_BUILD_APPS))
 endif
 
 # -----------------------------------------------------------------
-# module info file
-ifdef CREATE_MODULE_INFO_FILE
-  MODULE_INFO_FILE := $(PRODUCT_OUT)/module-info.txt
-  $(info Generating $(MODULE_INFO_FILE)...)
-  $(shell rm -f $(MODULE_INFO_FILE))
-  $(foreach m,$(ALL_MODULES), \
-    $(shell echo "NAME=\"$(m)\"" \
-	"PATH=\"$(strip $(ALL_MODULES.$(m).PATH))\"" \
-	"TAGS=\"$(strip $(filter-out _%,$(ALL_MODULES.$(m).TAGS)))\"" \
-	"BUILT=\"$(strip $(ALL_MODULES.$(m).BUILT))\"" \
-	"INSTALLED=\"$(strip $(ALL_MODULES.$(m).INSTALLED))\"" >> $(MODULE_INFO_FILE)))
-endif
-
-# -----------------------------------------------------------------
 
 # The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
