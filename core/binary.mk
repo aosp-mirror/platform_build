@@ -646,21 +646,23 @@ proto_generated_headers :=
 ifneq ($(proto_sources),)
 proto_generated_sources_dir := $(generated_sources_dir)/proto
 proto_generated_obj_dir := $(intermediates)/proto
+proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 
 ifneq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
 my_proto_source_suffix := .c
 my_proto_c_includes := external/nanopb-c
 my_protoc_flags := --nanopb_out=$(proto_generated_sources_dir) \
     --plugin=external/nanopb-c/generator/protoc-gen-nanopb
+my_protoc_deps := $(NANOPB_SRCS) $(proto_sources_fullpath:%.proto=%.options)
 else
 my_proto_source_suffix := .cc
 my_proto_c_includes := external/protobuf/src
 my_cflags += -DGOOGLE_PROTOBUF_NO_RTTI
 my_protoc_flags := --cpp_out=$(proto_generated_sources_dir)
+my_protoc_deps :=
 endif
 my_proto_c_includes += $(proto_generated_sources_dir)
 
-proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 proto_generated_sources := $(addprefix $(proto_generated_sources_dir)/, \
     $(patsubst %.proto,%.pb$(my_proto_source_suffix),$(proto_sources_fullpath)))
 proto_generated_headers := $(patsubst %.pb$(my_proto_source_suffix),%.pb.h, $(proto_generated_sources))
@@ -672,7 +674,7 @@ $(call track-src-file-obj,$(proto_sources),$(proto_generated_objects))
 ifndef $(my_prefix)_$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_proto_defined
 $(proto_generated_sources): PRIVATE_PROTO_INCLUDES := $(TOP)
 $(proto_generated_sources): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS) $(my_protoc_flags)
-$(proto_generated_sources): $(proto_generated_sources_dir)/%.pb$(my_proto_source_suffix): %.proto $(PROTOC)
+$(proto_generated_sources): $(proto_generated_sources_dir)/%.pb$(my_proto_source_suffix): %.proto $(my_protoc_deps) $(PROTOC)
 	$(transform-proto-to-cc)
 
 # This is just a dummy rule to make sure gmake doesn't skip updating the dependents.
