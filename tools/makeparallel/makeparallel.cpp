@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -343,6 +344,15 @@ int main(int argc, char* argv[]) {
     // child
     unsetenv("MAKEFLAGS");
     unsetenv("MAKELEVEL");
+
+    // make 3.81 sets the stack ulimit to unlimited, which may cause problems
+    // for child processes
+    struct rlimit rlim{};
+    if (getrlimit(RLIMIT_STACK, &rlim) == 0 && rlim.rlim_cur == RLIM_INFINITY) {
+      rlim.rlim_cur = 8*1024*1024;
+      setrlimit(RLIMIT_STACK, &rlim);
+    }
+
     int ret = execvp(path, args.data());
     if (ret < 0) {
       error(errno, errno, "exec %s failed", path);
