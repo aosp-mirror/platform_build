@@ -15,9 +15,9 @@
 # limitations under the License.
 
 """
-Build image output_image_file from input_directory and properties_file.
+Build image output_image_file from input_directory, properties_file, and target_out_dir
 
-Usage:  build_image input_directory properties_file output_image_file
+Usage:  build_image input_directory properties_file output_image_file target_out_dir
 
 """
 import os
