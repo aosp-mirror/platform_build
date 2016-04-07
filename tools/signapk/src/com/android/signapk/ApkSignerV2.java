@@ -75,7 +75,6 @@ public abstract class ApkSignerV2 {
     public static final int SIGNATURE_ECDSA_WITH_SHA256 = 0x0201;
     public static final int SIGNATURE_ECDSA_WITH_SHA512 = 0x0202;
     public static final int SIGNATURE_DSA_WITH_SHA256 = 0x0301;
-    public static final int SIGNATURE_DSA_WITH_SHA512 = 0x0302;
 
     /**
      * {@code .SF} file header section attribute indicating that the APK is signed not just with
@@ -660,8 +659,6 @@ public abstract class ApkSignerV2 {
                 return Pair.create("SHA512withECDSA", null);
             case SIGNATURE_DSA_WITH_SHA256:
                 return Pair.create("SHA256withDSA", null);
-            case SIGNATURE_DSA_WITH_SHA512:
-                return Pair.create("SHA512withDSA", null);
             default:
                 throw new IllegalArgumentException(
                         "Unknown signature algorithm: 0x"
@@ -679,7 +676,6 @@ public abstract class ApkSignerV2 {
             case SIGNATURE_RSA_PSS_WITH_SHA512:
             case SIGNATURE_RSA_PKCS1_V1_5_WITH_SHA512:
             case SIGNATURE_ECDSA_WITH_SHA512:
-            case SIGNATURE_DSA_WITH_SHA512:
                 return CONTENT_DIGEST_CHUNKED_SHA512;
             default:
                 throw new IllegalArgumentException(

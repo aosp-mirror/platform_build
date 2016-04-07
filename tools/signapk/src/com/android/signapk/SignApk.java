@@ -992,7 +992,7 @@ class SignApk {
             } else if ("EC".equalsIgnoreCase(keyAlgorithm)) {
                 return ApkSignerV2.SIGNATURE_ECDSA_WITH_SHA512;
             } else if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
-                return ApkSignerV2.SIGNATURE_DSA_WITH_SHA512;
+                throw new IllegalArgumentException("SHA-512 is not supported with DSA");
             } else {
                 throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
             }
