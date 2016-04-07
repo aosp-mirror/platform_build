@@ -24,6 +24,8 @@ PRODUCT_NAME := core
 
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
+    ExtShared \
+    ExtServices \
     DownloadProvider \
     HTMLViewer \
     MediaProvider \
