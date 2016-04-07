@@ -22,6 +22,29 @@
       "revId": "7a3d612bdea8f02f128fa4672788c1d8985a3d91",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ea2ccbd_528875e3",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 636,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-07T18:54:43Z",
+      "side": 1,
+      "message": "You can replace the whole block with:\njacoco_filter_properties +\u003d $(addprefix,-D jack.coverage.jacoco.include\u003d,$(LOCAL_JACK_COVERAGE_INCLUDE_FILTER))",
+      "range": {
+        "startLine": 634,
+        "startChar": 0,
+        "endLine": 636,
+        "endChar": 42
+      },
+      "revId": "7a3d612bdea8f02f128fa4672788c1d8985a3d91",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
