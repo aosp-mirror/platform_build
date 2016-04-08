@@ -556,9 +556,11 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
+JACK_DEFAULT_ARGS :=
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
 else
-DEFAULT_JACK_EXTRA_ARGS := @$(BUILD_SYSTEM)/jack-default.args
+JACK_DEFAULT_ARGS := $(BUILD_SYSTEM)/jack-default.args
+DEFAULT_JACK_EXTRA_ARGS := @$(JACK_DEFAULT_ARGS)
 endif
 # Turn off jack warnings by default.
 DEFAULT_JACK_EXTRA_ARGS += --verbose error
