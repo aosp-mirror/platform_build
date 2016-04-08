@@ -117,6 +117,7 @@ class RangeSetTest(unittest.TestCase):
     self.assertTrue(RangeSet("").monotonic)
     self.assertTrue(RangeSet("0-4 5-9").monotonic)
     self.assertFalse(RangeSet("5-9 0-4").monotonic)
+    self.assertFalse(RangeSet("258768-259211 196604").monotonic)
 
     self.assertTrue(RangeSet(data=[0, 10]).monotonic)
     self.assertTrue(RangeSet(data=[0, 10, 15, 20]).monotonic)
