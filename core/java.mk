@@ -471,18 +471,25 @@ jack_proguard_flags := -printmapping $(jack_dictionary)
 
 common_proguard_flags := -forceprocessing
 
+common_proguard_flag_files :=
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
-common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.flags
+common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
+common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.jacoco.flags
 endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
-common_proguard_flags += -include $(BUILD_SYSTEM)/proguard_tests.flags
+common_proguard_flag_files += $(BUILD_SYSTEM)/proguard_tests.flags
 ifeq ($(filter shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default
 endif # shrinktests
 endif # test package
+ifneq ($(common_proguard_flag_files),)
+common_proguard_flags += $(addprefix -include , $(common_proguard_flag_files))
+# This is included from $(BUILD_SYSTEM)/proguard.flags
+common_proguard_flag_files += $(BUILD_SYSTEM)/proguard_basic_keeps.flags
+endif
+
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no obfuscation
 common_proguard_flags += -dontobfuscate
@@ -533,7 +540,7 @@ extra_input_jar :=
 endif
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(proguard_flag_files) | $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) | $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
 else  # LOCAL_PROGUARD_ENABLED not defined
@@ -615,9 +622,10 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
 
 jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
-        $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) $(proguard_flag_files) \
+        $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
+        $(common_proguard_flag_files) $(proguard_flag_files) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
-        $(JACK)
+        $(JACK_DEFAULT_ARGS) $(JACK)
 
 $(jack_check_timestamp): $(jack_all_deps)
 	@echo Checking build with Jack: $@
