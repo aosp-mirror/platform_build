@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_9d4b6f5a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-08T20:30:07Z",
+      "side": 1,
+      "message": "if BOARD_BPT_DISK_SIZE is not defined, it will trigger exception here? change to info_dict.get(\"...\") instead?\n\n(and same comment for L241 and L249)",
+      "range": {
+        "startLine": 246,
+        "startChar": 14,
+        "endLine": 246,
+        "endChar": 54
+      },
+      "revId": "74b691f59ef76b04368a3b7aafbd77b02a98fa92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
