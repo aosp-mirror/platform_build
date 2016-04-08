@@ -88,7 +88,7 @@ class RangeSet(object):
         if last <= s:
           last = s+1
         else:
-          monotonic = True
+          monotonic = False
     data.sort()
     self.data = tuple(self._remove_pairs(data))
     self.monotonic = monotonic
