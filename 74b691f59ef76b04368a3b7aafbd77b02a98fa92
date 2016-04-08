@@ -22,6 +22,30 @@
       "revId": "74b691f59ef76b04368a3b7aafbd77b02a98fa92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b20f290_55824cc8",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-04-08T22:00:09Z",
+      "side": 1,
+      "message": "Got it - nice catch, thanks!",
+      "parentUuid": "8e2d6c79_9d4b6f5a",
+      "range": {
+        "startLine": 246,
+        "startChar": 14,
+        "endLine": 246,
+        "endChar": 54
+      },
+      "revId": "74b691f59ef76b04368a3b7aafbd77b02a98fa92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
