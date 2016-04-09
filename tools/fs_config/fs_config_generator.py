@@ -183,8 +183,6 @@ def generate(files, dirs, aids):
     are_aids = len(aids) > 0
 
     if are_aids:
-        # sort on value of (file_name, name, value, strvalue)
-        aids.sort(key=lambda x: x[2])
         for a in aids:
             # use the preserved str value
             print FILE_COMMENT % a[0]
@@ -272,7 +270,24 @@ def main():
     for x in sys.argv[1:]:
         parse(x, files, dirs, aids, seen_paths, seen_aids)
 
+    # sort entries:
+    # * specified path before prefix match
+    # ** ie foo before f*
+    # * lexicographical less than before other
+    # ** ie boo before foo
+    # Given these paths:
+    # paths=['ac', 'a', 'acd', 'an', 'a*', 'aa', 'ac*']
+    # The sort order would be:
+    # paths=['a', 'aa', 'ac', 'acd', 'an', 'ac*', 'a*']
+    # Thus the fs_config tools will match on specified paths before attempting
+    # prefix, and match on the longest matching prefix.
     files.sort(key= lambda x: file_key(x[1]))
+
+    # sort on value of (file_name, name, value, strvalue)
+    # This is only cosmetic so AIDS are arranged in ascending order
+    # within the generated file.
+    aids.sort(key=lambda x: x[2])
+
     generate(files, dirs, aids)
 
 if __name__ == '__main__':
