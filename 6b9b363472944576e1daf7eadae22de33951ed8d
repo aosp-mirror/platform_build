@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_9951bc58",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-09T17:39:25Z",
+      "side": 1,
+      "message": "No more globals!",
+      "revId": "6b9b363472944576e1daf7eadae22de33951ed8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_b91e80aa",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-09T17:39:25Z",
+      "side": 1,
+      "message": "This bit of magic lets us add:\n\n@generator(\"groups\")\nclass GroupGen():\n ...",
+      "revId": "6b9b363472944576e1daf7eadae22de33951ed8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_d92334ed",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-09T17:39:25Z",
+      "side": 1,
+      "message": "generator",
+      "revId": "6b9b363472944576e1daf7eadae22de33951ed8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_191eaca9",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 361,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-09T17:39:25Z",
+      "side": 1,
+      "message": "Every time you add a @generator() it sets it up as a mutually exclusive option.",
+      "revId": "6b9b363472944576e1daf7eadae22de33951ed8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_f918f8bf",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-09T17:39:25Z",
+      "side": 1,
+      "message": "genertor",
+      "revId": "6b9b363472944576e1daf7eadae22de33951ed8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
