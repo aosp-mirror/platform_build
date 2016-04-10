@@ -16,6 +16,23 @@
       "revId": "fa11000d969fc408872fec6bf692c03f91e28774",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_39b1b055",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-10T05:24:09Z",
+      "side": 1,
+      "message": "Although stated, the code does not seem to be enforcing that at the moment...",
+      "revId": "fa11000d969fc408872fec6bf692c03f91e28774",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
