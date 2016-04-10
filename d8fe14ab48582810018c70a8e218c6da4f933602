@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_947fc1ac",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-10T19:04:37Z",
+      "side": 1,
+      "message": "May be we should limit this to [a-z0-9_]. Right now, its essentially case insensitive, so foo is FOO is fOo, and for aid identifiers it becomes AID_FOO and for the friendly name it becomes \"foo\". Rather than having this dis-ambiguity, it makes sens to me to have this as all lowercase, numbers and dashes only.",
+      "revId": "d8fe14ab48582810018c70a8e218c6da4f933602",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_b4a76582",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-10T19:04:37Z",
+      "side": 1,
+      "message": "likely should roll this into a class if were adding fields, 4 things was tricky enough to keep track of in the tuple.",
+      "revId": "d8fe14ab48582810018c70a8e218c6da4f933602",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_940ee151",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-10T19:04:37Z",
+      "side": 1,
+      "message": "homedir and intepreter could move as options to the AID sections, and we could have a default for them in the base config file. The base config DEFAULT could apply globally where as the OEM supplied file DEFAULT is applied per-file.",
+      "revId": "d8fe14ab48582810018c70a8e218c6da4f933602",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
