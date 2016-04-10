@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_b9292038",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-10T05:34:30Z",
+      "side": 1,
+      "message": "We want to make sure to exclude the delimiter token... perhaps since we say \"valid C define\" We just validate that here, that covers this token, along with others.",
+      "revId": "06c2b1f6a75c84e63fa182cb81f401c8df664cfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
