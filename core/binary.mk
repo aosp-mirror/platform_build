@@ -1409,8 +1409,17 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 ###########################################################
 export_includes := $(intermediates)/export_includes
 $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
+# Headers exported by whole static libraries are also exported by this library.
 export_include_deps := $(strip \
    $(foreach l,$(my_whole_static_libraries), \
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+# Re-export requested headers from shared libraries.
+export_include_deps += $(strip \
+   $(foreach l,$(LOCAL_EXPORT_SHARED_LIBRARY_HEADERS), \
+     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+# Re-export requested headers from static libraries.
+export_include_deps += $(strip \
+   $(foreach l,$(LOCAL_EXPORT_STATIC_LIBRARY_HEADERS), \
      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 $(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
 # Make sure .pb.h are already generated before any dependent source files get compiled.
