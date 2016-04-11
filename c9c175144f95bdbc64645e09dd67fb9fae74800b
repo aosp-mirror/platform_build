@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "8e2d6c79_daf4f89b",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1421,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-04-11T20:20:40Z",
+      "side": 1,
+      "message": "you add LOCAL_REEXPORTED_SHARED_LIBRARIES_32, etc. to my_shared_libraries above, but you don\u0027t handle them here.",
+      "revId": "c9c175144f95bdbc64645e09dd67fb9fae74800b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e2d6c79_3a035463",
         "filename": "core/clear_vars.mk",
         "patchSetId": 1
