@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_d7977170",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-04-11T20:16:36Z",
+      "side": 1,
+      "message": "Hmmm /vendor as homedir default for OEM range?",
+      "range": {
+        "startLine": 100,
+        "startChar": 6,
+        "endLine": 100,
+        "endChar": 13
+      },
+      "revId": "72985241ca61782fa13ad9caae51da0ab2d6cb07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e2d6c79_7aa6acd4",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 5
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-04-11T20:16:36Z",
+      "side": 1,
+      "message": "This field is unused and only adds clutter, default /system/bin/false might be the most appropriate answer none-the-less.",
+      "range": {
+        "startLine": 103,
+        "startChar": 7,
+        "endLine": 103,
+        "endChar": 17
+      },
+      "revId": "72985241ca61782fa13ad9caae51da0ab2d6cb07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
