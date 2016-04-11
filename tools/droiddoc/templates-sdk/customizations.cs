@@ -10,7 +10,7 @@ def:fullpage() ?>
   <div id="body-content">
     <div>
 <?cs /def ?>
-<?cs 
+<?cs
 def:sdk_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
     <div class="col-4 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -297,7 +297,7 @@ def:google_nav() ?>
       </div>
       <script type="text/javascript">
        showGoogleRefTree();
-    
+
       </script>
     </div> <!-- end side-nav -->
     <script>
@@ -528,7 +528,7 @@ def:custom_left_nav() ?><?cs
       call:fullpage() ?><?cs
     elif:nonavpage ?><?cs
       call:no_nav() ?><?cs
-    elif:guide || reference || samples || downloads ?><?cs      
+    elif:guide || reference || samples || downloads ?><?cs
       call:ndk_nav() ?><?cs
     else ?><?cs
       call:default_left_nav() ?> <?cs
