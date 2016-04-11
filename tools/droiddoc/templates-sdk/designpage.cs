@@ -9,10 +9,10 @@
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,medium,thin,italic,mediumitalic">
     <link rel="stylesheet" href="<?cs var:toroot ?>assets/yui-3.3.0-reset-min.css">
-    <link rel="stylesheet" href="<?cs var:toroot ?>assets/design/default.css">
+    <link rel="stylesheet" href="<?cs var:toroot ?>assets/design/default.css?v=19">
     <script src="<?cs var:toroot ?>assets/jquery-1.6.2.min.js"></script>
     <script>var SITE_ROOT = '<?cs var:toroot ?>design';</script>
-    <script src="<?cs var:toroot ?>assets/design/default.js"></script>
+    <script src="<?cs var:toroot ?>assets/design/default.js?v=19"></script>
   </head>
   <body class="gc-documentation 
     <?cs if:(guide||develop||training||reference||tools||sdk) ?>develop<?cs
