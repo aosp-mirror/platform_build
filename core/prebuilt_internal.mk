@@ -341,12 +341,21 @@ else  # ! prebuilt_module_is_dex_javalib
 ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target-strip-comments)
+ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+	$(hide) chmod +x $@
+endif
 else ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
 $(built_module) : $(my_prebuilt_src_file) | $(ACP)
 	$(transform-prebuilt-to-target)
+ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+	$(hide) chmod +x $@
+endif
 else
 $(built_module) : $(my_prebuilt_src_file)
 	$(copy-file-to-target-with-cp)
+ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+	$(hide) chmod +x $@
+endif
 endif
 endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_MODULE_CLASS != APPS
