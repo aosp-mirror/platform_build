@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8e2d6c79_5a02c82d",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1421,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-11T20:29:11Z",
+      "side": 1,
+      "message": "We don\u0027t support LOCAL_EXPORT_C_INCLUDE_DIRS_* variants -- do we actually need the other variants for this?\n\nI\u0027m mixed on the name too, it implies that we\u0027re re-exporting the shared libraries themselves, when we\u0027re only re-exporting their exported headers. It\u0027s also in past tense, unlike other similar variables.",
+      "parentUuid": "8e2d6c79_daf4f89b",
+      "revId": "c9c175144f95bdbc64645e09dd67fb9fae74800b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e2d6c79_3a035463",
         "filename": "core/clear_vars.mk",
         "patchSetId": 1
