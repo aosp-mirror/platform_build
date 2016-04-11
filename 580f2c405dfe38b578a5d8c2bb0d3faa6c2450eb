@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_971259eb",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-04-11T20:07:33Z",
+      "side": 1,
+      "message": "Could this be parsed from android_filesystem_config.h (e.g. could we add AID_OEM_RESERVED_3_START and AID_OEM_RESERVED_3_END and not have to revisit this?)\n\nDependencies to other repositories is probably the norm for the /build tree.",
+      "range": {
+        "startLine": 36,
+        "startChar": 1,
+        "endLine": 39,
+        "endChar": 1
+      },
+      "revId": "580f2c405dfe38b578a5d8c2bb0d3faa6c2450eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
