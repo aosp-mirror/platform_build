@@ -638,9 +638,11 @@ $(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
 
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS := \
-    -D jack.coverage="true" \
+    -D jack.coverage=true \
     -D jack.coverage.metadata.file=$(intermediates.COMMON)/coverage.em \
-    -D jack.coverage.jacoco.package=$(JACOCO_PACKAGE_NAME)
+    -D jack.coverage.jacoco.package=$(JACOCO_PACKAGE_NAME) \
+    $(addprefix -D jack.coverage.jacoco.include=,$(LOCAL_JACK_COVERAGE_INCLUDE_FILTER)) \
+    $(addprefix -D jack.coverage.jacoco.exclude=,$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
 else
 $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
 endif
