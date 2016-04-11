@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e2d6c79_3a035463",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-04-11T20:19:40Z",
+      "side": 1,
+      "message": "you need to clear all these variants of LOCAL_REEXPORTED_SHARED_LIBRARIES too",
+      "revId": "c9c175144f95bdbc64645e09dd67fb9fae74800b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
