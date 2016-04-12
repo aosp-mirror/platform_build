@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8baf1e8f_014a3052",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "i don\u0027t know how you want to \"ensure\" that in follow-up CLs... by waiting for reports on bricked devices? if you don\u0027t want to merge this CL, put DO NOT SUBMIT things and remove reviewers. only add people who wants to experiment the CL. otherwise make it correct (based on your local verification tests) and avoid wasting human hours for testing and debugging buggy builds.",
+      "range": {
+        "startLine": 12,
+        "startChar": 65,
+        "endLine": 14,
+        "endChar": 52
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_1e860d45",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "use None, here and L37. also need to update all the \u0027len(xx) !\u003d 0\u0027 part to be \u0027xx is not None\".\n\nNone means the data here is invalid (we have never set a meaningful value), and \"()\" means a valid value.\n\nIt\u0027s different from the case in L36. Because L36 really means a meaningful (i.e. empty) RnageSet.",
+      "range": {
+        "startLine": 34,
+        "startChar": 27,
+        "endLine": 34,
+        "endChar": 29
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_61912c3f",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "i don\u0027t understand why you need to call list().",
+      "range": {
+        "startLine": 114,
+        "startChar": 20,
+        "endLine": 114,
+        "endChar": 24
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_a161840d",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "do we really need to call tuple() every time?",
+      "range": {
+        "startLine": 117,
+        "startChar": 27,
+        "endLine": 117,
+        "endChar": 32
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_be760110",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "delete",
+      "range": {
+        "startLine": 118,
+        "startChar": 6,
+        "endLine": 118,
+        "endChar": 32
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_410fc888",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 156,
+        "startChar": 13,
+        "endLine": 156,
+        "endChar": 49
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_01f5d092",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "https://www.python.org/dev/peps/pep-0008/#documentation-strings",
+      "range": {
+        "startLine": 163,
+        "startChar": 4,
+        "endLine": 167,
+        "endChar": 50
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_211c94b2",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "the current",
+      "range": {
+        "startLine": 238,
+        "startChar": 51,
+        "endLine": 238,
+        "endChar": 58
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_e1529c57",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-12T18:16:47Z",
+      "side": 1,
+      "message": "ws",
+      "range": {
+        "startLine": 238,
+        "startChar": 68,
+        "endLine": 238,
+        "endChar": 69
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
