@@ -38,6 +38,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
     DefaultContainerService \
+    ExtShared \
+    ExtServices \
     SettingsProvider \
     Shell \
     bcc \
