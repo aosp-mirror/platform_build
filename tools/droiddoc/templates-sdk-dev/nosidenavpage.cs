@@ -11,7 +11,6 @@
 <?cs call:custom_masthead() ?>
 
 <div id="body-content">
-<div>
 <div id="doc-content" style="position:relative;">
 
 <?cs call:tag_list(root.descr) ?>
