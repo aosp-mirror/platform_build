@@ -172,10 +172,10 @@ $(noshrob_classes_jack) $(full_classes_jack) $(jack_check_timestamp) \
 built_aar := $(intermediates.COMMON)/javalib.aar
 $(built_aar): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(built_aar): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
-$(built_aar): PRIVATE_CLASSES_JAR := $(LOCAL_BUILT_MODULE)
+$(built_aar): PRIVATE_CLASSES_JAR := $(full_classes_jar)
 $(built_aar): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(built_aar): PRIVATE_R_TXT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.txt
-$(built_aar) : $(LOCAL_BUILT_MODULE)
+$(built_aar) : $(full_classes_jar) $(full_android_manifest)
 	@echo "target AAR:  $(PRIVATE_MODULE) ($@)"
 	$(hide) rm -rf $(dir $@)aar && mkdir -p $(dir $@)aar/res
 	$(hide) cp $(PRIVATE_ANDROID_MANIFEST) $(dir $@)aar/AndroidManifest.xml
