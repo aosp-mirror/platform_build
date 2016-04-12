@@ -46,6 +46,30 @@
       "revId": "580f2c405dfe38b578a5d8c2bb0d3faa6c2450eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8baf1e8f_58b5fda6",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-12T16:24:30Z",
+      "side": 1,
+      "message": "Now you can: https://android-review.googlesource.com/#/c/214999\n\nDropping this will likely cause a rebase nightmare... also, this is a simple stop-gap till the better way gets merged (fixes it on AOSP)",
+      "parentUuid": "8e2d6c79_5a456892",
+      "range": {
+        "startLine": 36,
+        "startChar": 1,
+        "endLine": 39,
+        "endChar": 1
+      },
+      "revId": "580f2c405dfe38b578a5d8c2bb0d3faa6c2450eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
