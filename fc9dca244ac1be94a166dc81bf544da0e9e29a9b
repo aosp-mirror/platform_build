@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cb303615_7c4f390f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-12T00:45:00Z",
+      "side": 1,
+      "message": "This goes away in the next commit topic: aid-scraping",
+      "revId": "fc9dca244ac1be94a166dc81bf544da0e9e29a9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
