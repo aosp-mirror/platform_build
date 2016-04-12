@@ -996,9 +996,9 @@ else
 """ % bcb_dev)
 
   # Verify the existing partitions.
-  system_diff.WriteVerifyScript(script)
+  system_diff.WriteVerifyScript(script, touched_blocks_only=True)
   if vendor_diff:
-    vendor_diff.WriteVerifyScript(script)
+    vendor_diff.WriteVerifyScript(script, touched_blocks_only=True)
 
   script.Comment("---- start making changes here ----")
 
