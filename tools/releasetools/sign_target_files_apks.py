@@ -421,8 +421,8 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   temp_file = cStringIO.StringIO()
   certs_zip = zipfile.ZipFile(temp_file, "w")
   for k in mapped_keys:
-    certs_zip.write(k)
-  certs_zip.close()
+    common.ZipWrite(certs_zip, k)
+  common.ZipClose(certs_zip)
   common.ZipWriteStr(output_tf_zip, "SYSTEM/etc/security/otacerts.zip",
                      temp_file.getvalue())
 
