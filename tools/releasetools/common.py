@@ -1446,7 +1446,8 @@ class BlockDifference(object):
     if progress:
       script.ShowProgress(progress, 0)
     self._WriteUpdate(script, output_zip)
-    self._WritePostInstallVerifyScript(script)
+    if OPTIONS.verify:
+      self._WritePostInstallVerifyScript(script)
 
   def WriteStrictVerifyScript(self, script):
     """Verify all the blocks in the care_map, including clobbered blocks.
@@ -1570,7 +1571,8 @@ class BlockDifference(object):
 
     call = ('block_image_update("{device}", '
             'package_extract_file("{partition}.transfer.list"), '
-            '"{partition}.new.dat", "{partition}.patch.dat");\n'.format(
+            '"{partition}.new.dat", "{partition}.patch.dat") ||\n'
+            '    abort("Failed to update {partition} image.");'.format(
                 device=self.device, partition=self.partition))
     script.AppendExtra(script.WordWrap(call))
 
