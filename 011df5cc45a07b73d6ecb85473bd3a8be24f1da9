@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "ab85c25a_31e8b0f5",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8baf1e8f_1e860d45",
+      "range": {
+        "startLine": 34,
+        "startChar": 27,
+        "endLine": 34,
+        "endChar": 29
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8baf1e8f_61912c3f",
         "filename": "tools/releasetools/rangelib.py",
         "patchSetId": 3
@@ -59,6 +83,30 @@
       "writtenOn": "2016-04-12T18:16:47Z",
       "side": 1,
       "message": "i don\u0027t understand why you need to call list().",
+      "range": {
+        "startLine": 114,
+        "startChar": 20,
+        "endLine": 114,
+        "endChar": 24
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab85c25a_d1b3642d",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8baf1e8f_61912c3f",
       "range": {
         "startLine": 114,
         "startChar": 20,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "ab85c25a_91addccc",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "we\u0027re maintaining original_data as tuple",
+      "parentUuid": "8baf1e8f_a161840d",
+      "range": {
+        "startLine": 117,
+        "startChar": 27,
+        "endLine": 117,
+        "endChar": 32
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8baf1e8f_be760110",
         "filename": "tools/releasetools/rangelib.py",
         "patchSetId": 3
@@ -105,6 +177,30 @@
       "writtenOn": "2016-04-12T18:16:47Z",
       "side": 1,
       "message": "delete",
+      "range": {
+        "startLine": 118,
+        "startChar": 6,
+        "endLine": 118,
+        "endChar": 32
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab85c25a_f1b8e80b",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8baf1e8f_be760110",
       "range": {
         "startLine": 118,
         "startChar": 6,
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "ab85c25a_51c8d494",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8baf1e8f_410fc888",
+      "range": {
+        "startLine": 156,
+        "startChar": 13,
+        "endLine": 156,
+        "endChar": 49
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8baf1e8f_01f5d092",
         "filename": "tools/releasetools/rangelib.py",
         "patchSetId": 3
@@ -151,6 +271,30 @@
       "writtenOn": "2016-04-12T18:16:47Z",
       "side": 1,
       "message": "https://www.python.org/dev/peps/pep-0008/#documentation-strings",
+      "range": {
+        "startLine": 163,
+        "startChar": 4,
+        "endLine": 167,
+        "endChar": 50
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab85c25a_71c5d879",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8baf1e8f_01f5d092",
       "range": {
         "startLine": 163,
         "startChar": 4,
@@ -197,6 +341,30 @@
       "writtenOn": "2016-04-12T18:16:47Z",
       "side": 1,
       "message": "ws",
+      "range": {
+        "startLine": 238,
+        "startChar": 68,
+        "endLine": 238,
+        "endChar": 69
+      },
+      "revId": "011df5cc45a07b73d6ecb85473bd3a8be24f1da9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab85c25a_31bf50ee",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-04-13T00:34:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8baf1e8f_e1529c57",
       "range": {
         "startLine": 238,
         "startChar": 68,
