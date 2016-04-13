@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b808e4d_4cc6ff19",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-13T06:44:43Z",
+      "side": 1,
+      "message": "RangeSet(\"258768-259211 196604\").monotonic is expected to be False (which is broken), so that it won\u0027t be calling \u0027imgdiff -z\u0027 when computing the patch.",
+      "range": {
+        "startLine": 181,
+        "startChar": 19,
+        "endLine": 181,
+        "endChar": 59
+      },
+      "revId": "4a1293cff58bb157e59c978f31004227e3905b20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b808e4d_0cc0f7f8",
+        "filename": "tools/releasetools/rangelib.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-04-13T06:44:43Z",
+      "side": 1,
+      "message": "i believe this is the actual culprit...",
+      "range": {
+        "startLine": 113,
+        "startChar": 22,
+        "endLine": 113,
+        "endChar": 26
+      },
+      "revId": "4a1293cff58bb157e59c978f31004227e3905b20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
