@@ -39,9 +39,6 @@ PRODUCT_PACKAGES += \
     hid \
     ime \
     input \
-    input.evdev.default \
-    inputflinger \
-    inputflingerhost \
     javax.obex \
     libandroid \
     libandroid_runtime \
@@ -60,7 +57,6 @@ PRODUCT_PACKAGES += \
     libeffects \
     libinput \
     libinputflinger \
-    libinputflingerhost \
     libiprouteutil \
     libjnigraphics \
     libldnhncr \
