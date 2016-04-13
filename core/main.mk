@@ -242,6 +242,12 @@ $(error stop)
 endif # java version is not Sun Oracle JDK
 endif # if requires_openjdk
 
+KNOWN_INCOMPATIBLE_JAVAC_VERSIONS := google
+incompat_javac := $(foreach v,$(KNOWN_INCOMPATIBLE_JAVAC_VERSIONS),$(findstring $(v),$(javac_version_str)))
+ifneq ($(incompat_javac),)
+javac_version :=
+endif
+
 # Check for the correct version of javac
 ifeq ($(strip $(javac_version)),)
 $(info ************************************************************)
@@ -249,7 +255,12 @@ $(info You are attempting to build with the incorrect version)
 $(info of javac.)
 $(info $(space))
 $(info Your version is: $(javac_version_str).)
+ifneq ($(incompat_javac),)
+$(info This '$(incompat_javac)' version is not supported for Android platform builds.)
+$(info Use a publicly available JDK and make sure you have run envsetup.sh / lunch.)
+else
 $(info The required version is: $(required_javac_version))
+endif
 $(info $(space))
 $(info Please follow the machine setup instructions at)
 $(info $(space)$(space)$(space)$(space)https://source.android.com/source/download.html)
