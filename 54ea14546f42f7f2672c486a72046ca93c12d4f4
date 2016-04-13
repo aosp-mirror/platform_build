@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bd1de8e_4fa5dec6",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-13T21:20:53Z",
+      "side": 1,
+      "message": "ifeq ($(my_strip_module),$(my_strip_module))",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 53
+      },
+      "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
