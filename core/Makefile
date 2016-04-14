@@ -1407,6 +1407,36 @@ userdatatarball-nodeps: $(FS_GET_STATS)
 
 
 # -----------------------------------------------------------------
+# partition table image
+ifdef BOARD_BPT_INPUT_FILES
+
+BUILT_BPTIMAGE_TARGET := $(PRODUCT_OUT)/partition-table.img
+
+INTERNAL_BVBTOOL_MAKE_TABLE_ARGS := \
+	--output_gpt $(BUILT_BPTIMAGE_TARGET) \
+	--output_json $(PRODUCT_OUT)/partition-table.bpt \
+	$(foreach file, $(BOARD_BPT_INPUT_FILES), --input $(file))
+
+ifdef BOARD_BPT_DISK_SIZE
+INTERNAL_BVBTOOL_MAKE_TABLE_ARGS += --disk_size $(BOARD_BPT_DISK_SIZE)
+endif
+
+define build-bptimage-target
+  $(call pretty,"Target partition table image: $(INSTALLED_BPTIMAGE_TARGET)")
+  $(hide) $(BPTTOOL) make_table $(INTERNAL_BVBTOOL_MAKE_TABLE_ARGS) $(BOARD_BPT_MAKE_TABLE_ARGS)
+endef
+
+INSTALLED_BPTIMAGE_TARGET := $(BUILT_BPTIMAGE_TARGET)
+$(INSTALLED_BPTIMAGE_TARGET): $(BPTTOOL) $(BOARD_BPT_INPUT_FILES)
+	$(build-bptimage-target)
+
+.PHONY: bptimage-nodeps
+bptimage-nodeps:
+	$(build-bptimage-target)
+
+endif # BOARD_BPT_INPUT_FILES
+
+# -----------------------------------------------------------------
 # cache partition image
 ifdef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
 INTERNAL_CACHEIMAGE_FILES := \
@@ -1811,6 +1841,14 @@ ifeq ($(BOARD_BVB_ENABLE),true)
 	$(hide) echo "board_bvb_key_path=$(BOARD_BVB_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "board_bvb_rollback_index=$(BOARD_BVB_ROLLBACK_INDEX)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "board_bvb_add_image_hashes_args=$(BOARD_BVB_ADD_IMAGE_HASHES_ARGS)" >> $(zip_root)/META/misc_info.txt
+endif
+ifdef BOARD_BPT_INPUT_FILES
+	$(hide) echo "board_bpt_enable=true" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bpt_make_table_args=$(BOARD_BPT_MAKE_TABLE_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_bpt_input_files=$(BOARD_BPT_INPUT_FILES)" >> $(zip_root)/META/misc_info.txt
+endif
+ifdef BOARD_BPT_DISK_SIZE
+	$(hide) echo "board_bpt_disk_size=$(BOARD_BPT_DISK_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
