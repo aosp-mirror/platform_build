@@ -51,6 +51,10 @@ else
   endif
 endif
 
+ifneq (,$(strip $(LOCAL_MIN_SDK_VERSION)))
+  my_jack_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
+endif
+
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 ifneq ($(proto_sources),)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
