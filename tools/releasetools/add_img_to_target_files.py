@@ -228,6 +228,35 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
   shutil.rmtree(temp_dir)
 
 
+def AddPartitionTable(output_zip, prefix="IMAGES/"):
+  """Create a partition table image and store it in output_zip."""
+
+  _, img_file_name = tempfile.mkstemp()
+  _, bpt_file_name = tempfile.mkstemp()
+
+  # use BPTTOOL from environ, or "bpttool" if empty or not set.
+  bpttool = os.getenv("BPTTOOL") or "bpttool"
+  cmd = [bpttool, "make_table", "--output_json", bpt_file_name,
+         "--output_gpt", img_file_name]
+  input_files_str = OPTIONS.info_dict["board_bpt_input_files"]
+  input_files = input_files_str.split(" ")
+  for i in input_files:
+    cmd.extend(["--input", i])
+  disk_size = OPTIONS.info_dict.get("board_bpt_disk_size")
+  if disk_size:
+    cmd.extend(["--disk_size", disk_size])
+  args = OPTIONS.info_dict.get("board_bpt_make_table_args")
+  if args:
+    cmd.extend(shlex.split(args))
+
+  p = common.Run(cmd, stdout=subprocess.PIPE)
+  p.communicate()
+  assert p.returncode == 0, "bpttool make_table failed"
+
+  common.ZipWrite(output_zip, img_file_name, prefix + "partition-table.img")
+  common.ZipWrite(output_zip, bpt_file_name, prefix + "partition-table.bpt")
+
+
 def AddCache(output_zip, prefix="IMAGES/"):
   """Create an empty cache image and store it in output_zip."""
 
@@ -362,6 +391,9 @@ def AddImagesToTargetFiles(filename):
   AddUserdata(output_zip)
   banner("cache")
   AddCache(output_zip)
+  if OPTIONS.info_dict.get("board_bpt_enable", None) == "true":
+    banner("partition-table")
+    AddPartitionTable(output_zip)
 
   # For devices using A/B update, copy over images from RADIO/ to IMAGES/ and
   # make sure we have all the needed images ready under IMAGES/.
