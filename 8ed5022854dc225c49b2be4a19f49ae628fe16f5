@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b732e96_345ff04b",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2016-04-14T10:20:58Z",
+      "side": 1,
+      "message": "I think we can be more helpful and suggest a possible cause / solution.\n\nSuggestion:\n\nThis \u0027$(incompat_javac)\u0027 version is not supported for Android platform builds. Use a publicly available JDK and make sure you have run envsetup.sh / lunch.\n\nIt\u0027ll be interesting to see what engineers this change flushes out.",
+      "range": {
+        "startLine": 248,
+        "startChar": 43,
+        "endLine": 248,
+        "endChar": 55
+      },
+      "revId": "8ed5022854dc225c49b2be4a19f49ae628fe16f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
