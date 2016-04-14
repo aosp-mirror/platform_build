@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bd1de8e_75afbdf0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-14T18:30:09Z",
+      "side": 1,
+      "message": "Does that mean ld can resolve symbols coming from indirect dependency libraries? I don\u0027t think so.\n(Even if it was, that\u0027s not a good thing. A module must put all the libraries it needs as direct dependency.)",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 58
+      },
+      "revId": "5f75e8b173d79aa51a0c8f3bb51d559a7a8d54b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
