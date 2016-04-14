@@ -2546,7 +2546,7 @@ function search_focus_changed(obj, focused)
 }
 
 function submit_search() {
-  var query = document.getElementById('search_autocomplete').value;
+  var query = escapeHTML(document.getElementById('search_autocomplete').value);
   location.hash = 'q=' + query;
   searchControl.query = query;
   searchControl.init();
@@ -2617,7 +2617,7 @@ dacsearch.CustomSearchEngine.prototype.bindEvents_ = function() {
   this.searchInputEl_.keyup(this.debounce_(function(e) {
     var code = e.which;
     if (code != 13) {
-      this.query = this.searchInputEl_.val();
+      this.query = escapeHTML(this.searchInputEl_.val());
       location.hash = 'q=' + encodeURI(this.query);
       this.searchResultEl_.empty();
       this.getResults_();
@@ -2800,7 +2800,7 @@ google.setOnLoadCallback(function(){
     return;
   } else {
     // first time loading search results for this page
-    searchControl.query = decodeURI(location.hash.split('q=')[1]);
+    searchControl.query = escapeHTML(decodeURI(location.hash.split('q=')[1]));
     searchControl.init();
     searchControl.trackSearchRequest(searchControl.query);
     $('#searchResults').slideDown('slow', setStickyTop);
