@@ -272,6 +272,8 @@ class BlockImageDiff(object):
     self.src_basenames = {}
     self.src_numpatterns = {}
     self._max_stashed_size = 0
+    self.touched_src_ranges = RangeSet()
+    self.touched_src_sha1 = None
 
     assert version in (1, 2, 3, 4)
 
@@ -373,6 +375,7 @@ class BlockImageDiff(object):
           else:
             stashes[sh] = 1
             stashed_blocks += sr.size()
+            self.touched_src_ranges = self.touched_src_ranges.union(sr)
             out.append("stash %s %s\n" % (sh, sr.to_string_raw()))
 
       if stashed_blocks > max_stashed_blocks:
@@ -479,6 +482,9 @@ class BlockImageDiff(object):
               if temp_stash_usage > max_stashed_blocks:
                 max_stashed_blocks = temp_stash_usage
 
+            self.touched_src_ranges = self.touched_src_ranges.union(
+                xf.src_ranges)
+
             out.append("%s %s %s %s\n" % (
                 xf.style,
                 self.HashBlocks(self.tgt, xf.tgt_ranges),
@@ -501,6 +507,9 @@ class BlockImageDiff(object):
             temp_stash_usage = stashed_blocks + xf.src_ranges.size()
             if temp_stash_usage > max_stashed_blocks:
               max_stashed_blocks = temp_stash_usage
+
+          self.touched_src_ranges = self.touched_src_ranges.union(
+              xf.src_ranges)
 
           out.append("%s %d %d %s %s %s %s\n" % (
               xf.style,
@@ -536,6 +545,10 @@ class BlockImageDiff(object):
                    max_stashed_blocks * self.tgt.blocksize, max_stashed_blocks,
                    self.tgt.blocksize, max_allowed, cache_size,
                    stash_threshold)
+
+    if self.version >= 3:
+      self.touched_src_sha1 = self.HashBlocks(
+          self.src, self.touched_src_ranges)
 
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
