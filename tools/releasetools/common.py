@@ -1425,6 +1425,8 @@ class BlockDifference(object):
     self.path = os.path.join(tmpdir, partition)
     b.Compute(self.path)
     self._required_cache = b.max_stashed_size
+    self.touched_src_ranges = b.touched_src_ranges
+    self.touched_src_sha1 = b.touched_src_sha1
 
     if src is None:
       _, self.device = GetTypeAndDevice("/" + partition, OPTIONS.info_dict)
@@ -1468,26 +1470,31 @@ class BlockDifference(object):
                        self.device))
     script.AppendExtra("")
 
-  def WriteVerifyScript(self, script):
+  def WriteVerifyScript(self, script, touched_blocks_only=False):
     partition = self.partition
     if not self.src:
       script.Print("Image %s will be patched unconditionally." % (partition,))
     else:
-      ranges = self.src.care_map.subtract(self.src.clobbered_blocks)
+      if touched_blocks_only and self.version >= 3:
+        ranges = self.touched_src_ranges
+        expected_sha1 = self.touched_src_sha1
+      else:
+        ranges = self.src.care_map.subtract(self.src.clobbered_blocks)
+        expected_sha1 = self.src.TotalSha1()
       ranges_str = ranges.to_string_raw()
       if self.version >= 4:
         script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
                             'block_image_verify("%s", '
                             'package_extract_file("%s.transfer.list"), '
                             '"%s.new.dat", "%s.patch.dat")) then') % (
-                            self.device, ranges_str, self.src.TotalSha1(),
+                            self.device, ranges_str, expected_sha1,
                             self.device, partition, partition, partition))
       elif self.version == 3:
         script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
                             'block_image_verify("%s", '
                             'package_extract_file("%s.transfer.list"), '
                             '"%s.new.dat", "%s.patch.dat")) then') % (
-                            self.device, ranges_str, self.src.TotalSha1(),
+                            self.device, ranges_str, expected_sha1,
                             self.device, partition, partition, partition))
       else:
         script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
