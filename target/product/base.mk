@@ -132,12 +132,6 @@ PRODUCT_PACKAGES += \
     vold \
     wm
 
-# TODO: Remove after N. Set WifiHAL to only log debug by default.
-# This is not the proper way to really fix this, but it is the best thing to
-# do in the time period we have for N.  In the future they will be moving
-# more to a dumpsys style approach.
-PRODUCT_PROPERTY_OVERRIDES += \
-    persist.log.tag.WifiHAL=I
 
 PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
     frameworks/base/preloaded-classes:system/etc/preloaded-classes)
