@@ -94,6 +94,30 @@
       "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a814e833_82dd3bff",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2016-04-15T23:12:44Z",
+      "side": 1,
+      "message": "I see. done.",
+      "parentUuid": "a814e833_ce10ffe2",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 53
+      },
+      "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
