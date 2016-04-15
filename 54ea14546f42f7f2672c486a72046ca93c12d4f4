@@ -46,6 +46,54 @@
       "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a814e833_aef4abe0",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-15T22:59:22Z",
+      "side": 1,
+      "message": "sorry, I meant:\nifeq (mini-debug-info,$(my_strip_module))\nThe point is that you don\u0027t need to call $(filter) if you just compare to a single value.",
+      "parentUuid": "a814e833_2eef7b63",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 53
+      },
+      "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a814e833_ce10ffe2",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-15T22:59:22Z",
+      "side": 1,
+      "message": "Sorry, I meant:\nifneq (mini-debug-info,$(my_strip_module))\nThe point is that you don\u0027t need to call $(filter) if it\u0027s compared to a single value.",
+      "parentUuid": "a814e833_2eef7b63",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 53
+      },
+      "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
