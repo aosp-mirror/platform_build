@@ -22,6 +22,30 @@
       "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a814e833_2eef7b63",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2016-04-15T22:47:24Z",
+      "side": 1,
+      "message": "oh, I plan to change L119 into my_strip_module :\u003d mini-debug-info in a later patch. So it will not revert everything if the default my_strip_module is reverted.",
+      "parentUuid": "8bd1de8e_4fa5dec6",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 53
+      },
+      "revId": "54ea14546f42f7f2672c486a72046ca93c12d4f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
