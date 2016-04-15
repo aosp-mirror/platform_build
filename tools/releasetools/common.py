@@ -1472,8 +1472,12 @@ class BlockDifference(object):
 
   def WriteVerifyScript(self, script, touched_blocks_only=False):
     partition = self.partition
+
+    # full OTA
     if not self.src:
       script.Print("Image %s will be patched unconditionally." % (partition,))
+
+    # incremental OTA
     else:
       if touched_blocks_only and self.version >= 3:
         ranges = self.touched_src_ranges
@@ -1481,6 +1485,11 @@ class BlockDifference(object):
       else:
         ranges = self.src.care_map.subtract(self.src.clobbered_blocks)
         expected_sha1 = self.src.TotalSha1()
+
+      # No blocks to be checked, skipping.
+      if not ranges:
+        return
+
       ranges_str = ranges.to_string_raw()
       if self.version >= 4:
         script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
