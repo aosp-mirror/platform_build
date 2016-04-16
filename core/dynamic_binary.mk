@@ -121,6 +121,7 @@ endif
 
 $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 $(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
+$(strip_output): PRIVATE_NM := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM)
 $(strip_output): PRIVATE_READELF := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_READELF)
 ifeq ($(my_strip_module),no_debuglink)
 $(strip_output): PRIVATE_NO_DEBUGLINK := true
@@ -128,7 +129,11 @@ else
 $(strip_output): PRIVATE_NO_DEBUGLINK :=
 endif
 
-ifneq ($(filter true no_debuglink,$(my_strip_module)),)
+ifeq ($(my_strip_module),mini-debug-info)
+# Strip the binary, but keep debug frames and symbol table in a compressed .gnu_debugdata section.
+$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM)
+	$(transform-to-stripped-keep-mini-debug-info)
+else ifneq ($(filter true no_debuglink,$(my_strip_module)),)
 # Strip the binary
 $(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 	$(transform-to-stripped)
