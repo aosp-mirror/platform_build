@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4881acc7_16a151bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "WITH_TIDY",
+      "range": {
+        "startLine": 13,
+        "startChar": 34,
+        "endLine": 13,
+        "endChar": 44
+      },
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_f614d568",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1175,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "Tabs vs. spaces.",
+      "range": {
+        "startLine": 1173,
+        "startChar": 0,
+        "endLine": 1175,
+        "endChar": 42
+      },
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_56002925",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "4 space indent vs. previous 2 space indents.",
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_f6eb7592",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1234,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "Tabs vs. spaces.",
+      "range": {
+        "startLine": 1230,
+        "startChar": 0,
+        "endLine": 1234,
+        "endChar": 41
+      },
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_76d8c50d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1254,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "Tabs vs. spaces. The second line should also be indented, since it is a continuation.",
+      "range": {
+        "startLine": 1253,
+        "startChar": 0,
+        "endLine": 1254,
+        "endChar": 40
+      },
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_d6599963",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1321,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "These lines are using tabs, while others just use 2 spaces.",
+      "range": {
+        "startLine": 1320,
+        "startChar": 0,
+        "endLine": 1321,
+        "endChar": 47
+      },
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_76aa054e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1326,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "4 space indent vs. 2 space indents.",
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4881acc7_f6629510",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1383,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-04-18T21:20:03Z",
+      "side": 1,
+      "message": "These lines should be indented.",
+      "range": {
+        "startLine": 1382,
+        "startChar": 0,
+        "endLine": 1383,
+        "endChar": 47
+      },
+      "revId": "7d769163d8ca00bf9cfa4be9299bd57c39acd850",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
