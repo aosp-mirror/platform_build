@@ -33,8 +33,10 @@ GENERIC_DEFINE = "#define %s\t%s"
 FILE_COMMENT = '// Defined in file: \"%s\"'
 
 # from system/core/include/private/android_filesystem_config.h
-AID_OEM_RESERVED_START = 2900
-AID_OEM_RESERVED_END = 2999
+AID_OEM_RESERVED_RANGES = [
+    (2900, 2999),
+    (5000, 5999),
+]
 
 
 AID_MATCH = re.compile('AID_[a-zA-Z]+')
@@ -52,9 +54,9 @@ def handle_aid(file_name, section_name, config, aids, seen_aids):
         raise Exception(errmsg % ('Invalid "value", not a number, got: \"%s\"' % value))
 
     # Values must be within OEM range
-    if (v < AID_OEM_RESERVED_START) or (v > AID_OEM_RESERVED_END):
-        s = '"value" not in valid range %d - %d, got: %s'
-        s = s % (AID_OEM_RESERVED_START, AID_OEM_RESERVED_END, value)
+    if not any(lower <= v <= upper for (lower, upper) in AID_OEM_RESERVED_RANGES):
+        s = '"value" not in valid range %s, got: %s'
+        s = s % (str(AID_OEM_RESERVED_RANGES), value)
         raise Exception(errmsg % s)
 
     # use the normalized int value in the dict and detect
