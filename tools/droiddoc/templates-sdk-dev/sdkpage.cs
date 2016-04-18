@@ -46,7 +46,7 @@
 #
 ?>
 
-<?cs if:header.hide ?><?cs else ?>
+<?cs if:(header.hide||devsite)?><?cs else ?>
 <h1 itemprop="name"><?cs var:page.title ?></h1>
 <?cs /if ?>
   <div id="jd-content" itemprop="description">
@@ -574,7 +574,7 @@ tools release notes</a>.</p>
 
 </div><!-- end jd-content -->
 
-<?cs if:!sdk.redirect ?>
+<?cs if:!sdk.redirect && !devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs /if ?>
 
@@ -599,6 +599,3 @@ document.write('<iframe src="https://2507573.fls.doubleclick.net/activityi;src=2
 <!-- End of Tag -->
 </body>
 </html>
-
-
-
