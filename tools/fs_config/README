@@ -90,7 +90,10 @@ value:
 It is an error to specify multiple sections with the same [AID_<name>]. Per the ini
 specifications enforced by Pythons ConfigParser. It is also an error to specify
 multiple sections with the same value option. It is also an error to specify a value
-that is outside of the OEM range AID_OEM_RESERVED_START(2900) and AID_OEM_RESERVED_END(2999)
+that is outside of the inclusive OEM ranges:
+ * AID_OEM_RESERVED_START(2900) - AID_OEM_RESERVED_END(2999)
+ * AID_OEM_RESERVED_2_START(5000) - AID_OEM_RESERVED_2_END(5999)
+
 as defined by system/core/include/private/android_filesystem_config.h.
 
 Ordering within the TARGET_FS_CONFIG_GEN files is not relevant. The paths for files are sorted
