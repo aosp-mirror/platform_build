@@ -63,6 +63,8 @@ PRODUCT_PACKAGES += \
     libfilterfw \
     libkeystore \
     libgatekeeper \
+    libwebviewchromium_loader \
+    libwebviewchromium_plat_support \
     libwilhelm \
     logd \
     make_ext4fs \
