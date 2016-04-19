@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08fc147c_e02c2a73",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "my_tidy uneeded.",
+      "range": {
+        "startLine": 467,
+        "startChar": 0,
+        "endLine": 467,
+        "endChar": 32
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_db963f04",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "If $(PATH_TO_CLANG_TIDY) is the only value (i.e. not differ across modules), you don\u0027t even need a PRIVATE variable.",
+      "range": {
+        "startLine": 472,
+        "startChar": 31,
+        "endLine": 472,
+        "endChar": 57
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_e0454a1b",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1378,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "In makefile we usually use empty string or false to indicate disabling.",
+      "range": {
+        "startLine": 1378,
+        "startChar": 2,
+        "endLine": 1378,
+        "endChar": 22
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_80b9e63d",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1391,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "Where will these global variables be defined?\nProbably rename the variable to something like GLOABL_TIDY_CHECK_FLAGS?",
+      "range": {
+        "startLine": 1391,
+        "startChar": 22,
+        "endLine": 1391,
+        "endChar": 38
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_005fb6b9",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1401,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 1401,
+        "startChar": 21,
+        "endLine": 1401,
+        "endChar": 36
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_1b3c47bc",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "You don\u0027t need my_skip_compilation or PRIVATE_SKIP_COMPILATION, if it\u0027s purely decided by a global variable WITH_TIDY_ONLY.",
+      "range": {
+        "startLine": 1414,
+        "startChar": 0,
+        "endLine": 1417,
+        "endChar": 5
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_db775f5b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1180,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "If PRIVATE_SKIP_COMPILATION with no PRIVATE_TIDY_CHECKS, we\u0027ll only print this line in the build recipe?",
+      "range": {
+        "startLine": 1180,
+        "startChar": 2,
+        "endLine": 1180,
+        "endChar": 50
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08fc147c_7be0eb42",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1185,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-19T01:11:43Z",
+      "side": 1,
+      "message": "If it skips compilation, won\u0027t the build fail in the link phase?",
+      "range": {
+        "startLine": 1185,
+        "startChar": 0,
+        "endLine": 1185,
+        "endChar": 33
+      },
+      "revId": "6f94282480d2e1ab2d973824e2cec4d3db54084e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
