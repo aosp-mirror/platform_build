@@ -474,8 +474,10 @@ DX := $(HOST_OUT_EXECUTABLES)/dx
 MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 
 # Always use prebuilts for ckati and makeparallel
-CKATI := $(prebuilt_sdk_tools_bin)/ckati
-MAKEPARALLEL := $(prebuilt_sdk_tools_bin)/makeparallel
+prebuilt_build_tools := prebuilts/build-tools
+prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
+CKATI := $(prebuilt_build_tools_bin)/ckati
+MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
