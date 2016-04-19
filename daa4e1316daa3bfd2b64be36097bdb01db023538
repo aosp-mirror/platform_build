@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "68a590c6_5e178429",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 472,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-19T23:17:45Z",
+      "side": 1,
+      "message": "(likely as a follow-on) we should move acp from prebuilts/sdk to prebuilts/build-tools too, as it\u0027s not part of the public sdk build tools either.",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 472,
+        "endChar": 36
+      },
+      "revId": "daa4e1316daa3bfd2b64be36097bdb01db023538",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
