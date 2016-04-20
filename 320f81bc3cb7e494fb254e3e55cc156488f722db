@@ -22,6 +22,30 @@
       "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "485feccb_5d25319d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-20T23:33:29Z",
+      "side": 1,
+      "message": "When WITH_TIDY_ONLY, we want to save time and skip all compilation and link, assuming that .o and library files can be reused from previous make. When we need to regenerate correct .o files, we unset WITH_TIDY_ONLY to get a normal build.",
+      "parentUuid": "485feccb_77be0c81",
+      "range": {
+        "startLine": 1260,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 1
+      },
+      "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
