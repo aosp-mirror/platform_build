@@ -18,7 +18,12 @@ endif
 ifneq (true,$(my_skip_this_target))
 
 ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+# If a native test explicity specifies to build only for the translation arch,
+# we'll still need LOCAL_MULTILIB=both and let module_arch_supported.mk choose
+# to build only for TARGET_2ND_ARCH.
+ifneq (1,$(words $(LOCAL_MODULE_TARGET_ARCH)))
 LOCAL_MULTILIB := first
+endif
 endif
 
 my_prefix := TARGET_
