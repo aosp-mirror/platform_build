@@ -699,7 +699,7 @@ jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
         $(LOCAL_MODULE_MAKEFILE_DEP) $(JACK)
 
-$(jack_check_timestamp): $(jack_all_deps)
+$(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
 	@echo Checking build with Jack: $@
 	$(jack-check-java)
 
