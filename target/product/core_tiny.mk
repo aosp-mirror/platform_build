@@ -37,6 +37,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
+    WallpaperBackup \
     DefaultContainerService \
     ExtShared \
     ExtServices \
