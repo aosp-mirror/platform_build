@@ -68,10 +68,12 @@ include $(BUILD_SYSTEM)/setup_one_odex.mk
 # #################################################
 # Odex for the 2nd arch
 ifdef TARGET_2ND_ARCH
+ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 ifneq (first,$(my_module_multilib))
 my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/setup_one_odex.mk
 endif  # my_module_multilib is not first.
+endif  # TARGET_TRANSLATE_2ND_ARCH not true
 endif  # TARGET_2ND_ARCH
 # #################################################
 else  # must be APPS
