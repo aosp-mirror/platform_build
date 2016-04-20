@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "485feccb_77be0c81",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-20T22:31:31Z",
+      "side": 1,
+      "message": "why do you need to skip assembly compilation and static library creation etc.?\nLooks like you can just leave them as is.",
+      "range": {
+        "startLine": 1260,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 1
+      },
+      "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
