@@ -1,5 +1,6 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
+<?cs include:"../../../../frameworks/base/docs/html/sdk/sdk_vars.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs if:sdk.redirect ?>
   <head>
@@ -80,20 +81,20 @@
       <th>Platform</th>
       <th>Package</th>
       <th style="white-space:nowrap">Size (Bytes)</th>
-      <th>MD5 Checksum</th>
+      <th>SHA1 Checksum</th>
   </tr>
   <tr>
     <td>Windows 32-bit</td>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.win32_download ?>"><?cs var:ndk.win32_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.win32_download ?>"><?cs var:ndk.win32_download ?></a>
     </td>
     <td><?cs var:ndk.win32_bytes ?></td>
     <td><?cs var:ndk.win32_checksum ?></td>
   </tr>
  <!-- <tr>
    <td>
-  <a onClick="return onDownload(this)"
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
      href="//dl.google.com/android/ndk/<?cs var:ndk.win32.legacy_download ?>"><?cs var:ndk.win32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.win32.legacy_bytes ?></td>
@@ -102,16 +103,16 @@
   <tr>
     <td>Windows 64-bit</td>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.win64_download ?>"><?cs var:ndk.win64_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.win64_download ?>"><?cs var:ndk.win64_download ?></a>
     </td>
     <td><?cs var:ndk.win64_bytes ?></td>
     <td><?cs var:ndk.win64_checksum ?></td>
   </tr>
  <!--  <tr>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.win64.legacy_download ?>"><?cs var:ndk.win64.legacy_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.win64.legacy_download ?>"><?cs var:ndk.win64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.win64.legacy_bytes ?></td>
     <td><?cs var:ndk.win64.legacy_checksum ?></td>
@@ -120,8 +121,8 @@
   <tr>
     <td>Mac OS X 32-bit</td>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.mac32_download ?>"><?cs var:ndk.mac32_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.mac32_download ?>"><?cs var:ndk.mac32_download ?></a>
     </td>
     <td><?cs var:ndk.mac32_bytes ?></td>
     <td><?cs var:ndk.mac32_checksum ?></td>
@@ -129,41 +130,32 @@
  <!-- (this item is deprecated)
   <tr>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32.legacy_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.mac32.legacy_download ?>"><?cs var:ndk.mac32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.mac32.legacy_bytes ?></td>
     <td><?cs var:ndk.mac32.legacy_checksum ?></td>
   </tr> -->
     <td>Mac OS X 64-bit</td>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.mac64_download ?>"><?cs var:ndk.mac64_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.mac64_download ?>"><?cs var:ndk.mac64_download ?></a>
     </td>
     <td><?cs var:ndk.mac64_bytes ?></td>
     <td><?cs var:ndk.mac64_checksum ?></td>
   </tr>
  <!--  <tr>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.mac64.legacy_download ?>"><?cs var:ndk.mac64.legacy_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.mac64.legacy_download ?>"><?cs var:ndk.mac64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.mac64.legacy_bytes ?></td>
     <td><?cs var:ndk.mac64.legacy_checksum ?></td>
   </tr> -->
-  <tr>
-    <td>Linux 32-bit (x86)</td>
-    <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.linux32_download ?>"><?cs var:ndk.linux32_download ?></a>
-    </td>
-    <td><?cs var:ndk.linux32_bytes ?></td>
-    <td><?cs var:ndk.linux32_checksum ?></td>
-  </tr>
  <!--  <tr>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.linux32.legacy_download ?>"><?cs var:ndk.linux32.legacy_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.linux32.legacy_download ?>"><?cs var:ndk.linux32.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.linux32.legacy_bytes ?></td>
     <td><?cs var:ndk.linux32.legacy_checksum ?></td>
@@ -171,16 +163,16 @@
   <tr>
     <td>Linux 64-bit (x86)</td>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.linux64_download ?>"><?cs var:ndk.linux64_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.linux64_download ?>"><?cs var:ndk.linux64_download ?></a>
     </td>
     <td><?cs var:ndk.linux64_bytes ?></td>
     <td><?cs var:ndk.linux64_checksum ?></td>
   </tr>
   <!--  <tr>
     <td>
-  <a onClick="return onDownload(this)"
-     href="//dl.google.com/android/ndk/<?cs var:ndk.linux64.legacy_download ?>"><?cs var:ndk.linux64.legacy_download ?></a>
+  <a onClick="return onDownload(this)" data-modal-toggle="ndk_tos"
+     href="//dl.google.com/android/repository/<?cs var:ndk.linux64.legacy_download ?>"><?cs var:ndk.linux64.legacy_download ?></a>
     </td>
     <td><?cs var:ndk.linux64.legacy_bytes ?></td>
     <td><?cs var:ndk.linux64.legacy_checksum ?></td>
@@ -192,16 +184,13 @@
   <?cs call:tag_list(root.descr) ?>
 
 
-
+<?cs ########  The NDK version of the download script ######### ?>
 <script>
   function onDownload(link) {
 
     $("#downloadForRealz").html("Download " + $(link).text());
     $("#downloadForRealz").attr('href',$(link).attr('href'));
 
-    $("#tos").fadeIn('slow');
-
-    location.hash = "download";
     return false;
   }
 
@@ -214,24 +203,27 @@
     }
   }
 
-  function onDownloadNdkForRealz(link) {
+
+  function onDownloadForRealz(link) {
     if ($("input#agree").is(':checked')) {
-      $("#tos").fadeOut('slow');
-
-      $('html, body').animate({
-          scrollTop: $("#Installing").offset().top
-        }, 800, function() {
-          $("#Installing").click();
+      $("div.sdk-terms").slideUp();
+      $("h2#tos-header").text('Now downloading...');
+      $(".sdk-terms-intro").text('Your download is in progress.');
+      $("#sdk-terms-form").fadeOut('slow', function() {
+        setTimeout(function() {
+          // close the dialog
+          $('#ndk_tos').trigger('modal-close');
+          // reload to refresh the tos or optionally forward the user
+           location.reload();
+        }, 3000);
       });
-
+      ga('send', 'event', 'SDK', 'NDK tools', $("#downloadForRealz").html());
       return true;
     } else {
-      $("label#agreeLabel").parent().stop().animate({color: "#258AAF"}, 200,
-        function() {$("label#agreeLabel").parent().stop().animate({color: "#222"}, 200)}
-      );
       return false;
     }
   }
+
 
   $(window).hashchange( function(){
     if (location.hash == "") {
@@ -264,153 +256,173 @@
 <?cs call:tag_list(root.descr) ?>
 
 
+<section id="downloads" class="dac-section dac-small">
+<div class="wrap">
 
+<h2 class="norule">Start using Android Studio today</h2>
 
-<div class="pax col-13 online" style="margin:0;">
+<p>Android Studio includes all the tools you need to build apps for Android.</p>
 
+<div style="float:left;margin-right:40px;width:auto;">
+<p>
+  <a class="landing-button green download-bundle-button"
+    data-modal-toggle="studio_tos">Download Android Studio 2.0<br>
+  <span class="small"></span></a>
+</p>
+</div>
 
-<h3>SDK Tools Only</h3>
-
-<p>If you prefer to use a different IDE or run the tools from the
-command line or with build scripts, you can instead download the stand-alone Android SDK Tools.
-These packages provide the basic SDK tools for app development, without an IDE.
-Also see the <a href="<?cs var:toroot ?>tools/sdk/tools-notes.html">SDK tools release notes</a>.</p>
-
-  <table class="download">
-    <tr>
-      <th>Platform</th>
-      <th>Package</th>
-      <th>Size</th>
-      <th>SHA-1 Checksum</th>
-  </tr>
-  <tr>
-    <td rowspan="2">Windows</td>
-    <td>
-  <a onclick="return onDownload(this)" id="win-tools" href="//dl.google.com/android/<?cs
-var:sdk.win_installer
-?>"><?cs var:sdk.win_installer ?></a> (Recommended)
-    </td>
-    <td><?cs var:sdk.win_installer_bytes ?> bytes</td>
-    <td><?cs var:sdk.win_installer_checksum ?></td>
-  </tr>
-  <tr>
-    <!-- blank TD from Windows rowspan -->
-    <td>
-  <a onclick="return onDownload(this)" href="//dl.google.com/android/<?cs var:sdk.win_download
-?>"><?cs var:sdk.win_download ?></a>
-    </td>
-    <td><?cs var:sdk.win_bytes ?> bytes</td>
-    <td><?cs var:sdk.win_checksum ?></td>
-  </tr>
-  <tr>
-    <td><nobr>Mac OS X</nobr></td>
-    <td>
-  <a onclick="return onDownload(this)" id="mac-tools" href="//dl.google.com/android/<?cs
-var:sdk.mac_download
-?>"><?cs var:sdk.mac_download ?></a>
-    </td>
-    <td><?cs var:sdk.mac_bytes ?> bytes</td>
-    <td><?cs var:sdk.mac_checksum ?></td>
-  </tr>
-  <tr>
-    <td>Linux</td>
-    <td>
-  <a onclick="return onDownload(this)" id="linux-tools" href="//dl.google.com/android/<?cs
-var:sdk.linux_download
-?>"><?cs var:sdk.linux_download ?></a>
-    </td>
-    <td><?cs var:sdk.linux_bytes ?> bytes</td>
-    <td><?cs var:sdk.linux_checksum ?></td>
-  </tr>
-  </table>
+<div style="float:left;width:auto;margin-bottom:40px">
+<ul class="nolist" style="text-transform: uppercase;margin:8px 0">
+<li>Version: <?cs var:studio.version ?></li>
+<li>Release date: <?cs var:studio.release.date ?></li>
+</ul>
+</div>
 
 
 
-<h3>All Android Studio Packages</h3>
-
-<p>Select a specific Android Studio package for your platform. Also see the
-<a href="<?cs var:toroot ?>tools/revisions/studio.html">Android Studio release notes</a>.</p>
+<h4 style="clear:left;margin-top:40px">Select a different platform</h4>
 
   <table class="download">
     <tr>
       <th>Platform</th>
-      <th>Package</th>
+      <th>Android Studio package</th>
       <th>Size</th>
-      <th>SHA-1 Checksum</th>
+      <th>SHA-1 checksum</th>
   </tr>
-
   <tr>
     <td rowspan="3">Windows</td>
     <td>
-  <a onclick="return onDownload(this,false,true)" id="win-bundle"
-    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_exe_download ?>"
-    ><?cs var:studio.win_bundle_exe_download ?></a><br>(Recommended)
+  <a onclick="return onDownload(this,false,true)" id="win-bundle" data-modal-toggle="studio_tos"
+    href="//dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_exe_download ?>"
+    ><?cs var:studio.win_bundle_exe_download ?></a><br>
+    Includes Windows installer (recommended)
     </td>
-    <td><?cs var:studio.win_bundle_exe_bytes ?> bytes</td>
+    <td id="win-bundle-size"><?cs call:size_in_mb(studio.win_bundle_exe_bytes) ?> MB
+      <br>(<?cs var:studio.win_bundle_exe_bytes ?> bytes)</td>
     <td><?cs var:studio.win_bundle_exe_checksum ?></td>
   </tr>
-
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="return onDownload(this,false,true)" id="win-bundle-notools"
-    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
-    ><?cs var:studio.win_notools_exe_download ?></a><br>(No SDK tools included)
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-zip" data-modal-toggle="studio_tos"
+    href="//dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
+    ><?cs var:studio.win_bundle_download ?></a><br>
+    No Windows installer
     </td>
-    <td><?cs var:studio.win_notools_exe_bytes ?> bytes</td>
-    <td><?cs var:studio.win_notools_exe_checksum ?></td>
-  </tr>
-
-  <tr>
-    <!-- blank TD from Windows rowspan -->
-    <td>
-  <a onclick="return onDownload(this,false,true)" id="win-bundle-zip"
-    href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
-    ><?cs var:studio.win_bundle_download ?></a>
-    </td>
-    <td><?cs var:studio.win_bundle_bytes ?> bytes</td>
+    <td><?cs call:size_in_mb(studio.win_bundle_bytes) ?> MB
+      <br>(<?cs var:studio.win_bundle_bytes ?> bytes)</td>
     <td><?cs var:studio.win_bundle_checksum ?></td>
   </tr>
-
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-notools" data-modal-toggle="studio_tos"
+    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
+    ><?cs var:studio.win_notools_exe_download ?></a><br>
+    Includes Windows installer but no SDK tools
+    </td>
+    <td><?cs call:size_in_mb(studio.win_notools_exe_bytes) ?> MB
+      <br>(<?cs var:studio.win_notools_exe_bytes ?> bytes)</td>
+    <td><?cs var:studio.win_notools_exe_checksum ?></td>
+  </tr>
   <tr>
     <td><nobr>Mac OS X</nobr></td>
     <td>
-  <a onclick="return onDownload(this,false,true)" id="mac-bundle"
-    href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.mac_bundle_download ?>"
+  <a onclick="return onDownload(this,false,true)" id="mac-bundle" data-modal-toggle="studio_tos"
+    href="//dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.mac_bundle_download ?>"
     ><?cs var:studio.mac_bundle_download ?></a>
     </td>
-    <td><?cs var:studio.mac_bundle_bytes ?> bytes</td>
+    <td id="mac-bundle-size"><?cs call:size_in_mb(studio.mac_bundle_bytes) ?> MB
+      <br>(<?cs var:studio.mac_bundle_bytes ?> bytes)</td>
     <td><?cs var:studio.mac_bundle_checksum ?></td>
   </tr>
-
   <tr>
     <td>Linux</td>
     <td>
-  <a onclick="return onDownload(this,false,true)" id="linux-bundle"
-    href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.linux_bundle_download ?>"
+  <a onclick="return onDownload(this,false,true)" id="linux-bundle" data-modal-toggle="studio_tos"
+    href="//dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.linux_bundle_download ?>"
     ><?cs var:studio.linux_bundle_download ?></a>
     </td>
-    <td><?cs var:studio.linux_bundle_bytes ?> bytes</td>
+    <td id="linux-bundle-size"><?cs call:size_in_mb(studio.linux_bundle_bytes) ?> MB
+      <br>(<?cs var:studio.linux_bundle_bytes ?> bytes)</td>
     <td><?cs var:studio.linux_bundle_checksum ?></td>
   </tr>
   </table>
 
 
 
-</div><!-- end pax -->
+<h4 class="norule" style="margin-top:40px">Get just the SDK tools</h4>
+
+<p>If you do not need Android Studio, you can download the basic
+Android SDK tools below.</p>
+
+  <table class="download">
+    <tr>
+      <th>Platform</th>
+      <th>SDK tools package</th>
+      <th>Size</th>
+      <th>SHA-1 checksum</th>
+  </tr>
+  <tr>
+    <td rowspan="2">Windows</td>
+    <td>
+  <a onclick="return onDownload(this)" id="win-tools" data-modal-toggle="studio_tos"
+    href="//dl.google.com/android/<?cs
+var:sdk.win_installer
+?>"><?cs var:sdk.win_installer ?></a><br>
+    Includes Windows installer
+    </td>
+    <td><?cs call:size_in_mb(sdk.win_installer_bytes) ?> MB
+      <br>(<?cs var:sdk.win_installer_bytes ?> bytes)</td>
+    <td><?cs var:sdk.win_installer_checksum ?></td>
+  </tr>
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this)" id="win-tools2" data-modal-toggle="studio_tos"
+    href="//dl.google.com/android/<?cs var:sdk.win_download
+?>"><?cs var:sdk.win_download ?></a><br>
+    No Windows installer
+    </td>
+    <td><?cs call:size_in_mb(sdk.win_bytes) ?> MB
+      <br>(<?cs var:sdk.win_bytes ?> bytes)</td>
+    <td><?cs var:sdk.win_checksum ?></td>
+  </tr>
+  <tr>
+    <td><nobr>Mac OS X</nobr></td>
+    <td>
+  <a onclick="return onDownload(this)" id="mac-tools" data-modal-toggle="studio_tos"
+    href="//dl.google.com/android/<?cs
+var:sdk.mac_download
+?>"><?cs var:sdk.mac_download ?></a>
+    </td>
+    <td><?cs call:size_in_mb(sdk.mac_bytes) ?> MB
+      <br>(<?cs var:sdk.mac_bytes ?> bytes)</td>
+    <td><?cs var:sdk.mac_checksum ?></td>
+  </tr>
+  <tr>
+    <td>Linux</td>
+    <td>
+  <a onclick="return onDownload(this)" id="linux-tools" data-modal-toggle="studio_tos"
+    href="//dl.google.com/android/<?cs
+var:sdk.linux_download
+?>"><?cs var:sdk.linux_download ?></a>
+    </td>
+    <td><?cs call:size_in_mb(sdk.linux_bytes) ?> MB
+      <br>(<?cs var:sdk.linux_bytes ?> bytes)</td>
+    <td><?cs var:sdk.linux_checksum ?></td>
+  </tr>
+  </table>
+  <p>
+Also see the <a href="<?cs var:toroot ?>tools/sdk/tools-notes.html">SDK
+tools release notes</a>.</p>
+
+  </div><!-- end wrap -->
+  </section>
 
 
-
-
-
+<?cs ########  The Android Studio version of the download script ######### ?>
 <script>
-
-  if (location.hash == "#Requirements") {
-    $('.reqs').show();
-  } else if (location.hash == "#ExistingIDE") {
-	 $('.ide').show();
-  }
-
   var os;
   var bundlename;
   var $toolslink;
@@ -435,7 +447,9 @@ var:sdk.linux_download
     $('#not-supported').hide();
 
     /* set up primary Android Studio download button */
-    $('.download-bundle-button > .small').html(" for " + os);
+    idname = bundlename + "-size";
+    sizeMB = $(idname).text().split(' MB')[0];
+    $('.download-bundle-button > .small').html(" for " + os + " <em>(" + sizeMB + " MB)</em>");
     $('.download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
   }
 
@@ -453,13 +467,10 @@ var:sdk.linux_download
     if (bundle && !button) {
       $("a#downloadForRealz").attr("name", "#" + $(link).attr('id'));
     } else {
+      $("h2#tos-header").text('Download the Android SDK Tools');
       $("a#downloadForRealz").attr("name", $(link).attr('href'));
     }
 
-    $("#tos").show();
-    $("#landing").hide();
-
-    location.hash = "top";
     return false;
   }
 
@@ -487,22 +498,24 @@ var:sdk.linux_download
 
   function onDownloadForRealz(link) {
     if ($("input#agree").is(':checked')) {
-      location.hash = "";
-      location.hash = "top";
       $("div.sdk-terms").slideUp();
-      $("h1#tos-header").text('Now downloading...');
-      $(".sdk-terms-intro").text('You\'ll be redirected to the install instructions in a moment.');
-      $("#sdk-terms-form").fadeOut('slow', function() {
-        setTimeout(function() {
-          if ($("#downloadForRealz").attr('bundle') == 'true') {
-            // User downloaded the studio Bundle
-            window.location = "/sdk/installing/index.html?pkg=studio";
-          } else {
-            // User downloaded the SDK Tools
-            window.location = "/sdk/installing/index.html?pkg=tools";
-          }
-        }, 3000);
-      });
+      if ($("#downloadForRealz").attr('bundle') == 'true') {
+        $("h2#tos-header").text('Now downloading Android Studio!');
+        $(".sdk-terms-intro").text('Redirecting to the install instructions...');
+        $("#sdk-terms-form").slideUp(function() {
+          setTimeout(function() {
+            window.location = "/sdk/installing/index.html";
+          }, 2000);
+        });
+      } else {
+        $("h2#tos-header").text('Now downloading the Android SDK Tools!');
+        $(".sdk-terms-intro").html("<p>Because you've chosen to download " +
+          "only the Android SDK tools (and not Android Studio), there are no " +
+          "setup procedures to follow.</p><p>For information about how to " +
+          "keep your SDK tools up to date, refer to the " +
+          "<a href='/tools/help/sdk-manager.html'>SDK Manager</a> guide.</p>");
+        $("#sdk-terms-form").slideUp();
+      }
       ga('send', 'event', 'SDK', 'IDE and Tools', $("#downloadForRealz").html());
       return true;
     } else {
@@ -520,7 +533,7 @@ var:sdk.linux_download
 
 
 
-</div><!-- end the wrapper used for relative/absolute positions  -->
+
 <?cs # THIS DIV WAS OPENED IN INDEX.JD ?>
 
 
@@ -569,6 +582,11 @@ var:sdk.linux_download
 </div><!-- end g-unit -->
 
 <?cs include:"trailer.cs" ?>
+<script src="https://developer.android.com/ytblogger_lists_unified.js?v=17" type="text/javascript"></script>
+<script src="/jd_lists_unified.js?v=17" type="text/javascript"></script>
+<script src="/jd_extras.js?v=17" type="text/javascript"></script>
+<script src="/jd_collections.js?v=17" type="text/javascript"></script>
+<script src="/jd_tag_helpers.js?v=17" type="text/javascript"></script>
 
 <!-- Start of Tag -->
 <script type="text/javascript">
