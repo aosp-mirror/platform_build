@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_145d891a",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1229,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-21T18:15:36Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this depend on my_tidy_enabled?",
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_543f01b5",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-21T18:15:36Z",
+      "side": 1,
+      "message": "my_tidy_flags should also be cleared here (cleaner, it shouldn\u0027t change anything)",
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_d48071c2",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1413,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-21T18:15:36Z",
+      "side": 1,
+      "message": "This should affect my_tidy_enabled (and thus be moved up above the previous block)",
+      "range": {
+        "startLine": 1410,
+        "startChar": 0,
+        "endLine": 1413,
+        "endChar": 5
+      },
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_9497d9ff",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1418,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-21T18:15:36Z",
+      "side": 1,
+      "message": "This should happen once in config.mk, not in every binary module.",
+      "range": {
+        "startLine": 1415,
+        "startChar": 0,
+        "endLine": 1418,
+        "endChar": 5
+      },
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_9470b9a5",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-21T18:15:36Z",
+      "side": 1,
+      "message": "If we\u0027re expecting a user to set WITH_TIDY, this may as well be an error instead of a warning.",
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
