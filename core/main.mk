@@ -1121,4 +1121,9 @@ showcommands:
 .PHONY: nothing
 nothing:
 	@echo Successfully read the makefiles.
+
+.PHONY: tidy_only
+tidy_only:
+	@echo Successfully make tidy_only.
+
 endif # KATI

@@ -794,6 +794,9 @@ function mm()
               MODULES=all_modules
               ARGS=$@
             fi
+            if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
+              MODULES=tidy_only
+            fi
             ONE_SHOT_MAKEFILE=$M $DRV make -C $T -f build/core/main.mk $MODULES $ARGS
         fi
     fi
@@ -844,6 +847,9 @@ function mmm()
         if [ -n "$GET_INSTALL_PATH" ]; then
           ARGS=$GET_INSTALL_PATH
           MODULES=
+        fi
+        if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
+          MODULES=tidy_only
         fi
         ONE_SHOT_MAKEFILE="$MAKEFILE" $DRV make -C $T -f build/core/main.mk $DASH_ARGS $MODULES $ARGS
     else
