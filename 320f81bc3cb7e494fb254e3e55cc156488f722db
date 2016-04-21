@@ -46,6 +46,30 @@
       "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_748168ed",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-21T00:58:34Z",
+      "side": 1,
+      "message": "This sounds quite broken :)\nI think a better solution would be to define a phony target \"c_cxx_compilation\" that depends on all obj files of c/cpp files. Then you can run \"make c_cxx_compilation WITH_TIDY_ONLY\u003dtrue\".",
+      "parentUuid": "485feccb_5d25319d",
+      "range": {
+        "startLine": 1260,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 1
+      },
+      "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
