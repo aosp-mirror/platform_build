@@ -45,6 +45,30 @@
       "revId": "b42d591fea0e7b3ce681076a28b548669fa84d33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_86140cd7",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-21T21:55:34Z",
+      "side": 1,
+      "message": "Probably we can remove the macro jack-lib-deps now. It\u0027s only referenced in the core build system.",
+      "parentUuid": "08733496_46375490",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 34
+      },
+      "revId": "b42d591fea0e7b3ce681076a28b548669fa84d33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
