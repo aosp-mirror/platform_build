@@ -363,7 +363,7 @@ full_shared_jack_libs := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS
 full_jack_deps := $(full_shared_jack_libs)
 endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
-full_jack_libs := $(full_shared_jack_libs) $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
+full_shared_jack_libs += $(LOCAL_JACK_CLASSPATH)
 full_jack_deps += $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
 
 ifndef LOCAL_IS_HOST_MODULE
@@ -377,7 +377,6 @@ ifneq ($(apk_libraries),)
 
   # link against the jar with full original names (before proguard processing).
   full_shared_jack_libs += $(link_apk_jack_libraries)
-  full_jack_libs += $(link_apk_jack_libraries)
   full_jack_deps += $(link_apk_jack_libraries)
 endif
 
@@ -387,13 +386,13 @@ endif
 ifdef LOCAL_INSTRUMENTATION_FOR
    # link against the jar with full original names (before proguard processing).
    link_instr_classes_jack := $(link_instr_intermediates_dir.COMMON)/classes.noshrob.jack
-   full_jack_libs += $(link_instr_classes_jack)
+   full_shared_jack_libs += $(link_instr_classes_jack)
    full_jack_deps += $(link_instr_classes_jack)
 endif  # LOCAL_INSTRUMENTATION_FOR
 endif  # !LOCAL_IS_HOST_MODULE
 
 # Propagate local configuration options to this target.
-$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_ALL_JACK_LIBRARIES:= $(full_jack_libs)
+$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JACK_SHARED_LIBRARIES:= $(full_shared_jack_libs)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 
 endif  # need_compile_java
