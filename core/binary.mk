@@ -1412,8 +1412,7 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     # Set up global default checks
     my_tidy_checks := $(WITH_TIDY_CHECKS)
     ifeq ($(my_tidy_checks),)
-      # AOSP source did not follow Google readability rules.
-      my_tidy_checks := -*,google*,-google-readability*
+      my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
     endif
     # Append local clang-tidy checks.
     ifneq ($(LOCAL_TIDY_CHECKS),)
