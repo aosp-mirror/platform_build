@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_e6f940df",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-21T21:53:44Z",
+      "side": 1,
+      "message": "Could you also please remove \"USE_CORE_LIB_BOOTCLASSPATH :\u003d\" in core/host_dalvik_static_java_library.mk? I just found that\u0027s unneeded.",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 332,
+        "endChar": 41
+      },
+      "revId": "b42d591fea0e7b3ce681076a28b548669fa84d33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_46375490",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-21T21:53:44Z",
+      "side": 1,
+      "message": "Given that jack-lib-deps\u003d\u003djack-lib-files, the two branches are actually identical. We can remove the \"ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)\" now.",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 34
+      },
+      "revId": "b42d591fea0e7b3ce681076a28b548669fa84d33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
