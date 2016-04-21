@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "08733496_2fadd2c0",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1229,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-21T19:33:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_145d891a",
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08733496_543f01b5",
         "filename": "core/binary.mk",
         "patchSetId": 8
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "08733496_6fc6ea89",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-21T19:33:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_543f01b5",
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08733496_d48071c2",
         "filename": "core/binary.mk",
         "patchSetId": 8
@@ -47,6 +83,30 @@
       "writtenOn": "2016-04-21T18:15:36Z",
       "side": 1,
       "message": "This should affect my_tidy_enabled (and thus be moved up above the previous block)",
+      "range": {
+        "startLine": 1410,
+        "startChar": 0,
+        "endLine": 1413,
+        "endChar": 5
+      },
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_0faf36c3",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1413,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-21T19:33:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_d48071c2",
       "range": {
         "startLine": 1410,
         "startChar": 0,
@@ -82,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "08733496_0fd65641",
+        "filename": "core/binary.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1418,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-21T19:33:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_9497d9ff",
+      "range": {
+        "startLine": 1415,
+        "startChar": 0,
+        "endLine": 1418,
+        "endChar": 5
+      },
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08733496_9470b9a5",
         "filename": "core/config.mk",
         "patchSetId": 8
@@ -93,6 +177,24 @@
       "writtenOn": "2016-04-21T18:15:36Z",
       "side": 1,
       "message": "If we\u0027re expecting a user to set WITH_TIDY, this may as well be an error instead of a warning.",
+      "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_ef275a4a",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-21T19:33:44Z",
+      "side": 1,
+      "message": "Either warning or error could work for me. I think it should be consistent with the WITH_STATIC_ANALYZER and WITH_SYNTAX_CHECK cases at line 365 and 373.",
+      "parentUuid": "08733496_9470b9a5",
       "revId": "cdb1308986b6d937e16002cada59ebaf0340ca2c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
