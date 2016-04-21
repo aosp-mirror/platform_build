@@ -36,8 +36,7 @@ ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 endif
 
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  LOCAL_JAVA_LIBRARIES +=  core-oj-hostdex
-  LOCAL_JAVA_LIBRARIES +=  core-libart-hostdex
+  LOCAL_JAVA_LIBRARIES :=  core-oj-hostdex core-libart-hostdex $(LOCAL_JAVA_LIBRARIES)
 endif
 
 full_classes_jack := $(intermediates.COMMON)/classes.jack

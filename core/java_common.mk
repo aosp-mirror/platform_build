@@ -318,50 +318,14 @@ full_static_jack_libs := \
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
 
-ifndef LOCAL_IS_HOST_MODULE
-ifeq ($(LOCAL_SDK_VERSION),)
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-my_bootclasspath :=
-else
-my_bootclasspath :=  $(call jack-lib-files,core-oj):$(call jack-lib-files,core-libart)
-endif
-else  # LOCAL_SDK_VERSION
-ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-# LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-my_bootclasspath := $(call jack-lib-files,android_stubs_current)
-else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-my_bootclasspath := $(call jack-lib-files,android_system_stubs_current)
-else
-my_bootclasspath :=$(call jack-lib-files,sdk_v$(LOCAL_SDK_VERSION))
-endif # current or system_current
-endif # LOCAL_SDK_VERSION
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_bootclasspath)
-
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_jack_deps := $(full_shared_jack_libs)
+
+ifndef LOCAL_IS_HOST_MODULE
 # Turn off .toc optimization for apps build as we cannot build dexdump.
 ifeq (,$(TARGET_BUILD_APPS))
 full_jack_deps := $(patsubst %.jack, %.dex.toc, $(full_jack_deps))
 endif
-
-else # LOCAL_IS_HOST_MODULE
-
-ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-my_bootclasspath :=
-else
-my_bootclasspath := $(call jack-lib-files,core-oj-hostdex,$(LOCAL_IS_HOST_MODULE)):$(call jack-lib-files,core-libart-hostdex,$(LOCAL_IS_HOST_MODULE))
-endif
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES := $(my_bootclasspath)
-# Compiling against the final jack library. If we want to add support for obfuscated library
-# we'll need to change that to compile against the not obfuscated jack library.
-full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_deps := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-else
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH_JAVA_LIBRARIES :=
-full_shared_jack_libs := $(call jack-lib-deps,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_deps := $(full_shared_jack_libs)
-endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 full_shared_jack_libs += $(LOCAL_JACK_CLASSPATH)
 full_jack_deps += $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
