@@ -70,6 +70,30 @@
       "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_1e95aa2b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1263,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-21T16:56:04Z",
+      "side": 1,
+      "message": "It is actually consistent to skip everything else and run only clang-tidy when WITH_TIDY_ONLY is set. Anyway, since clang-tidy only parses C/C++ code and WITH_TIDY_ONLY is used mostly with \u0027mm\u0027 and \u0027mmm\u0027, I now added a new tidy_only target to include c_objects and cpp_objects in the new patch. \u0027mm\u0027 and \u0027mmm\u0027 functions are modified to detect  WITH_TIDY_ONLY and call make with tidy_only.",
+      "parentUuid": "08733496_748168ed",
+      "range": {
+        "startLine": 1260,
+        "startChar": 0,
+        "endLine": 1263,
+        "endChar": 1
+      },
+      "revId": "320f81bc3cb7e494fb254e3e55cc156488f722db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
