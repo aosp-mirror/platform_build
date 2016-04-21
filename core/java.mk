@@ -414,6 +414,7 @@ $(full_classes_compiled_jar): \
         $(layers_file) \
         $(RenderScript_file_stamp) \
         $(proto_java_sources_file_stamp) \
+        $(NORMALIZE_PATH) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
 
@@ -629,7 +630,7 @@ jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
         $(common_proguard_flag_files) $(proguard_flag_files) \
         $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
-        $(JACK_DEFAULT_ARGS) $(JACK)
+        $(NORMALIZE_PATH) $(JACK_DEFAULT_ARGS) $(JACK)
 
 $(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
 	@echo Checking build with Jack: $@

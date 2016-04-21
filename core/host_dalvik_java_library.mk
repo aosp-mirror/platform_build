@@ -80,7 +80,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(PLATFORM_JACK_M
 
 jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
         $(jar_manifest_file) $(proto_java_sources_file_stamp) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(JACK_DEFAULT_ARGS) $(JACK)
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(NORMALIZE_PATH) $(JACK_DEFAULT_ARGS) $(JACK)
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
