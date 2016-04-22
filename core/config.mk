@@ -187,8 +187,8 @@ FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(OUT_DIR) $(SCAN_EXCLUDE_DIRS) .r
 #     etc.
 #
 # NOTE: These directories MUST contain post-processed headers using the
-# bionic/libc/kernel/clean_header.py tool. Additionally, the original kernel
-# headers must also be checked in, but in a different subdirectory. By
+# bionic/libc/kernel/tools/clean_header.py tool. Additionally, the original
+# kernel headers must also be checked in, but in a different subdirectory. By
 # convention, the originals should be checked into original-kernel-headers
 # directory of the same parent dir. For example,
 #     device/samsung/tuna/kernel-headers            <----- post-processed
