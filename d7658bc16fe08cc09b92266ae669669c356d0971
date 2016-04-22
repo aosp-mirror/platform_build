@@ -22,6 +22,30 @@
       "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_5828011b",
+        "filename": "core/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-22T17:49:44Z",
+      "side": 1,
+      "message": "If we don\u0027t enable google-runtime-int for external/google, it will be disabled from the external/ rule. We will only include AOSP projects here.\nTo enable or disable a check with LOCAL_TIDY_CHECKS will change many .mk files. We are trying to revert and avoid CLs like https://android-review.googlesource.com/215294 and 215384.",
+      "parentUuid": "08733496_586001ac",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 40
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
