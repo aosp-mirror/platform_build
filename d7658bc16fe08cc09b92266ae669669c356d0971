@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_586001ac",
+        "filename": "core/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-22T17:35:00Z",
+      "side": 1,
+      "message": "I\u0027d prefer not to hardcode in path names to google projects here. Can we not require these to be added to these projects specifically?\n\nWe already special case external/ for other warnings, but we don\u0027t go any further.",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 40
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
