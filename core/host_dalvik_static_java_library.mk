@@ -24,5 +24,4 @@ LOCAL_IS_STATIC_JAVA_LIBRARY := true
 
 include $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 
-USE_CORE_LIB_BOOTCLASSPATH :=
 LOCAL_IS_STATIC_JAVA_LIBRARY :=
