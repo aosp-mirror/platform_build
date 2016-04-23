@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "08733496_29b92eee",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1400,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-23T03:34:29Z",
+      "side": 1,
+      "message": "This makes me think it is a global constatn. I would explicitly pass in $(LOCAL_PATH) as argument.",
+      "range": {
+        "startLine": 1400,
+        "startChar": 24,
+        "endLine": 1400,
+        "endChar": 53
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08733496_586001ac",
         "filename": "core/tidy.mk",
         "patchSetId": 1
@@ -42,6 +65,53 @@
         "startChar": 0,
         "endLine": 35,
         "endChar": 40
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_ce8fe059",
+        "filename": "core/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-23T03:34:29Z",
+      "side": 1,
+      "message": "I once though about adding subtree-scoped variables. For example in external/Android.mk (assuming we can put a file there), something like:\nSUBTREE_TIDY_CHECKS :\u003d ...\ninclude $(all-sudbdir-makefiles)\n$(include CLEAR_SUBTREE_VARS)\n\nIn the core build system we\u0027ll apply the SUBTREE_* values.\n\nWe probably don\u0027t want do that in the makefile-based build system any more. Dan, how do you think about such support in Soong?",
+      "parentUuid": "08733496_5828011b",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 40
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_a9a45ecd",
+        "filename": "core/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-23T03:34:29Z",
+      "side": 1,
+      "message": "It\u0027s more efficient with:\n$(filter $(word 1)%,$(LOCAL_PATH)/)",
+      "range": {
+        "startLine": 39,
+        "startChar": 5,
+        "endLine": 39,
+        "endChar": 52
       },
       "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
