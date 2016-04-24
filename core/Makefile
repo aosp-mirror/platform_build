@@ -1306,6 +1306,10 @@ DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
   $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
   $(HOST_OUT_EXECUTABLES)/make_ext4fs \
+  $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh \
+  $(HOST_OUT_EXECUTABLES)/mksquashfs \
+  $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh \
+  $(HOST_OUT_EXECUTABLES)/make_f2fs \
   $(HOST_OUT_EXECUTABLES)/simg2img \
   $(HOST_OUT_EXECUTABLES)/e2fsck \
   $(HOST_OUT_EXECUTABLES)/build_verity_tree \
