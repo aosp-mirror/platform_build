@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "08733496_44764812",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1400,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-25T16:58:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_29b92eee",
+      "range": {
+        "startLine": 1400,
+        "startChar": 24,
+        "endLine": 1400,
+        "endChar": 53
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08733496_586001ac",
         "filename": "core/tidy.mk",
         "patchSetId": 1
@@ -107,6 +131,30 @@
       "writtenOn": "2016-04-23T03:34:29Z",
       "side": 1,
       "message": "It\u0027s more efficient with:\n$(filter $(word 1)%,$(LOCAL_PATH)/)",
+      "range": {
+        "startLine": 39,
+        "startChar": 5,
+        "endLine": 39,
+        "endChar": 52
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_9fe7c9fb",
+        "filename": "core/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-25T16:58:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_a9a45ecd",
       "range": {
         "startLine": 39,
         "startChar": 5,
