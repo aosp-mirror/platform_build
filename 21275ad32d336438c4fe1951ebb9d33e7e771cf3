@@ -22,6 +22,30 @@
       "revId": "21275ad32d336438c4fe1951ebb9d33e7e771cf3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_54c1936c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 894,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-04-25T18:53:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08733496_b41d87fd",
+      "range": {
+        "startLine": 893,
+        "startChar": 0,
+        "endLine": 894,
+        "endChar": 31
+      },
+      "revId": "21275ad32d336438c4fe1951ebb9d33e7e771cf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
