@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_3c85d935",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-25T23:13:57Z",
+      "side": 1,
+      "message": "this needs to go",
+      "revId": "199ddaa3a261cd296017dee19f82556041e7427b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_7c77510e",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-25T23:13:57Z",
+      "side": 1,
+      "message": "$(hide)",
+      "revId": "199ddaa3a261cd296017dee19f82556041e7427b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
