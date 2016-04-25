@@ -172,16 +172,15 @@ def recursiveDiff(prefix, dir1, dir2, out_file):
       continue
 
     if entry in list2:
-      if os.path.islink(name1):
-        if os.path.islink(name2):
-          link1 = os.readlink(name1)
-          link2 = os.readlink(name2)
-          if link1 != link2:
-            print("%s: Symlinks differ: %s vs %s" % (name, link1, link2),
-                  file=out_file)
-        else:
-          print("%s: File types differ, skipping compare" % name,
+      if os.path.islink(name1) and os.path.islink(name2):
+        link1 = os.readlink(name1)
+        link2 = os.readlink(name2)
+        if link1 != link2:
+          print("%s: Symlinks differ: %s vs %s" % (name, link1, link2),
                 file=out_file)
+        continue
+      elif os.path.islink(name1) or os.path.islink(name2):
+        print("%s: File types differ, skipping compare" % name, file=out_file)
         continue
 
       stat1 = os.stat(name1)
