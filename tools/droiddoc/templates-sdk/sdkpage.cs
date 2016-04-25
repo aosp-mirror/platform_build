@@ -266,7 +266,7 @@
 <div style="float:left;margin-right:40px;width:auto;">
 <p>
   <a class="landing-button green download-bundle-button"
-    data-modal-toggle="studio_tos">Download Android Studio 2.0<br>
+    data-modal-toggle="studio_tos">Download Android Studio<br>
   <span class="small"></span></a>
 </p>
 </div>
