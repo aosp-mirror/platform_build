@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_3f922bd5",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1175,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-25T23:32:21Z",
+      "side": 1,
+      "message": "Optionally we can leave those fields blank too and just hardcode a default in Bionic, but I thought it best to get any defaults out of there and into here, since we can just easily change it, and allow OEMs to set these fields if desired.\n\nI could definitely see the case where I would want to set homedir. However, homedir could be optional.",
+      "revId": "c4e888131e1ce7648195a0526b4860d5a834a352",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
