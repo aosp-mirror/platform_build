@@ -922,7 +922,11 @@ function croot()
 {
     T=$(gettop)
     if [ "$T" ]; then
-        \cd $(gettop)
+        if [ "$1" ]; then
+            \cd $(gettop)/$1
+        else
+            \cd $(gettop)
+        fi
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
     fi
