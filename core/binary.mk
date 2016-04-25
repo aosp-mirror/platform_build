@@ -791,6 +791,38 @@ my_generated_sources += $(aidl_gen_cpp)
 endif  # $(aidl_src) non-empty
 
 ###########################################################
+## Compile the .vts files to .cc (or .c) and then to .o
+###########################################################
+
+vts_src := $(strip $(filter %.vts,$(my_src_files)))
+vts_gen_cpp :=
+ifneq ($(vts_src),)
+
+# Use the intermediates directory to avoid writing our own .cpp -> .o rules.
+vts_gen_cpp_root := $(intermediates)/vts-generated/src
+vts_gen_include_root := $(intermediates)/vts-generated/include
+
+# Multi-architecture builds have distinct intermediates directories.
+# Thus we'll actually generate source for each architecture.
+$(foreach s,$(vts_src),\
+    $(eval $(call define-vts-cpp-rule,$(s),$(vts_gen_cpp_root),vts_gen_cpp)))
+$(foreach cpp,$(vts_gen_cpp), \
+    $(call include-depfile,$(addsuffix .vts.P,$(basename $(cpp))),$(cpp)))
+$(call track-src-file-gen,$(vts_src),$(vts_gen_cpp))
+
+$(vts_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
+$(vts_gen_cpp) : PRIVATE_HEADER_OUTPUT_DIR := $(vts_gen_include_root)
+$(vts_gen_cpp) : PRIVATE_VTS_FLAGS := $(addprefix -I,$(LOCAL_VTS_INCLUDES))
+
+# Add generated headers to include paths.
+my_c_includes += $(vts_gen_include_root)
+my_export_c_include_dirs += $(vts_gen_include_root)
+# Pick up the generated C++ files later for transformation to .o files.
+my_generated_sources += $(vts_gen_cpp)
+
+endif  # $(vts_src) non-empty
+
+###########################################################
 ## YACC: Compile .y/.yy files to .c/.cpp and then to .o.
 ###########################################################
 
@@ -1392,7 +1424,7 @@ $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
 # Similarly, the generated DBus headers need to exist before we export their location.
 # People are not going to consume the aidl generated cpp file, but the cpp file is
 # generated after the headers, so this is a convenient way to ensure the headers exist.
-$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp)
+$(export_includes) : $(LOCAL_MODULE_MAKEFILE_DEP) $(proto_generated_headers) $(dbus_generated_headers) $(aidl_gen_cpp) $(vts_gen_cpp)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp
 ifdef my_export_c_include_dirs
