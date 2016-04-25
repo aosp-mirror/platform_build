@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_b41d87fd",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 894,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-25T18:44:46Z",
+      "side": 1,
+      "message": "I\u0027d move this to build/core/clang/config.mk (or add content of tidy.mk to build/core/definitions.mk).",
+      "range": {
+        "startLine": 893,
+        "startChar": 0,
+        "endLine": 894,
+        "endChar": 31
+      },
+      "revId": "21275ad32d336438c4fe1951ebb9d33e7e771cf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
