@@ -539,6 +539,7 @@ NANOPB_SRCS := external/nanopb-c/generator/protoc-gen-nanopb \
     $(wildcard external/nanopb-c/generator/*.py \
                external/nanopb-c/generator/google/*.py \
                external/nanopb-c/generator/proto/*.py)
+VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 DBUS_GENERATOR := $(HOST_OUT_EXECUTABLES)/dbus-binding-generator
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
