@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "08733496_f4cd3f84",
+        "filename": "core/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-25T17:59:56Z",
+      "side": 1,
+      "message": "That\u0027s something that may be feasible in Soong, since variables are already subtree-scoped, but we\u0027d need a way to implicitly attach them onto a module.\n\nBut I\u0027m not sure we can even put a file in external/ in any sane manner -- there\u0027s not a common external project in all manifests that I know of.\n\nAnd I\u0027m less worried about external/.. (which is already a build system concept) than the external/google* and external/webrtc/* special cases, which won\u0027t be helped with that.",
+      "parentUuid": "08733496_ce8fe059",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 40
+      },
+      "revId": "d7658bc16fe08cc09b92266ae669669c356d0971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08733496_a9a45ecd",
         "filename": "core/tidy.mk",
         "patchSetId": 1
