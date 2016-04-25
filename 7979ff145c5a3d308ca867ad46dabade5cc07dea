@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08733496_a75f1b1b",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 894,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-25T19:07:34Z",
+      "side": 1,
+      "message": "I meant to also include it from build/core/clang/config.mk.",
+      "range": {
+        "startLine": 894,
+        "startChar": 0,
+        "endLine": 894,
+        "endChar": 37
+      },
+      "revId": "7979ff145c5a3d308ca867ad46dabade5cc07dea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
