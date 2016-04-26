@@ -17,7 +17,7 @@
 ifneq ($(filter-out false,$(USE_CCACHE)),)
   # The default check uses size and modification time, causing false misses
   # since the mtime depends when the repo was checked out
-  export CCACHE_COMPILERCHECK := content
+  export CCACHE_COMPILERCHECK ?= content
 
   # See man page, optimizations to get more cache hits
   # implies that __DATE__ and __TIME__ are not critical for functionality.
