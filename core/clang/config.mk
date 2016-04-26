@@ -177,3 +177,5 @@ ifeq ($(HOST_PREFER_32_BIT),true)
 # We don't have 32-bit prebuilt libLLVM/libclang, so force to build them from source.
 FORCE_BUILD_LLVM_COMPONENTS := true
 endif
+
+include $(BUILD_SYSTEM)/clang/tidy.mk
