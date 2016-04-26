@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "888725d1_5b2b7b20",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-26T20:32:54Z",
+      "side": 1,
+      "message": "Im ok with adding these as conditional based on TARGET_FS_CONFIG_GEN, it may result in a 0 length file added but only in the case an OEM is actually setting up filesystem customization, which seems reasonable.\n\nHowever, is it OK to gaurd PROD_PACK adds here?",
+      "revId": "7be445415f3ec4cba7dcae60594f893b7e8c5fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
