@@ -304,26 +304,26 @@
   <tr>
     <!-- blank TD from Windows rowspan -->
     <td>
-  <a onclick="return onDownload(this,false,true)" id="win-bundle-zip" data-modal-toggle="studio_tos"
-    href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
-    ><?cs var:studio.win_bundle_download ?></a><br>
-    No Android SDK
-    </td>
-    <td><?cs call:size_in_mb(studio.win_bundle_bytes) ?> MB
-      <br>(<?cs var:studio.win_bundle_bytes ?> bytes)</td>
-    <td><?cs var:studio.win_bundle_checksum ?></td>
-  </tr>
-  <tr>
-    <!-- blank TD from Windows rowspan -->
-    <td>
   <a onclick="return onDownload(this,false,true)" id="win-bundle-notools" data-modal-toggle="studio_tos"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
     ><?cs var:studio.win_notools_exe_download ?></a><br>
-    No Android SDK, no installer
+    No Android SDK
     </td>
     <td><?cs call:size_in_mb(studio.win_notools_exe_bytes) ?> MB
       <br>(<?cs var:studio.win_notools_exe_bytes ?> bytes)</td>
     <td><?cs var:studio.win_notools_exe_checksum ?></td>
+  </tr>
+  <tr>
+    <!-- blank TD from Windows rowspan -->
+    <td>
+  <a onclick="return onDownload(this,false,true)" id="win-bundle-zip" data-modal-toggle="studio_tos"
+    href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
+    ><?cs var:studio.win_bundle_download ?></a><br>
+    No Android SDK, no installer
+    </td>
+    <td><?cs call:size_in_mb(studio.win_bundle_bytes) ?> MB
+      <br>(<?cs var:studio.win_bundle_bytes ?> bytes)</td>
+    <td><?cs var:studio.win_bundle_checksum ?></td>
   </tr>
   <tr>
     <td><nobr>Mac OS X</nobr></td>
