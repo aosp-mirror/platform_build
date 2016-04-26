@@ -17,6 +17,7 @@
       if:ndk ?><?cs
         if:guide ?>guide<?cs
         elif:samples ?>samples<?cs
+          if:(samplesDocPage&&!samplesProjectIndex) ?> samples-docpage<?cs /if ?><?cs
         elif:reference ?>reference<?cs
         elif:downloads ?>downloads<?cs
         else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
@@ -30,6 +31,7 @@
           elif:tools ?>tools<?cs
           elif:sdk ?>sdk<?cs
           elif:samples ?>samples<?cs
+            if:(samplesDocPage&&!samplesProjectIndex) ?> samples-docpage<?cs /if ?><?cs
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(google||reference.gms||reference.gcm) ?>google<?cs
         elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
