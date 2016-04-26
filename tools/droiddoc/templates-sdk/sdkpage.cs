@@ -295,7 +295,7 @@
   <a onclick="return onDownload(this,false,true)" id="win-bundle" data-modal-toggle="studio_tos"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_exe_download ?>"
     ><?cs var:studio.win_bundle_exe_download ?></a><br>
-    Includes Windows installer (recommended)
+    Includes Android SDK <b>(recommended)</b>
     </td>
     <td id="win-bundle-size"><?cs call:size_in_mb(studio.win_bundle_exe_bytes) ?> MB
       <br>(<?cs var:studio.win_bundle_exe_bytes ?> bytes)</td>
@@ -307,7 +307,7 @@
   <a onclick="return onDownload(this,false,true)" id="win-bundle-zip" data-modal-toggle="studio_tos"
     href="https://dl.google.com/dl/android/studio/ide-zips/<?cs var:studio.version ?>/<?cs var:studio.win_bundle_download ?>"
     ><?cs var:studio.win_bundle_download ?></a><br>
-    No Windows installer
+    No Android SDK
     </td>
     <td><?cs call:size_in_mb(studio.win_bundle_bytes) ?> MB
       <br>(<?cs var:studio.win_bundle_bytes ?> bytes)</td>
@@ -319,7 +319,7 @@
   <a onclick="return onDownload(this,false,true)" id="win-bundle-notools" data-modal-toggle="studio_tos"
     href="https://dl.google.com/dl/android/studio/install/<?cs var:studio.version ?>/<?cs var:studio.win_notools_exe_download ?>"
     ><?cs var:studio.win_notools_exe_download ?></a><br>
-    Includes Windows installer but no SDK tools
+    No Android SDK, no installer
     </td>
     <td><?cs call:size_in_mb(studio.win_notools_exe_bytes) ?> MB
       <br>(<?cs var:studio.win_notools_exe_bytes ?> bytes)</td>
@@ -351,10 +351,10 @@
 
 
 
-<h4 class="norule" style="margin-top:40px">Get just the SDK tools</h4>
+<h4 class="norule" style="margin-top:40px">Get just the command line tools</h4>
 
-<p>If you do not need Android Studio, you can download the basic
-Android SDK tools below.</p>
+<p>If you do not need Android Studio, you can download the basic Android
+command line tools below.</p>
 
   <table class="download">
     <tr>
@@ -370,7 +370,6 @@ Android SDK tools below.</p>
     href="//dl.google.com/android/<?cs
 var:sdk.win_installer
 ?>"><?cs var:sdk.win_installer ?></a><br>
-    Includes Windows installer
     </td>
     <td><?cs call:size_in_mb(sdk.win_installer_bytes) ?> MB
       <br>(<?cs var:sdk.win_installer_bytes ?> bytes)</td>
@@ -382,7 +381,7 @@ var:sdk.win_installer
   <a onclick="return onDownload(this)" id="win-tools2" data-modal-toggle="studio_tos"
     href="//dl.google.com/android/<?cs var:sdk.win_download
 ?>"><?cs var:sdk.win_download ?></a><br>
-    No Windows installer
+    No installer
     </td>
     <td><?cs call:size_in_mb(sdk.win_bytes) ?> MB
       <br>(<?cs var:sdk.win_bytes ?> bytes)</td>
