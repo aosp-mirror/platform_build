@@ -22,6 +22,30 @@
       "revId": "45014a0a097d650eefbf317c32f729eede593947",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "08733496_45f0f8af",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-26T00:19:01Z",
+      "side": 1,
+      "message": "I\u0027m not sure what your getting at, as their not overriding anything.\n\nWhat I am trying to avoid is something like fs_config_files, where one not only has to set up config.fs files, but they also have to add this magical package name to PRODUCT_PACKAGES. Its too easy to miss that PRODUCT_PACKAGES set. In fact, I want to go look at the fs_config_files and fs_config_dirs code and see if it handles empty files. I would like to drop that requirement for successful configuration at some point.",
+      "parentUuid": "08733496_df6db794",
+      "range": {
+        "startLine": 91,
+        "startChar": 4,
+        "endLine": 91,
+        "endChar": 10
+      },
+      "revId": "45014a0a097d650eefbf317c32f729eede593947",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
