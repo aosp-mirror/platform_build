@@ -127,7 +127,7 @@
 <title><?cs
 if:devsite ?><?cs
   if:page.title ?><?cs
-    var:page.title ?><?cs
+    var:html_strip(page.title) ?><?cs
   else ?>Android Developers<?cs
   /if ?><?cs
 else ?><?cs
