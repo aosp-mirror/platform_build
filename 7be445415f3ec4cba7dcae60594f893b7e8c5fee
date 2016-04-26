@@ -16,6 +16,24 @@
       "revId": "7be445415f3ec4cba7dcae60594f893b7e8c5fee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "888725d1_6d0ec026",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-04-26T22:12:33Z",
+      "side": 1,
+      "message": "No, in general don\u0027t use conditionals in product makefiles. (We can load them all in at the same time, and cache inherited products, which can lead to bad results when combined with conditionals)\n\nIf you really do need it to be optional, then you can either make the products that need it add it to their PRODUCT_PACKAGES, or conditionalize the definition of the module itself -- a missing module in PRODUCT_PACKAGES is not an error.",
+      "parentUuid": "888725d1_5b2b7b20",
+      "revId": "7be445415f3ec4cba7dcae60594f893b7e8c5fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
