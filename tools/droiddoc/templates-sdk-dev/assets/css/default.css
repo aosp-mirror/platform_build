@@ -6632,15 +6632,18 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   transition: opacity 200ms linear 200ms;
 }
 
-@media (min-width: 720px) and (max-width: 979px) {
+@media (min-width: 720px) {
   .dac-header-tabs {
     display: inline-block;
   }
-}
 
-@media (min-width: 980px) {
-  .dac-header-tabs {
-    display: inline-block;
+  /* Do not show nav toggle and up-nav button for left nav
+     in Studio docs, when header tabs are visible */
+  body.studio .dac-nav-back-button {
+    display:none;
+  }
+  body.studio .dac-nav-sub {
+    top: 0 !important;
   }
 }
 
@@ -6752,6 +6755,10 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
   list-style-type: none;
   margin: 23px 0 -13px 0;
   display: inline-block;
+}
+
+body.studio .dac-header-crumbs {
+  display:none;
 }
 
 .dac-header-crumbs.dac-has-content {
@@ -7397,6 +7404,21 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools]
 @media (min-width: 980px) {
   .dac-nav-open #body-content {
     padding-left: 250px;
+  }
+
+  /* Do not show nav toggle for Studio on large screens */
+  body.studio .dac-nav-toggle {
+    display:none;
+  }
+  body.studio .dac-header-logo {
+    padding-left:20px;
+  }
+  /* And if the page has no subcomponent, don't show left nav at all */
+  body.studio.None .dac-nav {
+    display: none;
+  }
+  body.studio.None #body-content {
+    padding-left:0;
   }
 }
 
