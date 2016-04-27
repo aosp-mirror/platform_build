@@ -34,6 +34,24 @@
       "revId": "7be445415f3ec4cba7dcae60594f893b7e8c5fee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48560d47_f45d113a",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-27T16:02:11Z",
+      "side": 1,
+      "message": "Oh thanks Dan, I didn\u0027t realize that its ok to have it in PRODUCT_PACKAGES but no rule for the target. I think that fits the bill perfectly.",
+      "parentUuid": "888725d1_6d0ec026",
+      "revId": "7be445415f3ec4cba7dcae60594f893b7e8c5fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
