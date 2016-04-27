@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48560d47_ba242db7",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-27T00:16:16Z",
+      "side": 1,
+      "message": "How about mips64?\nIf it\u0027s mips only, you don\u0027t need $(filter).",
+      "range": {
+        "startLine": 126,
+        "startChar": 7,
+        "endLine": 126,
+        "endChar": 21
+      },
+      "revId": "540e9d96e7e3a0b40e6d7575b48845192c7d22ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
