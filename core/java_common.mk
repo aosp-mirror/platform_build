@@ -133,6 +133,15 @@ else
   extra_jar_args :=
 endif # java_resource_file_groups
 
+#####################################
+## Warn if there is unrecognized file in LOCAL_SRC_FILES.
+my_unknown_src_files := $(filter-out \
+  %.java %.aidl %.proto %.logtags %.fs %.rs, \
+  $(LOCAL_SRC_FILES) $(LOCAL_INTERMEDIATE_SOURCES) $(LOCAL_GENERATED_SOURCES))
+ifneq ($(my_unknown_src_files),)
+$(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Unused source files: $(my_unknown_src_files))
+endif
+
 ######################################
 ## PRIVATE java vars
 # LOCAL_SOURCE_FILES_ALL_GENERATED is set only if the module does not have static source files,
