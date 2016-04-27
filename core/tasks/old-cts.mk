@@ -65,7 +65,9 @@ CTS_CORE_CASE_LIST += \
 
 CTS_TEST_JAR_LIST := \
 	cts-junit \
-	CtsJdwp
+	CtsJdwp \
+	cts-testng \
+	CtsLibcoreOj
 
 # Depend on the full package paths rather than the phony targets to avoid
 # rebuilding the packages every time.
