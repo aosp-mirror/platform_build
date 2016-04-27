@@ -22,6 +22,30 @@
       "revId": "540e9d96e7e3a0b40e6d7575b48845192c7d22ab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48560d47_7d83afdc",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2016-04-27T00:42:19Z",
+      "side": 1,
+      "message": "mips64 has the same problem as mips. I mistakenly thought $(filter) can search string \"mips\" in the text.",
+      "parentUuid": "48560d47_ba242db7",
+      "range": {
+        "startLine": 126,
+        "startChar": 7,
+        "endLine": 126,
+        "endChar": 21
+      },
+      "revId": "540e9d96e7e3a0b40e6d7575b48845192c7d22ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
