@@ -116,7 +116,16 @@ my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
   $(LOCAL_STRIP_MODULE))
 ifeq ($(my_strip_module),)
+  my_strip_module := mini-debug-info
+endif
+
+ifeq ($(my_strip_module),mini-debug-info)
+# Don't use mini-debug-info on mips (both 32-bit and 64-bit). objcopy checks that all
+# SH_MIPS_DWARF sections having name prefix .debug_ or .zdebug_, so there seems no easy
+# way using objcopy to remove all debug sections except .debug_frame on mips.
+ifneq ($(filter mips mips64,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_strip_module := true
+endif
 endif
 
 $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
