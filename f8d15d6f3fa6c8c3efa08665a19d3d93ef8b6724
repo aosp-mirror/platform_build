@@ -16,6 +16,24 @@
       "revId": "f8d15d6f3fa6c8c3efa08665a19d3d93ef8b6724",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48560d47_6049487b",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-04-27T01:29:27Z",
+      "side": 1,
+      "message": "In binary.mk you can track the generated sources like .proto-\u003e.cpp-\u003e.o; in Java typically the generated .java files aren\u0027t known at this point and we don\u0027t have a full list of generated java files.\nAlso pattern filtering is simpler and straightforward.",
+      "parentUuid": "48560d47_dd02bbfa",
+      "revId": "f8d15d6f3fa6c8c3efa08665a19d3d93ef8b6724",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
