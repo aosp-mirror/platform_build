@@ -22,6 +22,30 @@
       "revId": "4400405f0e0324737f93cbda2c1fa13432cc8d4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8594975_8e448b65",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-04-27T23:14:31Z",
+      "side": 1,
+      "message": "True.\n\nglibc opens this file every time and does an fstat, and then mmaps it in according to strace. I\u0027m not too concerned about the performance of this, however since its on a read-only filesystem we could cache that as its empty and not do it again to avoid this overhead. I guess for those remounting system and hand pushing a file they would need to reboot.\n\nOEMs now could add an empty file potentially based on the exact config, the only thing this limits them would be to remove it in the case of an empty file, which I am ok with.",
+      "parentUuid": "a8594975_e38c4092",
+      "range": {
+        "startLine": 39,
+        "startChar": 6,
+        "endLine": 39,
+        "endChar": 11
+      },
+      "revId": "4400405f0e0324737f93cbda2c1fa13432cc8d4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
