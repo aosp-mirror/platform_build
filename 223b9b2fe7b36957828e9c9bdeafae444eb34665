@@ -22,6 +22,30 @@
       "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8594975_9afe827a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1655,
+      "author": {
+        "id": 1059614
+      },
+      "writtenOn": "2016-04-28T19:15:43Z",
+      "side": 1,
+      "message": "It\u0027s a legitimate worry, I agree.\n\nI did check the section type and flags, which looked ok. Did not think to check the alignment-- I can look into that. \n\nHaven\u0027t tested the unwinder. Can you recommend a test or tests to run?\n\nThanks, Than",
+      "parentUuid": "480b6d61_ce3956ca",
+      "range": {
+        "startLine": 1655,
+        "startChar": 27,
+        "endLine": 1655,
+        "endChar": 68
+      },
+      "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
