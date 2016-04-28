@@ -425,7 +425,7 @@ endef
 
 define find-subdir-assets
 $(sort $(if $(1),$(patsubst ./%,%, \
-	$(shell if [ -d $(1) ] ; then cd $(1) ; find -L ./ -not -name '.*' -and -type f -and -not -type l ; fi)), \
+	$(shell if [ -d $(1) ] ; then cd $(1) ; find ./ -not -name '.*' -and -type f -and -not -type l ; fi)), \
 	$(warning Empty argument supplied to find-subdir-assets) \
 ))
 endef
@@ -1926,7 +1926,6 @@ $(eval _p_w := $(strip $(subst /,$(space),$(dir $(1)))))$(2)/$(subst $(space),/,
 endef
 
 define aapt2-link
-$(call dump-words-to-file,$(PRIVATE_RES_FLAT),$(PRIVATE_SOURCE_INTERMEDIATES_DIR)/aapt2-flat-list)
 $(hide) $(AAPT2) link -o $@ \
   $(PRIVATE_AAPT_FLAGS) \
   $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
@@ -1944,7 +1943,7 @@ $(hide) $(AAPT2) link -o $@ \
   $(addprefix --rename-manifest-package ,$(PRIVATE_MANIFEST_PACKAGE_NAME)) \
   $(addprefix --rename-instrumentation-target-package ,$(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
   $(addprefix -R , $(PRIVATE_OVERLAY_FLAT)) \
-  \@$(PRIVATE_SOURCE_INTERMEDIATES_DIR)/aapt2-flat-list
+  $(PRIVATE_RES_FLAT)
 endef
 
 ###########################################################
@@ -1959,34 +1958,34 @@ endef
 define dump-words-to-file
         @rm -f $(2)
         @touch $(2)
-        @$(call emit-line,$(wordlist 1,500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 501,1000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 1001,1500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 1501,2000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 2001,2500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 2501,3000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 3001,3500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 3501,4000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 4001,4500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 4501,5000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 5001,5500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 5501,6000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 6001,6500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 6501,7000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 7001,7500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 7501,8000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 8001,8500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 8501,9000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 9001,9500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 9501,10000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 10001,10500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 10501,11000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 11001,11500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 11501,12000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 12001,12500,$(1)),$(2))
-        @$(call emit-line,$(wordlist 12501,13000,$(1)),$(2))
-        @$(call emit-line,$(wordlist 13001,13500,$(1)),$(2))
-        @$(if $(wordlist 13501,13502,$(1)),$(error Too many words ($(words $(1)))))
+        @$(call emit-line,$(wordlist 1,200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 201,400,$(1)),$(2))
+        @$(call emit-line,$(wordlist 401,600,$(1)),$(2))
+        @$(call emit-line,$(wordlist 601,800,$(1)),$(2))
+        @$(call emit-line,$(wordlist 801,1000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 1001,1200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 1201,1400,$(1)),$(2))
+        @$(call emit-line,$(wordlist 1401,1600,$(1)),$(2))
+        @$(call emit-line,$(wordlist 1601,1800,$(1)),$(2))
+        @$(call emit-line,$(wordlist 1801,2000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 2001,2200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 2201,2400,$(1)),$(2))
+        @$(call emit-line,$(wordlist 2401,2600,$(1)),$(2))
+        @$(call emit-line,$(wordlist 2601,2800,$(1)),$(2))
+        @$(call emit-line,$(wordlist 2801,3000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 3001,3200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 3201,3400,$(1)),$(2))
+        @$(call emit-line,$(wordlist 3401,3600,$(1)),$(2))
+        @$(call emit-line,$(wordlist 3601,3800,$(1)),$(2))
+        @$(call emit-line,$(wordlist 3801,4000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4001,4200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4201,4400,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4401,4600,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4601,4800,$(1)),$(2))
+        @$(call emit-line,$(wordlist 4801,5000,$(1)),$(2))
+        @$(call emit-line,$(wordlist 5001,5200,$(1)),$(2))
+        @$(call emit-line,$(wordlist 5201,5400,$(1)),$(2))
+        @$(if $(wordlist 5401,5402,$(1)),$(error Too many words ($(words $(1)))))
 endef
 
 # For a list of jar files, unzip them to a specified directory,
