@@ -21,6 +21,8 @@ $.ajaxSetup({
 
 $(document).ready(function() {
 
+  showStudioSurveyButton();
+
   // show lang dialog if the URL includes /intl/
   //if (location.pathname.substring(0,6) == "/intl/") {
   //  var lang = location.pathname.split('/')[2];
@@ -5375,3 +5377,17 @@ function showSamples() {
   $(document)
     .on('click.toggle', '[data-toggle="section"]', Toggle.prototype.toggle);
 })(jQuery);
+
+
+var STUDIO_SURVEY_CLICKED = 'studio-survey-20160429-clicked';
+
+function onClickStudioSurvey() {
+  localStorage.setItem(STUDIO_SURVEY_CLICKED, 'true');
+  $("#studio-survey-button").fadeOut();
+}
+
+function showStudioSurveyButton() {
+  if (localStorage.getItem(STUDIO_SURVEY_CLICKED) == null) {
+    $("#studio-survey-button").show();
+  }
+}
