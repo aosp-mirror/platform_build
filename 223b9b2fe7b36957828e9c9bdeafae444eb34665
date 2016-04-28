@@ -46,6 +46,30 @@
       "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8594975_3a177695",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1655,
+      "author": {
+        "id": 1059614
+      },
+      "writtenOn": "2016-04-28T19:19:49Z",
+      "side": 1,
+      "message": "Rats. You\u0027re right, the alignment was lost-- was 4-byte aligned and is now unaligned. I\u0027ll look into that.",
+      "parentUuid": "a8594975_9afe827a",
+      "range": {
+        "startLine": 1655,
+        "startChar": 27,
+        "endLine": 1655,
+        "endChar": 68
+      },
+      "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
