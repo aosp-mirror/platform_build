@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "480b6d61_ce3956ca",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1655,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2016-04-28T19:10:12Z",
+      "side": 1,
+      "message": "I am worried if we add .debug_frame like this, the section types, section flags and alignment may have changed. And libunwind may not be able to use it. Have you verified that?",
+      "range": {
+        "startLine": 1655,
+        "startChar": 27,
+        "endLine": 1655,
+        "endChar": 68
+      },
+      "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
