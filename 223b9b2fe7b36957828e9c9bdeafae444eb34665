@@ -70,6 +70,30 @@
       "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "480b6d61_cedcb687",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1655,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2016-04-28T19:26:50Z",
+      "side": 1,
+      "message": "I am not familiar with tests in libunwind. So I will read some code in libunwind and enable simpleperf for mips and test this patch once you fix the alignment issue.",
+      "parentUuid": "a8594975_3a177695",
+      "range": {
+        "startLine": 1655,
+        "startChar": 27,
+        "endLine": 1655,
+        "endChar": 68
+      },
+      "revId": "223b9b2fe7b36957828e9c9bdeafae444eb34665",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
