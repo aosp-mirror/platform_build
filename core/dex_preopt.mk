@@ -29,6 +29,10 @@ ifeq ($(HOST_OS),linux)
   ifeq (eng,$(TARGET_BUILD_VARIANT))
     WITH_DEXPREOPT_BOOT_IMG_ONLY ?= true
   endif
+# Add mini-debug-info to the boot classpath unless explicitly asked not to.
+  ifneq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
+    PRODUCT_DEX_PREOPT_BOOT_FLAGS += --generate-mini-debug-info
+  endif
 endif
 
 GLOBAL_DEXPREOPT_FLAGS :=
