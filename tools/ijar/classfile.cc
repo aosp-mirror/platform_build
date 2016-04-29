@@ -123,7 +123,7 @@ inline Constant *constant(int idx) {
 // See sec.4.4 of JVM spec.
 struct Constant {
 
-  Constant(u1 tag) :
+  explicit Constant(u1 tag) :
       slot_(0),
       tag_(tag) {}
 
@@ -180,7 +180,7 @@ void ExtractClassNames(const std::string& desc, size_t* p);
 // See sec.4.4.1 of JVM spec.
 struct Constant_Class : Constant
 {
-  Constant_Class(u2 name_index) :
+  explicit Constant_Class(u2 name_index) :
       Constant(CONSTANT_Class),
       name_index_(name_index) {}
 
@@ -231,7 +231,7 @@ struct Constant_FMIref : Constant
 // See sec.4.4.3 of JVM spec.
 struct Constant_String : Constant
 {
-  Constant_String(u2 string_index) :
+  explicit Constant_String(u2 string_index) :
       Constant(CONSTANT_String),
       string_index_(string_index) {}
 
@@ -360,7 +360,7 @@ struct Constant_MethodHandle : Constant
 // See sec.4.4.9 of JVM spec.
 struct Constant_MethodType : Constant
 {
-  Constant_MethodType(u2 descriptor_index) :
+  explicit Constant_MethodType(u2 descriptor_index) :
       Constant(CONSTANT_MethodType),
       descriptor_index_(descriptor_index) {}
 
