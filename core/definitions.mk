@@ -2469,13 +2469,15 @@ endef
 # Align STORED entries of a package on 4-byte boundaries to make them easier to mmap.
 #
 define align-package
-$(hide) mv $@ $@.unaligned
-$(hide) $(ZIPALIGN) \
+$(hide) if ! $(ZIPALIGN) -c $(ZIPALIGN_PAGE_ALIGN_FLAGS) 4 $@ >/dev/null ; then \
+  mv $@ $@.unaligned; \
+  $(ZIPALIGN) \
     -f \
     $(ZIPALIGN_PAGE_ALIGN_FLAGS) \
     4 \
-    $@.unaligned $@.aligned
-$(hide) mv $@.aligned $@
+    $@.unaligned $@.aligned; \
+  mv $@.aligned $@; \
+  fi
 endef
 
 # Remove dynamic timestamps from packages
