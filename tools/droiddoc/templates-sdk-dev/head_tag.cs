@@ -5,11 +5,11 @@
     if:devsite ?>
     <meta name="top_category" value="<?cs
       if:ndk ?>ndk<?cs
-      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples) ?>develop<?cs
+      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples||preview) ?>develop<?cs
+      elif:(go||libraries) ?>develop<?cs
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
       elif:(about||versions||wear||tv||auto) ?>about<?cs
-      elif:preview ?>preview<?cs
       else ?>none<?cs
       /if ?>" />
     <?cs set:dac_subcategory_set = #1 ?>
@@ -34,6 +34,9 @@
             if:(samplesDocPage&&!samplesProjectIndex) ?> samples-docpage<?cs /if ?><?cs
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(google||reference.gms||reference.gcm) ?>google<?cs
+        elif:(go||libraries) ?><?cs
+          if:libraries ?>libraries<?cs
+          else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
           if:googleplay ?>googleplay<?cs
           elif:essentials ?>essentials<?cs
@@ -69,6 +72,8 @@
             elif:sdk ?>/tools<?cs
             elif:samples ?>/samples<?cs /if ?><?cs
           elif:(google||reference.gms||reference.gcm) ?>/google<?cs
+          elif:(go||libraries) ?>/go<?cs
+            if:libraries ?>/libraries<?cs /if ?><?cs
           elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>/distribute<?cs
             if:googleplay ?>/googleplay<?cs
             elif:essentials ?>/essentials<?cs

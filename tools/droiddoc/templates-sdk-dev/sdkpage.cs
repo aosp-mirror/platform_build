@@ -449,7 +449,7 @@ tools release notes</a>.</p>
     idname = bundlename + "-size";
     sizeMB = $(idname).text().split(' MB')[0];
     $('.download-bundle-button > .small').html(" for " + os + " <em>(" + sizeMB + " MB)</em>");
-    $('.download-bundle-button').click(function() {return onDownload(this,true,true);}).attr('href', bundlename);
+    $('.download-bundle-button').click(function() { onDownload(this,true,true);}).attr('href', bundlename);
   }
 
 
@@ -581,11 +581,14 @@ tools release notes</a>.</p>
 </div><!-- end g-unit -->
 
 <?cs include:"trailer.cs" ?>
+<?cs if:!devsite ?>
 <script src="https://developer.android.com/ytblogger_lists_unified.js?v=17" type="text/javascript"></script>
 <script src="/jd_lists_unified.js?v=17" type="text/javascript"></script>
 <script src="/jd_extras.js?v=17" type="text/javascript"></script>
 <script src="/jd_collections.js?v=17" type="text/javascript"></script>
 <script src="/jd_tag_helpers.js?v=17" type="text/javascript"></script>
+<?cs /if ?><!--end !devsite -->
+
 
 <!-- Start of Tag -->
 <script type="text/javascript">
