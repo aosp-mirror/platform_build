@@ -29,10 +29,15 @@ DEFAULT_GLOBAL_TIDY_CHECKS := \
 # where google-runtime-int is enabled at the end.
 DEFAULT_LOCAL_TIDY_CHECKS := \
   external/:,-google-build-using-namespace \
-  external/:,-google-explicit-constructor \
-  external/:,-google-runtime-int \
+  external/:,-google-explicit-constructor,-google-runtime-int \
   external/google:,google-runtime-int \
   external/webrtc/:,google-runtime-int \
+  hardware/qcom:,-google-build-using-namespace \
+  hardware/qcom:,-google-explicit-constructor,-google-runtime-int \
+  vendor/lge:,-google-build-using-namespace \
+  vendor/lge:,-google-explicit-constructor,-google-runtime-int \
+  vendor/widevine:,-google-build-using-namespace \
+  vendor/widevine:,-google-explicit-constructor,-google-runtime-int \
 
 # Returns 2nd word of $(1) if $(2) has prefix of the 1st word of $(1).
 define find_default_local_tidy_check2
