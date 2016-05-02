@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8aea9f7_c6b542e1",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-05-02T18:47:08Z",
+      "side": 1,
+      "message": "Fix these doc indents while here.",
+      "revId": "5d8b7109c5a0ce1b741c726bf3a33e426686ad12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8aea9f7_86c4da50",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-05-02T18:47:08Z",
+      "side": 1,
+      "message": "Cant use super() here do to decorator usage.",
+      "revId": "5d8b7109c5a0ce1b741c726bf3a33e426686ad12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8aea9f7_e6eb26bf",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-05-02T18:47:08Z",
+      "side": 1,
+      "message": "This was already done by the C compiler via redefinition of define, but now were detecting early.",
+      "revId": "5d8b7109c5a0ce1b741c726bf3a33e426686ad12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
