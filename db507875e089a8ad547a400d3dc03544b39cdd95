@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a8aea9f7_e77160d2",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-05-02T21:07:27Z",
+      "side": 1,
+      "message": "Damn, this is overly-complex. I missed the last sentence in https://docs.python.org/2/library/functions.html#int and this works like strtol() family of routines on base equal to 0.",
+      "revId": "db507875e089a8ad547a400d3dc03544b39cdd95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
