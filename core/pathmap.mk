@@ -106,6 +106,7 @@ FRAMEWORKS_BASE_JAVA_SRC_DIRS := \
 #
 FRAMEWORKS_SUPPORT_SUBDIRS := \
         annotations \
+        compat \
         v4 \
         v7/gridlayout \
         v7/cardview \
