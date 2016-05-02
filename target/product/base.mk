@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
     blkid \
     bmgr \
     bugreport \
+    bugreportz \
     cameraserver \
     content \
     dnsmasq \
