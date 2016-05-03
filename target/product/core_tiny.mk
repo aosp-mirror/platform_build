@@ -37,12 +37,13 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
-    WallpaperBackup \
+    CtsShimPrivPrebuilt \
     DefaultContainerService \
     ExtShared \
     ExtServices \
     SettingsProvider \
     Shell \
+    WallpaperBackup \
     bcc \
     bu \
     com.android.location.provider \
