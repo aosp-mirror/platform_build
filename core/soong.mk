@@ -19,7 +19,7 @@ ifneq ($(wildcard $(SOONG_BOOTSTRAP)),)
     SOONG_NEEDS_REBOOTSTRAP := FORCE
     $(warning soong_out_dir changed)
   endif
-  ifneq ($(strip $(shell build/soong/reverse_path.py $(SOONG_OUT_DIR))),$(strip $(shell source $(SOONG_BOOTSTRAP); echo $$SRCDIR_FROM_BUILDDIR)))
+  ifneq ($(strip $(shell build/soong/scripts/reverse_path.py $(SOONG_OUT_DIR))),$(strip $(shell source $(SOONG_BOOTSTRAP); echo $$SRCDIR_FROM_BUILDDIR)))
     SOONG_NEEDS_REBOOTSTRAP := FORCE
     $(warning reverse path changed)
   endif
