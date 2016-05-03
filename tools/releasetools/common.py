@@ -186,16 +186,22 @@ def LoadInfoDict(input_file, input_dir=None):
     if "system_base_fs_file" in d:
       basename = os.path.basename(d["system_base_fs_file"])
       system_base_fs_file = os.path.join(input_dir, "META", basename)
-      assert os.path.exists(system_base_fs_file), \
-          "failed to find system base fs file: %s" % (system_base_fs_file,)
-      d["system_base_fs_file"] = system_base_fs_file
+      if os.path.exists(system_base_fs_file):
+        d["system_base_fs_file"] = system_base_fs_file
+      else:
+        print "Warning: failed to find system base fs file: %s" % (
+            system_base_fs_file,)
+        del d["system_base_fs_file"]
 
     if "vendor_base_fs_file" in d:
       basename = os.path.basename(d["vendor_base_fs_file"])
       vendor_base_fs_file = os.path.join(input_dir, "META", basename)
-      assert os.path.exists(vendor_base_fs_file), \
-          "failed to find vendor base fs file: %s" % (vendor_base_fs_file,)
-      d["vendor_base_fs_file"] = vendor_base_fs_file
+      if os.path.exists(vendor_base_fs_file):
+        d["vendor_base_fs_file"] = vendor_base_fs_file
+      else:
+        print "Warning: failed to find vendor base fs file: %s" % (
+            vendor_base_fs_file,)
+        del d["vendor_base_fs_file"]
 
   try:
     data = read_helper("META/imagesizes.txt")
