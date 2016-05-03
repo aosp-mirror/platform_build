@@ -8,7 +8,7 @@ reference:<?cs
 each:page = docs.pages?><?cs
   if:page.type == "package"?>
 - title: <?cs var:page.label ?>
-  path: <?cs var:page.link ?>
+  path: /<?cs var:page.link ?>
   status_text: apilevel-<?cs var:page.apilevel ?><?cs
   /if?><?cs
 /each ?>
