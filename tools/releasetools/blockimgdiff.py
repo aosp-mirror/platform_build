@@ -556,12 +556,22 @@ class BlockImageDiff(object):
       total += self.tgt.extended.size()
 
     # We erase all the blocks on the partition that a) don't contain useful
-    # data in the new image and b) will not be touched by dm-verity.
+    # data in the new image; b) will not be touched by dm-verity. Out of those
+    # blocks, we erase the ones that won't be used in this update at the
+    # beginning of an update. The rest would be erased at the end. This is to
+    # work around the eMMC issue observed on some devices, which may otherwise
+    # get starving for clean blocks and thus fail the update. (b/28347095)
     all_tgt = RangeSet(data=(0, self.tgt.total_blocks))
     all_tgt_minus_extended = all_tgt.subtract(self.tgt.extended)
     new_dontcare = all_tgt_minus_extended.subtract(self.tgt.care_map)
-    if new_dontcare:
-      out.append("erase %s\n" % (new_dontcare.to_string_raw(),))
+
+    erase_first = new_dontcare.subtract(self.touched_src_ranges)
+    if erase_first:
+      out.insert(0, "erase %s\n" % (erase_first.to_string_raw(),))
+
+    erase_last = new_dontcare.subtract(erase_first)
+    if erase_last:
+      out.append("erase %s\n" % (erase_last.to_string_raw(),))
 
     out.insert(0, "%d\n" % (self.version,))   # format version number
     out.insert(1, "%d\n" % (total,))
