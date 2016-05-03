@@ -24,17 +24,16 @@ PRODUCT_NAME := core
 
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
-    CtsShimPrivPrebuilt \
-    DownloadProvider \
+    WallpaperBackup \
     ExtShared \
     ExtServices \
+    DownloadProvider \
     HTMLViewer \
     MediaProvider \
     PackageInstaller \
     SettingsProvider \
     Shell \
     StatementService \
-    WallpaperBackup \
     bcc \
     bu \
     com.android.future.usb.accessory \
