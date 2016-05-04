@@ -29,8 +29,6 @@
             if:page.trainingcourse ?>trainingcourse<?cs
             else ?>training<?cs /if ?><?cs
           elif:reference ?>reference<?cs
-          elif:tools ?>tools<?cs
-          elif:sdk ?>sdk<?cs
           elif:samples ?>samples<?cs
             if:(samplesDocPage&&!samplesProjectIndex) ?> samples-docpage<?cs /if ?><?cs
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
@@ -57,7 +55,7 @@
 
     <?cs if:nonavpage ?>
       <meta name="hide_toc" value='True' />
-    <?cs elif: !nonavpage && dac_subcategory_set ?>
+    <?cs elif: !nonavpage && dac_subcategory_set && !tools && !sdk ?>
       <meta name="book_path" value="<?cs
         if:ndk ?>/ndk<?cs
           if:guide ?>/guides<?cs
@@ -69,8 +67,6 @@
             if:guide ?>/guide<?cs
             elif:training ?>/training<?cs
             elif:reference ?>/reference<?cs
-            elif:tools ?>/tools<?cs
-            elif:sdk ?>/tools<?cs
             elif:samples ?>/samples<?cs /if ?><?cs
           elif:(google||reference.gms||reference.gcm) ?>/google<?cs
           elif:(topic||libraries) ?>/topic<?cs
