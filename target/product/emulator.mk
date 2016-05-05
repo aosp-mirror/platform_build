@@ -60,7 +60,8 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/ueventd.goldfish.rc:root/ueventd.goldfish.rc \
     device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
-    device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc
+    device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc \
+    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
 
 PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
 
