@@ -1,4 +1,4 @@
-NINJA ?= prebuilts/ninja/$(HOST_PREBUILT_TAG)/ninja
+NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
 
 include $(BUILD_SYSTEM)/soong.mk
 
