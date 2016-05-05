@@ -97,6 +97,9 @@ include $(BUILD_SYSTEM)/help.mk
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
 
+# Default soong to on
+USE_SOONG ?= true
+
 ifndef KATI
 ifdef USE_NINJA
 $(warning USE_NINJA is ignored. Ninja is always used.)
