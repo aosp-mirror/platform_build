@@ -82,6 +82,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
+
 import javax.crypto.Cipher;
 import javax.crypto.EncryptedPrivateKeyInfo;
 import javax.crypto.SecretKeyFactory;
@@ -126,34 +127,29 @@ class SignApk {
     private static final String APK_SIG_SCHEME_V2_DIGEST_ALGORITHM = "SHA-256";
 
     /**
-     * Minimum Android SDK API Level which accepts JAR signatures which use SHA-256. Older platform
-     * versions accept only SHA-1 signatures.
-     */
-    private static final int MIN_API_LEVEL_FOR_SHA256_JAR_SIGNATURES = 18;
-
-    /**
      * Returns the digest algorithm ID (one of {@code USE_SHA1} or {@code USE_SHA256}) to be used
-     * for v1 signing (using JAR Signature Scheme) an APK using the private key corresponding to the
-     * provided certificate.
+     * for v1 signing (JAR signing) an APK using the private key corresponding to the provided
+     * certificate.
      *
      * @param minSdkVersion minimum Android platform API Level supported by the APK (see
      *        minSdkVersion attribute in AndroidManifest.xml). The higher the minSdkVersion, the
      *        stronger hash may be used for signing the APK.
      */
     private static int getV1DigestAlgorithmForApk(X509Certificate cert, int minSdkVersion) {
-        String sigAlg = cert.getSigAlgName().toUpperCase(Locale.US);
-        if ("SHA1WITHRSA".equals(sigAlg) || "MD5WITHRSA".equals(sigAlg)) {
-            // see "HISTORICAL NOTE" above.
-            if (minSdkVersion < MIN_API_LEVEL_FOR_SHA256_JAR_SIGNATURES) {
-                return USE_SHA1;
-            } else {
-                return USE_SHA256;
+        String keyAlgorithm = cert.getPublicKey().getAlgorithm();
+        if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+            // RSA can be used only with SHA-1 prior to API Level 18.
+            return (minSdkVersion < 18) ? USE_SHA1 : USE_SHA256;
+        } else if ("EC".equalsIgnoreCase(keyAlgorithm)) {
+            // ECDSA cannot be used prior to API Level 18 at all. It can only be used with SHA-1
+            // on API Levels 18, 19, and 20.
+            if (minSdkVersion < 18) {
+                throw new IllegalArgumentException(
+                        "ECDSA signatures only supported for minSdkVersion 18 and higher");
             }
-        } else if (sigAlg.startsWith("SHA256WITH")) {
-            return USE_SHA256;
+            return (minSdkVersion < 21) ? USE_SHA1 : USE_SHA256;
         } else {
-            throw new IllegalArgumentException("unsupported signature algorithm \"" + sigAlg +
-                                               "\" in cert [" + cert.getSubjectDN());
+            throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlgorithm);
         }
     }
 
