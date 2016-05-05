@@ -611,6 +611,32 @@ if:subcount(class.subclasses.direct) && !class.subclasses.hidden ?>
 <!-- ========= END OF CLASS DATA ========= -->
 
 </div><!-- end jd-content -->
+
+<?cs if:devsite ?>
+
+<div class="data-reference-resources-wrapper">
+  <?cs if:subcount(class.package) ?>
+  <ul data-reference-resources>
+    <?cs call:list("Annotations", class.package.annotations) ?>
+    <?cs call:list("Interfaces", class.package.interfaces) ?>
+    <?cs call:list("Classes", class.package.classes) ?>
+    <?cs call:list("Enums", class.package.enums) ?>
+    <?cs call:list("Exceptions", class.package.exceptions) ?>
+    <?cs call:list("Errors", class.package.errors) ?>
+  </ul>
+  <?cs elif:subcount(package) ?>
+  <ul data-reference-resources>
+    <?cs call:class_link_list("Annotations", package.annotations) ?>
+    <?cs call:class_link_list("Interfaces", package.interfaces) ?>
+    <?cs call:class_link_list("Classes", package.classes) ?>
+    <?cs call:class_link_list("Enums", package.enums) ?>
+    <?cs call:class_link_list("Exceptions", package.exceptions) ?>
+    <?cs call:class_link_list("Errors", package.errors) ?>
+  </ul>
+  <?cs /if ?>
+</div>
+<?cs /if ?>
+
 <?cs if:!devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs include:"trailer.cs" ?>
