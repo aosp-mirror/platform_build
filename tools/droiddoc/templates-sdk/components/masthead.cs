@@ -86,13 +86,7 @@
           <span class="dac-sprite dac-google-play"></span>
           <span class="dac-visible-desktop-inline">Developer</span>
           Console
-        </a>
-        <a class="dac-header-console-btn" id="studio-survey-button"
-          href="http://goo.gl/forms/dOQUuzwBsX"
-          onclick="onClickStudioSurvey()"
-          target="_blank" style="background:#FFE0B2;display:none"
-        >Take a 1 min survey</a>
-        <?cs /if ?>
+        </a><?cs /if ?>
 
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
