@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd53efc8_438806d6",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "I assume the input / output APKs may be the same or not since this API does not deal with the files directly. However, this could be made clearer in the documentation.",
+      "range": {
+        "startLine": 31,
+        "startChar": 6,
+        "endLine": 32,
+        "endChar": 13
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6d65a395_0821c7ec",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "My understanding of the API is that we need one engine for each transformation and it cannot be reused for future transformations. Is this correct? If so, could you add that to the documentation? For example, when you say \"Obtain a new instance of the engine.\" you could add something line: \"Note that engine instances cannot be reused.\"\n\nAnd, if they cannot be reused, wouldn\u0027t it make sense to make the engine a Closeable so we can explicitly close it?",
+      "range": {
+        "startLine": 47,
+        "startChar": 7,
+        "endLine": 47,
+        "endChar": 42
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cdf84ffd_fb810fd6",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "Some high-level comments:\n\n- \n-",
+      "range": {
+        "startLine": 72,
+        "startChar": 17,
+        "endLine": 72,
+        "endChar": 32
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad6b1b69_6a5cf73a",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "Is invoking this with null equivalent to not invoking it at all?",
+      "range": {
+        "startLine": 80,
+        "startChar": 30,
+        "endLine": 80,
+        "endChar": 56
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edab53ee_8cbb67d3",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "What happens when this method returns SKIP ad the file is already in the APK? Are we expected to remove the entry from the output? And should \"outputJarEntryRemoved()\" be called?",
+      "range": {
+        "startLine": 87,
+        "startChar": 30,
+        "endLine": 87,
+        "endChar": 43
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edab53ee_ecb02bf1",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "close()? And make this extend Closeable?",
+      "range": {
+        "startLine": 247,
+        "startChar": 13,
+        "endLine": 247,
+        "endChar": 17
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edab53ee_2ccb5364",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-06T14:22:06Z",
+      "side": 1,
+      "message": "What do you mean by \"order\"? Is entry order in the APK under control of the signer?",
+      "range": {
+        "startLine": 264,
+        "startChar": 88,
+        "endLine": 264,
+        "endChar": 93
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
