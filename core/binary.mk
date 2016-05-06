@@ -700,7 +700,7 @@ endif
 proto_intermediate_dir := $(intermediates)/proto
 proto_intermediate_cpps := $(patsubst $(proto_gen_dir)/%,$(proto_intermediate_dir)/%,\
     $(proto_generated_cpps))
-$(proto_intermediate_cpps) : $(proto_intermediate_dir)/% : $(proto_gen_dir)/%
+$(proto_intermediate_cpps) : $(proto_intermediate_dir)/% : $(proto_gen_dir)/% | $(ACP)
 	@echo "Copy: $@"
 	$(copy-file-to-target)
 	$(hide) cp $(basename $<).h $(basename $@).h
