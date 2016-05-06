@@ -1152,6 +1152,9 @@ $(hide) $(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
 	$(PRIVATE_PROTOC_FLAGS) \
 	$<
+@# aprotoc outputs only .cc. Rename it to .cpp if necessary.
+$(if $(PRIVATE_RENAME_CPP_EXT),\
+  $(hide) mv $(basename $@).cc $@)
 endef
 
 
