@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ad65dbc5_da3fc574",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd53efc8_438806d6",
+      "range": {
+        "startLine": 31,
+        "startChar": 6,
+        "endLine": 32,
+        "endChar": 13
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6d65a395_0821c7ec",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 6
@@ -36,6 +60,30 @@
       "writtenOn": "2016-05-06T14:22:06Z",
       "side": 1,
       "message": "My understanding of the API is that we need one engine for each transformation and it cannot be reused for future transformations. Is this correct? If so, could you add that to the documentation? For example, when you say \"Obtain a new instance of the engine.\" you could add something line: \"Note that engine instances cannot be reused.\"\n\nAnd, if they cannot be reused, wouldn\u0027t it make sense to make the engine a Closeable so we can explicitly close it?",
+      "range": {
+        "startLine": 47,
+        "startChar": 7,
+        "endLine": 47,
+        "endChar": 42
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad65dbc5_3af521dc",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "All good points. Done.",
+      "parentUuid": "6d65a395_0821c7ec",
       "range": {
         "startLine": 47,
         "startChar": 7,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ad65dbc5_5a1bb50a",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "Hm. I can\u0027t see your comments in this box other than two bullet/dash characters. There\u0027s no other text...",
+      "parentUuid": "cdf84ffd_fb810fd6",
+      "range": {
+        "startLine": 72,
+        "startChar": 17,
+        "endLine": 72,
+        "endChar": 32
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ad6b1b69_6a5cf73a",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 6
@@ -82,6 +154,30 @@
       "writtenOn": "2016-05-06T14:22:06Z",
       "side": 1,
       "message": "Is invoking this with null equivalent to not invoking it at all?",
+      "range": {
+        "startLine": 80,
+        "startChar": 30,
+        "endLine": 80,
+        "endChar": 56
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad65dbc5_9d8d473c",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "I see what you mean. I\u0027ve now dropped the null option from here. It makes this method similar in spirit to inputJarEntry: if you invoke it, it means there\u0027s something in the input APK, if you don\u0027t invoke it, we don\u0027t know but will assume there\u0027s nothing.",
+      "parentUuid": "ad6b1b69_6a5cf73a",
       "range": {
         "startLine": 80,
         "startChar": 30,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "ad65dbc5_3d5c3b3a",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "Yes, the Javadoc of SKIP says \"must not be output\". Obviously, you\u0027re encourage to follow through. Otherwise the resulting APK might not get signed. If this entry is already in the output, you should thus remove it from there. If you\u0027ve previously told the engine that this entry is in the output (via outputJarEntry), you should definitely invoke outputJarEntryRemoved. However, there\u0027s no harm in invoking outputJarEntryRemoved even if you haven\u0027t told the engine that this entry was there.\n\nI\u0027ve clarified some of this in the class-level Javadoc and that of outputJarEntryRemoved.",
+      "parentUuid": "edab53ee_8cbb67d3",
+      "range": {
+        "startLine": 87,
+        "startChar": 30,
+        "endLine": 87,
+        "endChar": 43
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "edab53ee_ecb02bf1",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 6
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "ad65dbc5_9dfd471a",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "I don\u0027t think Request is Closeable. Request by design holds resources after you\u0027re done with it. So, I\u0027d rather keep done() and not add a close(). On the engine side, it might make sense to invoke close() once the engine is done with the request, however, the engine impl is the one that produces impls of this interface and thus the engine impl\u0027s Request impls can be Closeable if the engine impl finds it useful.",
+      "parentUuid": "edab53ee_ecb02bf1",
+      "range": {
+        "startLine": 247,
+        "startChar": 13,
+        "endLine": 247,
+        "endChar": 17
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "edab53ee_2ccb5364",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 6
@@ -151,6 +295,30 @@
       "writtenOn": "2016-05-06T14:22:06Z",
       "side": 1,
       "message": "What do you mean by \"order\"? Is entry order in the APK under control of the signer?",
+      "range": {
+        "startLine": 264,
+        "startChar": 88,
+        "endLine": 264,
+        "endChar": 93
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad65dbc5_fabba97f",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-06T17:02:18Z",
+      "side": 1,
+      "message": "Good point. It\u0027s actually better to not require a particular order. I\u0027ll leave this as a List though to make life easier for deterministic build pipelines.",
+      "parentUuid": "edab53ee_2ccb5364",
       "range": {
         "startLine": 264,
         "startChar": 88,
