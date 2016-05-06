@@ -106,13 +106,15 @@ ifeq (,$(NINJA_STATUS))
 NINJA_STATUS := [%p %s/%t]$(space)
 endif
 
+NINJA_EXTRA_ARGS :=
+
 ifneq (,$(filter showcommands,$(ORIGINAL_MAKECMDGOALS)))
-NINJA_ARGS += "-v"
+NINJA_EXTRA_ARGS += "-v"
 endif
 
 # Make multiple rules to generate the same target an error instead of
 # proceeding with undefined behavior.
-NINJA_ARGS += -w dupbuild=err
+NINJA_EXTRA_ARGS += -w dupbuild=err
 
 ifdef USE_GOMA
 KATI_MAKEPARALLEL := $(MAKEPARALLEL)
@@ -120,10 +122,12 @@ KATI_MAKEPARALLEL := $(MAKEPARALLEL)
 # this parallelism. Note the parallelism of all other jobs is still
 # limited by the -j flag passed to GNU make.
 NINJA_REMOTE_NUM_JOBS ?= 500
-NINJA_ARGS += -j$(NINJA_REMOTE_NUM_JOBS)
+NINJA_EXTRA_ARGS += -j$(NINJA_REMOTE_NUM_JOBS)
 else
 NINJA_MAKEPARALLEL := $(MAKEPARALLEL) --ninja
 endif
+
+NINJA_ARGS += $(NINJA_EXTRA_ARGS)
 
 ifeq ($(USE_SOONG),true)
 COMBINED_BUILD_NINJA := $(OUT_DIR)/combined$(KATI_NINJA_SUFFIX).ninja
