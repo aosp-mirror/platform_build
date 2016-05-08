@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "f2fb3484_6c979b49",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "Forgot to delete the comment :) Please ignore :)",
+      "parentUuid": "ad65dbc5_5a1bb50a",
+      "range": {
+        "startLine": 72,
+        "startChar": 17,
+        "endLine": 72,
+        "endChar": 32
+      },
+      "revId": "0d672b851609d2052dd83f00a77ff117d904fe62",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ad6b1b69_6a5cf73a",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 6
