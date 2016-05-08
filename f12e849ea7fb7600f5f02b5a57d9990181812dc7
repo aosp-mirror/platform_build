@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "927038c5_99c11b44",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "My expectation while reading this is that I can reuse the engine for subsequent incremental runs on the same input/output APK as long as I do not invoke close(). Is this correct?",
+      "range": {
+        "startLine": 81,
+        "startChar": 10,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "927038c5_59df031c",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "Now, if all above are \"yes\", then for incremental runs in the \"new\" engine, my expectation is that I need to inform of all existing input entries, but for runs in the \"reused\" engine, I only need to inform of changed input entries.\n\nRegarding output entries, I need to inform of all existing output entries in the \"new\" engine. In the \"reused\" engine, I only need to inform if I cannot guarantee they have not been changed, correct?",
+      "range": {
+        "startLine": 81,
+        "startChar": 10,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "927038c5_b9be5fbb",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "If the answer to the previous comment is \"yes\", then in the case of an incremental run where 1 file has been added to the input, there would be two possible sequences: one in which I reuse the engine and another in which I would create a new engine. Right? This would allow much better performance in the build system if I can keep the engine object cached. However, even if I cannot, I can still do an incremental run, right?",
+      "range": {
+        "startLine": 81,
+        "startChar": 10,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "927038c5_79e447f3",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "I\u0027m curious about why the engine would ever need this. If I\u0027m doing IN -\u003e OUT, OUT\u0027s v2 signature would be a newly computed one, so what is the relevance of IN\u0027s v2 signature?",
+      "range": {
+        "startLine": 107,
+        "startChar": 9,
+        "endLine": 107,
+        "endChar": 29
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2fb3484_0c925759",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "Can it happen that the engine wants to remove a file from the output? For example, what about the CERT.RSA file if you\u0027re not signing using RSA.",
+      "range": {
+        "startLine": 127,
+        "startChar": 35,
+        "endLine": 127,
+        "endChar": 49
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "927038c5_19e98bca",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "You don\u0027t handle the case in which we update an input entry. You\u0027re expecting me to call inputJarEntryRemoved followed by inputJarEntry, right? This is just to make sure :)",
+      "range": {
+        "startLine": 137,
+        "startChar": 43,
+        "endLine": 137,
+        "endChar": 63
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "927038c5_39eecfd3",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-08T20:30:54Z",
+      "side": 1,
+      "message": "Does this method imply outputDone() kinda like File\u0027s close() implies flush()? Or is it incorrect to do:\n\ntry (ApkSignerEngine engine \u003d ...) {\n    engine.inputJarEntry()...\n    // Do not call outputDone()\n}\n\nIf calling close still requires a call to outputDone(), could you add that to the javadoc?",
+      "range": {
+        "startLine": 202,
+        "startChar": 9,
+        "endLine": 202,
+        "endChar": 14
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
