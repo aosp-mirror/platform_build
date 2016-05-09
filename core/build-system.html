@@ -438,7 +438,7 @@ intermediates:= $(local-generated-sources-dir)
 GEN := $(intermediates)/<font color=red>file.c</font>
 $(GEN): PRIVATE_INPUT_FILE := $(LOCAL_PATH)/<font color=red>input.file</font>
 $(GEN): PRIVATE_CUSTOM_TOOL = <font color=red>cat $(PRIVATE_INPUT_FILE) &gt; $@</font>
-$(GEN): <font color=red>$(LOCAL_PATH)/file.c</font>
+$(GEN): <font color=red>$(LOCAL_PATH)/input.file</font>
 	$(transform-generated-source)
 LOCAL_GENERATED_SOURCES += $(GEN)
 </pre>
