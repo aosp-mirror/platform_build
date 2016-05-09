@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d22678a_e8d4abcf",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/apk/v2/V2SchemeSigner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1022895
+      },
+      "writtenOn": "2016-05-09T19:12:11Z",
+      "side": 1,
+      "message": "Any reason not to include e?",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 209,
+        "endChar": 69
+      },
+      "revId": "a6cacb9729e329653f798d1e18de5bee4b84577f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
