@@ -22,6 +22,30 @@
       "revId": "a6cacb9729e329653f798d1e18de5bee4b84577f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12728820_8e93bfb1",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/apk/v2/V2SchemeSigner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-09T19:16:51Z",
+      "side": 1,
+      "message": "Good catch. Done.",
+      "parentUuid": "0d22678a_e8d4abcf",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 209,
+        "endChar": 69
+      },
+      "revId": "a6cacb9729e329653f798d1e18de5bee4b84577f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
