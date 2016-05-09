@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "12728820_a82073eb",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-09T18:15:25Z",
+      "side": 1,
+      "message": "I presume you\u0027re talking about how this engine would be used in your Gradle/AS pipeline. If so, you\u0027re 100% correct. Given that we can\u0027t persist the engine across invocations of ./gradlew, the only place there\u0027s a chance to use this engine\u0027s incremental mode (not to be confused with your pipeline\u0027s incremental mode!) is when building in Android Studio. There, it should be possible to preserve the engine\u0027s instance across invocations of the pipeline.",
+      "parentUuid": "927038c5_b9be5fbb",
+      "range": {
+        "startLine": 81,
+        "startChar": 10,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "927038c5_79e447f3",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 9
@@ -82,6 +106,30 @@
       "writtenOn": "2016-05-08T20:30:54Z",
       "side": 1,
       "message": "I\u0027m curious about why the engine would ever need this. If I\u0027m doing IN -\u003e OUT, OUT\u0027s v2 signature would be a newly computed one, so what is the relevance of IN\u0027s v2 signature?",
+      "range": {
+        "startLine": 107,
+        "startChar": 9,
+        "endLine": 107,
+        "endChar": 29
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12728820_e5b37659",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-09T18:15:25Z",
+      "side": 1,
+      "message": "Depending on the engine\u0027s configuration/impl it may or may not need to preserve: (1) input APK\u0027s v2 signatures, and/or (2) input APK\u0027s non-v2 blocks in APK Signing Block.",
+      "parentUuid": "927038c5_79e447f3",
       "range": {
         "startLine": 107,
         "startChar": 9,
@@ -117,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "12728820_e58a9675",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-09T18:15:25Z",
+      "side": 1,
+      "message": "Yes, that\u0027s why you want to use inputJarEntry first, if you can, to avoid outputting an entry which the engine doesn\u0027t like. However, the current pipeline in Gradle/AS doesn\u0027t offer this luxury.\n\nSee Output-only Operation section of class-level Javadoc.",
+      "parentUuid": "f2fb3484_0c925759",
+      "range": {
+        "startLine": 127,
+        "startChar": 35,
+        "endLine": 127,
+        "endChar": 49
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "927038c5_19e98bca",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 9
@@ -140,6 +212,30 @@
     },
     {
       "key": {
+        "uuid": "12728820_65d14662",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-09T18:15:25Z",
+      "side": 1,
+      "message": "It\u0027s up to you. I\u0027ve now added documentation to input/outputJarEntryAdded to say that it\u0027s fine to invoke this without first invoking Removed if you\u0027re updating the entry.",
+      "parentUuid": "927038c5_19e98bca",
+      "range": {
+        "startLine": 137,
+        "startChar": 43,
+        "endLine": 137,
+        "endChar": 63
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "927038c5_39eecfd3",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 9
@@ -151,6 +247,30 @@
       "writtenOn": "2016-05-08T20:30:54Z",
       "side": 1,
       "message": "Does this method imply outputDone() kinda like File\u0027s close() implies flush()? Or is it incorrect to do:\n\ntry (ApkSignerEngine engine \u003d ...) {\n    engine.inputJarEntry()...\n    // Do not call outputDone()\n}\n\nIf calling close still requires a call to outputDone(), could you add that to the javadoc?",
+      "range": {
+        "startLine": 202,
+        "startChar": 9,
+        "endLine": 202,
+        "endChar": 14
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12728820_65b78604",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-09T18:15:25Z",
+      "side": 1,
+      "message": "I\u0027ve now clarified this in the Javadoc.",
+      "parentUuid": "927038c5_39eecfd3",
       "range": {
         "startLine": 202,
         "startChar": 9,
