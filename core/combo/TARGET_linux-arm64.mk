@@ -95,16 +95,6 @@ TARGET_GLOBAL_CFLAGS += \
 
 TARGET_GLOBAL_CFLAGS += -fno-strict-volatile-bitfields
 
-# This is to avoid the dreaded warning compiler message:
-#   note: the mangling of 'va_list' has changed in GCC 4.4
-#
-# The fact that the mangling changed does not affect the NDK ABI
-# very fortunately (since none of the exposed APIs used va_list
-# in their exported C++ functions). Also, GCC 4.5 has already
-# removed the warning from the compiler.
-#
-TARGET_GLOBAL_CFLAGS += -Wno-psabi
-
 TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
 			-Wl,-z,relro \
