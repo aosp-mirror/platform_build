@@ -95,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "72af4490_58cc1dcf",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-09T20:33:09Z",
+      "side": 1,
+      "message": "Perfect then. It all makes sense :)",
+      "parentUuid": "12728820_a82073eb",
+      "range": {
+        "startLine": 81,
+        "startChar": 10,
+        "endLine": 81,
+        "endChar": 31
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "927038c5_79e447f3",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 9
@@ -130,6 +154,30 @@
       "side": 1,
       "message": "Depending on the engine\u0027s configuration/impl it may or may not need to preserve: (1) input APK\u0027s v2 signatures, and/or (2) input APK\u0027s non-v2 blocks in APK Signing Block.",
       "parentUuid": "927038c5_79e447f3",
+      "range": {
+        "startLine": 107,
+        "startChar": 9,
+        "endLine": 107,
+        "endChar": 29
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "72af4490_78d1e161",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-09T20:33:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12728820_e5b37659",
       "range": {
         "startLine": 107,
         "startChar": 9,
@@ -189,6 +237,30 @@
     },
     {
       "key": {
+        "uuid": "f2fb3484_eca0abb3",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-09T20:33:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12728820_e58a9675",
+      "range": {
+        "startLine": 127,
+        "startChar": 35,
+        "endLine": 127,
+        "endChar": 49
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "927038c5_19e98bca",
         "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
         "patchSetId": 9
@@ -224,6 +296,30 @@
       "side": 1,
       "message": "It\u0027s up to you. I\u0027ve now added documentation to input/outputJarEntryAdded to say that it\u0027s fine to invoke this without first invoking Removed if you\u0027re updating the entry.",
       "parentUuid": "927038c5_19e98bca",
+      "range": {
+        "startLine": 137,
+        "startChar": 43,
+        "endLine": 137,
+        "endChar": 63
+      },
+      "revId": "f12e849ea7fb7600f5f02b5a57d9990181812dc7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "72af4490_98c5d5a2",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkSignerEngine.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1104608
+      },
+      "writtenOn": "2016-05-09T20:33:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12728820_65d14662",
       "range": {
         "startLine": 137,
         "startChar": 43,
