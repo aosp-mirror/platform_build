@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "125a88dd_ab042d6d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1978,
+      "author": {
+        "id": 1003981
+      },
+      "writtenOn": "2016-05-10T17:10:04Z",
+      "side": 1,
+      "message": "It\u0027s not good to have file target depend on phony target.\nAlso target-tests isn\u0027t enough.\nWe can add $(INSTALLED_USERDATAIMAGE_TARGET) and $(INSTALLED_VENDORIMAGE_TARGET) as dependency here.",
+      "range": {
+        "startLine": 1978,
+        "startChar": 71,
+        "endLine": 1978,
+        "endChar": 83
+      },
+      "revId": "697da4236b3699875b65afe714c61a0310a3804d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
