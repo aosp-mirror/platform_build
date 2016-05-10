@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "125a88dd_e734919b",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-05-10T22:33:06Z",
+      "side": 1,
+      "message": "it seems better to add a cortex-a9 section instead of mixing it in with the generic section",
+      "revId": "a0f40f9423f840ac0c4af83cf2814496cb28a51a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
