@@ -874,6 +874,9 @@ for line in infile:
 # dump the html output to stdout
 dumphtmlprologue('Warnings for ' + platformversion + ' - ' + targetproduct + ' - ' + targetvariant)
 dumpstats()
+# sort table based on number of members once dumpstats has deduplicated the
+# members.
+warnpatterns.sort(reverse=True, key=lambda i: len(i['members']))
 dumptoc()
 dumpseverity(severity.FIXMENOW)
 dumpseverity(severity.HIGH)
