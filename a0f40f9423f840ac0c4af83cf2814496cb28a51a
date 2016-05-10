@@ -16,6 +16,24 @@
       "revId": "a0f40f9423f840ac0c4af83cf2814496cb28a51a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_02b43be0",
+        "filename": "core/combo/arch/arm/armv7-a-neon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-05-10T22:40:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "125a88dd_e734919b",
+      "revId": "a0f40f9423f840ac0c4af83cf2814496cb28a51a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
