@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "125a88dd_2b4a7d47",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1644,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-05-10T17:30:55Z",
+      "side": 1,
+      "message": "intermediates :)\n\n(and L1882)",
+      "range": {
+        "startLine": 1644,
+        "startChar": 20,
+        "endLine": 1644,
+        "endChar": 34
+      },
+      "revId": "3114eba26c179e27a46c164a54325f2197eaff80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_cbd16967",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1882,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-05-10T17:30:55Z",
+      "side": 1,
+      "message": "I\u0027m not sure what would be under $(vendor_partitions_intermediates). Do we want to include all of them here? Since we\u0027re only checking for top-level .img files in add_img_to_target_files.py.",
+      "range": {
+        "startLine": 1882,
+        "startChar": 16,
+        "endLine": 1882,
+        "endChar": 62
+      },
+      "revId": "3114eba26c179e27a46c164a54325f2197eaff80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_2b611dc5",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-05-10T17:30:55Z",
+      "side": 1,
+      "message": "Can you help update the comment here?",
+      "range": {
+        "startLine": 398,
+        "startChar": 2,
+        "endLine": 399,
+        "endChar": 63
+      },
+      "revId": "3114eba26c179e27a46c164a54325f2197eaff80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
