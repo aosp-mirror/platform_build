@@ -395,8 +395,9 @@ def AddImagesToTargetFiles(filename):
     banner("partition-table")
     AddPartitionTable(output_zip)
 
-  # For devices using A/B update, copy over images from RADIO/ to IMAGES/ and
-  # make sure we have all the needed images ready under IMAGES/.
+  # For devices using A/B update, copy over images from RADIO/ and/or
+  # VENDOR_IMAGES/ to IMAGES/ and make sure we have all the needed
+  # images ready under IMAGES/. All images should have '.img' as extension.
   ab_partitions = os.path.join(OPTIONS.input_tmp, "META", "ab_partitions.txt")
   if os.path.exists(ab_partitions):
     with open(ab_partitions, 'r') as f:
@@ -404,9 +405,17 @@ def AddImagesToTargetFiles(filename):
     for line in lines:
       img_name = line.strip() + ".img"
       img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
+      img_vendor_dir = os.path.join(
+        OPTIONS.input_tmp, "VENDOR_IMAGES")
       if os.path.exists(img_radio_path):
         common.ZipWrite(output_zip, img_radio_path,
                         os.path.join("IMAGES", img_name))
+      else:
+        for root, _, files in os.walk(img_vendor_dir):
+          if img_name in files:
+            common.ZipWrite(output_zip, os.path.join(root, img_name),
+              os.path.join("IMAGES", img_name))
+            break
 
       # Zip spec says: All slashes MUST be forward slashes.
       img_path = 'IMAGES/' + img_name
