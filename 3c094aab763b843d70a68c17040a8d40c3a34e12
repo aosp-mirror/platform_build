@@ -22,6 +22,30 @@
       "revId": "3c094aab763b843d70a68c17040a8d40c3a34e12",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92daf8a7_69b70549",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1983,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-05-11T17:12:49Z",
+      "side": 1,
+      "message": "OK. Then let\u0027s give up having them for now? Not updating symbol info of  test binaries won\u0027t be a big deal anyway. Also, I guess it\u0027d be easier to fix this with Soong.",
+      "parentUuid": "125a88dd_9cb40644",
+      "range": {
+        "startLine": 1983,
+        "startChar": 2,
+        "endLine": 1983,
+        "endChar": 24
+      },
+      "revId": "3c094aab763b843d70a68c17040a8d40c3a34e12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
