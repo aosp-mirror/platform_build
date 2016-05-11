@@ -65,11 +65,11 @@ void to_565_raw_dither(int width)
         out = to565(rb, gb, bb);
         write(1, &out, 2);
 
-#define apply_error(ch) {                                               \
-            next_error[(i-1)*3+ch] += e * 3 / 16;                       \
-            next_error[(i)*3+ch] += e * 5 / 16;                         \
-            next_error[(i+1)*3+ch] += e * 1 / 16;                       \
-            error[(i+1)*3+ch] += e - ((e*1/16) + (e*3/16) + (e*5/16));  \
+#define apply_error(ch) {                                                \
+            next_error[(i-1)*3+(ch)] += e * 3 / 16;                      \
+            next_error[(i)*3+(ch)] += e * 5 / 16;                        \
+            next_error[(i+1)*3+(ch)] += e * 1 / 16;                      \
+            error[(i+1)*3+(ch)] += e - ((e*1/16) + (e*3/16) + (e*5/16)); \
         }
 
         e = r - from565_r(out);
