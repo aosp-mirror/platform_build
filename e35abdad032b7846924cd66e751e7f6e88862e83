@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "125a88dd_4b9ebec7",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1105075
+      },
+      "writtenOn": "2016-05-11T19:26:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "125a88dd_0b47666a",
+      "range": {
+        "startLine": 414,
+        "startChar": 18,
+        "endLine": 414,
+        "endChar": 22
+      },
+      "revId": "e35abdad032b7846924cd66e751e7f6e88862e83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "125a88dd_8b535627",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-05-11T19:18:59Z",
       "side": 1,
       "message": "nit: indent with two space or align with \"output_zip\" in last line.",
+      "range": {
+        "startLine": 417,
+        "startChar": 12,
+        "endLine": 417,
+        "endChar": 24
+      },
+      "revId": "e35abdad032b7846924cd66e751e7f6e88862e83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_eba20a0e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1105075
+      },
+      "writtenOn": "2016-05-11T19:26:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "125a88dd_8b535627",
       "range": {
         "startLine": 417,
         "startChar": 12,
