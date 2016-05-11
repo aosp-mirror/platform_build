@@ -46,6 +46,30 @@
       "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_67bf38b9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2016-05-11T06:31:28Z",
+      "side": 1,
+      "message": "I see, that\u0027s the basename is for. One concern is that the provision-device script will not work as it expects some folder structure. \n\nFor example:\nhttps://cs.corp.google.com/android/device/qcom/dragonboard/provision-device?type\u003dcs\n\nSome bin files are under partitions folder, some are under vendor-partitions folder.\n\nAlso, it seems that this change will not include that provision-device script. Is it the plan not to use that to do device provision? David might have more input on that.",
+      "parentUuid": "125a88dd_a7c53050",
+      "range": {
+        "startLine": 11,
+        "startChar": 65,
+        "endLine": 11,
+        "endChar": 72
+      },
+      "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
