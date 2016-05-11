@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "125a88dd_5cd76e59",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1879,
+      "author": {
+        "id": 1105075
+      },
+      "writtenOn": "2016-05-11T17:37:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "125a88dd_9ca96638",
+      "range": {
+        "startLine": 1879,
+        "startChar": 1,
+        "endLine": 1879,
+        "endChar": 2
+      },
+      "revId": "c3cc7cdd57ffcb20618df8c510f585626137f237",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "125a88dd_1cbd7673",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-05-11T16:42:51Z",
       "side": 1,
       "message": "feels like you want notdir instead of basename?\n\nalso do we need to worry about duplicate filenames (like a/file.img, b/file.img)?",
+      "range": {
+        "startLine": 1880,
+        "startChar": 36,
+        "endLine": 1880,
+        "endChar": 44
+      },
+      "revId": "c3cc7cdd57ffcb20618df8c510f585626137f237",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_d2d02707",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1880,
+      "author": {
+        "id": 1105075
+      },
+      "writtenOn": "2016-05-11T17:37:36Z",
+      "side": 1,
+      "message": "This is in bash context, so use basename instead of notdir, see \u0027$$\u0027.\nIf this happens, there will be also ambiguous in ab_partitions.txt.",
+      "parentUuid": "125a88dd_1cbd7673",
       "range": {
         "startLine": 1880,
         "startChar": 36,
