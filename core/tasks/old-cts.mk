@@ -228,6 +228,7 @@ $(CTS_TESTCASES_OUT)/android.core.tests.libcore.package.org.xml: $(CTS_CORE_XMLS
 		org.apache.harmony.luni.tests:\
 		org.apache.harmony.tests.internal.net.www.protocol:\
 		org.apache.harmony.tests.javax.net:\
+		org.apache.harmony.tests.javax.xml:\
 		org.json,\
 		$(TARGET_ARCH),libcore/expectations)
 
