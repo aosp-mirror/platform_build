@@ -22,6 +22,30 @@
       "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_a7c53050",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1105075
+      },
+      "writtenOn": "2016-05-11T06:25:04Z",
+      "side": 1,
+      "message": "The last part of the pair path will be trucated to filename so images are stored flat under VENDOR_IMAGES/.\ne.g. $(vendor_partition_directory):bootloader/teesst.img\n teesst.img will be stored under VENDOR_IMAGES/ not VENDOR_IMAGES/bootloader/teesst.img",
+      "parentUuid": "125a88dd_27b940da",
+      "range": {
+        "startLine": 11,
+        "startChar": 65,
+        "endLine": 11,
+        "endChar": 72
+      },
+      "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
