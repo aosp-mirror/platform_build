@@ -22,6 +22,30 @@
       "revId": "697da4236b3699875b65afe714c61a0310a3804d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "92daf8a7_29386dc2",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1978,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-05-11T11:11:37Z",
+      "side": 1,
+      "message": "I see. I couldn\u0027t find a make variable which contains all test binaries, so I\u0027ve added ALL_TEST_BINARIES variable. I also added the two target images and the updater binary (as I\u0027ve realized the zip file contains the symbol info of it. too).",
+      "parentUuid": "125a88dd_ab042d6d",
+      "range": {
+        "startLine": 1978,
+        "startChar": 71,
+        "endLine": 1978,
+        "endChar": 83
+      },
+      "revId": "697da4236b3699875b65afe714c61a0310a3804d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
