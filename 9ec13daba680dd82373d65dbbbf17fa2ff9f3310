@@ -94,6 +94,30 @@
       "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_079764fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2016-05-11T07:06:52Z",
+      "side": 1,
+      "message": "Got it. David can comment on if we need to preserve the folder structure. That is mostly to separate regular images from vendor images.",
+      "parentUuid": "125a88dd_87fa7482",
+      "range": {
+        "startLine": 11,
+        "startChar": 65,
+        "endLine": 11,
+        "endChar": 72
+      },
+      "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
