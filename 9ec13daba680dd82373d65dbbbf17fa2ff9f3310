@@ -70,6 +70,30 @@
       "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_87fa7482",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1105075
+      },
+      "writtenOn": "2016-05-11T06:36:35Z",
+      "side": 1,
+      "message": "This is not for provision device, this change is for fixing the build breakage on brillo branch due to the dependency. This change as well as c/224289 are to add support for more AB partitions other than boot and system.  provision-device is not impacted by any of the change.",
+      "parentUuid": "125a88dd_67bf38b9",
+      "range": {
+        "startLine": 11,
+        "startChar": 65,
+        "endLine": 11,
+        "endChar": 72
+      },
+      "revId": "9ec13daba680dd82373d65dbbbf17fa2ff9f3310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
