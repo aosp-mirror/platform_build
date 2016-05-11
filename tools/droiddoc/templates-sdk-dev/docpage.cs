@@ -120,15 +120,6 @@ include:"header.cs" ?>
   <h1 itemprop="name"><?cs var:projectDir ?></h1>
 
 <?cs else ?>
-  <?cs if:training ?>
-<?cs # horrible horrible hack to move TOC up when the next/prev links are not there ?>
-<style>
-  #tb-wrapper {
-    margin-top:6px;
-  }
-</style>
-  <?cs /if ?>
-
   <?cs if:(!fullpage && !header.hide && !devsite) ?>
     <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
