@@ -15,22 +15,25 @@
 #
 
 # Most Android source files are not clang-tidy clean yet.
-# Global tidy checks include only google* minus google-readability*.
+# Global tidy checks include only google* and misc-macro-parentheses,
+# but not google-readability*.
 DEFAULT_GLOBAL_TIDY_CHECKS := \
-  -*,google*,-google-readability*
+  -*,google*,-google-readability*,misc-macro-parentheses
 
-# Disable google style rules usually not followed by external projects.
+# Disable style rules usually not followed by external projects.
 # Every word in DEFAULT_LOCAL_TIDY_CHECKS list has the following format:
 #   <local_path_prefix>:,<tidy-check-pattern>
 # The tidy-check-patterns of all matching local_path_prefixes will be used.
 # For example, external/google* projects will have:
 #   ,-google-build-using-namespace,-google-explicit-constructor
-#   ,-google-runtime-int,google-runtime-int
-# where google-runtime-int is enabled at the end.
+#   ,-google-runtime-int,-misc-macro-parentheses,
+#   ,google-runtime-int,misc-macro-parentheses
+# where google-runtime-int and misc-macro-parentheses are enabled at the end.
 DEFAULT_LOCAL_TIDY_CHECKS := \
   external/:,-google-build-using-namespace \
   external/:,-google-explicit-constructor,-google-runtime-int \
-  external/google:,google-runtime-int \
+  external/:,-misc-macro-parentheses \
+  external/google:,google-runtime-int,misc-macro-parentheses \
   external/webrtc/:,google-runtime-int \
   hardware/qcom:,-google-build-using-namespace \
   hardware/qcom:,-google-explicit-constructor,-google-runtime-int \
