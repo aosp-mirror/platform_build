@@ -83,6 +83,8 @@
           elif:(about||versions||wear||tv||auto) ?>/about<?cs
           elif:preview ?>/preview<?cs
           elif:design ?>/design<?cs
+          elif:reference.testSupport ?>/reference/android/support/test<?cs
+          elif:reference.wearableSupport ?>/reference/android/support/wearable<?cs
           elif:walkthru ?>/walkthru<?cs /if ?><?cs
         /if ?>/_book.yaml" />
     <?cs /if ?>
