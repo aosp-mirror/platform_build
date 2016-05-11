@@ -108,6 +108,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         annotations \
         compat \
         media-compat \
+        fragment \
+        core-ui \
         v4 \
         v7/gridlayout \
         v7/cardview \
