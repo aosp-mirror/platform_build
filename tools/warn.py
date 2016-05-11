@@ -1,12 +1,20 @@
 #!/usr/bin/env python
 # This file uses the following encoding: utf-8
 
+import argparse
 import sys
 import re
 
-if len(sys.argv) == 1:
-    print 'usage: ' + sys.argv[0] + ' <build.log>'
-    sys.exit()
+parser = argparse.ArgumentParser(description='Convert a build log into HTML')
+parser.add_argument('--url',
+                    help='Root URL of an Android source code tree prefixed '
+                    'before files in warnings')
+parser.add_argument('--separator',
+                    help='Separator between the end of a URL and the line '
+                    'number argument. e.g. #')
+parser.add_argument(dest='buildlog', metavar='build.log',
+                    help='Path to build.log file')
+args = parser.parse_args()
 
 # if you add another level, don't forget to give it a color below
 class severity:
@@ -781,7 +789,7 @@ def tablerow(text):
     output('<tr bgcolor="' + row_colors[cur_row_color] + '"><td colspan="2">',)
     cur_row_color = 1 - cur_row_color
     output(text,)
-    output('</td></tr>')
+    output('</td></tr>\n')
 
 def begintable(text, backgroundcolor, extraanchor):
     global anchor
@@ -879,6 +887,19 @@ def dumpfixed():
     if tablestarted:
         endtable()
 
+def warningwithurl(line):
+    if not args.url:
+        return line
+    m = re.search( r'^([^ :]+):(\d+):(.+)', line, re.M|re.I)
+    if not m:
+        return line
+    filepath = m.group(1)
+    linenumber = m.group(2)
+    warning = m.group(3)
+    if args.separator:
+        return '<a href="' + args.url + '/' + filepath + args.separator + linenumber + '">' + filepath + ':' + linenumber + '</a>:' + warning
+    else:
+        return '<a href="' + args.url + '/' + filepath + '">' + filepath + '</a>:' + linenumber + ':' + warning
 
 # dump a category, provided it is not marked as 'SKIP' and has more than 0 occurrences
 def dumpcategory(cat):
@@ -888,7 +909,7 @@ def dumpcategory(cat):
             header[1:1] = [' (related option: ' + cat['option'] +')']
         begintable(header, colorforseverity(cat['severity']), cat['anchor'])
         for i in cat['members']:
-            tablerow(i)
+            tablerow(warningwithurl(i))
         endtable()
 
 
@@ -918,7 +939,7 @@ def compilepatterns():
         for pat in i['patterns']:
             i['compiledpatterns'].append(re.compile(pat))
 
-infile = open(sys.argv[1], 'r')
+infile = open(args.buildlog, 'r')
 warnings = []
 
 platformversion = 'unknown'
