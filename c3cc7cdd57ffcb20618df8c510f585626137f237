@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "125a88dd_9ca96638",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1879,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-05-11T16:42:51Z",
+      "side": 1,
+      "message": "the second tab \u003d\u003e space (to be consistent with the lines around)",
+      "range": {
+        "startLine": 1879,
+        "startChar": 1,
+        "endLine": 1879,
+        "endChar": 2
+      },
+      "revId": "c3cc7cdd57ffcb20618df8c510f585626137f237",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "125a88dd_1cbd7673",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1880,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-05-11T16:42:51Z",
+      "side": 1,
+      "message": "feels like you want notdir instead of basename?\n\nalso do we need to worry about duplicate filenames (like a/file.img, b/file.img)?",
+      "range": {
+        "startLine": 1880,
+        "startChar": 36,
+        "endLine": 1880,
+        "endChar": 44
+      },
+      "revId": "c3cc7cdd57ffcb20618df8c510f585626137f237",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
