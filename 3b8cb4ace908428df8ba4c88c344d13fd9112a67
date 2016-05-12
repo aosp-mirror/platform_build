@@ -22,6 +22,30 @@
       "revId": "3b8cb4ace908428df8ba4c88c344d13fd9112a67",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1720ba90_951b44b7",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1052304
+      },
+      "writtenOn": "2016-05-12T10:01:18Z",
+      "side": 1,
+      "message": "I can remove it. But if we don\u0027t say who uses that specific target, I would be afraid someone would remove it or ask why we have it. (We are hacking into auto-generated targets.)",
+      "parentUuid": "b75fee26_aa45afa8",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "3b8cb4ace908428df8ba4c88c344d13fd9112a67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
