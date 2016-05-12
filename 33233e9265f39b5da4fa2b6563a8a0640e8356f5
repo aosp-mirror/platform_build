@@ -34,6 +34,24 @@
       "revId": "33233e9265f39b5da4fa2b6563a8a0640e8356f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5257a0e9_2367ab40",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-05-12T23:43:20Z",
+      "side": 1,
+      "message": "Gross.\n\n    $ ndk-build -C tests/build/issue66668-libc++-std-feof/ APP_ABI\u003dmips V\u003d1 NDK_DEBUG_MODULES\u003dtrue\n    [trimmed]\n    module issue66668-libc++-std-feof [./obj/local/mips/issue66668-libc++-std-feof]\n    .  all_libs\u003d\u0027c++_static c++abi unwind android_support\u0027\n    .  shared_libs\u003d\u0027\u0027\n    .  static_libs\u003d\u0027c++_static c++abi android_support\u0027\n    .  whole_static_libs\u003d\u0027\u0027\n    .  built_shared_libs\u003d\u0027 \u0027\n    .  built_static_libs\u003d\u0027/work/src/ndk/out/android-ndk-r13-beta1/sources/cxx-stl/llvm-libc++/libs/mips/libc++_static.a /work/src/ndk/out/android-ndk-r13-beta1/sources/cxx-stl/llvm-libc++abi/../llvm-libc++/libs/mips/libc++abi.a ./obj/local/mips/libandroid_support.a\u0027\n    .  built_whole_static_libs\u003d\u0027\u0027\n\nCan see that libunwind is in the list of all_libs, but doesn\u0027t make it into static_libs. static_libs is setup here https://android.googlesource.com/platform/ndk/+/master/build/core/build-binary.mk#624\n\nThe function it\u0027s calling just filters all_libs by the MODULE_CLASS of each lib. Since make thinks all uninitialized values are the empty string, it happily reports that the non-existent library is not a static library, and it gets filtered out.\n\nI should probably fix that, but at least for now I know why ndk-build wasn\u0027t having the same problem.",
+      "parentUuid": "5257a0e9_0a62bc30",
+      "revId": "33233e9265f39b5da4fa2b6563a8a0640e8356f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
