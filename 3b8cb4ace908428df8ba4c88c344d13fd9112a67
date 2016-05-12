@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b75fee26_aa45afa8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2016-05-12T09:56:08Z",
+      "side": 1,
+      "message": "Erf, this is very ART specific, not sure we want to mention it here.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 38
+      },
+      "revId": "3b8cb4ace908428df8ba4c88c344d13fd9112a67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
