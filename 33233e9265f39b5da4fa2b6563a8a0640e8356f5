@@ -16,6 +16,24 @@
       "revId": "33233e9265f39b5da4fa2b6563a8a0640e8356f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5257a0e9_0a62bc30",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-05-12T21:59:33Z",
+      "side": 1,
+      "message": "Huh. I wonder why `ndk-build` isn\u0027t complaining, since it isn\u0027t conditional on the architecture there either...",
+      "parentUuid": "5257a0e9_eabf38b6",
+      "revId": "33233e9265f39b5da4fa2b6563a8a0640e8356f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
