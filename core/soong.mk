@@ -8,7 +8,7 @@ SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 # Only include the Soong-generated Android.mk if we're merging the
 # Soong-defined binaries with Kati-defined binaries.
 ifeq ($(USE_SOONG),true)
-SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android.mk
+SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
 endif
 
 # We need to rebootstrap soong if SOONG_OUT_DIR or the reverse path from
@@ -37,6 +37,8 @@ $(SOONG_VARIABLES): FORCE
 	$(hide) mkdir -p $(dir $@)
 	$(hide) (\
 	echo '{'; \
+	echo '    "Make_suffix": "-$(TARGET_PRODUCT)",'; \
+	echo ''; \
 	echo '    "Platform_sdk_version": $(PLATFORM_SDK_VERSION),'; \
 	echo '    "Unbundled_build": $(if $(TARGET_BUILD_APPS),true,false),'; \
 	echo '    "Brillo": $(if $(BRILLO),true,false),'; \
