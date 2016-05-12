@@ -5,7 +5,7 @@
     if:devsite ?>
     <meta name="top_category" value="<?cs
       if:ndk ?>ndk<?cs
-      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples) ?>develop<?cs
+      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples||wearpreview) ?>develop<?cs
       elif:(topic||libraries) ?>develop<?cs
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
@@ -48,6 +48,7 @@
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(about||versions||wear||tv||auto) ?>about<?cs
         elif:preview ?>preview<?cs
+        elif:wearpreview ?>wearpreview<?cs
         elif:design ?>design<?cs
         elif:walkthru ?>walkthru<?cs
         else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
@@ -82,6 +83,7 @@
             elif:analyze ?>/analyze<?cs /if ?><?cs
           elif:(about||versions||wear||tv||auto) ?>/about<?cs
           elif:preview ?>/preview<?cs
+          elif:wearpreview ?>/wear/preview<?cs
           elif:design ?>/design<?cs
           elif:reference.testSupport ?>/reference/android/support/test<?cs
           elif:reference.wearableSupport ?>/reference/android/support/wearable<?cs
