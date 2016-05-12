@@ -24,11 +24,11 @@ import java.security.MessageDigest;
  * Data sink which feeds all received data into the associated {@link MessageDigest} instances. Each
  * {@code MessageDigest} instance receives the same data.
  */
-class MessageDigestSink implements DataSink {
+public class MessageDigestSink implements DataSink {
 
     private final MessageDigest[] mMessageDigests;
 
-    MessageDigestSink(MessageDigest[] digests) {
+    public MessageDigestSink(MessageDigest[] digests) {
         mMessageDigests = digests;
     }
 
