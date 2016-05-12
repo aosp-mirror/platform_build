@@ -22,6 +22,30 @@
       "revId": "585ab91741f5e21bec3f42985e6a651f46946816",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5257a0e9_aaab7586",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 400,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-12T18:33:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5257a0e9_c7ec3408",
+      "range": {
+        "startLine": 400,
+        "startChar": 7,
+        "endLine": 400,
+        "endChar": 12
+      },
+      "revId": "585ab91741f5e21bec3f42985e6a651f46946816",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
