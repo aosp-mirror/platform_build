@@ -182,6 +182,8 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
         <?cs include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
       <?cs elif:preview ?>
         <?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+      <?cs elif:preview ?>
+        <?cs include:"../../../../frameworks/base/docs/html/wear/preview/preview_toc.cs" ?>
       <?cs elif:distribute ?>
         <?cs if:googleplay ?>
           <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
