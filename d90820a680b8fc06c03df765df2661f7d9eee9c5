@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5257a0e9_b49e6560",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1080051
+      },
+      "writtenOn": "2016-05-13T19:43:16Z",
+      "side": 1,
+      "message": "Is there some preferred way to do numerical \u003c compare in mk files?",
+      "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "722d8476_4e8ea78c",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1080051
+      },
+      "writtenOn": "2016-05-13T19:43:16Z",
+      "side": 1,
+      "message": "Have we been using symlinks before, or did NDK change how it handled old api\u0027s lately?",
+      "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5257a0e9_14b491e0",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1080051
+      },
+      "writtenOn": "2016-05-13T19:43:16Z",
+      "side": 1,
+      "message": "This can become a simple test for arm, w/o a filter.",
+      "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
