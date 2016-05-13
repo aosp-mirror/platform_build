@@ -107,6 +107,8 @@ $(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
 else # KATI
 
+include $(SOONG_MAKEVARS_MK)
+
 # Write the build number to a file so it can be read back in
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
