@@ -144,7 +144,10 @@ ifeq ($(USE_SOONG),true)
 define filter-soong-makefiles
 $(foreach mk,$(1),\
   $(if $(wildcard $(patsubst %/Android.mk,%/Android.bp,$(mk))),\
-    $(info skipping $(mk) ...),\
+    $(if $(wildcard $(patsubst %/Android.mk,%/Android.soong.mk,$(mk))),\
+      $(info skipping $(mk), but including Android.soong.mk ...)\
+        $(patsubst %/Android.mk,%/Android.soong.mk,$(mk)),\
+      $(info skipping $(mk) ...)),\
     $(mk)))
 endef
 else
