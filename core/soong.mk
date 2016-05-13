@@ -3,6 +3,7 @@ SOONG := $(SOONG_OUT_DIR)/soong
 SOONG_BOOTSTRAP := $(SOONG_OUT_DIR)/.soong.bootstrap
 SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
 SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
+SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
 
 # Only include the Soong-generated Android.mk if we're merging the
