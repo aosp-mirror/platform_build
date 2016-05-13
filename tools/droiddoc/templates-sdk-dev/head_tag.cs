@@ -6,7 +6,7 @@
     <meta name="top_category" value="<?cs
       if:ndk ?>ndk<?cs
       elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples||wearpreview) ?>develop<?cs
-      elif:(topic||libraries) ?>develop<?cs
+      elif:(topic||libraries||instantapps) ?>develop<?cs
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
       elif:(about||versions||wear||tv||auto) ?>about<?cs
@@ -35,6 +35,7 @@
         elif:(google||reference.gms||reference.gcm) ?>google<?cs
         elif:(topic||libraries) ?><?cs
           if:libraries ?>libraries<?cs
+          elif:instantapps ?>instantapps<?cs
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
           if:googleplay ?>googleplay<?cs
@@ -71,7 +72,8 @@
             elif:samples ?>/samples<?cs /if ?><?cs
           elif:(google||reference.gms||reference.gcm) ?>/google<?cs
           elif:(topic||libraries) ?>/topic<?cs
-            if:libraries ?>/libraries<?cs /if ?><?cs
+            if:libraries ?>/libraries<?cs
+            elif:instantapps ?>/instant-apps<?cs /if ?><?cs
           elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>/distribute<?cs
             if:googleplay ?>/googleplay<?cs
             elif:essentials ?>/essentials<?cs
