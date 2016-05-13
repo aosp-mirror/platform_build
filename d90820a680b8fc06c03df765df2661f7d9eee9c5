@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5257a0e9_b4d665cf",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-05-13T19:48:41Z",
+      "side": 1,
+      "message": "iirc the only way to do it is to shell out, and idk how portable this is. This seems reasonable to me, but wangying will say for sure.",
+      "parentUuid": "5257a0e9_b49e6560",
+      "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "722d8476_4e8ea78c",
         "filename": "core/binary.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2016-05-13T19:43:16Z",
       "side": 1,
       "message": "Have we been using symlinks before, or did NDK change how it handled old api\u0027s lately?",
+      "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5257a0e9_b453c558",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-05-13T19:48:41Z",
+      "side": 1,
+      "message": "That is was https://android.googlesource.com/platform/prebuilts/ndk/+/master/make_platform_symlinks.py#66 does, but I actually prefer having this in the build system.",
+      "parentUuid": "722d8476_4e8ea78c",
       "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
