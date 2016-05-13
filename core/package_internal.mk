@@ -369,6 +369,7 @@ ifeq ($(dir $(strip $(LOCAL_CERTIFICATE))),./)
 endif
 private_key := $(LOCAL_CERTIFICATE).pk8
 certificate := $(LOCAL_CERTIFICATE).x509.pem
+additional_certificates := $(foreach c,$(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
 
 $(LOCAL_BUILT_MODULE): $(private_key) $(certificate) $(SIGNAPK_JAR)
 $(LOCAL_BUILT_MODULE): PRIVATE_PRIVATE_KEY := $(private_key)
@@ -377,8 +378,8 @@ $(LOCAL_BUILT_MODULE): PRIVATE_CERTIFICATE := $(certificate)
 PACKAGES.$(LOCAL_PACKAGE_NAME).PRIVATE_KEY := $(private_key)
 PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 
-$(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
-    $(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
+$(LOCAL_BUILT_MODULE): $(additional_certificates)
+$(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certificates)
 
 # Define the rule to build the actual package.
 $(LOCAL_BUILT_MODULE): $(AAPT)
