@@ -378,6 +378,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     build_command.extend(["-m", prop_dict["mount_point"]])
     if target_out:
       build_command.extend(["-d", target_out])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
     if "selinux_fc" in prop_dict:
       build_command.extend(["-c", prop_dict["selinux_fc"]])
     if "squashfs_compressor" in prop_dict:
