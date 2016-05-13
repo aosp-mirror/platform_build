@@ -37,6 +37,23 @@
     },
     {
       "key": {
+        "uuid": "722d8476_ee43db03",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1080051
+      },
+      "writtenOn": "2016-05-13T22:16:39Z",
+      "side": 1,
+      "message": "This is unrelated to LOCAL_NDK_VERSION. A better name would be local_ndk_api.  Var my_local_sdk_version is unused after this so a single var should be used for both.",
+      "revId": "d90820a680b8fc06c03df765df2661f7d9eee9c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "722d8476_4e8ea78c",
         "filename": "core/binary.mk",
         "patchSetId": 3
