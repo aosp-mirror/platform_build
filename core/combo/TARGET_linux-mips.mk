@@ -127,24 +127,6 @@ $(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS := \
 
 libc_root := bionic/libc
 
-
-## on some hosts, the target cross-compiler is not available so do not run this command
-ifneq ($(wildcard $($(combo_2nd_arch_prefix)TARGET_CC)),)
-# We compile with the global cflags to ensure that
-# any flags which affect libgcc are correctly taken
-# into account.
-$(combo_2nd_arch_prefix)TARGET_LIBGCC := \
-  $(shell $($(combo_2nd_arch_prefix)TARGET_CC) $($(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS) -print-file-name=libgcc.a)
-$(combo_2nd_arch_prefix)TARGET_LIBATOMIC := \
-  $(shell $($(combo_2nd_arch_prefix)TARGET_CC) $($(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS) -print-file-name=libatomic.a)
-LIBGCC_EH := $(shell $($(combo_2nd_arch_prefix)TARGET_CC) $($(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS) -print-file-name=libgcc_eh.a)
-ifneq ($(LIBGCC_EH),libgcc_eh.a)
-  $(combo_2nd_arch_prefix)TARGET_LIBGCC += $(LIBGCC_EH)
-endif
-$(combo_2nd_arch_prefix)TARGET_LIBGCOV := $(shell $($(combo_2nd_arch_prefix)TARGET_CC) $($(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS) \
-        --print-file-name=libgcov.a)
-endif
-
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-mips # mips covers both mips and mips64.

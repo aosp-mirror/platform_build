@@ -62,15 +62,6 @@ define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
 
-ifneq ($(wildcard $(TARGET_CC)),)
-TARGET_LIBGCC := \
-	$(shell $(TARGET_CC) -m64 -print-file-name=libgcc.a)
-TARGET_LIBATOMIC := \
-	$(shell $(TARGET_CC) -m64 -print-file-name=libatomic.a)
-TARGET_LIBGCOV := \
-	$(shell $(TARGET_CC) -m64 -print-file-name=libgcov.a)
-endif
-
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
 libc_root := bionic/libc
