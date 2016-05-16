@@ -17,15 +17,6 @@
 # Configuration for builds hosted on linux-x86_64.
 # Included by combo/select.mk
 
-ifeq ($(strip $(HOST_TOOLCHAIN_PREFIX)),)
-HOST_TOOLCHAIN_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/bin/x86_64-linux-
-endif
-HOST_CC  := $(HOST_TOOLCHAIN_PREFIX)gcc
-HOST_CXX := $(HOST_TOOLCHAIN_PREFIX)g++
-HOST_AR  := $(HOST_TOOLCHAIN_PREFIX)ar
-HOST_READELF  := $(HOST_TOOLCHAIN_PREFIX)readelf
-HOST_NM  := $(HOST_TOOLCHAIN_PREFIX)nm
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
