@@ -5,11 +5,12 @@
     if:devsite ?>
     <meta name="top_category" value="<?cs
       if:ndk ?>ndk<?cs
-      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples||wearpreview) ?>develop<?cs
+      elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples) ?>develop<?cs
       elif:(topic||libraries||instantapps) ?>develop<?cs
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
       elif:(about||versions||wear||tv||auto) ?>about<?cs
+      elif:wearpreview ?>about<?cs
       elif:preview ?>preview<?cs
       else ?>none<?cs
       /if ?>" />
@@ -49,7 +50,7 @@
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(about||versions||wear||tv||auto) ?>about<?cs
         elif:preview ?>preview<?cs
-        elif:wearpreview ?>wearpreview<?cs
+        elif:wearpreview ?>wear<?cs
         elif:design ?>design<?cs
         elif:walkthru ?>walkthru<?cs
         else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
