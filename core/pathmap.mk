@@ -136,6 +136,8 @@ FRAMEWORKS_MULTIDEX_SUBDIRS := \
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
 	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)) \
+        frameworks/support/graphics/drawable/animated \
+        frameworks/support/graphics/drawable/static \
 	frameworks/support/v7/appcompat/src \
 	frameworks/support/v7/recyclerview/src
 
@@ -144,6 +146,8 @@ FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 #
 FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
     $(foreach dir,$(FRAMEWORKS_SUPPORT_SUBDIRS),android-support-$(subst /,-,$(dir))) \
+    android-support-vectordrawable \
+    android-support-animatedvectordrawable \
     android-support-v7-appcompat \
     android-support-v7-recyclerview \
     android-support-multidex \
