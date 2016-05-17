@@ -9,7 +9,3 @@ ARCH_X86_HAVE_AES_NI := false
 ARCH_X86_HAVE_AVX    := false
 ARCH_X86_HAVE_POPCNT := true
 ARCH_X86_HAVE_MOVBE  := false
-
-# CFLAGS for this arch
-arch_variant_cflags := \
-	-march=corei7
