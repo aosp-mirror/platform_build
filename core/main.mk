@@ -293,6 +293,12 @@ endif
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
+ifneq ($(USE_SOONG),true)
+$(eval $(call copy-toolchain-library,libgcc))
+$(eval $(call copy-toolchain-library,libatomic))
+$(eval $(call copy-toolchain-library,libgcov))
+endif
+
 # Bring in dex_preopt.mk
 include $(BUILD_SYSTEM)/dex_preopt.mk
 
