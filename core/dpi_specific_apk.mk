@@ -5,6 +5,7 @@
 dpi_apk_name := $(LOCAL_MODULE)_$(my_dpi)
 dpi_intermediate := $(call intermediates-dir-for,APPS,$(dpi_apk_name))
 built_dpi_apk := $(dpi_intermediate)/package.apk
+additional_certificates := $(foreach c,$(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
 
 # Set up all the target-specific variables.
 $(built_dpi_apk): PRIVATE_MODULE := $(dpi_apk_name)
@@ -27,8 +28,8 @@ $(built_dpi_apk): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_ab
 $(built_dpi_apk): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abis)
 $(built_dpi_apk): PRIVATE_PRIVATE_KEY := $(private_key)
 $(built_dpi_apk): PRIVATE_CERTIFICATE := $(certificate)
-$(built_dpi_apk): PRIVATE_ADDITIONAL_CERTIFICATES := $(foreach c,\
-    $(LOCAL_ADDITIONAL_CERTIFICATES), $(c).x509.pem $(c).pk8)
+$(built_dpi_apk): $(additional_certificates)
+$(built_dpi_apk): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certificates)
 
 ifneq ($(full_classes_jar),)
 $(built_dpi_apk): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
