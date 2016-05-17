@@ -133,24 +133,6 @@ TARGET_RELEASE_CFLAGS := \
 
 libc_root := bionic/libc
 
-
-## on some hosts, the target cross-compiler is not available so do not run this command
-ifneq ($(wildcard $(TARGET_CC)),)
-# We compile with the global cflags to ensure that
-# any flags which affect libgcc are correctly taken
-# into account.
-TARGET_LIBGCC := \
-  $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) -print-file-name=libgcc.a)
-TARGET_LIBATOMIC := \
-  $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) -print-file-name=libatomic.a)
-LIBGCC_EH := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) -print-file-name=libgcc_eh.a)
-ifneq ($(LIBGCC_EH),libgcc_eh.a)
-  TARGET_LIBGCC += $(LIBGCC_EH)
-endif
-TARGET_LIBGCOV := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
-        --print-file-name=libgcov.a)
-endif
-
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-mips
