@@ -34,6 +34,24 @@
       "revId": "51eeb2fc7117c79153c7fd127c40365903a6c1ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "722d8476_82e6ae53",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-05-17T19:13:43Z",
+      "side": 1,
+      "message": "Yeah, either BOARD_..., or TARGET_... seem to be the convention, but it\u0027s rather free-form, since it\u0027s just a standard make variable. Just make sure it\u0027s not used anywhere else.",
+      "parentUuid": "722d8476_97d0ae3b",
+      "revId": "51eeb2fc7117c79153c7fd127c40365903a6c1ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
