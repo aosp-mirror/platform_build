@@ -178,6 +178,7 @@ ifeq ($(LOCAL_CERTIFICATE),EXTERNAL)
   LOCAL_CERTIFICATE := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
   PACKAGES.$(LOCAL_MODULE).EXTERNAL_KEY := 1
 
+  $(built_module) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
   $(built_module) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
@@ -204,6 +205,7 @@ else
   PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
   PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
 
+  $(built_module) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
   $(built_module) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
@@ -283,6 +285,7 @@ $(error You must put all the split source apks in the same folder: $(LOCAL_PACKA
 endif
 my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
 
+$(built_apk_splits) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
 $(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
 $(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 $(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(AAPT)
