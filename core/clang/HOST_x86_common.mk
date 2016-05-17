@@ -23,8 +23,6 @@ CLANG_CONFIG_x86_LINUX_HOST_EXTRA_CFLAGS += -fstack-protector-strong
 
 ifneq ($(strip $($(clang_2nd_arch_prefix)HOST_IS_64_BIT)),)
 CLANG_CONFIG_x86_LINUX_HOST_EXTRA_CPPFLAGS := \
-  --gcc-toolchain=$($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG) \
-  --sysroot $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/sysroot \
   -isystem $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/include/c++/4.8 \
   -isystem $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/include/c++/4.8/x86_64-linux \
   -isystem $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/include/c++/4.8/backward
@@ -38,8 +36,6 @@ CLANG_CONFIG_x86_LINUX_HOST_EXTRA_LDFLAGS := \
   -L$($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/lib64
 else
 CLANG_CONFIG_x86_LINUX_HOST_EXTRA_CPPFLAGS := \
-  --gcc-toolchain=$($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG) \
-  --sysroot $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/sysroot \
   -isystem $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/include/c++/4.8 \
   -isystem $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/include/c++/4.8/x86_64-linux/32 \
   -isystem $($(clang_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG)/x86_64-linux/include/c++/4.8/backward
