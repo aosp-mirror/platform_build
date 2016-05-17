@@ -410,7 +410,7 @@ endif
 ifeq ($(my_clang),true)
     my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBPROFILE_RT)
 else
-    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBGCOV)
+    my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,,,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)

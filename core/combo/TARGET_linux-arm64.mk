@@ -126,13 +126,6 @@ TARGET_RELEASE_CFLAGS := \
 
 libc_root := bionic/libc
 
-TARGET_LIBGCC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
-	-print-libgcc-file-name)
-TARGET_LIBATOMIC := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
-	-print-file-name=libatomic.a)
-TARGET_LIBGCOV := $(shell $(TARGET_CC) $(TARGET_GLOBAL_CFLAGS) \
-	-print-file-name=libgcov.a)
-
 KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
 KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH)
