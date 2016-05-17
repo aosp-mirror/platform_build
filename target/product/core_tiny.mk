@@ -37,6 +37,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     BackupRestoreConfirmation \
+    CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     DefaultContainerService \
     ExtShared \
