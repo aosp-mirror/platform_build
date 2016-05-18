@@ -2500,7 +2500,7 @@ endif
 # Uncompress shared libraries embedded in an apk.
 #
 define uncompress-shared-libs
-$(hide) if unzip -l $@ $(PRIVATE_EMBEDDED_JNI_LIBS) >/dev/null ; then \
+$(hide) if (zipinfo $@ $(PRIVATE_EMBEDDED_JNI_LIBS) 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
   rm -rf $(dir $@)uncompressedlibs && mkdir $(dir $@)uncompressedlibs; \
   unzip $@ $(PRIVATE_EMBEDDED_JNI_LIBS) -d $(dir $@)uncompressedlibs && \
   zip -d $@ 'lib/*.so' && \
