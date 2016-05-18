@@ -47,6 +47,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "Allow_missing_dependencies": $(if $(TARGET_BUILD_APPS)$(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),true,false),'; \
 	echo '    "SanitizeHost": [$(if $(SANITIZE_HOST),"$(subst $(comma),"$(comma)",$(SANITIZE_HOST))")],'; \
 	echo '    "SanitizeDevice": [$(if $(SANITIZE_TARGET),"$(subst $(comma),"$(comma)",$(SANITIZE_TARGET))")],'; \
+	echo '    "HostStaticBinaries": $(if $(strip $(BUILD_HOST_static)),true,false),'; \
 	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
