@@ -135,7 +135,7 @@ KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 $(combo_2nd_arch_prefix)TARGET_C_INCLUDES := \
 	$(libc_root)/arch-arm/include \
 	$(libc_root)/include \
-	$(KERNEL_HEADERS) \
+	$(KERNEL_HEADERS)
 
 $(combo_2nd_arch_prefix)TARGET_CRTBEGIN_STATIC_O := $($(combo_2nd_arch_prefix)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 $(combo_2nd_arch_prefix)TARGET_CRTBEGIN_DYNAMIC_O := $($(combo_2nd_arch_prefix)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
