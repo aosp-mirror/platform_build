@@ -36,11 +36,7 @@ endif
 # Decouple NDK library selection with platform compiler version
 TARGET_NDK_GCC_VERSION := 4.9
 
-ifeq ($(strip $(TARGET_GCC_VERSION_EXP)),)
 TARGET_GCC_VERSION := 4.9
-else
-TARGET_GCC_VERSION := $(TARGET_GCC_VERSION_EXP)
-endif
 
 TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
 ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
@@ -50,20 +46,7 @@ endif
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 include $(BUILD_SYSTEM)/combo/fdo.mk
 
-# You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
-ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
 TARGET_TOOLCHAIN_ROOT := prebuilts/gcc/$(HOST_PREBUILT_TAG)/aarch64/aarch64-linux-android-$(TARGET_GCC_VERSION)
-TARGET_TOOLS_PREFIX := $(TARGET_TOOLCHAIN_ROOT)/bin/aarch64-linux-android-
-endif
-
-TARGET_CC := $(TARGET_TOOLS_PREFIX)gcc
-TARGET_CXX := $(TARGET_TOOLS_PREFIX)g++
-TARGET_AR := $(TARGET_TOOLS_PREFIX)ar
-TARGET_OBJCOPY := $(TARGET_TOOLS_PREFIX)objcopy
-TARGET_LD := $(TARGET_TOOLS_PREFIX)ld
-TARGET_READELF := $(TARGET_TOOLS_PREFIX)readelf
-TARGET_STRIP := $(TARGET_TOOLS_PREFIX)strip
-TARGET_NM := $(TARGET_TOOLS_PREFIX)nm
 
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
