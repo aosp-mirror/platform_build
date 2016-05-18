@@ -31,20 +31,9 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CO
 
 include $(BUILD_COMBOS)/mac_version.mk
 
-$(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT := prebuilts/gcc/darwin-x86/host/i686-apple-darwin-4.2.1
-$(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT)/bin/i686-apple-darwin11
-$(combo_2nd_arch_prefix)HOST_CC  := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX)-gcc
-$(combo_2nd_arch_prefix)HOST_CXX := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_PREFIX)-g++
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_macho,$(1),$(2))
 endef
-
-# gcc location for clang; to be updated when clang is updated
-# HOST_TOOLCHAIN_ROOT is a Darwin-specific define
-$(combo_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG := $($(combo_2nd_arch_prefix)HOST_TOOLCHAIN_ROOT)
-
-$(combo_2nd_arch_prefix)HOST_AR := $(mac_sdk_path)/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
 
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -isysroot $(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version) -DMACOSX_DEPLOYMENT_TARGET=$(mac_sdk_version)
 $(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -isysroot $(mac_sdk_root) -Wl,-syslibroot,$(mac_sdk_root) -mmacosx-version-min=$(mac_sdk_version)
