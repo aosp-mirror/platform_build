@@ -22,7 +22,6 @@ $(combo_var_prefix)GLOBAL_CFLAGS += -Wno-unused-parameter
 $(combo_var_prefix)GLOBAL_CFLAGS += --sysroot prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
 $(combo_var_prefix)GLOBAL_CFLAGS += -m32
 $(combo_var_prefix)GLOBAL_LDFLAGS += -m32
-TOOLS_PREFIX := prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/bin/x86_64-w64-mingw32-
 $(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/include
 $(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/lib/gcc/x86_64-w64-mingw32/4.8.3/include
 $(combo_var_prefix)GLOBAL_LD_DIRS += -Lprebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/lib32
@@ -36,12 +35,6 @@ $(combo_var_prefix)GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
 $(combo_var_prefix)GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0600 -DWINVER=0x0600
 # Get 64-bit off_t and related functions.
 $(combo_var_prefix)GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64
-
-$(combo_var_prefix)CC := $(TOOLS_PREFIX)gcc
-$(combo_var_prefix)CXX := $(TOOLS_PREFIX)g++
-$(combo_var_prefix)AR := $(TOOLS_PREFIX)ar
-$(combo_var_prefix)NM := $(TOOLS_PREFIX)nm
-$(combo_var_prefix)OBJDUMP := $(TOOLS_PREFIX)objdump
 
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OBJDUMP) -x $(1) | grep "^Name" | cut -f3 -d" " > $(2)
