@@ -493,7 +493,7 @@ endif
 # up if --no-undefined is passed to the linker.
 ifeq ($(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS)),)
 ifeq ($(my_allow_undefined_symbols),)
-  my_ldflags +=  $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)NO_UNDEFINED_LDFLAGS)
+  my_ldflags += -Wl,--no-undefined
 endif
 endif
 

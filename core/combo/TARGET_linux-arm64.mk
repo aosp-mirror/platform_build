@@ -52,8 +52,6 @@ define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
 
-TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
-
 TARGET_GLOBAL_CFLAGS += \
     -fno-strict-aliasing \
 
