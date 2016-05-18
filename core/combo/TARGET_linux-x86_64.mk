@@ -116,7 +116,7 @@ TARGET_GLOBAL_LDFLAGS += -Wl,--no-undefined-version
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86_64/include \
 	$(libc_root)/include \
-	$(KERNEL_HEADERS) \
+	$(KERNEL_HEADERS)
 
 TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
