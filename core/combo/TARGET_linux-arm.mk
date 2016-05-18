@@ -52,8 +52,6 @@ define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
 
-$(combo_2nd_arch_prefix)TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
-
 $(combo_2nd_arch_prefix)TARGET_arm_CFLAGS :=    -O2 \
                         -fomit-frame-pointer \
                         -fstrict-aliasing    \

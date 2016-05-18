@@ -40,5 +40,3 @@ HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector
 # Workaround differences in inttypes.h between host and target.
 # See bug 12708004.
 HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
-
-HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined

@@ -46,8 +46,6 @@ $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CO
 # both 32- and 64-bit (whether art uses them or not --- 9d59f417767991246848c3e101cb27d2dfea5988).
 $(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1
 
-$(combo_2nd_arch_prefix)HOST_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
-
 ############################################################
 ## Macros after this line are shared by the 64-bit config.
 
