@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17fefabc_9f42ab01",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-05-19T20:17:00Z",
+      "side": 1,
+      "message": "I\u0027d almost just do a check outside everything above that makes sure that the value is either true or false at this point, so that we error on values other than \"\" earlier too.\n\nExample, setting it to \"asdf\" gives this error:\n\n  config file: out/soong/soong.variables did not parse correctly: invalid character \u0027a\u0027 looking for beginning of value",
+      "revId": "493ea29558cc9c721cb2765229324316410ac66f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
