@@ -124,6 +124,7 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/preference \
         v14/preference \
         v17/preference-leanback \
+        documents-archive \
         customtabs
 
 #
