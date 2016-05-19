@@ -64,45 +64,6 @@ ifeq ($(FORCE_MIPS_DEBUGGING),true)
   TARGET_mips_CFLAGS += -fno-omit-frame-pointer
 endif
 
-TARGET_GLOBAL_CFLAGS += \
-			$(TARGET_mips_CFLAGS) \
-			-U__unix -U__unix__ -Umips \
-			-ffunction-sections \
-			-fdata-sections \
-			-funwind-tables \
-			-fstack-protector-strong \
-			-Wa,--noexecstack \
-			-Werror=format-security \
-			-D_FORTIFY_SOURCE=2 \
-			-no-canonical-prefixes \
-			-fno-canonical-system-headers \
-			$(arch_variant_cflags) \
-
-# Help catch common 32/64-bit errors.
-TARGET_GLOBAL_CFLAGS += \
-    -Werror=pointer-to-int-cast \
-    -Werror=int-to-pointer-cast \
-    -Werror=implicit-function-declaration \
-
-ifneq ($(ARCH_MIPS_PAGE_SHIFT),)
-TARGET_GLOBAL_CFLAGS += -DPAGE_SHIFT=$(ARCH_MIPS_PAGE_SHIFT)
-endif
-
-TARGET_GLOBAL_LDFLAGS += \
-			-Wl,-z,noexecstack \
-			-Wl,-z,relro \
-			-Wl,-z,now \
-			-Wl,--build-id=md5 \
-			-Wl,--warn-shared-textrel \
-			-Wl,--fatal-warnings \
-			-Wl,--no-undefined-version \
-			$(arch_variant_ldflags)
-
-# Disable transitive dependency library symbol resolving.
-TARGET_GLOBAL_LDFLAGS += -Wl,--allow-shlib-undefined
-
-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
-
 # More flags/options can be added here
 TARGET_RELEASE_CFLAGS := \
 			-DNDEBUG \
