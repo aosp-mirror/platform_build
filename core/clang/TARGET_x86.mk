@@ -50,22 +50,6 @@ define $(clang_2nd_arch_prefix)convert-to-clang-flags
   $(1))))
 endef
 
-$(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CFLAGS := \
-  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS)) \
-  $(CLANG_CONFIG_x86_TARGET_EXTRA_CFLAGS)
-
-$(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CONLYFLAGS := \
-  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CONLYFLAGS)) \
-  $(CLANG_CONFIG_x86_TARGET_EXTRA_CONLYFLAGS)
-
-$(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_CPPFLAGS := \
-  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS)) \
-  $(CLANG_CONFIG_x86_TARGET_EXTRA_CPPFLAGS)
-
-$(clang_2nd_arch_prefix)CLANG_TARGET_GLOBAL_LDFLAGS := \
-  $(call $(clang_2nd_arch_prefix)convert-to-clang-flags,$($(clang_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS)) \
-  $(CLANG_CONFIG_x86_TARGET_EXTRA_LDFLAGS)
-
 $(clang_2nd_arch_prefix)RS_TRIPLE := armv7-linux-androideabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS := -D__i386__
 $(clang_2nd_arch_prefix)RS_COMPAT_TRIPLE := i686-linux-android

@@ -43,22 +43,6 @@ define convert-to-clang-flags
   $(1))))
 endef
 
-CLANG_TARGET_GLOBAL_CFLAGS := \
-  $(call convert-to-clang-flags,$(TARGET_GLOBAL_CFLAGS)) \
-  $(CLANG_CONFIG_arm64_TARGET_EXTRA_CFLAGS)
-
-CLANG_TARGET_GLOBAL_CONLYFLAGS := \
-  $(call convert-to-clang-flags,$(TARGET_GLOBAL_CONLYFLAGS)) \
-  $(CLANG_CONFIG_arm64_TARGET_EXTRA_CONLYFLAGS)
-
-CLANG_TARGET_GLOBAL_CPPFLAGS := \
-  $(call convert-to-clang-flags,$(TARGET_GLOBAL_CPPFLAGS)) \
-  $(CLANG_CONFIG_arm64_TARGET_EXTRA_CPPFLAGS)
-
-CLANG_TARGET_GLOBAL_LDFLAGS := \
-  $(call convert-to-clang-flags,$(TARGET_GLOBAL_LDFLAGS)) \
-  $(CLANG_CONFIG_arm64_TARGET_EXTRA_LDFLAGS)
-
 RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS :=
 RS_COMPAT_TRIPLE := aarch64-linux-android
