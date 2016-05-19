@@ -17,37 +17,13 @@
 # Settings to use MinGW as a cross-compiler under Linux
 # Included by combo/select.make
 
-$(combo_var_prefix)GLOBAL_CFLAGS += -DUSE_MINGW -DWIN32_LEAN_AND_MEAN
-$(combo_var_prefix)GLOBAL_CFLAGS += -Wno-unused-parameter
-$(combo_var_prefix)GLOBAL_CFLAGS += --sysroot prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32
-$(combo_var_prefix)GLOBAL_CFLAGS += -m32
-$(combo_var_prefix)GLOBAL_LDFLAGS += -m32
-$(combo_var_prefix)GLOBAL_LDFLAGS += -Lprebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/lib32
 $(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/include
 $(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/lib/gcc/x86_64-w64-mingw32/4.8.3/include
-
-# Workaround differences in inttypes.h between host and target.
-# See bug 12708004.
-$(combo_var_prefix)GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
-# Use C99-compliant printf functions (%zd).
-$(combo_var_prefix)GLOBAL_CFLAGS += -D__USE_MINGW_ANSI_STDIO=1
-# Admit to using >= Vista. Both are needed because of <_mingw.h>.
-$(combo_var_prefix)GLOBAL_CFLAGS += -D_WIN32_WINNT=0x0600 -DWINVER=0x0600
-# Get 64-bit off_t and related functions.
-$(combo_var_prefix)GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64
 
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OBJDUMP) -x $(1) | grep "^Name" | cut -f3 -d" " > $(2)
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)NM) -g -f p $(1) | cut -f1-2 -d" " >> $(2)
 endef
-
-$(combo_var_prefix)GLOBAL_LDFLAGS += \
-    --enable-stdcall-fixup
-
-ifneq ($(strip $(BUILD_HOST_static)),)
-# Statically-linked binaries are desirable for sandboxed environment
-$(combo_var_prefix)GLOBAL_LDFLAGS += -static
-endif # BUILD_HOST_static
 
 $(combo_var_prefix)SHLIB_SUFFIX := .dll
 $(combo_var_prefix)EXECUTABLE_SUFFIX := .exe

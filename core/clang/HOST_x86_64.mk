@@ -57,20 +57,4 @@ define convert-to-host-clang-flags
   $(1))))
 endef
 
-CLANG_HOST_GLOBAL_CFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_GLOBAL_CFLAGS)) \
-  $(CLANG_CONFIG_x86_64_HOST_EXTRA_CFLAGS)
-
-CLANG_HOST_GLOBAL_CONLYFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_GLOBAL_CONLYFLAGS)) \
-  $(CLANG_CONFIG_x86_64_HOST_EXTRA_CONLYFLAGS)
-
-CLANG_HOST_GLOBAL_CPPFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_GLOBAL_CPPFLAGS)) \
-  $(CLANG_CONFIG_x86_64_HOST_EXTRA_CPPFLAGS)
-
-CLANG_HOST_GLOBAL_LDFLAGS := \
-  $(call convert-to-host-clang-flags,$(HOST_GLOBAL_LDFLAGS)) \
-  $(CLANG_CONFIG_x86_64_HOST_EXTRA_LDFLAGS)
-
 HOST_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-x86_64.a

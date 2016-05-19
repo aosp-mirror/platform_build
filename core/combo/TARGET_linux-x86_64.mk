@@ -52,65 +52,6 @@ KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-x86 # x86 covers both x86 and x86_64.
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
-TARGET_GLOBAL_CFLAGS += \
-			-O2 \
-			-Wa,--noexecstack \
-			-Werror=format-security \
-			-D_FORTIFY_SOURCE=2 \
-			-Wstrict-aliasing=2 \
-			-ffunction-sections \
-			-finline-functions \
-			-finline-limit=300 \
-			-fno-short-enums \
-			-fstrict-aliasing \
-			-funswitch-loops \
-			-funwind-tables \
-			-fstack-protector-strong \
-			-m64 \
-			-no-canonical-prefixes \
-			-fno-canonical-system-headers
-
-# Help catch common 32/64-bit errors.
-TARGET_GLOBAL_CFLAGS += \
-    -Werror=pointer-to-int-cast \
-    -Werror=int-to-pointer-cast \
-    -Werror=implicit-function-declaration \
-
-TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
-
-ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
-    TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3 -mssse3
-endif
-ifeq ($(ARCH_X86_HAVE_SSE4),true)
-    TARGET_GLOBAL_CFLAGS += -msse4
-endif
-ifeq ($(ARCH_X86_HAVE_SSE4_1),true)
-    TARGET_GLOBAL_CFLAGS += -msse4.1
-endif
-ifeq ($(ARCH_X86_HAVE_SSE4_2),true)
-    TARGET_GLOBAL_CFLAGS += -msse4.2
-endif
-ifeq ($(ARCH_X86_HAVE_POPCNT),true)
-    TARGET_GLOBAL_CFLAGS += -mpopcnt
-endif
-ifeq ($(ARCH_X86_HAVE_AVX),true)
-    TARGET_GLOBAL_CFLAGS += -mavx
-endif
-ifeq ($(ARCH_X86_HAVE_AES_NI),true)
-    TARGET_GLOBAL_CFLAGS += -maes
-endif
-
-TARGET_GLOBAL_LDFLAGS += -m64
-
-TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack
-TARGET_GLOBAL_LDFLAGS += -Wl,-z,relro -Wl,-z,now
-TARGET_GLOBAL_LDFLAGS += -Wl,--build-id=md5
-TARGET_GLOBAL_LDFLAGS += -Wl,--warn-shared-textrel
-TARGET_GLOBAL_LDFLAGS += -Wl,--fatal-warnings
-TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
-TARGET_GLOBAL_LDFLAGS += -Wl,--hash-style=gnu
-TARGET_GLOBAL_LDFLAGS += -Wl,--no-undefined-version
-
 TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86_64/include \
 	$(libc_root)/include \
