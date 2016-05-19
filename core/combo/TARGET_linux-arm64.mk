@@ -52,50 +52,6 @@ define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
 
-TARGET_GLOBAL_CFLAGS += \
-    -fno-strict-aliasing \
-
-TARGET_GLOBAL_CFLAGS += \
-			-fstack-protector-strong \
-			-ffunction-sections \
-			-fdata-sections \
-			-funwind-tables \
-			-Wa,--noexecstack \
-			-Werror=format-security \
-			-D_FORTIFY_SOURCE=2 \
-			-fno-short-enums \
-			-no-canonical-prefixes \
-			-fno-canonical-system-headers \
-			$(arch_variant_cflags) \
-
-# Help catch common 32/64-bit errors.
-TARGET_GLOBAL_CFLAGS += \
-    -Werror=pointer-to-int-cast \
-    -Werror=int-to-pointer-cast \
-    -Werror=implicit-function-declaration \
-
-TARGET_GLOBAL_CFLAGS += -fno-strict-volatile-bitfields
-
-TARGET_GLOBAL_LDFLAGS += \
-			-Wl,-z,noexecstack \
-			-Wl,-z,relro \
-			-Wl,-z,now \
-			-Wl,--build-id=md5 \
-			-Wl,--warn-shared-textrel \
-			-Wl,--fatal-warnings \
-			-Wl,-maarch64linux \
-			-Wl,--hash-style=gnu \
-			-Wl,--fix-cortex-a53-843419 \
-			-fuse-ld=gold \
-			-Wl,--icf=safe \
-			-Wl,--no-undefined-version \
-			$(arch_variant_ldflags)
-
-# Disable transitive dependency library symbol resolving.
-TARGET_GLOBAL_LDFLAGS += -Wl,--allow-shlib-undefined
-
-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
-
 # More flags/options can be added here
 TARGET_RELEASE_CFLAGS := \
 			-DNDEBUG \

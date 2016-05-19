@@ -24,28 +24,6 @@ endef
 # gcc location for clang; to be updated when clang is updated
 $(combo_2nd_arch_prefix)HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8
 
-# We expect SSE3 floating point math.
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -msse3 -mfpmath=sse -m32 -Wa,--noexecstack -march=prescott
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -m32 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--no-undefined-version
-
-ifneq ($(strip $(BUILD_HOST_static)),)
-# Statically-linked binaries are desirable for sandboxed environment
-$(combo_2nd_arch_prefix)HOST_GLOBAL_LDFLAGS += -static
-endif # BUILD_HOST_static
-
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -fPIC \
-  -no-canonical-prefixes \
-
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector
-
-# Workaround differences in inttypes.h between host and target.
-# See bug 12708004.
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
-
-# We build a 32-bit host art, and right now that also means building *all* host libraries
-# both 32- and 64-bit (whether art uses them or not --- 9d59f417767991246848c3e101cb27d2dfea5988).
-$(combo_2nd_arch_prefix)HOST_GLOBAL_CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE=1
-
 ############################################################
 ## Macros after this line are shared by the 64-bit config.
 

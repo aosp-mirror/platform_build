@@ -52,56 +52,6 @@ KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
 KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-x86 # x86 covers both x86 and x86_64.
 KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
 
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += \
-			-O2 \
-			-Wa,--noexecstack \
-			-Werror=format-security \
-			-D_FORTIFY_SOURCE=2 \
-			-Wstrict-aliasing=2 \
-			-ffunction-sections \
-			-finline-functions \
-			-finline-limit=300 \
-			-fno-short-enums \
-			-fstrict-aliasing \
-			-funswitch-loops \
-			-funwind-tables \
-			-fstack-protector-strong \
-			-m32 \
-			-no-canonical-prefixes \
-			-fno-canonical-system-headers \
-
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += $(arch_variant_cflags)
-
-ifeq ($(ARCH_X86_HAVE_SSSE3),true)   # yes, really SSSE3, not SSE3!
-    $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -DUSE_SSSE3 -mssse3
-endif
-ifeq ($(ARCH_X86_HAVE_SSE4),true)
-    $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -msse4
-endif
-ifeq ($(ARCH_X86_HAVE_SSE4_1),true)
-    $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -msse4.1
-endif
-ifeq ($(ARCH_X86_HAVE_SSE4_2),true)
-    $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -msse4.2
-endif
-ifeq ($(ARCH_X86_HAVE_AVX),true)
-    $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -mavx
-endif
-ifeq ($(ARCH_X86_HAVE_AES_NI),true)
-    $(combo_2nd_arch_prefix)TARGET_GLOBAL_CFLAGS += -maes
-endif
-
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -m32
-
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,-z,noexecstack
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,-z,relro -Wl,-z,now
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--build-id=md5
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--warn-shared-textrel
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--fatal-warnings
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--gc-sections
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--hash-style=gnu
-$(combo_2nd_arch_prefix)TARGET_GLOBAL_LDFLAGS += -Wl,--no-undefined-version
-
 $(combo_2nd_arch_prefix)TARGET_C_INCLUDES := \
 	$(libc_root)/arch-x86/include \
 	$(libc_root)/include \
