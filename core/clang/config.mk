@@ -85,6 +85,30 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -Wunused-but-set-parameter \
   -Wunused-but-set-variable \
   -fdiagnostics-color \
+  -mthumb-interwork \
+  -fgcse-after-reload \
+  -frerun-cse-after-loop \
+  -frename-registers \
+  -fno-align-jumps \
+  -fno-builtin-sin \
+  -fno-caller-saves \
+  -fno-early-inlining \
+  -fno-move-loop-invariants \
+  -fno-partial-inlining \
+  -fno-strict-volatile-bitfields \
+  -fno-tree-copy-prop \
+  -fno-tree-loop-optimize \
+  -msynci \
+  -mno-synci \
+  -mno-fused-madd \
+  -finline-limit=300 \
+  -fno-inline-functions-called-once \
+  -mfpmath=sse \
+  -mbionic
+
+define convert-to-clang-flags
+$(strip $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(1)))
+endef
 
 # Clang flags for all host rules
 CLANG_CONFIG_HOST_EXTRA_ASFLAGS :=

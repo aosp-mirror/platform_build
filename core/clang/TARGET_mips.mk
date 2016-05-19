@@ -37,13 +37,6 @@ CLANG_CONFIG_mips_TARGET_EXTRA_LDFLAGS := \
   -B$(CLANG_CONFIG_mips_TARGET_TOOLCHAIN_PREFIX)
 
 
-define $(clang_2nd_arch_prefix)convert-to-clang-flags
-  $(strip \
-  $(call subst-clang-incompatible-mips-flags,\
-  $(filter-out $(CLANG_CONFIG_mips_UNKNOWN_CFLAGS),\
-  $(1))))
-endef
-
 $(clang_2nd_arch_prefix)RS_TRIPLE := armv7-linux-androideabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS :=
 RS_COMPAT_TRIPLE := mipsel-linux-android
