@@ -23,20 +23,3 @@ endef
 
 # gcc location for clang; to be updated when clang is updated
 HOST_TOOLCHAIN_FOR_CLANG := prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8
-
-HOST_GLOBAL_CFLAGS += -m64 -Wa,--noexecstack
-HOST_GLOBAL_LDFLAGS += -m64 -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--no-undefined-version
-
-ifneq ($(strip $(BUILD_HOST_static)),)
-# Statically-linked binaries are desirable for sandboxed environment
-HOST_GLOBAL_LDFLAGS += -static
-endif # BUILD_HOST_static
-
-HOST_GLOBAL_CFLAGS += -fPIC \
-  -no-canonical-prefixes \
-
-HOST_GLOBAL_CFLAGS += -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector
-
-# Workaround differences in inttypes.h between host and target.
-# See bug 12708004.
-HOST_GLOBAL_CFLAGS += -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS
