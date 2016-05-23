@@ -89,7 +89,7 @@ function get_abs_build_var()
 {
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
-        eval echo \"\${abs_var_cache_$1}\"
+        eval "echo \"\${abs_var_cache_$1}\""
     return
     fi
 
@@ -107,7 +107,7 @@ function get_build_var()
 {
     if [ "$BUILD_VAR_CACHE_READY" = "true" ]
     then
-        eval echo \"\${var_cache_$1}\"
+        eval "echo \"\${var_cache_$1}\""
     return
     fi
 
