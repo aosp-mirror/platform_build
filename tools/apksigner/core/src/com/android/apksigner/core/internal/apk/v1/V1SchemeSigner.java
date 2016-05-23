@@ -169,6 +169,14 @@ public abstract class V1SchemeSigner {
     }
 
     /**
+     * Returns the JCA {@link MessageDigest} algorithm corresponding to the provided digest
+     * algorithm.
+     */
+    public static String getJcaMessageDigestAlgorithm(DigestAlgorithm digestAlgorithm) {
+        return digestAlgorithm.getJcaMessageDigestAlgorithm();
+    }
+
+    /**
      * Returns {@code true} if the provided JAR entry must be mentioned in signed JAR archive's
      * manifest.
      */
