@@ -50,11 +50,4 @@ CLANG_CONFIG_x86_64_HOST_EXTRA_LDFLAGS := \
   $(CLANG_CONFIG_x86_64_HOST_COMBO_EXTRA_LDFLAGS) \
   -target $(CLANG_CONFIG_x86_64_HOST_TRIPLE)
 
-define convert-to-host-clang-flags
-  $(strip \
-  $(call subst-clang-incompatible-x86_64-flags,\
-  $(filter-out $(CLANG_CONFIG_x86_64_UNKNOWN_CFLAGS),\
-  $(1))))
-endef
-
 HOST_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-x86_64.a
