@@ -36,13 +36,6 @@ CLANG_CONFIG_x86_64_TARGET_EXTRA_LDFLAGS := \
   -B$(CLANG_CONFIG_x86_64_TARGET_TOOLCHAIN_PREFIX)
 
 
-define convert-to-clang-flags
-  $(strip \
-  $(call subst-clang-incompatible-x86_64-flags,\
-  $(filter-out $(CLANG_CONFIG_x86_64_UNKNOWN_CFLAGS),\
-  $(1))))
-endef
-
 RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS := -D__x86_64__
 RS_COMPAT_TRIPLE := x86_64-linux-android

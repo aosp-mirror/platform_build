@@ -43,13 +43,6 @@ CLANG_CONFIG_x86_TARGET_EXTRA_LDFLAGS := \
   -B$(CLANG_CONFIG_x86_TARGET_TOOLCHAIN_PREFIX)
 
 
-define $(clang_2nd_arch_prefix)convert-to-clang-flags
-  $(strip \
-  $(call subst-clang-incompatible-x86-flags,\
-  $(filter-out $(CLANG_CONFIG_x86_UNKNOWN_CFLAGS),\
-  $(1))))
-endef
-
 $(clang_2nd_arch_prefix)RS_TRIPLE := armv7-linux-androideabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS := -D__i386__
 $(clang_2nd_arch_prefix)RS_COMPAT_TRIPLE := i686-linux-android
