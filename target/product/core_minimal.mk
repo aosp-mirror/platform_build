@@ -142,8 +142,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     pm.dexopt.forced-dexopt=speed
 
 # Enable boot.oat filtering of compiled classes to reduce boot.oat size. b/28026683
-PRODUCT_COPY_FILES += \
-    frameworks/base/compiled-classes-phone:system/etc/compiled-classes
+PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+    frameworks/base/compiled-classes-phone:system/etc/compiled-classes)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
