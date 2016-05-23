@@ -28,6 +28,7 @@ import com.android.apksigner.core.util.DataSource;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
@@ -227,7 +228,7 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
             GetJarEntryDataDigestRequest dataDigestRequest =
                     new GetJarEntryDataDigestRequest(
                             entryName,
-                            V1SchemeSigner.getMessageDigestInstance(mV1ContentDigestAlgorithm));
+                            V1SchemeSigner.getJcaMessageDigestAlgorithm(mV1ContentDigestAlgorithm));
             mOutputJarEntryDigestRequests.put(entryName, dataDigestRequest);
             mOutputJarEntryDigests.remove(entryName);
             return dataDigestRequest;
@@ -590,9 +591,9 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
     private static class GetJarEntryDataRequest implements InspectJarEntryRequest {
         private final String mEntryName;
         private final Object mLock = new Object();
-        private final ByteArrayOutputStreamSink mBuf = new ByteArrayOutputStreamSink();
 
         private boolean mDone;
+        private ByteArrayOutputStreamSink mBuf;
 
         private GetJarEntryDataRequest(String entryName) {
             mEntryName = entryName;
@@ -607,6 +608,9 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
         public DataSink getDataSink() {
             synchronized (mLock) {
                 checkNotDone();
+                if (mBuf == null) {
+                    mBuf = new ByteArrayOutputStreamSink();
+                }
                 return mBuf;
             }
         }
@@ -640,7 +644,7 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
                 if (!mDone) {
                     throw new IllegalStateException("Not yet done");
                 }
-                return mBuf.getData();
+                return (mBuf != null) ? mBuf.getData() : new byte[0];
             }
         }
     }
@@ -650,17 +654,17 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
      */
     private static class GetJarEntryDataDigestRequest implements InspectJarEntryRequest {
         private final String mEntryName;
-        private final MessageDigest mMessageDigest;
-        private final DataSink mDataSink;
+        private final String mJcaDigestAlgorithm;
         private final Object mLock = new Object();
 
         private boolean mDone;
+        private DataSink mDataSink;
+        private MessageDigest mMessageDigest;
         private byte[] mDigest;
 
-        private GetJarEntryDataDigestRequest(String entryName, MessageDigest digest) {
+        private GetJarEntryDataDigestRequest(String entryName, String jcaDigestAlgorithm) {
             mEntryName = entryName;
-            mMessageDigest = digest;
-            mDataSink = new MessageDigestSink(new MessageDigest[] {mMessageDigest});
+            mJcaDigestAlgorithm = jcaDigestAlgorithm;
         }
 
         @Override
@@ -672,7 +676,24 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
         public DataSink getDataSink() {
             synchronized (mLock) {
                 checkNotDone();
+                if (mDataSink == null) {
+                    mDataSink = new MessageDigestSink(new MessageDigest[] {getMessageDigest()});
+                }
                 return mDataSink;
+            }
+        }
+
+        private MessageDigest getMessageDigest() {
+            synchronized (mLock) {
+                if (mMessageDigest == null) {
+                    try {
+                        mMessageDigest = MessageDigest.getInstance(mJcaDigestAlgorithm);
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(
+                                mJcaDigestAlgorithm + " MessageDigest not available", e);
+                    }
+                }
+                return mMessageDigest;
             }
         }
 
@@ -683,7 +704,9 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
                     return;
                 }
                 mDone = true;
-                mDigest = mMessageDigest.digest();
+                mDigest = getMessageDigest().digest();
+                mMessageDigest = null;
+                mDataSink = null;
             }
         }
 
