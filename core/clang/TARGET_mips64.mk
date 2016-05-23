@@ -36,13 +36,6 @@ CLANG_CONFIG_mips64_TARGET_EXTRA_LDFLAGS := \
   -B$(CLANG_CONFIG_mips64_TARGET_TOOLCHAIN_PREFIX)
 
 
-define convert-to-clang-flags
-  $(strip \
-  $(call subst-clang-incompatible-mips64-flags,\
-  $(filter-out $(CLANG_CONFIG_mips64_UNKNOWN_CFLAGS),\
-  $(1))))
-endef
-
 RS_TRIPLE := aarch64-linux-android
 RS_TRIPLE_CFLAGS :=
 RS_COMPAT_TRIPLE := mips64el-linux-android
