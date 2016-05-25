@@ -73,6 +73,33 @@ OPTIONS = Options()
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
+class ErrorCode(object):
+  """Define error_codes for failures that happen during the actual
+  update package installation.
+
+  Error codes 0-999 are reserved for failures before the package
+  installation (i.e. low battery, package verification failure).
+  Detailed code in 'bootable/recovery/error_code.h' """
+
+  SYSTEM_VERIFICATION_FAILURE = 1000
+  SYSTEM_UPDATE_FAILURE = 1001
+  SYSTEM_UNEXPECTED_CONTENTS = 1002
+  SYSTEM_NONZERO_CONTENTS = 1003
+  SYSTEM_RECOVER_FAILURE = 1004
+  VENDOR_VERIFICATION_FAILURE = 2000
+  VENDOR_UPDATE_FAILURE = 2001
+  VENDOR_UNEXPECTED_CONTENTS = 2002
+  VENDOR_NONZERO_CONTENTS = 2003
+  VENDOR_RECOVER_FAILURE = 2004
+  OEM_PROP_MISMATCH = 3000
+  FINGERPRINT_MISMATCH = 3001
+  THUMBPRINT_MISMATCH = 3002
+  OLDER_BUILD = 3003
+  DEVICE_MISMATCH = 3004
+  BAD_PATCH_FILE = 3005
+  INSUFFICIENT_CACHE_SPACE = 3006
+  TUNE_PARTITION_FAILURE = 3007
+  APPLY_PATCH_FAILURE = 3008
 
 class ExternalError(RuntimeError):
   pass
@@ -1544,15 +1571,19 @@ class BlockDifference(object):
           script.AppendExtra('check_first_block("%s");' % (self.device,))
 
         # If version >= 4, try block recovery before abort update
+        if partition == "system":
+          code = ErrorCode.SYSTEM_RECOVER_FAILURE
+        else:
+          code = ErrorCode.VENDOR_RECOVER_FAILURE
         script.AppendExtra((
             'ifelse (block_image_recover("{device}", "{ranges}") && '
             'block_image_verify("{device}", '
             'package_extract_file("{partition}.transfer.list"), '
             '"{partition}.new.dat", "{partition}.patch.dat"), '
             'ui_print("{partition} recovered successfully."), '
-            'abort("{partition} partition fails to recover"));\n'
+            'abort("E{code}: {partition} partition fails to recover"));\n'
             'endif;').format(device=self.device, ranges=ranges_str,
-                             partition=partition))
+                             partition=partition, code=code))
 
       # Abort the OTA update. Note that the incremental OTA cannot be applied
       # even if it may match the checksum of the target partition.
@@ -1560,8 +1591,13 @@ class BlockDifference(object):
       #    unconditionally and damage the partition.
       # b) If version >= 3, it won't even reach here.
       else:
-        script.AppendExtra(('abort("%s partition has unexpected contents");\n'
-                            'endif;') % (partition,))
+        if partition == "system":
+          code = ErrorCode.SYSTEM_VERIFICATION_FAILURE
+        else:
+          code = ErrorCode.VENDOR_VERIFICATION_FAILURE
+        script.AppendExtra((
+            'abort("E%d: %s partition has unexpected contents");\n'
+            'endif;') % (code, partition))
 
   def _WritePostInstallVerifyScript(self, script):
     partition = self.partition
@@ -1581,18 +1617,28 @@ class BlockDifference(object):
                          self.device, ranges_str,
                          self._HashZeroBlocks(self.tgt.extended.size())))
       script.Print('Verified the updated %s image.' % (partition,))
+      if partition == "system":
+        code = ErrorCode.SYSTEM_NONZERO_CONTENTS
+      else:
+        code = ErrorCode.VENDOR_NONZERO_CONTENTS
       script.AppendExtra(
           'else\n'
-          '  abort("%s partition has unexpected non-zero contents after OTA '
-          'update");\n'
-          'endif;' % (partition,))
+          '  abort("E%d: %s partition has unexpected non-zero contents after '
+          'OTA update");\n'
+          'endif;' % (code, partition))
     else:
       script.Print('Verified the updated %s image.' % (partition,))
 
+    if partition == "system":
+      code = ErrorCode.SYSTEM_UNEXPECTED_CONTENTS
+    else:
+      code = ErrorCode.VENDOR_UNEXPECTED_CONTENTS
+
     script.AppendExtra(
         'else\n'
-        '  abort("%s partition has unexpected contents after OTA update");\n'
-        'endif;' % (partition,))
+        '  abort("E%d: %s partition has unexpected contents after OTA '
+        'update");\n'
+        'endif;' % (code, partition))
 
   def _WriteUpdate(self, script, output_zip):
     ZipWrite(output_zip,
@@ -1606,11 +1652,16 @@ class BlockDifference(object):
              '{}.patch.dat'.format(self.partition),
              compress_type=zipfile.ZIP_STORED)
 
+    if self.partition == "system":
+      code = ErrorCode.SYSTEM_UPDATE_FAILURE
+    else:
+      code = ErrorCode.VENDOR_UPDATE_FAILURE
+
     call = ('block_image_update("{device}", '
             'package_extract_file("{partition}.transfer.list"), '
             '"{partition}.new.dat", "{partition}.patch.dat") ||\n'
-            '    abort("Failed to update {partition} image.");'.format(
-                device=self.device, partition=self.partition))
+            '  abort("E{code}: Failed to update {partition} image.");'.format(
+                device=self.device, partition=self.partition, code=code))
     script.AppendExtra(script.WordWrap(call))
 
   def _HashBlocks(self, source, ranges): # pylint: disable=no-self-use
