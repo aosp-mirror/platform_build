@@ -140,7 +140,6 @@ endef
 ###########################################################
 ## Remove any makefiles that are being handled by soong
 ###########################################################
-ifeq ($(USE_SOONG),true)
 define filter-soong-makefiles
 $(foreach mk,$(1),\
   $(if $(wildcard $(patsubst %/Android.mk,%/Android.bp,$(mk))),\
@@ -150,11 +149,6 @@ $(foreach mk,$(1),\
       $(info skipping $(mk) ...)),\
     $(mk)))
 endef
-else
-define filter-soong-makefiles
-$(1)
-endef
-endif
 
 ###########################################################
 ## Retrieve a list of all makefiles immediately below some directory
@@ -2599,36 +2593,6 @@ $(foreach t,$(1),\
   $(eval s := $(patsubst $(2)%,%,$(t)))\
   $(hide) mkdir -p $(dir $(3)/$(s)); cp -Rf $(t) $(3)/$(s)$(newline))
 endef
-
-
-###########################################################
-## Commands to copy toolchain libraries
-###########################################################
-ifneq ($(USE_SOONG),true)
-# Used when Soong isn't defining our toolchain libraries
-# $(1): Name of library (libgcc, etc)
-define copy-toolchain-library
-$(call copy-toolchain-library-internal,\
-  $(call intermediates-dir-for,STATIC_LIBRARIES,$(1))/$(1).a,,$(1))
-ifdef TARGET_2ND_ARCH
-$(call copy-toolchain-library-internal,\
-  $(call intermediates-dir-for,STATIC_LIBRARIES,$(1),,,2ND_)/$(1).a,2ND_,$(1))
-endif
-endef
-
-# $(1): the intermediates library path
-# $(2): whether this is the 2nd target architecture
-# $(3): the name of the library without the extension
-define copy-toolchain-library-internal
-$(1): build/soong/scripts/copygcclib.sh $($(2)TARGET_CC)
-	@echo "Toolchain library: $(3)"
-	@mkdir -p $$(dir $$@)
-	$$(hide) rm -f $$@
-	$$(hide) build/soong/scripts/copygcclib.sh $$@ $($(2)TARGET_CC) $($(2)TARGET_GLOBAL_CFLAGS) -print-file-name=$(3).a
-
-$(call include-depfile,$(1).d,$(1))
-endef
-endif
 
 ###########################################################
 ## Commands to call Proguard

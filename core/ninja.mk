@@ -127,16 +127,12 @@ endif
 
 NINJA_ARGS += $(NINJA_EXTRA_ARGS)
 
-ifeq ($(USE_SOONG),true)
 COMBINED_BUILD_NINJA := $(OUT_DIR)/combined$(KATI_NINJA_SUFFIX).ninja
 
 $(COMBINED_BUILD_NINJA): $(KATI_BUILD_NINJA)
 	$(hide) echo "builddir = $(OUT_DIR)" > $(COMBINED_BUILD_NINJA)
 	$(hide) echo "subninja $(SOONG_BUILD_NINJA)" >> $(COMBINED_BUILD_NINJA)
 	$(hide) echo "subninja $(KATI_BUILD_NINJA)" >> $(COMBINED_BUILD_NINJA)
-else
-COMBINED_BUILD_NINJA := $(KATI_BUILD_NINJA)
-endif
 
 $(sort $(DEFAULT_GOAL) $(ANDROID_GOALS)) : ninja_wrapper
 	@#empty
