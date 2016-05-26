@@ -97,9 +97,6 @@ include $(BUILD_SYSTEM)/help.mk
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
 
-# Default soong to on
-USE_SOONG ?= true
-
 ifndef KATI
 ifdef USE_NINJA
 $(warning USE_NINJA is ignored. Ninja is always used.)
@@ -290,12 +287,6 @@ endif
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
-
-ifneq ($(USE_SOONG),true)
-$(eval $(call copy-toolchain-library,libgcc))
-$(eval $(call copy-toolchain-library,libatomic))
-$(eval $(call copy-toolchain-library,libgcov))
-endif
 
 # Bring in dex_preopt.mk
 include $(BUILD_SYSTEM)/dex_preopt.mk
@@ -556,9 +547,7 @@ ifneq ($(dont_bother),true)
 subdir_makefiles := \
 	$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) $(subdirs) Android.mk)
 
-ifeq ($(USE_SOONG),true)
 subdir_makefiles := $(SOONG_ANDROID_MK) $(call filter-soong-makefiles,$(subdir_makefiles))
-endif
 
 $(foreach mk, $(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
 
@@ -899,9 +888,8 @@ files: $(modules_to_install) \
 
 .PHONY: checkbuild
 checkbuild: $(modules_to_check) droid_targets
-ifeq ($(USE_SOONG),true)
 checkbuild: checkbuild-soong
-endif
+
 ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT))
 droid: checkbuild
 endif
