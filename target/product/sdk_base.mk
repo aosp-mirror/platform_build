@@ -21,7 +21,6 @@ PRODUCT_PACKAGES := \
 	CubeLiveWallpapers \
 	CustomLocale \
 	Development \
-	DevelopmentSettings \
 	Dialer \
 	EmulatorSmokeTests \
 	Fallback \
