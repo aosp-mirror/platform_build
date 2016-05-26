@@ -2146,7 +2146,7 @@ function showSamples() {
 
     BlogReader.prototype.openModal_ = function(blog, post) {
       var published = new Date(post.published);
-      var formattedDate = monthNames[published.getMonth()] + ' ' + published.getDay() + ' ' + published.getFullYear();
+      var formattedDate = monthNames[published.getMonth()] + ' ' + published.getDate() + ' ' + published.getFullYear();
       this.blogReader.find('.dac-modal-header-open').attr('href', post.url);
       this.blogReader.find('.dac-modal-header-title').text(blog.title);
       this.blogReader.find('.dac-blog-reader-title').html(post.title);
