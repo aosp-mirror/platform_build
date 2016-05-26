@@ -46,9 +46,9 @@ my_target_crtbegin_dynamic_o :=
 my_target_crtbegin_static_o :=
 my_target_crtend_o :=
 else
-my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTBEGIN_DYNAMIC_O)
-my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTBEGIN_STATIC_O)
-my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_CRTEND_O)
+my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
+my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
+my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
 endif
 ifdef LOCAL_SDK_VERSION
 # Make sure the prebuilt NDK paths are put ahead of the TARGET_GLOBAL_LD_DIRS,

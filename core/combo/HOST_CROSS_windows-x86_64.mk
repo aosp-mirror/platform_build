@@ -17,18 +17,7 @@
 # Settings to use MinGW as a cross-compiler under Linux
 # Included by combo/select.make
 
-$(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/x86_64-w64-mingw32/include
-$(combo_var_prefix)C_INCLUDES += prebuilts/gcc/linux-x86/host/x86_64-w64-mingw32-4.8/lib/gcc/x86_64-w64-mingw32/4.8.3/include
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OBJDUMP) -x $(1) | grep "^Name" | cut -f3 -d" " > $(2)
 $(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)NM) -g -f p $(1) | cut -f1-2 -d" " >> $(2)
 endef
-
-$(combo_var_prefix)SHLIB_SUFFIX := .dll
-$(combo_var_prefix)EXECUTABLE_SUFFIX := .exe
-
-$(combo_var_prefix)IS_64_BIT := true
-
-# The mingw gcc is 4.8, 4.9 is required for color diagnostics
-$(combo_var_prefix)UNKNOWN_CFLAGS := -fdiagnostics-color
