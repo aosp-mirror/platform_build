@@ -33,11 +33,6 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := mips64r6
 endif
 
-# Decouple NDK library selection with platform compiler version
-TARGET_NDK_GCC_VERSION := 4.9
-
-TARGET_GCC_VERSION := 4.9
-
 TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_ARCH)/$(TARGET_ARCH_VARIANT).mk
 ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
 $(error Unknown MIPS architecture variant: $(TARGET_ARCH_VARIANT))
@@ -46,52 +41,9 @@ endif
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 include $(BUILD_SYSTEM)/combo/fdo.mk
 
-TARGET_TOOLCHAIN_ROOT := prebuilts/gcc/$(HOST_PREBUILT_TAG)/mips/mips64el-linux-android-$(TARGET_GCC_VERSION)
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
-
-TARGET_mips_CFLAGS :=	-O2 \
-			-fomit-frame-pointer \
-			-fno-strict-aliasing    \
-			-funswitch-loops
-
-# Set FORCE_MIPS_DEBUGGING to "true" in your buildspec.mk
-# or in your environment to gdb debugging easier.
-# Don't forget to do a clean build.
-ifeq ($(FORCE_MIPS_DEBUGGING),true)
-  TARGET_mips_CFLAGS += -fno-omit-frame-pointer
-endif
-
-# More flags/options can be added here
-TARGET_RELEASE_CFLAGS := \
-			-DNDEBUG \
-			-g \
-			-Wstrict-aliasing=2 \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
-
-libc_root := bionic/libc
-
-KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
-KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
-KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-mips
-# TODO: perhaps use $(libc_root)/kernel/uapi/asm-$(TARGET_ARCH) instead of asm-mips ?
-KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
-
-TARGET_C_INCLUDES := \
-	$(libc_root)/arch-mips64/include \
-	$(libc_root)/include \
-	$(KERNEL_HEADERS)
-
-TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
-TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
-TARGET_CRTEND_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
-
-TARGET_CRTBEGIN_SO_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_so.o
-TARGET_CRTEND_SO_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_so.o
 
 TARGET_PACK_MODULE_RELOCATIONS := true
 

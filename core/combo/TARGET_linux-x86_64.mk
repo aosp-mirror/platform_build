@@ -22,11 +22,6 @@ ifeq ($(strip $(TARGET_ARCH_VARIANT)),)
 TARGET_ARCH_VARIANT := x86_64
 endif
 
-# Decouple NDK library selection with platform compiler version
-TARGET_NDK_GCC_VERSION := 4.9
-
-TARGET_GCC_VERSION := 4.9
-
 # Include the arch-variant-specific configuration file.
 # Its role is to define various ARCH_X86_HAVE_XXX feature macros,
 # plus initial values for TARGET_GLOBAL_CFLAGS
@@ -39,30 +34,9 @@ endif
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 include $(BUILD_SYSTEM)/combo/fdo.mk
 
-TARGET_TOOLCHAIN_ROOT := prebuilts/gcc/$(HOST_PREBUILT_TAG)/x86/x86_64-linux-android-$(TARGET_GCC_VERSION)
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_elf,$(1),$(2))
 endef
-
-libc_root := bionic/libc
-
-KERNEL_HEADERS_COMMON := $(libc_root)/kernel/uapi
-KERNEL_HEADERS_COMMON += $(libc_root)/kernel/common
-KERNEL_HEADERS_ARCH   := $(libc_root)/kernel/uapi/asm-x86 # x86 covers both x86 and x86_64.
-KERNEL_HEADERS := $(KERNEL_HEADERS_COMMON) $(KERNEL_HEADERS_ARCH)
-
-TARGET_C_INCLUDES := \
-	$(libc_root)/arch-x86_64/include \
-	$(libc_root)/include \
-	$(KERNEL_HEADERS)
-
-TARGET_CRTBEGIN_STATIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
-TARGET_CRTBEGIN_DYNAMIC_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
-TARGET_CRTEND_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
-
-TARGET_CRTBEGIN_SO_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_so.o
-TARGET_CRTEND_SO_O := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_so.o
 
 TARGET_LINKER := /system/bin/linker64
 

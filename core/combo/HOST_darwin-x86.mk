@@ -17,20 +17,11 @@
 # Configuration for Darwin (Mac OS X) on x86.
 # Included by combo/select.mk
 
-include $(BUILD_COMBOS)/mac_version.mk
-
 define $(combo_var_prefix)transform-shared-lib-to-toc
 $(call _gen_toc_command_for_macho,$(1),$(2))
 endef
 
-$(combo_2nd_arch_prefix)HOST_SHLIB_SUFFIX := .dylib
-$(combo_2nd_arch_prefix)HOST_JNILIB_SUFFIX := .jnilib
-
 $(combo_2nd_arch_prefix)HOST_GLOBAL_ARFLAGS := cqs
-
-# Use Darwin's libc++, as Darwin's libstdc++ is old and does not support C++11
-$(combo_2nd_arch_prefix)HOST_SYSTEMCPP_CPPFLAGS := -isystem $(mac_sdk_path)/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1
-$(combo_2nd_arch_prefix)HOST_SYSTEMCPP_LDFLAGS := -stdlib=libc++
 
 ############################################################
 ## Macros after this line are shared by the 64-bit config.

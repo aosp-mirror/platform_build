@@ -11,8 +11,3 @@ ARCH_X86_HAVE_POPCNT := true
 ARCH_X86_HAVE_SSE4 := true
 ARCH_X86_HAVE_SSE4_1 := true
 ARCH_X86_HAVE_SSE4_2 := true
-
-
-# CFLAGS for this arch
-arch_variant_cflags := \
-    -march=x86-64
