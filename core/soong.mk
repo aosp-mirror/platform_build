@@ -5,12 +5,7 @@ SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
 SOONG_IN_MAKE := $(SOONG_OUT_DIR)/.soong.in_make
 SOONG_MAKEVARS_MK := $(SOONG_OUT_DIR)/make_vars-$(TARGET_PRODUCT).mk
 SOONG_VARIABLES := $(SOONG_OUT_DIR)/soong.variables
-
-# Only include the Soong-generated Android.mk if we're merging the
-# Soong-defined binaries with Kati-defined binaries.
-ifeq ($(USE_SOONG),true)
 SOONG_ANDROID_MK := $(SOONG_OUT_DIR)/Android-$(TARGET_PRODUCT).mk
-endif
 
 # We need to rebootstrap soong if SOONG_OUT_DIR or the reverse path from
 # SOONG_OUT_DIR to TOP changes
