@@ -1,42 +1,3 @@
-
-include $(BUILD_SYSTEM)/clang/arm.mk
-
-CLANG_CONFIG_arm_TARGET_TRIPLE := arm-linux-androideabi
-CLANG_CONFIG_arm_TARGET_TOOLCHAIN_PREFIX := \
-  $($(clang_2nd_arch_prefix)TARGET_TOOLCHAIN_ROOT)/$(CLANG_CONFIG_arm_TARGET_TRIPLE)/bin
-
-CLANG_CONFIG_arm_TARGET_EXTRA_ASFLAGS := \
-  $(CLANG_CONFIG_EXTRA_ASFLAGS) \
-  $(CLANG_CONFIG_TARGET_EXTRA_ASFLAGS) \
-  $(CLANG_CONFIG_arm_EXTRA_ASFLAGS) \
-  -target $(CLANG_CONFIG_arm_TARGET_TRIPLE) \
-  -B$(CLANG_CONFIG_arm_TARGET_TOOLCHAIN_PREFIX)
-
-CLANG_CONFIG_arm_TARGET_EXTRA_CFLAGS := \
-  $(CLANG_CONFIG_EXTRA_CFLAGS) \
-  $(CLANG_CONFIG_TARGET_EXTRA_CFLAGS) \
-  $(CLANG_CONFIG_arm_EXTRA_CFLAGS) \
-  -target $(CLANG_CONFIG_arm_TARGET_TRIPLE) \
-  $(CLANG_CONFIG_arm_TARGET_EXTRA_ASFLAGS)
-
-CLANG_CONFIG_arm_TARGET_EXTRA_CONLYFLAGS := \
-  $(CLANG_CONFIG_EXTRA_CONLYFLAGS) \
-  $(CLANG_CONFIG_TARGET_EXTRA_CONLYFLAGS) \
-  $(CLANG_CONFIG_arm_EXTRA_CONLYFLAGS)
-
-CLANG_CONFIG_arm_TARGET_EXTRA_CPPFLAGS := \
-  $(CLANG_CONFIG_EXTRA_CPPFLAGS) \
-  $(CLANG_CONFIG_TARGET_EXTRA_CPPFLAGS) \
-  $(CLANG_CONFIG_arm_EXTRA_CPPFLAGS)
-
-CLANG_CONFIG_arm_TARGET_EXTRA_LDFLAGS := \
-  $(CLANG_CONFIG_EXTRA_LDFLAGS) \
-  $(CLANG_CONFIG_TARGET_EXTRA_LDFLAGS) \
-  $(CLANG_CONFIG_arm_EXTRA_LDFLAGS) \
-  -target $(CLANG_CONFIG_arm_TARGET_TRIPLE) \
-  -B$(CLANG_CONFIG_arm_TARGET_TOOLCHAIN_PREFIX)
-
-
 $(clang_2nd_arch_prefix)RS_TRIPLE := armv7-linux-androideabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS :=
 $(clang_2nd_arch_prefix)RS_COMPAT_TRIPLE := armv7-none-linux-gnueabi
@@ -44,5 +5,4 @@ $(clang_2nd_arch_prefix)RS_COMPAT_TRIPLE := armv7-none-linux-gnueabi
 $(clang_2nd_arch_prefix)TARGET_LIBPROFILE_RT := $(LLVM_RTLIB_PATH)/libclang_rt.profile-arm-android.a
 
 # Address sanitizer clang config
-$(clang_2nd_arch_prefix)ADDRESS_SANITIZER_RUNTIME_LIBRARY := libclang_rt.asan-arm-android
 $(clang_2nd_arch_prefix)ADDRESS_SANITIZER_LINKER := /system/bin/linker_asan

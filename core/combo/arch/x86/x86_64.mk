@@ -10,9 +10,3 @@ ARCH_X86_HAVE_POPCNT := true
 ARCH_X86_HAVE_SSE4 := true
 ARCH_X86_HAVE_SSE4_1 := true
 ARCH_X86_HAVE_SSE4_2 := true
-
-
-# Some intrinsic functions used by libcxx only exist for prescott or newer CPUs.
-arch_variant_cflags := \
-    -march=prescott \
-

@@ -11,9 +11,3 @@
 ARCH_X86_HAVE_SSSE3 := false
 ARCH_X86_HAVE_MOVBE := false
 ARCH_X86_HAVE_POPCNT := false
-
-
-# Some intrinsic functions used by libcxx only exist for prescott or newer CPUs.
-arch_variant_cflags := \
-    -march=prescott \
-
