@@ -501,7 +501,6 @@ endif
 #
 # Typical build; include any Android.mk files we can find.
 #
-subdirs := $(TOP)
 
 FULL_BUILD := true
 
@@ -542,14 +541,9 @@ ifneq ($(dont_bother),true)
 # Include all of the makefiles in the system
 #
 
-# Can't use first-makefiles-under here because
-# --mindepth=2 makes the prunes not work.
-subdir_makefiles := \
-	$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) $(subdirs) Android.mk)
+subdir_makefiles := $(SOONG_ANDROID_MK) $(call first-makefiles-under,$(TOP))
 
-subdir_makefiles := $(SOONG_ANDROID_MK) $(call filter-soong-makefiles,$(subdir_makefiles))
-
-$(foreach mk, $(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
+$(foreach mk,$(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
 
 ifdef PDK_FUSION_PLATFORM_ZIP
 # Bring in the PDK platform.zip modules.
