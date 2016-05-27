@@ -28,7 +28,7 @@ import java.nio.ByteBuffer;
 public class ByteBufferDataSource implements DataSource {
 
     private final ByteBuffer mBuffer;
-    private final long mSize;
+    private final int mSize;
 
     /**
      * Constructs a new {@code ByteBufferDigestSource} based on the data contained in the provided
@@ -45,7 +45,59 @@ public class ByteBufferDataSource implements DataSource {
     }
 
     @Override
-    public void feed(long offset, int size, DataSink sink) throws IOException {
+    public ByteBufferDataSource slice(long offset, long size) {
+        if ((offset == 0) && (size == mSize)) {
+            return this;
+        }
+        checkChunkValid(offset, size);
+
+        // checkChunkValid ensures that it's OK to cast offset and size to int.
+        int chunkPosition = (int) offset;
+        int chunkLimit = (int) (chunkPosition + size);
+        // Creating a slice of ByteBuffer modifies the state of the source ByteBuffer (position
+        // and limit fields, to be more specific). We thus use synchronization around these
+        // state-changing operations to make instances of this class thread-safe.
+        synchronized (mBuffer) {
+            // ByteBuffer.limit(int) and .position(int) check that that the position >= limit
+            // invariant is not broken. Thus, the only way to safely change position and limit
+            // without caring about their current values is to first set position to 0 or set the
+            // limit to capacity.
+            mBuffer.position(0);
+
+            mBuffer.limit(chunkLimit);
+            mBuffer.position(chunkPosition);
+            // Create a ByteBufferDataSource for the slice of the buffer between limit and position.
+            return new ByteBufferDataSource(mBuffer);
+        }
+    }
+
+    @Override
+    public void feed(long offset, long size, DataSink sink) throws IOException {
+        checkChunkValid(offset, size);
+
+        // checkChunkValid ensures that it's OK to cast offset and size to int.
+        int chunkPosition = (int) offset;
+        int chunkLimit = (int) (chunkPosition + size);
+        ByteBuffer chunk;
+        // Creating a slice of ByteBuffer modifies the state of the source ByteBuffer (position
+        // and limit fields, to be more specific). We thus use synchronization around these
+        // state-changing operations to make instances of this class thread-safe.
+        synchronized (mBuffer) {
+            // ByteBuffer.limit(int) and .position(int) check that that the position >= limit
+            // invariant is not broken. Thus, the only way to safely change position and limit
+            // without caring about their current values is to first set position to 0 or set the
+            // limit to capacity.
+            mBuffer.position(0);
+
+            mBuffer.limit(chunkLimit);
+            mBuffer.position(chunkPosition);
+            chunk = mBuffer.slice();
+        }
+
+        sink.consume(chunk);
+    }
+
+    private void checkChunkValid(long offset, long size) {
         if (offset < 0) {
             throw new IllegalArgumentException("offset: " + offset);
         }
@@ -65,25 +117,5 @@ public class ByteBufferDataSource implements DataSource {
             throw new IllegalArgumentException(
                     "offset (" + offset + ") + size (" + size + ") > source size (" + mSize  +")");
         }
-
-        int chunkPosition = (int) offset; // safe to downcast because mSize <= Integer.MAX_VALUE
-        int chunkLimit = (int) endOffset; // safe to downcast because mSize <= Integer.MAX_VALUE
-        ByteBuffer chunk;
-        // Creating a slice of ByteBuffer modifies the state of the source ByteBuffer (position
-        // and limit fields, to be more specific). We thus use synchronization around these
-        // state-changing operations to make instances of this class thread-safe.
-        synchronized (mBuffer) {
-            // ByteBuffer.limit(int) and .position(int) check that that the position >= limit
-            // invariant is not broken. Thus, the only way to safely change position and limit
-            // without caring about their current values is to first set position to 0 or set the
-            // limit to capacity.
-            mBuffer.position(0);
-
-            mBuffer.limit(chunkLimit);
-            mBuffer.position(chunkPosition);
-            chunk = mBuffer.slice();
-        }
-
-        sink.consume(chunk);
     }
 }

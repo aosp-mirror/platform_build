@@ -43,5 +43,11 @@ public interface DataSource {
      * @param offset index (in bytes) at which the chunk starts inside data source
      * @param size size (in bytes) of the chunk
      */
-    void feed(long offset, int size, DataSink sink) throws IOException;
+    void feed(long offset, long size, DataSink sink) throws IOException;
+
+    /**
+     * Returns a data source representing the specified region of data of this data source. Changes
+     * to data represented by this data source will also be visible in the returned data source.
+     */
+    DataSource slice(long offset, long size);
 }
