@@ -12,7 +12,8 @@ public abstract class DataSources {
 
     /**
      * Returns a {@link DataSource} backed by the provided {@link ByteBuffer}. The data source
-     * represents the data contained between the position and limit of the buffer.
+     * represents the data contained between the position and limit of the buffer. Changes to the
+     * buffer's contents will be visible in the data source.
      */
     public static DataSource asDataSource(ByteBuffer buffer) {
         if (buffer == null) {
