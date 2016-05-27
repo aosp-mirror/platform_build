@@ -52,6 +52,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.DigestOutputStream;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -118,6 +119,19 @@ class SignApk {
     private static final String CERT_SIG_MULTI_NAME = "META-INF/CERT%d.%s";
 
     private static final String OTACERT_NAME = "META-INF/com/android/otacert";
+
+    /**
+     * Extensible data block/field header ID used for storing information about alignment of
+     * uncompressed entries as well as for aligning the entries's data. See ZIP appnote.txt section
+     * 4.5 Extensible data fields.
+     */
+    private static final short ALIGNMENT_ZIP_EXTRA_DATA_FIELD_HEADER_ID = (short) 0xd935;
+
+    /**
+     * Minimum size (in bytes) of the extensible data block/field used for alignment of uncompressed
+     * entries.
+     */
+    private static final short ALIGNMENT_ZIP_EXTRA_DATA_FIELD_MIN_SIZE_BYTES = 6;
 
     // bitmasks for which hash algorithms we need the manifest to include.
     private static final int USE_SHA1 = 1;
@@ -588,28 +602,40 @@ class SignApk {
             outEntry.setComment(null);
             outEntry.setExtra(null);
 
-            // 'offset' is the offset into the file at which we expect
-            // the file data to begin.  This is the value we need to
-            // make a multiple of 'alignement'.
+            int alignment = getStoredEntryDataAlignment(name, defaultAlignment);
+            // Alignment of the entry's data is achieved by adding a data block to the entry's Local
+            // File Header extra field. The data block contains information about the alignment
+            // value and the necessary padding bytes (0x00) to achieve the alignment.  This works
+            // because the entry's data will be located immediately after the extra field.
+            // See ZIP APPNOTE.txt section "4.5 Extensible data fields" for details about the format
+            // of the extra field.
+
+            // 'offset' is the offset into the file at which we expect the entry's data to begin.
+            // This is the value we need to make a multiple of 'alignment'.
             offset += JarFile.LOCHDR + outEntry.getName().length();
             if (firstEntry) {
-                // The first entry in a jar file has an extra field of
-                // four bytes that you can't get rid of; any extra
-                // data you specify in the JarEntry is appended to
-                // these forced four bytes.  This is JAR_MAGIC in
-                // JarOutputStream; the bytes are 0xfeca0000.
+                // The first entry in a jar file has an extra field of four bytes that you can't get
+                // rid of; any extra data you specify in the JarEntry is appended to these forced
+                // four bytes.  This is JAR_MAGIC in JarOutputStream; the bytes are 0xfeca0000.
+                // See http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6808540
+                // and http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4138619.
                 offset += 4;
                 firstEntry = false;
             }
-            int alignment = getStoredEntryDataAlignment(name, defaultAlignment);
-            if (alignment > 0 && (offset % alignment != 0)) {
-                // Set the "extra data" of the entry to between 1 and
-                // alignment-1 bytes, to make the file data begin at
-                // an aligned offset.
-                int needed = alignment - (int)(offset % alignment);
-                outEntry.setExtra(new byte[needed]);
-                offset += needed;
+            int extraPaddingSizeBytes = 0;
+            if (alignment > 0) {
+                long paddingStartOffset = offset + ALIGNMENT_ZIP_EXTRA_DATA_FIELD_MIN_SIZE_BYTES;
+                extraPaddingSizeBytes = alignment - (int) (paddingStartOffset % alignment);
             }
+            byte[] extra =
+                    new byte[ALIGNMENT_ZIP_EXTRA_DATA_FIELD_MIN_SIZE_BYTES + extraPaddingSizeBytes];
+            ByteBuffer extraBuf = ByteBuffer.wrap(extra);
+            extraBuf.order(ByteOrder.LITTLE_ENDIAN);
+            extraBuf.putShort(ALIGNMENT_ZIP_EXTRA_DATA_FIELD_HEADER_ID); // Header ID
+            extraBuf.putShort((short) (2 + extraPaddingSizeBytes)); // Data Size
+            extraBuf.putShort((short) alignment);
+            outEntry.setExtra(extra);
+            offset += extra.length;
 
             out.putNextEntry(outEntry);
 
