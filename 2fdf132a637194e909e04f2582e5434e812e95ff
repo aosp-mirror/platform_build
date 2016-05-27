@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ca29f11_5d82c7a8",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-05-27T22:39:10Z",
+      "side": 1,
+      "message": "Change this to \".\" and remove subdirs, otherwise if we did actually have subdirs in this variable, the previous comment about first-makefiles-under would apply.",
+      "range": {
+        "startLine": 545,
+        "startChar": 69,
+        "endLine": 545,
+        "endChar": 79
+      },
+      "revId": "2fdf132a637194e909e04f2582e5434e812e95ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
