@@ -22,6 +22,30 @@
       "revId": "f81813a3eb879f2cec4410b65c4d4a558d3f5bbb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fcfdcbc0_7ad35372",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/util/ByteBufferDataSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-05-27T17:31:10Z",
+      "side": 1,
+      "message": "I\u0027ve now fixed the bug where mSize was long rather than int. Now that mSize is an int, checkChunkValid does ensure that both offset and offset + size fall within 0 and mSize and are thus safe to case to int.",
+      "parentUuid": "fcfdcbc0_5a2ad780",
+      "range": {
+        "startLine": 78,
+        "startChar": 56,
+        "endLine": 78,
+        "endChar": 78
+      },
+      "revId": "f81813a3eb879f2cec4410b65c4d4a558d3f5bbb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
