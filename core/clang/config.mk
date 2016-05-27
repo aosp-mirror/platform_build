@@ -16,48 +16,6 @@ RS_CLANG := $(RS_LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
 RS_LLVM_AS := $(RS_LLVM_PREBUILTS_PATH)/llvm-as$(BUILD_EXECUTABLE_SUFFIX)
 RS_LLVM_LINK := $(RS_LLVM_PREBUILTS_PATH)/llvm-link$(BUILD_EXECUTABLE_SUFFIX)
 
-# Clang flags for all host or target rules
-CLANG_CONFIG_EXTRA_ASFLAGS :=
-CLANG_CONFIG_EXTRA_CFLAGS :=
-CLANG_CONFIG_EXTRA_CONLYFLAGS := -std=gnu99
-CLANG_CONFIG_EXTRA_CPPFLAGS :=
-CLANG_CONFIG_EXTRA_LDFLAGS :=
-
-CLANG_CONFIG_EXTRA_CFLAGS += \
-  -D__compiler_offsetof=__builtin_offsetof
-
-# Help catch common 32/64-bit errors.
-CLANG_CONFIG_EXTRA_CFLAGS += \
-  -Werror=int-conversion
-
-# Disable overly aggressive warning for macros defined with a leading underscore
-# This used to happen in AndroidConfig.h, which was included everywhere.
-# TODO: can we remove this now?
-CLANG_CONFIG_EXTRA_CFLAGS += \
-  -Wno-reserved-id-macro
-
-# Disable overly aggressive warning for format strings.
-# Bug: 20148343
-CLANG_CONFIG_EXTRA_CFLAGS += \
-  -Wno-format-pedantic
-
-# Workaround for ccache with clang.
-# See http://petereisentraut.blogspot.com/2011/05/ccache-and-clang.html.
-CLANG_CONFIG_EXTRA_CFLAGS += \
-  -Wno-unused-command-line-argument
-
-# Disable -Winconsistent-missing-override until we can clean up the existing
-# codebase for it.
-CLANG_CONFIG_EXTRA_CPPFLAGS += \
-  -Wno-inconsistent-missing-override
-
-# Force clang to always output color diagnostics.  Ninja will strip the ANSI
-# color codes if it is not running in a terminal.
-ifdef BUILDING_WITH_NINJA
-CLANG_CONFIG_EXTRA_CFLAGS += \
-  -fcolor-diagnostics
-endif
-
 CLANG_CONFIG_UNKNOWN_CFLAGS := \
   -finline-functions \
   -finline-limit=64 \
@@ -109,24 +67,6 @@ CLANG_CONFIG_UNKNOWN_CFLAGS := \
 define convert-to-clang-flags
 $(strip $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(1)))
 endef
-
-# Clang flags for all host rules
-CLANG_CONFIG_HOST_EXTRA_ASFLAGS :=
-CLANG_CONFIG_HOST_EXTRA_CFLAGS :=
-CLANG_CONFIG_HOST_EXTRA_CPPFLAGS :=
-CLANG_CONFIG_HOST_EXTRA_LDFLAGS :=
-
-# Clang flags for all host cross rules
-CLANG_CONFIG_HOST_CROSS_EXTRA_ASFLAGS :=
-CLANG_CONFIG_HOST_CROSS_EXTRA_CFLAGS :=
-CLANG_CONFIG_HOST_CROSS_EXTRA_CPPFLAGS :=
-CLANG_CONFIG_HOST_CROSS_EXTRA_LDFLAGS :=
-
-# Clang flags for all target rules
-CLANG_CONFIG_TARGET_EXTRA_ASFLAGS :=
-CLANG_CONFIG_TARGET_EXTRA_CFLAGS := -nostdlibinc
-CLANG_CONFIG_TARGET_EXTRA_CPPFLAGS :=
-CLANG_CONFIG_TARGET_EXTRA_LDFLAGS :=
 
 CLANG_DEFAULT_UB_CHECKS := \
   bool \
