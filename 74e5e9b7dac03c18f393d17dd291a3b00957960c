@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "590b4918_b80ab916",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1069238
+      },
+      "writtenOn": "2016-05-31T20:14:05Z",
+      "side": 1,
+      "message": "No real reason beyond removing a bit of friction for profiling with perf in userdebug builds. It could just be the default in both user/userdebug.",
+      "parentUuid": "3991350e_5399247f",
+      "range": {
+        "startLine": 380,
+        "startChar": 24,
+        "endLine": 380,
+        "endChar": 28
+      },
+      "revId": "74e5e9b7dac03c18f393d17dd291a3b00957960c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3991350e_53b284f3",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-05-31T19:50:17Z",
       "side": 1,
       "message": "Does this need to be persisted?",
+      "range": {
+        "startLine": 382,
+        "startChar": 37,
+        "endLine": 382,
+        "endChar": 44
+      },
+      "revId": "74e5e9b7dac03c18f393d17dd291a3b00957960c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "590b4918_9807f510",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1069238
+      },
+      "writtenOn": "2016-05-31T20:14:05Z",
+      "side": 1,
+      "message": "If it\u0027s not exposed as a setting, then probably not.",
+      "parentUuid": "3991350e_53b284f3",
       "range": {
         "startLine": 382,
         "startChar": 37,
