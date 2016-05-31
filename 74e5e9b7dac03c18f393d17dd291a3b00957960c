@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3991350e_5399247f",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2016-05-31T19:50:17Z",
+      "side": 1,
+      "message": "Why user? Prefer to keep diffs between userdebug and user to a minimum.",
+      "range": {
+        "startLine": 380,
+        "startChar": 24,
+        "endLine": 380,
+        "endChar": 28
+      },
+      "revId": "74e5e9b7dac03c18f393d17dd291a3b00957960c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3991350e_53b284f3",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2016-05-31T19:50:17Z",
+      "side": 1,
+      "message": "Does this need to be persisted?",
+      "range": {
+        "startLine": 382,
+        "startChar": 37,
+        "endLine": 382,
+        "endChar": 44
+      },
+      "revId": "74e5e9b7dac03c18f393d17dd291a3b00957960c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
