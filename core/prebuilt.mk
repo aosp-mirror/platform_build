@@ -13,7 +13,10 @@ else
   my_prefix := TARGET_
 
   ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-    LOCAL_MULTILIB := first
+    # Only support prebuilt shared and static libraries for translated arch
+    ifeq ($(filter SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+      LOCAL_MULTILIB := first
+    endif
   endif
 endif
 
