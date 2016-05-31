@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3991350e_a24f0028",
+        "filename": "core/tasks/vendor_module_check.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-05-31T17:53:39Z",
+      "side": 1,
+      "message": "I think it would be better to deduplicate the logic here, extract this value out to a variable, setting it from here or the VENDOR_ version, but error if both are set.\n\nThen you can make the exception lists a variable too, and the current version would be blank, the VENDOR_ one would be from the PRODUCTS.$(INTERNAL_PRODUCT).VENDOR_* variables. Then the logic should be the same, an empty exception list just wouldn\u0027t do anything, and behave the same as today.",
+      "revId": "8e997cdda180f30a494d6fe654b7a6841305e620",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
