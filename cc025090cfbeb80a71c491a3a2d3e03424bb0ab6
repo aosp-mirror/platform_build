@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3991350e_65290225",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1010669
+      },
+      "writtenOn": "2016-05-31T18:49:35Z",
+      "side": 1,
+      "message": "Allow override by some new shell variable; default to current.\n\nShell variable will allow naming of nonstandard NDK version directory names such as  prebuilts/ndk/r13-mips, to be found only on Imgtec-supported repos, not at aosp.\n\nThis mechanism will be used for mips64 builds.",
+      "revId": "cc025090cfbeb80a71c491a3a2d3e03424bb0ab6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
