@@ -1,4 +1,3 @@
-SOONG_OUT_DIR := $(OUT_DIR)/soong
 SOONG := $(SOONG_OUT_DIR)/soong
 SOONG_BOOTSTRAP := $(SOONG_OUT_DIR)/.soong.bootstrap
 SOONG_BUILD_NINJA := $(SOONG_OUT_DIR)/build.ninja
