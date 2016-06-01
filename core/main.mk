@@ -376,6 +376,7 @@ tags_to_install :=
 ifneq (,$(user_variant))
   # Target is secure in user builds.
   ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
+  ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1
 
   ifeq ($(user_variant),user)
     ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1
