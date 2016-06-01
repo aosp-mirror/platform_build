@@ -103,7 +103,7 @@ $(shell mkdir -p $(dir $(my_ninja_suffix_file)) && \
 endif
 
 ifeq (,$(NINJA_STATUS))
-NINJA_STATUS := [%p %s/%t]$(space)
+NINJA_STATUS := [%p %f/%t]$(space)
 endif
 
 NINJA_EXTRA_ARGS :=
