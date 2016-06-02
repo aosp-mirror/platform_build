@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "19771110_29a3a90f",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1231,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-02T00:45:23Z",
+      "side": 1,
+      "message": "I suppose this won\u0027t catch cases that start with ../, or ones that clean out to ../, but we\u0027ll catch those in Soong.",
+      "range": {
+        "startLine": 1231,
+        "startChar": 49,
+        "endLine": 1231,
+        "endChar": 78
+      },
+      "revId": "062e30b422e9055ba25bdc1655482358bfadd09a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
