@@ -883,6 +883,11 @@ recovery_fstab := $(TARGET_RECOVERY_FSTAB)
 else
 recovery_fstab := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery.fstab))
 endif
+ifdef TARGET_RECOVERY_BRICK
+recovery_brick := $(TARGET_RECOVERY_BRICK)
+else
+recovery_brick :=
+endif
 
 # Prior to A/B update, we used to have:
 #   boot.img + recovery-from-boot.p + recovery-resource.dat = recovery.img.
@@ -968,6 +973,8 @@ define build-recoveryimage-target
     cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
   $(hide) $(foreach item,$(recovery_fstab), \
     cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.fstab)
+  $(if $(strip $(recovery_brick)), \
+    $(hide) cp -f $(recovery_brick) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.brick)
   $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
   $(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
           > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
