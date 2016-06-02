@@ -261,7 +261,7 @@ endif
 ## logtags: Add .logtags files to global list
 ###########################################################
 
-logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES))
+logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES)) $(LOCAL_LOGTAGS_FILES)
 
 ifneq ($(strip $(logtags_sources)),)
 event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
