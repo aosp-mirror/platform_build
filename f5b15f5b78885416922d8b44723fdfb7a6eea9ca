@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "46ed2637_4e9b1b88",
+        "filename": "core/product_launched_with_l.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-03T22:40:17Z",
+      "side": 1,
+      "message": "That\u0027s in the same project, so it\u0027s still one CL. (Just up a directory, then target/product/...)",
+      "parentUuid": "46ed2637_4e12fb53",
+      "revId": "f5b15f5b78885416922d8b44723fdfb7a6eea9ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46ed2637_4ec4bb57",
         "filename": "core/product_launched_with_l.mk",
         "patchSetId": 1
