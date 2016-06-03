@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46ed2637_598763cc",
+        "filename": "target/product/product_launched_with_l.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-03T22:55:22Z",
+      "side": 1,
+      "message": "Can we get this back to:\n\n  PRODUCT_SHIPPING_API_LEVEL :\u003d 21\n\n(notice the :\u003d, not \u003d)",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 5
+      },
+      "revId": "e332c460cb3713f899ba8840bb6045943ee45048",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
