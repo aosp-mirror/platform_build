@@ -21,7 +21,11 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := signapk
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_JAR_MANIFEST := SignApk.mf
-LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle-host bouncycastle-bcpkix-host conscrypt-host
+LOCAL_STATIC_JAVA_LIBRARIES := \
+    apksigner-core \
+    bouncycastle-host \
+    bouncycastle-bcpkix-host \
+    conscrypt-host
 LOCAL_REQUIRED_MODULES := libconscrypt_openjdk_jni
 include $(BUILD_HOST_JAVA_LIBRARY)
 
