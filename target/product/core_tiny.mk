@@ -129,7 +129,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     pm.dexopt.ab-ota=speed-profile \
     pm.dexopt.nsys-library=speed \
     pm.dexopt.shared-apk=speed \
-    pm.dexopt.forced-dexopt=speed
+    pm.dexopt.forced-dexopt=speed \
+    pm.dexopt.core-app=speed
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
