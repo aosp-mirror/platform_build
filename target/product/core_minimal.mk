@@ -141,7 +141,9 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     pm.dexopt.ab-ota=speed-profile \
     pm.dexopt.nsys-library=speed \
     pm.dexopt.shared-apk=speed \
-    pm.dexopt.forced-dexopt=speed
+    pm.dexopt.forced-dexopt=speed \
+    pm.dexopt.core-app=speed
+
 
 # Enable boot.oat filtering of compiled classes to reduce boot.oat size. b/28026683
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
