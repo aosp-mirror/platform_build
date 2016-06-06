@@ -16,7 +16,6 @@
 
 package com.android.apksigner.core.internal.apk.v2;
 
-import com.android.apksigner.core.internal.util.ByteBufferSink;
 import com.android.apksigner.core.internal.util.Pair;
 import com.android.apksigner.core.internal.zip.ZipUtils;
 import com.android.apksigner.core.util.DataSource;
@@ -191,8 +190,10 @@ public abstract class V2SchemeSigner {
         // offset field is treated as pointing to the offset at which the APK Signing Block will
         // start.
         long centralDirOffsetForDigesting = beforeCentralDir.size();
-        ByteBuffer eocdBuf = copyToByteBuffer(eocd);
+        ByteBuffer eocdBuf = ByteBuffer.allocate((int) eocd.size());
         eocdBuf.order(ByteOrder.LITTLE_ENDIAN);
+        eocd.copyTo(0, (int) eocd.size(), eocdBuf);
+        eocdBuf.flip();
         ZipUtils.setZipEocdCentralDirectoryOffset(eocdBuf, centralDirOffsetForDigesting);
 
         // Compute digests of APK contents.
@@ -599,16 +600,5 @@ public abstract class V2SchemeSigner {
             result.put(second);
         }
         return result.array();
-    }
-
-    private static ByteBuffer copyToByteBuffer(DataSource dataSource) throws IOException {
-        long dataSourceSize = dataSource.size();
-        if (dataSourceSize > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Data source too large: " + dataSourceSize);
-        }
-        ByteBuffer result = ByteBuffer.allocate((int) dataSourceSize);
-        dataSource.feed(0, result.remaining(), new ByteBufferSink(result));
-        result.position(0);
-        return result;
     }
 }
