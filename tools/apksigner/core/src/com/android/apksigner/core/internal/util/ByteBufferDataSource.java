@@ -35,7 +35,15 @@ public class ByteBufferDataSource implements DataSource {
      * buffer between the buffer's position and limit.
      */
     public ByteBufferDataSource(ByteBuffer buffer) {
-        mBuffer = buffer.slice();
+        this(buffer, true);
+    }
+
+    /**
+     * Constructs a new {@code ByteBufferDigestSource} based on the data contained in the provided
+     * buffer between the buffer's position and limit.
+     */
+    private ByteBufferDataSource(ByteBuffer buffer, boolean sliceRequired) {
+        mBuffer = (sliceRequired) ? buffer.slice() : buffer;
         mSize = buffer.remaining();
     }
 
@@ -45,15 +53,12 @@ public class ByteBufferDataSource implements DataSource {
     }
 
     @Override
-    public ByteBufferDataSource slice(long offset, long size) {
-        if ((offset == 0) && (size == mSize)) {
-            return this;
-        }
+    public ByteBuffer getByteBuffer(long offset, int size) {
         checkChunkValid(offset, size);
 
-        // checkChunkValid ensures that it's OK to cast offset and size to int.
+        // checkChunkValid ensures that it's OK to cast offset to int.
         int chunkPosition = (int) offset;
-        int chunkLimit = (int) (chunkPosition + size);
+        int chunkLimit = chunkPosition + size;
         // Creating a slice of ByteBuffer modifies the state of the source ByteBuffer (position
         // and limit fields, to be more specific). We thus use synchronization around these
         // state-changing operations to make instances of this class thread-safe.
@@ -66,35 +71,35 @@ public class ByteBufferDataSource implements DataSource {
 
             mBuffer.limit(chunkLimit);
             mBuffer.position(chunkPosition);
-            // Create a ByteBufferDataSource for the slice of the buffer between limit and position.
-            return new ByteBufferDataSource(mBuffer);
+            return mBuffer.slice();
         }
     }
 
     @Override
+    public void copyTo(long offset, int size, ByteBuffer dest) {
+        dest.put(getByteBuffer(offset, size));
+    }
+
+    @Override
     public void feed(long offset, long size, DataSink sink) throws IOException {
-        checkChunkValid(offset, size);
-
-        // checkChunkValid ensures that it's OK to cast offset and size to int.
-        int chunkPosition = (int) offset;
-        int chunkLimit = (int) (chunkPosition + size);
-        ByteBuffer chunk;
-        // Creating a slice of ByteBuffer modifies the state of the source ByteBuffer (position
-        // and limit fields, to be more specific). We thus use synchronization around these
-        // state-changing operations to make instances of this class thread-safe.
-        synchronized (mBuffer) {
-            // ByteBuffer.limit(int) and .position(int) check that that the position >= limit
-            // invariant is not broken. Thus, the only way to safely change position and limit
-            // without caring about their current values is to first set position to 0 or set the
-            // limit to capacity.
-            mBuffer.position(0);
-
-            mBuffer.limit(chunkLimit);
-            mBuffer.position(chunkPosition);
-            chunk = mBuffer.slice();
+        if ((size < 0) || (size > mSize)) {
+            throw new IllegalArgumentException("size: " + size + ", source size: " + mSize);
         }
+        sink.consume(getByteBuffer(offset, (int) size));
+    }
 
-        sink.consume(chunk);
+    @Override
+    public ByteBufferDataSource slice(long offset, long size) {
+        if ((offset == 0) && (size == mSize)) {
+            return this;
+        }
+        if ((size < 0) || (size > mSize)) {
+            throw new IllegalArgumentException("size: " + size + ", source size: " + mSize);
+        }
+        return new ByteBufferDataSource(
+                getByteBuffer(offset, (int) size),
+                false // no need to slice -- it's already a slice
+                );
     }
 
     private void checkChunkValid(long offset, long size) {
