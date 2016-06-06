@@ -92,7 +92,7 @@ ifneq ($(filter true no_debuglink,$(my_strip_module) $(my_pack_module_relocation
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
   endif
-  ifeq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
+  ifeq ($(filter SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
     $(error Can strip/pack only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
   endif
   ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
@@ -346,7 +346,7 @@ ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 else
 	$(transform-prebuilt-to-target)
 endif
-ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
 endif
 endif # ! prebuilt_module_is_dex_javalib
