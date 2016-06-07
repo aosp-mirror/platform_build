@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.apksigner.core.internal.apk.v2;
+package com.android.apksigner.core.internal.util;
 
 import com.android.apksigner.core.util.DataSink;
 
