@@ -186,7 +186,7 @@ endif
 # all code is position independent, and then those warnings get promoted to
 # errors.
 ifneq ($($(my_prefix)OS),windows)
-ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 my_cflags += -fpie
 else
 my_cflags += -fPIC
