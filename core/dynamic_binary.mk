@@ -58,7 +58,7 @@ endif
 # Do not pack relocations for executables. Because packing results in
 # non-zero p_vaddr which causes kernel to load executables to lower
 # address (starting at 0x8000) http://b/20665974
-ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
   my_pack_module_relocations := false
 endif
 

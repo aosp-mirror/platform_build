@@ -19,11 +19,13 @@ LOCAL_LDFLAGS += $(HOST_FPIE_FLAGS)
 endif
 
 ifeq ($(my_module_multilib),both)
+ifneq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 ifeq ($(LOCAL_MODULE_PATH_32)$(LOCAL_MODULE_STEM_32),)
 $(error $(LOCAL_PATH): LOCAL_MODULE_STEM_32 or LOCAL_MODULE_PATH_32 is required for LOCAL_MULTILIB := both for module $(LOCAL_MODULE))
 endif
 ifeq ($(LOCAL_MODULE_PATH_64)$(LOCAL_MODULE_STEM_64),)
 $(error $(LOCAL_PATH): LOCAL_MODULE_STEM_64 or LOCAL_MODULE_PATH_64 is required for LOCAL_MULTILIB := both for module $(LOCAL_MODULE))
+endif
 endif
 else #!LOCAL_MULTILIB == both
 LOCAL_NO_2ND_ARCH_MODULE_SUFFIX := true
