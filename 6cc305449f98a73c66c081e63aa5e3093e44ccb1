@@ -22,6 +22,30 @@
       "revId": "6cc305449f98a73c66c081e63aa5e3093e44ccb1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a3989490_2236e3ef",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/ApkVerifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-06-07T23:29:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3989490_5193feb5",
+      "range": {
+        "startLine": 259,
+        "startChar": 35,
+        "endLine": 259,
+        "endChar": 42
+      },
+      "revId": "6cc305449f98a73c66c081e63aa5e3093e44ccb1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
