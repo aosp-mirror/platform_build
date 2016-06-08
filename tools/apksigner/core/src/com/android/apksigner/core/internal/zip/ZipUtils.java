@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.android.apksigner.core.internal.util.ByteBufferSink;
 import com.android.apksigner.core.internal.util.Pair;
 import com.android.apksigner.core.util.DataSource;
 
@@ -175,11 +174,10 @@ public abstract class ZipUtils {
         // Lower maxCommentSize if the file is too small.
         maxCommentSize = (int) Math.min(maxCommentSize, fileSize - ZIP_EOCD_REC_MIN_SIZE);
 
-        ByteBuffer buf = ByteBuffer.allocate(ZIP_EOCD_REC_MIN_SIZE + maxCommentSize);
+        int maxEocdSize = ZIP_EOCD_REC_MIN_SIZE + maxCommentSize;
+        long bufOffsetInFile = fileSize - maxEocdSize;
+        ByteBuffer buf = zip.getByteBuffer(bufOffsetInFile, maxEocdSize);
         buf.order(ByteOrder.LITTLE_ENDIAN);
-        long bufOffsetInFile = fileSize - buf.capacity();
-        zip.feed(bufOffsetInFile, buf.remaining(), new ByteBufferSink(buf));
-        buf.flip();
         int eocdOffsetInBuf = findZipEndOfCentralDirectoryRecord(buf);
         if (eocdOffsetInBuf == -1) {
             // No EoCD record found in the buffer
@@ -252,10 +250,8 @@ public abstract class ZipUtils {
             return false;
         }
 
-        ByteBuffer sig = ByteBuffer.allocate(4);
+        ByteBuffer sig = zip.getByteBuffer(locatorPosition, 4);
         sig.order(ByteOrder.LITTLE_ENDIAN);
-        zip.feed(locatorPosition, sig.remaining(), new ByteBufferSink(sig));
-        sig.flip();
         return sig.getInt(0) == ZIP64_EOCD_LOCATOR_SIG;
     }
 
