@@ -18,9 +18,9 @@ package com.android.apksigner.core;
 
 import com.android.apksigner.core.internal.apk.v1.DigestAlgorithm;
 import com.android.apksigner.core.internal.apk.v1.V1SchemeSigner;
-import com.android.apksigner.core.internal.apk.v2.MessageDigestSink;
 import com.android.apksigner.core.internal.apk.v2.V2SchemeSigner;
 import com.android.apksigner.core.internal.util.ByteArrayOutputStreamSink;
+import com.android.apksigner.core.internal.util.MessageDigestSink;
 import com.android.apksigner.core.internal.util.Pair;
 import com.android.apksigner.core.util.DataSink;
 import com.android.apksigner.core.util.DataSource;
