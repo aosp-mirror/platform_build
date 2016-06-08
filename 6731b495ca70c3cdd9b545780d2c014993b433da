@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "032c002d_e4ed8434",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-06-08T05:59:57Z",
+      "side": 1,
+      "message": "FYI for danalbert@, since he may need to update this list later",
+      "revId": "6731b495ca70c3cdd9b545780d2c014993b433da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
