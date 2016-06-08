@@ -1167,6 +1167,34 @@ asm_objects += $(asm_objects_asm)
 endif
 
 
+####################################################
+## For NDK-built libraries, move LOCAL_SHARED_LIBRARY
+## references to my_ldlibs, so that we use the NDK
+## prebuilt library and headers for linking.
+####################################################
+ifndef LOCAL_IS_HOST_MODULE
+my_allowed_ldlibs :=
+ifdef LOCAL_SDK_VERSION
+  my_ndk_shared_libraries := $(filter $(addprefix lib,$(NDK_PREBUILT_SHARED_LIBRARIES)),$(my_shared_libraries))
+  my_shared_libraries := $(filter-out $(my_ndk_shared_libraries),$(my_shared_libraries))
+  my_ldlibs += $(patsubst lib%,-l%,$(my_ndk_shared_libraries))
+  my_ndk_shared_libraries :=
+  my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
+endif
+
+# Sort ldlibs and ldflags between -l and other linker flags
+# We'll do this again later, since there are still changes happening, but that's fine.
+my_ldlib_flags := $(my_ldflags) $(my_ldlibs)
+my_ldlibs := $(filter -l%,$(my_ldlib_flags))
+my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
+my_ldlib_flags :=
+
+# Move other ldlibs back to shared libraries
+my_shared_libraries += $(patsubst -l%,lib%,$(filter-out $(my_allowed_ldlibs),$(my_ldlibs)))
+my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
+endif
+
+
 ##########################################################
 ## Set up installed module dependency
 ## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
@@ -1463,6 +1491,24 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
       my_tidy_flags := -header-filter=.*
     endif
   endif
+endif
+
+# Move -l* entries from ldflags to ldlibs, and everything else to ldflags
+my_ldlib_flags := $(my_ldflags) $(my_ldlibs)
+my_ldlibs := $(filter -l%,$(my_ldlib_flags))
+my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
+
+# One last verification check for ldlibs
+ifndef LOCAL_IS_HOST_MODULE
+my_allowed_ldlibs :=
+ifdef LOCAL_SDK_VERSION
+  my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
+endif
+
+my_bad_ldlibs := $(filter-out $(my_allowed_ldlibs),$(my_ldlibs))
+ifneq ($(my_bad_ldlibs),)
+  $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Bad LOCAL_LDLIBS entries: $(my_bad_ldlibs))
+endif
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
