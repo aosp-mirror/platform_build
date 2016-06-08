@@ -41,13 +41,20 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DEROutputStream;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignatureEncryptionAlgorithmFinder;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
+import org.bouncycastle.cms.DefaultCMSSignatureEncryptionAlgorithmFinder;
+import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
@@ -462,10 +469,11 @@ public abstract class V1SchemeSigner {
                     .build(signerConfig.privateKey);
             CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
             gen.addSignerInfoGenerator(
-                    new JcaSignerInfoGeneratorBuilder(
-                            new JcaDigestCalculatorProviderBuilder().build())
-                    .setDirectSignature(true)
-                    .build(signer, signerCert));
+                    new SignerInfoGeneratorBuilder(
+                            new JcaDigestCalculatorProviderBuilder().build(),
+                            SignerInfoSignatureAlgorithmFinder.INSTANCE)
+                            .setDirectSignature(true)
+                            .build(signer, new JcaX509CertificateHolder(signerCert)));
             gen.addCertificates(certs);
 
             CMSSignedData sigData =
@@ -479,6 +487,37 @@ public abstract class V1SchemeSigner {
             return out.toByteArray();
         } catch (OperatorCreationException | CMSException | IOException e) {
             throw new SignatureException("Failed to generate signature", e);
+        }
+    }
+
+    /**
+     * Chooser of SignatureAlgorithm for PKCS #7 CMS SignerInfo.
+     */
+    private static class SignerInfoSignatureAlgorithmFinder
+            implements CMSSignatureEncryptionAlgorithmFinder {
+        private static final SignerInfoSignatureAlgorithmFinder INSTANCE =
+                new SignerInfoSignatureAlgorithmFinder();
+
+        private static final AlgorithmIdentifier DSA =
+                new AlgorithmIdentifier(X9ObjectIdentifiers.id_dsa, DERNull.INSTANCE);
+
+        private final CMSSignatureEncryptionAlgorithmFinder mDefault =
+                new DefaultCMSSignatureEncryptionAlgorithmFinder();
+
+        @Override
+        public AlgorithmIdentifier findEncryptionAlgorithm(AlgorithmIdentifier id) {
+            // Use the default chooser, but replace dsaWithSha1 with dsa. This is because "dsa" is
+            // accepted by any Android platform whereas "dsaWithSha1" is accepted only since
+            // API Level 9.
+            id = mDefault.findEncryptionAlgorithm(id);
+            if (id != null) {
+                ASN1ObjectIdentifier oid = id.getAlgorithm();
+                if (X9ObjectIdentifiers.id_dsa_with_sha1.equals(oid)) {
+                    return DSA;
+                }
+            }
+
+            return id;
         }
     }
 
