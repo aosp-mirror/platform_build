@@ -19,7 +19,7 @@ package com.android.apksigner.core.internal.apk.v2;
 /**
  * APK Signature Scheme v2 content digest algorithm.
  */
-enum ContentDigestAlgorithm {
+public enum ContentDigestAlgorithm {
     /** SHA2-256 over 1 MB chunks. */
     CHUNKED_SHA256("SHA-256", 256 / 8),
 
