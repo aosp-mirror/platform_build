@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "032c002d_09945950",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-08T04:07:12Z",
+      "side": 1,
+      "message": "You could rather safely assume that if we\u0027re using the libc++_static stl, then you\u0027re going to want the static version of libprotobuf-cpp-lite instead of the shared version.",
+      "range": {
+        "startLine": 728,
+        "startChar": 0,
+        "endLine": 728,
+        "endChar": 51
+      },
+      "revId": "c5082de8c6d2be4a8bbe6e7f25f55e26f89ea4f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
