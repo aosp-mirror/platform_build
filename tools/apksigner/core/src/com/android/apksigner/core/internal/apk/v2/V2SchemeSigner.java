@@ -16,6 +16,7 @@
 
 package com.android.apksigner.core.internal.apk.v2;
 
+import com.android.apksigner.core.internal.util.MessageDigestSink;
 import com.android.apksigner.core.internal.util.Pair;
 import com.android.apksigner.core.internal.zip.ZipUtils;
 import com.android.apksigner.core.util.DataSource;
@@ -216,7 +217,7 @@ public abstract class V2SchemeSigner {
         return generateApkSigningBlock(signerConfigs, contentDigests);
     }
 
-    private static Map<ContentDigestAlgorithm, byte[]> computeContentDigests(
+    static Map<ContentDigestAlgorithm, byte[]> computeContentDigests(
             Set<ContentDigestAlgorithm> digestAlgorithms,
             DataSource[] contents) throws IOException, DigestException {
         // For each digest algorithm the result is computed as follows:
