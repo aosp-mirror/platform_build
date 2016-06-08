@@ -23,7 +23,7 @@ import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 
 /**
- * APK Signature Scheme v2 content digest algorithm.
+ * APK Signature Scheme v2 signature algorithm.
  */
 public enum SignatureAlgorithm {
     /**
