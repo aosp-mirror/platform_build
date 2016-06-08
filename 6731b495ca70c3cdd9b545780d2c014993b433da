@@ -16,6 +16,24 @@
       "revId": "6731b495ca70c3cdd9b545780d2c014993b433da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "032c002d_0430c088",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-08T06:26:23Z",
+      "side": 1,
+      "message": "I suspect this list will move to Soong and be exported here eventually. Then we could automatically generate it based on the ndk_prebuilt_library list (which at least is defined in prebuilts/ndk). But there\u0027s more to figure out on the Soong side before that happens.",
+      "parentUuid": "032c002d_e4ed8434",
+      "revId": "6731b495ca70c3cdd9b545780d2c014993b433da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
