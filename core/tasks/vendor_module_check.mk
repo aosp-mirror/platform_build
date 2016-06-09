@@ -43,6 +43,7 @@ _vendor_owner_whitelist := \
         synaptics \
         ti \
         trusted_logic \
+        verizon \
         widevine
 
 
