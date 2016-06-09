@@ -120,7 +120,7 @@ _product_var_list := \
     PRODUCT_DEX_PREOPT_MODULE_CONFIGS \
     PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
     PRODUCT_DEX_PREOPT_BOOT_FLAGS \
-
+    PRODUCT_SHIPPING_API_LEVEL \
 
 define dump-product
 $(info ==== $(1) ====)\
