@@ -125,7 +125,6 @@ _product_var_list := \
     PRODUCT_SHIPPING_API_LEVEL \
 
 
-
 define dump-product
 $(info ==== $(1) ====)\
 $(foreach v,$(_product_var_list),\
