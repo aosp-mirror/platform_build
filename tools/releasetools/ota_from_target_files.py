@@ -834,6 +834,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
                                    OPTIONS.target_info_dict)
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
+  metadata["pre-build-incremental"] = GetBuildProp(
+      "ro.build.version.incremental", OPTIONS.source_info_dict)
+  metadata["post-build-incremental"] = GetBuildProp(
+      "ro.build.version.incremental", OPTIONS.target_info_dict)
 
   source_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT",
@@ -1186,6 +1190,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   metadata = {
       "post-build": CalculateFingerprint(oem_props, oem_dict,
                                          OPTIONS.info_dict),
+      "post-build-incremental" : GetBuildProp("ro.build.version.incremental",
+                                              OPTIONS.info_dict),
       "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
                                    OPTIONS.info_dict),
       "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
@@ -1196,6 +1202,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   if source_file is not None:
     metadata["pre-build"] = CalculateFingerprint(oem_props, oem_dict,
                                                  OPTIONS.source_info_dict)
+    metadata["pre-build-incremental"] = GetBuildProp(
+        "ro.build.version.incremental", OPTIONS.source_info_dict)
 
   # 1. Generate payload.
   payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
@@ -1510,6 +1518,10 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
+  metadata["pre-build-incremental"] = GetBuildProp(
+      "ro.build.version.incremental", OPTIONS.source_info_dict)
+  metadata["post-build-incremental"] = GetBuildProp(
+      "ro.build.version.incremental", OPTIONS.target_info_dict)
 
   source_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT",
