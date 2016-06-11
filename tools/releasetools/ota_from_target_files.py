@@ -1153,6 +1153,9 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generate an Android OTA package that has A/B update payload."""
 
+  # The place where the output from the subprocess should go.
+  log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
+
   # Setup signing keys.
   if OPTIONS.package_key is None:
     OPTIONS.package_key = OPTIONS.info_dict.get(
@@ -1165,8 +1168,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "-inform", "DER", "-nocrypt"]
   rsa_key = common.MakeTempFile(prefix="key-", suffix=".key")
   cmd.extend(["-out", rsa_key])
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "openssl pkcs8 failed"
 
   # Stage the output zip package for signing.
@@ -1204,8 +1207,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "--target_image", target_file]
   if source_file is not None:
     cmd.extend(["--source_image", source_file])
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "brillo_update_payload generate failed"
 
   # 2. Generate hashes of the payload and metadata files.
@@ -1216,8 +1219,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "--signature_size", "256",
          "--metadata_hash_file", metadata_sig_file,
          "--payload_hash_file", payload_sig_file]
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "brillo_update_payload hash failed"
 
   # 3. Sign the hashes and insert them back into the payload file.
@@ -1231,8 +1234,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "-pkeyopt", "digest:sha256",
          "-in", payload_sig_file,
          "-out", signed_payload_sig_file]
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "openssl sign payload failed"
 
   # 3b. Sign the metadata hash.
@@ -1241,8 +1244,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "-pkeyopt", "digest:sha256",
          "-in", metadata_sig_file,
          "-out", signed_metadata_sig_file]
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "openssl sign metadata failed"
 
   # 3c. Insert the signatures back into the payload file.
@@ -1254,8 +1257,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "--signature_size", "256",
          "--metadata_signature_file", signed_metadata_sig_file,
          "--payload_signature_file", signed_payload_sig_file]
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "brillo_update_payload sign failed"
 
   # 4. Dump the signed payload properties.
@@ -1264,8 +1267,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   cmd = ["brillo_update_payload", "properties",
          "--payload", signed_payload_file,
          "--properties_file", properties_file]
-  p1 = common.Run(cmd, stdout=subprocess.PIPE)
-  p1.wait()
+  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+  p1.communicate()
   assert p1.returncode == 0, "brillo_update_payload properties failed"
 
   # Add the signed payload file and properties into the zip.
