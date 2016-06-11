@@ -866,9 +866,15 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   # disk type is ext4
   system_partition = OPTIONS.source_info_dict["fstab"]["/system"]
   check_first_block = system_partition.fs_type == "ext4"
+  # Disable using imgdiff for squashfs. 'imgdiff -z' expects input files to be
+  # in zip formats. However with squashfs, a) all files are compressed in LZ4;
+  # b) the blocks listed in block map may not contain all the bytes for a given
+  # file (because they're rounded to be 4K-aligned).
+  disable_imgdiff = system_partition.fs_type == "squashfs"
   system_diff = common.BlockDifference("system", system_tgt, system_src,
                                        check_first_block,
-                                       version=blockimgdiff_version)
+                                       version=blockimgdiff_version,
+                                       disable_imgdiff=disable_imgdiff)
 
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
@@ -882,9 +888,11 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     # disk type is ext4
     vendor_partition = OPTIONS.source_info_dict["fstab"]["/vendor"]
     check_first_block = vendor_partition.fs_type == "ext4"
+    disable_imgdiff = vendor_partition.fs_type == "squashfs"
     vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src,
                                          check_first_block,
-                                         version=blockimgdiff_version)
+                                         version=blockimgdiff_version,
+                                         disable_imgdiff=disable_imgdiff)
   else:
     vendor_diff = None
 
