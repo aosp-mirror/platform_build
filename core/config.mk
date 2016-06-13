@@ -582,8 +582,6 @@ else
 JACK_DEFAULT_ARGS := $(BUILD_SYSTEM)/jack-default.args
 DEFAULT_JACK_EXTRA_ARGS := @$(JACK_DEFAULT_ARGS)
 endif
-# Turn off jack warnings by default.
-DEFAULT_JACK_EXTRA_ARGS += --verbose error
 
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
