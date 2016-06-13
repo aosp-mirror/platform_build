@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f09f4df_c4fb7f1b",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/jar/ManifestParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 1022895
+      },
+      "writtenOn": "2016-06-13T17:53:11Z",
+      "side": 1,
+      "message": "Break missing?",
+      "range": {
+        "startLine": 209,
+        "startChar": 0,
+        "endLine": 209,
+        "endChar": 41
+      },
+      "revId": "5595d69971d9401b025550d0c533fe2252508d8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
