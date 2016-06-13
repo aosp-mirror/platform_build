@@ -46,6 +46,29 @@
       "revId": "5595d69971d9401b025550d0c533fe2252508d8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f09f4df_1775abb5",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/zip/LocalFileHeader.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1022895
+      },
+      "writtenOn": "2016-06-13T18:24:51Z",
+      "side": 1,
+      "message": "If you\u0027re doing strict checking you should check here that unCompressedSize \u003d\u003d compressedSize",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 54
+      },
+      "revId": "5595d69971d9401b025550d0c533fe2252508d8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
