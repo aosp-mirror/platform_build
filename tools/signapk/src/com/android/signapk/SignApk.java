@@ -445,7 +445,8 @@ class SignApk {
             int extraPaddingSizeBytes = 0;
             if (alignment > 0) {
                 long paddingStartOffset = offset + ALIGNMENT_ZIP_EXTRA_DATA_FIELD_MIN_SIZE_BYTES;
-                extraPaddingSizeBytes = alignment - (int) (paddingStartOffset % alignment);
+                extraPaddingSizeBytes =
+                        (alignment - (int) (paddingStartOffset % alignment)) % alignment;
             }
             byte[] extra =
                     new byte[ALIGNMENT_ZIP_EXTRA_DATA_FIELD_MIN_SIZE_BYTES + extraPaddingSizeBytes];
