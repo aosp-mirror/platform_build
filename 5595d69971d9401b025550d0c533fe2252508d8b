@@ -69,6 +69,30 @@
       "revId": "5595d69971d9401b025550d0c533fe2252508d8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f09f4df_ae7bc10d",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/zip/LocalFileHeader.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-06-13T19:43:28Z",
+      "side": 1,
+      "message": "As documented at the top of the method, this is doing just the checks (roughly) that Android platform does.",
+      "parentUuid": "8f09f4df_1775abb5",
+      "range": {
+        "startLine": 183,
+        "startChar": 0,
+        "endLine": 183,
+        "endChar": 54
+      },
+      "revId": "5595d69971d9401b025550d0c533fe2252508d8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
