@@ -400,6 +400,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-C", fs_config])
     if "selinux_fc" in prop_dict:
       build_command.extend(["-c", prop_dict["selinux_fc"]])
+    if "block_list" in prop_dict:
+      build_command.extend(["-B", prop_dict["block_list"]])
     if "squashfs_compressor" in prop_dict:
       build_command.extend(["-z", prop_dict["squashfs_compressor"]])
     if "squashfs_compressor_opt" in prop_dict:
