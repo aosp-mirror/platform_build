@@ -504,7 +504,7 @@ endif
 ifndef BOARD_BVB_KEY_PATH
 # If key path isn't specified, use the 4096-bit test key.
 INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS := --algorithm SHA256_RSA4096 \
-	--key system/bvb/test/testkey_rsa4096.pem
+	--key external/bvb/test/testkey_rsa4096.pem
 else
 INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS := \
 	--algorithm $(BOARD_BVB_ALGORITHM) --key $(BOARD_BVB_KEY_PATH)
