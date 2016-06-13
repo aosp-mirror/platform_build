@@ -19,12 +19,13 @@ package com.android.apksigner.core;
 import com.android.apksigner.core.internal.apk.v1.DigestAlgorithm;
 import com.android.apksigner.core.internal.apk.v1.V1SchemeSigner;
 import com.android.apksigner.core.internal.apk.v2.V2SchemeSigner;
-import com.android.apksigner.core.internal.util.ByteArrayOutputStreamSink;
 import com.android.apksigner.core.internal.util.MessageDigestSink;
 import com.android.apksigner.core.internal.util.Pair;
 import com.android.apksigner.core.util.DataSink;
+import com.android.apksigner.core.util.DataSinks;
 import com.android.apksigner.core.util.DataSource;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -593,7 +594,8 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
         private final Object mLock = new Object();
 
         private boolean mDone;
-        private ByteArrayOutputStreamSink mBuf;
+        private DataSink mDataSink;
+        private ByteArrayOutputStream mDataSinkBuf;
 
         private GetJarEntryDataRequest(String entryName) {
             mEntryName = entryName;
@@ -608,10 +610,13 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
         public DataSink getDataSink() {
             synchronized (mLock) {
                 checkNotDone();
-                if (mBuf == null) {
-                    mBuf = new ByteArrayOutputStreamSink();
+                if (mDataSinkBuf == null) {
+                    mDataSinkBuf = new ByteArrayOutputStream();
                 }
-                return mBuf;
+                if (mDataSink == null) {
+                    mDataSink = DataSinks.asDataSink(mDataSinkBuf);
+                }
+                return mDataSink;
             }
         }
 
@@ -644,7 +649,7 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
                 if (!mDone) {
                     throw new IllegalStateException("Not yet done");
                 }
-                return (mBuf != null) ? mBuf.getData() : new byte[0];
+                return (mDataSinkBuf != null) ? mDataSinkBuf.toByteArray() : new byte[0];
             }
         }
     }
