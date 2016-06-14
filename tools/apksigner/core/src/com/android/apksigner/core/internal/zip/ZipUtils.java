@@ -255,13 +255,13 @@ public abstract class ZipUtils {
         return sig.getInt(0) == ZIP64_EOCD_LOCATOR_SIG;
     }
 
-    private static void assertByteOrderLittleEndian(ByteBuffer buffer) {
+    static void assertByteOrderLittleEndian(ByteBuffer buffer) {
         if (buffer.order() != ByteOrder.LITTLE_ENDIAN) {
             throw new IllegalArgumentException("ByteBuffer byte order must be little endian");
         }
     }
 
-    private static int getUnsignedInt16(ByteBuffer buffer, int offset) {
+    public static int getUnsignedInt16(ByteBuffer buffer, int offset) {
         return buffer.getShort(offset) & 0xffff;
     }
 
@@ -272,7 +272,7 @@ public abstract class ZipUtils {
         buffer.putInt(offset, (int) value);
     }
 
-    private static long getUnsignedInt32(ByteBuffer buffer, int offset) {
+    static long getUnsignedInt32(ByteBuffer buffer, int offset) {
         return buffer.getInt(offset) & 0xffffffffL;
     }
 }
