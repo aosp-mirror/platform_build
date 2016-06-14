@@ -17,16 +17,24 @@
 package com.android.apksigner.core;
 
 import com.android.apksigner.core.apk.ApkUtils;
+import com.android.apksigner.core.internal.apk.v1.V1SchemeVerifier;
 import com.android.apksigner.core.internal.apk.v2.ContentDigestAlgorithm;
 import com.android.apksigner.core.internal.apk.v2.SignatureAlgorithm;
 import com.android.apksigner.core.internal.apk.v2.V2SchemeVerifier;
+import com.android.apksigner.core.internal.util.AndroidSdkVersion;
 import com.android.apksigner.core.util.DataSource;
 import com.android.apksigner.core.zip.ZipFormatException;
 
 import java.io.IOException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * APK signature verifier which mimics the behavior of the Android platform.
@@ -35,6 +43,10 @@ import java.util.List;
  * the verifier to be used for checking whether an APK's signatures will verify on Android.
  */
 public class ApkVerifier {
+
+    private static final int APK_SIGNATURE_SCHEME_V2_ID = 2;
+    private static final Map<Integer, String> SUPPORTED_APK_SIG_SCHEME_NAMES =
+            Collections.singletonMap(APK_SIGNATURE_SCHEME_V2_ID, "APK Signature Scheme v2");
 
     /**
      * Verifies the APK's signatures and returns the result of verification. The APK can be
@@ -53,23 +65,96 @@ public class ApkVerifier {
 
         // Attempt to verify the APK using APK Signature Scheme v2
         Result result = new Result();
+        Set<Integer> foundApkSigSchemeIds = new HashSet<>(1);
         try {
             V2SchemeVerifier.Result v2Result = V2SchemeVerifier.verify(apk, zipSections);
+            foundApkSigSchemeIds.add(APK_SIGNATURE_SCHEME_V2_ID);
             result.mergeFrom(v2Result);
         } catch (V2SchemeVerifier.SignatureNotFoundException ignored) {}
         if (result.containsErrors()) {
             return result;
         }
 
-        // TODO: Verify JAR signature if necessary
-        if (!result.isVerifiedUsingV2Scheme()) {
+        // Attempt to verify the APK using JAR signing if necessary. Platforms prior to Android N
+        // ignore APK Signature Scheme v2 signatures and always attempt to verify JAR signatures.
+        // Android N onwards verifies JAR signatures only if no APK Signature Scheme v2 (or newer
+        // scheme) signatures were found.
+        if ((minSdkVersion < AndroidSdkVersion.N) || (foundApkSigSchemeIds.isEmpty())) {
+            V1SchemeVerifier.Result v1Result =
+                    V1SchemeVerifier.verify(
+                            apk,
+                            zipSections,
+                            SUPPORTED_APK_SIG_SCHEME_NAMES,
+                            foundApkSigSchemeIds,
+                            minSdkVersion);
+            result.mergeFrom(v1Result);
+        }
+        if (result.containsErrors()) {
+            return result;
+        }
+
+        // Check whether v1 and v2 scheme signer identifies match, provided both v1 and v2
+        // signatures verified.
+        if ((result.isVerifiedUsingV1Scheme()) && (result.isVerifiedUsingV2Scheme())) {
+            ArrayList<Result.V1SchemeSignerInfo> v1Signers =
+                    new ArrayList<>(result.getV1SchemeSigners());
+            ArrayList<Result.V2SchemeSignerInfo> v2Signers =
+                    new ArrayList<>(result.getV2SchemeSigners());
+            ArrayList<ByteArray> v1SignerCerts = new ArrayList<>();
+            ArrayList<ByteArray> v2SignerCerts = new ArrayList<>();
+            for (Result.V1SchemeSignerInfo signer : v1Signers) {
+                try {
+                    v1SignerCerts.add(new ByteArray(signer.getCertificate().getEncoded()));
+                } catch (CertificateEncodingException e) {
+                    throw new RuntimeException(
+                            "Failed to encode JAR signer " + signer.getName() + " certs", e);
+                }
+            }
+            for (Result.V2SchemeSignerInfo signer : v2Signers) {
+                try {
+                    v2SignerCerts.add(new ByteArray(signer.getCertificate().getEncoded()));
+                } catch (CertificateEncodingException e) {
+                    throw new RuntimeException(
+                            "Failed to encode APK Signature Scheme v2 signer (index: "
+                                    + signer.getIndex() + ") certs",
+                            e);
+                }
+            }
+
+            for (int i = 0; i < v1SignerCerts.size(); i++) {
+                ByteArray v1Cert = v1SignerCerts.get(i);
+                if (!v2SignerCerts.contains(v1Cert)) {
+                    Result.V1SchemeSignerInfo v1Signer = v1Signers.get(i);
+                    v1Signer.addError(Issue.V2_SIG_MISSING);
+                    break;
+                }
+            }
+            for (int i = 0; i < v2SignerCerts.size(); i++) {
+                ByteArray v2Cert = v2SignerCerts.get(i);
+                if (!v1SignerCerts.contains(v2Cert)) {
+                    Result.V2SchemeSignerInfo v2Signer = v2Signers.get(i);
+                    v2Signer.addError(Issue.JAR_SIG_MISSING);
+                    break;
+                }
+            }
+        }
+        if (result.containsErrors()) {
             return result;
         }
 
         // Verified
         result.setVerified();
-        for (Result.V2SchemeSignerInfo signerInfo : result.getV2SchemeSigners()) {
-            result.addSignerCertificate(signerInfo.getCertificate());
+        if (result.isVerifiedUsingV2Scheme()) {
+            for (Result.V2SchemeSignerInfo signerInfo : result.getV2SchemeSigners()) {
+                result.addSignerCertificate(signerInfo.getCertificate());
+            }
+        } else if (result.isVerifiedUsingV1Scheme()) {
+            for (Result.V1SchemeSignerInfo signerInfo : result.getV1SchemeSigners()) {
+                result.addSignerCertificate(signerInfo.getCertificate());
+            }
+        } else {
+            throw new RuntimeException(
+                    "APK considered verified, but has not verified using either v1 or v2 schemes");
         }
 
         return result;
@@ -83,9 +168,12 @@ public class ApkVerifier {
         private final List<IssueWithParams> mErrors = new ArrayList<>();
         private final List<IssueWithParams> mWarnings = new ArrayList<>();
         private final List<X509Certificate> mSignerCerts = new ArrayList<>();
+        private final List<V1SchemeSignerInfo> mV1SchemeSigners = new ArrayList<>();
+        private final List<V1SchemeSignerInfo> mV1SchemeIgnoredSigners = new ArrayList<>();
         private final List<V2SchemeSignerInfo> mV2SchemeSigners = new ArrayList<>();
 
         private boolean mVerified;
+        private boolean mVerifiedUsingV1Scheme;
         private boolean mVerifiedUsingV2Scheme;
 
         /**
@@ -97,6 +185,13 @@ public class ApkVerifier {
 
         private void setVerified() {
             mVerified = true;
+        }
+
+        /**
+         * Returns {@code true} if the APK's JAR signatures verified.
+         */
+        public boolean isVerifiedUsingV1Scheme() {
+            return mVerifiedUsingV1Scheme;
         }
 
         /**
@@ -115,6 +210,27 @@ public class ApkVerifier {
 
         private void addSignerCertificate(X509Certificate cert) {
             mSignerCerts.add(cert);
+        }
+
+        /**
+         * Returns information about JAR signers associated with the APK's signature. These are the
+         * signers used by Android.
+         *
+         * @see #getV1SchemeIgnoredSigners()
+         */
+        public List<V1SchemeSignerInfo> getV1SchemeSigners() {
+            return mV1SchemeSigners;
+        }
+
+        /**
+         * Returns information about JAR signers ignored by the APK's signature verification
+         * process. These signers are ignored by Android. However, each signer's errors or warnings
+         * will contain information about why they are ignored.
+         *
+         * @see #getV1SchemeSigners()
+         */
+        public List<V1SchemeSignerInfo> getV1SchemeIgnoredSigners() {
+            return mV1SchemeIgnoredSigners;
         }
 
         /**
@@ -139,6 +255,18 @@ public class ApkVerifier {
             return mWarnings;
         }
 
+        private void mergeFrom(V1SchemeVerifier.Result source) {
+            mVerifiedUsingV1Scheme = source.verified;
+            mErrors.addAll(source.getErrors());
+            mWarnings.addAll(source.getWarnings());
+            for (V1SchemeVerifier.Result.SignerInfo signer : source.signers) {
+                mV1SchemeSigners.add(new V1SchemeSignerInfo(signer));
+            }
+            for (V1SchemeVerifier.Result.SignerInfo signer : source.ignoredSigners) {
+                mV1SchemeIgnoredSigners.add(new V1SchemeSignerInfo(signer));
+            }
+        }
+
         private void mergeFrom(V2SchemeVerifier.Result source) {
             mVerifiedUsingV2Scheme = source.verified;
             mErrors.addAll(source.getErrors());
@@ -156,6 +284,13 @@ public class ApkVerifier {
             if (!mErrors.isEmpty()) {
                 return true;
             }
+            if (!mV1SchemeSigners.isEmpty()) {
+                for (V1SchemeSignerInfo signer : mV1SchemeSigners) {
+                    if (signer.containsErrors()) {
+                        return true;
+                    }
+                }
+            }
             if (!mV2SchemeSigners.isEmpty()) {
                 for (V2SchemeSignerInfo signer : mV2SchemeSigners) {
                     if (signer.containsErrors()) {
@@ -165,6 +300,98 @@ public class ApkVerifier {
             }
 
             return false;
+        }
+
+        /**
+         * Information about a JAR signer associated with the APK's signature.
+         */
+        public static class V1SchemeSignerInfo {
+            private final String mName;
+            private final List<X509Certificate> mCertChain;
+            private final String mSignatureBlockFileName;
+            private final String mSignatureFileName;
+
+            private final List<IssueWithParams> mErrors;
+            private final List<IssueWithParams> mWarnings;
+
+            private V1SchemeSignerInfo(V1SchemeVerifier.Result.SignerInfo result) {
+                mName = result.name;
+                mCertChain = result.certChain;
+                mSignatureBlockFileName = result.signatureBlockFileName;
+                mSignatureFileName = result.signatureFileName;
+                mErrors = result.getErrors();
+                mWarnings = result.getWarnings();
+            }
+
+            /**
+             * Returns a user-friendly name of the signer.
+             */
+            public String getName() {
+                return mName;
+            }
+
+            /**
+             * Returns the name of the JAR entry containing this signer's JAR signature block file.
+             */
+            public String getSignatureBlockFileName() {
+                return mSignatureBlockFileName;
+            }
+
+            /**
+             * Returns the name of the JAR entry containing this signer's JAR signature file.
+             */
+            public String getSignatureFileName() {
+                return mSignatureFileName;
+            }
+
+            /**
+             * Returns this signer's signing certificate or {@code null} if not available. The
+             * certificate is guaranteed to be available if no errors were encountered during
+             * verification (see {@link #containsErrors()}.
+             *
+             * <p>This certificate contains the signer's public key.
+             */
+            public X509Certificate getCertificate() {
+                return mCertChain.isEmpty() ? null : mCertChain.get(0);
+            }
+
+            /**
+             * Returns the certificate chain for the signer's public key. The certificate containing
+             * the public key is first, followed by the certificate (if any) which issued the
+             * signing certificate, and so forth. An empty list may be returned if an error was
+             * encountered during verification (see {@link #containsErrors()}).
+             */
+            public List<X509Certificate> getCertificateChain() {
+                return mCertChain;
+            }
+
+            /**
+             * Returns {@code true} if an error was encountered while verifying this signer's JAR
+             * signature. Any error prevents the signer's signature from being considered verified.
+             */
+            public boolean containsErrors() {
+                return !mErrors.isEmpty();
+            }
+
+            /**
+             * Returns errors encountered while verifying this signer's JAR signature. Any error
+             * prevents the signer's signature from being considered verified.
+             */
+            public List<IssueWithParams> getErrors() {
+                return mErrors;
+            }
+
+            /**
+             * Returns warnings encountered while verifying this signer's JAR signature. Warnings
+             * do not prevent the signer's signature from being considered verified.
+             */
+            public List<IssueWithParams> getWarnings() {
+                return mWarnings;
+            }
+
+            private void addError(Issue msg, Object... parameters) {
+                mErrors.add(new IssueWithParams(msg, parameters));
+            }
         }
 
         /**
@@ -212,6 +439,10 @@ public class ApkVerifier {
                 return mCerts;
             }
 
+            private void addError(Issue msg, Object... parameters) {
+                mErrors.add(new IssueWithParams(msg, parameters));
+            }
+
             public boolean containsErrors() {
                 return !mErrors.isEmpty();
             }
@@ -230,6 +461,324 @@ public class ApkVerifier {
      * Error or warning encountered while verifying an APK's signatures.
      */
     public static enum Issue {
+
+        /**
+         * APK is not JAR-signed.
+         */
+        JAR_SIG_NO_SIGNATURES("No JAR signatures"),
+
+        /**
+         * APK does not contain any entries covered by JAR signatures.
+         */
+        JAR_SIG_NO_SIGNED_ZIP_ENTRIES("No JAR entries covered by JAR signatures"),
+
+        /**
+         * APK contains multiple entries with the same name.
+         *
+         * <ul>
+         * <li>Parameter 1: name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_DUPLICATE_ZIP_ENTRY("Duplicate entry: %1$s"),
+
+        /**
+         * JAR manifest contains a section with a duplicate name.
+         *
+         * <ul>
+         * <li>Parameter 1: section name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_DUPLICATE_MANIFEST_SECTION("Duplicate section in META-INF/MANIFEST.MF: %1$s"),
+
+        /**
+         * JAR manifest contains a section without a name.
+         *
+         * <ul>
+         * <li>Parameter 1: section index (1-based) ({@code Integer})</li>
+         * </ul>
+         */
+        JAR_SIG_UNNNAMED_MANIFEST_SECTION(
+                "Malformed META-INF/MANIFEST.MF: invidual section #%1$d does not have a name"),
+
+        /**
+         * JAR signature file contains a section without a name.
+         *
+         * <ul>
+         * <li>Parameter 1: signature file name ({@code String})</li>
+         * <li>Parameter 2: section index (1-based) ({@code Integer})</li>
+         * </ul>
+         */
+        JAR_SIG_UNNNAMED_SIG_FILE_SECTION(
+                "Malformed %1$s: invidual section #%2$d does not have a name"),
+
+        /** APK is missing the JAR manifest entry (META-INF/MANIFEST.MF). */
+        JAR_SIG_NO_MANIFEST("Missing META-INF/MANIFEST.MF"),
+
+        /**
+         * JAR manifest references an entry which is not there in the APK.
+         *
+         * <ul>
+         * <li>Parameter 1: entry name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_MISSING_ZIP_ENTRY_REFERENCED_IN_MANIFEST(
+                "%1$s entry referenced by META-INF/MANIFEST.MF not found in the APK"),
+
+        /**
+         * JAR manifest does not list a digest for the specified entry.
+         *
+         * <ul>
+         * <li>Parameter 1: entry name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_NO_ZIP_ENTRY_DIGEST_IN_MANIFEST("No digest for %1$s in META-INF/MANIFEST.MF"),
+
+        /**
+         * JAR signature does not list a digest for the specified entry.
+         *
+         * <ul>
+         * <li>Parameter 1: entry name ({@code String})</li>
+         * <li>Parameter 2: signature file name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_NO_ZIP_ENTRY_DIGEST_IN_SIG_FILE("No digest for %1$s in %2$s"),
+
+        /**
+         * The specified JAR entry is not covered by JAR signature.
+         *
+         * <ul>
+         * <li>Parameter 1: entry name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_ZIP_ENTRY_NOT_SIGNED("%1$s entry not signed"),
+
+        /**
+         * JAR signature uses different set of signers to protect the two specified ZIP entries.
+         *
+         * <ul>
+         * <li>Parameter 1: first entry name ({@code String})</li>
+         * <li>Parameter 2: first entry signer names ({@code List<String>})</li>
+         * <li>Parameter 3: second entry name ({@code String})</li>
+         * <li>Parameter 4: second entry signer names ({@code List<String>})</li>
+         * </ul>
+         */
+        JAR_SIG_ZIP_ENTRY_SIGNERS_MISMATCH(
+                "Entries %1$s and %3$s are signed with different sets of signers"
+                        + " : <%2$s> vs <%4$s>"),
+
+        /**
+         * Digest of the specified ZIP entry's data does not match the digest expected by the JAR
+         * signature.
+         *
+         * <ul>
+         * <li>Parameter 1: entry name ({@code String})</li>
+         * <li>Parameter 2: digest algorithm (e.g., SHA-256) ({@code String})</li>
+         * <li>Parameter 3: name of the entry in which the expected digest is specified
+         *     ({@code String})</li>
+         * <li>Parameter 4: base64-encoded actual digest ({@code String})</li>
+         * <li>Parameter 5: base64-encoded expected digest ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_ZIP_ENTRY_DIGEST_DID_NOT_VERIFY(
+                "%2$s digest of %1$s does not match the digest specified in %3$s"
+                        + ". Expected: <%5$s>, actual: <%4$s>"),
+
+        /**
+         * Digest of the JAR manifest main section did not verify.
+         *
+         * <ul>
+         * <li>Parameter 1: digest algorithm (e.g., SHA-256) ({@code String})</li>
+         * <li>Parameter 2: name of the entry in which the expected digest is specified
+         *     ({@code String})</li>
+         * <li>Parameter 3: base64-encoded actual digest ({@code String})</li>
+         * <li>Parameter 4: base64-encoded expected digest ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_MANIFEST_MAIN_SECTION_DIGEST_DID_NOT_VERIFY(
+                "%1$s digest of META-INF/MANIFEST.MF main section does not match the digest"
+                        + " specified in %2$s. Expected: <%4$s>, actual: <%3$s>"),
+
+        /**
+         * Digest of the specified JAR manifest section does not match the digest expected by the
+         * JAR signature.
+         *
+         * <ul>
+         * <li>Parameter 1: section name ({@code String})</li>
+         * <li>Parameter 2: digest algorithm (e.g., SHA-256) ({@code String})</li>
+         * <li>Parameter 3: name of the signature file in which the expected digest is specified
+         *     ({@code String})</li>
+         * <li>Parameter 4: base64-encoded actual digest ({@code String})</li>
+         * <li>Parameter 5: base64-encoded expected digest ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_MANIFEST_SECTION_DIGEST_DID_NOT_VERIFY(
+                "%2$s digest of META-INF/MANIFEST.MF section for %1$s does not match the digest"
+                        + " specified in %3$s. Expected: <%5$s>, actual: <%4$s>"),
+
+        /**
+         * JAR signature file does not contain the whole-file digest of the JAR manifest file. The
+         * digest speeds up verification of JAR signature.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature file ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_NO_MANIFEST_DIGEST_IN_SIG_FILE(
+                "%1$s does not specify digest of META-INF/MANIFEST.MF"
+                        + ". This slows down verification."),
+
+        /**
+         * APK is signed using APK Signature Scheme v2 or newer, but JAR signature file does not
+         * contain protections against stripping of these newer scheme signatures.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature file ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_NO_APK_SIG_STRIP_PROTECTION(
+                "APK is signed using APK Signature Scheme v2 but these signatures may be stripped"
+                        + " without being detected because %1$s does not contain anti-stripping"
+                        + " protections."),
+
+        /**
+         * JAR signature of the signer is missing a file/entry.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the encountered file ({@code String})</li>
+         * <li>Parameter 2: name of the missing file ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_MISSING_FILE("Partial JAR signature. Found: %1$s, missing: %2$s"),
+
+        /**
+         * An exception was encountered while verifying JAR signature contained in a signature block
+         * against the signature file.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature block file ({@code String})</li>
+         * <li>Parameter 2: name of the signature file ({@code String})</li>
+         * <li>Parameter 3: exception ({@code Throwable})</li>
+         * </ul>
+         */
+        JAR_SIG_VERIFY_EXCEPTION("Failed to verify JAR signature %1$s against %2$s: %3$s"),
+
+        /**
+         * An exception was encountered while parsing JAR signature contained in a signature block.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature block file ({@code String})</li>
+         * <li>Parameter 2: exception ({@code Throwable})</li>
+         * </ul>
+         */
+        JAR_SIG_PARSE_EXCEPTION("Failed to parse JAR signature %1$s: %2$s"),
+
+        /**
+         * An exception was encountered while parsing a certificate contained in the JAR signature
+         * block.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature block file ({@code String})</li>
+         * <li>Parameter 2: exception ({@code Throwable})</li>
+         * </ul>
+         */
+        JAR_SIG_MALFORMED_CERTIFICATE("Malformed certificate in JAR signature %1$s: %2$s"),
+
+        /**
+         * JAR signature contained in a signature block file did not verify against the signature
+         * file.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature block file ({@code String})</li>
+         * <li>Parameter 2: name of the signature file ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_DID_NOT_VERIFY("JAR signature %1$s did not verify against %2$s"),
+
+        /**
+         * JAR signature contains no verified signers.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature block file ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_NO_SIGNERS("JAR signature %1$s contains no signers"),
+
+        /**
+         * JAR signature file contains a section with a duplicate name.
+         *
+         * <ul>
+         * <li>Parameter 1: signature file name ({@code String})</li>
+         * <li>Parameter 1: section name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_DUPLICATE_SIG_FILE_SECTION("Duplicate section in %1$s: %2$s"),
+
+        /**
+         * JAR signature file's main section doesn't contain the mandatory Signature-Version
+         * attribute.
+         *
+         * <ul>
+         * <li>Parameter 1: signature file name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_MISSING_VERSION_ATTR_IN_SIG_FILE(
+                "Malformed %1$s: missing Signature-Version attribute"),
+
+        /**
+         * JAR signature file references an unknown APK signature scheme ID.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature file ({@code String})</li>
+         * <li>Parameter 2: unknown APK signature scheme ID ({@code} Integer)</li>
+         * </ul>
+         */
+        JAR_SIG_UNKNOWN_APK_SIG_SCHEME_ID(
+                "JAR signature %1$s references unknown APK signature scheme ID: %2$d"),
+
+        /**
+         * JAR signature file indicates that the APK is supposed to be signed with a supported APK
+         * signature scheme (in addition to the JAR signature) but no such signature was found in
+         * the APK.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature file ({@code String})</li>
+         * <li>Parameter 2: APK signature scheme ID ({@code} Integer)</li>
+         * <li>Parameter 3: APK signature scheme English name ({@code} String)</li>
+         * </ul>
+         */
+        JAR_SIG_MISSING_APK_SIG_REFERENCED(
+                "JAR signature %1$s indicates the APK is signed using %3$s but no such signature"
+                        + " was found. Signature stripped?"),
+
+        /**
+         * JAR entry is not covered by signature and thus unauthorized modifications to its contents
+         * will not be detected.
+         *
+         * <ul>
+         * <li>Parameter 1: entry name ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_UNPROTECTED_ZIP_ENTRY(
+                "%1$s not protected by signature. Unauthorized modifications to this JAR entry"
+                        + " will not be detected. Delete or move the entry outside of META-INF/."),
+
+        /**
+         * APK which is both JAR-signed and signed using APK Signature Scheme v2 contains an APK
+         * Signature Scheme v2 signature from this signer, but does not contain a JAR signature
+         * from this signer.
+         */
+        JAR_SIG_MISSING(
+                "No APK Signature Scheme v2 signature from this signer despite APK being v2"
+                        + " signed"),
+
+        /**
+         * APK which is both JAR-signed and signed using APK Signature Scheme v2 contains a JAR
+         * signature from this signer, but does not contain an APK Signature Scheme v2 signature
+         * from this signer.
+         */
+        V2_SIG_MISSING(
+                "No APK Signature Scheme v2 signature from this signer despite APK being v2"
+                        + " signed"),
 
         /**
          * Failed to parse the list of signers contained in the APK Signature Scheme v2 signature.
@@ -453,6 +1002,44 @@ public class ApkVerifier {
         @Override
         public String toString() {
             return String.format(mIssue.getFormat(), mParams);
+        }
+    }
+
+    /**
+     * Wrapped around {@code byte[]} which ensures that {@code equals} and {@code hashCode} operate
+     * on the contents of the arrays rather than on references.
+     */
+    private static class ByteArray {
+        private final byte[] mArray;
+
+        private ByteArray(byte[] arr) {
+            mArray = arr;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.hashCode(mArray);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            ByteArray other = (ByteArray) obj;
+            if (!Arrays.equals(mArray, other.mArray)) {
+                return false;
+            }
+            return true;
         }
     }
 }
