@@ -18,3 +18,17 @@ cc_binary_host {
     // libc++ is not supported for TARGET_BUILD_APPS builds
     stl: "libstdc++",
 }
+
+cc_binary_host {
+    srcs: [
+        "classfile.cc",
+        "ijar.cc",
+        "zip.cc",
+    ],
+    cflags: [
+        "-Wall",
+        "-Werror",
+    ],
+    host_ldlibs: ["-lz"],
+    name: "ijar_libc++",
+}
