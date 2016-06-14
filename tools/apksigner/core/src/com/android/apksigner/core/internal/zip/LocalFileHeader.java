@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -93,7 +94,7 @@ public class LocalFileHeader {
         // exhibited when reading an APK for the purposes of verifying its signatures.
 
         String entryName = cdRecord.getName();
-        byte[] cdNameBytes = entryName.getBytes("UTF-8");
+        byte[] cdNameBytes = entryName.getBytes(StandardCharsets.UTF_8);
         int headerSizeWithName = HEADER_SIZE_BYTES + cdNameBytes.length;
         long localFileHeaderOffsetInArchive = cdRecord.getLocalFileHeaderOffset();
         long headerEndInArchive = localFileHeaderOffsetInArchive + headerSizeWithName;
