@@ -722,6 +722,8 @@ else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
     else
         my_shared_libraries += libprotobuf-cpp-full
     endif
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),lite-static)
+    my_static_libraries += libprotobuf-cpp-lite
 else
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-lite-ndk
