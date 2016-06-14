@@ -79,8 +79,9 @@ public abstract class V1SchemeSigner {
     private static final String ATTRIBUTE_VALUE_MANIFEST_VERSION = "1.0";
     private static final String ATTRIBUTE_VALUE_SIGNATURE_VERSION = "1.0";
 
+    static final String SF_ATTRIBUTE_NAME_ANDROID_APK_SIGNED_NAME_STR = "X-Android-APK-Signed";
     private static final Attributes.Name SF_ATTRIBUTE_NAME_ANDROID_APK_SIGNED_NAME =
-            new Attributes.Name("X-Android-APK-Signed");
+            new Attributes.Name(SF_ATTRIBUTE_NAME_ANDROID_APK_SIGNED_NAME_STR);
 
     /**
      * Signer configuration.

@@ -23,6 +23,8 @@ import java.util.jar.Attributes;
 
 /**
  * Producer of JAR signature file ({@code *.SF}).
+ *
+ * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jar/jar.html#JAR_Manifest">JAR Manifest format</a>
  */
 public abstract class SignatureFileWriter {
     private SignatureFileWriter() {}
