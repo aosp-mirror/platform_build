@@ -465,7 +465,6 @@ BUILD_PLATFORM_ZIP := $(filter platform platform-java,$(MAKECMDGOALS))
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
-ACP := $(HOST_OUT_EXECUTABLES)/acp
 AIDL := $(HOST_OUT_EXECUTABLES)/aidl
 AAPT := $(HOST_OUT_EXECUTABLES)/aapt
 AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
@@ -481,14 +480,16 @@ MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 # Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
+ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
+IJAR := $(prebuilt_build_tools_bin)/ijar
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
+ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
 # Override the definitions above for unbundled and PDK builds
 ifneq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
-ACP := $(prebuilt_sdk_tools_bin)/acp
 AIDL := $(prebuilt_sdk_tools_bin)/aidl
 AAPT := $(prebuilt_sdk_tools_bin)/aapt
 AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
@@ -595,13 +596,6 @@ FUTILITY := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/futility/futility
 VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
 FEC := $(HOST_OUT_EXECUTABLES)/fec
 
-ifndef TARGET_BUILD_APPS
-ZIPTIME := $(HOST_OUT_EXECUTABLES)/ziptime$(HOST_EXECUTABLE_SUFFIX)
-endif
-
-# ijar converts a .jar file to a smaller .jar file which only has its
-# interfaces.
-IJAR := $(HOST_OUT_EXECUTABLES)/ijar$(BUILD_EXECUTABLE_SUFFIX)
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 
 # relocation packer
