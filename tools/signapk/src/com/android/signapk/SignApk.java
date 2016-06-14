@@ -57,6 +57,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -717,7 +718,7 @@ class SignApk {
         // archive comment, so that tools that display the comment
         // (hopefully) show something sensible.
         // TODO: anything more useful we can put in this message?
-        byte[] message = "signed by SignApk".getBytes("UTF-8");
+        byte[] message = "signed by SignApk".getBytes(StandardCharsets.UTF_8);
         temp.write(message);
         temp.write(0);
 

@@ -16,7 +16,7 @@
 
 package com.android.apksigner.core.internal.jar;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -220,11 +220,7 @@ public class ManifestParser {
         if (lineLengthBytes == 0) {
             return "";
         }
-        try {
-            return new String(mManifest, startOffset, lineLengthBytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 character encoding not supported", e);
-        }
+        return new String(mManifest, startOffset, lineLengthBytes, StandardCharsets.UTF_8);
     }
 
 
