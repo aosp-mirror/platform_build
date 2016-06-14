@@ -18,9 +18,9 @@ package com.android.apksigner.core.internal.zip;
 
 import com.android.apksigner.core.zip.ZipFormatException;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 
 /**
@@ -168,11 +168,7 @@ public class CentralDirectoryRecord {
                 record.position(originalPosition);
             }
         }
-        try {
-            return new String(nameBytes, nameBytesOffset, nameLengthBytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 character encoding not supported", e);
-        }
+        return new String(nameBytes, nameBytesOffset, nameLengthBytes, StandardCharsets.UTF_8);
     }
 
     private static class ByLocalFileHeaderOffsetComparator
