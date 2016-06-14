@@ -11,6 +11,10 @@ else
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 endif
 
+# Pass special classpath to skip uses library check.
+# Should modify build system to pass used libraries properly later.
+DEX2OAT_CLASSPATH := "&"
+
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
 
 # Use the first preloaded-classes file in PRODUCT_COPY_FILES.
@@ -94,6 +98,7 @@ $(hide) rm -f $(2)
 $(hide) mkdir -p $(dir $(2))
 $(hide) ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
 	--runtime-arg -Xms$(DEX2OAT_XMS) --runtime-arg -Xmx$(DEX2OAT_XMX) \
+	--runtime-arg -classpath --runtime-arg $(DEX2OAT_CLASSPATH) \
 	--boot-image=$(PRIVATE_DEX_PREOPT_IMAGE_LOCATION) \
 	--dex-file=$(1) \
 	--dex-location=$(PRIVATE_DEX_LOCATION) \
