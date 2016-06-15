@@ -20,7 +20,10 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := apksigner-core
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
-LOCAL_JAVA_LIBRARIES = \
-  bouncycastle-host \
-  bouncycastle-bcpkix-host
+
+# Disable warnnings about our use of internal proprietary OpenJDK API.
+# TODO: Remove this workaround by moving to our own implementation of PKCS #7
+# SignedData block generation, parsing, and verification.
+LOCAL_JAVACFLAGS := -XDignore.symbol.file
+
 include $(BUILD_HOST_JAVA_LIBRARY)
