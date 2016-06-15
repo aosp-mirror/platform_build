@@ -33,7 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
-import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -342,7 +342,7 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
                                 mOutputJarEntryDigests,
                                 apkSigningSchemeIds,
                                 inputJarManifest);
-            } catch (CertificateEncodingException e) {
+            } catch (CertificateException e) {
                 throw new SignatureException("Failed to generate v1 signature", e);
             }
         } else {
@@ -360,7 +360,7 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
                                     mV1ContentDigestAlgorithm,
                                     apkSigningSchemeIds,
                                     newManifest);
-                } catch (CertificateEncodingException e) {
+                } catch (CertificateException e) {
                     throw new SignatureException("Failed to generate v1 signature", e);
                 }
             } else {
