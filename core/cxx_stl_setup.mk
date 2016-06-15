@@ -107,10 +107,8 @@ else ifeq ($(my_cxx_stl),ndk)
 else ifeq ($(my_cxx_stl),libstdc++)
     ifndef LOCAL_IS_HOST_MODULE
         $(error $(LOCAL_PATH): $(LOCAL_MODULE): libstdc++ is not supported for device modules)
-    else
-        # Host builds will use the system C++. libc++ on Darwin, GNU libstdc++ everywhere else
-        my_cppflags += $($(my_prefix)SYSTEMCPP_CPPFLAGS)
-        my_ldflags += $($(my_prefix)SYSTEMCPP_LDFLAGS)
+    else ifneq ($($(my_prefix)OS),windows)
+        $(error $(LOCAL_PATH): $(LOCAL_MODULE): libstdc++ is not supported on $($(my_prefix)OS))
     endif
 else ifeq ($(my_cxx_stl),none)
     ifdef LOCAL_IS_HOST_MODULE
