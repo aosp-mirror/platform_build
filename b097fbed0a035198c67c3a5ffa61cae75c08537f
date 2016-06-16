@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f417a9f9_388b6f36",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1241,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-06-16T05:54:41Z",
+      "side": 1,
+      "message": "This seems like the kind of shell commands that need testing on darwin",
+      "revId": "b097fbed0a035198c67c3a5ffa61cae75c08537f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
