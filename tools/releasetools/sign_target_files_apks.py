@@ -51,10 +51,12 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       in which they appear on the command line.
 
   -o  (--replace_ota_keys)
-      Replace the certificate (public key) used by OTA package
-      verification with the one specified in the input target_files
-      zip (in the META/otakeys.txt file).  Key remapping (-k and -d)
-      is performed on this key.
+      Replace the certificate (public key) used by OTA package verification
+      with the ones specified in the input target_files zip (in the
+      META/otakeys.txt file). Key remapping (-k and -d) is performed on the
+      keys. For A/B devices, the payload verification key will be replaced
+      as well. If there're multiple OTA keys, only the first one will be used
+      for payload verification.
 
   -t  (--tag_changes)  <+tag>,<-tag>,...
       Comma-separated list of changes to make to the set of tags (in
@@ -171,7 +173,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
   rebuild_recovery = False
+  system_root_image = misc_info.get("system_root_image") == "true"
 
+  # tmpdir will only be used to regenerate the recovery-from-boot patch.
   tmpdir = tempfile.mkdtemp()
   def write_to_temp(fn, attr, data):
     fn = os.path.join(tmpdir, fn)
@@ -207,13 +211,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       new_data = ReplaceVerityPublicKey(output_tf_zip, info.filename,
                                         OPTIONS.replace_verity_public_key[1])
       write_to_temp(info.filename, info.external_attr, new_data)
-    # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch.
-    elif (info.filename.startswith("BOOT/") or
-          info.filename.startswith("RECOVERY/") or
-          info.filename.startswith("META/") or
-          info.filename.startswith("ROOT/") or
-          info.filename == "SYSTEM/etc/recovery-resource.dat"):
-      write_to_temp(info.filename, info.external_attr, data)
 
     # Sign APKs.
     if info.filename.endswith(".apk"):
@@ -228,6 +225,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         # an APK we're not supposed to sign.
         print "NOT signing: %s" % (name,)
         common.ZipWriteStr(output_tf_zip, out_info, data)
+
+    # System properties.
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
                            "BOOT/RAMDISK/default.prop",
@@ -238,19 +237,30 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if info.filename in ("BOOT/RAMDISK/default.prop",
                            "RECOVERY/RAMDISK/default.prop"):
         write_to_temp(info.filename, info.external_attr, new_data)
+
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
       new_data = ReplaceCerts(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
+
+    # Trigger a rebuild of the recovery patch if needed.
     elif info.filename in ("SYSTEM/recovery-from-boot.p",
                            "SYSTEM/etc/recovery.img",
                            "SYSTEM/bin/install-recovery.sh"):
       rebuild_recovery = True
+
+    # Don't copy OTA keys if we're replacing them.
     elif (OPTIONS.replace_ota_keys and
-          info.filename in ("RECOVERY/RAMDISK/res/keys",
-                            "SYSTEM/etc/security/otacerts.zip")):
-      # don't copy these files if we're regenerating them below
+          info.filename in (
+              "BOOT/RAMDISK/res/keys",
+              "RECOVERY/RAMDISK/res/keys",
+              "SYSTEM/etc/security/otacerts.zip",
+              "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
+
+    # Skip verity keys since they have been processed above.
+    # TODO: verity_key is at a wrong location (BOOT/verity_key). Will fix and
+    # clean up verity related lines in a separate CL.
     elif (OPTIONS.replace_verity_private_key and
           info.filename == "META/misc_info.txt"):
       pass
@@ -258,14 +268,32 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
           info.filename in ("BOOT/RAMDISK/verity_key",
                             "BOOT/verity_key")):
       pass
+
+    # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
+    # must come AFTER other matching rules.
+    elif (info.filename.startswith("BOOT/") or
+          info.filename.startswith("RECOVERY/") or
+          info.filename.startswith("META/") or
+          info.filename.startswith("ROOT/") or
+          info.filename == "SYSTEM/etc/recovery-resource.dat"):
+      write_to_temp(info.filename, info.external_attr, data)
+      common.ZipWriteStr(output_tf_zip, out_info, data)
+
+    # A non-APK file; copy it verbatim.
     else:
-      # a non-APK file; copy it verbatim
       common.ZipWriteStr(output_tf_zip, out_info, data)
 
   if OPTIONS.replace_ota_keys:
     new_recovery_keys = ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
     if new_recovery_keys:
-      write_to_temp("RECOVERY/RAMDISK/res/keys", 0o755 << 16, new_recovery_keys)
+      if system_root_image:
+        recovery_keys_location = "BOOT/RAMDISK/res/keys"
+      else:
+        recovery_keys_location = "RECOVERY/RAMDISK/res/keys"
+      # The "new_recovery_keys" has been already written into the output_tf_zip
+      # while calling ReplaceOtaKeys(). We're just putting the same copy to
+      # tmpdir in case we need to regenerate the recovery-from-boot patch.
+      write_to_temp(recovery_keys_location, 0o755 << 16, new_recovery_keys)
 
   if rebuild_recovery:
     recovery_img = common.GetBootableImage(
@@ -398,7 +426,8 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
                            "build/target/product/security/testkey")
     mapped_keys.append(
         OPTIONS.key_map.get(devkey, devkey) + ".x509.pem")
-    print "META/otakeys.txt has no keys; using", mapped_keys[0]
+    print("META/otakeys.txt has no keys; using %s for OTA package"
+          " verification." % (mapped_keys[0],))
 
   # recovery uses a version of the key that has been slightly
   # predigested (by DumpPublicKey.java) and put in res/keys.
@@ -411,8 +440,13 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   new_recovery_keys, _ = p.communicate()
   if p.returncode != 0:
     raise common.ExternalError("failed to run dumpkeys")
-  common.ZipWriteStr(output_tf_zip, "RECOVERY/RAMDISK/res/keys",
-                     new_recovery_keys)
+
+  # system_root_image puts the recovery keys at BOOT/RAMDISK.
+  if misc_info.get("system_root_image") == "true":
+    recovery_keys_location = "BOOT/RAMDISK/res/keys"
+  else:
+    recovery_keys_location = "RECOVERY/RAMDISK/res/keys"
+  common.ZipWriteStr(output_tf_zip, recovery_keys_location, new_recovery_keys)
 
   # SystemUpdateActivity uses the x509.pem version of the keys, but
   # put into a zipfile system/etc/security/otacerts.zip.
@@ -425,6 +459,20 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   common.ZipClose(certs_zip)
   common.ZipWriteStr(output_tf_zip, "SYSTEM/etc/security/otacerts.zip",
                      temp_file.getvalue())
+
+  # For A/B devices, update the payload verification key.
+  if misc_info.get("ab_update") == "true":
+    # Unlike otacerts.zip that may contain multiple keys, we can only specify
+    # ONE payload verification key.
+    if len(mapped_keys) > 1:
+      print("\n  WARNING: Found more than one OTA keys; Using the first one"
+            " as payload verification key.\n\n")
+
+    print "Using %s for payload verification." % (mapped_keys[0],)
+    common.ZipWrite(
+        output_tf_zip,
+        mapped_keys[0],
+        arcname="SYSTEM/etc/update_engine/update-payload-key.pub.pem")
 
   return new_recovery_keys
 
