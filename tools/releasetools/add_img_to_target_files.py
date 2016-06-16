@@ -78,6 +78,24 @@ def BuildSystem(input_dir, info_dict, block_list=None):
   return CreateImage(input_dir, info_dict, "system", block_list=block_list)
 
 
+def AddSystemOther(output_zip, prefix="IMAGES/"):
+  """Turn the contents of SYSTEM_OTHER into a system_other image
+  and store it in output_zip."""
+
+  prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "system_other.img")
+  if os.path.exists(prebuilt_path):
+    print "system_other.img already exists in %s, no need to rebuild..." % (prefix,)
+    return
+
+  imgname = BuildSystemOther(OPTIONS.input_tmp, OPTIONS.info_dict)
+  common.ZipWrite(output_zip, imgname, prefix + "system_other.img")
+
+def BuildSystemOther(input_dir, info_dict):
+  """Build the (sparse) system_other image and return the name of a temp
+  file containing it."""
+  return CreateImage(input_dir, info_dict, "system_other", block_list=None)
+
+
 def AddVendor(output_zip, prefix="IMAGES/"):
   """Turn the contents of VENDOR into a vendor image and store in it
   output_zip."""
@@ -268,6 +286,8 @@ def AddImagesToTargetFiles(filename):
   except KeyError:
     has_vendor = False
 
+  has_system_other = "SYSTEM_OTHER/" in input_zip.namelist()
+
   OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.input_tmp)
 
   common.ZipClose(input_zip)
@@ -314,6 +334,9 @@ def AddImagesToTargetFiles(filename):
   if has_vendor:
     banner("vendor")
     AddVendor(output_zip)
+  if has_system_other:
+    banner("system_other")
+    AddSystemOther(output_zip)
   banner("userdata")
   AddUserdata(output_zip)
   banner("cache")

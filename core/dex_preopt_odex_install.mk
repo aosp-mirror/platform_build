@@ -39,6 +39,14 @@ ifeq ($(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
 LOCAL_DEX_PREOPT :=
 endif
 endif
+# if installing into system, and odex are being installed into system_other, don't strip
+ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
+ifeq ($(LOCAL_DEX_PREOPT),true)
+ifneq ($(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(my_module_path)),)
+LOCAL_DEX_PREOPT := nostripping
+endif
+endif
+endif
 
 built_odex :=
 installed_odex :=
@@ -100,14 +108,6 @@ endif
 endif
 
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
-
-# Use pattern rule - we may have multiple installed odex files.
-# Ugly syntax - See the definition get-odex-file-path.
-$(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(installed_odex))) \
-                  : $(dir $(LOCAL_BUILT_MODULE))%$(notdir $(word 1,$(built_odex))) \
-    | $(ACP)
-	@echo "Install: $@"
-	$(copy-file-to-target)
 endif
 
 # Add the installed_odex to the list of installed files for this module.
