@@ -81,6 +81,7 @@ dont_bother_goals := clean clobber dataclean installclean \
     userdataimage-nodeps userdatatarball-nodeps \
     cacheimage-nodeps \
     vendorimage-nodeps \
+    systemotherimage-nodeps \
     ramdisk-nodeps \
     bootimage-nodeps \
     recoveryimage-nodeps \
@@ -928,6 +929,9 @@ cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
 .PHONY: vendorimage
 vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 
+.PHONY: systemotherimage
+systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
+
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
@@ -955,8 +959,10 @@ droidcore: files \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_CACHEIMAGE_TARGET) \
 	$(INSTALLED_VENDORIMAGE_TARGET) \
+	$(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
 	$(INSTALLED_FILES_FILE) \
-	$(INSTALLED_FILES_FILE_VENDOR)
+	$(INSTALLED_FILES_FILE_VENDOR) \
+	$(INSTALLED_FILES_FILE_SYSTEMOTHER)
 
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
@@ -1017,6 +1023,7 @@ else # TARGET_BUILD_APPS
     $(SYMBOLS_ZIP) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_FILE_VENDOR) \
+    $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_BUILD_PROP_TARGET) \
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
