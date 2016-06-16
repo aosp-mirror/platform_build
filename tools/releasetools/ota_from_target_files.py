@@ -1279,6 +1279,11 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   p1.communicate()
   assert p1.returncode == 0, "brillo_update_payload properties failed"
 
+  if OPTIONS.wipe_user_data:
+    with open(properties_file, "a") as f:
+      f.write("POWERWASH=1\n")
+    metadata["ota-wipe"] = "yes"
+
   # Add the signed payload file and properties into the zip.
   common.ZipWrite(output_zip, properties_file, arcname="payload_properties.txt")
   common.ZipWrite(output_zip, signed_payload_file, arcname="payload.bin",
