@@ -1242,6 +1242,43 @@ else
 	$(hide) touch $@
 endif
 
+
+####################################################
+## Verify that NDK-built libraries only link against
+## other NDK-built libraries
+####################################################
+
+my_link_type := $(intermediates)/link_type
+ifdef LOCAL_SDK_VERSION
+$(my_link_type): PRIVATE_LINK_TYPE := ndk
+$(my_link_type): PRIVATE_ALLOWED_TYPES := ndk
+else
+$(my_link_type): PRIVATE_LINK_TYPE := platform
+$(my_link_type): PRIVATE_ALLOWED_TYPES := (ndk|platform)
+endif
+my_link_type_deps := $(strip \
+   $(foreach l,$(my_whole_static_libraries) $(my_static_libraries), \
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/link_type))
+ifneq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+my_link_type_deps += $(strip \
+   $(foreach l,$(my_shared_libraries), \
+     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/link_type))
+endif
+$(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
+$(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(my_link_type): PRIVATE_MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
+$(my_link_type): $(my_link_type_deps)
+	@echo Check module type: $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+ifdef my_link_type_deps
+	$(hide) for f in $(PRIVATE_DEPS); do \
+	  grep -qE '^$(PRIVATE_ALLOWED_TYPES)$$' $$f || \
+	    $(call echo-warning,"$(PRIVATE_MAKEFILE): $(PRIVATE_MODULE) ($(PRIVATE_LINK_TYPE)) should not link to $$(basename $${f%_intermediates/link_type}) ($$(cat $$f))"); \
+	done
+endif
+	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+
+
 ###########################################################
 ## Common object handling.
 ###########################################################
@@ -1594,4 +1631,4 @@ endif
 .KATI_RESTAT: $(export_includes)
 
 # Make sure export_includes gets generated when you are running mm/mmm
-$(LOCAL_BUILT_MODULE) : | $(export_includes)
+$(LOCAL_BUILT_MODULE) : | $(export_includes) $(my_link_type)
