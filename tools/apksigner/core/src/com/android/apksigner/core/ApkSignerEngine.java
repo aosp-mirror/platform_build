@@ -19,6 +19,7 @@ package com.android.apksigner.core;
 import java.io.Closeable;
 import java.io.IOException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.util.List;
 
@@ -182,13 +183,17 @@ public interface ApkSignerEngine extends Closeable {
      *         request must be fulfilled before
      *         {@link #outputZipSections(DataSource, DataSource, DataSource)} is invoked.
      *
+     * @throws NoSuchAlgorithmException if a signature could not be generated because a required
+     *         cryptographic algorithm implementation is missing
      * @throws InvalidKeyException if a signature could not be generated because a signing key is
      *         not suitable for generating the signature
-     * @throws SignatureException if an error occurred while generating the JAR signature
+     * @throws SignatureException if an error occurred while generating a signature
      * @throws IllegalStateException if there are unfulfilled requests, such as to inspect some JAR
      *         entries, or if the engine is closed
      */
-    OutputJarSignatureRequest outputJarEntries() throws InvalidKeyException, SignatureException;
+    OutputJarSignatureRequest outputJarEntries()
+            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+                    IllegalStateException;
 
     /**
      * Indicates to this engine that the ZIP sections comprising the output APK have been output.
@@ -207,16 +212,20 @@ public interface ApkSignerEngine extends Closeable {
      *         {@link #outputDone()} is invoked.
      *
      * @throws IOException if an I/O error occurs while reading the provided ZIP sections
+     * @throws NoSuchAlgorithmException if a signature could not be generated because a required
+     *         cryptographic algorithm implementation is missing
      * @throws InvalidKeyException if a signature could not be generated because a signing key is
      *         not suitable for generating the signature
-     * @throws SignatureException if an error occurred while generating the APK's signature
+     * @throws SignatureException if an error occurred while generating a signature
      * @throws IllegalStateException if there are unfulfilled requests, such as to inspect some JAR
      *         entries or to output JAR signature, or if the engine is closed
      */
     OutputApkSigningBlockRequest outputZipSections(
             DataSource zipEntries,
             DataSource zipCentralDirectory,
-            DataSource zipEocd) throws IOException, InvalidKeyException, SignatureException;
+            DataSource zipEocd)
+                    throws IOException, NoSuchAlgorithmException, InvalidKeyException,
+                            SignatureException, IllegalStateException;
 
     /**
      * Indicates to this engine that the signed APK was output.
