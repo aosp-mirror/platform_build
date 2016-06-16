@@ -835,6 +835,20 @@ endef
 
 
 ###########################################################
+## Color-coded warnings and errors in build rules
+##
+## $(1): message to print
+###########################################################
+define echo-warning
+echo -e "\e[1;35mwarning:\e[0m \e[1m" $(1) "\e[0m\n"
+endef
+
+define echo-error
+echo -e "\e[1;31merror:\e[0m \e[1m" $(1) "\e[0m\n"
+endef
+
+
+###########################################################
 ## Package filtering
 ###########################################################
 

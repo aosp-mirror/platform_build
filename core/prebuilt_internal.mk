@@ -122,7 +122,14 @@ else
 	$(hide) touch $@
 endif
 
-$(LOCAL_BUILT_MODULE) : | $(intermediates)/export_includes
+my_link_type := $(intermediates)/link_type
+$(my_link_type): PRIVATE_LINK_TYPE := $(if $(LOCAL_SDK_VERSION),ndk,platform)
+$(my_link_type):
+	@echo Check module type: $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+
+$(LOCAL_BUILT_MODULE) : | $(export_includes) $(my_link_type)
 endif  # prebuilt_module_is_a_library
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
