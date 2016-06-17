@@ -56,23 +56,43 @@ public class ApkVerifier {
      * @param apk APK file contents
      * @param minSdkVersion API Level of the oldest Android platform on which the APK's signatures
      *        may need to be verified
+     * @param maxSdkVersion API Level of the newest Android platform on which the APK's signatures
+     *        may need to be verified
      *
      * @throws IOException if an I/O error is encountered while reading the APK
      * @throws ZipFormatException if the APK is malformed at ZIP format level
      */
-    public Result verify(DataSource apk, int minSdkVersion) throws IOException, ZipFormatException {
+    public Result verify(DataSource apk, int minSdkVersion, int maxSdkVersion)
+            throws IOException, ZipFormatException {
+        if (minSdkVersion < 0) {
+            throw new IllegalArgumentException(
+                    "minSdkVersion must not be negative: " + minSdkVersion);
+        }
+        if (minSdkVersion > maxSdkVersion) {
+            throw new IllegalArgumentException(
+                    "minSdkVersion (" + minSdkVersion + ") > maxSdkVersion (" + maxSdkVersion
+                            + ")");
+        }
         ApkUtils.ZipSections zipSections = ApkUtils.findZipSections(apk);
 
-        // Attempt to verify the APK using APK Signature Scheme v2
         Result result = new Result();
-        Set<Integer> foundApkSigSchemeIds = new HashSet<>(1);
-        try {
-            V2SchemeVerifier.Result v2Result = V2SchemeVerifier.verify(apk, zipSections);
-            foundApkSigSchemeIds.add(APK_SIGNATURE_SCHEME_V2_ID);
-            result.mergeFrom(v2Result);
-        } catch (V2SchemeVerifier.SignatureNotFoundException ignored) {}
-        if (result.containsErrors()) {
-            return result;
+
+        // Android N and newer attempts to verify APK Signature Scheme v2 signature of the APK.
+        // If the signature is not found, it falls back to JAR signature verification. If the
+        // signature is found but does not verify, the APK is rejected.
+        Set<Integer> foundApkSigSchemeIds;
+        if (maxSdkVersion >= AndroidSdkVersion.N) {
+            foundApkSigSchemeIds = new HashSet<>(1);
+            try {
+                V2SchemeVerifier.Result v2Result = V2SchemeVerifier.verify(apk, zipSections);
+                foundApkSigSchemeIds.add(APK_SIGNATURE_SCHEME_V2_ID);
+                result.mergeFrom(v2Result);
+            } catch (V2SchemeVerifier.SignatureNotFoundException ignored) {}
+            if (result.containsErrors()) {
+                return result;
+            }
+        } else {
+            foundApkSigSchemeIds = Collections.emptySet();
         }
 
         // Attempt to verify the APK using JAR signing if necessary. Platforms prior to Android N
@@ -86,7 +106,8 @@ public class ApkVerifier {
                             zipSections,
                             SUPPORTED_APK_SIG_SCHEME_NAMES,
                             foundApkSigSchemeIds,
-                            minSdkVersion);
+                            minSdkVersion,
+                            maxSdkVersion);
             result.mergeFrom(v1Result);
         }
         if (result.containsErrors()) {
