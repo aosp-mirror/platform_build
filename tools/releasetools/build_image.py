@@ -414,14 +414,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["partition_size"]])
   else:
-    build_command = ["mkyaffs2image", "-f"]
-    if prop_dict.get("mkyaffs2_extra_flags", None):
-      build_command.extend(prop_dict["mkyaffs2_extra_flags"].split())
-    build_command.append(in_dir)
-    build_command.append(out_file)
-    if "selinux_fc" in prop_dict:
-      build_command.append(prop_dict["selinux_fc"])
-      build_command.append(prop_dict["mount_point"])
+    print("Error: unknown filesystem type '%s'" % (fs_type))
+    return False
 
   if in_dir != origin_in:
     # Construct a staging directory of the root file system.
@@ -527,7 +521,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "squashfs_sparse_flag",
-      "mkyaffs2_extra_flags",
       "selinux_fc",
       "skip_fsck",
       "verity",

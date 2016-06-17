@@ -184,11 +184,9 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
     print "userdata.img already exists in %s, no need to rebuild..." % (prefix,)
     return
 
+  # Skip userdata.img if no size.
   image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict, "data")
-  # We only allow yaffs to have a 0/missing partition_size.
-  # Extfs, f2fs must have a size. Skip userdata.img if no size.
-  if (not image_props.get("fs_type", "").startswith("yaffs") and
-      not image_props.get("partition_size")):
+  if not image_props.get("partition_size"):
     return
 
   print "creating userdata.img..."
