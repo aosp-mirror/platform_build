@@ -562,7 +562,8 @@ public abstract class V1SchemeSigner {
                     // SignatureAlgorithm: dsaWithSha256 (2.16.840.1.101.3.4.3.2) and
                     // dsa (1.2.840.10040.4.1). The latter works only on API Level 22+. Thus, we use
                     // the former.
-                    sigAlgId = getSupportedAlgorithmId("2.16.840.1.101.3.4.3.2"); // DSA with SHA-256
+                    sigAlgId =
+                            getSupportedAlgorithmId("2.16.840.1.101.3.4.3.2"); // DSA with SHA-256
                     break;
                 default:
                     throw new IllegalArgumentException(
