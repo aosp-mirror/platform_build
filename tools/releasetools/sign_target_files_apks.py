@@ -65,6 +65,9 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       removed.  Changes are processed in the order they appear.
       Default value is "-test-keys,-dev-keys,+release-keys".
 
+  --replace_verity_keyid <path_to_X509_PEM_cert_file>
+      Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
+      with keyid of the cert pointed by <path_to_X509_PEM_cert_file>
 """
 
 import sys
@@ -94,6 +97,7 @@ OPTIONS.key_map = {}
 OPTIONS.replace_ota_keys = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
+OPTIONS.replace_verity_keyid = False
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
 
 def GetApkCerts(tf_zip):
@@ -211,7 +215,15 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       new_data = ReplaceVerityPublicKey(output_tf_zip, info.filename,
                                         OPTIONS.replace_verity_public_key[1])
       write_to_temp(info.filename, info.external_attr, new_data)
-
+    elif (info.filename == "BOOT/cmdline" and
+          OPTIONS.replace_verity_keyid):
+      new_cmdline = ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
+          OPTIONS.replace_verity_keyid[1])
+      # Writing the new cmdline to tmpdir is redundant as the bootimage
+      # gets build in the add_image_to_target_files and rebuild_recovery
+      # is not exercised while building the boot image for the A/B
+      # path
+      write_to_temp(info.filename, info.external_attr, new_cmdline)
     # Sign APKs.
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
@@ -267,6 +279,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif (OPTIONS.replace_verity_public_key and
           info.filename in ("BOOT/RAMDISK/verity_key",
                             "BOOT/verity_key")):
+      pass
+
+    elif (info.filename == "BOOT/cmdline" and
+          OPTIONS.replace_verity_keyid):
       pass
 
     # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
@@ -492,6 +508,30 @@ def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,
   common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
   misc_info["verity_key"] = key_path
 
+def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
+  in_cmdline = targetfile_input_zip.read("BOOT/cmdline")
+  # copy in_cmdline to output_zip if veritykeyid is not present in in_cmdline
+  if "veritykeyid" not in in_cmdline:
+    common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", in_cmdline)
+    return in_cmdline
+  out_cmdline = []
+  for param in in_cmdline.split():
+    if "veritykeyid" in param:
+      # extract keyid using openssl command
+      p = common.Run(["openssl", "x509", "-in", keypath, "-text"], stdout=subprocess.PIPE)
+      keyid, stderr = p.communicate()
+      keyid = re.search(r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
+      print "Replacing verity keyid with %s error=%s" % (keyid, stderr)
+      out_cmdline.append("veritykeyid=id:%s" % (keyid,))
+    else:
+      out_cmdline.append(param)
+
+  out_cmdline = ' '.join(out_cmdline)
+  out_cmdline = out_cmdline.strip()
+  print "out_cmdline %s" % (out_cmdline)
+  common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", out_cmdline)
+  return out_cmdline
+
 def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
     if s is None:   # -d option
@@ -589,6 +629,8 @@ def main(argv):
       OPTIONS.replace_verity_public_key = (True, a)
     elif o == "--replace_verity_private_key":
       OPTIONS.replace_verity_private_key = (True, a)
+    elif o == "--replace_verity_keyid":
+      OPTIONS.replace_verity_keyid = (True, a)
     else:
       return False
     return True
@@ -601,7 +643,8 @@ def main(argv):
                                               "replace_ota_keys",
                                               "tag_changes=",
                                               "replace_verity_public_key=",
-                                              "replace_verity_private_key="],
+                                              "replace_verity_private_key=",
+                                              "replace_verity_keyid="],
                              extra_option_handler=option_handler)
 
   if len(args) != 2:
