@@ -170,7 +170,7 @@ class EdifyGenerator(object):
     self.script.append("set_progress(%f);" % (frac,))
 
   def PatchCheck(self, filename, *sha1):
-    """Check that the given file (or MTD reference) has one of the
+    """Check that the given file has one of the
     given *sha1 hashes, checking the version saved in cache if the
     file does not match."""
     self.script.append(
@@ -180,7 +180,7 @@ class EdifyGenerator(object):
             common.ErrorCode.BAD_PATCH_FILE, filename))
 
   def Verify(self, filename):
-    """Check that the given file (or MTD reference) has one of the
+    """Check that the given file has one of the
     given hashes (encoded in the filename)."""
     self.script.append(
         'apply_patch_check("{filename}") && '
@@ -189,7 +189,7 @@ class EdifyGenerator(object):
             filename=filename))
 
   def FileCheck(self, filename, *sha1):
-    """Check that the given file (or MTD reference) has one of the
+    """Check that the given file has one of the
     given *sha1 hashes."""
     self.script.append('assert(sha1_check(read_file("%s")' % (filename,) +
                        "".join([', "%s"' % (i,) for i in sha1]) +
@@ -329,11 +329,7 @@ class EdifyGenerator(object):
       p = fstab[mount_point]
       partition_type = common.PARTITION_TYPES[p.fs_type]
       args = {'device': p.device, 'fn': fn}
-      if partition_type == "MTD":
-        self.script.append(
-            'write_raw_image(package_extract_file("%(fn)s"), "%(device)s");'
-            % args)
-      elif partition_type == "EMMC":
+      if partition_type == "EMMC":
         if mapfn:
           args["map"] = mapfn
           self.script.append(
