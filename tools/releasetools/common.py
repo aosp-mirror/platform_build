@@ -155,14 +155,6 @@ def LoadInfoDict(input_file, input_dir=None):
   # files.  Look for them, in case we're processing an old
   # target_files zip.
 
-  if "mkyaffs2_extra_flags" not in d:
-    try:
-      d["mkyaffs2_extra_flags"] = read_helper(
-          "META/mkyaffs2-extra-flags.txt").strip()
-    except KeyError:
-      # ok if flags don't exist
-      pass
-
   if "recovery_api_version" not in d:
     try:
       d["recovery_api_version"] = read_helper(
@@ -864,10 +856,6 @@ def CheckSize(data, target, info_dict):
   if not fs_type or not limit:
     return
 
-  if fs_type == "yaffs2":
-    # image size should be increased by 1/64th to account for the
-    # spare area (64 bytes per 2k page)
-    limit = limit / 2048 * (2048+64)
   size = len(data)
   pct = float(size) * 100.0 / limit
   msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
@@ -1687,8 +1675,6 @@ DataImage = blockimgdiff.DataImage
 
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {
-    "yaffs2": "MTD",
-    "mtd": "MTD",
     "ext4": "EMMC",
     "emmc": "EMMC",
     "f2fs": "EMMC",
