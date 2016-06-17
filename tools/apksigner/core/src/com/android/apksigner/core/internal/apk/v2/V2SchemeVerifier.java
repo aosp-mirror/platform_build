@@ -31,9 +31,13 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.DigestException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -74,11 +78,13 @@ public abstract class V2SchemeVerifier {
      * verification. APK is considered verified only if {@link Result#verified} is {@code true}. If
      * verification fails, the result will contain errors -- see {@link Result#getErrors()}.
      *
+     * @throws NoSuchAlgorithmException if the APK's signatures cannot be verified because a
+     *         required cryptographic algorithm implementation is missing
      * @throws SignatureNotFoundException if no APK Signature Scheme v2 signatures are found
      * @throws IOException if an I/O error occurs when reading the APK
      */
     public static Result verify(DataSource apk, ApkUtils.ZipSections zipSections)
-            throws IOException, SignatureNotFoundException {
+            throws IOException, NoSuchAlgorithmException, SignatureNotFoundException {
         Result result = new Result();
         SignatureInfo signatureInfo = findSignature(apk, zipSections, result);
 
@@ -107,7 +113,7 @@ public abstract class V2SchemeVerifier {
             ByteBuffer apkSignatureSchemeV2Block,
             DataSource centralDir,
             ByteBuffer eocd,
-            Result result) throws IOException {
+            Result result) throws IOException, NoSuchAlgorithmException {
         Set<ContentDigestAlgorithm> contentDigestsToVerify = new HashSet<>(1);
         parseSigners(apkSignatureSchemeV2Block, contentDigestsToVerify, result);
         if (result.containsErrors()) {
@@ -131,7 +137,7 @@ public abstract class V2SchemeVerifier {
     private static void parseSigners(
             ByteBuffer apkSignatureSchemeV2Block,
             Set<ContentDigestAlgorithm> contentDigestsToVerify,
-            Result result) {
+            Result result) throws NoSuchAlgorithmException {
         ByteBuffer signers;
         try {
             signers = getLengthPrefixedSlice(apkSignatureSchemeV2Block);
@@ -178,7 +184,8 @@ public abstract class V2SchemeVerifier {
             ByteBuffer signerBlock,
             CertificateFactory certFactory,
             Result.SignerInfo result,
-            Set<ContentDigestAlgorithm> contentDigestsToVerify) throws IOException {
+            Set<ContentDigestAlgorithm> contentDigestsToVerify)
+                    throws IOException, NoSuchAlgorithmException {
         ByteBuffer signedData = getLengthPrefixedSlice(signerBlock);
         byte[] signedDataBytes = new byte[signedData.remaining()];
         signedData.get(signedDataBytes);
@@ -252,7 +259,8 @@ public abstract class V2SchemeVerifier {
                 }
                 result.verifiedSignatures.put(signatureAlgorithm, sigBytes);
                 contentDigestsToVerify.add(signatureAlgorithm.getContentDigestAlgorithm());
-            } catch (Exception e) {
+            } catch (InvalidKeyException | InvalidAlgorithmParameterException
+                    | SignatureException e) {
                 result.addError(Issue.V2_SIG_VERIFY_EXCEPTION, signatureAlgorithm, e);
                 return;
             }
@@ -440,7 +448,7 @@ public abstract class V2SchemeVerifier {
             DataSource centralDir,
             ByteBuffer eocd,
             Set<ContentDigestAlgorithm> contentDigestAlgorithms,
-            Result result) throws IOException {
+            Result result) throws IOException, NoSuchAlgorithmException {
         if (contentDigestAlgorithms.isEmpty()) {
             // This should never occur because this method is invoked once at least one signature
             // is verified, meaning at least one content digest is known.

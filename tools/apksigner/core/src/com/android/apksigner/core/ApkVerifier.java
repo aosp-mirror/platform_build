@@ -26,6 +26,7 @@ import com.android.apksigner.core.util.DataSource;
 import com.android.apksigner.core.zip.ZipFormatException;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -61,9 +62,11 @@ public class ApkVerifier {
      *
      * @throws IOException if an I/O error is encountered while reading the APK
      * @throws ZipFormatException if the APK is malformed at ZIP format level
+     * @throws NoSuchAlgorithmException if the APK's signatures cannot be verified because a
+     *         required cryptographic algorithm implementation is missing
      */
     public Result verify(DataSource apk, int minSdkVersion, int maxSdkVersion)
-            throws IOException, ZipFormatException {
+            throws IOException, ZipFormatException, NoSuchAlgorithmException {
         if (minSdkVersion < 0) {
             throw new IllegalArgumentException(
                     "minSdkVersion must not be negative: " + minSdkVersion);
