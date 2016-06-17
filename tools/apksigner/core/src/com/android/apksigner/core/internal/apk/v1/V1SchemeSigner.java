@@ -155,13 +155,10 @@ public abstract class V1SchemeSigner {
     /**
      * Returns a new {@link MessageDigest} instance corresponding to the provided digest algorithm.
      */
-    public static MessageDigest getMessageDigestInstance(DigestAlgorithm digestAlgorithm) {
+    private static MessageDigest getMessageDigestInstance(DigestAlgorithm digestAlgorithm)
+            throws NoSuchAlgorithmException {
         String jcaAlgorithm = digestAlgorithm.getJcaMessageDigestAlgorithm();
-        try {
-            return MessageDigest.getInstance(jcaAlgorithm);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Failed to obtain " + jcaAlgorithm + " MessageDigest", e);
-        }
+        return MessageDigest.getInstance(jcaAlgorithm);
     }
 
     /**
@@ -215,6 +212,8 @@ public abstract class V1SchemeSigner {
      * @param signerConfigs signer configurations, one for each signer. At least one signer config
      *        must be provided.
      *
+     * @throws NoSuchAlgorithmException if a required cryptographic algorithm implementation is
+     *         missing
      * @throws InvalidKeyException if a signing key is not suitable for this signature scheme or
      *         cannot be used in general
      * @throws SignatureException if an error occurs when computing digests of generating
@@ -226,7 +225,8 @@ public abstract class V1SchemeSigner {
             Map<String, byte[]> jarEntryDigests,
             List<Integer> apkSigningSchemeIds,
             byte[] sourceManifestBytes)
-                    throws InvalidKeyException, CertificateException, SignatureException {
+                    throws NoSuchAlgorithmException, InvalidKeyException, CertificateException,
+                            SignatureException {
         if (signerConfigs.isEmpty()) {
             throw new IllegalArgumentException("At least one signer config must be provided");
         }
@@ -253,7 +253,8 @@ public abstract class V1SchemeSigner {
             DigestAlgorithm digestAlgorithm,
             List<Integer> apkSigningSchemeIds,
             OutputManifestFile manifest)
-                    throws InvalidKeyException, CertificateException, SignatureException {
+                    throws NoSuchAlgorithmException, InvalidKeyException, CertificateException,
+                            SignatureException {
         if (signerConfigs.isEmpty()) {
             throw new IllegalArgumentException("At least one signer config must be provided");
         }
@@ -378,7 +379,7 @@ public abstract class V1SchemeSigner {
     private static byte[] generateSignatureFile(
             List<Integer> apkSignatureSchemeIds,
             DigestAlgorithm manifestDigestAlgorithm,
-            OutputManifestFile manifest) {
+            OutputManifestFile manifest) throws NoSuchAlgorithmException {
         Manifest sf = new Manifest();
         Attributes mainAttrs = sf.getMainAttributes();
         mainAttrs.put(Attributes.Name.SIGNATURE_VERSION, ATTRIBUTE_VALUE_SIGNATURE_VERSION);
@@ -447,7 +448,8 @@ public abstract class V1SchemeSigner {
     @SuppressWarnings("restriction")
     private static byte[] generateSignatureBlock(
             SignerConfig signerConfig, byte[] signatureFileBytes)
-                    throws InvalidKeyException, CertificateException, SignatureException {
+                    throws NoSuchAlgorithmException, InvalidKeyException, CertificateException,
+                            SignatureException {
         List<X509Certificate> signerCerts = signerConfig.certificates;
         X509Certificate signerCert = signerCerts.get(0);
         PublicKey signerPublicKey = signerCert.getPublicKey();
@@ -455,16 +457,10 @@ public abstract class V1SchemeSigner {
         Pair<String, AlgorithmId> signatureAlgs =
                 getSignerInfoSignatureAlgorithm(signerPublicKey, digestAlgorithm);
         String jcaSignatureAlgorithm = signatureAlgs.getFirst();
-        byte[] signatureBytes;
-        try {
-            Signature signature = Signature.getInstance(jcaSignatureAlgorithm);
-            signature.initSign(signerConfig.privateKey);
-            signature.update(signatureFileBytes);
-            signatureBytes = signature.sign();
-        } catch (NoSuchAlgorithmException e) {
-            throw new SignatureException(
-                    jcaSignatureAlgorithm + " Signature implementation not found", e);
-        }
+        Signature signature = Signature.getInstance(jcaSignatureAlgorithm);
+        signature.initSign(signerConfig.privateKey);
+        signature.update(signatureFileBytes);
+        byte[] signatureBytes = signature.sign();
 
         X500Name issuerName;
         try {

@@ -163,6 +163,8 @@ public abstract class V2SchemeSigner {
      *        must be provided.
      *
      * @throws IOException if an I/O error occurs
+     * @throws NoSuchAlgorithmException if a required cryptographic algorithm implementation is
+     *         missing
      * @throws InvalidKeyException if a signing key is not suitable for this signature scheme or
      *         cannot be used in general
      * @throws SignatureException if an error occurs when computing digests of generating
@@ -173,7 +175,8 @@ public abstract class V2SchemeSigner {
             DataSource centralDir,
             DataSource eocd,
             List<SignerConfig> signerConfigs)
-                        throws IOException, InvalidKeyException, SignatureException {
+                        throws IOException, NoSuchAlgorithmException, InvalidKeyException,
+                                SignatureException {
         if (signerConfigs.isEmpty()) {
             throw new IllegalArgumentException(
                     "No signer configs provided. At least one is required");
@@ -219,7 +222,7 @@ public abstract class V2SchemeSigner {
 
     static Map<ContentDigestAlgorithm, byte[]> computeContentDigests(
             Set<ContentDigestAlgorithm> digestAlgorithms,
-            DataSource[] contents) throws IOException, DigestException {
+            DataSource[] contents) throws IOException, NoSuchAlgorithmException, DigestException {
         // For each digest algorithm the result is computed as follows:
         // 1. Each segment of contents is split into consecutive chunks of 1 MB in size.
         //    The final chunk will be shorter iff the length of segment is not a multiple of 1 MB.
@@ -256,11 +259,7 @@ public abstract class V2SchemeSigner {
                     chunkCount, concatenationOfChunkCountAndChunkDigests, 1);
             digestsOfChunks[i] = concatenationOfChunkCountAndChunkDigests;
             String jcaAlgorithm = digestAlgorithm.getJcaMessageDigestAlgorithm();
-            try {
-                mds[i] = MessageDigest.getInstance(jcaAlgorithm);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(jcaAlgorithm + " MessageDigest not supported", e);
-            }
+            mds[i] = MessageDigest.getInstance(jcaAlgorithm);
         }
 
         MessageDigestSink mdSink = new MessageDigestSink(mds);
@@ -338,7 +337,7 @@ public abstract class V2SchemeSigner {
     private static byte[] generateApkSigningBlock(
             List<SignerConfig> signerConfigs,
             Map<ContentDigestAlgorithm, byte[]> contentDigests)
-                    throws InvalidKeyException, SignatureException {
+                    throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         byte[] apkSignatureSchemeV2Block =
                 generateApkSignatureSchemeV2Block(signerConfigs, contentDigests);
         return generateApkSigningBlock(apkSignatureSchemeV2Block);
@@ -379,7 +378,7 @@ public abstract class V2SchemeSigner {
     private static byte[] generateApkSignatureSchemeV2Block(
             List<SignerConfig> signerConfigs,
             Map<ContentDigestAlgorithm, byte[]> contentDigests)
-                    throws InvalidKeyException, SignatureException {
+                    throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         // FORMAT:
         // * length-prefixed sequence of length-prefixed signer blocks.
 
@@ -407,7 +406,7 @@ public abstract class V2SchemeSigner {
     private static byte[] generateSignerBlock(
             SignerConfig signerConfig,
             Map<ContentDigestAlgorithm, byte[]> contentDigests)
-                    throws InvalidKeyException, SignatureException {
+                    throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         if (signerConfig.certificates.isEmpty()) {
             throw new SignatureException("No certificates configured for signer");
         }
@@ -470,10 +469,9 @@ public abstract class V2SchemeSigner {
                 signature.update(signer.signedData);
                 signatureBytes = signature.sign();
             } catch (InvalidKeyException e) {
-                throw new InvalidKeyException("Failed sign using " + jcaSignatureAlgorithm, e);
-            } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException
-                    | SignatureException e) {
-                throw new SignatureException("Failed sign using " + jcaSignatureAlgorithm, e);
+                throw new InvalidKeyException("Failed to sign using " + jcaSignatureAlgorithm, e);
+            } catch (InvalidAlgorithmParameterException | SignatureException e) {
+                throw new SignatureException("Failed to sign using " + jcaSignatureAlgorithm, e);
             }
 
             try {
@@ -487,12 +485,13 @@ public abstract class V2SchemeSigner {
                     throw new SignatureException("Signature did not verify");
                 }
             } catch (InvalidKeyException e) {
-                throw new InvalidKeyException("Failed to verify generated " + jcaSignatureAlgorithm
-                        + " signature using public key from certificate", e);
-            } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException
-                    | SignatureException e) {
-                throw new SignatureException("Failed to verify generated " + jcaSignatureAlgorithm
-                        + " signature using public key from certificate", e);
+                throw new InvalidKeyException(
+                        "Failed to verify generated " + jcaSignatureAlgorithm + " signature using"
+                                + " public key from certificate", e);
+            } catch (InvalidAlgorithmParameterException | SignatureException e) {
+                throw new SignatureException(
+                        "Failed to verify generated " + jcaSignatureAlgorithm + " signature using"
+                                + " public key from certificate", e);
             }
 
             signer.signatures.add(Pair.of(signatureAlgorithm.getId(), signatureBytes));
@@ -526,7 +525,8 @@ public abstract class V2SchemeSigner {
         }
     }
 
-    private static byte[] encodePublicKey(PublicKey publicKey) throws InvalidKeyException {
+    private static byte[] encodePublicKey(PublicKey publicKey)
+            throws InvalidKeyException, NoSuchAlgorithmException {
         byte[] encodedPublicKey = null;
         if ("X.509".equals(publicKey.getFormat())) {
             encodedPublicKey = publicKey.getEncoded();
@@ -537,11 +537,6 @@ public abstract class V2SchemeSigner {
                         KeyFactory.getInstance(publicKey.getAlgorithm())
                                 .getKeySpec(publicKey, X509EncodedKeySpec.class)
                                 .getEncoded();
-            } catch (NoSuchAlgorithmException e) {
-                throw new InvalidKeyException(
-                        "Failed to obtain X.509 encoded form of public key " + publicKey
-                                + " of class " + publicKey.getClass().getName(),
-                        e);
             } catch (InvalidKeySpecException e) {
                 throw new InvalidKeyException(
                         "Failed to obtain X.509 encoded form of public key " + publicKey
