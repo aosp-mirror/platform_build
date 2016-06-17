@@ -293,7 +293,7 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
 
     @Override
     public OutputJarSignatureRequest outputJarEntries()
-            throws InvalidKeyException, SignatureException {
+            throws InvalidKeyException, SignatureException, NoSuchAlgorithmException {
         checkNotClosed();
 
         if (!mV1SignaturePending) {
@@ -413,7 +413,9 @@ public class DefaultApkSignerEngine implements ApkSignerEngine {
     public OutputApkSigningBlockRequest outputZipSections(
             DataSource zipEntries,
             DataSource zipCentralDirectory,
-            DataSource zipEocd) throws IOException, InvalidKeyException, SignatureException {
+            DataSource zipEocd)
+                    throws IOException, InvalidKeyException, SignatureException,
+                            NoSuchAlgorithmException {
         checkNotClosed();
         checkV1SigningDoneIfEnabled();
         if (!mV2SigningEnabled) {
