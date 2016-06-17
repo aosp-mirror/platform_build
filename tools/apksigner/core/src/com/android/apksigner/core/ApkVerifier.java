@@ -663,6 +663,21 @@ public class ApkVerifier {
         JAR_SIG_VERIFY_EXCEPTION("Failed to verify JAR signature %1$s against %2$s: %3$s"),
 
         /**
+         * JAR signature contains unsupported digest algorithm.
+         *
+         * <ul>
+         * <li>Parameter 1: name of the signature block file ({@code String})</li>
+         * <li>Parameter 2: digest algorithm OID ({@code String})</li>
+         * <li>Parameter 2: signature algorithm OID ({@code String})</li>
+         * <li>Parameter 3: API Levels on which this combination of algorithms is not supported
+         *     ({@code String})</li>
+         * </ul>
+         */
+        JAR_SIG_UNSUPPORTED_SIG_ALG(
+                "JAR signature %1$s uses digest algorithm %2$s and signature algorithm %3$s which"
+                        + " is not supported on API Levels %4$s"),
+
+        /**
          * An exception was encountered while parsing JAR signature contained in a signature block.
          *
          * <ul>

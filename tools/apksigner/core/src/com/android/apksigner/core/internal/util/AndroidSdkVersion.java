@@ -24,6 +24,9 @@ public abstract class AndroidSdkVersion {
     /** Hidden constructor to prevent instantiation. */
     private AndroidSdkVersion() {}
 
+    /** Android 2.3. */
+    public static final int GINGERBREAD = 9;
+
     /** Android 4.3. The revenge of the beans. */
     public static final int JELLY_BEAN_MR2 = 18;
 
