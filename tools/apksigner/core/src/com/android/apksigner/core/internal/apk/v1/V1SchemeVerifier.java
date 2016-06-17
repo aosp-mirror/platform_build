@@ -78,7 +78,14 @@ public abstract class V1SchemeVerifier {
             ApkUtils.ZipSections apkSections,
             Map<Integer, String> supportedApkSigSchemeNames,
             Set<Integer> foundApkSigSchemeIds,
-            int minSdkVersion) throws IOException, ZipFormatException {
+            int minSdkVersion,
+            int maxSdkVersion) throws IOException, ZipFormatException {
+        if (minSdkVersion > maxSdkVersion) {
+            throw new IllegalArgumentException(
+                    "minSdkVersion (" + minSdkVersion + ") > maxSdkVersion (" + maxSdkVersion
+                            + ")");
+        }
+
         Result result = new Result();
 
         // Parse the ZIP Central Directory and check that there are no entries with duplicate names.
@@ -97,6 +104,7 @@ public abstract class V1SchemeVerifier {
                 supportedApkSigSchemeNames,
                 foundApkSigSchemeIds,
                 minSdkVersion,
+                maxSdkVersion,
                 result);
 
         return result;
@@ -143,6 +151,7 @@ public abstract class V1SchemeVerifier {
                 Map<Integer, String> supportedApkSigSchemeNames,
                 Set<Integer> foundApkSigSchemeIds,
                 int minSdkVersion,
+                int maxSdkVersion,
                 Result result) throws ZipFormatException, IOException {
 
             // Find JAR manifest and signature block files.
@@ -243,7 +252,8 @@ public abstract class V1SchemeVerifier {
             // signature file .SF. Any error encountered for any signer terminates verification, to
             // mimic Android's behavior.
             for (Signer signer : signers) {
-                signer.verifySigBlockAgainstSigFile(apk, cdStartOffset, minSdkVersion);
+                signer.verifySigBlockAgainstSigFile(
+                        apk, cdStartOffset, minSdkVersion, maxSdkVersion);
                 if (signer.getResult().containsErrors()) {
                     result.signers.add(signer.getResult());
                 }
@@ -264,7 +274,8 @@ public abstract class V1SchemeVerifier {
                         entryNameToManifestSection,
                         supportedApkSigSchemeNames,
                         foundApkSigSchemeIds,
-                        minSdkVersion);
+                        minSdkVersion,
+                        maxSdkVersion);
                 if (signer.isIgnored()) {
                     result.ignoredSigners.add(signer.getResult());
                 } else {
@@ -393,7 +404,7 @@ public abstract class V1SchemeVerifier {
 
         @SuppressWarnings("restriction")
         public void verifySigBlockAgainstSigFile(
-                DataSource apk, long cdStartOffset, int minSdkVersion)
+                DataSource apk, long cdStartOffset, int minSdkVersion, int maxSdkVersion)
                         throws IOException, ZipFormatException {
             byte[] sigBlockBytes =
                     LocalFileHeader.getUncompressedData(
@@ -433,7 +444,8 @@ public abstract class V1SchemeVerifier {
                     String signatureAlgorithmOid =
                             unverifiedSignerInfo
                                     .getDigestEncryptionAlgorithmId().getOID().toString();
-                    InclusiveIntRange desiredApiLevels = InclusiveIntRange.from(minSdkVersion);
+                    InclusiveIntRange desiredApiLevels =
+                            InclusiveIntRange.fromTo(minSdkVersion, maxSdkVersion);
                     List<InclusiveIntRange> apiLevelsWhereDigestAndSigAlgorithmSupported =
                             getSigAlgSupportedApiLevels(digestAlgorithmOid, signatureAlgorithmOid);
                     List<InclusiveIntRange> apiLevelsWhereDigestAlgorithmNotSupported =
@@ -843,7 +855,8 @@ public abstract class V1SchemeVerifier {
                 Map<String, ManifestParser.Section> entryNameToManifestSection,
                 Map<Integer, String> supportedApkSigSchemeNames,
                 Set<Integer> foundApkSigSchemeIds,
-                int minSdkVersion) {
+                int minSdkVersion,
+                int maxSdkVersion) {
             // Inspect the main section of the .SF file.
             ManifestParser sf = new ManifestParser(mSigFileBytes);
             ManifestParser.Section sfMainSection = sf.readSection();
@@ -854,10 +867,16 @@ public abstract class V1SchemeVerifier {
                 setIgnored();
                 return;
             }
-            checkForStrippedApkSignatures(
-                    sfMainSection, supportedApkSigSchemeNames, foundApkSigSchemeIds);
-            if (mResult.containsErrors()) {
-                return;
+
+            if (maxSdkVersion >= AndroidSdkVersion.N) {
+                // Android N and newer rejects APKs whose .SF file says they were supposed to be
+                // signed with APK Signature Scheme v2 (or newer) and yet no such signature was
+                // found.
+                checkForStrippedApkSignatures(
+                        sfMainSection, supportedApkSigSchemeNames, foundApkSigSchemeIds);
+                if (mResult.containsErrors()) {
+                    return;
+                }
             }
 
             boolean createdBySigntool = false;
@@ -867,10 +886,18 @@ public abstract class V1SchemeVerifier {
             }
             boolean manifestDigestVerified =
                     verifyManifestDigest(
-                            sfMainSection, createdBySigntool, manifestBytes, minSdkVersion);
+                            sfMainSection,
+                            createdBySigntool,
+                            manifestBytes,
+                            minSdkVersion,
+                            maxSdkVersion);
             if (!createdBySigntool) {
                 verifyManifestMainSectionDigest(
-                        sfMainSection, manifestMainSection, manifestBytes, minSdkVersion);
+                        sfMainSection,
+                        manifestMainSection,
+                        manifestBytes,
+                        minSdkVersion,
+                        maxSdkVersion);
             }
             if (mResult.containsErrors()) {
                 return;
@@ -922,7 +949,8 @@ public abstract class V1SchemeVerifier {
                         createdBySigntool,
                         manifestSection,
                         manifestBytes,
-                        minSdkVersion);
+                        minSdkVersion,
+                        maxSdkVersion);
             }
             mSigFileEntryNames = sfEntryNames;
         }
@@ -936,12 +964,14 @@ public abstract class V1SchemeVerifier {
                 ManifestParser.Section sfMainSection,
                 boolean createdBySigntool,
                 byte[] manifestBytes,
-                int minSdkVersion) {
+                int minSdkVersion,
+                int maxSdkVersion) {
             Collection<NamedDigest> expectedDigests =
                     getDigestsToVerify(
                             sfMainSection,
                             ((createdBySigntool) ? "-Digest" : "-Digest-Manifest"),
-                            minSdkVersion);
+                            minSdkVersion,
+                            maxSdkVersion);
             boolean digestFound = !expectedDigests.isEmpty();
             if (!digestFound) {
                 mResult.addWarning(
@@ -977,10 +1007,14 @@ public abstract class V1SchemeVerifier {
                 ManifestParser.Section sfMainSection,
                 ManifestParser.Section manifestMainSection,
                 byte[] manifestBytes,
-                int minSdkVersion) {
+                int minSdkVersion,
+                int maxSdkVersion) {
             Collection<NamedDigest> expectedDigests =
                     getDigestsToVerify(
-                            sfMainSection, "-Digest-Manifest-Main-Attributes", minSdkVersion);
+                            sfMainSection,
+                            "-Digest-Manifest-Main-Attributes",
+                            minSdkVersion,
+                            maxSdkVersion);
             if (expectedDigests.isEmpty()) {
                 return;
             }
@@ -1014,10 +1048,12 @@ public abstract class V1SchemeVerifier {
                 boolean createdBySigntool,
                 ManifestParser.Section manifestIndividualSection,
                 byte[] manifestBytes,
-                int minSdkVersion) {
+                int minSdkVersion,
+                int maxSdkVersion) {
             String entryName = sfIndividualSection.getName();
             Collection<NamedDigest> expectedDigests =
-                    getDigestsToVerify(sfIndividualSection, "-Digest", minSdkVersion);
+                    getDigestsToVerify(
+                            sfIndividualSection, "-Digest", minSdkVersion, maxSdkVersion);
             if (expectedDigests.isEmpty()) {
                 mResult.addError(
                         Issue.JAR_SIG_NO_ZIP_ENTRY_DIGEST_IN_SIG_FILE,
@@ -1124,7 +1160,8 @@ public abstract class V1SchemeVerifier {
     private static Collection<NamedDigest> getDigestsToVerify(
             ManifestParser.Section section,
             String digestAttrSuffix,
-            int minSdkVersion) {
+            int minSdkVersion,
+            int maxSdkVersion) {
         Decoder base64Decoder = Base64.getDecoder();
         List<NamedDigest> result = new ArrayList<>(1);
         if (minSdkVersion < AndroidSdkVersion.JELLY_BEAN_MR2) {
@@ -1163,21 +1200,23 @@ public abstract class V1SchemeVerifier {
             }
         }
 
-        // JB MR2 and newer, Android platform picks the strongest algorithm out of:
-        // SHA-512, SHA-384, SHA-256, SHA-1.
-        for (String alg : JB_MR2_AND_NEWER_DIGEST_ALGS) {
-            String attrName = getJarDigestAttributeName(alg, digestAttrSuffix);
-            String digestBase64 = section.getAttributeValue(attrName);
-            if (digestBase64 == null) {
-                // Attribute not found
-                continue;
+        if (maxSdkVersion >= AndroidSdkVersion.JELLY_BEAN_MR2) {
+            // On JB MR2 and newer, Android platform picks the strongest algorithm out of:
+            // SHA-512, SHA-384, SHA-256, SHA-1.
+            for (String alg : JB_MR2_AND_NEWER_DIGEST_ALGS) {
+                String attrName = getJarDigestAttributeName(alg, digestAttrSuffix);
+                String digestBase64 = section.getAttributeValue(attrName);
+                if (digestBase64 == null) {
+                    // Attribute not found
+                    continue;
+                }
+                byte[] digest = base64Decoder.decode(digestBase64);
+                byte[] digestInResult = getDigest(result, alg);
+                if ((digestInResult == null) || (!Arrays.equals(digestInResult, digest))) {
+                    result.add(new NamedDigest(alg, digest));
+                }
+                break;
             }
-            byte[] digest = base64Decoder.decode(digestBase64);
-            byte[] digestInResult = getDigest(result, alg);
-            if ((digestInResult == null) || (!Arrays.equals(digestInResult, digest))) {
-                result.add(new NamedDigest(alg, digest));
-            }
-            break;
         }
 
         return result;
