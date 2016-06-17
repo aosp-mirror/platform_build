@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "895f3427_04994a82",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-06-17T00:59:44Z",
+      "side": 1,
+      "message": "let\u0027s also kill these lines",
+      "range": {
+        "startLine": 131,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 10
+      },
+      "revId": "432e9fe6c39a28fe258e72c585daea8b022c2ec1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "895f3427_a49f1e64",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 819,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-06-17T00:59:44Z",
+      "side": 1,
+      "message": "and here",
+      "range": {
+        "startLine": 819,
+        "startChar": 2,
+        "endLine": 819,
+        "endChar": 25
+      },
+      "revId": "432e9fe6c39a28fe258e72c585daea8b022c2ec1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
