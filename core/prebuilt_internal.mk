@@ -152,6 +152,8 @@ endif  # my_strip_module not true
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 
+my_extract_apk := $(strip $(LOCAL_EXTRACT_APK))
+
 # Select dpi-specific source
 ifdef LOCAL_DPI_VARIANTS
 my_dpi := $(firstword $(filter $(LOCAL_DPI_VARIANTS),$(PRODUCT_AAPT_PREF_CONFIG) $(PRODUCT_AAPT_PREBUILT_DPI)))
@@ -162,8 +164,26 @@ else
 my_prebuilt_dpi_file_stem := $(LOCAL_MODULE)_%.apk
 endif
 my_prebuilt_src_file := $(dir $(my_prebuilt_src_file))$(subst %,$(my_dpi),$(my_prebuilt_dpi_file_stem))
+
+ifneq ($(strip $(LOCAL_EXTRACT_DPI_APK)),)
+my_extract_apk := $(subst %,$(my_dpi),$(LOCAL_EXTRACT_DPI_APK))
+endif  # LOCAL_EXTRACT_DPI_APK
 endif  # my_dpi
 endif  # LOCAL_DPI_VARIANTS
+
+ifdef my_extract_apk
+my_extracted_apk := $(intermediates)/extracted.apk
+
+$(my_extracted_apk): PRIVATE_EXTRACT := $(my_extract_apk)
+$(my_extracted_apk): $(my_prebuilt_src_file)
+	@echo Extract APK: $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(hide) unzip -p $< $(PRIVATE_EXTRACT) >$@
+
+my_prebuilt_src_file := $(my_extracted_apk)
+my_extracted_apk :=
+my_extract_apk :=
+endif
 
 rs_compatibility_jni_libs :=
 include $(BUILD_SYSTEM)/install_jni_libs.mk
