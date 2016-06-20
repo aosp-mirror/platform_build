@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8982d44f_c7addc56",
+        "filename": "core/post_clean.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-20T21:25:20Z",
+      "side": 1,
+      "message": "It duplicates it, more or less. We may remove more than what an installclean would remove (some top level components in $PRODUCT_OUT). But an installclean would catch symlinks and other missing items.\n\nI changed the removal code below to check for file existence before removing, so unless there\u0027s something extra to remove, there won\u0027t be any prints (or removals).",
+      "parentUuid": "8982d44f_a1c3e895",
+      "revId": "e16095a68c4c2447c15ffaab55f333de5ceedde2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8982d44f_81d4a451",
         "filename": "core/post_clean.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-06-20T19:24:42Z",
       "side": 1,
       "message": "Might be worth computing this somewhere more obvious like main.mk, other patches are constantly adding new images (https://googleplex-android-review.git.corp.google.com/1159150).",
+      "revId": "e16095a68c4c2447c15ffaab55f333de5ceedde2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8982d44f_a77c58d1",
+        "filename": "core/post_clean.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-20T21:25:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8982d44f_81d4a451",
       "revId": "e16095a68c4c2447c15ffaab55f333de5ceedde2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
