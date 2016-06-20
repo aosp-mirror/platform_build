@@ -22,6 +22,30 @@
       "revId": "c2e18fc4a362243bebbc59bd30e7c2858221e8fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8982d44f_19558c08",
+        "filename": "core/post_clean.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-20T21:37:38Z",
+      "side": 1,
+      "message": "I suspect so, but I did this just in case there were wildcards present in the filename, with the goal that we\u0027d only call rm on what\u0027s actually in the file list. Though for that to be complete, we\u0027d need to make sure they aren\u0027t expanded in the rm call below either.\n\nI\u0027ll just remove it",
+      "parentUuid": "8982d44f_59e8f489",
+      "range": {
+        "startLine": 121,
+        "startChar": 76,
+        "endLine": 121,
+        "endChar": 103
+      },
+      "revId": "c2e18fc4a362243bebbc59bd30e7c2858221e8fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
