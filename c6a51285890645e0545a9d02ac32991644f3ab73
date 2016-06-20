@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8982d44f_19402c42",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1904,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-06-20T21:39:41Z",
+      "side": 1,
+      "message": "\u0027n\u0027 should be removed",
+      "range": {
+        "startLine": 1904,
+        "startChar": 50,
+        "endLine": 1904,
+        "endChar": 51
+      },
+      "revId": "c6a51285890645e0545a9d02ac32991644f3ab73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
