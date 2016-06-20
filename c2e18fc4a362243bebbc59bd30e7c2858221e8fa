@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8982d44f_59e8f489",
+        "filename": "core/post_clean.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-06-20T21:32:47Z",
+      "side": 1,
+      "message": "wouldn\u0027t $(wildcard $(f)) be enough here?",
+      "range": {
+        "startLine": 121,
+        "startChar": 76,
+        "endLine": 121,
+        "endChar": 103
+      },
+      "revId": "c2e18fc4a362243bebbc59bd30e7c2858221e8fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
