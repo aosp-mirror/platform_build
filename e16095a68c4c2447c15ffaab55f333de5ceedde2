@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8982d44f_a1c3e895",
+        "filename": "core/post_clean.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-06-20T19:24:42Z",
+      "side": 1,
+      "message": "How does this interact with the automatic installclean when changing targets?",
+      "revId": "e16095a68c4c2447c15ffaab55f333de5ceedde2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8982d44f_81d4a451",
+        "filename": "core/post_clean.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-06-20T19:24:42Z",
+      "side": 1,
+      "message": "Might be worth computing this somewhere more obvious like main.mk, other patches are constantly adding new images (https://googleplex-android-review.git.corp.google.com/1159150).",
+      "revId": "e16095a68c4c2447c15ffaab55f333de5ceedde2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
