@@ -342,6 +342,21 @@ class BlockImageDiff(object):
     return ctx.hexdigest()
 
   def WriteTransfers(self, prefix):
+    def WriteTransfersZero(out, to_zero):
+      """Limit the number of blocks in command zero to 1024 blocks.
+
+      This prevents the target size of one command from being too large; and
+      might help to avoid fsync errors on some devices."""
+
+      zero_blocks_limit = 1024
+      total = 0
+      while to_zero:
+        zero_blocks = to_zero.first(zero_blocks_limit)
+        out.append("zero %s\n" % (zero_blocks.to_string_raw(),))
+        total += zero_blocks.size()
+        to_zero = to_zero.subtract(zero_blocks)
+      return total
+
     out = []
 
     total = 0
@@ -523,9 +538,8 @@ class BlockImageDiff(object):
       elif xf.style == "zero":
         assert xf.tgt_ranges
         to_zero = xf.tgt_ranges.subtract(xf.src_ranges)
-        if to_zero:
-          out.append("%s %s\n" % (xf.style, to_zero.to_string_raw()))
-          total += to_zero.size()
+        assert WriteTransfersZero(out, to_zero) == to_zero.size()
+        total += to_zero.size()
       else:
         raise ValueError("unknown transfer style '%s'\n" % xf.style)
 
@@ -554,7 +568,8 @@ class BlockImageDiff(object):
 
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
-      out.append("zero %s\n" % (self.tgt.extended.to_string_raw(),))
+      assert (WriteTransfersZero(out, self.tgt.extended) ==
+              self.tgt.extended.size())
       total += self.tgt.extended.size()
 
     # We erase all the blocks on the partition that a) don't contain useful
