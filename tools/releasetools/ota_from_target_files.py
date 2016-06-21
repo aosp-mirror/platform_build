@@ -64,11 +64,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate an OTA package that will wipe the user data partition
       when installed.
 
-  -n  (--no_prereq)
-      Omit the timestamp prereq check normally included at the top of
-      the build scripts (used for developer OTA packages which
-      legitimately need to go back and forth).
-
   --downgrade
       Intentionally generate an incremental OTA that updates from a newer
       build to an older one (based on timestamp comparison). "post-timestamp"
@@ -139,7 +134,6 @@ OPTIONS.require_verbatim = set()
 OPTIONS.prohibit_verbatim = set(("system/build.prop",))
 OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
-OPTIONS.omit_prereq = False
 OPTIONS.downgrade = False
 OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
@@ -561,10 +555,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   metadata["ota-type"] = "BLOCK" if block_based else "FILE"
 
-  if not OPTIONS.omit_prereq:
-    ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
-    ts_text = GetBuildProp("ro.build.date", OPTIONS.info_dict)
-    script.AssertOlderBuild(ts, ts_text)
+  ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
+  ts_text = GetBuildProp("ro.build.date", OPTIONS.info_dict)
+  script.AssertOlderBuild(ts, ts_text)
 
   AppendAssertions(script, OPTIONS.info_dict, oem_dict)
   device_specific.FullOTA_Assertions()
@@ -1873,8 +1866,6 @@ def main(argv):
       OPTIONS.full_bootloader = True
     elif o in ("-w", "--wipe_user_data"):
       OPTIONS.wipe_user_data = True
-    elif o in ("-n", "--no_prereq"):
-      OPTIONS.omit_prereq = True
     elif o == "--downgrade":
       OPTIONS.downgrade = True
       OPTIONS.wipe_user_data = True
@@ -1922,7 +1913,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:wne:t:a:2o:",
+                             extra_opts="b:k:i:d:we:t:a:2o:",
                              extra_long_opts=[
                                  "board_config=",
                                  "package_key=",
@@ -1930,7 +1921,6 @@ def main(argv):
                                  "full_radio",
                                  "full_bootloader",
                                  "wipe_user_data",
-                                 "no_prereq",
                                  "downgrade",
                                  "extra_script=",
                                  "worker_threads=",
@@ -1961,8 +1951,7 @@ def main(argv):
     # Otherwise the device may go back from arbitrary build with this full
     # OTA package.
     if OPTIONS.incremental_source is None:
-      raise ValueError("Cannot generate downgradable full OTAs - consider"
-                       "using --omit_prereq?")
+      raise ValueError("Cannot generate downgradable full OTAs")
 
   # Load the dict file from the zip directly to have a peek at the OTA type.
   # For packages using A/B update, unzipping is not needed.
