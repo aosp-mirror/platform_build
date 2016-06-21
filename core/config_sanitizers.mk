@@ -24,6 +24,12 @@ ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize)
 endif
 
+# Add a filter point for 32-bit vs 64-bit sanitization (to lighten the burden).
+SANITIZE_ARCH ?= 32 64
+ifeq ($(filter $(SANITIZE_ARCH),$(my_32_64_bit_suffix)),)
+  my_sanitize :=
+endif
+
 # Don't apply sanitizers to NDK code.
 ifdef LOCAL_SDK_VERSION
   my_sanitize :=
