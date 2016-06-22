@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
     QuickSearchBox \
     Settings \
     SharedStorageBackup \
+    StorageManager \
     Telecom \
     TeleService \
     VpnDialogs \
