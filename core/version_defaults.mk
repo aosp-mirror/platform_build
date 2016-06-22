@@ -103,7 +103,7 @@ ifeq "" "$(PLATFORM_SECURITY_PATCH)"
   # Can be an arbitrary string, but must be a single word.
   #
   # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-  PLATFORM_SECURITY_PATCH := 2016-07-05
+  PLATFORM_SECURITY_PATCH := 2016-08-05
 endif
 
 ifeq "" "$(PLATFORM_BASE_OS)"
