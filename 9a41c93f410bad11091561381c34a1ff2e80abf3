@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2eed6e38_825fbc23",
+        "filename": "tools/apksigner/core/src/com/android/apksigner/core/internal/util/RandomAccessFileDataSource.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1022895
+      },
+      "writtenOn": "2016-06-22T22:03:26Z",
+      "side": 1,
+      "message": "Is it worth splitting this off into another CL? Seems unrelated.",
+      "range": {
+        "startLine": 30,
+        "startChar": 13,
+        "endLine": 30,
+        "endChar": 39
+      },
+      "revId": "9a41c93f410bad11091561381c34a1ff2e80abf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
