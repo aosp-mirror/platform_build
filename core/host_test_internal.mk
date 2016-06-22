@@ -23,3 +23,7 @@ endif
 ifdef LOCAL_MODULE_PATH_64
 $(error $(LOCAL_PATH): Do not set LOCAL_MODULE_PATH_64 when building test $(LOCAL_MODULE))
 endif
+
+ifndef LOCAL_MODULE_RELATIVE_PATH
+LOCAL_MODULE_RELATIVE_PATH := $(LOCAL_MODULE)
+endif
