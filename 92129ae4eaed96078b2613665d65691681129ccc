@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23f5893d_bf8cd7e5",
+        "filename": "core/tasks/vendor_module_check.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-23T03:06:35Z",
+      "side": 1,
+      "message": ":\u003d",
+      "range": {
+        "startLine": 49,
+        "startChar": 14,
+        "endLine": 49,
+        "endChar": 15
+      },
+      "revId": "92129ae4eaed96078b2613665d65691681129ccc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86be3e8f_55010f5f",
+        "filename": "core/tasks/vendor_module_check.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-23T03:06:35Z",
+      "side": 1,
+      "message": "_restrictions",
+      "range": {
+        "startLine": 51,
+        "startChar": 10,
+        "endLine": 51,
+        "endChar": 68
+      },
+      "revId": "92129ae4eaed96078b2613665d65691681129ccc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cec4d2d4_ed8c9d4f",
+        "filename": "core/tasks/vendor_module_check.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-23T03:06:35Z",
+      "side": 1,
+      "message": "remove (this is on line 49)",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 86
+      },
+      "revId": "92129ae4eaed96078b2613665d65691681129ccc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee219686_683b5b2c",
+        "filename": "core/tasks/vendor_module_check.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-23T03:06:35Z",
+      "side": 1,
+      "message": ":\u003d",
+      "range": {
+        "startLine": 59,
+        "startChar": 14,
+        "endLine": 59,
+        "endChar": 15
+      },
+      "revId": "92129ae4eaed96078b2613665d65691681129ccc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86be3e8f_3546db73",
+        "filename": "core/tasks/vendor_module_check.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-23T03:06:35Z",
+      "side": 1,
+      "message": "And _vendor_exception_modules",
+      "revId": "92129ae4eaed96078b2613665d65691681129ccc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
