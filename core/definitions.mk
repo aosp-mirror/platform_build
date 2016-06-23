@@ -1084,6 +1084,19 @@ $(hide) $(AIDL_CPP) -d$(basename $@).aidl.P $(PRIVATE_AIDL_FLAGS) \
     $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
 endef
 
+## Given a .aidl file path, generate the rule to compile it a .java file
+# $(1): a .aidl source file
+# $(2): a directory to place the generated .java files in
+# $(3): name of a variable to add the path to the generated source file to
+#
+# You must call this with $(eval).
+define define-aidl-java-rule
+define-aidl-java-rule-src := $(patsubst %.aidl,%.java,$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define-aidl-java-rule-src) : $(LOCAL_PATH)/$(1) $(AIDL)
+	$$(transform-aidl-to-java)
+$(3) += $$(define-aidl-java-rule-src)
+endef
+
 ## Given a .aidl file path generate the rule to compile it a .cpp file.
 # $(1): a .aidl source file
 # $(2): a directory to place the generated .cpp files in
