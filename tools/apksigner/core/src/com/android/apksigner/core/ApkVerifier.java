@@ -23,9 +23,13 @@ import com.android.apksigner.core.internal.apk.v2.SignatureAlgorithm;
 import com.android.apksigner.core.internal.apk.v2.V2SchemeVerifier;
 import com.android.apksigner.core.internal.util.AndroidSdkVersion;
 import com.android.apksigner.core.util.DataSource;
+import com.android.apksigner.core.util.DataSources;
 import com.android.apksigner.core.zip.ZipFormatException;
 
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -42,12 +46,65 @@ import java.util.Set;
  *
  * <p>The verifier is designed to closely mimic the behavior of Android platforms. This is to enable
  * the verifier to be used for checking whether an APK's signatures will verify on Android.
+ *
+ * <p>Use {@link Builder} to obtain instances of this verifier.
  */
 public class ApkVerifier {
 
     private static final int APK_SIGNATURE_SCHEME_V2_ID = 2;
     private static final Map<Integer, String> SUPPORTED_APK_SIG_SCHEME_NAMES =
             Collections.singletonMap(APK_SIGNATURE_SCHEME_V2_ID, "APK Signature Scheme v2");
+
+    private final File mApkFile;
+    private final DataSource mApkDataSource;
+
+    private final int mMinSdkVersion;
+    private final int mMaxSdkVersion;
+
+    private ApkVerifier(
+            File apkFile,
+            DataSource apkDataSource,
+            int minSdkVersion,
+            int maxSdkVersion) {
+        mApkFile = apkFile;
+        mApkDataSource = apkDataSource;
+        mMinSdkVersion = minSdkVersion;
+        mMaxSdkVersion = maxSdkVersion;
+    }
+
+    /**
+     * Verifies the APK's signatures and returns the result of verification. The APK can be
+     * considered verified iff the result's {@link Result#isVerified()} returns {@code true}.
+     * The verification result also includes errors, warnings, and information about signers.
+     *
+     * @throws IOException if an I/O error is encountered while reading the APK
+     * @throws ZipFormatException if the APK is malformed at ZIP format level
+     * @throws NoSuchAlgorithmException if the APK's signatures cannot be verified because a
+     *         required cryptographic algorithm implementation is missing
+     * @throws IllegalStateException if this verifier's configuration is missing required
+     *         information.
+     */
+    public Result verify() throws IOException, ZipFormatException, NoSuchAlgorithmException,
+            IllegalStateException {
+        Closeable in = null;
+        try {
+            DataSource apk;
+            if (mApkDataSource != null) {
+                apk = mApkDataSource;
+            } else if (mApkFile != null) {
+                RandomAccessFile f = new RandomAccessFile(mApkFile, "r");
+                in = f;
+                apk = DataSources.asDataSource(f, 0, f.length());
+            } else {
+                throw new IllegalStateException("APK not provided");
+            }
+            return verify(apk, mMinSdkVersion, mMaxSdkVersion);
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
 
     /**
      * Verifies the APK's signatures and returns the result of verification. The APK can be
@@ -65,7 +122,7 @@ public class ApkVerifier {
      * @throws NoSuchAlgorithmException if the APK's signatures cannot be verified because a
      *         required cryptographic algorithm implementation is missing
      */
-    public Result verify(DataSource apk, int minSdkVersion, int maxSdkVersion)
+    private static Result verify(DataSource apk, int minSdkVersion, int maxSdkVersion)
             throws IOException, ZipFormatException, NoSuchAlgorithmException {
         if (minSdkVersion < 0) {
             throw new IllegalArgumentException(
@@ -1050,17 +1107,16 @@ public class ApkVerifier {
      */
     private static class ByteArray {
         private final byte[] mArray;
+        private final int mHashCode;
 
         private ByteArray(byte[] arr) {
             mArray = arr;
+            mHashCode = Arrays.hashCode(mArray);
         }
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Arrays.hashCode(mArray);
-            return result;
+            return mHashCode;
         }
 
         @Override
@@ -1075,10 +1131,103 @@ public class ApkVerifier {
                 return false;
             }
             ByteArray other = (ByteArray) obj;
+            if (hashCode() != other.hashCode()) {
+                return false;
+            }
             if (!Arrays.equals(mArray, other.mArray)) {
                 return false;
             }
             return true;
+        }
+    }
+
+    /**
+     * Builder of {@link ApkVerifier} instances.
+     *
+     * <p>Although not required, it is best to provide the SDK version (API Level) of the oldest
+     * Android platform on which the APK is supposed to be installed -- see
+     * {@link #setMinCheckedPlatformVersion(int)}. Without this information, APKs which use security
+     * features not supported on ancient Android platforms (e.g., SHA-256 digests or ECDSA
+     * signatures) will not verify.
+     */
+    public static class Builder {
+        private final File mApkFile;
+        private final DataSource mApkDataSource;
+
+        private int mMinSdkVersion = 1;
+        private int mMaxSdkVersion = Integer.MAX_VALUE;
+
+        /**
+         * Constructs a new {@code Builder} for verifying the provided APK file.
+         */
+        public Builder(File apk) {
+            if (apk == null) {
+                throw new NullPointerException("apk == null");
+            }
+            mApkFile = apk;
+            mApkDataSource = null;
+        }
+
+        /**
+         * Constructs a new {@code Builder} for verifying the provided APK.
+         */
+        public Builder(DataSource apk) {
+            if (apk == null) {
+                throw new NullPointerException("apk == null");
+            }
+            mApkDataSource = apk;
+            mApkFile = null;
+        }
+
+        /**
+         * Sets the oldest Android platform version for which the APK is verified. APK verification
+         * will confirm that the APK is expected to install successfully on all known Android
+         * platforms starting from the platform version with the provided API Level.
+         *
+         * <p>By default, the APK is checked for all platform versions. Thus, APKs which use
+         * security features not supported on ancient Android platforms (e.g., SHA-256 digests or
+         * ECDSA signatures) will not verify by default.
+         *
+         * @param minSdkVersion API Level of the oldest platform for which to verify the APK
+         *
+         * @see #setCheckedPlatformVersions(int, int)
+         */
+        public Builder setMinCheckedPlatformVersion(int minSdkVersion) {
+            mMinSdkVersion = minSdkVersion;
+            mMaxSdkVersion = Integer.MAX_VALUE;
+            return this;
+        }
+
+        /**
+         * Sets the range of Android platform versions for which the APK is verified. APK
+         * verification will confirm that the APK is expected to install successfully on Android
+         * platforms whose API Levels fall into this inclusive range.
+         *
+         * <p>By default, the APK is checked for all platform versions. Thus, APKs which use
+         * security features not supported on ancient Android platforms (e.g., SHA-256 digests or
+         * ECDSA signatures) will not verify by default.
+         *
+         * @param minSdkVersion API Level of the oldest platform for which to verify the APK
+         * @param maxSdkVersion API Level of the newest platform for which to verify the APK
+         *
+         * @see #setMinCheckedPlatformVersion(int)
+         */
+        public Builder setCheckedPlatformVersions(int minSdkVersion, int maxSdkVersion) {
+            mMinSdkVersion = minSdkVersion;
+            mMaxSdkVersion = maxSdkVersion;
+            return this;
+        }
+
+        /**
+         * Returns an {@link ApkVerifier} initialized according to the configuration of this
+         * builder.
+         */
+        public ApkVerifier build() {
+            return new ApkVerifier(
+                    mApkFile,
+                    mApkDataSource,
+                    mMinSdkVersion,
+                    mMaxSdkVersion);
         }
     }
 }
