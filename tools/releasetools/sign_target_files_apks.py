@@ -65,9 +65,19 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       removed.  Changes are processed in the order they appear.
       Default value is "-test-keys,-dev-keys,+release-keys".
 
+  --replace_verity_private_key <key>
+      Replace the private key used for verity signing. It expects a filename
+      WITHOUT the extension (e.g. verity_key).
+
+  --replace_verity_public_key <key>
+      Replace the certificate (public key) used for verity verification. The
+      key file replaces the one at BOOT/RAMDISK/verity_key (or ROOT/verity_key
+      for devices using system_root_image). It expects the key filename WITH
+      the extension (e.g. verity_key.pub).
+
   --replace_verity_keyid <path_to_X509_PEM_cert_file>
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
-      with keyid of the cert pointed by <path_to_X509_PEM_cert_file>
+      with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
 """
 
 import sys
@@ -204,26 +214,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     data = input_tf_zip.read(info.filename)
     out_info = copy.copy(info)
 
-    # Replace keys if requested.
-    if (info.filename == "META/misc_info.txt" and
-        OPTIONS.replace_verity_private_key):
-      ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
-                              OPTIONS.replace_verity_private_key[1])
-    elif (info.filename in ("BOOT/RAMDISK/verity_key",
-                            "BOOT/verity_key") and
-          OPTIONS.replace_verity_public_key):
-      new_data = ReplaceVerityPublicKey(output_tf_zip, info.filename,
-                                        OPTIONS.replace_verity_public_key[1])
-      write_to_temp(info.filename, info.external_attr, new_data)
-    elif (info.filename == "BOOT/cmdline" and
-          OPTIONS.replace_verity_keyid):
-      new_cmdline = ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
-          OPTIONS.replace_verity_keyid[1])
-      # Writing the new cmdline to tmpdir is redundant as the bootimage
-      # gets build in the add_image_to_target_files and rebuild_recovery
-      # is not exercised while building the boot image for the A/B
-      # path
-      write_to_temp(info.filename, info.external_attr, new_cmdline)
     # Sign APKs.
     if info.filename.endswith(".apk"):
       name = os.path.basename(info.filename)
@@ -270,19 +260,20 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
               "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
 
-    # Skip verity keys since they have been processed above.
-    # TODO: verity_key is at a wrong location (BOOT/verity_key). Will fix and
-    # clean up verity related lines in a separate CL.
+    # Skip META/misc_info.txt if we will replace the verity private key later.
     elif (OPTIONS.replace_verity_private_key and
           info.filename == "META/misc_info.txt"):
       pass
+
+    # Skip verity public key if we will replace it.
     elif (OPTIONS.replace_verity_public_key and
           info.filename in ("BOOT/RAMDISK/verity_key",
-                            "BOOT/verity_key")):
+                            "ROOT/verity_key")):
       pass
 
-    elif (info.filename == "BOOT/cmdline" and
-          OPTIONS.replace_verity_keyid):
+    # Skip verity keyid (for system_root_image use) if we will replace it.
+    elif (OPTIONS.replace_verity_keyid and
+          info.filename == "BOOT/cmdline"):
       pass
 
     # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
@@ -310,6 +301,32 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       # while calling ReplaceOtaKeys(). We're just putting the same copy to
       # tmpdir in case we need to regenerate the recovery-from-boot patch.
       write_to_temp(recovery_keys_location, 0o755 << 16, new_recovery_keys)
+
+  # Replace the keyid string in META/misc_info.txt.
+  if OPTIONS.replace_verity_private_key:
+    ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
+                            OPTIONS.replace_verity_private_key[1])
+
+  if OPTIONS.replace_verity_public_key:
+    if system_root_image:
+      dest = "ROOT/verity_key"
+    else:
+      dest = "BOOT/RAMDISK/verity_key"
+    # We are replacing the one in boot image only, since the one under
+    # recovery won't ever be needed.
+    new_data = ReplaceVerityPublicKey(
+        output_tf_zip, dest, OPTIONS.replace_verity_public_key[1])
+    write_to_temp(dest, 0o755 << 16, new_data)
+
+  # Replace the keyid string in BOOT/cmdline.
+  if OPTIONS.replace_verity_keyid:
+    new_cmdline = ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
+      OPTIONS.replace_verity_keyid[1])
+    # Writing the new cmdline to tmpdir is redundant as the bootimage
+    # gets build in the add_image_to_target_files and rebuild_recovery
+    # is not exercised while building the boot image for the A/B
+    # path
+    write_to_temp("BOOT/cmdline", 0o755 << 16, new_cmdline)
 
   if rebuild_recovery:
     recovery_img = common.GetBootableImage(
@@ -492,12 +509,14 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 
   return new_recovery_keys
 
+
 def ReplaceVerityPublicKey(targetfile_zip, filename, key_path):
   print "Replacing verity public key with %s" % key_path
   with open(key_path) as f:
     data = f.read()
   common.ZipWriteStr(targetfile_zip, filename, data)
   return data
+
 
 def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,
                             misc_info, key_path):
@@ -507,6 +526,7 @@ def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,
   new_misc_info = original_misc_info.replace(current_key, key_path)
   common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
   misc_info["verity_key"] = key_path
+
 
 def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
   in_cmdline = targetfile_input_zip.read("BOOT/cmdline")
@@ -531,6 +551,7 @@ def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
   print "out_cmdline %s" % (out_cmdline)
   common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", out_cmdline)
   return out_cmdline
+
 
 def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
