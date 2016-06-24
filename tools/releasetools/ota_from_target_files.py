@@ -116,6 +116,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       directly, a payload signer that knows how to do that should be specified.
       The signer will be supplied with "-inkey <path_to_key>",
       "-in <input_file>" and "-out <output_file>" parameters.
+
+  --payload_signer_args <args>
+      Specify the arguments needed for payload signer.
 """
 
 import sys
@@ -127,6 +130,7 @@ if sys.hexversion < 0x02070000:
 import multiprocessing
 import os
 import subprocess
+import shlex
 import tempfile
 import zipfile
 
@@ -163,6 +167,7 @@ OPTIONS.stash_threshold = 0.8
 OPTIONS.gen_verify = False
 OPTIONS.log_diff = None
 OPTIONS.payload_signer = None
+OPTIONS.payload_signer_args = []
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -1242,8 +1247,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                                  suffix=".bin")
   # 3a. Sign the payload hash.
   if OPTIONS.payload_signer is not None:
-    cmd = [OPTIONS.payload_signer,
-           "-inkey", OPTIONS.package_key + OPTIONS.private_key_suffix]
+    cmd = [OPTIONS.payload_signer]
+    cmd.extend(OPTIONS.payload_signer_args)
   else:
     cmd = ["openssl", "pkeyutl", "-sign",
            "-inkey", rsa_key,
@@ -1256,8 +1261,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
 
   # 3b. Sign the metadata hash.
   if OPTIONS.payload_signer is not None:
-    cmd = [OPTIONS.payload_signer,
-           "-inkey", OPTIONS.package_key + OPTIONS.private_key_suffix]
+    cmd = [OPTIONS.payload_signer]
+    cmd.extend(OPTIONS.payload_signer_args)
   else:
     cmd = ["openssl", "pkeyutl", "-sign",
            "-inkey", rsa_key,
@@ -1929,6 +1934,8 @@ def main(argv):
       OPTIONS.log_diff = a
     elif o == "--payload_signer":
       OPTIONS.payload_signer = a
+    elif o == "--payload_signer_args":
+      OPTIONS.payload_signer_args = shlex.split(a)
     else:
       return False
     return True
@@ -1958,6 +1965,7 @@ def main(argv):
                                  "gen_verify",
                                  "log_diff=",
                                  "payload_signer=",
+                                 "payload_signer_args=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
