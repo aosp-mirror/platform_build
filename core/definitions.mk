@@ -2074,6 +2074,7 @@ endef
 define aapt2-link
 @mkdir -p $(dir $@)
 $(call dump-words-to-file,$(PRIVATE_RES_FLAT),$(dir $@)aapt2-flat-list)
+$(call dump-words-to-file,$(PRIVATE_OVERLAY_FLAT),$(dir $@)aapt2-flat-overlay-list)
 $(hide) $(AAPT2) link -o $@ \
   $(PRIVATE_AAPT_FLAGS) \
   $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
@@ -2090,7 +2091,7 @@ $(hide) $(AAPT2) link -o $@ \
   $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
   $(addprefix --rename-manifest-package ,$(PRIVATE_MANIFEST_PACKAGE_NAME)) \
   $(addprefix --rename-instrumentation-target-package ,$(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
-  $(addprefix -R , $(PRIVATE_OVERLAY_FLAT)) \
+  -R \@$(dir $@)aapt2-flat-overlay-list \
   \@$(dir $@)aapt2-flat-list
 endef
 
