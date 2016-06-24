@@ -277,10 +277,9 @@ endif
 ## AIDL: Compile .aidl files to .java
 ###########################################################
 aidl_sources := $(filter %.aidl,$(LOCAL_SRC_FILES))
+aidl_java_sources :=
 
 ifneq ($(strip $(aidl_sources)),)
-aidl_java_sources := $(patsubst %.aidl,%.java,$(addprefix $(intermediates.COMMON)/src/, $(aidl_sources)))
-aidl_sources := $(addprefix $(LOCAL_PATH)/, $(aidl_sources))
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
@@ -294,19 +293,17 @@ else
 # build against the platform.
 LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
 endif # LOCAL_SDK_VERSION
-$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
 
-$(aidl_java_sources): $(intermediates.COMMON)/src/%.java: \
-        $(LOCAL_PATH)/%.aidl \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) \
-        $(AIDL) \
-        $(aidl_preprocess_import)
-	$(transform-aidl-to-java)
+$(foreach s,$(aidl_sources),\
+    $(eval $(call define-aidl-java-rule,$(s),$(intermediates.COMMON),aidl_java_sources)))
 $(foreach java,$(aidl_java_sources), \
     $(call include-depfile,$(java:%.java=%.P),$(java)))
 
-else
-aidl_java_sources :=
+$(aidl_java_sources) : $(LOCAL_ADDITIONAL_DEPENDENCIES) $(aidl_preprocess_import)
+
+$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
+$(aidl_java_sources : PRIVATE_MODULE := $(LOCAL_MODULE)
+
 endif
 
 ##########################################
