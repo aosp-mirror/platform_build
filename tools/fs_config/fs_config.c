@@ -105,6 +105,9 @@ int main(int argc, char** argv) {
       switch (buffer[i]) {
         case '\n':
           buffer[i-is_dir] = '\0';
+          if (i == 0) {
+            is_dir = 1; // empty line is considered as root directory
+          }
           i = 1025;
           break;
         case '/':
