@@ -268,6 +268,13 @@ ifdef LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 my_clang := $(strip $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 endif
 
+# if custom toolchain is in use, default is not to use clang, if not explicitly required
+ifneq ($(my_cc)$(my_cxx),)
+    ifeq ($(my_clang),)
+        my_clang := false
+    endif
+endif
+
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
