@@ -108,6 +108,14 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Generate a log file that shows the differences in the source and target
       builds for an incremental package. This option is only meaningful when
       -i is specified.
+
+  --payload_signer <signer>
+      Specify the signer when signing the payload and metadata for A/B OTAs.
+      By default (i.e. without this flag), it calls 'openssl pkeyutl' to sign
+      with the package private key. If the private key cannot be accessed
+      directly, a payload signer that knows how to do that should be specified.
+      The signer will be supplied with "-inkey <path_to_key>",
+      "-in <input_file>" and "-out <output_file>" parameters.
 """
 
 import sys
@@ -154,6 +162,7 @@ OPTIONS.cache_size = None
 OPTIONS.stash_threshold = 0.8
 OPTIONS.gen_verify = False
 OPTIONS.log_diff = None
+OPTIONS.payload_signer = None
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -1159,17 +1168,19 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
         "default_system_dev_certificate",
         "build/target/product/security/testkey")
 
-  # A/B updater expects key in RSA format.
-  cmd = ["openssl", "pkcs8",
-         "-in", OPTIONS.package_key + OPTIONS.private_key_suffix,
-         "-inform", "DER", "-nocrypt"]
-  rsa_key = common.MakeTempFile(prefix="key-", suffix=".key")
-  cmd.extend(["-out", rsa_key])
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "openssl pkcs8 failed"
+  # A/B updater expects a signing key in RSA format. Gets the key ready for
+  # later use in step 3, unless a payload_signer has been specified.
+  if OPTIONS.payload_signer is None:
+    cmd = ["openssl", "pkcs8",
+           "-in", OPTIONS.package_key + OPTIONS.private_key_suffix,
+           "-inform", "DER", "-nocrypt"]
+    rsa_key = common.MakeTempFile(prefix="key-", suffix=".key")
+    cmd.extend(["-out", rsa_key])
+    p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
+    p1.communicate()
+    assert p1.returncode == 0, "openssl pkcs8 failed"
 
-  # Stage the output zip package for signing.
+  # Stage the output zip package for package signing.
   temp_zip_file = tempfile.NamedTemporaryFile()
   output_zip = zipfile.ZipFile(temp_zip_file, "w",
                                compression=zipfile.ZIP_DEFLATED)
@@ -1230,21 +1241,29 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   signed_metadata_sig_file = common.MakeTempFile(prefix="signed-sig-",
                                                  suffix=".bin")
   # 3a. Sign the payload hash.
-  cmd = ["openssl", "pkeyutl", "-sign",
-         "-inkey", rsa_key,
-         "-pkeyopt", "digest:sha256",
-         "-in", payload_sig_file,
-         "-out", signed_payload_sig_file]
+  if OPTIONS.payload_signer is not None:
+    cmd = [OPTIONS.payload_signer,
+           "-inkey", OPTIONS.package_key + OPTIONS.private_key_suffix]
+  else:
+    cmd = ["openssl", "pkeyutl", "-sign",
+           "-inkey", rsa_key,
+           "-pkeyopt", "digest:sha256"]
+  cmd.extend(["-in", payload_sig_file,
+              "-out", signed_payload_sig_file])
   p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
   p1.communicate()
   assert p1.returncode == 0, "openssl sign payload failed"
 
   # 3b. Sign the metadata hash.
-  cmd = ["openssl", "pkeyutl", "-sign",
-         "-inkey", rsa_key,
-         "-pkeyopt", "digest:sha256",
-         "-in", metadata_sig_file,
-         "-out", signed_metadata_sig_file]
+  if OPTIONS.payload_signer is not None:
+    cmd = [OPTIONS.payload_signer,
+           "-inkey", OPTIONS.package_key + OPTIONS.private_key_suffix]
+  else:
+    cmd = ["openssl", "pkeyutl", "-sign",
+           "-inkey", rsa_key,
+           "-pkeyopt", "digest:sha256"]
+  cmd.extend(["-in", metadata_sig_file,
+              "-out", signed_metadata_sig_file])
   p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
   p1.communicate()
   assert p1.returncode == 0, "openssl sign metadata failed"
@@ -1908,6 +1927,8 @@ def main(argv):
       OPTIONS.gen_verify = True
     elif o == "--log_diff":
       OPTIONS.log_diff = a
+    elif o == "--payload_signer":
+      OPTIONS.payload_signer = a
     else:
       return False
     return True
@@ -1936,6 +1957,7 @@ def main(argv):
                                  "stash_threshold=",
                                  "gen_verify",
                                  "log_diff=",
+                                 "payload_signer=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
