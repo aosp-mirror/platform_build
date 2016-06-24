@@ -1683,8 +1683,41 @@ warnpatterns = [
 ]
 
 anchor = 0
-cur_row_color = 0
-row_colors = [ 'e0e0e0', 'd0d0d0' ]
+cur_row_class = 0
+
+html_script_style = """\
+    <script type="text/javascript">
+    function expand(id) {
+      var e = document.getElementById(id);
+      var f = document.getElementById(id + "_mark");
+      if (e.style.display == 'block') {
+         e.style.display = 'none';
+         f.innerHTML = '&#x2295';
+      }
+      else {
+         e.style.display = 'block';
+         f.innerHTML = '&#x2296';
+      }
+    };
+    function expand_collapse(show) {
+      for (var id = 1; ; id++) {
+        var e = document.getElementById(id + "");
+        var f = document.getElementById(id + "_mark");
+        if (!e || !f) break;
+        e.style.display = (show ? 'block' : 'none');
+        f.innerHTML = (show ? '&#x2296' : '&#x2295');
+      }
+    };
+    </script>
+    <style type="text/css">
+    table,th,td{border-collapse:collapse; width:100%;}
+    .button{color:blue;font-size:110%;font-weight:bolder;}
+    .bt{color:black;background-color:transparent;border:none;outline:none;
+        font-size:140%;font-weight:bolder;}
+    .c0{background-color:#e0e0e0;}
+    .c1{background-color:#d0d0d0;}
+    </style>\n"""
+
 
 def output(text):
     print text,
@@ -1693,39 +1726,23 @@ def htmlbig(param):
     return '<font size="+2">' + param + '</font>'
 
 def dumphtmlprologue(title):
-    output('<html>\n<head>\n<title>' + title + '</title>\n<body>\n')
+    output('<html>\n<head>\n')
+    output('<title>' + title + '</title>\n')
+    output(html_script_style)
+    output('</head>\n<body>\n')
     output('<a name="PageTop">')
     output(htmlbig(title))
     output('<p>\n')
 
+def dumphtmlepilogue():
+    output('</body>\n</head>\n</html>\n')
+
 def tablerow(text):
-    global cur_row_color
-    output('<tr bgcolor="' + row_colors[cur_row_color] + '"><td colspan="2">',)
-    cur_row_color = 1 - cur_row_color
-    output(text,)
-    output('</td></tr>\n')
-
-def begintable(text, backgroundcolor, extraanchor):
-    global anchor
-    output('<table border="1" rules="cols" frame="box" width="100%" bgcolor="black"><tr bgcolor="' +
-        backgroundcolor + '"><a name="anchor' + str(anchor) + '">')
-    if extraanchor:
-        output('<a name="' + extraanchor + '">')
-    output('<td>')
-    output(htmlbig(text[0]) + '<br>')
-    for i in text[1:]:
-        output(i + '<br>')
-    output('</td>')
-    output('<td width="100" bgcolor="grey">' +
-           '<a align="right" href="#PageTop">top</a><br>' +
-           '<a align="right" href="#anchor' + str(anchor-1) + '">previous</a><br>' +
-           '<a align="right" href="#anchor' + str(anchor+1) + '">next</a>')
-    output('</td></a></tr>')
-    anchor += 1
-
-def endtable():
-    output('</table><p>')
-
+    global cur_row_class
+    output('<tr><td class="c' + str(cur_row_class) + '">')
+    cur_row_class = 1 - cur_row_class
+    output(text)
+    output('</td></tr>')
 
 # dump some stats about total number of warnings and such
 def dumpstats():
@@ -1743,38 +1760,33 @@ def dumpstats():
     output('\nTotal number of warnings: <b>' + str(total) + '</b>')
     if total < 1000:
         output('(low count may indicate incremental build)')
-    output('\n<p>\n')
+    output('<br><br>\n')
+    output('<button class="button" onclick="expand_collapse(1);">' +
+           'Expand all warnings</button> ' +
+           '<button class="button" onclick="expand_collapse(0);">' +
+           'Collapse all warnings</button>')
+    output('<br>\n')
 
-# dump count of warnings of a given severity in TOC
-def dumpcount(sev):
-    first = True
-    for i in warnpatterns:
-      if i['severity'] == sev and len(i['members']) > 0:
-          if first:
-              output(headerforseverity(sev) + ':\n<blockquote>' +
-                     '<table border="1" frame="box" width="100%">')
-          output('<tr bgcolor="' + colorforseverity(sev) + '">' +
-                 '<td><a href="#' + i['anchor'] + '">' + descriptionfor(i) +
-                 ' (' + str(len(i['members'])) + ')</a></td></tr>\n')
-          first = False
-    if not first:
-        output('</table></blockquote>\n')
-
-# dump table of content, list of all warning patterns
-def dumptoc():
-    n = 1
+# dump everything for a given severity
+def dumpseverity(sev):
+    global anchor
+    output('\n<br><span style="background-color:' + colorforseverity(sev) + '"><b>' +
+           headerforseverity(sev) + ':</b></span>\n')
     output('<blockquote>\n')
     for i in warnpatterns:
-        i['anchor'] = 'Warning' + str(n)
-        n += 1
-    dumpcount(severity.FIXMENOW)
-    dumpcount(severity.HIGH)
-    dumpcount(severity.MEDIUM)
-    dumpcount(severity.LOW)
-    dumpcount(severity.TIDY)
-    dumpcount(severity.HARMLESS)
-    dumpcount(severity.UNKNOWN)
-    output('</blockquote>\n<p>\n')
+      if i['severity'] == sev and len(i['members']) > 0:
+          output('\n<table frame="box">\n')
+          anchor += 1
+          i['anchor'] = str(anchor)
+          mark = str(anchor) + '_mark'
+          output('<tr bgcolor="' + colorforseverity(sev) + '">' +
+                 '<td><button class="bt" id="' + mark +
+                 '" onclick="expand(\'' + str(anchor) + '\');">' +
+                 '&#x2295</button> ' + descriptionfor(i) +
+                 ' (' + str(len(i['members'])) + ')</td></tr>\n')
+          output('</table>\n')
+          dumpcategory(i)
+    output('</blockquote>\n')
 
 def allpatterns(cat):
     pats = ''
@@ -1791,15 +1803,28 @@ def descriptionfor(cat):
 
 # show which warnings no longer occur
 def dumpfixed():
-    tablestarted = False
+    global anchor
+    anchor += 1
+    mark = str(anchor) + '_mark'
+    output('\n<br><p style="background-color:lightblue"><b>' +
+           '<button id="' + mark + '" ' +
+           'class="bt" onclick="expand(' + str(anchor) + ');">' +
+           '&#x2295</button> Fixed warnings. ' +
+           'No more occurences. Please consider turning these into ' +
+           'errors if possible, before they are reintroduced in to the build' +
+           ':</b></p>\n')
+    output('<blockquote>\n')
+    fixed_patterns = []
     for i in warnpatterns:
         if len(i['members']) == 0 and i['severity'] != severity.SKIP:
-            if tablestarted == False:
-                tablestarted = True
-                begintable(['Fixed warnings', 'No more occurences. Please consider turning these in to errors if possible, before they are reintroduced in to the build'], 'blue', '')
-            tablerow(i['description'] + ' (' + allpatterns(i) + ') ' + i['option'])
-    if tablestarted:
-        endtable()
+            fixed_patterns.append(i['description'] + ' (' +
+                                  allpatterns(i) + ') ' + i['option'])
+    fixed_patterns.sort()
+    output('<div id="' + str(anchor) + '" style="display:none;"><table>\n')
+    for i in fixed_patterns:
+        tablerow(i)
+    output('</table></div>\n')
+    output('</blockquote>\n')
 
 def warningwithurl(line):
     if not args.url:
@@ -1821,17 +1846,12 @@ def dumpcategory(cat):
         header = [descriptionfor(cat),str(len(cat['members'])) + ' occurences:']
         if cat['option'] != '':
             header[1:1] = [' (related option: ' + cat['option'] +')']
-        begintable(header, colorforseverity(cat['severity']), cat['anchor'])
+
+        output('<div id="' + cat['anchor'] + '" style="display:none;">')
+        output('<table>\n')
         for i in cat['members']:
             tablerow(warningwithurl(i))
-        endtable()
-
-
-# dump everything for a given severity
-def dumpseverity(sev):
-    for i in warnpatterns:
-        if i['severity'] == sev:
-            dumpcategory(i)
+        output('</table></div>\n')
 
 
 def classifywarning(line):
@@ -1895,7 +1915,6 @@ dumpstats()
 # sort table based on number of members once dumpstats has deduplicated the
 # members.
 warnpatterns.sort(reverse=True, key=lambda i: len(i['members']))
-dumptoc()
 dumpseverity(severity.FIXMENOW)
 dumpseverity(severity.HIGH)
 dumpseverity(severity.MEDIUM)
@@ -1904,3 +1923,4 @@ dumpseverity(severity.TIDY)
 dumpseverity(severity.HARMLESS)
 dumpseverity(severity.UNKNOWN)
 dumpfixed()
+dumphtmlepilogue()
