@@ -342,19 +342,20 @@ class BlockImageDiff(object):
     return ctx.hexdigest()
 
   def WriteTransfers(self, prefix):
-    def WriteTransfersZero(out, to_zero):
-      """Limit the number of blocks in command zero to 1024 blocks.
+    def WriteSplitTransfers(out, style, target_blocks):
+      """Limit the size of operand in command 'new' and 'zero' to 1024 blocks.
 
       This prevents the target size of one command from being too large; and
       might help to avoid fsync errors on some devices."""
 
-      zero_blocks_limit = 1024
+      assert (style == "new" or style == "zero")
+      blocks_limit = 1024
       total = 0
-      while to_zero:
-        zero_blocks = to_zero.first(zero_blocks_limit)
-        out.append("zero %s\n" % (zero_blocks.to_string_raw(),))
-        total += zero_blocks.size()
-        to_zero = to_zero.subtract(zero_blocks)
+      while target_blocks:
+        blocks_to_write = target_blocks.first(blocks_limit)
+        out.append("%s %s\n" % (style, blocks_to_write.to_string_raw()))
+        total += blocks_to_write.size()
+        target_blocks = target_blocks.subtract(blocks_to_write)
       return total
 
     out = []
@@ -478,7 +479,7 @@ class BlockImageDiff(object):
 
       if xf.style == "new":
         assert xf.tgt_ranges
-        out.append("%s %s\n" % (xf.style, xf.tgt_ranges.to_string_raw()))
+        assert tgt_size == WriteSplitTransfers(out, xf.style, xf.tgt_ranges)
         total += tgt_size
       elif xf.style == "move":
         assert xf.tgt_ranges
@@ -538,7 +539,7 @@ class BlockImageDiff(object):
       elif xf.style == "zero":
         assert xf.tgt_ranges
         to_zero = xf.tgt_ranges.subtract(xf.src_ranges)
-        assert WriteTransfersZero(out, to_zero) == to_zero.size()
+        assert WriteSplitTransfers(out, xf.style, to_zero) == to_zero.size()
         total += to_zero.size()
       else:
         raise ValueError("unknown transfer style '%s'\n" % xf.style)
@@ -568,7 +569,7 @@ class BlockImageDiff(object):
 
     # Zero out extended blocks as a workaround for bug 20881595.
     if self.tgt.extended:
-      assert (WriteTransfersZero(out, self.tgt.extended) ==
+      assert (WriteSplitTransfers(out, "zero", self.tgt.extended) ==
               self.tgt.extended.size())
       total += self.tgt.extended.size()
 
