@@ -2375,7 +2375,7 @@ define _transform-dex-to-toc
 $1/classes.dex.toc: PRIVATE_INPUT_DEX_FILES := $1/classes*.dex
 $1/classes.dex.toc: $1/classes.dex $(DEXDUMP)
 	@echo Generating TOC: $$@
-	$(hide) $(DEXDUMP) -l xml $$(PRIVATE_INPUT_DEX_FILES) > $$@.tmp
+	$(hide) ANDROID_LOG_TAGS="*:e" $(DEXDUMP) -l xml $$(PRIVATE_INPUT_DEX_FILES) > $$@.tmp
 	$$(call commit-change-for-toc,$$@)
 endef
 
