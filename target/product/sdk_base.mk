@@ -44,6 +44,7 @@ PRODUCT_PACKAGES := \
 	SoftKeyboard \
 	sqlite3 \
 	SystemUI \
+	EasterEgg \
 	WidgetPreview
 
 # Define the host tools and libs that are parts of the SDK.
