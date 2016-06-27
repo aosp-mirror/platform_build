@@ -24,6 +24,14 @@ ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize)
 endif
 
+# The sanitizer specified in the product configuration wins over the previous.
+ifneq ($(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG),)
+  my_sanitize := $(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG)
+  ifeq ($(my_sanitize),never)
+    my_sanitize :=
+  endif
+endif
+
 # Add a filter point for 32-bit vs 64-bit sanitization (to lighten the burden).
 SANITIZE_ARCH ?= 32 64
 ifeq ($(filter $(SANITIZE_ARCH),$(my_32_64_bit_suffix)),)

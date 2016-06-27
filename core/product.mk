@@ -120,6 +120,7 @@ _product_var_list := \
     PRODUCT_DEX_PREOPT_MODULE_CONFIGS \
     PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
     PRODUCT_DEX_PREOPT_BOOT_FLAGS \
+    PRODUCT_SANITIZER_MODULE_CONFIGS \
     PRODUCT_SYSTEM_BASE_FS_PATH \
     PRODUCT_VENDOR_BASE_FS_PATH \
     PRODUCT_SHIPPING_API_LEVEL \
@@ -331,5 +332,16 @@ _PDPMC_SP_PLACE_HOLDER := |@SP@|
 define add-product-dex-preopt-module-config
 $(eval _c := $(subst $(space),$(_PDPMC_SP_PLACE_HOLDER),$(strip $(2))))\
 $(eval PRODUCT_DEX_PREOPT_MODULE_CONFIGS += \
+  $(foreach m,$(1),$(m)=$(_c)))
+endef
+
+# whitespace placeholder when we record module's sanitizer config.
+_PSMC_SP_PLACE_HOLDER := |@SP@|
+# Set up sanitizer config for a module.
+# $(1) list of module names
+# $(2) the modules' sanitizer config
+define add-product-sanitizer-module-config
+$(eval _c := $(subst $(space),$(_PSMC_SP_PLACE_HOLDER),$(strip $(2))))\
+$(eval PRODUCT_SANITIZER_MODULE_CONFIGS += \
   $(foreach m,$(1),$(m)=$(_c)))
 endef
