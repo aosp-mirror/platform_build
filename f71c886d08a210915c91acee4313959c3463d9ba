@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3c531ce_2d2a1f22",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-06-27T21:10:27Z",
+      "side": 1,
+      "message": "You\u0027re missing dependencies used by the script here.",
+      "range": {
+        "startLine": 1457,
+        "startChar": 28,
+        "endLine": 1457,
+        "endChar": 47
+      },
+      "revId": "f71c886d08a210915c91acee4313959c3463d9ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
