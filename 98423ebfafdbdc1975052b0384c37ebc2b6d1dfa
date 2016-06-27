@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "80e8eb66_e86747fd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-27T21:03:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80e8eb66_05b5b490",
+      "range": {
+        "startLine": 9,
+        "startChar": 4,
+        "endLine": 9,
+        "endChar": 5
+      },
+      "revId": "98423ebfafdbdc1975052b0384c37ebc2b6d1dfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "80e8eb66_45bbbc86",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "80e8eb66_058254b3",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1449,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-27T21:03:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80e8eb66_45bbbc86",
+      "revId": "98423ebfafdbdc1975052b0384c37ebc2b6d1dfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "80e8eb66_25c0b8ea",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -53,6 +95,30 @@
       "writtenOn": "2016-06-27T15:16:51Z",
       "side": 1,
       "message": "No tab here.\n\nAlso, EFI_IMAGEBUILD is a weird name. Since the tool is called make_efi_image.sh it would make more sense if you used the variable MAKE_EFI_IMAGE, no?\n\nI would also drop the .sh extension (some day we might rewrite it in python) and ensure that it\u0027s installed in $(HOST_OUT_EXECUTABLES). The snippet you\u0027d use in the Android.mk for make_efi_image would be something like what\u0027s in system/tools/bpt/Android.mk\n\nYou should also define this in config.mk just like for BPTTOOL, BVBTOOL, and MKBOOTIMG and then just use MAKE_EFI_IMAGE from there.",
+      "range": {
+        "startLine": 1453,
+        "startChar": 14,
+        "endLine": 1453,
+        "endChar": 15
+      },
+      "revId": "98423ebfafdbdc1975052b0384c37ebc2b6d1dfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80e8eb66_c8e7e3b4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1453,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-27T21:03:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80e8eb66_25c0b8ea",
       "range": {
         "startLine": 1453,
         "startChar": 14,
@@ -100,6 +166,30 @@
       "side": 1,
       "message": "How is EFI_INPUT_FILES passed to make_efi_image.sh?\n\nAlso, please post the CL for make_efi_image.sh and mention it in this CL.",
       "parentUuid": "80e8eb66_85c1c4f4",
+      "range": {
+        "startLine": 1457,
+        "startChar": 9,
+        "endLine": 1457,
+        "endChar": 13
+      },
+      "revId": "98423ebfafdbdc1975052b0384c37ebc2b6d1dfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80e8eb66_88f2fb3b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-27T21:03:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80e8eb66_e5b1b0a4",
       "range": {
         "startLine": 1457,
         "startChar": 9,
