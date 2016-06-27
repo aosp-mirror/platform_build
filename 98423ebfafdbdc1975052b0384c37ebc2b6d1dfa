@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "80e8eb66_85c1c4f4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1457,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-27T15:04:04Z",
+      "side": 1,
+      "message": "EFI_IMAGEBUILD would not run if this \u0027exec\u0027 was not present. Unsure why this is.",
+      "range": {
+        "startLine": 1457,
+        "startChar": 9,
+        "endLine": 1457,
+        "endChar": 13
+      },
+      "revId": "98423ebfafdbdc1975052b0384c37ebc2b6d1dfa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
