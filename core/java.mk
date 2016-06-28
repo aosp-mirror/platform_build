@@ -459,6 +459,8 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
 	$(hide) $(ACP) -fp $< $@
 endif
 
+full_classes_jar_source := $(full_classes_jarjar_jar)
+ifndef LOCAL_JACK_ENABLED
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.emma.ignore
 $(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
@@ -475,15 +477,12 @@ endif
 # $(full_classes_emma_jar)
 $(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
-
-else
-$(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(ACP)
-	@echo Copying: $@
-	$(copy-file-to-target)
+full_classes_jar_source := $(full_classes_emma_jar)
+endif
 endif
 
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
+$(full_classes_jar): $(full_classes_jar_source) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
