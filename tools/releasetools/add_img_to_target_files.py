@@ -396,12 +396,18 @@ def AddImagesToTargetFiles(filename):
   # For devices using A/B update, copy over images from RADIO/ and/or
   # VENDOR_IMAGES/ to IMAGES/ and make sure we have all the needed
   # images ready under IMAGES/. All images should have '.img' as extension.
+  banner("radio")
   ab_partitions = os.path.join(OPTIONS.input_tmp, "META", "ab_partitions.txt")
   if os.path.exists(ab_partitions):
     with open(ab_partitions, 'r') as f:
       lines = f.readlines()
     for line in lines:
       img_name = line.strip() + ".img"
+      prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
+      if os.path.exists(prebuilt_path):
+        print "%s already exists, no need to overwrite..." % (img_name,)
+        continue
+
       img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
       img_vendor_dir = os.path.join(
         OPTIONS.input_tmp, "VENDOR_IMAGES")
