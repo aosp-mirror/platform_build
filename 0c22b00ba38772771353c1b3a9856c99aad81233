@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00c6bb30_78ca0e28",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-06-28T23:31:36Z",
+      "side": 1,
+      "message": "missing the cherry-picked from commit ... line",
+      "revId": "0c22b00ba38772771353c1b3a9856c99aad81233",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
