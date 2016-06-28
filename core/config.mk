@@ -645,8 +645,10 @@ GLOBAL_CFLAGS_NO_OVERRIDE := \
 
 GLOBAL_CLANG_CFLAGS_NO_OVERRIDE := \
     -Werror=address-of-temporary \
-    -Werror=null-dereference \
     -Werror=return-type \
+    # Bug: http://b/29823425 Disable -Wnull-dereference until the new cases
+    # detected by this warning in Clang r271374 are fixed.
+    #-Werror=null-dereference \
 
 GLOBAL_CPPFLAGS_NO_OVERRIDE :=
 
