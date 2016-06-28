@@ -598,7 +598,7 @@ def _BuildBvbBootableImage(sourcedir, fs_config_file, system_img_path,
     cmd.extend(["--algorithm", algorithm, "--key", key_path])
   else:
     cmd.extend(["--algorithm", "SHA256_RSA4096"])
-    cmd.extend(["--key", "system/bvb/test/testkey_rsa4096.pem"])
+    cmd.extend(["--key", "external/bvb/test/testkey_rsa4096.pem"])
 
   args = info_dict.get("board_bvb_sign_boot_image_args", None)
   if args and args.strip():
