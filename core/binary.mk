@@ -1251,7 +1251,7 @@ endif
 
 my_unused_src_files := $(filter-out $(logtags_sources) $(my_tracked_src_files),$(my_src_files) $(my_gen_src_files))
 ifneq ($(my_unused_src_files),)
-  $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Unused source files: $(my_unused_src_files))
+  $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Unused source files: $(my_unused_src_files))
 endif
 
 # some rules depend on asm_objects being first.  If your code depends on
