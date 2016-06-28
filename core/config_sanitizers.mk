@@ -27,6 +27,7 @@ endif
 # Don't apply sanitizers to NDK code.
 ifdef LOCAL_SDK_VERSION
   my_sanitize :=
+  my_global_sanitize :=
 endif
 
 # Never always wins.
