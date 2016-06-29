@@ -556,6 +556,19 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("system_base_fs_file", "base_fs_file")
+  elif mount_point == "system_other":
+    # We inherit the selinux policies of /system since we contain some of its files.
+    d["mount_point"] = "system"
+    copy_prop("fs_type", "fs_type")
+    copy_prop("system_fs_type", "fs_type")
+    copy_prop("system_size", "partition_size")
+    copy_prop("system_journal_size", "journal_size")
+    copy_prop("system_verity_block_device", "verity_block_device")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("system_squashfs_compressor", "squashfs_compressor")
+    copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("system_squashfs_block_size", "squashfs_block_size")
+    copy_prop("system_base_fs_file", "base_fs_file")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -618,6 +631,8 @@ def main(argv):
     mount_point = ""
     if image_filename == "system.img":
       mount_point = "system"
+    elif image_filename == "system_other.img":
+      mount_point = "system_other"
     elif image_filename == "userdata.img":
       mount_point = "data"
     elif image_filename == "cache.img":

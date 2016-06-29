@@ -374,6 +374,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*)
 # $(PRODUCT_OUT)/recovery/root/sdcard goes from symlink to folder.
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/recovery/root/sdcard)
 
+# Add BOARD_USES_SYSTEM_OTHER_ODEX
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
