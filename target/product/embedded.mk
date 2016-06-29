@@ -74,6 +74,7 @@ PRODUCT_PACKAGES += \
     service \
     servicemanager \
     sh \
+    storaged \
     surfaceflinger \
     toolbox \
     toybox \
