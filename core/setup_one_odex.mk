@@ -32,7 +32,9 @@ $(my_built_odex) : $($(my_2nd_arch_prefix)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BO
     $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
     $(my_dex_preopt_image_filename)
 
-my_installed_odex := $(call get-odex-file-path,$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+my_installed_odex := $(call get-odex-installed-file-path,$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
+
+$(eval $(call copy-one-file,$(my_built_odex),$(my_installed_odex)))
 
 built_odex += $(my_built_odex)
 installed_odex += $(my_installed_odex)

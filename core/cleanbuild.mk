@@ -242,6 +242,7 @@ installclean_files := \
 	$(PRODUCT_OUT)/recovery \
 	$(PRODUCT_OUT)/root \
 	$(PRODUCT_OUT)/system \
+	$(PRODUCT_OUT)/system_other \
 	$(PRODUCT_OUT)/vendor \
 	$(PRODUCT_OUT)/oem \
 	$(PRODUCT_OUT)/dex_bootjars \

@@ -1495,6 +1495,59 @@ endif # BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
 
 
 # -----------------------------------------------------------------
+# system_other partition image
+ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
+BOARD_USES_SYSTEM_OTHER := true
+
+# Marker file to identify that odex files are installed
+INSTALLED_SYSTEM_OTHER_ODEX_MARKER := $(TARGET_OUT_SYSTEM_OTHER)/system-other-odex-marker
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)
+$(INSTALLED_SYSTEM_OTHER_ODEX_MARKER):
+	$(hide) touch $@
+endif
+
+ifdef BOARD_USES_SYSTEM_OTHER
+INTERNAL_SYSTEMOTHERIMAGE_FILES := \
+    $(filter $(TARGET_OUT_SYSTEM_OTHER)/%,\
+      $(ALL_DEFAULT_INSTALLED_MODULES)\
+      $(ALL_PDK_FUSION_FILES))
+
+INSTALLED_FILES_FILE_SYSTEMOTHER := $(PRODUCT_OUT)/installed-files-system-other.txt
+$(INSTALLED_FILES_FILE_SYSTEMOTHER) : $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) build/tools/fileslist.py $(TARGET_OUT_SYSTEM_OTHER) > $@
+
+systemotherimage_intermediates := \
+    $(call intermediates-dir-for,PACKAGING,system_other)
+BUILT_SYSTEMOTHERIMAGE_TARGET := $(PRODUCT_OUT)/system_other.img
+
+# Note that we assert the size is SYSTEMIMAGE_PARTITION_SIZE since this is the 'b' system image.
+define build-systemotherimage-target
+  $(call pretty,"Target system_other fs image: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)")
+  @mkdir -p $(TARGET_OUT_SYSTEM_OTHER)
+  @mkdir -p $(systemotherimage_intermediates) && rm -rf $(systemotherimage_intermediates)/system_other_image_info.txt
+  $(call generate-userimage-prop-dictionary, $(systemotherimage_intermediates)/system_other_image_info.txt, skip_fsck=true)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+      ./build/tools/releasetools/build_image.py \
+      $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) $(TARGET_OUT)
+  $(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
+endef
+
+# We just build this directly to the install location.
+INSTALLED_SYSTEMOTHERIMAGE_TARGET := $(BUILT_SYSTEMOTHERIMAGE_TARGET)
+$(INSTALLED_SYSTEMOTHERIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEMOTHER)
+	$(build-systemotherimage-target)
+
+.PHONY: systemotherimage-nodeps
+systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
+	$(build-systemotherimage-target)
+
+endif # BOARD_USES_SYSTEM_OTHER
+
+
+# -----------------------------------------------------------------
 # vendor partition image
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 INTERNAL_VENDORIMAGE_FILES := \
@@ -1730,6 +1783,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_CACHEIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 		$(SELINUX_FC) \
 		$(APKCERTS_FILE) \
@@ -1803,6 +1857,11 @@ ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 	@# Contents of the vendor image
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_OUT_VENDOR),$(zip_root)/VENDOR)
+endif
+ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
+	@# Contents of the system_other image
+	$(hide) $(call package_files-copy-root, \
+		$(TARGET_OUT_SYSTEM_OTHER),$(zip_root)/SYSTEM_OTHER)
 endif
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA
@@ -1950,6 +2009,9 @@ endif
 	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="BOOT/RAMDISK/" } /^BOOT\/RAMDISK\// {print $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) > $(zip_root)/META/boot_filesystem_config.txt
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="RECOVERY/RAMDISK/" } /^RECOVERY\/RAMDISK\// {print $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) > $(zip_root)/META/recovery_filesystem_config.txt
+endif
+ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
+	$(hide) zipinfo -1 $@ | awk 'BEGIN { FS="SYSTEM_OTHER/" } /^SYSTEM_OTHER\// { print "system/" $$2}' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	$(hide) (cd $(zip_root) && zip -qX ../$(notdir $@) META/*filesystem_config.txt)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \

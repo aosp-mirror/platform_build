@@ -19,6 +19,10 @@ DEXPREOPT_BOOT_JAR_DIR_FULL_PATH := $(DEXPREOPT_PRODUCT_DIR_FULL_PATH)/$(DEXPREO
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
 
+# The default filter for which files go into the system_other image (if it is
+# being used). To bundle everything one should set this to '%'
+SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/%
+
 # The default values for pre-opting: always preopt PIC.
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)

@@ -59,6 +59,21 @@ define get-odex-file-path
 $(dir $(2))oat/$(1)/$(basename $(notdir $(2))).odex
 endef
 
+# Returns the full path to the installed .odex file.
+# This handles BOARD_USES_SYSTEM_OTHER_ODEX to install odex files into another
+# partition.
+# $(1): the arch name.
+# $(2): the full install path (including file name) of the corresponding .apk.
+ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
+define get-odex-installed-file-path
+$(if $(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(2)),
+  $(call get-odex-file-path,$(1),$(patsubst $(TARGET_OUT)/%,$(TARGET_OUT_SYSTEM_OTHER)/%,$(2))),
+  $(call get-odex-file-path,$(1),$(2)))
+endef
+else
+get-odex-installed-file-path = $(get-odex-file-path)
+endif
+
 # Returns the path to the image file (such as "/system/framework/<arch>/boot.art"
 # $(1): the arch name (such as "arm")
 # $(2): the image location (such as "/system/framework/boot.art")
