@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8082ab4f_782059ee",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1399,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-30T21:10:31Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "8082ab4f_f2b0e80d",
+      "range": {
+        "startLine": 1399,
+        "startChar": 50,
+        "endLine": 1399,
+        "endChar": 51
+      },
+      "revId": "cc6b7165a6d1adb66734d39bb9dc9614662a4d9e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8082ab4f_b2ba60e8",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-06-30T16:01:04Z",
       "side": 1,
       "message": "Why both EFI_IMAGE_BLOCK_SIZE and EFI_IMAGE_BLOCK_COUNT? I\u0027d use just EFI_IMAGE_SIZE and say that\u0027s the size in bytes.\n\nAlso, I would simplify the check to just be\n\n ifdef EFI_INPUT_FILES\n\nsince it\u0027s simpler and all you need - no need to gracefully handle the user only setting one of the variables but not the other(s).\n\nAlso add a comment after \"EFI image\" that explains what EFI_INPUT_FILES and EFI_IMAGE_SIZE variable are.",
+      "range": {
+        "startLine": 1449,
+        "startChar": 0,
+        "endLine": 1449,
+        "endChar": 82
+      },
+      "revId": "cc6b7165a6d1adb66734d39bb9dc9614662a4d9e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8082ab4f_582315fc",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1449,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-06-30T21:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8082ab4f_b2ba60e8",
       "range": {
         "startLine": 1449,
         "startChar": 0,
