@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9d4856a2_98a7a4b9",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-06-30T21:52:00Z",
+      "side": 1,
+      "message": "Comment is not longer relevant with this change, and the conditional no longer necessary.",
+      "revId": "e57da2cc287f8f2e987df336db47364aa8e95d59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
