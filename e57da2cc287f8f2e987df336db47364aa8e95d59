@@ -16,6 +16,24 @@
       "revId": "e57da2cc287f8f2e987df336db47364aa8e95d59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d4856a2_73963b64",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2016-06-30T22:52:46Z",
+      "side": 1,
+      "message": "The conditional is actually needed, otherwise we get non-empty $(my_sanitize), and the following check fails:\n\n# Sanitizers can only be used with clang.                                                                                        \nifneq ($(my_clang),true)\n  ifneq ($(my_sanitize),)",
+      "parentUuid": "9d4856a2_98a7a4b9",
+      "revId": "e57da2cc287f8f2e987df336db47364aa8e95d59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
