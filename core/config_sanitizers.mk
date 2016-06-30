@@ -34,6 +34,11 @@ ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize :=
 endif
 
+my_nosanitize = $(strip $(LOCAL_NOSANITIZE))
+ifneq ($(my_nosanitize),)
+  my_sanitize := $(filter-out $(my_nosanitize),$(my_sanitize))
+endif
+
 # TSAN is not supported on 32-bit architectures. For non-multilib cases, make
 # its use an error. For multilib cases, don't use it for the 32-bit case.
 ifneq ($(filter thread,$(my_sanitize)),)
