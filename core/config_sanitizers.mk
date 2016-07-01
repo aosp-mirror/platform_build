@@ -75,6 +75,12 @@ ifneq ($(filter thread,$(my_sanitize)),)
   endif
 endif
 
+ifneq ($(filter safe-stack,$(my_sanitize)),)
+  ifeq ($(my_32_64_bit_suffix),32)
+    my_sanitize := $(filter-out safe-stack,$(my_sanitize))
+  endif
+endif
+
 # Undefined symbols can occur if a non-sanitized library links
 # sanitized static libraries. That's OK, because the executable
 # always depends on the ASan runtime library, which defines these
