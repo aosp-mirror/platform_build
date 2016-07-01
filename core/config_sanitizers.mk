@@ -55,17 +55,13 @@ endif
 # sanitized static libraries. That's OK, because the executable
 # always depends on the ASan runtime library, which defines these
 # symbols.
-ifneq ($(strip $(SANITIZE_TARGET)),)
+ifneq ($(filter address thread,$(strip $(SANITIZE_TARGET))),)
   ifndef LOCAL_IS_HOST_MODULE
     ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
       ifeq ($(my_sanitize),)
         my_allow_undefined_symbols := true
       endif
     endif
-    # Workaround for a bug in AddressSanitizer that breaks stack unwinding.
-    # https://code.google.com/p/address-sanitizer/issues/detail?id=387
-    # Revert when external/compiler-rt is updated past r236014.
-    LOCAL_PACK_MODULE_RELOCATIONS := false
   endif
 endif
 
