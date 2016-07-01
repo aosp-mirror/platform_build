@@ -6,7 +6,7 @@
     <meta name="top_category" value="<?cs
       if:ndk ?>ndk<?cs
       elif:(guide||develop||training||reference||tools||sdk||google||reference.gms||reference.gcm||samples) ?>develop<?cs
-      elif:(topic||libraries||instantapps) ?>develop<?cs
+      elif:(topic||libraries||instantapps||perf) ?>develop<?cs
       elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>distribute<?cs
       elif:(design||vision||material||patterns||devices||designdownloads) ?>design<?cs
       elif:(about||versions||wear||tv||auto) ?>about<?cs
@@ -35,9 +35,10 @@
             if:(samplesDocPage&&!samplesProjectIndex) ?> samples-docpage<?cs /if ?><?cs
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(google||reference.gms||reference.gcm) ?>google<?cs
-        elif:(topic||libraries) ?><?cs
+        elif:(topic||libraries||perf) ?><?cs
           if:libraries ?>libraries<?cs
           elif:instantapps ?>instantapps<?cs
+          elif:perf ?>perf<?cs
           else ?>none<?cs set:dac_subcategory_set = #0 ?><?cs /if ?><?cs
         elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?><?cs
           if:googleplay ?>googleplay<?cs
@@ -74,9 +75,10 @@
             elif:reference ?>/reference<?cs
             elif:samples ?>/samples<?cs /if ?><?cs
           elif:(google||reference.gms||reference.gcm) ?>/google<?cs
-          elif:(topic||libraries) ?>/topic<?cs
+          elif:(topic||libraries||perf) ?>/topic<?cs
             if:libraries ?>/libraries<?cs
-            elif:instantapps ?>/instant-apps<?cs /if ?><?cs
+            elif:instantapps ?>/instant-apps<?cs
+            elif:perf ?>/performance<?cs /if ?><?cs
           elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>/distribute<?cs
             if:googleplay ?>/googleplay<?cs
             elif:essentials ?>/essentials<?cs
