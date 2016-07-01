@@ -24,6 +24,31 @@ ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize)
 endif
 
+# The sanitizer specified in the product configuration wins over the previous.
+ifneq ($(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG),)
+  my_sanitize := $(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG)
+  ifeq ($(my_sanitize),never)
+    my_sanitize :=
+  endif
+endif
+
+# Add a filter point for 32-bit vs 64-bit sanitization (to lighten the burden).
+SANITIZE_ARCH ?= 32 64
+ifeq ($(filter $(SANITIZE_ARCH),$(my_32_64_bit_suffix)),)
+  my_sanitize :=
+endif
+
+# Add a filter point based on module owner (to lighten the burden). The format is a space- or
+# colon-separated list of owner names.
+ifneq (,$(SANITIZE_NEVER_BY_OWNER))
+  ifneq (,$(LOCAL_MODULE_OWNER))
+    ifneq (,$(filter $(LOCAL_MODULE_OWNER),$(subst :, ,$(SANITIZE_NEVER_BY_OWNER))))
+      $(warning Not sanitizing $(LOCAL_MODULE) based on module owner.)
+      my_sanitize :=
+    endif
+  endif
+endif
+
 # Don't apply sanitizers to NDK code.
 ifdef LOCAL_SDK_VERSION
   my_sanitize :=
