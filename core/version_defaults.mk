@@ -55,7 +55,7 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
-  PLATFORM_SDK_VERSION := 24
+  PLATFORM_SDK_VERSION := 25
 endif
 
 ifeq "" "$(PLATFORM_JACK_MIN_SDK_VERSION)"
@@ -64,7 +64,7 @@ ifeq "" "$(PLATFORM_JACK_MIN_SDK_VERSION)"
   # PLATFORM_SDK_VERSION. During development, this number may be incremented
   # before PLATFORM_SDK_VERSION if the plateform starts to add new java
   # language supports.
-  PLATFORM_JACK_MIN_SDK_VERSION := 24
+  PLATFORM_JACK_MIN_SDK_VERSION := 25
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
