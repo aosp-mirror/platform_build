@@ -126,7 +126,9 @@ ifneq ($(my_sanitize),)
       my_cflags += -fsanitize-trap=all
       my_cflags += -ftrap-function=abort
     endif
-    my_shared_libraries += libdl
+    ifneq ($(filter address thread,$(my_sanitize)),)
+      my_shared_libraries += libdl
+    endif
   endif
 endif
 
