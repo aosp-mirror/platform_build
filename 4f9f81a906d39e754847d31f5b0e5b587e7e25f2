@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd71ee1c_6ea4c31d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1451,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-07-06T20:08:38Z",
+      "side": 1,
+      "message": "Why would someone ever want to set EFI_OUTPUT_IMAGE to something that isn\u0027t ${PRODUCT_OUT}/EFI.img ? Just use ${PRODUCT_OUT}/EFI.img",
+      "revId": "4f9f81a906d39e754847d31f5b0e5b587e7e25f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd71ee1c_8ea81ff2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1462,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-07-06T20:08:38Z",
+      "side": 1,
+      "message": "Well... If we were to have ${EFI_OUTPUT_IMAGE}, then you forgot to update this.",
+      "range": {
+        "startLine": 1462,
+        "startChar": 29,
+        "endLine": 1462,
+        "endChar": 51
+      },
+      "revId": "4f9f81a906d39e754847d31f5b0e5b587e7e25f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
