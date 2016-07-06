@@ -17,8 +17,10 @@
 package com.android.apksigner.core.util;
 
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 import com.android.apksigner.core.internal.util.OutputStreamDataSink;
+import com.android.apksigner.core.internal.util.RandomAccessFileDataSink;
 
 /**
  * Utility methods for working with {@link DataSink} abstraction.
@@ -32,5 +34,13 @@ public abstract class DataSinks {
      */
     public static DataSink asDataSink(OutputStream out) {
         return new OutputStreamDataSink(out);
+    }
+
+    /**
+     * Returns a {@link DataSink} which outputs received data into the provided file, sequentially,
+     * starting at the beginning of the file.
+     */
+    public static DataSink asDataSink(RandomAccessFile file) {
+        return new RandomAccessFileDataSink(file);
     }
 }
