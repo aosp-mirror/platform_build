@@ -16,9 +16,12 @@
 
 package com.android.apksigner.core.internal.zip;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.zip.CRC32;
+import java.util.zip.Deflater;
 
 import com.android.apksigner.core.internal.util.Pair;
 import com.android.apksigner.core.util.DataSource;
@@ -34,6 +37,9 @@ public abstract class ZipUtils {
 
     public static final short COMPRESSION_METHOD_STORED = 0;
     public static final short COMPRESSION_METHOD_DEFLATED = 8;
+
+    public static final short GP_FLAG_DATA_DESCRIPTOR_USED = 0x08;
+    public static final short GP_FLAG_EFS = 0x0800;
 
     private static final int ZIP_EOCD_REC_MIN_SIZE = 22;
     private static final int ZIP_EOCD_REC_SIG = 0x06054b50;
@@ -265,14 +271,83 @@ public abstract class ZipUtils {
         return buffer.getShort(offset) & 0xffff;
     }
 
-    private static void setUnsignedInt32(ByteBuffer buffer, int offset, long value) {
+    public static int getUnsignedInt16(ByteBuffer buffer) {
+        return buffer.getShort() & 0xffff;
+    }
+
+    static void setUnsignedInt16(ByteBuffer buffer, int offset, int value) {
+        if ((value < 0) || (value > 0xffff)) {
+            throw new IllegalArgumentException("uint16 value of out range: " + value);
+        }
+        buffer.putShort(offset, (short) value);
+    }
+
+    static void setUnsignedInt32(ByteBuffer buffer, int offset, long value) {
         if ((value < 0) || (value > 0xffffffffL)) {
             throw new IllegalArgumentException("uint32 value of out range: " + value);
         }
         buffer.putInt(offset, (int) value);
     }
 
+    public static void putUnsignedInt16(ByteBuffer buffer, int value) {
+        if ((value < 0) || (value > 0xffff)) {
+            throw new IllegalArgumentException("uint16 value of out range: " + value);
+        }
+        buffer.putShort((short) value);
+    }
+
     static long getUnsignedInt32(ByteBuffer buffer, int offset) {
         return buffer.getInt(offset) & 0xffffffffL;
+    }
+
+    static long getUnsignedInt32(ByteBuffer buffer) {
+        return buffer.getInt() & 0xffffffffL;
+    }
+
+    static void putUnsignedInt32(ByteBuffer buffer, long value) {
+        if ((value < 0) || (value > 0xffffffffL)) {
+            throw new IllegalArgumentException("uint32 value of out range: " + value);
+        }
+        buffer.putInt((int) value);
+    }
+
+    public static DeflateResult deflate(ByteBuffer input) {
+        byte[] inputBuf;
+        int inputOffset;
+        int inputLength = input.remaining();
+        if (input.hasArray()) {
+            inputBuf = input.array();
+            inputOffset = input.arrayOffset() + input.position();
+            input.position(input.limit());
+        } else {
+            inputBuf = new byte[inputLength];
+            inputOffset = 0;
+            input.get(inputBuf);
+        }
+        CRC32 crc32 = new CRC32();
+        crc32.update(inputBuf, inputOffset, inputLength);
+        long crc32Value = crc32.getValue();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Deflater deflater = new Deflater(9, true);
+        deflater.setInput(inputBuf, inputOffset, inputLength);
+        deflater.finish();
+        byte[] buf = new byte[65536];
+        while (!deflater.finished()) {
+            int chunkSize = deflater.deflate(buf);
+            out.write(buf, 0, chunkSize);
+        }
+        return new DeflateResult(inputLength, crc32Value, out.toByteArray());
+    }
+
+    public static class DeflateResult {
+        public final int inputSizeBytes;
+        public final long inputCrc32;
+        public final byte[] output;
+
+        public DeflateResult(int inputSizeBytes, long inputCrc32, byte[] output) {
+            this.inputSizeBytes = inputSizeBytes;
+            this.inputCrc32 = inputCrc32;
+            this.output = output;
+        }
     }
 }
