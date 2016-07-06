@@ -20,6 +20,7 @@ import com.android.apksigner.core.zip.ZipFormatException;
 
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 
@@ -38,52 +39,59 @@ public class CentralDirectoryRecord {
     private static final int RECORD_SIGNATURE = 0x02014b50;
     private static final int HEADER_SIZE_BYTES = 46;
 
-    private static final int GP_FLAGS_OFFSET = 8;
-    private static final int COMPRESSION_METHOD_OFFSET = 10;
-    private static final int CRC32_OFFSET = 16;
-    private static final int COMPRESSED_SIZE_OFFSET = 20;
-    private static final int UNCOMPRESSED_SIZE_OFFSET = 24;
-    private static final int NAME_LENGTH_OFFSET = 28;
-    private static final int EXTRA_LENGTH_OFFSET = 30;
-    private static final int COMMENT_LENGTH_OFFSET = 32;
-    private static final int LOCAL_FILE_HEADER_OFFSET = 42;
+    private static final int LAST_MODIFICATION_TIME_OFFSET =  12;
+    private static final int LOCAL_FILE_HEADER_OFFSET_OFFSET = 42;
     private static final int NAME_OFFSET = HEADER_SIZE_BYTES;
 
-    private final short mGpFlags;
-    private final short mCompressionMethod;
+    private final ByteBuffer mData;
+    private final int mLastModificationTime;
+    private final int mLastModificationDate;
     private final long mCrc32;
     private final long mCompressedSize;
     private final long mUncompressedSize;
     private final long mLocalFileHeaderOffset;
     private final String mName;
+    private final int mNameSizeBytes;
 
     private CentralDirectoryRecord(
-            short gpFlags,
-            short compressionMethod,
+            ByteBuffer data,
+            int lastModificationTime,
+            int lastModificationDate,
             long crc32,
             long compressedSize,
             long uncompressedSize,
             long localFileHeaderOffset,
-            String name) {
-        mGpFlags = gpFlags;
-        mCompressionMethod = compressionMethod;
+            String name,
+            int nameSizeBytes) {
+        mData = data;
+        mLastModificationDate = lastModificationDate;
+        mLastModificationTime = lastModificationTime;
         mCrc32 = crc32;
         mCompressedSize = compressedSize;
         mUncompressedSize = uncompressedSize;
         mLocalFileHeaderOffset = localFileHeaderOffset;
         mName = name;
+        mNameSizeBytes = nameSizeBytes;
+    }
+
+    public int getSize() {
+        return mData.remaining();
     }
 
     public String getName() {
         return mName;
     }
 
-    public short getGpFlags() {
-        return mGpFlags;
+    public int getNameSizeBytes() {
+        return mNameSizeBytes;
     }
 
-    public short getCompressionMethod() {
-        return mCompressionMethod;
+    public int getLastModificationTime() {
+        return mLastModificationTime;
+    }
+
+    public int getLastModificationDate() {
+        return mLastModificationDate;
     }
 
     public long getCrc32() {
@@ -114,24 +122,25 @@ public class CentralDirectoryRecord {
                             + " bytes, available: " + buf.remaining() + " bytes",
                     new BufferUnderflowException());
         }
-        int bufPosition = buf.position();
-        int recordSignature = buf.getInt(bufPosition);
+        int originalPosition = buf.position();
+        int recordSignature = buf.getInt();
         if (recordSignature != RECORD_SIGNATURE) {
             throw new ZipFormatException(
                     "Not a Central Directory record. Signature: 0x"
                             + Long.toHexString(recordSignature & 0xffffffffL));
         }
-        short gpFlags = buf.getShort(bufPosition + GP_FLAGS_OFFSET);
-        short compressionMethod = buf.getShort(bufPosition + COMPRESSION_METHOD_OFFSET);
-        long crc32 = ZipUtils.getUnsignedInt32(buf, bufPosition + CRC32_OFFSET);
-        long compressedSize = ZipUtils.getUnsignedInt32(buf, bufPosition + COMPRESSED_SIZE_OFFSET);
-        long uncompressedSize =
-                ZipUtils.getUnsignedInt32(buf,  bufPosition + UNCOMPRESSED_SIZE_OFFSET);
-        int nameSize = ZipUtils.getUnsignedInt16(buf, bufPosition + NAME_LENGTH_OFFSET);
-        int extraSize = ZipUtils.getUnsignedInt16(buf, bufPosition + EXTRA_LENGTH_OFFSET);
-        int commentSize = ZipUtils.getUnsignedInt16(buf, bufPosition + COMMENT_LENGTH_OFFSET);
-        long localFileHeaderOffset =
-                ZipUtils.getUnsignedInt32(buf, bufPosition + LOCAL_FILE_HEADER_OFFSET);
+        buf.position(originalPosition + LAST_MODIFICATION_TIME_OFFSET);
+        int lastModificationTime = ZipUtils.getUnsignedInt16(buf);
+        int lastModificationDate = ZipUtils.getUnsignedInt16(buf);
+        long crc32 = ZipUtils.getUnsignedInt32(buf);
+        long compressedSize = ZipUtils.getUnsignedInt32(buf);
+        long uncompressedSize = ZipUtils.getUnsignedInt32(buf);
+        int nameSize = ZipUtils.getUnsignedInt16(buf);
+        int extraSize = ZipUtils.getUnsignedInt16(buf);
+        int commentSize = ZipUtils.getUnsignedInt16(buf);
+        buf.position(originalPosition + LOCAL_FILE_HEADER_OFFSET_OFFSET);
+        long localFileHeaderOffset = ZipUtils.getUnsignedInt32(buf);
+        buf.position(originalPosition);
         int recordSize = HEADER_SIZE_BYTES + nameSize + extraSize + commentSize;
         if (recordSize > buf.remaining()) {
             throw new ZipFormatException(
@@ -139,16 +148,99 @@ public class CentralDirectoryRecord {
                             + buf.remaining() + " bytes",
                     new BufferUnderflowException());
         }
-        String name = getName(buf, bufPosition + NAME_OFFSET, nameSize);
-        buf.position(bufPosition + recordSize);
+        String name = getName(buf, originalPosition + NAME_OFFSET, nameSize);
+        buf.position(originalPosition);
+        int originalLimit = buf.limit();
+        int recordEndInBuf = originalPosition + recordSize;
+        ByteBuffer recordBuf;
+        try {
+            buf.limit(recordEndInBuf);
+            recordBuf = buf.slice();
+        } finally {
+            buf.limit(originalLimit);
+        }
+        // Consume this record
+        buf.position(recordEndInBuf);
         return new CentralDirectoryRecord(
-                gpFlags,
-                compressionMethod,
+                recordBuf,
+                lastModificationTime,
+                lastModificationDate,
                 crc32,
                 compressedSize,
                 uncompressedSize,
                 localFileHeaderOffset,
-                name);
+                name,
+                nameSize);
+    }
+
+    public void copyTo(ByteBuffer output) {
+        output.put(mData.slice());
+    }
+
+    public CentralDirectoryRecord createWithModifiedLocalFileHeaderOffset(
+            long localFileHeaderOffset) {
+        ByteBuffer result = ByteBuffer.allocate(mData.remaining());
+        result.put(mData.slice());
+        result.flip();
+        result.order(ByteOrder.LITTLE_ENDIAN);
+        ZipUtils.setUnsignedInt32(result, LOCAL_FILE_HEADER_OFFSET_OFFSET, localFileHeaderOffset);
+        return new CentralDirectoryRecord(
+                result,
+                mLastModificationTime,
+                mLastModificationDate,
+                mCrc32,
+                mCompressedSize,
+                mUncompressedSize,
+                localFileHeaderOffset,
+                mName,
+                mNameSizeBytes);
+    }
+
+    public static CentralDirectoryRecord createWithDeflateCompressedData(
+            String name,
+            int lastModifiedTime,
+            int lastModifiedDate,
+            long crc32,
+            long compressedSize,
+            long uncompressedSize,
+            long localFileHeaderOffset) {
+        byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+        int recordSize = HEADER_SIZE_BYTES + nameBytes.length;
+        ByteBuffer result = ByteBuffer.allocate(recordSize);
+        result.order(ByteOrder.LITTLE_ENDIAN);
+        result.putInt(RECORD_SIGNATURE);
+        ZipUtils.putUnsignedInt16(result, 0x14); // Version made by
+        ZipUtils.putUnsignedInt16(result, 0x14); // Minimum version needed to extract
+        result.putShort(ZipUtils.GP_FLAG_EFS); // UTF-8 character encoding used for entry name
+        result.putShort(ZipUtils.COMPRESSION_METHOD_DEFLATED);
+        ZipUtils.putUnsignedInt16(result, lastModifiedTime);
+        ZipUtils.putUnsignedInt16(result, lastModifiedDate);
+        ZipUtils.putUnsignedInt32(result, crc32);
+        ZipUtils.putUnsignedInt32(result, compressedSize);
+        ZipUtils.putUnsignedInt32(result, uncompressedSize);
+        ZipUtils.putUnsignedInt16(result, nameBytes.length);
+        ZipUtils.putUnsignedInt16(result, 0); // Extra field length
+        ZipUtils.putUnsignedInt16(result, 0); // File comment length
+        ZipUtils.putUnsignedInt16(result, 0); // Disk number
+        ZipUtils.putUnsignedInt16(result, 0); // Internal file attributes
+        ZipUtils.putUnsignedInt32(result, 0); // External file attributes
+        ZipUtils.putUnsignedInt32(result, localFileHeaderOffset);
+        result.put(nameBytes);
+
+        if (result.hasRemaining()) {
+            throw new RuntimeException("pos: " + result.position() + ", limit: " + result.limit());
+        }
+        result.flip();
+        return new CentralDirectoryRecord(
+                result,
+                lastModifiedTime,
+                lastModifiedDate,
+                crc32,
+                compressedSize,
+                uncompressedSize,
+                localFileHeaderOffset,
+                name,
+                nameBytes.length);
     }
 
     static String getName(ByteBuffer record, int position, int nameLengthBytes) {

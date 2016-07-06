@@ -33,9 +33,9 @@ import com.android.apksigner.core.util.DataSource;
  * <p><h3>Operating Model</h3>
  *
  * The abstract operating model is that there is an input APK which is being signed, thus producing
- * an output APK. In reality, there may be just an output APK being built from scratch, or the input APK and
- * the output APK may be the same file. Because this engine does not deal with reading and writing
- * files, it can handle all of these scenarios.
+ * an output APK. In reality, there may be just an output APK being built from scratch, or the input
+ * APK and the output APK may be the same file. Because this engine does not deal with reading and
+ * writing files, it can handle all of these scenarios.
  *
  * <p>The engine is stateful and thus cannot be used for signing multiple APKs. However, once
  * the engine signed an APK, the engine can be used to re-sign the APK after it has been modified.
@@ -119,9 +119,10 @@ public interface ApkSignerEngine extends Closeable {
      * @param apkSigningBlock APK signing block of the input APK. The provided data source is
      *        guaranteed to not be used by the engine after this method terminates.
      *
+     * @throws IOException if an I/O error occurs while reading the APK Signing Block
      * @throws IllegalStateException if this engine is closed
      */
-    void inputApkSigningBlock(DataSource apkSigningBlock) throws IllegalStateException;
+    void inputApkSigningBlock(DataSource apkSigningBlock) throws IOException, IllegalStateException;
 
     /**
      * Indicates to this engine that the specified JAR entry was encountered in the input APK.

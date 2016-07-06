@@ -47,7 +47,7 @@ import com.android.apksigner.core.internal.util.AndroidSdkVersion;
 import com.android.apksigner.core.internal.util.InclusiveIntRange;
 import com.android.apksigner.core.internal.util.MessageDigestSink;
 import com.android.apksigner.core.internal.zip.CentralDirectoryRecord;
-import com.android.apksigner.core.internal.zip.LocalFileHeader;
+import com.android.apksigner.core.internal.zip.LocalFileRecord;
 import com.android.apksigner.core.util.DataSource;
 import com.android.apksigner.core.zip.ZipFormatException;
 
@@ -187,10 +187,7 @@ public abstract class V1SchemeVerifier {
 
             // Parse the JAR manifest and check that all JAR entries it references exist in the APK.
             byte[] manifestBytes =
-                    LocalFileHeader.getUncompressedData(
-                            apk, 0,
-                            manifestEntry,
-                            cdStartOffset);
+                    LocalFileRecord.getUncompressedData(apk, manifestEntry, cdStartOffset);
             Map<String, ManifestParser.Section> entryNameToManifestSection = null;
             ManifestParser manifest = new ManifestParser(manifestBytes);
             ManifestParser.Section manifestMainSection = manifest.readSection();
@@ -411,15 +408,9 @@ public abstract class V1SchemeVerifier {
                 DataSource apk, long cdStartOffset, int minSdkVersion, int maxSdkVersion)
                         throws IOException, ZipFormatException, NoSuchAlgorithmException {
             byte[] sigBlockBytes =
-                    LocalFileHeader.getUncompressedData(
-                            apk, 0,
-                            mSignatureBlockEntry,
-                            cdStartOffset);
+                    LocalFileRecord.getUncompressedData(apk, mSignatureBlockEntry, cdStartOffset);
             mSigFileBytes =
-                    LocalFileHeader.getUncompressedData(
-                            apk, 0,
-                            mSignatureFileEntry,
-                            cdStartOffset);
+                    LocalFileRecord.getUncompressedData(apk, mSignatureFileEntry, cdStartOffset);
             PKCS7 sigBlock;
             try {
                 sigBlock = new PKCS7(sigBlockBytes);
@@ -1412,8 +1403,8 @@ public abstract class V1SchemeVerifier {
             }
 
             try {
-                LocalFileHeader.sendUncompressedData(
-                        apk, 0,
+                LocalFileRecord.outputUncompressedData(
+                        apk,
                         cdRecord,
                         cdOffsetInApk,
                         new MessageDigestSink(mds));
