@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ddc56ece_6b6255f0",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-07-07T15:53:36Z",
+      "side": 1,
+      "message": "line 144 and line 153 seem to show that single if statements should be bracketed, so you\u0027ll want to bracket this.",
+      "revId": "5eb2e2e273e28a3a71bd8bb32607b7b91156b11b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
