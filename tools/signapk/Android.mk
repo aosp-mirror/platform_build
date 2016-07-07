@@ -22,7 +22,7 @@ LOCAL_MODULE := signapk
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_JAR_MANIFEST := SignApk.mf
 LOCAL_STATIC_JAVA_LIBRARIES := \
-    apksigner-core \
+    apksig \
     bouncycastle-host \
     bouncycastle-bcpkix-host \
     conscrypt-host
