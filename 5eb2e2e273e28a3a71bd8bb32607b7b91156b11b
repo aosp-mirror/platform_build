@@ -16,6 +16,24 @@
       "revId": "5eb2e2e273e28a3a71bd8bb32607b7b91156b11b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ddc56ece_2e1a2b74",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-07-07T16:56:50Z",
+      "side": 1,
+      "message": "Correct: Android coding standard:\n\nif (i \u003d\u003d 0) {\n . . . /* even if one line */\n}\n\nor\n\nif (i \u003d\u003d 0) is_dir \u003d 1;\n\nNOT\n\nif (i \u003d\u003d 0)\n    is_dir \u003d 1;",
+      "parentUuid": "ddc56ece_6b6255f0",
+      "revId": "5eb2e2e273e28a3a71bd8bb32607b7b91156b11b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
