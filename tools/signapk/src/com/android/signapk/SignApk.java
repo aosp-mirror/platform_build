@@ -34,12 +34,12 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.conscrypt.OpenSSLProvider;
 
-import com.android.apksigner.core.ApkSignerEngine;
-import com.android.apksigner.core.DefaultApkSignerEngine;
-import com.android.apksigner.core.apk.ApkUtils;
-import com.android.apksigner.core.util.DataSink;
-import com.android.apksigner.core.util.DataSources;
-import com.android.apksigner.core.zip.ZipFormatException;
+import com.android.apksig.ApkSignerEngine;
+import com.android.apksig.DefaultApkSignerEngine;
+import com.android.apksig.apk.ApkUtils;
+import com.android.apksig.util.DataSink;
+import com.android.apksig.util.DataSources;
+import com.android.apksig.zip.ZipFormatException;
 
 import java.io.Console;
 import java.io.BufferedReader;
