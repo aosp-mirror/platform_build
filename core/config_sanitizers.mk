@@ -133,6 +133,11 @@ ifneq ($(my_sanitize),)
   endif
 endif
 
+ifneq ($(filter cfi,$(my_sanitize)),)
+  my_cflags += -flto -fsanitize-cfi-cross-dso -fvisibility=default
+  my_ldflags += -flto -fsanitize-cfi-cross-dso -fsanitize=cfi -Wl,-plugin-opt,O1 -Wl,-export-dynamic-symbol=__cfi_check
+endif
+
 # If local or global modules need ASAN, add linker flags.
 ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
   my_ldflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS)
@@ -186,4 +191,14 @@ endif
 ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
   recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_RECOVER)),
   my_cflags += -fsanitize-recover=$(recover_arg)
+endif
+
+ifneq ($(strip $(LOCAL_SANITIZE_DIAG)),)
+  notrap_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_DIAG)),
+  my_cflags += -fno-sanitize-trap=$(notrap_arg)
+  # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
+  ifeq ($(filter address thread,$(my_sanitize)),)
+    # Does not have to be the first DT_NEEDED unlike ASan.
+    my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
+  endif
 endif
