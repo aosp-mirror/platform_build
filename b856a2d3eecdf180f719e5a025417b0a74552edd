@@ -16,6 +16,24 @@
       "revId": "b856a2d3eecdf180f719e5a025417b0a74552edd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ad2c8e8_124c0c61",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1107984
+      },
+      "writtenOn": "2016-07-08T18:00:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "daf6544b_fcb940d9",
+      "revId": "b856a2d3eecdf180f719e5a025417b0a74552edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
