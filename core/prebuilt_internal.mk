@@ -368,6 +368,20 @@ common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
 $(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
 
+my_link_type := $(intermediates.COMMON)/link_type
+ifeq ($(LOCAL_SDK_VERSION),system_current)
+$(my_link_type): PRIVATE_LINK_TYPE := system
+else ifneq ($(LOCAL_SDK_VERSION),)
+$(my_link_type): PRIVATE_LINK_TYPE := sdk
+else
+$(my_link_type): PRIVATE_LINK_TYPE := platform
+endif
+$(my_link_type):
+	@echo Check module type: $@
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+$(LOCAL_BUILT_MODULE): $(my_link_type)
+
 ifeq ($(prebuilt_module_is_dex_javalib),true)
 # For prebuilt shared Java library we don't have classes.jar.
 $(common_javalib_jar) : $(my_src_jar) | $(ACP)

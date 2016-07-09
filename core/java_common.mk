@@ -369,3 +369,42 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JACK_SHARED_LIBRARIES:= $(full_shared_ja
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 
 endif  # need_compile_java
+
+
+###########################################################
+# Verify that all libraries are safe to use
+###########################################################
+ifndef LOCAL_IS_HOST_MODULE
+my_link_type := $(intermediates.COMMON)/link_type
+my_link_type_deps := $(strip \
+  $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES),\
+    $(call intermediates-dir-for, \
+      JAVA_LIBRARIES,$(lib),,COMMON)/link_type) \
+  $(foreach lib,$(apk_libraries), \
+    $(call intermediates-dir-for, \
+      APPS,$(lib),,COMMON)/link_type))
+ifeq ($(LOCAL_SDK_VERSION),system_current)
+$(my_link_type): PRIVATE_LINK_TYPE := system
+$(my_link_type): PRIVATE_ALLOWED_TYPES := (sdk|system)
+else ifneq ($(LOCAL_SDK_VERSION),)
+$(my_link_type): PRIVATE_LINK_TYPE := sdk
+$(my_link_type): PRIVATE_ALLOWED_TYPES := sdk
+else
+$(my_link_type): PRIVATE_LINK_TYPE := platform
+$(my_link_type): PRIVATE_ALLOWED_TYPES := (sdk|system|platform)
+endif
+$(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
+$(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(my_link_type): PRIVATE_MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
+$(my_link_type): $(my_link_type_deps)
+	@echo Check Java library module types: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -f $@
+	$(hide) for f in $(PRIVATE_DEPS); do \
+	  grep -qE '^$(PRIVATE_ALLOWED_TYPES)$$' $$f || \
+	    $(call echo-warning,"$(PRIVATE_MAKEFILE): $(PRIVATE_MODULE) ($(PRIVATE_LINK_TYPE)) should not link to $$(basename $${f%_intermediates/link_type}) ($$(cat $$f))"); \
+	done
+	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+
+$(LOCAL_BUILT_MODULE): $(my_link_type)
+endif  # !LOCAL_IS_HOST_MODULE
