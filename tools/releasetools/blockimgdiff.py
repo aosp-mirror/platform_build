@@ -261,7 +261,8 @@ class HeapItem(object):
 # original image.
 
 class BlockImageDiff(object):
-  def __init__(self, tgt, src=None, threads=None, version=4):
+  def __init__(self, tgt, src=None, threads=None, version=4,
+               disable_imgdiff=False):
     if threads is None:
       threads = multiprocessing.cpu_count() // 2
       if threads == 0:
@@ -274,6 +275,7 @@ class BlockImageDiff(object):
     self._max_stashed_size = 0
     self.touched_src_ranges = RangeSet()
     self.touched_src_sha1 = None
+    self.disable_imgdiff = disable_imgdiff
 
     assert version in (1, 2, 3, 4)
 
@@ -704,6 +706,7 @@ class BlockImageDiff(object):
             # produces significantly smaller patches than bsdiff).
             # This is permissible if:
             #
+            #  - imgdiff is not disabled, and
             #  - the source and target files are monotonic (ie, the
             #    data is stored with blocks in increasing order), and
             #  - we haven't removed any blocks from the source set.
@@ -713,7 +716,7 @@ class BlockImageDiff(object):
             # zip file (plus possibly extra zeros in the last block),
             # which is what imgdiff needs to operate.  (imgdiff is
             # fine with extra zeros at the end of the file.)
-            imgdiff = (xf.intact and
+            imgdiff = (not self.disable_imgdiff and xf.intact and
                        xf.tgt_name.split(".")[-1].lower()
                        in ("apk", "jar", "zip"))
             xf.style = "imgdiff" if imgdiff else "bsdiff"
