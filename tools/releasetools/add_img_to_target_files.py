@@ -39,6 +39,7 @@ import zipfile
 
 import build_image
 import common
+import sparse_img
 
 OPTIONS = common.OPTIONS
 
@@ -47,6 +48,19 @@ OPTIONS.rebuild_recovery = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.verity_signer_path = None
+
+def GetCareMap(which, imgname):
+  """Generate care_map of system (or vendor) partition"""
+
+  assert which in ("system", "vendor")
+  _, blk_device = common.GetTypeAndDevice("/" + which, OPTIONS.info_dict)
+
+  simg = sparse_img.SparseImage(imgname)
+  care_map_list = []
+  care_map_list.append(blk_device)
+  care_map_list.append(simg.care_map.to_string_raw())
+  return care_map_list
+
 
 def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
   """Turn the contents of SYSTEM into a system image and store it in
@@ -120,13 +134,14 @@ def AddVendor(output_zip, prefix="IMAGES/"):
   prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "vendor.img")
   if os.path.exists(prebuilt_path):
     print "vendor.img already exists in %s, no need to rebuild..." % (prefix,)
-    return
+    return prebuilt_path
 
   block_list = common.MakeTempFile(prefix="vendor-blocklist-", suffix=".map")
   imgname = BuildVendor(OPTIONS.input_tmp, OPTIONS.info_dict,
                         block_list=block_list)
   common.ZipWrite(output_zip, imgname, prefix + "vendor.img")
   common.ZipWrite(output_zip, block_list, prefix + "vendor.map")
+  return imgname
 
 
 def BuildVendor(input_dir, info_dict, block_list=None):
@@ -156,8 +171,9 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
 
   image_props = build_image.ImagePropFromGlobalDict(info_dict, what)
   fstab = info_dict["fstab"]
-  if fstab:
-    image_props["fs_type"] = fstab["/" + what].fs_type
+  mount_point = "/" + what
+  if fstab and mount_point in fstab:
+    image_props["fs_type"] = fstab[mount_point].fs_type
 
   # Use a fixed timestamp (01/01/2009) when packaging the image.
   # Bug: 24377993
@@ -402,9 +418,10 @@ def AddImagesToTargetFiles(filename):
       system_img_path=system_img_path)
     if boot_image:
       boot_image.AddToZip(output_zip)
+  vendor_img_path = None
   if has_vendor:
     banner("vendor")
-    AddVendor(output_zip)
+    vendor_img_path = AddVendor(output_zip)
   if has_system_other:
     banner("system_other")
     AddSystemOther(output_zip)
@@ -424,7 +441,19 @@ def AddImagesToTargetFiles(filename):
   if os.path.exists(ab_partitions):
     with open(ab_partitions, 'r') as f:
       lines = f.readlines()
+    # For devices using A/B update, generate care_map for system and vendor
+    # partitions (if present), then write this file to target_files package.
+    care_map_list = []
     for line in lines:
+      if line.strip() == "system" and OPTIONS.info_dict.get(
+          "system_verity_block_device", None) is not None:
+        assert os.path.exists(system_img_path)
+        care_map_list += GetCareMap("system", system_img_path)
+      if line.strip() == "vendor" and OPTIONS.info_dict.get(
+          "vendor_verity_block_device", None) is not None:
+        assert os.path.exists(vendor_img_path)
+        care_map_list += GetCareMap("vendor", vendor_img_path)
+
       img_name = line.strip() + ".img"
       prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
       if os.path.exists(prebuilt_path):
@@ -447,6 +476,10 @@ def AddImagesToTargetFiles(filename):
       # Zip spec says: All slashes MUST be forward slashes.
       img_path = 'IMAGES/' + img_name
       assert img_path in output_zip.namelist(), "cannot find " + img_name
+
+    if care_map_list:
+      file_path = "META/care_map.txt"
+      common.ZipWriteStr(output_zip, file_path, '\n'.join(care_map_list))
 
   common.ZipClose(output_zip)
 
