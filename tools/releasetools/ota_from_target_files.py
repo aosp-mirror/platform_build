@@ -1317,6 +1317,19 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                   compress_type=zipfile.ZIP_STORED)
   WriteMetadata(metadata, output_zip)
 
+  # If dm-verity is supported for the device, copy contents of care_map
+  # into A/B OTA package.
+  if OPTIONS.info_dict.get("verity") == "true":
+    target_zip = zipfile.ZipFile(target_file, "r")
+    care_map_path = "META/care_map.txt"
+    namelist = target_zip.namelist()
+    if care_map_path in namelist:
+      care_map_data = target_zip.read(care_map_path)
+      common.ZipWriteStr(output_zip, "care_map.txt", care_map_data)
+    else:
+      print "Warning: cannot find care map file in target_file package"
+    common.ZipClose(target_zip)
+
   # Sign the whole package to comply with the Android OTA package format.
   common.ZipClose(output_zip)
   SignOutput(temp_zip_file.name, output_file)
