@@ -138,40 +138,12 @@ $(strip \
 endef
 
 
-define _filter-soong-makefile
-$(if $(wildcard $(patsubst %/Android.mk,%/Android.bp,$(1))),\
-  $(info skipping $(1) ...)\
-    $(call _filter-soong-bpfile $(patsubst %/Android.mk,%/Android.bp,$(1))),\
-  $(1))
-endef
-
-define _filter-soong-bpfile
-$(if $(wildcard $(patsubst %/Android.bp,%/Android.soong.mk,$(1))),\
-  $(patsubst %/Android.bp,%/Android.soong.mk,$(1)))
-endef
-
-###########################################################
-## Remove any makefiles that are being handled by soong
-##
-## If passed an Android.mk file, returns the Android.mk file
-## if no Android.bp file exists and the same path.  If an
-## Android.bp file exists, or if passed an Android.bp file,
-## returns the Android.soong.mk file at the same path if it
-## exists, or nothing if it does not.
-###########################################################
-define filter-soong-makefiles
-$(sort $(foreach mk,$(1),\
-  $(if $(filter %/Android.bp,$(mk)),\
-    $(call _filter-soong-bpfile,$(mk)),\
-    $(call _filter-soong-makefile,$(mk)))))
-endef
-
 ###########################################################
 ## Retrieve a list of all makefiles immediately below some directory
 ###########################################################
 
 define all-makefiles-under
-$(call filter-soong-makefiles,$(wildcard $(1)/*/Android.mk $(1)/*/Android.bp))
+$(wildcard $(1)/*/Android.mk)
 endef
 
 ###########################################################
@@ -182,9 +154,8 @@ endef
 # $(1): directory to search under
 # Ignores $(1)/Android.mk
 define first-makefiles-under
-$(call filter-soong-makefiles,\
-  $(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) \
-        --mindepth=2 $(addprefix --dir=,$(1)) Android.bp Android.mk))
+$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) \
+        --mindepth=2 $(addprefix --dir=,$(1)) Android.mk)
 endef
 
 ###########################################################
@@ -204,9 +175,7 @@ endef
 
 # $(1): List of directories to look for under this directory
 define all-named-subdir-makefiles
-$(call filter-soong-makefiles,\
-  $(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1))))\
-  $(wildcard $(addsuffix /Android.bp, $(addprefix $(call my-dir)/,$(1)))))
+$(wildcard $(addsuffix /Android.mk, $(addprefix $(call my-dir)/,$(1))))
 endef
 
 ###########################################################
