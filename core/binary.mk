@@ -1273,7 +1273,7 @@ $(my_link_type): $(my_link_type_deps)
 ifdef my_link_type_deps
 	$(hide) for f in $(PRIVATE_DEPS); do \
 	  grep -qE '^$(PRIVATE_ALLOWED_TYPES)$$' $$f || \
-	    $(call echo-warning,"$(PRIVATE_MAKEFILE): $(PRIVATE_MODULE) ($(PRIVATE_LINK_TYPE)) should not link to $$(basename $${f%_intermediates/link_type}) ($$(cat $$f))"); \
+	    ($(call echo-error,"$(PRIVATE_MAKEFILE): $(PRIVATE_MODULE) ($(PRIVATE_LINK_TYPE)) should not link to $$(basename $${f%_intermediates/link_type}) ($$(cat $$f))"); exit 1) \
 	done
 endif
 	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
