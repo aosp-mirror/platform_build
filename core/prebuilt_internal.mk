@@ -88,7 +88,7 @@ LOCAL_BUILT_MODULE_STEM := package.apk
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
 endif
 
-ifneq ($(filter true keep_symbols no_debuglink,$(my_strip_module) $(my_pack_module_relocations)),)
+ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module) $(my_pack_module_relocations)),)
   ifdef LOCAL_IS_HOST_MODULE
     $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
   endif
