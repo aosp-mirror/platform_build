@@ -42,6 +42,8 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "SanitizeHost": [$(if $(SANITIZE_HOST),"$(subst $(comma),"$(comma)",$(SANITIZE_HOST))")],'; \
 	echo '    "SanitizeDevice": [$(if $(SANITIZE_TARGET),"$(subst $(comma),"$(comma)",$(SANITIZE_TARGET))")],'; \
 	echo '    "HostStaticBinaries": $(if $(strip $(BUILD_HOST_static)),true,false),'; \
+	echo '    "Cpusets": $(if $(strip $(ENABLE_CPUSETS)),true,false),'; \
+	echo '    "Schedboost": $(if $(strip $(ENABLE_SCHEDBOOST)),true,false),'; \
 	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
