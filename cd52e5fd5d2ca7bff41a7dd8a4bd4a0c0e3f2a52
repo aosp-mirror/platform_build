@@ -22,6 +22,30 @@
       "revId": "cd52e5fd5d2ca7bff41a7dd8a4bd4a0c0e3f2a52",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a9d046f_71967862",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074131
+      },
+      "writtenOn": "2016-07-13T09:41:27Z",
+      "side": 1,
+      "message": "yes we have different flags for 32 bit/64 bits and x86/ x86_64 and current build system of N does not allow this differentiation right now. this is the reason why this patch is posted.",
+      "parentUuid": "da157484_3ce49742",
+      "range": {
+        "startLine": 12,
+        "startChar": 18,
+        "endLine": 13,
+        "endChar": 37
+      },
+      "revId": "cd52e5fd5d2ca7bff41a7dd8a4bd4a0c0e3f2a52",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
