@@ -323,6 +323,9 @@ $(foreach c, $(my_path_components),\
 ## Module installation rule
 ###########################################################
 
+my_init_rc_installed :=
+my_init_rc_pairs :=
+my_installed_symlinks :=
 ifndef LOCAL_UNINSTALLABLE_MODULE
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
@@ -331,8 +334,6 @@ $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	$(PRIVATE_POST_INSTALL_CMD)
 
 # Rule to install the module's companion init.rc.
-my_init_rc_installed :=
-my_init_rc_pairs :=
 my_init_rc := $(LOCAL_INIT_RC_$(my_32_64_bit_suffix))
 ifneq ($(my_init_rc),)
 my_init_rc_pairs += $(LOCAL_PATH)/$(my_init_rc):$(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(my_init_rc))
@@ -347,6 +348,12 @@ my_init_rc_installed := $(call copy-many-files,$(my_init_rc_pairs))
 
 $(my_register_name) : $(my_init_rc_installed)
 endif # my_init_rc_pairs
+
+# Rule to install the module's companion symlinks
+my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
+$(foreach symlink,$(my_installed_symlinks),\
+    $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink)))
+
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
@@ -395,7 +402,7 @@ ALL_MODULES.$(my_register_name).BUILT := \
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
-    $(LOCAL_INSTALLED_MODULE) $(my_init_rc_installed))
+    $(LOCAL_INSTALLED_MODULE) $(my_init_rc_installed) $(my_installed_symlinks))
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
