@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "faa1580d_2266b604",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2611,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-14T23:48:33Z",
+      "side": 1,
+      "message": "I didn\u0027t think a broken symlink would work properly in the dependency graph, since the file would always be missing, and would have to be reegenerated every time, even if nothing else changes. It would cause us to regenerate the system image, etc.",
+      "revId": "d4b92c016e78f4a97e4deec7aecdd2a3401d5ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
