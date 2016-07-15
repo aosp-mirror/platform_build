@@ -16,6 +16,24 @@
       "revId": "d4b92c016e78f4a97e4deec7aecdd2a3401d5ba7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "faa1580d_7c369bd4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2611,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-07-15T19:26:34Z",
+      "side": 1,
+      "message": "The comment was moved from executable_prefer_symlink.mk.  I tweaked it to require the source to exist using an order-only dependency.",
+      "parentUuid": "faa1580d_2266b604",
+      "revId": "d4b92c016e78f4a97e4deec7aecdd2a3401d5ba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
