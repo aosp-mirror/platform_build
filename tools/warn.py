@@ -1977,15 +1977,15 @@ warningpattern = re.compile('.* warning:.*')
 compilepatterns()
 
 # read the log file and classify all the warnings
-lastmatchedline = ''
+warninglines = set()
 for line in infile:
     # replace fancy quotes with plain ol' quotes
     line = line.replace("‘", "'");
     line = line.replace("’", "'");
     if warningpattern.match(line):
-        if line != lastmatchedline:
+        if line not in warninglines:
             classifywarning(line)
-            lastmatchedline = line
+            warninglines.add(line)
     else:
         # save a little bit of time by only doing this for the first few lines
         if linecounter < 50:
