@@ -110,7 +110,7 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         media-compat \
         fragment \
         core-ui \
-        v4 \
+        core-utils \
         v7/gridlayout \
         v7/cardview \
         v7/mediarouter \
