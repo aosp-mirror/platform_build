@@ -34,6 +34,24 @@
       "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a6037e5_7620b504",
+        "filename": "core/goma.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1104568
+      },
+      "writtenOn": "2016-07-19T17:38:02Z",
+      "side": 1,
+      "message": "Not setting GOMA_HERMETIC at all and defaulting to \"fallback\" make sense to me. Dan and Shinichiro, any other concern if we do what david suggested?",
+      "parentUuid": "6a6037e5_25ed6523",
+      "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
