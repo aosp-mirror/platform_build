@@ -52,6 +52,24 @@
       "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a6037e5_414e0695",
+        "filename": "core/goma.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-19T20:26:48Z",
+      "side": 1,
+      "message": "Sure, always using fallback seems fine",
+      "parentUuid": "6a6037e5_7620b504",
+      "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
