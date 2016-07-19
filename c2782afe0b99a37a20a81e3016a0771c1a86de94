@@ -16,6 +16,24 @@
       "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a6037e5_25ed6523",
+        "filename": "core/goma.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1076194
+      },
+      "writtenOn": "2016-07-19T16:01:32Z",
+      "side": 1,
+      "message": "I\u0027d prefer to be able to use GOMA_HERMETIC\u003derror everywhere, but doing this would require that GOMA can pick up toolchains from the build itself -- i.e. when we\u0027re testing a CL that modifies the toolchain, GOMA would pick up the new toolchain from the CL and use it. I believe GOMA can\u0027t do that with current architecture, so that\u0027s why we need fallback mode.\n\nA question: When we update the toolchain in Android with a commit, does Goma pick it up immediately or is there some lag? If the latter, we actually want GOMA_HERMETIC\u003dfallback everywhere, because it\u0027s then inevitable that there will be times when we can\u0027t compile on the goma farm.\n\nThe last option, GOMA_HERMETIC\u003doff, is generally a recipe for trouble since it doesn\u0027t guarantee you get the right compiler. But, do we really know better than the user here? Maybe the user just wants to use the option for debugging goma performance?\n\nI suggest we just delete all of this code for simplicity. GOMA can manage the options. Don\u0027t set GOMA_HERMETIC at all, and goma will default to \"fallback\" -- this is new as of 4 months ago: https://chrome-internal-review.googlesource.com/#/c/251515/\n\nThoughts from others on this?",
+      "parentUuid": "4ac1b31c_298e8d25",
+      "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
