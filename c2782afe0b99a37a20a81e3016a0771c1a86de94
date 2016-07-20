@@ -70,6 +70,24 @@
       "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ac1b31c_e91f155f",
+        "filename": "core/goma.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1076769
+      },
+      "writtenOn": "2016-07-20T04:00:24Z",
+      "side": 1,
+      "message": "\u003e does Goma pick it up immediately\n\nNo, there\u0027s some lag. Ideally, compiler changes should be automatically tested on the bot with goma before they are actually delivered to developers. IIRC this is what Chromium is doing. But for now, setting fallback by default makes sense to me.",
+      "parentUuid": "6a6037e5_414e0695",
+      "revId": "c2782afe0b99a37a20a81e3016a0771c1a86de94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
