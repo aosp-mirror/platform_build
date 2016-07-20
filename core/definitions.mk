@@ -1192,19 +1192,24 @@ $(hide) $(DBUS_GENERATOR) \
 	$(filter %.dbus-xml,$^)
 endef
 
+###########################################################
+## Helper to set include paths form transform-*-to-o
+###########################################################
+define c-includes
+$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
+$$(cat $(PRIVATE_IMPORT_INCLUDES))\
+$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),,\
+    $(addprefix -isystem ,\
+        $(filter-out $(PRIVATE_C_INCLUDES), \
+            $(PRIVATE_GLOBAL_C_INCLUDES))))
+endef
 
 ###########################################################
 ## Commands for running gcc to compile a C++ file
 ###########################################################
 
 define transform-cpp-to-o-compiler-args
-	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
-	$$(cat $(PRIVATE_IMPORT_INCLUDES)) \
-	$(addprefix -isystem ,\
-	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	        $(filter-out $(PRIVATE_C_INCLUDES), \
-	            $(PRIVATE_TARGET_PROJECT_INCLUDES) \
-	            $(PRIVATE_TARGET_C_INCLUDES)))) \
+	$(c-includes) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
@@ -1250,13 +1255,7 @@ endif
 
 # $(1): extra flags
 define transform-c-or-s-to-o-compiler-args
-	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
-	$$(cat $(PRIVATE_IMPORT_INCLUDES)) \
-	$(addprefix -isystem ,\
-	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	        $(filter-out $(PRIVATE_C_INCLUDES), \
-	            $(PRIVATE_TARGET_PROJECT_INCLUDES) \
-	            $(PRIVATE_TARGET_C_INCLUDES)))) \
+	$(c-includes) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
@@ -1342,13 +1341,7 @@ endef
 ###########################################################
 
 define transform-host-cpp-to-o-compiler-args
-	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
-	$$(cat $(PRIVATE_IMPORT_INCLUDES)) \
-	$(addprefix -isystem ,\
-	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	        $(filter-out $(PRIVATE_C_INCLUDES), \
-	            $($(PRIVATE_PREFIX)PROJECT_INCLUDES) \
-	            $(PRIVATE_HOST_C_INCLUDES)))) \
+	$(c-includes) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(PRIVATE_HOST_GLOBAL_CFLAGS) \
@@ -1391,13 +1384,7 @@ endif
 ###########################################################
 
 define transform-host-c-or-s-to-o-common-args
-	$(addprefix -I , $(PRIVATE_C_INCLUDES)) \
-	$$(cat $(PRIVATE_IMPORT_INCLUDES)) \
-	$(addprefix -isystem ,\
-	    $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	        $(filter-out $(PRIVATE_C_INCLUDES), \
-	            $($(PRIVATE_PREFIX)PROJECT_INCLUDES) \
-	            $(PRIVATE_HOST_C_INCLUDES)))) \
+	$(c-includes) \
 	-c \
 	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
 	    $(PRIVATE_HOST_GLOBAL_CFLAGS) \
