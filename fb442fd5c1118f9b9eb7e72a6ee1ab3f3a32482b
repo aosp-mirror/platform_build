@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aaf86f8a_db6e3fc4",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-07-20T20:17:52Z",
+      "side": 1,
+      "message": "LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES",
+      "range": {
+        "startLine": 49,
+        "startChar": 4,
+        "endLine": 49,
+        "endChar": 31
+      },
+      "revId": "fb442fd5c1118f9b9eb7e72a6ee1ab3f3a32482b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
