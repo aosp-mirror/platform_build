@@ -22,6 +22,30 @@
       "revId": "53c7a16f90b601526c3d13755b7728795aebd05a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aaf86f8a_3b3663ed",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-07-20T20:14:56Z",
+      "side": 1,
+      "message": "This file is evaluated before out/soong/make_vars-$product.mk, so referencing SRC_SYSTEM_HEADERS won\u0027t work once we remove the definition above.",
+      "parentUuid": "aaf86f8a_60079a20",
+      "range": {
+        "startLine": 669,
+        "startChar": 33,
+        "endLine": 669,
+        "endChar": 34
+      },
+      "revId": "53c7a16f90b601526c3d13755b7728795aebd05a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
