@@ -16,9 +16,9 @@
 
 # Most Android source files are not clang-tidy clean yet.
 # Global tidy checks include only google* and misc-macro-parentheses,
-# but not google-readability*.
+# but not google-readability* or google-runtime-references.
 DEFAULT_GLOBAL_TIDY_CHECKS := \
-  -*,google*,-google-readability*,misc-macro-parentheses
+  -*,google*,-google-readability*,-google-runtime-references,misc-macro-parentheses
 
 # Disable style rules usually not followed by external projects.
 # Every word in DEFAULT_LOCAL_TIDY_CHECKS list has the following format:
@@ -37,9 +37,9 @@ DEFAULT_LOCAL_TIDY_CHECKS := \
   external/webrtc/:,google-runtime-int \
   hardware/qcom:,-google-build-using-namespace \
   hardware/qcom:,-google-explicit-constructor,-google-runtime-int \
-  vendor/lge:,-google-build-using-namespace \
+  vendor/lge:,-google-build-using-namespace,-misc-macro-parentheses \
   vendor/lge:,-google-explicit-constructor,-google-runtime-int \
-  vendor/widevine:,-google-build-using-namespace \
+  vendor/widevine:,-google-build-using-namespace,-misc-macro-parentheses \
   vendor/widevine:,-google-explicit-constructor,-google-runtime-int \
 
 # Returns 2nd word of $(1) if $(2) has prefix of the 1st word of $(1).
