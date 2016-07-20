@@ -39,17 +39,17 @@ export PYTHONDONTWRITEBYTECODE := 1
 # TODO: Enforce some kind of layering; only add include paths
 #       when a module links against a particular library.
 # TODO: See if we can remove most of these from the global list.
-SRC_HEADERS := \
-	$(TOPDIR)system/core/include \
-	$(TOPDIR)system/media/audio/include \
-	$(TOPDIR)hardware/libhardware/include \
-	$(TOPDIR)hardware/libhardware_legacy/include \
-	$(TOPDIR)hardware/ril/include \
-	$(TOPDIR)libnativehelper/include \
-	$(TOPDIR)frameworks/native/include \
-	$(TOPDIR)frameworks/native/opengl/include \
-	$(TOPDIR)frameworks/av/include \
-	$(TOPDIR)frameworks/base/include
+SRC_SYSTEM_HEADERS := \
+	$(wildcard system/core/include) \
+	$(wildcard system/media/audio/include) \
+	$(wildcard hardware/libhardware/include) \
+	$(wildcard hardware/libhardware_legacy/include) \
+	$(wildcard hardware/ril/include) \
+	$(wildcard libnativehelper/include) \
+	$(wildcard frameworks/native/include) \
+	$(wildcard frameworks/native/opengl/include) \
+	$(wildcard frameworks/av/include) \
+	$(wildcard frameworks/base/include)
 SRC_TARGET_DIR := $(TOPDIR)build/target
 SRC_API_DIR := $(TOPDIR)prebuilts/sdk/api
 SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
@@ -663,28 +663,34 @@ endif
 HOST_GLOBAL_LD_DIRS := -L$(HOST_OUT_INTERMEDIATE_LIBRARIES)
 TARGET_GLOBAL_LD_DIRS := -L$(TARGET_OUT_INTERMEDIATE_LIBRARIES)
 
-HOST_PROJECT_INCLUDES:= $(SRC_HEADERS) $(HOST_OUT_HEADERS)
-TARGET_PROJECT_INCLUDES:= $(SRC_HEADERS) $(TARGET_OUT_HEADERS) \
+HOST_PROJECT_INCLUDES :=
+HOST_PROJECT_SYSTEM_INCLUDES := $(HOST_OUT_HEADERS)
+TARGET_PROJECT_INCLUDES :=
+TARGET_PROJECT_SYSTEM_INCLUDES := $(TARGET_OUT_HEADERS) \
 		$(TARGET_DEVICE_KERNEL_HEADERS) $(TARGET_BOARD_KERNEL_HEADERS) \
 		$(TARGET_PRODUCT_KERNEL_HEADERS)
 
 ifdef TARGET_2ND_ARCH
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LD_DIRS := -L$($(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_INCLUDES := $(TARGET_PROJECT_INCLUDES)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_SYSTEM_INCLUDES := $(TARGET_PROJECT_SYSTEM_INCLUDES)
 endif
 
 ifdef HOST_2ND_ARCH
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS := -L$($(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_INTERMEDIATE_LIBRARIES)
 $(HOST_2ND_ARCH_VAR_PREFIX)HOST_PROJECT_INCLUDES := $(HOST_PROJECT_INCLUDES)
+$(HOST_2ND_ARCH_VAR_PREFIX)HOST_PROJECT_SYSTEM_INCLUDES := $(HOST_PROJECT_SYSTEM_INCLUDES)
 endif
 
 ifdef HOST_CROSS_OS
 HOST_CROSS_GLOBAL_LD_DIRS := -L$(HOST_CROSS_OUT_INTERMEDIATE_LIBRARIES)
-HOST_CROSS_PROJECT_INCLUDES:= $(SRC_HEADERS) $(HOST_CROSS_OUT_HEADERS)
+HOST_CROSS_PROJECT_INCLUDES :=
+HOST_CROSS_PROJECT_SYSTEM_INCLUDES := $(HOST_CROSS_OUT_HEADERS)
 
 ifdef HOST_CROSS_2ND_ARCH
 $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)HOST_CROSS_GLOBAL_LD_DIRS := -L$($(HOST_CROSS_2ND_ARCH_VAR_PREFIX)HOST_CROSS_OUT_INTERMEDIATE_LIBRARIES)
 $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)HOST_CROSS_PROJECT_INCLUDES:= $(HOST_CROSS_PROJECT_INCLUDES)
+$(HOST_CROSS_2ND_ARCH_VAR_PREFIX)HOST_CROSS_PROJECT_SYSTEM_INCLUDES:= $(HOST_CROSS_PROJECT_SYSTEM_INCLUDES)
 endif
 endif
 
