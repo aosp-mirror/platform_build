@@ -1199,9 +1199,12 @@ define c-includes
 $(addprefix -I , $(PRIVATE_C_INCLUDES)) \
 $$(cat $(PRIVATE_IMPORT_INCLUDES))\
 $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),,\
+    $(addprefix -I ,\
+        $(filter-out $(PRIVATE_C_INCLUDES), \
+            $(PRIVATE_GLOBAL_C_INCLUDES))) \
     $(addprefix -isystem ,\
         $(filter-out $(PRIVATE_C_INCLUDES), \
-            $(PRIVATE_GLOBAL_C_INCLUDES))))
+            $(PRIVATE_GLOBAL_C_SYSTEM_INCLUDES))))
 endef
 
 ###########################################################
