@@ -8,6 +8,7 @@ java\.beans
 java\.io
 java\.lang
 java\.lang\.annotation
+java\.lang\.invoke
 java\.lang\.ref
 java\.lang\.reflect
 java\.math
