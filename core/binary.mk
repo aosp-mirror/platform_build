@@ -70,6 +70,9 @@ ifdef LOCAL_SDK_VERSION
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
   endif
 
+  # Make sure we've built the NDK.
+  my_additional_dependencies += ndk
+
   # mips32r6 is not supported by the NDK. No released NDK contains these
   # libraries, but the r10 in prebuilts/ndk had a local hack to add them :(
   #
@@ -81,9 +84,31 @@ ifdef LOCAL_SDK_VERSION
     endif
   endif
 
-  my_ndk_source_root := $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
-  my_ndk_sysroot := $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(LOCAL_SDK_VERSION)/arch-$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-  my_ndk_sysroot_include := $(my_ndk_sysroot)/usr/include
+  my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
+    my_min_sdk_version := 21
+  else
+    my_min_sdk_version := 9
+  endif
+
+  # Historically we've just set up a bunch of symlinks in prebuilts/ndk to map
+  # missing API levels to existing ones where necessary, but we're not doing
+  # that for the generated libraries. Clip the API level to the minimum where
+  # appropriate.
+  my_ndk_api := \
+    $(shell if [ $(LOCAL_SDK_VERSION) -lt $(my_min_sdk_version) ]; then \
+        echo $(my_min_sdk_version); else echo $(LOCAL_SDK_VERSION); fi)
+
+  my_ndk_source_root := \
+      $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
+  my_ndk_sysroot := \
+    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(my_ndk_api)/arch-$(my_arch)
+  my_built_ndk := $(SOONG_OUT_DIR)/ndk
+  my_ndk_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_TRIPLE)
+  my_ndk_sysroot_include := \
+      $(my_built_ndk)/sysroot/usr/include \
+      $(my_built_ndk)/sysroot/usr/include/$(my_ndk_triple) \
+      $(my_ndk_sysroot)/usr/include \
 
   # x86_64 and and mips64 are both multilib toolchains, so their libraries are
   # installed in /usr/lib64. Aarch64, on the other hand, is not a multilib
@@ -92,13 +117,18 @@ ifdef LOCAL_SDK_VERSION
   # Mips32r6 is yet another variation, with libraries installed in libr6.
   #
   # For the rest, the libraries are installed simply to /usr/lib.
-  ifneq (,$(filter x86_64 mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
-    my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib64
+  ifneq (,$(filter x86_64 mips64,$(my_arch)))
+    my_ndk_libdir_name := lib64
   else ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
-    my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/libr6
+    my_ndk_libdir_name := libr6
   else
-    my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/lib
+    my_ndk_libdir_name := lib
   endif
+
+  my_ndk_platform_dir := \
+      $(my_built_ndk)/platforms/android-$(my_ndk_api)/arch-$(my_arch)
+  my_built_ndk_libs := $(my_ndk_platform_dir)/usr/$(my_ndk_libdir_name)
+  my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/$(my_ndk_libdir_name)
 
   # The bionic linker now has support for packed relocations and gnu style
   # hashes (which are much faster!), but shipping to older devices requires
@@ -180,6 +210,11 @@ ifdef LOCAL_SDK_VERSION
   endif
   endif
   endif
+
+  my_generated_ndk_shared_libraries := \
+      $(filter $(NDK_MIGRATED_LIBS),$(my_system_shared_libraries))
+  my_system_shared_libraries := \
+      $(filter-out $(NDK_MIGRATED_LIBS),$(my_system_shared_libraries))
 endif
 
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
@@ -1365,7 +1400,14 @@ my_system_shared_libraries_fullpath := \
     $(addprefix $(my_ndk_sysroot_lib)/, \
         $(addsuffix $(so_suffix), $(my_system_shared_libraries)))
 
-built_shared_libraries += $(my_system_shared_libraries_fullpath)
+my_built_ndk_shared_libraries_fullpath := \
+    $(addprefix $(my_built_ndk_libs)/,\
+        $(addsuffix $(so_suffix),$(my_generated_ndk_shared_libraries)))
+
+built_shared_libraries += \
+    $(my_built_ndk_shared_libraries_fullpath) \
+    $(my_system_shared_libraries_fullpath) \
+
 else
 built_shared_libraries := \
     $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
