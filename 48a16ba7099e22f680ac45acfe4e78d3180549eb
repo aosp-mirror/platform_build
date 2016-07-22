@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a91eb63_10642b1c",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1798,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-07-22T00:18:07Z",
+      "side": 1,
+      "message": "This is a good start, but we probably will eventually need to break this down further (i.e. we can separate out vendor/google from vendor/*). I don\u0027t think we need that for the initial version, however.",
+      "revId": "48a16ba7099e22f680ac45acfe4e78d3180549eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
