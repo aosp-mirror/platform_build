@@ -70,6 +70,7 @@ PRODUCT_PACKAGES += \
     make_ext4fs \
     e2fsck \
     resize2fs \
+    tune2fs \
     screencap \
     sensorservice \
     telephony-common \
