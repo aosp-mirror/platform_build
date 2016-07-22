@@ -6,6 +6,10 @@ import sys
 import re
 
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
+parser.add_argument('--gencsv',
+                    help='Generate a CSV file with number of various warnings',
+                    action="store_true",
+                    default=False)
 parser.add_argument('--url',
                     help='Root URL of an Android source code tree prefixed '
                     'before files in warnings')
@@ -1789,6 +1793,54 @@ warnpatterns = [
         'patterns':[r".*: warning: .+"] },
 ]
 
+# A list of [project_name, file_path_pattern].
+# project_name should not contain comma, to be used in CSV output.
+projectlist = [
+    ['art',         r"(^|.*/)art/.*: warning:"],
+    ['bionic',      r"(^|.*/)bionic/.*: warning:"],
+    ['bootable',    r"(^|.*/)bootable/.*: warning:"],
+    ['build',       r"(^|.*/)build/.*: warning:"],
+    ['cts',         r"(^|.*/)cts/.*: warning:"],
+    ['dalvik',      r"(^|.*/)dalvik/.*: warning:"],
+    ['developers',  r"(^|.*/)developers/.*: warning:"],
+    ['development', r"(^|.*/)development/.*: warning:"],
+    ['device',      r"(^|.*/)device/.*: warning:"],
+    ['doc',         r"(^|.*/)doc/.*: warning:"],
+    ['external',    r"(^|.*/)external/.*: warning:"],
+    ['frameworks',  r"(^|.*/)frameworks/.*: warning:"],
+    ['hardware',    r"(^|.*/)hardware/.*: warning:"],
+    ['kernel',      r"(^|.*/)kernel/.*: warning:"],
+    ['libcore',     r"(^|.*/)libcore/.*: warning:"],
+    ['libnativehelper', r"(^|.*/)libnativehelper/.*: warning:"],
+    ['ndk',         r"(^|.*/)ndk/.*: warning:"],
+    ['packages',    r"(^|.*/)packages/.*: warning:"],
+    ['pdk',         r"(^|.*/)pdk/.*: warning:"],
+    ['prebuilts',   r"(^|.*/)prebuilts/.*: warning:"],
+    ['system',      r"(^|.*/)system/.*: warning:"],
+    ['toolchain',   r"(^|.*/)toolchain/.*: warning:"],
+    ['test',        r"(^|.*/)test/.*: warning:"],
+    ['tools',       r"(^|.*/)tools/.*: warning:"],
+    ['vendor',      r"(^|.*/)vendor/.*: warning:"],
+    ['out/obj',     r".*/(gen|obj[^/]*)/(include|EXECUTABLES|SHARED_LIBRARIES|STATIC_LIBRARIES)/.*: warning:"],
+    ['other',       r".*: warning:"],
+]
+
+projectpatterns = []
+for p in projectlist:
+    projectpatterns.append({'description':p[0], 'members':[], 'pattern':re.compile(p[1])})
+
+# Each warning pattern has a dictionary that maps
+# a project name to number of warnings in that project.
+for w in warnpatterns:
+    w['projects'] = {}
+
+platformversion = 'unknown'
+targetproduct = 'unknown'
+targetvariant = 'unknown'
+
+
+##### Data and functions to dump html file. ##################################
+
 anchor = 0
 cur_row_class = 0
 
@@ -1837,7 +1889,6 @@ def dumphtmlprologue(title):
     output('<title>' + title + '</title>\n')
     output(html_script_style)
     output('</head>\n<body>\n')
-    output('<a name="PageTop">')
     output(htmlbig(title))
     output('<p>\n')
 
@@ -1851,12 +1902,16 @@ def tablerow(text):
     output(text)
     output('</td></tr>')
 
+def sortwarnings():
+    for i in warnpatterns:
+        i['members'] = sorted(set(i['members']))
+
 # dump some stats about total number of warnings and such
 def dumpstats():
     known = 0
     unknown = 0
+    sortwarnings()
     for i in warnpatterns:
-        i['members'] = sorted(set(i['members']))
         if i['severity'] == severity.UNKNOWN:
             unknown += len(i['members'])
         elif i['severity'] != severity.SKIP:
@@ -1961,17 +2016,28 @@ def dumpcategory(cat):
         output('</table></div>\n')
 
 
+def findproject(line):
+    for p in projectpatterns:
+        if p['pattern'].match(line):
+            return p['description']
+    return '???'
+
 def classifywarning(line):
     for i in warnpatterns:
         for cpat in i['compiledpatterns']:
             if cpat.match(line):
                 i['members'].append(line)
+                pname = findproject(line)
+                if pname in i['projects']:
+                  i['projects'][pname] += 1
+                else:
+                  i['projects'][pname] = 1
                 return
-    else:
-        # If we end up here, there was a problem parsing the log
-        # probably caused by 'make -j' mixing the output from
-        # 2 or more concurrent compiles
-        pass
+            else:
+                # If we end up here, there was a problem parsing the log
+                # probably caused by 'make -j' mixing the output from
+                # 2 or more concurrent compiles
+                pass
 
 # precompiling every pattern speeds up parsing by about 30x
 def compilepatterns():
@@ -1980,54 +2046,103 @@ def compilepatterns():
         for pat in i['patterns']:
             i['compiledpatterns'].append(re.compile(pat))
 
-infile = open(args.buildlog, 'r')
-warnings = []
+def parseinputfile():
+    global platformversion
+    global targetproduct
+    global targetvariant
+    infile = open(args.buildlog, 'r')
+    linecounter = 0
 
-platformversion = 'unknown'
-targetproduct = 'unknown'
-targetvariant = 'unknown'
-linecounter = 0
+    warningpattern = re.compile('.* warning:.*')
+    compilepatterns()
 
-warningpattern = re.compile('.* warning:.*')
-compilepatterns()
-
-# read the log file and classify all the warnings
-warninglines = set()
-for line in infile:
-    # replace fancy quotes with plain ol' quotes
-    line = line.replace("‘", "'");
-    line = line.replace("’", "'");
-    if warningpattern.match(line):
-        if line not in warninglines:
-            classifywarning(line)
-            warninglines.add(line)
-    else:
-        # save a little bit of time by only doing this for the first few lines
-        if linecounter < 50:
-            linecounter +=1
-            m = re.search('(?<=^PLATFORM_VERSION=).*', line)
-            if m != None:
-                platformversion = m.group(0)
-            m = re.search('(?<=^TARGET_PRODUCT=).*', line)
-            if m != None:
-                targetproduct = m.group(0)
-            m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
-            if m != None:
-                targetvariant = m.group(0)
+    # read the log file and classify all the warnings
+    warninglines = set()
+    for line in infile:
+        # replace fancy quotes with plain ol' quotes
+        line = line.replace("‘", "'");
+        line = line.replace("’", "'");
+        if warningpattern.match(line):
+            if line not in warninglines:
+                classifywarning(line)
+                warninglines.add(line)
+        else:
+            # save a little bit of time by only doing this for the first few lines
+            if linecounter < 50:
+                linecounter +=1
+                m = re.search('(?<=^PLATFORM_VERSION=).*', line)
+                if m != None:
+                    platformversion = m.group(0)
+                m = re.search('(?<=^TARGET_PRODUCT=).*', line)
+                if m != None:
+                    targetproduct = m.group(0)
+                m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
+                if m != None:
+                    targetvariant = m.group(0)
 
 
 # dump the html output to stdout
-dumphtmlprologue('Warnings for ' + platformversion + ' - ' + targetproduct + ' - ' + targetvariant)
-dumpstats()
-# sort table based on number of members once dumpstats has deduplicated the
-# members.
-warnpatterns.sort(reverse=True, key=lambda i: len(i['members']))
-dumpseverity(severity.FIXMENOW)
-dumpseverity(severity.HIGH)
-dumpseverity(severity.MEDIUM)
-dumpseverity(severity.LOW)
-dumpseverity(severity.TIDY)
-dumpseverity(severity.HARMLESS)
-dumpseverity(severity.UNKNOWN)
-dumpfixed()
-dumphtmlepilogue()
+def dumphtml():
+    dumphtmlprologue('Warnings for ' + platformversion + ' - ' + targetproduct + ' - ' + targetvariant)
+    dumpstats()
+    # sort table based on number of members once dumpstats has deduplicated the
+    # members.
+    warnpatterns.sort(reverse=True, key=lambda i: len(i['members']))
+    dumpseverity(severity.FIXMENOW)
+    dumpseverity(severity.HIGH)
+    dumpseverity(severity.MEDIUM)
+    dumpseverity(severity.LOW)
+    dumpseverity(severity.TIDY)
+    dumpseverity(severity.HARMLESS)
+    dumpseverity(severity.UNKNOWN)
+    dumpfixed()
+    dumphtmlepilogue()
+
+
+##### Functions to count warnings and dump csv file. #########################
+
+def descriptionforcsv(cat):
+    if cat['description'] == '':
+        return '?'
+    return cat['description']
+
+def stringforcsv(s):
+    if ',' in s:
+        return '"{}"'.format(s)
+    return s
+
+def countseverity(sev, kind):
+  sum = 0
+  for i in warnpatterns:
+      if i['severity'] == sev and len(i['members']) > 0:
+          n = len(i['members'])
+          sum += n
+          warning = stringforcsv(kind + ': ' + descriptionforcsv(i))
+          print '{},,{}'.format(n, warning)
+          # print number of warnings for each project, ordered by project name.
+          projects = i['projects'].keys()
+          projects.sort()
+          for p in projects:
+              print '{},{},{}'.format(i['projects'][p], p, warning)
+  print '{},,{}'.format(sum, kind + ' warnings')
+  return sum
+
+# dump number of warnings in csv format to stdout
+def dumpcsv():
+    sortwarnings()
+    total = 0
+    total += countseverity(severity.FIXMENOW, 'FixNow')
+    total += countseverity(severity.HIGH, 'High')
+    total += countseverity(severity.MEDIUM, 'Medium')
+    total += countseverity(severity.LOW, 'Low')
+    total += countseverity(severity.TIDY, 'Tidy')
+    total += countseverity(severity.HARMLESS, 'Harmless')
+    total += countseverity(severity.UNKNOWN, 'Unknown')
+    print '{},,{}'.format(total, 'All warnings')
+
+
+parseinputfile()
+if args.gencsv:
+    dumpcsv()
+else:
+    dumphtml()
