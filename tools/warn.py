@@ -10,6 +10,10 @@ parser.add_argument('--gencsv',
                     help='Generate a CSV file with number of various warnings',
                     action="store_true",
                     default=False)
+parser.add_argument('--byproject',
+                    help='Separate warnings in HTML output by project names',
+                    action="store_true",
+                    default=False)
 parser.add_argument('--url',
                     help='Root URL of an Android source code tree prefixed '
                     'before files in warnings')
@@ -1660,6 +1664,7 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
         'description':'Undefined result',
         'patterns':[r".*: warning: The result of .+ is undefined",
+                    r".*: warning: passing an object that .+ has undefined behavior \[-Wvarargs\]",
                     r".*: warning: 'this' pointer cannot be null in well-defined C\+\+ code;",
                     r".*: warning: shifting a negative signed value is undefined"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,     'members':[], 'option':'',
@@ -1796,43 +1801,52 @@ warnpatterns = [
 # A list of [project_name, file_path_pattern].
 # project_name should not contain comma, to be used in CSV output.
 projectlist = [
-    ['art',         r"(^|.*/)art/.*: warning:"],
-    ['bionic',      r"(^|.*/)bionic/.*: warning:"],
-    ['bootable',    r"(^|.*/)bootable/.*: warning:"],
-    ['build',       r"(^|.*/)build/.*: warning:"],
-    ['cts',         r"(^|.*/)cts/.*: warning:"],
-    ['dalvik',      r"(^|.*/)dalvik/.*: warning:"],
-    ['developers',  r"(^|.*/)developers/.*: warning:"],
-    ['development', r"(^|.*/)development/.*: warning:"],
-    ['device',      r"(^|.*/)device/.*: warning:"],
-    ['doc',         r"(^|.*/)doc/.*: warning:"],
-    ['external',    r"(^|.*/)external/.*: warning:"],
-    ['frameworks',  r"(^|.*/)frameworks/.*: warning:"],
-    ['hardware',    r"(^|.*/)hardware/.*: warning:"],
-    ['kernel',      r"(^|.*/)kernel/.*: warning:"],
-    ['libcore',     r"(^|.*/)libcore/.*: warning:"],
-    ['libnativehelper', r"(^|.*/)libnativehelper/.*: warning:"],
-    ['ndk',         r"(^|.*/)ndk/.*: warning:"],
-    ['packages',    r"(^|.*/)packages/.*: warning:"],
-    ['pdk',         r"(^|.*/)pdk/.*: warning:"],
-    ['prebuilts',   r"(^|.*/)prebuilts/.*: warning:"],
-    ['system',      r"(^|.*/)system/.*: warning:"],
-    ['toolchain',   r"(^|.*/)toolchain/.*: warning:"],
-    ['test',        r"(^|.*/)test/.*: warning:"],
-    ['tools',       r"(^|.*/)tools/.*: warning:"],
-    ['vendor',      r"(^|.*/)vendor/.*: warning:"],
-    ['out/obj',     r".*/(gen|obj[^/]*)/(include|EXECUTABLES|SHARED_LIBRARIES|STATIC_LIBRARIES)/.*: warning:"],
-    ['other',       r".*: warning:"],
+    ['art',                 r"(^|.*/)art/.*: warning:"],
+    ['bionic',              r"(^|.*/)bionic/.*: warning:"],
+    ['bootable',            r"(^|.*/)bootable/.*: warning:"],
+    ['build',               r"(^|.*/)build/.*: warning:"],
+    ['cts',                 r"(^|.*/)cts/.*: warning:"],
+    ['dalvik',              r"(^|.*/)dalvik/.*: warning:"],
+    ['developers',          r"(^|.*/)developers/.*: warning:"],
+    ['development',         r"(^|.*/)development/.*: warning:"],
+    ['device',              r"(^|.*/)device/.*: warning:"],
+    ['doc',                 r"(^|.*/)doc/.*: warning:"],
+    # match external/google* before external/
+    ['external/google',     r"(^|.*/)external/google.*: warning:"],
+    ['external/non-google', r"(^|.*/)external/.*: warning:"],
+    ['frameworks',          r"(^|.*/)frameworks/.*: warning:"],
+    ['hardware',            r"(^|.*/)hardware/.*: warning:"],
+    ['kernel',              r"(^|.*/)kernel/.*: warning:"],
+    ['libcore',             r"(^|.*/)libcore/.*: warning:"],
+    ['libnativehelper',      r"(^|.*/)libnativehelper/.*: warning:"],
+    ['ndk',                 r"(^|.*/)ndk/.*: warning:"],
+    ['packages',            r"(^|.*/)packages/.*: warning:"],
+    ['pdk',                 r"(^|.*/)pdk/.*: warning:"],
+    ['prebuilts',           r"(^|.*/)prebuilts/.*: warning:"],
+    ['system',              r"(^|.*/)system/.*: warning:"],
+    ['toolchain',           r"(^|.*/)toolchain/.*: warning:"],
+    ['test',                r"(^|.*/)test/.*: warning:"],
+    ['tools',               r"(^|.*/)tools/.*: warning:"],
+    # match vendor/google* before vendor/
+    ['vendor/google',       r"(^|.*/)vendor/google.*: warning:"],
+    ['vendor/non-google',   r"(^|.*/)vendor/.*: warning:"],
+    # keep out/obj and other patterns at the end.
+    ['out/obj', r".*/(gen|obj[^/]*)/(include|EXECUTABLES|SHARED_LIBRARIES|STATIC_LIBRARIES)/.*: warning:"],
+    ['other',   r".*: warning:"],
 ]
 
 projectpatterns = []
 for p in projectlist:
     projectpatterns.append({'description':p[0], 'members':[], 'pattern':re.compile(p[1])})
 
-# Each warning pattern has a dictionary that maps
-# a project name to number of warnings in that project.
+# Each warning pattern has 3 dictionaries:
+# (1) 'projects' maps a project name to number of warnings in that project.
+# (2) 'projectanchor' maps a project name to its anchor number for HTML.
+# (3) 'projectwarning' maps a project name to a list of warning of that project.
 for w in warnpatterns:
     w['projects'] = {}
+    w['projectanchor'] = {}
+    w['projectwarning'] = {}
 
 platformversion = 'unknown'
 targetproduct = 'unknown'
@@ -1937,17 +1951,12 @@ def dumpseverity(sev):
     output('<blockquote>\n')
     for i in warnpatterns:
       if i['severity'] == sev and len(i['members']) > 0:
-          output('\n<table frame="box">\n')
           anchor += 1
           i['anchor'] = str(anchor)
-          mark = str(anchor) + '_mark'
-          output('<tr bgcolor="' + colorforseverity(sev) + '">' +
-                 '<td><button class="bt" id="' + mark +
-                 '" onclick="expand(\'' + str(anchor) + '\');">' +
-                 '&#x2295</button> ' + descriptionfor(i) +
-                 ' (' + str(len(i['members'])) + ')</td></tr>\n')
-          output('</table>\n')
-          dumpcategory(i)
+          if args.byproject:
+              dumpcategorybyproject(sev, i)
+          else:
+              dumpcategory(sev, i)
     output('</blockquote>\n')
 
 def allpatterns(cat):
@@ -2002,19 +2011,35 @@ def warningwithurl(line):
     else:
         return '<a href="' + args.url + '/' + filepath + '">' + filepath + '</a>:' + linenumber + ':' + warning
 
-# dump a category, provided it is not marked as 'SKIP' and has more than 0 occurrences
-def dumpcategory(cat):
-    if cat['severity'] != severity.SKIP and len(cat['members']) != 0:
-        header = [descriptionfor(cat),str(len(cat['members'])) + ' occurences:']
-        if cat['option'] != '':
-            header[1:1] = [' (related option: ' + cat['option'] +')']
+def dumpgroup(sev, anchor, description, warnings):
+    mark = anchor + '_mark'
+    output('\n<table frame="box">\n')
+    output('<tr bgcolor="' + colorforseverity(sev) + '">' +
+           '<td><button class="bt" id="' + mark +
+           '" onclick="expand(\'' + anchor + '\');">' +
+           '&#x2295</button> ' + description + '</td></tr>\n')
+    output('</table>\n')
+    output('<div id="' + anchor + '" style="display:none;">')
+    output('<table>\n')
+    for i in warnings:
+        tablerow(warningwithurl(i))
+    output('</table></div>\n')
 
-        output('<div id="' + cat['anchor'] + '" style="display:none;">')
-        output('<table>\n')
-        for i in cat['members']:
-            tablerow(warningwithurl(i))
-        output('</table></div>\n')
+# dump warnings in a category
+def dumpcategory(sev, cat):
+    description = descriptionfor(cat) + ' (' + str(len(cat['members'])) + ')'
+    dumpgroup(sev, cat['anchor'], description, cat['members'])
 
+# similar to dumpcategory but output one table per project.
+def dumpcategorybyproject(sev, cat):
+    warning = descriptionfor(cat)
+    projects = cat['projectwarning'].keys()
+    projects.sort()
+    for p in projects:
+        anchor = cat['projectanchor'][p]
+        projectwarnings = cat['projectwarning'][p]
+        description = '{}, in {} ({})'.format(warning, p, len(projectwarnings))
+        dumpgroup(sev, anchor, description, projectwarnings)
 
 def findproject(line):
     for p in projectpatterns:
@@ -2023,15 +2048,26 @@ def findproject(line):
     return '???'
 
 def classifywarning(line):
+    global anchor
     for i in warnpatterns:
         for cpat in i['compiledpatterns']:
             if cpat.match(line):
                 i['members'].append(line)
                 pname = findproject(line)
+                # Count warnings by project.
                 if pname in i['projects']:
-                  i['projects'][pname] += 1
+                    i['projects'][pname] += 1
                 else:
-                  i['projects'][pname] = 1
+                    i['projects'][pname] = 1
+                # Collect warnings by project.
+                if args.byproject:
+                    if pname in i['projectwarning']:
+                        i['projectwarning'][pname].append(line)
+                    else:
+                        i['projectwarning'][pname] = [line]
+                    if pname not in i['projectanchor']:
+                        anchor += 1
+                        i['projectanchor'][pname] = str(anchor)
                 return
             else:
                 # If we end up here, there was a problem parsing the log
