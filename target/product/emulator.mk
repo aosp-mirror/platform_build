@@ -47,6 +47,7 @@ PRODUCT_PACKAGES += \
     fingerprint.goldfish \
     sensors.goldfish \
     audio.primary.goldfish \
+    audio.primary.goldfish_legacy \
     vibrator.goldfish \
     power.goldfish \
     fingerprint.ranchu \
