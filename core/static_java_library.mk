@@ -19,6 +19,7 @@
 # classpaths.  They can, however, be included wholesale in
 # other java modules.
 
+$(call record-module-type,STATIC_JAVA_LIBRARY)
 LOCAL_UNINSTALLABLE_MODULE := true
 LOCAL_IS_STATIC_JAVA_LIBRARY := true
 LOCAL_MODULE_CLASS := JAVA_LIBRARIES

@@ -1,3 +1,4 @@
+$(call record-module-type,HOST_SHARED_LIBRARY)
 LOCAL_IS_HOST_MODULE := true
 my_prefix := HOST_
 LOCAL_HOST_PREFIX :=

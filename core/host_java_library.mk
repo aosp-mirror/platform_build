@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+$(call record-module-type,HOST_JAVA_LIBRARY)
+
 #
 # Standard rules for building a host java library.
 #

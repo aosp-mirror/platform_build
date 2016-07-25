@@ -2,6 +2,7 @@
 ## A thin wrapper around BUILD_HOST_EXECUTABLE
 ## Common flags for host native tests are added.
 ################################################
+$(call record-module-type,HOST_NATIVE_TEST)
 
 ifdef LOCAL_MODULE_CLASS
 ifneq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)

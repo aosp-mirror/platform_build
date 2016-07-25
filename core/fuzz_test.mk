@@ -2,6 +2,7 @@
 ## A thin wrapper around BUILD_EXECUTABLE
 ## Common flags for fuzz tests are added.
 ###########################################
+$(call record-module-type,FUZZ_TEST)
 
 ifdef LOCAL_SDK_VERSION
     $(error $(LOCAL_PATH): $(LOCAL_MODULE): NDK fuzz tests are not supported.)

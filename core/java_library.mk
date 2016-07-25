@@ -2,6 +2,7 @@
 ## Standard rules for building a java library.
 ##
 ###########################################################
+$(call record-module-type,JAVA_LIBRARY)
 
 ifdef LOCAL_IS_HOST_MODULE
 $(error $(LOCAL_PATH): Host java libraries must use BUILD_HOST_JAVA_LIBRARY)
