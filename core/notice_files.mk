@@ -1,6 +1,7 @@
 ###########################################################
 ## Track NOTICE files
 ###########################################################
+$(call record-module-type,NOTICE_FILE)
 
 ifneq ($(LOCAL_NOTICE_FILE),)
 notice_file:=$(strip $(LOCAL_NOTICE_FILE))

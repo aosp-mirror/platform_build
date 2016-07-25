@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+$(call record-module-type,DROIDDOC)
 ##
 ##
 ## Common to both droiddoc and javadoc

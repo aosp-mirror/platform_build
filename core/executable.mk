@@ -16,6 +16,7 @@ ifneq ($(filter address,$(SANITIZE_TARGET)),)
 endif
 
 ifneq (true,$(my_skip_this_target))
+$(call record-module-type,EXECUTABLE)
 
 ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 # If a native test explicity specifies to build only for the translation arch,
