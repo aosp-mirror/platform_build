@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fff696c_55369eeb",
+        "filename": "core/fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-07-26T17:37:16Z",
+      "side": 1,
+      "message": "Won\u0027t this double-count as a FUZZ_TEST and an EXECUTABLE?",
+      "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
