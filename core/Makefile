@@ -1612,7 +1612,6 @@ OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libconscrypt_openjdk_jni$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libbrillo$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libbrillo-stream$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libbrillo-http$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libchrome$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcurl-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libevent-host$(HOST_SHLIB_SUFFIX) \
