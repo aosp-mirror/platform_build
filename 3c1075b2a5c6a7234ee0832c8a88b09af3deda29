@@ -22,6 +22,30 @@
       "revId": "3c1075b2a5c6a7234ee0832c8a88b09af3deda29",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a617bbb_8a65eeb9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1077068
+      },
+      "writtenOn": "2016-07-26T01:18:41Z",
+      "side": 1,
+      "message": "Agrrr... sorry, I had the autosubmit on since it was a very small CL.",
+      "parentUuid": "0a617bbb_c35c392b",
+      "range": {
+        "startLine": 9,
+        "startChar": 56,
+        "endLine": 9,
+        "endChar": 61
+      },
+      "revId": "3c1075b2a5c6a7234ee0832c8a88b09af3deda29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
