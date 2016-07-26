@@ -164,6 +164,11 @@ ifneq ($(MALLOC_IMPL),)
   $(error Use `MALLOC_SVELTE := true` to configure jemalloc for low-memory)
 endif
 TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
+ifneq ($(ENABLE_TREBLE),true)
+ifneq ($(BOARD_WRAPS_CONVENTIONAL_HALS),)
+$(error BOARD_WRAPS_CONVENTIONAL_HALS cannot be defined when ENABLE_TREBLE is not set to true)
+endif
+endif
 board_config_mk :=
 
 ###########################################
