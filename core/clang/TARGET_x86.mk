@@ -1,4 +1,4 @@
-$(clang_2nd_arch_prefix)RS_TRIPLE := armv7-linux-androideabi
+$(clang_2nd_arch_prefix)RS_TRIPLE := renderscript32-linux-androideabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS := -D__i386__
 $(clang_2nd_arch_prefix)RS_COMPAT_TRIPLE := i686-linux-android
 
