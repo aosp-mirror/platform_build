@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fff696c_3fad8933",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-27T19:58:32Z",
+      "side": 1,
+      "message": "This is $(SOONG_OUT_DIR)",
+      "range": {
+        "startLine": 106,
+        "startChar": 18,
+        "endLine": 106,
+        "endChar": 34
+      },
+      "revId": "7fabbf6cf43484a332894a68c3a22e3011be6b56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6fff696c_9f78f5d4",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-27T19:58:32Z",
+      "side": 1,
+      "message": "Can these come from Soong?",
+      "revId": "7fabbf6cf43484a332894a68c3a22e3011be6b56",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
