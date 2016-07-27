@@ -15,10 +15,12 @@
 #
 
 # Most Android source files are not clang-tidy clean yet.
-# Global tidy checks include only google* and misc-macro-parentheses,
-# but not google-readability* or google-runtime-references.
+# Global tidy checks include only google*, performance*,
+# and misc-macro-parentheses, but not google-readability*
+# or google-runtime-references.
 DEFAULT_GLOBAL_TIDY_CHECKS := \
-  -*,google*,-google-readability*,-google-runtime-references,misc-macro-parentheses
+  -*,google*,performance*,misc-macro-parentheses \
+  ,-google-readability*,-google-runtime-references
 
 # Disable style rules usually not followed by external projects.
 # Every word in DEFAULT_LOCAL_TIDY_CHECKS list has the following format:
