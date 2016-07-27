@@ -316,6 +316,24 @@ $(call all-vts-files-under,.)
 endef
 
 ###########################################################
+## Find all files named "*.hidl" under the named directories,
+## which must be relative to $(LOCAL_PATH).  The returned list
+## is relative to $(LOCAL_PATH).
+###########################################################
+
+define all-hidl-files-under
+$(call all-named-files-under,*.hidl,$(1))
+endef
+
+###########################################################
+## Find all of the "*.hidl" files under $(LOCAL_PATH).
+###########################################################
+
+define all-subdir-hidl-files
+$(call all-hidl-files-under,.)
+endef
+
+###########################################################
 ## Find all of the logtags files under the named directories.
 ## Meant to be used like:
 ##    SRC_FILES := $(call all-logtags-files-under,src)
@@ -1120,6 +1138,33 @@ define-vts-cpp-rule-src := $(patsubst %.vts,%$(LOCAL_CPP_EXTENSION),$(subst ../,
 $$(define-vts-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(VTSC)
 	$$(transform-vts-to-cpp)
 $(3) += $$(define-vts-cpp-rule-src)
+endef
+
+###########################################################
+## Commands for running hidl-gen
+###########################################################
+
+define transform-hidl-to-cpp
+@mkdir -p $(dir $@)
+@mkdir -p $(PRIVATE_HEADER_OUTPUT_DIR)
+@mkdir -p $(PRIVATE_SRC_OUTPUT_DIR)
+@echo "Generating C++ from HIDL: $(PRIVATE_MODULE) <= $<"
+$(hide) $(HIDL) -d$(basename $@).hidl.P $(PRIVATE_HIDL_FLAGS) \
+    all_cpps $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
+endef
+
+## Given a .hidl file path generate the rule to compile it to .cpp and .h files.
+# $(1): a .hidl source file
+# $(2): a directory to place the generated .cpp and .h files in
+# $(3): name of a variable to add the path to the generated source files to
+#
+# You must call this with $(eval).
+define define-hidl-cpp-rule
+my_tracked_source_files += $@
+define-hidl-cpp-rule-src := $(patsubst %.hidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+$$(define-hidl-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(HIDL)
+	$$(transform-hidl-to-cpp)
+$(3) += $$(define-hidl-cpp-rule-src)
 endef
 
 ###########################################################
