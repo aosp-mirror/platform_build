@@ -25,6 +25,13 @@ $(SOONG_BOOTSTRAP): bootstrap.bash $(SOONG_NEEDS_REBOOTSTRAP)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) BUILDDIR=$(SOONG_OUT_DIR) ./bootstrap.bash
 
+BINDER32BIT :=
+ifneq ($(TARGET_USES_64_BIT_BINDER),true)
+ifneq ($(TARGET_IS_64_BIT),true)
+BINDER32BIT := true
+endif
+endif
+
 # Create soong.variables with copies of makefile settings.  Runs every build,
 # but only updates soong.variables if it changes
 SOONG_VARIABLES_TMP := $(SOONG_VARIABLES).$$$$
@@ -44,6 +51,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "HostStaticBinaries": $(if $(strip $(BUILD_HOST_static)),true,false),'; \
 	echo '    "Cpusets": $(if $(strip $(ENABLE_CPUSETS)),true,false),'; \
 	echo '    "Schedboost": $(if $(strip $(ENABLE_SCHEDBOOST)),true,false),'; \
+	echo '    "Binder32bit": $(if $(BINDER32BIT),true,false),'; \
 	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
