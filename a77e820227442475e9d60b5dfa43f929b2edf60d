@@ -16,6 +16,24 @@
       "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ff26de6_c414d256",
+        "filename": "core/fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-28T05:48:08Z",
+      "side": 1,
+      "message": "Yeah, we\u0027ll get some double counting, not sure if it\u0027s worth dealing with that here. If Make was better at math, I\u0027d say we could just subtract them at the end, but it\u0027s probably better done when analyzing the data.\n\nBUILD_NOTICE_FILE and BUILD_COPY_HEADERS both get included often by the build system, but could be used by others.\n\nBUILD_HOST_PREBUILT, native tests and benchmarks, and static test libraries all wrap other BUILD_*  too.",
+      "parentUuid": "6fff696c_55369eeb",
+      "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
