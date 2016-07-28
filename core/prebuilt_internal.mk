@@ -46,9 +46,18 @@ my_pack_module_relocations := $(firstword \
   $(LOCAL_PACK_MODULE_RELOCATIONS))
 
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
-  # Put the built targets of all shared libraries in a common directory
-  # to simplify the link line.
-  OVERRIDE_BUILT_MODULE_PATH := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
+  # LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES indicates that this prebuilt should be
+  # installed to the common directory of libraries. This is needed for the NDK
+  # shared libraries built by soong, as we build many different versions of each
+  # library (one for each API level). Since they all have the same basename,
+  # they'd clobber each other (as well as any platform libraries by the same
+  # name).
+  ifneq ($(LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES),false)
+    # Put the built targets of all shared libraries in a common directory
+    # to simplify the link line.
+    OVERRIDE_BUILT_MODULE_PATH :=  \
+        $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
+  endif
   ifeq ($(LOCAL_IS_HOST_MODULE)$(my_strip_module),)
     # Strip but not try to add debuglink
     my_strip_module := no_debuglink
