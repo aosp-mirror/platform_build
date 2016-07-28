@@ -245,7 +245,7 @@ class TargetFiles(object):
             fullname = os.path.join(dirpath, fn)
             displayname = fullname[len(d)+1:]
             apk = APK(fullname, displayname)
-            self.apks[apk.package] = apk
+            self.apks[apk.filename] = apk
             self.apks_by_basename[os.path.basename(apk.filename)] = apk
 
             self.max_pkg_len = max(self.max_pkg_len, len(apk.package))
@@ -316,8 +316,7 @@ class TargetFiles(object):
                                         self.max_pkg_len, apk.package,
                                         apk.shared_uid)
         else:
-          print "  %-*s  %-*s" % (self.max_fn_len, apk.filename,
-                                  self.max_pkg_len, apk.package)
+          print "  %-*s  %s" % (self.max_fn_len, apk.filename, apk.package)
       print
 
   def CompareWith(self, other):
