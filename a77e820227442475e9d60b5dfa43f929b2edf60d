@@ -34,6 +34,24 @@
       "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ff26de6_e407d61e",
+        "filename": "core/fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-07-28T05:50:45Z",
+      "side": 1,
+      "message": "Set a variable inside record-module-type when it is called, don\u0027t add to the list if it is set, and clear it in clear_vars.mk?",
+      "parentUuid": "0ff26de6_c414d256",
+      "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
