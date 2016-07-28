@@ -52,6 +52,24 @@
       "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ff26de6_e406b6eb",
+        "filename": "core/fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-07-28T06:59:30Z",
+      "side": 1,
+      "message": "Done. This turned out even better, because now we get stats on how many modules bypass BUILD_* and directly include base_rules.mk",
+      "parentUuid": "0ff26de6_e407d61e",
+      "revId": "a77e820227442475e9d60b5dfa43f929b2edf60d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
