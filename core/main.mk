@@ -1127,4 +1127,7 @@ nothing:
 tidy_only:
 	@echo Successfully make tidy_only.
 
+ndk: $(SOONG_OUT_DIR)/ndk.timestamp
+.PHONY: ndk
+
 endif # KATI
