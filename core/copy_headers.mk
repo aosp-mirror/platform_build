@@ -1,6 +1,7 @@
 ###########################################################
 ## Copy headers to the install tree
 ###########################################################
+$(call record-module-type,COPY_HEADERS)
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
   my_prefix := HOST_
 else

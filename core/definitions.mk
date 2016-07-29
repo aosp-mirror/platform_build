@@ -2840,6 +2840,48 @@ $(strip $(if $(filter $(TARGET_ARCH),$(1)),$(TARGET_ARCH),\
   $(if $(filter $(TARGET_2ND_ARCH),$(1)),$(TARGET_2ND_ARCH),$(if $(1),none))))
 endef
 
+# ###############################################################
+# Set up statistics gathering
+# ###############################################################
+STATS.MODULE_TYPE := \
+  HOST_STATIC_LIBRARY \
+  HOST_SHARED_LIBRARY \
+  STATIC_LIBRARY \
+  SHARED_LIBRARY \
+  EXECUTABLE \
+  HOST_EXECUTABLE \
+  PACKAGE \
+  PHONY_PACKAGE \
+  HOST_PREBUILT \
+  PREBUILT \
+  MULTI_PREBUILT \
+  JAVA_LIBRARY \
+  STATIC_JAVA_LIBRARY \
+  HOST_JAVA_LIBRARY \
+  DROIDDOC \
+  COPY_HEADERS \
+  NATIVE_TEST \
+  NATIVE_BENCHMARK \
+  HOST_NATIVE_TEST \
+  FUZZ_TEST \
+  HOST_FUZZ_TEST \
+  STATIC_TEST_LIBRARY \
+  HOST_STATIC_TEST_LIBRARY \
+  NOTICE_FILE \
+  HOST_DALVIK_JAVA_LIBRARY \
+  HOST_DALVIK_STATIC_JAVA_LIBRARY \
+  base_rules
+
+$(foreach $(s),$(STATS.MODULE_TYPE),$(eval STATS.MODULE_TYPE.$(s) :=))
+define record-module-type
+$(strip $(if $(LOCAL_RECORDED_MODULE_TYPE),,
+  $(if $(filter-out $(SOONG_ANDROID_MK),$(LOCAL_MODULE_MAKEFILE)),
+    $(if $(filter $(1),$(STATS.MODULE_TYPE)),
+      $(eval LOCAL_RECORDED_MODULE_TYPE := true)
+        $(eval STATS.MODULE_TYPE.$(1) += 1),
+      $(error Invalid module type: $(1))))))
+endef
+
 ###########################################################
 ## Other includes
 ###########################################################

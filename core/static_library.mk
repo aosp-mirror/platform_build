@@ -1,3 +1,4 @@
+$(call record-module-type,STATIC_LIBRARY)
 my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
