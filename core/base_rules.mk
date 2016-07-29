@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# Catch users that directly include base_rules.mk
+$(call record-module-type,base_rules)
+
 # Users can define base-rules-hook in their buildspec.mk to perform
 # arbitrary operations as each module is included.
 ifdef base-rules-hook
