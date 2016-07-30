@@ -5,6 +5,7 @@
 ## None.
 ##
 ###########################################################
+$(call record-module-type,PREBUILT)
 
 ifdef LOCAL_IS_HOST_MODULE
   my_prefix := HOST_

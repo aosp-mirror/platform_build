@@ -2,6 +2,7 @@
 ## A thin wrapper around BUILD_EXECUTABLE
 ## Common flags for native benchmarks are added.
 ###########################################
+$(call record-module-type,NATIVE_BENCHMARK)
 
 LOCAL_STATIC_LIBRARIES += libgoogle-benchmark
 

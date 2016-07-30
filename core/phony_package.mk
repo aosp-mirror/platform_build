@@ -1,3 +1,4 @@
+$(call record-module-type,PHONY_PACKAGE)
 ifneq ($(strip $(LOCAL_SRC_FILES)),)
 $(error LOCAL_SRC_FILES are not allowed for phony packages)
 endif
