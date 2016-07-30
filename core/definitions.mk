@@ -95,6 +95,9 @@ TARGET_DISPLAY := target
 HOST_DISPLAY := host
 HOST_CROSS_DISPLAY := host cross
 
+# All installed initrc files
+ALL_INIT_RC_INSTALLED_PAIRS :=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
