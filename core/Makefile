@@ -386,7 +386,15 @@ ifneq (,$(TARGET_BUILD_APPS))
 endif
 
 # -----------------------------------------------------------------
+# build system stats
+BUILD_SYSTEM_STATS := $(PRODUCT_OUT)/build_system_stats.txt
+$(BUILD_SYSTEM_STATS):
+	@rm -f $@
+	@$(foreach s,$(STATS.MODULE_TYPE),echo "modules_type_make,$(s),$(words $(STATS.MODULE_TYPE.$(s)))" >>$@;)
+	@$(foreach s,$(STATS.SOONG_MODULE_TYPE),echo "modules_type_soong,$(s),$(STATS.SOONG_MODULE_TYPE.$(s))" >>$@;)
+$(call dist-for-goals,droidcore,$(BUILD_SYSTEM_STATS))
 
+# -----------------------------------------------------------------
 # The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
 # deliverables will be re-signed by hand.  We expect this file to
