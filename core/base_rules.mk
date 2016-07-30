@@ -336,21 +336,22 @@ $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	$(copy-file-to-new-target)
 	$(PRIVATE_POST_INSTALL_CMD)
 
+ifndef LOCAL_IS_HOST_MODULE
 # Rule to install the module's companion init.rc.
-my_init_rc := $(LOCAL_INIT_RC_$(my_32_64_bit_suffix))
-ifneq ($(my_init_rc),)
-my_init_rc_pairs += $(LOCAL_PATH)/$(my_init_rc):$(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(my_init_rc))
-endif
-ifneq ($(LOCAL_INIT_RC),)
-my_init_rc_pairs += $(LOCAL_PATH)/$(LOCAL_INIT_RC):$(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(LOCAL_INIT_RC))
-# Make sure we don't define the rule twice in multilib module.
-LOCAL_INIT_RC :=
-endif
-ifneq ($(my_init_rc_pairs),)
-my_init_rc_installed := $(call copy-many-files,$(my_init_rc_pairs))
+my_init_rc := $(LOCAL_INIT_RC_$(my_32_64_bit_suffix)) $(LOCAL_INIT_RC)
+ifneq ($(strip $(my_init_rc)),)
+my_init_rc_pairs := $(foreach rc,$(my_init_rc),$(LOCAL_PATH)/$(rc):$(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(rc)))
+my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(rc)))
+
+# Make sure we only set up the copy rules once, even if another arch variant
+# shares a common LOCAL_INIT_RC.
+my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc_pairs))
+my_init_rc_new_installed := $(call copy-many-files,$(my_init_rc_new_pairs))
+ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
 $(my_register_name) : $(my_init_rc_installed)
-endif # my_init_rc_pairs
+endif # my_init_rc
+endif # !LOCAL_IS_HOST_MODULE
 
 # Rule to install the module's companion symlinks
 my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
