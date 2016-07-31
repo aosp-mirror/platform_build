@@ -152,16 +152,12 @@ endif  # if not ONE_SHOT_MAKEFILE dont_bother
 
 previous_build_config_file := $(PRODUCT_OUT)/previous_build_config.mk
 
-# A change in the list of aapt configs warrants an installclean, too.
-aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG) $(PRODUCT_AAPT_PREF_CONFIG))
-
 current_build_config := \
-    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)-{$(aapt_config_list)}
+    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)
 current_sanitize_target := $(strip $(SANITIZE_TARGET))
 ifeq (,$(current_sanitize_target))
   current_sanitize_target := false
 endif
-aapt_config_list :=
 force_installclean := false
 force_objclean := false
 
