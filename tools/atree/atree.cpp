@@ -92,7 +92,7 @@ debug_printf(const char* format, ...)
 
 // Escape the filename so that it can be added to the makefile properly.
 static string
-escape_filename(const string name)
+escape_filename(const string& name)
 {
     ostringstream new_name;
     for (string::const_iterator iter = name.begin(); iter != name.end(); ++iter)
