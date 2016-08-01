@@ -67,6 +67,8 @@ org\.w3c\.dom
 org\.w3c\.dom\.ls
 org\.w3c\.dom\.traversal
 # OpenJdk internal implementation.
+sun\.invoke\.util
+sun\.invoke\.empty
 sun\.misc
 sun\.util.*
 sun\.text.*
