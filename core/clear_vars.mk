@@ -365,6 +365,16 @@ LOCAL_MODULE_SYMLINKS_64:=
 LOCAL_JAVA_LANGUAGE_VERSION:=
 LOCAL_CTS_GTEST_LIST_EXECUTABLE:=
 
+LOCAL_IS_AUX_MODULE :=
+LOCAL_AUX_TOOLCHAIN :=
+LOCAL_AUX_OS :=
+LOCAL_AUX_ARCH :=
+LOCAL_AUX_SUBARCH :=
+LOCAL_AUX_CPU :=
+LOCAL_AUX_OS_VARIANT :=
+LOCAL_CUSTOM_BUILD_STEP_INPUT:=
+LOCAL_CUSTOM_BUILD_STEP_OUTPUT:=
+
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
 # Leave the current makefile to make sure we don't break anything

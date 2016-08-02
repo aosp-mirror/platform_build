@@ -92,6 +92,7 @@ ANDROID_RESOURCE_GENERATED_CLASSES := 'R.class' 'R$$*.class' 'Manifest.class' 'M
 
 # Display names for various build targets
 TARGET_DISPLAY := target
+AUX_DISPLAY := aux
 HOST_DISPLAY := host
 HOST_CROSS_DISPLAY := host cross
 
@@ -456,6 +457,28 @@ define reverse-list
 $(if $(1),$(call reverse-list,$(wordlist 2,$(words $(1)),$(1)))) $(firstword $(1))
 endef
 
+define def-host-aux-target
+$(eval _idf_val_:=$(if $(strip $(LOCAL_IS_HOST_MODULE)),HOST,$(if $(strip $(LOCAL_IS_AUX_MODULE)),AUX,))) \
+$(_idf_val_)
+endef
+
+###########################################################
+## Returns correct _idfPrefix from the list:
+##   { HOST, HOST_CROSS, AUX, TARGET }
+###########################################################
+# the following rules checked in order:
+# ($1 is in {AUX, HOST_CROSS} => $1;
+# ($1 is empty) => TARGET;
+# ($2 is not empty) => HOST_CROSS;
+# => HOST;
+define find-idf-prefix
+$(strip \
+    $(eval _idf_pfx_:=$(strip $(filter AUX HOST_CROSS,$(1)))) \
+    $(eval _idf_pfx_:=$(if $(strip $(1)),$(if $(_idf_pfx_),$(_idf_pfx_),$(if $(strip $(2)),HOST_CROSS,HOST)),TARGET)) \
+    $(_idf_pfx_)
+)
+endef
+
 ###########################################################
 ## The intermediates directory.  Where object files go for
 ## a given target.  We could technically get away without
@@ -466,7 +489,7 @@ endef
 
 # $(1): target class, like "APPS"
 # $(2): target name, like "NotePad"
-# $(3): if non-empty, this is a HOST target.
+# $(3): { HOST, HOST_CROSS, AUX, <empty (TARGET)>, <other non-empty (HOST)> }
 # $(4): if non-empty, force the intermediates to be COMMON
 # $(5): if non-empty, force the intermediates to be for the 2nd arch
 # $(6): if non-empty, force the intermediates to be for the host cross os
@@ -478,7 +501,7 @@ $(strip \
     $(eval _idfName := $(strip $(2))) \
     $(if $(_idfName),, \
         $(error $(LOCAL_PATH): Name not defined in call to intermediates-dir-for)) \
-    $(eval _idfPrefix := $(if $(strip $(3)),$(if $(strip $(6)),HOST_CROSS,HOST),TARGET)) \
+    $(eval _idfPrefix := $(call find-idf-prefix,$(3),$(6))) \
     $(eval _idf2ndArchPrefix := $(if $(strip $(5)),$(TARGET_2ND_ARCH_VAR_PREFIX))) \
     $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_INTERMEDIATES)) \
@@ -503,7 +526,7 @@ $(strip \
         $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-intermediates-dir)) \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-intermediates-dir)) \
-    $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(LOCAL_IS_HOST_MODULE),$(1),$(2),$(3)) \
+    $(call intermediates-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(call def-host-aux-target),$(1),$(2),$(3)) \
 )
 endef
 
@@ -518,7 +541,7 @@ endef
 
 # $(1): target class, like "APPS"
 # $(2): target name, like "NotePad"
-# $(3): if non-empty, this is a HOST target.
+# $(3): { HOST, HOST_CROSS, AUX, <empty (TARGET)>, <other non-empty (HOST)> }
 # $(4): if non-empty, force the generated sources to be COMMON
 define generated-sources-dir-for
 $(strip \
@@ -528,7 +551,7 @@ $(strip \
     $(eval _idfName := $(strip $(2))) \
     $(if $(_idfName),, \
         $(error $(LOCAL_PATH): Name not defined in call to generated-sources-dir-for)) \
-    $(eval _idfPrefix := $(if $(strip $(3)),HOST,TARGET)) \
+    $(eval _idfPrefix := $(call find-idf-prefix,$(3),)) \
     $(if $(filter $(_idfPrefix)-$(_idfClass),$(COMMON_MODULE_CLASSES))$(4), \
         $(eval _idfIntBase := $($(_idfPrefix)_OUT_COMMON_GEN)) \
       , \
@@ -548,7 +571,7 @@ $(strip \
         $(error $(LOCAL_PATH): LOCAL_MODULE_CLASS not defined before call to local-generated-sources-dir)) \
     $(if $(strip $(LOCAL_MODULE)),, \
         $(error $(LOCAL_PATH): LOCAL_MODULE not defined before call to local-generated-sources-dir)) \
-    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(LOCAL_IS_HOST_MODULE),$(1)) \
+    $(call generated-sources-dir-for,$(LOCAL_MODULE_CLASS),$(LOCAL_MODULE),$(call def-host-aux-target),$(1)) \
 )
 endef
 
@@ -1556,6 +1579,89 @@ $(extract-and-include-target-whole-static-libs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
     $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
+endef
+
+# $(1): the full path of the source static library.
+define _extract-and-include-single-aux-whole-static-lib
+$(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
+    rm -rf $$ldir; \
+    mkdir -p $$ldir; \
+    cp $(1) $$ldir; \
+    lib_to_include=$$ldir/$(notdir $(1)); \
+    filelist=; \
+    subdir=0; \
+    for f in `$(PRIVATE_AR) t $(1)`; do \
+        if [ -e $$ldir/$$f ]; then \
+            mkdir $$ldir/$$subdir; \
+            ext=$$subdir/; \
+            subdir=$$((subdir+1)); \
+            $(PRIVATE_AR) m $$lib_to_include $$f; \
+        else \
+            ext=; \
+        fi; \
+        $(PRIVATE_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
+        filelist="$$filelist $$ldir/$$ext$$f"; \
+    done ; \
+    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) \
+        $(PRIVATE_ARFLAGS) $@ $$filelist
+
+endef
+
+define extract-and-include-aux-whole-static-libs
+$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)))
+$(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
+    $(call _extract-and-include-single-aux-whole-static-lib, $(lib)))
+endef
+
+# Explicitly delete the archive first so that ar doesn't
+# try to add to an existing archive.
+define transform-o-to-aux-static-lib
+@echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
+@rm -f $@
+$(extract-and-include-aux-whole-static-libs)
+$(call split-long-arguments,$(PRIVATE_AR) \
+    $(AUX_GLOBAL_ARFLAGS) \
+    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
+endef
+
+define transform-o-to-aux-executable-inner
+$(hide) $(PRIVATE_CXX) -pie \
+	-Bdynamic \
+	-Wl,--gc-sections \
+	$(PRIVATE_ALL_OBJECTS) \
+	-Wl,--whole-archive \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+	-Wl,--no-whole-archive \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+	$(PRIVATE_LDFLAGS) \
+	-o $@
+endef
+
+define transform-o-to-aux-executable
+@echo "$(AUX_DISPLAY) Executable: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
+$(transform-o-to-aux-executable-inner)
+endef
+
+define transform-o-to-aux-static-executable-inner
+$(hide) $(PRIVATE_CXX) \
+	-Bstatic \
+	-Wl,--gc-sections \
+	$(PRIVATE_ALL_OBJECTS) \
+	-Wl,--whole-archive \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+	-Wl,--no-whole-archive \
+	$(call normalize-target-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+	$(PRIVATE_LDFLAGS) \
+	-Wl,-Map=$(@).map \
+	-o $@
+endef
+
+define transform-o-to-aux-static-executable
+@echo "$(AUX_DISPLAY) StaticExecutable: $(PRIVATE_MODULE) ($@)"
+@mkdir -p $(dir $@)
+$(transform-o-to-aux-static-executable-inner)
 endef
 
 ###########################################################
