@@ -265,6 +265,13 @@ endif
 ifdef LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 my_clang := $(strip $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 endif
+# Issue warning if LOCAL_CLANG* is set to false and the local makefile is not found
+# in the exception project list.
+ifeq ($(my_clang),false)
+    ifeq ($(call find_in_local_clang_exception_projects,$(LOCAL_MODULE_MAKEFILE)),)
+        $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): warning: LOCAL_CLANG is set to false)
+    endif
+endif
 
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
