@@ -22,7 +22,8 @@ print_build_config_vars := \
   HOST_CROSS_2ND_ARCH \
   HOST_BUILD_TYPE \
   BUILD_ID \
-  OUT_DIR
+  OUT_DIR \
+  AUX_OS_VARIANT_LIST
 
 ifeq ($(TARGET_BUILD_PDK),true)
 print_build_config_vars += \
