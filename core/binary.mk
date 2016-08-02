@@ -220,11 +220,13 @@ endif
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
 # all code is position independent, and then those warnings get promoted to
 # errors.
+ifneq ($(LOCAL_NO_PIC),true)
 ifneq ($($(my_prefix)OS),windows)
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 my_cflags += -fpie
 else
 my_cflags += -fPIC
+endif
 endif
 endif
 
