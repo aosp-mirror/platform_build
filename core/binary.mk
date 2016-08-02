@@ -338,7 +338,7 @@ endif
 ifneq ($(strip $(CUSTOM_$(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)LINKER)),)
   my_linker := $(CUSTOM_$(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)LINKER)
 else
-  my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LINKER)
+  my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LINKER)
 endif
 
 include $(BUILD_SYSTEM)/config_sanitizers.mk
@@ -388,24 +388,24 @@ my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroo
 my_target_global_cppflags := $(my_ndk_stl_cppflags)
 else
 my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_C_INCLUDES)
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
 my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PROJECT_SYSTEM_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_C_SYSTEM_INCLUDES)
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 my_target_global_cppflags :=
 endif # LOCAL_SDK_VERSION
 
 ifeq ($(my_clang),true)
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CONLYFLAGS)
-my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_CPPFLAGS)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_TARGET_GLOBAL_LDFLAGS)
+my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
+my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS)
+my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS)
+my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 else
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CONLYFLAGS)
-my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_CPPFLAGS)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LDFLAGS)
+my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
+my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS)
+my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS)
+my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_clang
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
@@ -464,9 +464,9 @@ else
 endif
 
 ifeq ($(my_clang),true)
-    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_LIBPROFILE_RT)
+    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
 else
-    my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,,,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
+    my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,$(filter AUX,$(my_kind)),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
@@ -494,7 +494,7 @@ endif
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
   my_syntax_arch := host
 else
-  my_syntax_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  my_syntax_arch := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 endif
 
 ifeq ($(strip $(my_cc)),)
@@ -1249,9 +1249,9 @@ endif
 import_includes := $(intermediates)/import_includes
 import_includes_deps := $(strip \
     $(foreach l, $(installed_shared_library_module_names), \
-      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
+      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
     $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
-      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 $(import_includes): PRIVATE_IMPORT_EXPORT_INCLUDES := $(import_includes_deps)
 $(import_includes) : $(import_includes_deps)
 	@echo Import includes file: $@
@@ -1263,7 +1263,6 @@ ifdef import_includes_deps
 else
 	$(hide) touch $@
 endif
-
 
 ####################################################
 ## Verify that NDK-built libraries only link against
@@ -1280,11 +1279,11 @@ $(my_link_type): PRIVATE_ALLOWED_TYPES := (ndk|platform)
 endif
 my_link_type_deps := $(strip \
    $(foreach l,$(my_whole_static_libraries) $(my_static_libraries), \
-     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/link_type))
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/link_type))
 ifneq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
 my_link_type_deps += $(strip \
    $(foreach l,$(my_shared_libraries), \
-     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/link_type))
+     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/link_type))
 endif
 $(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
 $(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
@@ -1437,7 +1436,7 @@ endif
 built_static_libraries := \
     $(foreach lib,$(my_static_libraries), \
       $(call intermediates-dir-for, \
-        STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
+        STATIC_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
 
 ifdef LOCAL_SDK_VERSION
 built_static_libraries += $(my_ndk_stl_static_lib)
@@ -1446,7 +1445,7 @@ endif
 built_whole_libraries := \
     $(foreach lib,$(my_whole_static_libraries), \
       $(call intermediates-dir-for, \
-        STATIC_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
+        STATIC_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(a_suffix))
 
 # We don't care about installed static libraries, since the
 # libraries have already been linked into the module at that point.
@@ -1625,15 +1624,15 @@ $(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
 # Headers exported by whole static libraries are also exported by this library.
 export_include_deps := $(strip \
    $(foreach l,$(my_whole_static_libraries), \
-     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 # Re-export requested headers from shared libraries.
 export_include_deps += $(strip \
    $(foreach l,$(LOCAL_EXPORT_SHARED_LIBRARY_HEADERS), \
-     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 # Re-export requested headers from static libraries.
 export_include_deps += $(strip \
    $(foreach l,$(LOCAL_EXPORT_STATIC_LIBRARY_HEADERS), \
-     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(LOCAL_IS_HOST_MODULE),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
 $(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
 # By adding $(my_generated_sources) it makes sure the headers get generated
 # before any dependent source files get compiled.

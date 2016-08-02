@@ -17,6 +17,7 @@ PARSE_TIME_MAKE_GOALS := \
 	DUMP_% \
 	ECLIPSE-% \
 	PRODUCT-% \
+	AUX-% \
 	boottarball-nodeps \
 	brillo_tests \
 	btnod \

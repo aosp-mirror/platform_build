@@ -33,6 +33,7 @@ ifeq ($(LOCAL_MODULE),)
 endif
 
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
+LOCAL_IS_AUX_MODULE := $(strip $(LOCAL_IS_AUX_MODULE))
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(LOCAL_IS_HOST_MODULE),true)
     $(error $(LOCAL_PATH): LOCAL_IS_HOST_MODULE must be "true" or empty, not "$(LOCAL_IS_HOST_MODULE)")
@@ -43,8 +44,18 @@ ifdef LOCAL_IS_HOST_MODULE
     my_prefix := $(LOCAL_HOST_PREFIX)
   endif
   my_host := host-
+  my_kind := HOST
 else
-  my_prefix := TARGET_
+  ifdef LOCAL_IS_AUX_MODULE
+    ifneq ($(LOCAL_IS_AUX_MODULE),true)
+      $(error $(LOCAL_PATH): LOCAL_IS_AUX_MODULE must be "true" or empty, not "$(LOCAL_IS_AUX_MODULE)")
+    endif
+    my_prefix := AUX_
+    my_kind := AUX
+  else
+    my_prefix := TARGET_
+    my_kind :=
+  endif
   my_host :=
 endif
 
@@ -195,9 +206,13 @@ ifndef LOCAL_NO_2ND_ARCH_MODULE_SUFFIX
 my_register_name := $(my_register_name)$($(my_prefix)2ND_ARCH_MODULE_SUFFIX)
 endif
 endif
+
+# variant is enough to make nano class unique; it serves as a key to lookup (OS,ARCH) tuple
+aux_class := $($(my_prefix)OS_VARIANT)
 # Make sure that this IS_HOST/CLASS/MODULE combination is unique.
 module_id := MODULE.$(if \
-    $(LOCAL_IS_HOST_MODULE),$($(my_prefix)OS),TARGET).$(LOCAL_MODULE_CLASS).$(my_register_name)
+    $(LOCAL_IS_HOST_MODULE),$($(my_prefix)OS),$(if \
+    $(LOCAL_IS_AUX_MODULE),$(aux_class),TARGET)).$(LOCAL_MODULE_CLASS).$(my_register_name)
 ifdef $(module_id)
 $(error $(LOCAL_PATH): $(module_id) already defined by $($(module_id)))
 endif
@@ -292,6 +307,7 @@ $(cleantarget)::
 ###########################################################
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_PATH:=$(LOCAL_PATH)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_IS_HOST_MODULE := $(LOCAL_IS_HOST_MODULE)
+$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_IS_AUX_MODULE := $(LOCAL_IS_AUX_MODULE)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_HOST:= $(my_host)
 $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_PREFIX := $(my_prefix)
 
