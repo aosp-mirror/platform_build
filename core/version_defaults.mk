@@ -25,7 +25,7 @@
 #     BUILD_ID
 #     BUILD_NUMBER
 #     BUILD_DATETIME
-#     SECURITY_PATCH
+#     PLATFORM_SECURITY_PATCH
 #
 
 # Look for an optional file containing overrides of the defaults,
