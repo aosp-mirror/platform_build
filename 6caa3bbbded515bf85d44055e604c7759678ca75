@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f48172c9_b39aef5b",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-08-02T22:23:31Z",
+      "side": 1,
+      "message": "Done. Thanks.",
+      "parentUuid": "f48172c9_2008c3d6",
+      "range": {
+        "startLine": 152,
+        "startChar": 16,
+        "endLine": 152,
+        "endChar": 25
+      },
+      "revId": "6caa3bbbded515bf85d44055e604c7759678ca75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f48172c9_000b47d6",
         "filename": "core/clang/config.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-08-02T22:15:29Z",
       "side": 1,
       "message": "This shouldn\u0027t be here",
+      "range": {
+        "startLine": 152,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 24
+      },
+      "revId": "6caa3bbbded515bf85d44055e604c7759678ca75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f48172c9_13b5e3c8",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-08-02T22:23:31Z",
+      "side": 1,
+      "message": "Do you mean that LOCAL_CLANG_EXCEPTION_PROJECTS shouldn\u0027t be in this file, or some of vendor project names should not be here?",
+      "parentUuid": "f48172c9_000b47d6",
       "range": {
         "startLine": 152,
         "startChar": 0,
