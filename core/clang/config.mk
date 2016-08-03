@@ -143,4 +143,21 @@ ifeq ($(HOST_PREFER_32_BIT),true)
 FORCE_BUILD_LLVM_COMPONENTS := true
 endif
 
+# A list of projects that are allowed to set LOCAL_CLANG to false.
+LOCAL_CLANG_EXCEPTION_PROJECTS := \
+  device/huawei/angler/ \
+  device/lge/bullhead/ \
+  external/valgrind/ \
+  hardware/qcom/ \
+  $(INTERNAL_LOCAL_CLANG_EXCEPTION_PROJECTS)
+
+# Find $1 in the exception project list.
+define find_in_local_clang_exception_projects
+$(subst $(space),, \
+  $(foreach project,$(LOCAL_CLANG_EXCEPTION_PROJECTS), \
+    $(if $(filter $(project)%,$(1)),$(project)) \
+  ) \
+)
+endef
+
 include $(BUILD_SYSTEM)/clang/tidy.mk
