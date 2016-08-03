@@ -145,6 +145,7 @@ endif
 
 # A list of projects that are allowed to set LOCAL_CLANG to false.
 LOCAL_CLANG_EXCEPTION_PROJECTS := \
+  bionic/tests/ \
   device/huawei/angler/ \
   device/lge/bullhead/ \
   external/valgrind/ \
