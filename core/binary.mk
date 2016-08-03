@@ -274,6 +274,13 @@ ifneq ($(my_cc)$(my_cxx),)
         my_clang := false
     endif
 endif
+# Issue warning if LOCAL_CLANG* is set to false and the local makefile is not found
+# in the exception project list.
+ifeq ($(my_clang),false)
+    ifeq ($(call find_in_local_clang_exception_projects,$(LOCAL_MODULE_MAKEFILE)),)
+        $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): warning: LOCAL_CLANG is set to false)
+    endif
+endif
 
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
