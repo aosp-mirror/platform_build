@@ -151,6 +151,8 @@ LOCAL_CLANG_EXCEPTION_PROJECTS = \
   device/lge/bullhead/ \
   external/valgrind/ \
   hardware/qcom/ \
+  test/vts/hals/camera/bullhead/ \
+  test/vts/hals/etc/libqdutils/ \
   $(INTERNAL_LOCAL_CLANG_EXCEPTION_PROJECTS)
 
 # Find $1 in the exception project list.
