@@ -115,7 +115,6 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v7/cardview \
         v7/mediarouter \
         v7/palette \
-        v8/renderscript \
         v13 \
         v17/leanback \
         design \
@@ -141,6 +140,7 @@ FRAMEWORKS_MULTIDEX_SUBDIRS := \
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
 	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
 	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)) \
+        frameworks/rs/support \
         frameworks/support/graphics/drawable/animated \
         frameworks/support/graphics/drawable/static \
 	frameworks/support/v7/appcompat/src \
@@ -156,6 +156,7 @@ FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
     android-support-animatedvectordrawable \
     android-support-v7-appcompat \
     android-support-v7-recyclerview \
+    android-support-v8-renderscript \
     android-support-multidex \
     android-support-multidex-instrumentation
 
