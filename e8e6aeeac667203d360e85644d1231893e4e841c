@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "54231e3a_ec36c606",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-08-04T19:14:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "54231e3a_3b5dda1c",
+      "range": {
+        "startLine": 9,
+        "startChar": 31,
+        "endLine": 9,
+        "endChar": 36
+      },
+      "revId": "e8e6aeeac667203d360e85644d1231893e4e841c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "54231e3a_3b74fa92",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-08-04T17:29:48Z",
       "side": 1,
       "message": "fastboot doesn\u0027t care about target_files.zip. it looks at -img.zip only.",
+      "range": {
+        "startLine": 10,
+        "startChar": 8,
+        "endLine": 10,
+        "endChar": 50
+      },
+      "revId": "e8e6aeeac667203d360e85644d1231893e4e841c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "54231e3a_8c4cea9d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-08-04T19:14:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "54231e3a_3b74fa92",
       "range": {
         "startLine": 10,
         "startChar": 8,
