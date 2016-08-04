@@ -19,7 +19,31 @@ Given a target-files zipfile that does not contain images (ie, does
 not have an IMAGES/ top-level subdirectory), produce the images and
 add them to the zipfile.
 
-Usage:  add_img_to_target_files target_files
+Usage:  add_img_to_target_files [flag] target_files
+
+  -a  (--add_missing)
+      Build and add missing images to "IMAGES/". If this option is
+      not specified, this script will simply exit when "IMAGES/"
+      directory exists in the target file.
+
+  -r  (--rebuild_recovery)
+      Rebuild the recovery patch and write it to the system image. Only
+      meaningful when system image needs to be rebuilt.
+
+  --replace_verity_private_key
+      Replace the private key used for verity signing. (same as the option
+      in sign_target_files_apks)
+
+  --replace_verity_public_key
+       Replace the certificate (public key) used for verity verification. (same
+       as the option in sign_target_files_apks)
+
+  --is_signing
+      Skip building & adding the images for "userdata" and "cache" if we
+      are signing the target files.
+
+  --verity_signer_path
+      Specify the signer path to build verity metadata.
 """
 
 import sys
@@ -45,6 +69,7 @@ OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
+OPTIONS.is_signing = False
 OPTIONS.verity_signer_path = None
 
 def GetCareMap(which, imgname):
@@ -356,10 +381,11 @@ def AddImagesToTargetFiles(filename):
   if has_system_other:
     banner("system_other")
     AddSystemOther(output_zip)
-  banner("userdata")
-  AddUserdata(output_zip)
-  banner("cache")
-  AddCache(output_zip)
+  if not OPTIONS.is_signing:
+    banner("userdata")
+    AddUserdata(output_zip)
+    banner("cache")
+    AddCache(output_zip)
 
   # For devices using A/B update, copy over images from RADIO/ to IMAGES/ and
   # make sure we have all the needed images ready under IMAGES/.
@@ -406,6 +432,8 @@ def main(argv):
       OPTIONS.replace_verity_private_key = (True, a)
     elif o == "--replace_verity_public_key":
       OPTIONS.replace_verity_public_key = (True, a)
+    elif o == "--is_signing":
+      OPTIONS.is_signing = True
     elif o == "--verity_signer_path":
       OPTIONS.verity_signer_path = a
     else:
@@ -417,6 +445,7 @@ def main(argv):
       extra_long_opts=["add_missing", "rebuild_recovery",
                        "replace_verity_public_key=",
                        "replace_verity_private_key=",
+                       "is_signing",
                        "verity_signer_path="],
       extra_option_handler=option_handler)
 
