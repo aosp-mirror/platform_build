@@ -278,7 +278,7 @@ endif
 # in the exception project list.
 ifeq ($(my_clang),false)
     ifeq ($(call find_in_local_clang_exception_projects,$(LOCAL_MODULE_MAKEFILE)),)
-        $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): warning: LOCAL_CLANG is set to false)
+        $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): LOCAL_CLANG is set to false)
     endif
 endif
 
