@@ -320,17 +320,17 @@ $(call all-vts-files-under,.)
 endef
 
 ###########################################################
-## Find all files named "*.hal" under the named directories,
+## Find all files named "*.hidl" under the named directories,
 ## which must be relative to $(LOCAL_PATH).  The returned list
 ## is relative to $(LOCAL_PATH).
 ###########################################################
 
 define all-hidl-files-under
-$(call all-named-files-under,*.hal,$(1))
+$(call all-named-files-under,*.hidl,$(1))
 endef
 
 ###########################################################
-## Find all of the "*.hal" files under $(LOCAL_PATH).
+## Find all of the "*.hidl" files under $(LOCAL_PATH).
 ###########################################################
 
 define all-subdir-hidl-files
@@ -1175,19 +1175,19 @@ define transform-hidl-to-cpp
 @mkdir -p $(PRIVATE_HEADER_OUTPUT_DIR)
 @mkdir -p $(PRIVATE_SRC_OUTPUT_DIR)
 @echo "Generating C++ from HIDL: $(PRIVATE_MODULE) <= $<"
-$(hide) $(HIDL) -d$(basename $@).hal.P $(PRIVATE_HIDL_FLAGS) \
+$(hide) $(HIDL) -d$(basename $@).hidl.P $(PRIVATE_HIDL_FLAGS) \
     all_cpps $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
 endef
 
-## Given a .hal file path generate the rule to compile it to .cpp and .h files.
-# $(1): a .hal source file
+## Given a .hidl file path generate the rule to compile it to .cpp and .h files.
+# $(1): a .hidl source file
 # $(2): a directory to place the generated .cpp and .h files in
 # $(3): name of a variable to add the path to the generated source files to
 #
 # You must call this with $(eval).
 define define-hidl-cpp-rule
 my_tracked_source_files += $@
-define-hidl-cpp-rule-src := $(patsubst %.hal,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
+define-hidl-cpp-rule-src := $(patsubst %.hidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
 $$(define-hidl-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(HIDL)
 	$$(transform-hidl-to-cpp)
 $(3) += $$(define-hidl-cpp-rule-src)

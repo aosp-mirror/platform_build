@@ -946,10 +946,10 @@ my_generated_sources += $(vts_gen_cpp)
 endif  # $(vts_src) non-empty
 
 ###########################################################
-## Compile the .hal files to .cpp and then to .o
+## Compile the .hidl files to .cpp and then to .o
 ###########################################################
 
-hidl_src := $(strip $(filter %.hal,$(my_src_files)))
+hidl_src := $(strip $(filter %.hidl,$(my_src_files)))
 hidl_gen_cpp :=
 ifneq ($(hidl_src),)
 
@@ -962,7 +962,7 @@ hidl_gen_include_root := $(intermediates)/hidl-generated/include
 $(foreach s,$(hidl_src),\
     $(eval $(call define-hidl-cpp-rule,$(s),$(hidl_gen_cpp_root),hidl_gen_cpp)))
 $(foreach cpp,$(hidl_gen_cpp), \
-    $(call include-depfile,$(addsuffix .hal.P,$(basename $(cpp))),$(cpp)))
+    $(call include-depfile,$(addsuffix .hidl.P,$(basename $(cpp))),$(cpp)))
 $(call track-src-file-gen,$(hidl_src),$(hidl_gen_cpp))
 
 $(hidl_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
