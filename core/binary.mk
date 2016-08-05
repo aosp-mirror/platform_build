@@ -210,11 +210,37 @@ ifdef LOCAL_SDK_VERSION
   endif
   endif
   endif
+endif
 
-  my_generated_ndk_shared_libraries := \
-      $(filter $(NDK_MIGRATED_LIBS),$(my_system_shared_libraries))
+ifndef LOCAL_IS_HOST_MODULE
+# For device libraries, move LOCAL_LDLIBS references to my_shared_libraries. We
+# no longer need to use my_ldlibs to pick up NDK prebuilt libraries since we're
+# linking my_shared_libraries by full path now.
+my_allowed_ldlibs :=
+
+# Sort ldlibs and ldflags between -l and other linker flags
+# We'll do this again later, since there are still changes happening, but that's fine.
+my_ldlib_flags := $(my_ldflags) $(my_ldlibs)
+my_ldlibs := $(filter -l%,$(my_ldlib_flags))
+my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
+my_ldlib_flags :=
+
+# Move other ldlibs back to shared libraries
+my_shared_libraries += $(patsubst -l%,lib%,$(filter-out $(my_allowed_ldlibs),$(my_ldlibs)))
+my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
+endif
+
+ifdef LOCAL_SDK_VERSION
+  my_all_ndk_libraries := \
+      $(NDK_MIGRATED_LIBS) $(addprefix lib,$(NDK_PREBUILT_SHARED_LIBRARIES))
+  my_ndk_shared_libraries := \
+      $(filter $(my_all_ndk_libraries),\
+        $(my_shared_libraries) $(my_system_shared_libraries))
+
+  my_shared_libraries := \
+      $(filter-out $(my_all_ndk_libraries),$(my_shared_libraries))
   my_system_shared_libraries := \
-      $(filter-out $(NDK_MIGRATED_LIBS),$(my_system_shared_libraries))
+      $(filter-out $(my_all_ndk_libraries),$(my_system_shared_libraries))
 endif
 
 # MinGW spits out warnings about -fPIC even for -fpie?!) being ignored because
@@ -1232,34 +1258,6 @@ asm_objects += $(asm_objects_asm)
 endif
 
 
-####################################################
-## For NDK-built libraries, move LOCAL_SHARED_LIBRARY
-## references to my_ldlibs, so that we use the NDK
-## prebuilt library and headers for linking.
-####################################################
-ifndef LOCAL_IS_HOST_MODULE
-my_allowed_ldlibs :=
-ifdef LOCAL_SDK_VERSION
-  my_ndk_shared_libraries := $(filter $(addprefix lib,$(NDK_PREBUILT_SHARED_LIBRARIES)),$(my_shared_libraries))
-  my_shared_libraries := $(filter-out $(my_ndk_shared_libraries),$(my_shared_libraries))
-  my_ldlibs += $(patsubst lib%,-l%,$(my_ndk_shared_libraries))
-  my_ndk_shared_libraries :=
-  my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
-endif
-
-# Sort ldlibs and ldflags between -l and other linker flags
-# We'll do this again later, since there are still changes happening, but that's fine.
-my_ldlib_flags := $(my_ldflags) $(my_ldlibs)
-my_ldlibs := $(filter -l%,$(my_ldlib_flags))
-my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
-my_ldlib_flags :=
-
-# Move other ldlibs back to shared libraries
-my_shared_libraries += $(patsubst -l%,lib%,$(filter-out $(my_allowed_ldlibs),$(my_ldlibs)))
-my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
-endif
-
-
 ##########################################################
 ## Set up installed module dependency
 ## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
@@ -1451,12 +1449,17 @@ my_system_shared_libraries_fullpath := \
     $(addprefix $(my_ndk_sysroot_lib)/, \
         $(addsuffix $(so_suffix), $(my_system_shared_libraries)))
 
-my_built_ndk_shared_libraries_fullpath := \
-    $(addprefix $(my_built_ndk_libs)/,\
-        $(addsuffix $(so_suffix),$(my_generated_ndk_shared_libraries)))
+# We need to preserve the ordering of LOCAL_SHARED_LIBRARIES regardless of
+# whether the libs are generated or prebuilt, so we simply can't split into two
+# lists and use addprefix.
+my_ndk_shared_libraries_fullpath := \
+    $(foreach _lib,$(my_ndk_shared_libraries),\
+        $(if $(filter $(NDK_MIGRATED_LIBS),$(_lib)),\
+            $(my_built_ndk_libs)/$(_lib)$(so_suffix),\
+            $(my_ndk_sysroot_lib)/$(_lib)$(so_suffix)))
 
 built_shared_libraries += \
-    $(my_built_ndk_shared_libraries_fullpath) \
+    $(my_ndk_shared_libraries_fullpath) \
     $(my_system_shared_libraries_fullpath) \
 
 else
