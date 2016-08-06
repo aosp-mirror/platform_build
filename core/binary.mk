@@ -99,6 +99,11 @@ ifdef LOCAL_SDK_VERSION
     $(shell if [ $(LOCAL_SDK_VERSION) -lt $(my_min_sdk_version) ]; then \
         echo $(my_min_sdk_version); else echo $(LOCAL_SDK_VERSION); fi)
 
+  # Traditionally this has come from android/api-level.h, but with the libc
+  # headers unified it must be set by the build system since we don't have
+  # per-API level copies of that header now.
+  my_cflags += -D__ANDROID_API__=$(my_ndk_api)
+
   my_ndk_source_root := \
       $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
   my_ndk_sysroot := \
