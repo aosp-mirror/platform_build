@@ -85,7 +85,9 @@ endif
 
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 LOCAL_BUILT_MODULE_STEM := package.apk
+ifndef LOCAL_INSTALLED_MODULE_STEM
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
+endif
 endif
 
 ifneq ($(filter true no_debuglink,$(my_strip_module) $(my_pack_module_relocations)),)
