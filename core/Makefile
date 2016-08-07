@@ -284,7 +284,7 @@ endif
 # -----------------------------------------------------------------
 # vendor build.prop
 #
-# For verifying that the vendor build is what we thing it is
+# For verifying that the vendor build is what we think it is
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
