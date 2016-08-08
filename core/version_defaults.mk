@@ -43,7 +43,7 @@ ifeq "" "$(PLATFORM_VERSION)"
   # which is the version that we reveal to the end user.
   # Update this value when the platform version changes (rather
   # than overriding it somewhere else).  Can be an arbitrary string.
-  PLATFORM_VERSION := NMR1
+  PLATFORM_VERSION := 7.1
 endif
 
 ifeq "" "$(PLATFORM_SDK_VERSION)"
@@ -70,7 +70,7 @@ endif
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
   # This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
-  PLATFORM_VERSION_CODENAME := NMR1
+  PLATFORM_VERSION_CODENAME := REL
 
   # This is all of the development codenames that are active.  Should be either
   # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
@@ -91,7 +91,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 1
+    PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
 
