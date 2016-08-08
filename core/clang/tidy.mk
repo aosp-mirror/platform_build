@@ -19,30 +19,30 @@
 # and misc-macro-parentheses, but not google-readability*
 # or google-runtime-references.
 DEFAULT_GLOBAL_TIDY_CHECKS := \
-  -*,google*,performance*,misc-macro-parentheses \
-  ,-google-readability*,-google-runtime-references
+  $(subst $(space),, \
+    -*,google*,performance*,misc-macro-parentheses \
+    ,-google-readability*,-google-runtime-references \
+  )
 
-# Disable style rules usually not followed by external projects.
+# There are too many clang-tidy warnings in external and vendor projects.
+# Enable only some google checks for these projects.
+DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS := \
+  $(subst $(space),, \
+    -*,google*,-google-build-using-namespace \
+    ,-google-readability*,-google-runtime-references \
+    ,-google-explicit-constructor,-google-runtime-int \
+  )
+
 # Every word in DEFAULT_LOCAL_TIDY_CHECKS list has the following format:
-#   <local_path_prefix>:,<tidy-check-pattern>
-# The tidy-check-patterns of all matching local_path_prefixes will be used.
-# For example, external/google* projects will have:
-#   ,-google-build-using-namespace,-google-explicit-constructor
-#   ,-google-runtime-int,-misc-macro-parentheses,
-#   ,google-runtime-int,misc-macro-parentheses
-# where google-runtime-int and misc-macro-parentheses are enabled at the end.
+#   <local_path_prefix>:,<tidy-checks>
+# The last matched local_path_prefix should be the most specific to be used.
 DEFAULT_LOCAL_TIDY_CHECKS := \
-  external/:,-google-build-using-namespace \
-  external/:,-google-explicit-constructor,-google-runtime-int \
-  external/:,-misc-macro-parentheses \
-  external/google:,google-runtime-int,misc-macro-parentheses \
-  external/webrtc/:,google-runtime-int \
-  hardware/qcom:,-google-build-using-namespace \
-  hardware/qcom:,-google-explicit-constructor,-google-runtime-int \
-  vendor/lge:,-google-build-using-namespace,-misc-macro-parentheses \
-  vendor/lge:,-google-explicit-constructor,-google-runtime-int \
-  vendor/widevine:,-google-build-using-namespace,-misc-macro-parentheses \
-  vendor/widevine:,-google-explicit-constructor,-google-runtime-int \
+  external/:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
+  external/google:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
+  external/webrtc:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
+  hardware/qcom:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
+  vendor/:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
+  vendor/google:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
 
 # Returns 2nd word of $(1) if $(2) has prefix of the 1st word of $(1).
 define find_default_local_tidy_check2
@@ -54,11 +54,11 @@ define find_default_local_tidy_check
 $(call find_default_local_tidy_check2,$(subst :,$(space),$(1)),$(2))
 endef
 
-# Returns concatenated tidy check patterns from the
-# DEFAULT_GLOBAL_TIDY_CHECKS and all matched patterns
-# in DEFAULT_LOCAL_TIDY_CHECKS based on given directory path $(1).
+# Returns the default tidy check list for local project path $(1).
+# Match $(1) with all patterns in DEFAULT_LOCAL_TIDY_CHECKS and use the last
+# most specific pattern.
 define default_global_tidy_checks
-$(subst $(space),, \
+$(lastword \
   $(DEFAULT_GLOBAL_TIDY_CHECKS) \
   $(foreach pattern,$(DEFAULT_LOCAL_TIDY_CHECKS), \
     $(call find_default_local_tidy_check,$(pattern),$(1)) \
