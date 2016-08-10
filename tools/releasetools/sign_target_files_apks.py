@@ -255,6 +255,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif (OPTIONS.replace_ota_keys and
           info.filename in (
               "BOOT/RAMDISK/res/keys",
+              "BOOT/RAMDISK/etc/update_engine/update-payload-key.pub.pem",
               "RECOVERY/RAMDISK/res/keys",
               "SYSTEM/etc/security/otacerts.zip",
               "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
@@ -509,6 +510,10 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     common.ZipWriteStr(
         output_tf_zip,
         "SYSTEM/etc/update_engine/update-payload-key.pub.pem",
+        pubkey)
+    common.ZipWriteStr(
+        output_tf_zip,
+        "BOOT/RAMDISK/etc/update_engine/update-payload-key.pub.pem",
         pubkey)
 
   return new_recovery_keys
