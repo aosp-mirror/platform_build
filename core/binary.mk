@@ -946,39 +946,6 @@ my_generated_sources += $(vts_gen_cpp)
 endif  # $(vts_src) non-empty
 
 ###########################################################
-## Compile the .hal files to .cpp and then to .o
-###########################################################
-
-hidl_src := $(strip $(filter %.hal,$(my_src_files)))
-hidl_gen_cpp :=
-ifneq ($(hidl_src),)
-
-# Use the intermediates directory to avoid writing our own .cpp -> .o rules.
-hidl_gen_cpp_root := $(intermediates)/hidl-generated/src
-hidl_gen_include_root := $(intermediates)/hidl-generated/include
-
-# Multi-architecture builds have distinct intermediates directories.
-# Thus we'll actually generate source for each architecture.
-$(foreach s,$(hidl_src),\
-    $(eval $(call define-hidl-cpp-rule,$(s),$(hidl_gen_cpp_root),hidl_gen_cpp)))
-$(foreach cpp,$(hidl_gen_cpp), \
-    $(call include-depfile,$(addsuffix .hal.P,$(basename $(cpp))),$(cpp)))
-$(call track-src-file-gen,$(hidl_src),$(hidl_gen_cpp))
-
-$(hidl_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
-$(hidl_gen_cpp) : PRIVATE_HEADER_OUTPUT_DIR := $(hidl_gen_include_root)
-$(hidl_gen_cpp) : PRIVATE_SRC_OUTPUT_DIR := $(hidl_gen_cpp_root)
-$(hidl_gen_cpp) : PRIVATE_HIDL_FLAGS := $(addprefix -I,$(LOCAL_HIDL_INCLUDES))
-
-# Add generated headers to include paths.
-my_c_includes += $(hidl_gen_include_root)
-my_export_c_include_dirs += $(hidl_gen_include_root)
-# Pick up the generated C++ files later for transformation to .o files.
-my_generated_sources += $(hidl_gen_cpp)
-
-endif  # $(hidl_src) non-empty
-
-###########################################################
 ## YACC: Compile .y/.yy files to .c/.cpp and then to .o.
 ###########################################################
 
