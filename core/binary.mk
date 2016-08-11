@@ -152,7 +152,6 @@ ifdef LOCAL_SDK_VERSION
   # See ndk/docs/CPLUSPLUS-SUPPORT.html
   my_ndk_stl_include_path :=
   my_ndk_stl_shared_lib_fullpath :=
-  my_ndk_stl_shared_lib :=
   my_ndk_stl_static_lib :=
   my_ndk_stl_cppflags :=
   my_cpu_variant := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
@@ -178,31 +177,58 @@ ifdef LOCAL_SDK_VERSION
       my_ldlibs += -ldl
     else
       my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(my_cpu_variant)/libstlport_shared.so
-      my_ndk_stl_shared_lib := -lstlport_shared
     endif
   else # LOCAL_NDK_STL_VARIANT is not stlport_* either
   ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
-    my_ndk_stl_include_path := \
-      $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include \
-      $(my_ndk_source_root)/android/support/include \
-
     # Pre-r11 NDKs used libgabi++ for libc++'s C++ ABI, but r11 and later use
     # libc++abi.
-    ifeq ($(LOCAL_NDK_VERSION),r10)
+    #
+    # r13 no longer has the inner directory as a side effect of just using
+    # external/libcxx.
+    ifeq (r10,$(LOCAL_NDK_VERSION))
+      my_ndk_stl_include_path := \
+        $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include
       my_ndk_stl_include_path += \
         $(my_ndk_source_root)/cxx-stl/llvm-libc++/gabi++/include
-    else
+    else ifeq (r11,$(LOCAL_NDK_VERSION))
+      my_ndk_stl_include_path := \
+        $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include
       my_ndk_stl_include_path += \
         $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/libcxxabi/include
+    else
+      my_ndk_stl_include_path := \
+        $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
+      my_ndk_stl_include_path += \
+        $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
+    endif
+    my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
+
+    my_libcxx_libdir := \
+      $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)
+
+    ifneq (,$(filter r10 r11,$(LOCAL_NDK_VERSION)))
+      ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
+        my_ndk_stl_static_lib := $(my_libcxx_libdir)/libc++_static.a
+        my_ldlibs += -ldl
+      else
+        my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
+      endif
+    else
+      ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
+        my_ndk_stl_static_lib := \
+          $(my_libcxx_libdir)/libc++_static.a \
+          $(my_libcxx_libdir)/libc++abi.a
+        my_ldlibs += -ldl
+      else
+        my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
+      endif
+
+      my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
+      ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
+        my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
+      endif
     endif
 
-    ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
-      my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)/libc++_static.a
-      my_ldlibs += -ldl
-    else
-      my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)/libc++_shared.so
-      my_ndk_stl_shared_lib := -lc++_shared
-    endif
     my_ndk_stl_cppflags := -std=c++11
   else # LOCAL_NDK_STL_VARIANT is not c++_* either
   ifneq (,$(filter gnustl_%, $(LOCAL_NDK_STL_VARIANT)))
