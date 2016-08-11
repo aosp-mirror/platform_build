@@ -479,6 +479,9 @@ BCC_COMPAT := $(HOST_OUT_EXECUTABLES)/bcc_compat
 DX := $(HOST_OUT_EXECUTABLES)/dx
 MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 
+SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
+ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
+
 # Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
