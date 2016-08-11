@@ -232,11 +232,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
                            "BOOT/RAMDISK/default.prop",
+                           "ROOT/default.prop",
                            "RECOVERY/RAMDISK/default.prop"):
       print "rewriting %s:" % (info.filename,)
       new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
       if info.filename in ("BOOT/RAMDISK/default.prop",
+                           "ROOT/default.prop",
                            "RECOVERY/RAMDISK/default.prop"):
         write_to_temp(info.filename, info.external_attr, new_data)
 
