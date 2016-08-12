@@ -279,6 +279,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
           info.filename == "BOOT/cmdline"):
       pass
 
+    # Skip the care_map as we will regenerate the system/vendor images.
+    elif (info.filename == "META/care_map.txt"):
+      pass
+
     # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
     # must come AFTER other matching rules.
     elif (info.filename.startswith("BOOT/") or
