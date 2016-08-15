@@ -527,11 +527,28 @@ NOTICE-HOST-%: ;
 NOTICE-TARGET-%: ;
 
 # A helper goal printing out install paths
-.PHONY: GET-INSTALL-PATH
-GET-INSTALL-PATH:
-	@echo "Install paths for modules in $(ONE_SHOT_MAKEFILE):"
-	@$(foreach m, $(ALL_MODULES), $(if $(ALL_MODULES.$(m).INSTALLED), \
-		echo 'INSTALL-PATH: $(m) $(ALL_MODULES.$(m).INSTALLED)';))
+define register_module_install_path
+.PHONY: GET-MODULE-INSTALL-PATH-$(1)
+GET-MODULE-INSTALL-PATH-$(1):
+	echo 'INSTALL-PATH: $(1) $(ALL_MODULES.$(1).INSTALLED)'
+endef
+
+SORTED_ALL_MODULES := $(sort $(ALL_MODULES))
+UNIQUE_ALL_MODULES :=
+$(foreach m,$(SORTED_ALL_MODULES),\
+    $(if $(call streq,$(m),$(lastword $(UNIQUE_ALL_MODULES))),,\
+        $(eval UNIQUE_ALL_MODULES += $(m))))
+SORTED_ALL_MODULES :=
+
+$(foreach mod,$(UNIQUE_ALL_MODULES),$(if $(ALL_MODULES.$(mod).INSTALLED),\
+    $(eval $(call register_module_install_path,$(mod)))\
+    $(foreach path,$(ALL_MODULES.$(mod).PATH),\
+        $(eval my_path_prefix := GET-INSTALL-PATH-IN)\
+        $(foreach component,$(subst /,$(space),$(path)),\
+            $(eval my_path_prefix := $$(my_path_prefix)-$$(component))\
+            $(eval .PHONY: $$(my_path_prefix))\
+            $(eval $$(my_path_prefix): GET-MODULE-INSTALL-PATH-$(mod))))))
+UNIQUE_ALL_MODULES :=
 
 else # ONE_SHOT_MAKEFILE
 
@@ -917,20 +934,6 @@ vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
-
-# phony target that include any targets in $(ALL_MODULES)
-.PHONY: all_modules
-ifndef BUILD_MODULES_IN_PATHS
-all_modules: $(ALL_MODULES)
-else
-# BUILD_MODULES_IN_PATHS is a list of paths relative to the top of the tree
-build_modules_in_paths := $(patsubst ./%,%,$(BUILD_MODULES_IN_PATHS))
-module_path_patterns := $(foreach p, $(build_modules_in_paths),\
-    $(if $(filter %/,$(p)),$(p)%,$(p)/%))
-my_all_modules := $(sort $(foreach m, $(ALL_MODULES),$(if $(filter\
-    $(module_path_patterns), $(addsuffix /,$(ALL_MODULES.$(m).PATH))),$(m))))
-all_modules: $(my_all_modules)
-endif
 
 .PHONY: auxiliary
 auxiliary: $(INSTALLED_AUX_TARGETS)
