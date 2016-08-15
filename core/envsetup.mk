@@ -20,7 +20,7 @@ include $(BUILD_SYSTEM)/version_defaults.mk
 # people who haven't re-run those will have to do so before they
 # can build.  Make sure to also update the corresponding value in
 # buildspec.mk.default and envsetup.sh.
-CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 11
+CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 12
 
 # ---------------------------------------------------------------
 # The product defaults to generic on hardware
