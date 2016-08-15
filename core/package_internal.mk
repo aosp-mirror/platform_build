@@ -75,10 +75,6 @@ ifeq ($(filter tests, $(LOCAL_MODULE_TAGS)),)
 LOCAL_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) -z
 endif
 
-ifdef LOCAL_PACKAGE_SPLITS
-LOCAL_AAPT_FLAGS += $(addprefix --split ,$(LOCAL_PACKAGE_SPLITS))
-endif
-
 need_compile_asset :=
 ifeq (,$(LOCAL_ASSET_DIR))
 LOCAL_ASSET_DIR := $(LOCAL_PATH)/assets
@@ -163,6 +159,10 @@ all_resources := $(strip \
        ) \
      ))
 
+ifdef LOCAL_PACKAGE_SPLITS
+LOCAL_AAPT_FLAGS += $(addprefix --split ,$(LOCAL_PACKAGE_SPLITS))
+endif
+
 endif  # LOCAL_USE_AAPT2
 
 ifneq ($(all_resources),)
@@ -170,7 +170,6 @@ ifneq ($(all_resources),)
 endif
 
 all_res_assets := $(strip $(all_assets) $(all_resources))
-
 
 # If no assets or resources were found, clear the directory variables so
 # we don't try to build them.
@@ -325,6 +324,20 @@ $(built_dex_intermediate) : $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
 ifeq ($(need_compile_res),true)
+
+###############################
+## APK splits
+built_apk_splits :=
+installed_apk_splits :=
+my_apk_split_configs :=
+
+ifdef LOCAL_PACKAGE_SPLITS
+my_apk_split_configs := $(LOCAL_PACKAGE_SPLITS)
+my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
+built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk)
+installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+endif
+
 ifdef LOCAL_USE_AAPT2
 my_compiled_res_base_dir := $(intermediates)/flat-res
 my_generated_res_dirs := $(rs_generated_res_dir)
@@ -548,12 +561,6 @@ endif
 ###############################
 ## APK splits
 ifdef LOCAL_PACKAGE_SPLITS
-# LOCAL_PACKAGE_SPLITS is a list of resource labels.
-# aapt will convert comma inside resource lable to underscore in the file names.
-my_split_suffixes := $(subst $(comma),_,$(LOCAL_PACKAGE_SPLITS))
-built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk)
-installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
-
 # The splits should have been built in the same command building the base apk.
 # This rule just runs signing.
 # Note that we explicily check the existence of the split apk and remove the

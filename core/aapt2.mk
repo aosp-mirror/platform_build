@@ -1,19 +1,24 @@
 ######################################
 # Compile resource with AAPT2
 # Input variables:
-# full_android_manifest,
-# my_res_resources, my_overlay_resources,
-# my_compiled_res_base_dir, my_res_package,
-# R_file_stamp, proguard_options_file
-# my_generated_res_dirs: Resources generated during the build process and we have to compile them in a single run of aapt2.
-# my_generated_res_dirs_deps: the dependency to use for my_generated_res_dirs.
+# - full_android_manifest
+# - my_res_resources
+# - my_overlay_resources
+# - my_compiled_res_base_dir
+# - my_res_package
+# - R_file_stamp
+# - proguard_options_file
+# - my_generated_res_dirs: Resources generated during the build process and we have to compile them in a single run of aapt2.
+# - my_generated_res_dirs_deps: the dependency to use for my_generated_res_dirs.
+# - my_apk_split_configs: The configurations for which to generate splits.
+# - built_apk_splits: The paths where AAPT should generate the splits.
 #
 # Output variables:
-# my_res_resources_flat, my_overlay_resources_flat,
-# my_generated_resources_flata
+# - my_res_resources_flat
+# - my_overlay_resources_flat
+# - my_generated_resources_flata
 #
 ######################################
-
 
 # Compile all the resource files.
 my_res_resources_flat := \
@@ -50,6 +55,11 @@ my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
 
 ifneq ($(my_static_library_resources),)
 $(my_res_package): PRIVATE_AAPT_FLAGS += --auto-add-overlay
+endif
+
+ifneq ($(my_apk_split_configs),)
+# Join the Split APK paths with their configuration, separated by a ':'.
+$(my_res_package): PRIVATE_AAPT_FLAGS += $(addprefix --split ,$(join $(built_apk_splits),$(addprefix :,$(my_apk_split_configs))))
 endif
 
 $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
