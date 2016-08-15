@@ -290,7 +290,7 @@ function set_stuff_for_environment()
 
 function set_sequence_number()
 {
-    export BUILD_ENV_SEQUENCE_NUMBER=11
+    export BUILD_ENV_SEQUENCE_NUMBER=12
 }
 
 function settitle()
@@ -789,7 +789,8 @@ function mm()
             done
             if [ -n "$GET_INSTALL_PATH" ]; then
               MODULES=
-              ARGS=GET-INSTALL-PATH
+              ARGS=GET-INSTALL-PATH-IN-$(dirname ${M})
+              ARGS=${ARGS//\//-}
             else
               MODULES=MODULES-IN-$(dirname ${M})
               # Convert "/" to "-".
@@ -816,6 +817,7 @@ function mmm()
         local DIR TO_CHOP
         local DIR_MODULES
         local GET_INSTALL_PATH=
+        local GET_INSTALL_PATHS=
         local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
         local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
         for DIR in $DIRS ; do
@@ -827,6 +829,7 @@ function mmm()
             if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
                 if [ "$DIR_MODULES" = "" ]; then
                     MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$DIR"
+                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$DIR"
                 else
                     MODULES="$MODULES $DIR_MODULES"
                 fi
@@ -854,7 +857,7 @@ function mmm()
             fi
         done
         if [ -n "$GET_INSTALL_PATH" ]; then
-          ARGS=$GET_INSTALL_PATH
+          ARGS=${GET_INSTALL_PATHS//\//-}
           MODULES=
           MODULES_IN_PATHS=
         fi

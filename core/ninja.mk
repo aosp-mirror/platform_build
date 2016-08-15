@@ -79,9 +79,6 @@ endif
 ifneq ($(ONE_SHOT_MAKEFILE),)
 KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-mmm-$(call replace_space_and_slash,$(ONE_SHOT_MAKEFILE))
 endif
-ifneq ($(BUILD_MODULES_IN_PATHS),)
-KATI_NINJA_SUFFIX := $(KATI_NINJA_SUFFIX)-mmma-$(call replace_space_and_slash,$(BUILD_MODULES_IN_PATHS))
-endif
 
 my_checksum_suffix :=
 my_ninja_suffix_too_long := $(filter 1, $(shell v='$(KATI_NINJA_SUFFIX)' && echo $$(($${$(pound)v} > 64))))
