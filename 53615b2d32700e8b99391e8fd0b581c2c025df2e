@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bd3fb1e_460c4699",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-08-16T20:54:06Z",
+      "side": 1,
+      "message": "This should be in those makefiles, not here (or in a supplemental config in vendor/google/build)",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 66
+      },
+      "revId": "53615b2d32700e8b99391e8fd0b581c2c025df2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
