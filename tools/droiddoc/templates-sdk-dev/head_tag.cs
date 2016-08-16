@@ -87,7 +87,7 @@
             elif:users ?>/users<?cs
             elif:engage ?>/engage<?cs
             elif:monetize ?>/monetize<?cs
-            elif:disttools ?>/disttools<?cs
+            elif:disttools ?>/tools<?cs
             elif:stories ?>/stories<?cs
             elif:analyze ?>/analyze<?cs /if ?><?cs
           elif:(about||versions||wear||tv||auto) ?>/about<?cs
@@ -100,6 +100,30 @@
           elif:walkthru ?>/walkthru<?cs /if ?><?cs
         /if ?>/_book.yaml" />
     <?cs /if ?>
+
+    <meta name="project_path" value="<?cs
+      if:(guide||develop||training||reference||tools||sdk||samples) ?><?cs
+        if:guide ?>/guide<?cs
+        elif:training ?>/training<?cs
+        elif:reference ?>/reference<?cs
+        elif:samples ?>/samples<?cs /if ?><?cs
+      elif:(google||reference.gms||reference.gcm) ?>/google<?cs
+      elif:(topic||libraries) ?>/develop<?cs
+      elif:(distribute||googleplay||essentials||users||engage||monetize||disttools||stories||analyze) ?>/distribute<?cs
+        if:googleplay ?>/googleplay<?cs
+        elif:essentials ?>/essentials<?cs
+        elif:users ?>/users<?cs
+        elif:engage ?>/engage<?cs
+        elif:monetize ?>/monetize<?cs
+        elif:disttools ?>/tools<?cs
+        elif:stories ?>/stories<?cs
+        elif:analyze ?>/analyze<?cs
+        else ?><?cs /if ?><?cs
+      elif:(about||versions||wear||tv||auto) ?>/about<?cs
+      elif:wearpreview ?>/wear<?cs
+      elif:work ?>/work<?cs
+      elif:preview ?>/preview<?cs
+      elif:design ?>/design<?cs /if ?>/_project.yaml" />
 
     <?cs if:page.tags && page.tags != "" ?>
       <meta name="keywords" value='<?cs var:page.tags ?>' />
@@ -119,6 +143,10 @@
 
     <?cs if:page.article ?>
       <meta name="page_type" value="article" />
+    <?cs /if ?>
+
+    <?cs if:page.image ?>
+      <meta name="image_path" value='/<?cs var:page.image ?>' />
     <?cs /if ?>
 
     <?cs /if ?><?cs
