@@ -22,6 +22,30 @@
       "revId": "53615b2d32700e8b99391e8fd0b581c2c025df2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bd3fb1e_2ac9c0c2",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-08-16T22:49:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3bd3fb1e_460c4699",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 66
+      },
+      "revId": "53615b2d32700e8b99391e8fd0b581c2c025df2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
