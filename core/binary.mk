@@ -1635,6 +1635,8 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
   endif
 endif
 
+my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
+
 # Move -l* entries from ldflags to ldlibs, and everything else to ldflags
 my_ldlib_flags := $(my_ldflags) $(my_ldlibs)
 my_ldlibs := $(filter -l%,$(my_ldlib_flags))
