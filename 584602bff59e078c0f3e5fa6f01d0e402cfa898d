@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bd3fb1e_6c5da026",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1570,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-08-17T08:01:27Z",
+      "side": 1,
+      "message": "Is the intent here to make -Werror not overridable? This would turn it off, since cppflags is added after cflags:\n\n  LOCAL_CPPFLAGS :\u003d -Wno-error\n\nwe\u0027ve got my_cflags_no_override if that\u0027s the intent.",
+      "revId": "584602bff59e078c0f3e5fa6f01d0e402cfa898d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3bd3fb1e_4c0a9c27",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 803,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-08-17T08:01:27Z",
+      "side": 1,
+      "message": "This is a single module -- why isn\u0027t -Werror just in its local cflags?",
+      "range": {
+        "startLine": 803,
+        "startChar": 0,
+        "endLine": 803,
+        "endChar": 20
+      },
+      "revId": "584602bff59e078c0f3e5fa6f01d0e402cfa898d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
