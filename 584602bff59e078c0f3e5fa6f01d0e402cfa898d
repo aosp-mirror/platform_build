@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "bb944b51_d2a484fb",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1570,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-08-17T18:38:23Z",
+      "side": 1,
+      "message": "Thanks. Use my_cflags_no_override is better.",
+      "parentUuid": "3bd3fb1e_6c5da026",
+      "revId": "584602bff59e078c0f3e5fa6f01d0e402cfa898d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3bd3fb1e_4c0a9c27",
         "filename": "core/config.mk",
         "patchSetId": 3
@@ -30,6 +48,30 @@
       "writtenOn": "2016-08-17T08:01:27Z",
       "side": 1,
       "message": "This is a single module -- why isn\u0027t -Werror just in its local cflags?",
+      "range": {
+        "startLine": 803,
+        "startChar": 0,
+        "endLine": 803,
+        "endChar": 20
+      },
+      "revId": "584602bff59e078c0f3e5fa6f01d0e402cfa898d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb944b51_d5e8ee75",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 803,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-08-17T18:38:23Z",
+      "side": 1,
+      "message": "It\u0027s just an example here to show that a subdirectory can be compiled with -Werror while most other directories cannot,\nso external/ is in the \"allowed\" list.\nI added more comments to this list.",
+      "parentUuid": "3bd3fb1e_4c0a9c27",
       "range": {
         "startLine": 803,
         "startChar": 0,
