@@ -58,7 +58,7 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
-  # This is the current development code-name, if the build is not a final
+# This is the current development code-name, if the build is not a final
   # release build.  If this is a final release build, it is simply "REL".
   PLATFORM_VERSION_CODENAME := REL
 endif
@@ -68,7 +68,7 @@ ifeq "" "$(PLATFORM_SECURITY_PATCH)"
   # Can be an arbitrary string, but must be a single word.
   #
   # If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-  PLATFORM_SECURITY_PATCH := 2016-09-07
+  PLATFORM_SECURITY_PATCH := 2016-10-01
 endif
 
 ifeq "" "$(PLATFORM_BASE_OS)"
