@@ -1440,10 +1440,11 @@ userdatatarball-nodeps: $(FS_GET_STATS)
 ifdef BOARD_BPT_INPUT_FILES
 
 BUILT_BPTIMAGE_TARGET := $(PRODUCT_OUT)/partition-table.img
+BUILT_BPTJSON_TARGET := $(PRODUCT_OUT)/partition-table.bpt
 
 INTERNAL_BVBTOOL_MAKE_TABLE_ARGS := \
 	--output_gpt $(BUILT_BPTIMAGE_TARGET) \
-	--output_json $(PRODUCT_OUT)/partition-table.bpt \
+	--output_json $(BUILT_BPTJSON_TARGET) \
 	$(foreach file, $(BOARD_BPT_INPUT_FILES), --input $(file))
 
 ifdef BOARD_BPT_DISK_SIZE
@@ -1456,6 +1457,9 @@ define build-bptimage-target
 endef
 
 INSTALLED_BPTIMAGE_TARGET := $(BUILT_BPTIMAGE_TARGET)
+$(BUILT_BPTJSON_TARGET): $(INSTALLED_BPTIMAGE_TARGET)
+	$(hide) touch -c $(BUILT_BPTJSON_TARGET)
+
 $(INSTALLED_BPTIMAGE_TARGET): $(BPTTOOL) $(BOARD_BPT_INPUT_FILES)
 	$(build-bptimage-target)
 
