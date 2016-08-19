@@ -155,7 +155,7 @@
           <i class="dac-sprite dac-expand-more-black dac-nav-sub-slider"></i>
           <ul class="dac-nav-secondary about">
             <li class="dac-nav-item versions">
-              <a class="dac-nav-link" href="<?cs var:toroot ?>about/versions/marshmallow/index.html">Android</a>
+              <a class="dac-nav-link" href="<?cs var:toroot ?>about/versions/nougat/index.html">Android</a>
             </li>
             <li class="dac-nav-item wear">
               <a class="dac-nav-link" href="<?cs var:toroot ?>wear/index.html">Wear</a>
@@ -261,9 +261,9 @@
             </li>
           </ul>
         </li>
-        <li class="dac-nav-item preview">
+        <!--<li class="dac-nav-item preview">
           <a class="dac-nav-link" href="<?cs var:toroot ?>preview/index.html">Preview</a>
-        </li>
+        </li>-->
         </ul>
       </div>
     </div>
