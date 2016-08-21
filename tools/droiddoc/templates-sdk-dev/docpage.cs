@@ -1,10 +1,10 @@
-<?cs include:"doctype.cs" ?>
-<?cs include:"macros.cs" ?>
-<html<?cs if:devsite ?> devsite<?cs /if ?>>
+<?cs if:!devsite ?><?cs
+  include:"doctype.cs" ?><?cs /if ?><?cs
+  include:"macros.cs" ?><html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs include:"head_tag.cs" ?>
-<body class="gc-documentation
-
-<?cs # add document classes for navigation header selection (and other stuff) ?>
+<body<?cs
+if:!devsite ?> class="gc-documentation<?cs
+# add document classes for navigation header selection (and other stuff) ?>
 <?cs
   if:(google || reference.gms || reference.gcm) ?>google <?cs /if ?><?cs
   if:ndk ?>ndk<?cs
@@ -39,14 +39,15 @@
     elif:(preview) ?> preview<?cs
     /if ?><?cs
     if:page.trainingcourse ?> trainingcourse<?cs /if ?><?cs
-/if ?>" itemscope itemtype="http://schema.org/Article"><?cs
-include:"header.cs" ?>
+  /if ?>" itemscope itemtype="http://schema.org/Article"><?cs
+/if ?>><?cs
+include:"header.cs" ?><?cs
 
-<?cs if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs
-# header logic for docs that provide previous/next buttons ?>
-  <?cs if:(header.hide||devsite) ?>
-  <?cs else ?>
-  <div class="content-header <?cs if:header.justLinks ?>just-links<?cs /if ?>">
+if:(design||training||walkthru) && !page.trainingcourse && !page.article ?><?cs
+# header logic for docs that provide previous/next buttons ?><?cs
+  if:(header.hide||devsite) ?><?cs
+  else ?>
+    <div class="content-header <?cs if:header.justLinks ?>just-links<?cs /if ?>">
       <?cs if:header.justLinks ?>&nbsp;
       <?cs else ?>
         <ul class="dac-header-crumbs">
@@ -57,9 +58,9 @@ include:"header.cs" ?>
         <script>$('.dac-nav-list').dacCurrentPage().dacCrumbs();</script>
 
         <h1 itemprop="name"><?cs var:page.title ?>
-      </h1>
-      <?cs /if ?>
-    <?cs if:training ?>
+      </h1><?cs
+      /if ?><?cs
+      if:training ?>
       <div class="training-nav-top" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <a href="#" class="prev-page-link hide"
             zh-tw-lang="上一堂課"
@@ -85,8 +86,8 @@ include:"header.cs" ?>
             ja-lang="開始する"
             es-lang="Empezar"
             >Get started</a>
-      </div>
-    <?cs elif:!page.trainingcourse ?>
+      </div><?cs
+      elif:!page.trainingcourse ?>
       <?cs # <div class="paging-linkss" itemscope itemtype="http://schema.org/SiteNavigationElement">
         <a href="#" class="prev-page-link hide"
             zh-tw-lang="上一堂課"
@@ -104,12 +105,12 @@ include:"header.cs" ?>
             ja-lang="次へ"
             es-lang="Siguiente"
             >Next</a>
-      </div> ?>
-    <?cs /if ?><?cs # end if training ?>
+      </div> ?><?cs
+      /if ?><?cs # end if training ?>
   </div>
-  <?cs /if ?><?cs # end if header.hide ?>
+  <?cs /if ?><?cs # end if header.hide ?><?cs
 
-<?cs elif:samplesProjectIndex ?>
+elif:samplesProjectIndex ?>
   <div id="api-info-block">
   <div class="sum-details-links">
   Overview
@@ -119,9 +120,9 @@ include:"header.cs" ?>
   </div><!-- end breadcurmb block -->
   <h1 itemprop="name"><?cs var:projectDir ?></h1>
 
-<?cs else ?>
-  <?cs if:(!fullpage && !header.hide && !devsite) ?>
-    <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
+<?cs else ?><?cs
+  if:(!fullpage && !header.hide && !devsite) ?><?cs
+    if:page.landing ?><?cs # header logic for docs that are landing pages ?>
       <div class="landing-banner">
         <?cs if:page.landing.image ?><?cs # use two-column layout only if there is an image ?>
         <div class="cols">
@@ -139,8 +140,8 @@ include:"header.cs" ?>
         </div>
         <?cs /if ?>
       </div>
-    <?cs else ?>
-      <?cs if:tab1 ?><div id="title-tabs-wrapper"><?cs /if ?>
+    <?cs else ?><?cs
+      if:tab1 ?><div id="title-tabs-wrapper"><?cs /if ?>
         <ul class="dac-header-crumbs">
           <?cs # More <li> elements added here with javascript ?>
         </ul>
@@ -157,30 +158,32 @@ include:"header.cs" ?>
               <li><a href="<?cs var:tab3.link ?>"><?cs var:tab3 ?></a></li><?cs /if ?>
             </ul>
           <?cs /if ?>
-      <?cs if:tab1 ?></div><!-- end tab-wrapper --><?cs /if ?>
-    <?cs /if ?>
-  <?cs /if ?>
-<?cs /if ?><?cs # end if design ?>
+      <?cs if:tab1 ?></div><!-- end tab-wrapper --><?cs /if ?><?cs
+    /if ?><?cs
+  /if ?><?cs
+/if ?><?cs # end if design ?><?cs
 
-  <?cs if devsite ?>
-    <?cs if:tab1 ?>
-    <div id="title-tabs-wrapper">
-      <ul id="title-tabs">
-        <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
-        <?cs if:tab2 ?>
-        <li><a href="<?cs var:tab2.link ?>"><?cs var:tab2 ?></a></li><?cs /if ?>
-        <?cs if:tab3 ?>
-        <li><a href="<?cs var:tab3.link ?>"><?cs var:tab3 ?></a></li><?cs /if ?>
-      </ul>
-    </div><!-- end tab-wrapper -->
-    <?cs /if ?>
-  <?cs /if ?>
+if devsite ?><?cs
+  if:tab1 ?>
+  <div id="title-tabs-wrapper">
+    <ul id="title-tabs">
+      <li class="selected"><a href="<?cs var:tab1.link ?>"><?cs var:tab1 ?></a></li>
+      <?cs if:tab2 ?>
+      <li><a href="<?cs var:tab2.link ?>"><?cs var:tab2 ?></a></li><?cs /if ?>
+      <?cs if:tab3 ?>
+      <li><a href="<?cs var:tab3.link ?>"><?cs var:tab3 ?></a></li><?cs /if ?>
+    </ul>
+  </div><!-- end tab-wrapper --><?cs
+  /if ?><?cs
+/if ?><?cs
 
-  <?cs # THIS IS THE MAIN DOC CONTENT ?>
+# THIS IS THE MAIN DOC CONTENT ?><?cs
+  if:!devsite ?>
   <div id="jd-content">
-    <div class="jd-descr" itemprop="articleBody">
-    <?cs if:(!fullpage && !header.hide && devsite) ?>
-      <?cs if:page.landing ?><?cs # header logic for docs that are landing pages ?>
+    <div class="jd-descr" itemprop="articleBody"><?cs
+  /if ?><?cs
+  if:(!fullpage && !header.hide && devsite) ?><?cs
+    if:page.landing ?><?cs # header logic for docs that are landing pages ?>
         <div class="landing-banner">
           <?cs if:page.landing.image ?><?cs # use two-column layout only if there is an image ?>
           <div class="cols">
@@ -192,19 +195,22 @@ include:"header.cs" ?>
             <h1 itemprop="name" style="margin-bottom:0;"><?cs var:page.title ?></h1>
             <p itemprop="description"><?cs var:page.landing.intro ?></p>
 
-            <p><a class="next-page-link topic-start-link"></a></p>
-          <?cs if:page.landing.image ?>
+            <p><a class="next-page-link topic-start-link"></a></p><?cs
+            if:page.landing.image ?>
             </div>
-          </div>
-          <?cs /if ?>
-        </div>
-      <?cs /if ?>
-    <?cs /if ?>
+          </div><?cs
+          /if ?>
+        </div><?cs
+    /if ?><?cs
+  /if ?>
 
-    <?cs call:tag_list(root.descr) ?>
-    </div>
+<?cs call:tag_list(root.descr) ?><?cs
 
-    <?cs if:!fullscreen && (design||training||walkthru) && !page.landing && !page.trainingcourse
+if:!devsite ?>
+    </div><!-- end jd-descr --><?cs
+/if ?><?cs
+
+if:!fullscreen && (design||training||walkthru) && !page.landing && !page.trainingcourse
       && !footer.hide && !devsite?>
       <div class="content-footer <?cs
                     if:fullpage ?>wrap<?cs /if ?>"
@@ -240,14 +246,16 @@ include:"header.cs" ?>
               <span class="page-link-caption">Next class</span>
             </a>
           </div>
-      </div>
-    <?cs /if ?>
+      </div><?cs
+    /if ?><?cs
+if:!devsite ?>
+  </div> <!-- end jd-content --><?cs
+/if ?><?cs
 
-  </div> <!-- end jd-content -->
-
-<?cs if:!devsite ?>
+if:!devsite ?>
 <?cs include:"footer.cs" ?>
 <?cs include:"trailer.cs" ?>
 <?cs /if ?>
+
 </body>
 </html>
