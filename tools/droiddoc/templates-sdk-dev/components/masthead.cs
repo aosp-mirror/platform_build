@@ -88,12 +88,12 @@
           <span class="dac-sprite dac-google-play"></span>
           <span class="dac-visible-desktop-inline">Developer</span>
           Console
-        </a><?cs /if ?>
+        </a><?cs /if ?><?cs
 
-        <?cs # ADD SEARCH AND MENU ?>
-        <?cs if:!ndk ?>
-        <?cs call:header_search_widget() ?>
-        <?cs /if ?>
+        # ADD SEARCH AND MENU ?><?cs
+        if:!ndk ?><?cs
+        call:header_search_widget() ?><?cs
+        /if ?>
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
   </div> <!--end header-wrapper -->
@@ -275,12 +275,11 @@
 <script>$('[data-dac-nav]').dacNav();</script>
 
 <?cs
-/def ?><?cs # end custom_masthead() ?>
+/def ?><?cs # end custom_masthead() ?><?cs
 
+def:toast() ?><?cs
 
-<?cs def:toast() ?>
-
-  <?cs # (UN)COMMENT TO TOGGLE VISIBILITY
+# (UN)COMMENT TO TOGGLE VISIBILITY
 
   <div class="dac-toast-group">
     <div class="dac-toast" data-toast>
@@ -290,6 +289,5 @@
     </div>
   </div>
 
-?>
-
-<?cs /def ?>
+?><?cs
+/def ?>
