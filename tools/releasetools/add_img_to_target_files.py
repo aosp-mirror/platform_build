@@ -352,7 +352,8 @@ def AddImagesToTargetFiles(filename):
 
   common.ZipClose(input_zip)
   output_zip = zipfile.ZipFile(filename, "a",
-                               compression=zipfile.ZIP_DEFLATED)
+                               compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=True)
 
   has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
   system_root_image = (OPTIONS.info_dict.get("system_root_image", None) == "true")
