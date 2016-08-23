@@ -1,14 +1,14 @@
 <?cs def:body_content_wrap_start() ?>
   <div class="wrap clearfix" id="body-content">
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs def:fullpage() ?>
+def:fullpage() ?>
   <div id="body-content">
     <div>
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs # The default side navigation for the reference docs ?>
-<?cs def:reference_default_nav() ?>
+# The default side navigation for the reference docs ?><?cs
+def:reference_default_nav() ?>
   <!-- Fullscreen toggler -->
   <button data-fullscreen class="dac-nav-fullscreen">
     <i class="dac-sprite dac-fullscreen"></i>
@@ -73,9 +73,8 @@
       </div>
     </div>
   <?cs /if ?>
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs
 def:ndk_nav() ?>
   <div class="wrap clearfix" id="body-content"><div class="cols">
     <div class="col-3 dac-toggle dac-mobile" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
@@ -91,9 +90,9 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
         </div>
       </div>
     </div> <!-- end side-nav -->
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs def:header_search_widget() ?>
+def:header_search_widget() ?>
   <form data-search class="dac-header-search">
     <button class="dac-header-search-close" data-search-close>
       <i class="dac-sprite dac-back-arrow"></i>
@@ -107,9 +106,9 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
       </button>
     </div>
   </form>
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs def:search_results() ?>
+def:search_results() ?>
   <div id="search-results" class="dac-search-results">
     <div id="dac-search-results-history" class="dac-search-results-history">
       <div class="wrap dac-search-results-history-wrap">
@@ -148,9 +147,9 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
 
     </div>
   </div>
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs def:custom_left_nav() ?>
+def:custom_left_nav() ?>
   <?cs if:(!fullpage && !nonavpage) || forcelocalnav ?>
     <a class="dac-nav-back-button dac-swap-section dac-up dac-no-anim" data-swap-button href="javascript:;">
       <i class="dac-sprite dac-nav-back"></i> <span class="dac-nav-back-title">Back</span>
@@ -209,34 +208,34 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
       <?cs /if ?>
     </div>
   <?cs /if ?>
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs # appears at the bottom of every page ?>
-<?cs def:custom_cc_copyright() ?>
+# appears at the bottom of every page ?><?cs
+def:custom_cc_copyright() ?>
   Except as noted, this content is
   licensed under <a href="http://creativecommons.org/licenses/by/2.5/">
   Creative Commons Attribution 2.5</a>. For details and
   restrictions, see the <a href="<?cs var:toroot ?>license.html">Content
   License</a>.
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs def:custom_copyright() ?>
+def:custom_copyright() ?>
   Except as noted, this content is licensed under <a
   href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
   For details and restrictions, see the <a href="<?cs var:toroot ?>license.html">
   Content License</a>.
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs def:custom_footerlinks() ?>
+def:custom_footerlinks() ?>
   <a href="<?cs var:toroot ?>about/android.html">About Android</a>
   <a href="<?cs var:toroot ?>auto/index.html">Auto</a>
   <a href="<?cs var:toroot ?>tv/index.html">TV</a>
   <a href="<?cs var:toroot ?>wear/index.html">Wear</a>
   <a href="<?cs var:toroot ?>legal.html">Legal</a>
-<?cs /def ?>
+<?cs /def ?><?cs
 
-<?cs # appears on the right side of the blue bar at the bottom off every page ?>
-<?cs def:custom_buildinfo() ?>
+# appears on the right side of the blue bar at the bottom off every page ?><?cs
+def:custom_buildinfo() ?>
   <?cs if:!google && !reference.gcm && !reference.gms ?>
     Android <?cs var:sdk.version ?>&nbsp;r<?cs var:sdk.rel.id ?> &mdash;
   <?cs /if ?>
