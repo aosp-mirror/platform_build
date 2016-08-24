@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8277349_7d602b37",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-08-24T07:26:09Z",
+      "side": 1,
+      "message": "shall we just use a general name like \"--is_signing\"?",
+      "range": {
+        "startLine": 13,
+        "startChar": 45,
+        "endLine": 13,
+        "endChar": 66
+      },
+      "revId": "c52c2b860a634930f9359233101a1290a70c3640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8277349_1d6d772e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-08-24T07:26:09Z",
+      "side": 1,
+      "message": "also add to the usage at L21",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 35
+      },
+      "revId": "c52c2b860a634930f9359233101a1290a70c3640",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
