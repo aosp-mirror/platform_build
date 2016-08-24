@@ -374,6 +374,8 @@ my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS)
 $(foreach symlink,$(my_installed_symlinks),\
     $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink)))
 
+$(my_register_name) : | $(my_installed_symlinks)
+
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
