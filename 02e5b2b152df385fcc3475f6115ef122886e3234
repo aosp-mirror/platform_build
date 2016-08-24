@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48e70357_ef0cad4b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-08-24T19:21:03Z",
+      "side": 1,
+      "message": "a bit different from what i imagined. take a look at other files (like sign_target_files_apks.py in this CL).",
+      "range": {
+        "startLine": 20,
+        "startChar": 24,
+        "endLine": 22,
+        "endChar": 69
+      },
+      "revId": "02e5b2b152df385fcc3475f6115ef122886e3234",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
