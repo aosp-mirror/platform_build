@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e83b57ab_9cb0d1a3",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-08-25T02:57:16Z",
+      "side": 1,
+      "message": "This should probably have a Device-specific name, since we also have HOST_PREFER_32_BIT, but I\u0027m not sure we really support that anymore.",
+      "revId": "d3a9fd39900caa223cdeb62019facd34f9d3388e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
