@@ -16,6 +16,24 @@
       "revId": "d3a9fd39900caa223cdeb62019facd34f9d3388e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4537ee0c_b57392a9",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-08-25T21:49:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e83b57ab_9cb0d1a3",
+      "revId": "d3a9fd39900caa223cdeb62019facd34f9d3388e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
