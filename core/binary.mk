@@ -30,6 +30,8 @@ else
   endif
 endif
 
+my_soong_problems :=
+
 # The following LOCAL_ variables will be modified in this file.
 # Because the same LOCAL_ variables may be used to define modules for both 1st arch and 2nd arch,
 # we can't modify them in place.
@@ -416,6 +418,16 @@ ifeq (,$(LOCAL_SDK_VERSION)$(WITHOUT_LIBCOMPILER_RT))
 endif
 endif
 
+ifneq ($(filter ../%,$(my_src_files)),)
+my_soong_problems += dotdot_srcs
+endif
+ifneq ($(foreach i,$(my_c_includes),$(filter %/..,$(i))$(findstring /../,$(i))),)
+my_soong_problems += dotdot_incs
+endif
+ifneq ($(filter %.arm,$(my_src_files)),)
+my_soong_problems += srcs_dotarm
+endif
+
 ####################################################
 ## Add FDO flags if FDO is turned on and supported
 ## Please note that we will do option filtering during FDO build.
@@ -698,6 +710,7 @@ ALL_GENERATED_SOURCES += $(my_generated_sources)
 renderscript_sources := $(filter %.rs %.fs,$(my_src_files))
 
 ifneq (,$(renderscript_sources))
+my_soong_problems += rs
 
 renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sources))
 RenderScript_file_stamp := $(intermediates)/RenderScriptCPP.stamp
@@ -777,6 +790,7 @@ endif
 ###########################################################
 proto_sources := $(filter %.proto,$(my_src_files))
 ifneq ($(proto_sources),)
+my_soong_problems += proto
 proto_gen_dir := $(generated_sources_dir)/proto
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 
@@ -859,6 +873,7 @@ endif  # $(proto_sources) non-empty
 dbus_definitions := $(filter %.dbus-xml,$(my_src_files))
 dbus_generated_headers :=
 ifneq ($(dbus_definitions),)
+my_soong_problems += dbus
 
 dbus_definition_paths := $(addprefix $(LOCAL_PATH)/,$(dbus_definitions))
 dbus_service_config := $(filter %dbus-service-config.json,$(my_src_files))
@@ -914,6 +929,7 @@ endif  # $(dbus_definitions) non-empty
 aidl_src := $(strip $(filter %.aidl,$(my_src_files)))
 aidl_gen_cpp :=
 ifneq ($(aidl_src),)
+my_soong_problems += aidl
 
 # Use the intermediates directory to avoid writing our own .cpp -> .o rules.
 aidl_gen_cpp_root := $(intermediates)/aidl-generated/src
@@ -946,6 +962,7 @@ endif  # $(aidl_src) non-empty
 vts_src := $(strip $(filter %.vts,$(my_src_files)))
 vts_gen_cpp :=
 ifneq ($(vts_src),)
+my_soong_problems += vts
 
 # Use the intermediates directory to avoid writing our own .cpp -> .o rules.
 vts_gen_cpp_root := $(intermediates)/vts-generated/src
@@ -1208,6 +1225,7 @@ objc_objects := $(addprefix $(intermediates)/,$(objc_sources:.m=.o))
 $(call track-src-file-obj,$(objc_sources),$(objc_objects))
 
 ifneq ($(strip $(objc_objects)),)
+my_soong_problems += objc
 $(objc_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.m \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)m-to-o)
@@ -1223,6 +1241,7 @@ objcpp_objects := $(addprefix $(intermediates)/,$(objcpp_sources:.mm=.o))
 $(call track-src-file-obj,$(objcpp_sources),$(objcpp_objects))
 
 ifneq ($(strip $(objcpp_objects)),)
+my_soong_problems += objc
 $(objcpp_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.mm \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)mm-to-o)
@@ -1737,3 +1756,15 @@ endif
 
 # Make sure export_includes gets generated when you are running mm/mmm
 $(LOCAL_BUILT_MODULE) : | $(export_includes) $(my_link_type)
+
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+SOONG_CONV.$(LOCAL_MODULE).PROBLEMS := \
+    $(SOONG_CONV.$(LOCAL_MODULE).PROBLEMS) $(my_soong_problems)
+SOONG_CONV.$(LOCAL_MODULE).DEPS := \
+    $(SOONG_CONV.$(LOCAL_MODULE).DEPS) \
+    $(my_static_libraries) \
+    $(my_whole_static_libraries) \
+    $(my_shared_libraries) \
+    $(my_system_shared_libraries)
+SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
+endif

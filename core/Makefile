@@ -395,6 +395,22 @@ $(BUILD_SYSTEM_STATS):
 $(call dist-for-goals,droidcore,$(BUILD_SYSTEM_STATS))
 
 # -----------------------------------------------------------------
+# Modules ready to be converted to Soong, ordered by how many
+# modules depend on them.
+SOONG_CONV := $(sort $(SOONG_CONV))
+SOONG_CONV_DATA := $(call intermediates-dir-for,PACKAGING,soong_conversion)/soong_conv_data
+$(SOONG_CONV_DATA):
+	@rm -f $@
+	@$(foreach s,$(SOONG_CONV),echo "$(s),$(sort $(SOONG_CONV.$(s).PROBLEMS)),$(sort $(filter-out $(SOONG_ALREADY_CONV),$(SOONG_CONV.$(s).DEPS)))" >>$@;)
+
+SOONG_TO_CONVERT_SCRIPT := build/tools/soong_to_convert.py
+SOONG_TO_CONVERT := $(PRODUCT_OUT)/soong_to_convert.txt
+$(SOONG_TO_CONVERT): $(SOONG_CONV_DATA) $(SOONG_TO_CONVERT_SCRIPT)
+	@rm -f $@
+	$(hide) $(SOONG_TO_CONVERT_SCRIPT) $< >$@
+$(call dist-for-goals,droidcore,$(SOONG_TO_CONVERT))
+
+# -----------------------------------------------------------------
 # The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
 # deliverables will be re-signed by hand.  We expect this file to
