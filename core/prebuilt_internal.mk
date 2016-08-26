@@ -79,6 +79,12 @@ else
   prebuilt_module_is_a_library :=
 endif
 
+ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+ifeq ($(prebuilt_module_is_a_library),true)
+SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
+endif
+endif
+
 # Don't install static libraries by default.
 ifndef LOCAL_UNINSTALLABLE_MODULE
 ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
