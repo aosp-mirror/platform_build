@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85c2c66f_15cfa360",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1423,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-08-27T00:59:36Z",
+      "side": 1,
+      "message": "It\u0027s actually intentional to use exactly $(OUT_DIR) here, then you only include absolute pathnames into your objects if $(OUT_DIR) is already absolute.\n\nWouldn\u0027t this break $(OUT_DIR)s which are relative, since the core build system will be generating relative paths to the generated headers?\n\nIf the include dirs are in $(OUT_DIR), you should be using $(OUT_DIR) to generate them, so they should be relative if $(OUT_DIR) is relative. If you really are getting include paths from some other process that only generates absolute paths, then you\u0027ll probably need to generate the relative path based on the absolute path (though this can get tricky, especially if symlinks are involved).",
+      "range": {
+        "startLine": 1423,
+        "startChar": 36,
+        "endLine": 1423,
+        "endChar": 46
+      },
+      "revId": "3e0ca0b307531750d829d8b3046ce82b606cd363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
