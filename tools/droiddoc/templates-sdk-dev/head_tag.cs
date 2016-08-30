@@ -148,7 +148,7 @@ if:devsite ?>
   <meta name="page_type" value="article" /><?cs
       /if ?><?cs
       if:page.image ?>
-  <meta name="image_path" value='/<?cs var:page.image ?>' /><?cs
+  <meta name="image_path" value='<?cs var:page.image ?>' /><?cs
       /if ?><?cs
 /if ?><?cs # END if/else devsite ?><?cs
 
