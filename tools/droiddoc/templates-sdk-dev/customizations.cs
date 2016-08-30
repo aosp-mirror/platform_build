@@ -151,10 +151,14 @@ def:search_results() ?>
 
 def:custom_left_nav() ?>
   <?cs if:(!fullpage && !nonavpage) || forcelocalnav ?>
+    <?cs if:!referenceonly ?>
     <a class="dac-nav-back-button dac-swap-section dac-up dac-no-anim" data-swap-button href="javascript:;">
       <i class="dac-sprite dac-nav-back"></i> <span class="dac-nav-back-title">Back</span>
     </a>
-    <div class="dac-nav-sub dac-swap-section dac-right dac-active" itemscope itemtype="http://schema.org/SiteNavigationElement">
+    <?cs /if ?>
+    <div class="dac-nav-sub dac-swap-section dac-right dac-active" itemscope
+      itemtype="http://schema.org/SiteNavigationElement" <?cs
+        if:referenceonly ?>style="top:0 !important;"<?cs /if ?>>
       <?cs if:ndk ?>
         <?cs if:guide ?>
           <?cs include:"../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?>
