@@ -5,6 +5,14 @@ var mPagePath; // initialized in ready() function
 var basePath = getBaseUri(location.pathname);
 var SITE_ROOT = toRoot + basePath.substring(1, basePath.indexOf("/", 1));
 
+// TODO(akassay) generate this var in the reference doc build.
+var API_LEVELS = ['1', '2', '3', '4', '5', '6', '7', '8', '9',
+      '10', '11', '12', '13', '14', '15', '16',
+      '17', '18', '19', '20', '21', '22', '23', '24'];
+var METADATA = METADATA || {};
+var RESERVED_METADATA_CATEGORY_NAMES = ['extras', 'carousel', 'collections',
+                                        'searchHeroCollections'];
+
 // Ensure that all ajax getScript() requests allow caching
 $.ajaxSetup({
   cache: true
@@ -15,8 +23,7 @@ $.ajaxSetup({
 $(document).ready(function() {
 
   // prep nav expandos
-  var pagePath = devsite ?
-      location.href.replace(location.hash, '') : document.location.pathname;
+  var pagePath = location.href.replace(location.hash, '');
   // account for intl docs by removing the intl/*/ path
   if (pagePath.indexOf("/intl/") == 0) {
     pagePath = pagePath.substr(pagePath.indexOf("/", 6)); // start after intl/ to get last /
@@ -53,6 +60,9 @@ $(document).ready(function() {
   // set global variable so we can highlight the sidenav a bit later (such as for google reference)
   // and highlight the sidenav
   mPagePath = pagePath;
+
+  // Check for params and remove them.
+  mPagePath = mPagePath.split('?')[0];
   highlightSidenav();
 
   // set up prev/next links if they exist
@@ -160,8 +170,12 @@ false; // navigate across topic boundaries only in design docs
       $('.next-page-link').attr('href', $nextLink.attr('href'))
                           .removeClass("hide");
       // for the footer link, also add the previous and next page titles
-      $('.content-footer .prev-page-link').append($prevLink.html());
-      $('.content-footer .next-page-link').append($nextLink.html());
+      if ($prevLink.length) {
+        $('.content-footer .prev-page-link').append($prevLink.html());
+      }
+      if ($nextLink.length) {
+        $('.content-footer .next-page-link').append($nextLink.html());
+      }
     }
 
     if (!startClass && $prevLink.length) {
@@ -172,7 +186,6 @@ false; // navigate across topic boundaries only in design docs
         $('.prev-page-link').attr('href', $prevLink.attr('href')).removeClass("hide");
       }
     }
-
   }
 
   // Set up the course landing pages for Training with class names and descriptions
@@ -231,6 +244,12 @@ false; // navigate across topic boundaries only in design docs
     $(this).get(0).play();
   });
 
+  // Set up play-on-click for <video> tags with a "video-wrapper".
+  $('.video-wrapper > video').bind('click', function() {
+    this.play();
+    $(this.parentElement).addClass('playing');
+  });
+
   // Set up tooltips
   var TOOLTIP_MARGIN = 10;
   $('acronym,.tooltip-link').each(function() {
@@ -281,24 +300,13 @@ false; // navigate across topic boundaries only in design docs
 // END of the onload event
 
 function initExpandableNavItems(rootTag) {
-  $(rootTag + ' li.nav-section .nav-section-header').click(function() {
-    var section = $(this).closest('li.nav-section');
-    if (section.hasClass('expanded')) {
-      /* hide me and descendants */
-      section.find('ul').slideUp(250, function() {
-        // remove 'expanded' class from my section and any children
-        section.closest('li').removeClass('expanded');
-        $('li.nav-section', section).removeClass('expanded');
-      });
-    } else {
-      /* show me */
-      // first hide all other siblings
-      var $others = $('li.nav-section.expanded', $(this).closest('ul')).not('.sticky');
-      $others.removeClass('expanded').children('ul').slideUp(250);
+  var toggleIcon = $(
+      rootTag + ' li.nav-section .nav-section-header .toggle-icon, ' +
+      rootTag + ' li.nav-section .nav-section-header a[href="#"]');
 
-      // now expand me
-      section.closest('li').addClass('expanded');
-      section.children('ul').slideDown(250);
+  toggleIcon.on('click keypress', function(e) {
+    if (e.type == 'keypress' && e.which == 13 || e.type == 'click') {
+      doNavToggle(this);
     }
   });
 
@@ -309,6 +317,27 @@ function initExpandableNavItems(rootTag) {
     window.location.href = $(this).attr('href');
     return false;
   });
+}
+
+function doNavToggle(el) {
+  var section = $(el).closest('li.nav-section');
+  if (section.hasClass('expanded')) {
+    /* hide me and descendants */
+    section.find('ul').slideUp(250, function() {
+      // remove 'expanded' class from my section and any children
+      section.closest('li').removeClass('expanded');
+      $('li.nav-section', section).removeClass('expanded');
+    });
+  } else {
+    /* show me */
+    // first hide all other siblings
+    var $others = $('li.nav-section.expanded', $(el).closest('ul')).not('.sticky');
+    $others.removeClass('expanded').children('ul').slideUp(250);
+
+    // now expand me
+    section.closest('li').addClass('expanded');
+    section.children('ul').slideDown(250);
+  }
 }
 
 /** Highlight the current page in sidenav, expanding children as appropriate */
@@ -494,7 +523,7 @@ function toggleContent(obj) {
     $(".toggle-content-text:eq(0)", obj).toggle();
     div.removeClass("closed").addClass("open");
     $(".toggle-content-img:eq(0)", div).attr("title", "hide").attr("src", toRoot +
-                  "assets/images/triangle-opened.png");
+                  "assets/images/styles/disclosure_up.png");
   } else { // if it's open, close it
     toggleMe.slideUp('fast', function() {  // Wait until the animation is done before closing arrow
       $(".toggle-content-text:eq(0)", obj).toggle();
@@ -502,7 +531,7 @@ function toggleContent(obj) {
       div.find(".toggle-content").removeClass("open").addClass("closed")
               .find(".toggle-content-toggleme").hide();
       $(".toggle-content-img", div).attr("title", "show").attr("src", toRoot +
-                  "assets/images/triangle-closed.png");
+                  "assets/images/styles/disclosure_down.png");
     });
   }
   return false;
@@ -826,24 +855,14 @@ function hideExpandable(ids) {
 /* #################  JAVADOC REFERENCE ################### */
 /* ######################################################## */
 
-/* Initialize some droiddoc stuff, but only if we're in the reference */
-if (location.pathname.indexOf("/reference") == 0) {
-  if (!(location.pathname.indexOf("/reference-gms/packages.html") == 0) &&
-    !(location.pathname.indexOf("/reference-gcm/packages.html") == 0) &&
-    !(location.pathname.indexOf("/reference/com/google") == 0)) {
-    $(document).ready(function() {
-      // init available apis based on user pref
-      changeApiLevel();
-    });
-  }
-}
+
 
 var API_LEVEL_COOKIE = "api_level";
 var minLevel = 1;
 var maxLevel = 1;
 
 function buildApiLevelSelector() {
-  maxLevel = SINCE_DATA.length;
+  maxLevel = API_LEVELS.length;
   var userApiLevel = parseInt(readCookie(API_LEVEL_COOKIE));
   userApiLevel = userApiLevel == 0 ? maxLevel : userApiLevel; // If there's no cookie (zero), use the max by default
 
@@ -856,8 +875,8 @@ function buildApiLevelSelector() {
   }
   var select = $("#apiLevelSelector").html("").change(changeApiLevel);
   for (var i = maxLevel - 1; i >= 0; i--) {
-    var option = $("<option />").attr("value", "" + SINCE_DATA[i]).append("" + SINCE_DATA[i]);
-    //  if (SINCE_DATA[i] < minLevel) option.addClass("absent"); // always false for strings (codenames)
+    var option = $("<option />").attr("value", "" + API_LEVELS[i]).append("" + API_LEVELS[i]);
+    //  if (API_LEVELS[i] < minLevel) option.addClass("absent"); // always false for strings (codenames)
     select.append(option);
   }
 
@@ -867,7 +886,8 @@ function buildApiLevelSelector() {
 }
 
 function changeApiLevel() {
-  maxLevel = SINCE_DATA.length;
+  maxLevel = API_LEVELS.length;
+  minLevel = parseInt($('#doc-api-level').attr('class'));
   var selectedLevel = maxLevel;
 
   selectedLevel = parseInt($("#apiLevelSelector option:selected").val());
@@ -876,20 +896,11 @@ function changeApiLevel() {
   writeCookie(API_LEVEL_COOKIE, selectedLevel, null);
 
   if (selectedLevel < minLevel) {
-    $("#naMessage").show().html("<div><p><strong>This API" +
-              " requires API level " + minLevel + " or higher.</strong></p>" +
-              "<p>This document is hidden because your selected API level for the documentation is " +
-              selectedLevel + ". You can change the documentation API level with the selector " +
-              "above the left navigation.</p>" +
-              "<p>For more information about specifying the API level your app requires, " +
-              "read <a href='" + toRoot + "training/basics/supporting-devices/platforms.html'" +
-              ">Supporting Different Platform Versions</a>.</p>" +
-              "<input type='button' value='OK, make this page visible' " +
-              "title='Change the API level to " + minLevel + "' " +
-              "onclick='$(\"#apiLevelSelector\").val(\"" + minLevel + "\");changeApiLevel();' />" +
-              "</div>");
-  } else {
-    $("#naMessage").hide();
+      // Show the API notice dialog, set number values and button event
+      $('#api-unavailable').trigger('modal-open');
+      $('#api-unavailable .selected-level').text(selectedLevel);
+      $('#api-unavailable .api-level').text(minLevel);
+      $('#api-unavailable button.ok').attr('onclick','$("#apiLevelSelector").val("' + minLevel + '");changeApiLevel();');
   }
 }
 
@@ -1248,6 +1259,10 @@ function showSamples() {
 
   $selectedLi.children("ul").children("li").each(function() {
     var $li = $("<li>").append($(this).find("a").first().clone());
+    var $samplesLink = $li.find("a");
+    if ($samplesLink.text().endsWith('/')) {
+      $samplesLink.text($samplesLink.text().slice(0,-1));
+    }
     $ul.append($li);
   });
 
@@ -1563,7 +1578,8 @@ function showSamples() {
       // Record number of pages viewed in analytics.
       if (!firstPage) {
         var clicks = Math.ceil((i - initialResults) / opts.itemsPerPage);
-        ga('send', 'event', 'Cards', 'Click More', clicks);
+        devsite.analytics.trackAnalyticsEvent('event',
+            'Cards', 'Click More', clicks);
       }
     }
 
@@ -1585,8 +1601,7 @@ function showSamples() {
     $widget.toggleClass('dac-has-less', false);
 
     opts.currentIndex = Math.min(opts.initialResults, resources.length);
-
-    ga('send', 'event', 'Cards', 'Click Less');
+    devsite.analytics.trackAnalyticsEvent('event', 'Cards', 'Click Less');
   }
 
   /* A decorator for event functions which finds the surrounding widget and it's options */
@@ -2215,7 +2230,8 @@ function showSamples() {
     }
   }
 
-  $(document).on('click.blog-reader', 'a[href*="blogspot.com/"]', wrapLinkWithReader);
+  $(document).on('click.blog-reader', 'a.resource-card[href*="blogspot.com/"]',
+      wrapLinkWithReader);
 })(jQuery, window);
 
 (function($) {
@@ -2547,11 +2563,13 @@ function showSamples() {
 
     if (checkbox.checked) {
       this.chipsEl_.append(this.chipForItem(item));
-      ga('send', 'event', 'Filters', 'Check', $(checkbox).val());
+      devsite.analytics.trackAnalyticsEvent('event',
+          'Filters', 'Check', $(checkbox).val());
     } else {
       item.data('chip.dac-filter').remove();
       this.addToItemValue(item, -1);
-      ga('send', 'event', 'Filters', 'Uncheck', $(checkbox).val());
+      devsite.analytics.trackAnalyticsEvent('event',
+          'Filters', 'Uncheck', $(checkbox).val());
     }
 
     this.draw_(this.filteredResources());
@@ -3280,20 +3298,9 @@ function getBaseUri(uri) {
 
 function changeLangPref(targetLang, submit) {
   window.writeCookie('pref_lang', targetLang, null);
-//DD
   $('#language').find('option[value="' + targetLang + '"]').attr('selected', true);
-  //  #######  TODO:  Remove this condition once we're stable on devsite #######
-  //  This condition is only needed if we still need to support legacy GAE server
-  if (window.devsite) {
-    // Switch language when on Devsite server
-    if (submit) {
-      $('#setlang').submit();
-    }
-  } else {
-    // Switch language when on legacy GAE server
-    if (submit) {
-      window.location = getBaseUri(location.pathname);
-    }
+  if (submit) {
+    $('#setlang').submit();
   }
 }
 // Redundant usage to appease jshint.
@@ -3378,24 +3385,11 @@ window.changeLangPref = changeLangPref;
     return lang;
   })();
   var localeTarget = (function() {
-    var localeTarget = locale;
-    if (window.devsite) {
-      if (getQueryVariable('hl')) {
-        var target = getQueryVariable('hl');
-        if (!(target === 0) || (LANGUAGES.indexOf(target) === -1)) {
-          localeTarget = target;
-        }
-      }
-    } else {
-      if (location.pathname.substring(0,6) == "/intl/") {
-        var target = location.pathname.split('/')[2];
-        if (!(target === 0) || (LANGUAGES.indexOf(target) === -1)) {
-          localeTarget = target;
-        }
-      }
+    var lang = getQueryVariable('hl');
+    if (lang === false || LANGUAGES.indexOf(lang) === -1) {
+      lang = locale;
     }
-
-    return localeTarget;
+    return lang;
   })();
 
   /**
@@ -3899,14 +3893,14 @@ switch (window.getLangPref()) {
   };
 
   Modal.prototype.close_ = function() {
+    // When closing the modal for Android Studio downloads, reload the page
+    // because otherwise we might get stuck with post-download dialog state
+    if ($("[data-modal='studio_tos'].dac-active").length) {
+      location.reload();
+    }
     this.el.removeClass('dac-active');
     $('body').removeClass('dac-modal-open');
     this.isOpen = false;
-    // When closing the modal for Android Studio downloads, reload the page
-    // because otherwise we might get stuck with post-download dialog state
-    if ($("[data-modal='studio_tos']").length) {
-      location.reload();
-    }
   };
 
   Modal.prototype.open_ = function() {
@@ -3952,13 +3946,29 @@ switch (window.getLangPref()) {
 
     // Check if url anchor is targetting a toggle to open the modal.
     if (location.hash) {
-      $(location.hash + '[data-modal-toggle]').trigger('click');
+      var $elem = $(document.getElementById(location.hash.substr(1)));
+      if ($elem.attr('data-modal-toggle')) {
+        $elem.trigger('click');
+      }
     }
 
-    if (window.getLangTarget() !== window.getLangPref()) {
-          $('#langform').trigger('modal-open');
-          $("#langform button.yes").attr("onclick","window.changeLangPref('" + window.getLangTarget() + "', true);  return false;");
-          $("#langform button.no").attr("onclick","window.changeLangPref('" + window.getLangPref() + "', true); return false;");
+    var isTargetLangValid = false;
+    $(ANDROID_LANGUAGES).each(function(index, langCode) {
+      if (langCode == window.getLangTarget()) {
+        isTargetLangValid = true;
+        return;
+      }
+    });
+    if (window.getLangTarget() !== window.getLangPref() && isTargetLangValid) {
+        $('#langform').trigger('modal-open');
+        $("#langform button.yes").attr("onclick","window.changeLangPref('" + window.getLangTarget() + "', true);  return false;");
+        $("#langform button.no").attr("onclick","window.changeLangPref('" + window.getLangPref() + "', true); return false;");
+    }
+
+    /* Check the current API level, but only if we're in the reference */
+    if (location.pathname.indexOf('/reference') == 0) {
+      // init available apis based on user pref
+      changeApiLevel();
     }
   });
 })(jQuery);
@@ -4093,7 +4103,12 @@ switch (window.getLangPref()) {
   var forwardLink = $('<span/>')
     .addClass('dac-nav-link-forward')
     .html(icon)
-    .on('click', swap_);
+    .attr('tabindex', 0)
+    .on('click keypress', function(e) {
+      if (e.type == 'keypress' && e.which == 13 || e.type == 'click') {
+        swap_(e);
+      }
+    });
 
   /**
    * @constructor
@@ -4147,8 +4162,11 @@ switch (window.getLangPref()) {
   // Setup sub navigation collapse/expand
   function initCollapsedNavs(toggleIcons) {
     toggleIcons.each(setInitiallyActive_($('body')));
-    toggleIcons.on('click', handleSubNavToggle_);
-
+    toggleIcons.on('click keypress', function(e) {
+      if (e.type == 'keypress' && e.which == 13 || e.type == 'click') {
+        handleSubNavToggle_(e);
+      }
+    });
   }
 
   function setInitiallyActive_(body) {
@@ -4164,6 +4182,10 @@ switch (window.getLangPref()) {
       var landingPageClass = getCurrentLandingPage_(icon);
       var expanded = expandedNavs.indexOf(landingPageClass) >= 0;
       landingPageClass = landingPageClass === 'home' ? 'about' : landingPageClass;
+
+      if (landingPageClass == 'about' && location.pathname == '/index.html') {
+        expanded = true;
+      }
 
       // TODO: Should read from localStorage
       var visible = body.hasClass(landingPageClass) || expanded;
@@ -4220,17 +4242,28 @@ switch (window.getLangPref()) {
    * @param {jQuery} el - The DOM element.
    */
   function buildReferenceNav(el) {
+    var supportLibraryPath = '/reference/android/support/';
+    var currPath = location.pathname;
+
+    if (currPath.indexOf(supportLibraryPath) > -1) {
+      updateSupportLibrariesNav(supportLibraryPath, currPath);
+    }
     var namespaceList = el.find('[data-reference-namespaces]');
-    var resources = el.find('[data-reference-resources]');
+    var resources = $('[data-reference-resources]').detach();
     var selected = namespaceList.find('.selected');
+    resources.appendTo(el);
 
     // Links should be toggleable.
     namespaceList.find('a').addClass('dac-reference-nav-toggle dac-closed');
 
+    // Set the path for the navtree data to use.
+    var navtree_filepath = getNavtreeFilePath(supportLibraryPath, currPath);
+
     // Load in all resources
-    $.getScript('/navtree_data.js', function(data, textStatus, xhr) {
+    $.getScript(navtree_filepath, function(data, textStatus, xhr) {
       if (xhr.status === 200) {
-        namespaceList.on('click', 'a.dac-reference-nav-toggle', toggleResourcesHandler);
+        namespaceList.on(
+            'click', 'a.dac-reference-nav-toggle', toggleResourcesHandler);
       }
     });
 
@@ -4243,13 +4276,14 @@ switch (window.getLangPref()) {
     var overview = addResourcesToView(resources, selected);
 
     // Currently viewing Overview
-    if (location.pathname === overview.attr('href')) {
+    if (location.href === overview.attr('href')) {
       overview.parent().addClass('selected');
     }
 
     // Open currently selected resource
     var listsToOpen = selected.children().eq(1);
-    listsToOpen = listsToOpen.add(listsToOpen.find('.selected').parent()).show();
+    listsToOpen = listsToOpen.add(
+        listsToOpen.find('.selected').parent()).show();
 
     // Mark dropdowns as open
     listsToOpen.prev().removeClass('dac-closed');
@@ -4258,20 +4292,45 @@ switch (window.getLangPref()) {
     namespaceList.scrollIntoView(selected);
   }
 
+  function getNavtreeFilePath(supportLibraryPath, currPath) {
+    var navtree_filepath = '';
+    var navtree_filename = 'navtree_data.js';
+    if (currPath.indexOf(supportLibraryPath + 'test') > -1) {
+      navtree_filepath = supportLibraryPath + 'test/' + navtree_filename;
+    } else if (currPath.indexOf(supportLibraryPath + 'wearable') > -1) {
+      navtree_filepath = supportLibraryPath + 'wearable/' + navtree_filename;
+    } else {
+      navtree_filepath = '/' + navtree_filename;
+    }
+    return navtree_filepath;
+  }
+
+  function updateSupportLibrariesNav(supportLibraryPath, currPath) {
+    var navTitle = '';
+    if (currPath.indexOf(supportLibraryPath + 'test') > -1) {
+      navTitle = 'Test Support APIs';
+    } else if (currPath.indexOf(supportLibraryPath + 'wearable') > -1) {
+      navTitle = 'Wearable Support APIs';
+    }
+    $('#api-nav-title').text(navTitle);
+    $('#api-level-toggle').hide();
+  }
+
   /**
    * Handles the toggling of resources.
    * @param {Event} event
    */
   function toggleResourcesHandler(event) {
     event.preventDefault();
-    var el = $(this);
+    if (event.type == 'click' || event.type == 'keypress' && event.which == 13) {
+      var el = $(this);
+      // If resources for given namespace is not present, fetch correct data.
+      if (this.tagName === 'A' && !this.hasResources) {
+        addResourcesToView(buildResourcesViewForData(getDataForNamespace(el.text())), el.parent());
+      }
 
-    // If resources for given namespace is not present, fetch correct data.
-    if (this.tagName === 'A' && !this.hasResources) {
-      addResourcesToView(buildResourcesViewForData(getDataForNamespace(el.text())), el.parent());
+      el.toggleClass('dac-closed').next().slideToggle(200);
     }
-
-    el.toggleClass('dac-closed').next().slideToggle(200);
   }
 
   /**
@@ -4331,9 +4390,9 @@ switch (window.getLangPref()) {
       .find('a')
         .addClass('dac-reference-nav-resource')
       .end()
-        .find('h2')
+        .find('h2').attr('tabindex', 0)
         .addClass('dac-reference-nav-toggle dac-closed')
-        .on('click', toggleResourcesHandler)
+        .on('click keypress', toggleResourcesHandler)
       .end()
         .add(resources.find('ul'))
         .addClass('dac-reference-nav-resources')
@@ -4343,11 +4402,31 @@ switch (window.getLangPref()) {
     return overview;
   }
 
+  function setActiveReferencePackage(el) {
+    var packageLinkEls = el.find('[data-reference-namespaces] a');
+    var selected = null;
+    var highestMatchCount = 0;
+    packageLinkEls.each(function(index, linkEl) {
+      var matchCount = 0;
+      $(location.pathname.split('/')).each(function(index, subpath) {
+        if (linkEl.href.indexOf('/' + subpath + '/') > -1) {
+          matchCount++;
+        }
+      });
+      if (matchCount > highestMatchCount) {
+        selected = linkEl;
+        highestMatchCount = matchCount;
+      }
+    });
+    $(selected).parent().addClass('selected');
+  }
+
   /**
    * jQuery plugin
    */
   $.fn.dacReferenceNav = function() {
     return this.each(function() {
+      setActiveReferencePackage($(this));
       buildReferenceNav($(this));
     });
   };
@@ -4389,7 +4468,7 @@ $.fn.scrollIntoView = function(target) {
     var parentNavEl;
     var selected;
     // In NDK docs, highlight appropriate sub-nav
-    if (body.hasClass('ndk')) {
+    if (body.hasClass('dac-ndk')) {
       if (body.hasClass('guide')) {
         selected = navEl.find('> li.guides > a').addClass('selected');
       } else if (body.hasClass('reference')) {
@@ -4399,8 +4478,10 @@ $.fn.scrollIntoView = function(target) {
       } else if (body.hasClass('downloads')) {
         selected = navEl.find('> li.downloads > a').addClass('selected');
       }
-    } else if (body.hasClass('studio')) {
-      if (body.hasClass('features')) {
+    } else if (body.hasClass('dac-studio')) {
+      if (body.hasClass('download')) {
+        selected = navEl.find('> li.download > a').addClass('selected');
+      } else if (body.hasClass('features')) {
         selected = navEl.find('> li.features > a').addClass('selected');
       } else if (body.hasClass('guide')) {
         selected = navEl.find('> li.guide > a').addClass('selected');
@@ -4410,7 +4491,7 @@ $.fn.scrollIntoView = function(target) {
     } else if (body.hasClass('design')) {
       selected = navEl.find('> li.design > a').addClass('selected');
       // highlight Home nav
-    } else if (body.hasClass('about')) {
+    } else if (body.hasClass('about') || location.pathname == '/index.html') {
       parentNavEl = navEl.find('> li.home > a');
       parentNavEl.addClass('has-subnav');
       // In Home docs, also highlight appropriate sub-nav
@@ -4438,8 +4519,6 @@ $.fn.scrollIntoView = function(target) {
         } else {
           selected = subNavEl.find('li.reference > a').addClass('selected');
         }
-      } else if ((urlSegments[1] === 'tools') || (urlSegments[1] === 'sdk')) {
-        selected = subNavEl.find('li.tools > a').addClass('selected');
       } else if (body.hasClass('google')) {
         selected = subNavEl.find('li.google > a').addClass('selected');
       } else if (body.hasClass('samples')) {
@@ -4502,6 +4581,11 @@ $.fn.scrollIntoView = function(target) {
    */
   function toggleSidebarVisibility(body) {
     var wasClosed = ('' + localStorage.getItem('navigation-open')) === 'false';
+    // Override the local storage setting for navigation-open for child sites
+    // with no-subnav class.
+    if (document.body.classList.contains('no-subnav')) {
+      wasClosed = false;
+    }
 
     if (wasClosed) {
       body.removeClass(ToggleNav.DEFAULTS_.activeClass);
@@ -4746,28 +4830,66 @@ window.metadata.prepare = (function() {
 
     // Get current language.
     var locale = getLangPref();
-
     // Merge english resources.
-    METADATA.all = mergeArrays(
-      METADATA.en.about,
-      METADATA.en.design,
-      METADATA.en.distribute,
-      METADATA.en.develop,
-      YOUTUBE_RESOURCES,
-      BLOGGER_RESOURCES,
-      METADATA.en.extras
-    );
+    if (useDevsiteMetadata) {
+      var all_keys = Object.keys(METADATA['en']);
+      METADATA.all = []
+
+      $(all_keys).each(function(index, category) {
+        if (RESERVED_METADATA_CATEGORY_NAMES.indexOf(category) == -1) {
+          METADATA.all = mergeArrays(
+            METADATA.all,
+            METADATA.en[category]
+          );
+        }
+      });
+
+      METADATA.all = mergeArrays(
+        METADATA.all,
+        YOUTUBE_RESOURCES,
+        BLOGGER_RESOURCES,
+        METADATA.en.extras
+      );
+    } else {
+      METADATA.all = mergeArrays(
+        METADATA.en.about,
+        METADATA.en.design,
+        METADATA.en.distribute,
+        METADATA.en.develop,
+        YOUTUBE_RESOURCES,
+        BLOGGER_RESOURCES,
+        METADATA.en.extras
+      );
+    }
 
     // Merge local language resources.
     if (locale !== 'en' && METADATA[locale]) {
-      METADATA.all = mergeArrays(
-        METADATA.all,
-        METADATA[locale].about,
-        METADATA[locale].design,
-        METADATA[locale].distribute,
-        METADATA[locale].develop,
-        METADATA[locale].extras
-      );
+      if (useDevsiteMetadata) {
+        all_keys = Object.keys(METADATA[locale]);
+        $(all_keys).each(function(index, category) {
+          if (RESERVED_METADATA_CATEGORY_NAMES.indexOf(category) == -1) {
+            METADATA.all = mergeArrays(
+              METADATA.all,
+              METADATA.en[category]
+            );
+          }
+        });
+
+        METADATA.all = mergeArrays(
+          METADATA.all,
+          METADATA[locale].extras
+        );
+      } else {
+        METADATA.all = mergeArrays(
+          METADATA.all,
+          METADATA[locale].about,
+          METADATA[locale].design,
+          METADATA[locale].distribute,
+          METADATA[locale].develop,
+          METADATA[locale].extras
+        );
+
+      }
     }
 
     mergeMetadataMap('collections', locale);
@@ -4778,7 +4900,8 @@ window.metadata.prepare = (function() {
     createIndices(METADATA.all, locale);
 
     // Reference metadata.
-    METADATA.androidReference = window.DATA;
+    METADATA.androidReference = mergeArrays(
+        window.DATA, window.SUPPORT_WEARABLE_DATA, window.SUPPORT_TEST_DATA);
     METADATA.googleReference = mergeArrays(window.GMS_DATA, window.GCM_DATA);
   };
 })();
@@ -5478,20 +5601,9 @@ window.metadata.search = (function() {
   var ROW_COUNT_GOOGLE_EXPANDED = 8;
 
   function onSuggestionClick(e) {
-    var normalClick = e.which === 1 && !e.ctrlKey && !e.shiftKey && !e.metaKey;
-    if (normalClick) {
-      e.preventDefault();
-    }
-
-    // When user clicks a suggested document, track it
-    var url = $(e.currentTarget).attr('href');
-    ga('send', 'event', 'Suggestion Click', 'clicked: ' + url,
-        'query: ' + $('#search_autocomplete').val().toLowerCase(),
-        {hitCallback: function() {
-          if (normalClick) {
-            document.location = url;
-          }
-        }});
+    devsite.analytics.trackAnalyticsEvent('event',
+        'Suggestion Click', 'clicked: ' + $(e.currentTarget).attr('href'),
+        'query: ' + $('#search_autocomplete').val().toLowerCase());
   }
 
   function buildLink(match) {
@@ -5526,7 +5638,7 @@ window.metadata.search = (function() {
   function renderAndroidResults(list, gMatches, query) {
     list.empty();
 
-    var header = $('<li class="dac-search-results-reference-header">android</li>');
+    var header = $('<li class="dac-search-results-reference-header">android APIs</li>');
     list.append(header);
 
     if (gMatches.length > 0) {
@@ -5647,16 +5759,18 @@ window.metadata.search = (function() {
     this.searchResultsHero = $('#dac-search-results-hero');
     this.searchResultsReference = $('#dac-search-results-reference');
     this.searchHeader = $('[data-search]').data('search-input.dac');
+    this.pageNav = $('a[name=navigation]');
     this.currQueryReferenceResults = {};
+    this.isOpen = false;
   }
 
   Search.prototype.init = function() {
-    if (!devsite && this.checkRedirectToIndex()) { return; }
-
     this.searchHistory = window.dacStore('search-history');
 
     this.searchInput.focus(this.onSearchChanged.bind(this));
-    this.searchInput.keydown(this.handleKeyboardShortcut.bind(this));
+    this.searchInput.keypress(this.handleKeyboardShortcut.bind(this));
+    this.pageNav.keyup(this.handleTabbedToNav.bind(this));
+    this.searchResults.keyup(this.handleKeyboardShortcut.bind(this));
     this.searchInput.on('input', this.onSearchChanged.bind(this));
     this.searchClear.click(this.clear.bind(this));
     this.searchClose.click(this.close.bind(this));
@@ -5712,6 +5826,12 @@ window.metadata.search = (function() {
       event.preventDefault();
     }
   };
+
+  Search.prototype.handleTabbedToNav = function(event) {
+    if (this.isOpen) {
+      this.searchClose.trigger('click');
+    }
+  }
 
   Search.prototype.goToResult = function(relativeIndex) {
     var links = this.searchResults.find('a').filter(':visible');
@@ -5775,6 +5895,8 @@ window.metadata.search = (function() {
     this.removeQueryFromUrl();
     this.searchInput.blur();
     this.hideOverlay();
+    this.pageNav.focus();
+    this.isOpen = false;
   };
 
   Search.prototype.getUrlQuery = function() {
@@ -5859,6 +5981,7 @@ window.metadata.search = (function() {
   };
 
   Search.prototype.showOverlay = function() {
+    this.isOpen = true;
     this.body.addClass('dac-modal-open dac-search-open');
   };
 
@@ -5956,7 +6079,11 @@ window.dacStore = (function(window) {
     this.initiallyActive = this.containers.children('.' + this.options.activeClass).eq(0);
     this.el.on('swap-content', this.swap.bind(this));
     this.el.on('swap-reset', this.reset.bind(this));
-    this.el.find(this.options.swapButton).on('click', this.swap.bind(this));
+    this.el.find(this.options.swapButton).on('click keypress', function(e) {
+      if (e.type == 'keypress' && e.which == 13 || e.type == 'click') {
+        this.swap();
+      }
+    }.bind(this));
   }
 
   /**
@@ -6008,6 +6135,7 @@ window.dacStore = (function(window) {
       if (!this.options.dynamic) {
         container.children().toggleClass(this.options.activeClass);
         this.complete.bind(this);
+        $('.' + this.options.activeClass).focus();
         return;
       }
 
@@ -6139,7 +6267,7 @@ window.dacStore = (function(window) {
    */
   Toast.prototype.closeBtn = function() {
     this.closeBtnEl = this.closeBtnEl || $('<button class="' + this.options.closeBtnClass + '">' +
-      '<i class="dac-sprite dac-close-black"></i>' +
+      '<span class="dac-button dac-raised dac-primary">OK</span>' +
     '</button>');
     return this.closeBtnEl;
   };
@@ -6461,23 +6589,27 @@ window.dacStore = (function(window) {
       // Video starts, send the video ID
       if (event.data === YT.PlayerState.PLAYING) {
         if (this.mPlayerPaused) {
-          ga('send', 'event', 'Videos', 'Resume', videoId);
+          devsite.analytics.trackAnalyticsEvent('event',
+              'Videos', 'Resume', videoId);
         } else {
           // track the start playing event so we know from which page the video was selected
-          ga('send', 'event', 'Videos', 'Start: ' + videoId, 'on: ' + document.location.href);
+          devsite.analytics.trackAnalyticsEvent('event',
+              'Videos', 'Start: ' + videoId, 'on: ' + document.location.href);
         }
         this.mPlayerPaused = false;
       }
 
       // Video paused, send video ID and video elapsed time
       if (event.data === YT.PlayerState.PAUSED) {
-        ga('send', 'event', 'Videos', 'Paused', videoId, currentTime);
+        devsite.analytics.trackAnalyticsEvent('event',
+            'Videos', 'Paused: ' + videoId, 'on: ' + currentTime);
         this.mPlayerPaused = true;
       }
 
       // Video finished, send video ID and video elapsed time
       if (event.data === YT.PlayerState.ENDED) {
-        ga('send', 'event', 'Videos', 'Finished', videoId, currentTime);
+        devsite.analytics.trackAnalyticsEvent('event',
+            'Videos', 'Finished: ' + videoId, 'on: ' + currentTime);
         this.mPlayerPaused = true;
       }
     };
