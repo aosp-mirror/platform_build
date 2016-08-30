@@ -51,6 +51,26 @@
             >Downloads</a>
           </li>
         </ul><?cs else
+        ?><?cs
+        #
+        # For the reference only docs, include just one tab
+        #
+        ?><?cs if:referenceonly
+          ?><ul class="dac-header-tabs">
+            <li><a href="<?cs var:toroot ?>reference/packages.html" class="dac-header-tab"><?cs
+              if:sdk.preview
+                ?>Android <?cs var:sdk.codename ?>
+                  Preview <?cs var:sdk.preview.version ?><?cs
+              else
+                ?>Android <?cs var:sdk.version ?>
+                  r<?cs var:sdk.rel.id ?><?cs
+              /if ?></a>
+            </li>
+          </ul>
+        <?cs else ?><?cs
+        #
+        # End reference only docs, now the online DAC tabs...
+        #
         ?><ul class="dac-header-tabs">
           <li>
           <a class="dac-header-tab" href="<?cs var:toroot ?>design/index.html"
@@ -80,7 +100,12 @@
              es-lang="Distribuir">Distribute</a>
           </li>
         </ul><?cs
-        /if ?>
+        /if ?><?cs
+        #
+        # End if/else reference only docs
+        #
+        ?><?cs
+        /if ?><?cs # end if/else ndk ?>
 
         <?cs if:ndk ?><a class="dac-header-console-btn" href="http://developer.android.com">
           Back to Android Developers
@@ -92,7 +117,9 @@
 
         # ADD SEARCH AND MENU ?><?cs
         if:!ndk ?><?cs
-        call:header_search_widget() ?><?cs
+          if:!referenceonly ?><?cs
+            call:header_search_widget() ?><?cs
+          /if ?><?cs
         /if ?>
       </div><!-- end header-wrap.wrap -->
     </div><!-- end header -->
@@ -147,8 +174,9 @@
     <div class="dac-nav-dimmer" data-dac-toggle-nav></div>
 
     <div class="dac-nav-sidebar" data-swap data-dynamic="false" data-transition-speed="300" data-dac-nav>
-      <div data-swap-container>
+      <div <?cs if:!referenceonly ?>data-swap-container<?cs /if ?>>
         <?cs call:custom_left_nav() ?>
+        <?cs if:!referenceonly ?>
         <ul id="dac-main-navigation" class="dac-nav-list dac-swap-section dac-left dac-no-anim">
         <li class="dac-nav-item home">
           <a class="dac-nav-link" href="<?cs var:toroot ?>index.html">Home</a>
@@ -265,6 +293,7 @@
           <a class="dac-nav-link" href="<?cs var:toroot ?>preview/index.html">Preview</a>
         </li>-->
         </ul>
+        <?cs /if ?><?cs # end if referenceonly ?>
       </div>
     </div>
   </nav>
