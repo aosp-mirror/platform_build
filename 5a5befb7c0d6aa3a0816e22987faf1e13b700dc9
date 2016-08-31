@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5137b50c_ddb63c48",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-08-31T16:59:32Z",
+      "side": 1,
+      "message": "We don\u0027t use CXX_WRAPPER in soong.",
+      "range": {
+        "startLine": 288,
+        "startChar": 0,
+        "endLine": 288,
+        "endChar": 18
+      },
+      "revId": "5a5befb7c0d6aa3a0816e22987faf1e13b700dc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
