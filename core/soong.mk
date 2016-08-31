@@ -90,4 +90,4 @@ $(SOONG_IN_MAKE):
 # prebuilts.
 .PHONY: run_soong
 run_soong: $(SOONG_BOOTSTRAP) $(SOONG_VARIABLES) $(SOONG_IN_MAKE) FORCE
-	$(hide) $(SOONG) $(SOONG_BUILD_NINJA) $(NINJA_EXTRA_ARGS)
+	$(hide) SKIP_NINJA=true $(SOONG)
