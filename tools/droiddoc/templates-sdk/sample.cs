@@ -5,11 +5,6 @@
 <body class="gc-documentation develop samples" itemscope itemtype="http://schema.org/Article">
 <?cs include:"header.cs" ?>
 
-<div <?cs if:fullpage
-?>class="fullpage"<?cs elif:design||tools||about||sdk||distribute
-?>class="col-13" id="doc-col"<?cs else
-?>class="col-12" id="doc-col"<?cs /if ?> >
-
 <!-- start breadcrumb block -->
 <div id="api-info-block">
   <div class="sum-details-links">
@@ -30,7 +25,7 @@
 <div id="pathCrumb">
 <?cs each:item = parentdirs ?>
   <?cs if:LinkifyPathCrumb
-    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> / 
+    ?><a href="<?cs var:toroot ?><?cs var:item.Link ?>"><?cs var:item.Name ?></a> /
   <?cs else
     ?><?cs var:item.Name ?> / <?cs /if ?>
 <?cs /each ?>
@@ -135,17 +130,10 @@
 
   </div> <!-- end jd-content -->
 
-<?cs include:"footer.cs" ?>
-</div><!-- end doc-content -->
-
-<?cs include:"trailer.cs" ?>
+  <?cs if:!devsite ?>
+  <?cs include:"footer.cs" ?>
+  <?cs include:"trailer.cs" ?>
+  <?cs /if ?>
 
 </body>
 </html>
-
-
-
-
-
-
-
