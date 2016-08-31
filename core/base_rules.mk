@@ -550,6 +550,7 @@ $(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(my_checked_module)
 ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
+$(LOCAL_MODULE)-$(h_or_t) : $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
 endif
 
 ###########################################################
