@@ -131,8 +131,8 @@ COMBINED_BUILD_NINJA := $(OUT_DIR)/combined$(KATI_NINJA_SUFFIX).ninja
 
 $(COMBINED_BUILD_NINJA): $(KATI_BUILD_NINJA)
 	$(hide) echo "builddir = $(OUT_DIR)" > $(COMBINED_BUILD_NINJA)
-	$(hide) echo "subninja $(SOONG_BUILD_NINJA)" >> $(COMBINED_BUILD_NINJA)
-	$(hide) echo "subninja $(KATI_BUILD_NINJA)" >> $(COMBINED_BUILD_NINJA)
+	$(hide) echo "include $(KATI_BUILD_NINJA)" >> $(COMBINED_BUILD_NINJA)
+	$(hide) echo "include $(SOONG_BUILD_NINJA)" >> $(COMBINED_BUILD_NINJA)
 
 $(sort $(DEFAULT_GOAL) $(ANDROID_GOALS)) : ninja_wrapper
 	@#empty
