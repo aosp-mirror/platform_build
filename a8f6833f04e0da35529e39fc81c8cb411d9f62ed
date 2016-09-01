@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f11a6924_b87b1585",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2111,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-01T21:04:18Z",
+      "side": 1,
+      "message": "Actually, I don\u0027t need to change this line, since jack won\u0027t use classes.jar. Should I be pulling in something else?",
+      "revId": "a8f6833f04e0da35529e39fc81c8cb411d9f62ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
