@@ -886,8 +886,10 @@ function mma()
       echo "Couldn't locate the top of the tree.  Try setting TOP."
       return 1
     fi
-    local MY_PWD=`PWD= /bin/pwd|sed 's:'$T'/::'`
-    local MODULES_IN_PATHS=MODULES-IN-$MY_PWD
+    local M=$(findmakefile)
+    # Remove the path to top as the makefilepath needs to be relative
+    local M=`echo $M|sed 's:'$T'/::'`
+    local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
     $DRV make -C $T -f build/core/main.mk $@ $MODULES_IN_PATHS
