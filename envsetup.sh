@@ -827,22 +827,23 @@ function mmm()
             DIR=${DIR#./}
             DIR=${DIR%/}
             if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
-                if [ "$DIR_MODULES" = "" ]; then
-                    MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$DIR"
-                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$DIR"
-                else
-                    MODULES="$MODULES $DIR_MODULES"
-                fi
                 local TO_CHOP=`(\cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
                 local TO_CHOP=`expr $TO_CHOP + 1`
                 local START=`PWD= /bin/pwd`
-                local MFILE=`echo $START | cut -c${TO_CHOP}-`
-                if [ "$MFILE" = "" ] ; then
-                    MFILE=$DIR/Android.mk
+                local MDIR=`echo $START | cut -c${TO_CHOP}-`
+                if [ "$MDIR" = "" ] ; then
+                    MDIR=$DIR
                 else
-                    MFILE=$MFILE/$DIR/Android.mk
+                    MDIR=$MDIR/$DIR
                 fi
-                MAKEFILE="$MAKEFILE $MFILE"
+                MDIR=${MDIR%/.}
+                if [ "$DIR_MODULES" = "" ]; then
+                    MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$MDIR"
+                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$MDIR"
+                else
+                    MODULES="$MODULES $DIR_MODULES"
+                fi
+                MAKEFILE="$MAKEFILE $MDIR/Android.mk"
             else
                 case $DIR in
                   showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
