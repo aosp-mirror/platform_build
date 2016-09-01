@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11cc5df8_8c5feb43",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 892,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-01T22:32:34Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 892,
+        "startChar": 0,
+        "endLine": 892,
+        "endChar": 11
+      },
+      "revId": "c1096da827b0ff6d64988addca05a1c5a323db44",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
