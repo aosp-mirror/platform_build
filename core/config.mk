@@ -281,11 +281,13 @@ combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
+ifndef KATI
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
 
 export CC_WRAPPER
 export CXX_WRAPPER
+endif
 
 ifdef TARGET_PREFER_32_BIT
 TARGET_PREFER_32_BIT_APPS := true
