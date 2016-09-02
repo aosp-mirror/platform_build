@@ -109,7 +109,8 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
   Args:
     partition_size: the size of the partition to be verified.
   Returns:
-    The size of the partition adjusted for verity metadata.
+    A tuple of the size of the partition adjusted for verity metadata, and
+    the size of verity metadata.
   """
   key = "%d %d" % (partition_size, fec_supported)
   if key in AdjustPartitionSizeForVerity.results:
@@ -121,27 +122,31 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
 
   # verity tree and fec sizes depend on the partition size, which
   # means this estimate is always going to be unnecessarily small
-  lo = partition_size - GetVeritySize(hi, fec_supported)
+  verity_size = GetVeritySize(hi, fec_supported)
+  lo = partition_size - verity_size
   result = lo
 
   # do a binary search for the optimal size
   while lo < hi:
     i = ((lo + hi) // (2 * BLOCK_SIZE)) * BLOCK_SIZE
-    size = i + GetVeritySize(i, fec_supported)
-    if size <= partition_size:
+    v = GetVeritySize(i, fec_supported)
+    if i + v <= partition_size:
       if result < i:
         result = i
+        verity_size = v
       lo = i + BLOCK_SIZE
     else:
       hi = i
 
-  AdjustPartitionSizeForVerity.results[key] = result
-  return result
+  AdjustPartitionSizeForVerity.results[key] = (result, verity_size)
+  return (result, verity_size)
 
 AdjustPartitionSizeForVerity.results = {}
 
-def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path):
-  cmd = "fec -e %s %s %s" % (sparse_image_path, verity_path, verity_fec_path)
+def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path,
+                   padding_size):
+  cmd = "fec -e -p %d %s %s %s" % (padding_size, sparse_image_path,
+                                   verity_path, verity_fec_path)
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -204,7 +209,7 @@ def Append(target, file_to_append, error_message):
 
 def BuildVerifiedImage(data_image_path, verity_image_path,
                        verity_metadata_path, verity_fec_path,
-                       fec_supported):
+                       padding_size, fec_supported):
   if not Append(verity_image_path, verity_metadata_path,
                 "Could not append verity metadata!"):
     return False
@@ -212,7 +217,7 @@ def BuildVerifiedImage(data_image_path, verity_image_path,
   if fec_supported:
     # build FEC for the entire partition, including metadata
     if not BuildVerityFEC(data_image_path, verity_image_path,
-                          verity_fec_path):
+                          verity_fec_path, padding_size):
       return False
 
     if not Append(verity_image_path, verity_fec_path, "Could not append FEC!"):
@@ -250,7 +255,7 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
     True on success, False otherwise.
   """
   # get properties
-  image_size = prop_dict["partition_size"]
+  image_size = int(prop_dict["partition_size"])
   block_dev = prop_dict["verity_block_device"]
   signer_key = prop_dict["verity_key"] + ".pk8"
   if OPTIONS.verity_signer_path is not None:
@@ -281,10 +286,17 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
     return False
 
   # build the full verified image
+  target_size = int(prop_dict["original_partition_size"])
+  verity_size = int(prop_dict["verity_size"])
+
+  padding_size = target_size - image_size - verity_size
+  assert padding_size >= 0
+
   if not BuildVerifiedImage(out_file,
                             verity_image_path,
                             verity_metadata_path,
                             verity_fec_path,
+                            padding_size,
                             fec_supported):
     shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
@@ -355,12 +367,13 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # verified.
   if verity_supported and is_verity_partition:
     partition_size = int(prop_dict.get("partition_size"))
-    adjusted_size = AdjustPartitionSizeForVerity(partition_size,
-                                                 verity_fec_supported)
+    (adjusted_size, verity_size) = AdjustPartitionSizeForVerity(partition_size,
+                                                                verity_fec_supported)
     if not adjusted_size:
       return False
     prop_dict["partition_size"] = str(adjusted_size)
     prop_dict["original_partition_size"] = str(partition_size)
+    prop_dict["verity_size"] = str(verity_size)
 
   if fs_type.startswith("ext"):
     build_command = ["mkuserimg.sh"]
