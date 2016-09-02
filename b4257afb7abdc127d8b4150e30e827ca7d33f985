@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11cc5df8_6681e32e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-09-02T16:04:37Z",
+      "side": 1,
+      "message": "nit: can you also update the comment here?",
+      "range": {
+        "startLine": 112,
+        "startChar": 4,
+        "endLine": 112,
+        "endChar": 59
+      },
+      "revId": "b4257afb7abdc127d8b4150e30e827ca7d33f985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
