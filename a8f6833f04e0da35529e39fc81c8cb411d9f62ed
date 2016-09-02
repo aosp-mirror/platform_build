@@ -16,6 +16,24 @@
       "revId": "a8f6833f04e0da35529e39fc81c8cb411d9f62ed",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "96e9236c_a2d71ede",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2111,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-09-02T09:42:51Z",
+      "side": 1,
+      "message": "The equivalent unobfuscated jack file would be classes.noshrob.jack. But depending on the usage of \"unobfuscated_jars\" you more probably need to still include those unobfusacted jars and not the jack files.\n\nJack doesn\u0027t use any classes.jar but the rule to generate it is still there. They are just not in the dependency chain to dex files as they used to be. So you\u0027ll need to add an explicit dependency between PROGUARD_DICT_ZIP and those classes.jar. I guess it\u0027s something to add around main.mk:975-991.",
+      "parentUuid": "f11a6924_b87b1585",
+      "revId": "a8f6833f04e0da35529e39fc81c8cb411d9f62ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
