@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11cc5df8_1aeb1fa2",
+        "filename": "core/soong.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-02T20:35:21Z",
+      "side": 0,
+      "message": "Is there a Soong change to remove this too?",
+      "revId": "a5b02ff1ef69092f83782e87a4027c8fdfd72497",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
