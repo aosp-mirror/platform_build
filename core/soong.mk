@@ -53,7 +53,6 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "Schedboost": $(if $(strip $(ENABLE_SCHEDBOOST)),true,false),'; \
 	echo '    "Binder32bit": $(if $(BINDER32BIT),true,false),'; \
 	echo '    "DevicePrefer32BitExecutables": $(if $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)),true,false),'; \
-	echo '    "HostPrefer32BitExecutables": $(if $(filter true,$(HOST_PREFER_32_BIT)),true,false),'; \
 	echo '    "UseGoma": $(if $(filter-out false,$(USE_GOMA)),true,false),'; \
 	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \

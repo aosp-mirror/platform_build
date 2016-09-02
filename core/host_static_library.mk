@@ -6,12 +6,8 @@ include $(BUILD_SYSTEM)/multilib.mk
 
 ifndef LOCAL_MODULE_HOST_ARCH
 ifndef my_module_multilib
-ifeq ($(HOST_PREFER_32_BIT),true)
-my_module_multilib := 32
-else
 # libraries default to building for both architecturess
 my_module_multilib := both
-endif
 endif
 endif
 
