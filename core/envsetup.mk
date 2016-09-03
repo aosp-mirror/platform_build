@@ -299,11 +299,7 @@ $(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_NATIVE_TESTS := $(HOST_OUT)/nativetest
 
 # The default host library path.
 # It always points to the path where we build libraries in the default bitness.
-ifeq ($(HOST_PREFER_32_BIT),true)
-HOST_LIBRARY_PATH := $($(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)
-else
 HOST_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
-endif
 
 # Out for HOST_CROSS_2ND_ARCH
 HOST_CROSS_2ND_ARCH_VAR_PREFIX := 2ND_
