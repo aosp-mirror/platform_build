@@ -138,11 +138,6 @@ ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES := libasan
 # provides to Clang (for supporting features like -ftrapv).
 COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler_rt-extras
 
-ifeq ($(HOST_PREFER_32_BIT),true)
-# We don't have 32-bit prebuilt libLLVM/libclang, so force to build them from source.
-FORCE_BUILD_LLVM_COMPONENTS := true
-endif
-
 # A list of projects that are allowed to set LOCAL_CLANG to false.
 # INTERNAL_LOCAL_CLANG_EXCEPTION_PROJECTS is defined later in other config.mk.
 LOCAL_CLANG_EXCEPTION_PROJECTS = \

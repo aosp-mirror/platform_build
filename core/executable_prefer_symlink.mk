@@ -33,11 +33,7 @@ ifneq ($(LOCAL_IS_HOST_MODULE),true)
   endif
 else
   my_symlink := $(addprefix $(HOST_OUT)/bin/, $(LOCAL_MODULE))
-  ifneq ($(HOST_PREFER_32_BIT),true)
-    my_src_binary_name := $(LOCAL_MODULE_STEM_64)
-  else
-    my_src_binary_name := $(LOCAL_MODULE_STEM_32)
-  endif
+  my_src_binary_name := $(LOCAL_MODULE_STEM_64)
 endif
 
 $(call symlink-file,$(my_module_path)/$(my_src_binary_name),$(my_src_binary_name),$(my_symlink))
