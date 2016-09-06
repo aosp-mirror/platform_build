@@ -31,7 +31,10 @@ TARGET_CPU_ABI  := mips64
 TARGET_2ND_ARCH := mips
 ifeq (,$(TARGET_2ND_ARCH_VARIANT))
 ifeq ($(TARGET_ARCH_VARIANT),mips64r6)
-TARGET_2ND_ARCH_VARIANT :=  mips32r6
+# Imgtec builds use 32r6 arch variant with Imgtec-maintained prebuilts/ndk library:
+# TARGET_2ND_ARCH_VARIANT := mips32r6
+# Aosp builds lack full set of mips32r6 NDK prebuilts, so use 32r2 abi:
+TARGET_2ND_ARCH_VARIANT :=  mips32r2-fp
 else
 TARGET_2ND_ARCH_VARIANT :=  mips32r2-fp
 endif
