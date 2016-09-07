@@ -73,3 +73,25 @@ $(lastword \
   ) \
 )
 endef
+
+# Give warnings to header files only in selected directories.
+# Do not give warnings to external or vendor header files,
+# which contain too many warnings.
+DEFAULT_TIDY_HEADER_DIRS := \
+     art/ \
+    |bionic/ \
+    |bootable/ \
+    |build/ \
+    |cts/ \
+    |dalvik/ \
+    |developers/ \
+    |development/ \
+    |frameworks/ \
+    |libcore/ \
+    |libnativehelper/ \
+    |system/
+
+# Default filter contains current directory $1 and DEFAULT_TIDY_HEADER_DIRS.
+define default_tidy_header_filter
+  -header-filter="($(subst $(space),,$1|$(DEFAULT_TIDY_HEADER_DIRS)))"
+endef
