@@ -16,6 +16,24 @@
       "revId": "21a4ef04fd1147f66387783f414611b605520beb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16f373ac_495f2244",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-09-07T05:27:39Z",
+      "side": 1,
+      "message": "I saw this new Java warning, maybe from some recent Java code.\nI will update commit message and submit this CL.",
+      "parentUuid": "16f373ac_8e859063",
+      "revId": "21a4ef04fd1147f66387783f414611b605520beb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
