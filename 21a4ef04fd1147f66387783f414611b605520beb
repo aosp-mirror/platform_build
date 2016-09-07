@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16f373ac_8e859063",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-07T05:18:48Z",
+      "side": 1,
+      "message": "Did you really mean to add this Java pattern?",
+      "revId": "21a4ef04fd1147f66387783f414611b605520beb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
