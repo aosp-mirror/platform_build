@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "563b2b5a_860daeee",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-07T20:38:11Z",
+      "side": 1,
+      "message": "So now we\u0027ve got:\n\n  $(LOCAL_MODULE)\n  host_$(LOCAL_MODULE)\n  $(LOCAL_MODULE)-host\n\nall doing basically the same thing for a host module that has multilib :\u003d first? do we really need all of these? should we try to be more consistent?",
+      "revId": "3c1809b85a1fc3c083451dc08ae5e68dfb11c1c2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
