@@ -16,6 +16,24 @@
       "revId": "3c1809b85a1fc3c083451dc08ae5e68dfb11c1c2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "563b2b5a_29c7d58e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-09-07T20:59:15Z",
+      "side": 1,
+      "message": "host_$(LOCAL_MODULE) is an internal target of the build system, not intended for manual use.  In most cases $(LOCAL_MODULE)-host is a subset of $(LOCAL_MODULE), for a host-only module they are identical, but they should both exist for consistency.",
+      "parentUuid": "563b2b5a_860daeee",
+      "revId": "3c1809b85a1fc3c083451dc08ae5e68dfb11c1c2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
