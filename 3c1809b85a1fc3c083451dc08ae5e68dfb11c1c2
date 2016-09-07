@@ -34,6 +34,24 @@
       "revId": "3c1809b85a1fc3c083451dc08ae5e68dfb11c1c2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "563b2b5a_e9448d00",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-07T21:00:43Z",
+      "side": 1,
+      "message": "The intended use gets really blurry in make -- can we give it a less \"friendly\" name to help make it a bit clearer?",
+      "parentUuid": "563b2b5a_29c7d58e",
+      "revId": "3c1809b85a1fc3c083451dc08ae5e68dfb11c1c2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
