@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "563b2b5a_86b5aecd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-09-07T20:03:31Z",
+      "side": 1,
+      "message": "This doesn\u0027t work, my_register_name is the same for the host and target modules.",
+      "revId": "2fe319ede4c617d42bda4fc49fec8f2e46908249",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
