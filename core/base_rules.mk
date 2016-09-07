@@ -207,6 +207,14 @@ my_register_name := $(my_register_name)$($(my_prefix)2ND_ARCH_MODULE_SUFFIX)
 endif
 endif
 
+ifeq ($(my_host_cross),true)
+  my_all_targets := host_cross_$(my_register_name)_all_targets
+else ifneq ($(LOCAL_IS_HOST_MODULE),)
+  my_all_targets := host_$(my_register_name)_all_targets
+else
+  my_all_targets := device_$(my_register_name)_all_targets
+endif
+
 # variant is enough to make nano class unique; it serves as a key to lookup (OS,ARCH) tuple
 aux_class := $($(my_prefix)OS_VARIANT)
 # Make sure that this IS_HOST/CLASS/MODULE combination is unique.
@@ -273,7 +281,7 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 # Kati adds restat=1 to ninja. GNU make does nothing for this.
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
 # Build .toc file when using mm, mma, or make $(my_register_name)
-$(my_register_name): $(LOCAL_BUILT_MODULE).toc
+$(my_all_targets): $(LOCAL_BUILT_MODULE).toc
 endif
 endif
 
@@ -320,13 +328,16 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MODULE:= $(my_register_name)
 # Provide a short-hand for building this module.
 # We name both BUILT and INSTALLED in case
 # LOCAL_UNINSTALLABLE_MODULE is set.
+.PHONY: $(my_all_targets)
+$(my_all_targets): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
+
 .PHONY: $(my_register_name)
-$(my_register_name): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
+$(my_register_name): $(my_all_targets)
 
 ifneq ($(my_register_name),$(LOCAL_MODULE))
 # $(LOCAL_MODULE) covers all the multilib targets.
 .PHONY: $(LOCAL_MODULE)
-$(LOCAL_MODULE) : $(my_register_name)
+$(LOCAL_MODULE) : $(my_all_targets)
 endif
 
 # Set up phony targets that covers all modules under the given paths.
@@ -336,7 +347,7 @@ my_path_prefix := MODULES-IN
 $(foreach c, $(my_path_components),\
   $(eval my_path_prefix := $(my_path_prefix)-$(c))\
   $(eval .PHONY : $(my_path_prefix))\
-  $(eval $(my_path_prefix) : $(my_register_name)))
+  $(eval $(my_path_prefix) : $(my_all_targets)))
 
 ###########################################################
 ## Module installation rule
@@ -365,7 +376,7 @@ my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc
 my_init_rc_new_installed := $(call copy-many-files,$(my_init_rc_new_pairs))
 ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
-$(my_register_name) : $(my_init_rc_installed)
+$(my_all_targets) : $(my_init_rc_installed)
 endif # my_init_rc
 endif # !LOCAL_IS_HOST_MODULE
 
@@ -374,7 +385,7 @@ my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS)
 $(foreach symlink,$(my_installed_symlinks),\
     $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink)))
 
-$(my_register_name) : | $(my_installed_symlinks)
+$(my_all_targets) : | $(my_installed_symlinks)
 
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
@@ -444,7 +455,7 @@ COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
   $(my_compat_files)
 
 # Copy over the compatibility files when user runs mm/mmm.
-$(my_register_name) : $(my_compat_files)
+$(my_all_targets) : $(my_compat_files)
 endif  # LOCAL_COMPATIBILITY_SUITE
 
 ###########################################################
@@ -550,7 +561,7 @@ $(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(my_checked_module)
 ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
-$(LOCAL_MODULE)-$(h_or_t) : $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
+$(LOCAL_MODULE)-$(h_or_t) : $(my_all_targets)
 endif
 
 ###########################################################
