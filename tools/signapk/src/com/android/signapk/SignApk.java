@@ -1010,6 +1010,7 @@ class SignApk {
                                 .setV1SigningEnabled(true)
                                 .setV2SigningEnabled(signUsingApkSignatureSchemeV2)
                                 .setOtherSignersSignaturesPreserved(false)
+                                .setCreatedBy("1.0 (Android SignApk)")
                                 .build()) {
                     // We don't preserve the input APK's APK Signing Block (which contains v2
                     // signatures)
