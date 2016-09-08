@@ -1649,7 +1649,7 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     endif
     # If tidy flags are not specified, default to check all header files.
     ifeq ($(my_tidy_flags),)
-      my_tidy_flags := -header-filter=.*
+      my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
     endif
   endif
 endif
