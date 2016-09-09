@@ -978,7 +978,7 @@ $(call track-src-file-gen,$(vts_src),$(vts_gen_cpp))
 
 $(vts_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
 $(vts_gen_cpp) : PRIVATE_HEADER_OUTPUT_DIR := $(vts_gen_include_root)
-$(vts_gen_cpp) : PRIVATE_VTS_FLAGS := $(addprefix -I,$(LOCAL_VTS_INCLUDES))
+$(vts_gen_cpp) : PRIVATE_VTS_FLAGS := $(addprefix -I,$(LOCAL_VTS_INCLUDES)) $(addprefix -m,$(LOCAL_VTS_MODE))
 
 # Add generated headers to include paths.
 my_c_includes += $(vts_gen_include_root)
