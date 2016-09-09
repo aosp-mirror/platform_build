@@ -34,7 +34,7 @@ endif
 endif
 
 # Define PRIVATE_ variables from global vars
-my_target_global_ld_dirs := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_LD_DIRS)
+my_target_global_ld_dirs :=
 ifeq ($(LOCAL_NO_LIBGCC),true)
 my_target_libgcc :=
 else
