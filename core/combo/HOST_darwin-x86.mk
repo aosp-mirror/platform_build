@@ -31,14 +31,13 @@ HOST_CUSTOM_LD_COMMAND := true
 define transform-host-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
         -dynamiclib -single_module -read_only_relocs suppress \
-        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS) \
         $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
             $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
         ) \
         $(PRIVATE_ALL_OBJECTS) \
         $(addprefix -force_load , $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
-        $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
-        $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(PRIVATE_ALL_SHARED_LIBRARIES) \
+        $(PRIVATE_ALL_STATIC_LIBRARIES) \
         $(PRIVATE_LDLIBS) \
         -o $@ \
         -install_name @rpath/$(notdir $@) \
@@ -53,14 +52,13 @@ $(hide) $(PRIVATE_CXX) \
           -Wl,-rpath,@loader_path/$(path)) \
         -o $@ \
         -Wl,-headerpad_max_install_names \
-        $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_GLOBAL_LD_DIRS) \
         $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
            $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
         ) \
-        $(call normalize-host-libraries,$(PRIVATE_ALL_SHARED_LIBRARIES)) \
+        $(PRIVATE_ALL_SHARED_LIBRARIES) \
         $(PRIVATE_ALL_OBJECTS) \
-        $(call normalize-host-libraries,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
-        $(call normalize-host-libraries,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+        $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+        $(PRIVATE_ALL_STATIC_LIBRARIES) \
         $(PRIVATE_LDFLAGS) \
         $(PRIVATE_LDLIBS)
 endef
