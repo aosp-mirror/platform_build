@@ -41,8 +41,11 @@ endif
 endif
 
 built_odex :=
+built_vdex :=
 installed_odex :=
+installed_vdex :=
 built_installed_odex :=
+built_installed_vdex :=
 ifdef LOCAL_DEX_PREOPT
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
 ifdef dexpreopt_boot_jar_module
@@ -91,7 +94,9 @@ endif  # LOCAL_MODULE_CLASS
 endif  # boot jar
 
 built_odex := $(strip $(built_odex))
+built_vdex := $(strip $(built_vdex))
 installed_odex := $(strip $(installed_odex))
+installed_vdex := $(strip $(installed_vdex))
 
 ifdef built_odex
 ifndef LOCAL_DEX_PREOPT_FLAGS
@@ -103,17 +108,25 @@ endif
 
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 
+$(built_vdex): $(built_odex)
+
 # Use pattern rule - we may have multiple installed odex files.
 # Ugly syntax - See the definition get-odex-file-path.
 $(installed_odex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(installed_odex))) \
                   : $(dir $(LOCAL_BUILT_MODULE))%$(notdir $(word 1,$(built_odex)))
 	@echo "Install: $@"
 	$(copy-file-to-target)
+$(installed_vdex) : $(dir $(LOCAL_INSTALLED_MODULE))%$(notdir $(word 1,$(installed_vdex))) \
+                  : $(dir $(LOCAL_BUILT_MODULE))%$(notdir $(word 1,$(built_vdex)))
+	@echo "Install: $@"
+	$(copy-file-to-target)
 endif
 
 # Add the installed_odex to the list of installed files for this module.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -128,7 +141,7 @@ DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
   $(DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS)) $(LOCAL_MODULE))
 
 
-# Make sure to install the .odex when you run "make <module_name>"
-$(my_register_name): $(installed_odex)
+# Make sure to install the .odex and .vdex when you run "make <module_name>"
+$(my_register_name): $(installed_odex) $(installed_vdex)
 
 endif # LOCAL_DEX_PREOPT

@@ -75,8 +75,8 @@ LIBART_TARGET_BOOT_DEX_FILES := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),$(call 
 # is converted into to boot.art (to match the legacy assumption that boot.art
 # exists), and the rest are converted to boot-<name>.art.
 # In addition, each .art file has an associated .oat file.
-LIBART_TARGET_BOOT_ART_EXTRA_FILES := $(foreach jar,$(wordlist 2,999,$(LIBART_TARGET_BOOT_JARS)),boot-$(jar).art boot-$(jar).oat)
-LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat
+LIBART_TARGET_BOOT_ART_EXTRA_FILES := $(foreach jar,$(wordlist 2,999,$(LIBART_TARGET_BOOT_JARS)),boot-$(jar).art boot-$(jar).oat boot-$(jar).vdex)
+LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat boot.vdex
 
 my_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
