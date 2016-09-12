@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3a0657_bee1d0f0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2063,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-12T21:15:03Z",
+      "side": 1,
+      "message": "remove trailing space",
+      "range": {
+        "startLine": 2063,
+        "startChar": 34,
+        "endLine": 2063,
+        "endChar": 35
+      },
+      "revId": "9389f4621c9ab4b0a62dcd30968e8d0c9bfe0eb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3a0657_beac70a8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2083,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-12T21:15:03Z",
+      "side": 1,
+      "message": "add a blank line at the end of this block",
+      "revId": "9389f4621c9ab4b0a62dcd30968e8d0c9bfe0eb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
