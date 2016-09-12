@@ -34,8 +34,17 @@ $(my_built_odex) : $($(my_2nd_arch_prefix)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BO
 
 my_installed_odex := $(call get-odex-installed-file-path,$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
 
+my_built_vdex := $(patsubst %.odex,%.vdex,$(my_built_odex))
+my_installed_vdex := $(patsubst %.odex,%.vdex,$(my_installed_odex))
+
 $(eval $(call copy-one-file,$(my_built_odex),$(my_installed_odex)))
+$(eval $(call copy-one-file,$(my_built_vdex),$(my_installed_vdex)))
 
 built_odex += $(my_built_odex)
+built_vdex += $(my_built_vdex)
+
 installed_odex += $(my_installed_odex)
+installed_vdex += $(my_installed_vdex)
+
 built_installed_odex += $(my_built_odex):$(my_installed_odex)
+built_installed_vdex += $(my_built_vdex):$(my_installed_vdex)
