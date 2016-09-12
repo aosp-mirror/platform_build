@@ -54,9 +54,14 @@ my_cxx := $(LOCAL_CXX)
 my_cxx_wrapper := $(CXX_WRAPPER)
 my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
-my_native_coverage := $(LOCAL_NATIVE_COVERAGE)
 my_additional_dependencies := $(LOCAL_ADDITIONAL_DEPENDENCIES)
 my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
+
+ifneq (,$(foreach dir,$(COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH))))
+  my_native_coverage := true
+else
+  my_native_coverage := false
+endif
 
 ifdef LOCAL_IS_HOST_MODULE
 my_allow_undefined_symbols := true
@@ -1768,4 +1773,12 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
     $(my_shared_libraries) \
     $(my_system_shared_libraries)
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
+endif
+
+###########################################################
+# Coverage packaging.
+###########################################################
+ifeq ($(my_native_coverage),true)
+LOCAL_GCNO_FILES := $(patsubst %.o,%.gcno,$(all_objects))
+$(foreach f,$(all_objects),$(eval $(call gcno-touch-rule,$(f),$(f:.o=.gcno))))
 endif
