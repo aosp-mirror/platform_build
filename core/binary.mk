@@ -537,17 +537,18 @@ ifeq ($(NATIVE_COVERAGE),true)
         my_cflags += --coverage -O0
         my_ldflags += --coverage
     endif
+
+    ifeq ($(my_clang),true)
+        my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
+    else
+        my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,$(filter AUX,$(my_kind)),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
+    endif
+
+    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
+    $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
 else
     my_native_coverage := false
 endif
-
-ifeq ($(my_clang),true)
-    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
-else
-    my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,$(filter AUX,$(my_kind)),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
 
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types
