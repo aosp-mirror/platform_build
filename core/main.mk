@@ -994,6 +994,9 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(SYMBOLS_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(SYMBOLS_ZIP))
 
+  $(COVERAGE_ZIP) : $(apps_only_installed_files)
+  $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
+
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
@@ -1014,6 +1017,7 @@ else # TARGET_BUILD_APPS
     $(INTERNAL_OTA_PACKAGE_TARGET) \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
+    $(COVERAGE_ZIP) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_FILE_VENDOR) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
@@ -1057,6 +1061,7 @@ sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk win_sdk, \
     $(ALL_SDK_TARGETS) \
     $(SYMBOLS_ZIP) \
+    $(COVERAGE_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
 
