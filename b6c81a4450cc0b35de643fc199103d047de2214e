@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8b101ad0_aac9af78",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1067895
+      },
+      "writtenOn": "2016-09-13T04:33:29Z",
+      "side": 1,
+      "message": "Because we need yet another script to start goma compiler_proxy for developing goma client, especially we need to update both client and backend to support some features.",
+      "parentUuid": "6b3a0657_9e408339",
+      "revId": "b6c81a4450cc0b35de643fc199103d047de2214e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3a0657_5e3afbd2",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-09-13T04:05:58Z",
       "side": 1,
       "message": "We use lowercase and a colon, like Change-Id (and in the same paragraph):\n\n  Bug:\n  Test:\n  Change-Id:",
+      "revId": "b6c81a4450cc0b35de643fc199103d047de2214e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8b101ad0_cad4e30e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1067895
+      },
+      "writtenOn": "2016-09-13T04:33:29Z",
+      "side": 1,
+      "message": "ok.  I will follow that.",
+      "parentUuid": "6b3a0657_5e3afbd2",
       "revId": "b6c81a4450cc0b35de643fc199103d047de2214e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
