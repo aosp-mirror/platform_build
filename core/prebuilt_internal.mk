@@ -171,6 +171,16 @@ endif
 # "my_strip_module not true" because otherwise the rules are defined in dynamic_binary.mk.
 endif  # my_strip_module not true
 
+# Coverage information is needed when static lib is a dependency of another
+# coverage-enabled module.
+ifeq (STATIC_LIBRARIES, $(LOCAL_MODULE_CLASS))
+GCNO_ARCHIVE := $(LOCAL_MODULE).gcnodir
+$(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_OBJECTS :=
+$(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_WHOLE_STATIC_LIBRARIES :=
+$(intermediates)/$(GCNO_ARCHIVE) :
+	$(transform-o-to-static-lib)
+endif
+
 ifeq ($(LOCAL_MODULE_CLASS),APPS)
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 

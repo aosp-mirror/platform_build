@@ -81,4 +81,32 @@ $(linked_module): \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-o-to-shared-lib)
 
+ifeq ($(my_native_coverage),true)
+gcno_suffix := .gcnodir
+
+built_whole_gcno_libraries := \
+    $(foreach lib,$(my_whole_static_libraries), \
+      $(call intermediates-dir-for, \
+        STATIC_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX), \
+        $(my_host_cross))/$(lib)$(gcno_suffix))
+
+built_static_gcno_libraries := \
+    $(foreach lib,$(my_static_libraries), \
+      $(call intermediates-dir-for, \
+        STATIC_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX), \
+        $(my_host_cross))/$(lib)$(gcno_suffix))
+
+GCNO_ARCHIVE := $(LOCAL_MODULE)$(gcno_suffix)
+
+$(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_OBJECTS := $(strip $(LOCAL_GCNO_FILES))
+$(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_WHOLE_STATIC_LIBRARIES := $(strip $(built_whole_gcno_libraries)) $(strip $(built_static_gcno_libraries))
+$(intermediates)/$(GCNO_ARCHIVE) : $(LOCAL_GCNO_FILES) $(built_whole_gcno_libraries) $(built_static_gcno_libraries)
+	$(transform-o-to-static-lib)
+
+$($(my_prefix)OUT_COVERAGE)/$(GCNO_ARCHIVE) : $(intermediates)/$(GCNO_ARCHIVE)
+	$(copy-file-to-target)
+
+$(LOCAL_BUILT_MODULE): $($(my_prefix)OUT_COVERAGE)/$(GCNO_ARCHIVE)
+endif
+
 endif  # skip_build_from_source
