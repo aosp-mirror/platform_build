@@ -597,9 +597,6 @@ endif # LOCAL_PACKAGE_SPLITS
 # Save information about this package
 PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_FILES := $(all_resources)
-ifdef package_resource_overlays
-PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_OVERLAYS := $(package_resource_overlays)
-endif
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
 
