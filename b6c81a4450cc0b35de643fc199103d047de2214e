@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "8b101ad0_0adb1b3a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1067895
+      },
+      "writtenOn": "2016-09-13T05:38:45Z",
+      "side": 1,
+      "message": "Let me explain more on this.\nensure_start ensures goma compiler_proxy is already running with *the same environment* goma compiler_proxy is started in the last time.  If not (i.e. environment has been changed), it automatically restarts.\n\nWhen we develop goma compiler_proxy, we need to make goma compiler_proxy connect to development server.  For that purpose, we use the option that is not relevant to set with goma_ctl.py. (we use yet another script for developers to start compiler_proxy in this case)\n\nHowever, even if we start goma compiler_proxy with \"developer option\" with special script, current \"USE_GOMA\u003d1 m\" always restart compiler_proxy because \"goma_ctl.py ensure_start\" in goma.mk always think environment has changed.\n\n\nAs a result, when I fixed b/31170252#comment16, I need to remove code goma_ctl.py ensure_start to avoid the issue above.  However, I believe such temporary removal of code for debugging the feature is error-prone, and I would like to make goma.mk to have a option for that purpose.\n\nWhat do you think?",
+      "parentUuid": "8b101ad0_aac9af78",
+      "revId": "b6c81a4450cc0b35de643fc199103d047de2214e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3a0657_5e3afbd2",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
