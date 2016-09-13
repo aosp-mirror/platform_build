@@ -1675,6 +1675,10 @@ ifneq ($(my_bad_ldlibs),)
 endif
 endif
 
+# my_cxx_ldlibs may contain linker flags need to wrap certain libraries
+# (start-group/end-group), so append after the check above.
+my_ldlibs += $(my_cxx_ldlibs)
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASFLAGS := $(my_asflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CONLYFLAGS := $(my_conlyflags)
