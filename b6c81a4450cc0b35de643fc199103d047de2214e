@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3a0657_9e408339",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-13T04:05:58Z",
+      "side": 1,
+      "message": "Why doesn\u0027t ensure_start work here? Shouldn\u0027t that just ensure that it\u0027s started, and do nothing if it\u0027s already running?",
+      "revId": "b6c81a4450cc0b35de643fc199103d047de2214e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3a0657_5e3afbd2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-13T04:05:58Z",
+      "side": 1,
+      "message": "We use lowercase and a colon, like Change-Id (and in the same paragraph):\n\n  Bug:\n  Test:\n  Change-Id:",
+      "revId": "b6c81a4450cc0b35de643fc199103d047de2214e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
