@@ -49,8 +49,7 @@ pathmap_INCL := \
     audio-route:system/media/audio_route/include \
     wilhelm:frameworks/wilhelm/include \
     wilhelm-ut:frameworks/wilhelm/src/ut \
-    mediandk:frameworks/av/media/ndk/ \
-    speex:external/speex/include
+    mediandk:frameworks/av/media/ndk/
 
 #
 # Returns the path to the requested module's include directory,
