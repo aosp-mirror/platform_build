@@ -27,7 +27,11 @@ test_artifacts := $(COMPATIBILITY.$(test_suite_name).FILES)
 test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/tradefed-prebuilt.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-host-util-tests.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-common-util-tests.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/compatibility-tradefed-tests.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed).jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed)-tests.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
   $(test_suite_readme)
 
