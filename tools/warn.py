@@ -2,7 +2,6 @@
 # This file uses the following encoding: utf-8
 
 import argparse
-import sys
 import re
 
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
@@ -26,14 +25,15 @@ args = parser.parse_args()
 
 # if you add another level, don't forget to give it a color below
 class severity:
-    UNKNOWN=0
-    SKIP=100
-    FIXMENOW=1
-    HIGH=2
-    MEDIUM=3
-    LOW=4
-    TIDY=5
-    HARMLESS=6
+    UNKNOWN = 0
+    FIXMENOW = 1
+    HIGH = 2
+    MEDIUM = 3
+    LOW = 4
+    TIDY = 5
+    HARMLESS = 6
+    SKIP = 100
+    kinds = [FIXMENOW, HIGH, MEDIUM, LOW, TIDY, HARMLESS, UNKNOWN, SKIP]
 
 def colorforseverity(sev):
     if sev == severity.FIXMENOW:
@@ -68,6 +68,23 @@ def headerforseverity(sev):
     if sev == severity.UNKNOWN:
         return 'Unknown warnings'
     return 'Unhandled warnings'
+
+def columnheaderforseverity(sev):
+    if sev == severity.FIXMENOW:
+        return 'FixNow'
+    if sev == severity.HIGH:
+        return 'High'
+    if sev == severity.MEDIUM:
+        return 'Medium'
+    if sev == severity.LOW:
+        return 'Low'
+    if sev == severity.HARMLESS:
+        return 'Harmless'
+    if sev == severity.TIDY:
+        return 'Tidy'
+    if sev == severity.UNKNOWN:
+        return 'Unknown'
+    return 'Unhandled'
 
 warnpatterns = [
     { 'category':'make',    'severity':severity.MEDIUM,   'members':[], 'option':'',
@@ -240,7 +257,8 @@ warnpatterns = [
         'patterns':[r".*: warning: control reaches end of non-void function"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wimplicit-int',
         'description':'Implicit int type',
-        'patterns':[r".*: warning: type specifier missing, defaults to 'int'"] },
+        'patterns':[r".*: warning: type specifier missing, defaults to 'int'",
+                    r".*: warning: type defaults to 'int' in declaration of '.+'"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM,   'members':[], 'option':'-Wmain-return-type',
         'description':'Main function should return int',
         'patterns':[r".*: warning: return type of 'main' is not 'int'"] },
@@ -295,9 +313,6 @@ warnpatterns = [
                     r".*: warning: .+ results in a null pointer dereference",
                     r".*: warning: Access to .+ results in a dereference of a null pointer",
                     r".*: warning: Null pointer argument in"] },
-    { 'category':'cont.',   'severity':severity.SKIP,     'members':[], 'option':'',
-        'description':'',
-        'patterns':[r".*: warning: type defaults to 'int' in declaration of '.+'"] },
     { 'category':'cont.',   'severity':severity.SKIP,     'members':[], 'option':'',
         'description':'',
         'patterns':[r".*: warning: parameter names \(without types\) in function declaration"] },
@@ -1909,6 +1924,8 @@ projectpatterns = []
 for p in projectlist:
     projectpatterns.append({'description':p[0], 'members':[], 'pattern':re.compile(p[1])})
 
+projectnames = [p[0] for p in projectlist]
+
 # Each warning pattern has 3 dictionaries:
 # (1) 'projects' maps a project name to number of warnings in that project.
 # (2) 'projectanchor' maps a project name to its anchor number for HTML.
@@ -1953,12 +1970,13 @@ html_script_style = """\
     };
     </script>
     <style type="text/css">
-    table,th,td{border-collapse:collapse; width:100%;}
+    th,td{border-collapse:collapse; border:1px solid black;}
     .button{color:blue;font-size:110%;font-weight:bolder;}
     .bt{color:black;background-color:transparent;border:none;outline:none;
         font-size:140%;font-weight:bolder;}
     .c0{background-color:#e0e0e0;}
     .c1{background-color:#d0d0d0;}
+    .t1{border-collapse:collapse; width:100%; border:1px solid black;}
     </style>\n"""
 
 
@@ -1990,44 +2008,113 @@ def sortwarnings():
     for i in warnpatterns:
         i['members'] = sorted(set(i['members']))
 
+# dump a table of warnings per project and severity
+def dumpstatsbyproject():
+    projects = set(projectnames)
+    severities = set(severity.kinds)
+
+    # warnings[p][s] is number of warnings in project p of severity s.
+    warnings = {p:{s:0 for s in severity.kinds} for p in projectnames}
+    for i in warnpatterns:
+        s = i['severity']
+        for p in i['projects']:
+            warnings[p][s] += i['projects'][p]
+
+    # totalbyseverity[s] is number of warnings of severity s.
+    totalbyseverity = {s:0 for s in severity.kinds}
+
+    # emit table header
+    output('<blockquote><table border=1>\n<tr><th></th>\n')
+    for s in severity.kinds:
+        output('<th width="8%"><span style="background-color:{}">{}</span></th>'.
+               format(colorforseverity(s), columnheaderforseverity(s)))
+    output('<th>TOTAL</th></tr>\n')
+
+    # emit a row of warnings per project
+    totalallprojects = 0
+    for p in projectnames:
+        totalbyproject = 0
+        output('<tr><td align="left">{}</td>'.format(p))
+        for s in severity.kinds:
+            output('<td align="right">{}</td>'.format(warnings[p][s]))
+            totalbyproject += warnings[p][s]
+            totalbyseverity[s] += warnings[p][s]
+        output('<td align="right">{}</td>'.format(totalbyproject))
+        totalallprojects += totalbyproject
+        output('</tr>\n')
+
+    # emit a row of warning counts per severity
+    totalallseverities = 0
+    output('<tr><td align="right">TOTAL</td>')
+    for s in severity.kinds:
+        output('<td align="right">{}</td>'.format(totalbyseverity[s]))
+        totalallseverities += totalbyseverity[s]
+    output('<td align="right">{}</td></tr>\n'.format(totalallprojects))
+
+    # at the end of table, verify total counts
+    output('</table></blockquote><br>\n')
+    if totalallprojects != totalallseverities:
+        output('<h3>ERROR: Sum of warnings by project ' +
+               '!= Sum of warnings by severity.</h3>\n')
+
 # dump some stats about total number of warnings and such
 def dumpstats():
     known = 0
+    skipped = 0
     unknown = 0
     sortwarnings()
     for i in warnpatterns:
         if i['severity'] == severity.UNKNOWN:
             unknown += len(i['members'])
-        elif i['severity'] != severity.SKIP:
+        elif i['severity'] == severity.SKIP:
+            skipped += len(i['members'])
+        else:
             known += len(i['members'])
     output('\nNumber of classified warnings: <b>' + str(known) + '</b><br>' )
+    output('\nNumber of skipped warnings: <b>' + str(skipped) + '</b><br>')
     output('\nNumber of unclassified warnings: <b>' + str(unknown) + '</b><br>')
-    total = unknown + known
+    total = unknown + known + skipped
     output('\nTotal number of warnings: <b>' + str(total) + '</b>')
     if total < 1000:
         output('(low count may indicate incremental build)')
     output('<br><br>\n')
+
+def emitbuttons():
     output('<button class="button" onclick="expand_collapse(1);">' +
-           'Expand all warnings</button> ' +
+           'Expand all warnings</button>\n' +
            '<button class="button" onclick="expand_collapse(0);">' +
-           'Collapse all warnings</button>')
-    output('<br>\n')
+           'Collapse all warnings</button><br>\n')
 
 # dump everything for a given severity
 def dumpseverity(sev):
     global anchor
+    total = 0
+    for i in warnpatterns:
+        if i['severity'] == sev:
+            total = total + len(i['members'])
     output('\n<br><span style="background-color:' + colorforseverity(sev) + '"><b>' +
-           headerforseverity(sev) + ':</b></span>\n')
+           headerforseverity(sev) + ': ' + str(total) + '</b></span>\n')
     output('<blockquote>\n')
     for i in warnpatterns:
-      if i['severity'] == sev and len(i['members']) > 0:
-          anchor += 1
-          i['anchor'] = str(anchor)
-          if args.byproject:
-              dumpcategorybyproject(sev, i)
-          else:
-              dumpcategory(sev, i)
+        if i['severity'] == sev and len(i['members']) > 0:
+            anchor += 1
+            i['anchor'] = str(anchor)
+            if args.byproject:
+                dumpcategorybyproject(sev, i)
+            else:
+                dumpcategory(sev, i)
     output('</blockquote>\n')
+
+# emit all skipped project anchors for expand_collapse.
+def dumpskippedanchors():
+    output('<div style="display:none;">\n')  # hide these fake elements
+    for i in warnpatterns:
+        if i['severity'] == severity.SKIP and len(i['members']) > 0:
+            projects = i['projectwarning'].keys()
+            for p in projects:
+                output('<div id="' + i['projectanchor'][p] + '"></div>' +
+                       '<div id="' + i['projectanchor'][p] + '_mark"></div>\n')
+    output('</div>\n')
 
 def allpatterns(cat):
     pats = ''
@@ -2057,7 +2144,7 @@ def dumpfixed():
     output('<blockquote>\n')
     fixed_patterns = []
     for i in warnpatterns:
-        if len(i['members']) == 0 and i['severity'] != severity.SKIP:
+        if len(i['members']) == 0:
             fixed_patterns.append(i['description'] + ' (' +
                                   allpatterns(i) + ') ' + i['option'])
     fixed_patterns.sort()
@@ -2083,14 +2170,14 @@ def warningwithurl(line):
 
 def dumpgroup(sev, anchor, description, warnings):
     mark = anchor + '_mark'
-    output('\n<table frame="box">\n')
+    output('\n<table class="t1">\n')
     output('<tr bgcolor="' + colorforseverity(sev) + '">' +
            '<td><button class="bt" id="' + mark +
            '" onclick="expand(\'' + anchor + '\');">' +
            '&#x2295</button> ' + description + '</td></tr>\n')
     output('</table>\n')
     output('<div id="' + anchor + '" style="display:none;">')
-    output('<table>\n')
+    output('<table class="t1">\n')
     for i in warnings:
         tablerow(warningwithurl(i))
     output('</table></div>\n')
@@ -2191,16 +2278,15 @@ def parseinputfile():
 def dumphtml():
     dumphtmlprologue('Warnings for ' + platformversion + ' - ' + targetproduct + ' - ' + targetvariant)
     dumpstats()
+    dumpstatsbyproject()
+    emitbuttons()
     # sort table based on number of members once dumpstats has deduplicated the
     # members.
     warnpatterns.sort(reverse=True, key=lambda i: len(i['members']))
-    dumpseverity(severity.FIXMENOW)
-    dumpseverity(severity.HIGH)
-    dumpseverity(severity.MEDIUM)
-    dumpseverity(severity.LOW)
-    dumpseverity(severity.TIDY)
-    dumpseverity(severity.HARMLESS)
-    dumpseverity(severity.UNKNOWN)
+    # Dump warnings by severity. If severity.SKIP warnings are not dumpped,
+    # the project anchors should be dumped through dumpskippedanchors.
+    for s in severity.kinds:
+        dumpseverity(s)
     dumpfixed()
     dumphtmlepilogue()
 
@@ -2237,13 +2323,8 @@ def countseverity(sev, kind):
 def dumpcsv():
     sortwarnings()
     total = 0
-    total += countseverity(severity.FIXMENOW, 'FixNow')
-    total += countseverity(severity.HIGH, 'High')
-    total += countseverity(severity.MEDIUM, 'Medium')
-    total += countseverity(severity.LOW, 'Low')
-    total += countseverity(severity.TIDY, 'Tidy')
-    total += countseverity(severity.HARMLESS, 'Harmless')
-    total += countseverity(severity.UNKNOWN, 'Unknown')
+    for s in severity.kinds:
+        total += countseverity(s, columnheaderforseverity(s))
     print '{},,{}'.format(total, 'All warnings')
 
 
