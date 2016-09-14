@@ -123,6 +123,15 @@ define true-or-empty
 $(filter true, $(1))
 endef
 
+###########################################################
+## Rule for touching GCNO files.
+###########################################################
+define gcno-touch-rule
+$(2): $(1)
+	touch -c $$@
+endef
+
+###########################################################
 
 ###########################################################
 ## Retrieve the directory of the current makefile
