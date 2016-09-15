@@ -40,21 +40,6 @@ $(warning The build system needs unmodified output of grep.)
 $(error Please remove --color=always from your  $$GREP_OPTIONS)
 endif
 
-# Standard source directories.
-# TODO: Enforce some kind of layering; only add include paths
-#       when a module links against a particular library.
-# TODO: See if we can remove most of these from the global list.
-SRC_SYSTEM_HEADERS := \
-	$(wildcard system/core/include) \
-	$(wildcard system/media/audio/include) \
-	$(wildcard hardware/libhardware/include) \
-	$(wildcard hardware/libhardware_legacy/include) \
-	$(wildcard hardware/ril/include) \
-	$(wildcard libnativehelper/include) \
-	$(wildcard frameworks/native/include) \
-	$(wildcard frameworks/native/opengl/include) \
-	$(wildcard frameworks/av/include) \
-	$(wildcard frameworks/base/include)
 SRC_TARGET_DIR := $(TOPDIR)build/target
 SRC_API_DIR := $(TOPDIR)prebuilts/sdk/api
 SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
