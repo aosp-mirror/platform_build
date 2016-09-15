@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6b3926b8_1d886358",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-15T21:55:55Z",
+      "side": 1,
+      "message": "There are still 13 left in AOSP according to my local build. With the next patch, I improved things so that warn.py can separate these out as higher priority warnings.",
+      "parentUuid": "6b3926b8_0fe4a9fe",
+      "range": {
+        "startLine": 122,
+        "startChar": 28,
+        "endLine": 122,
+        "endChar": 34
+      },
+      "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_2fe16def",
         "filename": "tools/check_link_type.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-09-15T18:31:31Z",
       "side": 1,
       "message": "2016",
+      "range": {
+        "startLine": 3,
+        "startChar": 16,
+        "endLine": 3,
+        "endChar": 20
+      },
+      "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3926b8_1de4e3fe",
+        "filename": "tools/check_link_type.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-15T21:55:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b3926b8_2fe16def",
       "range": {
         "startLine": 3,
         "startChar": 16,
@@ -65,6 +113,24 @@
     },
     {
       "key": {
+        "uuid": "6b3926b8_ddc96b78",
+        "filename": "tools/check_link_type.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-15T21:55:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b3926b8_72742ec3",
+      "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_9274422b",
         "filename": "tools/check_link_type.py",
         "patchSetId": 2
@@ -76,6 +142,24 @@
       "writtenOn": "2016-09-15T18:31:31Z",
       "side": 1,
       "message": "Is this okay to use anywhere we run builds? Does this need a sys.stdin.isatty()? Although iirc that didn\u0027t work with ninja...",
+      "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3926b8_7d695fb5",
+        "filename": "tools/check_link_type.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-15T21:55:55Z",
+      "side": 1,
+      "message": "Yes. Ninja doesn\u0027t prevent a tty since it buffers all output, but expects you to always write out ANSI color codes. When ninja goes to print the output, it will leave them in if isatty is true (and TERM is agreeable), otherwise it will strip out the escape sequences before printing.",
+      "parentUuid": "6b3926b8_9274422b",
       "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -99,6 +183,24 @@
     },
     {
       "key": {
+        "uuid": "6b3926b8_9dba93de",
+        "filename": "tools/check_link_type.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-15T21:55:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b3926b8_b215c6aa",
+      "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_f2673e1b",
         "filename": "tools/check_link_type.py",
         "patchSetId": 2
@@ -110,6 +212,30 @@
       "writtenOn": "2016-09-15T18:31:31Z",
       "side": 1,
       "message": "pylint doesn\u0027t like this because this is technically in the global scope so it thinks it should be PARSER. I typically just move the argument parsing into a `parse_args()` function.",
+      "range": {
+        "startLine": 54,
+        "startChar": 4,
+        "endLine": 54,
+        "endChar": 10
+      },
+      "revId": "aa0287570acf4bfdccf3cd97bab82cb834133686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3926b8_3dac47a7",
+        "filename": "tools/check_link_type.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-15T21:55:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b3926b8_f2673e1b",
       "range": {
         "startLine": 54,
         "startChar": 4,
