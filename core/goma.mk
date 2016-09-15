@@ -49,7 +49,9 @@ ifneq ($(filter-out false,$(USE_GOMA)),)
   # gomacc can start goma client's daemon process automatically, but
   # it is safer and faster to start up it beforehand. We run this as a
   # background process so this won't slow down the build.
-  $(shell ( $(goma_ctl) ensure_start ) &> /dev/null &)
+  ifndef NOSTART_GOMA
+    $(shell ( $(goma_ctl) ensure_start ) &> /dev/null &)
+  endif
 
   goma_ctl :=
   goma_dir :=
