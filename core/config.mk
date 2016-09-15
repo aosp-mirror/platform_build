@@ -586,6 +586,7 @@ TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/tools/fat16copy.py
+CHECK_LINK_TYPE := build/tools/check_link_type.py
 
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 JACK_DEFAULT_ARGS :=

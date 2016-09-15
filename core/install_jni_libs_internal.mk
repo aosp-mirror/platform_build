@@ -102,28 +102,26 @@ endif  # outer my_prebuilt_jni_libs
 # Verify that all included libraries are built against the NDK
 ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
 my_link_type := $(call intermediates-dir-for,APPS,$(LOCAL_MODULE))/$(my_2nd_arch_prefix)jni_link_type
+all_link_types: $(my_link_type)
 my_link_type_deps := $(strip \
   $(foreach l,$(LOCAL_JNI_SHARED_LIBRARIES),\
     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),,,$(my_2nd_arch_prefix))/link_type))
 ifneq ($(LOCAL_SDK_VERSION),)
-$(my_link_type): PRIVATE_LINK_TYPE := sdk
-$(my_link_type): PRIVATE_ALLOWED_TYPES := ndk
+$(my_link_type): PRIVATE_LINK_TYPE := app:sdk
+$(my_link_type): PRIVATE_WARN_TYPES := native:platform
+$(my_link_type): PRIVATE_ALLOWED_TYPES := native:ndk
 else
-$(my_link_type): PRIVATE_LINK_TYPE := platform
-$(my_link_type): PRIVATE_ALLOWED_TYPES := (ndk|platform)
+$(my_link_type): PRIVATE_LINK_TYPE := app:platform
+$(my_link_type): PRIVATE_WARN_TYPES :=
+$(my_link_type): PRIVATE_ALLOWED_TYPES := native:ndk native:platform
 endif
+$(eval $(call link-type-partitions,$(my_link_type)))
 $(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
 $(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(my_link_type): PRIVATE_MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
-$(my_link_type): $(my_link_type_deps)
+$(my_link_type): $(my_link_type_deps) $(CHECK_LINK_TYPE)
 	@echo Check JNI module types: $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) rm -f $@
-	$(hide) for f in $(PRIVATE_DEPS); do \
-	  grep -qE '^$(PRIVATE_ALLOWED_TYPES)$$' $$f || \
-	    $(call echo-warning,"$(PRIVATE_MAKEFILE): $(PRIVATE_MODULE) ($(PRIVATE_LINK_TYPE)) should not link to $$(basename $${f%_intermediates/link_type}) ($$(cat $$f))"); \
-	done
-	$(hide) touch $@
+	$(check-link-type)
 
 $(LOCAL_BUILT_MODULE): | $(my_link_type)
 
