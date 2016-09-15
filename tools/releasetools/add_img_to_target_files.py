@@ -96,18 +96,22 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
   imgname = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict,
                         block_list=block_list)
 
-  # If requested, calculate and add dm-verity integrity hashes and
+  # AVB: if enabled, calculate and add dm-verity integrity hashes and
   # metadata to system.img.
-  if OPTIONS.info_dict.get("board_bvb_enable", None) == "true":
-    bvbtool = os.getenv('BVBTOOL') or "bvbtool"
-    cmd = [bvbtool, "add_image_hashes", "--image", imgname]
-    args = OPTIONS.info_dict.get("board_bvb_add_image_hashes_args", None)
+  if OPTIONS.info_dict.get("board_avb_enable", None) == "true":
+    avbtool = os.getenv('AVBTOOL') or "avbtool"
+    part_size = OPTIONS.info_dict.get("system_size", None)
+    cmd = [avbtool, "add_hashtree_footer", "--image", imgname,
+           "--partition_size", str(part_size), "--partition_name", "system"]
+    common.AppendAVBSigningArgs(cmd)
+    args = OPTIONS.info_dict.get("board_avb_system_add_hashtree_footer_args",
+                                 None)
     if args and args.strip():
       cmd.extend(shlex.split(args))
     p = common.Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
-    assert p.returncode == 0, "bvbtool add_image_hashes of %s image failed" % (
-      os.path.basename(OPTIONS.input_tmp),)
+    assert p.returncode == 0, "avbtool add_hashtree_footer of %s failed" % (
+      os.path.basename(OPTIONS.input_tmp))
 
   common.ZipWrite(output_zip, imgname, prefix + "system.img")
   common.ZipWrite(output_zip, block_list, prefix + "system.map")
@@ -251,6 +255,25 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
   shutil.rmtree(temp_dir)
 
 
+def AddVBMeta(output_zip, boot_img_path, system_img_path, prefix="IMAGES/"):
+  """Create a VBMeta image and store it in output_zip."""
+  _, img_file_name = tempfile.mkstemp()
+  avbtool = os.getenv('AVBTOOL') or "avbtool"
+  cmd = [avbtool, "make_vbmeta_image",
+         "--output", img_file_name,
+         "--include_descriptors_from_image", boot_img_path,
+         "--include_descriptors_from_image", system_img_path,
+         "--generate_dm_verity_cmdline_from_hashtree", system_img_path]
+  common.AppendAVBSigningArgs(cmd)
+  args = OPTIONS.info_dict.get("board_avb_make_vbmeta_image_args", None)
+  if args and args.strip():
+    cmd.extend(shlex.split(args))
+  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  p.communicate()
+  assert p.returncode == 0, "avbtool make_vbmeta_image failed"
+  common.ZipWrite(output_zip, img_file_name, prefix + "vbmeta.img")
+
+
 def AddPartitionTable(output_zip, prefix="IMAGES/"):
   """Create a partition table image and store it in output_zip."""
 
@@ -346,15 +369,6 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
   system_root_image = (OPTIONS.info_dict.get("system_root_image", None) == "true")
-  board_bvb_enable = (OPTIONS.info_dict.get("board_bvb_enable", None) == "true")
-
-  # Brillo Verified Boot is incompatible with certain
-  # configurations. Explicitly check for these.
-  if board_bvb_enable:
-    assert not has_recovery, "has_recovery incompatible with bvb"
-    assert not system_root_image, "system_root_image incompatible with bvb"
-    assert not OPTIONS.rebuild_recovery, "rebuild_recovery incompatible with bvb"
-    assert not has_vendor, "VENDOR images currently incompatible with bvb"
 
   def banner(s):
     print "\n\n++++ " + s + " ++++\n\n"
@@ -368,17 +382,11 @@ def AddImagesToTargetFiles(filename):
       boot_image = common.GetBootableImage(
           "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
   else:
-    if board_bvb_enable:
-      # With Brillo Verified Boot, we need to build system.img before
-      # boot.img since the latter includes the dm-verity root hash and
-      # salt for the former.
-      pass
-    else:
-      banner("boot")
-      boot_image = common.GetBootableImage(
+    banner("boot")
+    boot_image = common.GetBootableImage(
         "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-      if boot_image:
-        boot_image.AddToZip(output_zip)
+    if boot_image:
+      boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:
@@ -399,15 +407,6 @@ def AddImagesToTargetFiles(filename):
   banner("system")
   system_img_path = AddSystem(
     output_zip, recovery_img=recovery_image, boot_img=boot_image)
-  if OPTIONS.info_dict.get("board_bvb_enable", None) == "true":
-    # If we're using Brillo Verified Boot, we can now build boot.img
-    # given that we have system.img.
-    banner("boot")
-    boot_image = common.GetBootableImage(
-      "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT",
-      system_img_path=system_img_path)
-    if boot_image:
-      boot_image.AddToZip(output_zip)
   if has_vendor:
     banner("vendor")
     AddVendor(output_zip)
@@ -419,6 +418,10 @@ def AddImagesToTargetFiles(filename):
   if OPTIONS.info_dict.get("board_bpt_enable", None) == "true":
     banner("partition-table")
     AddPartitionTable(output_zip)
+  if OPTIONS.info_dict.get("board_avb_enable", None) == "true":
+    banner("vbmeta")
+    boot_contents = boot_image.WriteToTemp()
+    AddVBMeta(output_zip, boot_contents.name, system_img_path)
 
   # For devices using A/B update, copy over images from RADIO/ and/or
   # VENDOR_IMAGES/ to IMAGES/ and make sure we have all the needed
