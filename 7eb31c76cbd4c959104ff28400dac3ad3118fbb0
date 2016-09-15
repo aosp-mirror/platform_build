@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3926b8_72a42956",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2016-09-15T22:02:29Z",
+      "side": 1,
+      "message": "Should we define the key per partition?\ne.g.,\n - BOARD_SYSTEM_AVB_ALGORITHM\n - BOARD_SYSTEM_AVB_KEY_PATH\n - BOARD_VENDOR_AVB_ALGORITHM\n - BOARD_VENDOR_AVB_KEY_PATH\n\nIf it\u0027s not set, use BOARD_AVB_ALGORITHM/BOARD_AVB_KEY_PATH for all partitions.\n\nIn Android, the verified partitions will be: /boot, /system, /vendor (optional for now) and /odm (optional for now, currently built by build_custom_images.mk).\n\nWe probably also need to add the support for signing vendor partition, this could be another CL though.",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 52
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3926b8_7e26b5d6",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 940,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2016-09-15T22:02:29Z",
+      "side": 1,
+      "message": "vbmetaimage?",
+      "range": {
+        "startLine": 940,
+        "startChar": 8,
+        "endLine": 940,
+        "endChar": 17
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
