@@ -216,7 +216,6 @@ ifdef LOCAL_SDK_VERSION
     ifneq (,$(filter r10 r11,$(LOCAL_NDK_VERSION)))
       ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
         my_ndk_stl_static_lib := $(my_libcxx_libdir)/libc++_static.a
-        my_ldlibs += -ldl
       else
         my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
       endif
@@ -225,7 +224,6 @@ ifdef LOCAL_SDK_VERSION
         my_ndk_stl_static_lib := \
           $(my_libcxx_libdir)/libc++_static.a \
           $(my_libcxx_libdir)/libc++abi.a
-        my_ldlibs += -ldl
       else
         my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
       endif
@@ -235,6 +233,8 @@ ifdef LOCAL_SDK_VERSION
         my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
       endif
     endif
+
+    my_ldlibs += -ldl
 
     my_ndk_stl_cppflags := -std=c++11
   else # LOCAL_NDK_STL_VARIANT is not c++_* either
@@ -418,7 +418,7 @@ include $(BUILD_SYSTEM)/config_sanitizers.mk
 
 ifneq ($(LOCAL_NO_LIBCOMPILER_RT),true)
 # Add in libcompiler_rt for all regular device builds
-ifeq (,$(LOCAL_SDK_VERSION)$(WITHOUT_LIBCOMPILER_RT))
+ifeq (,$(WITHOUT_LIBCOMPILER_RT))
   my_static_libraries += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
 endif
 endif
