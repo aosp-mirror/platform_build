@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3926b8_0bcf347b",
+        "filename": "tools/releasetools/check_package_signature.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2016-09-16T00:33:30Z",
+      "side": 1,
+      "message": "Consider making this script return different error codes (e.g., 0 for verified and 1 for failed) to be in-line with Unix philosophy and to make it easy to re-use this script in larger pipelines.",
+      "revId": "6df87955d046cebe8996bfbb6b706d0e161c22b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
