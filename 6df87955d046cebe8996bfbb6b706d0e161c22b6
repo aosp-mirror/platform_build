@@ -16,6 +16,24 @@
       "revId": "6df87955d046cebe8996bfbb6b706d0e161c22b6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3926b8_5620e70c",
+        "filename": "tools/releasetools/check_package_signature.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-09-16T22:09:11Z",
+      "side": 1,
+      "message": "Done. PS2 changed the \"FAILED\" case to an assertion. So any failure including the digests mismatch case would return 1 to $? (or throw AssertionError if called in Python).",
+      "parentUuid": "6b3926b8_0bcf347b",
+      "revId": "6df87955d046cebe8996bfbb6b706d0e161c22b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
