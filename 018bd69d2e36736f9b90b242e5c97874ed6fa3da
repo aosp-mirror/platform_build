@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3926b8_2c4965b6",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-09-16T20:12:32Z",
+      "side": 1,
+      "message": "wrap the really long lgine",
+      "revId": "018bd69d2e36736f9b90b242e5c97874ed6fa3da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
