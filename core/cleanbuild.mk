@@ -151,6 +151,7 @@ endif  # if not ONE_SHOT_MAKEFILE dont_bother
 # necessary to keep things consistent.
 
 previous_build_config_file := $(PRODUCT_OUT)/previous_build_config.mk
+current_build_config_file := $(PRODUCT_OUT)/current_build_config.mk
 
 current_build_config := \
     $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)
@@ -176,15 +177,17 @@ endif  # else, this is the first build, so no need to clean.
 
 # Write the new state to the file.
 #
-ifneq ($(PREVIOUS_BUILD_CONFIG)-$(PREVIOUS_SANITIZE_TARGET),$(current_build_config)-$(current_sanitize_target))
 $(shell \
-  mkdir -p $(dir $(previous_build_config_file)) && \
+  mkdir -p $(dir $(current_build_config_file)) && \
   echo "PREVIOUS_BUILD_CONFIG := $(current_build_config)" > \
-      $(previous_build_config_file) \
+      $(current_build_config_file) \
  )
-endif
+$(shell cmp $(current_build_config_file) $(previous_build_config_file) > /dev/null 2>&1 || \
+  mv -f $(current_build_config_file) $(previous_build_config_file))
+
 PREVIOUS_BUILD_CONFIG :=
 previous_build_config_file :=
+current_build_config_file :=
 current_build_config :=
 
 #
