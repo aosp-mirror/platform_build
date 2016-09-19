@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3926b8_ce4eee8a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 993,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-09-19T21:07:15Z",
+      "side": 1,
+      "message": "I see \"what + \u0027-\u0027\" in other examples...",
+      "range": {
+        "startLine": 993,
+        "startChar": 24,
+        "endLine": 993,
+        "endChar": 29
+      },
+      "revId": "4c851b1098577f67f20742edbc086ee045e61c47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
