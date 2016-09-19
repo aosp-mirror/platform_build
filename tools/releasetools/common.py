@@ -990,7 +990,7 @@ def ParseOptions(argv,
   return args
 
 
-def MakeTempFile(prefix=None, suffix=None):
+def MakeTempFile(prefix='tmp', suffix=''):
   """Make a temp file and add it to the list of things to be deleted
   when Cleanup() is called.  Return the filename."""
   fd, fn = tempfile.mkstemp(prefix=prefix, suffix=suffix)
