@@ -379,6 +379,7 @@ endif  # need_compile_java
 ###########################################################
 ifndef LOCAL_IS_HOST_MODULE
 my_link_type := $(intermediates.COMMON)/link_type
+all_link_types: $(my_link_type)
 my_link_type_deps := $(strip \
   $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES),\
     $(call intermediates-dir-for, \
@@ -387,27 +388,25 @@ my_link_type_deps := $(strip \
     $(call intermediates-dir-for, \
       APPS,$(lib),,COMMON)/link_type))
 ifeq ($(LOCAL_SDK_VERSION),system_current)
-$(my_link_type): PRIVATE_LINK_TYPE := system
-$(my_link_type): PRIVATE_ALLOWED_TYPES := (sdk|system)
+$(my_link_type): PRIVATE_LINK_TYPE := java:system
+$(my_link_type): PRIVATE_WARN_TYPES := java:platform
+$(my_link_type): PRIVATE_ALLOWED_TYPES := java:sdk java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
-$(my_link_type): PRIVATE_LINK_TYPE := sdk
-$(my_link_type): PRIVATE_ALLOWED_TYPES := sdk
+$(my_link_type): PRIVATE_LINK_TYPE := java:sdk
+$(my_link_type): PRIVATE_WARN_TYPES := java:system java:platform
+$(my_link_type): PRIVATE_ALLOWED_TYPES := java:sdk
 else
-$(my_link_type): PRIVATE_LINK_TYPE := platform
-$(my_link_type): PRIVATE_ALLOWED_TYPES := (sdk|system|platform)
+$(my_link_type): PRIVATE_LINK_TYPE := java:platform
+$(my_link_type): PRIVATE_WARN_TYPES :=
+$(my_link_type): PRIVATE_ALLOWED_TYPES := java:sdk java:system java:platform
 endif
+$(eval $(call link-type-partitions,$(my_link_type)))
 $(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
 $(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(my_link_type): PRIVATE_MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
-$(my_link_type): $(my_link_type_deps)
+$(my_link_type): $(my_link_type_deps) $(CHECK_LINK_TYPE)
 	@echo Check Java library module types: $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) rm -f $@
-	$(hide) for f in $(PRIVATE_DEPS); do \
-	  grep -qE '^$(PRIVATE_ALLOWED_TYPES)$$' $$f || \
-	    $(call echo-warning,"$(PRIVATE_MAKEFILE): $(PRIVATE_MODULE) ($(PRIVATE_LINK_TYPE)) should not link to $$(basename $${f%_intermediates/link_type}) ($$(cat $$f))"); \
-	done
-	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+	$(check-link-type)
 
 $(LOCAL_BUILT_MODULE): $(my_link_type)
 endif  # !LOCAL_IS_HOST_MODULE
