@@ -1137,4 +1137,7 @@ tidy_only:
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
 
+.PHONY: all_link_types
+all_link_types:
+
 endif # KATI
