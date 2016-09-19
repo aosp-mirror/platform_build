@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "6b3926b8_99ed27b8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2016-09-19T18:26:01Z",
+      "side": 1,
+      "message": "OK, SGTM for now.\nI\u0027ll see if partners have any feedback on this and decide what to do next.\n\nThanks for the detailed comments!",
+      "parentUuid": "90d3ebea_d2876410",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 52
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_7e26b5d6",
         "filename": "core/main.mk",
         "patchSetId": 1
