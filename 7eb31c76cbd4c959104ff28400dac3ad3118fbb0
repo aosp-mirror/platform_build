@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "90d3ebea_d2876410",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-09-19T15:16:44Z",
+      "side": 1,
+      "message": "I thought about doing that but decided not to.\n\nThe reason is that avbtool gives so much flexibility that I don\u0027t think we\u0027d be able to capture all possible use-cases through BOARD_*AVB* variables in the build system. That\u0027s also why it\u0027s easy to erase AVB metadata, both footers (\u0027avbtool erase_footer\u0027) and the entire vbmeta.img file. E.g. the tools have been designed with \"someone will need to re-sign images and/or inject metadata down the road\" in mind.\n\nFor example, for the use case you mention - partitions \u0027system\u0027 and \u0027vendor\u0027 being signed by different keys - the individual artifacts (\u0027system\u0027 and \u0027vendor\u0027) will come from different entities and thus different build systems. So they wouldn\u0027t use this feature anyway. Extrapolating, I think the assumption that only a single key-par per build system is somewhat sound.\n\nThat said, if you have good use-cases I don\u0027t mind adding this - I just like to keep things simple to begin with!",
+      "parentUuid": "6b3926b8_72a42956",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 52
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_7e26b5d6",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2016-09-15T22:02:29Z",
       "side": 1,
       "message": "vbmetaimage?",
+      "range": {
+        "startLine": 940,
+        "startChar": 8,
+        "endLine": 940,
+        "endChar": 17
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90d3ebea_127e4c09",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 940,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-09-19T15:16:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6b3926b8_7e26b5d6",
       "range": {
         "startLine": 940,
         "startChar": 8,
