@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b3926b8_48ee7bed",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1515,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-09-19T15:54:36Z",
+      "side": 1,
+      "message": "nit: a mix of tab and space? (same below L1525, L1528)",
+      "range": {
+        "startLine": 1515,
+        "startChar": 0,
+        "endLine": 1515,
+        "endChar": 1
+      },
+      "revId": "f5bcb44748fa61dc767eb12c8180b5b7ca52e172",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6b3926b8_a8e45700",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-09-19T15:54:36Z",
+      "side": 1,
+      "message": "tab \u003d\u003e space",
+      "range": {
+        "startLine": 266,
+        "startChar": 0,
+        "endLine": 266,
+        "endChar": 2
+      },
+      "revId": "f5bcb44748fa61dc767eb12c8180b5b7ca52e172",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
