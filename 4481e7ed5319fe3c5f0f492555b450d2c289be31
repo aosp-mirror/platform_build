@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "508b33e0_83ea006e",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-09-19T15:06:29Z",
+      "side": 1,
+      "message": "should be LOCAL_JACK_PLUGIN",
+      "range": {
+        "startLine": 109,
+        "startChar": 47,
+        "endLine": 109,
+        "endChar": 58
+      },
+      "revId": "4481e7ed5319fe3c5f0f492555b450d2c289be31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
