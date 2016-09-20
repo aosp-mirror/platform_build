@@ -140,11 +140,12 @@ else
 endif
 
 my_link_type := $(intermediates)/link_type
-$(my_link_type): PRIVATE_LINK_TYPE := $(if $(LOCAL_SDK_VERSION),ndk,platform)
+$(my_link_type): PRIVATE_LINK_TYPE := native:$(if $(LOCAL_SDK_VERSION),ndk,platform)
+$(eval $(call link-type-partitions,$(my_link_type)))
 $(my_link_type):
 	@echo Check module type: $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
-	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+	$(hide) echo "$(PRIVATE_LINK_TYPE)" >$@
 
 $(LOCAL_BUILT_MODULE) : | $(export_includes) $(my_link_type)
 endif  # prebuilt_module_is_a_library
@@ -419,16 +420,17 @@ $(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
 
 my_link_type := $(intermediates.COMMON)/link_type
 ifeq ($(LOCAL_SDK_VERSION),system_current)
-$(my_link_type): PRIVATE_LINK_TYPE := system
+$(my_link_type): PRIVATE_LINK_TYPE := java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
-$(my_link_type): PRIVATE_LINK_TYPE := sdk
+$(my_link_type): PRIVATE_LINK_TYPE := java:sdk
 else
-$(my_link_type): PRIVATE_LINK_TYPE := platform
+$(my_link_type): PRIVATE_LINK_TYPE := java:platform
 endif
+$(eval $(call link-type-partitions,$(my_link_type)))
 $(my_link_type):
 	@echo Check module type: $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
-	$(hide) echo $(PRIVATE_LINK_TYPE) >$@
+	$(hide) echo "$(PRIVATE_LINK_TYPE)" >$@
 $(LOCAL_BUILT_MODULE): $(my_link_type)
 
 ifeq ($(prebuilt_module_is_dex_javalib),true)
