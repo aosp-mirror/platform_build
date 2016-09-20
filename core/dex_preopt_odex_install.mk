@@ -142,6 +142,6 @@ DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
 
 
 # Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_register_name): $(installed_odex) $(installed_vdex)
+$(my_all_targets): $(installed_odex) $(installed_vdex)
 
 endif # LOCAL_DEX_PREOPT
