@@ -173,6 +173,19 @@ else ifeq ($(filter vendor system/vendor,$(TARGET_COPY_OUT_VENDOR)),)
 $(error TARGET_COPY_OUT_VENDOR must be either 'vendor' or 'system/vendor', seeing '$(TARGET_COPY_OUT_VENDOR)'.)
 endif
 PRODUCT_COPY_FILES := $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_VENDORIMAGE :=
+ifdef BOARD_PREBUILT_VENDORIMAGE
+BOARD_USES_VENDORIMAGE := true
+endif
+ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+BOARD_USES_VENDORIMAGE := true
+endif
+ifeq ($(TARGET_COPY_OUT_VENDOR),vendor)
+BOARD_USES_VENDORIMAGE := true
+else ifdef BOARD_USES_VENDORIMAGE
+$(error TARGET_COPY_OUT_VENDOR must be set to 'vendor' to use a vendor image)
+endif
 ###########################################
 
 
