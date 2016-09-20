@@ -124,3 +124,14 @@ class RangeSetTest(unittest.TestCase):
     self.assertTrue(RangeSet(data=[2, 9, 30, 31, 31, 32, 35, 36]).monotonic)
     self.assertTrue(RangeSet(data=[0, 5, 5, 10]).monotonic)
     self.assertFalse(RangeSet(data=[5, 10, 0, 5]).monotonic)
+
+  def test_next_item(self):
+    self.assertEqual(
+        list(RangeSet("0-9").next_item()),
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    self.assertEqual(
+        list(RangeSet("10-19 3-5").next_item()),
+        [3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+    self.assertEqual(
+        list(RangeSet("10-19 3 5 7").next_item()),
+        [3, 5, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
