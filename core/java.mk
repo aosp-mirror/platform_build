@@ -416,6 +416,7 @@ $(full_classes_compiled_jar): \
 	$(transform-java-to-classes.jar)
 
 javac-check : $(full_classes_compiled_jar)
+javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
