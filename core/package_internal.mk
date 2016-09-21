@@ -579,7 +579,7 @@ ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
   $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
 # Make sure to install the splits when you run "make <module_name>".
-$(my_register_name): $(installed_apk_splits)
+$(my_all_targets): $(installed_apk_splits)
 
 ifdef LOCAL_COMPATIBILITY_SUITE
 cts_testcase_file := $(foreach s,$(my_split_suffixes),$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_$(s).apk)
@@ -590,7 +590,7 @@ COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
   $(COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES) \
   $(cts_testcase_file)
 
-$(my_register_name) : $(cts_testcase_file)
+$(my_all_targets) : $(cts_testcase_file)
 endif # LOCAL_COMPATIBILITY_SUITE
 endif # LOCAL_PACKAGE_SPLITS
 

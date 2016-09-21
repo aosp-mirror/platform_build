@@ -336,7 +336,7 @@ ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
   $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/$(notdir $(s)):$(my_module_path)/$(notdir $(s)))
 
 # Make sure to install the splits when you run "make <module_name>".
-$(my_register_name): $(installed_apk_splits)
+$(my_all_targets): $(installed_apk_splits)
 
 endif # LOCAL_PACKAGE_SPLITS
 
