@@ -22,6 +22,30 @@
       "revId": "b6c061e9ffa5208b0b2dae0a5a88694925c6b527",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70c1171d_d1dc2602",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2134,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-21T17:04:46Z",
+      "side": 1,
+      "message": "zip is fine with this -- I believe the behavior means that we\u0027ll \"add\" the first copy, then \"update\" with the second copy, but since they\u0027re the same it doesn\u0027t significantly matter. These also aren\u0027t exceptionally large files, so even if we compress twice, it\u0027s not a huge time issue.\n\nSince we\u0027ve disabled support for turning off Jack, I\u0027d actually consider removing the proguard dictionary and classes.jar inclusion, since the apps themselves should be using jack and jack_dictionary...",
+      "parentUuid": "10ca9b6e_d65f246b",
+      "range": {
+        "startLine": 2133,
+        "startChar": 0,
+        "endLine": 2134,
+        "endChar": 50
+      },
+      "revId": "b6c061e9ffa5208b0b2dae0a5a88694925c6b527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
