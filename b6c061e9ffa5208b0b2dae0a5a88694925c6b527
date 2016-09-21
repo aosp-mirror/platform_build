@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10ca9b6e_d65f246b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2134,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2016-09-21T09:49:33Z",
+      "side": 1,
+      "message": "Isn\u0027t it giving jack_dictionary twice to zip?\n\nWhat about something like that instead?\n\nunobfuscated_jars\u003d`for dict_file in $$dict_files; do echo $dict_file | sed -n s/proguard_dictionary/classes.jar/gp; done`\n\nOr maybe you decided that it\u0027s not a problem?",
+      "range": {
+        "startLine": 2133,
+        "startChar": 0,
+        "endLine": 2134,
+        "endChar": 50
+      },
+      "revId": "b6c061e9ffa5208b0b2dae0a5a88694925c6b527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
