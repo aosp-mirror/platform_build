@@ -3314,7 +3314,7 @@ window.changeLangPref = changeLangPref;
   var LANGUAGES = [
     'en',
     'es',
-    'in',
+    'id',
     'ja',
     'ko',
     'pt-br',
@@ -3351,7 +3351,7 @@ window.changeLangPref = changeLangPref;
       'languageValTarget': {
         'en': 'English',
         'ar': 'Arabic (العربيّة)',
-        'in': 'Indonesian (Bahasa)',
+        'id': 'Indonesian (Bahasa)',
         'fr': 'French (français)',
         'de': 'German (Deutsch)',
         'ja': 'Japanese (日本語)',
@@ -3609,7 +3609,7 @@ switch (window.getLangPref()) {
       }
     });
     break;
-  case 'in':
+  case 'id':
     window.polyglot.extend({
       'newsletter': {
         'title': 'Receba as dicas e as notícias mais recentes para os desenvolvedores Android e seja bem-sucedido ' +
