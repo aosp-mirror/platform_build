@@ -85,7 +85,9 @@ jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
-$(built_dex): $(jack_all_deps) | setup-jack-server
+$(built_dex): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
+$(built_dex): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
+$(built_dex): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
 	@echo Building with Jack: $@
 	$(jack-java-to-dex)
 
@@ -103,7 +105,9 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	$(add-carried-jack-resources)
 
 else  # LOCAL_IS_STATIC_JAVA_LIBRARY
-$(full_classes_jack): $(jack_all_deps) | setup-jack-server
+$(full_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
+$(full_classes_jack): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
+$(full_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
 	@echo Building with Jack: $@
 	$(java-to-jack)
 

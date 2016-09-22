@@ -749,6 +749,13 @@ $(subst $(space),:,$(strip $(1)))
 endef
 
 ###########################################################
+## Convert "a b c" into "a,b,c"
+###########################################################
+define normalize-comma-list
+$(subst $(space),$(comma),$(strip $(1)))
+endef
+
+###########################################################
 ## Read the word out of a colon-separated list of words.
 ## This has the same behavior as the built-in function
 ## $(word n,str).
@@ -2325,6 +2332,9 @@ $(call call-jack) \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_JACK_SHARED_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
+    $(addprefix --pluginpath ,$(strip \
+         $(call normalize-path-list,$(PRIVATE_JACK_PLUGIN_PATH)))) \
+    $(if $(PRIVATE_JACK_PLUGIN),--plugin $(call normalize-comma-list,$(PRIVATE_JACK_PLUGIN))) \
     $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
     -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
     -D jack.import.resource.policy=keep-first \
@@ -2384,6 +2394,9 @@ define transform-jar-to-jack
 	$(hide) find $@.tmpjill.res -iname "*.class" -delete
 	$(hide) $(call call-jack) \
 	    $(PRIVATE_JACK_FLAGS) \
+	    $(addprefix --pluginpath ,$(strip \
+                $(call normalize-path-list,$(PRIVATE_JACK_PLUGIN_PATH)))) \
+	    $(if $(PRIVATE_JACK_PLUGIN),--plugin $(call normalize-comma-list,$(PRIVATE_JACK_PLUGIN))) \
         -D jack.import.resource.policy=keep-first \
         -D jack.import.type.policy=keep-first \
         -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
@@ -2491,6 +2504,9 @@ $(call call-jack) \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_JACK_SHARED_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
+    $(addprefix --pluginpath ,$(strip \
+        $(call normalize-path-list,$(PRIVATE_JACK_PLUGIN_PATH)))) \
+    $(if $(PRIVATE_JACK_PLUGIN),--plugin $(call normalize-comma-list,$(PRIVATE_JACK_PLUGIN))) \
     $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
     -D jack.import.resource.policy=keep-first \
     -D jack.import.type.policy=keep-first \
