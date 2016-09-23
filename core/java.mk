@@ -641,7 +641,9 @@ $(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
 	$(jack-check-java)
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-$(full_classes_jack): $(jack_all_deps) | setup-jack-server
+$(full_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
+$(full_classes_jack): PRIVATE_JACK_PLUGIN := $(JACK_PLUGIN)
+$(full_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
 	@echo Building with Jack: $@
 	$(java-to-jack)
 
@@ -654,6 +656,8 @@ else #LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
 
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
+LOCAL_JACK_PLUGIN_PATH += $(HOST_OUT_JAVA_LIBRARIES)/jack-coverage-plugin.jar
+LOCAL_JACK_PLUGIN += com.android.jack.coverage.CodeCoverage
 $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS := \
     -D jack.coverage=true \
     -D jack.coverage.metadata.file=$(intermediates.COMMON)/coverage.em \
@@ -664,7 +668,9 @@ else
 $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
 endif
 
-$(built_dex_intermediate): $(jack_all_deps) | setup-jack-server
+$(built_dex_intermediate): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
+$(built_dex_intermediate): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
+$(built_dex_intermediate): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
 	@echo Building with Jack: $@
 	$(jack-java-to-dex)
 
@@ -678,9 +684,11 @@ $(call define-dex-to-toc-rule, $(intermediates.COMMON))
 
 endif #LOCAL_IS_STATIC_JAVA_LIBRARY
 
+$(noshrob_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
+$(noshrob_classes_jack): PRIVATE_JACK_PLUGIN := $(JACK_PLUGIN)
 $(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
 $(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
-$(noshrob_classes_jack): $(jack_all_deps) | setup-jack-server
+$(noshrob_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
 	@echo Building with Jack: $@
 	$(java-to-jack)
 endif  # full_classes_jar is defined
