@@ -747,7 +747,8 @@ ifdef FULL_BUILD
   # The base list of modules to build for this product is specified
   # by the appropriate product definition file, which was included
   # by product_config.mk.
-  product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  # modified by adding package prune
+  product_MODULES := $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_PRUNE),$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
   # Filter out the overridden packages before doing expansion
   product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
       $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
@@ -782,15 +783,15 @@ endif
 
 eng_MODULES := $(sort \
         $(call get-tagged-modules,eng) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG)) \
+        $(call module-installed-files, $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG_PRUNE),$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG))) \
     )
 debug_MODULES := $(sort \
         $(call get-tagged-modules,debug) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG)) \
+        $(call module-installed-files, $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_PRUNE),$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG))) \
     )
 tests_MODULES := $(sort \
         $(call get-tagged-modules,tests) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
+        $(call module-installed-files, $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS_PRUNE),$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS))) \
     )
 
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES

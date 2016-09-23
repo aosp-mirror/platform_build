@@ -262,7 +262,7 @@ all_product_configs :=
 #############################################################################
 
 # A list of module names of BOOTCLASSPATH (jar files)
-PRODUCT_BOOT_JARS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS))
+PRODUCT_BOOT_JARS := $(strip $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS_PRUNE),$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOT_JARS)))
 PRODUCT_SYSTEM_SERVER_JARS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_SERVER_JARS))
 
 # Find the device that this product maps to.
@@ -344,7 +344,7 @@ endif
 # The rules for these copy steps are defined in build/core/Makefile.
 # The optional :<owner> is used to indicate the owner of a vendor file.
 PRODUCT_COPY_FILES := \
-    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
+    $(strip $(filter-out $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES_PRUNE),$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES)))
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
