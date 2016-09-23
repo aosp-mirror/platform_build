@@ -3145,18 +3145,27 @@ endef
 
 define link-type-partitions
 ifndef LOCAL_IS_HOST_MODULE
-ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
+ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+ifneq ($(filter $(TARGET_OUT_VENDOR)/%,$(my_module_path)),)
 $(1): PRIVATE_LINK_TYPE += partition:vendor
+$(1): PRIVATE_WARN_TYPES += partition:data
 $(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm
-else ifeq (true,$(LOCAL_OEM_MODULE))
+else ifneq ($(filter $(TARGET_OUT_OEM)/%,$(my_module_path)),)
 $(1): PRIVATE_LINK_TYPE += partition:oem
+$(1): PRIVATE_WARN_TYPES += partition:data
 $(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm
-else ifeq (true,$(LOCAL_ODM_MODULE))
+else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(my_module_path)),)
 $(1): PRIVATE_LINK_TYPE += partition:odm
+$(1): PRIVATE_WARN_TYPES += partition:data
 $(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm
+else ifneq ($(filter $(TARGET_OUT_DATA)/%,$(my_module_path)),)
+$(1): PRIVATE_LINK_TYPE += partition:data
+$(1): PRIVATE_ALLOWED_TYPES += partition:data partition:vendor partition:oem partition:odm
 else
-# TODO: Mark libraries in /data
-$(1): PRIVATE_WARN_TYPES += partition:vendor partition:oem partition:odm
+$(1): PRIVATE_WARN_TYPES += partition:vendor partition:oem partition:odm partition:data
+endif
+else # uninstallable module
+$(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm partition:data
 endif
 endif
 endef
