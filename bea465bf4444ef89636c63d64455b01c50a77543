@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25c75f2e_6e032f72",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1627,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-26T17:52:59Z",
+      "side": 1,
+      "message": "Seems like most of these should be using ^ instead of (^|.*/) unless there\u0027s something else strange, to prevent this problem (there are many other instances that this could happen -- .*/build/.* is something that will be common under device/ and vendor/ too)",
+      "revId": "bea465bf4444ef89636c63d64455b01c50a77543",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25c75f2e_2efd2752",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1644,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-26T17:52:59Z",
+      "side": 1,
+      "message": "To prevent hardcoding all of these names into the build system, should we have something more generic, like being able to say:\n\n  \u0027frameworks/av/*\u0027\n  \u0027frameworks/*\u0027\n  \u0027system/*\u0027\n\nAnd expanding out the regexes as required (it seems like many could be auto-generated today)",
+      "revId": "bea465bf4444ef89636c63d64455b01c50a77543",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
