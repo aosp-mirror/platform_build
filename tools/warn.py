@@ -1,5 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # This file uses the following encoding: utf-8
+
+"""Grep warnings messages and output HTML tables or warning counts in CSV.
+
+Default is to output warnings in HTML tables grouped by warning severity.
+Use option --byproject to output tables grouped by source file projects.
+Use option --gencsv to output warning counts in CSV format.
+"""
 
 import argparse
 import re
@@ -7,11 +14,11 @@ import re
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
 parser.add_argument('--gencsv',
                     help='Generate a CSV file with number of various warnings',
-                    action="store_true",
+                    action='store_true',
                     default=False)
 parser.add_argument('--byproject',
                     help='Separate warnings in HTML output by project names',
-                    action="store_true",
+                    action='store_true',
                     default=False)
 parser.add_argument('--url',
                     help='Root URL of an Android source code tree prefixed '
@@ -23,33 +30,39 @@ parser.add_argument(dest='buildlog', metavar='build.log',
                     help='Path to build.log file')
 args = parser.parse_args()
 
-# if you add another level, don't forget to give it a color below
-class severity:
-    UNKNOWN = 0
-    FIXMENOW = 1
-    HIGH = 2
-    MEDIUM = 3
-    LOW = 4
-    TIDY = 5
-    HARMLESS = 6
-    SKIP = 7
-    attributes = [
-        ['lightblue', 'Unknown',   'Unknown warnings'],
-        ['fuchsia',   'FixNow',    'Critical warnings, fix me now'],
-        ['red',       'High',      'High severity warnings'],
-        ['orange',    'Medium',    'Medium severity warnings'],
-        ['yellow',    'Low',       'Low severity warnings'],
-        ['peachpuff', 'Tidy',      'Clang-Tidy warnings'],
-        ['limegreen', 'Harmless',  'Harmless warnings'],
-        ['grey',      'Unhandled', 'Unhandled warnings']
-    ]
-    color = [a[0] for a in attributes]
-    columnheader = [a[1] for a in attributes]
-    header = [a[2] for a in attributes]
-    # order to dump by severity
-    kinds = [FIXMENOW, HIGH, MEDIUM, LOW, TIDY, HARMLESS, UNKNOWN, SKIP]
 
-warnpatterns = [
+# if you add another level, don't forget to give it a color below
+class severity:  # pylint:disable=invalid-name,old-style-class
+  """Severity levels and attributes."""
+  UNKNOWN = 0
+  FIXMENOW = 1
+  HIGH = 2
+  MEDIUM = 3
+  LOW = 4
+  TIDY = 5
+  HARMLESS = 6
+  SKIP = 7
+  attributes = [
+      # pylint:disable=bad-whitespace
+      ['lightblue', 'Unknown',   'Unknown warnings'],
+      ['fuchsia',   'FixNow',    'Critical warnings, fix me now'],
+      ['red',       'High',      'High severity warnings'],
+      ['orange',    'Medium',    'Medium severity warnings'],
+      ['yellow',    'Low',       'Low severity warnings'],
+      ['peachpuff', 'Tidy',      'Clang-Tidy warnings'],
+      ['limegreen', 'Harmless',  'Harmless warnings'],
+      ['grey',      'Unhandled', 'Unhandled warnings']
+  ]
+  color = [a[0] for a in attributes]
+  column_headers = [a[1] for a in attributes]
+  header = [a[2] for a in attributes]
+  # order to dump by severity
+  kinds = [FIXMENOW, HIGH, MEDIUM, LOW, TIDY, HARMLESS, UNKNOWN, SKIP]
+
+warn_patterns = [
+    # TODO(chh): fix pylint space and indentation warnings
+    # pylint:disable=bad-whitespace,bad-continuation,
+    # pylint:disable=line-too-long,g-inconsistent-quotes
     { 'category':'make',    'severity':severity.MEDIUM,
         'description':'make: overriding commands/ignoring old commands',
         'patterns':[r".*: warning: overriding commands for target .+",
@@ -1158,6 +1171,8 @@ warnpatterns = [
     { 'category':'C/C++',   'severity':severity.MEDIUM, 'option':'-Wmissing-noreturn',
         'description':'Missing noreturn',
         'patterns':[r".*: warning: function '.*' could be declared with attribute 'noreturn'"] },
+    # pylint:disable=anomalous-backslash-in-string
+    # TODO(chh): fix the backslash pylint warning.
     { 'category':'gcc',     'severity':severity.MEDIUM,
         'description':'Invalid option for C file',
         'patterns':[r".*: warning: command line option "".+"" is valid for C\+\+\/ObjC\+\+ but not for C"] },
@@ -1577,14 +1592,11 @@ warnpatterns = [
         'patterns':[r".*: warning: .+"] },
 ]
 
-for w in warnpatterns:
-    w['members'] = []
-    if 'option' not in w:
-        w['option'] = ''
 
 # A list of [project_name, file_path_pattern].
 # project_name should not contain comma, to be used in CSV output.
-projectlist = [
+project_list = [
+    # pylint:disable=bad-whitespace,g-inconsistent-quotes,line-too-long
     ['art',                 r"(^|.*/)art/.*: warning:"],
     ['bionic',              r"(^|.*/)bionic/.*: warning:"],
     ['bootable',            r"(^|.*/)bootable/.*: warning:"],
@@ -1619,24 +1631,37 @@ projectlist = [
     ['other',   r".*: warning:"],
 ]
 
-projectpatterns = []
-for p in projectlist:
-    projectpatterns.append({'description':p[0], 'members':[], 'pattern':re.compile(p[1])})
+project_patterns = []
+project_names = []
 
-projectnames = [p[0] for p in projectlist]
 
-# Each warning pattern has 3 dictionaries:
-# (1) 'projects' maps a project name to number of warnings in that project.
-# (2) 'projectanchor' maps a project name to its anchor number for HTML.
-# (3) 'projectwarning' maps a project name to a list of warning of that project.
-for w in warnpatterns:
+def initialize_arrays():
+  """Complete global arrays before they are used."""
+  global project_names
+  project_names = [p[0] for p in project_list]
+  for p in project_list:
+    project_patterns.append({'description': p[0],
+                             'members': [],
+                             'pattern': re.compile(p[1])})
+  # Each warning pattern has 3 dictionaries:
+  # (1) 'projects' maps a project name to number of warnings in that project.
+  # (2) 'project_anchor' maps a project name to its anchor number for HTML.
+  # (3) 'project_warnings' maps a project name to a list of warning messages.
+  for w in warn_patterns:
+    w['members'] = []
+    if 'option' not in w:
+      w['option'] = ''
     w['projects'] = {}
-    w['projectanchor'] = {}
-    w['projectwarning'] = {}
+    w['project_anchor'] = {}
+    w['project_warnings'] = {}
 
-platformversion = 'unknown'
-targetproduct = 'unknown'
-targetvariant = 'unknown'
+
+initialize_arrays()
+
+
+platform_version = 'unknown'
+target_product = 'unknown'
+target_variant = 'unknown'
 
 
 ##### Data and functions to dump html file. ##################################
@@ -1680,363 +1705,391 @@ html_script_style = """\
 
 
 def output(text):
-    print text,
+  print text,
 
-def htmlbig(param):
-    return '<font size="+2">' + param + '</font>'
 
-def dumphtmlprologue(title):
-    output('<html>\n<head>\n')
-    output('<title>' + title + '</title>\n')
-    output(html_script_style)
-    output('</head>\n<body>\n')
-    output(htmlbig(title))
-    output('<p>\n')
+def html_big(param):
+  return '<font size="+2">' + param + '</font>'
 
-def dumphtmlepilogue():
-    output('</body>\n</head>\n</html>\n')
 
-def tablerow(text):
-    global cur_row_class
-    cur_row_class = 1 - cur_row_class
-    # remove last '\n'
-    t = text[:-1] if text[-1] == '\n' else text
-    output('<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>\n')
+def dump_html_prologue(title):
+  output('<html>\n<head>\n')
+  output('<title>' + title + '</title>\n')
+  output(html_script_style)
+  output('</head>\n<body>\n')
+  output(html_big(title))
+  output('<p>\n')
 
-def sortwarnings():
-    for i in warnpatterns:
-        i['members'] = sorted(set(i['members']))
 
-# dump a table of warnings per project and severity
-def dumpstatsbyproject():
-    projects = set(projectnames)
-    severities = set(severity.kinds)
+def dump_html_epilogue():
+  output('</body>\n</head>\n</html>\n')
 
-    # warnings[p][s] is number of warnings in project p of severity s.
-    warnings = {p:{s:0 for s in severity.kinds} for p in projectnames}
-    for i in warnpatterns:
-        s = i['severity']
-        for p in i['projects']:
-            warnings[p][s] += i['projects'][p]
 
-    # totalbyproject[p] is number of warnings in project p.
-    totalbyproject = {p:sum(warnings[p][s] for s in severity.kinds)
-                      for p in projectnames}
+def table_row(text):
+  global cur_row_class
+  cur_row_class = 1 - cur_row_class
+  # remove last '\n'
+  t = text[:-1] if text[-1] == '\n' else text
+  output('<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>\n')
 
-    # totalbyseverity[s] is number of warnings of severity s.
-    totalbyseverity = {s:sum(warnings[p][s] for p in projectnames)
+
+def sort_warnings():
+  for i in warn_patterns:
+    i['members'] = sorted(set(i['members']))
+
+
+def dump_stats_by_project():
+  """Dump a table of warnings per project and severity."""
+  # warnings[p][s] is number of warnings in project p of severity s.
+  warnings = {p: {s: 0 for s in severity.kinds} for p in project_names}
+  for i in warn_patterns:
+    s = i['severity']
+    for p in i['projects']:
+      warnings[p][s] += i['projects'][p]
+
+  # total_by_project[p] is number of warnings in project p.
+  total_by_project = {p: sum(warnings[p][s] for s in severity.kinds)
+                      for p in project_names}
+
+  # total_by_severity[s] is number of warnings of severity s.
+  total_by_severity = {s: sum(warnings[p][s] for p in project_names)
                        for s in severity.kinds}
 
-    # emit table header
-    output('<blockquote><table border=1>\n<tr><th>Project</th>\n')
-    for s in severity.kinds:
-        if totalbyseverity[s]:
-            output('<th width="8%"><span style="background-color:{}">{}</span></th>'.
-                   format(severity.color[s], severity.columnheader[s]))
-    output('<th>TOTAL</th></tr>\n')
+  # emit table header
+  output('<blockquote><table border=1>\n<tr><th>Project</th>\n')
+  for s in severity.kinds:
+    if total_by_severity[s]:
+      output('<th width="8%"><span style="background-color:{}">{}</span></th>'.
+             format(severity.color[s], severity.column_headers[s]))
+  output('<th>TOTAL</th></tr>\n')
 
-    # emit a row of warning counts per project, skip no-warning projects
-    totalallprojects = 0
-    for p in projectnames:
-        if totalbyproject[p]:
-            output('<tr><td align="left">{}</td>'.format(p))
-            for s in severity.kinds:
-                if totalbyseverity[s]:
-                    output('<td align="right">{}</td>'.format(warnings[p][s]))
-            output('<td align="right">{}</td>'.format(totalbyproject[p]))
-            totalallprojects += totalbyproject[p]
-            output('</tr>\n')
+  # emit a row of warning counts per project, skip no-warning projects
+  total_all_projects = 0
+  for p in project_names:
+    if total_by_project[p]:
+      output('<tr><td align="left">{}</td>'.format(p))
+      for s in severity.kinds:
+        if total_by_severity[s]:
+          output('<td align="right">{}</td>'.format(warnings[p][s]))
+      output('<td align="right">{}</td>'.format(total_by_project[p]))
+      total_all_projects += total_by_project[p]
+      output('</tr>\n')
 
-    # emit a row of warning counts per severity
-    totalallseverities = 0
-    output('<tr><td align="right">TOTAL</td>')
-    for s in severity.kinds:
-        if totalbyseverity[s]:
-            output('<td align="right">{}</td>'.format(totalbyseverity[s]))
-            totalallseverities += totalbyseverity[s]
-    output('<td align="right">{}</td></tr>\n'.format(totalallprojects))
+  # emit a row of warning counts per severity
+  total_all_severities = 0
+  output('<tr><td align="right">TOTAL</td>')
+  for s in severity.kinds:
+    if total_by_severity[s]:
+      output('<td align="right">{}</td>'.format(total_by_severity[s]))
+      total_all_severities += total_by_severity[s]
+  output('<td align="right">{}</td></tr>\n'.format(total_all_projects))
 
-    # at the end of table, verify total counts
-    output('</table></blockquote><br>\n')
-    if totalallprojects != totalallseverities:
-        output('<h3>ERROR: Sum of warnings by project ' +
-               '!= Sum of warnings by severity.</h3>\n')
-
-# dump some stats about total number of warnings and such
-def dumpstats():
-    known = 0
-    skipped = 0
-    unknown = 0
-    sortwarnings()
-    for i in warnpatterns:
-        if i['severity'] == severity.UNKNOWN:
-            unknown += len(i['members'])
-        elif i['severity'] == severity.SKIP:
-            skipped += len(i['members'])
-        else:
-            known += len(i['members'])
-    output('\nNumber of classified warnings: <b>' + str(known) + '</b><br>' )
-    output('\nNumber of skipped warnings: <b>' + str(skipped) + '</b><br>')
-    output('\nNumber of unclassified warnings: <b>' + str(unknown) + '</b><br>')
-    total = unknown + known + skipped
-    output('\nTotal number of warnings: <b>' + str(total) + '</b>')
-    if total < 1000:
-        output('(low count may indicate incremental build)')
-    output('<br><br>\n')
-
-def emitbuttons():
-    output('<button class="button" onclick="expand_collapse(1);">' +
-           'Expand all warnings</button>\n' +
-           '<button class="button" onclick="expand_collapse(0);">' +
-           'Collapse all warnings</button><br>\n')
-
-# dump everything for a given severity
-def dumpseverity(sev):
-    global anchor
-    total = 0
-    for i in warnpatterns:
-        if i['severity'] == sev:
-            total = total + len(i['members'])
-    output('\n<br><span style="background-color:' + severity.color[sev] + '"><b>' +
-           severity.header[sev] + ': ' + str(total) + '</b></span>\n')
-    output('<blockquote>\n')
-    for i in warnpatterns:
-        if i['severity'] == sev and len(i['members']) > 0:
-            anchor += 1
-            i['anchor'] = str(anchor)
-            if args.byproject:
-                dumpcategorybyproject(sev, i)
-            else:
-                dumpcategory(sev, i)
-    output('</blockquote>\n')
-
-# emit all skipped project anchors for expand_collapse.
-def dumpskippedanchors():
-    output('<div style="display:none;">\n')  # hide these fake elements
-    for i in warnpatterns:
-        if i['severity'] == severity.SKIP and len(i['members']) > 0:
-            projects = i['projectwarning'].keys()
-            for p in projects:
-                output('<div id="' + i['projectanchor'][p] + '"></div>' +
-                       '<div id="' + i['projectanchor'][p] + '_mark"></div>\n')
-    output('</div>\n')
-
-def allpatterns(cat):
-    pats = ''
-    for i in cat['patterns']:
-        pats += i
-        pats += ' / '
-    return pats
-
-def descriptionfor(cat):
-    if cat['description'] != '':
-        return cat['description']
-    return allpatterns(cat)
+  # at the end of table, verify total counts
+  output('</table></blockquote><br>\n')
+  if total_all_projects != total_all_severities:
+    output('<h3>ERROR: Sum of warnings by project '
+           '!= Sum of warnings by severity.</h3>\n')
 
 
-# show which warnings no longer occur
-def dumpfixed():
-    global anchor
-    anchor += 1
-    mark = str(anchor) + '_mark'
-    output('\n<br><p style="background-color:lightblue"><b>' +
-           '<button id="' + mark + '" ' +
-           'class="bt" onclick="expand(' + str(anchor) + ');">' +
-           '&#x2295</button> Fixed warnings. ' +
-           'No more occurences. Please consider turning these into ' +
-           'errors if possible, before they are reintroduced in to the build' +
-           ':</b></p>\n')
-    output('<blockquote>\n')
-    fixed_patterns = []
-    for i in warnpatterns:
-        if len(i['members']) == 0:
-            fixed_patterns.append(i['description'] + ' (' +
-                                  allpatterns(i) + ')')
-        if i['option']:
-            fixed_patterns.append(' ' + i['option'])
-    fixed_patterns.sort()
-    output('<div id="' + str(anchor) + '" style="display:none;"><table>\n')
-    for i in fixed_patterns:
-        tablerow(i)
-    output('</table></div>\n')
-    output('</blockquote>\n')
-
-def warningwithurl(line):
-    if not args.url:
-        return line
-    m = re.search( r'^([^ :]+):(\d+):(.+)', line, re.M|re.I)
-    if not m:
-        return line
-    filepath = m.group(1)
-    linenumber = m.group(2)
-    warning = m.group(3)
-    if args.separator:
-        return '<a href="' + args.url + '/' + filepath + args.separator + linenumber + '">' + filepath + ':' + linenumber + '</a>:' + warning
+def dump_stats():
+  """Dump some stats about total number of warnings and such."""
+  known = 0
+  skipped = 0
+  unknown = 0
+  sort_warnings()
+  for i in warn_patterns:
+    if i['severity'] == severity.UNKNOWN:
+      unknown += len(i['members'])
+    elif i['severity'] == severity.SKIP:
+      skipped += len(i['members'])
     else:
-        return '<a href="' + args.url + '/' + filepath + '">' + filepath + '</a>:' + linenumber + ':' + warning
+      known += len(i['members'])
+  output('\nNumber of classified warnings: <b>' + str(known) + '</b><br>')
+  output('\nNumber of skipped warnings: <b>' + str(skipped) + '</b><br>')
+  output('\nNumber of unclassified warnings: <b>' + str(unknown) + '</b><br>')
+  total = unknown + known + skipped
+  output('\nTotal number of warnings: <b>' + str(total) + '</b>')
+  if total < 1000:
+    output('(low count may indicate incremental build)')
+  output('<br><br>\n')
 
-def dumpgroup(sev, anchor, description, warnings):
-    mark = anchor + '_mark'
-    output('\n<table class="t1">\n')
-    output('<tr bgcolor="' + severity.color[sev] + '">' +
-           '<td><button class="bt" id="' + mark +
-           '" onclick="expand(\'' + anchor + '\');">' +
-           '&#x2295</button> ' + description + '</td></tr>\n')
-    output('</table>\n')
-    output('<div id="' + anchor + '" style="display:none;">')
-    output('<table class="t1">\n')
-    for i in warnings:
-        tablerow(warningwithurl(i))
-    output('</table></div>\n')
 
-# dump warnings in a category
-def dumpcategory(sev, cat):
-    description = descriptionfor(cat) + ' (' + str(len(cat['members'])) + ')'
-    dumpgroup(sev, cat['anchor'], description, cat['members'])
+def emit_buttons():
+  output('<button class="button" onclick="expand_collapse(1);">'
+         'Expand all warnings</button>\n'
+         '<button class="button" onclick="expand_collapse(0);">'
+         'Collapse all warnings</button><br>\n')
 
-# similar to dumpcategory but output one table per project.
-def dumpcategorybyproject(sev, cat):
-    warning = descriptionfor(cat)
-    projects = cat['projectwarning'].keys()
-    projects.sort()
-    for p in projects:
-        anchor = cat['projectanchor'][p]
-        projectwarnings = cat['projectwarning'][p]
-        description = '{}, in {} ({})'.format(warning, p, len(projectwarnings))
-        dumpgroup(sev, anchor, description, projectwarnings)
 
-def findproject(line):
-    for p in projectpatterns:
-        if p['pattern'].match(line):
-            return p['description']
-    return '???'
+def dump_severity(sev):
+  """Dump everything for a given severity."""
+  global anchor
+  total = 0
+  for i in warn_patterns:
+    if i['severity'] == sev:
+      total += len(i['members'])
+  output('\n<br><span style="background-color:' + severity.color[sev] +
+         '"><b>' + severity.header[sev] + ': ' + str(total) + '</b></span>\n')
+  output('<blockquote>\n')
+  for i in warn_patterns:
+    if i['severity'] == sev and i['members']:
+      anchor += 1
+      i['anchor'] = str(anchor)
+      if args.byproject:
+        dump_category_by_project(sev, i)
+      else:
+        dump_category(sev, i)
+  output('</blockquote>\n')
 
-def classifywarning(line):
-    global anchor
-    for i in warnpatterns:
-        for cpat in i['compiledpatterns']:
-            if cpat.match(line):
-                i['members'].append(line)
-                pname = findproject(line)
-                # Count warnings by project.
-                if pname in i['projects']:
-                    i['projects'][pname] += 1
-                else:
-                    i['projects'][pname] = 1
-                # Collect warnings by project.
-                if args.byproject:
-                    if pname in i['projectwarning']:
-                        i['projectwarning'][pname].append(line)
-                    else:
-                        i['projectwarning'][pname] = [line]
-                    if pname not in i['projectanchor']:
-                        anchor += 1
-                        i['projectanchor'][pname] = str(anchor)
-                return
-            else:
-                # If we end up here, there was a problem parsing the log
-                # probably caused by 'make -j' mixing the output from
-                # 2 or more concurrent compiles
-                pass
 
-# precompiling every pattern speeds up parsing by about 30x
-def compilepatterns():
-    for i in warnpatterns:
-        i['compiledpatterns'] = []
-        for pat in i['patterns']:
-            i['compiledpatterns'].append(re.compile(pat))
+def dump_skipped_anchors():
+  """emit all skipped project anchors for expand_collapse."""
+  output('<div style="display:none;">\n')  # hide these fake elements
+  for i in warn_patterns:
+    if i['severity'] == severity.SKIP and i['members']:
+      projects = i['project_warnings'].keys()
+      for p in projects:
+        output('<div id="' + i['project_anchor'][p] + '"></div>' +
+               '<div id="' + i['project_anchor'][p] + '_mark"></div>\n')
+  output('</div>\n')
 
-def parseinputfile():
-    global platformversion
-    global targetproduct
-    global targetvariant
-    infile = open(args.buildlog, 'r')
-    linecounter = 0
 
-    warningpattern = re.compile('.* warning:.*')
-    compilepatterns()
+def all_patterns(cat):
+  pats = ''
+  for i in cat['patterns']:
+    pats += i
+    pats += ' / '
+  return pats
 
-    # read the log file and classify all the warnings
-    warninglines = set()
-    for line in infile:
-        # replace fancy quotes with plain ol' quotes
-        line = line.replace("‘", "'");
-        line = line.replace("’", "'");
-        if warningpattern.match(line):
-            if line not in warninglines:
-                classifywarning(line)
-                warninglines.add(line)
+
+def description_for(cat):
+  if cat['description']:
+    return cat['description']
+  return all_patterns(cat)
+
+
+def dump_fixed():
+  """Show which warnings no longer occur."""
+  global anchor
+  anchor += 1
+  mark = str(anchor) + '_mark'
+  output('\n<br><p style="background-color:lightblue"><b>'
+         '<button id="' + mark + '" '
+         'class="bt" onclick="expand(' + str(anchor) + ');">'
+         '&#x2295</button> Fixed warnings. '
+         'No more occurrences. Please consider turning these into '
+         'errors if possible, before they are reintroduced in to the build'
+         ':</b></p>\n')
+  output('<blockquote>\n')
+  fixed_patterns = []
+  for i in warn_patterns:
+    if not i['members']:
+      fixed_patterns.append(i['description'] + ' (' +
+                            all_patterns(i) + ')')
+    if i['option']:
+      fixed_patterns.append(' ' + i['option'])
+  fixed_patterns.sort()
+  output('<div id="' + str(anchor) + '" style="display:none;"><table>\n')
+  for i in fixed_patterns:
+    table_row(i)
+  output('</table></div>\n')
+  output('</blockquote>\n')
+
+
+def warning_with_url(line):
+  """Returns a warning message line with HTML link to given args.url."""
+  if not args.url:
+    return line
+  m = re.search(r'^([^ :]+):(\d+):(.+)', line, re.M|re.I)
+  if not m:
+    return line
+  file_path = m.group(1)
+  line_number = m.group(2)
+  warning = m.group(3)
+  prefix = '<a href="' + args.url + '/' + file_path
+  if args.separator:
+    return (prefix + args.separator + line_number + '">' + file_path +
+            ':' + line_number + '</a>:' + warning)
+  else:
+    return prefix + '">' + file_path + '</a>:' + line_number + ':' + warning
+
+
+def dump_group(sev, anchor_str, description, warnings):
+  """Dump warnings of given severity, anchor_str, and description."""
+  mark = anchor_str + '_mark'
+  output('\n<table class="t1">\n')
+  output('<tr bgcolor="' + severity.color[sev] + '">' +
+         '<td><button class="bt" id="' + mark +
+         '" onclick="expand(\'' + anchor_str + '\');">' +
+         '&#x2295</button> ' + description + '</td></tr>\n')
+  output('</table>\n')
+  output('<div id="' + anchor_str + '" style="display:none;">')
+  output('<table class="t1">\n')
+  for i in warnings:
+    table_row(warning_with_url(i))
+  output('</table></div>\n')
+
+
+def dump_category(sev, cat):
+  """Dump warnings in a category."""
+  description = description_for(cat) + ' (' + str(len(cat['members'])) + ')'
+  dump_group(sev, cat['anchor'], description, cat['members'])
+
+
+def dump_category_by_project(sev, cat):
+  """Similar to dump_category but output one table per project."""
+  warning = description_for(cat)
+  projects = cat['project_warnings'].keys()
+  projects.sort()
+  for p in projects:
+    anchor_str = cat['project_anchor'][p]
+    project_warnings = cat['project_warnings'][p]
+    description = '{}, in {} ({})'.format(warning, p, len(project_warnings))
+    dump_group(sev, anchor_str, description, project_warnings)
+
+
+def find_project(line):
+  for p in project_patterns:
+    if p['pattern'].match(line):
+      return p['description']
+  return '???'
+
+
+def classify_warning(line):
+  global anchor
+  for i in warn_patterns:
+    for cpat in i['compiled_patterns']:
+      if cpat.match(line):
+        i['members'].append(line)
+        pname = find_project(line)
+        # Count warnings by project.
+        if pname in i['projects']:
+          i['projects'][pname] += 1
         else:
-            # save a little bit of time by only doing this for the first few lines
-            if linecounter < 50:
-                linecounter +=1
-                m = re.search('(?<=^PLATFORM_VERSION=).*', line)
-                if m != None:
-                    platformversion = m.group(0)
-                m = re.search('(?<=^TARGET_PRODUCT=).*', line)
-                if m != None:
-                    targetproduct = m.group(0)
-                m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
-                if m != None:
-                    targetvariant = m.group(0)
+          i['projects'][pname] = 1
+        # Collect warnings by project.
+        if args.byproject:
+          if pname in i['project_warnings']:
+            i['project_warnings'][pname].append(line)
+          else:
+            i['project_warnings'][pname] = [line]
+          if pname not in i['project_anchor']:
+            anchor += 1
+            i['project_anchor'][pname] = str(anchor)
+        return
+      else:
+        # If we end up here, there was a problem parsing the log
+        # probably caused by 'make -j' mixing the output from
+        # 2 or more concurrent compiles
+        pass
 
 
-# dump the html output to stdout
-def dumphtml():
-    dumphtmlprologue('Warnings for ' + platformversion + ' - ' + targetproduct + ' - ' + targetvariant)
-    dumpstats()
-    dumpstatsbyproject()
-    emitbuttons()
-    # sort table based on number of members once dumpstats has deduplicated the
-    # members.
-    warnpatterns.sort(reverse=True, key=lambda i: len(i['members']))
-    # Dump warnings by severity. If severity.SKIP warnings are not dumpped,
-    # the project anchors should be dumped through dumpskippedanchors.
-    for s in severity.kinds:
-        dumpseverity(s)
-    dumpfixed()
-    dumphtmlepilogue()
+def compile_patterns():
+  """Precompiling every pattern speeds up parsing by about 30x."""
+  for i in warn_patterns:
+    i['compiled_patterns'] = []
+    for pat in i['patterns']:
+      i['compiled_patterns'].append(re.compile(pat))
+
+
+def parse_input_file():
+  """Parse input file, match warning lines."""
+  global platform_version
+  global target_product
+  global target_variant
+  infile = open(args.buildlog, 'r')
+  line_counter = 0
+
+  warning_pattern = re.compile('.* warning:.*')
+  compile_patterns()
+
+  # read the log file and classify all the warnings
+  warning_lines = set()
+  for line in infile:
+    # replace fancy quotes with plain ol' quotes
+    line = line.replace('‘', "'")
+    line = line.replace('’', "'")
+    if warning_pattern.match(line):
+      if line not in warning_lines:
+        classify_warning(line)
+        warning_lines.add(line)
+    else:
+      # save a little bit of time by only doing this for the first few lines
+      if line_counter < 50:
+        line_counter += 1
+        m = re.search('(?<=^PLATFORM_VERSION=).*', line)
+        if m is not None:
+          platform_version = m.group(0)
+        m = re.search('(?<=^TARGET_PRODUCT=).*', line)
+        if m is not None:
+          target_product = m.group(0)
+        m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
+        if m is not None:
+          target_variant = m.group(0)
+
+
+def dump_html():
+  """Dump the html output to stdout."""
+  dump_html_prologue('Warnings for ' + platform_version + ' - ' +
+                     target_product + ' - ' + target_variant)
+  dump_stats()
+  dump_stats_by_project()
+  emit_buttons()
+  # sort table based on number of members once dump_stats has de-duplicated the
+  # members.
+  warn_patterns.sort(reverse=True, key=lambda i: len(i['members']))
+  # Dump warnings by severity. If severity.SKIP warnings are not dumped,
+  # the project anchors should be dumped through dump_skipped_anchors.
+  for s in severity.kinds:
+    dump_severity(s)
+  dump_fixed()
+  dump_html_epilogue()
 
 
 ##### Functions to count warnings and dump csv file. #########################
 
-def descriptionforcsv(cat):
-    if cat['description'] == '':
-        return '?'
-    return cat['description']
 
-def stringforcsv(s):
-    if ',' in s:
-        return '"{}"'.format(s)
-    return s
-
-def countseverity(sev, kind):
-  sum = 0
-  for i in warnpatterns:
-      if i['severity'] == sev and len(i['members']) > 0:
-          n = len(i['members'])
-          sum += n
-          warning = stringforcsv(kind + ': ' + descriptionforcsv(i))
-          print '{},,{}'.format(n, warning)
-          # print number of warnings for each project, ordered by project name.
-          projects = i['projects'].keys()
-          projects.sort()
-          for p in projects:
-              print '{},{},{}'.format(i['projects'][p], p, warning)
-  print '{},,{}'.format(sum, kind + ' warnings')
-  return sum
-
-# dump number of warnings in csv format to stdout
-def dumpcsv():
-    sortwarnings()
-    total = 0
-    for s in severity.kinds:
-        total += countseverity(s, severity.columnheader[s])
-    print '{},,{}'.format(total, 'All warnings')
+def description_for_csv(cat):
+  if not cat['description']:
+    return '?'
+  return cat['description']
 
 
-parseinputfile()
+def string_for_csv(s):
+  if ',' in s:
+    return '"{}"'.format(s)
+  return s
+
+
+def count_severity(sev, kind):
+  """Count warnings of given severity."""
+  total = 0
+  for i in warn_patterns:
+    if i['severity'] == sev and i['members']:
+      n = len(i['members'])
+      total += n
+      warning = string_for_csv(kind + ': ' + description_for_csv(i))
+      print '{},,{}'.format(n, warning)
+      # print number of warnings for each project, ordered by project name.
+      projects = i['projects'].keys()
+      projects.sort()
+      for p in projects:
+        print '{},{},{}'.format(i['projects'][p], p, warning)
+  print '{},,{}'.format(total, kind + ' warnings')
+  return total
+
+
+def dump_csv():
+  """Dump number of warnings in csv format to stdout."""
+  sort_warnings()
+  total = 0
+  for s in severity.kinds:
+    total += count_severity(s, severity.column_headers[s])
+  print '{},,{}'.format(total, 'All warnings')
+
+
+parse_input_file()
 if args.gencsv:
-    dumpcsv()
+  dump_csv()
 else:
-    dumphtml()
+  dump_html()
