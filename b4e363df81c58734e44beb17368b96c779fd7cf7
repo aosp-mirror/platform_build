@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5b6efe4_9dcea726",
+        "filename": "target/product/core_minimal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-26T20:41:39Z",
+      "side": 1,
+      "message": "This is intended to be alphabetical (though some of the filesystem packages above already violated that)",
+      "revId": "b4e363df81c58734e44beb17368b96c779fd7cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
