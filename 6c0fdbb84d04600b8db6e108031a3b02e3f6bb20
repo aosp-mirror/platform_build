@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "855f2b58_f937d7e4",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1851,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-26T19:47:47Z",
+      "side": 1,
+      "message": "Every \u0027cat\u0027 should really be \u0027category\u0027 if we are going to fix up abbreviations.",
+      "range": {
+        "startLine": 1851,
+        "startChar": 17,
+        "endLine": 1851,
+        "endChar": 20
+      },
+      "revId": "6c0fdbb84d04600b8db6e108031a3b02e3f6bb20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "855f2b58_d93493e3",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1852,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-26T19:47:47Z",
+      "side": 1,
+      "message": "patterns",
+      "range": {
+        "startLine": 1852,
+        "startChar": 2,
+        "endLine": 1852,
+        "endChar": 6
+      },
+      "revId": "6c0fdbb84d04600b8db6e108031a3b02e3f6bb20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "855f2b58_b9443f47",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1927,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-26T19:47:47Z",
+      "side": 1,
+      "message": "severerity",
+      "range": {
+        "startLine": 1927,
+        "startChar": 18,
+        "endLine": 1927,
+        "endChar": 21
+      },
+      "revId": "6c0fdbb84d04600b8db6e108031a3b02e3f6bb20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "855f2b58_99417b37",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1927,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-26T19:47:47Z",
+      "side": 1,
+      "message": "category",
+      "range": {
+        "startLine": 1927,
+        "startChar": 23,
+        "endLine": 1927,
+        "endChar": 26
+      },
+      "revId": "6c0fdbb84d04600b8db6e108031a3b02e3f6bb20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "855f2b58_39782f84",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1933,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-26T19:47:47Z",
+      "side": 1,
+      "message": "Same naming",
+      "revId": "6c0fdbb84d04600b8db6e108031a3b02e3f6bb20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
