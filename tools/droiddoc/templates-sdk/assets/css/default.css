@@ -3822,14 +3822,13 @@ td.gsc-search-button {
   display: none;
 }
 
-/* offset the <a name=""> tags to account for sticky nav */
-body.reference a[name] {
+/* offset the empty <a name=""> tags to account for sticky nav */
+body.reference a[name]:empty {
   visibility: hidden;
   display: block;
   position: relative;
   top: -56px;
 }
-
 
 /* Quicknav */
 .btn-quicknav {
