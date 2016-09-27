@@ -4217,7 +4217,7 @@ EndColorStr='#ececec');
 }
 
 /* offset the <a name=""> tags to account for sticky nav */
-body.reference a[name] {
+body.reference a[name]:empty {
   visibility: hidden;
   display: block;
   position: relative;
