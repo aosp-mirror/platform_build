@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85ec8b0b_b0fd919b",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1508,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-09-27T17:09:30Z",
+      "side": 1,
+      "message": "\"ifeq (true,$(BOARD_AVB_ENABLE))\" to be consistent with other occurrences?",
+      "range": {
+        "startLine": 1508,
+        "startChar": 0,
+        "endLine": 1508,
+        "endChar": 22
+      },
+      "revId": "2636364bc5a04da13ea61b7b515762e295104fb4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
