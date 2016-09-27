@@ -8,6 +8,77 @@ Use option --byproject to output tables grouped by source file projects.
 Use option --gencsv to output warning counts in CSV format.
 """
 
+# List of important data structures and functions in this script.
+#
+# To parse and keep warning message in the input file:
+#   severity:                classification of message severity
+#   severity.range           [0, 1, ... last_severity_level]
+#   severity.colors          for header background
+#   severity.column_headers  for the warning count table
+#   severity.headers         for warning message tables
+#   warn_patterns:
+#   warn_patterns[w]['category']     tool that issued the warning, not used now
+#   warn_patterns[w]['description']  table heading
+#   warn_patterns[w]['members']      matched warnings from input
+#   warn_patterns[w]['option']       compiler flag to control the warning
+#   warn_patterns[w]['patterns']     regular expressions to match warnings
+#   warn_patterns[w]['projects'][p]  number of warnings of pattern w in p
+#   warn_patterns[w]['severity']     severity level
+#   project_list[p][0]               project name
+#   project_list[p][1]               regular expression to match a project path
+#   project_patterns[p]              re.compile(project_list[p][1])
+#   project_names[p]                 project_list[p][0]
+#   warning_messages     array of each warning message, without source url
+#   warning_records      array of [idx to warn_patterns,
+#                                  idx to project_names,
+#                                  idx to warning_messages]
+#   platform_version
+#   target_product
+#   target_variant
+#   compile_patterns, parse_input_file
+#
+# To emit html page of warning messages:
+#   flags: --byproject, --url, --separator
+# Old stuff for static html components:
+#   html_script_style:  static html scripts and styles
+#   htmlbig:
+#   dump_stats, dump_html_prologue, dump_html_epilogue:
+#   emit_buttons:
+#   dump_fixed
+#   sort_warnings:
+#   emit_stats_by_project:
+#   all_patterns,
+#   findproject, classify_warning
+#   dump_html
+#
+# New dynamic HTML page's static JavaScript data:
+#   Some data are copied from Python to JavaScript, to generate HTML elements.
+#   FlagURL                args.url
+#   FlagSeparator          args.separator
+#   SeverityColors:        severity.colors
+#   SeverityHeaders:       severity.headers
+#   SeverityColumnHeaders: severity.column_headers
+#   ProjectNames:          project_names, or project_list[*][0]
+#   WarnPatternsSeverity:     warn_patterns[*]['severity']
+#   WarnPatternsDescription:  warn_patterns[*]['description']
+#   WarnPatternsOption:       warn_patterns[*]['option']
+#   WarningMessages:          warning_messages
+#   Warnings:                 warning_records
+#   StatsHeader:           warning count table header row
+#   StatsRows:             array of warning count table rows
+#
+# New dynamic HTML page's dynamic JavaScript data:
+#
+# New dynamic HTML related function to emit data:
+#   escape_string, strip_escape_string, emit_warning_arrays
+#   emit_js_data():
+#
+# To emit csv files of warning message counts:
+#   flag --gencsv
+#   description_for_csv, string_for_csv:
+#   count_severity(sev, kind):
+#   dump_csv():
+
 import argparse
 import re
 
@@ -31,33 +102,32 @@ parser.add_argument(dest='buildlog', metavar='build.log',
 args = parser.parse_args()
 
 
-# if you add another level, don't forget to give it a color below
 class severity:  # pylint:disable=invalid-name,old-style-class
   """Severity levels and attributes."""
-  UNKNOWN = 0
-  FIXMENOW = 1
-  HIGH = 2
-  MEDIUM = 3
-  LOW = 4
-  TIDY = 5
-  HARMLESS = 6
+  # numbered by dump order
+  FIXMENOW = 0
+  HIGH = 1
+  MEDIUM = 2
+  LOW = 3
+  TIDY = 4
+  HARMLESS = 5
+  UNKNOWN = 6
   SKIP = 7
+  range = range(8)
   attributes = [
       # pylint:disable=bad-whitespace
-      ['lightblue', 'Unknown',   'Unknown warnings'],
       ['fuchsia',   'FixNow',    'Critical warnings, fix me now'],
       ['red',       'High',      'High severity warnings'],
       ['orange',    'Medium',    'Medium severity warnings'],
       ['yellow',    'Low',       'Low severity warnings'],
       ['peachpuff', 'Tidy',      'Clang-Tidy warnings'],
       ['limegreen', 'Harmless',  'Harmless warnings'],
+      ['lightblue', 'Unknown',   'Unknown warnings'],
       ['grey',      'Unhandled', 'Unhandled warnings']
   ]
-  color = [a[0] for a in attributes]
+  colors = [a[0] for a in attributes]
   column_headers = [a[1] for a in attributes]
-  header = [a[2] for a in attributes]
-  # order to dump by severity
-  kinds = [FIXMENOW, HIGH, MEDIUM, LOW, TIDY, HARMLESS, UNKNOWN, SKIP]
+  headers = [a[2] for a in attributes]
 
 warn_patterns = [
     # TODO(chh): fix pylint space and indentation warnings
@@ -84,7 +154,7 @@ warn_patterns = [
         'patterns':[r".*: warning: implicit declaration of function .+",
                     r".*: warning: implicitly declaring library function" ] },
     { 'category':'C/C++',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, conflicting types for ...',
         'patterns':[r".*: warning: conflicting types for '.+'"] },
     { 'category':'C/C++',   'severity':severity.HIGH, 'option':'-Wtype-limits',
         'description':'Expression always evaluates to true or false',
@@ -159,7 +229,7 @@ warn_patterns = [
         'description':'Need virtual destructor',
         'patterns':[r".*: warning: delete called .* has virtual functions but non-virtual destructor"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, near initialization for ...',
         'patterns':[r".*: warning: \(near initialization for '.+'\)"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM, 'option':'-Wdate-time',
         'description':'Expansion of data or time macro',
@@ -299,7 +369,7 @@ warn_patterns = [
                     r".*: warning: Access to .+ results in a dereference of a null pointer",
                     r".*: warning: Null pointer argument in"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, parameter name (without types) in function declaration',
         'patterns':[r".*: warning: parameter names \(without types\) in function declaration"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM, 'option':'-Wstrict-aliasing',
         'description':'Dereferencing &lt;foo&gt; breaks strict aliasing rules',
@@ -315,7 +385,7 @@ warn_patterns = [
         'description':'Symbol redefined',
         'patterns':[r".*: warning: "".+"" redefined"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, ... location of the previous definition',
         'patterns':[r".*: warning: this is the location of the previous definition"] },
     { 'category':'ld',      'severity':severity.MEDIUM,
         'description':'ld: type and size of dynamic symbol are not defined',
@@ -351,7 +421,7 @@ warn_patterns = [
         'description':'Redundant declaration',
         'patterns':[r".*: warning: redundant redeclaration of '.+'"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, previous declaration ... was here',
         'patterns':[r".*: warning: previous declaration of '.+' was here"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM, 'option':'-Wswitch-enum',
         'description':'Enum value not handled in switch',
@@ -1154,13 +1224,13 @@ warn_patterns = [
         'patterns':[r".*: warning: '.+' will be initialized after",
                     r".*: warning: field .+ will be initialized after .+Wreorder"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip,   ....',
         'patterns':[r".*: warning:   '.+'"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip,   base ...',
         'patterns':[r".*: warning:   base '.+'"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip,   when initialized here',
         'patterns':[r".*: warning:   when initialized here"] },
     { 'category':'C/C++',   'severity':severity.MEDIUM, 'option':'-Wmissing-parameter-type',
         'description':'Parameter type not specified',
@@ -1206,7 +1276,7 @@ warn_patterns = [
         'description':'&lt;foo&gt; declared inside parameter list, scope limited to this definition',
         'patterns':[r".*: warning: '.+' declared inside parameter list"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, its scope is only this ...',
         'patterns':[r".*: warning: its scope is only this definition or declaration, which is probably not what you want"] },
     { 'category':'C/C++',   'severity':severity.LOW, 'option':'-Wcomment',
         'description':'Line continuation inside comment',
@@ -1277,7 +1347,7 @@ warn_patterns = [
         'description':'Overload resolution chose to promote from unsigned or enum to signed type' ,
         'patterns':[r".*: warning: passing '.+' chooses '.+' over '.+'.*Wsign-promo"] },
     { 'category':'cont.',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip,   in call to ...',
         'patterns':[r".*: warning:   in call to '.+'"] },
     { 'category':'C/C++',   'severity':severity.HIGH, 'option':'-Wextra',
         'description':'Base should be explicitly initialized in copy constructor',
@@ -1469,13 +1539,13 @@ warn_patterns = [
 
     # these next ones are to deal with formatting problems resulting from the log being mixed up by 'make -j'
     { 'category':'C/C++',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, ,',
         'patterns':[r".*: warning: ,$"] },
     { 'category':'C/C++',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip,',
         'patterns':[r".*: warning: $"] },
     { 'category':'C/C++',   'severity':severity.SKIP,
-        'description':'',
+        'description':'skip, In file included from ...',
         'patterns':[r".*: warning: In file included from .+,"] },
 
     # warnings from clang-tidy
@@ -1610,16 +1680,56 @@ project_list = [
     # match external/google* before external/
     ['external/google',     r"(^|.*/)external/google.*: warning:"],
     ['external/non-google', r"(^|.*/)external/.*: warning:"],
-    ['frameworks',          r"(^|.*/)frameworks/.*: warning:"],
-    ['hardware',            r"(^|.*/)hardware/.*: warning:"],
+    ['frameworks/av/camera',r"(^|.*/)frameworks/av/camera/.*: warning:"],
+    ['frameworks/av/cmds',  r"(^|.*/)frameworks/av/cmds/.*: warning:"],
+    ['frameworks/av/drm',   r"(^|.*/)frameworks/av/drm/.*: warning:"],
+    ['frameworks/av/include',r"(^|.*/)frameworks/av/include/.*: warning:"],
+    ['frameworks/av/media', r"(^|.*/)frameworks/av/media/.*: warning:"],
+    ['frameworks/av/radio', r"(^|.*/)frameworks/av/radio/.*: warning:"],
+    ['frameworks/av/services', r"(^|.*/)frameworks/av/services/.*: warning:"],
+    ['frameworks/av/Other', r"(^|.*/)frameworks/av/.*: warning:"],
+    ['frameworks/base',     r"(^|.*/)frameworks/base/.*: warning:"],
+    ['frameworks/compile',  r"(^|.*/)frameworks/compile/.*: warning:"],
+    ['frameworks/minikin',  r"(^|.*/)frameworks/minikin/.*: warning:"],
+    ['frameworks/native',   r"(^|.*/)frameworks/native/.*: warning:"],
+    ['frameworks/opt',      r"(^|.*/)frameworks/opt/.*: warning:"],
+    ['frameworks/rs',       r"(^|.*/)frameworks/rs/.*: warning:"],
+    ['frameworks/webview',  r"(^|.*/)frameworks/webview/.*: warning:"],
+    ['frameworks/wilhelm',  r"(^|.*/)frameworks/wilhelm/.*: warning:"],
+    ['frameworks/Other',    r"(^|.*/)frameworks/.*: warning:"],
+    ['hardware/akm',        r"(^|.*/)hardware/akm/.*: warning:"],
+    ['hardware/broadcom',   r"(^|.*/)hardware/broadcom/.*: warning:"],
+    ['hardware/google',     r"(^|.*/)hardware/google/.*: warning:"],
+    ['hardware/intel',      r"(^|.*/)hardware/intel/.*: warning:"],
+    ['hardware/interfaces', r"(^|.*/)hardware/interfaces/.*: warning:"],
+    ['hardware/libhardware',r"(^|.*/)hardware/libhardware/.*: warning:"],
+    ['hardware/libhardware_legacy',r"(^|.*/)hardware/libhardware_legacy/.*: warning:"],
+    ['hardware/qcom',       r"(^|.*/)hardware/qcom/.*: warning:"],
+    ['hardware/ril',        r"(^|.*/)hardware/ril/.*: warning:"],
+    ['hardware/Other',      r"(^|.*/)hardware/.*: warning:"],
     ['kernel',              r"(^|.*/)kernel/.*: warning:"],
     ['libcore',             r"(^|.*/)libcore/.*: warning:"],
-    ['libnativehelper',      r"(^|.*/)libnativehelper/.*: warning:"],
+    ['libnativehelper',     r"(^|.*/)libnativehelper/.*: warning:"],
     ['ndk',                 r"(^|.*/)ndk/.*: warning:"],
+    # match vendor/unbungled_google/packages before other packages
+    ['unbundled_google',    r"(^|.*/)unbundled_google/.*: warning:"],
     ['packages',            r"(^|.*/)packages/.*: warning:"],
     ['pdk',                 r"(^|.*/)pdk/.*: warning:"],
     ['prebuilts',           r"(^|.*/)prebuilts/.*: warning:"],
-    ['system',              r"(^|.*/)system/.*: warning:"],
+    ['system/bt',           r"(^|.*/)system/bt/.*: warning:"],
+    ['system/connectivity', r"(^|.*/)system/connectivity/.*: warning:"],
+    ['system/core',         r"(^|.*/)system/core/.*: warning:"],
+    ['system/extras',       r"(^|.*/)system/extras/.*: warning:"],
+    ['system/gatekeeper',   r"(^|.*/)system/gatekeeper/.*: warning:"],
+    ['system/keymaster',    r"(^|.*/)system/keymaster/.*: warning:"],
+    ['system/libhwbinder',  r"(^|.*/)system/libhwbinder/.*: warning:"],
+    ['system/media',        r"(^|.*/)system/media/.*: warning:"],
+    ['system/netd',         r"(^|.*/)system/netd/.*: warning:"],
+    ['system/security',     r"(^|.*/)system/security/.*: warning:"],
+    ['system/sepolicy',     r"(^|.*/)system/sepolicy/.*: warning:"],
+    ['system/tools',        r"(^|.*/)system/tools/.*: warning:"],
+    ['system/vold',         r"(^|.*/)system/vold/.*: warning:"],
+    ['system/Other',        r"(^|.*/)system/.*: warning:"],
     ['toolchain',           r"(^|.*/)toolchain/.*: warning:"],
     ['test',                r"(^|.*/)test/.*: warning:"],
     ['tools',               r"(^|.*/)tools/.*: warning:"],
@@ -1627,33 +1737,28 @@ project_list = [
     ['vendor/google',       r"(^|.*/)vendor/google.*: warning:"],
     ['vendor/non-google',   r"(^|.*/)vendor/.*: warning:"],
     # keep out/obj and other patterns at the end.
-    ['out/obj', r".*/(gen|obj[^/]*)/(include|EXECUTABLES|SHARED_LIBRARIES|STATIC_LIBRARIES)/.*: warning:"],
+    ['out/obj', r".*/(gen|obj[^/]*)/(include|EXECUTABLES|SHARED_LIBRARIES|STATIC_LIBRARIES|NATIVE_TESTS)/.*: warning:"],
     ['other',   r".*: warning:"],
 ]
 
 project_patterns = []
 project_names = []
+warning_messages = []
+warning_records = []
 
 
 def initialize_arrays():
   """Complete global arrays before they are used."""
-  global project_names
+  global project_names, project_patterns
   project_names = [p[0] for p in project_list]
-  for p in project_list:
-    project_patterns.append({'description': p[0],
-                             'members': [],
-                             'pattern': re.compile(p[1])})
-  # Each warning pattern has 3 dictionaries:
-  # (1) 'projects' maps a project name to number of warnings in that project.
-  # (2) 'project_anchor' maps a project name to its anchor number for HTML.
-  # (3) 'project_warnings' maps a project name to a list of warning messages.
+  project_patterns = [re.compile(p[1]) for p in project_list]
   for w in warn_patterns:
     w['members'] = []
     if 'option' not in w:
       w['option'] = ''
+    # Each warning pattern has a 'projects' dictionary, that
+    # maps a project name to number of warnings in that project.
     w['projects'] = {}
-    w['project_anchor'] = {}
-    w['project_warnings'] = {}
 
 
 initialize_arrays()
@@ -1666,46 +1771,41 @@ target_variant = 'unknown'
 
 ##### Data and functions to dump html file. ##################################
 
-anchor = 0
-cur_row_class = 0
-
-html_script_style = """\
-    <script type="text/javascript">
-    function expand(id) {
-      var e = document.getElementById(id);
+html_head_scripts = """\
+  <script type="text/javascript">
+  function expand(id) {
+    var e = document.getElementById(id);
+    var f = document.getElementById(id + "_mark");
+    if (e.style.display == 'block') {
+       e.style.display = 'none';
+       f.innerHTML = '&#x2295';
+    }
+    else {
+       e.style.display = 'block';
+       f.innerHTML = '&#x2296';
+    }
+  };
+  function expandCollapse(show) {
+    for (var id = 1; ; id++) {
+      var e = document.getElementById(id + "");
       var f = document.getElementById(id + "_mark");
-      if (e.style.display == 'block') {
-         e.style.display = 'none';
-         f.innerHTML = '&#x2295';
-      }
-      else {
-         e.style.display = 'block';
-         f.innerHTML = '&#x2296';
-      }
-    };
-    function expand_collapse(show) {
-      for (var id = 1; ; id++) {
-        var e = document.getElementById(id + "");
-        var f = document.getElementById(id + "_mark");
-        if (!e || !f) break;
-        e.style.display = (show ? 'block' : 'none');
-        f.innerHTML = (show ? '&#x2296' : '&#x2295');
-      }
-    };
-    </script>
-    <style type="text/css">
-    th,td{border-collapse:collapse; border:1px solid black;}
-    .button{color:blue;font-size:110%;font-weight:bolder;}
-    .bt{color:black;background-color:transparent;border:none;outline:none;
-        font-size:140%;font-weight:bolder;}
-    .c0{background-color:#e0e0e0;}
-    .c1{background-color:#d0d0d0;}
-    .t1{border-collapse:collapse; width:100%; border:1px solid black;}
-    </style>\n"""
-
-
-def output(text):
-  print text,
+      if (!e || !f) break;
+      e.style.display = (show ? 'block' : 'none');
+      f.innerHTML = (show ? '&#x2296' : '&#x2295');
+    }
+  };
+  </script>
+  <style type="text/css">
+  th,td{border-collapse:collapse; border:1px solid black;}
+  .button{color:blue;font-size:110%;font-weight:bolder;}
+  .bt{color:black;background-color:transparent;border:none;outline:none;
+      font-size:140%;font-weight:bolder;}
+  .c0{background-color:#e0e0e0;}
+  .c1{background-color:#d0d0d0;}
+  .t1{border-collapse:collapse; width:100%; border:1px solid black;}
+  </style>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+"""
 
 
 def html_big(param):
@@ -1713,24 +1813,17 @@ def html_big(param):
 
 
 def dump_html_prologue(title):
-  output('<html>\n<head>\n')
-  output('<title>' + title + '</title>\n')
-  output(html_script_style)
-  output('</head>\n<body>\n')
-  output(html_big(title))
-  output('<p>\n')
+  print '<html>\n<head>'
+  print '<title>' + title + '</title>'
+  print html_head_scripts
+  emit_stats_by_project()
+  print '</head>\n<body>'
+  print html_big(title)
+  print '<p>'
 
 
 def dump_html_epilogue():
-  output('</body>\n</head>\n</html>\n')
-
-
-def table_row(text):
-  global cur_row_class
-  cur_row_class = 1 - cur_row_class
-  # remove last '\n'
-  t = text[:-1] if text[-1] == '\n' else text
-  output('<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>\n')
+  print '</body>\n</head>\n</html>'
 
 
 def sort_warnings():
@@ -1738,57 +1831,59 @@ def sort_warnings():
     i['members'] = sorted(set(i['members']))
 
 
-def dump_stats_by_project():
-  """Dump a table of warnings per project and severity."""
+def emit_stats_by_project():
+  """Dump a google chart table of warnings per project and severity."""
   # warnings[p][s] is number of warnings in project p of severity s.
-  warnings = {p: {s: 0 for s in severity.kinds} for p in project_names}
+  warnings = {p: {s: 0 for s in severity.range} for p in project_names}
   for i in warn_patterns:
     s = i['severity']
     for p in i['projects']:
       warnings[p][s] += i['projects'][p]
 
   # total_by_project[p] is number of warnings in project p.
-  total_by_project = {p: sum(warnings[p][s] for s in severity.kinds)
+  total_by_project = {p: sum(warnings[p][s] for s in severity.range)
                       for p in project_names}
 
   # total_by_severity[s] is number of warnings of severity s.
   total_by_severity = {s: sum(warnings[p][s] for p in project_names)
-                       for s in severity.kinds}
+                       for s in severity.range}
 
   # emit table header
-  output('<blockquote><table border=1>\n<tr><th>Project</th>\n')
-  for s in severity.kinds:
+  stats_header = ['Project']
+  for s in severity.range:
     if total_by_severity[s]:
-      output('<th width="8%"><span style="background-color:{}">{}</span></th>'.
-             format(severity.color[s], severity.column_headers[s]))
-  output('<th>TOTAL</th></tr>\n')
+      stats_header.append("<span style='background-color:{}'>{}</span>".
+                          format(severity.colors[s],
+                                 severity.column_headers[s]))
+  stats_header.append('TOTAL')
 
   # emit a row of warning counts per project, skip no-warning projects
   total_all_projects = 0
+  stats_rows = []
   for p in project_names:
     if total_by_project[p]:
-      output('<tr><td align="left">{}</td>'.format(p))
-      for s in severity.kinds:
+      one_row = [p]
+      for s in severity.range:
         if total_by_severity[s]:
-          output('<td align="right">{}</td>'.format(warnings[p][s]))
-      output('<td align="right">{}</td>'.format(total_by_project[p]))
+          one_row.append(warnings[p][s])
+      one_row.append(total_by_project[p])
+      stats_rows.append(one_row)
       total_all_projects += total_by_project[p]
-      output('</tr>\n')
 
   # emit a row of warning counts per severity
   total_all_severities = 0
-  output('<tr><td align="right">TOTAL</td>')
-  for s in severity.kinds:
+  one_row = ['<b>TOTAL</b>']
+  for s in severity.range:
     if total_by_severity[s]:
-      output('<td align="right">{}</td>'.format(total_by_severity[s]))
+      one_row.append(total_by_severity[s])
       total_all_severities += total_by_severity[s]
-  output('<td align="right">{}</td></tr>\n'.format(total_all_projects))
-
-  # at the end of table, verify total counts
-  output('</table></blockquote><br>\n')
-  if total_all_projects != total_all_severities:
-    output('<h3>ERROR: Sum of warnings by project '
-           '!= Sum of warnings by severity.</h3>\n')
+  one_row.append(total_all_projects)
+  stats_rows.append(one_row)
+  print '<script>'
+  emit_const_string_array('StatsHeader', stats_header)
+  emit_const_object_array('StatsRows', stats_rows)
+  print draw_table_javascript
+  print '</script>'
 
 
 def dump_stats():
@@ -1804,83 +1899,57 @@ def dump_stats():
       skipped += len(i['members'])
     else:
       known += len(i['members'])
-  output('\nNumber of classified warnings: <b>' + str(known) + '</b><br>')
-  output('\nNumber of skipped warnings: <b>' + str(skipped) + '</b><br>')
-  output('\nNumber of unclassified warnings: <b>' + str(unknown) + '</b><br>')
+  print 'Number of classified warnings: <b>' + str(known) + '</b><br>'
+  print 'Number of skipped warnings: <b>' + str(skipped) + '</b><br>'
+  print 'Number of unclassified warnings: <b>' + str(unknown) + '</b><br>'
   total = unknown + known + skipped
-  output('\nTotal number of warnings: <b>' + str(total) + '</b>')
+  extra_msg = ''
   if total < 1000:
-    output('(low count may indicate incremental build)')
-  output('<br><br>\n')
+    extra_msg = ' (low count may indicate incremental build)'
+  print 'Total number of warnings: <b>' + str(total) + '</b>' + extra_msg
 
 
+# New base table of warnings, [severity, warn_id, project, warning_message]
+# Need buttons to show warnings in different grouping options.
+# (1) Current, group by severity, id for each warning pattern
+#     sort by severity, warn_id, warning_message
+# (2) Current --byproject, group by severity,
+#     id for each warning pattern + project name
+#     sort by severity, warn_id, project, warning_message
+# (3) New, group by project + severity,
+#     id for each warning pattern
+#     sort by project, severity, warn_id, warning_message
 def emit_buttons():
-  output('<button class="button" onclick="expand_collapse(1);">'
+  print ('<button class="button" onclick="expandCollapse(1);">'
          'Expand all warnings</button>\n'
-         '<button class="button" onclick="expand_collapse(0);">'
-         'Collapse all warnings</button><br>\n')
+         '<button class="button" onclick="expandCollapse(0);">'
+         'Collapse all warnings</button>\n'
+         '<button class="button" onclick="groupBySeverity();">'
+         'Group warnings by severity</button>\n'
+         '<button class="button" onclick="groupByProject();">'
+         'Group warnings by project</button><br>')
 
 
-def dump_severity(sev):
-  """Dump everything for a given severity."""
-  global anchor
-  total = 0
-  for i in warn_patterns:
-    if i['severity'] == sev:
-      total += len(i['members'])
-  output('\n<br><span style="background-color:' + severity.color[sev] +
-         '"><b>' + severity.header[sev] + ': ' + str(total) + '</b></span>\n')
-  output('<blockquote>\n')
-  for i in warn_patterns:
-    if i['severity'] == sev and i['members']:
-      anchor += 1
-      i['anchor'] = str(anchor)
-      if args.byproject:
-        dump_category_by_project(sev, i)
-      else:
-        dump_category(sev, i)
-  output('</blockquote>\n')
-
-
-def dump_skipped_anchors():
-  """emit all skipped project anchors for expand_collapse."""
-  output('<div style="display:none;">\n')  # hide these fake elements
-  for i in warn_patterns:
-    if i['severity'] == severity.SKIP and i['members']:
-      projects = i['project_warnings'].keys()
-      for p in projects:
-        output('<div id="' + i['project_anchor'][p] + '"></div>' +
-               '<div id="' + i['project_anchor'][p] + '_mark"></div>\n')
-  output('</div>\n')
-
-
-def all_patterns(cat):
-  pats = ''
-  for i in cat['patterns']:
-    pats += i
-    pats += ' / '
-  return pats
-
-
-def description_for(cat):
-  if cat['description']:
-    return cat['description']
-  return all_patterns(cat)
+def all_patterns(category):
+  patterns = ''
+  for i in category['patterns']:
+    patterns += i
+    patterns += ' / '
+  return patterns
 
 
 def dump_fixed():
   """Show which warnings no longer occur."""
-  global anchor
-  anchor += 1
-  mark = str(anchor) + '_mark'
-  output('\n<br><p style="background-color:lightblue"><b>'
+  anchor = 'fixed_warnings'
+  mark = anchor + '_mark'
+  print ('\n<br><p style="background-color:lightblue"><b>'
          '<button id="' + mark + '" '
-         'class="bt" onclick="expand(' + str(anchor) + ');">'
+         'class="bt" onclick="expand(\'' + anchor + '\');">'
          '&#x2295</button> Fixed warnings. '
          'No more occurrences. Please consider turning these into '
          'errors if possible, before they are reintroduced in to the build'
-         ':</b></p>\n')
-  output('<blockquote>\n')
+         ':</b></p>')
+  print '<blockquote>'
   fixed_patterns = []
   for i in warn_patterns:
     if not i['members']:
@@ -1889,93 +1958,40 @@ def dump_fixed():
     if i['option']:
       fixed_patterns.append(' ' + i['option'])
   fixed_patterns.sort()
-  output('<div id="' + str(anchor) + '" style="display:none;"><table>\n')
-  for i in fixed_patterns:
-    table_row(i)
-  output('</table></div>\n')
-  output('</blockquote>\n')
+  print '<div id="' + anchor + '" style="display:none;"><table>'
+  cur_row_class = 0
+  for text in fixed_patterns:
+    cur_row_class = 1 - cur_row_class
+    # remove last '\n'
+    t = text[:-1] if text[-1] == '\n' else text
+    print '<tr><td class="c' + str(cur_row_class) + '">' + t + '</td></tr>'
+  print '</table></div>'
+  print '</blockquote>'
 
 
-def warning_with_url(line):
-  """Returns a warning message line with HTML link to given args.url."""
-  if not args.url:
-    return line
-  m = re.search(r'^([^ :]+):(\d+):(.+)', line, re.M|re.I)
-  if not m:
-    return line
-  file_path = m.group(1)
-  line_number = m.group(2)
-  warning = m.group(3)
-  prefix = '<a href="' + args.url + '/' + file_path
-  if args.separator:
-    return (prefix + args.separator + line_number + '">' + file_path +
-            ':' + line_number + '</a>:' + warning)
-  else:
-    return prefix + '">' + file_path + '</a>:' + line_number + ':' + warning
-
-
-def dump_group(sev, anchor_str, description, warnings):
-  """Dump warnings of given severity, anchor_str, and description."""
-  mark = anchor_str + '_mark'
-  output('\n<table class="t1">\n')
-  output('<tr bgcolor="' + severity.color[sev] + '">' +
-         '<td><button class="bt" id="' + mark +
-         '" onclick="expand(\'' + anchor_str + '\');">' +
-         '&#x2295</button> ' + description + '</td></tr>\n')
-  output('</table>\n')
-  output('<div id="' + anchor_str + '" style="display:none;">')
-  output('<table class="t1">\n')
-  for i in warnings:
-    table_row(warning_with_url(i))
-  output('</table></div>\n')
-
-
-def dump_category(sev, cat):
-  """Dump warnings in a category."""
-  description = description_for(cat) + ' (' + str(len(cat['members'])) + ')'
-  dump_group(sev, cat['anchor'], description, cat['members'])
-
-
-def dump_category_by_project(sev, cat):
-  """Similar to dump_category but output one table per project."""
-  warning = description_for(cat)
-  projects = cat['project_warnings'].keys()
-  projects.sort()
-  for p in projects:
-    anchor_str = cat['project_anchor'][p]
-    project_warnings = cat['project_warnings'][p]
-    description = '{}, in {} ({})'.format(warning, p, len(project_warnings))
-    dump_group(sev, anchor_str, description, project_warnings)
-
-
-def find_project(line):
-  for p in project_patterns:
-    if p['pattern'].match(line):
-      return p['description']
-  return '???'
+def find_project_index(line):
+  for p in range(len(project_patterns)):
+    if project_patterns[p].match(line):
+      return p
+  return -1
 
 
 def classify_warning(line):
-  global anchor
-  for i in warn_patterns:
-    for cpat in i['compiled_patterns']:
+  for i in range(len(warn_patterns)):
+    w = warn_patterns[i]
+    for cpat in w['compiled_patterns']:
       if cpat.match(line):
-        i['members'].append(line)
-        pname = find_project(line)
+        w['members'].append(line)
+        p = find_project_index(line)
+        index = len(warning_messages)
+        warning_messages.append(line)
+        warning_records.append([i, p, index])
+        pname = '???' if p < 0 else project_names[p]
         # Count warnings by project.
-        if pname in i['projects']:
-          i['projects'][pname] += 1
+        if pname in w['projects']:
+          w['projects'][pname] += 1
         else:
-          i['projects'][pname] = 1
-        # Collect warnings by project.
-        if args.byproject:
-          if pname in i['project_warnings']:
-            i['project_warnings'][pname].append(line)
-          else:
-            i['project_warnings'][pname] = [line]
-          if pname not in i['project_anchor']:
-            anchor += 1
-            i['project_anchor'][pname] = str(anchor)
+          w['projects'][pname] = 1
         return
       else:
         # If we end up here, there was a problem parsing the log
@@ -2013,19 +2029,243 @@ def parse_input_file():
       if line not in warning_lines:
         classify_warning(line)
         warning_lines.add(line)
-    else:
+    elif line_counter < 50:
       # save a little bit of time by only doing this for the first few lines
-      if line_counter < 50:
-        line_counter += 1
-        m = re.search('(?<=^PLATFORM_VERSION=).*', line)
-        if m is not None:
-          platform_version = m.group(0)
-        m = re.search('(?<=^TARGET_PRODUCT=).*', line)
-        if m is not None:
-          target_product = m.group(0)
-        m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
-        if m is not None:
-          target_variant = m.group(0)
+      line_counter += 1
+      m = re.search('(?<=^PLATFORM_VERSION=).*', line)
+      if m is not None:
+        platform_version = m.group(0)
+      m = re.search('(?<=^TARGET_PRODUCT=).*', line)
+      if m is not None:
+        target_product = m.group(0)
+      m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
+      if m is not None:
+        target_variant = m.group(0)
+
+
+# Return s with escaped quotation characters.
+def escape_string(s):
+  return s.replace('"', '\\"')
+
+
+# Return s without trailing '\n' and escape the quotation characters.
+def strip_escape_string(s):
+  if not s:
+    return s
+  s = s[:-1] if s[-1] == '\n' else s
+  return escape_string(s)
+
+
+def emit_warning_array(name):
+  print 'var warning_{} = ['.format(name)
+  for i in range(len(warn_patterns)):
+    print '{},'.format(warn_patterns[i][name])
+  print '];'
+
+
+def emit_warning_arrays():
+  emit_warning_array('severity')
+  print 'var warning_description = ['
+  for i in range(len(warn_patterns)):
+    if warn_patterns[i]['members']:
+      print '"{}",'.format(escape_string(warn_patterns[i]['description']))
+    else:
+      print '"",'  # no such warning
+  print '];'
+
+scripts_for_warning_groups = """
+  function compareMessages(x1, x2) { // of the same warning type
+    return (WarningMessages[x1[2]] <= WarningMessages[x2[2]]) ? -1 : 1;
+  }
+  function byMessageCount(x1, x2) {
+    return x2[2] - x1[2];  // reversed order
+  }
+  function bySeverityMessageCount(x1, x2) {
+    // orer by severity first
+    if (x1[1] != x2[1])
+      return  x1[1] - x2[1];
+    return byMessageCount(x1, x2);
+  }
+  const ParseLinePattern = /^([^ :]+):(\\d+):(.+)/;
+  function addURL(line) {
+    if (FlagURL == "") return line;
+    if (FlagSeparator == "") {
+      return line.replace(ParseLinePattern,
+        "<a href='" + FlagURL + "/$1'>$1</a>:$2:$3");
+    }
+    return line.replace(ParseLinePattern,
+      "<a href='" + FlagURL + "/$1" + FlagSeparator + "$2'>$1:$2</a>:$3");
+  }
+  function createArrayOfDictionaries(n) {
+    var result = [];
+    for (var i=0; i<n; i++) result.push({});
+    return result;
+  }
+  function groupWarningsBySeverity() {
+    // groups is an array of dictionaries,
+    // each dictionary maps from warning type to array of warning messages.
+    var groups = createArrayOfDictionaries(SeverityColors.length);
+    for (var i=0; i<Warnings.length; i++) {
+      var w = Warnings[i][0];
+      var s = WarnPatternsSeverity[w];
+      var k = w.toString();
+      if (!(k in groups[s]))
+        groups[s][k] = [];
+      groups[s][k].push(Warnings[i]);
+    }
+    return groups;
+  }
+  function groupWarningsByProject() {
+    var groups = createArrayOfDictionaries(ProjectNames.length);
+    for (var i=0; i<Warnings.length; i++) {
+      var w = Warnings[i][0];
+      var p = Warnings[i][1];
+      var k = w.toString();
+      if (!(k in groups[p]))
+        groups[p][k] = [];
+      groups[p][k].push(Warnings[i]);
+    }
+    return groups;
+  }
+  var GlobalAnchor = 0;
+  function createWarningSection(header, color, group) {
+    var result = "";
+    var groupKeys = [];
+    var totalMessages = 0;
+    for (var k in group) {
+       totalMessages += group[k].length;
+       groupKeys.push([k, WarnPatternsSeverity[parseInt(k)], group[k].length]);
+    }
+    groupKeys.sort(bySeverityMessageCount);
+    for (var idx=0; idx<groupKeys.length; idx++) {
+      var k = groupKeys[idx][0];
+      var messages = group[k];
+      var w = parseInt(k);
+      var wcolor = SeverityColors[WarnPatternsSeverity[w]];
+      var description = WarnPatternsDescription[w];
+      if (description.length == 0)
+          description = "???";
+      GlobalAnchor += 1;
+      result += "<table class='t1'><tr bgcolor='" + wcolor + "'><td>" +
+                "<button class='bt' id='" + GlobalAnchor + "_mark" +
+                "' onclick='expand(\\"" + GlobalAnchor + "\\");'>" +
+                "&#x2295</button> " +
+                description + " (" + messages.length + ")</td></tr></table>";
+      result += "<div id='" + GlobalAnchor +
+                "' style='display:none;'><table class='t1'>";
+      var c = 0;
+      messages.sort(compareMessages);
+      for (var i=0; i<messages.length; i++) {
+        result += "<tr><td class='c" + c + "'>" +
+                  addURL(WarningMessages[messages[i][2]]) + "</td></tr>";
+        c = 1 - c;
+      }
+      result += "</table></div>";
+    }
+    if (result.length > 0) {
+      return "<br><span style='background-color:" + color + "'><b>" +
+             header + ": " + totalMessages +
+             "</b></span><blockquote><table class='t1'>" +
+             result + "</table></blockquote>";
+
+    }
+    return "";  // empty section
+  }
+  function generateSectionsBySeverity() {
+    var result = "";
+    var groups = groupWarningsBySeverity();
+    for (s=0; s<SeverityColors.length; s++) {
+      result += createWarningSection(SeverityHeaders[s], SeverityColors[s], groups[s]);
+    }
+    return result;
+  }
+  function generateSectionsByProject() {
+    var result = "";
+    var groups = groupWarningsByProject();
+    for (i=0; i<groups.length; i++) {
+      result += createWarningSection(ProjectNames[i], 'lightgrey', groups[i]);
+    }
+    return result;
+  }
+  function groupWarnings(generator) {
+    GlobalAnchor = 0;
+    var e = document.getElementById("warning_groups");
+    e.innerHTML = generator();
+  }
+  function groupBySeverity() {
+    groupWarnings(generateSectionsBySeverity);
+  }
+  function groupByProject() {
+    groupWarnings(generateSectionsByProject);
+  }
+"""
+
+
+# Emit a JavaScript const string
+def emit_const_string(name, value):
+  print 'const ' + name + ' = "' + escape_string(value) + '";'
+
+
+# Emit a JavaScript const integer array.
+def emit_const_int_array(name, array):
+  print 'const ' + name + ' = ['
+  for n in array:
+    print str(n) + ','
+  print '];'
+
+
+# Emit a JavaScript const string array.
+def emit_const_string_array(name, array):
+  print 'const ' + name + ' = ['
+  for s in array:
+    print '"' + strip_escape_string(s) + '",'
+  print '];'
+
+
+# Emit a JavaScript const object array.
+def emit_const_object_array(name, array):
+  print 'const ' + name + ' = ['
+  for x in array:
+    print str(x) + ','
+  print '];'
+
+
+def emit_js_data():
+  """Dump dynamic HTML page's static JavaScript data."""
+  emit_const_string('FlagURL', args.url if args.url else '')
+  emit_const_string('FlagSeparator', args.separator if args.separator else '')
+  emit_const_string_array('SeverityColors', severity.colors)
+  emit_const_string_array('SeverityHeaders', severity.headers)
+  emit_const_string_array('SeverityColumnHeaders', severity.column_headers)
+  emit_const_string_array('ProjectNames', project_names)
+  emit_const_int_array('WarnPatternsSeverity',
+                       [w['severity'] for w in warn_patterns])
+  emit_const_string_array('WarnPatternsDescription',
+                          [w['description'] for w in warn_patterns])
+  emit_const_string_array('WarnPatternsOption',
+                          [w['option'] for w in warn_patterns])
+  emit_const_string_array('WarningMessages', warning_messages)
+  emit_const_object_array('Warnings', warning_records)
+
+draw_table_javascript = """
+google.charts.load('current', {'packages':['table']});
+google.charts.setOnLoadCallback(drawTable);
+function drawTable() {
+  var data = new google.visualization.DataTable();
+  data.addColumn('string', StatsHeader[0]);
+  for (var i=1; i<StatsHeader.length; i++) {
+    data.addColumn('number', StatsHeader[i]);
+  }
+  data.addRows(StatsRows);
+  for (var i=0; i<StatsRows.length; i++) {
+    for (var j=0; j<StatsHeader.length; j++) {
+      data.setProperty(i, j, 'style', 'border:1px solid black;');
+    }
+  }
+  var table = new google.visualization.Table(document.getElementById('stats_table'));
+  table.draw(data, {allowHtml: true, alternatingRowStyle: true});
+}
+"""
 
 
 def dump_html():
@@ -2033,15 +2273,18 @@ def dump_html():
   dump_html_prologue('Warnings for ' + platform_version + ' - ' +
                      target_product + ' - ' + target_variant)
   dump_stats()
-  dump_stats_by_project()
+  print '<br><div id="stats_table"></div><br>'
+  print '\n<script>'
+  emit_js_data()
+  print scripts_for_warning_groups
+  print '</script>'
   emit_buttons()
-  # sort table based on number of members once dump_stats has de-duplicated the
-  # members.
-  warn_patterns.sort(reverse=True, key=lambda i: len(i['members']))
-  # Dump warnings by severity. If severity.SKIP warnings are not dumped,
-  # the project anchors should be dumped through dump_skipped_anchors.
-  for s in severity.kinds:
-    dump_severity(s)
+  # Warning messages are grouped by severities or project names.
+  print '<br><div id="warning_groups"></div>'
+  if args.byproject:
+    print '<script>groupByProject();</script>'
+  else:
+    print '<script>groupBySeverity();</script>'
   dump_fixed()
   dump_html_epilogue()
 
@@ -2049,14 +2292,17 @@ def dump_html():
 ##### Functions to count warnings and dump csv file. #########################
 
 
-def description_for_csv(cat):
-  if not cat['description']:
+def description_for_csv(category):
+  if not category['description']:
     return '?'
-  return cat['description']
+  return category['description']
 
 
 def string_for_csv(s):
+  # Only some Java warning desciptions have used quotation marks.
+  # TODO(chh): if s has double quote character, s should be quoted.
   if ',' in s:
+    # TODO(chh): replace a double quote with two double quotes in s.
     return '"{}"'.format(s)
   return s
 
@@ -2079,14 +2325,17 @@ def count_severity(sev, kind):
   return total
 
 
+# dump number of warnings in csv format to stdout
 def dump_csv():
   """Dump number of warnings in csv format to stdout."""
   sort_warnings()
   total = 0
-  for s in severity.kinds:
+  for s in severity.range:
     total += count_severity(s, severity.column_headers[s])
   print '{},,{}'.format(total, 'All warnings')
 
+
+##### Main function starts here. #########################
 
 parse_input_file()
 if args.gencsv:
