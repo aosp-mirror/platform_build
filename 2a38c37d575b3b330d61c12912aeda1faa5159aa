@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85ec8b0b_9a2bcceb",
+        "filename": "tools/warn.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1908,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-27T07:58:46Z",
+      "side": 1,
+      "message": "LOL. I hope that one day we can eliminate this warning. :)",
+      "revId": "2a38c37d575b3b330d61c12912aeda1faa5159aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
