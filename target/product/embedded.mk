@@ -32,6 +32,7 @@ PRODUCT_PACKAGES += \
     grep \
     gzip \
     healthd \
+    hwservicemanager \
     init \
     init.environ.rc \
     init.rc \
