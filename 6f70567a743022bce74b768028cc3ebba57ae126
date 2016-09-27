@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25f59ffe_7e0cd19c",
+        "filename": "tools/droiddoc/templates-ndk/assets/css/default.css",
+        "patchSetId": 3
+      },
+      "lineNbr": 4219,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2016-09-27T09:22:32Z",
+      "side": 1,
+      "message": "empty needed adding here like elsewhere?",
+      "revId": "6f70567a743022bce74b768028cc3ebba57ae126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25f59ffe_1e0f8d93",
+        "filename": "tools/droiddoc/templates-sdk-dev/assets/css/default.css",
+        "patchSetId": 3
+      },
+      "lineNbr": 3211,
+      "author": {
+        "id": 1039338
+      },
+      "writtenOn": "2016-09-27T09:22:32Z",
+      "side": 1,
+      "message": "empty needed adding here like elsewhere?",
+      "revId": "6f70567a743022bce74b768028cc3ebba57ae126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
