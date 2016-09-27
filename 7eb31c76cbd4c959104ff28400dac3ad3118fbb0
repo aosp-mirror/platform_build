@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "85ec8b0b_eef8d6ac",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-09-27T19:00:13Z",
+      "side": 1,
+      "message": "Once you\u0027ve got vendor image support, we\u0027ll want a way to specify a default public key for vendor if we\u0027re not building the vendor image. For AOSP, the vendor image is either coming in as a prebuilt, or is already on the device.",
+      "parentUuid": "6b3926b8_99ed27b8",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 52
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_7e26b5d6",
         "filename": "core/main.mk",
         "patchSetId": 1
