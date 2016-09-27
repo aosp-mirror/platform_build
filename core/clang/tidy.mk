@@ -78,6 +78,7 @@ endef
 # Do not give warnings to external or vendor header files,
 # which contain too many warnings.
 DEFAULT_TIDY_HEADER_DIRS := \
+  $(subst $(space),, \
      art/ \
     |bionic/ \
     |bootable/ \
@@ -89,7 +90,8 @@ DEFAULT_TIDY_HEADER_DIRS := \
     |frameworks/ \
     |libcore/ \
     |libnativehelper/ \
-    |system/
+    |system/ \
+  )
 
 # Default filter contains current directory $1 and DEFAULT_TIDY_HEADER_DIRS.
 define default_tidy_header_filter
