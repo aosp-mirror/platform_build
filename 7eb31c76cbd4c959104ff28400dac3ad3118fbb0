@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "455613ef_af1b99e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-09-28T16:06:01Z",
+      "side": 1,
+      "message": "I think that\u0027s already possible this way\n\n BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS +\u003d \" --chain-partition vendor:1:/path/to/vendor_public_key.avbpubkey\"\n\nwhere /path/to/vendor_public_key.avbpubkey is generated using \u0027avbtool extract_public_key\u0027. We can add some porcelain on top of that if needed!",
+      "parentUuid": "85ec8b0b_eef8d6ac",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 52
+      },
+      "revId": "7eb31c76cbd4c959104ff28400dac3ad3118fbb0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6b3926b8_7e26b5d6",
         "filename": "core/main.mk",
         "patchSetId": 1
