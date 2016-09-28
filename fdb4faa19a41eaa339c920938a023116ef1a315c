@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85dd6ba2_638efe2d",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1666,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-28T02:03:29Z",
+      "side": 1,
+      "message": "name, pattern\n\nThe python style guide says that we should avoid abbreviations.",
+      "range": {
+        "startLine": 1666,
+        "startChar": 29,
+        "endLine": 1666,
+        "endChar": 33
+      },
+      "revId": "fdb4faa19a41eaa339c920938a023116ef1a315c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85dd6ba2_c399aa76",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1670,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-09-28T02:03:29Z",
+      "side": 1,
+      "message": "pattern",
+      "range": {
+        "startLine": 1670,
+        "startChar": 27,
+        "endLine": 1670,
+        "endChar": 28
+      },
+      "revId": "fdb4faa19a41eaa339c920938a023116ef1a315c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
