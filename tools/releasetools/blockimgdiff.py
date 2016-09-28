@@ -696,10 +696,19 @@ class BlockImageDiff(object):
     with open(prefix + ".new.dat", "wb") as new_f:
       for xf in self.transfers:
         if xf.style == "zero":
-          pass
+          tgt_size = xf.tgt_ranges.size() * self.tgt.blocksize
+          print("%10d %10d (%6.2f%%) %7s %s %s" % (
+              tgt_size, tgt_size, 100.0, xf.style, xf.tgt_name,
+              str(xf.tgt_ranges)))
+
         elif xf.style == "new":
           for piece in self.tgt.ReadRangeSet(xf.tgt_ranges):
             new_f.write(piece)
+          tgt_size = xf.tgt_ranges.size() * self.tgt.blocksize
+          print("%10d %10d (%6.2f%%) %7s %s %s" % (
+              tgt_size, tgt_size, 100.0, xf.style,
+              xf.tgt_name, str(xf.tgt_ranges)))
+
         elif xf.style == "diff":
           src = self.src.ReadRangeSet(xf.src_ranges)
           tgt = self.tgt.ReadRangeSet(xf.tgt_ranges)
@@ -726,6 +735,12 @@ class BlockImageDiff(object):
             # These are identical; we don't need to generate a patch,
             # just issue copy commands on the device.
             xf.style = "move"
+            if xf.src_ranges != xf.tgt_ranges:
+              print("%10d %10d (%6.2f%%) %7s %s %s (from %s)" % (
+                  tgt_size, tgt_size, 100.0, xf.style,
+                  xf.tgt_name if xf.tgt_name == xf.src_name else (
+                      xf.tgt_name + " (from " + xf.src_name + ")"),
+                  str(xf.tgt_ranges), str(xf.src_ranges)))
           else:
             # For files in zip format (eg, APKs, JARs, etc.) we would
             # like to use imgdiff -z if possible (because it usually
@@ -773,10 +788,11 @@ class BlockImageDiff(object):
           size = len(patch)
           with lock:
             patches[patchnum] = (patch, xf)
-            print("%10d %10d (%6.2f%%) %7s %s" % (
+            print("%10d %10d (%6.2f%%) %7s %s %s %s" % (
                 size, tgt_size, size * 100.0 / tgt_size, xf.style,
                 xf.tgt_name if xf.tgt_name == xf.src_name else (
-                    xf.tgt_name + " (from " + xf.src_name + ")")))
+                    xf.tgt_name + " (from " + xf.src_name + ")"),
+                str(xf.tgt_ranges), str(xf.src_ranges)))
 
       threads = [threading.Thread(target=diff_worker)
                  for _ in range(self.threads)]
@@ -1102,27 +1118,23 @@ class BlockImageDiff(object):
   def FindTransfers(self):
     """Parse the file_map to generate all the transfers."""
 
-    def AddTransfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id,
-                    split=False):
-      """Wrapper function for adding a Transfer().
+    def AddSplitTransfers(tgt_name, src_name, tgt_ranges, src_ranges,
+                          style, by_id):
+      """Add one or multiple Transfer()s by splitting large files.
 
       For BBOTA v3, we need to stash source blocks for resumable feature.
       However, with the growth of file size and the shrink of the cache
       partition source blocks are too large to be stashed. If a file occupies
-      too many blocks (greater than MAX_BLOCKS_PER_DIFF_TRANSFER), we split it
-      into smaller pieces by getting multiple Transfer()s.
+      too many blocks, we split it into smaller pieces by getting multiple
+      Transfer()s.
 
       The downside is that after splitting, we may increase the package size
       since the split pieces don't align well. According to our experiments,
       1/8 of the cache size as the per-piece limit appears to be optimal.
       Compared to the fixed 1024-block limit, it reduces the overall package
-      size by 30% volantis, and 20% for angler and bullhead."""
+      size by 30% for volantis, and 20% for angler and bullhead."""
 
-      # We care about diff transfers only.
-      if style != "diff" or not split:
-        Transfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
-        return
-
+      # Possibly split large files into smaller chunks.
       pieces = 0
       cache_size = common.OPTIONS.cache_size
       split_threshold = 0.125
@@ -1157,6 +1169,74 @@ class BlockImageDiff(object):
         src_split_name = "%s-%d" % (src_name, pieces)
         Transfer(tgt_split_name, src_split_name, tgt_ranges, src_ranges, style,
                  by_id)
+
+    def AddTransfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id,
+                    split=False):
+      """Wrapper function for adding a Transfer()."""
+
+      # We specialize diff transfers only (which covers bsdiff/imgdiff/move);
+      # otherwise add the Transfer() as is.
+      if style != "diff" or not split:
+        Transfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
+        return
+
+      # Handle .odex files specially to analyze the block-wise difference. If
+      # most of the blocks are identical with only few changes (e.g. header),
+      # we will patch the changed blocks only. This avoids stashing unchanged
+      # blocks while patching. We limit the analysis to files without size
+      # changes only. This is to avoid sacrificing the OTA generation cost too
+      # much.
+      if (tgt_name.split(".")[-1].lower() == 'odex' and
+          tgt_ranges.size() == src_ranges.size()):
+
+        # 0.5 threshold can be further tuned. The tradeoff is: if only very
+        # few blocks remain identical, we lose the opportunity to use imgdiff
+        # that may have better compression ratio than bsdiff.
+        crop_threshold = 0.5
+
+        tgt_skipped = RangeSet()
+        src_skipped = RangeSet()
+        tgt_size = tgt_ranges.size()
+        tgt_changed = 0
+        for src_block, tgt_block in zip(src_ranges.next_item(),
+                                        tgt_ranges.next_item()):
+          src_rs = RangeSet(str(src_block))
+          tgt_rs = RangeSet(str(tgt_block))
+          if self.src.ReadRangeSet(src_rs) == self.tgt.ReadRangeSet(tgt_rs):
+            tgt_skipped = tgt_skipped.union(tgt_rs)
+            src_skipped = src_skipped.union(src_rs)
+          else:
+            tgt_changed += tgt_rs.size()
+
+          # Terminate early if no clear sign of benefits.
+          if tgt_changed > tgt_size * crop_threshold:
+            break
+
+        if tgt_changed < tgt_size * crop_threshold:
+          assert tgt_changed + tgt_skipped.size() == tgt_size
+          print('%10d %10d (%6.2f%%) %s' % (tgt_skipped.size(), tgt_size,
+                tgt_skipped.size() * 100.0 / tgt_size, tgt_name))
+          AddSplitTransfers(
+              "%s-skipped" % (tgt_name,),
+              "%s-skipped" % (src_name,),
+              tgt_skipped, src_skipped, style, by_id)
+
+          # Intentionally change the file extension to avoid being imgdiff'd as
+          # the files are no longer in their original format.
+          tgt_name = "%s-cropped" % (tgt_name,)
+          src_name = "%s-cropped" % (src_name,)
+          tgt_ranges = tgt_ranges.subtract(tgt_skipped)
+          src_ranges = src_ranges.subtract(src_skipped)
+
+          # Possibly having no changed blocks.
+          if not tgt_ranges:
+            return
+
+      # Add the transfer(s).
+      AddSplitTransfers(
+          tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
+
+    print("Finding transfers...")
 
     empty = RangeSet()
     for tgt_fn, tgt_ranges in self.tgt.file_map.items():
