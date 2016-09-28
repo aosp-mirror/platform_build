@@ -561,10 +561,6 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
     $(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
 
-ifeq ($(strip $(WITH_SYNTAX_CHECK)),)
-  LOCAL_NO_SYNTAX_CHECK := true
-endif
-
 ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
   LOCAL_NO_STATIC_ANALYZER := true
 endif
@@ -593,10 +589,6 @@ endif
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
   my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
            $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
-else
-ifneq ($(LOCAL_NO_SYNTAX_CHECK),true)
-  my_cc := $(my_cc) -fsyntax-only
-endif
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
@@ -613,10 +605,6 @@ endif
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
   my_cxx := CCC_CXX=$(CLANG_CXX) CLANG_CXX=$(CLANG_CXX) \
             $(SYNTAX_TOOLS_PREFIX)/c++-analyzer
-else
-ifneq ($(LOCAL_NO_SYNTAX_CHECK),true)
-  my_cxx := $(my_cxx) -fsyntax-only
-endif
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
