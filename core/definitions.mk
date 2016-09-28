@@ -1196,31 +1196,6 @@ $(if $(PRIVATE_RENAME_CPP_EXT),\
   $(hide) mv $(basename $@).cc $@)
 endef
 
-
-######################################################################
-## Commands for generating DBus adaptors from .dbus-xml files.
-######################################################################
-define generate-dbus-adaptors
-@echo "Generating DBus adaptors for $(PRIVATE_MODULE)"
-@mkdir -p $(dir $@)
-$(hide) $(DBUS_GENERATOR) \
-	--service-config=$(PRIVATE_DBUS_SERVICE_CONFIG) \
-	--adaptor=$@ \
-	$<
-endef
-
-######################################################################
-## Commands for generating DBus proxies from .dbus-xml files.
-######################################################################
-define generate-dbus-proxies
-@echo "Generating DBus proxies for $(PRIVATE_MODULE)"
-@mkdir -p $(dir $@)
-$(hide) $(DBUS_GENERATOR) \
-	--service-config=$(PRIVATE_DBUS_SERVICE_CONFIG) \
-	--proxy=$@ \
-	$(filter %.dbus-xml,$^)
-endef
-
 ###########################################################
 ## Helper to set include paths form transform-*-to-o
 ###########################################################
