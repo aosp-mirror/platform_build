@@ -83,6 +83,7 @@ dont_bother_goals := clean clobber dataclean installclean \
     ramdisk-nodeps \
     bootimage-nodeps \
     recoveryimage-nodeps \
+    vbmetaimage-nodeps \
     product-graph dump-products
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
@@ -940,6 +941,9 @@ systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
+.PHONY: vbmetaimage
+vbmetaimage: $(INSTALLED_VBMETAIMAGE_TARGET)
+
 .PHONY: auxiliary
 auxiliary: $(INSTALLED_AUX_TARGETS)
 
@@ -949,6 +953,7 @@ droidcore: files \
 	systemimage \
 	$(INSTALLED_BOOTIMAGE_TARGET) \
 	$(INSTALLED_RECOVERYIMAGE_TARGET) \
+	$(INSTALLED_VBMETAIMAGE_TARGET) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_CACHEIMAGE_TARGET) \
 	$(INSTALLED_BPTIMAGE_TARGET) \

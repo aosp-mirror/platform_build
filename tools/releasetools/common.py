@@ -392,6 +392,16 @@ def DumpInfoDict(d):
     print "%-25s = (%s) %s" % (k, type(v).__name__, v)
 
 
+def AppendAVBSigningArgs(cmd):
+  """Append signing arguments for avbtool."""
+  keypath = OPTIONS.info_dict.get("board_avb_key_path", None)
+  algorithm = OPTIONS.info_dict.get("board_avb_algorithm", None)
+  if not keypath or not algorithm:
+    algorithm = "SHA256_RSA4096"
+    keypath = "external/avb/test/data/testkey_rsa4096.pem"
+  cmd.extend(["--key", keypath, "--algorithm", algorithm])
+
+
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
                         has_ramdisk=False):
   """Build a bootable image from the specified sourcedir.
@@ -511,111 +521,20 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     img_unsigned.close()
     img_keyblock.close()
 
-  img.seek(os.SEEK_SET, 0)
-  data = img.read()
-
-  if has_ramdisk:
-    ramdisk_img.close()
-  img.close()
-
-  return data
-
-
-def _BuildBvbBootableImage(sourcedir, fs_config_file, system_img_path,
-                           info_dict=None, has_ramdisk=False):
-  """Build a bootable image compatible with Brillo Verified Boot from the
-  specified sourcedir.
-
-  Take a kernel, cmdline, system image path, and optionally a ramdisk
-  directory from the input (in 'sourcedir'), and turn them into a boot
-  image.  Return the image data, or None if sourcedir does not appear
-  to contains files for building the requested image.
-  """
-
-  def make_ramdisk():
-    ramdisk_img = tempfile.NamedTemporaryFile()
-
-    if os.access(fs_config_file, os.F_OK):
-      cmd = ["mkbootfs", "-f", fs_config_file,
-             os.path.join(sourcedir, "RAMDISK")]
-    else:
-      cmd = ["mkbootfs", os.path.join(sourcedir, "RAMDISK")]
-    p1 = Run(cmd, stdout=subprocess.PIPE)
-    p2 = Run(["minigzip"], stdin=p1.stdout, stdout=ramdisk_img.file.fileno())
-
-    p2.wait()
-    p1.wait()
-    assert p1.returncode == 0, "mkbootfs of %s ramdisk failed" % (sourcedir,)
-    assert p2.returncode == 0, "minigzip of %s ramdisk failed" % (sourcedir,)
-
-    return ramdisk_img
-
-  if not os.access(os.path.join(sourcedir, "kernel"), os.F_OK):
-    return None
-
-  if has_ramdisk and not os.access(os.path.join(sourcedir, "RAMDISK"), os.F_OK):
-    return None
-
-  if info_dict is None:
-    info_dict = OPTIONS.info_dict
-
-  img = tempfile.NamedTemporaryFile()
-
-  if has_ramdisk:
-    ramdisk_img = make_ramdisk()
-
-  # use BVBTOOL from environ, or "bvbtool" if empty or not set
-  bvbtool = os.getenv('BVBTOOL') or "bvbtool"
-
-  # First, create boot.img.
-  cmd = [bvbtool, "make_boot_image"]
-
-  fn = os.path.join(sourcedir, "cmdline")
-  if os.access(fn, os.F_OK):
-    cmd.append("--kernel_cmdline")
-    cmd.append(open(fn).read().rstrip("\n"))
-
-  cmd.extend(["--kernel", os.path.join(sourcedir, "kernel")])
-
-  if has_ramdisk:
-    cmd.extend(["--initrd", ramdisk_img.name])
-
-  cmd.extend(["--rootfs_with_hashes", system_img_path])
-
-  args = info_dict.get("board_bvb_make_boot_image_args", None)
-  if args and args.strip():
-    cmd.extend(shlex.split(args))
-
-  rollback_index = info_dict.get("board_bvb_rollback_index", None)
-  if rollback_index and rollback_index.strip():
-    cmd.extend(["--rollback_index", rollback_index.strip()])
-
-  cmd.extend(["--output", img.name])
-
-  p = Run(cmd, stdout=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, "bvbtool make_boot_image of %s image failed" % (
-      os.path.basename(sourcedir),)
-
-  # Then, sign boot.img.
-  cmd = [bvbtool, "sign_boot_image", "--image", img.name]
-
-  algorithm = info_dict.get("board_bvb_algorithm", None)
-  key_path = info_dict.get("board_bvb_key_path", None)
-  if algorithm and algorithm.strip() and key_path and key_path.strip():
-    cmd.extend(["--algorithm", algorithm, "--key", key_path])
-  else:
-    cmd.extend(["--algorithm", "SHA256_RSA4096"])
-    cmd.extend(["--key", "external/bvb/test/testkey_rsa4096.pem"])
-
-  args = info_dict.get("board_bvb_sign_boot_image_args", None)
-  if args and args.strip():
-    cmd.extend(shlex.split(args))
-
-  p = Run(cmd, stdout=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, "bvbtool sign_boot_image of %s image failed" % (
-      os.path.basename(sourcedir),)
+  # AVB: if enabled, calculate and add hash to boot.img.
+  if OPTIONS.info_dict.get("board_avb_enable", None) == "true":
+    avbtool = os.getenv('AVBTOOL') or "avbtool"
+    part_size = OPTIONS.info_dict.get("boot_size", None)
+    cmd = [avbtool, "add_hash_footer", "--image", img.name,
+           "--partition_size", str(part_size), "--partition_name", "boot"]
+    AppendAVBSigningArgs(cmd)
+    args = OPTIONS.info_dict.get("board_avb_boot_add_hash_footer_args", None)
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    p = Run(cmd, stdout=subprocess.PIPE)
+    p.communicate()
+    assert p.returncode == 0, "avbtool add_hash_footer of %s failed" % (
+        os.path.basename(OPTIONS.input_tmp))
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
@@ -658,14 +577,9 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
                  info_dict.get("recovery_as_boot") == "true")
 
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
-  if info_dict.get("board_bvb_enable", None) == "true":
-    data = _BuildBvbBootableImage(os.path.join(unpack_dir, tree_subdir),
-                                  os.path.join(unpack_dir, fs_config),
-                                  system_img_path, info_dict, has_ramdisk)
-  else:
-    data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
-                               os.path.join(unpack_dir, fs_config),
-                               info_dict, has_ramdisk)
+  data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
+                             os.path.join(unpack_dir, fs_config),
+                             info_dict, has_ramdisk)
   if data:
     return File(name, data)
   return None
