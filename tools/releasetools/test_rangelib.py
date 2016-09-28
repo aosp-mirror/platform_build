@@ -138,3 +138,14 @@ class RangeSetTest(unittest.TestCase):
 
     with self.assertRaises(AssertionError):
       RangeSet.parse_raw("4,0,10")
+
+  def test_next_item(self):
+    self.assertEqual(
+        list(RangeSet("0-9").next_item()),
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    self.assertEqual(
+        list(RangeSet("10-19 3-5").next_item()),
+        [3, 4, 5, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+    self.assertEqual(
+        list(RangeSet("10-19 3 5 7").next_item()),
+        [3, 5, 7, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
