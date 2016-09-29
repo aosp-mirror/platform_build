@@ -516,28 +516,8 @@ INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
 	--kernel $(INSTALLED_KERNEL_TARGET)
 
-INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS := \
-	--kernel $(INSTALLED_KERNEL_TARGET) \
-	--rootfs_with_hashes $(PRODUCT_OUT)/system.img
-
-ifdef BOARD_BVB_ROLLBACK_INDEX
-INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS += \
-	--rollback_index $(BOARD_BVB_ROLLBACK_INDEX)
-endif
-
-ifndef BOARD_BVB_KEY_PATH
-# If key path isn't specified, use the 4096-bit test key.
-INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS := --algorithm SHA256_RSA4096 \
-	--key external/bvb/test/testkey_rsa4096.pem
-else
-INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS := \
-	--algorithm $(BOARD_BVB_ALGORITHM) --key $(BOARD_BVB_KEY_PATH)
-endif
-
-
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 INTERNAL_BOOTIMAGE_ARGS += --ramdisk $(INSTALLED_RAMDISK_TARGET)
-INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS += --initrd $(INSTALLED_RAMDISK_TARGET)
 endif
 
 INTERNAL_BOOTIMAGE_FILES := $(filter-out --%,$(INTERNAL_BOOTIMAGE_ARGS))
@@ -577,28 +557,35 @@ ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 endif
 endif
 
-ifeq ($(BOARD_BVB_ENABLE),true)
-
-$(INSTALLED_BOOTIMAGE_TARGET): $(BVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(PRODUCT_OUT)/system.img
-	$(call pretty,"Target boot image: $@")
-	$(hide) $(BVBTOOL) make_boot_image $(INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS) $(BOARD_BVB_MAKE_BOOT_IMAGE_ARGS) --output $@
-	$(hide) $(BVBTOOL) sign_boot_image $(INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS) $(BOARD_BVB_SIGN_BOOT_IMAGE_ARGS) --image $@
-	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
-
-.PHONY: bootimage-nodeps
-bootimage-nodeps: $(BVBTOOL)
-	@echo "make $@: ignoring dependencies"
-	$(hide) $(BVBTOOL) make_boot_image $(INTERNAL_BVBTOOL_MAKE_BOOT_IMAGE_ARGS) $(BOARD_BVB_MAKE_BOOT_IMAGE_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
-	$(hide) $(BVBTOOL) sign_boot_image $(INTERNAL_BVBTOOL_SIGN_BOOT_IMAGE_ARGS) $(BOARD_BVB_SIGN_BOOT_IMAGE_ARGS) --image $(INSTALLED_BOOTIMAGE_TARGET)
-	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
-
-else # BOARD_BVB_ENABLE
-
 # We build recovery as boot image if BOARD_USES_RECOVERY_AS_BOOT is true.
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 ifeq ($(TARGET_BOOTIMAGE_USE_EXT2),true)
 $(error TARGET_BOOTIMAGE_USE_EXT2 is not supported anymore)
-else ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_BOOT_SIGNER)) # TARGET_BOOTIMAGE_USE_EXT2 != true
+
+else ifeq (true,$(BOARD_AVB_ENABLE)) # TARGET_BOOTIMAGE_USE_EXT2 != true
+
+$(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES)
+	$(call pretty,"Target boot image: $@")
+	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(AVBTOOL) add_hash_footer \
+	  --image $@ \
+	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+	  --partition_name boot $(INTERNAL_AVB_SIGNING_ARGS) \
+	  $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+
+.PHONY: bootimage-nodeps
+bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL)
+	@echo "make $@: ignoring dependencies"
+	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
+	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(AVBTOOL) add_hash_footer \
+	  --image $@ \
+	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+	  --partition_name boot $(INTERNAL_AVB_SIGNING_ARGS) \
+	  $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
+
+else ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_BOOT_SIGNER)) # BOARD_AVB_ENABLE != true
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOT_SIGNER)
 	$(call pretty,"Target boot image: $@")
@@ -643,7 +630,6 @@ bootimage-nodeps: $(MKBOOTIMG)
 
 endif # TARGET_BOOTIMAGE_USE_EXT2
 endif # BOARD_USES_RECOVERY_AS_BOOT
-endif # BOARD_BVB_ENABLE
 
 else	# TARGET_NO_KERNEL
 # HACK: The top-level targets depend on the bootimage.  Not all targets
@@ -1194,12 +1180,14 @@ define build-systemimage-target
            fi; \
            mkdir -p $(DIST_DIR); cp $(INSTALLED_FILES_FILE) $(DIST_DIR)/installed-files-rescued.txt; \
            exit 1 )
-  $(if $(BOARD_BVB_ENABLE), $(hide) $(BVBTOOL) add_image_hashes $(BOARD_BVB_ADD_IMAGE_HASHES_ARGS) --image $(1))
+  $(if $(BOARD_AVB_ENABLE), \
+    $(hide) $(AVBTOOL) add_hashtree_footer \
+      --image $(1) \
+      --partition_size $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) \
+      --partition_name system \
+      $(INTERNAL_AVB_SIGNING_ARGS) \
+      $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
 endef
-
-ifeq ($(BOARD_BVB_ENABLE),true)
-FULL_SYSTEMIMAGE_DEPS += $(BVBTOOL)
-endif
 
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
 	$(call build-systemimage-target,$@)
@@ -1515,6 +1503,60 @@ cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 
 endif # BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
 
+# -----------------------------------------------------------------
+# vbmeta image
+ifeq ($(BOARD_AVB_ENABLE),true)
+
+BUILT_VBMETAIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta.img
+
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS := \
+    --include_descriptors_from_image $(INSTALLED_BOOTIMAGE_TARGET) \
+    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE) \
+    --generate_dm_verity_cmdline_from_hashtree $(INSTALLED_SYSTEMIMAGE)
+
+ifdef BOARD_AVB_ROLLBACK_INDEX
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --rollback_index $(BOARD_AVB_ROLLBACK_INDEX)
+endif
+
+ifndef BOARD_AVB_KEY_PATH
+# If key path isn't specified, use the 4096-bit test key.
+INTERNAL_AVB_SIGNING_ARGS := \
+    --algorithm SHA256_RSA4096 \
+    --key external/avb/test/data/testkey_rsa4096.pem
+else
+INTERNAL_AVB_SIGNING_ARGS := \
+    --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
+endif
+
+ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
+  $(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
+endif
+
+ifndef BOARD_SYSTEMIMAGE_PARTITION_SIZE
+  $(error BOARD_SYSTEMIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
+endif
+
+define build-vbmetaimage-target
+  $(call pretty,"Target vbmeta image: $(INSTALLED_VBMETAIMAGE_TARGET)")
+  $(hide) $(AVBTOOL) make_vbmeta_image \
+    $(INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS) \
+    $(INTERNAL_AVB_SIGNING_ARGS) \
+    $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
+    --output $@
+endef
+
+INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
+$(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_SYSTEMIMAGE)
+	$(build-vbmetaimage-target)
+
+.PHONY: vbmetaimage-nodeps
+vbmetaimage-nodeps:
+	$(build-vbmetaimage-target)
+
+# We need $(AVBTOOL) for system.img generation.
+FULL_SYSTEMIMAGE_DEPS += $(AVBTOOL)
+
+endif # BOARD_AVB_ENABLE
 
 # -----------------------------------------------------------------
 # vendor partition image
@@ -1898,14 +1940,14 @@ endif
 ifeq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
 	$(hide) echo "full_recovery_image=true" >> $(zip_root)/META/misc_info.txt
 endif
-ifeq ($(BOARD_BVB_ENABLE),true)
-	$(hide) echo "board_bvb_enable=true" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_bvb_make_boot_image_args=$(BOARD_BVB_MAKE_BOOT_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_bvb_sign_boot_image_args=$(BOARD_BVB_SIGN_BOOT_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_bvb_algorithm=$(BOARD_BVB_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_bvb_key_path=$(BOARD_BVB_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_bvb_rollback_index=$(BOARD_BVB_ROLLBACK_INDEX)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_bvb_add_image_hashes_args=$(BOARD_BVB_ADD_IMAGE_HASHES_ARGS)" >> $(zip_root)/META/misc_info.txt
+ifeq ($(BOARD_AVB_ENABLE),true)
+	$(hide) echo "board_avb_enable=true" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_rollback_index=$(BOARD_AVB_ROLLBACK_INDEX)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_key_path=$(BOARD_AVB_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_algorithm=$(BOARD_AVB_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_boot_add_hash_footer_args=$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_system_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_make_vbmeta_image_args=$(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_BPT_INPUT_FILES
 	$(hide) echo "board_bpt_enable=true" >> $(zip_root)/META/misc_info.txt
