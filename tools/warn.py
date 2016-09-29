@@ -2342,10 +2342,14 @@ def dump_csv():
   print '{},,{}'.format(total, 'All warnings')
 
 
-##### Main function starts here. #########################
+def main():
+  parse_input_file()
+  if args.gencsv:
+    dump_csv()
+  else:
+    dump_html()
 
-parse_input_file()
-if args.gencsv:
-  dump_csv()
-else:
-  dump_html()
+
+# Run main function if warn.py is the main program.
+if __name__ == '__main__':
+  main()
