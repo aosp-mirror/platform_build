@@ -56,6 +56,7 @@ my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_additional_dependencies := $(LOCAL_ADDITIONAL_DEPENDENCIES)
 my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
+my_export_c_include_deps := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
 ifneq (,$(foreach dir,$(COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH))))
   my_native_coverage := true
@@ -1727,7 +1728,7 @@ export_include_deps += $(strip \
 $(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
 # By adding $(my_generated_sources) it makes sure the headers get generated
 # before any dependent source files get compiled.
-$(export_includes) : $(my_generated_sources) $(export_include_deps)
+$(export_includes) : $(my_export_c_include_deps) $(my_generated_sources) $(export_include_deps)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp && touch $@.tmp
 ifdef my_export_c_include_dirs
