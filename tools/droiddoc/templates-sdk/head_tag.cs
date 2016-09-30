@@ -78,7 +78,10 @@ if:devsite ?>
           elif:reference ?>/reference<?cs
           elif:downloads ?>/downloads<?cs /if ?><?cs
         else ?><?cs
-          if:(guide||develop||training||reference||tools||sdk||samples) ?><?cs
+          if:reference.testSupport ?>/reference/android/support/test<?cs
+          elif:reference.wearableSupport ?>/reference/android/support/wearable<?cs
+          elif:reference.constraintSupport ?>/reference/android/support/constraint<?cs
+          elif:(guide||develop||training||reference||tools||sdk||samples) ?><?cs
             if:guide ?>/guide<?cs
             elif:training ?>/training<?cs
             elif:reference ?>/reference<?cs
@@ -103,8 +106,6 @@ if:devsite ?>
           elif:wearpreview ?>/wear/preview<?cs
           elif:work ?>/work<?cs
           elif:design ?>/design<?cs
-          elif:reference.testSupport ?>/reference/android/support/test<?cs
-          elif:reference.wearableSupport ?>/reference/android/support/wearable<?cs
           elif:walkthru ?>/walkthru<?cs /if ?><?cs
         /if ?>/_book.yaml" /><?cs
         /if ?>
