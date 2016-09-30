@@ -51,6 +51,7 @@ DEFAULT_LOCAL_TIDY_CHECKS := \
   hardware/qcom:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
   vendor/:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
   vendor/google:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
+  vendor/google_devices:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
 
 # Returns 2nd word of $(1) if $(2) has prefix of the 1st word of $(1).
 define find_default_local_tidy_check2
