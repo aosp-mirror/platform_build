@@ -280,7 +280,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       pass
 
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif (info.filename == "META/care_map.txt"):
+    elif info.filename == "META/care_map.txt":
       pass
 
     # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
@@ -553,9 +553,12 @@ def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
   for param in in_cmdline.split():
     if "veritykeyid" in param:
       # extract keyid using openssl command
-      p = common.Run(["openssl", "x509", "-in", keypath, "-text"], stdout=subprocess.PIPE)
+      p = common.Run(
+          ["openssl", "x509", "-in", keypath, "-text"],
+          stdout=subprocess.PIPE)
       keyid, stderr = p.communicate()
-      keyid = re.search(r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
+      keyid = re.search(
+          r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
       print "Replacing verity keyid with %s error=%s" % (keyid, stderr)
       out_cmdline.append("veritykeyid=id:%s" % (keyid,))
     else:
@@ -592,7 +595,6 @@ def GetApiLevelAndCodename(input_tf_zip):
   codename = None
   for line in data.split("\n"):
     line = line.strip()
-    original_line = line
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
       key = key.strip()
@@ -615,7 +617,6 @@ def GetCodenameToApiLevelMap(input_tf_zip):
   codenames = None
   for line in data.split("\n"):
     line = line.strip()
-    original_line = line
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
       key = key.strip()
@@ -698,12 +699,8 @@ def main(argv):
   CheckAllApksSigned(input_zip, apk_key_map)
 
   key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
-  platform_api_level, platform_codename = GetApiLevelAndCodename(input_zip)
+  platform_api_level, _ = GetApiLevelAndCodename(input_zip)
   codename_to_api_level_map = GetCodenameToApiLevelMap(input_zip)
-  # Android N will be API Level 24, but isn't yet.
-  # TODO: Remove this workaround once Android N is officially API Level 24.
-  if platform_api_level == 23 and platform_codename == "N":
-    platform_api_level = 24
 
   ProcessTargetFiles(input_zip, output_zip, misc_info,
                      apk_key_map, key_passwords,
