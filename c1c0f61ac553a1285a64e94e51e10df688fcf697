@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2254b50d_68956936",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3176,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-10-01T03:24:17Z",
+      "side": 1,
+      "message": "streq seems kinda heavyweight, why not just:\n\n   $(if $(1),,$(error Argument missing to math function))\n   $(if $(word 2,$(1)),$(error Multiple words in a single argument to a math function: $(1)))\n   $(if $(call math_is_number),,$(error Only positive integers \u003c\u003d 100 are supported (not $(1))))",
+      "range": {
+        "startLine": 3176,
+        "startChar": 14,
+        "endLine": 3176,
+        "endChar": 19
+      },
+      "revId": "c1c0f61ac553a1285a64e94e51e10df688fcf697",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2254b50d_8877852c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3204,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-10-01T03:24:17Z",
+      "side": 1,
+      "message": "$(if $(filter $(1),$(__MATH_NUMBERS)),true,)",
+      "range": {
+        "startLine": 3204,
+        "startChar": 7,
+        "endLine": 3204,
+        "endChar": 12
+      },
+      "revId": "c1c0f61ac553a1285a64e94e51e10df688fcf697",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2254b50d_e88f1927",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3209,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-10-01T03:24:17Z",
+      "side": 1,
+      "message": "This seems like a strange expected result",
+      "revId": "c1c0f61ac553a1285a64e94e51e10df688fcf697",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
