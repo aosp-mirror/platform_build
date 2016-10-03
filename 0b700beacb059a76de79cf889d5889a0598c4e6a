@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e24a9d97_c2cdc62b",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-10-03T16:19:37Z",
+      "side": 1,
+      "message": "Yeah, that was my assumption.",
+      "parentUuid": "22e115e5_670ce048",
+      "range": {
+        "startLine": 425,
+        "startChar": 0,
+        "endLine": 425,
+        "endChar": 31
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e211bd99_c4ff7ef4",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -83,6 +107,30 @@
       "writtenOn": "2016-10-03T16:07:45Z",
       "side": 1,
       "message": "Also, there\u0027s no support for appending FEC metadata here, unlike in the existing verity code.",
+      "range": {
+        "startLine": 565,
+        "startChar": 0,
+        "endLine": 565,
+        "endChar": 69
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e24a9d97_82c45e0a",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-10-03T16:19:37Z",
+      "side": 1,
+      "message": "My plan - see b/31263832 - is to do that in avbtool and --calc_max_image_size will take that into account. That way in things like Brillo and Treble creating an odm.img can be done easily just by a single avbtool command. That\u0027s the thinking anyway... maybe best to discuss in that bug?",
+      "parentUuid": "22e115e5_a7b98835",
       "range": {
         "startLine": 565,
         "startChar": 0,
