@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82a001a7_975aec4a",
+        "filename": "core/ninja.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-10-03T22:30:37Z",
+      "side": 0,
+      "message": "Don\u0027t remove",
+      "range": {
+        "startLine": 153,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 77
+      },
+      "revId": "647d38378806783510cb31cf9c2206cf9c3ec1c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
