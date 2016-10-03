@@ -85,6 +85,7 @@ BUILD_EXECUTABLE:= $(BUILD_SYSTEM)/executable.mk
 BUILD_HOST_EXECUTABLE:= $(BUILD_SYSTEM)/host_executable.mk
 BUILD_PACKAGE:= $(BUILD_SYSTEM)/package.mk
 BUILD_PHONY_PACKAGE:= $(BUILD_SYSTEM)/phony_package.mk
+BUILD_RRO_PACKAGE:= $(BUILD_SYSTEM)/build_rro_package.mk
 BUILD_HOST_PREBUILT:= $(BUILD_SYSTEM)/host_prebuilt.mk
 BUILD_PREBUILT:= $(BUILD_SYSTEM)/prebuilt.mk
 BUILD_MULTI_PREBUILT:= $(BUILD_SYSTEM)/multi_prebuilt.mk
