@@ -140,6 +140,30 @@
       "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22e115e5_c783f43c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2016-10-03T16:26:39Z",
+      "side": 1,
+      "message": "OK, SGTM.",
+      "parentUuid": "e24a9d97_82c45e0a",
+      "range": {
+        "startLine": 565,
+        "startChar": 0,
+        "endLine": 565,
+        "endChar": 69
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
