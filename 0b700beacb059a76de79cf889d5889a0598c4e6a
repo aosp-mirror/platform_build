@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e24a9d97_02032e1e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-10-03T17:55:50Z",
+      "side": 1,
+      "message": "I can do that, sure.",
+      "parentUuid": "22e115e5_f2c3509b",
+      "range": {
+        "startLine": 878,
+        "startChar": 39,
+        "endLine": 878,
+        "endChar": 61
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "22e115e5_670ce048",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -201,6 +225,30 @@
       "writtenOn": "2016-10-03T17:51:53Z",
       "side": 1,
       "message": "seems a duplicate of d[\"mount_point\"] (L616)?",
+      "range": {
+        "startLine": 662,
+        "startChar": 2,
+        "endLine": 662,
+        "endChar": 21
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e24a9d97_e2ff22f4",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-10-03T17:55:50Z",
+      "side": 1,
+      "message": "Almost - line 386 resets it to\n\n prop_dict[\"mount_point\"] \u003d \"/\"\n\nso that\u0027s why I\u0027m copying it here.",
+      "parentUuid": "22e115e5_b215484f",
       "range": {
         "startLine": 662,
         "startChar": 2,
