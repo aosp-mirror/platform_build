@@ -18,7 +18,7 @@
 # Global tidy checks include only google*, performance*,
 # and misc-macro-parentheses, but not google-readability*
 # or google-runtime-references.
-DEFAULT_GLOBAL_TIDY_CHECKS := \
+DEFAULT_GLOBAL_TIDY_CHECKS ?= \
   $(subst $(space),, \
     -*,google* \
     ,misc-macro-parentheses \
@@ -29,7 +29,7 @@ DEFAULT_GLOBAL_TIDY_CHECKS := \
 
 # There are too many clang-tidy warnings in external and vendor projects.
 # Enable only some google checks for these projects.
-DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS := \
+DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS ?= \
   $(subst $(space),, \
     -*,google* \
     ,-google-build-using-namespace \
