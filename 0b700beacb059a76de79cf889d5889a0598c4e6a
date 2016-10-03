@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e211bd99_c4ff7ef4",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2016-10-03T12:49:13Z",
+      "side": 1,
+      "message": "Do you have to change prop_dict[\"verity_size\"] as well?",
+      "range": {
+        "startLine": 433,
+        "startChar": 0,
+        "endLine": 434,
+        "endChar": 62
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
