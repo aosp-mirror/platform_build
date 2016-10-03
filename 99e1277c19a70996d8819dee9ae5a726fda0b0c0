@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82a001a7_05eec277",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-10-03T23:40:07Z",
+      "side": 1,
+      "message": "Ah, now I see how symbols is getting around this. This would work, but it won\u0027t necessarily map well to the installed shared library, since LOCAL_MODULE doesn\u0027t need to match the installed filename.\n\nSymbols uses this in order to grab the installed module path:\n\n  my_unstripped_path :\u003d $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))\n\nYou could do something similar, and use my_coverage_path instead of $($(my_prefix)OUT_COVERAGE)/$(GCNO_ARCHIVE)\n\n  ifdef LOCAL_IS_HOST_MODULE\n  my_coverage_path :\u003d $($(my_prefix)OUT_COVERAGE)/$(patsubst $($(my_prefix)OUT)/%,%,$(my_module_path))\n  else\n  my_coverage_path :\u003d $(TARGET_OUT_COVERAGE)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))\n  endif\n\nThey can\u0027t be unified between host and target because PRODUCT_OUT !\u003d TARGET_OUT :(",
+      "revId": "99e1277c19a70996d8819dee9ae5a726fda0b0c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
