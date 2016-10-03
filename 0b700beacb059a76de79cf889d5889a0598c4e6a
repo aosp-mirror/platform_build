@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "22e115e5_670ce048",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2016-10-03T16:07:45Z",
+      "side": 1,
+      "message": "Are you assuming that verity_supported is false if avb_enable is in prop_dict, or how does this work with the existing verity partition resizing?",
+      "range": {
+        "startLine": 425,
+        "startChar": 0,
+        "endLine": 425,
+        "endChar": 31
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e211bd99_c4ff7ef4",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -42,6 +65,29 @@
         "startChar": 0,
         "endLine": 434,
         "endChar": 62
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22e115e5_a7b98835",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 1058768
+      },
+      "writtenOn": "2016-10-03T16:07:45Z",
+      "side": 1,
+      "message": "Also, there\u0027s no support for appending FEC metadata here, unlike in the existing verity code.",
+      "range": {
+        "startLine": 565,
+        "startChar": 0,
+        "endLine": 565,
+        "endChar": 69
       },
       "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
