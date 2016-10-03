@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82a001a7_d16724b4",
+        "filename": "tools/makeparallel/makeparallel.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-10-03T21:00:05Z",
+      "side": 1,
+      "message": "Should we pass SIGALRM down too, so that in the future we can deal with timeouts better?",
+      "revId": "051d6ba166defc7eddfb150a739e9f07ddd560e1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
