@@ -22,6 +22,30 @@
       "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e24a9d97_5fa4efb3",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2016-10-03T15:01:17Z",
+      "side": 1,
+      "message": "Nope - |verity_size| isn\u0027t used by AVB.",
+      "parentUuid": "e211bd99_c4ff7ef4",
+      "range": {
+        "startLine": 433,
+        "startChar": 0,
+        "endLine": 434,
+        "endChar": 62
+      },
+      "revId": "0b700beacb059a76de79cf889d5889a0598c4e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
