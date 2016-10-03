@@ -103,9 +103,7 @@ ifdef LOCAL_SDK_VERSION
   # missing API levels to existing ones where necessary, but we're not doing
   # that for the generated libraries. Clip the API level to the minimum where
   # appropriate.
-  my_ndk_api := \
-    $(shell if [ $(LOCAL_SDK_VERSION) -lt $(my_min_sdk_version) ]; then \
-        echo $(my_min_sdk_version); else echo $(LOCAL_SDK_VERSION); fi)
+  my_ndk_api := $(call math_max,$(LOCAL_SDK_VERSION),$(my_min_sdk_version))
 
   # Traditionally this has come from android/api-level.h, but with the libc
   # headers unified it must be set by the build system since we don't have

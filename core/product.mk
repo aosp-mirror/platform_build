@@ -301,7 +301,7 @@ _product_stash_var_list += \
 #
 define stash-product-vars
 $(foreach v,$(_product_stash_var_list), \
-        $(eval $(strip $(1))_$(call rot13,$(v)):=$$($$(v))) \
+        $(eval $(strip $(1))_rot26_$(v):=$$($$(v))) \
  )
 endef
 
@@ -313,7 +313,7 @@ define assert-product-vars
 $(strip \
   $(eval changed_variables:=)
   $(foreach v,$(_product_stash_var_list), \
-    $(if $(call streq,$($(v)),$($(strip $(1))_$(call rot13,$(v)))),, \
+    $(if $(call streq,$($(v)),$($(strip $(1))_rot26_$(v))),, \
         $(eval $(warning $(v) has been modified: $($(v)))) \
         $(eval $(warning previous value: $($(strip $(1))_$(call rot13,$(v))))) \
         $(eval changed_variables := $(changed_variables) $(v))) \
