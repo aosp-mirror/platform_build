@@ -660,6 +660,14 @@ define add-required-deps
 $(1): | $(2)
 endef
 
+# Use a normal dependency instead of an order-only dependency when installing
+# host dynamic binaries so that the timestamp of the final binary always
+# changes, even if the toc optimization has skipped relinking the binary
+# and its dependant shared libraries.
+define add-required-host-so-deps
+$(1): $(2)
+endef
+
 $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
@@ -702,7 +710,9 @@ $(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LI
   $(if $(3),$(eval deps := $(addprefix host_cross_,$(deps))))\
   $(eval r := $(filter $($(root))/%,$(call module-installed-files,\
     $(deps))))\
-  $(eval $(call add-required-deps,$(word 2,$(p)),$(r)))\
+  $(if $(filter $(1),HOST_),\
+    $(eval $(call add-required-host-so-deps,$(word 2,$(p)),$(r))),\
+    $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))\
   $(eval ALL_MODULES.$(mod).REQUIRED += $(deps)))
 endef
 
