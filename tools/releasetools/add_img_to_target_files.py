@@ -110,23 +110,6 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
   imgname = BuildSystem(OPTIONS.input_tmp, OPTIONS.info_dict,
                         block_list=block_list)
 
-  # AVB: if enabled, calculate and add dm-verity integrity hashes and
-  # metadata to system.img.
-  if OPTIONS.info_dict.get("board_avb_enable", None) == "true":
-    avbtool = os.getenv('AVBTOOL') or "avbtool"
-    part_size = OPTIONS.info_dict.get("system_size", None)
-    cmd = [avbtool, "add_hashtree_footer", "--image", imgname,
-           "--partition_size", str(part_size), "--partition_name", "system"]
-    common.AppendAVBSigningArgs(cmd)
-    args = OPTIONS.info_dict.get("board_avb_system_add_hashtree_footer_args",
-                                 None)
-    if args and args.strip():
-      cmd.extend(shlex.split(args))
-    p = common.Run(cmd, stdout=subprocess.PIPE)
-    p.communicate()
-    assert p.returncode == 0, "avbtool add_hashtree_footer of %s failed" % (
-      os.path.basename(OPTIONS.input_tmp))
-
   common.ZipWrite(output_zip, imgname, prefix + "system.img")
   common.ZipWrite(output_zip, block_list, prefix + "system.map")
   return imgname
