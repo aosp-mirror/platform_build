@@ -16,6 +16,24 @@
       "revId": "4b9c3c56128f44e082ef99274a4cac3e9fbe8a98",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "629f8d7a_603cf2ca",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1121516
+      },
+      "writtenOn": "2016-10-04T00:46:54Z",
+      "side": 1,
+      "message": "I\u0027m not getting paths in that format. For example if I enable coverage on /device/lge/bullhead/liblight, the output in the current patchset goes to coverage/...../hw/lights.bullhead.gcnodir. Without $(GCNO_ARCHIVE), it becomes .../hw.gcnodir.",
+      "parentUuid": "629f8d7a_e030020e",
+      "revId": "4b9c3c56128f44e082ef99274a4cac3e9fbe8a98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
