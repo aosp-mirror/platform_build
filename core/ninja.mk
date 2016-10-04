@@ -148,7 +148,7 @@ $(sort $(DEFAULT_GOAL) $(ANDROID_GOALS)) : ninja_wrapper
 .PHONY: ninja_wrapper
 ninja_wrapper: $(COMBINED_BUILD_NINJA) $(MAKEPARALLEL)
 	@echo Starting build with ninja
-	+$(hide) export NINJA_STATUS="$(NINJA_STATUS)" && source $(KATI_ENV_SH) && $(NINJA_MAKEPARALLEL) $(NINJA) $(NINJA_GOALS) -C $(TOP) -f $(COMBINED_BUILD_NINJA) $(NINJA_ARGS)
+	+$(hide) export NINJA_STATUS="$(NINJA_STATUS)" && source $(KATI_ENV_SH) && $(NINJA_MAKEPARALLEL) $(NINJA) -d keepdepfile $(NINJA_GOALS) -C $(TOP) -f $(COMBINED_BUILD_NINJA) $(NINJA_ARGS)
 
 # Dummy Android.mk and CleanSpec.mk files so that kati won't recurse into the
 # out directory
