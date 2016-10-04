@@ -22,6 +22,30 @@
       "revId": "5bb1cf6d08d5e3a79b6acb0a4a5484fc410f1e75",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22775548_2e31275a",
+        "filename": "core/clang/tidy.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-10-04T17:31:12Z",
+      "side": 1,
+      "message": "Thanks. It\u0027s corrected in new patch.",
+      "parentUuid": "629f8d7a_665beaf8",
+      "range": {
+        "startLine": 22,
+        "startChar": 27,
+        "endLine": 22,
+        "endChar": 29
+      },
+      "revId": "5bb1cf6d08d5e3a79b6acb0a4a5484fc410f1e75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
