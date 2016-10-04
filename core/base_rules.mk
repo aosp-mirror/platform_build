@@ -269,9 +269,6 @@ LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 # dependent binaries of a .toc file will be rebuilt only when the content of
 # the .toc file is changed.
 ###########################################################
-ifndef LOCAL_IS_HOST_MODULE
-# Disable .toc optimization for host modules: we may run the host binaries during the build process
-# and the libraries' implementation matters.
 ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE).toc
 $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
@@ -282,7 +279,6 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
 # Build .toc file when using mm, mma, or make $(my_register_name)
 $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
-endif
 endif
 
 ###########################################################
