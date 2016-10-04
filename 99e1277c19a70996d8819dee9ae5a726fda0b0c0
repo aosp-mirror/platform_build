@@ -16,6 +16,24 @@
       "revId": "99e1277c19a70996d8819dee9ae5a726fda0b0c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "629f8d7a_a0967af8",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1121516
+      },
+      "writtenOn": "2016-10-04T00:31:39Z",
+      "side": 1,
+      "message": "Thank you! I\u0027ll fix this and get a patchset up shortly.",
+      "parentUuid": "82a001a7_05eec277",
+      "revId": "99e1277c19a70996d8819dee9ae5a726fda0b0c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
