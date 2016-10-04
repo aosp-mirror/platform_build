@@ -732,7 +732,7 @@ a.back-link {
     text-align:center;
     width: 50%;
   }
-  
+
   .training-nav-top a.prev-page-link {
     padding-left: 15px;
     text-align: left;
@@ -840,7 +840,7 @@ a.back-link {
     margin: 0 0 6px;
     line-height: 16px;
   }
-  
+
   /* Class colors */
   ol.class-list li:nth-child(10n+1) .title {
     background: #00bcd4;
@@ -872,7 +872,7 @@ a.back-link {
   ol.class-list li:nth-child(10n+10) .title {
     background: #7e57c2;
   }
-  
+
   @media (max-width: 719px) {
     ol.class-list ol,
     ol.class-list .description {
@@ -3822,8 +3822,8 @@ td.gsc-search-button {
   display: none;
 }
 
-/* offset the <a name=""> tags to account for sticky nav */
-body.reference a[name] {
+/* offset the empty <a name=""> tags to account for sticky nav */
+body.reference a[name]:empty {
   visibility: hidden;
   display: block;
   position: relative;
@@ -6376,7 +6376,7 @@ div.jd-descr > .resource-widget[data-section=distribute\/tools] .section-card-me
 .dac-button.dac-raised.dac-primary, .landing-secondary, .button {
   background-color: #039bef; }
   .dac-button.dac-raised.dac-primary:hover, .landing-secondary:hover, .button:hover {
-    background-color: #0288d1; 
+    background-color: #0288d1;
     color:#fff; }
   .dac-button.dac-raised.dac-primary:active, .landing-secondary:active, .button:active {
     background-color: #0277bd;
