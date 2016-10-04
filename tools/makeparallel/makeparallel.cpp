@@ -337,7 +337,29 @@ int main(int argc, char* argv[]) {
 
   args.push_back(nullptr);
 
-  pid_t pid = fork();
+  static pid_t pid;
+
+  // Set up signal handlers to forward SIGHUP, SIGINT, SIGQUIT, SIGTERM, and
+  // SIGALRM to child
+  struct sigaction action = {};
+  action.sa_flags = SA_SIGINFO | SA_RESTART,
+  action.sa_sigaction = [](int signal, siginfo_t*, void*) {
+    if (pid > 0) {
+      kill(pid, signal);
+    }
+  };
+
+  int ret = 0;
+  if (!ret) ret = sigaction(SIGHUP, &action, NULL);
+  if (!ret) ret = sigaction(SIGINT, &action, NULL);
+  if (!ret) ret = sigaction(SIGQUIT, &action, NULL);
+  if (!ret) ret = sigaction(SIGTERM, &action, NULL);
+  if (!ret) ret = sigaction(SIGALRM, &action, NULL);
+  if (ret < 0) {
+    error(errno, errno, "sigaction failed");
+  }
+
+  pid = fork();
   if (pid < 0) {
     error(errno, errno, "fork failed");
   } else if (pid == 0) {
@@ -361,9 +383,10 @@ int main(int argc, char* argv[]) {
   }
 
   // parent
+
   siginfo_t status = {};
   int exit_status = 0;
-  int ret = waitid(P_PID, pid, &status, WEXITED);
+  ret = waitid(P_PID, pid, &status, WEXITED);
   if (ret < 0) {
     error(errno, errno, "waitpid failed");
   } else if (status.si_code == CLD_EXITED) {
