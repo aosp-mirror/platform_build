@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "629f8d7a_e030020e",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-10-04T00:40:12Z",
+      "side": 1,
+      "message": "Ah, this will give filenames like:\n\n  coverage/system/lib/hw/gralloc.default.so/gralloc.default.$(gcno_suffix)\n\nYou may want to use:\n\n my_coverage_path :\u003d $(basename $(my_coverage_path))$(gcno_suffix)\n\nto replace the file extension, then drop the $(GCNO_ARCHIVE) appending to my_coverage_path (but keep the GCNO_ARCHIVE for consistent intermediates)\n\n(And do the same thing for binaries in addition to shared libraries)",
+      "revId": "4b9c3c56128f44e082ef99274a4cac3e9fbe8a98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
