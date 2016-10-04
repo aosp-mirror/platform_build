@@ -873,6 +873,10 @@ $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_subkey=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "futility=$(FUTILITY)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_signer_cmd=$(VBOOT_SIGNER)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_signing_args=$(INTERNAL_AVB_SIGNING_ARGS)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_avbtool=$(AVBTOOL)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_enable=$(BOARD_AVB_ENABLE)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
@@ -1180,13 +1184,6 @@ define build-systemimage-target
            fi; \
            mkdir -p $(DIST_DIR); cp $(INSTALLED_FILES_FILE) $(DIST_DIR)/installed-files-rescued.txt; \
            exit 1 )
-  $(if $(BOARD_AVB_ENABLE), \
-    $(hide) $(AVBTOOL) add_hashtree_footer \
-      --image $(1) \
-      --partition_size $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) \
-      --partition_name system \
-      $(INTERNAL_AVB_SIGNING_ARGS) \
-      $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
 endef
 
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
