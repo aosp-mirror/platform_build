@@ -1507,13 +1507,7 @@ built_shared_libraries := \
     $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
         $(installed_shared_library_module_names)))
-ifdef LOCAL_IS_HOST_MODULE
-# Disable .toc optimization for host modules: we may run the host binaries during the build process
-# and the libraries' implementation matters.
-built_shared_library_deps := $(built_shared_libraries)
-else
 built_shared_library_deps := $(addsuffix .toc, $(built_shared_libraries))
-endif
 my_system_shared_libraries_fullpath :=
 endif
 
