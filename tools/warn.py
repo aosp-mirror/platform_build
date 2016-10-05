@@ -109,17 +109,19 @@ class Severity(object):
   HIGH = 1
   MEDIUM = 2
   LOW = 3
-  TIDY = 4
-  HARMLESS = 5
-  UNKNOWN = 6
-  SKIP = 7
-  range = range(8)
+  ANALYZER = 4
+  TIDY = 5
+  HARMLESS = 6
+  UNKNOWN = 7
+  SKIP = 8
+  range = range(SKIP + 1)
   attributes = [
       # pylint:disable=bad-whitespace
       ['fuchsia',   'FixNow',    'Critical warnings, fix me now'],
       ['red',       'High',      'High severity warnings'],
       ['orange',    'Medium',    'Medium severity warnings'],
       ['yellow',    'Low',       'Low severity warnings'],
+      ['hotpink',   'Analyzer',  'Clang-Analyzer warnings'],
       ['peachpuff', 'Tidy',      'Clang-Tidy warnings'],
       ['limegreen', 'Harmless',  'Harmless warnings'],
       ['lightblue', 'Unknown',   'Unknown warnings'],
@@ -131,6 +133,9 @@ class Severity(object):
 
 warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
+     'description': 'clang-analyzer Security warning',
+     'patterns': [r".*: warning: .+\[clang-analyzer-security.*\]"]},
     {'category': 'make', 'severity': Severity.MEDIUM,
      'description': 'make: overriding commands/ignoring old commands',
      'patterns': [r".*: warning: overriding commands for target .+",
@@ -1283,8 +1288,8 @@ warn_patterns = [
      'description': 'Comment inside comment',
      'patterns': [r".*: warning: "".+"" within comment"]},
     # Warning "value stored is never read" could be from clang-tidy or clang static analyzer.
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy Value stored is never read',
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
+     'description': 'clang-analyzer Value stored is never read',
      'patterns': [r".*: warning: Value stored to .+ is never read.*clang-analyzer-deadcode.DeadStores"]},
     {'category': 'C/C++', 'severity': Severity.LOW,
      'description': 'Value stored is never read',
@@ -1601,46 +1606,46 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.TIDY,
      'description': 'clang-tidy performance-unnecessary-value-param',
      'patterns': [r".*: .+\[performance-unnecessary-value-param\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Unreachable code',
      'patterns': [r".*: warning: This statement is never executed.*UnreachableCode"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Size of malloc may overflow',
      'patterns': [r".*: warning: .* size of .* may overflow .*MallocOverflow"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Stream pointer might be NULL',
      'patterns': [r".*: warning: Stream pointer might be NULL .*unix.Stream"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Opened file never closed',
      'patterns': [r".*: warning: Opened File never closed.*unix.Stream"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer sozeof() on a pointer type',
      'patterns': [r".*: warning: .*calls sizeof.* on a pointer type.*SizeofPtr"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Pointer arithmetic on non-array variables',
      'patterns': [r".*: warning: Pointer arithmetic on non-array variables .*PointerArithm"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Subtraction of pointers of different memory chunks',
      'patterns': [r".*: warning: Subtraction of two pointers .*PointerSub"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Access out-of-bound array element',
      'patterns': [r".*: warning: Access out-of-bound array element .*ArrayBound"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Out of bound memory access',
      'patterns': [r".*: warning: Out of bound memory access .*ArrayBoundV2"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Possible lock order reversal',
      'patterns': [r".*: warning: .* Possible lock order reversal.*PthreadLock"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Argument is a pointer to uninitialized value',
      'patterns': [r".*: warning: .* argument is a pointer to uninitialized value .*CallAndMessage"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer cast to struct',
      'patterns': [r".*: warning: Casting a non-structure type to a structure type .*CastToStruct"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer call path problems',
      'patterns': [r".*: warning: Call Path : .+"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer other',
      'patterns': [r".*: .+\[clang-analyzer-.+\]$",
                   r".*: Call Path : .+$"]},
