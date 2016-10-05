@@ -25,10 +25,6 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 COMPILED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
 
-# start of image reserved address space
-LIBART_IMG_HOST_BASE_ADDRESS   := 0x60000000
-LIBART_IMG_TARGET_BASE_ADDRESS := 0x70000000
-
 define get-product-default-property
 $(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))
 endef
@@ -45,7 +41,6 @@ ifeq ($(TARGET_ARCH),$(filter $(TARGET_ARCH),mips mips64))
 # building the image. We therefore limit the Xmx value. This isn't done
 # via a property as we want the larger Xmx value if we're running on a
 # MIPS device.
-LIBART_IMG_TARGET_BASE_ADDRESS := 0x30000000
 DEX2OAT_XMX := 128m
 endif
 
