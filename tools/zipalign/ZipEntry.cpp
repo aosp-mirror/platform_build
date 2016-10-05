@@ -130,6 +130,7 @@ void ZipEntry::initNew(const char* fileName, const char* comment)
     if (mCDE.mFileCommentLength > 0) {
         /* TODO: stop assuming null-terminated ASCII here? */
         mCDE.mFileComment = new uint8_t[mCDE.mFileCommentLength+1];
+        assert(comment != NULL);
         strcpy((char*) mCDE.mFileComment, comment);
     }
 
