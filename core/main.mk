@@ -504,12 +504,9 @@ endif
 
 FULL_BUILD := true
 
-# Before we go and include all of the module makefiles, stash away
-# the PRODUCT_* values so that later we can verify they are not modified.
-stash_product_vars:=true
-ifeq ($(stash_product_vars),true)
-  $(call stash-product-vars, __STASHED)
-endif
+# Before we go and include all of the module makefiles, mark the PRODUCT_*
+# values readonly so that they won't be modified.
+$(call readonly-product-vars)
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
@@ -573,10 +570,6 @@ endif # ONE_SHOT_MAKEFILE
 
 # Now with all Android.mks loaded we can do post cleaning steps.
 include $(BUILD_SYSTEM)/post_clean.mk
-
-ifeq ($(stash_product_vars),true)
-  $(call assert-product-vars, __STASHED)
-endif
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
