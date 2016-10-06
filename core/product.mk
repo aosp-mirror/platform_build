@@ -296,31 +296,13 @@ _product_stash_var_list += \
 	GLOBAL_CLANG_CFLAGS_NO_OVERRIDE \
 
 #
-# Stash values of the variables in _product_stash_var_list.
-# $(1): Renamed prefix
+# Mark the variables in _product_stash_var_list as readonly
 #
-define stash-product-vars
+define readonly-product-vars
 $(foreach v,$(_product_stash_var_list), \
-        $(eval $(strip $(1))_rot26_$(v):=$$($$(v))) \
+	$(eval $(v) ?=) \
+	$(eval .KATI_READONLY := $(v)) \
  )
-endef
-
-#
-# Assert that the the variable stashed by stash-product-vars remains untouched.
-# $(1): The prefix as supplied to stash-product-vars
-#
-define assert-product-vars
-$(strip \
-  $(eval changed_variables:=)
-  $(foreach v,$(_product_stash_var_list), \
-    $(if $(call streq,$($(v)),$($(strip $(1))_rot26_$(v))),, \
-        $(eval $(warning $(v) has been modified: $($(v)))) \
-        $(eval $(warning previous value: $($(strip $(1))_$(call rot13,$(v))))) \
-        $(eval changed_variables := $(changed_variables) $(v))) \
-   ) \
-  $(if $(changed_variables),\
-    $(eval $(error The following variables have been changed: $(changed_variables))),)
-)
 endef
 
 define add-to-product-copy-files-if-exists
