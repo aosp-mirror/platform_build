@@ -40,7 +40,6 @@ PARSE_TIME_MAKE_GOALS := \
 	eng \
 	fusion \
 	oem_image \
-	old-cts \
 	online-system-api-sdk-docs \
 	pdk \
 	platform \
