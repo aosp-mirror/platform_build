@@ -1,4 +1,8 @@
+ifeq ($(filter address,$(SANITIZE_HOST)),)
 NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
+else
+NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
+endif
 
 include $(BUILD_SYSTEM)/soong.mk
 
