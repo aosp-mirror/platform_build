@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff9f98ca_9936fee6",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2049,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-10-10T23:07:42Z",
+      "side": 1,
+      "message": "absolute",
+      "range": {
+        "startLine": 2049,
+        "startChar": 22,
+        "endLine": 2049,
+        "endChar": 31
+      },
+      "revId": "be03b44e172094660d9aa4aec27f1bb7cb7d2f45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
