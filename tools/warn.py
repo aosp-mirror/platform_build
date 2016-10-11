@@ -2028,7 +2028,8 @@ def parse_input_file():
   infile = open(args.buildlog, 'r')
   line_counter = 0
 
-  warning_pattern = re.compile('.* warning:.*')
+  # handle only warning messages with a file path
+  warning_pattern = re.compile('^[^ ]*/[^ ]*: warning: .*')
   compile_patterns()
 
   # read the log file and classify all the warnings
@@ -2055,9 +2056,9 @@ def parse_input_file():
         target_variant = m.group(0)
 
 
-# Return s with escaped quotation characters.
+# Return s with escaped backslash and quotation characters.
 def escape_string(s):
-  return s.replace('"', '\\"')
+  return s.replace('\\', '\\\\').replace('"', '\\"')
 
 
 # Return s without trailing '\n' and escape the quotation characters.
