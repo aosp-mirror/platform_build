@@ -145,7 +145,6 @@ LOCAL_CLANG_EXCEPTION_PROJECTS = \
   device/huawei/angler/ \
   device/lge/bullhead/ \
   external/gentoo/integration/ \
-  external/valgrind/ \
   hardware/qcom/ \
   $(INTERNAL_LOCAL_CLANG_EXCEPTION_PROJECTS)
 
