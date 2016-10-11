@@ -32,6 +32,7 @@ Use option --gencsv to output warning counts in CSV format.
 #   warning_records      array of [idx to warn_patterns,
 #                                  idx to project_names,
 #                                  idx to warning_messages]
+#   android_root
 #   platform_version
 #   target_product
 #   target_variant
@@ -80,6 +81,7 @@ Use option --gencsv to output warning counts in CSV format.
 #   dump_csv():
 
 import argparse
+import os
 import re
 
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
@@ -1776,6 +1778,7 @@ def initialize_arrays():
 initialize_arrays()
 
 
+android_root = ''
 platform_version = 'unknown'
 target_product = 'unknown'
 target_variant = 'unknown'
@@ -2020,6 +2023,53 @@ def compile_patterns():
       i['compiled_patterns'].append(re.compile(pat))
 
 
+def find_android_root(path):
+  """Set and return android_root path if it is found."""
+  global android_root
+  parts = path.split('/')
+  for idx in reversed(range(2, len(parts))):
+    root_path = '/'.join(parts[:idx])
+    # Android root directory should contain this script.
+    if os.path.exists(root_path + '/build/tools/warn.py'):
+      android_root = root_path
+      return root_path
+  return ''
+
+
+def remove_android_root_prefix(path):
+  """Remove android_root prefix from path if it is found."""
+  if path.startswith(android_root):
+    return path[1 + len(android_root):]
+  else:
+    return path
+
+
+def normalize_path(path):
+  """Normalize file path relative to android_root."""
+  # If path is not an absolute path, just normalize it.
+  path = os.path.normpath(path)
+  if path[0] != '/':
+    return path
+  # Remove known prefix of root path and normalize the suffix.
+  if android_root or find_android_root(path):
+    return remove_android_root_prefix(path)
+  else:
+    return path
+
+
+def normalize_warning_line(line):
+  """Normalize file path relative to android_root in a warning line."""
+  # replace fancy quotes with plain ol' quotes
+  line = line.replace('‘', "'")
+  line = line.replace('’', "'")
+  line = line.strip()
+  first_column = line.find(':')
+  if first_column > 0:
+    return normalize_path(line[:first_column]) + line[first_column:]
+  else:
+    return line
+
+
 def parse_input_file():
   """Parse input file, match warning lines."""
   global platform_version
@@ -2034,10 +2084,8 @@ def parse_input_file():
   # read the log file and classify all the warnings
   warning_lines = set()
   for line in infile:
-    # replace fancy quotes with plain ol' quotes
-    line = line.replace('‘', "'")
-    line = line.replace('’', "'")
     if warning_pattern.match(line):
+      line = normalize_warning_line(line)
       if line not in warning_lines:
         classify_warning(line)
         warning_lines.add(line)
