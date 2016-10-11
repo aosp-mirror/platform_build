@@ -919,6 +919,7 @@ status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
             getSize = fread(inBuf, 1, kBufSize, srcFp);
             if (ferror(srcFp)) {
                 ALOGD("deflate read failed (errno=%d)\n", errno);
+                result = UNKNOWN_ERROR;
                 delete[] inBuf;
                 goto bail;
             }
@@ -937,6 +938,7 @@ status_t ZipFile::compressFpToFp(FILE* dstFp, FILE* srcFp,
     ALOGV("+++ writing %d bytes\n", (int)outSize);
     if (fwrite(outBuf, 1, outSize, dstFp) != outSize) {
         ALOGD("write %d failed in deflate\n", (int)outSize);
+        result = UNKNOWN_ERROR;
         goto bail;
     }
 
