@@ -18,7 +18,7 @@
   <!-- End: Fullscreen toggler -->
 
   <?cs if:reference.gcm || reference.gms ?>
-    <?cs include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
+    <?cs include:"../../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
     <script type="text/javascript">
       showGoogleRefTree();
     </script>
@@ -83,10 +83,10 @@ def:ndk_nav() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
 <?cs
-if:guide ?><?cs include:"../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?><?cs
-elif:reference ?><?cs include:"../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?><?cs
-elif:downloads ?><?cs include:"../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?><?cs
-elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?><?cs
+if:guide ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?><?cs
+elif:reference ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?><?cs
+elif:downloads ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?><?cs
+elif:samples ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?><?cs
 /if ?>
         </div>
       </div>
@@ -158,52 +158,52 @@ elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/s
     <div class="dac-nav-sub dac-swap-section dac-right dac-active" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <?cs if:ndk ?>
         <?cs if:guide ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?>
         <?cs elif:reference ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?>
         <?cs elif:downloads ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?>
         <?cs elif:samples ?>
-          <?cs include:"../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?>
         <?cs else ?>
           <?cs call:reference_default_nav() ?>
         <?cs /if ?>
       <?cs elif:guide ?>
-        <?cs include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
       <?cs elif:design ?>
-        <?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
       <?cs elif:training ?>
-        <?cs include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
       <?cs elif:tools ?>
-        <?cs include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
       <?cs elif:google ?>
-        <?cs include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
       <?cs elif:samples ?>
-        <?cs include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
       <?cs elif:preview ?>
-        <?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
       <?cs elif:preview ?>
-        <?cs include:"../../../../frameworks/base/docs/html/wear/preview/preview_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/wear/preview/preview_toc.cs" ?>
       <?cs elif:distribute ?>
         <?cs if:googleplay ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
         <?cs elif:essentials ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
         <?cs elif:users ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
         <?cs elif:engage ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
         <?cs elif:monetize ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
         <?cs elif:analyze ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
         <?cs elif:disttools ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
         <?cs elif:stories ?>
-          <?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
+          <?cs include:"../../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
         <?cs /if ?>
       <?cs elif:about ?>
-        <?cs include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
+        <?cs include:"../../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
       <?cs else ?>
         <?cs call:reference_default_nav() ?>
       <?cs /if ?>

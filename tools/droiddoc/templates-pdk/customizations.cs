@@ -3,7 +3,7 @@ def:sdk_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav"><?cs 
-        include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
 <?cs /def ?>
@@ -12,7 +12,7 @@ def:resources_tab_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav"><?cs 
-        include:"../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/resources/resources_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -26,7 +26,7 @@ def:guide_nav() ?>
   <div class="g-section g-tpl-240" id="body-content">
     <div class="g-unit g-first" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav"><?cs 
-        include:"../../../../vendor/pdk/data/google/docs/guide/guide_toc.cs" ?>
+        include:"../../../../../vendor/pdk/data/google/docs/guide/guide_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -37,7 +37,7 @@ def:guide_nav() ?>
 <?cs /def ?>
 <?cs
 def:design_nav() ?>
-  <?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+  <?cs include:"../../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
 <?cs /def ?>
 
 <?cs # The default side navigation for the reference docs ?><?cs 
