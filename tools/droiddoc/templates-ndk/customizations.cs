@@ -9,7 +9,7 @@ def:sdk_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
 
 
       </div>
@@ -25,7 +25,7 @@ def:tools_nav() ?>
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
 
 
       </div>
@@ -43,7 +43,7 @@ def:ndk_guides_nav() ?>
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html-ndk/ndk/guides/guides_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html-ndk/ndk/guides/guides_toc.cs" ?>
 
 
       </div>
@@ -62,7 +62,7 @@ def:ndk_reference_nav() ?>
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html-ndk/ndk/reference/reference_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html-ndk/ndk/reference/reference_toc.cs" ?>
 
 
       </div>
@@ -81,7 +81,7 @@ def:ndk_samples_nav() ?>
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html-ndk/ndk/samples/samples_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html-ndk/ndk/samples/samples_toc.cs" ?>
 
 
       </div>
@@ -100,7 +100,7 @@ def:ndk_downloads_nav() ?>
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
 <?cs
-        include:"../../../../frameworks/base/docs/html-ndk/ndk/downloads/downloads_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html-ndk/ndk/downloads/downloads_toc.cs" ?>
 
 
       </div>
@@ -120,7 +120,7 @@ def:training_nav() ?>
 
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
 
 
       </div>
@@ -136,7 +136,7 @@ def:googleplay_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -150,7 +150,7 @@ def:essentials_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -164,7 +164,7 @@ def:users_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -178,7 +178,7 @@ def:engage_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -192,7 +192,7 @@ def:analyze_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -206,7 +206,7 @@ def:monetize_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -220,7 +220,7 @@ def:disttools_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -234,7 +234,7 @@ def:stories_nav() ?>
   <div class="wrap clearfix" id="body-content">
     <div class="col-3" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
@@ -250,7 +250,7 @@ def:guide_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
 
 
       </div>
@@ -269,7 +269,7 @@ def:design_nav() ?>
 
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
 
 
       </div>
@@ -287,7 +287,7 @@ def:distribute_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
 
 
       </div>
@@ -306,7 +306,7 @@ def:samples_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
 
       </div>
 
@@ -325,7 +325,7 @@ def:google_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
 
 
       </div>
@@ -348,7 +348,7 @@ def:about_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
 
 
       </div>
@@ -368,7 +368,7 @@ def:wear_nav() ?>
       <div id="devdoc-nav" class="scroll-pane">
 
 <?cs
-        include:"../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
+        include:"../../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
 
 
       </div>
@@ -386,7 +386,7 @@ def:preview_nav() ?>
     <div class="col-4" id="side-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
       <div id="devdoc-nav" class="scroll-pane">
         <?cs
-          include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+          include:"../../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
       </div>
     </div> <!-- end side-nav -->
     <script>
