@@ -17,7 +17,7 @@ def:sdk_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/sdk/sdk_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -34,7 +34,7 @@ def:tools_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/tools/tools_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -51,7 +51,7 @@ def:training_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/training/training_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -68,7 +68,7 @@ def:googleplay_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/googleplay/googleplay_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -85,7 +85,7 @@ def:preview_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/preview/preview_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -102,7 +102,7 @@ def:essentials_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/essentials/essentials_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -119,7 +119,7 @@ def:users_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/users/users_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -136,7 +136,7 @@ def:engage_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/engage/engage_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -153,7 +153,7 @@ def:analyze_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/analyze/analyze_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -170,7 +170,7 @@ def:monetize_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/monetize/monetize_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -187,7 +187,7 @@ def:disttools_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/tools/disttools_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -204,7 +204,7 @@ def:stories_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/stories/stories_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -221,7 +221,7 @@ def:guide_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/guide/guide_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -238,7 +238,7 @@ def:design_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/design/design_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -255,7 +255,7 @@ def:distribute_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/distribute/distribute_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -273,7 +273,7 @@ def:samples_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/samples/samples_toc.cs" ?>
         </div>
       </div>
 
@@ -292,7 +292,7 @@ def:google_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/google/google_toc.cs" ?>
         </div>
       </div>
       <script type="text/javascript">
@@ -314,7 +314,7 @@ def:about_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/about/about_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -333,7 +333,7 @@ def:wear_nav() ?>
       <?cs call:mobile_nav_toggle() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
-<?cs include:"../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/wear/wear_toc.cs" ?>
         </div>
       </div>
     </div> <!-- end side-nav -->
@@ -463,10 +463,10 @@ def:ndk_nav() ?>
       <div class="dac-toggle-content" id="devdoc-nav">
         <div class="scroll-pane">
 <?cs
-if:guide ?><?cs include:"../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?><?cs
-elif:reference ?><?cs include:"../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?><?cs
-elif:downloads ?><?cs include:"../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?><?cs
-elif:samples ?><?cs include:"../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?><?cs
+if:guide ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/guides/guides_toc.cs" ?><?cs
+elif:reference ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/reference/reference_toc.cs" ?><?cs
+elif:downloads ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/downloads/downloads_toc.cs" ?><?cs
+elif:samples ?><?cs include:"../../../../../frameworks/base/docs/html/ndk/samples/samples_toc.cs" ?><?cs
 /if ?>
         </div>
       </div>

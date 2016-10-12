@@ -1,6 +1,6 @@
 <?cs include:"doctype.cs" ?>
 <?cs include:"macros.cs" ?>
-<?cs include:"../../../../frameworks/base/docs/html/sdk/sdk_vars.cs" ?>
+<?cs include:"../../../../../frameworks/base/docs/html/sdk/sdk_vars.cs" ?>
 <html<?cs if:devsite ?> devsite<?cs /if ?>>
 <?cs if:sdk.redirect ?>
   <head>
