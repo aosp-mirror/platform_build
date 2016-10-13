@@ -1596,6 +1596,16 @@ ifeq ($(my_strict),true)
     my_cflags += -DANDROID_STRICT
 endif
 
+# Add -Werror if LOCAL_PATH is in the WARNING_DISALLOWED project list,
+# or not in the WARNING_ALLOWED project list.
+ifneq (,$(strip $(call find_warning_disallowed_projects,$(LOCAL_PATH))))
+  my_cflags_no_override += -Werror
+else
+  ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
+    my_cflags_no_override += -Werror
+  endif
+endif
+
 # Disable clang-tidy if it is not found.
 ifeq ($(PATH_TO_CLANG_TIDY),)
   my_tidy_enabled := false
