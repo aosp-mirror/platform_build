@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c9e567e_2415dcf7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1210,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-10-13T18:03:53Z",
+      "side": 1,
+      "message": "does it make sense to make the default value to None, then assign len(data) to compress_size if it\u0027s None?\n\notherwise when not specifying the compress_size, the comparison in ota_from_target_files.py would be always True",
+      "range": {
+        "startLine": 1210,
+        "startChar": 4,
+        "endLine": 1210,
+        "endChar": 38
+      },
+      "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c9e567e_c423d066",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-10-13T18:03:53Z",
+      "side": 1,
+      "message": "seems no need to change this value? (also changing to 1.0 makes it useless)",
+      "range": {
+        "startLine": 147,
+        "startChar": 26,
+        "endLine": 147,
+        "endChar": 29
+      },
+      "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
