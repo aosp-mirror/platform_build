@@ -2027,6 +2027,15 @@ ifneq ($(filter $(MAKECMDGOALS),target-files-package),)
 $(call dist-for-goals, target-files-package, $(BUILT_TARGET_FILES_PACKAGE))
 endif
 
+# -----------------------------------------------------------------
+# NDK Sysroot Package
+NDK_SYSROOT_TARGET := $(PRODUCT_OUT)/ndk_sysroot.tar.bz2
+$(NDK_SYSROOT_TARGET): ndk
+	@echo Package NDK sysroot...
+	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
+
+$(call dist-for-goals,sdk,$(NDK_SYSROOT_TARGET))
+
 ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
 # OTA update package
