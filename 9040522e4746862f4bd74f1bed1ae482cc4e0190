@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fc1a4624_15813400",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1210,
+      "author": {
+        "id": 1005082
+      },
+      "writtenOn": "2016-10-14T00:54:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c9e567e_2415dcf7",
+      "range": {
+        "startLine": 1210,
+        "startChar": 4,
+        "endLine": 1210,
+        "endChar": 38
+      },
+      "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c9e567e_c423d066",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2016-10-13T18:03:53Z",
       "side": 1,
       "message": "seems no need to change this value? (also changing to 1.0 makes it useless)",
+      "range": {
+        "startLine": 147,
+        "startChar": 26,
+        "endLine": 147,
+        "endChar": 29
+      },
+      "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc1a4624_758ea82f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1005082
+      },
+      "writtenOn": "2016-10-14T00:54:25Z",
+      "side": 1,
+      "message": "I\u0027m not sure which threshold value is better between 0.95 and 1.0.\nBut in this case (MOB30P vs NRD90S), here are results.\n\n217252\tota_shamu_old.zip\n217408\tota_shamu_new_095.zip\n216520\tota_shamu_new.zip\n\nAnd I had some results of compress ratio of each patch files.\n\nhttps://gist.github.com/ganadist/2ef45ea73e1647aab60caa2cb2bde055",
+      "parentUuid": "7c9e567e_c423d066",
       "range": {
         "startLine": 147,
         "startChar": 26,
