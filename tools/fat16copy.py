@@ -222,7 +222,11 @@ class fat_dir(object):
       data.seek(0, os.SEEK_END)
       size = data.tell()
 
-    chunk = self.backing.fs.allocate(size or 1)
+    chunk = 0
+
+    if size > 0:
+      chunk = self.backing.fs.allocate(size)
+
     (shortname, ext) = self.make_short_name(name)
     self.add_dentry(0, shortname, ext, name, chunk, size)
 
@@ -240,10 +244,19 @@ class fat_dir(object):
     """
     chunk = self.backing.fs.allocate(1)
     (shortname, ext) = self.make_short_name(name)
-    new_dentry = dentry(self.backing.fs, ATTRIBUTE_SUBDIRECTORY,
-        shortname, ext, name, chunk, 0)
-    new_dentry.commit(self.backing)
-    return new_dentry.open_directory()
+    new_dentry = self.add_dentry(ATTRIBUTE_SUBDIRECTORY, shortname,
+            ext, name, chunk, 0)
+    result = new_dentry.open_directory()
+
+    parent_cluster = 0
+
+    if hasattr(self.backing, 'start_cluster'):
+      parent_cluster = self.backing.start_cluster
+
+    result.add_dentry(ATTRIBUTE_SUBDIRECTORY, '.', '', '', chunk, 0)
+    result.add_dentry(ATTRIBUTE_SUBDIRECTORY, '..', '', '', parent_cluster, 0)
+
+    return result
 
 def lfn_checksum(name_data):
   """
@@ -624,6 +637,9 @@ class fat(object):
     Allocate a new cluster chain big enough to hold at least the given amount
     of bytes.
     """
+
+    assert amount > 0, "Must allocate a non-zero amount."
+
     f = self.f
     f.seek(FAT_TABLE_START + 4)
 
@@ -708,8 +724,9 @@ class fat(object):
       return_cluster = return_cluster or cluster
       position += 2
       self.write_cluster_entry(cluster)
+      amount -= self.bytes_per_cluster
 
-    if amount < 0:
+    if amount <= 0:
       self.write_cluster_entry(0xFFFF)
       return return_cluster
 
