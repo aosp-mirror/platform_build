@@ -67,7 +67,11 @@ else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
     LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-nano
   else
-    LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-lite
+    ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),stream)
+      # No library for stream protobufs
+    else
+      LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-lite
+    endif
   endif
 endif
 endif
