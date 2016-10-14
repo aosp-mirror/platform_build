@@ -222,7 +222,8 @@ class fat_dir(object):
       data.seek(0, os.SEEK_END)
       size = data.tell()
 
-    chunk = self.backing.fs.allocate(size or 1)
+    # Empty files shouldn't have any clusters assigned.
+    chunk = self.backing.fs.allocate(size) if size > 0 else 0
     (shortname, ext) = self.make_short_name(name)
     self.add_dentry(0, shortname, ext, name, chunk, size)
 
@@ -240,10 +241,19 @@ class fat_dir(object):
     """
     chunk = self.backing.fs.allocate(1)
     (shortname, ext) = self.make_short_name(name)
-    new_dentry = dentry(self.backing.fs, ATTRIBUTE_SUBDIRECTORY,
-        shortname, ext, name, chunk, 0)
-    new_dentry.commit(self.backing)
-    return new_dentry.open_directory()
+    new_dentry = self.add_dentry(ATTRIBUTE_SUBDIRECTORY, shortname,
+            ext, name, chunk, 0)
+    result = new_dentry.open_directory()
+
+    parent_cluster = 0
+
+    if hasattr(self.backing, 'start_cluster'):
+      parent_cluster = self.backing.start_cluster
+
+    result.add_dentry(ATTRIBUTE_SUBDIRECTORY, '.', '', '', chunk, 0)
+    result.add_dentry(ATTRIBUTE_SUBDIRECTORY, '..', '', '', parent_cluster, 0)
+
+    return result
 
 def lfn_checksum(name_data):
   """
@@ -380,28 +390,23 @@ class dentry(object):
     record_count = len(longname_record_data) + 1
 
     found_count = 0
-
-    while True:
+    while found_count < record_count:
       record = f.read(32)
 
       if record is None or len(record) != 32:
-        break
+        # We reached the EOF, so we need to extend the file with a new cluster.
+        f.write("\0" * self.fs.bytes_per_cluster)
+        f.seek(-self.fs.bytes_per_cluster, os.SEEK_CUR)
+        record = f.read(32)
 
       marker = struct.unpack("B", record[0])[0]
 
       if marker == DEL_MARKER or marker == 0:
         found_count += 1
-
-        if found_count == record_count:
-          break
       else:
         found_count = 0
 
-    if found_count != record_count:
-      f.write("\0" * self.fs.bytes_per_cluster)
-      f.seek(-self.fs.bytes_per_cluster, os.SEEK_CUR)
-    else:
-      f.seek(-(record_count * 32), os.SEEK_CUR)
+    f.seek(-(record_count * 32), os.SEEK_CUR)
     f.write(entry)
 
 class root_dentry_file(fake_file):
@@ -624,6 +629,8 @@ class fat(object):
     Allocate a new cluster chain big enough to hold at least the given amount
     of bytes.
     """
+    assert amount > 0, "Must allocate a non-zero amount."
+
     f = self.f
     f.seek(FAT_TABLE_START + 4)
 
@@ -686,38 +693,17 @@ class fat(object):
     Given a cluster which is the *last* cluster in a chain, extend it to hold
     at least `amount` more bytes.
     """
-    return_cluster = None
+    if amount == 0:
+      return
     f = self.f
-
-    position = FAT_TABLE_START + cluster * 2
-    f.seek(position)
-
+    entry_offset = FAT_TABLE_START + cluster * 2
+    f.seek(entry_offset)
     assert read_le_short(f) == 0xFFFF, "Extending from middle of chain"
-    rewind_short(f)
 
-    while position + 2 < FAT_TABLE_START + self.fat_size and amount > 0:
-      skip_short(f)
-      got = read_le_short(f)
-      rewind_short(f)
-      rewind_short(f)
-
-      if got != 0:
-        break
-
-      cluster += 1
-      return_cluster = return_cluster or cluster
-      position += 2
-      self.write_cluster_entry(cluster)
-
-    if amount < 0:
-      self.write_cluster_entry(0xFFFF)
-      return return_cluster
-
-    new_chunk = self.allocate(amount)
-    f.seek(FAT_TABLE_START + cluster * 2)
-    self.write_cluster_entry(new_chunk)
-
-    return return_cluster or new_chunk
+    return_cluster = self.allocate(amount)
+    f.seek(entry_offset)
+    self.write_cluster_entry(return_cluster)
+    return return_cluster
 
   def write_file(self, head_cluster, start_byte, data):
     """
@@ -728,35 +714,31 @@ class fat(object):
     data: The data to write.
     """
     f = self.f
+    last_offset = start_byte + len(data)
+    current_offset = 0
+    current_cluster = head_cluster
 
-    while True:
-      if start_byte < self.bytes_per_cluster:
-        to_write = data[:self.bytes_per_cluster - start_byte]
-        data = data[self.bytes_per_cluster - start_byte:]
+    while current_offset < last_offset:
+      # Write everything that falls in the cluster starting at current_offset.
+      data_begin = max(0, current_offset - start_byte)
+      data_end = min(len(data),
+                     current_offset + self.bytes_per_cluster - start_byte)
+      if data_end > data_begin:
+        cluster_file_offset = (self.data_start() + self.root_entries * 32 +
+                               (current_cluster - 2) * self.bytes_per_cluster)
+        f.seek(cluster_file_offset + max(0, start_byte - current_offset))
+        f.write(data[data_begin:data_end])
 
-        cluster_bytes_from_root = (head_cluster - 2) * \
-            self.bytes_per_cluster
-        bytes_from_root = cluster_bytes_from_root + start_byte
-        bytes_from_data_start = bytes_from_root + self.root_entries * 32
+      # Advance to the next cluster in the chain or get a new cluster if needed.
+      current_offset += self.bytes_per_cluster
+      if last_offset > current_offset:
+        f.seek(FAT_TABLE_START + current_cluster * 2)
+        next_cluster = read_le_short(f)
+        if next_cluster > MAX_CLUSTER_ID:
+          next_cluster = self.extend_cluster(current_cluster, len(data))
+        current_cluster = next_cluster
+        assert current_cluster > 0, "Cannot write free cluster"
 
-        f.seek(self.data_start() + bytes_from_data_start)
-        f.write(to_write)
-
-        if len(data) == 0:
-          return
-
-      start_byte -= self.bytes_per_cluster
-
-      if start_byte < 0:
-        start_byte = 0
-
-      f.seek(FAT_TABLE_START + head_cluster * 2)
-      next_cluster = read_le_short(f)
-      if next_cluster > MAX_CLUSTER_ID:
-        head_cluster = self.extend_cluster(head_cluster, len(data))
-      else:
-        head_cluster = next_cluster
-      assert head_cluster > 0, "Cannot write free cluster"
 
 def add_item(directory, item):
   """
@@ -770,7 +752,7 @@ def add_item(directory, item):
     if len(base) == 0:
       base = os.path.basename(item[:-1])
     sub = directory.new_subdirectory(base)
-    for next_item in os.listdir(item):
+    for next_item in sorted(os.listdir(item)):
       add_item(sub, os.path.join(item, next_item))
   else:
     with open(item, 'rb') as f:
