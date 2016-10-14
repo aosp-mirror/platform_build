@@ -787,7 +787,7 @@ def add_item(directory, item):
     if len(base) == 0:
       base = os.path.basename(item[:-1])
     sub = directory.new_subdirectory(base)
-    for next_item in os.listdir(item):
+    for next_item in sorted(os.listdir(item)):
       add_item(sub, os.path.join(item, next_item))
   else:
     with open(item, 'rb') as f:
