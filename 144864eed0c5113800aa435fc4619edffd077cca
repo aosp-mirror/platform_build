@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc9bc331_be5dd55f",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1726,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2016-10-15T00:05:44Z",
+      "side": 1,
+      "message": "I will put together a CL to split this up as well. mclinker should be its own group, while slang/libbcc can probably get grouped together.",
+      "revId": "144864eed0c5113800aa435fc4619edffd077cca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
