@@ -68,7 +68,7 @@ def GetVerityTreeSize(partition_size):
   return True, int(output)
 
 def GetVerityMetadataSize(partition_size):
-  cmd = "system/extras/verity/build_verity_metadata.py -s %d"
+  cmd = "system/extras/verity/build_verity_metadata.py size %d"
   cmd %= partition_size
 
   status, output = commands.getstatusoutput(cmd)
@@ -163,11 +163,14 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
   return True
 
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                        block_device, signer_path, key):
+                        block_device, signer_path, key, signer_args):
   cmd_template = (
-      "system/extras/verity/build_verity_metadata.py %s %s %s %s %s %s %s")
+      "system/extras/verity/build_verity_metadata.py build " +
+      "%s %s %s %s %s %s %s")
   cmd = cmd_template % (image_size, verity_metadata_path, root_hash, salt,
                         block_device, signer_path, key)
+  if signer_args:
+    cmd += " --signer_args=\"%s\"" % (' '.join(signer_args),)
   print cmd
   status, output = commands.getstatusoutput(cmd)
   if status:
@@ -254,10 +257,10 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   block_dev = prop_dict["verity_block_device"]
   signer_key = prop_dict["verity_key"] + ".pk8"
   if OPTIONS.verity_signer_path is not None:
-    signer_path = OPTIONS.verity_signer_path + ' '
-    signer_path += ' '.join(OPTIONS.verity_signer_args)
+    signer_path = OPTIONS.verity_signer_path
   else:
     signer_path = prop_dict["verity_signer_cmd"]
+  signer_args = OPTIONS.verity_signer_args
 
   # make a tempdir
   tempdir_name = tempfile.mkdtemp(suffix="_verity_images")
@@ -276,7 +279,7 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   root_hash = prop_dict["verity_root_hash"]
   salt = prop_dict["verity_salt"]
   if not BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                             block_dev, signer_path, signer_key):
+                             block_dev, signer_path, signer_key, signer_args):
     shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
