@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3cf3ffac_4ea733a4",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2019,
+      "author": {
+        "id": 1115958
+      },
+      "writtenOn": "2016-10-17T21:32:13Z",
+      "side": 1,
+      "message": "Please make this a flag + default value.",
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_2e7e275e",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2024,
+      "author": {
+        "id": 1115958
+      },
+      "writtenOn": "2016-10-17T21:32:13Z",
+      "side": 1,
+      "message": "groups \u003d [warning_lines[i:max(i + num_cpu, len(warning_lines)) for i in xrange(0, len(warning_lines), num_cpu)]\n\nThis should be more efficient to divide a list into chunks.",
+      "range": {
+        "startLine": 2020,
+        "startChar": 2,
+        "endLine": 2024,
+        "endChar": 25
+      },
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_0ef88ba6",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2028,
+      "author": {
+        "id": 1115958
+      },
+      "writtenOn": "2016-10-17T21:32:13Z",
+      "side": 1,
+      "message": "If no other threads are submitting tasks to the pool these two lines are irrelevant. Map already joins all the submitted workers.",
+      "range": {
+        "startLine": 2027,
+        "startChar": 2,
+        "endLine": 2028,
+        "endChar": 13
+      },
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_6ecb0f5e",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2129,
+      "author": {
+        "id": 1115958
+      },
+      "writtenOn": "2016-10-17T21:32:13Z",
+      "side": 1,
+      "message": "It might be better to have an option (flag) that determines if one wants to use parallel classification or not.",
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
