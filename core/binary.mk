@@ -58,7 +58,7 @@ my_additional_dependencies := $(LOCAL_ADDITIONAL_DEPENDENCIES)
 my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
 my_export_c_include_deps := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
-ifneq (,$(foreach dir,$(COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH))))
+ifneq (,$(strip $(foreach dir,$(COVERAGE_PATHS),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
 else
   my_native_coverage := false
