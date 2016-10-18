@@ -16,6 +16,24 @@
       "revId": "d0aec89d43004718bc6e808a00c98303298eecfc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_c232d20b",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1729,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-10-18T01:01:37Z",
+      "side": 1,
+      "message": "Right. In case a new subdirectory is added later, it\u0027s better to catch it here than frameworks/Other.",
+      "parentUuid": "3cf3ffac_542064c2",
+      "revId": "d0aec89d43004718bc6e808a00c98303298eecfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
