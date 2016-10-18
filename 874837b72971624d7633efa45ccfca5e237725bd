@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3cf3ffac_14c25c21",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2019,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-10-18T00:54:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3cf3ffac_4ea733a4",
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3cf3ffac_2e7e275e",
         "filename": "tools/warn.py",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2016-10-17T21:32:13Z",
       "side": 1,
       "message": "groups \u003d [warning_lines[i:max(i + num_cpu, len(warning_lines)) for i in xrange(0, len(warning_lines), num_cpu)]\n\nThis should be more efficient to divide a list into chunks.",
+      "range": {
+        "startLine": 2020,
+        "startChar": 2,
+        "endLine": 2024,
+        "endChar": 25
+      },
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_345798e6",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2024,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-10-18T00:54:00Z",
+      "side": 1,
+      "message": "warning_lines is a set. So I have to use a loop instead of list subranges. I tried before to convert it to a list and then subrange, but that used more time.",
+      "parentUuid": "3cf3ffac_2e7e275e",
       "range": {
         "startLine": 2020,
         "startChar": 2,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "3cf3ffac_b43d48f7",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2028,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-10-18T00:54:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3cf3ffac_0ef88ba6",
+      "range": {
+        "startLine": 2027,
+        "startChar": 2,
+        "endLine": 2028,
+        "endChar": 13
+      },
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3cf3ffac_6ecb0f5e",
         "filename": "tools/warn.py",
         "patchSetId": 2
@@ -76,6 +142,24 @@
       "writtenOn": "2016-10-17T21:32:13Z",
       "side": 1,
       "message": "It might be better to have an option (flag) that determines if one wants to use parallel classification or not.",
+      "revId": "874837b72971624d7633efa45ccfca5e237725bd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_a265063b",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2129,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2016-10-18T00:54:00Z",
+      "side": 1,
+      "message": "Now with a flag, users can choose to use 1 subprocess.\nFor current large number of warnings, 2 or 3 subprocesses are almost 2X to 3X faster.",
+      "parentUuid": "3cf3ffac_6ecb0f5e",
       "revId": "874837b72971624d7633efa45ccfca5e237725bd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
