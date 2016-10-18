@@ -117,6 +117,30 @@
       "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1cc71b67_751ac8e3",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1005082
+      },
+      "writtenOn": "2016-10-18T08:35:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3cf3ffac_62f15e78",
+      "range": {
+        "startLine": 147,
+        "startChar": 26,
+        "endLine": 147,
+        "endChar": 29
+      },
+      "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
