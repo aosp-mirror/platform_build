@@ -93,6 +93,30 @@
       "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3cf3ffac_62f15e78",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-10-18T00:45:33Z",
+      "side": 1,
+      "message": "Thanks for providing detailed data!\n\nThe ratio value in your github link seems to be inverted. It should be patch_size / compressed_size when comparing against 0.95 or 1.0. I parsed the data from your full list. And here are the ones ranging between 0.95 and 1.0.\n\n821552   \t   394070\t   393617\t  1.00\t\tlib/libwebrtc_audio_preprocessing.so\n33248    \t     8038\t     8032\t  1.00\t\tframework/oat/arm/dpm.odex\n8581600  \t  3808257\t  3758492\t  0.99\t\tpriv-app/Dialer/oat/arm/Dialer.odex\n639456   \t   281583\t   279332\t  0.99\t\tpriv-app/ManagedProvisioning/oat/arm/ManagedProvisioning.odex\n4208337  \t  1218170\t  1205972\t  0.99\t\tpriv-app/PackageInstaller/PackageInstaller.apk\n9253344  \t  4280471\t  4176707\t  0.98\t\tpriv-app/Settings/oat/arm/Settings.odex\n4583904  \t  2092325\t  2052351\t  0.98\t\tapp/DeskClock/oat/arm/DeskClock.odex\n451040   \t   191707\t   187017\t  0.98\t\tpriv-app/SettingsProvider/oat/arm/SettingsProvider.odex\n3864660  \t  1799441\t  1761875\t  0.98\t\tlib/libskia.so\n366152   \t   118820\t   116393\t  0.98\t\tlib/libbinder.so\n354996   \t   102559\t   100034\t  0.98\t\tlib/libclcore_neon.bc\n161428   \t    85980\t    84664\t  0.98\t\tbin/dumpstate\n1511904  \t   671169\t   654967\t  0.98\t\tapp/PrintSpooler/oat/arm/PrintSpooler.odex\n6034     \t     4492\t     4356\t  0.97\t\tpriv-app/MmsService/MmsService.apk\n5811     \t     4205\t     4075\t  0.97\t\tapp/BluetoothMidiService/BluetoothMidiService.apk\n4383200  \t  1985336\t  1934138\t  0.97\t\tpriv-app/PackageInstaller/oat/arm/PackageInstaller.odex\n2856     \t     1407\t     1362\t  0.97\t\tusr/hyphen-data/hyph-eu.lic.txt\n20799968 \t  9644926\t  9314747\t  0.97\t\tframework/oat/arm/services.odex\n17884    \t     7618\t     7417\t  0.97\t\tbin/gzip\n123360   \t    48661\t    47070\t  0.97\t\tframework/oat/arm/pm.odex\n91488    \t    47809\t    45896\t  0.96\t\tlib/libexpat.so\n87616    \t    45337\t    43354\t  0.96\t\tlib/libunwind.so\n3885876  \t  1870959\t  1799778\t  0.96\t\tlib/libpac.so\n3645920  \t  1603142\t  1542481\t  0.96\t\tpriv-app/TeleService/oat/arm/TeleService.odex\n330840   \t   211667\t   202635\t  0.96\t\tfonts/Roboto-BoldItalic.ttf\n329472   \t   211688\t   202766\t  0.96\t\tfonts/Roboto-MediumItalic.ttf\n321124   \t   148381\t   142643\t  0.96\t\tlib/libaudioflinger.so\n29152    \t     8458\t     8142\t  0.96\t\tapp/HTMLViewer/oat/arm/HTMLViewer.odex\n2803396  \t  1239991\t  1189823\t  0.96\t\tlib/libart-compiler.so\n244588   \t   140882\t   135175\t  0.96\t\tlib/libttspico.so\n239188   \t    75775\t    72959\t  0.96\t\tlib/libcamera_client.so\n170888   \t    59368\t    56915\t  0.96\t\tpriv-app/Shell/Shell.apk\n152192   \t    83468\t    80312\t  0.96\t\tbin/applypatch\n1110496  \t   471163\t   452118\t  0.96\t\tpriv-app/DownloadProvider/oat/arm/DownloadProvider.odex\n104408   \t    50942\t    48810\t  0.96\t\tlib/libminikin.so\n91732    \t    37768\t    36032\t  0.95\t\tlib/libkeystore_binder.so\n631264   \t   270114\t   256958\t  0.95\t\tpriv-app/TelephonyProvider/oat/arm/TelephonyProvider.odex\n376408   \t   106725\t   101526\t  0.95\t\tlib/libclcore_debug.bc\n332976   \t   211872\t   201959\t  0.95\t\tfonts/Roboto-LightItalic.ttf\n329592   \t   210398\t   200851\t  0.95\t\tfonts/Roboto-Italic.ttf\n192992   \t    77645\t    74135\t  0.95\t\tframework/oat/arm/am.odex\n112148   \t    52511\t    50066\t  0.95\t\tlib/libart-disassembler.so\n\nThe diff sums up to 947346 bytes, which is close to your observed value of (217408 - 216520) (I assume your numbers are in KiB).\n\nFor the patch_threshold, I\u0027m also thinking about a different purpose. Using 1.0 as the threshold is likely a win for the package size, as shown from your data. However, patching would be more costly then taking the file verbatim in terms of update time. Because we need to additionally read the source file, and apply the patching in memory before writing back the file. (0.95 is less likely a well-tuned threshold. We\u0027re not putting too much effort on file-based OTA though, since it\u0027s sort of being deprecated.)",
+      "parentUuid": "fc1a4624_758ea82f",
+      "range": {
+        "startLine": 147,
+        "startChar": 26,
+        "endLine": 147,
+        "endChar": 29
+      },
+      "revId": "9040522e4746862f4bd74f1bed1ae482cc4e0190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
