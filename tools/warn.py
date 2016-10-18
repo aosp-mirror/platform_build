@@ -81,6 +81,7 @@ Use option --gencsv to output warning counts in CSV format.
 #   dump_csv():
 
 import argparse
+import multiprocessing
 import os
 import re
 
@@ -99,6 +100,10 @@ parser.add_argument('--url',
 parser.add_argument('--separator',
                     help='Separator between the end of a URL and the line '
                     'number argument. e.g. #')
+parser.add_argument('--processes',
+                    type=int,
+                    default=multiprocessing.cpu_count(),
+                    help='Number of parallel processes to process warnings')
 parser.add_argument(dest='buildlog', metavar='build.log',
                     help='Path to build.log file')
 args = parser.parse_args()
@@ -1706,7 +1711,8 @@ project_list = [
     simple_project_pattern('frameworks/av/media/mtp'),
     simple_project_pattern('frameworks/av/media/ndk'),
     simple_project_pattern('frameworks/av/media/utils'),
-    project_name_and_pattern('frameworks/av/media/Other', 'frameworks/av/media'),
+    project_name_and_pattern('frameworks/av/media/Other',
+                             'frameworks/av/media'),
     simple_project_pattern('frameworks/av/radio'),
     simple_project_pattern('frameworks/av/services'),
     simple_project_pattern('frameworks/av/soundtrigger'),
@@ -2065,28 +2071,51 @@ def find_project_index(line):
   return -1
 
 
-def classify_warning(line):
+def classify_one_warning(line, results):
   for i in range(len(warn_patterns)):
     w = warn_patterns[i]
     for cpat in w['compiled_patterns']:
       if cpat.match(line):
-        w['members'].append(line)
         p = find_project_index(line)
-        index = len(warning_messages)
-        warning_messages.append(line)
-        warning_records.append([i, p, index])
-        pname = '???' if p < 0 else project_names[p]
-        # Count warnings by project.
-        if pname in w['projects']:
-          w['projects'][pname] += 1
-        else:
-          w['projects'][pname] = 1
+        results.append([line, i, p])
         return
       else:
         # If we end up here, there was a problem parsing the log
         # probably caused by 'make -j' mixing the output from
         # 2 or more concurrent compiles
         pass
+
+
+def classify_warnings(lines):
+  results = []
+  for line in lines:
+    classify_one_warning(line, results)
+  return results
+
+
+def parallel_classify_warnings(warning_lines):
+  """Classify all warning lines with num_cpu parallel processes."""
+  num_cpu = args.processes
+  groups = [[] for x in range(num_cpu)]
+  i = 0
+  for x in warning_lines:
+    groups[i].append(x)
+    i = (i + 1) % num_cpu
+  pool = multiprocessing.Pool(num_cpu)
+  group_results = pool.map(classify_warnings, groups)
+  for result in group_results:
+    for line, pattern_idx, project_idx in result:
+      pattern = warn_patterns[pattern_idx]
+      pattern['members'].append(line)
+      message_idx = len(warning_messages)
+      warning_messages.append(line)
+      warning_records.append([pattern_idx, project_idx, message_idx])
+      pname = '???' if project_idx < 0 else project_names[project_idx]
+      # Count warnings by project.
+      if pname in pattern['projects']:
+        pattern['projects'][pname] += 1
+      else:
+        pattern['projects'][pname] = 1
 
 
 def compile_patterns():
@@ -2156,14 +2185,12 @@ def parse_input_file():
   warning_pattern = re.compile('^[^ ]*/[^ ]*: warning: .*')
   compile_patterns()
 
-  # read the log file and classify all the warnings
+  # Collect all warnings into the warning_lines set.
   warning_lines = set()
   for line in infile:
     if warning_pattern.match(line):
       line = normalize_warning_line(line)
-      if line not in warning_lines:
-        classify_warning(line)
-        warning_lines.add(line)
+      warning_lines.add(line)
     elif line_counter < 50:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
@@ -2176,6 +2203,7 @@ def parse_input_file():
       m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
       if m is not None:
         target_variant = m.group(0)
+  parallel_classify_warnings(warning_lines)
 
 
 # Return s with escaped backslash and quotation characters.
