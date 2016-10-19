@@ -22,6 +22,7 @@ USE_CAMERA_STUB := true
 # of an SDK AVD. Note that this operation only works on Linux for now
 ifeq ($(HOST_OS),linux)
 WITH_DEXPREOPT ?= true
+WITH_DEXPREOPT_BOOT_IMG_ONLY ?= false
 endif
 
 # Build OpenGLES emulation host and guest libraries
