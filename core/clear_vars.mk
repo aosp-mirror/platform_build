@@ -364,7 +364,7 @@ LOCAL_INIT_RC_32:=
 LOCAL_INIT_RC_64:=
 LOCAL_JAVA_LANGUAGE_VERSION:=
 LOCAL_IS_RUNTIME_RESOURCE_OVERLAY:=
-LOCAL_RRO_SKU:=
+LOCAL_RRO_THEME:=
 
 # Trim MAKEFILE_LIST so that $(call my-dir) doesn't need to
 # iterate over thousands of entries every time.
