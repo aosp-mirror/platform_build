@@ -329,6 +329,8 @@ function addcompletions()
             . $f
         done
     fi
+
+    complete -C "bit --tab" bit
 }
 
 function choosetype()
