@@ -460,6 +460,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
         return False
       build_command.extend(["-d", base_fs_file])
     build_command.extend(["-L", prop_dict["mount_point"]])
+    if "extfs_inode_count" in prop_dict:
+      build_command.extend(["-i", prop_dict["extfs_inode_count"]])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -639,6 +641,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_avb_enable", "avb_enable")
     copy_prop("system_avb_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
+    copy_prop("system_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its files.
     d["mount_point"] = "system"
@@ -652,6 +655,10 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_base_fs_file", "base_fs_file")
+    copy_prop("system_avb_enable", "avb_enable")
+    copy_prop("system_avb_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("system_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -674,11 +681,13 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_avb_enable", "avb_enable")
     copy_prop("vendor_avb_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
+    copy_prop("vendor_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
     copy_prop("oem_journal_size", "journal_size")
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("oem_extfs_inode_count", "extfs_inode_count")
   d["partition_name"] = mount_point
   return d
 
