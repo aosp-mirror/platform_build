@@ -159,7 +159,7 @@ ifdef LOCAL_SDK_VERSION
   my_ndk_stl_include_path :=
   my_ndk_stl_shared_lib_fullpath :=
   my_ndk_stl_static_lib :=
-  my_ndk_stl_cppflags :=
+  my_ndk_cpp_std_version :=
   my_cpu_variant := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
   ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
     my_cpu_variant := mips32r6
@@ -235,7 +235,7 @@ ifdef LOCAL_SDK_VERSION
 
     my_ldlibs += -ldl
 
-    my_ndk_stl_cppflags := -std=c++11
+    my_ndk_cpp_std_version := c++11
   else # LOCAL_NDK_STL_VARIANT is not c++_* either
   ifneq (,$(filter gnustl_%, $(LOCAL_NDK_STL_VARIANT)))
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/libs/$(my_cpu_variant)/include \
@@ -367,30 +367,38 @@ else ifeq ($(my_clang),)
     my_clang := true
 endif
 
-my_cpp_std_version := -std=gnu++14
+my_c_std_version := $(DEFAULT_C_STD_VERSION)
+my_cpp_std_version := $(DEFAULT_CPP_STD_VERSION)
 
 ifneq ($(my_clang),true)
     # GCC uses an invalid C++14 ABI (emits calls to
     # __cxa_throw_bad_array_length, which is not a valid C++ RT ABI).
     # http://b/25022512
-    my_cpp_std_version := -std=gnu++11
+    my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
 endif
 
 ifdef LOCAL_SDK_VERSION
     # The NDK handles this itself.
-    my_cpp_std_version :=
+    my_cpp_std_version := $(my_ndk_cpp_std_version)
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
     ifneq ($(my_clang),true)
         # The host GCC doesn't support C++14 (and is deprecated, so likely
         # never will). Build these modules with C++11.
-        my_cpp_std_version := -std=gnu++11
+        my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
     endif
 endif
 
-my_cppflags := $(my_cpp_std_version) $(my_cppflags)
+my_c_std_conlyflags :=
+my_cpp_std_cppflags :=
+ifneq (,$(my_c_std_version))
+    my_c_std_conlyflags := -std=$(my_c_std_version)
+endif
 
+ifneq (,$(my_cpp_std_version))
+   my_cpp_std_cppflags := -std=$(my_cpp_std_version)
+endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
 my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_static_libraries)
@@ -467,7 +475,6 @@ ifndef LOCAL_IS_HOST_MODULE
 ifdef LOCAL_SDK_VERSION
 my_target_global_c_includes :=
 my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
-my_target_global_cppflags := $(my_ndk_stl_cppflags)
 else
 my_target_global_c_includes := $(SRC_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
@@ -475,18 +482,17 @@ my_target_global_c_includes := $(SRC_HEADERS) \
 my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-my_target_global_cppflags :=
 endif # LOCAL_SDK_VERSION
 
 ifeq ($(my_clang),true)
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS)
-my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS)
+my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 else
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS)
-my_target_global_cppflags += $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS)
+my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_clang
 
@@ -508,13 +514,13 @@ my_host_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
 
 ifeq ($(my_clang),true)
 my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS)
+my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 else
 my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS)
+my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_clang
 
