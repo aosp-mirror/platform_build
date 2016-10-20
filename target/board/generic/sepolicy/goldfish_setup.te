@@ -12,6 +12,7 @@ allow goldfish_setup system_file:file execute_no_trans;
 allow goldfish_setup toolbox_exec:file rx_file_perms;
 allow goldfish_setup self:capability { net_admin net_raw };
 allow goldfish_setup self:udp_socket create_socket_perms;
+allowxperm goldfish_setup self:udp_socket ioctl priv_sock_ioctls;
 
 net_domain(goldfish_setup)
 
