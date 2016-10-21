@@ -633,6 +633,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("system_base_fs_file", "base_fs_file")
+    copy_prop("system_avb_enable", "avb_enable")
+    copy_prop("system_avb_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its files.
     d["mount_point"] = "system"
@@ -646,9 +649,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_base_fs_file", "base_fs_file")
-    copy_prop("system_avb_enable", "avb_enable")
-    copy_prop("system_avb_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
