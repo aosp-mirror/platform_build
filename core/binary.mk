@@ -64,10 +64,11 @@ else
   my_native_coverage := false
 endif
 
+my_allow_undefined_symbols := $(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS))
+ifdef SANITIZE_HOST
 ifdef LOCAL_IS_HOST_MODULE
 my_allow_undefined_symbols := true
-else
-my_allow_undefined_symbols := $(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS))
+endif
 endif
 
 my_ndk_sysroot :=
@@ -625,9 +626,18 @@ endif
 # Certain modules like libdl have to have symbols resolved at runtime and blow
 # up if --no-undefined is passed to the linker.
 ifeq ($(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS)),)
-ifeq ($(my_allow_undefined_symbols),)
-  my_ldflags += -Wl,--no-undefined
-endif
+  ifeq ($(my_allow_undefined_symbols),)
+    ifneq ($(HOST_OS),darwin)
+      my_ldflags += -Wl,--no-undefined
+    endif
+  else
+    ifdef LOCAL_IS_HOST_MODULE
+      ifeq ($(HOST_OS),darwin)
+        # darwin defaults to treating undefined symbols as errors
+        my_ldflags += -Wl,-undefined,dynamic_lookup
+      endif
+    endif
+  endif
 endif
 
 ifeq (true,$(LOCAL_GROUP_STATIC_LIBRARIES))
