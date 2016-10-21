@@ -92,7 +92,6 @@ LOCAL_CLANG_EXCEPTION_PROJECTS = \
   device/huawei/angler/ \
   device/lge/bullhead/ \
   external/gentoo/integration/ \
-  external/valgrind/ \
   hardware/qcom/ \
   test/vts/hals/camera/bullhead/ \
   test/vts/hals/etc/libqdutils/ \
