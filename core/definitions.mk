@@ -1584,7 +1584,7 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-        $(PRIVATE_ARFLAGS) $@ $$filelist
+        $@ $$filelist
 
 endef
 
@@ -1609,7 +1609,7 @@ define transform-o-to-static-lib
 $(extract-and-include-target-whole-static-libs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
+    $@,$(PRIVATE_ALL_OBJECTS))
 endef
 
 # $(1): the full path of the source static library.
@@ -1633,8 +1633,7 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         $(PRIVATE_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
-    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) \
-        $(PRIVATE_ARFLAGS) $@ $$filelist
+    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) $@ $$filelist
 
 endef
 
@@ -1652,8 +1651,7 @@ define transform-o-to-aux-static-lib
 @rm -f $@
 $(extract-and-include-aux-whole-static-libs)
 $(call split-long-arguments,$(PRIVATE_AR) \
-    $(AUX_GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
+    $(AUX_GLOBAL_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
 endef
 
 define transform-o-to-aux-executable-inner
@@ -1721,7 +1719,7 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) \
-        $(PRIVATE_ARFLAGS) $@ $$filelist
+        $@ $$filelist
 
 endef
 
@@ -1757,8 +1755,8 @@ define transform-host-o-to-static-lib
 $(extract-and-include-host-whole-static-libs)
 $(create-dummy.o-if-no-objs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) \
-    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) \
-    $(PRIVATE_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS) $(get-dummy.o-if-no-objs))
+    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) $@,\
+    $(PRIVATE_ALL_OBJECTS) $(get-dummy.o-if-no-objs))
 $(delete-dummy.o-if-no-objs)
 endef
 
