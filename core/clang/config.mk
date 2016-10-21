@@ -22,54 +22,6 @@ RS_CLANG := $(RS_LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
 RS_LLVM_AS := $(RS_LLVM_PREBUILTS_PATH)/llvm-as$(BUILD_EXECUTABLE_SUFFIX)
 RS_LLVM_LINK := $(RS_LLVM_PREBUILTS_PATH)/llvm-link$(BUILD_EXECUTABLE_SUFFIX)
 
-CLANG_CONFIG_UNKNOWN_CFLAGS := \
-  -finline-functions \
-  -finline-limit=64 \
-  -fno-canonical-system-headers \
-  -Wno-clobbered \
-  -fno-devirtualize \
-  -fno-tree-sra \
-  -fprefetch-loop-arrays \
-  -funswitch-loops \
-  -Werror=unused-but-set-parameter \
-  -Werror=unused-but-set-variable \
-  -Wmaybe-uninitialized \
-  -Wno-error=clobbered \
-  -Wno-error=maybe-uninitialized \
-  -Wno-error=unused-but-set-parameter \
-  -Wno-error=unused-but-set-variable \
-  -Wno-free-nonheap-object \
-  -Wno-literal-suffix \
-  -Wno-maybe-uninitialized \
-  -Wno-old-style-declaration \
-  -Wno-psabi \
-  -Wno-unused-but-set-parameter \
-  -Wno-unused-but-set-variable \
-  -Wno-unused-local-typedefs \
-  -Wunused-but-set-parameter \
-  -Wunused-but-set-variable \
-  -fdiagnostics-color \
-  -mthumb-interwork \
-  -fgcse-after-reload \
-  -frerun-cse-after-loop \
-  -frename-registers \
-  -fno-align-jumps \
-  -fno-builtin-sin \
-  -fno-caller-saves \
-  -fno-early-inlining \
-  -fno-move-loop-invariants \
-  -fno-partial-inlining \
-  -fno-strict-volatile-bitfields \
-  -fno-tree-copy-prop \
-  -fno-tree-loop-optimize \
-  -msynci \
-  -mno-synci \
-  -mno-fused-madd \
-  -finline-limit=300 \
-  -fno-inline-functions-called-once \
-  -mfpmath=sse \
-  -mbionic
-
 define convert-to-clang-flags
 $(strip $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(1)))
 endef
@@ -128,11 +80,6 @@ ifdef TARGET_2ND_ARCH
 clang_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/clang/TARGET_$(TARGET_2ND_ARCH).mk
 endif
-
-ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS := -fno-omit-frame-pointer
-ADDRESS_SANITIZER_CONFIG_EXTRA_LDFLAGS := -Wl,-u,__asan_preinit
-
-ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES := libasan
 
 # This allows us to use the superset of functionality that compiler-rt
 # provides to Clang (for supporting features like -ftrapv).
