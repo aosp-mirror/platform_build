@@ -27,6 +27,7 @@ PRODUCT_PACKAGES += \
     app_process \
     applypatch \
     audioserver \
+    bit \
     blkid \
     bmgr \
     bugreport \
