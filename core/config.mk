@@ -644,19 +644,6 @@ endif
 # Set up final options.
 # ###############################################################
 
-GLOBAL_CFLAGS_NO_OVERRIDE := \
-    -Werror=int-to-pointer-cast \
-    -Werror=pointer-to-int-cast \
-
-GLOBAL_CLANG_CFLAGS_NO_OVERRIDE := \
-    -Werror=address-of-temporary \
-    -Werror=return-type \
-    # Bug: http://b/29823425 Disable -Wnull-dereference until the new cases
-    # detected by this warning in Clang r271374 are fixed.
-    #-Werror=null-dereference \
-
-GLOBAL_CPPFLAGS_NO_OVERRIDE :=
-
 # We run gcc/clang with PWD=/proc/self/cwd to remove the $TOP
 # from the debug output. That way two builds in two different
 # directories will create the same output.
@@ -780,8 +767,6 @@ endif
 # API Level lists for Renderscript Compat lib.
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
 RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
-
-NDK_PREBUILT_SHARED_LIBRARIES := android c dl EGL GLESv1_CM GLESv2 GLESv3 jnigraphics log mediandk m OpenMAXAL OpenSLES stdc++ vulkan z
 
 ifeq ($(JAVA_NOT_REQUIRED),true)
 # Remove java and tools from our path so that we make sure nobody uses them.
