@@ -41,9 +41,6 @@ Usage:  add_img_to_target_files [flag] target_files
   --is_signing
       Skip building & adding the images for "userdata" and "cache" if we
       are signing the target files.
-
-  --verity_signer_path
-      Specify the signer path to build verity metadata.
 """
 
 import sys
@@ -72,7 +69,6 @@ OPTIONS.rebuild_recovery = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
-OPTIONS.verity_signer_path = None
 
 def GetCareMap(which, imgname):
   """Generate care_map of system (or vendor) partition"""
@@ -508,8 +504,6 @@ def main(argv):
       OPTIONS.replace_verity_public_key = (True, a)
     elif o == "--is_signing":
       OPTIONS.is_signing = True
-    elif o == "--verity_signer_path":
-      OPTIONS.verity_signer_path = a
     else:
       return False
     return True
@@ -519,8 +513,7 @@ def main(argv):
       extra_long_opts=["add_missing", "rebuild_recovery",
                        "replace_verity_public_key=",
                        "replace_verity_private_key=",
-                       "is_signing",
-                       "verity_signer_path="],
+                       "is_signing"],
       extra_option_handler=option_handler)
 
 
