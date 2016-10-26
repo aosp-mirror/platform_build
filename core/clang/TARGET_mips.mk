@@ -1,4 +1,4 @@
-$(clang_2nd_arch_prefix)RS_TRIPLE := armv7-linux-androideabi
+$(clang_2nd_arch_prefix)RS_TRIPLE := renderscript32-linux-androideabi
 $(clang_2nd_arch_prefix)RS_TRIPLE_CFLAGS :=
 RS_COMPAT_TRIPLE := mipsel-linux-android
 
