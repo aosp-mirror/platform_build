@@ -22,6 +22,30 @@
       "revId": "c41b0bca5fde9f8e722982fe3dcdecf6ae0e52f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21a03809_67e44e64",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-10-26T21:45:46Z",
+      "side": 1,
+      "message": "As stated, they are behind an userdebug_or_eng :-(\n\nI want neither one to slip outside of the macro as to do so would lose the checking we have to ensure no one is using logpersist otherwise except for the tricks exposed in this file ...",
+      "parentUuid": "21a03809_c72a62ae",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 48
+      },
+      "revId": "c41b0bca5fde9f8e722982fe3dcdecf6ae0e52f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
