@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21a03809_c72a62ae",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2016-10-26T21:38:26Z",
+      "side": 1,
+      "message": "These already exist in core policy so not needed here. This is device-specific policy for the emulator.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 48
+      },
+      "revId": "c41b0bca5fde9f8e722982fe3dcdecf6ae0e52f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
