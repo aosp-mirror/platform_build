@@ -46,6 +46,30 @@
       "revId": "c41b0bca5fde9f8e722982fe3dcdecf6ae0e52f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21a03809_079d8aa1",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2016-10-26T21:55:48Z",
+      "side": 1,
+      "message": "I would prefer we keep these inside a userdebug_or_eng() statement too.",
+      "parentUuid": "21a03809_67e44e64",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 48
+      },
+      "revId": "c41b0bca5fde9f8e722982fe3dcdecf6ae0e52f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
