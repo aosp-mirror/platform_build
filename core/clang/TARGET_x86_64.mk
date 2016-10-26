@@ -1,4 +1,4 @@
-RS_TRIPLE := aarch64-linux-android
+RS_TRIPLE := renderscript64-linux-android
 RS_TRIPLE_CFLAGS := -D__x86_64__
 RS_COMPAT_TRIPLE := x86_64-linux-android
 
