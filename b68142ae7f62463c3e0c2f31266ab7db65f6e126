@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21a03809_d3f7cc1c",
+        "filename": "core/configure_local_jack.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-10-26T16:03:32Z",
+      "side": 1,
+      "message": "Plus, this probably isn\u0027t doing what you think it\u0027s doing -- the proper syntax is:\n\n  ifndef LOCAL_JACK_VERSION\n\nor:\n\n  ifneq (,$(strip $(LOCAL_JACK_VERSION)))",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 28
+      },
+      "revId": "b68142ae7f62463c3e0c2f31266ab7db65f6e126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
