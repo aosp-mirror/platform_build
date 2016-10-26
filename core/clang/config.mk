@@ -15,7 +15,7 @@ LLVM_TBLGEN := $(BUILD_OUT_EXECUTABLES)/llvm-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 # RenderScript-specific tools
 # These are tied to the version of LLVM directly in external/, so they might
 # trail the host prebuilts being used for the rest of the build process.
-RS_LLVM_PREBUILTS_VERSION := clang-2812033
+RS_LLVM_PREBUILTS_VERSION := clang-3289846
 RS_LLVM_PREBUILTS_BASE := prebuilts/clang/host
 RS_LLVM_PREBUILTS_PATH := $(RS_LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(RS_LLVM_PREBUILTS_VERSION)/bin
 RS_CLANG := $(RS_LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
