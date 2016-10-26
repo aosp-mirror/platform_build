@@ -904,6 +904,7 @@ files: $(modules_to_install) \
 
 .PHONY: checkbuild
 checkbuild: $(modules_to_check) droid_targets
+checkbuild: checkbuild-soong
 
 ifeq (true,$(ANDROID_BUILD_EVERYTHING_BY_DEFAULT))
 droid: checkbuild
