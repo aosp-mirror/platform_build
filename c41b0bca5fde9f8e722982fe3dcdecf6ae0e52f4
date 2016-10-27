@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "21a03809_8f8b4ca8",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-10-27T16:51:42Z",
+      "side": 1,
+      "message": "Sadly, we can not have duplicate types, no matter how much they are the same, so I have to move it out of userdebug_or_eng in the main logpersist.te and drop this one.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 43
+      },
+      "revId": "c41b0bca5fde9f8e722982fe3dcdecf6ae0e52f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21a03809_c72a62ae",
         "filename": "target/board/generic/sepolicy/logpersist.te",
         "patchSetId": 1
