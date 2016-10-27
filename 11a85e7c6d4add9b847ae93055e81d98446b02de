@@ -99,6 +99,24 @@
       "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6651ef7_09a96979",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-10-27T21:01:37Z",
+      "side": 1,
+      "message": "But it is not a required module for ART, that\u0027s the point.\n\nIt\u0027s required for a functioning phone wrt/ O release. But it is wrong to declare that dependency for the ART module, because ART does not require this functionality.",
+      "parentUuid": "a6651ef7_49f641bb",
+      "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
