@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a6651ef7_099f299a",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-10-27T20:32:17Z",
+      "side": 1,
+      "message": "Most of these libraries seem unnecessary, aren\u0027t they shared library dependencies of other modules that will cause them to be installed?  Only dlopen\u0027d libraries would need to be listed here.",
+      "range": {
+        "startLine": 39,
+        "startChar": 3,
+        "endLine": 42,
+        "endChar": 14
+      },
+      "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6651ef7_49a521ee",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-10-27T20:32:17Z",
+      "side": 1,
+      "message": "Who loads this library?  Would it be better to add it as a LOCAL_REQUIRED_MODULES of that module?",
+      "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
