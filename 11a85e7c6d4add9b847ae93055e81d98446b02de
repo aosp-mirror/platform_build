@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a6651ef7_e91a952e",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-10-27T20:52:00Z",
+      "side": 1,
+      "message": "I can\u0027t talk to that. See the comment above, maybe it\u0027s just to really really ensure things.",
+      "parentUuid": "a6651ef7_099f299a",
+      "range": {
+        "startLine": 39,
+        "startChar": 3,
+        "endLine": 42,
+        "endChar": 14
+      },
+      "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a6651ef7_49a521ee",
         "filename": "target/product/runtime_libart.mk",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2016-10-27T20:32:17Z",
       "side": 1,
       "message": "Who loads this library?  Would it be better to add it as a LOCAL_REQUIRED_MODULES of that module?",
+      "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6651ef7_093609b0",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-10-27T20:52:00Z",
+      "side": 1,
+      "message": "No.\n\nThe runtime will load this when it is asked to, but it is not a requirement of the runtime. ART works just fine without TI. (In fact TI is just a regular plugin when it comes to internals.)",
+      "parentUuid": "a6651ef7_49a521ee",
       "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
