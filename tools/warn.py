@@ -2096,13 +2096,17 @@ def classify_warnings(lines):
 def parallel_classify_warnings(warning_lines):
   """Classify all warning lines with num_cpu parallel processes."""
   num_cpu = args.processes
-  groups = [[] for x in range(num_cpu)]
-  i = 0
-  for x in warning_lines:
-    groups[i].append(x)
-    i = (i + 1) % num_cpu
-  pool = multiprocessing.Pool(num_cpu)
-  group_results = pool.map(classify_warnings, groups)
+  if num_cpu > 1:
+    groups = [[] for x in range(num_cpu)]
+    i = 0
+    for x in warning_lines:
+      groups[i].append(x)
+      i = (i + 1) % num_cpu
+    pool = multiprocessing.Pool(num_cpu)
+    group_results = pool.map(classify_warnings, groups)
+  else:
+    group_results = [classify_warnings(warning_lines)]
+
   for result in group_results:
     for line, pattern_idx, project_idx in result:
       pattern = warn_patterns[pattern_idx]
