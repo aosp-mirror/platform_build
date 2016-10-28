@@ -324,6 +324,10 @@ $(error $(my_missing_exclude_files))
 endif
 my_src_files := $(filter-out $(my_src_files_exclude),$(my_src_files))
 
+# Strip '/' from the beginning of each src file. This helps the ../ detection in case
+# the source file is in the form of /../file
+my_src_files := $(patsubst /%,%,$(my_src_files))
+
 my_clang := $(strip $(LOCAL_CLANG))
 ifdef LOCAL_CLANG_$(my_32_64_bit_suffix)
 my_clang := $(strip $(LOCAL_CLANG_$(my_32_64_bit_suffix)))
