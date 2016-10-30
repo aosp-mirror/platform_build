@@ -16,9 +16,6 @@ ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
 $(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
 
-# Not much sense to check build prebuilts
-LOCAL_DONT_CHECK_MODULE := true
-
 my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
 
 ifdef LOCAL_PREBUILT_MODULE_FILE
@@ -37,6 +34,8 @@ else
     endif
   endif
 endif
+
+LOCAL_CHECKED_MODULE := $(my_prebuilt_src_file)
 
 my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
