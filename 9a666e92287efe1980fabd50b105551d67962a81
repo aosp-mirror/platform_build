@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a65fde57_96365dae",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2016-10-31T19:24:47Z",
+      "side": 1,
+      "message": "why can\u0027t these be inside a userdebug_or_eng statement? Don\u0027t we want the emulator to have the same behavior as a production device?",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 55
+      },
+      "revId": "9a666e92287efe1980fabd50b105551d67962a81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
