@@ -56,6 +56,9 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "UseGoma": $(if $(filter-out false,$(USE_GOMA)),true,false),'; \
 	echo '    "Debuggable": $(if $(filter userdebug eng,$(TARGET_BUILD_VARIANT)),true,false),'; \
 	echo ''; \
+	echo '    "ClangTidy": $(if $(filter 1 true,$(WITH_TIDY)),true,false),'; \
+	echo '    "TidyChecks": "$(WITH_TIDY_CHECKS)",'; \
+	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
 	echo '    "DeviceArchVariant": "$(TARGET_ARCH_VARIANT)",'; \
