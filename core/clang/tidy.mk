@@ -14,45 +14,6 @@
 # limitations under the License.
 #
 
-# Most Android source files are not clang-tidy clean yet.
-# Global tidy checks include only google*, performance*,
-# and misc-macro-parentheses, but not google-readability*
-# or google-runtime-references.
-DEFAULT_GLOBAL_TIDY_CHECKS ?= \
-  $(subst $(space),, \
-    -*,google* \
-    ,misc-macro-parentheses \
-    ,performance* \
-    ,-google-readability* \
-    ,-google-runtime-references \
-  )
-
-# There are too many clang-tidy warnings in external and vendor projects.
-# Enable only some google checks for these projects.
-DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS ?= \
-  $(subst $(space),, \
-    -*,google* \
-    ,-google-build-using-namespace \
-    ,-google-default-arguments \
-    ,-google-explicit-constructor \
-    ,-google-readability* \
-    ,-google-runtime-int \
-    ,-google-runtime-references \
-  )
-
-# Every word in DEFAULT_LOCAL_TIDY_CHECKS list has the following format:
-#   <local_path_prefix>:,<tidy-checks>
-# The last matched local_path_prefix should be the most specific to be used.
-DEFAULT_LOCAL_TIDY_CHECKS := \
-  external/:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
-  external/google:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
-  external/webrtc:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
-  frameworks/compile/mclinker/:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
-  hardware/qcom:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
-  vendor/:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
-  vendor/google:$(DEFAULT_GLOBAL_TIDY_CHECKS) \
-  vendor/google_devices:$(DEFAULT_EXTERNAL_VENDOR_TIDY_CHECKS) \
-
 # Returns 2nd word of $(1) if $(2) has prefix of the 1st word of $(1).
 define find_default_local_tidy_check2
 $(if $(filter $(word 1,$(1))%,$(2)/),$(word 2,$(1)))
@@ -74,25 +35,6 @@ $(lastword \
   ) \
 )
 endef
-
-# Give warnings to header files only in selected directories.
-# Do not give warnings to external or vendor header files,
-# which contain too many warnings.
-DEFAULT_TIDY_HEADER_DIRS := \
-  $(subst $(space),, \
-     art/ \
-    |bionic/ \
-    |bootable/ \
-    |build/ \
-    |cts/ \
-    |dalvik/ \
-    |developers/ \
-    |development/ \
-    |frameworks/ \
-    |libcore/ \
-    |libnativehelper/ \
-    |system/ \
-  )
 
 # Default filter contains current directory $1 and DEFAULT_TIDY_HEADER_DIRS.
 define default_tidy_header_filter
