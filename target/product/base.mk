@@ -107,6 +107,7 @@ PRODUCT_PACKAGES += \
     media_cmd \
     mediadrmserver \
     mediaserver \
+    mediaanalytics \
     mediacodec \
     mediaextractor \
     monkey \
