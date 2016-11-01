@@ -117,6 +117,24 @@
       "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6ec3e0b_2b56d56f",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2016-11-01T17:54:36Z",
+      "side": 1,
+      "message": "is is true this is not required for ART, it is optional.",
+      "parentUuid": "a6651ef7_09a96979",
+      "revId": "11a85e7c6d4add9b847ae93055e81d98446b02de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
