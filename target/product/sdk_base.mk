@@ -54,6 +54,7 @@ PRODUCT_PACKAGES := \
 # audio libraries.
 PRODUCT_PACKAGES += \
 	audio.primary.goldfish \
+	audio.r_submix.default \
 	local_time.default
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
