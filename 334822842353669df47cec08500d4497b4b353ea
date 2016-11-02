@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c67db254_e5fa309d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1004,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-02T17:26:41Z",
+      "side": 1,
+      "message": "Another one of those times I wish it was easier to share python code across android modules... This is really begging for someone to create OrderedSet, but there\u0027s no good place to share it from.",
+      "revId": "334822842353669df47cec08500d4497b4b353ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
