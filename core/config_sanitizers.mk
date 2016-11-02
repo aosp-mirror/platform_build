@@ -31,10 +31,12 @@ ifneq ($(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG),)
   endif
 endif
 
-# Add a filter point for 32-bit vs 64-bit sanitization (to lighten the burden).
-SANITIZE_ARCH ?= 32 64
-ifeq ($(filter $(SANITIZE_ARCH),$(my_32_64_bit_suffix)),)
-  my_sanitize :=
+ifndef LOCAL_IS_HOST_MODULE
+  # Add a filter point for 32-bit vs 64-bit sanitization (to lighten the burden)
+  SANITIZE_TARGET_ARCH ?= $(TARGET_ARCH) $(TARGET_2ND_ARCH)
+  ifeq ($(filter $(SANITIZE_TARGET_ARCH),$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
+    my_sanitize :=
+  endif
 endif
 
 # Add a filter point based on module owner (to lighten the burden). The format is a space- or
