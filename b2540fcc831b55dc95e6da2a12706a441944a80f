@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6a5561c_80e67a2e",
+        "filename": "tools/findleaves.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-11-03T21:02:12Z",
+      "side": 1,
+      "message": "Is a while loop that deletes (like line 41) more efficient than copying dirs every time?",
+      "revId": "b2540fcc831b55dc95e6da2a12706a441944a80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
