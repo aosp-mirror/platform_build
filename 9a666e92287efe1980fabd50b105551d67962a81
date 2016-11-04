@@ -22,6 +22,30 @@
       "revId": "9a666e92287efe1980fabd50b105551d67962a81",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cbff7b6a_411c1c7e",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2016-11-04T20:58:00Z",
+      "side": 1,
+      "message": "Line 4 \u0027# allow for all builds\u0027. This resource runs always on the emulator.",
+      "parentUuid": "a65fde57_96365dae",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 55
+      },
+      "revId": "9a666e92287efe1980fabd50b105551d67962a81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
