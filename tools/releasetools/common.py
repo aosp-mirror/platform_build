@@ -1211,10 +1211,11 @@ class DeviceSpecificParams(object):
     return self._DoCall("VerifyOTA_Assertions")
 
 class File(object):
-  def __init__(self, name, data):
+  def __init__(self, name, data, compress_size = None):
     self.name = name
     self.data = data
     self.size = len(data)
+    self.compress_size = compress_size or self.size
     self.sha1 = sha1(data).hexdigest()
 
   @classmethod
