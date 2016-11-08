@@ -104,17 +104,29 @@ ifdef LOCAL_SDK_VERSION
   # missing API levels to existing ones where necessary, but we're not doing
   # that for the generated libraries. Clip the API level to the minimum where
   # appropriate.
-  my_ndk_api := $(call math_max,$(LOCAL_SDK_VERSION),$(my_min_sdk_version))
+  my_ndk_api := $(LOCAL_SDK_VERSION)
+  ifneq ($(my_ndk_api),current)
+      my_ndk_api := $(call math_max,$(LOCAL_SDK_VERSION),$(my_min_sdk_version))
+  endif
+
+  my_ndk_api_def := $(my_ndk_api)
+  my_ndk_hist_api := $(my_ndk_api)
+  ifeq ($(my_ndk_api),current)
+    my_ndk_api_def := __ANDROID_API_FUTURE__
+    # The last API level supported by the old prebuilt NDKs.
+    my_ndk_hist_api := 24
+  endif
+
 
   # Traditionally this has come from android/api-level.h, but with the libc
   # headers unified it must be set by the build system since we don't have
   # per-API level copies of that header now.
-  my_cflags += -D__ANDROID_API__=$(my_ndk_api)
+  my_cflags += -D__ANDROID_API__=$(my_ndk_api_def)
 
   my_ndk_source_root := \
       $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
   my_ndk_sysroot := \
-    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(my_ndk_api)/arch-$(my_arch)
+    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/platforms/android-$(my_ndk_hist_api)/arch-$(my_arch)
   my_built_ndk := $(SOONG_OUT_DIR)/ndk
   my_ndk_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_TRIPLE)
   my_ndk_sysroot_include := \
