@@ -472,11 +472,11 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   # recovery uses a version of the key that has been slightly
   # predigested (by DumpPublicKey.java) and put in res/keys.
   # extra_recovery_keys are used only in recovery.
-
-  p = common.Run(["java", "-jar",
-                  os.path.join(OPTIONS.search_path, "framework", "dumpkey.jar")]
-                 + mapped_keys + extra_recovery_keys,
-                 stdout=subprocess.PIPE)
+  cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
+         ["-jar",
+          os.path.join(OPTIONS.search_path, "framework", "dumpkey.jar")] +
+         mapped_keys + extra_recovery_keys)
+  p = common.Run(cmd, stdout=subprocess.PIPE)
   new_recovery_keys, _ = p.communicate()
   if p.returncode != 0:
     raise common.ExternalError("failed to run dumpkeys")
