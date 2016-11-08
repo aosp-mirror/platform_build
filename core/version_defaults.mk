@@ -55,6 +55,10 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
+
+  # When you change PLATFORM_SDK_VERSION please ensure you also update the
+  # corresponding methods for isAtLeast* in the following java file:
+  # platform/frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
   PLATFORM_SDK_VERSION := 25
 endif
 
