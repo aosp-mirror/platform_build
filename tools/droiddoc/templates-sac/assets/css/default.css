@@ -122,6 +122,10 @@ a.external-link {
   padding-right:16px;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 img {
   border: none; }
 #jd-content img {
