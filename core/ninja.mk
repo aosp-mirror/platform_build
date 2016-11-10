@@ -1,77 +1,7 @@
-ifeq ($(filter address,$(SANITIZE_HOST)),)
-NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
-else
-NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
-endif
-
 include $(BUILD_SYSTEM)/soong.mk
 
-KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
-
 # Modifier goals we don't need to pass to Ninja.
-NINJA_EXCLUDE_GOALS := showcommands all dist
 .PHONY : $(NINJA_EXCLUDE_GOALS)
-
-# A list of goals which affect parsing of makefiles and we need to pass to Kati.
-PARSE_TIME_MAKE_GOALS := \
-	$(PARSE_TIME_MAKE_GOALS) \
-	$(dont_bother_goals) \
-	all \
-	APP-% \
-	DUMP_% \
-	ECLIPSE-% \
-	PRODUCT-% \
-	AUX-% \
-	boottarball-nodeps \
-	brillo_tests \
-	btnod \
-	build-art% \
-	build_kernel-nodeps \
-	clean-oat% \
-	continuous_instrumentation_tests \
-	continuous_native_tests \
-	cts \
-	custom_images \
-	deps-license \
-	dicttool_aosp \
-	dist \
-	dump-products \
-	dumpvar-% \
-	eng \
-	fusion \
-	oem_image \
-	online-system-api-sdk-docs \
-	pdk \
-	platform \
-	platform-java \
-	product-graph \
-	samplecode \
-	sdk \
-	sdk_addon \
-	sdk_repo \
-	snod \
-	stnod \
-	systemimage-nodeps \
-	systemtarball-nodeps \
-	target-files-package \
-	test-art% \
-	user \
-	userdataimage \
-	userdebug \
-	valgrind-test-art% \
-	vts \
-	win_sdk \
-	winsdk-tools
-
--include vendor/google/build/ninja_config.mk
-
-# Any Android goals that need to be built.
-ANDROID_GOALS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(CKATI) $(MAKEPARALLEL),\
-    $(sort $(ORIGINAL_MAKECMDGOALS) $(MAKECMDGOALS)))
-# Goals we need to pass to Ninja.
-NINJA_GOALS := $(filter-out $(NINJA_EXCLUDE_GOALS), $(ANDROID_GOALS))
-# Goals we need to pass to Kati.
-KATI_GOALS := $(filter $(PARSE_TIME_MAKE_GOALS),  $(ANDROID_GOALS))
 
 define replace_space_and_slash
 $(subst /,_,$(subst $(space),_,$(sort $1)))
