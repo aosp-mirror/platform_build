@@ -9,44 +9,6 @@ else
 SHELL := /bin/bash
 endif
 
-# this turns off the suffix rules built into make
-.SUFFIXES:
-
-# this turns off the RCS / SCCS implicit rules of GNU Make
-% : RCS/%,v
-% : RCS/%
-% : %,v
-% : s.%
-% : SCCS/s.%
-
-# If a rule fails, delete $@.
-.DELETE_ON_ERROR:
-
-# Figure out where we are.
-#TOP := $(dir $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
-#TOP := $(patsubst %/,%,$(TOP))
-
-# TOPDIR is the normal variable you should use, because
-# if we are executing relative to the current directory
-# it can be "", whereas TOP must be "." which causes
-# pattern matching problems when make strips off the
-# trailing "./" from paths in various places.
-#ifeq ($(TOP),.)
-#TOPDIR :=
-#else
-#TOPDIR := $(TOP)/
-#endif
-
-# Check for broken versions of make.
-ifneq (1,$(strip $(shell expr $(MAKE_VERSION) \>= 3.81)))
-$(warning ********************************************************************************)
-$(warning *  You are using version $(MAKE_VERSION) of make.)
-$(warning *  Android can only be built by versions 3.81 and higher.)
-$(warning *  see https://source.android.com/source/download.html)
-$(warning ********************************************************************************)
-$(error stopping)
-endif
-
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
 # the top of the source tree, for example when "make -C" is used in m/mm/mmm.
@@ -65,32 +27,6 @@ $(DEFAULT_GOAL): droid_targets
 .PHONY: droid_targets
 droid_targets:
 
-# Used to force goals to build.  Only use for conditionally defined goals.
-.PHONY: FORCE
-FORCE:
-
-# These goals don't need to collect and include Android.mks/CleanSpec.mks
-# in the source tree.
-dont_bother_goals := clean clobber dataclean installclean \
-    help out \
-    snod systemimage-nodeps \
-    stnod systemtarball-nodeps \
-    userdataimage-nodeps userdatatarball-nodeps \
-    cacheimage-nodeps \
-    bptimage-nodeps \
-    vendorimage-nodeps \
-    ramdisk-nodeps \
-    bootimage-nodeps \
-    recoveryimage-nodeps \
-    vbmetaimage-nodeps \
-    product-graph dump-products
-
-ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
-dont_bother := true
-endif
-
-ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
-
 # Targets that provide quick help on the build system.
 include $(BUILD_SYSTEM)/help.mk
 
@@ -107,6 +43,10 @@ endif
 $(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
 include build/core/ninja.mk
 else # KATI
+
+ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
+dont_bother := true
+endif
 
 include $(SOONG_MAKEVARS_MK)
 
