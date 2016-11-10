@@ -859,4 +859,10 @@ dont_bother_goals := clean clobber dataclean installclean \
     vbmetaimage-nodeps \
     product-graph dump-products
 
+ifndef KATI
+include $(BUILD_SYSTEM)/ninja_config.mk
+-include vendor/google/build/ninja_config.mk
+include $(BUILD_SYSTEM)/soong_config.mk
+endif
+
 include $(BUILD_SYSTEM)/dumpvar.mk
