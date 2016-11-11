@@ -898,22 +898,6 @@ endef
 endif
 
 ###########################################################
-## Commands for munging the dependency files the compiler generates
-###########################################################
-# $(1): the input .d file
-# $(2): the output .P file
-define transform-d-to-p-args
-$(hide) cp $(1) $(2); \
-	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-		-e '/^$$/ d' -e 's/$$/ :/' < $(1) >> $(2); \
-	rm -f $(1)
-endef
-
-define transform-d-to-p
-$(call transform-d-to-p-args,$(@:%.o=%.d),$(@:%.o=%.P))
-endef
-
-###########################################################
 ## Commands for including the dependency files the compiler generates
 ###########################################################
 # $(1): the .P file
@@ -924,7 +908,7 @@ endef
 
 # $(1): object files
 define include-depfiles-for-objs
-$(foreach obj, $(1), $(call include-depfile, $(obj:%.o=%.P), $(obj)))
+$(foreach obj, $(1), $(call include-depfile, $(obj:%.o=%.d), $(obj)))
 endef
 
 ###########################################################
@@ -1023,7 +1007,6 @@ $(hide) $(PRIVATE_RS_CC) \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
   $(PRIVATE_RS_SOURCE_FILES)
 $(call _merge-renderscript-d,$(PRIVATE_DEP_FILES),$@.d)
-$(call transform-d-to-p-args,$@.d,$@.P)
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
@@ -1060,7 +1043,6 @@ $(hide) $(PRIVATE_RS_CC) \
   $(addprefix -I , $(PRIVATE_RS_INCLUDES)) \
   $(PRIVATE_RS_SOURCE_FILES)
 $(call _merge-renderscript-d,$(PRIVATE_DEP_FILES),$@.d)
-$(call transform-d-to-p-args,$@.d,$@.P)
 $(hide) mkdir -p $(dir $@)
 $(hide) touch $@
 endef
@@ -1261,7 +1243,6 @@ $(if $(PRIVATE_TIDY_CHECKS),$(clang-tidy-cpp))
 $(hide) $(RELATIVE_PWD) $(PRIVATE_CXX) \
   $(transform-cpp-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
-$(hide) $(transform-d-to-p)
 endef
 endif
 
@@ -1310,21 +1291,15 @@ $(if $(PRIVATE_TIDY_CHECKS),$(clang-tidy-c))
 $(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(transform-c-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
-$(hide) $(transform-d-to-p)
 endef
 endif
 
-define transform-s-to-o-no-deps
+define transform-s-to-o
 @echo "$($(PRIVATE_PREFIX)DISPLAY) asm: $(PRIVATE_MODULE) <= $<"
 @mkdir -p $(dir $@)
 $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(call transform-c-or-s-to-o-compiler-args, $(PRIVATE_ASFLAGS)) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
-endef
-
-define transform-s-to-o
-$(transform-s-to-o-no-deps)
-$(transform-d-to-p)
 endef
 
 # YASM compilation
@@ -1343,14 +1318,9 @@ endef
 ## will error at build time.
 ###########################################################
 
-define transform-m-to-o-no-deps
-@echo "$($(PRIVATE_PREFIX)DISPLAY) ObjC: $(PRIVATE_MODULE) <= $<"
-$(call transform-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
-endef
-
 define transform-m-to-o
-$(transform-m-to-o-no-deps)
-$(transform-d-to-p)
+@echo "$($(PRIVATE_PREFIX)DISPLAY) ObjC: $(PRIVATE_MODULE) <= $<"
+$(call transform-c-or-s-to-o, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS))
 endef
 
 ###########################################################
@@ -1391,7 +1361,6 @@ $(if $(PRIVATE_TIDY_CHECKS),$(clang-tidy-host-cpp))
 $(hide) $(RELATIVE_PWD) $(PRIVATE_CXX) \
   $(transform-host-cpp-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
-$(hide) $(transform-d-to-p)
 endef
 endif
 
@@ -1410,7 +1379,7 @@ define transform-host-c-or-s-to-o-common-args
 endef
 
 # $(1): extra flags
-define transform-host-c-or-s-to-o-no-deps
+define transform-host-c-or-s-to-o
 @mkdir -p $(dir $@)
 $(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(transform-host-c-or-s-to-o-common-args) \
@@ -1444,32 +1413,21 @@ $(if $(PRIVATE_TIDY_CHECKS), $(clang-tidy-host-c))
 $(hide) $(RELATIVE_PWD) $(PRIVATE_CC) \
   $(transform-host-c-to-o-compiler-args) \
   -MD -MF $(patsubst %.o,%.d,$@) -o $@ $<
-$(hide) $(transform-d-to-p)
 endef
 endif
 
-define transform-host-s-to-o-no-deps
-@echo "$($(PRIVATE_PREFIX)DISPLAY) asm: $(PRIVATE_MODULE) <= $<"
-$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_ASFLAGS))
-endef
-
 define transform-host-s-to-o
-$(transform-host-s-to-o-no-deps)
-$(transform-d-to-p)
+@echo "$($(PRIVATE_PREFIX)DISPLAY) asm: $(PRIVATE_MODULE) <= $<"
+$(call transform-host-c-or-s-to-o, $(PRIVATE_ASFLAGS))
 endef
 
 ###########################################################
 ## Commands for running gcc to compile a host Objective-C file
 ###########################################################
 
-define transform-host-m-to-o-no-deps
-@echo "$($(PRIVATE_PREFIX)DISPLAY) ObjC: $(PRIVATE_MODULE) <= $<"
-$(call transform-host-c-or-s-to-o-no-deps, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS) $(PRIVATE_CFLAGS_NO_OVERRIDE))
-endef
-
 define transform-host-m-to-o
-$(transform-host-m-to-o-no-deps)
-$(transform-d-to-p)
+@echo "$($(PRIVATE_PREFIX)DISPLAY) ObjC: $(PRIVATE_MODULE) <= $<"
+$(call transform-host-c-or-s-to-o, $(PRIVATE_CFLAGS) $(PRIVATE_DEBUG_CFLAGS) $(PRIVATE_CFLAGS_NO_OVERRIDE))
 endef
 
 ###########################################################
@@ -1534,7 +1492,7 @@ endef
 define compile-dotdot-s-file-no-deps
 o := $(intermediates)/$(patsubst %.s,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
 $$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
-	$$(transform-$$(PRIVATE_HOST)s-to-o-no-deps)
+	$$(transform-$$(PRIVATE_HOST)s-to-o)
 $(3) += $$(o)
 endef
 
