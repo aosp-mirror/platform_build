@@ -60,6 +60,8 @@ PARSE_TIME_MAKE_GOALS := \
 	win_sdk \
 	winsdk-tools
 
+include $(wildcard vendor/*/build/ninja_config.mk)
+
 # Any Android goals that need to be built.
 ANDROID_GOALS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(CKATI) $(MAKEPARALLEL),\
     $(sort $(ORIGINAL_MAKECMDGOALS) $(MAKECMDGOALS)))
