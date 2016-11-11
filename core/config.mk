@@ -861,7 +861,6 @@ dont_bother_goals := clean clobber dataclean installclean \
 
 ifndef KATI
 include $(BUILD_SYSTEM)/ninja_config.mk
--include vendor/google/build/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
