@@ -953,7 +953,7 @@ aidl_gen_include_root := $(intermediates)/aidl-generated/include
 $(foreach s,$(aidl_src),\
     $(eval $(call define-aidl-cpp-rule,$(s),$(aidl_gen_cpp_root),aidl_gen_cpp)))
 $(foreach cpp,$(aidl_gen_cpp), \
-    $(call include-depfile,$(addsuffix .aidl.P,$(basename $(cpp))),$(cpp)))
+    $(call include-depfile,$(addsuffix .aidl.d,$(basename $(cpp))),$(cpp)))
 $(call track-src-file-gen,$(aidl_src),$(aidl_gen_cpp))
 
 $(aidl_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
