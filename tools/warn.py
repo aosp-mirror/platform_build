@@ -84,6 +84,8 @@ import argparse
 import multiprocessing
 import os
 import re
+import signal
+import sys
 
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
 parser.add_argument('--gencsv',
@@ -2090,11 +2092,16 @@ def classify_warnings(lines):
   results = []
   for line in lines:
     classify_one_warning(line, results)
+  # After the main work, ignore all other signals to a child process,
+  # to avoid bad warning/error messages from the exit clean-up process.
+  if args.processes > 1:
+    signal.signal(signal.SIGTERM, lambda *args: sys.exit(-signal.SIGTERM))
   return results
 
 
 def parallel_classify_warnings(warning_lines):
   """Classify all warning lines with num_cpu parallel processes."""
+  compile_patterns()
   num_cpu = args.processes
   if num_cpu > 1:
     groups = [[] for x in range(num_cpu)]
@@ -2177,17 +2184,15 @@ def normalize_warning_line(line):
     return line
 
 
-def parse_input_file():
+def parse_input_file(infile):
   """Parse input file, match warning lines."""
   global platform_version
   global target_product
   global target_variant
-  infile = open(args.buildlog, 'r')
   line_counter = 0
 
   # handle only warning messages with a file path
   warning_pattern = re.compile('^[^ ]*/[^ ]*: warning: .*')
-  compile_patterns()
 
   # Collect all warnings into the warning_lines set.
   warning_lines = set()
@@ -2207,7 +2212,7 @@ def parse_input_file():
       m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
       if m is not None:
         target_variant = m.group(0)
-  parallel_classify_warnings(warning_lines)
+  return warning_lines
 
 
 # Return s with escaped backslash and quotation characters.
@@ -2503,7 +2508,8 @@ def dump_csv():
 
 
 def main():
-  parse_input_file()
+  warning_lines = parse_input_file(open(args.buildlog, 'r'))
+  parallel_classify_warnings(warning_lines)
   if args.gencsv:
     dump_csv()
   else:
