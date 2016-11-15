@@ -83,6 +83,7 @@ PRODUCT_PACKAGES += \
     uncrypt \
     voip-common \
     webview \
+    webview_zygote \
     wifi-service
 
 PRODUCT_COPY_FILES += \
