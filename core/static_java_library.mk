@@ -69,7 +69,7 @@ endif
 
 proguard_options_file :=
 
-ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
+ifneq ($(filter custom,$(LOCAL_PROGUARD_ENABLED)),custom)
   proguard_options_file := $(intermediates.COMMON)/proguard_options
 endif
 
@@ -169,14 +169,22 @@ $(full_classes_compiled_jar) \
 $(noshrob_classes_jack) $(full_classes_jack) $(jack_check_timestamp) \
   : $(R_file_stamp)
 
+
+# if we have custom proguarding done use the proguarded classes jar instead of the normal classes jar
+ifeq ($(filter custom,$(LOCAL_PROGUARD_ENABLED)),custom)
+aar_classes_jar = $(full_classes_proguard_jar)
+else
+aar_classes_jar = $(full_classes_jar)
+endif
+
 # Rule to build AAR, archive including classes.jar, resource, etc.
 built_aar := $(intermediates.COMMON)/javalib.aar
 $(built_aar): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(built_aar): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
-$(built_aar): PRIVATE_CLASSES_JAR := $(full_classes_jar)
+$(built_aar): PRIVATE_CLASSES_JAR := $(aar_classes_jar)
 $(built_aar): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(built_aar): PRIVATE_R_TXT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.txt
-$(built_aar) : $(full_classes_jar) $(full_android_manifest)
+$(built_aar) : $(aar_classes_jar) $(full_android_manifest)
 	@echo "target AAR:  $(PRIVATE_MODULE) ($@)"
 	$(hide) rm -rf $(dir $@)aar && mkdir -p $(dir $@)aar/res
 	$(hide) cp $(PRIVATE_ANDROID_MANIFEST) $(dir $@)aar/AndroidManifest.xml
@@ -192,5 +200,6 @@ ALL_MODULES.$(LOCAL_MODULE).AAR := $(built_aar)
 endif  # need_compile_res
 
 # Reset internal variables.
+aar_classes_jar :=
 all_res_assets :=
 LOCAL_IS_STATIC_JAVA_LIBRARY :=
