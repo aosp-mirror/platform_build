@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30b088be_4d6411f7",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-11-16T21:21:24Z",
+      "side": 1,
+      "message": "is not None",
+      "range": {
+        "startLine": 125,
+        "startChar": 33,
+        "endLine": 125,
+        "endChar": 41
+      },
+      "revId": "febb5a7c502720893149394f10c3837647c401d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
