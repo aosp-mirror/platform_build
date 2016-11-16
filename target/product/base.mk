@@ -116,6 +116,7 @@ PRODUCT_PACKAGES += \
     ping \
     ping6 \
     platform.xml \
+    privapp-permissions-platform.xml \
     pppd \
     pm \
     racoon \
