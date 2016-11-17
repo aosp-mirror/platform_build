@@ -46,6 +46,30 @@
       "revId": "d2bf324fd7efaa470aa6c282405f62559e91c858",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d00724c8",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T22:34:33Z",
+      "side": 1,
+      "message": "+dwillemsen for the latest on how best to implement header-only libraries, but, \"yes\".",
+      "parentUuid": "30ca486f_f03b40f9",
+      "range": {
+        "startLine": 122,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 97
+      },
+      "revId": "d2bf324fd7efaa470aa6c282405f62559e91c858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
