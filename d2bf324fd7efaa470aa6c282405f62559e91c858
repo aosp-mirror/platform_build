@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_4526f47e",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T21:52:26Z",
+      "side": 1,
+      "message": "this seems like a pain. if we think this is something OEMs actually need to do, shouldn\u0027t we just make a oem_aids library or something they can add to LOCAL_STATIC_LIBRARIES?",
+      "range": {
+        "startLine": 122,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 97
+      },
+      "revId": "d2bf324fd7efaa470aa6c282405f62559e91c858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
