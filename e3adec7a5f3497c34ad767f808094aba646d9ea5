@@ -1,0 +1,376 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_b0838855",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Any particular reason for being lower case? At the very least you\u0027ll need to add a disable pylint comment here since this will trigger invalid-name.\n\nI\u0027m guessing nothing here has ever been pylint clean, but lets try not to make that worse :)",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d0056432",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Style: stick to \"\"\" for docstrings",
+      "range": {
+        "startLine": 20,
+        "startChar": 4,
+        "endLine": 20,
+        "endChar": 7
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_f0e98039",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "style: One line summary, blank line, then long description.\n\nhttps://google.github.io/styleguide/pyguide.html?showone\u003dComments#Comments\n\n\u003e We always use the three double-quote \"\"\" format for doc strings (per PEP 257). A doc string should be organized as a summary line (one physical line) terminated by a period, question mark, or exclamation point, followed by a blank line, followed by the rest of the doc string starting at the same cursor position as the first quote of the first line.\n\n(comment applies to other places, I\u0027m not going to call them all out so the other comments don\u0027t get buried in the noise)",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_90ce8cbf",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "there",
+      "range": {
+        "startLine": 40,
+        "startChar": 26,
+        "endLine": 40,
+        "endChar": 31
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d011e417",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Pick something more specific. ValueError is probably most appropriate here.",
+      "range": {
+        "startLine": 46,
+        "startChar": 18,
+        "endLine": 46,
+        "endChar": 27
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_101c3c2d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "namefoo (missing a space in the string)",
+      "range": {
+        "startLine": 46,
+        "startChar": 53,
+        "endLine": 46,
+        "endChar": 60
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d0b564d0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "bad indentaion",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d09c845a",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "`if normalized_value is not None`\n\nAlthough maybe it\u0027s a feature that someone passing the empty string for normalized_value would get ValueError? An explicit check would be more intention revealing though.",
+      "range": {
+        "startLine": 90,
+        "startChar": 32,
+        "endLine": 90,
+        "endChar": 68
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_2b0f09a9",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "file_name (str): The config.fs...",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_ab37993f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Looks like this wasn\u0027t even an option before then? Bummer. I was going to suggest that this should be explicitly set for consistent behavior, but I don\u0027t think we want that behavior to be non-strict :(",
+      "range": {
+        "startLine": 170,
+        "startChar": 25,
+        "endLine": 173,
+        "endChar": 19
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_4b336527",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Add an \"Args:\" section. Not obvious what config is at first glance.",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_0bd5eda0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "A closure would be a lot cleaner imo\n\n    def error_message(msg):\n        return \u0027{} for: \"{}\" file: \"{}\"\u0027.format(msg, section_name, file_name)",
+      "range": {
+        "startLine": 221,
+        "startChar": 7,
+        "endLine": 221,
+        "endChar": 80
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_2b154968",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "ValueError",
+      "range": {
+        "startLine": 229,
+        "startChar": 18,
+        "endLine": 229,
+        "endChar": 25
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_3d6bd060",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Use a property instead?\n\n    @property\n    def files(self):\n        return self._files",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_fd9f9839",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Use `\u0027\u0027.format()` (or `\u0027\u0027 % args`) for anything non-trivial",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_fdcdd849",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "\u0027 (be consistent)",
+      "range": {
+        "startLine": 473,
+        "startChar": 11,
+        "endLine": 473,
+        "endChar": 12
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_1db454b0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 484,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "There\u0027s a really handy module to make indentation on things like this nicer:\n\n    _GENERATED \u003d textwrap.dedent(\"\"\"\\\n        /*\n         * THIS IS AN AUTOGENERATED FILE! DO NOT MODIFY\n         */\n        \"\"\")",
+      "range": {
+        "startLine": 480,
+        "startChar": 0,
+        "endLine": 484,
+        "endChar": 4
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_5de5ecbf",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-17T23:38:03Z",
+      "side": 1,
+      "message": "Trailing newline is inconsistent in all these. Most don\u0027t have it.",
+      "range": {
+        "startLine": 488,
+        "startChar": 71,
+        "endLine": 488,
+        "endChar": 73
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
