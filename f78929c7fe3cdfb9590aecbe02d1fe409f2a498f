@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_bcb3699a",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T18:55:56Z",
+      "side": 1,
+      "message": "can we set strict mode in older versions?",
+      "revId": "f78929c7fe3cdfb9590aecbe02d1fe409f2a498f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
