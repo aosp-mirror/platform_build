@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_c5384492",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T21:53:45Z",
+      "side": 1,
+      "message": "uppercase",
+      "range": {
+        "startLine": 85,
+        "startChar": 47,
+        "endLine": 85,
+        "endChar": 55
+      },
+      "revId": "45d731322f8ea91147cc947b419c922a8ca76c32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
