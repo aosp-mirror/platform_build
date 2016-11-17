@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     libjavacore \
     libopenjdk \
     libopenjdkjvm \
+    libopenjdkjvmti \
     libnativehelper \
     libssl \
     libz \
