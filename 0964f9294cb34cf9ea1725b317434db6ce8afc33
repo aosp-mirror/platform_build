@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_f0c0a0e9",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 827,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T22:12:35Z",
+      "side": 1,
+      "message": "let\u0027s call this --aid-header --- no reason to abbreviate here.",
+      "range": {
+        "startLine": 827,
+        "startChar": 34,
+        "endLine": 827,
+        "endChar": 40
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_10befc62",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 830,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T22:12:35Z",
+      "side": 1,
+      "message": "missing space?",
+      "range": {
+        "startLine": 829,
+        "startChar": 72,
+        "endLine": 830,
+        "endChar": 32
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_70c490f8",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 834,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-11-17T22:12:35Z",
+      "side": 1,
+      "message": "why does it say required\u003dTrue above, but seems to be optional here?",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
