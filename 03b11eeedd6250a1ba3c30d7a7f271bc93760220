@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_b638e890",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-17T17:49:16Z",
+      "side": 1,
+      "message": "convert_int() can just go, and you can use the type exception directly. Just specify base 0 to int(). It works like strtoul() and I didn\u0027t know that when I wrote this. This is fixed in fs-config-2, which is why I never fixed it here (I talked with Mark offline on this).",
+      "revId": "03b11eeedd6250a1ba3c30d7a7f271bc93760220",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
