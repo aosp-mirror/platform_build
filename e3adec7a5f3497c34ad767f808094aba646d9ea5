@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_bd552016",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-17T23:44:04Z",
+      "side": 1,
+      "message": "A lot of this got reshuffled and lost history:\nhttps://android-review.googlesource.com/#/q/owner:self+status:abandoned+topic:fsconfig-2\n\nIt was never completly clean, as pylint complained about a few things  that were dumb.\n\nI formatted this with yapf with the style set to google iirc.",
+      "parentUuid": "30ca486f_b0838855",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_d0056432",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
