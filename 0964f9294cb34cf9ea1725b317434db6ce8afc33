@@ -2,6 +2,189 @@
   "comments": [
     {
       "key": {
+        "uuid": "30ca486f_9d2a248f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "in_any_range, and should just be a global func",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 69,
+        "endChar": 16
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_7d7388c6",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "for lineno, line in enumerate(aid_file):",
+      "range": {
+        "startLine": 201,
+        "startChar": 8,
+        "endLine": 201,
+        "endChar": 28
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_9d1ce453",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "Should this ever be caught? Might make more sense to just sys.exit here (it\u0027s an expected form of failure).\n\nSame comment goes for the rest of these",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_5df96cce",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "oops",
+      "range": {
+        "startLine": 317,
+        "startChar": 37,
+        "endLine": 317,
+        "endChar": 47
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_3d48302e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "You\u0027re checking each pair twice.\n\n    for i, range1 in enumerate(self._oem_ranges):\n        for range2 in self._oem_ranges[i + 1:]:\n\nAnd then you can drop the `range1 \u003d\u003d range2` check too.",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_3dde702e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "_oem_ranges?",
+      "range": {
+        "startLine": 331,
+        "startChar": 35,
+        "endLine": 331,
+        "endChar": 41
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_7dd8e83e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "Property?",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_40925f39",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "Here ranges are [a, b), but in `in_any_range` they\u0027re [a, b].\n\n    \u003e\u003e\u003e _get_overlap((0, 1), (1, 2))\n    0\n\nThis is a trivially unit tested function. Could you add some?",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_20b483b0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:13:44Z",
+      "side": 1,
+      "message": "in_any_range?",
+      "range": {
+        "startLine": 536,
+        "startChar": 15,
+        "endLine": 537,
+        "endChar": 58
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_f0c0a0e9",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
