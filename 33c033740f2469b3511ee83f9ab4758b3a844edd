@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_51f793b4",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 939,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T05:10:28Z",
+      "side": 1,
+      "message": "nice catch",
+      "parentUuid": "30ca486f_e0060b85",
+      "range": {
+        "startLine": 939,
+        "startChar": 19,
+        "endLine": 939,
+        "endChar": 21
+      },
+      "revId": "33c033740f2469b3511ee83f9ab4758b3a844edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_80671760",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -36,6 +60,41 @@
       "writtenOn": "2016-11-18T00:16:48Z",
       "side": 1,
       "message": "textwrap.dedent would make this a bit nicer",
+      "revId": "33c033740f2469b3511ee83f9ab4758b3a844edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_51deb32e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T05:10:28Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "30ca486f_80671760",
+      "revId": "33c033740f2469b3511ee83f9ab4758b3a844edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_b1ab876b",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 976,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T05:10:28Z",
+      "side": 1,
+      "message": "This is currently broken. Looks like this depends on the patch:\n\nhttps://android-review.googlesource.com/#/c/292015/3/tools/fs_config/fs_config_generator.py\n\nLikely just a rebase issue I introduced.",
       "revId": "33c033740f2469b3511ee83f9ab4758b3a844edd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
