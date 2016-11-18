@@ -70,6 +70,29 @@
       "revId": "d2bf324fd7efaa470aa6c282405f62559e91c858",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_a0b25397",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1004,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:18:55Z",
+      "side": 1,
+      "message": "nit: leading space",
+      "range": {
+        "startLine": 1004,
+        "startChar": 19,
+        "endLine": 1004,
+        "endChar": 21
+      },
+      "revId": "d2bf324fd7efaa470aa6c282405f62559e91c858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
