@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "b010f8cf_d357fee5",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-11-18T22:00:43Z",
+      "side": 1,
+      "message": "If you\u0027re defining it in Soong, then:\n\n  cc_library_static {\n       name: \"....\",\n       generated_headers: [\"headers_genrule_name\"],\n       export_generated_headers: true,\n  }\n\nIn Make:\n\n  include $(CLEAR_VARS)\n  LOCAL_MODULE :\u003d ....\n  LOCAL_EXPORT_C_INCLUDE_DIRS :\u003d $(oem_aid_dir)\n  LOCAL_EXPORT_C_INCLUDE_DEPS :\u003d $(oem_aid_file)\n  include $(BUILD_STATIC_LIBRARY)",
+      "parentUuid": "b010f8cf_13b11629",
+      "range": {
+        "startLine": 122,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 97
+      },
+      "revId": "d2bf324fd7efaa470aa6c282405f62559e91c858",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_a0b25397",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
