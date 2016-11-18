@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_e0060b85",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 939,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:16:48Z",
+      "side": 1,
+      "message": "nit: missing leading space",
+      "range": {
+        "startLine": 939,
+        "startChar": 19,
+        "endLine": 939,
+        "endChar": 21
+      },
+      "revId": "33c033740f2469b3511ee83f9ab4758b3a844edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_80671760",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 943,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:16:48Z",
+      "side": 1,
+      "message": "textwrap.dedent would make this a bit nicer",
+      "revId": "33c033740f2469b3511ee83f9ab4758b3a844edd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
