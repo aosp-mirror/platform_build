@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_f157bf41",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-11-18T03:51:56Z",
+      "side": 1,
+      "message": "Richard, should ahat rather go into the SDK dependencies? Did you have a strong reason to put this here (considering the file is talking about minimal requirements for a working runtime)?\n\n(Similarly, dexlist and hprof-conv probably should go. Though dexlist is on device? And, while we\u0027re at it, why are we shipping dexdump on device?)",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 10
+      },
+      "revId": "5d9c6165d0133eeca72c0b318dba449ca585a34d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
