@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_ec61a429",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 1010118
+      },
+      "writtenOn": "2016-11-18T06:38:04Z",
+      "side": 0,
+      "message": "Is removing this a glitch?",
+      "range": {
+        "startLine": 743,
+        "startChar": 0,
+        "endLine": 747,
+        "endChar": 57
+      },
+      "revId": "e4fb495b09cb919b6517c2ad7b8eea09c34d555d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
