@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_5115d366",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-11-18T04:03:05Z",
+      "side": 1,
+      "message": "See line 17. \"without Android frameworks\" I don\u0027t think this should be here. Similarly expat.",
+      "parentUuid": "30ca486f_3162171c",
+      "range": {
+        "startLine": 33,
+        "startChar": 24,
+        "endLine": 33,
+        "endChar": 27
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_b12d47c2",
         "filename": "target/product/runtime_libart.mk",
         "patchSetId": 1
@@ -59,6 +83,30 @@
       "writtenOn": "2016-11-18T03:58:20Z",
       "side": 1,
       "message": "because they are someone ART/dex helpers, just not ones you seem to use.\n\nart/tools/dmtracedump\ndalvik/dx\ndalvik/tools/dexdeps\ndalvik/tools/hprof-conv",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 41
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_711acf99",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-11-18T04:03:05Z",
+      "side": 1,
+      "message": "See line 17. These tools are not required for a functioning ART environment.",
+      "parentUuid": "30ca486f_d141e376",
       "range": {
         "startLine": 73,
         "startChar": 0,
