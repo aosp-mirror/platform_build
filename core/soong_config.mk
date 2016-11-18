@@ -47,6 +47,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "DeviceCpuVariant": "$(TARGET_CPU_VARIANT)",'; \
 	echo '    "DeviceAbi": ["$(TARGET_CPU_ABI)", "$(TARGET_CPU_ABI2)"],'; \
 	echo '    "DeviceUsesClang": $(if $(USE_CLANG_PLATFORM_BUILD),$(USE_CLANG_PLATFORM_BUILD),false),'; \
+	echo '    "DeviceVndkVersion": "$(BOARD_VNDK_VERSION)",'; \
 	echo ''; \
 	echo '    "DeviceSecondaryArch": "$(TARGET_2ND_ARCH)",'; \
 	echo '    "DeviceSecondaryArchVariant": "$(TARGET_2ND_ARCH_VARIANT)",'; \
