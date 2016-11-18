@@ -67,8 +67,9 @@ caps:
    * hex (0xFF)
   For multiple caps, just separate by whitespace.
 
-It is an error to specify multiple sections with the same [path]. Per the ini
-specifications enforced by Pythons ConfigParser.
+It is an error to specify multiple sections with the same [path] in different
+files. Note that the same file may contain sections that override the previous
+section in Python versions <= 3.2. In Python 3.2 it's set to strict mode.
 
 
 The next section type is the "AID" section, for specifying OEM specific AIDS.
@@ -84,13 +85,13 @@ Where:
   The <name> can be any valid character for a #define identifier in C.
 
 value:
-  A valid C style number string. Hex, octal, binary and decimal are supported. See "caps"
-  above for more details on number formatting.
+  A valid C style number string. Hex, octal, binary and decimal are supported.
+  See "caps" above for more details on number formatting.
 
-It is an error to specify multiple sections with the same [AID_<name>]. Per the ini
-specifications enforced by Pythons ConfigParser. It is also an error to specify
-multiple sections with the same value option. It is also an error to specify a value
-that is outside of the inclusive OEM ranges:
+It is an error to specify multiple sections with the same [AID_<name>]. With
+the same constraints as [path] described above. It is also an error to specify
+multiple sections with the same value option. It is also an error to specify a
+value that is outside of the inclusive OEM ranges:
  * AID_OEM_RESERVED_START(2900) - AID_OEM_RESERVED_END(2999)
  * AID_OEM_RESERVED_2_START(5000) - AID_OEM_RESERVED_2_END(5999)
 
