@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_8cdaf005",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T05:32:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30ca486f_c5384492",
+      "range": {
+        "startLine": 85,
+        "startChar": 47,
+        "endLine": 85,
+        "endChar": 55
+      },
+      "revId": "45d731322f8ea91147cc947b419c922a8ca76c32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_0086a7a4",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-11-18T00:22:51Z",
       "side": 1,
       "message": "(anywhere in this stack that has a bare \"Exception\" will need to be fixed up, but I\u0027m going to stop leaving comments on them)",
+      "range": {
+        "startLine": 510,
+        "startChar": 22,
+        "endLine": 510,
+        "endChar": 31
+      },
+      "revId": "45d731322f8ea91147cc947b419c922a8ca76c32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_6ce594c0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T05:32:19Z",
+      "side": 1,
+      "message": "most will likely be converted to sys.exit based on previous comments.",
+      "parentUuid": "30ca486f_0086a7a4",
       "range": {
         "startLine": 510,
         "startChar": 22,
