@@ -22,6 +22,30 @@
       "revId": "5d9c6165d0133eeca72c0b318dba449ca585a34d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0c80c9b_b3d93815",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1057373
+      },
+      "writtenOn": "2016-11-18T08:20:23Z",
+      "side": 1,
+      "message": "If I remember correctly, the purpose of adding ahat here was to ensure ahat was built by default, under the assumption that Android developers would want to be able to run it without having to do a special make command.\n\nI don\u0027t know what it means for ahat to go in PRODUCT_PACKAGES or the SDK dependencies. I\u0027m happy with it being anywhere that means I can run \u0027ahat\u0027 after doing a top level make.\n\nIs that reasonable? Does that answer your question?",
+      "parentUuid": "30ca486f_f157bf41",
+      "range": {
+        "startLine": 64,
+        "startChar": 4,
+        "endLine": 64,
+        "endChar": 10
+      },
+      "revId": "5d9c6165d0133eeca72c0b318dba449ca585a34d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
