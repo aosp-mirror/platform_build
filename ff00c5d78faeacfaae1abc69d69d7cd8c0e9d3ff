@@ -116,6 +116,30 @@
       "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_91176b2e",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2016-11-18T04:37:14Z",
+      "side": 1,
+      "message": "neither is oatdump, dexlist, dexdump, ahat, libart_fake...\n\ndalvikvm isn\u0027t required to boot a device. in any case, the SCREAMING UPPERCASE doesn\u0027t seem necessary.",
+      "parentUuid": "30ca486f_711acf99",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 41
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
