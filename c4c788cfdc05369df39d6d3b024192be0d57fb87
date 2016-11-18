@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_c0b90f16",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:40:21Z",
+      "side": 1,
+      "message": "dict comprehensions exist\n\n    {aid.friendly: aid for aid in base_aids}",
+      "range": {
+        "startLine": 882,
+        "startChar": 24,
+        "endLine": 882,
+        "endChar": 70
+      },
+      "revId": "c4c788cfdc05369df39d6d3b024192be0d57fb87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
