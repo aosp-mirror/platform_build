@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_6033db27",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1093,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:37:10Z",
+      "side": 1,
+      "message": "Split the lines or drop the splices (and if you\u0027re going to split the lines, prefer textwrap.dedent)",
+      "range": {
+        "startLine": 1093,
+        "startChar": 22,
+        "endLine": 1093,
+        "endChar": 25
+      },
+      "revId": "4c5334895c0bab92433c3b90bad6084d881289e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_e080cb4a",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1153,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-18T00:37:10Z",
+      "side": 1,
+      "message": "These should be sanitized. I get that you have to already be building the system image to affect this, but you can do weird shit here like give the username of \"foo::0:0::/:/system/bin/sh #\" and then your user is root...",
+      "range": {
+        "startLine": 1153,
+        "startChar": 46,
+        "endLine": 1153,
+        "endChar": 63
+      },
+      "revId": "4c5334895c0bab92433c3b90bad6084d881289e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
