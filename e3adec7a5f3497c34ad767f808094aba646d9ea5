@@ -186,6 +186,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_40489f2e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T02:07:04Z",
+      "side": 1,
+      "message": "Sure.",
+      "parentUuid": "30ca486f_d09c845a",
+      "range": {
+        "startLine": 90,
+        "startChar": 32,
+        "endLine": 90,
+        "endChar": 68
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_2b0f09a9",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -214,6 +238,30 @@
       "writtenOn": "2016-11-17T23:38:03Z",
       "side": 1,
       "message": "Looks like this wasn\u0027t even an option before then? Bummer. I was going to suggest that this should be explicitly set for consistent behavior, but I don\u0027t think we want that behavior to be non-strict :(",
+      "range": {
+        "startLine": 170,
+        "startChar": 25,
+        "endLine": 173,
+        "endChar": 19
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_80cf176d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T02:07:04Z",
+      "side": 1,
+      "message": "Yeah I don\u0027t want this, but it\u0027s not an option. The only way would be to subclass and get into a world of pain and suffering.",
+      "parentUuid": "30ca486f_ab37993f",
       "range": {
         "startLine": 170,
         "startChar": 25,
@@ -266,6 +314,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_b322af14",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T02:07:04Z",
+      "side": 1,
+      "message": "Yeah I like that better too.",
+      "parentUuid": "30ca486f_0bd5eda0",
+      "range": {
+        "startLine": 221,
+        "startChar": 7,
+        "endLine": 221,
+        "endChar": 80
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_2b154968",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -289,6 +361,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_d31f2bd3",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 229,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T02:07:04Z",
+      "side": 1,
+      "message": "Scratching my head, why did I do that.",
+      "parentUuid": "30ca486f_2b154968",
+      "range": {
+        "startLine": 229,
+        "startChar": 18,
+        "endLine": 229,
+        "endChar": 25
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_3d6bd060",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -300,6 +396,24 @@
       "writtenOn": "2016-11-17T23:38:03Z",
       "side": 1,
       "message": "Use a property instead?\n\n    @property\n    def files(self):\n        return self._files",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d34d6be3",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T02:07:04Z",
+      "side": 1,
+      "message": "I thought the point of properties is so you could do foo.files and if you wanted to encapsulate it later, you could by adding a property.\n\nI\u0027m going to skip this for now, unless you have a more compelling reason.",
+      "parentUuid": "30ca486f_3d6bd060",
       "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -380,6 +494,30 @@
       "writtenOn": "2016-11-17T23:38:03Z",
       "side": 1,
       "message": "Trailing newline is inconsistent in all these. Most don\u0027t have it.",
+      "range": {
+        "startLine": 488,
+        "startChar": 71,
+        "endLine": 488,
+        "endChar": 73
+      },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d361eb29",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T02:07:04Z",
+      "side": 1,
+      "message": "The newlines here make the generated file easier for a human to read IMHO.",
+      "parentUuid": "30ca486f_5de5ecbf",
       "range": {
         "startLine": 488,
         "startChar": 71,
