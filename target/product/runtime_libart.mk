@@ -16,41 +16,60 @@
 
 # Provides a functioning ART environment without Android frameworks
 
+# Minimal boot classpath. This should be a subset of PRODUCT_BOOT_JARS, and equivalent to
+# TARGET_CORE_JARS.
 PRODUCT_PACKAGES += \
     apache-xml \
-    ahat \
     bouncycastle \
-    cacerts \
-    conscrypt \
     core-oj \
-    core-junit \
     core-libart \
-    dalvikvm \
-    dex2oat \
-    dexdeps \
-    dexdump \
-    dexlist \
-    dmtracedump \
-    dx \
+    conscrypt \
+    okhttp \
+
+# Additional mixins to the boot classpath.
+PRODUCT_PACKAGES += \
+    core-junit \
+
+# Why are we pulling in ext, which is frameworks/base, depending on tagsoup and nist-sip?
+PRODUCT_PACKAGES += \
     ext \
-    hprof-conv \
-    libart \
-    libart_fake \
-    libcrypto \
+
+# Why are we pulling in expat, which is used in frameworks, only, it seem?
+PRODUCT_PACKAGES += \
     libexpat \
-    libicui18n \
-    libicuuc \
+
+# Libcore.
+PRODUCT_PACKAGES += \
     libjavacore \
     libopenjdk \
     libopenjdkjvm \
+
+# Libcore ICU. TODO: Try to figure out if/why we need them explicitly.
+PRODUCT_PACKAGES += \
+    libicui18n \
+    libicuuc \
+
+# ART.
+PRODUCT_PACKAGES += \
+    dalvikvm \
+    dex2oat \
+    libart \
+    libart_fake \
     libopenjdkjvmti \
-    libnativehelper \
-    libssl \
-    libz \
-    oatdump \
-    okhttp \
     patchoat \
     profman
+
+# ART/dex helpers.
+PRODUCT_PACKAGES += \
+    ahat \
+    dexdump \
+    dexlist \
+    hprof-conv \
+    oatdump \
+
+# Certificates.
+PRODUCT_PACKAGES += \
+    cacerts \
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     dalvik.vm.image-dex2oat-Xms=64m \
