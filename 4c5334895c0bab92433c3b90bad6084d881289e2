@@ -69,6 +69,30 @@
       "revId": "4c5334895c0bab92433c3b90bad6084d881289e2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_4cf61872",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1153,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T05:43:39Z",
+      "side": 1,
+      "message": "Actually already caught:\n\nSection names for AID_\u003cname\u003e in the ini file must be a valid character for a C define:\n\nException: Invalid characters in AID section at \"6\" for: \"Expecting upper case, a number or underscore\" for: \"AID_DE:IM\" file: \"/home/wcrobert/test/delim.fs\"\n\nGranted, I want explicit checks that logon or uid don\u0027t have \u0027:\u0027 in them, so ill still add them.",
+      "parentUuid": "30ca486f_ecd0c4e4",
+      "range": {
+        "startLine": 1153,
+        "startChar": 46,
+        "endLine": 1153,
+        "endChar": 63
+      },
+      "revId": "4c5334895c0bab92433c3b90bad6084d881289e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
