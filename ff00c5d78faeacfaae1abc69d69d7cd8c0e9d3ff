@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30ca486f_3162171c",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2016-11-18T03:58:20Z",
+      "side": 1,
+      "message": "this contained Apache HTTP Client in the past, which libcore at least used to have some tests for I believe.\n\next is part of the BOOTCLASSPATH",
+      "range": {
+        "startLine": 33,
+        "startChar": 24,
+        "endLine": 33,
+        "endChar": 27
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_b12d47c2",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2016-11-18T03:58:20Z",
+      "side": 1,
+      "message": "CA Certificates.",
+      "range": {
+        "startLine": 69,
+        "startChar": 2,
+        "endLine": 69,
+        "endChar": 15
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d141e376",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2016-11-18T03:58:20Z",
+      "side": 1,
+      "message": "because they are someone ART/dex helpers, just not ones you seem to use.\n\nart/tools/dmtracedump\ndalvik/dx\ndalvik/tools/dexdeps\ndalvik/tools/hprof-conv",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 41
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
