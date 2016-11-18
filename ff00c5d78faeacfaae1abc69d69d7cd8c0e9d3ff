@@ -140,6 +140,30 @@
       "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_2c62bc1b",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-11-18T07:03:18Z",
+      "side": 1,
+      "message": "As mentioned on the other CL:\n\nI agree with dexlist, dexdump, ahat. They\u0027re not required, and IMHO should not be here. I left ahat because its jars might be distributed as part of a regular build. I left dexlist because it is currently on device (?), similar for dexdump.\n\nDisagree with oatdump, which is valuable because of custom oat modifications.\n\ndalvikvm isn\u0027t required to boot a device, but then this file doesn\u0027t claim to give you a bootable device, just a \"functioning ART environment.\"\n\nAgree with the fake libart.\n\n\nThe uppercase is so that it catches the eye of the reviewer. I strongly disagree to these being here. And it\u0027s highly inconsistent and annoying that dx wasn\u0027t in the SDK list. dx is deprecated in the platform. If we had to put something here, shouldn\u0027t it be Jack?",
+      "parentUuid": "30ca486f_91176b2e",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 41
+      },
+      "revId": "ff00c5d78faeacfaae1abc69d69d7cd8c0e9d3ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
