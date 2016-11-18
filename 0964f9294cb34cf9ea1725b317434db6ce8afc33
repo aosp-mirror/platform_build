@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_918a0b6c",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "Utils grows in functionality and Id rather have it bound to class. I just don\u0027t like arbitrary static globals. Unless you can point to a Google style guide for python that says no, id prefer to leave it.",
+      "parentUuid": "30ca486f_9d2a248f",
+      "range": {
+        "startLine": 69,
+        "startChar": 8,
+        "endLine": 69,
+        "endChar": 16
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_7d7388c6",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_117efb83",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "neato",
+      "parentUuid": "30ca486f_7d7388c6",
+      "range": {
+        "startLine": 201,
+        "startChar": 8,
+        "endLine": 201,
+        "endChar": 28
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_9d1ce453",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -59,6 +107,24 @@
       "writtenOn": "2016-11-18T00:13:44Z",
       "side": 1,
       "message": "Should this ever be caught? Might make more sense to just sys.exit here (it\u0027s an expected form of failure).\n\nSame comment goes for the rest of these",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_d1d2c363",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "sys.exit just raises the SystemExit exception. I could really care less, but other cases in other patches that detect duplicate aid collisions also should then change.\n\nIf it really matters, ill change it.",
+      "parentUuid": "30ca486f_9d1ce453",
       "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -105,6 +171,24 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_f1cfbfb8",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "nice",
+      "parentUuid": "30ca486f_3d48302e",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_3dde702e",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -116,6 +200,30 @@
       "writtenOn": "2016-11-18T00:13:44Z",
       "side": 1,
       "message": "_oem_ranges?",
+      "range": {
+        "startLine": 331,
+        "startChar": 35,
+        "endLine": 331,
+        "endChar": 41
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_f1b6df22",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "yeah all the ranges...",
+      "parentUuid": "30ca486f_3dde702e",
       "range": {
         "startLine": 331,
         "startChar": 35,
@@ -145,6 +253,24 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_31b13729",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "It doesn\u0027t provide much here...\n\nx.oem_ranges \u003c-- someone will try and mutate that and get an error.\n\nvs\n\nx.get_oem_ranges() \u003c-- this is a clearly not mutable\n\nI prefer explicit get/sets.",
+      "parentUuid": "30ca486f_7dd8e83e",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_40925f39",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -162,6 +288,24 @@
     },
     {
       "key": {
+        "uuid": "30ca486f_110b5b06",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "Im not following what your saying about here vs in_any_range.\n\nFor unit tests, sure, I can add a commandlet called test that will fire up a unit test class. Ill do that in a different patch.",
+      "parentUuid": "30ca486f_40925f39",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_20b483b0",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -173,6 +317,30 @@
       "writtenOn": "2016-11-18T00:13:44Z",
       "side": 1,
       "message": "in_any_range?",
+      "range": {
+        "startLine": 536,
+        "startChar": 15,
+        "endLine": 537,
+        "endChar": 58
+      },
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30ca486f_51f4f3d7",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-18T04:40:54Z",
+      "side": 1,
+      "message": "yes",
+      "parentUuid": "30ca486f_20b483b0",
       "range": {
         "startLine": 536,
         "startChar": 15,
