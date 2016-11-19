@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b010f8cf_bfce8b6f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 893,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-19T02:25:01Z",
+      "side": 1,
+      "message": "Just put the \" with the file name in the list",
+      "revId": "adf6e6c389bd640a51d9bc03933f9581f1dc7558",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
