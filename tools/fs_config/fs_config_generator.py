@@ -158,6 +158,12 @@ class AID(object):
         friendly = identifier[len(AID.PREFIX):].lower()
         self.friendly = AID._fixup_friendly(friendly)
 
+    def __eq__(self, other):
+
+        return self.identifier == other.identifier \
+            and self.value == other.value and self.found == other.found \
+            and self.normalized_value == other.normalized_value
+
     @staticmethod
     def is_friendly(name):
         """Determines if an AID is a freindly name or C define.
@@ -217,6 +223,12 @@ class FSConfig(object):
         self.caps = caps
         self.path = path
         self.filename = filename
+
+    def __eq__(self, other):
+
+        return self.mode == other.mode and self.user == other.user \
+            and self.group == other.group and self.caps == other.caps \
+            and self.path == other.path and self.filename == other.filename
 
 
 class AIDHeaderParser(object):
