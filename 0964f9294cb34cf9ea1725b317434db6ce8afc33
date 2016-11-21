@@ -49,6 +49,24 @@
     },
     {
       "key": {
+        "uuid": "b010f8cf_0c620552",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:24:59Z",
+      "side": 1,
+      "message": "Interestingly the internal version of our style guide (annoyingly differs in a few places) says no, but the public one doesn\u0027t mind. There really isn\u0027t a consistent Python style in Android, but I think we can safely ignore the one that only Googlers can see :)\n\nThis is fine, it just looked a little odd since there\u0027s only a single method in it right now.",
+      "parentUuid": "30ca486f_918a0b6c",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_7d7388c6",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -125,6 +143,24 @@
       "side": 1,
       "message": "sys.exit just raises the SystemExit exception. I could really care less, but other cases in other patches that detect duplicate aid collisions also should then change.\n\nIf it really matters, ill change it.",
       "parentUuid": "30ca486f_9d1ce453",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_ec91f1e2",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:24:59Z",
+      "side": 1,
+      "message": "It does, but there\u0027s a default handler that catches SystemExit and simply prints the message rather than the stack trace (just a UX difference). Sounds like this is intended to be caught though, so LGTM.",
+      "parentUuid": "30ca486f_d1d2c363",
       "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -300,6 +336,24 @@
       "side": 1,
       "message": "Im not following what your saying about here vs in_any_range.\n\nFor unit tests, sure, I can add a commandlet called test that will fire up a unit test class. Ill do that in a different patch.",
       "parentUuid": "30ca486f_40925f39",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_6c13c17f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:24:59Z",
+      "side": 1,
+      "message": "These? https://en.wikipedia.org/wiki/Interval_(mathematics)#Notations_for_intervals\n\nCould you add a comment explaining if these intervals are open or closed? I suspect I\u0027ll find out when I get to the test CL, but a comment would certainly help clarify.",
+      "parentUuid": "30ca486f_110b5b06",
       "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
