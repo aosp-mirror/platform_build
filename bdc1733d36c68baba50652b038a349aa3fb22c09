@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b010f8cf_8706ce3b",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:52:08Z",
+      "side": 1,
+      "message": "Should probably raise ValueError since this is a utility function. Up to the caller how it wants to die/proceed.",
+      "revId": "bdc1733d36c68baba50652b038a349aa3fb22c09",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
