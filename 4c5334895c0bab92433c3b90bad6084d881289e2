@@ -93,6 +93,24 @@
       "revId": "4c5334895c0bab92433c3b90bad6084d881289e2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_27472298",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1153,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:50:18Z",
+      "side": 1,
+      "message": "Yeah, having the checks here is good because we\u0027ll still be protected in the event that the other code changes.",
+      "parentUuid": "30ca486f_4cf61872",
+      "revId": "4c5334895c0bab92433c3b90bad6084d881289e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
