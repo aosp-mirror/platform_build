@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b010f8cf_ccaaad68",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:32:27Z",
+      "side": 1,
+      "message": "Rebase mistake?",
+      "revId": "3fa4bbf7551d4f31bd0a167fe070ac0d2958e3e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_6c9aa15d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:32:27Z",
+      "side": 1,
+      "message": "And used here",
+      "revId": "3fa4bbf7551d4f31bd0a167fe070ac0d2958e3e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
