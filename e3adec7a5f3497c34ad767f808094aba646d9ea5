@@ -77,6 +77,24 @@
     },
     {
       "key": {
+        "uuid": "b010f8cf_5e10a770",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "Still needs to be done",
+      "parentUuid": "30ca486f_f0e98039",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_90ce8cbf",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -228,6 +246,24 @@
         "endLine": 90,
         "endChar": 68
       },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_21015221",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "That\u0027s what I mean by \"maybe it\u0027s a feature that someone passing the empty string for normalized_value would get ValueError?\".\n\nI think both this and the updated version still don\u0027t make it clear if the behavior of the empty string for `normalized_value` is intentional or a bug.\n\nThe following seems to most clear IMO:\n\n    if normalized_value \u003d\u003d \u0027\u0027:\n        raise ValueError(\u0027normalized_value cannot be the empty string\u0027)\n    elif normalized_value is None:\n        self.normalized_value \u003d str(int(value))\n    else:\n        self.normalized_value \u003d normalized_value\n\nNow that I\u0027ve seen it written that way, I noticed something else: do you need to perform any checking on normalized_value?",
+      "parentUuid": "30ca486f_564dc93c",
       "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -444,6 +480,24 @@
     },
     {
       "key": {
+        "uuid": "b010f8cf_01cf6e6e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "That\u0027s part of the reason, but I\u0027ve always considered a property to be the more pythonic solution. It keeps the method of accessing things consistent. It also makes it possible to go the other direction (accessor to simple attribute) if need be.\n\nLooks like at least some people on SO agree with me: http://stackoverflow.com/q/13852279/632035. The Google Style guide also agrees: https://google.github.io/styleguide/pyguide.html?showone\u003dProperties#Properties\n\nI can see a reason for property rather than a pure attribute here though: keeping it read only to users of the class. @property does enforce that unless you\u0027ve also made a @property.setter.",
+      "parentUuid": "30ca486f_d34d6be3",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_fd9f9839",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -572,6 +626,24 @@
         "endLine": 488,
         "endChar": 73
       },
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_cc1d0ddf",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "Sure, but that logic probably belongs in the printing code rather than built in to the variable.",
+      "parentUuid": "30ca486f_d361eb29",
       "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
