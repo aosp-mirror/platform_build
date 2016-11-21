@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b010f8cf_7e136b7f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "Thanks!",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 53
+      },
+      "revId": "a15f2300448555dd643bda8f36d7015fb83d2e32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_1e20efaf",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "I wouldn\u0027t complain if you wanted to just disable this in a pylintrc. I typically disable the entire design subset.\n\nWe use the following in a handful of other projects:\n\n    [MESSAGES CONTROL]\n    disable\u003dfixme,design,locally-disabled,too-many-lines\n\n    [VARIABLES]\n    dummy-variables-rgx\u003d_|dummy",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 40
+      },
+      "revId": "a15f2300448555dd643bda8f36d7015fb83d2e32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_c1ba7609",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-21T23:03:58Z",
+      "side": 1,
+      "message": "normlized_str and normalized_int (or whatever). No need to leave these landmines laying around :)",
+      "range": {
+        "startLine": 260,
+        "startChar": 50,
+        "endLine": 260,
+        "endChar": 91
+      },
+      "revId": "a15f2300448555dd643bda8f36d7015fb83d2e32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
