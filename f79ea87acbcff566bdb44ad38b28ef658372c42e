@@ -1,0 +1,214 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b010f8cf_a756721e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Any particular reason? I would think that it\u0027s more useful to just let the inevitable NameError happen here if an incompatible type is passed.",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_67507a22",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Same as above.",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_e7c8eab6",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1302,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Actually, docstrings for test cases are used to print friendlier text when run:\n\n\n    $ cat test_foo.py\n    import unittest\n\n\n    class Tests(unittest.TestCase):\n        def test_foo(self):\n            \"\"\"Tests that True is True.\"\"\"\n            self.assertTrue(True)\n    $ nose2 -v\n    test_foo (test_foo.Tests)\n    Tests that True is True. ... ok\n\n    ----------------------------------------------------------------------\n    Ran 1 test in 0.000s\n\n    OK",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_07265e7d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1305,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "I\u0027m actually not familiar with redundant-unittest-assert. Which tests was that triggering on?",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_a7baf207",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1308,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Should go in test_fs_config_generator.py so the usual python test runners (nose2 and co) can find it.\n\nAlso means that your protected-access disable won\u0027t accidentally affect non-test code (you didn\u0027t enable it after the test class).",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_07fc1e96",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1310,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Missing a test for an interval contained entirely in the other interval.",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_27de022e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1319,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be 11?",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_c7aa8668",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1329,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Tests for the identifier -\u003e friendly mappings that are overridden?",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_1270de49",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Test doesn\u0027t actually show that this is used since it\u0027s equal to the value we\u0027re passing anyway.",
+      "range": {
+        "startLine": 1338,
+        "startChar": 52,
+        "endLine": 1338,
+        "endChar": 57
+      },
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_077f7e55",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Incorrect indentation (and elsewhere)",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_12621e52",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1363,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "https://docs.python.org/2/library/unittest.html#unittest.TestCase.assertIn\n\nGives much better error messages:\n\n    $ cat test_stuff.py\n    test_stuff.py   test_stuff.pyc  \n    danalbert@danalbert:~/checks$ cat test_stuff.py\n    import unittest\n\n\n    NEEDLE \u003d \u0027foo\u0027\n    HAYSTACK \u003d [\u0027bar\u0027]\n\n\n    class Tests(unittest.TestCase):\n        def test_assertIn(self):\n            self.assertIn(NEEDLE, HAYSTACK)\n\n        def test_assertTrue(self):\n            self.assertTrue(NEEDLE in HAYSTACK)\n    $ nose2\n    FF\n    \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    FAIL: test_assertIn (test_stuff.Tests)\n    ----------------------------------------------------------------------\n    Traceback (most recent call last):\n      File \"/usr/local/google/home/danalbert/checks/test_stuff.py\", line 10, in test_assertIn\n        self.assertIn(NEEDLE, HAYSTACK)\n    AssertionError: \u0027foo\u0027 not found in [\u0027bar\u0027]\n\n    \u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n    FAIL: test_assertTrue (test_stuff.Tests)\n    ----------------------------------------------------------------------\n    Traceback (most recent call last):\n      File \"/usr/local/google/home/danalbert/checks/test_stuff.py\", line 13, in test_assertTrue\n        self.assertTrue(NEEDLE in HAYSTACK)\n    AssertionError: False is not true\n\n    ----------------------------------------------------------------------\n    Ran 2 tests in 0.000s\n\n    FAILED (failures\u003d2)",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_f218aaf0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1406,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T00:44:09Z",
+      "side": 1,
+      "message": "Oh, probably for these. unittest is less clunky than you think it is :)\n\nhttps://docs.python.org/2/library/unittest.html#unittest.TestCase.assertRaises\n\n    self.assertRaises(SystemExit, AIDHeaderParser(temp_file.name))",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
