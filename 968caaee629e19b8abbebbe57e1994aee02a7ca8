@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "b010f8cf_3f7f2a56",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T02:53:49Z",
+      "side": 1,
+      "message": "It might not have been",
+      "revId": "968caaee629e19b8abbebbe57e1994aee02a7ca8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_adf2d3b6",
         "filename": "core/binary.mk",
         "patchSetId": 2
@@ -13,6 +30,23 @@
       "writtenOn": "2016-11-22T01:58:52Z",
       "side": 1,
       "message": "It would be nice to reduce the duplication here, but I\u0027m not sure there is a clear way while keeping the current ordering.",
+      "revId": "968caaee629e19b8abbebbe57e1994aee02a7ca8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b010f8cf_1f2b4647",
+        "filename": "core/executable_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-22T02:53:49Z",
+      "side": 1,
+      "message": "I thought this was fixed because we link with full paths now.",
       "revId": "968caaee629e19b8abbebbe57e1994aee02a7ca8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
