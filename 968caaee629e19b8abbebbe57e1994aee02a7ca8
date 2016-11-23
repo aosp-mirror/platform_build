@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f027d048_a373048e",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-11-23T21:27:19Z",
+      "side": 1,
+      "message": "It actually will, but yes, this is confusing to read. (I check for host\u0026vndk in local_vndk.mk, which gets included before this)",
+      "parentUuid": "b010f8cf_3f7f2a56",
+      "revId": "968caaee629e19b8abbebbe57e1994aee02a7ca8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_adf2d3b6",
         "filename": "core/binary.mk",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2016-11-22T02:53:49Z",
       "side": 1,
       "message": "I thought this was fixed because we link with full paths now.",
+      "revId": "968caaee629e19b8abbebbe57e1994aee02a7ca8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f027d048_ce23c7ca",
+        "filename": "core/executable_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-11-23T21:27:19Z",
+      "side": 1,
+      "message": "Yeah, this just hasn\u0027t been cleaned up. Added a change before this one to remove all the global ld dirs completely.",
+      "parentUuid": "b010f8cf_1f2b4647",
       "revId": "968caaee629e19b8abbebbe57e1994aee02a7ca8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
