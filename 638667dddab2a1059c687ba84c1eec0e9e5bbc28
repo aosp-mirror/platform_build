@@ -22,6 +22,30 @@
       "revId": "638667dddab2a1059c687ba84c1eec0e9e5bbc28",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ed0297f6_4e8f554b",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-28T19:48:05Z",
+      "side": 1,
+      "message": "outside of the fact its missing the space, it complains that the module contains too many lines of code. Ideally, id like to keep this as a single a file, rather than needing to split it into separate files and doing the whole PYTHON_DIR stuff.",
+      "parentUuid": "b010f8cf_8ce5d51e",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 31
+      },
+      "revId": "638667dddab2a1059c687ba84c1eec0e9e5bbc28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
