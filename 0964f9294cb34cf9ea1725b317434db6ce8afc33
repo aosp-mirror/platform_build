@@ -360,6 +360,24 @@
     },
     {
       "key": {
+        "uuid": "ed0297f6_8e00bdb5",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 423,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-28T19:53:32Z",
+      "side": 1,
+      "message": "Oh yeah I see how this is confusing, its a closed interval but in a python tuple.",
+      "parentUuid": "b010f8cf_6c13c17f",
+      "revId": "0964f9294cb34cf9ea1725b317434db6ce8afc33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_20b483b0",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
