@@ -381,6 +381,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/*)
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/previous_overlays.txt)
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/current_packages.txt)
 
+$(call add-clean-step, rm -rf $(HOST_OUT_INTERMEDIATES)/include)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
