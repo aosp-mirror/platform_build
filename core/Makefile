@@ -1581,6 +1581,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/e2fsck \
   $(HOST_OUT_EXECUTABLES)/build_verity_tree \
   $(HOST_OUT_EXECUTABLES)/verity_signer \
+  $(HOST_OUT_EXECUTABLES)/verity_verifier \
   $(HOST_OUT_EXECUTABLES)/append2simg \
   $(HOST_OUT_EXECUTABLES)/img2simg \
   $(HOST_OUT_EXECUTABLES)/boot_signer \
