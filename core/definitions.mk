@@ -1779,7 +1779,6 @@ $(hide) $(PRIVATE_CXX) \
 	-nostdlib -Wl,-soname,$(notdir $@) \
 	-Wl,--gc-sections \
 	$(if $(filter true,$(PRIVATE_CLANG)),-shared,-Wl$(comma)-shared) \
-	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(PRIVATE_TARGET_CRTBEGIN_SO_O) \
 	$(PRIVATE_ALL_OBJECTS) \
 	-Wl,--whole-archive \
@@ -1866,7 +1865,6 @@ $(hide) $(PRIVATE_CXX) -pie \
 	-Wl,-dynamic-linker,$(PRIVATE_LINKER) \
 	-Wl,--gc-sections \
 	-Wl,-z,nocopyreloc \
-	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	-Wl,-rpath-link=$(PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES) \
 	$(PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O) \
 	$(PRIVATE_ALL_OBJECTS) \
@@ -1910,7 +1908,6 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(filter $(PRIVATE_LDFLAGS),-shared),,-static) \
 	-Wl,--gc-sections \
 	-o $@ \
-	$(PRIVATE_TARGET_GLOBAL_LD_DIRS) \
 	$(PRIVATE_TARGET_CRTBEGIN_STATIC_O) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
 	$(PRIVATE_LDFLAGS) \
