@@ -4,9 +4,8 @@ ifneq (,$(strip $(LOCAL_COPY_HEADERS)))
 ###########################################################
 $(call record-module-type,COPY_HEADERS)
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
-  my_prefix := HOST_
-else
-  my_prefix := TARGET_
+  $(shell echo $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): LOCAL_COPY_HEADERS may not be used with host modules >&2)
+  $(error done)
 endif
 
 # Modules linking against the SDK do not have the include path to use
@@ -37,8 +36,8 @@ $(foreach header,$(LOCAL_COPY_HEADERS), \
   $(eval _chFrom := $(LOCAL_PATH)/$(header)) \
   $(eval _chTo := \
       $(if $(LOCAL_COPY_HEADERS_TO),\
-        $($(my_prefix)OUT_HEADERS)/$(LOCAL_COPY_HEADERS_TO)/$(notdir $(header)),\
-        $($(my_prefix)OUT_HEADERS)/$(notdir $(header)))) \
+        $(TARGET_OUT_HEADERS)/$(LOCAL_COPY_HEADERS_TO)/$(notdir $(header)),\
+        $(TARGET_OUT_HEADERS)/$(notdir $(header)))) \
   $(eval ALL_COPIED_HEADERS.$(_chTo).MAKEFILE += $(LOCAL_MODULE_MAKEFILE)) \
   $(eval ALL_COPIED_HEADERS.$(_chTo).SRC += $(_chFrom)) \
   $(if $(filter $(_chTo),$(ALL_COPIED_HEADERS)),, \
