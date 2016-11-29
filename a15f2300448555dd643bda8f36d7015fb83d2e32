@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "702a0062_7d4ddb86",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T03:38:22Z",
+      "side": 1,
+      "message": "One of my goals was self contained, so id rather not add a pylintrc now.",
+      "parentUuid": "b010f8cf_1e20efaf",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 40
+      },
+      "revId": "a15f2300448555dd643bda8f36d7015fb83d2e32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_c1ba7609",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 6
@@ -59,6 +83,30 @@
       "writtenOn": "2016-11-21T23:03:58Z",
       "side": 1,
       "message": "normlized_str and normalized_int (or whatever). No need to leave these landmines laying around :)",
+      "range": {
+        "startLine": 260,
+        "startChar": 50,
+        "endLine": 260,
+        "endChar": 91
+      },
+      "revId": "a15f2300448555dd643bda8f36d7015fb83d2e32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_4f621e2f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T03:38:22Z",
+      "side": 1,
+      "message": "Moving the AID() initialization up and doing the check in the AID class gets rid of this kludge. Makes this way nicer.",
+      "parentUuid": "b010f8cf_c1ba7609",
       "range": {
         "startLine": 260,
         "startChar": 50,
