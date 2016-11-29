@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_5289e1b4",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "No particular reason, I prefer it throwing name error as well.",
+      "parentUuid": "b010f8cf_a756721e",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_67507a22",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -53,6 +71,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_12568949",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1302,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "Oh really, I did not know that.",
+      "parentUuid": "b010f8cf_e7c8eab6",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_07265e7d",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_d2323123",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1305,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "Im getting this, looking at it fresh, I should use fail()\n\nW:1457,12: Redundant use of assertTrue with constant value False (redundant-unittest-assert)\n\nBetter yet see if I can use assertRaises()",
+      "parentUuid": "b010f8cf_07265e7d",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_a7baf207",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -81,6 +135,24 @@
       "writtenOn": "2016-11-22T00:44:09Z",
       "side": 1,
       "message": "Should go in test_fs_config_generator.py so the usual python test runners (nose2 and co) can find it.\n\nAlso means that your protected-access disable won\u0027t accidentally affect non-test code (you didn\u0027t enable it after the test class).",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_1224c9d1",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1308,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "So much for self contained... Isn\u0027t the disable scoped to the class?",
+      "parentUuid": "b010f8cf_a7baf207",
       "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -121,6 +193,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_7213457f",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1319,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "duh yes.. :-P I see where this went wrong. Really based on its usage, i really only care if they overlap in any way shape or form. It really should be bool.",
+      "parentUuid": "b010f8cf_27de022e",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_c7aa8668",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -132,6 +222,24 @@
       "writtenOn": "2016-11-22T00:44:09Z",
       "side": 1,
       "message": "Tests for the identifier -\u003e friendly mappings that are overridden?",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_85beb560",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1329,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "That would be a separate test as the conversion doesn\u0027t happen within the AID() class itself. However, I see no reason why it shouldn\u0027t.",
+      "parentUuid": "b010f8cf_c7aa8668",
       "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -161,6 +269,30 @@
     },
     {
       "key": {
+        "uuid": "702a0062_c5a7cd57",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1338,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "Now that the conversion code is moving into AID class always, we drop this parameter so we test for it now.",
+      "parentUuid": "b010f8cf_1270de49",
+      "range": {
+        "startLine": 1338,
+        "startChar": 52,
+        "endLine": 1338,
+        "endChar": 57
+      },
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_077f7e55",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -172,6 +304,24 @@
       "writtenOn": "2016-11-22T00:44:09Z",
       "side": 1,
       "message": "Incorrect indentation (and elsewhere)",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_e5acd13e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b010f8cf_077f7e55",
       "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -195,6 +345,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_d21f9176",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1363,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "Actually this code wasn\u0027t working as expected. I ended up switching it around so we don\u0027t have to needlessly duplicate the iterations.",
+      "parentUuid": "b010f8cf_12621e52",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_f218aaf0",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -206,6 +374,24 @@
       "writtenOn": "2016-11-22T00:44:09Z",
       "side": 1,
       "message": "Oh, probably for these. unittest is less clunky than you think it is :)\n\nhttps://docs.python.org/2/library/unittest.html#unittest.TestCase.assertRaises\n\n    self.assertRaises(SystemExit, AIDHeaderParser(temp_file.name))",
+      "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_65c1c1eb",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1406,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T05:42:50Z",
+      "side": 1,
+      "message": "Yeah I just found this as well.",
+      "parentUuid": "b010f8cf_f218aaf0",
       "revId": "f79ea87acbcff566bdb44ad38b28ef658372c42e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
