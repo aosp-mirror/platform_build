@@ -49,7 +49,7 @@ my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERME
 my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
 endif
-ifdef LOCAL_SDK_VERSION
+ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
 my_target_crtbegin_dynamic_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_dynamic.o)
 my_target_crtbegin_static_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_static.o)
 my_target_crtend_o := $(wildcard $(my_ndk_sysroot_lib)/crtend_android.o)
