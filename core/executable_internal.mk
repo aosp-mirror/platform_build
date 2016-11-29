@@ -34,7 +34,6 @@ endif
 endif
 
 # Define PRIVATE_ variables from global vars
-my_target_global_ld_dirs :=
 ifeq ($(LOCAL_NO_LIBGCC),true)
 my_target_libgcc :=
 else
@@ -50,20 +49,11 @@ my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERME
 my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
 my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
 endif
-ifdef LOCAL_SDK_VERSION
-# Make sure the prebuilt NDK paths are put ahead of the TARGET_GLOBAL_LD_DIRS,
-# so we don't have race condition when the system libraries (such as libc, libstdc++) are also built in the tree.
-my_target_global_ld_dirs := \
-    $(addprefix -L, $(patsubst %/,%,$(dir $(my_ndk_stl_shared_lib_fullpath))) \
-    $(my_ndk_sysroot_lib)) \
-    $(my_target_global_ld_dirs)
-my_target_global_ldflags := $(my_ndk_stl_shared_lib) $(my_target_global_ldflags)
+ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
 my_target_crtbegin_dynamic_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_dynamic.o)
 my_target_crtbegin_static_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_static.o)
 my_target_crtend_o := $(wildcard $(my_ndk_sysroot_lib)/crtend_android.o)
 endif
-$(linked_module): PRIVATE_TARGET_GLOBAL_LD_DIRS := $(my_target_global_ld_dirs)
-$(linked_module): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
 $(linked_module): PRIVATE_TARGET_LIBGCC := $(my_target_libgcc)
 $(linked_module): PRIVATE_TARGET_LIBATOMIC := $(my_target_libatomic)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O := $(my_target_crtbegin_dynamic_o)
