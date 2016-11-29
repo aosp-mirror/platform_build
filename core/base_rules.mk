@@ -65,6 +65,8 @@ else
   my_host_cross :=
 endif
 
+include $(BUILD_SYSTEM)/local_vndk.mk
+
 my_module_tags := $(LOCAL_MODULE_TAGS)
 ifeq ($(my_host_cross),true)
   my_module_tags :=
