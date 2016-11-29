@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "702a0062_9ecb6234",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 822,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T16:52:59Z",
+      "side": 1,
+      "message": "this should be squashed to the right commit.",
+      "revId": "89b4029fbb51f2b50dd4541cb7b9297235aba86c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
