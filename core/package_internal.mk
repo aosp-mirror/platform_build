@@ -140,9 +140,9 @@ my_overlay_resources := $(strip \
     $(addprefix $(d)/, \
         $(call find-subdir-assets,$(d)))))
 
-my_res_resources := $(strip \
+my_res_resources := $(if $(my_res_dir),$(strip \
     $(addprefix $(my_res_dir)/, \
-        $(call find-subdir-assets,$(my_res_dir))))
+        $(call find-subdir-assets,$(my_res_dir)))))
 
 all_resources := $(strip $(my_res_resources) $(my_overlay_resources))
 

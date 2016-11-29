@@ -417,7 +417,7 @@ endef
 define find-subdir-assets
 $(sort $(if $(1),$(patsubst ./%,%, \
 	$(shell if [ -d $(1) ] ; then cd $(1) ; find -L ./ -not -name '.*' -and -type f ; fi)), \
-	$(warning Empty argument supplied to find-subdir-assets) \
+	$(warning Empty argument supplied to find-subdir-assets in $(LOCAL_PATH)) \
 ))
 endef
 
