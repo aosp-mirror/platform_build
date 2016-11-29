@@ -270,6 +270,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_bd11133d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T03:38:22Z",
+      "side": 1,
+      "message": "I think I can refactor this so the AID class does all the checking and conversion. As far as empty string, you cannot get an empty string as you\u0027ll hit the specified but unset check when the parser pulls it out of the ini file. If you quote it, the quotes are preserved and passed to int(x, 0) and it won\u0027t convert.",
+      "parentUuid": "b010f8cf_21015221",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_2b0f09a9",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -498,6 +516,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_cfa7ee57",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T03:38:22Z",
+      "side": 1,
+      "message": "I don\u0027t like it but ill do it.",
+      "parentUuid": "b010f8cf_01cf6e6e",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "30ca486f_fd9f9839",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 3
@@ -644,6 +680,24 @@
       "side": 1,
       "message": "Sure, but that logic probably belongs in the printing code rather than built in to the variable.",
       "parentUuid": "30ca486f_d361eb29",
+      "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_2fdecac9",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-29T03:38:22Z",
+      "side": 1,
+      "message": "Fair enough",
+      "parentUuid": "b010f8cf_cc1d0ddf",
       "revId": "e3adec7a5f3497c34ad767f808094aba646d9ea5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
