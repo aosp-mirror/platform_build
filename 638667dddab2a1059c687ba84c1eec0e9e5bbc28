@@ -64,6 +64,24 @@
       "revId": "638667dddab2a1059c687ba84c1eec0e9e5bbc28",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_899a475a",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-11-30T00:31:31Z",
+      "side": 1,
+      "message": "It does for min:\n\n$ pylint tools/fs_config/fs_config_generator.py \nNo config file found, using default configuration\n************* Module fs_config_generator\nI: 20, 0: Locally disabling too-many-lines (C0302) (locally-disabled)\n\n\u003csnip\u003e\nYour code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)",
+      "parentUuid": "702a0062_09d8173e",
+      "revId": "638667dddab2a1059c687ba84c1eec0e9e5bbc28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
