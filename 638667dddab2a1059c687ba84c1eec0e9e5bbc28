@@ -46,6 +46,24 @@
       "revId": "638667dddab2a1059c687ba84c1eec0e9e5bbc28",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_09d8173e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-30T00:27:32Z",
+      "side": 1,
+      "message": "I\u0027m not sure why I left this comment. This made sense. I moved all this into a pylintrc though since putting this disable here doesn\u0027t actually change anything (at least not with my pylint).",
+      "parentUuid": "b010f8cf_8ce5d51e",
+      "revId": "638667dddab2a1059c687ba84c1eec0e9e5bbc28",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
