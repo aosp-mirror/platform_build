@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "702a0062_aecb9133",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-30T00:22:01Z",
+      "side": 1,
+      "message": "Looks like too-many-lines is technically a warning on the first line of the file, so we can\u0027t actually disable it without one.",
+      "parentUuid": "702a0062_7d4ddb86",
+      "revId": "a15f2300448555dd643bda8f36d7015fb83d2e32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b010f8cf_c1ba7609",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 6
