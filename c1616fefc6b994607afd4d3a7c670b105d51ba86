@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "702a0062_06be3998",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-30T19:35:38Z",
+      "side": 1,
+      "message": "Please wrap this. There isn\u0027t a strict limit in this project, but if gerrit is wrapping it it\u0027s too long.",
+      "revId": "c1616fefc6b994607afd4d3a7c670b105d51ba86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_061479b9",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2016-11-30T19:35:38Z",
+      "side": 1,
+      "message": "Not sure, but won\u0027t this fail if multiple are true? Doesn\u0027t this turn in to `$(filter true,truetrue)` if that happens?",
+      "revId": "c1616fefc6b994607afd4d3a7c670b105d51ba86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
