@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "702a0062_c4fedabb",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1010186
+      },
+      "writtenOn": "2016-11-30T21:20:39Z",
+      "side": 1,
+      "message": "Is it possible that LOCAL_MODULE_PATH isn\u0027t set, but LOCAL_MODULE_RELATIVE_PATH set to vendor ?",
+      "range": {
+        "startLine": 7,
+        "startChar": 44,
+        "endLine": 7,
+        "endChar": 62
+      },
+      "revId": "8139025da27d6ce52f4771863bab6eedff180a58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
