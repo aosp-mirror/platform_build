@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "702a0062_e433e5af",
+        "filename": "target/product/base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1003723
+      },
+      "writtenOn": "2016-11-30T05:14:13Z",
+      "side": 1,
+      "message": "double underscore WAI?",
+      "range": {
+        "startLine": 135,
+        "startChar": 15,
+        "endLine": 135,
+        "endChar": 17
+      },
+      "revId": "a35d92e4312b2247b0a27e17a6f08f82dae49fdf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
