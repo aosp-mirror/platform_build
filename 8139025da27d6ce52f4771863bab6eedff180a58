@@ -22,6 +22,24 @@
       "revId": "8139025da27d6ce52f4771863bab6eedff180a58",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_44caea5f",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-11-30T21:33:13Z",
+      "side": 1,
+      "message": "That would be incorrect, but may work if there isn\u0027t a separate vendor partition. But we do support LOCAL_MODULE_PATH_(32,64,etc)\n\nAlso, this check would need to be $(TARGET_OUT_VENDOR)%",
+      "parentUuid": "702a0062_c4fedabb",
+      "revId": "8139025da27d6ce52f4771863bab6eedff180a58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
