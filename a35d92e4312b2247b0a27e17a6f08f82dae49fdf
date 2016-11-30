@@ -22,6 +22,30 @@
       "revId": "a35d92e4312b2247b0a27e17a6f08f82dae49fdf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "702a0062_50c8e743",
+        "filename": "target/product/base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2016-11-30T17:33:12Z",
+      "side": 1,
+      "message": "I assume Evgenii introduced it to differentiate from the underscore from the binary name.",
+      "parentUuid": "702a0062_e433e5af",
+      "range": {
+        "startLine": 135,
+        "startChar": 15,
+        "endLine": 135,
+        "endChar": 17
+      },
+      "revId": "a35d92e4312b2247b0a27e17a6f08f82dae49fdf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
