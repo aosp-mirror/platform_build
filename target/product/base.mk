@@ -129,6 +129,13 @@ PRODUCT_PACKAGES += \
     vold \
     wm
 
+# In SANITIZE_LITE, we have a specialized modules that are sanitized.
+ifeq ($(SANITIZE_LITE),true)
+PRODUCT_PACKAGES += \
+    app_process__asan \
+
+endif
+
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     perfprofd
