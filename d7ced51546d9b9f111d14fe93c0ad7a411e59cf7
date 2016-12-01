@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d6b6b00_921b0459",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2016-12-01T22:19:26Z",
+      "side": 1,
+      "message": "(i\u0027m assuming all three \"stage 3/3\"s should be outdented one level? not that it matters since it\u0027s only a comment, but looks odd...)",
+      "revId": "d7ced51546d9b9f111d14fe93c0ad7a411e59cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
