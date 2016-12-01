@@ -28,7 +28,7 @@ PRODUCT_PACKAGES += \
 
 # Additional mixins to the boot classpath.
 PRODUCT_PACKAGES += \
-    core-junit \
+    legacy-test \
 
 # Why are we pulling in ext, which is frameworks/base, depending on tagsoup and nist-sip?
 PRODUCT_PACKAGES += \
