@@ -131,6 +131,11 @@ PRODUCT_PACKAGES += \
 
 # In SANITIZE_LITE, we have a specialized modules that are sanitized.
 ifeq ($(SANITIZE_LITE),true)
+# Pull in the asan wrapper binary.
+PRODUCT_PACKAGES += \
+    asanwrapper \
+
+# Pull in the specialized binaries.
 PRODUCT_PACKAGES += \
     app_process__asan \
 
