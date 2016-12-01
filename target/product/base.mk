@@ -129,18 +129,6 @@ PRODUCT_PACKAGES += \
     vold \
     wm
 
-# In SANITIZE_LITE, we have a specialized modules that are sanitized.
-ifeq ($(SANITIZE_LITE),true)
-# Pull in the asan wrapper binary.
-PRODUCT_PACKAGES += \
-    asanwrapper \
-
-# Pull in the specialized binaries.
-PRODUCT_PACKAGES += \
-    app_process__asan \
-
-endif
-
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     perfprofd
