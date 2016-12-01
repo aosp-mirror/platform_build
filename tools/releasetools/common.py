@@ -547,7 +547,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
 
 
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
-                     info_dict=None, system_img_path=None):
+                     info_dict=None):
   """Return a File object with the desired bootable image.
 
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
