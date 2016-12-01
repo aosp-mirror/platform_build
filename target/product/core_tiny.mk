@@ -88,7 +88,7 @@ PRODUCT_BOOT_JARS := \
     core-libart \
     conscrypt \
     okhttp \
-    core-junit \
+    legacy-test \
     bouncycastle \
     ext \
     framework \
