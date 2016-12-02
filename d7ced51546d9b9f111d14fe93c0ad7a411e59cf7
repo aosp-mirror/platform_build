@@ -16,6 +16,24 @@
       "revId": "d7ced51546d9b9f111d14fe93c0ad7a411e59cf7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d6b6b00_9b2f98ba",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-12-02T01:58:43Z",
+      "side": 1,
+      "message": "it\u0027s guarded by the if at L634, so it\u0027s intended to stay in the inner block.\n\nPS2 added one more line after this comment, by writing a no-op comment into the generated script. it makes the code less weird, and also improves the readability of the generated script.",
+      "parentUuid": "0d6b6b00_921b0459",
+      "revId": "d7ced51546d9b9f111d14fe93c0ad7a411e59cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
