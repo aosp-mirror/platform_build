@@ -401,13 +401,17 @@ def DumpInfoDict(d):
 
 
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
-                        has_ramdisk=False):
+                        has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
 
   Take a kernel, cmdline, and optionally a ramdisk directory from the input (in
-  'sourcedir'), and turn them into a boot image.  Return the image data, or
-  None if sourcedir does not appear to contains files for building the
-  requested image."""
+  'sourcedir'), and turn them into a boot image. 'two_step_image' indicates if
+  we are building a two-step special image (i.e. building a recovery image to
+  be loaded into /boot in two-step OTAs).
+
+  Return the image data, or None if sourcedir does not appear to contains files
+  for building the requested image.
+  """
 
   def make_ramdisk():
     ramdisk_img = tempfile.NamedTemporaryFile()
@@ -491,7 +495,12 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
 
   if (info_dict.get("boot_signer", None) == "true" and
       info_dict.get("verity_key", None)):
-    path = "/" + os.path.basename(sourcedir).lower()
+    # Hard-code the path as "/boot" for two-step special recovery image (which
+    # will be loaded into /boot during the two-step OTA).
+    if two_step_image:
+      path = "/boot"
+    else:
+      path = "/" + os.path.basename(sourcedir).lower()
     cmd = [OPTIONS.boot_signer_path]
     cmd.extend(OPTIONS.boot_signer_args)
     cmd.extend([path, img.name,
@@ -530,7 +539,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
 
 
 def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
-                     info_dict=None):
+                     info_dict=None, two_step_image=False):
   """Return a File object with the desired bootable image.
 
   Look for it in 'unpack_dir'/BOOTABLE_IMAGES under the name 'prebuilt_name',
@@ -562,7 +571,7 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   fs_config = "META/" + tree_subdir.lower() + "_filesystem_config.txt"
   data = _BuildBootableImage(os.path.join(unpack_dir, tree_subdir),
                              os.path.join(unpack_dir, fs_config),
-                             info_dict, has_ramdisk)
+                             info_dict, has_ramdisk, two_step_image)
   if data:
     return File(name, data)
   return None
