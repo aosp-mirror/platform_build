@@ -467,6 +467,39 @@ def AppendAssertions(script, info_dict, oem_dict=None):
       script.AssertOemProperty(prop, oem_dict.get(prop))
 
 
+def _WriteRecoveryImageToBoot(script, output_zip):
+  """Find and write recovery image to /boot in two-step OTA.
+
+  In two-step OTAs, we write recovery image to /boot as the first step so that
+  we can reboot to there and install a new recovery image to /recovery.
+  A special "recovery-two-step.img" will be preferred, which encodes the correct
+  path of "/boot". Otherwise the device may show "device is corrupt" message
+  when booting into /boot.
+
+  Fall back to using the regular recovery.img if the two-step recovery image
+  doesn't exist. Note that rebuilding the special image at this point may be
+  infeasible, because we don't have the desired boot signer and keys when
+  calling ota_from_target_files.py.
+  """
+
+  recovery_two_step_img_name = "recovery-two-step.img"
+  recovery_two_step_img_path = os.path.join(
+      OPTIONS.input_tmp, "IMAGES", recovery_two_step_img_name)
+  if os.path.exists(recovery_two_step_img_path):
+    recovery_two_step_img = common.GetBootableImage(
+        recovery_two_step_img_name, recovery_two_step_img_name,
+        OPTIONS.input_tmp, "RECOVERY")
+    common.ZipWriteStr(
+        output_zip, recovery_two_step_img_name, recovery_two_step_img.data)
+    print "two-step package: using %s in stage 1/3" % (
+        recovery_two_step_img_name,)
+    script.WriteRawImage("/boot", recovery_two_step_img_name)
+  else:
+    print "two-step package: using recovery.img in stage 1/3"
+    # The "recovery.img" entry has been written into package earlier.
+    script.WriteRawImage("/boot", "recovery.img")
+
+
 def HasRecoveryPatch(target_files_zip):
   namelist = [name for name in target_files_zip.namelist()]
   return ("SYSTEM/recovery-from-boot.p" in namelist or
@@ -616,12 +649,18 @@ def WriteFullOTAPackage(input_zip, output_zip):
     script.AppendExtra("""
 if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
+
+    # Stage 2/3: Write recovery image to /recovery (currently running /boot).
+    script.Comment("Stage 2/3")
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") == "3/3" then
 """ % bcb_dev)
+
+    # Stage 3/3: Make changes.
+    script.Comment("Stage 3/3")
 
   # Dump fingerprints
   script.Print("Target: %s" % CalculateFingerprint(
@@ -722,7 +761,11 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 set_stage("%(bcb_dev)s", "");
 """ % bcb_dev)
     script.AppendExtra("else\n")
-    script.WriteRawImage("/boot", "recovery.img")
+
+    # Stage 1/3: Nothing to verify for full OTA. Write recovery image to /boot.
+    script.Comment("Stage 1/3")
+    _WriteRecoveryImageToBoot(script, output_zip)
+
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "2/3");
 reboot_now("%(bcb_dev)s", "");
@@ -945,6 +988,9 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.AppendExtra("""
 if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
+
+    # Stage 2/3: Write recovery image to /recovery (currently running /boot).
+    script.Comment("Stage 2/3")
     script.AppendExtra("sleep(20);\n")
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
@@ -952,6 +998,9 @@ set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
+
+    # Stage 1/3: (a) Verify the current system.
+    script.Comment("Stage 1/3")
 
   # Dump fingerprints
   script.Print("Source: %s" % CalculateFingerprint(
@@ -1016,12 +1065,17 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   device_specific.IncrementalOTA_VerifyEnd()
 
   if OPTIONS.two_step:
-    script.WriteRawImage("/boot", "recovery.img")
+    # Stage 1/3: (b) Write recovery image to /boot.
+    _WriteRecoveryImageToBoot(script, output_zip)
+
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "2/3");
 reboot_now("%(bcb_dev)s", "");
 else
 """ % bcb_dev)
+
+    # Stage 3/3: Make changes.
+    script.Comment("Stage 3/3")
 
   # Verify the existing partitions.
   system_diff.WriteVerifyScript(script, touched_blocks_only=True)
@@ -1616,6 +1670,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     script.AppendExtra("""
 if get_stage("%(bcb_dev)s") == "2/3" then
 """ % bcb_dev)
+
+    # Stage 2/3: Write recovery image to /recovery (currently running /boot).
+    script.Comment("Stage 2/3")
     script.AppendExtra("sleep(20);\n")
     script.WriteRawImage("/recovery", "recovery.img")
     script.AppendExtra("""
@@ -1623,6 +1680,9 @@ set_stage("%(bcb_dev)s", "3/3");
 reboot_now("%(bcb_dev)s", "recovery");
 else if get_stage("%(bcb_dev)s") != "3/3" then
 """ % bcb_dev)
+
+    # Stage 1/3: (a) Verify the current system.
+    script.Comment("Stage 1/3")
 
   # Dump fingerprints
   script.Print("Source: %s" % (source_fp,))
@@ -1668,12 +1728,17 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   device_specific.IncrementalOTA_VerifyEnd()
 
   if OPTIONS.two_step:
-    script.WriteRawImage("/boot", "recovery.img")
+    # Stage 1/3: (b) Write recovery image to /boot.
+    _WriteRecoveryImageToBoot(script, output_zip)
+
     script.AppendExtra("""
 set_stage("%(bcb_dev)s", "2/3");
 reboot_now("%(bcb_dev)s", "");
 else
 """ % bcb_dev)
+
+    # Stage 3/3: Make changes.
+    script.Comment("Stage 3/3")
 
   script.Comment("---- start making changes here ----")
 
